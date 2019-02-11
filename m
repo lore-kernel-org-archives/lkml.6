@@ -2,168 +2,169 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84B8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F204C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B28A218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4478E2075D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbfBKQcs (ORCPT
+        id S1728883AbfBKQf3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:32:48 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50070 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727084AbfBKQcr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:32:47 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BGUtYY018755;
-        Mon, 11 Feb 2019 17:32:33 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qjfy5yf5f-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Feb 2019 17:32:33 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 931EA34;
-        Mon, 11 Feb 2019 16:32:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5FC845235;
-        Mon, 11 Feb 2019 16:32:32 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.51) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 11 Feb
- 2019 17:32:31 +0100
-Subject: Re: [PATCH v2 2/3] mfd: syscon: Add optional clock support
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1544604495-4082-1-git-send-email-fabrice.gasnier@st.com>
- <1544604495-4082-3-git-send-email-fabrice.gasnier@st.com>
- <CAK8P3a1MucNG86=bXwVVsasGBOLJ67kuRSpoeneF6M5aB6GmQA@mail.gmail.com>
- <9e0ee154-a399-9bff-3beb-adfd9d6c6fee@st.com>
- <CAK8P3a0kV4-OF7JPwM9cEqxaPvNM9dFZdyZetc47t+D5izkFwQ@mail.gmail.com>
- <47a3fe9f-8adb-8f47-e7c1-342f8fc318aa@st.com>
-Message-ID: <01d49f11-a68e-1674-e6b7-d1b87aa973c9@st.com>
-Date:   Mon, 11 Feb 2019 17:32:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 11:35:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34044 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbfBKQf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:35:29 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA455C4EB9;
+        Mon, 11 Feb 2019 16:35:27 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66BE1600CC;
+        Mon, 11 Feb 2019 16:35:25 +0000 (UTC)
+Subject: Re: [PATCH] locking/rwsem: Remove arch specific rwsem files
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+References: <1549850450-10171-1-git-send-email-longman@redhat.com>
+ <20190211115833.GY32511@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <e470384d-fb7b-132d-253b-23c495e7c285@redhat.com>
+Date:   Mon, 11 Feb 2019 11:35:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <47a3fe9f-8adb-8f47-e7c1-342f8fc318aa@st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190211115833.GY32511@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_11:,,
- signatures=0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 11 Feb 2019 16:35:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/19 2:20 PM, Fabrice Gasnier wrote:
-> On 1/16/19 4:11 PM, Arnd Bergmann wrote:
->> On Wed, Jan 16, 2019 at 3:10 PM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
->>>
->>> On 1/16/19 1:14 PM, Arnd Bergmann wrote:
->>>> (sorry for the late reply, I just realized that I had never sent out the
->>>> mail after Lee asked me for a review last year and I had drafted
->>>> my reply).
->>>
->>> Hi Arnd,
->>>
->>> Many thanks for reviewing, no worries :-)
->>>
->>>>
->>>> On Wed, Dec 12, 2018 at 9:48 AM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
->>>>>
->>>>> Some system control registers need to be clocked, so the registers can
->>>>> be accessed. Add an optional clock and attach it to regmap.
->>>>>
->>>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>>>
->>>> This looks ok to me in principle, but I have one question: When we
->>>> do a clk_get() and clk_prepare() as part of regmap_mmio_attach_clk(),
->>>> does that change the behavior of syscon nodes that are otherwise
->>>> unused?
->>>
->>> I'm not sure I correctly understand this question. I don't think it will
->>> change the behavior for "unused" nodes. These should remain unused with
->>> this patch.
->>
->> What I mean is that nodes that listed as 'compatible="syscon"' get
->> probed by the syscon driver even when no other driver references
->> them, and that in turn would acquire the clock, right?
-> 
-> Hi Arnd,
-> 
-> Sorry for the late reply.
-> 
-> When no other driver references them, nothing happens at probe time on
-> the clock: no calls to get/prepare... the clock.
-> 
-> => The clock will remain unrequested & unused until another driver calls
-> one of "of_syscon_register()" variants:
-> - syscon_node_to_regmap
-> - syscon_regmap_lookup_by_compatible
-> - syscon_regmap_lookup_by_phandle
-> 
-> When another driver references them (e.g. one of the above calls), then
-> it will acquire the optional clock and use it, e.g.:
-> - clk_prepare() upon of_syscon_register() variants
-> - clk_enable & clk_disable when accessing the registers
-> 
-> I hope this clarifies.
-> 
-> Please advise,
-> Best Regards,
-> Fabrice
+On 02/11/2019 06:58 AM, Peter Zijlstra wrote:
+> Which is clearly worse. Now we can write that as:
+>
+>   int __down_read_trylock2(unsigned long *l)
+>   {
+> 	  long tmp = READ_ONCE(*l);
+>
+> 	  while (tmp >= 0) {
+> 		  if (try_cmpxchg(l, &tmp, tmp + 1))
+> 			  return 1;
+> 	  }
+>
+> 	  return 0;
+>   }
+>
+> which generates:
+>
+>   0000000000000030 <__down_read_trylock2>:
+>   30:   48 8b 07                mov    (%rdi),%rax
+>   33:   48 85 c0                test   %rax,%rax
+>   36:   78 18                   js     50 <__down_read_trylock2+0x20>
+>   38:   48 8d 50 01             lea    0x1(%rax),%rdx
+>   3c:   f0 48 0f b1 17          lock cmpxchg %rdx,(%rdi)
+>   41:   75 f0                   jne    33 <__down_read_trylock2+0x3>
+>   43:   b8 01 00 00 00          mov    $0x1,%eax
+>   48:   c3                      retq
+>   49:   0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+>   50:   31 c0                   xor    %eax,%eax
+>   52:   c3                      retq
+>
+> Which is a lot better; but not quite there yet.
+>
+>
+> I've tried quite a bit, but I can't seem to get GCC to generate the:
+>
+> 	add $1,%rdx
+> 	jle
+>
+> required; stuff like:
+>
+> 	new = old + 1;
+> 	if (new <= 0)
+>
+> generates:
+>
+> 	lea 0x1(%rax),%rdx
+> 	test %rdx, %rdx
+> 	jle
 
-Hi Arnd,
+Thanks for the suggested code snippet. So you want to replace "lea
+0x1(%rax), %rdx" by "add $1,%rdx"?
 
-Gentlemen reminder for this. I would appreciate to have your
-feedback.
+I think the compiler is doing that so as to use the address generation
+unit for addition instead of using the ALU. That will leave the ALU
+available for doing other arithmetic operation in parallel. I don't
+think it is a good idea to override the compiler and force it to use
+ALU. So I am not going to try doing that. It is only 1 or 2 more of
+codes anyway.
 
-Many thanks,
-Fabrice
+Cheers,
+Longman
 
-> 
->>
->>>> I think we have a bunch of devices that started out as a syscon but
->>>> then we added a proper driver for them, which would handle the
->>>> clocks explicitly. Is it guaranteed that this will keep working (including
->>>> shutting down the clocks when they are unused) if we have two drivers
->>>> that call clk_get() on the same device node?
->>>
->>> I'd expect nothing wrong happens when two drivers call clk_get() for the
->>> same clock.
->>> Are there some case where two drivers are bind (e.g. syscon driver +
->>> another driver) for the same piece of hardware ?
->>
->> You won't actually have two drivers binding to the same device, but you
->> could have a driver and a syscon user that does relies on the
->> syscon_regmap_lookup_by_*() functions.
->>
->> I think we've had a couple of cases where we started out representing
->> a device as syscon, and then later decided that a high-level abstraction
->> would be needed because syscon didn't quite support all the needed
->> features.
->>
->> Since each syscon node should also have a more specific
->> compatible value, you can then have another driver that binds
->> to that compatible string.
->>
->>       Arnd
->>
