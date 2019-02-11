@@ -2,88 +2,168 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3F2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A034AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65442054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 783982054F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbfBKVwb (ORCPT
+        id S1728021AbfBKVwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:52:31 -0500
-Received: from mga11.intel.com ([192.55.52.93]:21453 "EHLO mga11.intel.com"
+        Mon, 11 Feb 2019 16:52:51 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58967 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbfBKVwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:52:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726074AbfBKVwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:52:50 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 13:52:29 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 13:52:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="319517992"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by fmsmga005.fm.intel.com with ESMTP; 11 Feb 2019 13:52:29 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com, joro@8bytes.org, dwmw2@infradead.org
-Cc:     linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, keith.busch@intel.com,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH v2 2/2] iommu/vt-d: Enable PASID only if device expects PASID in PRG Response.
-Date:   Mon, 11 Feb 2019 13:50:32 -0800
-Message-Id: <787d13ae22ae07c708b06180241f4f2b71031f84.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+   d="scan'208";a="318156768"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Feb 2019 13:52:49 -0800
+Date:   Mon, 11 Feb 2019 13:52:38 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, netdev@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+Message-ID: <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190211201643.7599-3-ira.weiny@intel.com>
+ <20190211203916.GA2771@ziepe.ca>
+ <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
+ <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
+ <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Mon, Feb 11, 2019 at 01:39:12PM -0800, John Hubbard wrote:
+> On 2/11/19 1:26 PM, Ira Weiny wrote:
+> > On Mon, Feb 11, 2019 at 01:13:56PM -0800, John Hubbard wrote:
+> >> On 2/11/19 12:39 PM, Jason Gunthorpe wrote:
+> >>> On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
+> >>>> From: Ira Weiny <ira.weiny@intel.com>
+> >> [...]
+> >> It seems to me that the longterm vs. short-term is of questionable value.
+> > 
+> > This is exactly why I did not post this before.  I've been waiting our other
+> > discussions on how GUP pins are going to be handled to play out.  But with the
+> > netdev thread today[1] it seems like we need to make sure we have a "safe" fast
+> > variant for a while.  Introducing FOLL_LONGTERM seemed like the cleanest way to
+> > do that even if we will not need the distinction in the future...  :-(
+> 
+> Yes, I agree. Below...
+> 
+> > [...]
+> > This is also why I did not change the get_user_pages_longterm because we could
+> > be ripping this all out by the end of the year...  (I hope. :-)
+> > 
+> > So while this does "pollute" the GUP family of calls I'm hoping it is not
+> > forever.
+> > 
+> > Ira
+> > 
+> > [1] https://lkml.org/lkml/2019/2/11/1789
+> > 
+> 
+> Yes, and to be clear, I think your patchset here is fine. It is easy to find
+> the FOLL_LONGTERM callers if and when we want to change anything. I just think
+> also it's appopriate to go a bit further, and use FOLL_LONGTERM all by itself.
+> 
+> That's because in either design outcome, it's better that way:
+> 
+> -- If we keep the concept of "I'm a long-term gup call site", then FOLL_LONGTERM
+> is just right. The gup API already has _fast and non-fast variants, and once
+> you get past a couple, you end up with a multiplication of names that really
+> work better as flags. We're there.
+> 
+> -- If we drop the concept, then you've already done part of the work, by removing
+> the _longterm API variants.
 
-In Intel IOMMU, if the Page Request Queue (PRQ) is full, it will
-automatically respond to the device with a success message as a keep
-alive. And when sending the success message, IOMMU will include PASID in
-the Response Message when the Page Request has a PASID in Request
-Message and It does not check against the PRG Response PASID requirement
-of the device before sending the response. Also, If the device receives the
-PRG response with PASID when its not expecting it then the device behavior
-is undefined. So enable PASID support only if device expects PASID in PRG
-response message.
+Fair enough.   But to do that correctly I think we will need to convert
+get_user_pages_fast() to use flags as well.  I have a version of this series
+which includes a patch does this, but the patch touched a lot of subsystems and
+a couple of different architectures...[1]
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Suggested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+I can't test them all.  If we want to go that way I'm up for submitting the
+patch...  But if we remove longterm in the future we may be left with a
+get_user_pages_fast() which really only needs 1 flag.  But perhaps overall we
+would be better off?
+
+Ira
+
+
+[1] mm/gup.c: Change GUP fast to use flags rather than write bool
+
+To facilitate additional options to get_user_pages_fast change the
+singular write parameter to be the more generic gup_flags.
+
+This patch currently does not change any functionality.  New
+functionality will follow in subsequent patches.
+
+Many of the get_user_pages_fast call sites were unchanged because they
+already used FOLL_WRITE or 0 as appropriate.
+
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/mm/gup.c                         | 11 ++++++-----
+ arch/powerpc/kvm/book3s_64_mmu_hv.c        |  4 ++--
+ arch/powerpc/kvm/e500_mmu.c                |  2 +-
+ arch/powerpc/mm/mmu_context_iommu.c        |  4 ++--
+ arch/s390/kvm/interrupt.c                  |  2 +-
+ arch/s390/mm/gup.c                         | 12 ++++++------
+ arch/sh/mm/gup.c                           | 11 ++++++-----
+ arch/sparc/mm/gup.c                        |  9 +++++----
+ arch/x86/kvm/paging_tmpl.h                 |  2 +-
+ arch/x86/kvm/svm.c                         |  2 +-
+ drivers/fpga/dfl-afu-dma-region.c          |  2 +-
+ drivers/gpu/drm/via/via_dmablit.c          |  3 ++-
+ drivers/infiniband/hw/hfi1/user_pages.c    |  3 ++-
+ drivers/misc/genwqe/card_utils.c           |  2 +-
+ drivers/misc/vmw_vmci/vmci_host.c          |  2 +-
+ drivers/misc/vmw_vmci/vmci_queue_pair.c    |  6 ++++--
+ drivers/platform/goldfish/goldfish_pipe.c  |  3 ++-
+ drivers/rapidio/devices/rio_mport_cdev.c   |  4 +++-
+ drivers/sbus/char/oradax.c                 |  2 +-
+ drivers/scsi/st.c                          |  3 ++-
+ drivers/staging/gasket/gasket_page_table.c |  4 ++--
+ drivers/tee/tee_shm.c                      |  2 +-
+ drivers/vfio/vfio_iommu_spapr_tce.c        |  3 ++-
+ drivers/vhost/vhost.c                      |  2 +-
+ drivers/video/fbdev/pvr2fb.c               |  2 +-
+ drivers/virt/fsl_hypervisor.c              |  2 +-
+ drivers/xen/gntdev.c                       |  2 +-
+ fs/orangefs/orangefs-bufmap.c              |  2 +-
+ include/linux/mm.h                         |  4 ++--
+ kernel/futex.c                             |  2 +-
+ lib/iov_iter.c                             |  7 +++++--
+ mm/gup.c                                   | 10 +++++-----
+ mm/util.c                                  |  8 ++++----
+ net/ceph/pagevec.c                         |  2 +-
+ net/rds/info.c                             |  2 +-
+ net/rds/rdma.c                             |  3 ++-
+ 36 files changed, 81 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 1457f931218e..af2e4a011787 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1399,7 +1399,8 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
- 	   undefined. So always enable PASID support on devices which
- 	   have it, even if we can't yet know if we're ever going to
- 	   use it. */
--	if (info->pasid_supported && !pci_enable_pasid(pdev, info->pasid_supported & ~1))
-+	if (info->pasid_supported && pci_prg_resp_pasid_required(pdev) &&
-+	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
- 		info->pasid_enabled = 1;
- 
- 	if (info->pri_supported && !pci_reset_pri(pdev) && !pci_enable_pri(pdev, 32))
--- 
-2.20.1
 
