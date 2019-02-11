@@ -2,164 +2,122 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5C3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F93BC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9F9218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22CF2218F0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:28:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tOXq6WS4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfBKQ2R (ORCPT
+        id S1728784AbfBKQ2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:28:17 -0500
-Received: from relay.sw.ru ([185.231.240.75]:52414 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbfBKQ2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:28:17 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gtERF-0001Xi-Kx; Mon, 11 Feb 2019 19:28:09 +0300
-Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        christophe leroy <christophe.leroy@c-s.fr>
-Cc:     Daniel Axtens <dja@axtens.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-References: <cover.1548166824.git.christophe.leroy@c-s.fr>
- <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
- <87ef8i45km.fsf@dja-thinkpad.axtens.net>
- <69720148-fd19-0810-5a1d-96c45e2ec00c@c-s.fr>
- <CAAeHK+wcUwLiSQffUkcyiH2fuox=VihJadEqQqRG1YfU3Y2gDA@mail.gmail.com>
- <f8b9e9ec-991b-6824-46c2-f7fc0aaa7fb8@c-s.fr>
- <CAAeHK+zop5ajOJQ4KEYbuxMRegk2GM1LvuGcSbCU1O5EZxB0MA@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <805fbf9d-a10f-03e0-aa52-6f6bd16059b9@virtuozzo.com>
-Date:   Mon, 11 Feb 2019 19:28:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAAeHK+zop5ajOJQ4KEYbuxMRegk2GM1LvuGcSbCU1O5EZxB0MA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Feb 2019 11:28:45 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:47764 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726244AbfBKQ2o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:28:44 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0C3618EE235;
+        Mon, 11 Feb 2019 08:28:44 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1DH1RR_F85Ss; Mon, 11 Feb 2019 08:28:43 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 859E08EE121;
+        Mon, 11 Feb 2019 08:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549902523;
+        bh=eVqqr2vRyAucYgej9M3SlCKrG0QWNt25NjY5/11pdh4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tOXq6WS4veXGsO0JIgtFLWJhGoxWKoGpeCrst8ykWJdBjvGK5tcf7L3s8wmQjf+NH
+         PVXRMmi5Be0ybaDgTXWRzFmAylTu3zxch6crbVJloEYF0O7daaD3uVwx0lvJ8vcgb9
+         8Si85QZKroyuIYsPoXLc6VlhUeqhXP+JX3Bk1QpE=
+Message-ID: <1549902521.2831.23.camel@HansenPartnership.com>
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes
+ 5 minute delay during boot on Sun Blade 2500
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mikael Pettersson <mikpelinux@gmail.com>
+Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 11 Feb 2019 08:28:41 -0800
+In-Reply-To: <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+         <1549736341.2971.7.camel@HansenPartnership.com>
+         <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+         <1549813472.4142.3.camel@HansenPartnership.com>
+         <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+         <1549815924.4142.8.camel@HansenPartnership.com>
+         <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+         <1549898730.2831.6.camel@HansenPartnership.com>
+         <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
+         <1549899773.2831.12.camel@HansenPartnership.com>
+         <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/11/19 3:25 PM, Andrey Konovalov wrote:
-> On Sat, Feb 9, 2019 at 12:55 PM christophe leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->> Hi Andrey,
->>
->> Le 08/02/2019 à 18:40, Andrey Konovalov a écrit :
->>> On Fri, Feb 8, 2019 at 6:17 PM Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>>>
->>>> Hi Daniel,
->>>>
->>>> Le 08/02/2019 à 17:18, Daniel Axtens a écrit :
->>>>> Hi Christophe,
->>>>>
->>>>> I've been attempting to port this to 64-bit Book3e nohash (e6500),
->>>>> although I think I've ended up with an approach more similar to Aneesh's
->>>>> much earlier (2015) series for book3s.
->>>>>
->>>>> Part of this is just due to the changes between 32 and 64 bits - we need
->>>>> to hack around the discontiguous mappings - but one thing that I'm
->>>>> particularly puzzled by is what the kasan_early_init is supposed to do.
->>>>
->>>> It should be a problem as my patch uses a 'for_each_memblock(memory,
->>>> reg)' loop.
->>>>
->>>>>
->>>>>> +void __init kasan_early_init(void)
->>>>>> +{
->>>>>> +    unsigned long addr = KASAN_SHADOW_START;
->>>>>> +    unsigned long end = KASAN_SHADOW_END;
->>>>>> +    unsigned long next;
->>>>>> +    pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
->>>>>> +    int i;
->>>>>> +    phys_addr_t pa = __pa(kasan_early_shadow_page);
->>>>>> +
->>>>>> +    BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
->>>>>> +
->>>>>> +    if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
->>>>>> +            panic("KASAN not supported with Hash MMU\n");
->>>>>> +
->>>>>> +    for (i = 0; i < PTRS_PER_PTE; i++)
->>>>>> +            __set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
->>>>>> +                         kasan_early_shadow_pte + i,
->>>>>> +                         pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
->>>>>> +
->>>>>> +    do {
->>>>>> +            next = pgd_addr_end(addr, end);
->>>>>> +            pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_pte);
->>>>>> +    } while (pmd++, addr = next, addr != end);
->>>>>> +}
->>>>>
->>>>> As far as I can tell it's mapping the early shadow page, read-only, over
->>>>> the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the early
->>>>> shadow PTE array from the generic code.
->>>>>
->>>>> I haven't been able to find an answer to why this is in the docs, so I
->>>>> was wondering if you or anyone else could explain the early part of
->>>>> kasan init a bit better.
->>>>
->>>> See https://www.kernel.org/doc/html/latest/dev-tools/kasan.html for an
->>>> explanation of the shadow.
->>>>
->>>> When shadow is 0, it means the memory area is entirely accessible.
->>>>
->>>> It is necessary to setup a shadow area as soon as possible because all
->>>> data accesses check the shadow area, from the begining (except for a few
->>>> files where sanitizing has been disabled in Makefiles).
->>>>
->>>> Until the real shadow area is set, all access are granted thanks to the
->>>> zero shadow area beeing for of zeros.
->>>
->>> Not entirely correct. kasan_early_init() indeed maps the whole shadow
->>> memory range to the same kasan_early_shadow_page. However as kernel
->>> loads and memory gets allocated this shadow page gets rewritten with
->>> non-zero values by different KASAN allocator hooks. Since these values
->>> come from completely different parts of the kernel, but all land on
->>> the same page, kasan_early_shadow_page's content can be considered
->>> garbage. When KASAN checks memory accesses for validity it detects
->>> these garbage shadow values, but doesn't print any reports, as the
->>> reporting routine bails out on the current->kasan_depth check (which
->>> has the value of 1 initially). Only after kasan_init() completes, when
->>> the proper shadow memory is mapped, current->kasan_depth gets set to 0
->>> and we start reporting bad accesses.
->>
->> That's surprising, because in the early phase I map the shadow area
->> read-only, so I do not expect it to get modified unless RO protection is
->> failing for some reason.
+On Mon, 2019-02-11 at 08:46 -0700, Jens Axboe wrote:
+> On 2/11/19 8:42 AM, James Bottomley wrote:
+> > On Mon, 2019-02-11 at 08:28 -0700, Jens Axboe wrote:
+> > > On 2/11/19 8:25 AM, James Bottomley wrote:
+> > > > On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
+> > > > > On 2/10/19 9:25 AM, James Bottomley wrote:
+[...]
+> > > > > > That check wasn't changed by the code removal.
+> > > > > 
+> > > > > As I said above, for sd. This isn't true for non-disks.
+> > > > 
+> > > > Yes, but the behaviour above doesn't change across a switch to
+> > > > MQ, so I don't quite understand how it bisects back to that
+> > > > change.  If we're not gathering entropy for the device now, we
+> > > > wouldn't have been before the switch, so the entropy
+> > > > characteristics shouldn't have changed.
+> > > 
+> > > But it does, as I also wrote in that first email. The legacy
+> > > queue flags had QUEUE_FLAG_ADD_RANDOM set by default, the MQ ones
+> > > do not. Hence any non-sd device would previously ALWAYS have
+> > > ADD_RANDOM set, now none of them do. Also see the patch I sent.
+> > 
+> > So your theory is that the disk in question never gets to the
+> > rotational check?  because the check will clear the flag if it's
+> > non-rotational and set it if it's not, so the default state of the
+> > flag shouldn't matter.
 > 
-> Actually it might be that the allocator hooks don't modify shadow at
-> this point, as the allocator is not yet initialized. However stack
-> should be getting poisoned and unpoisoned from the very start. But the
-> generic statement that early shadow gets dirtied should be correct.
-> Might it be that you don't use stack instrumentation?
+> No, my point is about non-disks, devices that aren't driven by sd.
+> The behavior for sd hasn't changed, as it sets/clears it
+> unconditionally.
+
+I agree, but I don't think any of them were significant entropy
+contributors before: things like nvme have always been outside of this
+and sr and st don't really contribute much to the seek load during boot
+because they're probed but not used by the boot sequence, so I can't
+see how they would cause this behaviour.  I suppose it could be target
+probing, but even that seems unlikely because it should be dwarfed by
+the number of root disk reads during boot.
+
+For the rng to take an additional 5 minutes to initialize, we must have
+lost a significant entropy source somewhere.
+
+James
+
+> That's not true for something driven by sr, for instance, and
+> anything else non-sd. For those we defaulted to adding randomness for
+> !scsi-mq, and default to not adding randomness for scsi-mq.
 > 
+> The patch I included would have the same behavior for scsi-mq as we
+> had for non-mq.
 
-Yes, stack instrumentation is not used here, because shadow offset which we pass to
-the -fasan-shadow-offset= cflag is not specified here. So the logic in scrpits/Makefile.kasan
-just fallbacks to CFLAGS_KASAN_MINIMAL, which is outline and without stack instrumentation.
-
-Christophe, you can specify KASAN_SHADOW_OFFSET either in Kconfig (e.g. x86_64) or
-in Makefile (e.g. arm64). And make early mapping writable, because compiler generated code will write
-to shadow memory in function prologue/epilogue.
