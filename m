@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B788C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC544C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1233E222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCCE3222B6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894914;
-	bh=2PAryEP6tKHojVcLy3vRribLfeLAENPs4f3gpanAJVM=;
+	s=default; t=1549894917;
+	bh=sl3/65gnbN55u/33PWXDOI+hgYejdqgkf1ttKFUTuyo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g5UA9A4aZv8rbS3PuMq8XwCw1qsxJIs3cnxmNd65E14FZK5dneZsPsZtYIhh9zjpz
-	 uoFFmSktWCIYlxg/w+JWI4LYfo7XQW7JCFi0uHJRHn2o451R+yhiCXKxTUOpK9EZqO
-	 41aQsBgyi6Pzri5JAhdrZPAppHozFL1gkGx2ITdw=
+	b=fdPZ8T/7rL+aG7h5znXEx1fqK/zkopVnTVgbQrBtJPZJc2+oThPrumOHmKJjNdqmc
+	 gpNs/9s1PMxrBfu8AqdV8D9Gt1O1sggsH45cDOJpvxubYqETcxja7fNFs/SJtofzVq
+	 WCu/0m41EIBpv2GmvNXar0MxEvAare41CJgCATpI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfBKOVw (ORCPT
+        id S1728630AbfBKOV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54632 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728606AbfBKOVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:49 -0500
+        id S1727807AbfBKOVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8BE3222AA;
-        Mon, 11 Feb 2019 14:21:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2193222B6;
+        Mon, 11 Feb 2019 14:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894908;
-        bh=2PAryEP6tKHojVcLy3vRribLfeLAENPs4f3gpanAJVM=;
+        s=default; t=1549894914;
+        bh=sl3/65gnbN55u/33PWXDOI+hgYejdqgkf1ttKFUTuyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bhvTnlL2g67fL3vJ8wDnuWFUhsJ2Rr3DChASoeR3pPBRZr+2Ba76lFvmKTuIkhfrG
-         bSb7OPAiI6Qn+KRiJC7or/3gRZu7M4xE0NWHdhhYUMKyz3QFc62xthWVejkHEETZeb
-         gpcU89ieWOlj162FA9PzQVflgXe3JfMED+GH3M+k=
+        b=WQWhwa3awmtSF8soHOcwyWhfbPtYhbUH9LYLPsxZ5sRyLzIshEw7qQgP3Lp1BKKhg
+         0K7R9r3ufJtLyaUZTRFsrFdUvDLpI49v+fE6lVrUYoLHp2DM3vMOqP2AubccHiwPZ+
+         0yBuWyQb3GZw8jHVc3FpKjif8P4xgCC7jiqJGu7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 029/352] crypto: aes_ti - disable interrupts while accessing S-box
-Date:   Mon, 11 Feb 2019 15:14:16 +0100
-Message-Id: <20190211141848.192803545@linuxfoundation.org>
+Subject: [PATCH 4.20 013/352] drm/amd/display: Fix potential nullptr error
+Date:   Mon, 11 Feb 2019 15:14:00 +0100
+Message-Id: <20190211141847.251717353@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,111 +68,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
+[ Upstream commit 4f7129112c2a30331f3045a42026fad82e6cb72b ]
 
-In the "aes-fixed-time" AES implementation, disable interrupts while
-accessing the S-box, in order to make cache-timing attacks more
-difficult.  Previously it was possible for the CPU to be interrupted
-while the S-box was loaded into L1 cache, potentially evicting the
-cachelines and causing later table lookups to be time-variant.
+[Why]
+Fix surface/plane potential nullptr
 
-In tests I did on x86 and ARM, this doesn't affect performance
-significantly.  Responsiveness is potentially a concern, but interrupts
-are only disabled for a single AES block.
+[How]
+add null check
 
-Note that even after this change, the implementation still isn't
-necessarily guaranteed to be constant-time; see
-https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
-of the many difficulties involved in writing truly constant-time AES
-software.  But it's valuable to make such attacks more difficult.
-
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/Kconfig  |  3 ++-
- crypto/aes_ti.c | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 05c91eb10ca1..4f24acac3d48 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1006,7 +1006,8 @@ config CRYPTO_AES_TI
- 	  8 for decryption), this implementation only uses just two S-boxes of
- 	  256 bytes each, and attempts to eliminate data dependent latencies by
- 	  prefetching the entire table into the cache at the start of each
--	  block.
-+	  block. Interrupts are also disabled to avoid races where cachelines
-+	  are evicted when the CPU is interrupted to do something else.
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 3118ae0e7a87..315a245aedc2 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -5333,6 +5333,12 @@ enum surface_update_type dm_determine_update_type_for_commit(struct dc *dc, stru
+ 	struct dc_stream_update stream_update;
+ 	enum surface_update_type update_type = UPDATE_TYPE_FAST;
  
- config CRYPTO_AES_586
- 	tristate "AES cipher algorithms (i586)"
-diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
-index 03023b2290e8..1ff9785b30f5 100644
---- a/crypto/aes_ti.c
-+++ b/crypto/aes_ti.c
-@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_enc + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
++	if (!updates || !surface) {
++		DRM_ERROR("Plane or surface update failed to allocate");
++		/* Set type to FULL to avoid crashing in DC*/
++		update_type = UPDATE_TYPE_FULL;
++		goto ret;
++	}
  
- 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
-@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
- 
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
-+
- 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
- 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
- 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
-@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
-+
-+	local_irq_restore(flags);
- }
- 
- static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
-@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_dec + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
- 
- 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
-@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
- 
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
-+
- 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
- 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
- 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
-@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
-+
-+	local_irq_restore(flags);
- }
- 
- static struct crypto_alg aes_alg = {
+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+ 		new_dm_crtc_state = to_dm_crtc_state(new_crtc_state);
 -- 
 2.19.1
 
