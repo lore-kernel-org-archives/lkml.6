@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AFBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819FCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4555E214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E5FD21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896643;
-	bh=Vmnu2LaRbmsB8ctH47yQrgFg2U5Kx0Tcc4IHtCbFmOA=;
+	s=default; t=1549896645;
+	bh=dRcPbya7x3bePsOOfBk4rQtTeOmZ76zBBArajT38ONo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g+kK1dfA/lk+BNPPzS5MYXpI2pMuENy/D3DNyt2BSHCVjcZILGHN8C8naTZGsh73M
-	 4SCgnvDCFNAaa1lm/9y1eP+9gBZxhi5KhJfO82HESynyuDd1tXA14uyu+15DKwH8lp
-	 6kYcrP8pJAFhuSM15oZegSEI8VuzIRiQJ7/Fqa70=
+	b=lFWwdAh/MQhY/xCmoS5bQ5LsS4xnRFtoBCCHzw66n6nm6CPt3hkhyDzNUmI8x6pEf
+	 muJxTbTfo7/eg8NeevSHzuP1x/3ROfd0uL7wYwUBIXdnWDhCtQOBAEoSmPL+1GHcof
+	 T/5RkKYTvyxuojz9lsx2XtLOKQilX6BaHr7SbOKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388143AbfBKOul (ORCPT
+        id S2388154AbfBKOun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36476 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388113AbfBKOue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:34 -0500
+        id S2388133AbfBKOuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 451CD20700;
-        Mon, 11 Feb 2019 14:50:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69C242081B;
+        Mon, 11 Feb 2019 14:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896633;
-        bh=Vmnu2LaRbmsB8ctH47yQrgFg2U5Kx0Tcc4IHtCbFmOA=;
+        s=default; t=1549896639;
+        bh=dRcPbya7x3bePsOOfBk4rQtTeOmZ76zBBArajT38ONo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xWNHtUtKFyNrwqBDewGvnk5pNxtDS1VHth8JZnDEjeCxZs9Fo2Q78lhJaGHv1ioo0
-         rDRc/EbsiAQtOLHf+lntSieJbfzJR3hjm9/tfFQjPONcyP3liqxP65bPQRxVnMCjbk
-         RIr8utPjEA/4VNnv+vRG8V+RuZS/UXFEdzZwCi+E=
+        b=vdcQ9hb2MGXv6bT5TedQfwVhvpW4mTndlCS5v25PGndguPS3tQfOiFYhMInGUgBhK
+         /MgTrIGXK9mLiV7JziJH/W05S/NHuKMLM9brU9pIwo5xgGfs4ffzduu6ha99IvPTHM
+         za4v6rbOayjxRElOm8744qcimx1bqEkTrzczMEv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 222/313] cgroup: fix parsing empty mount option string
-Date:   Mon, 11 Feb 2019 15:18:22 +0100
-Message-Id: <20190211141908.074341297@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 224/313] scripts/decode_stacktrace: only strip base path when a prefix of the path
+Date:   Mon, 11 Feb 2019 15:18:24 +0100
+Message-Id: <20190211141908.230227211@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,43 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e250d91d65750a0c0c62483ac4f9f357e7317617 ]
+[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
 
-This fixes the case where all mount options specified are consumed by an
-LSM and all that's left is an empty string. In this case cgroupfs should
-accept the string and not fail.
+Running something like:
 
-How to reproduce (with SELinux enabled):
+	decodecode vmlinux .
 
-    # umount /sys/fs/cgroup/unified
-    # mount -o context=system_u:object_r:cgroup_t:s0 -t cgroup2 cgroup2 /sys/fs/cgroup/unified
-    mount: /sys/fs/cgroup/unified: wrong fs type, bad option, bad superblock on cgroup2, missing codepage or helper program, or other error.
-    # dmesg | tail -n 1
-    [   31.575952] cgroup: cgroup2: unknown option ""
+leads to interested results where not only the leading "." gets stripped
+from the displayed paths, but also anywhere in the string, displaying
+something like:
 
-Fixes: 67e9c74b8a87 ("cgroup: replace __DEVEL__sane_behavior with cgroup2 fs type")
-[NOTE: should apply on top of commit 5136f6365ce3 ("cgroup: implement "nsdelegate" mount option"), older versions need manual rebase]
-Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
+
+which doesn't help further processing.
+
+Fix it by only stripping the base path if it is a prefix of the path.
+
+Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cgroup.c | 2 +-
+ scripts/decode_stacktrace.sh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 1aa517908561..e578c3999970 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1743,7 +1743,7 @@ static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 64220e36ce3b..98a7d63a723e 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -78,7 +78,7 @@ parse_symbol() {
+ 	fi
  
- 	*root_flags = 0;
+ 	# Strip out the base of the path
+-	code=${code//$basepath/""}
++	code=${code//^$basepath/""}
  
--	if (!data)
-+	if (!data || *data == '\0')
- 		return 0;
- 
- 	while ((token = strsep(&data, ",")) != NULL) {
+ 	# In the case of inlines, move everything to same line
+ 	code=${code//$'\n'/' '}
 -- 
 2.19.1
 
