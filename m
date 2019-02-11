@@ -2,113 +2,115 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91DEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1CEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B26A32082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:07:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73212217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549926623;
+	bh=VFaQK1P93H4pBYLtgMcZ5ytlww/HwVbAWSImW8PhU5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OI830feVTR+dTW3ummKIdDE9UeJLcc6fBy6QbXHgWzH5erBvK9oVgmN+mWiAJXTts
+	 0nWh59n/eRPtjTCusGCSp1ExdcWDbq0LgDDVuif4X7YoQy1oUJaQVjY/V/y8xUFmmJ
+	 ya8PCaFi2/GS5jUu5DbJCOxvz0E/cVjietSldBYc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfBKXHR (ORCPT
+        id S1727556AbfBKXKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:07:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBKXHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:07:16 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1FABB1B9C;
-        Mon, 11 Feb 2019 23:07:16 +0000 (UTC)
-Received: from redhat.com (ovpn-121-111.rdu2.redhat.com [10.10.121.111])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6B065101961F;
-        Mon, 11 Feb 2019 23:07:02 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 18:07:02 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Pankaj Gupta <pagupta@redhat.com>, dchinner@redhat.com,
-        jack@suse.cz, kvm@vger.kernel.org, linux-nvdimm@ml01.01.org,
-        jasowang@redhat.com, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org,
-        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        dave jiang <dave.jiang@intel.com>,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, imammedo@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        pbonzini@redhat.com
-Subject: Re: [Qemu-devel] security implications of caching with virtio pmem
- (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
-Message-ID: <20190211180449-mutt-send-email-mst@kernel.org>
-References: <20190109144736.17452-1-pagupta@redhat.com>
- <20190204170515-mutt-send-email-mst@kernel.org>
- <888328358.132676.1549870186945.JavaMail.zimbra@redhat.com>
- <20190211222907.GR14116@dastard>
- <b2be7796-9dee-b9fd-87e5-1ae570aa7db6@redhat.com>
+        Mon, 11 Feb 2019 18:10:21 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36100 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfBKXKV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:10:21 -0500
+Received: by mail-it1-f195.google.com with SMTP id c9so2708749itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:10:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MKmbpPUHZp+qcDMrKqRrxDlgP/yKOLVeKW0Rs4b/jgM=;
+        b=DMOjHjq0aBZ1i+aDF2P7cTNN2pZi8Yd8O6t/XfxTW3u4dKiYxZzQVbgKQu0fE0JaNE
+         8BW1N19q2eR1qBEXvqMmxUeIlRmgLuB+8wo90rLbWzzVK6pARCT4RCF4HGhQufacaQX5
+         6kBEMYa8doWtecrJnNi5abto103RBw5nhZ9hY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MKmbpPUHZp+qcDMrKqRrxDlgP/yKOLVeKW0Rs4b/jgM=;
+        b=QGtOEa0CrLjOcWL/q8AWrmKEH+i2J/p8AESfCTre97rEuyNADeogjV5Ms2RVgSlGc4
+         q9npSVFkWtsQtqeDGjS00RPwWNHgO5DV0//yBGFDmRKiHEnXnsqHUp7RPpZO/pKiDJ7D
+         +loxWThChQL1v1eZMqXvjuosqH9Y3coTyILRezv7yq8JULKnTM/5mpKYXGbScd0gnbZP
+         IwF8rdMqfVXcYz7VFQRPtT8/zyVNQrN4zaKjgxTq9rll94HYG1JCDQVRN4b0FJVrUqwe
+         7EzNoVgKnoW767ootNIE30MyMcFHRi2ui3jOzwY6ytiSdJzLhSXdMjDNeV/Tnez7Lmxa
+         UqOA==
+X-Gm-Message-State: AHQUAubPKgIQejUWl+5seDKobzoktb9ySzb04132/Wh5oSQS5mPIFau1
+        mnTFDJ/3SH7vWcPJkNFJjkHgzA==
+X-Google-Smtp-Source: AHgI3IYo0D0VlUxEbWL006J7LpJS+ncKlf5NSndykjeR/wpGHZrqMyGQbxwX6Wtc8cQHCufkx3V+UQ==
+X-Received: by 2002:a02:8cf6:: with SMTP id n51mr389165jal.86.1549926620127;
+        Mon, 11 Feb 2019 15:10:20 -0800 (PST)
+Received: from chatter.qube.local ([199.66.90.209])
+        by smtp.gmail.com with ESMTPSA id u25sm4948883iob.23.2019.02.11.15.10.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 15:10:19 -0800 (PST)
+Date:   Mon, 11 Feb 2019 18:10:16 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>, pr-tracker-bot@kernel.org,
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Thermal-SoC management fixes for v5.0-rc6
+Message-ID: <20190211231016.GA2937@chatter.qube.local>
+References: <20190210041721.GA2805@localhost.localdomain>
+ <154977271617.2362.11794417398216386913.pr-tracker-bot@kernel.org>
+ <20190211031921.GA1799@localhost.localdomain>
+ <CAHk-=wgz_WpD7jc084QROuM0zszEG0-WvQhQZPsCboMOWNRiWw@mail.gmail.com>
+ <20190211201619.GA8065@work>
+ <CAHk-=wg9yvP3hGVRSnc=8qoj0g7_zt=_2FjmgSAu-0DViyFtaw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <b2be7796-9dee-b9fd-87e5-1ae570aa7db6@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 11 Feb 2019 23:07:16 +0000 (UTC)
+In-Reply-To: <CAHk-=wg9yvP3hGVRSnc=8qoj0g7_zt=_2FjmgSAu-0DViyFtaw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:58:15PM +0100, David Hildenbrand wrote:
-> On 11.02.19 23:29, Dave Chinner wrote:
-> > On Mon, Feb 11, 2019 at 02:29:46AM -0500, Pankaj Gupta wrote:
-> >> Hello Dave,
-> >> Are we okay with this?
-> > 
-> > Sure.
-> > 
-> > I'm not sure I agree with all the analysis presented, but, well, I
-> > haven't looked any deeper because I'm tired of being shouted at and
-> > being called argumentative for daring to ask hard questions about
-> > this topic....
-> 
-> I think if you have concerns, they should definitely be discussed.
-> Making people frustrated that review code is not what we want. Not at all.
-> 
-> I suggest that Pankaj properly documents what we found out so far about
-> security concerns and properly describes intended use cases and answers
-> other questions you had in the cover letter / documentation of the
-> follow up series.
-> 
-> Thanks Dave!
+On Mon, Feb 11, 2019 at 02:04:08PM -0800, Linus Torvalds wrote:
+>> Okay, so I need guidance on the proper behaviour here. As this 
+>> request
+>> didn't use the magic wording for the commit-id (as generated by
+>> git-request-pull), we ended up trying to look up the remote. The remote
+>> specified was:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
+>>
+>> Since it's a short refname, we first try to look it up as a tag:
+>
+>No, you don't do even that.
+>
+>The name is "fixes". But you seem to match it with one of these:
+>
+>> $ git ls-remote git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes^{}
+>> a6d25f4c951b8b28f2eaec6f891ff834622532f2        refs/tags/omap-for-v3.10-rc1/fixes^{}
+>> 77319669af37a1cfc844b801e83343b37e3c7e13        refs/tags/omap/fixes^{}
+>
+>*NEITHER* of which is a tag named "fixes". One is named
+>"omap-for-v3.10-rc1/fixes" and the other is a tag named "omap/fixes".
 
-Right. Also, there's an open question that you posed:
-	Also other storage devices have caches like that (well, the caches size
-	depends on the device) - thinking especially about storage systems -
-	which would in my opinion, also allow similar leaks. How are such
-	security concerns handled there? Are they different (besides eventually
-	access speed)?
-and that needs some looking into, and reporting on.
+Linus:
 
+Thank you for the feedback. I've implemented a fix that handles 
+shortname refs more properly in order to avoid hitting this problem 
+again.
 
-> > 
-> > Cheers,
-> > 
-> > Dave.
-> > 
-> 
-> 
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
+Regards,
+-K
