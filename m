@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D8AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BCCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656E6222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F080222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899721;
-	bh=kH4FaGw0nRJdSn2wcUmLK3AnZLJRAY6Bs+S/3dxbj1A=;
+	s=default; t=1549899741;
+	bh=8mlOSWb4ShClfox0s19CCQ4mSz+ovXEUhPLUgxkxV4Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yk3thv+BQIM62OGEFlR0A72LO45Jm/FdTiZoZqYqesh41m/GFm4KrZgyZ4g6lDL1s
-	 STDQhtayetAmz73I2WJnCp3j394Mdyx067mKB+tFYd+R5/F3byhwLmsGGpF2z8oEzp
-	 3UqRk3mqDRnX+9sTJVy7eNezHaSPPVCrTKmhrpvQ=
+	b=hcYpZl3OTVw3wtPFXatvezQ0lVQXgalERlVqAG17/9nATRd06BFEZho0eEUQAO+fS
+	 xEbKkY8mWSg3HVNPKMIQ/aYRBx3eUqKhhZ162r32JYY3nzSgt7H7Rv4tZN/10+1ukA
+	 0UR7sbd3cQOeittJJhLfQxJ5N3PjRXPsSCKdf04k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387476AbfBKPl7 (ORCPT
+        id S2387797AbfBKPmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:41:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732738AbfBKOrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:14 -0500
+        id S1733282AbfBKOql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB78B20700;
-        Mon, 11 Feb 2019 14:47:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1203A20700;
+        Mon, 11 Feb 2019 14:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896433;
-        bh=kH4FaGw0nRJdSn2wcUmLK3AnZLJRAY6Bs+S/3dxbj1A=;
+        s=default; t=1549896400;
+        bh=8mlOSWb4ShClfox0s19CCQ4mSz+ovXEUhPLUgxkxV4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ACCTKYd1zdRzhTHg/B/VHw7j+A09JR6iN0G9KX85RFbXF1g7GWUUd3EQFoMcc6aMA
-         MQG0pWZbp9Nyk+hlfO29rAkhWPySp6ytCwUzYaG+hlPvAAoVAWb9aq3lB4zsz4Z+pD
-         7Od2/InS66pqrXVw6A/h/mQQriwk8oQZJiQhRKZQ=
+        b=pTnDGdcXD1rlr49rXZdbKB0weAgNVGEcaUvjygGaCEx0PzVh/5gX9XVXnNi8JnWJ5
+         SggdrMxr7yFnAYgy+6yZS2PfGRpmvOHLYZwjegNIzSP3ex5lGyMj5wVqLYr0OmNmgy
+         QWsU/fV/T5+6/IX6uh/GXDds3KYhRwTdqzTyqjz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 155/313] serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
-Date:   Mon, 11 Feb 2019 15:17:15 +0100
-Message-Id: <20190211141903.871575519@linuxfoundation.org>
+Subject: [PATCH 4.19 154/313] serial: sh-sci: Fix locking in sci_submit_rx()
+Date:   Mon, 11 Feb 2019 15:17:14 +0100
+Message-Id: <20190211141903.818428347@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,75 +67,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 71ab1c0336c71ace5725740f200beca9667a339f ]
+[ Upstream commit dd1f2250da95e87cb3e612858f94b14f99445a7c ]
 
-On (H)SCIF, sci_submit_rx() is called in the receive interrupt handler.
-Hence if DMA submission fails, the interrupt handler should resume
-handling reception using PIO, else no more data is received.
+Some callers of sci_submit_rx() hold the port spinlock, others don't.
+During fallback to PIO, the driver needs to obtain the port spinlock.
+If the lock was already held, spinlock recursion is detected, causing a
+deadlock: BUG: spinlock recursion on CPU#0.
 
-Make sci_submit_rx() return an error indicator, so the receive interrupt
-handler can act appropriately.
+Fix this by adding a flag parameter to sci_submit_rx() for the caller to
+indicate the port spinlock is already held, so spinlock recursion can be
+avoided.
+
+Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
+which is safe as the recently introduced dmaengine_terminate_async() can
+be called in atomic context.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sh-sci.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5fdd7944b73b..c6e8ca2e5f7d 100644
+index effba6ce0caa..5fdd7944b73b 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
 @@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
  	dma_release_channel(chan);
  }
  
--static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
-+static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
+-static void sci_submit_rx(struct sci_port *s)
++static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
  {
  	struct dma_chan *chan = s->chan_rx;
  	struct uart_port *port = &s->port;
-@@ -1359,7 +1359,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	s->active_rx = s->cookie_rx[0];
- 
- 	dma_async_issue_pending(chan);
--	return;
-+	return 0;
+@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
+ 	return;
  
  fail:
- 	/* Switch to PIO */
-@@ -1374,6 +1374,7 @@ fail:
++	/* Switch to PIO */
++	if (!port_lock_held)
++		spin_lock_irqsave(&port->lock, flags);
+ 	if (i)
+ 		dmaengine_terminate_async(chan);
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+ 	s->active_rx = -EINVAL;
+-	/* Switch to PIO */
+-	spin_lock_irqsave(&port->lock, flags);
+ 	s->chan_rx = NULL;
  	sci_start_rx(port);
- 	if (!port_lock_held)
- 		spin_unlock_irqrestore(&port->lock, flags);
-+	return -EAGAIN;
+-	spin_unlock_irqrestore(&port->lock, flags);
++	if (!port_lock_held)
++		spin_unlock_irqrestore(&port->lock, flags);
  }
  
  static void work_fn_tx(struct work_struct *work)
-@@ -1668,8 +1669,10 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			disable_irq_nosync(irq);
+@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+ 	}
+ 
+ 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-		sci_submit_rx(s);
++		sci_submit_rx(s, true);
+ 
+ 	/* Direct new serial port interrupts back to CPU */
+ 	scr = serial_port_in(port, SCSCR);
+@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
+ 		s->chan_rx_saved = s->chan_rx = chan;
+ 
+ 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
+ 	}
+ }
+ 
+@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
  			scr |= SCSCR_RDRQE;
  		} else {
-+			if (sci_submit_rx(s, false) < 0)
-+				goto handle_pio;
-+
  			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s, false);
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
  		}
  		serial_port_out(port, SCSCR, scr);
  		/* Clear current interrupt */
-@@ -1681,6 +1684,8 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 
- 		return IRQ_HANDLED;
- 	}
-+
-+handle_pio:
- #endif
- 
- 	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
 -- 
 2.19.1
 
