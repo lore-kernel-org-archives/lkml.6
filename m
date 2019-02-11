@@ -2,145 +2,111 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE26C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE74CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4784B20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EF9921A80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549891852;
+	bh=zd2/qdEIrVr0UdLku0R+8t5HRgW7hNoZ+e2qXE3O2kY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=sTR94rHUFcdQj59Cg9F/sE9a06ejV0DHbfg5kAPPhNtV/Zupq2g7TKUkqqdpie57I
+	 CZeFXcof9Lz8BGZCwnxhz0vHuj61HvRrf9idrah+mRPyo1ClQK7K4rZ8IinlS5RPVV
+	 eMBlAgUQNV9fxyEfJTnEaMAN77wnsT7i2a+URi5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfBKNal (ORCPT
+        id S1728049AbfBKNav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:30:41 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35818 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727182AbfBKNak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:30:40 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BDOWR8105264
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 08:30:39 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qk8gmvj6h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 08:30:39 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 11 Feb 2019 13:30:37 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 13:30:31 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BDUUt22228690
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 13:30:31 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB2D64C044;
-        Mon, 11 Feb 2019 13:30:30 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A40264C050;
-        Mon, 11 Feb 2019 13:30:29 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.211])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 11 Feb 2019 13:30:29 +0000 (GMT)
-Date:   Mon, 11 Feb 2019 15:30:27 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [PATCH] arm: use memblocks_present
-References: <20190211131602.3294-1-peng.fan@nxp.com>
+        Mon, 11 Feb 2019 08:30:51 -0500
+Received: from mga05.intel.com ([192.55.52.43]:32813 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727991AbfBKNau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:30:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 05:30:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="asc'?scan'208";a="274132445"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 05:30:44 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christoph Hellwig <hch@lst.de>, John Crispin <john@phrozen.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        alsa-devel@alsa-project.org, iommu@lists.linux-foundation.org
+Subject: Re: [PATCH 12/18] fotg210-udc: remove a bogus dma_sync_single_for_device call
+In-Reply-To: <20190211131243.GA21917@lst.de>
+References: <20190201084801.10983-1-hch@lst.de> <20190201084801.10983-13-hch@lst.de> <87d0obodci.fsf@linux.intel.com> <20190201161026.GE6532@lst.de> <20190211131243.GA21917@lst.de>
+Date:   Mon, 11 Feb 2019 15:30:40 +0200
+Message-ID: <87mun25u67.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211131602.3294-1-peng.fan@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19021113-0016-0000-0000-000002550B9F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021113-0017-0000-0000-000032AF27AC
-Message-Id: <20190211133027.GA11446@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110105
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:04:59PM +0000, Peng Fan wrote:
-> arm_memory_present is doing same thing as memblocks_present, so
-> let's use common code memblocks_present instead of platform
-> specific arm_memory_present.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 
-> ---
->  arch/arm/mm/init.c | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-> index 478ea8b7db87..6c50dd407ba8 100644
-> --- a/arch/arm/mm/init.c
-> +++ b/arch/arm/mm/init.c
-> @@ -182,21 +182,6 @@ int pfn_valid(unsigned long pfn)
->  EXPORT_SYMBOL(pfn_valid);
->  #endif
->  
-> -#ifndef CONFIG_SPARSEMEM
-> -static void __init arm_memory_present(void)
-> -{
-> -}
-> -#else
-> -static void __init arm_memory_present(void)
-> -{
-> -	struct memblock_region *reg;
-> -
-> -	for_each_memblock(memory, reg)
-> -		memory_present(0, memblock_region_memory_base_pfn(reg),
-> -			       memblock_region_memory_end_pfn(reg));
-> -}
-> -#endif
-> -
->  static bool arm_memblock_steal_permitted = true;
->  
->  phys_addr_t __init arm_memblock_steal(phys_addr_t size, phys_addr_t align)
-> @@ -292,7 +277,7 @@ void __init bootmem_init(void)
->  	 * Sparsemem tries to allocate bootmem in memory_present(),
->  	 * so must be done after the fixed reservations
->  	 */
-> -	arm_memory_present();
-> +	memblocks_present();
->  
->  	/*
->  	 * sparse_init() needs the bootmem allocator up and running.
-> -- 
-> 2.16.4
-> 
+Hi,
 
--- 
-Sincerely yours,
-Mike.
+Christoph Hellwig <hch@lst.de> writes:
+> On Fri, Feb 01, 2019 at 05:10:26PM +0100, Christoph Hellwig wrote:
+>> On Fri, Feb 01, 2019 at 03:19:41PM +0200, Felipe Balbi wrote:
+>> > Christoph Hellwig <hch@lst.de> writes:
+>> >=20
+>> > > dma_map_single already transfers ownership to the device.
+>> > >
+>> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> >=20
+>> > Do you want me to take the USB bits or will you take the entire series?
+>> > In case you're taking the entire series:
+>>=20
+>> If you want to take the USB feel free.  I just want most of this in
+>> this merge window if possible.
+>
+> I didn't see in the USB tree yet, so please let me know if you want to
+> take it.
 
+sorry for the delay, just took it to my tree.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxheQAACgkQzL64meEa
+mQYzFg/4muRUpGlUEIEF7m9XPk3QIX8Pzn3aMhhLD7ucF6/5HvJqCFtSWHhlMFTm
+rFr30ro355hllOJnoWLoNfJY3T3cu8PMJ5IQ2365YdA+4CsmjZXUrcRe5WXAw/9Y
+lTgoKjRqyPgQ8pvDZcm5fWI738c74q/bdlaGmZEJ/Gnvx4V7J+VTwvZSWpzuWO+R
+R5BlvRd9D/WRvJjijfSnxH8e8bHQdzvOZBp3w1/xFfq7R/1ETCj5WIbQShh+EmEm
+32rDZZoXO5QM2vduoknOdvOxAaBYtmP98HIlpcZZad+cEmIzAIU/J73F7cNdDpFX
++9Uwan4LKbx39nimqGAGDFLKgm/RfTZ2f/kAnUroGbV9RB+cTcaFJD4jbLkFF0lt
+fszk5GE9EmONRYNdVUrZKDN/vuC5nIfrFckYMoEvHhbYWesSK7xPX6ULy7FqLfmX
+SVSfjhs4hyc4RC2M6ahpOEdiLmfioBX7fXWgN3wMQDS4wwt5Nu8tnuep/RZbfGDu
+13d2LNqpjvAX5wpyflLRZUeHSN7mPQGyS1w3i1ecVFo0BN99YNbwL72p0F1nSti4
+/bVCOR74cnliLlMOly3IExJCVTksMVLa/4rWpP3s/EF1OnCq7HhTcoyU9ctkaeFc
+YwL+7FWJm932YAw8lv0o5P6Tahvbl1CH4h0aw4Lkyw5XWIBxXQ==
+=9V6B
+-----END PGP SIGNATURE-----
+--=-=-=--
