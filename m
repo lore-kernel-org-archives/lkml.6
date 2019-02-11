@@ -2,145 +2,104 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E254CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEF5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA18A218DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="o9ktg4Gs"
+	by mail.kernel.org (Postfix) with ESMTP id 151F021773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbfBKQbM (ORCPT
+        id S1728854AbfBKQbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:31:12 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39141 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBKQbL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:31:11 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so27672958itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 08:31:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NB6mV9B8vcQ152ozOfFKlg62KKBFeup4CBAijLKW/ok=;
-        b=o9ktg4Gs1pR2ot43fRr2uBAEWLSaH4mM7rwVLUvhTgPBdDb1CHqP9VJ3P9KjCWBNgQ
-         0GYpdrwdSWoMMpooa1FTJbJz0RtlldwhXVwHCGGLIYxc3dmJSIvfMf7T7ol3d3ipwLl9
-         J8hNW1dsE6yE3fIF8/kDVwYZl1h+PAIzkvYpH0NXz482bSM5X6C0ymDPBfLgDeE4zNSb
-         1MW/EP5ggq+3baJo0YesVXofqgIVOwJvkiVX2vvKHGpcmXmRHawRY39zcquvz29cpX5U
-         gToU55rh+jDx4r2aZyIDHASI04rooWIt6ncbifS+BbHh2KUq9R90B1Fj8l7OEyjMtEvf
-         ckYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NB6mV9B8vcQ152ozOfFKlg62KKBFeup4CBAijLKW/ok=;
-        b=ca50y03I4WzBuQlhB3sUT8BAjlKb6wPLDZGf6a5wZ/GNXpoYPQFV1bLlZZSRNgRPAn
-         30rROgvLzTH0EYHQ/mqCafg04alq43rnk1OlVHutOz+v2znF00h/AIVVUHMtt+D4Q8U5
-         CuE5AWXvaZNVXsua7eNgEW820qOA4aiGdZ4kP7KGWhtbUP7u67X4Bp92YiWWannoNHEq
-         tMzFcBrS89vVjTa9xDBSmZBQeduLB7NF/wIe8ePLr6iVtDKKksXuZmhvCZ9/UkjW80Qa
-         8nI7SFVBA1kvRrYh9mc1VJdALvSlhC4ltSWDGx/i/a1GnObmV/IbLA2Jn/cGZyKaeOi/
-         vs0g==
-X-Gm-Message-State: AHQUAub9b1ujxqP8NlxaKx0pHC/STuBGQVYW+Sj8b/DiYZSjDbeSEH27
-        HBh2LEpfIp+FqLiD669k3u2xntP03GKnvw==
-X-Google-Smtp-Source: AHgI3IadP15Qd5ZG8A352PrfgFG/NRP+ZvGkasnxxN2HSL9LI06kWkOHzDR0uN2/wqPO6qA3KWrnNg==
-X-Received: by 2002:a5e:8517:: with SMTP id i23mr19001527ioj.28.1549902670078;
-        Mon, 11 Feb 2019 08:31:10 -0800 (PST)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id 196sm5507266itu.33.2019.02.11.08.31.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 08:31:08 -0800 (PST)
-Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes 5
- minute delay during boot on Sun Blade 2500
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mikael Pettersson <mikpelinux@gmail.com>
-Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
- <1549736341.2971.7.camel@HansenPartnership.com>
- <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
- <1549813472.4142.3.camel@HansenPartnership.com>
- <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
- <1549815924.4142.8.camel@HansenPartnership.com>
- <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
- <1549898730.2831.6.camel@HansenPartnership.com>
- <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
- <1549899773.2831.12.camel@HansenPartnership.com>
- <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
- <1549902521.2831.23.camel@HansenPartnership.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
-Date:   Mon, 11 Feb 2019 09:31:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1549902521.2831.23.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 11 Feb 2019 11:31:35 -0500
+Received: from mga09.intel.com ([134.134.136.24]:49284 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfBKQbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:31:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:31:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="117019570"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 11 Feb 2019 08:31:34 -0800
+Message-ID: <869a170e9232ffbc8ddbcf3d15535e8c6daedbde.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
+ hints
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, rkrcmar@redhat.com, x86@kernel.org,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
+        tglx@linutronix.de, akpm@linux-foundation.org
+Date:   Mon, 11 Feb 2019 08:31:34 -0800
+In-Reply-To: <20190209194437-mutt-send-email-mst@kernel.org>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181552.12095.46287.stgit@localhost.localdomain>
+         <20190209194437-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 9:28 AM, James Bottomley wrote:
-> On Mon, 2019-02-11 at 08:46 -0700, Jens Axboe wrote:
->> On 2/11/19 8:42 AM, James Bottomley wrote:
->>> On Mon, 2019-02-11 at 08:28 -0700, Jens Axboe wrote:
->>>> On 2/11/19 8:25 AM, James Bottomley wrote:
->>>>> On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
->>>>>> On 2/10/19 9:25 AM, James Bottomley wrote:
-> [...]
->>>>>>> That check wasn't changed by the code removal.
->>>>>>
->>>>>> As I said above, for sd. This isn't true for non-disks.
->>>>>
->>>>> Yes, but the behaviour above doesn't change across a switch to
->>>>> MQ, so I don't quite understand how it bisects back to that
->>>>> change.  If we're not gathering entropy for the device now, we
->>>>> wouldn't have been before the switch, so the entropy
->>>>> characteristics shouldn't have changed.
->>>>
->>>> But it does, as I also wrote in that first email. The legacy
->>>> queue flags had QUEUE_FLAG_ADD_RANDOM set by default, the MQ ones
->>>> do not. Hence any non-sd device would previously ALWAYS have
->>>> ADD_RANDOM set, now none of them do. Also see the patch I sent.
->>>
->>> So your theory is that the disk in question never gets to the
->>> rotational check?  because the check will clear the flag if it's
->>> non-rotational and set it if it's not, so the default state of the
->>> flag shouldn't matter.
->>
->> No, my point is about non-disks, devices that aren't driven by sd.
->> The behavior for sd hasn't changed, as it sets/clears it
->> unconditionally.
+On Sat, 2019-02-09 at 19:49 -0500, Michael S. Tsirkin wrote:
+> On Mon, Feb 04, 2019 at 10:15:52AM -0800, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > 
+> > Add guest support for providing free memory hints to the KVM hypervisor for
+> > freed pages huge TLB size or larger. I am restricting the size to
+> > huge TLB order and larger because the hypercalls are too expensive to be
+> > performing one per 4K page.
 > 
-> I agree, but I don't think any of them were significant entropy
-> contributors before: things like nvme have always been outside of this
-> and sr and st don't really contribute much to the seek load during boot
-> because they're probed but not used by the boot sequence, so I can't
-> see how they would cause this behaviour.  I suppose it could be target
-> probing, but even that seems unlikely because it should be dwarfed by
-> the number of root disk reads during boot.
+> Even 2M pages start to get expensive with a TB guest.
+
+Agreed.
+
+> Really it seems we want a virtio ring so we can pass a batch of these.
+> E.g. 256 entries, 2M each - that's more like it.
+
+The only issue I see with doing that is that we then have to defer the
+freeing. Doing that is going to introduce issues in the guest as we are
+going to have pages going unused for some period of time while we wait
+for the hint to complete, and we cannot just pull said pages back. I'm
+not really a fan of the asynchronous nature of Nitesh's patches for
+this reason.
+
+> > Using the huge TLB order became the obvious
+> > choice for the order to use as it allows us to avoid fragmentation of higher
+> > order memory on the host.
+> > 
+> > I have limited the functionality so that it doesn't work when page
+> > poisoning is enabled. I did this because a write to the page after doing an
+> > MADV_DONTNEED would effectively negate the hint, so it would be wasting
+> > cycles to do so.
 > 
-> For the rng to take an additional 5 minutes to initialize, we must have
-> lost a significant entropy source somewhere.
+> Again that's leaking host implementation detail into guest interface.
+> 
+> We are giving guest page hints to host that makes sense,
+> weird interactions with other features due to host
+> implementation details should be handled by host.
 
-I agree it's not a significant amount of entropy, but even just one bit
-could mean a long stall if that put us over the edge of just not having
-enough for whatever is blocking on /dev/random. Mikael's boot did have a
-CDROM, it's not impossible that the handful of commands we end up doing
-to that device would have contributed enough entropy to get the boot
-done without stalling for minutes.
+I don't view this as a host implementation detail, this is guest
+feature making use of all pages for debugging. If we are placing poison
+values in the page then I wouldn't consider them an unused page, it is
+being actively used to store the poison value. If we can achieve this
+and free the page back to the host then even better, but until the
+features can coexist we should not use the page hinting while page
+poisoning is enabled.
 
-One way to know for sure, and that's if Mikael tests the patch.
-
--- 
-Jens Axboe
+This is one of the reasons why I was opposed to just disabling page
+poisoning when this feature was enabled in Nitesh's patches. If the
+guest has page poisoning enabled it is doing something with the page.
+It shouldn't be prevented from doing that because the host wants to
+have the option to free the pages.
 
