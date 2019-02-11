@@ -2,121 +2,154 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B22C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60437C4151A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E04021B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5tw/40m"
+	by mail.kernel.org (Postfix) with ESMTP id 2E8B02229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387658AbfBKTJf (ORCPT
+        id S2387691AbfBKTJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:09:35 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44615 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387609AbfBKTJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:09:32 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y1so5357279pgk.11;
-        Mon, 11 Feb 2019 11:09:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nXXWwRuaJ6+ems3kM7ee19N3t7IhdXW1WW/p2CXVYdI=;
-        b=f5tw/40mwGuzkdOcN4HgctENimk7IRkUtncSGUWBNxDfImzcfpFsSc/X2DOrcTTZ3A
-         n0LbnvfXS7EVdDtkI/WPQ7IIjassAhqHIEVRy0c3cmH3zmtXgj3WdNJbc8kaTzTRzaqE
-         0Rkmf1uLlb/c4Tij/veYAEwld984BfNK6Ze2hcTrtWqKjpHDo16VbqPp6veoBC9kDcet
-         R2f4dlLxSLhTx/PL3c/S084cipdpplX0FmsL0nLr3Du3QKb6NA7aVAtMjZ5pyGT2C65J
-         CWJvHJsvyIJgLBV62FRx2aregf9ZQXjCbrTIO2Ma29AhKazy6qBW6cDZQhqz/63XTFzV
-         DuGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nXXWwRuaJ6+ems3kM7ee19N3t7IhdXW1WW/p2CXVYdI=;
-        b=j14uYVeT8lS3Z0UbJfNESCTdnE+4lZ08VbMLJwAhzYfDhu6DDDzFlF3Xx14qoPTgHS
-         +GXioXzhysQrl1aUSZwPdCfGFJNLNQ0Gq/REppjCRhrGF4Bq3qWTTi8wiy0gmiH7NDLd
-         UvqeIhrTydphLrLTySRNKO/pTs3Savv+uc1pS8eCAg2srv/75e4to4PNLnVOtrByiu0q
-         AhlOxljcTWBYCQyPePTS6Jl4fRM8iP3yRnvmloUuDSnT+0N+syCGVuLQrCzHYggvKEeK
-         awa57uLlN8eMm1lLXNko4824bXrBHG0ZQ93WOM//iNMQG9E5ASjFcRQNdctzexzSsLpt
-         ED7g==
-X-Gm-Message-State: AHQUAuZQyudcJfU39iXjHlfDeAz8CysohnbD2M1N66uVDpXWjJgNuSET
-        gUtmR2NJ7HriRG2/IDLqUhw=
-X-Google-Smtp-Source: AHgI3IYG+m4zIDVNNPmj5+E7N+OOV6khCxg17Cv7p6YOyLv1jkwlRprnlmBQzhLqEvhRByWMnrU9nw==
-X-Received: by 2002:a63:e051:: with SMTP id n17mr35005871pgj.258.1549912171925;
-        Mon, 11 Feb 2019 11:09:31 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id a15sm16655637pgd.4.2019.02.11.11.09.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:09:31 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
- loading
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20190211190108.GP19618@zn.tnic>
-Date:   Mon, 11 Feb 2019 11:09:25 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mon, 11 Feb 2019 14:09:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387609AbfBKTJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:09:38 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E64F8831F;
+        Mon, 11 Feb 2019 19:09:37 +0000 (UTC)
+Received: from redhat.com (ovpn-123-21.rdu2.redhat.com [10.10.123.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74BD819C7D;
+        Mon, 11 Feb 2019 19:09:33 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 14:09:31 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Peter Xu <peterx@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-11-rick.p.edgecombe@intel.com>
- <20190211182956.GN19618@zn.tnic>
- <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
- <20190211190108.GP19618@zn.tnic>
-To:     Borislav Petkov <bp@alien8.de>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
+ glory
+Message-ID: <20190211190931.GA3908@redhat.com>
+References: <20190131183706.20980-1-jglisse@redhat.com>
+ <20190201235738.GA12463@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190201235738.GA12463@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 19:09:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Feb 11, 2019, at 11:01 AM, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> On Mon, Feb 11, 2019 at 10:45:26AM -0800, Nadav Amit wrote:
->> Are you sure about that? This path is still used when modules are =
-loaded.
->=20
-> Yes, I'm sure. Loading a module does a gazillion things so saving a
-> couple of insns - yes, boot_cpu_has() is usually a RIP-relative MOV =
-and a
-> TEST - doesn't show even as a blip on any radar.
+On Fri, Feb 01, 2019 at 06:57:38PM -0500, Andrea Arcangeli wrote:
+> Hello everyone,
+> 
+> On Thu, Jan 31, 2019 at 01:37:02PM -0500, Jerome Glisse wrote:
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > This patchset is on top of my patchset to add context information to
+> > mmu notifier [1] you can find a branch with everything [2]. I have not
+> > tested it but i wanted to get the discussion started. I believe it is
+> > correct but i am not sure what kind of kvm test i can run to exercise
+> > this.
+> > 
+> > The idea is that since kvm will invalidate the secondary MMUs within
+> > invalidate_range callback then the change_pte() optimization is lost.
+> > With this patchset everytime core mm is using set_pte_at_notify() and
+> > thus change_pte() get calls then we can ignore the invalidate_range
+> > callback altogether and only rely on change_pte callback.
+> > 
+> > Note that this is only valid when either going from a read and write
+> > pte to a read only pte with same pfn, or from a read only pte to a
+> > read and write pte with different pfn. The other side of the story
+> > is that the primary mmu pte is clear with ptep_clear_flush_notify
+> > before the call to change_pte.
+> 
+> If it's cleared with ptep_clear_flush_notify, change_pte still won't
+> work. The above text needs updating with
+> "ptep_clear_flush". set_pte_at_notify is all about having
+> ptep_clear_flush only before it or it's the same as having a range
+> invalidate preceding it.
+> 
+> With regard to the code, wp_page_copy() needs
+> s/ptep_clear_flush_notify/ptep_clear_flush/ before set_pte_at_notify.
+> 
+> change_pte relies on the ptep_clear_flush preceding the
+> set_pte_at_notify that will make sure if the secondary MMU mapping
+> randomly disappears between ptep_clear_flush and set_pte_at_notify,
+> gup_fast will wait and block on the PT lock until after
+> set_pte_at_notify is completed before trying to re-establish a
+> secondary MMU mapping.
+> 
+> So then we've only to worry about what happens because we left the
+> secondary MMU mapping potentially intact despite we flushed the
+> primary MMU mapping with ptep_clear_flush (as opposed to
+> ptep_clear_flush_notify which would teardown the secondary MMU mapping
+> too).
 
-I fully agree, if that is the standard.
+So all the above is moot since as you pointed out in the other email
+ptep_clear_flush_notify does not invalidate kvm secondary mmu hence.
 
-It is just that I find the use of static_cpu_has()/boot_cpu_has() to be =
-very
-inconsistent. I doubt that show_cpuinfo_misc(), =
-copy_fpstate_to_sigframe(),
-or i915_memcpy_init_early() that use static_cpu_has() are any hotter =
-than
-text_poke_early().
 
-Anyhow, I=E2=80=99ll use boot_cpu_has() as you said.=
+> 
+> In you wording above at least the "with a different pfn" is
+> superflous. I think it's ok if the protection changes from read-only
+> to read-write and the pfn remains the same. Like when we takeover a
+> page because it's not shared anymore (fork child quit).
+> 
+> It's also ok to change pfn if the mapping is read-only and remains
+> read-only, this is what KSM does in replace_page.
+
+Yes i thought this was obvious i will reword and probably just do a
+list of every case that is fine.
+
+> 
+> The read-write to read-only case must not change pfn to avoid losing
+> coherency from the secondary MMU point of view. This isn't so much
+> about change_pte itself, but the fact that the page-copy generally
+> happens well before the pte mangling starts. This case never presents
+> itself in the code because KSM is first write protecting the page and
+> only later merging it, regardless of change_pte or not.
+> 
+> The important thing is that the secondary MMU must be updated first
+> (unlike the invalidates) to be sure the secondary MMU already points
+> to the new page when the pfn changes and the protection changes from
+> read-only to read-write (COW fault). The primary MMU cannot read/write
+> to the page anyway while we update the secondary MMU because we did
+> ptep_clear_flush() before calling set_pte_at_notify(). So this
+> ordering of "ptep_clear_flush; change_pte; set_pte_at" ensures
+> whenever the CPU can access the memory, the access is synchronous
+> with the secondary MMUs because they've all been updated already.
+> 
+> If (in set_pte_at_notify) we were to call change_pte() after
+> set_pte_at() what would happen is that the CPU could write to the page
+> through a TLB fill without page fault while the secondary MMUs still
+> read the old memory in the old readonly page.
+
+Yeah, between do you have any good workload for me to test this ? I
+was thinking of running few same VM and having KSM work on them. Is
+there some way to trigger KVM to fork ? As the other case is breaking
+COW after fork.
+
+Cheers,
+Jérôme
