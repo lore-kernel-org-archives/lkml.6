@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D22C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74808C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6383D20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41CE02229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896861;
-	bh=0xFQuxfEdK0hWFPHRWIDKlNxTH4ufCsvsamriwvkL4s=;
+	s=default; t=1549896864;
+	bh=e5HRXNyqe3Eevif5rTG9KXVQkQgi5QKUkfwTdMMHcBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GTE++kUIBOSwfn0bY5i2BGhotEaLqz9iRXCHxR9QadZKwX0hvltRLVeeKU6cs8za4
-	 sdnUs3SJ9gy5Dhqokb/Nt8bZ3aj4tpQD2U+OGwZ9lkFLxo6e79LBpF5obgZqvRrdOi
-	 S2VnMRYj6moUi/SAiDrge5TDFMnkPoArNsBu4DaE=
+	b=tpIGVMvh42EHAwtnypr4BebfmoFHkG1QvwtvJT2OXHMaUbw5gLSnOYrJWc8h+3iVE
+	 iGtt8frqptcKO9+/x1LcHoKuYzey8N+q4U5HhzDayouzml+DOpQKk2kAXqkA0WjCh+
+	 NJPTbPecJT09ZqSgNdKPVCYaCH96N3+FAUuxu7zs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388807AbfBKOyU (ORCPT
+        id S2388819AbfBKOyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:54:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40956 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:54:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388790AbfBKOyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:16 -0500
+        id S2388801AbfBKOyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD4C9222A1;
-        Mon, 11 Feb 2019 14:54:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ADD5222A5;
+        Mon, 11 Feb 2019 14:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896856;
-        bh=0xFQuxfEdK0hWFPHRWIDKlNxTH4ufCsvsamriwvkL4s=;
+        s=default; t=1549896859;
+        bh=e5HRXNyqe3Eevif5rTG9KXVQkQgi5QKUkfwTdMMHcBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FZ31kWqciWgiPPF7TWSZQScr4Ps3wSus8Jpw+rFt9FsfNFkwxHydpwA8Ca36d36xt
-         p1Nx/GuSgAIxChVeSf6IThv8Qv81M4J0ZxnQI9nGsnGx5Z/NXP3Pny11ZiVh8M4z5P
-         Us97fq1wsOgyqstj8mpGcAE6QvdLmZbH/eTCJMyI=
+        b=ILPLojJzgz2ywFfUVCfEoyxqPFsH/aIzWHkPY3TYI7t5e0qQizPvuvGscDHCmhVrB
+         kkihYcWjWedOeP41KoyxwDEgbAbnQnste+AGXksIjSGv2We+aSY8WEnGwtFgvVaBwm
+         ScKp0BHc71vRO/Aca6590uGyWIU7WzYxpHUO9/uE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yufen Wang <wangyufen@huawei.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 011/205] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
-Date:   Mon, 11 Feb 2019 15:16:49 +0100
-Message-Id: <20190211141827.896745597@linuxfoundation.org>
+Subject: [PATCH 4.14 012/205] clk: boston: fix possible memory leak in clk_boston_setup()
+Date:   Mon, 11 Feb 2019 15:16:50 +0100
+Message-Id: <20190211141827.953673980@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,61 +66,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
+[ Upstream commit 46fda5b5067a391912cf73bf3d32c26b6a22ad09 ]
 
-In case panic() and panic() called at the same time on different CPUS.
-For example:
-CPU 0:
-  panic()
-     __crash_kexec
-       machine_crash_shutdown
-         crash_smp_send_stop
-       machine_kexec
-         BUG_ON(num_online_cpus() > 1);
+Smatch report warnings:
+drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memory leak of 'onecell'
+drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memory leak of 'onecell'
+drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memory leak of 'onecell'
 
-CPU 1:
-  panic()
-    local_irq_disable
-    panic_smp_self_stop
+'onecell' is malloced in clk_boston_setup(), but not be freed
+before leaving from the error handling cases.
 
-If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
-fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
-To fix this problem, this patch split out the panic_smp_self_stop()
-and add set_cpu_online(smp_processor_id(), false).
-
-Signed-off-by: Yufen Wang <wangyufen@huawei.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/smp.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index e61af0600133..5e31c62127a0 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -691,6 +691,21 @@ void smp_send_stop(void)
- 		pr_warn("SMP: failed to stop secondary CPUs\n");
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423cc0c9..f5d54a64d33c 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+ 	if (err)
+ 		pr_err("failed to add DT provider: %d\n", err);
++
++	return;
++
++error:
++	kfree(onecell);
  }
  
-+/* In case panic() and panic() called at the same time on CPU1 and CPU2,
-+ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
-+ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
-+ * kdump fails. So split out the panic_smp_self_stop() and add
-+ * set_cpu_online(smp_processor_id(), false).
-+ */
-+void panic_smp_self_stop(void)
-+{
-+	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
-+	         smp_processor_id());
-+	set_cpu_online(smp_processor_id(), false);
-+	while (1)
-+		cpu_relax();
-+}
-+
  /*
-  * not supported here
-  */
 -- 
 2.19.1
 
