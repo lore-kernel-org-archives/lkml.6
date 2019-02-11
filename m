@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ED5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE4CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955DE20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFCE21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895827;
-	bh=jvFf9LLXffP+CHXHPgdApGzYbAC4EaYDA7MZW2ZqLqQ=;
+	s=default; t=1549895831;
+	bh=mjAm/QKxfyT1jRVyldkpIRz0R5NSQs79h6mRIfQS5YQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=by9QsM0aMpvCYUotVdZ8H7b4vgmjX5B6P8cKcteoDazlOj1voOJLTfaMlsPaziJ67
-	 bmgFRCa3mStucGqRlNYYsYE75hXrTc9ZXshuO6k9452KN004Ka5bOKA+dk+yCQGW34
-	 MBisFeIe7bX7IJAZ/zQfa7pFV8S+OOjOrQreNPkM=
+	b=xqxLe1ZoQIefphSFZFG7iBs41+AR8h2AmK7ZaIHLsyhyhS3OwqJ9AFHVkVWKmahmC
+	 lQAkIkGTxYNxONe9WvtUA9+S9dnX0YWK4Y/zhEZyevovwHdLNVU8FlTIvcjVbgqJ3j
+	 IDJ6yE/PyGD0jgt0o+f0o4K6PIjM1h5JJGT4kSTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbfBKOhF (ORCPT
+        id S1729961AbfBKOhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46318 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731359AbfBKOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:03 -0500
+        id S1730726AbfBKOhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0C0020844;
-        Mon, 11 Feb 2019 14:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4103420844;
+        Mon, 11 Feb 2019 14:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895822;
-        bh=jvFf9LLXffP+CHXHPgdApGzYbAC4EaYDA7MZW2ZqLqQ=;
+        s=default; t=1549895825;
+        bh=mjAm/QKxfyT1jRVyldkpIRz0R5NSQs79h6mRIfQS5YQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m1KZqMIpshE1JkcRyzbsAKX1qp1e7+2uZE/OBtSelQPArrr0+r6Zsskx/6IYljtPf
-         8AZ4CpkXW+jKKDIrpjJs1Zs9UuvkeiBZUVuRSV96ycBhSOCBgV/hBizjJ7Y556/HDR
-         KRA0/AUu2m1S5d3X5Q/tYP22N4tCBveFThZ9Uql8=
+        b=S3jBE0NXsYtezWjW6yxfVhEzaWK7SfcyM6BNb5jYEsTwVj5wQ+LY1YM7Camu0W6sH
+         7E+LbjYPv5M1xcP0fqrJRFi2cUThJ7SknNC/8yGuC5crGh8yf43sAPKHPBKoV4GSor
+         I9CjOHRPNuQfbOEUuyn2KHsc20XcnmhnuYpv4mmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Elder <paul.elder@ideasonboard.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.20 334/352] usb: gadget: musb: fix short isoc packets with inventra dma
-Date:   Mon, 11 Feb 2019 15:19:21 +0100
-Message-Id: <20190211141908.238451545@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 308/352] bnxt_en: Disable interrupts when allocating CP rings or NQs.
+Date:   Mon, 11 Feb 2019 15:18:55 +0100
+Message-Id: <20190211141906.448359989@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -64,114 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Elder <paul.elder@ideasonboard.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-commit c418fd6c01fbc5516a2cd1eaf1df1ec86869028a upstream.
+[ Upstream commit 5e66e35aab335b83d9ffb220d8a3a13986a7a60e ]
 
-Handling short packets (length < max packet size) in the Inventra DMA
-engine in the MUSB driver causes the MUSB DMA controller to hang. An
-example of a problem that is caused by this problem is when streaming
-video out of a UVC gadget, only the first video frame is transferred.
+When calling firmware to allocate a CP ring or NQ, an interrupt associated
+with that ring may be generated immediately before the doorbell is even
+setup after the firmware call returns.  When servicing the interrupt, the
+driver may crash when trying to access the doorbell.
 
-For short packets (mode-0 or mode-1 DMA), MUSB_TXCSR_TXPKTRDY must be
-set manually by the driver. This was previously done in musb_g_tx
-(musb_gadget.c), but incorrectly (all csr flags were cleared, and only
-MUSB_TXCSR_MODE and MUSB_TXCSR_TXPKTRDY were set). Fixing that problem
-allows some requests to be transferred correctly, but multiple requests
-were often put together in one USB packet, and caused problems if the
-packet size was not a multiple of 4. Instead, set MUSB_TXCSR_TXPKTRDY
-in dma_controller_irq (musbhsdma.c), just like host mode transfers.
+Fix it by disabling interrupt on that vector until the doorbell is
+set up.
 
-This topic was originally tackled by Nicolas Boichat [0] [1] and is
-discussed further at [2] as part of his GSoC project [3].
-
-[0] https://groups.google.com/forum/?hl=en#!topic/beagleboard-gsoc/k8Azwfp75CU
-[1] https://gitorious.org/beagleboard-usbsniffer/beagleboard-usbsniffer-kernel/commit/b0be3b6cc195ba732189b04f1d43ec843c3e54c9?p=beagleboard-usbsniffer:beagleboard-usbsniffer-kernel.git;a=patch;h=b0be3b6cc195ba732189b04f1d43ec843c3e54c9
-[2] http://beagleboard-usbsniffer.blogspot.com/2010/07/musb-isochronous-transfers-fixed.html
-[3] http://elinux.org/BeagleBoard/GSoC/USBSniffer
-
-Fixes: 550a7375fe72 ("USB: Add MUSB and TUSB support")
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 697197e5a173 ("bnxt_en: Re-structure doorbells.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/musb/musb_gadget.c |   13 +------------
- drivers/usb/musb/musbhsdma.c   |   21 +++++++++++----------
- 2 files changed, 12 insertions(+), 22 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -452,13 +452,10 @@ void musb_g_tx(struct musb *musb, u8 epn
- 	}
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -4903,12 +4903,18 @@ static int bnxt_hwrm_ring_alloc(struct b
+ 		struct bnxt_cp_ring_info *cpr = &bnapi->cp_ring;
+ 		struct bnxt_ring_struct *ring = &cpr->cp_ring_struct;
+ 		u32 map_idx = ring->map_idx;
++		unsigned int vector;
  
- 	if (request) {
--		u8	is_dma = 0;
--		bool	short_packet = false;
++		vector = bp->irq_tbl[map_idx].vector;
++		disable_irq_nosync(vector);
+ 		rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
+-		if (rc)
++		if (rc) {
++			enable_irq(vector);
+ 			goto err_out;
++		}
+ 		bnxt_set_db(bp, &cpr->cp_db, type, map_idx, ring->fw_ring_id);
+ 		bnxt_db_nq(bp, &cpr->cp_db, cpr->cp_raw_cons);
++		enable_irq(vector);
+ 		bp->grp_info[i].cp_fw_ring_id = ring->fw_ring_id;
  
- 		trace_musb_req_tx(req);
- 
- 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
--			is_dma = 1;
- 			csr |= MUSB_TXCSR_P_WZC_BITS;
- 			csr &= ~(MUSB_TXCSR_DMAENAB | MUSB_TXCSR_P_UNDERRUN |
- 				 MUSB_TXCSR_TXPKTRDY | MUSB_TXCSR_AUTOSET);
-@@ -476,16 +473,8 @@ void musb_g_tx(struct musb *musb, u8 epn
- 		 */
- 		if ((request->zero && request->length)
- 			&& (request->length % musb_ep->packet_sz == 0)
--			&& (request->actual == request->length))
--				short_packet = true;
-+			&& (request->actual == request->length)) {
- 
--		if ((musb_dma_inventra(musb) || musb_dma_ux500(musb)) &&
--			(is_dma && (!dma->desired_mode ||
--				(request->actual &
--					(musb_ep->packet_sz - 1)))))
--				short_packet = true;
--
--		if (short_packet) {
- 			/*
- 			 * On DMA completion, FIFO may not be
- 			 * available yet...
---- a/drivers/usb/musb/musbhsdma.c
-+++ b/drivers/usb/musb/musbhsdma.c
-@@ -346,12 +346,10 @@ static irqreturn_t dma_controller_irq(in
- 				channel->status = MUSB_DMA_STATUS_FREE;
- 
- 				/* completed */
--				if ((devctl & MUSB_DEVCTL_HM)
--					&& (musb_channel->transmit)
--					&& ((channel->desired_mode == 0)
--					    || (channel->actual_len &
--					    (musb_channel->max_packet_sz - 1)))
--				    ) {
-+				if (musb_channel->transmit &&
-+					(!channel->desired_mode ||
-+					(channel->actual_len %
-+					    musb_channel->max_packet_sz))) {
- 					u8  epnum  = musb_channel->epnum;
- 					int offset = musb->io.ep_offset(epnum,
- 								    MUSB_TXCSR);
-@@ -363,11 +361,14 @@ static irqreturn_t dma_controller_irq(in
- 					 */
- 					musb_ep_select(mbase, epnum);
- 					txcsr = musb_readw(mbase, offset);
--					txcsr &= ~(MUSB_TXCSR_DMAENAB
-+					if (channel->desired_mode == 1) {
-+						txcsr &= ~(MUSB_TXCSR_DMAENAB
- 							| MUSB_TXCSR_AUTOSET);
--					musb_writew(mbase, offset, txcsr);
--					/* Send out the packet */
--					txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						musb_writew(mbase, offset, txcsr);
-+						/* Send out the packet */
-+						txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						txcsr |= MUSB_TXCSR_DMAENAB;
-+					}
- 					txcsr |=  MUSB_TXCSR_TXPKTRDY;
- 					musb_writew(mbase, offset, txcsr);
- 				}
+ 		if (!i) {
 
 
