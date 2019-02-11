@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EB1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC5C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36552080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E674220818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895757;
-	bh=9AN8/t67k1Vo7bb8dYquVpBnISjiZbulXm7M2x+kdZY=;
+	s=default; t=1549895761;
+	bh=yuX/uGq+4qlryy93lnqueQk/S0Zv3nuRPJuT0L9kW40=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FscY+ucmbcQ1rJOxhxk1fdPyeXZL0KRTeNUqdgNFWS9Iyswd+oRmP7xTrP+j/z+GA
-	 YkeWRDsaUZof6z4IQ8LWrXXp9EPjs0Zv50v9ijJZ01stFrclUvveOrxUq0o4rEFNOM
-	 XYQdp+OXWEq+R9Q1sC+o96Xv3D1pxQ3fDtj1VJOQ=
+	b=u56vQN7TariVWfhnbQicBZ9fPFo9y+IhEmJvWi0Yk6B6Bnc6VwhJL0wfz9LPmlb48
+	 W8qYzeX5uISfGQDq8KCjg/NS34Y3Ty9NqGtN2rjszBjEGV9sFQt50Gdh8z8A7B3j7z
+	 pXW2MIm6ANDr8jeU+zD4GzILwG+izplumsSbyzUo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731141AbfBKOfz (ORCPT
+        id S1731153AbfBKOf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44704 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730708AbfBKOfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:53 -0500
+        id S1731138AbfBKOf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421EB20844;
-        Mon, 11 Feb 2019 14:35:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1B502080F;
+        Mon, 11 Feb 2019 14:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895752;
-        bh=9AN8/t67k1Vo7bb8dYquVpBnISjiZbulXm7M2x+kdZY=;
+        s=default; t=1549895755;
+        bh=yuX/uGq+4qlryy93lnqueQk/S0Zv3nuRPJuT0L9kW40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=teE128lv+knaeE7k2ezK4uaWyKdraNEPz9VO9CvgxyXpB28nwLr/i5Y3wZkfuPaL9
-         vc4lt4Nwt1F+cUeX1+K9fMQPpvo7CGviV+smWSB9uW5iIZwHh370WoGgPYuw1lV498
-         VW+7sQY60K0d/W9PUpLEu8IJsNKxxQeThTi5TXm8=
+        b=lDLMShLXJuAdP9ze7jUHyRwfscDaShi06fFw3pWOGN0OelYfThfXgtt8QXgAIy2QK
+         vzlr74cxWKJZrvYZ5ybtgZKOd8rPYtnBzciwiTu0Y4n93cZ9xa1oBbFHoikeaLHH0Y
+         xcE4R0d7VQXRVjjEOOoWGKzNHJ1x7ggpdY/njCOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng Lin <cheng.lin130@zte.com.cn>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 284/352] proc/sysctl: fix return error for proc_doulongvec_minmax()
-Date:   Mon, 11 Feb 2019 15:18:31 +0100
-Message-Id: <20190211141904.998708566@linuxfoundation.org>
+Subject: [PATCH 4.20 275/352] kdb: Dont back trace on a cpu that didnt round up
+Date:   Mon, 11 Feb 2019 15:18:22 +0100
+Message-Id: <20190211141904.465436663@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -70,102 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
+[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
 
-If the number of input parameters is less than the total parameters, an
-EINVAL error will be returned.
+If you have a CPU that fails to round up and then run 'btc' you'll end
+up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
+It's wise to also set the task to NULL when leaving the debugger so
+that if we fail to round up on a later entry into the debugger we
+won't backtrace a stale task.
 
-For example, we use proc_doulongvec_minmax to pass up to two parameters
-with kern_table:
-
-{
-	.procname       = "monitor_signals",
-	.data           = &monitor_sigs,
-	.maxlen         = 2*sizeof(unsigned long),
-	.mode           = 0644,
-	.proc_handler   = proc_doulongvec_minmax,
-},
-
-Reproduce:
-
-When passing two parameters, it's work normal.  But passing only one
-parameter, an error "Invalid argument"(EINVAL) is returned.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  -bash: echo: write error: Invalid argument
-  [root@cl150 ~]# echo $?
-  1
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-The following is the result after apply this patch.  No error is
-returned when the number of input parameters is less than the total
-parameters.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# echo $?
-  0
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-There are three processing functions dealing with digital parameters,
-__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-
-This patch deals with __do_proc_doulongvec_minmax, just as
-__do_proc_dointvec does, adding a check for parameters 'left'.  In
-__do_proc_douintvec, its code implementation explicitly does not support
-multiple inputs.
-
-static int __do_proc_douintvec(...){
-         ...
-         /*
-          * Arrays are not supported, keep this simple. *Do not* add
-          * support for them.
-          */
-         if (vleft != 1) {
-                 *lenp = 0;
-                 return -EINVAL;
-         }
-         ...
-}
-
-So, just __do_proc_doulongvec_minmax has the problem.  And most use of
-proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-parameter.
-
-Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/debug/debug_core.c       |  4 ++++
+ kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
+ kernel/debug/kdb/kdb_debugger.c |  7 -------
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5fc724e4e454..9ee261fce89e 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2779,6 +2779,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			bool neg;
+diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+index 65c0f1363788..94aa9ae0007a 100644
+--- a/kernel/debug/debug_core.c
++++ b/kernel/debug/debug_core.c
+@@ -535,6 +535,8 @@ return_normal:
+ 				arch_kgdb_ops.correct_hw_break();
+ 			if (trace_on)
+ 				tracing_on();
++			kgdb_info[cpu].debuggerinfo = NULL;
++			kgdb_info[cpu].task = NULL;
+ 			kgdb_info[cpu].exception_state &=
+ 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 			kgdb_info[cpu].enter_kgdb--;
+@@ -667,6 +669,8 @@ kgdb_restore:
+ 	if (trace_on)
+ 		tracing_on();
  
- 			left -= proc_skip_spaces(&p);
-+			if (!left)
-+				break;
- 
- 			err = proc_get_long(&p, &left, &val, &neg,
- 					     proc_wspace_sep,
++	kgdb_info[cpu].debuggerinfo = NULL;
++	kgdb_info[cpu].task = NULL;
+ 	kgdb_info[cpu].exception_state &=
+ 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 	kgdb_info[cpu].enter_kgdb--;
+diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+index 7921ae4fca8d..7e2379aa0a1e 100644
+--- a/kernel/debug/kdb/kdb_bt.c
++++ b/kernel/debug/kdb/kdb_bt.c
+@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
+ 		kdb_printf("btc: cpu status: ");
+ 		kdb_parse("cpu\n");
+ 		for_each_online_cpu(cpu) {
+-			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
++			void *kdb_tsk = KDB_TSK(cpu);
++
++			/* If a CPU failed to round up we could be here */
++			if (!kdb_tsk) {
++				kdb_printf("WARNING: no task for cpu %ld\n",
++					   cpu);
++				continue;
++			}
++
++			sprintf(buf, "btt 0x%px\n", kdb_tsk);
+ 			kdb_parse(buf);
+ 			touch_nmi_watchdog();
+ 		}
+diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
+index 15e1a7af5dd0..53a0df6e4d92 100644
+--- a/kernel/debug/kdb/kdb_debugger.c
++++ b/kernel/debug/kdb/kdb_debugger.c
+@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
+ 	kdb_bp_remove();
+ 	KDB_STATE_CLEAR(DOING_SS);
+ 	KDB_STATE_SET(PAGER);
+-	/* zero out any offline cpu data */
+-	for_each_present_cpu(i) {
+-		if (!cpu_online(i)) {
+-			kgdb_info[i].debuggerinfo = NULL;
+-			kgdb_info[i].task = NULL;
+-		}
+-	}
+ 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
+ 		ks->pass_exception = 1;
+ 		KDB_FLAG_SET(CATASTROPHIC);
 -- 
 2.19.1
 
