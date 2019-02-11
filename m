@@ -7,54 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A2CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B667C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D46FA222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC9B4222A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897284;
-	bh=cuz82Qwb0jd/Dh4dP1ZdMKaUS6rPhXaE2U8JHWfRIAs=;
+	s=default; t=1549897290;
+	bh=jXvPU3mrDV1hm7Pt7PueN/8J69H2hul9B8x1EEz1VMQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Eg7LQhglS6moBkZsq2fFT3PtO1pN7paySdwmo3SROFyVcL19IoD38zCxe3yuc1rfM
-	 TonNnZUyd3qYsF/aBBJqIt85m5BhIl+9wx8UaRG9dKLXW+nRqOGrVpl5ZSsSsZQzBO
-	 n4bxGsDKO5ZVb3IuL5qQXZpooCbTz0VnzrJSiqE4=
+	b=AJSBgUM9+8lLMX0bOvAPNLznzBXt7Hb9+GdyXiaGqDX2msuK2Hfz7aANRAnn7xHu3
+	 +lEDGqZLrrLGRLSfejmu5hed9H8a1FodNmzcNiUIhvWh5jYB5dzasBP3qQmyfzvwda
+	 NbD0Y/aa7WNN6otn1fIwcB/EvUTti6vtQPZLBYW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390180AbfBKPBX (ORCPT
+        id S2390204AbfBKPB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:01:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:01:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390165AbfBKPBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:21 -0500
+        id S2390184AbfBKPB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:01:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F417222A4;
-        Mon, 11 Feb 2019 15:01:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EC36222A6;
+        Mon, 11 Feb 2019 15:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897280;
-        bh=cuz82Qwb0jd/Dh4dP1ZdMKaUS6rPhXaE2U8JHWfRIAs=;
+        s=default; t=1549897285;
+        bh=jXvPU3mrDV1hm7Pt7PueN/8J69H2hul9B8x1EEz1VMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kvExjd7DUfDSO/c2Mbqvt/RwEJDKfK4sTgTu9XVB2sLC7WMJomdwLSLtTqVQ1N0b5
-         yZ1JUob/7tO/zjPd3HcrpscHWeHSNIwh6BhkYilDbfiDl96ZADmMcVvwZ+QSvmWCkj
-         NC8K6qJcYU0OmCaq3HkoalxjLsqGFTprlz97rNoU=
+        b=md4u9/QVbytOKd7DJwSF/kV53d5Ul2H/eMpvs2JkWA2kWPWDgiUsRQwY9FWjePp7C
+         X/xDTpQQVIsPaS/uKBGa7TGInpN5zW82+vdI80/OCXp8GdNB9BV3HePX9acEJUvgeQ
+         UqgAnH87VAsEhm/+BJ4u57dpE46eKNvm/nYASCnk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 148/205] ocfs2: dont clear bh uptodate for block read
-Date:   Mon, 11 Feb 2019 15:19:06 +0100
-Message-Id: <20190211141838.028436889@linuxfoundation.org>
+        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 120/205] drbd: skip spurious timeout (ping-timeo) when failing promote
+Date:   Mon, 11 Feb 2019 15:18:38 +0100
+Message-Id: <20190211141836.314466309@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -73,66 +65,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
+[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
 
-For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
-and submit the io, second wait io done, last check whether bh uptodate, if
-not return io error.
+If you try to promote a Secondary while connected to a Primary
+and allow-two-primaries is NOT set, we will wait for "ping-timeout"
+to give this node a chance to detect a dead primary,
+in case the cluster manager noticed faster than we did.
 
-If two sync io for the same bh were issued, it could be the first io done
-and set uptodate flag, but just before check that flag, the second io came
-in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
-will return IO error.
+But if we then are *still* connected to a Primary,
+we fail (after an additional timeout of ping-timout).
 
-Indeed it's not necessary to clear uptodate flag, as the io end handler
-end_buffer_read_sync() will set or clear it based on io succeed or failed.
+This change skips the spurious second timeout.
 
-The following message was found from a nfs server but the underlying
-storage returned no error.
+Most people won't notice really,
+since "ping-timeout" by default is half a second.
 
-[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
-[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
-[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
-[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
-[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
+But in some installations, ping-timeout may be 10 or 20 seconds or more,
+and spuriously delaying the error return becomes annoying.
 
-Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
-
-Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/buffer_head_io.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index 1d098c3c00e0..9f8250df99f1 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -152,7 +152,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- #endif
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index a12f77e6891e..ad13ec66c8e4 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -668,14 +668,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
+ 		if (rv == SS_TWO_PRIMARIES) {
+ 			/* Maybe the peer is detected as dead very soon...
+ 			   retry at most once more in this case. */
+-			int timeo;
+-			rcu_read_lock();
+-			nc = rcu_dereference(connection->net_conf);
+-			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
+-			rcu_read_unlock();
+-			schedule_timeout_interruptible(timeo);
+-			if (try < max_tries)
++			if (try < max_tries) {
++				int timeo;
+ 				try = max_tries - 1;
++				rcu_read_lock();
++				nc = rcu_dereference(connection->net_conf);
++				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
++				rcu_read_unlock();
++				schedule_timeout_interruptible(timeo);
++			}
+ 			continue;
  		}
- 
--		clear_buffer_uptodate(bh);
- 		get_bh(bh); /* for end_buffer_read_sync() */
- 		bh->b_end_io = end_buffer_read_sync;
- 		submit_bh(REQ_OP_READ, 0, bh);
-@@ -306,7 +305,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 				continue;
- 			}
- 
--			clear_buffer_uptodate(bh);
- 			get_bh(bh); /* for end_buffer_read_sync() */
- 			if (validate)
- 				set_buffer_needs_validate(bh);
+ 		if (rv < SS_SUCCESS) {
 -- 
 2.19.1
 
