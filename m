@@ -2,222 +2,168 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336E0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D1EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04232218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pwToANPy"
+	by mail.kernel.org (Postfix) with ESMTP id 87244218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfBKMMY (ORCPT
+        id S1727236AbfBKMM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:12:24 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52144 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfBKMMY (ORCPT
+        Mon, 11 Feb 2019 07:12:29 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42826 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726358AbfBKMM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:12:24 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1BCBV8B065230;
-        Mon, 11 Feb 2019 06:11:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549887091;
-        bh=nLJGr9HIid9oerfAWo/iG+WzCc+bgoeRiLmuDD+BNEo=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=pwToANPy/KXa1swN6MLuiyHoWKt9Jn4bwn/ycJ9Ci8WJXy+yibef+Gn3Se3tuTChO
-         94LjTqUhU+rlhrwqqnjgzHzxtC1lRTFNPjIzbEzhG/kLCKH9+ASwjGTv1JSdQWyuaT
-         wsr1qUrcvLFnEuR6bWdHHT6KmbwbZrx/V2CQJBoY=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1BCBVec128838
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 06:11:31 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 11
- Feb 2019 06:11:29 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 11 Feb 2019 06:11:29 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1BCBQ5D010534;
-        Mon, 11 Feb 2019 06:11:26 -0600
-Subject: Re: [PATCH 2/4] bus: ti-sysc: Add support for PRUSS SYSC type
-To:     Tony Lindgren <tony@atomide.com>
-References: <1549295637-24890-1-git-send-email-rogerq@ti.com>
- <1549295637-24890-3-git-send-email-rogerq@ti.com>
- <20190204180031.GL5720@atomide.com>
-CC:     <s-anna@ti.com>, <nsekhar@ti.com>, <linux-omap@vger.kernel.org>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <david@lechnology.com>,
-        <woods.technical@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C61666D.3030308@ti.com>
-Date:   Mon, 11 Feb 2019 14:11:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Mon, 11 Feb 2019 07:12:27 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BCAFJ6128951
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:12:26 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qk5tr8xds-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:12:25 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 11 Feb 2019 12:12:23 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Feb 2019 12:12:21 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BCCK9w10355004
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 12:12:20 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 10113AE045;
+        Mon, 11 Feb 2019 12:12:20 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82032AE053;
+        Mon, 11 Feb 2019 12:12:19 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.155])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Feb 2019 12:12:19 +0000 (GMT)
+Subject: Re: [PATCH v2] s390: vsie: Use effective CRYCBD.31 to check CRYCBD
+ validity
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     david@redhat.com, linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com
+References: <1549876849-32680-1-git-send-email-pmorel@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 11 Feb 2019 13:12:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190204180031.GL5720@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1549876849-32680-1-git-send-email-pmorel@linux.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19021112-0020-0000-0000-000003155E72
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021112-0021-0000-0000-000021667642
+Message-Id: <3c27ab48-f925-cbbb-a9bc-f3cad9ef2c7e@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902110096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony,
 
-On 04/02/19 20:00, Tony Lindgren wrote:
-> * Roger Quadros <rogerq@ti.com> [190204 15:54]:
->> +static int sysc_enable_pruss(struct sysc *sysc)
->> +{
->> +	int i;
->> +	u32 reg;
->> +	bool ready;
->> +
->> +	/* configure for Smart Idle & Smart Standby */
->> +	reg = sysc_read(sysc, sysc->offsets[SYSC_SYSCONFIG]);
->> +	reg &= ~(SYSC_PRUSS_STANDBY_MASK | SYSC_PRUSS_IDLE_MASK);
->> +	reg |= SYSC_PRUSS_STANDBY_SMART | SYSC_IDLE_SMART;
->> +	sysc_write(sysc, sysc->offsets[SYSC_SYSCONFIG], reg);
+
+On 11.02.2019 10:20, Pierre Morel wrote:
+> When facility.76 MSAX3 is present for the guest we must issue a validity
+> interception if the CRYCBD is not valid.
 > 
-> I think you can get rid of the SYSC_PRUSS_ defines here
-> if you define the bits for it in struct sysc_regbits. The
-> idle modes are SYSC_IDLE_* defines we already have in
-> include/dt-bindings/bus/ti-sysc.h.
+> The bit CRYCBD.31 is an effective field and tested at each guest
+> level and has for effect to mask the facility.76
 > 
-> My guess is these will just become generic sysc_enable()
-> and sysc_disable() functions :)
+> It follows that if CRYCBD.31 is clear and AP is not in use  we do not
+> have to test the CRYCBD validatity even facility.76 is present in the
+> host.
 > 
-> If you need module specific handling, you could add function
-> pointers for enable and disable to struct sysc_capabilities.
-
-OK. I'll move all this to a generic handler then.
+> Fixes: 6ee74098201b ("KVM: s390: vsie: allow CRYCB FORMAT-0")
+> Cc: stable@vger.kernel.org
 > 
->> @@ -649,6 +693,9 @@ static int __maybe_unused sysc_runtime_suspend(struct device *dev)
->>  		goto idled;
->>  	}
->>  
->> +	if (ddata->cap->type == TI_SYSC_PRUSS)
->> +		sysc_disable_pruss(ddata);
->> +
->>  	for (i = 0; i < ddata->nr_clocks; i++) {
->>  		if (IS_ERR_OR_NULL(ddata->clocks[i]))
->>  			continue;
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> Reported-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+
+thanks applied.
+> ---
+>  arch/s390/kvm/vsie.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Ideally this would be just unconditional call to generic
-> sysc_disable() here for non-legacy mode. Then if module
-> specific enable and disable are there, sysc_enable() and
-> disable() can call them.
-
-OK.
-
-> 
->> +static const struct sysc_regbits sysc_regbits_pruss = {
->> +	.midle_shift = -ENODEV,
->> +	.clkact_shift = -ENODEV,
->> +	.sidle_shift = -ENODEV,
->> +	.enwkup_shift = -ENODEV,
->> +	.srst_shift = -ENODEV,
->> +	.autoidle_shift = -ENODEV,
->> +	.dmadisable_shift = -ENODEV,
->> +	.emufree_shift = -ENODEV,
->> +};
-> 
-> So it seems you should populate at least midle_shift and sidle_shift
-> bits here as in PRUSS_SYSCFG. I think STANDBY_MODE offset should go
-> into the .midle_shift as it mentions initiator in TRM, and IDLE_MODE
-> offset should go into .sidle_shift. So this might be really just using
-> sysc_regbits_omap4_simple except it has an additional STANDBY_INIT
-> bit which you could add for struct sysc_regbits if we don't have
-> something similar already.
-
-Got it.
-
-> 
->> @@ -1702,6 +1772,10 @@ static int sysc_probe(struct platform_device *pdev)
->>  
->>  	INIT_DELAYED_WORK(&ddata->idle_work, ti_sysc_idle);
->>  
->> +	/* FIXME: how to ensure PRUSS stays enabled? */
->> +	if (ddata->cap->type == TI_SYSC_PRUSS)
->> +		goto skip_pm_put;
->> +
-
-This was my bad. I forgot to move the pm_runtime_enable/get from the old
-pruss_soc_bus.c to pruss.c :). It work after than and this hack is not required.
-
->>  	/* At least earlycon won't survive without deferred idle */
->>  	if (ddata->cfg.quirks & (SYSC_QUIRK_NO_IDLE_ON_INIT |
->>  				 SYSC_QUIRK_NO_RESET_ON_INIT)) {
-> 
-> Hmm so do you need to specify ti,no-idle-on-init or what's
-> the logic needed here?
-
-I was using "ti,no-reset-on-init" but that was because sysc_reset() was returning error
-due to missing syss mask. That can be fixed like so.
-
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 5b9c81a..f5f2000 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -941,6 +941,7 @@ static int sysc_reset(struct sysc *ddata)
- 	int val;
- 
- 	if (ddata->legacy_mode || offset < 0 ||
-+	    ddata->cap->regbits->srst_shift == -ENODEV ||
- 	    ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
- 		return 0;
-
-
-> 
->> diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
->> index 8ec78e8..7138384 100644
->> --- a/include/dt-bindings/bus/ti-sysc.h
->> +++ b/include/dt-bindings/bus/ti-sysc.h
->> @@ -17,17 +17,6 @@
->>  
->>  #define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
->>  
->> -/* SYSCONFIG specific to PRUSS */
->> -#define SYSC_PRUSS_SUB_MWAIT		(1 << 5)
->> -#define SYSC_PRUSS_STANDBY_INIT		(1 << 4)
->> -
->> -#define SYSC_PRUSS_STANDBY_FORCE	(0 << 2)
->> -#define SYSC_PRUSS_STANDBY_NO		(1 << 2)
->> -#define SYSC_PRUSS_STANDBY_SMART	(2 << 2)
->> -#define SYSC_PRUSS_STANDBY_MASK		(3 << 2)
->> -
->> -#define SYSC_PRUSS_IDLE_MASK		3
->> -
->>  /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
->>  #define SYSC_IDLE_FORCE			0
->>  #define SYSC_IDLE_NO			1
-> 
-> I suggest you make this series independent of the
-> rest of the PRUSS patches as we can add this
-> separately. So no need to define these bits at all
-> AFAIK.
-
-OK. Thanks.
-
-cheers,
--roger
-
-> 
-> Regards,
-> 
-> Tony
+> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+> index a153257..d62fa14 100644
+> --- a/arch/s390/kvm/vsie.c
+> +++ b/arch/s390/kvm/vsie.c
+> @@ -297,7 +297,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>  	scb_s->crycbd = 0;
+>  
+>  	apie_h = vcpu->arch.sie_block->eca & ECA_APIE;
+> -	if (!apie_h && !key_msk)
+> +	if (!apie_h && (!key_msk || fmt_o == CRYCB_FORMAT0))
+>  		return 0;
+>  
+>  	if (!crycb_addr)
 > 
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
