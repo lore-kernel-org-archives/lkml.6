@@ -4,50 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28E7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC5AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 663A92229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CEA6222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897096;
-	bh=N2B+/E2Cdv92UwWG0/XVbIEwtVaTn3PyOBQFimnI7xw=;
+	s=default; t=1549897101;
+	bh=sThCRVdTB8e5XIo/1yb5b+c0Nftm7NdeapiMVBHasIQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K38nkbrGbwyaP2QMneq6Y9LKtCU8u9M0e8FeyBeHWkmvzHGcq34QtLUhjaFk7NnAY
-	 4Mz73NU6dO2vRYRDE4WeX/+zGy+8iLM4Na0Bpzzv5Sgf+6U5yivftHyXhPPjhT2KLW
-	 /fpkE+FfFhiEQdiY+W18QWskLgeloDGA+91/Ts6s=
+	b=uXggIAbo76bDHJAEmhE4GK1aFJoFKVtL4kvwihIm1Hjvrpn8oeTN4CI+6+iToXgEz
+	 mjx6hHi4cJ3UdfnrCiaqhS5EuhL8NuBwRfYd/cM3xcngf0f5wHD12C448K7Eul0+Xj
+	 yFvmR04Qk4hwmBM5Dlxpjv5D7UxN6NUXZBklKgwk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388737AbfBKO6O (ORCPT
+        id S2389516AbfBKO6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:58:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45728 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:58:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389489AbfBKO6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:58:10 -0500
+        id S2389489AbfBKO6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:58:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87EE02229E;
-        Mon, 11 Feb 2019 14:58:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5458520700;
+        Mon, 11 Feb 2019 14:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897090;
-        bh=N2B+/E2Cdv92UwWG0/XVbIEwtVaTn3PyOBQFimnI7xw=;
+        s=default; t=1549897095;
+        bh=sThCRVdTB8e5XIo/1yb5b+c0Nftm7NdeapiMVBHasIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=091615R4gUmjEZ+uCExzBe57Q3MPQ+y7XLLNMJwQ1o9278EDTMvMivrfHfx9SgRHX
-         GH+itBNtQXwQ0d0e7fojqemQqROq0/iAr6tJgWwN/XR+uc1LdAaYBR9eSB8pEoiixP
-         KQvC9wh0H3jW8B2ua5YBQeQ/mkHxWAI2lRgQLaqA=
+        b=gZDN1b2INFcdAZDKDGJ5Mib9NLvk+ujSmHGFTRAFZfiBGCyf2anH4aaY9c2b3G3mm
+         Ra4kJH6zd/rStCVNZxAe+iZ5M6Ekpmnzpj/FYoeklVVoUkK5T2l0c+ptRFo52Ke0WF
+         OxGJVIkG5QGa/bqLTJuKO9U7c0qyVdctmKNoMsyU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, Rik van Riel <riel@surriel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kvm ML <kvm@vger.kernel.org>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 057/205] ARM: dts: mmp2: fix TWSI2
-Date:   Mon, 11 Feb 2019 15:17:35 +0100
-Message-Id: <20190211141832.531809119@linuxfoundation.org>
+Subject: [PATCH 4.14 059/205] x86/fpu: Add might_fault() to user_insn()
+Date:   Mon, 11 Feb 2019 15:17:37 +0100
+Message-Id: <20190211141832.659373595@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,54 +76,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
+[ Upstream commit 6637401c35b2f327a35d27f44bda05e327f2f017 ]
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+Every user of user_insn() passes an user memory pointer to this macro.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
 
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
+ [ bp: Space it out to make it more visible. ]
 
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
-
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..47e5b63339d1 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -220,12 +220,15 @@
- 				status = "disabled";
- 			};
- 
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible = "mrvl,mmp-twsi";
--				reg = <0xd4025000 0x1000>;
--				interrupts = <58>;
-+				reg = <0xd4031000 0x1000>;
-+				interrupt-parent = <&intcmux17>;
-+				interrupts = <0>;
- 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				status = "disabled";
- 			};
- 
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b61..fa2c93cb42a2 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++									\
++	might_fault();							\
++									\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
 -- 
 2.19.1
 
