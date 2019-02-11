@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC392C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C657AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5E7222AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96CAA217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897602;
-	bh=ENdxuBxAD7WPX/BCTCe0fDBDbwSIzDMAxtTooR0hv3g=;
+	s=default; t=1549897606;
+	bh=Xh/W8Mep+ovTfl4ZoIoSFsGXtAw3avb9e1ZygVJE1CQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oPD25ci2hxlmjjrZQN74M7uwL6DguyQ9XaAflj/6nrfQJW4wtp5EDF3eYBzE2/kGX
-	 ypSu4xgLjICQnQ5hGzMYO81dwW6/WzQPMmiiOyktBVcCfngGiBHOXr6OTYyS7xCjhM
-	 +CJgvUq/EbiYn9mCJHF6dcrrbrj51uuaniXkhEe0=
+	b=jOa0bLUiWU20N7Hin/kkuM6Sx0wxCxvK+NWxEnSt3j5zj4RUJybZAPaWyYRro9uJi
+	 U5FlE4yH0hvvpBNKPgvB6IGhggwE/7LtZW/ZvGVYENroNIZtSkI3/p119ui3DKvWbs
+	 6y/c6P4zJFFB0w6PPQmE6El2j6h7MB1qedNpxU4k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391244AbfBKPGl (ORCPT
+        id S2391256AbfBKPGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:06:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56240 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:06:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403771AbfBKPGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:06:40 -0500
+        id S2391246AbfBKPGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:06:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A89E222A7;
-        Mon, 11 Feb 2019 15:06:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1E4E222B8;
+        Mon, 11 Feb 2019 15:06:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897599;
-        bh=ENdxuBxAD7WPX/BCTCe0fDBDbwSIzDMAxtTooR0hv3g=;
+        s=default; t=1549897603;
+        bh=Xh/W8Mep+ovTfl4ZoIoSFsGXtAw3avb9e1ZygVJE1CQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m5IS7t/F4/lBng+lZvGLdn2Cnr6bh9J/YsKNVthnn34cXQtw+1/PnU6vSp7IWALb7
-         L+ep24KCZc9x30jQVcw8/SWj3+1lepcXhhzQYzhDtNr0W9o3/re21UmLMN2YtUuhI4
-         apoXNgCoUHg/wnz1Ls16sCl7QizbeRGLeyxV8bZ0=
+        b=HILwZOKmUl6FYKOdrZ7zq06e9JxTUOJ2ja5iqPB0zjmA3+LIXblsvN2zVo4LuCiP1
+         1FQT/zBL5G0KirHRFsFPFN6PGmP5VEEqB1NkDvR/J3v9nH8EK2gk7WMp5NC2HEtW3W
+         pGSW9UlH18K63yvwi/77EdFboP7TUZS4/qkogFrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 020/137] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
-Date:   Mon, 11 Feb 2019 15:18:21 +0100
-Message-Id: <20190211141813.851187274@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 011/137] drm/vc4: ->x_scaling[1] should never be set to VC4_SCALING_NONE
+Date:   Mon, 11 Feb 2019 15:18:12 +0100
+Message-Id: <20190211141813.045445906@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,60 +66,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
+[ Upstream commit 0560054da5673b25d56bea6c57c8d069673af73b ]
 
-of_parse_phandle() returns the device node with refcount incremented.
-There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
-but their refcounts are not decremented.
+For the YUV conversion to work properly, ->x_scaling[1] should never
+be set to VC4_SCALING_NONE, but vc4_get_scaling_mode() might return
+VC4_SCALING_NONE if the horizontal scaling ratio exactly matches the
+horizontal subsampling factor. Add a test to turn VC4_SCALING_NONE
+into VC4_SCALING_PPF when that happens.
 
-The patch adds one of_node_put() and fixes returning error codes.
+The old ->x_scaling[0] adjustment is dropped as I couldn't find any
+mention to this constraint in the spec and it's proven to be
+unnecessary (I tested various multi-planar YUV formats with scaling
+disabled, and all of them worked fine without this adjustment).
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: fc04023fafec ("drm/vc4: Add support for YUV planes.")
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181109102633.32603-1-boris.brezillon@bootlin.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vc4/vc4_plane.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-index 3e73e9db781f..7c025045ea90 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
- 	if (!node) {
- 		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
-+		return -ENODEV;
- 	}
- 	pdev = of_find_device_by_node(node);
-+	of_node_put(node);
- 	if (!pdev) {
- 		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
-+		return -ENODEV;
- 	}
- 	pm->larbvenc = &pdev->dev;
+diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+index 70051bf0ee5c..0376c0c2fc66 100644
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -345,12 +345,14 @@ static int vc4_plane_setup_clipping_and_scaling(struct drm_plane_state *state)
+ 			vc4_get_scaling_mode(vc4_state->src_h[1],
+ 					     vc4_state->crtc_h);
  
- 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
- 	if (!node) {
- 		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	pdev = of_find_device_by_node(node);
-+	of_node_put(node);
- 	if (!pdev) {
- 		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	pm->larbvenclt = &pdev->dev;
+-		/* YUV conversion requires that horizontal scaling be enabled,
+-		 * even on a plane that's otherwise 1:1. Looks like only PPF
+-		 * works in that case, so let's pick that one.
++		/* YUV conversion requires that horizontal scaling be enabled
++		 * on the UV plane even if vc4_get_scaling_mode() returned
++		 * VC4_SCALING_NONE (which can happen when the down-scaling
++		 * ratio is 0.5). Let's force it to VC4_SCALING_PPF in this
++		 * case.
+ 		 */
+-		if (vc4_state->is_unity)
+-			vc4_state->x_scaling[0] = VC4_SCALING_PPF;
++		if (vc4_state->x_scaling[1] == VC4_SCALING_NONE)
++			vc4_state->x_scaling[1] = VC4_SCALING_PPF;
+ 	} else {
+ 		vc4_state->is_yuv = false;
+ 		vc4_state->x_scaling[1] = VC4_SCALING_NONE;
 -- 
 2.19.1
 
