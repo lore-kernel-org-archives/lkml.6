@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D49C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7E6C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352AA21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B4A222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899886;
-	bh=PkiwelgmGzruBb5zzylvXoy8CMbYr2EWITUDTYBDMY0=;
+	s=default; t=1549899889;
+	bh=tOZlFF/0WJTg0g3PjwW747psDpVoNb9V+2Am2T7KqIk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jSmVVE/B82zDpbLTDEMnR38B/vut4hRuVmkTFImj8si4xYMnDPZm7QIjp0xaGluvt
-	 19Q3XohbOcd/crc5weJbXQzreMB+suJJfn8ervhW0AzuLWd8mDGEI+iuA7OljAkQLb
-	 78jseJXNEYmLOuXyXad4IJPL0QHsxn/Vw44NRDMk=
+	b=MIR/q6m3lt9koPwSTDXhnpuiykVWLh4DcJ7J3PKpHccwZ3OnJtMy+w+enDLubBq8M
+	 /9oGbrWPWiB+56dDUnPUWseLGH5OVGNby8cQln6s+WUebSmPn/RMShbBgK6hkc5AkA
+	 zRl4d975ukkN/VKt5HjSo2kNAji7P4DaapBYYldM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732769AbfBKOoJ (ORCPT
+        id S1732844AbfBKPos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56624 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:44:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732109AbfBKOoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:03 -0500
+        id S1732766AbfBKOoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBABA214DA;
-        Mon, 11 Feb 2019 14:44:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8C8520844;
+        Mon, 11 Feb 2019 14:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896242;
-        bh=PkiwelgmGzruBb5zzylvXoy8CMbYr2EWITUDTYBDMY0=;
+        s=default; t=1549896248;
+        bh=tOZlFF/0WJTg0g3PjwW747psDpVoNb9V+2Am2T7KqIk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tkQfOUtgtHhgjMGF9j+vQXy81g7UDuEzWPTCnPY+PfGkAAK53LxZXIH0cajGjMIiP
-         zkGJWPZq4bMyXkVeHyAo70VnnftQn1yHY2fz47qpeUi0iQStLk+qNY3suMLmd/pw/q
-         xoZjkTg65/r5y8aIvB6BDmO8gzkcvvk36wsQYV8E=
+        b=1sx+vzvfNH2bkCTsDKmvWTJNuK5LQz99FDrcuF5UZyVnxF9DAVY49JUDJBh69F+so
+         radqQE4xA17yje1jBjPWhJczdRgTp2MW8s5OX1zSkkxNELtMjBNQrd0ocW7ufvjsNc
+         h21zIVNOHbcmsRZ35zd5G9CWuI63ggjiQr8ZrDm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 118/313] ARM: dts: imx51-zii-rdu1: Do not specify "power-gpio" for hpa1
-Date:   Mon, 11 Feb 2019 15:16:38 +0100
-Message-Id: <20190211141901.723896774@linuxfoundation.org>
+Subject: [PATCH 4.19 091/313] media: i2c: TDA1997x: select CONFIG_HDMI
+Date:   Mon, 11 Feb 2019 15:16:11 +0100
+Message-Id: <20190211141859.930875260@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,64 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 79da07dec740a42c70963ebacbd2bf8866af9e20 ]
+[ Upstream commit 79e89e36dc8a47ef965a35b484d737a5227feed1 ]
 
-TPA6130A2 SD pin on RDU1 is not really controlled by SoC and instead
-is only meant to notify the system that audio was "muted" by external
-actors. To accommodate that, drop "power-gpio" property of hpa1 node as
-well as specify a name for that GPIO so that userspace can access it.
+Without CONFIG_HDMI, we get a link error for this driver:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Tested-by: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
+tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
+drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
+tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
+
+All other drivers in this directory that use HDMI select CONFIG_HDMI,
+so do the same here:
+
+Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx51-zii-rdu1.dts | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-index 469cce2c0357..6e80254c4562 100644
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -477,6 +477,15 @@
- };
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 82af97430e5b..041a777dfdee 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
+ 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
+ 	depends on SND_SOC
+ 	select SND_PCM
++	select HDMI
+ 	---help---
+ 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
  
- &gpio1 {
-+	gpio-line-names = "", "", "", "",
-+			  "", "", "", "",
-+			  "", "hp-amp-shutdown-b", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "";
-+
- 	unused-sd3-wp-gpio {
- 		/*
- 		 * See pinctrl_esdhc1 below for more details on this
-@@ -501,9 +510,6 @@
- 	hpa1: amp@60 {
- 		compatible = "ti,tpa6130a2";
- 		reg = <0x60>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_ampgpio>;
--		power-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
- 		Vdd-supply = <&reg_3p3v>;
- 	};
- 
-@@ -677,7 +683,10 @@
- };
- 
- &iomuxc {
--	pinctrl_ampgpio: ampgpiogrp {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
- 		fsl,pins = <
- 			MX51_PAD_GPIO1_9__GPIO1_9		0x5e
- 		>;
 -- 
 2.19.1
 
