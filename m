@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D2FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028C0C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 370D4222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8438222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899434;
-	bh=08EROL8kChbKpcPpafWNh31j5TzGEgYfuhRVF7WnzxQ=;
+	s=default; t=1549899436;
+	bh=/Uth2yVs47cZWNc0aro3mml8pIjQbMmWFyM79Zvgc30=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2jOhVXXTwxX39YLcy+i4j4Rw0mSHxAVfr8n2PTRHIZdfPXHFo0HNLMp4oHSXmT+RO
-	 A5NuaxZMWCFbdes/w/HuInrf/8O6WS6TeVop9e4fsZs55oA7DAYExP4oJlBbPO1Uyo
-	 Jjq40DHCnFjD98wxfumd0UqTI7MJB7KmOgK2JLlY=
+	b=N1Oh3u7ImfFp2jRtDk6sF0mKQBrTqcY0xq5VAQH7VMhmRCEysCwrc1ecVcYxDzUAL
+	 sBqh4yEorJi8qEBx1UmUTf6qx6W+h9Wd64gTjL2rKAGuCADaKf7gkvBxp39RTgXBGe
+	 YZDykU0utjC4V59P6L/gNFcr8+QFnVqaPhe+ppZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388233AbfBKOvO (ORCPT
+        id S2389306AbfBKPhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37172 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:37:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388217AbfBKOvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:51:11 -0500
+        id S2387801AbfBKOvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6939A2081B;
-        Mon, 11 Feb 2019 14:51:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A609820700;
+        Mon, 11 Feb 2019 14:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896669;
-        bh=08EROL8kChbKpcPpafWNh31j5TzGEgYfuhRVF7WnzxQ=;
+        s=default; t=1549896678;
+        bh=/Uth2yVs47cZWNc0aro3mml8pIjQbMmWFyM79Zvgc30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JXPpPs2rbC0Vn8vsZjTp+26e+O5J2VmeekqwWUvUuPFklyZJbz470g+6n+W376oiy
-         2hmL2UvmEJkp1rQM/n/HyGUczo3N+Ks7ZPbguaHp5heEQIzjCoFJF3qO7Vou2Lj2lk
-         tuH2oz1xgv4lBh0hVE2JGuKw4YBpay3pCcTFOLTs=
+        b=2YFg9zmx1AtIAUY18029Q3sZHyTp0iOEdm0YVVRH4DgUGTMOV1yVLfnbocQb3o8E4
+         WR8/75KA1krjTbwbwCC1oEIf8pCckk4+6oE8TZqb2VeeGmLNjEpR5uBexydJ4c9SJi
+         iqFNMkGurdqW5mfXt9+So1b/YYE1Uru/SDpmFho4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
+        stable@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 262/313] net: dp83640: expire old TX-skb
-Date:   Mon, 11 Feb 2019 15:19:02 +0100
-Message-Id: <20190211141910.816559687@linuxfoundation.org>
+Subject: [PATCH 4.19 265/313] net: dsa: mv88e6xxx: Fix counting of ATU violations
+Date:   Mon, 11 Feb 2019 15:19:05 +0100
+Message-Id: <20190211141911.017231195@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,83 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 53bc8d2af08654659abfadfd3e98eb9922ff787c ]
+[ Upstream commit 75c05a74e745ae7d663b04d75777af80ada2233c ]
 
-During sendmsg() a cloned skb is saved via dp83640_txtstamp() in
-->tx_queue. After the NIC sends this packet, the PHY will reply with a
-timestamp for that TX packet. If the cable is pulled at the right time I
-don't see that packet. It might gets flushed as part of queue shutdown
-on NIC's side.
-Once the link is up again then after the next sendmsg() we enqueue
-another skb in dp83640_txtstamp() and have two on the list. Then the PHY
-will send a reply and decode_txts() attaches it to the first skb on the
-list.
-No crash occurs since refcounting works but we are one packet behind.
-linuxptp/ptp4l usually closes the socket and opens a new one (in such a
-timeout case) so those "stale" replies never get there. However it does
-not resume normal operation anymore.
+The ATU port vector contains a bit per port of the switch. The code
+wrongly used it as a port number, and incremented a port counter. This
+resulted in the wrong interfaces counter being incremented, and
+potentially going off the end of the array of ports.
 
-Purge old skbs in decode_txts().
+Fix this by using the source port ID for the violation, which really
+is a port number.
 
-Fixes: cb646e2b02b2 ("ptp: Added a clock driver for the National Semiconductor PHYTER.")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
+Reported-by: Chris Healy <Chris.Healy@zii.aero>
+Tested-by: Chris Healy <Chris.Healy@zii.aero>
+Fixes: 65f60e4582bd ("net: dsa: mv88e6xxx: Keep ATU/VTU violation statistics")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83640.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/dsa/mv88e6xxx/global1_atu.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -896,14 +896,14 @@ static void decode_txts(struct dp83640_p
- 			struct phy_txts *phy_txts)
+--- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
++++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
+@@ -314,6 +314,7 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
  {
- 	struct skb_shared_hwtstamps shhwtstamps;
-+	struct dp83640_skb_info *skb_info;
- 	struct sk_buff *skb;
--	u64 ns;
- 	u8 overflow;
-+	u64 ns;
+ 	struct mv88e6xxx_chip *chip = dev_id;
+ 	struct mv88e6xxx_atu_entry entry;
++	int spid;
+ 	int err;
+ 	u16 val;
  
- 	/* We must already have the skb that triggered this. */
--
-+again:
- 	skb = skb_dequeue(&dp83640->tx_queue);
--
- 	if (!skb) {
- 		pr_debug("have timestamp but tx_queue empty\n");
- 		return;
-@@ -918,6 +918,11 @@ static void decode_txts(struct dp83640_p
- 		}
- 		return;
+@@ -336,6 +337,8 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
+ 	if (err)
+ 		goto out;
+ 
++	spid = entry.state;
++
+ 	if (val & MV88E6XXX_G1_ATU_OP_AGE_OUT_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+ 				    "ATU age out violation for %pM\n",
+@@ -344,23 +347,23 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
+ 
+ 	if (val & MV88E6XXX_G1_ATU_OP_MEMBER_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU member violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_member_violation++;
++				    "ATU member violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_member_violation++;
  	}
-+	skb_info = (struct dp83640_skb_info *)skb->cb;
-+	if (time_after(jiffies, skb_info->tmo)) {
-+		kfree_skb(skb);
-+		goto again;
-+	}
  
- 	ns = phy2txts(phy_txts);
- 	memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-@@ -1470,6 +1475,7 @@ static bool dp83640_rxtstamp(struct phy_
- static void dp83640_txtstamp(struct phy_device *phydev,
- 			     struct sk_buff *skb, int type)
- {
-+	struct dp83640_skb_info *skb_info = (struct dp83640_skb_info *)skb->cb;
- 	struct dp83640_private *dp83640 = phydev->priv;
+ 	if (val & MV88E6XXX_G1_ATU_OP_MISS_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU miss violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_miss_violation++;
++				    "ATU miss violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_miss_violation++;
+ 	}
  
- 	switch (dp83640->hwts_tx_en) {
-@@ -1482,6 +1488,7 @@ static void dp83640_txtstamp(struct phy_
- 		/* fall through */
- 	case HWTSTAMP_TX_ON:
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+		skb_info->tmo = jiffies + SKB_TIMESTAMP_TIMEOUT;
- 		skb_queue_tail(&dp83640->tx_queue, skb);
- 		break;
+ 	if (val & MV88E6XXX_G1_ATU_OP_FULL_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU full violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_full_violation++;
++				    "ATU full violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_full_violation++;
+ 	}
+ 	mutex_unlock(&chip->reg_lock);
  
 
 
