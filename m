@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BC9C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C221C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A2B222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C130222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899503;
-	bh=G/l0ESp0+YnkBU769hmDGBPaaaGM88sAyQO1uscnWCk=;
+	s=default; t=1549899520;
+	bh=yAtpNdE9k2J1QG0wDC94ANOwj0S+++ZwKJgC/emeGnw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E0Kmn9ztoPXtRTsjkEXw6d3B0r/Y7z7dDw2hPn3Jjk2cvWmxlQSbkT0loI+KFgU+l
-	 hykKBH0xw55UCQdRoDE53xTPc9h519L9/D4z2eGzxrFB6NbkcUKfeeUliT2vnVfJbz
-	 9X+Qj4iR3VpEePAG/kMA5aNW1zlLBuGdcYp2wfsI=
+	b=f6z/c9Mjr0BWmIXPoP459TLlrGvlXlKJdMXQIYjDckzJyvotUSm3BgqQk61GeKmF8
+	 RXNmU0VkljE5Fjw8uuWNEL/DU9vdhHj8zA31tDKpwQBSRc3Z6lOT5RlQp5PkW0gL6h
+	 iUKOYIw9TnIuUrhkgu+kulC+CWc6rUFhWVf/oLq0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388080AbfBKOuX (ORCPT
+        id S2388013AbfBKOuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36124 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388058AbfBKOuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:19 -0500
+        id S1728242AbfBKOuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87E9820700;
-        Mon, 11 Feb 2019 14:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3349C2081B;
+        Mon, 11 Feb 2019 14:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896619;
-        bh=G/l0ESp0+YnkBU769hmDGBPaaaGM88sAyQO1uscnWCk=;
+        s=default; t=1549896600;
+        bh=yAtpNdE9k2J1QG0wDC94ANOwj0S+++ZwKJgC/emeGnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MX2rEAF4bUdbRDpRAgxNis1xTBR9xBdRN4J+dUrL6EHWOjQPjiKumJlZP14GRg5dV
-         b2gNMHG+18cAdX52xOZ8riC++Dlehl4wJGEZMS1LM3FHYtzOqRdqxUkiHjA7SpAbdX
-         1Iig4yzgSnsJzKbQfiHCFcVbJmo5Rf2vzxVOO9cA=
+        b=YnI4baDINjuQiiLPri8tznDjX/e4yOC9qJecN1u/8BVLyoFnnZ0/6vLd5Z92+Ix35
+         V6SvRJQMOwGNAEQBDz4UbVfYX8z+OBwkd0v6o3cdLAk0yb/eDrlPfrjth8zX97hzBo
+         Jyd6+ZM/2wQRxDl8096g3V3bmw2ZMB7ebRjRdHE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jason Baron <jbaron@akamai.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 244/313] fs/epoll: drop ovflist branch prediction
-Date:   Mon, 11 Feb 2019 15:18:44 +0100
-Message-Id: <20190211141909.702760523@linuxfoundation.org>
+Subject: [PATCH 4.19 221/313] f2fs: fix sbi->extent_list corruption issue
+Date:   Mon, 11 Feb 2019 15:18:21 +0100
+Message-Id: <20190211141907.978430394@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,53 +66,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
+[ Upstream commit e4589fa545e0020dbbc3c9bde35f35f949901392 ]
 
-The ep->ovflist is a secondary ready-list to temporarily store events
-that might occur when doing sproc without holding the ep->wq.lock.  This
-accounts for every time we check for ready events and also send events
-back to userspace; both callbacks, particularly the latter because of
-copy_to_user, can account for a non-trivial time.
+When there is a failure in f2fs_fill_super() after/during
+the recovery of fsync'd nodes, it frees the current sbi and
+retries again. This time the mount is successful, but the files
+that got recovered before retry, still holds the extent tree,
+whose extent nodes list is corrupted since sbi and sbi->extent_list
+is freed up. The list_del corruption issue is observed when the
+file system is getting unmounted and when those recoverd files extent
+node is being freed up in the below context.
 
-As such, the unlikely() check to see if the pointer is being used, seems
-both misleading and sub-optimal.  In fact, we go to an awful lot of
-trouble to sync both lists, and populating the ovflist is far from an
-uncommon scenario.
+list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+<...>
+kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+lr : __list_del_entry_valid+0x94/0xb4
+pc : __list_del_entry_valid+0x94/0xb4
+<...>
+Call trace:
+__list_del_entry_valid+0x94/0xb4
+__release_extent_node+0xb0/0x114
+__free_extent_tree+0x58/0x7c
+f2fs_shrink_extent_tree+0xdc/0x3b0
+f2fs_leave_shrinker+0x28/0x7c
+f2fs_put_super+0xfc/0x1e0
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
+__cleanup_mnt+0x1c/0x28
+task_work_run+0x48/0xd0
+do_notify_resume+0x678/0xe98
+work_pending+0x8/0x14
 
-For example, profiling a concurrent epoll_wait(2) benchmark, with
-CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
-incorrect rate was seen; and when incrementally increasing the number of
-epoll instances (which is used, for example for multiple queuing load
-balancing models), up to a 90% incorrect rate was seen.
+Fix this by not creating extents for those recovered files if shrinker is
+not registered yet. Once mount is successful and shrinker is registered,
+those files can have extents again.
 
-Similarly, by deleting the prediction, 3% throughput boost was seen
-across incremental threads.
-
-Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jason Baron <jbaron@akamai.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/eventpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/f2fs.h     | 11 ++++++++++-
+ fs/f2fs/shrinker.c |  2 +-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 42bbe6824b4b..58f48ea0db23 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1154,7 +1154,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- 	 * semantics). All the events that happen during that period of time are
- 	 * chained in ep->ovflist and requeued later on.
- 	 */
--	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
-+	if (ep->ovflist != EP_UNACTIVE_PTR) {
- 		if (epi->next == EP_UNACTIVE_PTR) {
- 			epi->next = ep->ovflist;
- 			ep->ovflist = epi;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 462a2fb8aa69..eea2811dc672 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2614,10 +2614,19 @@ static inline bool is_dot_dotdot(const struct qstr *str)
+ 
+ static inline bool f2fs_may_extent_tree(struct inode *inode)
+ {
+-	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (!test_opt(sbi, EXTENT_CACHE) ||
+ 			is_inode_flag_set(inode, FI_NO_EXTENT))
+ 		return false;
+ 
++	/*
++	 * for recovered files during mount do not create extents
++	 * if shrinker is not registered.
++	 */
++	if (list_empty(&sbi->s_list))
++		return false;
++
+ 	return S_ISREG(inode->i_mode);
+ }
+ 
+diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+index 36cfd816c160..29042e6d5126 100644
+--- a/fs/f2fs/shrinker.c
++++ b/fs/f2fs/shrinker.c
+@@ -138,6 +138,6 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi)
+ 	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
+ 
+ 	spin_lock(&f2fs_list_lock);
+-	list_del(&sbi->s_list);
++	list_del_init(&sbi->s_list);
+ 	spin_unlock(&f2fs_list_lock);
+ }
 -- 
 2.19.1
 
