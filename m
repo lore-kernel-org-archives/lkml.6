@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1EAC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714C2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A92821B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38AC221B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898762;
-	bh=1GC4HfULWob7YTvC/Hklvifwku4eqzrErlcpxUSl53A=;
+	s=default; t=1549898776;
+	bh=nAuDK9DMkQ6pxZ50aCqI2Fk+cJz2dWXu0RVQXE4s05A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z3rJw4vkRf8eManO5ryWi33d6AAfyp+r5QxQzSbjI99z7ST/vVGDjiV7ZpwG4f9mX
-	 NS1qf9ydorqZCKyq0NRwrKt5H1D8Jkcep6+LkzRNeBVzoMBZlG2qDQ21IoywW1HLqe
-	 Y5ijW55g7RMhmz5e1bCtaaJiS2LMBeIXLfRmMdzY=
+	b=O48BxtMK63y7+/zdJEbH+5yRBiF91WSJSnl8C9GpwgKajM4Rel3GSVvucsZpp17Z1
+	 6s76lVLu12uddYSbUxXhdfbvZWZnVPm+Ew98+DuKDssSQeaENRx1jhhWR1pPdYnRO+
+	 QgfLYdkndxUvA37vMxhnJn35Iwsw8tL2KG2xG6ro=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390581AbfBKP0B (ORCPT
+        id S2390058AbfBKPAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:26:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48720 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390069AbfBKPAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:46 -0500
+        id S2389294AbfBKPAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EB50222A6;
-        Mon, 11 Feb 2019 15:00:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8347921773;
+        Mon, 11 Feb 2019 15:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897245;
-        bh=1GC4HfULWob7YTvC/Hklvifwku4eqzrErlcpxUSl53A=;
+        s=default; t=1549897240;
+        bh=nAuDK9DMkQ6pxZ50aCqI2Fk+cJz2dWXu0RVQXE4s05A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jr4qrUNkCB6GBaVJf+W3mLwhokveOG4oMIqQW3siaO1VyVo4pDabkBa/sOeGi8DqG
-         wd8RAK+lvIuzyRaPOywNbeWM3ZBGhERdLOu8gobwPWNwk8OWYA2azKo+InuD9jAsSK
-         lEEGLc7mDtUhWJ20AINSHCmKtqHHLDqOFCV5ugGc=
+        b=gxRN6jEoljaki1dic092/wg6SFIHcWb8G448m/0agCvqalfW0dMJdc711uInK9TG6
+         VqN69n1k/IuegcN8rUbf6d10Xrffw64yXb7k3gslwDcD3zVs4+ciYn434+PPqmgm7Z
+         FOYNHxt9cHWn81pl0HhKXsst4yekayEhcoYztF1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 138/205] seq_buf: Make seq_buf_puts() null-terminate the buffer
-Date:   Mon, 11 Feb 2019 15:18:56 +0100
-Message-Id: <20190211141837.407050854@linuxfoundation.org>
+Subject: [PATCH 4.14 136/205] hwmon: (lm80) fix a missing check of the status of SMBus read
+Date:   Mon, 11 Feb 2019 15:18:54 +0100
+Message-Id: <20190211141837.287206956@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,64 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
+[ Upstream commit c9c63915519b1def7043b184680f33c24cd49d7b ]
 
-Currently seq_buf_puts() will happily create a non null-terminated
-string for you in the buffer. This is particularly dangerous if the
-buffer is on the stack.
+If lm80_read_value() fails, it returns a negative number instead of the
+correct read data. Therefore, we should avoid using the data if it
+fails.
 
-For example:
+The fix checks if lm80_read_value() fails, and if so, returns with the
+error number.
 
-  char buf[8];
-  char secret = "secret";
-  struct seq_buf s;
-
-  seq_buf_init(&s, buf, sizeof(buf));
-  seq_buf_puts(&s, "foo");
-  printk("Message is %s\n", buf);
-
-Can result in:
-
-  Message is fooªªªªªsecret
-
-We could require all users to memset() their buffer to zero before
-use. But that seems likely to be forgotten and lead to bugs.
-
-Instead we can change seq_buf_puts() to always leave the buffer in a
-null-terminated state.
-
-The only downside is that this makes the buffer 1 character smaller
-for seq_buf_puts(), but that seems like a good trade off.
-
-Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
-
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+[groeck: One variable for return values is enough]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/seq_buf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/hwmon/lm80.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 11f2ae0f9099..6aabb609dd87 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
- 
- 	WARN_ON(s->size == 0);
- 
-+	/* Add 1 to len for the trailing null byte which must be there */
-+	len += 1;
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 08e3945a6fbf..04f9df0d2341 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -360,9 +360,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	struct i2c_client *client = data->client;
+ 	unsigned long min, val;
+ 	u8 reg;
+-	int err = kstrtoul(buf, 10, &val);
+-	if (err < 0)
+-		return err;
++	int rv;
 +
- 	if (seq_buf_can_fit(s, len)) {
- 		memcpy(s->buffer + s->len, str, len);
--		s->len += len;
-+		/* Don't count the trailing null byte against the capacity */
-+		s->len += len - 1;
- 		return 0;
++	rv = kstrtoul(buf, 10, &val);
++	if (rv < 0)
++		return rv;
+ 
+ 	/* Save fan_min */
+ 	mutex_lock(&data->update_lock);
+@@ -390,8 +392,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 		return -EINVAL;
  	}
- 	seq_buf_set_overflow(s);
+ 
+-	reg = (lm80_read_value(client, LM80_REG_FANDIV) &
+-	       ~(3 << (2 * (nr + 1)))) | (data->fan_div[nr] << (2 * (nr + 1)));
++	rv = lm80_read_value(client, LM80_REG_FANDIV);
++	if (rv < 0)
++		return rv;
++	reg = (rv & ~(3 << (2 * (nr + 1))))
++	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+ 
+ 	/* Restore fan_min */
 -- 
 2.19.1
 
