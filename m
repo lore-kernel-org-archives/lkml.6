@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F934C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E2AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7018121A80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC554218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900919;
-	bh=i8mREZB+8PDx2SGe85Bb4BtJN1WFRhlaCF2L+oVg9sU=;
+	s=default; t=1549900925;
+	bh=Bo/Ka2ucu4QoXjV4LqqcgqyzgA7UTGGPgmtiOF9ZTTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Dbd8Pt7duW9Tm7NjaxPvUyRC3uukTcyu8sbL6FHg+6TF+FROJGG+uqfNM8cbaX+b
-	 YnFJTV3pN0xls/zsQmhwQMYUZxqBuwjPbUzVCDi+nPGMPbC/JkpPF2w7oMA9uFxNkM
-	 vq/H1ti6CBaE66sdnG6aXn6fHVX428TYr1vkBy00=
+	b=klNQsCGYQm90yR1nAd8HKzZiq55MhO0vTIbgz99qfxsAI9aDcoEQQ1UPl39oyHJAN
+	 QkfhbawOk3I6SZmUbH7i4LyB6ImT256IQXOKfGFGAVcsPH5lSmTgkWY9nNuOlbqOWN
+	 IYEdEN6WIBtn3TCkobvq+BhlDoJmnDIbYX7GOkxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbfBKQB5 (ORCPT
+        id S1729445AbfBKOam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:01:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37272 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730172AbfBKOaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:30:46 -0500
+        id S1729724AbfBKOak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:30:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0943420675;
-        Mon, 11 Feb 2019 14:30:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E490820844;
+        Mon, 11 Feb 2019 14:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895445;
-        bh=i8mREZB+8PDx2SGe85Bb4BtJN1WFRhlaCF2L+oVg9sU=;
+        s=default; t=1549895439;
+        bh=Bo/Ka2ucu4QoXjV4LqqcgqyzgA7UTGGPgmtiOF9ZTTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0k/71FBVUvOxehfFWr60SwMMjMSXfnwpMoHtKkn5YmgPwacrT1XAhLRfcDybqs69
-         1ShgsaoJ/6UpVxyH5XGFY4FqurnuO3FynMHpcN81dXGz9EwtcULhjz6W1DebHtoldn
-         ARIpca2CNYQVV/OAglvIhcP3kByi0z8Eg/RNnfaQ=
+        b=qF/XCtbU8O0ZuoUkoz4Kjmr/FftQM8TI/UO17amn8WHhjOMt5QIkMMr+wq8vjJp6j
+         E62nV0DwyErvsvFy4bo3MjXL5dbq18i5qtOPn29019MXVBZvd7fKxrtEHlOOn30dFT
+         hyCv6can5yacnFcnEhAX3bs4+dIMSMR5sRWrvLhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Hsieh <paul.hsieh@amd.com>,
-        Eric Yang <eric.yang2@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 206/352] drm/amd/display: Add retry to read ddc_clock pin
-Date:   Mon, 11 Feb 2019 15:17:13 +0100
-Message-Id: <20190211141900.263471930@linuxfoundation.org>
+Subject: [PATCH 4.20 205/352] net: hns3: fix incomplete uninitialization of IRQ in the hns3_nic_uninit_vector_data()
+Date:   Mon, 11 Feb 2019 15:17:12 +0100
+Message-Id: <20190211141900.198909864@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,68 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bd4905a9583c760da31ded7256dca6f71483c3dc ]
+[ Upstream commit ae6017a71115ebc4e5c1a3f0f451319ab3f5c447 ]
 
-[WHY]
-On customer board, there is one pluse (1v , < 1ms) on
-DDC_CLK pin when plug / unplug DP cable. Driver will read
-it and config DP to HDMI/DVI dongle.
+In the hns3_nic_uninit_vector_data(), the procedure of uninitializing
+the tqp_vector's IRQ has not set affinity_notify to NULL and changes
+its init flag. This patch fixes it. And for simplificaton, local
+variable tqp_vector is used instead of priv->tqp_vector[i].
 
-[HOW]
-If there is a real dongle, DDC_CLK should be always pull high.
-Try to read again to recovery this special case. Retry times = 3.
-Need additional 3ms to detect DP passive dongle(3 failures)
-
-Signed-off-by: Paul Hsieh <paul.hsieh@amd.com>
-Reviewed-by: Eric Yang <eric.yang2@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c | 23 ++++++++++++++-----
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index 5141c1401889..ef1b350a45e0 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -332,7 +332,7 @@ bool dc_link_is_dp_sink_present(struct dc_link *link)
- {
- 	enum gpio_result gpio_result;
- 	uint32_t clock_pin = 0;
--
-+	uint8_t retry = 0;
- 	struct ddc *ddc;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 4aea3f57586e..85d534a24f2c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2971,12 +2971,12 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
  
- 	enum connector_id connector_id =
-@@ -361,11 +361,22 @@ bool dc_link_is_dp_sink_present(struct dc_link *link)
- 		return present;
- 	}
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
  
--	/* Read GPIO: DP sink is present if both clock and data pins are zero */
--	/* [anaumov] in DAL2, there was no check for GPIO failure */
--
--	gpio_result = dal_gpio_get_value(ddc->pin_clock, &clock_pin);
--	ASSERT(gpio_result == GPIO_RESULT_OK);
-+	/*
-+	 * Read GPIO: DP sink is present if both clock and data pins are zero
-+	 *
-+	 * [W/A] plug-unplug DP cable, sometimes customer board has
-+	 * one short pulse on clk_pin(1V, < 1ms). DP will be config to HDMI/DVI
-+	 * then monitor can't br light up. Add retry 3 times
-+	 * But in real passive dongle, it need additional 3ms to detect
-+	 */
-+	do {
-+		gpio_result = dal_gpio_get_value(ddc->pin_clock, &clock_pin);
-+		ASSERT(gpio_result == GPIO_RESULT_OK);
-+		if (clock_pin)
-+			udelay(1000);
-+		else
-+			break;
-+	} while (retry++ < 3);
+-		if (priv->tqp_vector[i].irq_init_flag == HNS3_VECTOR_INITED) {
+-			(void)irq_set_affinity_hint(
+-				priv->tqp_vector[i].vector_irq,
+-						    NULL);
+-			free_irq(priv->tqp_vector[i].vector_irq,
+-				 &priv->tqp_vector[i]);
++		if (tqp_vector->irq_init_flag == HNS3_VECTOR_INITED) {
++			irq_set_affinity_notifier(tqp_vector->vector_irq,
++						  NULL);
++			irq_set_affinity_hint(tqp_vector->vector_irq, NULL);
++			free_irq(tqp_vector->vector_irq, tqp_vector);
++			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+ 		}
  
- 	present = (gpio_result == GPIO_RESULT_OK) && !clock_pin;
- 
+ 		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
 -- 
 2.19.1
 
