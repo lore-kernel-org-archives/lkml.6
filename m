@@ -2,99 +2,109 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC20C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBABBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7AC20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928B42146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZF/AVF0A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2G2u39h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfBKHsV (ORCPT
+        id S1726876AbfBKHz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:48:21 -0500
-Received: from mail-eopbgr60052.outbound.protection.outlook.com ([40.107.6.52]:5657
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725931AbfBKHsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:48:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M2aD3DjmZ7NRQOIK0dSZrnZXCc8eiVdYQBg2Ia5Lizg=;
- b=ZF/AVF0A43WfHGgmlnTV1c3jq+JOCs64Ew2ooh7szKS5FY1NRHTBbRkxhDvvErXVN3PtcQ47OLiw3KJAgmas5e27XOwzFW4W9sI0w4681QoVk5pSKwyC1Oc9GTdBleve5i1gNyuUsqvs+72t/4RQb32tqAu1gLAyWbSGeTzy6bE=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3774.eurprd04.prod.outlook.com (52.134.15.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Mon, 11 Feb 2019 07:48:16 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::f51e:1692:77db:b931]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::f51e:1692:77db:b931%6]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
- 07:48:16 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] crypto: caam - add missing put_device() call
-Thread-Topic: [PATCH v2] crypto: caam - add missing put_device() call
-Thread-Index: AQHUwEEdF2TWagIXnEe8JyHpqqHt8w==
-Date:   Mon, 11 Feb 2019 07:48:16 +0000
-Message-ID: <VI1PR0402MB3485ADB2A3B8394DAFE03C4798640@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <HK0PR02MB3634C3869A390146183A1862B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3774;6:9gTMVzhUV2MZJtCUlCz0XWTIAsX2bgynQlgm3n/Ch6vQl+QsHJvuCSb3aZZtXELN18PsLRVsGfibow1X7oRHheSNQ/On5dV7vlTr7h+zPv/8q043lOWyYppQQfJ6e4KKmoaUgbMeGTchSBlHP4kp2gV+EHyFXROW+zQfjDgfXO6GHk+HuLQLE/mwZsDl4BgW22qCaKcbGoXhosVJYYODOX84zeMzj7NaccyxAFRZ6q44eSK/+lWi6KkYGdGmk3MKQoYswTGSejleiRLbIRczV07+mdh+DepnfqHYTBkMDm8TFoyi3NF93vK7heW8C/wK2IgNBpHgjB4SKw1LRjgE9O/pIsKRCFARGptAWo+Y89JVsNUeQqjAIQ8zcb2tQ3BwJQsyPYD9k1bCTXd1CE21/vsned83LF2aqlwjYULb41ISXKcMbl4RMF2wbSYp3Ct1RVhxlB9E03+rILlM6ZDNPg==;5:yu006qOZ5H5uyDoJVajWv4RtEEj5o3DF72+fkgmA4l4Jf3yhNRTtHlLFhASx+FCZcM2XBoZ2RWAJqwil+492bWhmb14xO6387wRs8nAnHnB38de6v5m1o/xiu1NpjHezT09cJMDkkhpO+wxxWi7Y8NMNXf9AG9mZ+d6nVNFdH/CHT5MKbyFXYYG+3vz/brZpfDGAPjvqqUTIFh8QpeMM/Q==;7:7sxN1S7d1LEVHHu7Z13/PNsnBRQp4PkW25rCAYiicZSc+cZMxi7l8dImCAmJGYmgKrW2mZIdr2qgHGS/851njApM8Slf50/uFVjgwqcmvQYgMPetIBA5M1WF5nWk8E+Zq4y05foMT9emS3Xqw/JDXA==
-x-ms-office365-filtering-correlation-id: 8e0b4ace-855a-441c-6e6a-08d68ff548a3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3774;
-x-ms-traffictypediagnostic: VI1PR0402MB3774:
-x-microsoft-antispam-prvs: <VI1PR0402MB3774CEE46A17EEB297DAF22098640@VI1PR0402MB3774.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(376002)(346002)(396003)(189003)(199004)(97736004)(256004)(71190400001)(71200400001)(6246003)(4326008)(476003)(486006)(44832011)(2501003)(446003)(106356001)(25786009)(53546011)(6506007)(102836004)(33656002)(26005)(2906002)(105586002)(186003)(3846002)(7736002)(74316002)(6116002)(9686003)(229853002)(305945005)(55016002)(66066001)(316002)(14454004)(4744005)(478600001)(76176011)(53936002)(99286004)(6436002)(54906003)(7696005)(68736007)(8936002)(8676002)(81156014)(81166006)(110136005)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3774;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: kk4uu5P4lMpoOtB4WQyj8eQvBSBJo0ESmgHjG2+6gbSQ1zegHs5UYD/LELgsPvgPF1j51yelWw7PovgRxuU/NNrMiQwdXVcaVDGk8CuuO2krqVfPBAyrNb91xMFVCNPihWhtIj9AogJcFDSigY2xRMd3r1N7GeWyezHI3Kor6PTncT+OqOio4t2lkg6+S2vOmEy7ex9nSAUUeZrKLVlSs3SDcA6h7P+oktNGJbQaAXy9E27fbehS6D96EY9CSq72pVPfMAfipQU7FrkH2+vnClF11EpJBftz1yrmGH8zO4kVWCKTKIscNCrNlpCBFBlt7Rj0OFb2CTqUzIuTpEqqR0kF7jLPdLlNKXYOPl8kXP1c/t9q8mVFy+Xn2M0CXgx5ozTan9iw3yrGIBdzL4O5jWlrayBKGDRpEFQK+oH+b0w=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Feb 2019 02:55:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41450 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKHz3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 02:55:29 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so4885837pfi.8;
+        Sun, 10 Feb 2019 23:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ygAEYs2cUK0TFmtHBpTd5q1OXKnqXfmKH4w1qi/rkyE=;
+        b=N2G2u39hE7742HJ34qPv5zld3vE71j66atBmbESmuD7la48FpTSssaywppnOm5KUu4
+         Ylr+laAskz9xKmLsh3EPfmVfjTP7kOdiA7r+01vRcxQGNWZPXMXmWqOLtRd4SEa0H0V2
+         bOMTxVNwj/Qai5hZNZvVmdhu6Vgdz7xJ1ay3qKzuONaDiSUfkAWufnv3Sw+GGiYB7SHJ
+         kSSBUgGO18OTpuHilZp1I5/+aDCHVTb1lX+gy07NjAsZb9OfRgi9s5GNPPYbZTaP5sYI
+         OZtRGePYFQF+Ry/87MyrWPjMHWkdRv8AyoLQwFQge/RTYsdfFXQRQ39ThUjDvEm9PjgM
+         0y3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ygAEYs2cUK0TFmtHBpTd5q1OXKnqXfmKH4w1qi/rkyE=;
+        b=AtdB3r+q7vDsALi/5Lyb+vqID9l2amNEfCxe1F7VWNH0Y2g8dlEYNbBYoP4quW4ekd
+         SIirJmNHYuzwtEl+z4jKxkvATuM9wb4dD/Tq535coqG3OmHodSBaDoClQKZuFnblDzVl
+         ecCAhT10JFfyDdIPVJYlBlE95YDedqIX6ies523LTWzqKVHd85jEwi2zaCoPViCCQ3/K
+         PlEI615ELrLBL4GVorVWO71rxS14extocCY2y3YcCnL86nu6dlTfVXvvGQqqgeRLFGLv
+         fshQFWhdH1Ax74jiN6Uj+kIy6d0vQXSPpi4GM2f0UfwvC1O1bjWiYNhXzrUW0YB66vn3
+         nU8w==
+X-Gm-Message-State: AHQUAuYH8E09fVwRcZEy+QYbcZzlyuu+Qf+6C+vGB5jLhYU6i0kvqy6z
+        1sbBEmOv7afd8EsJiBHP5HA=
+X-Google-Smtp-Source: AHgI3IYwJrTZAnuaPYyDWZ08ETuWFKbUPQzGipOaxRvNkL74WbdP2DA2ucnKRH6VIK5oE9Ofh/9nyg==
+X-Received: by 2002:a63:da18:: with SMTP id c24mr16494423pgh.318.1549871728594;
+        Sun, 10 Feb 2019 23:55:28 -0800 (PST)
+Received: from localhost ([175.223.48.87])
+        by smtp.gmail.com with ESMTPSA id y72sm14624151pfa.98.2019.02.10.23.55.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 23:55:27 -0800 (PST)
+Date:   Mon, 11 Feb 2019 16:55:24 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
+        akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com
+Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
+ description
+Message-ID: <20190211075524.GA26690@jagdpanzerIV>
+References: <20190207124635.3885-1-mpe@ellerman.id.au>
+ <20190208185515.r6vkrezbd3odhpxt@home.goodmis.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0b4ace-855a-441c-6e6a-08d68ff548a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 07:48:16.6142
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3774
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208185515.r6vkrezbd3odhpxt@home.goodmis.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/9/2019 8:31 AM, Wen Yang wrote:=0A=
-> The of_find_device_by_node() takes a reference to the underlying device=
-=0A=
-> structure, we should release that reference.=0A=
-> =0A=
-> Fixes: 35af64038623 ("crypto: caam - Check for CAAM block presence before=
- registering with crypto layer")=0A=
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>=0A=
-> ---=0A=
-> v2->v1: This patch also fixes caamalg.c, caampkc.c and caamrng.c.=0A=
-> =0A=
-caamalg_qi.c is also affected, could you please include it?=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+On (02/08/19 13:55), Steven Rostedt wrote:
+[..]
+> > +	if (len) {
+> > +		/*
+> > +		 * Order the stores above in vsnprintf() vs the store of the
+> > +		 * space below which joins the two strings. Note this doesn't
+> > +		 * make the code truly race free because there is no barrier on
+> > +		 * the read side. ie. Another CPU might load the uninitialised
+> > +		 * tail of the buffer first and then the space below (rather
+> > +		 * than the NULL that was there previously), and so print the
+> > +		 * uninitialised tail. But the whole string lives in BSS so in
+> > +		 * practice it should just see NULLs.
+> > +		 */
+> > +		smp_wmb();
+> 
+> This shows me that this can be called at a time when more than one CPU is
+> active. What happens if we have two CPUs calling dump_stack_add_arch_desc() at
+> the same time? Can't that corrupt the dump_stack_arch_desc_str?
+
+Can overwrite part of it, I guess (but it seems that Michael
+is OK with this). The string is still NULL terminated.
+
+The worst case scenario I can think of is not the one when
+two CPUs call dump_stack_add_arch_desc(), but when CPUA calls
+dump_stack_add_arch_desc() to append some data and at the
+same time CPUB calls dump_stack_set_arch_desc() and simply
+overwrites dump_stack_arch_desc_str. Not sure if this is
+critical (or possible).
+
+	-ss
