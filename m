@@ -2,175 +2,321 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71157C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5380BC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253A9218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:23:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KEeWnknn"
+	by mail.kernel.org (Postfix) with ESMTP id 22A14218F0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfBKQXn (ORCPT
+        id S1728803AbfBKQY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:23:43 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2329 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbfBKQXm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:23:42 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c61a18f0000>; Mon, 11 Feb 2019 08:23:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 08:23:40 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 11 Feb 2019 08:23:40 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 16:23:39 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 16:23:39 +0000
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.58) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Mon, 11 Feb 2019 16:23:39 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3608.namprd12.prod.outlook.com (20.178.197.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Mon, 11 Feb 2019 16:23:37 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
- 16:23:37 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        "Shardar Mohammed" <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "peda@axentia.se" <peda@axentia.se>,
-        "digetx@gmail.com" <digetx@gmail.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V18 6/6] i2c: tegra: add i2c interface timing support
-Thread-Topic: [PATCH V18 6/6] i2c: tegra: add i2c interface timing support
-Thread-Index: AQHUv+CHS8iiD7Agv0Wp9axF0O15H6XalJQAgAA0TeA=
-Date:   Mon, 11 Feb 2019 16:23:37 +0000
-Message-ID: <BYAPR12MB339842E44F370110CFA582FEC2640@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
- <1549652382-5476-6-git-send-email-skomatineni@nvidia.com>
- <20190211130322.2kpoky3scnqnxulw@ninjato>
-In-Reply-To: <20190211130322.2kpoky3scnqnxulw@ninjato>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3608;6:5nLh7RgDh4ihxLDe4o3iDGPX3vnKoPDHraItKASQzVSpvQYX3UEhGMOAo+1TS/TVwSuCSkNQmlRq6Uz8Nvqyf0KGzw/NYe8qNYJlX/FAyYAFxUHbabTt53SA/rZV/6XexYAjnGMlOwjGr/w60MEmc6NiwGvR1RYtz2K35h/J3mwWq1KVOYWKSYBB+ZSpZ8GR1UPwAEZHVFLNkc1NQvB+9u4HOnt7FTRNfsNTC9XzC+z39XB2B4TqmuE4701YStlTwhDmogyhUFk2fqeiTeWrQw90Ge1H90dWhZxYBcheGX/ZJ4NBlIWMiEKfYil522eEXGr0rIUgkYgHhnsJwdhtrMYqbyU3qLnCHFFbxVaYGJvQc6+IqzBtLvnn4UKyv2NRIMuAXmYobjlj8z21vlcPvcX3TSWUlJuQZw4Z4kGt5z6THEHraECn5gU+XYSMw3PFhKauvmBoRCVSkNJH0VxvWQ==;5:BZ4w+NhassCLVIQgmc76gdVQvzyxHYaSwiD8axgU4RaLkT+/cxax8PoluewtkhfC027VcUE+QsQEfxtYQpvirrWqr1+Nkedz9PQR7UaDFUq76JbIe7VoDXlxoE0ICpTH1gYma9I0q00Vnt9TTOvI1WRjvwDwXdAp6ag3JT1ymSiCj+vewFkXbz7nS2o8ntkpb3pyjSppc7K4oCU8ou0/pw==;7:1yuptr36fKF7BjFPxuZeBcFPOnNQLGTWm3gQ8Dg5UYL+EEMpYB/vhTggZC2rkDtdq/cijDYIPEuR9mbXzBlgmPhTi5siyx2JujaXGLQN3Dc/P0u7bZzLUH+W0lqBhzEGv+u8V5f7EyEMNbq/hG70Qg==
-x-ms-office365-filtering-correlation-id: c41d3c79-cc9e-4810-49ca-08d6903d46fe
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3608;
-x-ms-traffictypediagnostic: BYAPR12MB3608:
-x-microsoft-antispam-prvs: <BYAPR12MB3608AD85A42A8A2F3E4DAC7EC2640@BYAPR12MB3608.namprd12.prod.outlook.com>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(39860400002)(136003)(376002)(199004)(189003)(6506007)(102836004)(14454004)(186003)(71200400001)(9686003)(53936002)(6246003)(26005)(66066001)(71190400001)(6436002)(25786009)(256004)(55016002)(106356001)(105586002)(7696005)(33656002)(76176011)(8936002)(229853002)(305945005)(3846002)(6116002)(81156014)(81166006)(86362001)(7736002)(478600001)(476003)(68736007)(8676002)(97736004)(99286004)(74316002)(446003)(6916009)(11346002)(54906003)(316002)(486006)(4326008)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3608;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1kxBg4U3q1e14XNIXoKGvswt5Ny+2fmyQ/ZmJFCp5NJQ+v3b6qHUIITcCeICd/ctH5r7nJya5NJ6LJ99luLg/gqbniJfMzrV+Y6mcNRBctQGVWdtoeIQAALOb2Ytz/XztaLEcmiumw172CJTmCDC0CwZiz+4G4gTChe/spPOoJ0rcf7pm372NZJNqF2OVLvZRlnL9Zozklc926+0ZYvIPKoWr+0rwJoyS4W4676ZlKXsTsRAaJdSIounbADldU2+ChOjnMOsxRud1EIr8gKXv2NI2MrInRGly6gdIApPaOhYvZNNVklXR8H04G87IOx1lUP4jjJhZpNXkmG8OfMYEdDpXjVFEEQ3+BIywyI2ysGgQqQEhnqZr8+Z7fzX17iMPO8nfhLu0BTkDPf7d1dJ3YC0Rr5rjJ4bdBRXeipH3Qc=
+        Mon, 11 Feb 2019 11:24:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728699AbfBKQY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:24:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 01732B1EE;
+        Mon, 11 Feb 2019 16:24:28 +0000 (UTC)
+Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB664648B6;
+        Mon, 11 Feb 2019 16:24:03 +0000 (UTC)
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
+        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+ <20190204181558.12095.83484.stgit@localhost.localdomain>
+ <20190209195325-mutt-send-email-mst@kernel.org>
+ <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
+ <20190211091623-mutt-send-email-mst@kernel.org>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <ac61d035-7c7b-bfec-c78b-b9387c40d3ea@redhat.com>
+Date:   Mon, 11 Feb 2019 11:24:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c41d3c79-cc9e-4810-49ca-08d6903d46fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 16:23:37.5637
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3608
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549902223; bh=TyJxQ37NfELI1jRm5UbbuCIv5rxYrbxE5inlI/NNqQQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=KEeWnknnqqfuK7nPvNscDyYvN2i5L1KxYbxN/Nsjkywp1ILLFrBRH8+UpB5dqe+Nz
-         jm2j7/YFlKrWdX3ItTj+AU6MKCwacIXv8UfCpsOhmiIKCy5etdMFbPSjfLbFoA2MJJ
-         k79wLW05Z/VpBywhNvqWAFooVjzvjrSua6ssPNUzkaCR+y+vrGp/AYoa+TCRH4n54u
-         36ackSGM3zIJLr/jEYbajNKe03vu61V/Gg8wn7+dzNSpjrXglJXmlwwru46LDNB2ln
-         JayMthqkCYcxA2SHVwtjlxFc6qv9UuqBw09yc8Tw3Fl4Zxrn0HuW5oWPdyE50y0Drn
-         i2y7RnuZ3yuKg==
+In-Reply-To: <20190211091623-mutt-send-email-mst@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="qXx3fZQQSn93zl79DSJ7RyaJquTUjxsqL"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 16:24:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Fri, Feb 08, 2019 at 10:59:42AM -0800, Sowjanya Komatineni wrote:
-> > This patch adds I2C interface timing registers support for proper bus=20
-> > rate configuration along with meeting the I2C spec setup and hold=20
-> > times based on the tuning performed on Tegra210,
-> > Tegra186 and Tegra194 platforms.
-> >=20
-> > I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field and=20
-> > Tegra I2C controller design uses them as a part of internal clock=20
-> > divisor.
-> >=20
-> > I2C_INTERFACE_TIMING_1 register contains the setup and hold times for=20
-> > start and stop conditions.
-> >=20
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> > Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->
-> Are you aware that we also have DT bindings for various I2C timing values=
-? They are usually board dependent and not so much SoC dependent.
-> Please check here:
->
-> Documentation/devicetree/bindings/i2c/i2c.txt
->
-> (Oops, I noticed 'i2c-sda-hold-time-ns' is missing from the docs. Will fi=
-x that ASAP)
->
-> Just saying. The patch here is fine for me. DT support could be added lat=
-er, if you want that.
->
-Hi Wolfram,
-Yes I looked into those and the reason I added them as part of hw_feature i=
-nside driver are
-1. property is in-terms of ns for fall time but the value we program in int=
-erface timing is not exact ns time
-2. Below are the timing parameters need to be programmed for tegra I2C and =
-I don't see equivalent property for each of those
-     TSU_STA : Setup time for repeated START condition
-     THD_STA : Hold time for (repeated) START condition
-     TSU_STO : Setup time for STOP condition
-     TBUF: Bus free time b/w STOP and START conditions
-3. All above Timing configuration settings are different for different spee=
-d modes (STD/FM & FM+/HS Mode)=20
-4. All tegra platforms of specific Tegra chip has the same timing configura=
-tion at-least for now so added this info as part of hw feature inside the d=
-river.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--qXx3fZQQSn93zl79DSJ7RyaJquTUjxsqL
+Content-Type: multipart/mixed; boundary="IyEb9NGqXcudpVZ93K6BModc8xL8gsLEU";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rkrcmar@redhat.com,
+ alexander.h.duyck@linux.intel.com, x86@kernel.org, mingo@redhat.com,
+ bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+ akpm@linux-foundation.org
+Message-ID: <ac61d035-7c7b-bfec-c78b-b9387c40d3ea@redhat.com>
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+ <20190204181558.12095.83484.stgit@localhost.localdomain>
+ <20190209195325-mutt-send-email-mst@kernel.org>
+ <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
+ <20190211091623-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190211091623-mutt-send-email-mst@kernel.org>
 
-Sowjanya
+--IyEb9NGqXcudpVZ93K6BModc8xL8gsLEU
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
+
+On 2/11/19 9:17 AM, Michael S. Tsirkin wrote:
+> On Mon, Feb 11, 2019 at 08:30:03AM -0500, Nitesh Narayan Lal wrote:
+>> On 2/9/19 7:57 PM, Michael S. Tsirkin wrote:
+>>> On Mon, Feb 04, 2019 at 10:15:58AM -0800, Alexander Duyck wrote:
+>>>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>>
+>>>> Because the implementation was limiting itself to only providing hin=
+ts on
+>>>> pages huge TLB order sized or larger we introduced the possibility f=
+or free
+>>>> pages to slip past us because they are freed as something less then
+>>>> huge TLB in size and aggregated with buddies later.
+>>>>
+>>>> To address that I am adding a new call arch_merge_page which is call=
+ed
+>>>> after __free_one_page has merged a pair of pages to create a higher =
+order
+>>>> page. By doing this I am able to fill the gap and provide full cover=
+age for
+>>>> all of the pages huge TLB order or larger.
+>>>>
+>>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>> Looks like this will be helpful whenever active free page
+>>> hints are added. So I think it's a good idea to
+>>> add a hook.
+>>>
+>>> However, could you split adding the hook to a separate
+>>> patch from the KVM hypercall based implementation?
+>>>
+>>> Then e.g. Nilal's patches could reuse it too.
+>> With the current design of my patch-set, if I use this hook to report
+>> free pages. I will end up making redundant hints for the same pfns.
+>>
+>> This is because the pages once freed by the host, are returned back to=
+
+>> the buddy.
+> Suggestions on how you'd like to fix this? You do need this if
+> you introduce a size cut-off right?
+
+I do, there are two ways to go about it.
+
+One is to=C2=A0 use this and have a flag in the page structure indicating=
+
+whether that page has been freed/used or not. Though I am not sure if
+this will be acceptable upstream.
+Second is to find another place to invoke guest_free_page() post buddy
+merging.
+
+>
+>>>
+>>>> ---
+>>>>  arch/x86/include/asm/page.h |   12 ++++++++++++
+>>>>  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
+>>>>  include/linux/gfp.h         |    4 ++++
+>>>>  mm/page_alloc.c             |    2 ++
+>>>>  4 files changed, 46 insertions(+)
+>>>>
+>>>> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page=
+=2Eh
+>>>> index 4487ad7a3385..9540a97c9997 100644
+>>>> --- a/arch/x86/include/asm/page.h
+>>>> +++ b/arch/x86/include/asm/page.h
+>>>> @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *pa=
+ge, unsigned int order)
+>>>>  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+>>>>  		__arch_free_page(page, order);
+>>>>  }
+>>>> +
+>>>> +struct zone;
+>>>> +
+>>>> +#define HAVE_ARCH_MERGE_PAGE
+>>>> +void __arch_merge_page(struct zone *zone, struct page *page,
+>>>> +		       unsigned int order);
+>>>> +static inline void arch_merge_page(struct zone *zone, struct page *=
+page,
+>>>> +				   unsigned int order)
+>>>> +{
+>>>> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+>>>> +		__arch_merge_page(zone, page, order);
+>>>> +}
+>>>>  #endif
+>>>> =20
+>>>>  #include <linux/range.h>
+>>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>>>> index 09c91641c36c..957bb4f427bb 100644
+>>>> --- a/arch/x86/kernel/kvm.c
+>>>> +++ b/arch/x86/kernel/kvm.c
+>>>> @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsign=
+ed int order)
+>>>>  		       PAGE_SIZE << order);
+>>>>  }
+>>>> =20
+>>>> +void __arch_merge_page(struct zone *zone, struct page *page,
+>>>> +		       unsigned int order)
+>>>> +{
+>>>> +	/*
+>>>> +	 * The merging logic has merged a set of buddies up to the
+>>>> +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take=
+
+>>>> +	 * advantage of this moment to notify the hypervisor of the free
+>>>> +	 * memory.
+>>>> +	 */
+>>>> +	if (order !=3D KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
+>>>> +		return;
+>>>> +
+>>>> +	/*
+>>>> +	 * Drop zone lock while processing the hypercall. This
+>>>> +	 * should be safe as the page has not yet been added
+>>>> +	 * to the buddy list as of yet and all the pages that
+>>>> +	 * were merged have had their buddy/guard flags cleared
+>>>> +	 * and their order reset to 0.
+>>>> +	 */
+>>>> +	spin_unlock(&zone->lock);
+>>>> +
+>>>> +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
+>>>> +		       PAGE_SIZE << order);
+>>>> +
+>>>> +	/* reacquire lock and resume freeing memory */
+>>>> +	spin_lock(&zone->lock);
+>>>> +}
+>>>> +
+>>>>  #ifdef CONFIG_PARAVIRT_SPINLOCKS
+>>>> =20
+>>>>  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
+>>>> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+>>>> index fdab7de7490d..4746d5560193 100644
+>>>> --- a/include/linux/gfp.h
+>>>> +++ b/include/linux/gfp.h
+>>>> @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(in=
+t nid, gfp_t flags)
+>>>>  #ifndef HAVE_ARCH_FREE_PAGE
+>>>>  static inline void arch_free_page(struct page *page, int order) { }=
+
+>>>>  #endif
+>>>> +#ifndef HAVE_ARCH_MERGE_PAGE
+>>>> +static inline void
+>>>> +arch_merge_page(struct zone *zone, struct page *page, int order) { =
+}
+>>>> +#endif
+>>>>  #ifndef HAVE_ARCH_ALLOC_PAGE
+>>>>  static inline void arch_alloc_page(struct page *page, int order) { =
+}
+>>>>  #endif
+>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>> index c954f8c1fbc4..7a1309b0b7c5 100644
+>>>> --- a/mm/page_alloc.c
+>>>> +++ b/mm/page_alloc.c
+>>>> @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *=
+page,
+>>>>  		page =3D page + (combined_pfn - pfn);
+>>>>  		pfn =3D combined_pfn;
+>>>>  		order++;
+>>>> +
+>>>> +		arch_merge_page(zone, page, order);
+>>>>  	}
+>>>>  	if (max_order < MAX_ORDER) {
+>>>>  		/* If we are here, it means order is >=3D pageblock_order.
+>> --=20
+>> Regards
+>> Nitesh
+>>
+>
+>
+--=20
+Regards
+Nitesh
+
+
+--IyEb9NGqXcudpVZ93K6BModc8xL8gsLEU--
+
+--qXx3fZQQSn93zl79DSJ7RyaJquTUjxsqL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxhoaIACgkQo4ZA3AYy
+ozmlFg/+JqGEyRG/6eSJo76R07PR4myO0ukkvUcxhPRYRQPFKG+64BaaZam/k58p
+jVYWns005s/F4ZvmavRpwY5VgmEOiBMpjijEn886elQfGVG95hAyxiFAgbsNYxmB
+lSX3KYc5VrICx71byZenddUZPSz1t8vXKdOP4x2r95aPFOmEd0kV7GdL/zaq2EQ2
+YGlVnKd3dpwkSb4h0HZFOKcZ2g7XsZfCkHCxKBMWuFSu9C0XwRTD76MgyKtOc926
+wxrmel0oJnRxbNF9jCj70qaaTuWYvwrIMPySrHlid0VM3t0mUoj2cgfatnAdj+3e
+rI4NGZdj8niD4rvbGMkCs0Rxs8TIXyiywxjFjVrp/rEnOJI/Vmi0T7MrlzYWab4Z
+lCQRI/4vNI4CaaBannrN8ctD3Fl4dOH+DM+B9ifyk9mns0SkQqy96Kjroh3o7CKG
+x9kGKzdSUqyJXb+E61QtaCyWpFMHFdOlmvv5AtYWQyNvoJEcQ5anytzX2BM7WZbe
+oo/WXq84O0V87UVId0JkCAJoB1jGrc1WsxpqM3+vzZvdaV+carbQrWx4ZgVItXov
+FsoWQMoPLexeJdZk+Af+HgJiJimOfZEyLTbyS2Vh6wAcewLGbhbImKYt6xjNTfd8
+Le9j2oqkdEtHF+Efcate4JFjvgnhV+ygWkuixjISTRY9Vf1AvVs=
+=R7Q8
+-----END PGP SIGNATURE-----
+
+--qXx3fZQQSn93zl79DSJ7RyaJquTUjxsqL--
