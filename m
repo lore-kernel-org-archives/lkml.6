@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B9AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B862FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B16E21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781E021B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895865;
-	bh=TBpa5vMs0JrmUz3dafruZ0iVtKGSvh7JN5xZDGADmwQ=;
+	s=default; t=1549895874;
+	bh=5Wz7R4jYFXzViboDSCx3FTdkCQNdbNhUfM7JYZoTQ2s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wbKFrs79pIKUn9zUgAgkxaSjxMWWUuZ86y7IID++uP3KQJFnd5Mc/pgzSKFLRz5M0
-	 /y539bYipwNprgRf0vcWR18JFlpZfMa0iIlvOnjsyTGcV+hrynle7B+yhIR9s2lAMg
-	 SHpiARp2lQaUBnAbRqNE3rDwbi8XKhdSU0ee4v+w=
+	b=v8tXL6cu/Xa0DRlc0akGG60EVG/BavSbYLH3J4pNDNyXaSm2rNA5K8ywY+DvZJ0Wh
+	 V22S7NGNlV+7kY+gB+4bxJ5EyS+YCwg3nT/khljrBDfa+t+EyppgzWsOcOMaogxAae
+	 yvHWxwdzBIm3YuDMRYnMQ2M1i4FZ9GXGfnLBkwgY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731513AbfBKOhn (ORCPT
+        id S1731551AbfBKOhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47094 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731495AbfBKOhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:39 -0500
+        id S1731524AbfBKOhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD7D320700;
-        Mon, 11 Feb 2019 14:37:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA36720844;
+        Mon, 11 Feb 2019 14:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895858;
-        bh=TBpa5vMs0JrmUz3dafruZ0iVtKGSvh7JN5xZDGADmwQ=;
+        s=default; t=1549895867;
+        bh=5Wz7R4jYFXzViboDSCx3FTdkCQNdbNhUfM7JYZoTQ2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wGGxwqWJvpXHSnQPmJ8Up9oSs2SKkTgvlMQTR1YsXuklxHPoq9o+HYZLAudz6nSmL
-         I+Tq9KrHJBEG8boRJXu8T0at97lgxgFyTvb9JovVKTObNn5YaC+bEeLFTAnuyFYqwj
-         jvcs52MXMbRYXywv29m1XyDUZRivSAnMon6rzl+Q=
+        b=dXtD+vYHcOwmQwJqtj/pUSYHtUlm1p1/mcM1XwlWvTd0w+YxaglA38pwH2DjYewlS
+         NOkcmXpP5Fu2u4yYwqFoTRwvyZIHm5IoDHu6Ei5c1rpkAjdu5MVQkMyDXsJYqffVdi
+         eIyakOrKaiM40cFeXUcbjmDdBKhcc+hy54jkZTaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Secunia Research <vuln@secunia.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 305/352] sctp: walk the list of asoc safely
-Date:   Mon, 11 Feb 2019 15:18:52 +0100
-Message-Id: <20190211141906.269528538@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 4.20 350/352] serial: sh-sci: Do not free irqs that have already been freed
+Date:   Mon, 11 Feb 2019 15:19:37 +0100
+Message-Id: <20190211141909.445654543@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,45 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-[ Upstream commit ba59fb0273076637f0add4311faa990a5eec27c0 ]
+commit 4d95987a32db53f3beca76f8c4c8309ef6a5f192 upstream.
 
-In sctp_sendmesg(), when walking the list of endpoint associations, the
-association can be dropped from the list, making the list corrupt.
-Properly handle this by using list_for_each_entry_safe()
+Since IRQs might be muxed on some parts, we need to pay attention when we
+are freeing them.
+Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
 
-Fixes: 4910280503f3 ("sctp: add support for snd flag SCTP_SENDALL process in sendmsg")
-Reported-by: Secunia Research <vuln@secunia.com>
-Tested-by: Secunia Research <vuln@secunia.com>
+Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sctp/socket.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/sh-sci.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -2027,7 +2027,7 @@ static int sctp_sendmsg(struct sock *sk,
- 	struct sctp_endpoint *ep = sctp_sk(sk)->ep;
- 	struct sctp_transport *transport = NULL;
- 	struct sctp_sndrcvinfo _sinfo, *sinfo;
--	struct sctp_association *asoc;
-+	struct sctp_association *asoc, *tmp;
- 	struct sctp_cmsgs cmsgs;
- 	union sctp_addr *daddr;
- 	bool new = false;
-@@ -2053,7 +2053,7 @@ static int sctp_sendmsg(struct sock *sk,
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1921,7 +1921,7 @@ out_nomem:
  
- 	/* SCTP_SENDALL process */
- 	if ((sflags & SCTP_SENDALL) && sctp_style(sk, UDP)) {
--		list_for_each_entry(asoc, &ep->asocs, asocs) {
-+		list_for_each_entry_safe(asoc, tmp, &ep->asocs, asocs) {
- 			err = sctp_sendmsg_check_sflags(asoc, sflags, msg,
- 							msg_len);
- 			if (err == 0)
+ static void sci_free_irq(struct sci_port *port)
+ {
+-	int i;
++	int i, j;
+ 
+ 	/*
+ 	 * Intentionally in reverse order so we iterate over the muxed
+@@ -1937,6 +1937,13 @@ static void sci_free_irq(struct sci_port
+ 		if (unlikely(irq < 0))
+ 			continue;
+ 
++		/* Check if already freed (irq was muxed) */
++		for (j = 0; j < i; j++)
++			if (port->irqs[j] == irq)
++				j = i + 1;
++		if (j > i)
++			continue;
++
+ 		free_irq(port->irqs[i], port);
+ 		kfree(port->irqstr[i]);
+ 
 
 
