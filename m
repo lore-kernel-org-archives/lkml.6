@@ -2,90 +2,133 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCFDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29015C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9775721855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="BgQ1ovA3"
+	by mail.kernel.org (Postfix) with ESMTP id EC3B5218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549900283;
+	bh=bhLe5oNWGxCw9acYDORQ0JceE+j7Oypl1mW8/PEHgas=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xmNX4AC2X3v4TTy7/0qGyjtVwgV3PixpRwQ7cIDQ2XxrC9V0+MMF8ovlCfZDaCRPS
+	 dzXTMB1ED9N2/4HG8/aJM3V10gIaMnNOJfW4mNscwXsX125VbieJZpn0t/tLCnf/zP
+	 aMMPMIxI6YNmqmxyGY0OcdEzQ0AuX4eKWnyiQvaM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733001AbfBKPuy (ORCPT
+        id S1731619AbfBKOiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:50:54 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46179 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbfBKPuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:50:52 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f2so1197864edy.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:50:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=H8O2ji7eoCfVIIQ2UDhxHCJpSPjNVRuur7TWt3y0Zyo=;
-        b=BgQ1ovA38ynogaU+HY5DzzjQtYKGLcOXUHk6YKYcCrGJCPDJk2KBptC754VY5D/YMY
-         MAu+e5glyeABGKaLnqLQi6iMHeLit16ek9k3p3ODpek/sb2q3yrUBKHaOW/2xe0sEelu
-         0VqhxE+f3q27w+9dtB2SJOmHQsLWZVWnx8DNm9MUFGtxByLY0ykI53g94gcqcsgclG9N
-         gMyo0tFwSzU0bmzr/B6a+V8CExZhVTBxTep1otNfuC98yHnHGYYDieiOJQe5KxybDY0C
-         26FTeFGHPVNgWdvFL8umZCMb9iJxNhsdyegsXufPcj/zVKKykr0dsBuBlSdy9Gi+Putz
-         LX0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H8O2ji7eoCfVIIQ2UDhxHCJpSPjNVRuur7TWt3y0Zyo=;
-        b=FloYvkwIzBwdYwXvbJ9grKfR+MXLlyZtAhERhm3t0SqW7AtTTzHQ97+xd2hb8UMuqV
-         iZNaDsV/ygmH7gC5wR6yScPEMVxU7cbOFR/0gqUHhtaEJz2rTqhPqr9cd6+lFMnAWMJ7
-         xzXIwgSZvNd/pgbWX7xUvfqsyUnIRiKjhQ+EqlVKD8K9TjskIH2dNnUZZa9alZ4ryMur
-         L5f8frQrJL5qUtFn+8j4OxwkDGhOoVPnRM/pUikt7MkKSbUIBIhuMGn1DWERsjOdcWGd
-         xfTsq58CpgMPAPgTVHntXx2JivMcNYliYFW6WawnbMVZG0HjIffeQnZlr5AcGl0YrBcU
-         m84Q==
-X-Gm-Message-State: AHQUAuZzEitmXA3R1dfvKnDawsd0nOFJMfwTajERcaMNTQ47zPe2OXQg
-        3lvvpq8pIoDZ2bT7KCWJwm2Agg==
-X-Google-Smtp-Source: AHgI3Iac0a3uU7QGlWDuyjvPQW2YpTMPaeT7f5cg2/yDaaOSCMrpt6e2ebm4J8c3xvG2gxw2z7E+1Q==
-X-Received: by 2002:a50:81e4:: with SMTP id 91mr4084833ede.274.1549900250335;
-        Mon, 11 Feb 2019 07:50:50 -0800 (PST)
-Received: from localhost.localdomain ([80.233.32.169])
-        by smtp.gmail.com with ESMTPSA id j16sm1949902edt.81.2019.02.11.07.50.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:50:49 -0800 (PST)
-From:   Tom Murphy <murphyt7@tcd.ie>
-Cc:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fix flush_tlb_all typo
-Date:   Mon, 11 Feb 2019 15:50:33 +0000
-Message-Id: <20190211155033.7850-1-murphyt7@tcd.ie>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 11 Feb 2019 09:38:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731112AbfBKOiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E5B320844;
+        Mon, 11 Feb 2019 14:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895883;
+        bh=bhLe5oNWGxCw9acYDORQ0JceE+j7Oypl1mW8/PEHgas=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=klU/CiVBBPtU6ybvoc3yoR3ibYgcHlti0ZmVo/JwdZl/d0vwsqzeOVwdADQj1W0oZ
+         DmXbKg8XtD8jDfIFhlFj/qpmQ6lXxF59eUJyc1e+PZQMER3w7zzqlA90nmEeWN4rpK
+         3nISiPQmxTvLWdM03IJ8BNJBXXnRXCsQu+t+VGg4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.20 343/352] perf/x86/intel/uncore: Add Node ID mask
+Date:   Mon, 11 Feb 2019 15:19:30 +0100
+Message-Id: <20190211141909.010500358@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typo, flush_tlb_all should be flush_iotlb_all
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+------------------
+
+From: Kan Liang <kan.liang@linux.intel.com>
+
+commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
+
+Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
+Superdome Flex).
+
+To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
+the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
+configuration space, and the mapping between Socket ID and Node ID from
+GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
+
+The local Node ID is only available at bit 2:0, but current code doesn't
+mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
+will be fetched.
+
+Filter the Node ID by adding a mask.
+
+Reported-by: Song Liu <songliubraving@fb.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org> # v3.7+
+Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
+Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/linux/iommu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/intel/uncore_snbep.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a1d28f42cb77..bb4bf1269e5d 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -167,7 +167,7 @@ struct iommu_resv_region {
-  * @detach_dev: detach device from an iommu domain
-  * @map: map a physically contiguous memory region to an iommu domain
-  * @unmap: unmap a physically contiguous memory region from an iommu domain
-- * @flush_tlb_all: Synchronously flush all hardware TLBs for this domain
-+ * @flush_iotlb_all: Synchronously flush all hardware TLBs for this domain
-  * @tlb_range_add: Add a given iova range to the flush queue for this domain
-  * @tlb_sync: Flush all queued ranges from the hardware TLBs and empty flush
-  *            queue
--- 
-2.17.1
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -1222,6 +1222,8 @@ static struct pci_driver snbep_uncore_pc
+ 	.id_table	= snbep_uncore_pci_ids,
+ };
+ 
++#define NODE_ID_MASK	0x7
++
+ /*
+  * build pci bus to socket mapping
+  */
+@@ -1243,7 +1245,7 @@ static int snbep_pci2phy_map_init(int de
+ 		err = pci_read_config_dword(ubox_dev, nodeid_loc, &config);
+ 		if (err)
+ 			break;
+-		nodeid = config;
++		nodeid = config & NODE_ID_MASK;
+ 		/* get the Node ID mapping */
+ 		err = pci_read_config_dword(ubox_dev, idmap_loc, &config);
+ 		if (err)
+
 
