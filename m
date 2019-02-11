@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22C6C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A89C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A159A2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296BD20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896351;
-	bh=xBd+8iTel9417gKIeLFr7EttNX3uWEuXu8mgowdpAvM=;
+	s=default; t=1549896356;
+	bh=Zj4+VN2jH9EdrJIa+L80D/uH3xK5Z9w9uM2VQUVYoi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d5dsjW5y61duS640zLj+Ksnr0m+sXiH4fdML/QRbiKWF4LU03fbXNYxh6B776mOZ/
-	 7SyrWAxKt91v8iiPWSjIvt25i1ir8Ezun+URnAjWS1UVxZZF+8ojlQmQnPSeF8QibN
-	 NnBizHQFdwiUuncE/mIqjaLDZ/FRslaaizAdtN3E=
+	b=DfB1O2W1siDNJyYxsq++KrugTd8j20ZzWS2VaNJOpwbnomEGjinc7gAbC7fPioST1
+	 Pk67QUFFer3OJ4tpEGYDi85N/RQqOkTsd+YRa9IBhzjkBYXuPylztGrHZBk9nb5t1a
+	 wCCQMMGHwhozOIsXz7I0HuZfDFKBQBvAN0EJz/rI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbfBKOpu (ORCPT
+        id S1733138AbfBKOpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58912 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:45:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733117AbfBKOps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:45:48 -0500
+        id S1732417AbfBKOpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:45:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D237620700;
-        Mon, 11 Feb 2019 14:45:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66901206BA;
+        Mon, 11 Feb 2019 14:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896348;
-        bh=xBd+8iTel9417gKIeLFr7EttNX3uWEuXu8mgowdpAvM=;
+        s=default; t=1549896351;
+        bh=Zj4+VN2jH9EdrJIa+L80D/uH3xK5Z9w9uM2VQUVYoi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFng/BfRqmVKzPPX6vXcoTF8VyhxON/SPVXolxFzY7VjBtdGPnwNJmNRDpA+7/NYv
-         Yz87LgpyLb4NKb1WfuOgHB4tjfGHqQLt4XThxId1v+z4jxJGNkvxJAvWWVtHd777i1
-         yLAwB63+Sc9B8aDxYfOCUDOx1Ix+ZVRFPFdcl2u8=
+        b=xe20FaZXJenG9R/LcZT+STwxiB2HjdISLzmu7KuCJP7JDqAM/iepSyoNJLu6f68VX
+         HEJMvnB5QTEwCktv8WSl1TMre8La9sP4syXHn/JthjSYkn3nJHX8Xq2J+qic+aI9ze
+         AbMrnrNx8w5vZQYPa4NJk2lNZaHjJpqgIxZjbd2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 125/313] platform/x86: mlx-platform: Fix tachometer registers
-Date:   Mon, 11 Feb 2019 15:16:45 +0100
-Message-Id: <20190211141902.120426749@linuxfoundation.org>
+Subject: [PATCH 4.19 126/313] cpuidle: big.LITTLE: fix refcount leak
+Date:   Mon, 11 Feb 2019 15:16:46 +0100
+Message-Id: <20190211141902.184054962@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,50 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit edd45cba5ed7f53974475ddc9a1453c2c87b3328 ]
+[ Upstream commit 9456823c842f346c74265fcd98d008d87a7eb6f5 ]
 
-Shift by one the registers for tachometers (7 - 12).
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+bl_idle_init() doesn't do that, so fix it.
 
-This fix is relevant for the same new systems MQMB7, MSN37, MSN34,
-which are about to be released to the customers.
-At the moment, none of them is at customers sites. The customers will
-not suffer from this change.
-This fix is necessary, because register used before for tachometer 7
-has been than reserved for the second PWM for newer systems, which are
-not supported yet in mlx-platform driver. So registers of tachometers
-7-12 have been shifted by one.
-
-Fixes: 0378123c5800 ("platform/x86: mlx-platform: Add mlxreg-fan platform driver activation")
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/mlx-platform.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/cpuidle/cpuidle-big_little.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index d89936c93ba0..78b4aa4410fb 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -83,12 +83,12 @@
- #define MLXPLAT_CPLD_LPC_REG_TACHO4_OFFSET	0xe7
- #define MLXPLAT_CPLD_LPC_REG_TACHO5_OFFSET	0xe8
- #define MLXPLAT_CPLD_LPC_REG_TACHO6_OFFSET	0xe9
--#define MLXPLAT_CPLD_LPC_REG_TACHO7_OFFSET	0xea
--#define MLXPLAT_CPLD_LPC_REG_TACHO8_OFFSET	0xeb
--#define MLXPLAT_CPLD_LPC_REG_TACHO9_OFFSET	0xec
--#define MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET	0xed
--#define MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET	0xee
--#define MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET	0xef
-+#define MLXPLAT_CPLD_LPC_REG_TACHO7_OFFSET	0xeb
-+#define MLXPLAT_CPLD_LPC_REG_TACHO8_OFFSET	0xec
-+#define MLXPLAT_CPLD_LPC_REG_TACHO9_OFFSET	0xed
-+#define MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET	0xee
-+#define MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET	0xef
-+#define MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET	0xf0
- #define MLXPLAT_CPLD_LPC_IO_RANGE		0x100
- #define MLXPLAT_CPLD_LPC_I2C_CH1_OFF		0xdb
- #define MLXPLAT_CPLD_LPC_I2C_CH2_OFF		0xda
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index db2ede565f1a..b44476a1b7ad 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -167,6 +167,7 @@ static int __init bl_idle_init(void)
+ {
+ 	int ret;
+ 	struct device_node *root = of_find_node_by_path("/");
++	const struct of_device_id *match_id;
+ 
+ 	if (!root)
+ 		return -ENODEV;
+@@ -174,7 +175,11 @@ static int __init bl_idle_init(void)
+ 	/*
+ 	 * Initialize the driver just for a compliant set of machines
+ 	 */
+-	if (!of_match_node(compatible_machine_match, root))
++	match_id = of_match_node(compatible_machine_match, root);
++
++	of_node_put(root);
++
++	if (!match_id)
+ 		return -ENODEV;
+ 
+ 	if (!mcpm_is_available())
 -- 
 2.19.1
 
