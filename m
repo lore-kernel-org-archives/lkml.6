@@ -2,84 +2,143 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9A2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C612229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549892545;
-	bh=as6+ZGJm2y+vWEaA73phHL2yDc9uYkzeuj0NuifwlsI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=B7Sr7iAhIX+HgmTaNeRVVGTnOBw3wLPPuJdndHkCwEa0pT+nK0zC6YUxnOzzSfp6l
-	 37/wv6o71w2Mn6y79L7codldK857IOVUvJSzOzS5JhSWtEL3k1etlDIM9QZa6JkqKt
-	 6byXnB6bHrfOMWcN3wA81g4yigFlEmqZfN7mQq6c=
+	by mail.kernel.org (Postfix) with ESMTP id D68762229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfBKNmY (ORCPT
+        id S1728105AbfBKNnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:42:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40452 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 08:43:05 -0500
+Received: from mga01.intel.com ([192.55.52.88]:31782 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfBKNmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:42:23 -0500
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898192229E;
-        Mon, 11 Feb 2019 13:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549892542;
-        bh=as6+ZGJm2y+vWEaA73phHL2yDc9uYkzeuj0NuifwlsI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mGYP9GaSK25ZbcDVtFmPVIw+8uRZ8p8FybBpsvY+TvgnaRPRv08pV9qmJMICdyoQE
-         oweYKzboMXa+tYtG7Gk0o6kfi1cUod1wCuEsbpdfu3TIscO9N18vqtTnSnlBae/yas
-         rFK9r1O+IoW/7mxPPBDmWkpalVzrR5oJYC7tuLjI=
-Received: by mail-lj1-f173.google.com with SMTP id j13-v6so8797346ljc.2;
-        Mon, 11 Feb 2019 05:42:22 -0800 (PST)
-X-Gm-Message-State: AHQUAuYLsj9cRE8JQfvRaHDwFIQ7Mc9q9innckmxRrqcEnhmomoxsrHi
-        pFPU4q+2akBTwTfoLbwz1vmHhXvyWMEHpWEjAf4=
-X-Google-Smtp-Source: AHgI3IYfN/lm4EUjPyBuFhetVXpzLeIidzPBPpmSwoyG+8HO9oJE0YPSbnSGALURUNQBLfaArU5oSOvri3X1SsC9DA0=
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr18829134lja.19.1549892540758;
- Mon, 11 Feb 2019 05:42:20 -0800 (PST)
+        id S1727106AbfBKNnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:43:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 05:43:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="132681532"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Feb 2019 05:43:03 -0800
+Received: from [10.125.252.196] (abudanko-mobl.ccr.corp.intel.com [10.125.252.196])
+        by linux.intel.com (Postfix) with ESMTP id 7306D5800C6;
+        Mon, 11 Feb 2019 05:42:59 -0800 (PST)
+Subject: [PATCH v3 1/4] perf-security: document perf_events/Perf resource
+ control
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <784bbe0d-56c1-bd63-1879-b7db988e40c0@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <28e7f514-e9eb-ae8e-76cf-cd4a6913b99c@linux.intel.com>
+Date:   Mon, 11 Feb 2019 16:42:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CGME20190207170112epcas1p31ed740ef43d8a3eb71ca7245fba1bc3d@epcas1p3.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-9-s.nawrocki@samsung.com>
-In-Reply-To: <20190207170028.720-9-s.nawrocki@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 14:42:09 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcaQHttvBzzrBnX41+5RrBgrxkDuLxTy1ao9kmC33AYwA@mail.gmail.com>
-Message-ID: <CAJKOXPcaQHttvBzzrBnX41+5RrBgrxkDuLxTy1ao9kmC33AYwA@mail.gmail.com>
-Subject: Re: [PATCH 08/22] ASoC: samsung: i2s: Add widgets and routes for DPCM support
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <784bbe0d-56c1-bd63-1879-b7db988e40c0@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> This patch adds DAPM widgets required to model the internal mixer
-> of the I2S controller merging audio streams from the primary and
-> from the secondary PCM interface.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Extend perf-security.rst file with perf_events/Perf resource control
+section describing RLIMIT_NOFILE and perf_event_mlock_kb settings for
+performance monitoring user processes.
 
-Best regards,
-Krzysztof
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v3:
+- added two more paragraphs on open fds and memory allocation
+- applied comments and corrected typos
+
+Changes in v2:
+- applied comments on v1
+
+---
+ Documentation/admin-guide/perf-security.rst | 42 +++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
+index f73ebfe9bfe2..bac599e3c55f 100644
+--- a/Documentation/admin-guide/perf-security.rst
++++ b/Documentation/admin-guide/perf-security.rst
+@@ -84,6 +84,46 @@ governed by perf_event_paranoid [2]_ setting:
+      locking limit is imposed but ignored for unprivileged processes with
+      CAP_IPC_LOCK capability.
+ 
++perf_events/Perf resource control
++---------------------------------
++
++Open file descriptors
+++++++++++++++++++++++
++
++The perf_events system call API [2]_ allocates file descriptors for every configured
++PMU event. Open file descriptors are a per-process accountable resource governed
++by the RLIMIT_NOFILE [11]_ limit (ulimit -n), which is usually derived from the login
++shell process. When configuring Perf collection for a long list of events on a
++large server system, this limit can be easily hit preventing required monitoring
++configuration. RLIMIT_NOFILE limit can be increased on per-user basis modifying
++content of the limits.conf file [12]_ . Ordinarily, a Perf sampling session
++(perf record) requires an amount of open perf_event file descriptors that is not
++less than the number of monitored events multiplied by the number of monitored CPUs.
++
++Memory allocation
+++++++++++++++++++
++
++The amount of memory available to user processes for capturing performance monitoring
++data is governed by the perf_event_mlock_kb [2]_ setting. This perf_event specific
++resource setting defines overall per-cpu limits of memory allowed for mapping
++by the user processes to execute performance monitoring. The setting essentially
++extends the RLIMIT_MEMLOCK [11]_ limit, but only for memory regions mapped specifically
++for capturing monitored performance events and related data.
++
++For example, if a machine has eight cores and perf_event_mlock_kb limit is set
++to 516 KiB, then a user process is provided with 516 KiB * 8 = 4128 KiB of memory
++above the RLIMIT_MEMLOCK limit (ulimit -l) for perf_event mmap buffers. In particular,
++this means that, if the user wants to start two or more performance monitoring
++processes, the user is required to manually distribute the available 4128 KiB between the
++monitoring processes, for example, using the --mmap-pages Perf record mode option.
++Otherwise, the first started performance monitoring process allocates all available
++4128 KiB and the other processes will fail to proceed due to the lack of memory.
++
++RLIMIT_MEMLOCK and perf_event_mlock_kb resource constraints are ignored for
++processes with the CAP_IPC_LOCK capability. Thus, perf_events/Perf privileged users
++can be provided with memory above the constraints for perf_events/Perf performance
++monitoring purpose by providing the Perf executable with CAP_IPC_LOCK capability.
++
+ Bibliography
+ ------------
+ 
+@@ -94,4 +134,6 @@ Bibliography
+ .. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
+ .. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
+ .. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
++.. [11] `<http://man7.org/linux/man-pages/man2/getrlimit.2.html>`_
++.. [12] `<http://man7.org/linux/man-pages/man5/limits.conf.5.html>`_
+ 
