@@ -2,87 +2,62 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF0BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36F2C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C8721855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3inc+0g"
+	by mail.kernel.org (Postfix) with ESMTP id BB32121855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfBKVoI (ORCPT
+        id S1727797AbfBKVpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:44:08 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38262 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbfBKVoH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:44:07 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h58so383003edb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 13:44:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jz7m1a+FGluQZXoGscSuIG8g4cW33nsSXIWoU/bTeSM=;
-        b=X3inc+0g8d71KYB0klwWiT67APWByXJ6pi8dREpRgCV/SEteitRy5bClBU7beUcaVv
-         PWDWV+Qg+2kdHSgLNnd7vSyy8XB4oysxfNpI/K4l37XyV9OpQ9wLbWiHBvd0uS2rqSSh
-         dISz7M4vpxFYp9sscuLwucCfv6sHRKx+w/yISvpLt2HZfkyph5ODkk/tp1M9/1LwSHqR
-         ebqkz+QbFa1NgKzJ3MJ4AvcnpVmy5vDMYRAOT54l9R8RXBfnMjsQ6BgV0LvwBmMapbHs
-         ckUBzRxS3PtBbhLrtZ3Yfq575vcVFfGfBDJn3jifHqrBUVARpVpv11Hc92cK6Kz/qUac
-         xAHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jz7m1a+FGluQZXoGscSuIG8g4cW33nsSXIWoU/bTeSM=;
-        b=o8HLuPpsNCFL/RZ3C2/F3q0sPKGcmkqBdp9bMrhlGkwe6Z5LwzbrcND0bHVqejQJVK
-         BLBRpuzwnte6ighevJBT5BvgFDPAGSnJlT6otv313OyRWavSNKE1T7B83zNDRXXUc6r6
-         yz1DBTmwOt0sXrYFYWA3oeRa18FyamPcPIeK2gTHvLG95dqb2omOV/C9ZS3ik+FueUfn
-         ko3nKSYq5a8n0Txz3YcikWADtlZVYB3UPG6/07hiduPwfN4BCunKafe74cgshNv2K1qt
-         I86wmZnYXyNwnmEjHgpuhRG4vzBNxhHRdhHZKwDEj6IveKDuyUPEgjUQljQ+zKQNaU0O
-         PU4g==
-X-Gm-Message-State: AHQUAuacqFV8gTtWRkrxRou3E4v0c34wwbjJEv6UstteovdIfSds3X8v
-        B3NOtHuuqCI2p2BZZlURQ/OMzTvplu/EIC1lucdUOw==
-X-Google-Smtp-Source: AHgI3IbziUUoG76CIg2kxrZq0Bgxy2x1YMuzrqPnTRbLTGSn1e3BSib8gxUndBS28MkXeVUPgl3pCZAcyribIcwga/g=
-X-Received: by 2002:a17:906:f0d8:: with SMTP id dk24mr222755ejb.108.1549921445662;
- Mon, 11 Feb 2019 13:44:05 -0800 (PST)
+        Mon, 11 Feb 2019 16:45:02 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58441 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727305AbfBKVpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:45:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 13:44:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
+   d="scan'208";a="117096153"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga008.jf.intel.com with ESMTP; 11 Feb 2019 13:44:59 -0800
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com, joro@8bytes.org, dwmw2@infradead.org
+Cc:     linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, keith.busch@intel.com
+Subject: [PATCH v2 0/2] Add page alignment check in Intel IOMMU.
+Date:   Mon, 11 Feb 2019 13:43:13 -0800
+Message-Id: <cover.1548726944.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190205190849.GA2686@kunai> <20190211034021.242932-1-jsperbeck@google.com>
- <20190211092417.7f211ee0@gandalf.local.home>
-In-Reply-To: <20190211092417.7f211ee0@gandalf.local.home>
-From:   John Sperbeck <jsperbeck@google.com>
-Date:   Mon, 11 Feb 2019 13:43:54 -0800
-Message-ID: <CAFNjLiVMOii_mzs4Px38GHxFq6WnrDNhQ9YHMb+4yGZZ6SFpkQ@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: core-smbus: don't trace smbus_reply data on errors
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 6:24 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Sun, 10 Feb 2019 19:40:21 -0800
-> John Sperbeck <jsperbeck@google.com> wrote:
->
-> > If an smbus transfer fails, there's no guarantee that the output
-> > buffer was written.  So, avoid trying to show the output buffer when
-> > tracing after an error.  This was 'mostly harmless', but would trip
-> > up kasan checking if left-over cruft in byte 0 is a large length,
-> > causing us to read from unwritten memory.
->
-> This looks fine to me, but I'm not sure how the i2c maintainers feel,
-> but I always require that a new patch version starts a new thread, and
-> not be part of a older thread release (causes these patches to be
-> hidden from those that read patches in threading mode).
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-That sounds reasonable to me.  Unless I hear otherwise, I'll create a
-v3 as a new thread.  Thanks.
+As per Intel vt-d specification, Rev 3.0 (section 7.5.1.1, title "Page Request Descriptor"), Intel IOMMU Page Request Descriptor only provides bits[63:12] of the page address. Hence its required to enforce that the device will only send page request with page-aligned address. So, this patch set adds support to verify whether the device uses page aligned address before enabling the ATS service in Intel IOMMU driver.
+
+Kuppuswamy Sathyanarayanan (2):
+  PCI: ATS: Add function to check ATS page alignment status.
+  iommu/vt-d: Enable ATS only if the device uses page aligned address.
+
+ drivers/iommu/intel-iommu.c   |  1 +
+ drivers/pci/ats.c             | 24 ++++++++++++++++++++++++
+ include/linux/pci.h           |  2 ++
+ include/uapi/linux/pci_regs.h |  1 +
+ 4 files changed, 28 insertions(+)
+
+-- 
+2.20.1
+
