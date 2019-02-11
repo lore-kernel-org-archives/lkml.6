@@ -4,55 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7805CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09332C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C952054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C384E218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900732;
-	bh=qrRKHz8Jw4WKYbhyRChcspY9tiasDNFFKiCc7+GpKtE=;
+	s=default; t=1549900741;
+	bh=oGg5iQVgAh9anK6wyEm98yTwIRFqFSuqdZaexuZLnA4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fYRC/XKfnmqmZRP61QGrViiAvRedz7XkSxDxsY2WLNB9HIR/KvkYfGD0VcAg8Yqgl
-	 Gl8dH2cv/c08vJby4R6LA5fdgUes3Puw3rywhTX8i84TaPlGcTbK0smi3oeTVRDVR5
-	 Hghj4tA0ROyO+1oKFwpSv0GUoQb51R/VJ7hOb91I=
+	b=arIR2RQyk1UAToKQYWQ+9q36xwNV5Dum/Y6sNDQxkJtlxkXdZVZfZAkmxbdcQ4tK0
+	 gqwqLseAJITGTO/PFMhsEe+U3WrJy/cYXpPOQ2UmUD6rYe1db0M/juo9fFfpopnEGg
+	 HNwANHf3rYPvRhiSHLZXJsJissb1ruoTE5ui6SoI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387414AbfBKP6u (ORCPT
+        id S1731193AbfBKP7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:58:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40120 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:59:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729901AbfBKOci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:32:38 -0500
+        id S1730194AbfBKOcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:32:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88DB8214DA;
-        Mon, 11 Feb 2019 14:32:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4B4D20844;
+        Mon, 11 Feb 2019 14:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895558;
-        bh=qrRKHz8Jw4WKYbhyRChcspY9tiasDNFFKiCc7+GpKtE=;
+        s=default; t=1549895552;
+        bh=oGg5iQVgAh9anK6wyEm98yTwIRFqFSuqdZaexuZLnA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qyQ4dRfLZC7qkZCPek/bDT6MBhsCo2Ol4sDBP1r5QtRdQNrHsC/CNK87r7nZb81Ia
-         SnhV7efxvT1CviiLA4BSECwM4hBf3BXdLpMH6IdtKzMxvt5MXDSaj4/VDTHXcsAiMn
-         hOPJe/VmYwPrUW/gcMiI9LFq1vkvnAOiyYK+81SA=
+        b=bA6ji38ShWkrJmeMyyZxkzcqyJoQpmUP6ZEeqaOoUpXlX6otSzx+iQ2bdHw+vClCU
+         pALqUgz00eU/dhe1GCL70M0JNWA46zp84X/x37sN7iztza8JumPlNIHf1GGeEOqWBd
+         E4rhQITKRDcoTp1N5lV4kTefo+oALx1Rfyfiw0M8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murthy Bhat <murthy.bhat@microsemi.com>,
-        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 215/352] scsi: smartpqi: correct volume status
-Date:   Mon, 11 Feb 2019 15:17:22 +0100
-Message-Id: <20190211141900.885081142@linuxfoundation.org>
+Subject: [PATCH 4.20 241/352] powerpc/mm: Fix reporting of kernel execute faults on the 8xx
+Date:   Mon, 11 Feb 2019 15:17:48 +0100
+Message-Id: <20190211141902.496412047@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -71,41 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7ff44499bafbd376115f0bb6b578d980f56ee13b ]
+[ Upstream commit ffca395b11c4a5a6df6d6345f794b0e3d578e2d0 ]
 
-- fix race condition when a unit is deleted after an RLL,
-  and before we have gotten the LV_STATUS page of the unit.
-  - In this case we will get a standard inquiry, rather than
-    the desired page.  This will result in a unit presented
-    which no longer exists.
-  - If we ask for LV_STATUS, insure we get LV_STATUS
+On the 8xx, no-execute is set via PPP bits in the PTE. Therefore
+a no-exec fault generates DSISR_PROTFAULT error bits,
+not DSISR_NOEXEC_OR_G.
 
-Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
-Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This patch adds DSISR_PROTFAULT in the test mask.
+
+Fixes: d3ca587404b3 ("powerpc/mm: Fix reporting of kernel execute faults")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/mm/fault.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 5a86dddbd8ba..489e5cbbcbba 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -1168,6 +1168,9 @@ static void pqi_get_volume_status(struct pqi_ctrl_info *ctrl_info,
- 	if (rc)
- 		goto out;
- 
-+	if (vpd->page_code != CISS_VPD_LV_STATUS)
-+		goto out;
-+
- 	page_length = offsetof(struct ciss_vpd_logical_volume_status,
- 		volume_status) + vpd->page_length;
- 	if (page_length < sizeof(*vpd))
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index 1697e903bbf2..50e5c790d11e 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -226,7 +226,9 @@ static int mm_fault_error(struct pt_regs *regs, unsigned long addr,
+ static bool bad_kernel_fault(bool is_exec, unsigned long error_code,
+ 			     unsigned long address)
+ {
+-	if (is_exec && (error_code & (DSISR_NOEXEC_OR_G | DSISR_KEYFAULT))) {
++	/* NX faults set DSISR_PROTFAULT on the 8xx, DSISR_NOEXEC_OR_G on others */
++	if (is_exec && (error_code & (DSISR_NOEXEC_OR_G | DSISR_KEYFAULT |
++				      DSISR_PROTFAULT))) {
+ 		printk_ratelimited(KERN_CRIT "kernel tried to execute"
+ 				   " exec-protected page (%lx) -"
+ 				   "exploit attempt? (uid: %d)\n",
 -- 
 2.19.1
 
