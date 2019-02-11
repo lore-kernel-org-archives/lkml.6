@@ -7,55 +7,54 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C72FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09F2C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBCF222A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E7AA20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895891;
-	bh=yRSTsrYDaN7SkIx5xSXLB1XbGBrVelzUtwpf8I+DefQ=;
+	s=default; t=1549895896;
+	bh=buwIrzeTtNxuDndP9yFI8r5S4TeNuCDP2K/6GxA0j70=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wNkkfmZJuvtOqPP3L6XjJg55DLKPpIJN4o3nwJ5ad7H2Mb2NaC2Ah98KEYZPJ9xtB
-	 0h/vywK3n19yBCuzhc6h1KKho5B85q4aK6Z7UKvONaC93q1LlBbhy2tj5L2PJHcsA/
-	 1WCtzsRCoSCDK7O5BCQ+9PcLI/TMXvaz24fN+Z74=
+	b=QxUvjdU9oTwIylQHxssYjGhcdaejlIQNwWE4C7mFabxOHAnsVNcfQ5Xj6POLKqrTQ
+	 OLBNS0nrP4JlaFjvyKK12T19Ft0KtJ69ZiXYrPlxP0j2m2ClnO1EM7qsGeMBlZHkpp
+	 hnuYzFqUoCQ0BXyr5qEnb/1TRKsi2UGU4Tjev47U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbfBKOiK (ORCPT
+        id S1731633AbfBKOiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47686 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728985AbfBKOiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:06 -0500
+        id S1731614AbfBKOiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05AE721B18;
-        Mon, 11 Feb 2019 14:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EC03222A1;
+        Mon, 11 Feb 2019 14:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895885;
-        bh=yRSTsrYDaN7SkIx5xSXLB1XbGBrVelzUtwpf8I+DefQ=;
+        s=default; t=1549895891;
+        bh=buwIrzeTtNxuDndP9yFI8r5S4TeNuCDP2K/6GxA0j70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OBipSYOXmllMH2QPZSCpb5CU+bJEo/EyAabgKeTrZTNqgNkGRExZSzj4PJNKtAUCq
-         7sZWumAOIZjDYx9GK4XTwlgc4uyEB4lFIM310I4211BmJ874/xtwKHlrPPdyBvf33a
-         OUDH7VxbIS6ENIF1CVhJ/TwtjV75AUv1LHyojopQ=
+        b=X2zU8Lc5QoOFR4RKEpv0UTdd0Yb5iHKtfjelnF+6p2Sx3P+YgEMqWk+oYF/ZoIYCL
+         3+cbZaU1LWkmcyMkcoJNSvzoGU0nkjBb7VtlbMRnC4+boh2kUvW/iArcB54sa+F33N
+         /KKPXgGEZdel9PFbpH5gCgy4KRkJREzgGQK9gYeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
-        bp@alien8.de, hpa@zytor.com, jolsa@kernel.org,
-        kan.liang@linux.intel.com, namhyung@kernel.org,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.20 344/352] perf/x86/intel: Delay memory deallocation until x86_pmu_dead_cpu()
-Date:   Mon, 11 Feb 2019 15:19:31 +0100
-Message-Id: <20190211141909.069339947@linuxfoundation.org>
+Subject: [PATCH 4.20 346/352] perf/core: Dont WARN() for impossible ring-buffer sizes
+Date:   Mon, 11 Feb 2019 15:19:33 +0100
+Message-Id: <20190211141909.196297884@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -74,107 +73,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 602cae04c4864bb3487dfe4c2126c8d9e7e1614a upstream.
+commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
 
-intel_pmu_cpu_prepare() allocated memory for ->shared_regs among other
-members of struct cpu_hw_events. This memory is released in
-intel_pmu_cpu_dying() which is wrong. The counterpart of the
-intel_pmu_cpu_prepare() callback is x86_pmu_dead_cpu().
+The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+large its ringbuffer mmap should be. This can be configured to arbitrary
+values, which can be larger than the maximum possible allocation from
+kmalloc.
 
-Otherwise if the CPU fails on the UP path between CPUHP_PERF_X86_PREPARE
-and CPUHP_AP_PERF_X86_STARTING then it won't release the memory but
-allocate new memory on the next attempt to online the CPU (leaking the
-old memory).
-Also, if the CPU down path fails between CPUHP_AP_PERF_X86_STARTING and
-CPUHP_PERF_X86_PREPARE then the CPU will go back online but never
-allocate the memory that was released in x86_pmu_dying_cpu().
+When this is configured to a suitably large value (e.g. thanks to the
+perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+__alloc_pages_nodemask():
 
-Make the memory allocation/free symmetrical in regard to the CPU hotplug
-notifier by moving the deallocation to intel_pmu_cpu_dead().
+   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
 
-This started in commit:
+Let's avoid this by checking that the requested allocation is possible
+before calling kzalloc.
 
-   a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-
-In principle the bug was introduced in v2.6.39 (!), but it will almost
-certainly not backport cleanly across the big CPU hotplug rewrite between v4.7-v4.15...
-
-[ bigeasy: Added patch description. ]
-[ mingo: Added backporting guidance. ]
-
-Reported-by: He Zhe <zhe.he@windriver.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org> # With developer hat on
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org> # With maintainer hat on
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@kernel.org
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: jolsa@kernel.org
-Cc: kan.liang@linux.intel.com
-Cc: namhyung@kernel.org
 Cc: <stable@vger.kernel.org>
-Fixes: a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-Link: https://lkml.kernel.org/r/20181219165350.6s3jvyxbibpvlhtq@linutronix.de
+Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/core.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ kernel/events/ring_buffer.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3559,6 +3559,14 @@ static void free_excl_cntrs(int cpu)
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -734,6 +734,9 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
  
- static void intel_pmu_cpu_dying(int cpu)
- {
-+	fini_debug_store_on_cpu(cpu);
++	if (order_base_2(size) >= MAX_ORDER)
++		goto fail;
 +
-+	if (x86_pmu.counter_freezing)
-+		disable_counter_freeze();
-+}
-+
-+static void intel_pmu_cpu_dead(int cpu)
-+{
- 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
- 	struct intel_shared_regs *pc;
- 
-@@ -3570,11 +3578,6 @@ static void intel_pmu_cpu_dying(int cpu)
- 	}
- 
- 	free_excl_cntrs(cpu);
--
--	fini_debug_store_on_cpu(cpu);
--
--	if (x86_pmu.counter_freezing)
--		disable_counter_freeze();
- }
- 
- static void intel_pmu_sched_task(struct perf_event_context *ctx,
-@@ -3663,6 +3666,7 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
- };
- 
- static struct attribute *intel_pmu_attrs[];
-@@ -3703,6 +3707,8 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
-+
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
- };
+ 	rb = kzalloc(size, GFP_KERNEL);
+ 	if (!rb)
+ 		goto fail;
 
 
