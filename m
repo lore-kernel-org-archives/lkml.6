@@ -2,97 +2,119 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BE7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E31CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408BC21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:43:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ryEPVL3o"
+	by mail.kernel.org (Postfix) with ESMTP id 6451721B25
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbfBKTnC (ORCPT
+        id S1730500AbfBKTs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:43:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56204 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728288AbfBKTnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:43:02 -0500
-Received: from zn.tnic (p200300EC2BC7A100D435EAB708BAD763.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:d435:eab7:8ba:d763])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C15751EC01AF;
-        Mon, 11 Feb 2019 20:42:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549914180;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=+gKW9dyrdmotWHOe9duLDroxnAT+/cbjZvA/JDljj/4=;
-        b=ryEPVL3oTtALDvJ8cDIc+0KJtdcitxb40vihVDnWdIdXjZ6isjCTUoM6PCuhi2jnhtfGFL
-        E0NI+P5yhxp6BB1Ta3o0oMw1Ay4p2Vo7bvPytCD8SS5ycVqqTpNX8RqXhUdQXrf0XhWM8M
-        Btad+B7ZL7KPEAB6R+LP5YU1nECVJ6E=
-Date:   Mon, 11 Feb 2019 20:42:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
- loading
-Message-ID: <20190211194251.GS19618@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-11-rick.p.edgecombe@intel.com>
- <20190211182956.GN19618@zn.tnic>
- <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
- <20190211190108.GP19618@zn.tnic>
- <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
- <20190211191059.GR19618@zn.tnic>
- <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
+        Mon, 11 Feb 2019 14:48:28 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39070 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbfBKTs2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:48:28 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id B983A27EC6B
+Message-ID: <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com>
+Subject: Re: [PATCH v3 2/2] media: cedrus: Add H264 decoding support
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        jernej.skrabec@gmail.com, jonas@kwiboo.se,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Mon, 11 Feb 2019 16:48:17 -0300
+In-Reply-To: <4c00e1ab1e70adb1d94db59c37393250ca3791c5.1549895062.git-series.maxime.ripard@bootlin.com>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+         <4c00e1ab1e70adb1d94db59c37393250ca3791c5.1549895062.git-series.maxime.ripard@bootlin.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:27:03AM -0800, Nadav Amit wrote:
-> Is there any comment over static_cpu_has()? ;-)
+On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
+> Introduce some basic H264 decoding support in cedrus. So far, only the
+> baseline profile videos have been tested, and some more advanced features
+> used in higher profiles are not even implemented.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+[..]
 
-Almost:
 
-/*
- * Static testing of CPU features.  Used the same as boot_cpu_has().
- * These will statically patch the target code for additional
- * performance.
- */
-static __always_inline __pure bool _static_cpu_has(u16 bit)
+> +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
+> +				   struct cedrus_run *run,
+> +				   const u8 *ref_list, u8 num_ref,
+> +				   enum cedrus_h264_sram_off sram)
+> +{
+> +	const struct v4l2_ctrl_h264_decode_param *decode = run->h264.decode_param;
+> +	struct vb2_queue *cap_q = &ctx->fh.m2m_ctx->cap_q_ctx.q;
+> +	const struct vb2_buffer *dst_buf = &run->dst->vb2_buf;
+> +	struct cedrus_dev *dev = ctx->dev;
+> +	u8 sram_array[CEDRUS_MAX_REF_IDX];
+> +	unsigned int size, i;
+> +
+> +	memset(sram_array, 0, sizeof(sram_array));
+> +
+> +	for (i = 0; i < num_ref; i++) {
+> +		const struct v4l2_h264_dpb_entry *dpb;
+> +		const struct cedrus_buffer *cedrus_buf;
+> +		const struct vb2_v4l2_buffer *ref_buf;
+> +		unsigned int position;
+> +		int buf_idx;
+> +		u8 dpb_idx;
+> +
+> +		dpb_idx = ref_list[i];
+> +		dpb = &decode->dpb[dpb_idx];
+> +
+> +		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> +			continue;
+> +
+> +		if (dst_buf->timestamp == dpb->timestamp)
+> +			buf_idx = dst_buf->index;
+> +		else
+> +			buf_idx = vb2_find_timestamp(cap_q, dpb->timestamp, 0);
+> +
+> +		if (buf_idx < 0)
+> +			continue;
+> +
+> +		ref_buf = to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
+> +		cedrus_buf = vb2_v4l2_to_cedrus_buffer(ref_buf);
+> +		position = cedrus_buf->codec.h264.position;
+> +
+> +		sram_array[i] |= position << 1;
+> +		if (ref_buf->field == V4L2_FIELD_BOTTOM)
+> +			sram_array[i] |= BIT(0);
+> +	}
+> +
+> +	size = min((unsigned int)ALIGN(num_ref, 4), sizeof(sram_array));
 
--- 
-Regards/Gruss,
-    Boris.
+Perhaps s/unsigned int/size_t, so the arguments to min() have the same type?
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Otherwise, I got this warning:
+
+/home/zeta/repos/linux/media_tree/drivers/staging/media/sunxi/cedrus/cedrus_h264.c: In function ‘_cedrus_write_ref_list’:
+/home/zeta/repos/linux/media_tree/include/linux/kernel.h:846:29: warning: comparison of distinct pointer types lacks a cast
+   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+
+Regards,
+Ez
+
