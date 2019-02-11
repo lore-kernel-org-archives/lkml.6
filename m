@@ -2,107 +2,81 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA571C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD122C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E8E2229F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:15:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="EtoIsmNk"
+	by mail.kernel.org (Postfix) with ESMTP id 8E87D21B68
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731062AbfBKSPq (ORCPT
+        id S1731327AbfBKSQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:15:46 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46654 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfBKSPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:15:45 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so19044694otm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:15:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ul5thXc6++/JQFU35y5jSqKTerpNjS/zr14LWC0b/Yo=;
-        b=EtoIsmNkDKQpRH9ypOI5wOHAdlLYheZn+QoXMnH9j3ESgJ+H9ofHEeQ2+z0WgQiKEr
-         x9nF4ZYK4if03fgMSHrIocO7JgQkq8nUlENbhQkgchPEbtsIq8nWqKuoL+Jovt6l77PC
-         N7xGDCZnhMddxom8jz7HGzV8UCnt66iV8NXbA1KODSySGADwC0E5Y6CoZ4HYts0xJDyd
-         4crFfr0dStfGbzratLctbDnEN4KBjQvGMpQEabs0lF0hrPbIYi4QZy7IEaBYhZer3x73
-         HknObt5JsH4ENZsCqWCBSk5ZIQ9H6iR5krsJEj/meW/V3iGfAGNFHjvjw7Qs3eii4g1d
-         XMYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ul5thXc6++/JQFU35y5jSqKTerpNjS/zr14LWC0b/Yo=;
-        b=QrPd+SIbX4a6wkEENaoI9/ivrZanQ609uhbkNi3Drf55vK0/XnUCzlJYGdyIYABzDp
-         tf4YDJEBoobZQS6jc3WjdPHkHDlbA8G87ECPoQ48B63AGu2vg1+c428zi/pkY+31wBBa
-         eQ39+uPIMIt53A7NTpejAo0WxFPPJ0ct57nSLRTXkIST07sCy/6KL0FfmfN3b3oTMnBS
-         ODJtLHuAF4RaGE3TbIJvhq6wfD+r5p4Ne5sM10+PZ+fgaqHf9aie+J29LVUrKpUhE0Ij
-         VQnIrfwY5XvyDfOVl46TBoaZ5gLjolmu9gclUXgPriQP6o0Q0/XsJnbFlPnr8bCcisUp
-         BPLw==
-X-Gm-Message-State: AHQUAuZhxuQTPtF1eTKuQNnJtPIy5iV8rxob+Y7DRXWwK+4fJadlAsRt
-        GSkzxoHYz63kyjQN1BgWIzAcS4fwvwhQuo8VLe6KZA==
-X-Google-Smtp-Source: AHgI3Ib8Tv/GTd/LyyhnRUStQh32TJGMr1mf9h0L5JluLyTEcL0lx7jgHtIyGdtYh7vMLGodX085tmaC6phK3LYN9V4=
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr14708887otn.95.1549908944982;
- Mon, 11 Feb 2019 10:15:44 -0800 (PST)
+        Mon, 11 Feb 2019 13:16:37 -0500
+Received: from mga12.intel.com ([192.55.52.136]:56729 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728123AbfBKSQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:16:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:16:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="125617011"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2019 10:16:35 -0800
+Date:   Mon, 11 Feb 2019 10:10:13 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 10/10] x86/split_lock: Handle #AC exception for split
+ lock
+Message-ID: <20190211181013.GA103371@romley-ivt3.sc.intel.com>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-11-git-send-email-fenghua.yu@intel.com>
+ <20190211105339.GA40840@gmail.com>
 MIME-Version: 1.0
-References: <20190206220828.GJ12227@ziepe.ca> <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz>
- <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
- <20190211102402.GF19029@quack2.suse.cz> <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
-In-Reply-To: <20190211180654.GB24692@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 11 Feb 2019 10:15:33 -0800
-Message-ID: <CAPcyv4hdVwn0L8060_wxqDV0XBOwiUojSYjF+u+ugzLoQpcHzw@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211105339.GA40840@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:07 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Mon, Feb 11, 2019 at 09:22:58AM -0800, Dan Williams wrote:
->
-> > I honestly don't like the idea that random subsystems can pin down
-> > file blocks as a side effect of gup on the result of mmap. Recall that
-> > it's not just RDMA that wants this guarantee. It seems safer to have
-> > the file be in an explicit block-allocation-immutable-mode so that the
-> > fallocate man page can describe this error case. Otherwise how would
-> > you describe the scenarios under which FALLOC_FL_PUNCH_HOLE fails?
->
-> I rather liked CL's version of this - ftruncate/etc is simply racing
-> with a parallel pwrite - and it doesn't fail.
->
-> But it also doesnt' trucate/create a hole. Another thread wrote to it
-> right away and the 'hole' was essentially instantly reallocated. This
-> is an inherent, pre-existing, race in the ftrucate/etc APIs.
+On Mon, Feb 11, 2019 at 11:53:39AM +0100, Ingo Molnar wrote:
+> > +		do_trap(trapnr, signr, str, regs, error_code, BUS_ADRALN, NULL);
+> > +	}
+> > +}
+> 
+> Is there any experience with how frequently this signal is killing 
+> user-space processes on a modern distro? Any expectation of how frequent 
+> such SIGBUS task terminations are going to be in the field?
 
-If options are telling the truth with a potentially unexpected error,
-or lying that operation succeeded when it will be immediately undone,
-I'd choose the former.
+We did pretty intensive testing internally (zero day tests, many engineers
+and testers use the patches in their dailly work, etc). So far I'm not
+aware of any user space process hiting split lock issue. I guess GCC or
+other compilers takes care of the issue already. Inline assembly code may
+hit the issue if code is not right, but there are fewer inline assembly
+code in user space.
+
+So far we only find two kernel split lock issues and fix them in the first
+two patches in this patch set. We also find one BIOS split lock issue
+internally which has been fixed in production BIOS.
+
+Thanks.
+
+-Fenghua
