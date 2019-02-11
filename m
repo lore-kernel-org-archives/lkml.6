@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66099C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB62C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34479222BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DED222B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897795;
-	bh=3RE5akayfXhXLrqYDRAVlhOT7aZWSOrfFHABJkzLyIU=;
+	s=default; t=1549897802;
+	bh=2EeXccDA+bjQbM4FqGCRclXSpL3YK3lm+dOVcBccs58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vHDfqJZ7E93CyWBT9IQdmBQdCZd1Hi8zhG2bvgLi2HwQOLIcuaeJ8UoaRc9AnNu4/
-	 wyhXjlZBlCB2YnN2nZjXSwOyte5zzgkkWuK/F+rgzdTvIOWiWuldEKMcIp7bfG+pD0
-	 IqWyYxCCMG3oO4aiOosM8/dFSOOhraBlEysKqsp4=
+	b=dZOwX7Rmi01GfN/YKPEHwYgqo3jhOWvxq3ikPKFTJKxv82j64KxWFCpwAzMXnn4/x
+	 5YC80whNqTAuupK7p0j+kucOprh5H9qg2VFg2QBaLIDrN3j3S2I5x1QhvokTdyzPfZ
+	 SWq2pAh/VBirhT50i+E0vPLbesbTfYYD6nMFF7Ik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391734AbfBKPJy (ORCPT
+        id S2403928AbfBKPKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:09:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59824 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391718AbfBKPJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:49 -0500
+        id S2403805AbfBKPJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:09:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24A2A222B5;
-        Mon, 11 Feb 2019 15:09:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F25B8222BA;
+        Mon, 11 Feb 2019 15:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897788;
-        bh=3RE5akayfXhXLrqYDRAVlhOT7aZWSOrfFHABJkzLyIU=;
+        s=default; t=1549897797;
+        bh=2EeXccDA+bjQbM4FqGCRclXSpL3YK3lm+dOVcBccs58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNP9NlCt1NjpAxdo7T+6VJm56ILjPdFaVfVR7XEjAgryCeStwLKSzK8dYipvaTIq3
-         zKI2BzJ6EuS4dfh5XLBq9C86uHdSq4Woy22SnRoZ2MY8xS8icYwj0N9Ok2gbSHhh/R
-         94MDC/b9hAa32nQTEYSMQjWBvlBASx8JXrcQoGhc=
+        b=ypBDjPuUiwJhlQ7ifHcqaj7gUcFX8umAVFBcFy/rPhC4kWAlqWAArEuOChxDLgLmz
+         7nmpROszEd806PTXOLKGAyaYUoMxHRnukhI6bQ0WvPSiXu+LvxVIvw5M4ZLniwv/uj
+         9UeNLXUXKTilEtXsnFHoETIQ7gmT6fRKWJ2SnO/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 085/137] crypto: ux500 - Use proper enum in hash_set_dma_transfer
-Date:   Mon, 11 Feb 2019 15:19:26 +0100
-Message-Id: <20190211141819.908859802@linuxfoundation.org>
+Subject: [PATCH 4.9 088/137] um: Avoid marking pages with "changed protection"
+Date:   Mon, 11 Feb 2019 15:19:29 +0100
+Message-Id: <20190211141820.196104764@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,45 +67,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5ac93f808338f4dd465402e91869702eb87db241 ]
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
 
-drivers/crypto/ux500/hash/hash_core.c:169:4: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                        direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-                        ^~~~~~~~~
-1 warning generated.
+While the condition is not particularly common it is worth
+avoiding.
 
-dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
-We know that the only direction supported by this function is
-DMA_TO_DEVICE because of the check at the top of this function so we can
-just use the equivalent value from dma_transfer_direction.
-
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ux500/hash/hash_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ux500/hash/hash_core.c b/drivers/crypto/ux500/hash/hash_core.c
-index 9acccad26928..17c8e2b28c42 100644
---- a/drivers/crypto/ux500/hash/hash_core.c
-+++ b/drivers/crypto/ux500/hash/hash_core.c
-@@ -165,7 +165,7 @@ static int hash_set_dma_transfer(struct hash_ctx *ctx, struct scatterlist *sg,
- 		__func__);
- 	desc = dmaengine_prep_slave_sg(channel,
- 			ctx->device->dma.sg, ctx->device->dma.sg_len,
--			direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-+			DMA_MEM_TO_DEV, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dev_err(ctx->device->dev,
- 			"%s: dmaengine_prep_slave_sg() failed!\n", __func__);
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index 7485398d0737..9c04562310b3 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
+ }
+ 
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
 -- 
 2.19.1
 
