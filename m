@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742EAC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F3AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467BA20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7982420675
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895475;
-	bh=Enu4ctradxyBZdgzdrzNB4zd6gHjAy/IJFIWQJzxvBo=;
+	s=default; t=1549895480;
+	bh=p7rQwGGpEihrN2jmghXOLqkbHHr76DunJYUFtNP8KI0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P4iYRZykom4ltmgJuYyEBsxE2jqy9AlsVFnXwQIzcwHh44dkbToKY1kWbFSTbdyY+
-	 Bz6CghPg5hvsc1klqM1EgOg/esOobco1TYv6XCBx2LPzn5JGI8ws0gCkqgIEjXvmh2
-	 SM811DopWhhuhp1/IOVkmTlgbH2vL/ii1+pZOOmc=
+	b=k6sv6chgQHxmpyqMR4nUwSmM2QTc8xbKcFcUtyg48oX2HfSbbM4Kd45BOjueAgAd5
+	 XdMdd08kZoKnAEQYTefsUN/hLRApV55bb+aK3Kl0Jf5dQuFWXAtNNeiCBOuzOJRSbj
+	 IKiO+qVIqjiA1L4WSK65F/6gA1MgknowIQ53WDeE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbfBKObN (ORCPT
+        id S1730281AbfBKObT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:31:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37920 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:31:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729670AbfBKObK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:10 -0500
+        id S1728242AbfBKObQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8969C20838;
-        Mon, 11 Feb 2019 14:31:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A7FA20844;
+        Mon, 11 Feb 2019 14:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895470;
-        bh=Enu4ctradxyBZdgzdrzNB4zd6gHjAy/IJFIWQJzxvBo=;
+        s=default; t=1549895476;
+        bh=p7rQwGGpEihrN2jmghXOLqkbHHr76DunJYUFtNP8KI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6j5MfQENwa0KCLLz5T+aaLTHrELWZUwP7LDCP2qSc6NlRh52buNPLhjfXoVKWzNm
-         tdXUXtsFtEZ2/9Th7qheijK1t376KI7Z5jZZG/wi83KkwjtbG8AYFqPn6XJqUrpQ9e
-         kvZs516Ulqzgil+mzjMGKfeKQA/6ie39lx2d56Q8=
+        b=ApfyJjyYwXQHuMsbGFN9TEWae4xU9PqTqcDFRMGOqhPVlCXUWiRQFvYUQrzzgZPw7
+         +FnwI1a63OfDWj/po7IpcTZP+u0UF97pWy4m6RjyY2UycUrRq405+NGWFgKKhf17tB
+         /lvxJgGkYyOsFQQxwZRfEiXvnn72kikEOVToOhlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 184/352] tty: serial: samsung: Properly set flags in autoCTS mode
-Date:   Mon, 11 Feb 2019 15:16:51 +0100
-Message-Id: <20190211141858.828673041@linuxfoundation.org>
+Subject: [PATCH 4.20 176/352] mmc: sdhci-omap: Fix timeout checks
+Date:   Mon, 11 Feb 2019 15:16:43 +0100
+Message-Id: <20190211141858.285366192@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,42 +67,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
+[ Upstream commit 9f0ea0bda1d06120b053bb0c283f54afec59293d ]
 
-Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
-has changed the way the autoCTS mode is handled.
+Always check the wait condition before returning timeout.
 
-According to that change, serial drivers which enable H/W autoCTS mode must
-set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
-TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
-
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-[mszyprow: rephrased commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-omap.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index da1bd4bba8a9..2a49b6d876b8 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1365,11 +1365,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	wr_regl(port, S3C2410_ULCON, ulcon);
- 	wr_regl(port, S3C2410_UBRDIV, quot);
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index d264391616f9..d02f5cf76b3d 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -220,8 +220,12 @@ static void sdhci_omap_conf_bus_power(struct sdhci_omap_host *omap_host,
  
-+	port->status &= ~UPSTAT_AUTOCTS;
+ 	/* wait 1ms */
+ 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
+-	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)) {
+-		if (WARN_ON(ktime_after(ktime_get(), timeout)))
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
 +
- 	umcon = rd_regl(port, S3C2410_UMCON);
- 	if (termios->c_cflag & CRTSCTS) {
- 		umcon |= S3C2410_UMCOM_AFC;
- 		/* Disable RTS when RX FIFO contains 63 bytes */
- 		umcon &= ~S3C2412_UMCON_AFC_8;
-+		port->status = UPSTAT_AUTOCTS;
- 	} else {
- 		umcon &= ~S3C2410_UMCOM_AFC;
++		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)
++			break;
++		if (WARN_ON(timedout))
+ 			return;
+ 		usleep_range(5, 10);
+ 	}
+@@ -653,8 +657,12 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
+ 
+ 	/* wait 1ms */
+ 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
+-	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)) {
+-		if (WARN_ON(ktime_after(ktime_get(), timeout)))
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)
++			break;
++		if (WARN_ON(timedout))
+ 			return;
+ 		usleep_range(5, 10);
  	}
 -- 
 2.19.1
