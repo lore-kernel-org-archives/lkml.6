@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235C9C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CBFC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75CF222B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6BFA222B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897740;
-	bh=zNbkRYx69itHWHVh/awik1kc+U3Z6tzdrd3OCYzrNjI=;
+	s=default; t=1549897744;
+	bh=Mik7Q9ZBLa/I2Bz1gd8P7nWG9+zyF41C+/fk5QIsoHQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GCJLSttfTV0IB7ECbemKE9GPmTJXsiz9tE56X5R4j8jiB9phm1RBLIPyghkio4iC1
-	 C9dmyCQ7boIY3y/V99UxVTFmNS5jOM9vdh8B0YKlkx7hNZnw8I1okNQs4ldwmeaJ0x
-	 PYi6W805+7DGf9JrD/xLPcxlGQ9gyVLsXhJexA04=
+	b=Kgace/zQwrSmAnS3Gg91NtENukv1dndW+0DjLvcHCnEsPugHecVm0FgjjJvnYy7D6
+	 Y7u8jmXHtQrTGtC+oxZMIG09HZ7z6ym7L+1p8zEaZOtpPWTeAHFZmyYuq0vYtrGo4Q
+	 Tpmgy2rpZHx9Pv/41XDbQuCivpTm5Xk+kFjcvxWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391541AbfBKPI5 (ORCPT
+        id S2391557AbfBKPJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58724 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:09:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391077AbfBKPIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:51 -0500
+        id S2391575AbfBKPI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC154222A7;
-        Mon, 11 Feb 2019 15:08:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C611222A7;
+        Mon, 11 Feb 2019 15:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897730;
-        bh=zNbkRYx69itHWHVh/awik1kc+U3Z6tzdrd3OCYzrNjI=;
+        s=default; t=1549897736;
+        bh=Mik7Q9ZBLa/I2Bz1gd8P7nWG9+zyF41C+/fk5QIsoHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T19HbzHDpyzUPNeQDueS07EcHBS2iKmkgbr71NaT4vZRz6eP7L8AqP+hjl0sTcjBf
-         8OB87Jpdp6+K0UEWlKbKjZWaBtCjI8f4PaFes6vr52mWTSd10er+EgpU49VcJA359W
-         9a2V8RE1bZYWHUXNrSdcQE0dhwEq7sC2RJ9YGYqo=
+        b=Ldpk39kvXSlSpeDwOGZRRNgD5uOVsSj32Pd8dlg5ZxgiDykatTjrWDl5A22Tfiucn
+         n/YUHrOQcPp//A1O1uK1bthuJGKKZ++aaztKXKcKJv9aeQIEnDQgaXm4M2FTyjKEzA
+         7CrMdQgP8NsqeSNoAQVs4rXrXRXykebpwg21ojGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 097/137] thermal: generic-adc: Fix adc to temp interpolation
-Date:   Mon, 11 Feb 2019 15:19:38 +0100
-Message-Id: <20190211141821.048062427@linuxfoundation.org>
+Subject: [PATCH 4.9 081/137] hwmon: (lm80) fix a missing check of the status of SMBus read
+Date:   Mon, 11 Feb 2019 15:19:22 +0100
+Message-Id: <20190211141819.506092303@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,61 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
+[ Upstream commit c9c63915519b1def7043b184680f33c24cd49d7b ]
 
-First correct the edge case to return the last element if we're
-outside the range, rather than at the last element, so that
-interpolation is not omitted for points between the two last entries in
-the table.
+If lm80_read_value() fails, it returns a negative number instead of the
+correct read data. Therefore, we should avoid using the data if it
+fails.
 
-Then correct the formula to perform linear interpolation based the two
-points surrounding the read ADC value. The indices for temp are kept as
-"hi" and "lo" to pair with the adc indices, but there's no requirement
-that the temperature is provided in descendent order. mult_frac() is
-used to prevent issues with overflowing the int.
+The fix checks if lm80_read_value() fails, and if so, returns with the
+error number.
 
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+[groeck: One variable for return values is enough]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/hwmon/lm80.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index 73f55d6a1721..ad601e5b4175 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -26,7 +26,7 @@ struct gadc_thermal_info {
- 
- static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- {
--	int temp, adc_hi, adc_lo;
-+	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
- 	int i;
- 
- 	for (i = 0; i < gti->nlookup_table; i++) {
-@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- 
- 	if (i == 0) {
- 		temp = gti->lookup_table[0];
--	} else if (i >= (gti->nlookup_table - 1)) {
-+	} else if (i >= gti->nlookup_table) {
- 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
- 	} else {
- 		adc_hi = gti->lookup_table[2 * i - 1];
- 		adc_lo = gti->lookup_table[2 * i + 1];
--		temp = gti->lookup_table[2 * i];
--		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 4bcd9b882948..47ddae6b7038 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -360,9 +360,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	struct i2c_client *client = data->client;
+ 	unsigned long min, val;
+ 	u8 reg;
+-	int err = kstrtoul(buf, 10, &val);
+-	if (err < 0)
+-		return err;
++	int rv;
 +
-+		temp_hi = gti->lookup_table[2 * i - 2];
-+		temp_lo = gti->lookup_table[2 * i];
-+
-+		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
-+					   adc_lo - adc_hi);
++	rv = kstrtoul(buf, 10, &val);
++	if (rv < 0)
++		return rv;
+ 
+ 	/* Save fan_min */
+ 	mutex_lock(&data->update_lock);
+@@ -390,8 +392,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 		return -EINVAL;
  	}
  
- 	return temp;
+-	reg = (lm80_read_value(client, LM80_REG_FANDIV) &
+-	       ~(3 << (2 * (nr + 1)))) | (data->fan_div[nr] << (2 * (nr + 1)));
++	rv = lm80_read_value(client, LM80_REG_FANDIV);
++	if (rv < 0)
++		return rv;
++	reg = (rv & ~(3 << (2 * (nr + 1))))
++	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+ 
+ 	/* Restore fan_min */
 -- 
 2.19.1
 
