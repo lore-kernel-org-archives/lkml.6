@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F3AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1D2C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA39222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD05217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897637;
-	bh=f9zpnDp0l4b2/CBPGRPAbS6G6f+UKTaPACWFfUz3eTA=;
+	s=default; t=1549897641;
+	bh=BoYquLxXaCuXZyUpL3VTtT5ofVgGeDlgiXxkMd0fnjA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aSrFtJcECbzNdzGn9ARW/r5qBv940Jf59oUV630eBvsIkKjtcEDzxoInD9cgE4fEW
-	 3CpBUdCbh6nk1GMkQHD0PSV7xeMKc/dotwNMq9+XnWVsqTlaCoIO9tOfWRtAEgNg7S
-	 VSwvyZjCAeVrfu+3FXrKbRMpIp1EAfJLxPEKOP2A=
+	b=hDTLn4ZbKqUhDd5E6s849YXj92qRoCzQz17tZvc8IKoott7LPfIlosBwXe2w1I8Kt
+	 XxLPH+pe2EJj9BH0N6+Lgv/iZLjcJRH0mUTdzajlIczPucnOilS9HFAmPD+Mp/Tokb
+	 uU7qjSKljp5d1PtZtGn+NsEWFgi6DQYNydm9ed24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391333AbfBKPHQ (ORCPT
+        id S2403809AbfBKPHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56930 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390226AbfBKPHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:10 -0500
+        id S2403784AbfBKPHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99EEC217D9;
-        Mon, 11 Feb 2019 15:07:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55F86222AD;
+        Mon, 11 Feb 2019 15:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897630;
-        bh=f9zpnDp0l4b2/CBPGRPAbS6G6f+UKTaPACWFfUz3eTA=;
+        s=default; t=1549897632;
+        bh=BoYquLxXaCuXZyUpL3VTtT5ofVgGeDlgiXxkMd0fnjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sepfbx3GDJ2clUf8CEqd/yJg7g4JfPXS8FHstxbU6s5vcbptIBouOU6KIDcwMM4yH
-         O3woOM9Cobho+hPNfFRTIU7Grsni+5zcYBVN8hPNQrIB8w5pqY+lIVH7utGyzgU7A6
-         cs6AAa0aeMKnRaaAzUI9dXZdRVlIJJ6CAVNgI3Ks=
+        b=n4mCq65Y8Aoj8CAELqJkNSRgfe2bk6e+gHFyYw9M3gFOAcuhDvz4YwuZzI1/T0EZ6
+         Tk5itNpiHNCMyAxZmiKRi2WyT+Y05Ry/IPwaZxYlynOWoTi1X7ewdN+K8xIiXQ8isu
+         tNSkPv44COSbNGFAEDA6R+RfdCWFWjwo8LVH4J1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 062/137] mac80211: fix radiotap vendor presence bitmap handling
-Date:   Mon, 11 Feb 2019 15:19:03 +0100
-Message-Id: <20190211141817.715069018@linuxfoundation.org>
+Subject: [PATCH 4.9 063/137] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 11 Feb 2019 15:19:04 +0100
+Message-Id: <20190211141817.807723865@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,48 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-Due to the alignment handling, it actually matters where in the code
-we add the 4 bytes for the presence bitmap to the length; the first
-field is the timestamp with 8 byte alignment so we need to add the
-space for the extra vendor namespace presence bitmap *before* we do
-any alignment for the fields.
+gcc warn this:
 
-Move the presence bitmap length accounting to the right place to fix
-the alignment for the data properly.
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/ipv6/xfrm6_tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 93c332737e86..af02d2136a06 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -152,6 +152,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	/* allocate extra bitmaps */
- 	if (status->chains)
- 		len += 4 * hweight8(status->chains);
-+	/* vendor presence bitmap */
-+	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
-+		len += 4;
- 
- 	if (ieee80211_have_rx_timestamp(status)) {
- 		len = ALIGN(len, 8);
-@@ -193,8 +196,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
- 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
- 
--		/* vendor presence bitmap */
--		len += 4;
- 		/* alignment for fixed 6-byte vendor data header */
- 		len = ALIGN(len, 2);
- 		/* vendor data header */
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index e1c0bbe7996c..3a2701d42f47 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
++
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
