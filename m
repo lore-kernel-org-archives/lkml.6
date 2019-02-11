@@ -2,130 +2,120 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1306C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2690C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD8842146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86FAD20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:42:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AqA/ikAQ"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="otVR0jO7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBKFkH (ORCPT
+        id S1726074AbfBKFmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:40:07 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35650 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKFkH (ORCPT
+        Mon, 11 Feb 2019 00:42:25 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46526 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKFmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:40:07 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1B5e44r054401;
-        Sun, 10 Feb 2019 23:40:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549863604;
-        bh=iqHS0P40nM+mjia0ZQ7kC83B2fcK82Mp2OcRu8R+Ucg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AqA/ikAQI3xyBh8FcrNNNxTpqtzCAIJdcbgv2RFJmwFw5Q7IvAqevOpxj1A0fkey8
-         KOT1pzeKW3prVa5t0bGgKc620bIfdqH4K6XBcYjyncOA8e5V7TNjYWxUdk56Y1Bhjt
-         mO3hN4674C3Wcbfiah1z1w8gCg8JTRfQAeSecNp0=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1B5e4Zo120277
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 10 Feb 2019 23:40:04 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 10
- Feb 2019 23:40:03 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 10 Feb 2019 23:40:04 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1B5e1p3016023;
-        Sun, 10 Feb 2019 23:40:02 -0600
-Subject: Re: [PATCH v2] dt-bindings: input: ti-tsc-adc: Add new compatible for
- AM654 SoCs
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-input@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20190108052631.4169-1-vigneshr@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <3623af02-063d-9077-1e59-99d8cfe93ddd@ti.com>
-Date:   Mon, 11 Feb 2019 11:10:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190108052631.4169-1-vigneshr@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 11 Feb 2019 00:42:25 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1B5XwGA183364;
+        Mon, 11 Feb 2019 05:42:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=AI7geo5/vVaaJ8eeQAMFy9gofJfDJdlmvtd9zkaV+2k=;
+ b=otVR0jO7NpR8Sgeax2in8sAye2XczAkMzod4sVwx8S9RExbZ+vVxvDwTXRdRyu63TQKt
+ rBRdZ2/3N+SBCXfuuNbpHmmG0C1mbKV4jeGG4jBJ1aRNXqVgjSWk7huRoz3szXh7ti5n
+ hAv2aRGCjQfTMVhlQzhCJAWSsVF8vvxYPweeGhyWz6HpAz3b52ioIKs5z897oA6bund5
+ yoDidQNmLMj/qpwolhOHjM3BDtM33LQGd3/Vt7q6si+GsL1nnPvDLsmfxEJwOczRnzr1
+ m66xkpHyf2LBdWPCpgv4SERC1QngptCL/lm1u8Xb/RPSZ4/ZZZ9eQfTCuJI879oSCVI/ wg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2qhredknu5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 05:42:22 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1B5gM0o015760
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 05:42:22 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1B5gLXH020158;
+        Mon, 11 Feb 2019 05:42:21 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 10 Feb 2019 21:42:21 -0800
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-mq: insert rq with DONTPREP to hctx dispatch list when requeue
+Date:   Mon, 11 Feb 2019 13:41:05 +0800
+Message-Id: <1549863665-1691-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9163 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902110043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+When requeue, if RQF_DONTPREP, rq has contained some driver
+specific data, so insert it to hctx dispatch list to avoid any
+merge. Take scsi as example, here is the trace event log (no
+io scheduler, because RQF_STARTED would prevent merging),
 
-On 08/01/19 10:56 AM, Vignesh R wrote:
-> AM654 SoCs has ADC IP which is similar to AM335x, but without the
-> touchscreen part. Add new compatible to handle AM654 SoCs. Also, it
-> seems that existing compatible strings used in the kernel DTs were never
-> documented. So, document them now.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+   kworker/0:1H-339   [000] ...1  2037.209289: block_rq_insert: 8,0 R 4096 () 32768 + 8 [kworker/0:1H]
+scsi_inert_test-1987  [000] ....  2037.220465: block_bio_queue: 8,0 R 32776 + 8 [scsi_inert_test]
+scsi_inert_test-1987  [000] ...2  2037.220466: block_bio_backmerge: 8,0 R 32776 + 8 [scsi_inert_test]
+   kworker/0:1H-339   [000] ....  2047.220913: block_rq_issue: 8,0 R 8192 () 32768 + 16 [kworker/0:1H]
+scsi_inert_test-1996  [000] ..s1  2047.221007: block_rq_complete: 8,0 R () 32768 + 8 [0]
+scsi_inert_test-1996  [000] .Ns1  2047.221045: block_rq_requeue: 8,0 R () 32776 + 8 [0]
+   kworker/0:1H-339   [000] ...1  2047.221054: block_rq_insert: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+   kworker/0:1H-339   [000] ...1  2047.221056: block_rq_issue: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+scsi_inert_test-1986  [000] ..s1  2047.221119: block_rq_complete: 8,0 R () 32776 + 8 [0]
 
-If there are no comments, could you queue this bindings patch? This will
-help me in getting ADC DT nodes to be merged into ARM SoC tree.
+(32768 + 8) was requeued by scsi_queue_insert and had RQF_DONTPREP.
+Then it was merged with (32776 + 8) and issued. Due to RQF_DONTPREP,
+the sdb only contained the part of (32768 + 8), then only that part
+was completed. The lucky thing was that scsi_io_completion detected
+it and requeued the remaining part. So we didn't get corrupted data.
+However, the requeue of (32776 + 8) is not expected.
 
-Regards
-Vignesh
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-mq.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> v2:
-> Fix subject line to include subsystem name
-> Rebase onto v5.0-rc1
-> v1: https://lkml.org/lkml/2018/11/19/313
-> 
->  .../devicetree/bindings/input/touchscreen/ti-tsc-adc.txt  | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-> index b1163bf97146..aad5e34965eb 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-> @@ -2,7 +2,12 @@
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  
->  Required properties:
-> +- mfd
-> +	compatible: Should be
-> +		"ti,am3359-tscadc" for AM335x/AM437x SoCs
-> +		"ti,am654-tscadc", "ti,am3359-tscadc" for AM654 SoCs
->  - child "tsc"
-> +	compatible: Should be "ti,am3359-tsc".
->  	ti,wires: Wires refer to application modes i.e. 4/5/8 wire touchscreen
->  		  support on the platform.
->  	ti,x-plate-resistance: X plate resistance
-> @@ -25,6 +30,9 @@ Required properties:
->  			AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
->  			XP  = 0, XN = 1, YP = 2, YN = 3.
->  - child "adc"
-> +	compatible: Should be
-> +		    "ti,am3359-adc" for AM335x/AM437x SoCs
-> +		    "ti,am654-adc", "ti,am3359-adc" for AM654 SoCs
->  	ti,adc-channels: List of analog inputs available for ADC.
->  			 AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
->  
-> 
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 8f5b533..2d93eb5 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -737,6 +737,18 @@ static void blk_mq_requeue_work(struct work_struct *work)
+ 	spin_unlock_irq(&q->requeue_lock);
+ 
+ 	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
++		/*
++		 * If RQF_DONTPREP, rq has contained some driver specific
++		 * data, so insert it to hctx dispatch list to avoid any
++		 * merge.
++		 */
++		if (rq->rq_flags & RQF_DONTPREP) {
++			rq->rq_flags &= ~RQF_SOFTBARRIER;
++			list_del_init(&rq->queuelist);
++			blk_mq_request_bypass_insert(rq, false);
++			continue;
++		}
++
+ 		if (!(rq->rq_flags & RQF_SOFTBARRIER))
+ 			continue;
+ 
 -- 
-Regards
-Vignesh
+2.7.4
+
