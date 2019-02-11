@@ -2,73 +2,200 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B710C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADD5C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C1E2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FBC32082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xvO0dm9f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfBKXGR (ORCPT
+        id S1727799AbfBKXGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:06:17 -0500
-Received: from emh07.mail.saunalahti.fi ([62.142.5.117]:54212 "EHLO
-        emh07.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfBKXGR (ORCPT
+        Mon, 11 Feb 2019 18:06:45 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42020 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfBKXGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:06:17 -0500
-Received: from darkstar.musicnaut.iki.fi (85-76-87-85-nat.elisa-mobile.fi [85.76.87.85])
-        by emh07.mail.saunalahti.fi (Postfix) with ESMTP id 7487CB000C;
-        Tue, 12 Feb 2019 01:06:14 +0200 (EET)
-Date:   Tue, 12 Feb 2019 01:06:14 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Alexandre Oliva <lxoliva@fsfla.org>
-Cc:     Tom Li <tomli@tomli.me>, James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform
- Drivers
-Message-ID: <20190211230614.GB22242@darkstar.musicnaut.iki.fi>
-References: <20190208083038.GA1433@localhost.localdomain>
- <orbm3i5xrn.fsf@lxoliva.fsfla.org>
- <20190211125506.GA21280@localhost.localdomain>
- <orimxq3q9j.fsf@lxoliva.fsfla.org>
+        Mon, 11 Feb 2019 18:06:45 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BMrrtW086848;
+        Mon, 11 Feb 2019 23:06:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=GJsg/6iWF2zbUF5f0Vm/sN97tzeqEZu2i2wvGlJUiI8=;
+ b=xvO0dm9fESHPjIZDvu+HKHoj2eJWeinOjCBZ+QYWFOdSF60P408v4p9TtaGBW7qbITto
+ 8zK4YKPRPTNxekrU3ZuDvHEU+GKYznMlSw4E1A0CbD4syRCzGCmwcrAd28idwUM3yxt5
+ urxkhQG+65WuwkZrSh9/lMcq/AaF+H+yFmY2aYHTvVlCrVEgO8Pp7eDCv8I22ADu4YAy
+ TXtUEgeN3Ru7uHh/hsQ4qLTlPcuuqE4tTKh7EaYEmec4l/qnviwUefPpjItnjvM8MeFX
+ erWjId4332O5ve2POd7eXVZ6WzGgKQFY3bd5BFta+92j9oEhdACS4h1Yk12zWRYRV7Im Tw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qhredrt4x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 23:06:31 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1BN6UkF005337
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 23:06:30 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BN6TUg027998;
+        Mon, 11 Feb 2019 23:06:29 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 11 Feb 2019 15:06:29 -0800
+Subject: Re: [PATCH] huegtlbfs: fix page leak during migration of file pages
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20190130211443.16678-1-mike.kravetz@oracle.com>
+ <917e7673-051b-e475-8711-ed012cff4c44@oracle.com>
+ <20190208023132.GA25778@hori1.linux.bs1.fc.nec.co.jp>
+ <07ce373a-d9ea-f3d3-35cc-5bc181901caf@oracle.com>
+ <20190208073149.GA14423@hori1.linux.bs1.fc.nec.co.jp>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ffe58925-a301-6791-44d5-e3bec7f9ebf3@oracle.com>
+Date:   Mon, 11 Feb 2019 15:06:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <orimxq3q9j.fsf@lxoliva.fsfla.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190208073149.GA14423@hori1.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9164 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902110163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Feb 11, 2019 at 08:38:00PM -0200, Alexandre Oliva wrote:
-> On Feb 11, 2019, Tom Li <tomli@tomli.me> wrote:
-> >> and, more recently, a very slow system overall, that's been present since
-> >> 4.20.
+On 2/7/19 11:31 PM, Naoya Horiguchi wrote:
+> On Thu, Feb 07, 2019 at 09:50:30PM -0800, Mike Kravetz wrote:
+>> On 2/7/19 6:31 PM, Naoya Horiguchi wrote:
+>>> On Thu, Feb 07, 2019 at 10:50:55AM -0800, Mike Kravetz wrote:
+>>>> On 1/30/19 1:14 PM, Mike Kravetz wrote:
+>>>>> +++ b/fs/hugetlbfs/inode.c
+>>>>> @@ -859,6 +859,16 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
+>>>>>  	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
+>>>>>  	if (rc != MIGRATEPAGE_SUCCESS)
+>>>>>  		return rc;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * page_private is subpool pointer in hugetlb pages, transfer
+>>>>> +	 * if needed.
+>>>>> +	 */
+>>>>> +	if (page_private(page) && !page_private(newpage)) {
+>>>>> +		set_page_private(newpage, page_private(page));
+>>>>> +		set_page_private(page, 0);
+>>>
+>>> You don't have to copy PagePrivate flag?
+>>>
+>>
+>> Well my original thought was no.  For hugetlb pages, PagePrivate is not
+>> associated with page_private.  It indicates a reservation was consumed.
+>> It is set  when a hugetlb page is newly allocated and the allocation is
+>> associated with a reservation and the global reservation count is
+>> decremented.  When the page is added to the page cache or rmap,
+>> PagePrivate is cleared.  If the page is free'ed before being added to page
+>> cache or rmap, PagePrivate tells free_huge_page to restore (increment) the
+>> reserve count as we did not 'instantiate' the page.
+>>
+>> So, PagePrivate is only set from the time a huge page is allocated until
+>> it is added to page cache or rmap.  My original thought was that the page
+>> could not be migrated during this time.  However, I am not sure if that
+>> reasoning is correct.  The page is not locked, so it would appear that it
+>> could be migrated?  But, if it can be migrated at this time then perhaps
+>> there are bigger issues for the (hugetlb) page fault code?
 > 
-> > The mainline framebuffer driver doesn't have any hardware drawing, printing
-> > even a single line on the console is required a full screen redraw via memory-
+> In my understanding, free hugetlb pages are not expected to be passed to
+> migrate_pages(), and currently that's ensured by each migration caller
+> which checks and avoids free hugetlb pages on its own.
+> migrate_pages() and its internal code are probably not aware of handling
+> free hugetlb pages, so if they are accidentally passed to migration code,
+> that's a big problem as you are concerned.
+> So the above reasoning should work at least this assumption is correct.
 > 
-> That doesn't seem to explain even a quiet boot up taking several times
-> longer than 4.19, and package installation over an ethernet connection
-> (thus not using the console) also taking several times longer.
+> Most of migration callers are not intersted in moving free hugepages.
+> The one I'm not sure of is the code path from alloc_contig_range().
+> If someone think it's worthwhile to migrate free hugepage to get bigger
+> contiguous memory, he/she tries to enable that code path and the assumption
+> will be broken.
 
-Maybe it's a slow disk?
+You are correct.  We do not migrate free huge pages.  I was thinking more
+about problems if we migrate a page while it is being added to a task's page
+table as in hugetlb_no_page.
 
-ATA (libata) CS5536 driver is having issues with spurious IRQs and often
-disables IRQs completely during the boot. You should see a warning
-in dmesg. This was the reason for slowness on my FuLoong mini-PC. A
-workaround is to switch to old IDE driver.
+Commit bcc54222309c ("mm: hugetlb: introduce page_huge_active") addresses
+this issue, but I believe there is a bug in the implementation.
+isolate_huge_page contains this test:
 
-Discussion: https://lore.kernel.org/linux-mips/20190106124607.GK27785@darkstar.musicnaut.iki.fi/
+	if (!page_huge_active(page) || !get_page_unless_zero(page)) {
+		ret = false;
+		goto unlock;
+	}
 
-A.
+If the condition is not met, then the huge page can be isolated and migrated.
+
+In hugetlb_no_page, there is this block of code:
+
+                page = alloc_huge_page(vma, haddr, 0);
+                if (IS_ERR(page)) {
+                        ret = vmf_error(PTR_ERR(page));
+                        goto out;
+                }
+                clear_huge_page(page, address, pages_per_huge_page(h));
+                __SetPageUptodate(page);
+                set_page_huge_active(page);
+
+                if (vma->vm_flags & VM_MAYSHARE) {
+                        int err = huge_add_to_page_cache(page, mapping, idx);
+                        if (err) {
+                                put_page(page);
+                                if (err == -EEXIST)
+                                        goto retry;
+                                goto out;
+                        }
+                } else {
+                        lock_page(page);
+                        if (unlikely(anon_vma_prepare(vma))) {
+                                ret = VM_FAULT_OOM;
+                                goto backout_unlocked;
+                        }
+                        anon_rmap = 1;
+                }
+        } else {
+
+Note that we call set_page_huge_active BEFORE locking the page.  This
+means that we can isolate the page and have migration take place while
+we continue to add the page to page tables.  I was able to make this
+happen by adding a udelay() after set_page_huge_active to simulate worst
+case scheduling behavior.  It resulted in VM_BUG_ON while unlocking page.
+My test had several threads faulting in huge pages.  Another thread was
+offlining the memory blocks forcing migration.
+
+To fix this, we need to delay the set_page_huge_active call until after
+the page is locked.  I am testing a patch with this change.  Perhaps we
+should even delay calling set_page_huge_active until we know there are
+no errors and we know the page is actually in page tables?
+
+While looking at this, I think there is another issue.  When a hugetlb
+page is migrated, we do not migrate the 'page_huge_active' state of the
+page.  That should be moved as the page is migrated.  Correct?
+-- 
+Mike Kravetz
