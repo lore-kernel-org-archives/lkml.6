@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A01C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985BFC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFB7222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66B2620844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894871;
-	bh=MWuz8As0fElrjSqDzMxgqYltaiWXMlwVlmGeAtuAt7Y=;
+	s=default; t=1549894875;
+	bh=GrK334DDMMWOgkdPVbDuNPJ+ifvVXHSJCJF8rmhH1mw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AA2ln9AlqWkeF+jmnS8SQvpqesduHWDJLvEyGRSWeCKRCjwRSDEsfkbjq9kpjzbys
-	 i2U8Hvgs8KC1zczYOU72T5e8/vC8qeTo0PzIsE/PMM8GSR0YYNHt1v/mVir8ofPE8F
-	 NueUPPoVNWYejKZeeMI1RBuT4pTMbGYmKJj8yx9s=
+	b=Ver8ejv/OTaQJSoYBGIn73m0cvhOtBmtkDehOQOfwePmC//9B1lIypeve2ejzFi0D
+	 jh9gP5ZuvMsbaKR7VZTSh8kdyZEmFQqskAV8hsNBFLAKeQH4O0lMSUdCblE0X+AI/L
+	 KMsn/dNASKIvw9doGZTTF95hu9j6e/J31a0R9nTQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbfBKOVJ (ORCPT
+        id S1728494AbfBKOVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53940 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728459AbfBKOVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:06 -0500
+        id S1728473AbfBKOVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B50120838;
-        Mon, 11 Feb 2019 14:21:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A88720844;
+        Mon, 11 Feb 2019 14:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894866;
-        bh=MWuz8As0fElrjSqDzMxgqYltaiWXMlwVlmGeAtuAt7Y=;
+        s=default; t=1549894868;
+        bh=GrK334DDMMWOgkdPVbDuNPJ+ifvVXHSJCJF8rmhH1mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VNgOTDTb6T2sIzuulpHa9UNPZGOqsqv0NP3xwBKzai7BL0hHo7t62BimiH69YxP51
-         Lk/c56QRX7GEvmQtyHi9Pk5q5iHcBJ7M39W2FUadz1kWXa7sVPr+vXq2XTr0YO2W2W
-         a0rSZz6LcenfdS2DScklZNXE22DM+rWz3GlTle00=
+        b=N8mQ63J+BCiaLpCo7rMOVVk3vmRLtfJ7gN6MVtqbDqvPAeLyBYrJFyW6rIm4SVSCe
+         wez1QbLDOVvMTzNMiQSKPDG2S8uaoNVwRIkHZRBjzR5H1tByRq8ZuyxcfjXm8+z6kM
+         FQ2TNm+s+wHHcwxrDANSOwBzyAAA8PJlD8W60NrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 006/352] clk: sunxi-ng: h6: Set video PLLs limits
-Date:   Mon, 11 Feb 2019 15:13:53 +0100
-Message-Id: <20190211141846.888888662@linuxfoundation.org>
+Subject: [PATCH 4.20 007/352] ASoC: Intel: mrfld: fix uninitialized variable access
+Date:   Mon, 11 Feb 2019 15:13:54 +0100
+Message-Id: <20190211141846.935209382@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,45 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ed4433419d45bf8b58aef34c4450a27e1c8699e8 ]
+[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
 
-Video PLL factors can be set in a way that final PLL rate is outside
-stable range. H6 user manual specifically says that N factor should not
-be below 12. While it doesn't says anything about maximum stable rate, it
-is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
+Randconfig testing revealed a very old bug, with gcc-8:
 
-Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
-to 2.4 GHz, which is maximum in BSP driver.
+sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (fw == NULL) {
+     ^
+sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+  const struct firmware *fw;
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+We must check the return code of request_firmware() before we look at the
+pointer result that may be uninitialized when the function fails.
+
+Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 2193e1495086..19ff09f610e4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000UL,
- 	.common		= {
- 		.reg		= 0x040,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
-@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000UL,
- 	.common		= {
- 		.reg		= 0x048,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
+diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+index 27413ebae956..b8c456753f01 100644
+--- a/sound/soc/intel/atom/sst/sst_loader.c
++++ b/sound/soc/intel/atom/sst/sst_loader.c
+@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+ 	const struct firmware *fw;
+ 
+ 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+-	if (fw == NULL) {
+-		dev_err(sst->dev, "fw is returning as null\n");
+-		return -EINVAL;
+-	}
+ 	if (retval) {
+ 		dev_err(sst->dev, "request fw failed %d\n", retval);
+ 		return retval;
+ 	}
++	if (fw == NULL) {
++		dev_err(sst->dev, "fw is returning as null\n");
++		return -EINVAL;
++	}
+ 	mutex_lock(&sst->sst_lock);
+ 	retval = sst_cache_and_parse_fw(sst, fw);
+ 	mutex_unlock(&sst->sst_lock);
 -- 
 2.19.1
 
