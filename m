@@ -2,52 +2,53 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CD6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426F9C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E2D20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125D120844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895736;
-	bh=iCW2KEFq4AH5UUEFSlO+RY0fpm4QhOj9FaCtFGK1x6A=;
+	s=default; t=1549895741;
+	bh=3RQdn07mbs9dLl9vM2TE1866YD1cCOpzfORTzj/vjvM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gr0krgyGgBqBZiZYn6aX37H077krI2a37dNEplFvWo3mhb0Ev/ggeeFvyzVfU3FL0
-	 fBxgu6E0ENddkOqg2SsZ+mueLa3WJNmNUVI/+BMmABl6srGnOQXG7RVqQIlVE2XBH9
-	 FIt1cCcKl1vQu8G453f/VuV+KCct7lZafzGTIA1Q=
+	b=QLQjBUBnJT+nn/FujLFw+6PPHm4sOrzQZPQ7iF9J1x7qKUCer6305pK/idRgtqVtq
+	 8iJqFMk3PUr9FrCNUAM9UKTjkBZjYuq4sQwB/qfYwsTs27ACa0RK37/aHAhHYR511G
+	 AmfHQjlWf2/T0JCToOI9bZIeNdQNtZLPnGYtbpSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731060AbfBKOff (ORCPT
+        id S1731084AbfBKOfj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44148 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731033AbfBKOfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:30 -0500
+        id S1731064AbfBKOfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0518E204EC;
-        Mon, 11 Feb 2019 14:35:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEB92204EC;
+        Mon, 11 Feb 2019 14:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895729;
-        bh=iCW2KEFq4AH5UUEFSlO+RY0fpm4QhOj9FaCtFGK1x6A=;
+        s=default; t=1549895735;
+        bh=3RQdn07mbs9dLl9vM2TE1866YD1cCOpzfORTzj/vjvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xdo0gNX/fAeGFilQ/LnxV/A8pqd4RM8qP8DWHAdGu+Enb08KOXxoCXKGUEnGaMM63
-         Wt7mXRT6c/4+Acyk7PKf5NLEaZi276Mf/bloeDQgLN358dnCX2y2p5uJZqOL31L/Pd
-         gpQUEugOdafBFZqtEFQZLOTgezpDszEjcRwQTgcE=
+        b=pXOWGeD0d5uvbCqTwuVPO6l218m1sH2uo4ZUTMWv09HkiPNXX1JMgcOzKwLr6iJGa
+         VosB6gRsQNydcsLu59ITc3Mx7680Ag2xm890URgA1sE+rdLNQb1WaHamvt593jmsjP
+         G5I55ajZxPPtTpNMAKbdcjDr9NpofmpW/9oCNBKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        David Howells <dhowells@redhat.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 303/352] rxrpc: bad unlock balance in rxrpc_recvmsg
-Date:   Mon, 11 Feb 2019 15:18:50 +0100
-Message-Id: <20190211141906.151706537@linuxfoundation.org>
+        stable@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        Stan Johnson <userm57@yahoo.com>
+Subject: [PATCH 4.20 278/352] block/swim3: Fix regression on PowerBook G3
+Date:   Mon, 11 Feb 2019 15:18:25 +0100
+Message-Id: <20190211141904.651713385@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,86 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit 427c5ce4417cba0801fbf79c8525d1330704759c ]
 
-[ Upstream commit 6dce3c20ac429e7a651d728e375853370c796e8d ]
+As of v4.20, the swim3 driver crashes when loaded on a PowerBook G3
+(Wallstreet).
 
-When either "goto wait_interrupted;" or "goto wait_error;"
-paths are taken, socket lock has already been released.
-
-This patch fixes following syzbot splat :
-
-WARNING: bad unlock balance detected!
-5.0.0-rc4+ #59 Not tainted
--------------------------------------
-syz-executor223/8256 is trying to release lock (sk_lock-AF_RXRPC) at:
-[<ffffffff86651353>] rxrpc_recvmsg+0x6d3/0x3099 net/rxrpc/recvmsg.c:598
-but there are no more locks to release!
-
-other info that might help us debug this:
-1 lock held by syz-executor223/8256:
- #0: 00000000fa9ed0f4 (slock-AF_RXRPC){+...}, at: spin_lock_bh include/linux/spinlock.h:334 [inline]
- #0: 00000000fa9ed0f4 (slock-AF_RXRPC){+...}, at: release_sock+0x20/0x1c0 net/core/sock.c:2798
-
-stack backtrace:
-CPU: 1 PID: 8256 Comm: syz-executor223 Not tainted 5.0.0-rc4+ #59
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+MacIO PCI driver attached to Gatwick chipset
+MacIO PCI driver attached to Heathrow chipset
+swim3 0.00015000:floppy: [fd0] SWIM3 floppy controller in media bay
+0.00013020:ch-a: ttyS0 at MMIO 0xf3013020 (irq = 16, base_baud = 230400) is a Z85c30 ESCC - Serial port
+0.00013000:ch-b: ttyS1 at MMIO 0xf3013000 (irq = 17, base_baud = 230400) is a Z85c30 ESCC - Infrared port
+macio: fixed media-bay irq on gatwick
+macio: fixed left floppy irqs
+swim3 1.00015000:floppy: [fd1] Couldn't request interrupt
+Unable to handle kernel paging request for data at address 0x00000024
+Faulting instruction address: 0xc02652f8
+Oops: Kernel access of bad area, sig: 11 [#1]
+BE SMP NR_CPUS=2 PowerMac
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0 #2
+NIP:  c02652f8 LR: c026915c CTR: c0276d1c
+REGS: df43ba10 TRAP: 0300   Not tainted  (4.20.0)
+MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 28228288  XER: 00000100
+DAR: 00000024 DSISR: 40000000
+GPR00: c026915c df43bac0 df439060 c0731524 df494700 00000000 c06e1c08 00000001
+GPR08: 00000001 00000000 df5ff220 00001032 28228282 00000000 c0004ca4 00000000
+GPR16: 00000000 00000000 00000000 c073144c dfffe064 c0731524 00000120 c0586108
+GPR24: c073132c c073143c c073143c 00000000 c0731524 df67cd70 df494700 00000001
+NIP [c02652f8] blk_mq_free_rqs+0x28/0xf8
+LR [c026915c] blk_mq_sched_tags_teardown+0x58/0x84
 Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x172/0x1f0 lib/dump_stack.c:113
- print_unlock_imbalance_bug kernel/locking/lockdep.c:3391 [inline]
- print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3368
- __lock_release kernel/locking/lockdep.c:3601 [inline]
- lock_release+0x67e/0xa00 kernel/locking/lockdep.c:3860
- sock_release_ownership include/net/sock.h:1471 [inline]
- release_sock+0x183/0x1c0 net/core/sock.c:2808
- rxrpc_recvmsg+0x6d3/0x3099 net/rxrpc/recvmsg.c:598
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg net/socket.c:801 [inline]
- sock_recvmsg+0xd0/0x110 net/socket.c:797
- __sys_recvfrom+0x1ff/0x350 net/socket.c:1845
- __do_sys_recvfrom net/socket.c:1863 [inline]
- __se_sys_recvfrom net/socket.c:1859 [inline]
- __x64_sys_recvfrom+0xe1/0x1a0 net/socket.c:1859
- do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446379
-Code: e8 2c b3 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fe5da89fd98 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 0000000000446379
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
-R13: 0000000000000000 R14: 0000000000000000 R15: 20c49ba5e353f7cf
+[df43bac0] [c0045f50] flush_workqueue_prep_pwqs+0x178/0x1c4 (unreliable)
+[df43bae0] [c026915c] blk_mq_sched_tags_teardown+0x58/0x84
+[df43bb00] [c02697f0] blk_mq_exit_sched+0x9c/0xb8
+[df43bb20] [c0252794] elevator_exit+0x84/0xa4
+[df43bb40] [c0256538] blk_exit_queue+0x30/0x50
+[df43bb50] [c0256640] blk_cleanup_queue+0xe8/0x184
+[df43bb70] [c034732c] swim3_attach+0x330/0x5f0
+[df43bbb0] [c034fb24] macio_device_probe+0x58/0xec
+[df43bbd0] [c032ba88] really_probe+0x1e4/0x2f4
+[df43bc00] [c032bd28] driver_probe_device+0x64/0x204
+[df43bc20] [c0329ac4] bus_for_each_drv+0x60/0xac
+[df43bc50] [c032b824] __device_attach+0xe8/0x160
+[df43bc80] [c032ab38] bus_probe_device+0xa0/0xbc
+[df43bca0] [c0327338] device_add+0x3d8/0x630
+[df43bcf0] [c0350848] macio_add_one_device+0x444/0x48c
+[df43bd50] [c03509f8] macio_pci_add_devices+0x168/0x1bc
+[df43bd90] [c03500ec] macio_pci_probe+0xc0/0x10c
+[df43bda0] [c02ad884] pci_device_probe+0xd4/0x184
+[df43bdd0] [c032ba88] really_probe+0x1e4/0x2f4
+[df43be00] [c032bd28] driver_probe_device+0x64/0x204
+[df43be20] [c032bfcc] __driver_attach+0x104/0x108
+[df43be40] [c0329a00] bus_for_each_dev+0x64/0xb4
+[df43be70] [c032add8] bus_add_driver+0x154/0x238
+[df43be90] [c032ca24] driver_register+0x84/0x148
+[df43bea0] [c0004aa0] do_one_initcall+0x40/0x188
+[df43bf00] [c0690100] kernel_init_freeable+0x138/0x1d4
+[df43bf30] [c0004cbc] kernel_init+0x18/0x10c
+[df43bf40] [c00121e4] ret_from_kernel_thread+0x14/0x1c
+Instruction dump:
+5484d97e 4bfff4f4 9421ffe0 7c0802a6 bf410008 7c9e2378 90010024 8124005c
+2f890000 419e0078 81230004 7c7c1b78 <81290024> 2f890000 419e0064 81440000
+---[ end trace 12025ab921a9784c ]---
 
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: David Howells <dhowells@redhat.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reverting commit 8ccb8cb1892b ("swim3: convert to blk-mq") resolves the
+problem.
+
+That commit added a struct blk_mq_tag_set to struct floppy_state and
+initialized it with a blk_mq_init_sq_queue() call. Unfortunately, there
+is a memset() in swim3_add_device() that subsequently clears the
+floppy_state struct. That means fs->tag_set->ops is a NULL pointer, and
+it gets dereferenced by blk_mq_free_rqs() which gets called in the
+request_irq() error path. Move the memset() to fix this bug.
+
+BTW, the request_irq() failure for the left mediabay floppy (fd1) is not
+a regression. I don't know why it happens. The right media bay floppy
+(fd0) works fine however.
+
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 8ccb8cb1892b ("swim3: convert to blk-mq")
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/recvmsg.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/block/swim3.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/rxrpc/recvmsg.c
-+++ b/net/rxrpc/recvmsg.c
-@@ -596,6 +596,7 @@ error_requeue_call:
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index 3f6df3f1f5d9..1046459f172b 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1091,8 +1091,6 @@ static int swim3_add_device(struct macio_dev *mdev, int index)
+ 	struct floppy_state *fs = &floppy_states[index];
+ 	int rc = -EBUSY;
+ 
+-	/* Do this first for message macros */
+-	memset(fs, 0, sizeof(*fs));
+ 	fs->mdev = mdev;
+ 	fs->index = index;
+ 
+@@ -1192,14 +1190,15 @@ static int swim3_attach(struct macio_dev *mdev,
+ 			return rc;
  	}
- error_no_call:
- 	release_sock(&rx->sk);
-+error_trace:
- 	trace_rxrpc_recvmsg(call, rxrpc_recvmsg_return, 0, 0, 0, ret);
- 	return ret;
  
-@@ -604,7 +605,7 @@ wait_interrupted:
- wait_error:
- 	finish_wait(sk_sleep(&rx->sk), &wait);
- 	call = NULL;
--	goto error_no_call;
-+	goto error_trace;
- }
+-	fs = &floppy_states[floppy_count];
+-
+ 	disk = alloc_disk(1);
+ 	if (disk == NULL) {
+ 		rc = -ENOMEM;
+ 		goto out_unregister;
+ 	}
  
- /**
++	fs = &floppy_states[floppy_count];
++	memset(fs, 0, sizeof(*fs));
++
+ 	disk->queue = blk_mq_init_sq_queue(&fs->tag_set, &swim3_mq_ops, 2,
+ 						BLK_MQ_F_SHOULD_MERGE);
+ 	if (IS_ERR(disk->queue)) {
+-- 
+2.19.1
+
 
 
