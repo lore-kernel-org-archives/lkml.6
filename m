@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8B4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4533CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B8C20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EE620838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896115;
-	bh=YiESLhKyGix7XyxsNK7HwbMq5o5xkQYZ9KeovHwm4hM=;
+	s=default; t=1549896120;
+	bh=RHd1Mi7b1FOIOVCT2MarXi4McRknbt7iKs0zOl3F1rU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CQLDDqGPq4sOMu0/mXJBIpgvz7CitYH3cpGZkh3CJ0goF9FbAgfwkqLRfGBBsu/pI
-	 AEl3WSvLZbNPS8GYezG6E/aDVH6aoafzigY3iGptrTtb5sdxw2gYwyaDqv7FHJRrdX
-	 6nn0WZApVym6vbEKLZQvAlNjREF/F6G7r/CAF4AI=
+	b=KVkKNk7Rgz7FWtmB1IX+PM4zpS58PZgoyrr3pU6l/10OfaRZTXORW1+rXmv0b8Mua
+	 +vlVcOnWQphCo2a9a9c9fY1wYpqZy7kVgXq4EfiA/LtMsy9VFj8meygFznbJsauv0H
+	 NCMof36n6hM1w5lLshpaz7384npRaPWmd8oD8nHw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732317AbfBKOly (ORCPT
+        id S1732331AbfBKOl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53420 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731816AbfBKOlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:51 -0500
+        id S1731816AbfBKOlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D46482081B;
-        Mon, 11 Feb 2019 14:41:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22BBF20700;
+        Mon, 11 Feb 2019 14:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896111;
-        bh=YiESLhKyGix7XyxsNK7HwbMq5o5xkQYZ9KeovHwm4hM=;
+        s=default; t=1549896114;
+        bh=RHd1Mi7b1FOIOVCT2MarXi4McRknbt7iKs0zOl3F1rU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPzZhgb5R5yygkJZYti7dDVkoJwe3N5OFcqm9rUtOdOmzCx/chI4YXBcUhXisfl0O
-         o3CBNQ6KA6O5IEwP99aUp1AB4/VFrgQ5SZrN6OdUqfiLp0WZqcfkI15mZrpbKOMUp6
-         bxz5iQXy7ko9Vl+BBc2Ir0dkdQHkrhykey7gpcO0=
+        b=qqRfhunztmeaxhQZlsilBejWT4vtigq0+gleP8N/acPSOLkNhymXfq9Z6aDt3jqqm
+         jsGmDx8i5A5a38VcUIkDFfgC5UmC4ptFRYqTsbYsR9WREKstJ+ZRMm1z8Hk6WEqXZ5
+         jlOyewbaLnQsJSqlnNlscDzvsPHYAJ9xm+oFZCc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/313] nfsd4: fix crash on writing v4_end_grace before nfsd startup
-Date:   Mon, 11 Feb 2019 15:15:56 +0100
-Message-Id: <20190211141858.952421765@linuxfoundation.org>
+Subject: [PATCH 4.19 077/313] drm: Clear state->acquire_ctx before leaving drm_atomic_helper_commit_duplicated_state()
+Date:   Mon, 11 Feb 2019 15:15:57 +0100
+Message-Id: <20190211141859.019177196@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,38 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 62a063b8e7d1db684db3f207261a466fa3194e72 ]
+[ Upstream commit aa394b0dd68cb00c483e151dcd84713d4d517ed1 ]
 
-Anatoly Trosinenko reports that this:
+drm_atomic_helper_commit_duplicated_state() sets state->acquire_ctx to
+the context given in the argument and leaves it in state after it
+quits. The lifetime of state and context are not guaranteed to be the
+same, so we shouldn't leave that pointer hanging around. This patch
+resets the context to NULL to avoid any oopses.
 
-1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
-2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
-3) From `kvm-xfstests shell`:
+Changes in v2:
+- Added to the set
 
-results in NULL dereference in locks_end_grace.
-
-Check that nfsd has been started before trying to end the grace period.
-
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181129150423.239081-1-sean@poorly.run
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/nfsctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/drm_atomic_helper.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 7fb9f7c667b1..899174c7a8ae 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1126,6 +1126,8 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
- 		case 'Y':
- 		case 'y':
- 		case '1':
-+			if (nn->nfsd_serv)
-+				return -EBUSY;
- 			nfsd4_end_grace(nn);
- 			break;
- 		default:
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index f77bff5aa307..23397c08be11 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3192,7 +3192,7 @@ EXPORT_SYMBOL(drm_atomic_helper_suspend);
+ int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
+ 					      struct drm_modeset_acquire_ctx *ctx)
+ {
+-	int i;
++	int i, ret;
+ 	struct drm_plane *plane;
+ 	struct drm_plane_state *new_plane_state;
+ 	struct drm_connector *connector;
+@@ -3211,7 +3211,11 @@ int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
+ 	for_each_new_connector_in_state(state, connector, new_conn_state, i)
+ 		state->connectors[i].old_state = connector->state;
+ 
+-	return drm_atomic_commit(state);
++	ret = drm_atomic_commit(state);
++
++	state->acquire_ctx = NULL;
++
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_commit_duplicated_state);
+ 
 -- 
 2.19.1
 
