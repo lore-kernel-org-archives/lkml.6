@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B644C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3365AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F05F820838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F284120838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895412;
-	bh=aWHigvl4q892npeZOKRLcjzUYZhu9wfb9HiXXs9K6ME=;
+	s=default; t=1549895416;
+	bh=0s9Lufb1rVi03qTnL6+QEd7KuRQVSj/aJ9oUsMcPPfw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eJLQ25e+FaSDJUaCroPDOFSRLhcwqEPUKCYfdvNhnu5sMNAxz7YxeoPJ/Mn16Uwj4
-	 xcC9yPw6LUwSvfEu4Jc1QcTbsyIaMDsEDE862LncaZsUwXvSs2K7eAvrwjvCuQNoQx
-	 rrhy56p+taH6xWf7LfaLTOPw1UY4v3Xcn5bfnamQ=
+	b=IIL0fOz3dKIVwVys8JgfosV7bqAH1ypI99+RC+uLqgbvBDq/ugD/a5GlFAZZQq2B7
+	 WVXN3s/BfZnRzex3HGV32VhKBmoC/oEqVaSqZqr6YrjIpQj1051c4pmcAybOD70esv
+	 B+otNeVlZbO2UUPhuJvCAHs4VB8OTWGNMiaWj1kw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbfBKOaK (ORCPT
+        id S1730098AbfBKOaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:30:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36424 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:30:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727691AbfBKOaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:30:06 -0500
+        id S1730078AbfBKOaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:30:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDD422075C;
-        Mon, 11 Feb 2019 14:30:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D95B2082F;
+        Mon, 11 Feb 2019 14:30:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895406;
-        bh=aWHigvl4q892npeZOKRLcjzUYZhu9wfb9HiXXs9K6ME=;
+        s=default; t=1549895409;
+        bh=0s9Lufb1rVi03qTnL6+QEd7KuRQVSj/aJ9oUsMcPPfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QsRYQYrvGIvoQfB2gIInBrMms38WVIjtvLAv5jQ6u/+p5EjEF4kqBo0j6TOQMIHfj
-         WzNLA0oJOwcjwZyT6tLp7uPJIPsqtP3aJmuVWq0jPMcGMXdOS9PfeEkv27iNbfn7PM
-         tjtapPW4976w3GAuLHhtDzAXg6O7113uiaO3EJHk=
+        b=mN5RITp4Kgb7Zceft6/jzS4phAJkpXGlkA46DOVqcX4MR0cAUfTEvq+unjBWK6RBj
+         csC0zi9jGBKQMEkqe7VBMoQMUAGn7YUBqlF1i8353n5d5Ty/4JT4dWWs7G80EjwrrF
+         mYzg/+ld2XYF/fw8npsL1rRB8TLgIMgtmiV1x7bo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        linux-mips@linux-mips.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 195/352] pinctrl: rza1: Handle devm_kasprintf() failure cases
-Date:   Mon, 11 Feb 2019 15:17:02 +0100
-Message-Id: <20190211141859.544769780@linuxfoundation.org>
+Subject: [PATCH 4.20 178/352] mmc: jz4740: Get CD/WP GPIOs from descriptors
+Date:   Mon, 11 Feb 2019 15:16:45 +0100
+Message-Id: <20190211141858.411767436@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,45 +69,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit db221412cd2014506642967155698825ad80f6b6 ]
+[ Upstream commit 0c901c0566fb4edc2631c3786e5085a037be91f8 ]
 
-devm_kasprintf() may return NULL on failure of internal allocation
-thus the assignments are not safe if not checked. On error
-rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
-negative values so -ENOMEM in the (unlikely) failure case of
-devm_kasprintf() should be fine here.
+Modifty the JZ4740 driver to retrieve card detect and write
+protect GPIO pins from GPIO descriptors instead of hard-coded
+global numbers. Augment the only board file using this in the
+process and cut down on passed in platform data.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Preserve the code setting the caps2 flags for CD and WP
+as active low or high since the slot GPIO code currently
+ignores the gpiolib polarity inversion semantice and uses
+the raw accessors to read the GPIO lines, but set the right
+polarity flags in the descriptor table for jz4740.
+
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: linux-mips@linux-mips.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-rza1.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../mips/include/asm/mach-jz4740/jz4740_mmc.h |  2 --
+ arch/mips/jz4740/board-qi_lb60.c              | 12 ++++++++---
+ drivers/mmc/host/jz4740_mmc.c                 | 20 +++++++++----------
+ 3 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 14eb576c04a2..9cfe9d0520ac 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1225,6 +1225,9 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
- 	chip->base	= -1;
- 	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%pOFn",
- 					 np);
-+	if (!chip->label)
-+		return -ENOMEM;
-+
- 	chip->ngpio	= of_args.args[2];
- 	chip->of_node	= np;
- 	chip->parent	= rza1_pctl->dev;
-@@ -1326,6 +1329,8 @@ static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
- 		pins[i].number = i;
- 		pins[i].name = devm_kasprintf(rza1_pctl->dev, GFP_KERNEL,
- 					      "P%u-%u", port, pin);
-+		if (!pins[i].name)
-+			return -ENOMEM;
+diff --git a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
+index e9cc62cfac99..ff50aeb1a933 100644
+--- a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
++++ b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
+@@ -4,8 +4,6 @@
  
- 		if (i % RZA1_PINS_PER_PORT == 0) {
- 			/*
+ struct jz4740_mmc_platform_data {
+ 	int gpio_power;
+-	int gpio_card_detect;
+-	int gpio_read_only;
+ 	unsigned card_detect_active_low:1;
+ 	unsigned read_only_active_low:1;
+ 	unsigned power_active_low:1;
+diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
+index af0c8ace0141..705593d40d12 100644
+--- a/arch/mips/jz4740/board-qi_lb60.c
++++ b/arch/mips/jz4740/board-qi_lb60.c
+@@ -43,7 +43,6 @@
+ #include "clock.h"
+ 
+ /* GPIOs */
+-#define QI_LB60_GPIO_SD_CD		JZ_GPIO_PORTD(0)
+ #define QI_LB60_GPIO_SD_VCC_EN_N	JZ_GPIO_PORTD(2)
+ 
+ #define QI_LB60_GPIO_KEYOUT(x)		(JZ_GPIO_PORTC(10) + (x))
+@@ -386,12 +385,18 @@ static struct platform_device qi_lb60_gpio_keys = {
+ };
+ 
+ static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
+-	.gpio_card_detect	= QI_LB60_GPIO_SD_CD,
+-	.gpio_read_only		= -1,
+ 	.gpio_power		= QI_LB60_GPIO_SD_VCC_EN_N,
+ 	.power_active_low	= 1,
+ };
+ 
++static struct gpiod_lookup_table qi_lb60_mmc_gpio_table = {
++	.dev_id = "jz4740-mmc.0",
++	.table = {
++		GPIO_LOOKUP("GPIOD", 0, "cd", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /* beeper */
+ static struct pwm_lookup qi_lb60_pwm_lookup[] = {
+ 	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
+@@ -500,6 +505,7 @@ static int __init qi_lb60_init_platform_devices(void)
+ 	gpiod_add_lookup_table(&qi_lb60_audio_gpio_table);
+ 	gpiod_add_lookup_table(&qi_lb60_nand_gpio_table);
+ 	gpiod_add_lookup_table(&qi_lb60_spigpio_gpio_table);
++	gpiod_add_lookup_table(&qi_lb60_mmc_gpio_table);
+ 
+ 	spi_register_board_info(qi_lb60_spi_board_info,
+ 				ARRAY_SIZE(qi_lb60_spi_board_info));
+diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
+index 0c1efd5100b7..44ea452add8e 100644
+--- a/drivers/mmc/host/jz4740_mmc.c
++++ b/drivers/mmc/host/jz4740_mmc.c
+@@ -983,17 +983,17 @@ static int jz4740_mmc_request_gpios(struct mmc_host *mmc,
+ 	if (!pdata->read_only_active_low)
+ 		mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
+ 
+-	if (gpio_is_valid(pdata->gpio_card_detect)) {
+-		ret = mmc_gpio_request_cd(mmc, pdata->gpio_card_detect, 0);
+-		if (ret)
+-			return ret;
+-	}
++	/*
++	 * Get optional card detect and write protect GPIOs,
++	 * only back out on probe deferral.
++	 */
++	ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+-	if (gpio_is_valid(pdata->gpio_read_only)) {
+-		ret = mmc_gpio_request_ro(mmc, pdata->gpio_read_only);
+-		if (ret)
+-			return ret;
+-	}
++	ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+ 	return jz4740_mmc_request_gpio(&pdev->dev, pdata->gpio_power,
+ 			"MMC read only", true, pdata->power_active_low);
 -- 
 2.19.1
 
