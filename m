@@ -2,92 +2,110 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FABC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3229C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 298A8222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92E3C222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899395;
+	bh=Il8dBxNkESBnBi81MpJqx9tfhzVQgNWP6AhsD5bQm0c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=USwtp1g1O967yBW67e8bgvKTn1oym7mi5D+BR9tEcSGXu/yvxl0/GbksfP1s/kgRN
+	 VBbBeNVq7n+36yaIIF5D/L6HGzBmiakDW4Patk4xzgEiMcqyZ9V59bOzAewD+bk8SW
+	 cEUFpkyTeKWEQJWBzg8Pgfd6FXhj3kF5FaKtv2bc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388314AbfBKOvp (ORCPT
+        id S2388791AbfBKPge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:51:45 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:50780 "EHLO smtp.gentoo.org"
+        Mon, 11 Feb 2019 10:36:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbfBKOvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:51:38 -0500
-Received: from a1i15 (host2092.kph.uni-mainz.de [134.93.134.92])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2387406AbfBKOvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:44 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: ulm)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id 5B008335C9F;
-        Mon, 11 Feb 2019 14:51:35 +0000 (UTC)
-From:   Ulrich Mueller <ulm@gentoo.org>
-To:     Domenico Andreoli <cavok@debian.org>
-Cc:     Kristian Fiskerstrand <k_f@gentoo.org>,
-        Ben Finney <bignose@debian.org>,
-        Nadia Yvette Chambers <nyc@holomorphy.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        919356@bugs.debian.org, debian-legal@lists.debian.org,
-        linux-kernel@vger.kernel.org,
-        Martin Steigerwald <martin.steigerwald@proact.de>,
-        Jens Axboe <jens.axboe@oracle.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: Licensing of include/linux/hash.h
-References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
-        <20190123085000.fp7lhtjxcyzw3m4x@dumbo>
-        <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
-        <20190211072259.GA19224@nouveau> <w6gva1qzea4.fsf@kph.uni-mainz.de>
-Date:   Mon, 11 Feb 2019 15:51:32 +0100
-In-Reply-To: <w6gva1qzea4.fsf@kph.uni-mainz.de> (Ulrich Mueller's message of
-        "Mon, 11 Feb 2019 13:43:31 +0100")
-Message-ID: <w6go97iz8cr.fsf@kph.uni-mainz.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B06F20700;
+        Mon, 11 Feb 2019 14:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896703;
+        bh=Il8dBxNkESBnBi81MpJqx9tfhzVQgNWP6AhsD5bQm0c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QFQUzH2zQcqKX4HAKND2qYxiGrS27raWCrUkppTp/nl718949ppRnKzg/cSgHxWat
+         DtzpshQSSZircGhrRijpRjp+GY1HwO3emO9rB4m6JHtRhtOvqEe9oaB+dCW5CssoGi
+         4Xc9f6IHp/2mj04MfbYSAGcHR7k9P+pLvQsg8qqU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Secunia Research <vuln@secunia.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 273/313] sctp: walk the list of asoc safely
+Date:   Mon, 11 Feb 2019 15:19:13 +0100
+Message-Id: <20190211141911.511204092@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> On Mon, 11 Feb 2019, Ulrich Mueller wrote:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
->>>>> On Mon, 11 Feb 2019, Domenico Andreoli wrote:
->> On Mon, Feb 11, 2019 at 12:08:32AM +0100, Kristian Fiskerstrand wrote:
->>> It was [pointed out] by one of our license group that [hash.h]  is the
->>> same that has a GPL-2+ in [fio] which has a signed-off-by.
->>> 
->>> References:
->>> [pointed out]
->>> https://bugs.gentoo.org/677586#c1
->>> 
->>> [hash.h]
->>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/fio.git/commit/hash.h?id=bdc7211e190482f0c17c109a0d90834a6611be1c
+------------------
 
->> Yes, the Signed-off-by is from Jens Axboe (in CC) but he's not the
->> original author, I guess he just copied the file as Arnaldo did. The
->> file he committed has not any reference to the license.
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
->>> [fio]
->>> https://metadata.ftp-master.debian.org/changelogs/main/f/fio/fio_3.12-2_copyright
+[ Upstream commit ba59fb0273076637f0add4311faa990a5eec27c0 ]
 
->> I'm afraid that this entry in wrong. I'll seek confirmation with
->> Martin Steigerwald.
+In sctp_sendmesg(), when walking the list of endpoint associations, the
+association can be dropped from the list, making the list corrupt.
+Properly handle this by using list_for_each_entry_safe()
 
-> Not sure if this will help, but hash.h originally appeared in
-> Linux 2.5.7. In the following commit one can see that most of its code
-> was moved or copied from mm/filemap.c:
-> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=882ad449046cec136c484dd2b3659fb4c683e0a3
+Fixes: 4910280503f3 ("sctp: add support for snd flag SCTP_SENDALL process in sendmsg")
+Reported-by: Secunia Research <vuln@secunia.com>
+Tested-by: Secunia Research <vuln@secunia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sctp/socket.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> filemap.c has a copyright line by Linus, but git blame shows that
-> the relevant code was added in 2002 with a commit by Rik van Riel:
-> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=e5191c50d12621e04f8bc247dcb6a0f4ad76ae26
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -2045,7 +2045,7 @@ static int sctp_sendmsg(struct sock *sk,
+ 	struct sctp_endpoint *ep = sctp_sk(sk)->ep;
+ 	struct sctp_transport *transport = NULL;
+ 	struct sctp_sndrcvinfo _sinfo, *sinfo;
+-	struct sctp_association *asoc;
++	struct sctp_association *asoc, *tmp;
+ 	struct sctp_cmsgs cmsgs;
+ 	union sctp_addr *daddr;
+ 	bool new = false;
+@@ -2071,7 +2071,7 @@ static int sctp_sendmsg(struct sock *sk,
+ 
+ 	/* SCTP_SENDALL process */
+ 	if ((sflags & SCTP_SENDALL) && sctp_style(sk, UDP)) {
+-		list_for_each_entry(asoc, &ep->asocs, asocs) {
++		list_for_each_entry_safe(asoc, tmp, &ep->asocs, asocs) {
+ 			err = sctp_sendmsg_check_sflags(asoc, sflags, msg,
+ 							msg_len);
+ 			if (err == 0)
 
-> The relevant thread in LKML is here:
-> https://lkml.org/lkml/2002/2/18/1970
 
-Sorry, that link should read:
-https://lkml.org/lkml/2002/2/18/197
