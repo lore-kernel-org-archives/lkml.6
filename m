@@ -2,163 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF15C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A861BC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04DEE21B69
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74CCC2070D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549904333;
+	bh=5gE+sldJ+cJUl+bxpbxtliDsZaPs9BxUcltFjN0KCdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wtuOdjdfF5PZt7eIwpvezwmlvtKJB+ghJIsdBvmM7PQwTfJ0vnyzAi/SGP/LgXPOb
+	 PD1lXn5AkE35uc2Wj0ihx9YOF+AsvuariXqcplwPAqVAQ2/30b5MmrIu6PJrMFngQC
+	 SqC90Uvu+EtW/LLEBxA4OlHjHdyzNBodIyKdvuNg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbfBKQ6C (ORCPT
+        id S1728520AbfBKQ6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:58:02 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47291 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfBKQ6C (ORCPT
+        Mon, 11 Feb 2019 11:58:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47606 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728542AbfBKQ6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:58:02 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gtEu1-0001Y3-N8; Mon, 11 Feb 2019 17:57:53 +0100
-Message-ID: <1549904273.2546.16.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/2] pci: imx6: support kernels built in Thumb-2 mode
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Stefan Agner <stefan@agner.ch>, hongxing.zhu@nxp.com
-Cc:     robin.murphy@arm.com, tpiepho@impinj.com, linux@armlinux.org.uk,
-        leonard.crestez@nxp.com, andrew.smirnov@gmail.com,
-        festevam@gmail.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 11 Feb 2019 17:57:53 +0100
-In-Reply-To: <20181204132733.14422-2-stefan@agner.ch>
-References: <20181204132733.14422-1-stefan@agner.ch>
-         <20181204132733.14422-2-stefan@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 11 Feb 2019 11:58:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rv54XH4oqkQQn5ow0gBegq6P16nCT1DvfLnU46oU21w=; b=e+xbBr0hpxPzJIBwYq2b13hCa
+        QcT9wjjFD8xld3E2vGM7lNmCpSAfFqCCgoJrQwR9JlB3fVJ56bnMj0J4kj4cWjV/qAxI6Rz3k9Pz4
+        TQ/AsiuYbf0nrShe5mxe7O7fQMQqMwBehmD74Hqwfsu3cg5rrqUnxwyKUWAV84piNF4Es=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtEur-0005IR-FA; Mon, 11 Feb 2019 16:58:45 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id BCAE211280BD; Mon, 11 Feb 2019 16:58:39 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 16:58:39 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.20 066/352] ASoC: sunxi: sun50i-codec-analog: Add
+ support for cpvdd regulator supply
+Message-ID: <20190211165839.GF22391@sirena.org.uk>
+References: <20190211141846.543045703@linuxfoundation.org>
+ <20190211141850.315232314@linuxfoundation.org>
+ <20190211143924.GD22391@sirena.org.uk>
+ <20190211165008.GB21634@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iBwuxWUsK/REspAd"
+Content-Disposition: inline
+In-Reply-To: <20190211165008.GB21634@kroah.com>
+X-Cookie: Tell me what to think!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 04.12.2018, 14:27 +0100 schrieb Stefan Agner:
-> Add a fault handler which handles immediate reads in Thumb-2
-> mode. Install the appropriate handler depending on which mode
-> the kernel has been built. This avoids an "Unhandled fault:
-> external abort on non-linefetch (0x1008) at 0xf0a80000"
-> during boot on a device with a PCIe switch connected.
-> 
-> Link: https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
+--iBwuxWUsK/REspAd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> ---
-> Changes since v1:
-> - Added Thumb-2 32-bit instruction support (tested by inserting .w
->   instructions in arch/arm/include/asm/io.h)
-> - Avoid dereferencing if fault happened in user mode
-> 
->  drivers/pci/controller/dwc/pci-imx6.c | 59 ++++++++++++++++++++++++++-
->  1 file changed, 58 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 54a29e441303..a9bbbf176c4a 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -29,6 +29,7 @@
->  #include <linux/reset.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
-> +#include <asm/opcodes.h>
->  
->  #include "pcie-designware.h"
->  
-> @@ -305,6 +306,59 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
->  	return 1;
->  }
->  
-> +static int imx6q_pcie_abort_handler_thumb2(unsigned long addr,
-> +		unsigned int fsr, struct pt_regs *regs)
-> +{
-> +	unsigned long pc = instruction_pointer(regs);
-> +	unsigned long instr;
-> +
-> +	if (user_mode(regs))
-> +		return 1;
-> +
-> +	instr = __mem_to_opcode_thumb32(*(unsigned long *)pc);
-> +
-> +	if (__opcode_is_thumb32(instr)) {
-> +		/* Load word/byte and halfword immediate offset */
-> +		if ((instr & 0xff100000UL) == 0xf8100000UL) {
-> +			int reg = (instr >> 12) & 0xf;
-> +			unsigned long val;
-> +
-> +			if ((instr & 0x00700000UL) == 0x00100000UL)
-> +				val = 0xff;
-> +			else if ((instr & 0x00700000UL) == 0x00300000UL)
-> +				val = 0xffff;
-> +			else
-> +				val = 0xffffffffUL;
-> +
-> +			regs->uregs[reg] = val;
-> +			regs->ARM_pc += 4;
-> +			return 0;
-> +		}
-> +	} else {
-> +		instr = __mem_to_opcode_thumb16(*(unsigned long *)pc);
-> +
-> +		/* Load word/byte and halfword immediate offset */
-> +		if (((instr & 0xe800) == 0x6800) ||
-> +		    ((instr & 0xf800) == 0x8800)) {
-> +			int reg = instr & 0x7;
-> +			unsigned long val;
-> +
-> +			if (instr & 0x1000)
-> +				val = 0xff;
-> +			else if (instr & 0x8000)
-> +				val = 0xffff;
-> +			else
-> +				val = 0xffffffffUL;
-> +
-> +			regs->uregs[reg] = val;
-> +			regs->ARM_pc += 2;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return 1;
-> +}
-> +
->  static int imx6_pcie_attach_pd(struct device *dev)
->  {
->  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> @@ -1075,6 +1129,8 @@ static struct platform_driver imx6_pcie_driver = {
->  
->  static int __init imx6_pcie_init(void)
->  {
-> +	bool thumb2 = IS_ENABLED(CONFIG_THUMB2_KERNEL);
-> +
->  	/*
->  	 * Since probe() can be deferred we need to make sure that
->  	 * hook_fault_code is not called after __init memory is freed
-> @@ -1082,7 +1138,8 @@ static int __init imx6_pcie_init(void)
->  	 * we can install the handler here without risking it
->  	 * accessing some uninitialized driver state.
->  	 */
-> -	hook_fault_code(8, imx6q_pcie_abort_handler, SIGBUS, 0,
-> +	hook_fault_code(8, thumb2 ? imx6q_pcie_abort_handler_thumb2 :
-> +			imx6q_pcie_abort_handler, SIGBUS, 0,
->  			"external abort on non-linefetch");
->  
->  	return platform_driver_register(&imx6_pcie_driver);
+On Mon, Feb 11, 2019 at 05:50:08PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Feb 11, 2019 at 02:39:24PM +0000, Mark Brown wrote:
+
+> > This is more a new feature than a bug fix, it doesn't look like obvious
+> > stable material.
+
+> Normally we take "new quirks and device ids", and given that this is a
+> tiny 2 line patch, that seems to fit that requirement.
+
+It's definitely not a quirk, it's changing from completely ignoring a
+supply to actively managing it at runtime which if it has any effect on
+existing systems is more likely to break something than fix it.  It's
+not like the fixes for build problems which can't be triggered in old
+kernels, it'll start us things we never used to do.
+
+--iBwuxWUsK/REspAd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhqb4ACgkQJNaLcl1U
+h9CnCAf/bT5TUqOGA736QqtbTP63wZmfa0D6nfq93+xIfR7p2/W42Jg0RmwTYjdY
+6CWqH+atFnlJy+lMkRSXlqtiDU1VLI5XCeQquGX/cpPrAUNs3BYBEBqvTFolRAvz
+KBeEEJOJHEp0yV0hi3+73j2TVbWxlzGMbiyOKfM24PyRS2fURhnSrVtsuCJWpKJY
+yAgp4SboWkwB4cCW7D6aZqvnBKyXjJi1Z+vNQ0Qg1SjzcLrZC/MGz1mVbsPXr3HD
+QgE2h0fEYm04+8Fc2J+E94bNPTfSN7F6L+v3Q7Yo8BikAKykKmTJ+xyFPL1f9My6
+t6ZnNR4Xn5ePw9FQQ+yPZHC9DCkS2Q==
+=7DMV
+-----END PGP SIGNATURE-----
+
+--iBwuxWUsK/REspAd--
