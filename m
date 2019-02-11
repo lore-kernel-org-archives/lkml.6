@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23991C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBE6C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D880621B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5141321B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900596;
-	bh=eUePOIRHzLwgvHSFYYA8claPFnrr+mG7Ov9esdRkQG0=;
+	s=default; t=1549900601;
+	bh=azl55dmhvZDrCwpk01h1diQ57+nzg6+5PwBNS8L+mfQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nHQ5RzyfqdXqJmC0M5BWMk4l5J1/kxPr0ChpIJUDW56FGH/neTC4y+aNPhNX5IgRC
-	 eImuihrlPIYeCzNvKRc1du3TnRlEB48Ce0MGUO1ynHUGKzSncNIyZQFFbCXNjRycnT
-	 Z9JQLURUuBVruT59/TdkR+cEq2eOAuYXcO85Oba8=
+	b=YJ0S2tcb7nfn/pxGsjdrONS3GTop2XCWI2vSzW8fJMd1w+SmatGPATAHFLPSY7WSJ
+	 XJKN2uCwvDmy+OIWSAGejnzVccU8L65NpMe/J3P8PZHcsMTuGxuV/gPBGWgNv8Mwhg
+	 tv2YpTbE+vvVXxtMVAmhb5fn5RIpP3puik0vB17s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730834AbfBKOeX (ORCPT
+        id S1730810AbfBKOeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:34:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42518 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:34:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbfBKOeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:34:19 -0500
+        id S1730793AbfBKOeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:34:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47B8B2081B;
-        Mon, 11 Feb 2019 14:34:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D3A521B18;
+        Mon, 11 Feb 2019 14:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895658;
-        bh=eUePOIRHzLwgvHSFYYA8claPFnrr+mG7Ov9esdRkQG0=;
+        s=default; t=1549895652;
+        bh=azl55dmhvZDrCwpk01h1diQ57+nzg6+5PwBNS8L+mfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zH4t1VLoIUg1DzQh18etefeyM0/IuvxO5xoJdMna/IuMToT027HL6b4KMR7MOo+pQ
-         Y8soTEGWwKgN2nKIFIyHTXg8Iqf9ai/MSA/L3zXqiCp8JtBnXmrwKiiMOglwPPi9qW
-         9axuUcm4EM6TpXriLBSEo5d7N3bDdjZn777ec1tM=
+        b=0LtCrmAs5339co04I38cSsyLsFSbz2saDysull+MUc18qdjosZTLGV98TbwpvrdgY
+         RJF8/wpyGd0/oz6tVA6/8bEJtXD9NB44g5vJTaepMSzZSe+azOC9klCp5jw6Rp0o/V
+         U2/S6xexNS2S6jrdfK7u2Nr39XpmRN+G9+2ZwUCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Perl <cperl@janestreet.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 249/352] NFS: nfs_compare_mount_options always compare auth flavors.
-Date:   Mon, 11 Feb 2019 15:17:56 +0100
-Message-Id: <20190211141902.961670721@linuxfoundation.org>
+Subject: [PATCH 4.20 247/352] selftests: kvm: report failed stage when exit reason is unexpected
+Date:   Mon, 11 Feb 2019 15:17:54 +0100
+Message-Id: <20190211141902.841744391@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,50 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+[ Upstream commit b85c32dd27495075380350fcd5d614a6b45311b8 ]
 
-This patch removes the check from nfs_compare_mount_options to see if a
-`sec' option was passed for the current mount before comparing auth
-flavors and instead just always compares auth flavors.
+When we get a report like
 
-Consider the following scenario:
+==== Test Assertion Failure ====
+  x86_64/state_test.c:157: run->exit_reason == KVM_EXIT_IO
+  pid=955 tid=955 - Success
+     1	0x0000000000401350: main at state_test.c:154
+     2	0x00007fc31c9e9412: ?? ??:0
+     3	0x000000000040159d: _start at ??:?
+  Unexpected exit reason: 8 (SHUTDOWN),
 
-You have a server with the address 192.168.1.1 and two exports /export/a
-and /export/b.  The first export supports `sys' and `krb5' security, the
-second just `sys'.
+it is not obvious which particular stage failed. Add the info.
 
-Assume you start with no mounts from the server.
-
-The following results in EIOs being returned as the kernel nfs client
-incorrectly thinks it can share the underlying `struct nfs_server's:
-
-$ mkdir /tmp/{a,b}
-$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
-$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
-$ df >/dev/null
-df: ‘/tmp/b’: Input/output error
-
-Signed-off-by: Chris Perl <cperl@janestreet.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/testing/selftests/kvm/x86_64/evmcs_test.c | 4 ++--
+ tools/testing/selftests/kvm/x86_64/state_test.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index ac4b2f005778..5ef2c71348bd 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2409,8 +2409,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
- 		goto Ebusy;
- 	if (a->acdirmax != b->acdirmax)
- 		goto Ebusy;
--	if (b->auth_info.flavor_len > 0 &&
--	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
-+	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
- 		goto Ebusy;
- 	return 1;
- Ebusy:
+diff --git a/tools/testing/selftests/kvm/x86_64/evmcs_test.c b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
+index 92c2cfd1b182..ea3c73e8f4f6 100644
+--- a/tools/testing/selftests/kvm/x86_64/evmcs_test.c
++++ b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
+@@ -113,8 +113,8 @@ int main(int argc, char *argv[])
+ 	for (stage = 1;; stage++) {
+ 		_vcpu_run(vm, VCPU_ID);
+ 		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
+-			    "Unexpected exit reason: %u (%s),\n",
+-			    run->exit_reason,
++			    "Stage %d: unexpected exit reason: %u (%s),\n",
++			    stage, run->exit_reason,
+ 			    exit_reason_str(run->exit_reason));
+ 
+ 		memset(&regs1, 0, sizeof(regs1));
+diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
+index 03da41f0f736..4b3f556265f1 100644
+--- a/tools/testing/selftests/kvm/x86_64/state_test.c
++++ b/tools/testing/selftests/kvm/x86_64/state_test.c
+@@ -152,8 +152,8 @@ int main(int argc, char *argv[])
+ 	for (stage = 1;; stage++) {
+ 		_vcpu_run(vm, VCPU_ID);
+ 		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
+-			    "Unexpected exit reason: %u (%s),\n",
+-			    run->exit_reason,
++			    "Stage %d: unexpected exit reason: %u (%s),\n",
++			    stage, run->exit_reason,
+ 			    exit_reason_str(run->exit_reason));
+ 
+ 		memset(&regs1, 0, sizeof(regs1));
 -- 
 2.19.1
 
