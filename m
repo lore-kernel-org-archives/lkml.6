@@ -2,102 +2,768 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91371C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D81C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 572BD222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899315;
-	bh=/wwMOPi9SmtowaX9WKfDRUT6BwEPBJdJnB0CJIEIR5w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vM+hIuJK9EqeipB/FVZKjHcmYRlojNWRbLZq/bPYmT5ZjyCY2hA74t0B9E9bQzhW+
-	 P62s9fjr1WRG3y2dPawo4YIwrQ4ws6YEa5SS+uZkfORQV99PP9McuaqLT1WX8R8Oyn
-	 OczIIVbyUSijFEZrJRtd1MYWTcHlsni1rvlEZvrE=
+	by mail.kernel.org (Postfix) with ESMTP id B73AF222A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HJe1C/KS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbfBKOwl (ORCPT
+        id S2388770AbfBKPf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:52:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388481AbfBKOwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:52:39 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24DEE2081B;
-        Mon, 11 Feb 2019 14:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896758;
-        bh=/wwMOPi9SmtowaX9WKfDRUT6BwEPBJdJnB0CJIEIR5w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xvrHPY9GetKJuoAeY8rRcm0+W8+qaixfI3XrF4T9xbgIAN9vo0deIO8ytEAjphoq2
-         N8nWDcm5+lMH2k3Hoqs4/2AnCwfnmjfCR8CqjxT7OeYNcnrSYR5gpLNuM+INJR4V2+
-         Q0R1N2zDMnxysVmABvIczLXEg2ZhberTQyr7B3l8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 284/313] fuse: call pipe_buf_release() under pipe lock
-Date:   Mon, 11 Feb 2019 15:19:24 +0100
-Message-Id: <20190211141912.176375425@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:35:27 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46031 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730406AbfBKPfZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:35:25 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190211153523euoutp02534a84278336ce9e2ae35aecaa83f855~CWTkL-km00638306383euoutp02I
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:35:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190211153523euoutp02534a84278336ce9e2ae35aecaa83f855~CWTkL-km00638306383euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549899323;
+        bh=9oPK8ftx0fRzln88NU3ZBp7GOHWw0ycRiIO2K8OrP9o=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=HJe1C/KSJi77ZXb81D3CEoOe18vMeHRv9fRZj7G3MHukSwSkppRyCHS8keStUH5oN
+         LeGLAe5KShbaDtfbLygbuQ+Z62qVXWKZY8MQ/ZQx2kIH51RxZ+xBbJYN4j2mhhLS24
+         oRgc/sVLb6OkYvFzWd3hOv2VRMldulhI/ODIW4zg=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190211153522eucas1p251d760a83bdb5b94fd2524423456f748~CWTjcdFEg3108131081eucas1p2R;
+        Mon, 11 Feb 2019 15:35:22 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 5C.DB.04294.A36916C5; Mon, 11
+        Feb 2019 15:35:22 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190211153521eucas1p1e0fe8dabe15d0f65ac175e3cdcaa63cb~CWTimswvX0047200472eucas1p1Z;
+        Mon, 11 Feb 2019 15:35:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190211153521eusmtrp13a5732d8f5ec7468762457f17f2c3748~CWTiX7xDn0408104081eusmtrp1i;
+        Mon, 11 Feb 2019 15:35:21 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-48-5c61963aed34
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F1.DA.04284.936916C5; Mon, 11
+        Feb 2019 15:35:21 +0000 (GMT)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190211153520eusmtip2bb58db1e5c131b150d70dd1e76197422~CWTh4wDdZ2421424214eusmtip2F;
+        Mon, 11 Feb 2019 15:35:20 +0000 (GMT)
+Subject: Re: [PATCH v3 2/2] drm/panel: Add driver for Samsung S6E63M0 panel
+To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        thierry.reding@gmail.com
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <82ccf31e-13c3-1cd5-d87a-0c3291eb0224@samsung.com>
+Date:   Mon, 11 Feb 2019 16:35:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190202142748.6830-2-pawel.mikolaj.chmiel@gmail.com>
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG/XbOzo7LyXEavppljiIM1Ar/OGpopeRKKgukMLGOelKZtzbn
+        rZspifduprjGFMssM5R5HwSlsmnzStJFEUUkKtFZamSXlfMY+d/vfZ7n5Xsf+EhMrOc7k/FJ
+        qaw8iUmQEEK8Tb8y5OFbzkTsqZnbRJcM9vHoqp5BPj26bCLooaEmAf1apyboZz0TArr27QiP
+        /m4oxegbz3sE9IpOgx8QShs0DUjaqZoQSLX1BYS0/dsUXzpZZOBJS1vqkXRRuy1UEC7cH8Mm
+        xKexci//88K4+cZ6fopegzJMjzrxbDSZVYisSaC8Qduu4RUiISmmHiMw/1Rj3LCEYKBJjXPD
+        IoJKQy7+b0X98hPijDoEuQX9fG6YQ9Co6UGWlD0VAury25iFHahIGJ6uISwhjOpF8PD6U57F
+        ICh3+N38nrCwiPKHkpkWvoVxaid09E+v8WbqDHSXzCMuYwd9lTNrZ1hTgZBzjzsJo1wht/U+
+        xrEjjM1UrTUC6o0Ail/M87m7g2CwwrTO9vDZ0CLg2AWMd4vXu12DnMpRjFvOR9D7oI7gDD/o
+        NoysLpOrL7hDo86Lkw9CbouRsMhA2cK7OTvuBlu401aBcbII8vPEXNoNJgdaMY4doXZ4mbiF
+        JKoNzVQb2qg2tFH9f7ca4fXIkVUqEmNZxb4kNt1TwSQqlEmxntHJiVq0+ruMZsNSB9L9iupC
+        FIkkNqKMZCZCzGfSFJmJXQhITOIgiipblUQxTGYWK08+J1cmsIoutIXEJY6iS1ZTZ8VULJPK
+        ylg2hZX/c3mktXM2aoq2yZh9NdQeGh558eSPWdnoV22+OezQ+B+noLTjaqutMr9MY6nGbcVk
+        ci2SCYN5ndVXP4QvTAU4Wft+PDyObVd/2RV44mb4Dt9B5GPfbSy8UHjZ3ftYSEnVk7LmU0rb
+        oyNHFnShPn3pyjAZNVYncZkQmT3dTcFXFk+3BaR66PMkuCKO2bsbkyuYvx8moyZZAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xe7qW0xJjDFa9ELboPXeSyWL+kXOs
+        Fle+vmezOH9+A7vF5V1z2CzWHrnLbrH0+kUmix/H+5gtWvceYbf4uWseiwOXx5p5axg9ds66
+        y+6xaVUnm8f2bw9YPe53H2fy6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0j
+        E0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYx361exFhybx1jxftlOlgbG+1VdjJwcEgImEnMO
+        vmTsYuTiEBJYyijxq7GLBSIhLrF7/ltmCFtY4s+1LjaIoteMEu87ljGBJIQFvCXmTJsIViQi
+        ECcx+dw0JpAiZoETjBL73iyD6jjPKNG/Zz8bSBWbgKbE3803wWxeATuJ3idbWEFsFgFViR1n
+        HoHZogIREh+f7mOCqBGUODnzCdhJnALOEk1Tm8FsZgF1iT/zLjFD2PISzVtnQ9niEreezGea
+        wCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgtG479nPzDsZL
+        G4MPMQpwMCrx8FbkJ8YIsSaWFVfmHmKU4GBWEuFNmgIU4k1JrKxKLcqPLyrNSS0+xGgK9NxE
+        ZinR5HxgIskriTc0NTS3sDQ0NzY3NrNQEuc9b1AZJSSQnliSmp2aWpBaBNPHxMEp1cAoXXI/
+        /bdu7M4YF0+NZvF1RXvSkh7V1d9a+u9Xe1bx9vvreS88k/rp/vzJ/pWP32l0Mjxm8xWNOTqj
+        3jmnqEm521Wj4OhiNccLUhHvVrL8XpXUe5bNSnZ/zJzPU2zYWsOcFBM/pS5d61RqeLDre9er
+        hdI8ch8TNri6Boqk5kw/2ib+9t0fXy0lluKMREMt5qLiRAAc4O2X7AIAAA==
+X-CMS-MailID: 20190211153521eucas1p1e0fe8dabe15d0f65ac175e3cdcaa63cb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190203153852epcas1p468a7bddbe5114856daab76a108b5a511
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190203153852epcas1p468a7bddbe5114856daab76a108b5a511
+References: <20190202142748.6830-1-pawel.mikolaj.chmiel@gmail.com>
+        <CGME20190203153852epcas1p468a7bddbe5114856daab76a108b5a511@epcas1p4.samsung.com>
+        <20190202142748.6830-2-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 02.02.2019 15:27, Paweł Chmiel wrote:
+> This patch adds Samsung S6E63M0 AMOLED LCD panel driver, connected over
+> spi. It's based on already removed, non dt s6e63m0 driver and
+> panel-samsung-ld9040. It can be found for example in some of Samsung
+> Aries based phones.
+>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> ---
+> Changes from v2:
+>   - VIDEOMODE_HELPERS is not needed in Kconfig
+>   - Added help text to Kconfig
+>   - Remove unneeded videomode includes/fields
+>   - Add sentinel comment in s6e63m0_of_match struct
+>   - Handle errors during registration of backlight device. We shouldn't
+>     register panel if we fail to register backlight device
+>   - Added Reviewed-by
+>
+> Changes from v1:
+>   - Correct order of Kconfig/Makefile entry
+>   - Fix SPDX tag, so it matches value of MODULE_LICENSE
+>   - Remove inclusion of drmP.h
+>   - Fix code formatting
+>   - Use DRM_DEV_ERROR/DEBUG
+>   - Extract hardcoded values
+>   - Remove possibility to change gamma through sysfs, leaving only one
+>     gamma table values
+>   - Fix reset_gpio handling, so it'll be asserted in power_on and
+>     deasserted in power_off. Also do it before turning voltage on.
+>   - Disable backlight and enter sleep mode in disable callback.
+>     Previously it was done in unprepare
+>   - Enable display and backlight in enable callback. Previously it was
+>     done in prepare
+>   - Hardcode display timings and delays. Previously they were readed
+>     from device tree
+>   - We're using SPDX, so we don't need to have license body
+>   - Use MIPI_DCS_EXIT_SLEEP_MODE and MIPI_DCS_SET_DISPLAY_ON
+>   - Rename MAX_GAMMA_LEVEL to NUM_GAMMA_LEVELS
+>   - Ommit get_brightness callback
+>   - Use backlight_enable/disable API, like it's done in other panel
+>     drivers (for example panel-simple)
+>   - Make set_brightness called only from backlight api, like it's done
+>     in other panel drivers (for example panel-simple).
+>   - Reset gpio should be set to GPIOD_OUT_HIGH. It's declared as active
+>     low in device tree
+>   - Don't call power_off in remove callback
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |   9 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e63m0.c | 517 ++++++++++++++++++
+>  3 files changed, 527 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
+>
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 3f3537719beb..45e9ab4b7857 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -158,6 +158,15 @@ config DRM_PANEL_SAMSUNG_S6E63J0X03
+>  	depends on BACKLIGHT_CLASS_DEVICE
+>  	select VIDEOMODE_HELPERS
+>  
+> +config DRM_PANEL_SAMSUNG_S6E63M0
+> +	tristate "Samsung S6E63M0 RGB/SPI panel"
+> +	depends on OF
+> +	depends on SPI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+> +	help
+> +	  Say Y here if you want to enable support for Samsung s6e63m0
+> +	  AMOLED LCD panel.
+> +
+>  config DRM_PANEL_SAMSUNG_S6E8AA0
+>  	tristate "Samsung S6E8AA0 DSI video mode panel"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index 4396658a7996..4507a2d253ac 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -16,6 +16,7 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D16D0) += panel-samsung-s6d16d0.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA2) += panel-samsung-s6e3ha2.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
+> +obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0) += panel-samsung-s6e63m0.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0) += panel-samsung-s6e8aa0.o
+>  obj-$(CONFIG_DRM_PANEL_SEIKO_43WVF1G) += panel-seiko-43wvf1g.o
+>  obj-$(CONFIG_DRM_PANEL_SHARP_LQ101R1SX01) += panel-sharp-lq101r1sx01.o
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
+> new file mode 100644
+> index 000000000000..4312aa3e4386
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
+> @@ -0,0 +1,517 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * S6E63M0 AMOLED LCD drm_panel driver.
+> + *
+> + * Copyright (C) 2019 Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> + * Derived from drivers/gpu/drm/panel-samsung-ld9040.c
+> + *
+> + * Andrzej Hajda <a.hajda@samsung.com>
+> + */
+> +
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+> +#include <drm/drm_print.h>
+> +
+> +#include <linux/backlight.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/spi/spi.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +/* Manufacturer Command Set */
+> +#define MCS_ELVSS_ON                0xb1
+> +#define MCS_ACL_CTRL                0xc0
+> +#define MCS_DISPLAY_CONDITION   0xf2
+> +#define MCS_ETC_CONDITION           0xf6
+> +#define MCS_PANEL_CONDITION         0xF8
+> +#define MCS_GAMMA_CTRL              0xfa
+> +
+> +#define NUM_GAMMA_LEVELS             11
+> +#define GAMMA_TABLE_COUNT           23
+> +
+> +#define DATA_MASK                                       0x100
+> +
+> +#define MAX_BRIGHTNESS              (NUM_GAMMA_LEVELS - 1)
+> +
+> +/* array of gamma tables for gamma value 2.2 */
+> +static u8 const s6e63m0_gamma_22[NUM_GAMMA_LEVELS][GAMMA_TABLE_COUNT] = {
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x78, 0xEC, 0x3D, 0xC8,
+> +	  0xC2, 0xB6, 0xC4, 0xC7, 0xB6, 0xD5, 0xD7,
+> +	  0xCC, 0x00, 0x39, 0x00, 0x36, 0x00, 0x51 },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x73, 0x4A, 0x3D, 0xC0,
+> +	  0xC2, 0xB1, 0xBB, 0xBE, 0xAC, 0xCE, 0xCF,
+> +	  0xC5, 0x00, 0x5D, 0x00, 0x5E, 0x00, 0x82 },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x70, 0x51, 0x3E, 0xBF,
+> +	  0xC1, 0xAF, 0xB9, 0xBC, 0xAB, 0xCC, 0xCC,
+> +	  0xC2, 0x00, 0x65, 0x00, 0x67, 0x00, 0x8D },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x6C, 0x54, 0x3A, 0xBC,
+> +	  0xBF, 0xAC, 0xB7, 0xBB, 0xA9, 0xC9, 0xC9,
+> +	  0xBE, 0x00, 0x71, 0x00, 0x73, 0x00, 0x9E },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x69, 0x54, 0x37, 0xBB,
+> +	  0xBE, 0xAC, 0xB4, 0xB7, 0xA6, 0xC7, 0xC8,
+> +	  0xBC, 0x00, 0x7B, 0x00, 0x7E, 0x00, 0xAB },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x66, 0x55, 0x34, 0xBA,
+> +	  0xBD, 0xAB, 0xB1, 0xB5, 0xA3, 0xC5, 0xC6,
+> +	  0xB9, 0x00, 0x85, 0x00, 0x88, 0x00, 0xBA },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x63, 0x53, 0x31, 0xB8,
+> +	  0xBC, 0xA9, 0xB0, 0xB5, 0xA2, 0xC4, 0xC4,
+> +	  0xB8, 0x00, 0x8B, 0x00, 0x8E, 0x00, 0xC2 },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x62, 0x54, 0x30, 0xB9,
+> +	  0xBB, 0xA9, 0xB0, 0xB3, 0xA1, 0xC1, 0xC3,
+> +	  0xB7, 0x00, 0x91, 0x00, 0x95, 0x00, 0xDA },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x66, 0x58, 0x34, 0xB6,
+> +	  0xBA, 0xA7, 0xAF, 0xB3, 0xA0, 0xC1, 0xC2,
+> +	  0xB7, 0x00, 0x97, 0x00, 0x9A, 0x00, 0xD1 },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x64, 0x56, 0x33, 0xB6,
+> +	  0xBA, 0xA8, 0xAC, 0xB1, 0x9D, 0xC1, 0xC1,
+> +	  0xB7, 0x00, 0x9C, 0x00, 0x9F, 0x00, 0xD6 },
+> +	{ MCS_GAMMA_CTRL, 0x00,
+> +	  0x18, 0x08, 0x24, 0x5f, 0x50, 0x2d, 0xB6,
+> +	  0xB9, 0xA7, 0xAd, 0xB1, 0x9f, 0xbe, 0xC0,
+> +	  0xB5, 0x00, 0xa0, 0x00, 0xa4, 0x00, 0xdb },
+> +};
+> +
+> +struct s6e63m0 {
+> +	struct device *dev;
+> +	struct drm_panel panel;
+> +	struct backlight_device *bl_dev;
+> +
+> +	struct regulator_bulk_data supplies[2];
+> +	struct gpio_desc *reset_gpio;
+> +
+> +	bool prepared;
+> +	bool enabled;
+> +
+> +	/*
+> +	 * This field is tested by functions directly accessing bus before
+> +	 * transfer, transfer is skipped if it is set. In case of transfer
+> +	 * failure or unexpected response the field is set to error value.
+> +	 * Such construct allows to eliminate many checks in higher level
+> +	 * functions.
+> +	 */
+> +	int error;
+> +};
+> +
+> +static const struct drm_display_mode default_mode = {
+> +	.clock		= 25628,
+> +	.hdisplay	= 480,
+> +	.hsync_start	= 480 + 16,
+> +	.hsync_end	= 480 + 16 + 2,
+> +	.htotal		= 480 + 16 + 2 + 16,
+> +	.vdisplay	= 800,
+> +	.vsync_start	= 800 + 28,
+> +	.vsync_end	= 800 + 28 + 2,
+> +	.vtotal		= 800 + 28 + 2 + 1,
+> +	.vrefresh	= 60,
+> +	.width_mm	= 53,
+> +	.height_mm	= 89,
+> +	.flags		= DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
+> +};
+> +
+> +static inline struct s6e63m0 *panel_to_s6e63m0(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct s6e63m0, panel);
+> +}
+> +
+> +static int s6e63m0_clear_error(struct s6e63m0 *ctx)
+> +{
+> +	int ret = ctx->error;
+> +
+> +	ctx->error = 0;
+> +	return ret;
+> +}
+> +
+> +static int s6e63m0_spi_write_word(struct s6e63m0 *ctx, u16 data)
+> +{
+> +	struct spi_device *spi = to_spi_device(ctx->dev);
+> +	struct spi_transfer xfer = {
+> +		.len	= 2,
+> +		.tx_buf = &data,
+> +	};
+> +	struct spi_message msg;
+> +
+> +	spi_message_init(&msg);
+> +	spi_message_add_tail(&xfer, &msg);
+> +
+> +	return spi_sync(spi, &msg);
+> +}
+> +
+> +static void s6e63m0_dcs_write(struct s6e63m0 *ctx, const u8 *data, size_t len)
+> +{
+> +	int ret = 0;
+> +
+> +	if (ctx->error < 0 || len == 0)
+> +		return;
+> +
+> +	DRM_DEV_DEBUG(ctx->dev, "writing dcs seq: %*ph\n", (int)len, data);
+> +	ret = s6e63m0_spi_write_word(ctx, *data);
+> +
+> +	while (!ret && --len) {
+> +		++data;
+> +		ret = s6e63m0_spi_write_word(ctx, *data | DATA_MASK);
+> +	}
+> +
+> +	if (ret) {
+> +		DRM_DEV_ERROR(ctx->dev, "error %d writing dcs seq: %*ph\n", ret,
+> +			      (int)len, data);
+> +		ctx->error = ret;
+> +	}
+> +
+> +	usleep_range(300, 310);
+> +}
+> +
+> +#define s6e63m0_dcs_write_seq_static(ctx, seq ...) \
+> +	({ \
+> +		static const u8 d[] = { seq }; \
+> +		s6e63m0_dcs_write(ctx, d, ARRAY_SIZE(d)); \
+> +	})
+> +
+> +static void s6e63m0_brightness_set(struct s6e63m0 *ctx)
+> +{
+> +	int brightness = ctx->bl_dev->props.brightness;
+> +
+> +	/* disable and set new gamma */
+> +	s6e63m0_dcs_write(ctx, s6e63m0_gamma_22[brightness],
+> +			  ARRAY_SIZE(s6e63m0_gamma_22[brightness]));
+> +
+> +	/* update gamma table. */
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL, 0x01);
+> +}
 
-------------------
 
-From: Jann Horn <jannh@google.com>
+I guess you can squash this callback into s6e63m0_set_brightness.
+Moreover you performs transfer here unconditionally, regardless of panel
+power state, it will fail when drm device is disabled (using echo 255
+>/sys/class/backlight/...) - panel is also disabled - making transfer to
+disabled panel by panel driver looks odd, moreover it could be little
+bit racy. But in practice it could work.
 
-commit 9509941e9c534920ccc4771ae70bd6cbbe79df1c upstream.
+Moreover I do not see usage of backlight_properties.power,
+backlight_properties.state, but I do not understand how exactly
+backlight interface should work, if someone can point out to proper
+docs/usage of backlight API I will be glad.
 
-Some of the pipe_buf_release() handlers seem to assume that the pipe is
-locked - in particular, anon_pipe_buf_release() accesses pipe->tmp_page
-without taking any extra locks. From a glance through the callers of
-pipe_buf_release(), it looks like FUSE is the only one that calls
-pipe_buf_release() without having the pipe locked.
 
-This bug should only lead to a memory leak, nothing terrible.
+> +
+> +static void s6e63m0_init(struct s6e63m0 *ctx)
+> +{
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_PANEL_CONDITION,
+> +				     0x01, 0x27, 0x27, 0x07, 0x07, 0x54, 0x9f,
+> +				     0x63, 0x86, 0x1a, 0x33, 0x0d, 0x00, 0x00);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_DISPLAY_CONDITION,
+> +				     0x02, 0x03, 0x1c, 0x10, 0x10);
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xf7,
+> +				     0x03, 0x00, 0x00);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL,
+> +				     0x00, 0x18, 0x08, 0x24, 0x64, 0x56, 0x33,
+> +				     0xb6, 0xba, 0xa8, 0xac, 0xb1, 0x9d, 0xc1,
+> +				     0xc1, 0xb7, 0x00, 0x9c, 0x00, 0x9f, 0x00,
+> +				     0xd6);
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL,
+> +				     0x01);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_ETC_CONDITION,
+> +				     0x00, 0x8c, 0x07);
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb3,
+> +				     0xc);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb5,
+> +				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+> +				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+> +				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+> +				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+> +				     0x21, 0x20, 0x1e, 0x1e);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb6,
+> +				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
+> +				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
+> +				     0x66, 0x66);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb7,
+> +				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+> +				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+> +				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+> +				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+> +				     0x21, 0x20, 0x1e, 0x1e, 0x00, 0x00, 0x11,
+> +				     0x22, 0x33, 0x44, 0x44, 0x44, 0x55, 0x55,
+> +				     0x66, 0x66, 0x66, 0x66, 0x66, 0x66);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb9,
+> +				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+> +				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+> +				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+> +				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+> +				     0x21, 0x20, 0x1e, 0x1e);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xba,
+> +				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
+> +				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
+> +				     0x66, 0x66);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xc1,
+> +				     0x4d, 0x96, 0x1d, 0x00, 0x00, 0x01, 0xdf,
+> +				     0x00, 0x00, 0x03, 0x1f, 0x00, 0x00, 0x00,
+> +				     0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x06,
+> +				     0x09, 0x0d, 0x0f, 0x12, 0x15, 0x18);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, 0xb2,
+> +				     0x10, 0x10, 0x0b, 0x05);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_ACL_CTRL,
+> +				     0x01);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MCS_ELVSS_ON,
+> +				     0x0b);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
+> +}
+> +
+> +static int s6e63m0_power_on(struct s6e63m0 *ctx)
+> +{
+> +	int ret;
+> +
+> +	gpiod_set_value(ctx->reset_gpio, 0);
+> +	msleep(120);
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret < 0)
+> +		return ret;
 
-Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/fuse/dev.c |    2 ++
- 1 file changed, 2 insertions(+)
+Are you sure gpios before regulators, from my experience usually it is
+reverse.
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2032,8 +2032,10 @@ static ssize_t fuse_dev_splice_write(str
- 
- 	ret = fuse_dev_do_write(fud, &cs, len);
- 
-+	pipe_lock(pipe);
- 	for (idx = 0; idx < nbuf; idx++)
- 		pipe_buf_release(pipe, &bufs[idx]);
-+	pipe_unlock(pipe);
- 
- out:
- 	kvfree(bufs);
+
+> +
+> +	msleep(25);
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e63m0_power_off(struct s6e63m0 *ctx)
+> +{
+> +	int ret;
+> +
+> +	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	gpiod_set_value(ctx->reset_gpio, 1);
+
+
+Ditto.
+
+
+> +	msleep(120);
+
+
+What is the point of this msleep?
+
+
+I guess, the answer for above comments can be difficult, since datasheet
+is not available, so if you just followed vendor code please feel free
+to add:
+
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+--
+
+Regards
+Andrzej
+
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e63m0_disable(struct drm_panel *panel)
+> +{
+> +	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
+> +
+> +	if (!ctx->enabled)
+> +		return 0;
+> +
+> +	backlight_disable(ctx->bl_dev);
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
+> +	msleep(200);
+> +
+> +	ctx->enabled = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e63m0_unprepare(struct drm_panel *panel)
+> +{
+> +	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
+> +	int ret;
+> +
+> +	if (!ctx->prepared)
+> +		return 0;
+> +
+> +	s6e63m0_clear_error(ctx);
+> +
+> +	ret = s6e63m0_power_off(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ctx->prepared = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e63m0_prepare(struct drm_panel *panel)
+> +{
+> +	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
+> +	int ret;
+> +
+> +	if (ctx->prepared)
+> +		return 0;
+> +
+> +	ret = s6e63m0_power_on(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	s6e63m0_init(ctx);
+> +
+> +	ret = s6e63m0_clear_error(ctx);
+> +
+> +	if (ret < 0)
+> +		s6e63m0_unprepare(panel);
+> +
+> +	ctx->prepared = true;
+> +
+> +	return ret;
+> +}
+> +
+> +static int s6e63m0_enable(struct drm_panel *panel)
+> +{
+> +	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
+> +
+> +	if (ctx->enabled)
+> +		return 0;
+> +
+> +	s6e63m0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
+> +
+> +	backlight_enable(ctx->bl_dev);
+> +
+> +	ctx->enabled = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e63m0_get_modes(struct drm_panel *panel)
+> +{
+> +	struct drm_connector *connector = panel->connector;
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(panel->drm, &default_mode);
+> +	if (!mode) {
+> +		DRM_ERROR("failed to add mode %ux%ux@%u\n",
+> +			  default_mode.hdisplay, default_mode.vdisplay,
+> +			  default_mode.vrefresh);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	drm_mode_set_name(mode);
+> +
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	drm_mode_probed_add(connector, mode);
+> +
+> +	return 1;
+> +}
+> +
+> +static const struct drm_panel_funcs s6e63m0_drm_funcs = {
+> +	.disable	= s6e63m0_disable,
+> +	.unprepare	= s6e63m0_unprepare,
+> +	.prepare	= s6e63m0_prepare,
+> +	.enable		= s6e63m0_enable,
+> +	.get_modes	= s6e63m0_get_modes,
+> +};
+> +
+> +static int s6e63m0_set_brightness(struct backlight_device *bd)
+> +{
+> +	struct s6e63m0 *ctx = bl_get_data(bd);
+> +
+> +	s6e63m0_brightness_set(ctx);
+> +
+> +	return s6e63m0_clear_error(ctx);
+> +}
+> +
+> +static const struct backlight_ops s6e63m0_backlight_ops = {
+> +	.update_status	= s6e63m0_set_brightness,
+> +};
+> +
+> +static int s6e63m0_backlight_register(struct s6e63m0 *ctx)
+> +{
+> +	struct backlight_properties props = {
+> +		.type		= BACKLIGHT_RAW,
+> +		.brightness	= MAX_BRIGHTNESS,
+> +		.max_brightness = MAX_BRIGHTNESS
+> +	};
+> +	struct device *dev = ctx->dev;
+> +	int ret = 0;
+> +
+> +	ctx->bl_dev = devm_backlight_device_register(dev, "panel", dev, ctx,
+> +						     &s6e63m0_backlight_ops,
+> +						     &props);
+> +	if (IS_ERR(ctx->bl_dev)) {
+> +		ret = PTR_ERR(ctx->bl_dev);
+> +		DRM_DEV_ERROR(dev, "error registering backlight device (%d)\n",
+> +			      ret);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int s6e63m0_probe(struct spi_device *spi)
+> +{
+> +	struct device *dev = &spi->dev;
+> +	struct s6e63m0 *ctx;
+> +	int ret;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(struct s6e63m0), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	spi_set_drvdata(spi, ctx);
+> +
+> +	ctx->dev = dev;
+> +	ctx->enabled = false;
+> +	ctx->prepared = false;
+> +
+> +	ctx->supplies[0].supply = "vdd3";
+> +	ctx->supplies[1].supply = "vci";
+> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
+> +				      ctx->supplies);
+> +	if (ret < 0) {
+> +		DRM_DEV_ERROR(dev, "failed to get regulators: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(ctx->reset_gpio)) {
+> +		DRM_DEV_ERROR(dev, "cannot get reset-gpios %ld\n",
+> +			      PTR_ERR(ctx->reset_gpio));
+> +		return PTR_ERR(ctx->reset_gpio);
+> +	}
+> +
+> +	spi->bits_per_word = 9;
+> +	spi->mode = SPI_MODE_3;
+> +	ret = spi_setup(spi);
+> +	if (ret < 0) {
+> +		DRM_DEV_ERROR(dev, "spi setup failed.\n");
+> +		return ret;
+> +	}
+> +
+> +	drm_panel_init(&ctx->panel);
+> +	ctx->panel.dev = dev;
+> +	ctx->panel.funcs = &s6e63m0_drm_funcs;
+> +
+> +	ret = s6e63m0_backlight_register(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return drm_panel_add(&ctx->panel);
+> +}
+> +
+> +static int s6e63m0_remove(struct spi_device *spi)
+> +{
+> +	struct s6e63m0 *ctx = spi_get_drvdata(spi);
+> +
+> +	drm_panel_remove(&ctx->panel);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id s6e63m0_of_match[] = {
+> +	{ .compatible = "samsung,s6e63m0" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, s6e63m0_of_match);
+> +
+> +static struct spi_driver s6e63m0_driver = {
+> +	.probe			= s6e63m0_probe,
+> +	.remove			= s6e63m0_remove,
+> +	.driver			= {
+> +		.name		= "panel-samsung-s6e63m0",
+> +		.of_match_table = s6e63m0_of_match,
+> +	},
+> +};
+> +module_spi_driver(s6e63m0_driver);
+> +
+> +MODULE_AUTHOR("Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>");
+> +MODULE_DESCRIPTION("s6e63m0 LCD Driver");
+> +MODULE_LICENSE("GPL v2");
 
 
