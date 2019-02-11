@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29367C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BEBC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95D620838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5698620838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895325;
-	bh=kNcSL1ZfTSTjciDPKLioPB2oZ/7NQ91T2Co6b5B3j78=;
+	s=default; t=1549895330;
+	bh=MOYvTlkN5XYRkqPMyjzQEJ10dI/USLtgUhUO3pRGLb0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0HA8Y29ewrsX8cMV4p+5uehLtXi1fDLpT/0CYxElpKzfN06R+GVTd9OIbzjv5pGy+
-	 YYrOR3ZZNmWLfCX3pvsqMhK8UXMFDEvPyTj2QD+unEVgOHBqzBk9gjdcuHYY+8bEgy
-	 kUYLIWctKgbxKAlGiKesLS+vlaazfQUtOp78wHiM=
+	b=x/Zg/DikuD9wKxBHaiQX+G6IY5N1+cDOcfD3lJC909bvRBQRqY6QWMEkJrXQ9dw4f
+	 H+DqebPqUGUwdmLtOOoikeNjlvxonZicsGr9GH9xLH0RBkFjPEZYmJCUYAcWpQG6I2
+	 5W8gqD0WVyXlXYYOiPqPqIjNiiywas6QQGzkZ8Vs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbfBKO2n (ORCPT
+        id S1729912AbfBKO2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:28:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:28:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729883AbfBKO2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:39 -0500
+        id S1729153AbfBKO2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C3FB20821;
-        Mon, 11 Feb 2019 14:28:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5772920821;
+        Mon, 11 Feb 2019 14:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895318;
-        bh=kNcSL1ZfTSTjciDPKLioPB2oZ/7NQ91T2Co6b5B3j78=;
+        s=default; t=1549895323;
+        bh=MOYvTlkN5XYRkqPMyjzQEJ10dI/USLtgUhUO3pRGLb0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CRorByWhhJcBJGgH4xcNeuCj21T/wr7rCGV6M9sELGuC/8OKTvOGJ1vErRkndQltR
-         fVq44eJJw/pA+eeJVCZoLwynRKizTyOstNmO8vabx3xGhBJxAiSKPzgZUw2lyblFpO
-         PLl4h+IItM2cdvOEAK0O4nJmnWMpnCv1nKnjUr7M=
+        b=hqpLrwSR7bmylQJmb9rZ8K4d6cbxJ7QK7W55UEgfONJrguEGxLiF2s5bKU+0zEa4m
+         ZEtWavrFP+GTrh/hbpd6pGWs+yIG/t81kf0EjKtSvce0PXc3snoVGu+ZjiAi5COf8Z
+         OiNbpe71h+50gxy0hCxmIRTLPqoqj7aH3fieN464=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 165/352] fix dma-buf/udmabuf selftest
-Date:   Mon, 11 Feb 2019 15:16:32 +0100
-Message-Id: <20190211141857.475128124@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 167/352] f2fs: fix to reorder set_page_dirty and wait_on_page_writeback
+Date:   Mon, 11 Feb 2019 15:16:34 +0100
+Message-Id: <20190211141857.629447978@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,80 +66,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6edf2e3710f4ef2555ad7a2681dbeb4a69092b2d ]
+[ Upstream commit 8d64d365aed355b2e2465d19ba61df02462fff4d ]
 
-This patch fixes the udmabuf selftest. Currently the selftest is broken.
-I fixed the selftest by setting the F_SEAL_SHRINK seal on the memfd
-file descriptor which is required by udmabuf and added the test to
-the selftest Makefile.
+This patch reorders flow from
 
-Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
-Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+- update page
+- set_page_dirty
+- wait_on_page_writeback
+
+to
+
+- wait_on_page_writeback
+- update page
+- set_page_dirty
+
+The reason is:
+- set_page_dirty will increase reference of dirty page, the reference
+should be cleared before wait_on_page_writeback to keep its consistency.
+- some devices need stable page during page writebacking, so we
+should not change page's data.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/Makefile                  |  1 +
- tools/testing/selftests/drivers/dma-buf/Makefile  |  2 ++
- tools/testing/selftests/drivers/dma-buf/udmabuf.c | 11 +++++++++--
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ fs/f2fs/checkpoint.c | 7 ++++---
+ fs/f2fs/gc.c         | 5 +++--
+ fs/f2fs/node.c       | 5 +++--
+ fs/f2fs/segment.c    | 3 ++-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index f0017c831e57..a43a07a09a98 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -6,6 +6,7 @@ TARGETS += capabilities
- TARGETS += cgroup
- TARGETS += cpufreq
- TARGETS += cpu-hotplug
-+TARGETS += drivers/dma-buf
- TARGETS += efivarfs
- TARGETS += exec
- TARGETS += filesystems
-diff --git a/tools/testing/selftests/drivers/dma-buf/Makefile b/tools/testing/selftests/drivers/dma-buf/Makefile
-index 4154c3d7aa58..f22c3f7cf612 100644
---- a/tools/testing/selftests/drivers/dma-buf/Makefile
-+++ b/tools/testing/selftests/drivers/dma-buf/Makefile
-@@ -2,4 +2,6 @@ CFLAGS += -I../../../../../usr/include/
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9c28ea439e0b..e5719fcac47d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1290,11 +1290,12 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
+ 	struct page *page = f2fs_grab_meta_page(sbi, blk_addr);
+ 	int err;
  
- TEST_GEN_PROGS := udmabuf
- 
-+top_srcdir ?=../../../../..
+-	memcpy(page_address(page), src, PAGE_SIZE);
+-	set_page_dirty(page);
+-
+ 	f2fs_wait_on_page_writeback(page, META, true);
+ 	f2fs_bug_on(sbi, PageWriteback(page));
 +
- include ../../lib.mk
-diff --git a/tools/testing/selftests/drivers/dma-buf/udmabuf.c b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
-index 376b1d6730bd..4de902ea14d8 100644
---- a/tools/testing/selftests/drivers/dma-buf/udmabuf.c
-+++ b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
-@@ -4,7 +4,7 @@
- #include <unistd.h>
- #include <string.h>
- #include <errno.h>
--#include <fcntl.h>
-+#include <linux/fcntl.h>
- #include <malloc.h>
++	memcpy(page_address(page), src, PAGE_SIZE);
++
++	set_page_dirty(page);
+ 	if (unlikely(!clear_page_dirty_for_io(page)))
+ 		f2fs_bug_on(sbi, 1);
  
- #include <sys/ioctl.h>
-@@ -33,12 +33,19 @@ int main(int argc, char *argv[])
- 		exit(77);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index c96e7c6354ef..74f72dccab57 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -812,8 +812,8 @@ static int move_data_block(struct inode *inode, block_t bidx,
  	}
  
--	memfd = memfd_create("udmabuf-test", MFD_CLOEXEC);
-+	memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
- 	if (memfd < 0) {
- 		printf("%s: [skip,no-memfd]\n", TEST_PREFIX);
- 		exit(77);
- 	}
+ write_page:
+-	set_page_dirty(fio.encrypted_page);
+ 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
++	set_page_dirty(fio.encrypted_page);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+ 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
  
-+	ret = fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK);
-+	if (ret < 0) {
-+		printf("%s: [skip,fcntl-add-seals]\n", TEST_PREFIX);
-+		exit(77);
-+	}
+@@ -907,8 +907,9 @@ static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 		bool is_dirty = PageDirty(page);
+ 
+ retry:
+-		set_page_dirty(page);
+ 		f2fs_wait_on_page_writeback(page, DATA, true);
 +
++		set_page_dirty(page);
+ 		if (clear_page_dirty_for_io(page)) {
+ 			inode_dec_dirty_pages(inode);
+ 			f2fs_remove_dirty_inode(inode);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 88be946dedd4..33fb3f8aeafa 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1598,10 +1598,11 @@ int f2fs_move_node_page(struct page *node_page, int gc_type)
+ 			.for_reclaim = 0,
+ 		};
+ 
+-		set_page_dirty(node_page);
+ 		f2fs_wait_on_page_writeback(node_page, NODE, true);
+-
+ 		f2fs_bug_on(F2FS_P_SB(node_page), PageWriteback(node_page));
 +
- 	size = getpagesize() * NUM_PAGES;
- 	ret = ftruncate(memfd, size);
- 	if (ret == -1) {
++		set_page_dirty(node_page);
++
+ 		if (!clear_page_dirty_for_io(node_page)) {
+ 			err = -EAGAIN;
+ 			goto out_page;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6edcf8391dd3..8f3578c5230e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -387,8 +387,9 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 		if (page->mapping == inode->i_mapping) {
+ 			trace_f2fs_commit_inmem_page(page, INMEM);
+ 
+-			set_page_dirty(page);
+ 			f2fs_wait_on_page_writeback(page, DATA, true);
++
++			set_page_dirty(page);
+ 			if (clear_page_dirty_for_io(page)) {
+ 				inode_dec_dirty_pages(inode);
+ 				f2fs_remove_dirty_inode(inode);
 -- 
 2.19.1
 
