@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9C1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0F4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D4321855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC42E21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900210;
-	bh=ZRxiGvvNvqtuN90UFbqLZycJLyzCO+A7hl1yF5LPk5Y=;
+	s=default; t=1549900222;
+	bh=etrS1Kz6BK30fnjPjvyFaEMr12ZI1VREWGPXVe8X5fY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gGkyirgmGycUjtWVNd7JyIonwnemhWge1mqCgKUkZwQBUYFx6GBUJtQ4XepSR8cOg
-	 ouTN7frLoYazNOQY+0Krxra7OP8lqZuFkJNfaUi73Z31UZpEFMOMK22AN/GL4veSFn
-	 Y5Vu6mV7GZ0OBqquTEd+ZvLujQ8ANjLTwAAr1K1Y=
+	b=lkqHWiD6xkR8xwlOMNiW+z9zRvFonpNlUDLTOPND4q1EAkgKl9HlIU7WWLZ1jT4/T
+	 r9vv9c0h7ZCQQ4G6SBbBGDniG5D0V1RJE0egE/WleXVTwQmPtebz4I3zvEUFxlvdhj
+	 4pOv+tpgNNX5lFNH43lWOVIoO8FC81/mj5ChzbHQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbfBKPuI (ORCPT
+        id S1731950AbfBKPuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49488 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:50:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfBKOjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:17 -0500
+        id S1727780AbfBKOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28E7620700;
-        Mon, 11 Feb 2019 14:39:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0764C204FD;
+        Mon, 11 Feb 2019 14:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895956;
-        bh=ZRxiGvvNvqtuN90UFbqLZycJLyzCO+A7hl1yF5LPk5Y=;
+        s=default; t=1549895946;
+        bh=etrS1Kz6BK30fnjPjvyFaEMr12ZI1VREWGPXVe8X5fY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HRjnKR8p+kakrpBJ7ggWBDWb16sZOHc8ECukgIj5oBpIH8vP1BQn0Um9f6mgdPl6e
-         1Qs3yxliAeZTNGKYX2J+mpeWNK6Gsx3k1T+Pofbjpiw6KC+QffBUv3EIJG+lEHrvPa
-         oEEn/+CGEwhHpjAUYhFRQDuMjLrJfWZ1jdzghlhQ=
+        b=JZ4CpGi8+jnfW2DdOgh6oksx45ByVxrxVyYr6gOpk4nOS1mNdD68ZMvppPWVWbsII
+         W2pPHgY38uOxCuav6vWRQd1cBZidbAnN9D82eZsEsJD/tDAlEBVrH6B5iqT6Q8ryx1
+         3OVtfSvYIVFFy/Ot8beDUTKreDC+D3jMehx4QEnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 006/313] ASoC: Intel: mrfld: fix uninitialized variable access
-Date:   Mon, 11 Feb 2019 15:14:46 +0100
-Message-Id: <20190211141853.248678389@linuxfoundation.org>
+Subject: [PATCH 4.19 003/313] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
+Date:   Mon, 11 Feb 2019 15:14:43 +0100
+Message-Id: <20190211141852.990426000@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,52 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
+[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
 
-Randconfig testing revealed a very old bug, with gcc-8:
+Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
+error code. This change will ensure that this error is being passed up
+in the call stack, so it can be handled.
 
-sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
-sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (fw == NULL) {
-     ^
-sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
-  const struct firmware *fw;
-
-We must check the return code of request_firmware() before we look at the
-pointer result that may be uninitialized when the function fails.
-
-Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
-index 27413ebae956..b8c456753f01 100644
---- a/sound/soc/intel/atom/sst/sst_loader.c
-+++ b/sound/soc/intel/atom/sst/sst_loader.c
-@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
- 	const struct firmware *fw;
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index b736275c10f5..6a48ad067a8b 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
+ 	if (ret)
+ 		return ret;
  
- 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
--	if (fw == NULL) {
--		dev_err(sst->dev, "fw is returning as null\n");
--		return -EINVAL;
--	}
- 	if (retval) {
- 		dev_err(sst->dev, "request fw failed %d\n", retval);
- 		return retval;
- 	}
-+	if (fw == NULL) {
-+		dev_err(sst->dev, "fw is returning as null\n");
-+		return -EINVAL;
-+	}
- 	mutex_lock(&sst->sst_lock);
- 	retval = sst_cache_and_parse_fw(sst, fw);
- 	mutex_unlock(&sst->sst_lock);
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
+ 
+ 	ad7280_delay(st);
+ 
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
+ 	ad7280_delay(st);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		__ad7280_read32(st, &tmp);
++		ret = __ad7280_read32(st, &tmp);
++		if (ret)
++			return ret;
+ 
+ 		if (ad7280_check_crc(st, tmp))
+ 			return -EIO;
+@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
+ 		return ret;
+ 
+ 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
+-		__ad7280_read32(st, &val);
++		ret = __ad7280_read32(st, &val);
++		if (ret)
++			return ret;
++
+ 		if (val == 0)
+ 			return n - 1;
+ 
 -- 
 2.19.1
 
