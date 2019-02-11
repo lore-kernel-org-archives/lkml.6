@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F3DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBCDC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94535218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A0A218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895609;
-	bh=7UuqgsOsEIxD6Oe9B2LKwVd+drCYKCPlQ+glR9xkurQ=;
+	s=default; t=1549895612;
+	bh=fAMWJ4x3S+zQngx+kWPjPXY24ve7SURU5/YRIbXd3ao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QigYSf1jZ6k7wHlYkwss2QuXRgNPWEyXdlsiKWj5P1mzearUhec+LxN58P1QrzK9A
-	 3JfwCnV1o4K75bFAsWG3/F9hbe7f/8AJFR5YLEH4Fo6Qok7AUlgVp1EGPJvfqO6r9o
-	 cSctI+oAdB/olziHtt6nCTc/TFk0FdDMgWu/MuTs=
+	b=lTA7kgWZ2Y+Rk6aOS0OQGwr098gnrBuafK/hu12G6EoRcMyv5h11QmhBGBN5ihC+C
+	 ahdFGMBGHgeT68bWosIpBJrkTQ48/upPjIGsr9j4uxh2O+Ph4/DFY4M0XU1bkA4hZv
+	 g1ykgpRUCM3NeVbFUOWbJpSo+vEzGqIAEmQ0KUHk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbfBKOd1 (ORCPT
+        id S1730653AbfBKOdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41118 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:33:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730633AbfBKOdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:24 -0500
+        id S1730646AbfBKOd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AD1121855;
-        Mon, 11 Feb 2019 14:33:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9616421855;
+        Mon, 11 Feb 2019 14:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895603;
-        bh=7UuqgsOsEIxD6Oe9B2LKwVd+drCYKCPlQ+glR9xkurQ=;
+        s=default; t=1549895607;
+        bh=fAMWJ4x3S+zQngx+kWPjPXY24ve7SURU5/YRIbXd3ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fv9vPOw/nnJebY3XzmnlrvC9uGP+SmS6W/hBsnlIHOV8kpczSo1ITnBmKbiPHScm5
-         CWzUeFRSgEER1dmRTkZKsjjGxZa5lyDs1jv123qq9DkRVoEoNjt4SxtjU7hBR2hEc2
-         2ctGQ05V6en5Yxq8QXAIlp8E32RzwQy2gEAsw7+E=
+        b=IUJ6gjDtzmPOCcnGoZ9rhsB0O0XNLl0ERhl0Axy9Kh2FrMMEbl87me9bktC+75iQ3
+         3KWM179JsP1nwDm7g+p9VRTtiCcDAuOcJCkj9bRas8BtkhIkb8u+2azBI6xpptomje
+         aRXEfPdldaI4qokqf/ALGSrIFlcNCU0M5fRqLchY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 261/352] f2fs: fix sbi->extent_list corruption issue
-Date:   Mon, 11 Feb 2019 15:18:08 +0100
-Message-Id: <20190211141903.658764739@linuxfoundation.org>
+Subject: [PATCH 4.20 244/352] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
+Date:   Mon, 11 Feb 2019 15:17:51 +0100
+Message-Id: <20190211141902.657099280@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,90 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e4589fa545e0020dbbc3c9bde35f35f949901392 ]
+[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
 
-When there is a failure in f2fs_fill_super() after/during
-the recovery of fsync'd nodes, it frees the current sbi and
-retries again. This time the mount is successful, but the files
-that got recovered before retry, still holds the extent tree,
-whose extent nodes list is corrupted since sbi and sbi->extent_list
-is freed up. The list_del corruption issue is observed when the
-file system is getting unmounted and when those recoverd files extent
-node is being freed up in the below context.
+The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
+only belong to the pin controller in the AO domain. With the current
+definition these pins cannot be referred to in .dts files as group
+(which is possible on GXBB and GXL for example).
 
-list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-<...>
-kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-lr : __list_del_entry_valid+0x94/0xb4
-pc : __list_del_entry_valid+0x94/0xb4
-<...>
-Call trace:
-__list_del_entry_valid+0x94/0xb4
-__release_extent_node+0xb0/0x114
-__free_extent_tree+0x58/0x7c
-f2fs_shrink_extent_tree+0xdc/0x3b0
-f2fs_leave_shrinker+0x28/0x7c
-f2fs_put_super+0xfc/0x1e0
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
-__cleanup_mnt+0x1c/0x28
-task_work_run+0x48/0xd0
-do_notify_resume+0x678/0xe98
-work_pending+0x8/0x14
+Add a separate "gpio_aobus" function to fix the mapping between the pin
+controller and the GPIO pins in the AO domain. This is similar to how
+the GXBB and GXL drivers implement this functionality.
 
-Fix this by not creating extents for those recovered files if shrinker is
-not registered yet. Once mount is successful and shrinker is registered,
-those files can have extents again.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h     | 11 ++++++++++-
- fs/f2fs/shrinker.c |  2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ebad864c031c..6713060a59fb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2673,10 +2673,19 @@ static inline bool is_dot_dotdot(const struct qstr *str)
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index 647ad15d5c3c..91cffc051055 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -646,16 +646,18 @@ static const char * const gpio_groups[] = {
+ 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
+ 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
  
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
+-	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
+-	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
+-	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
+-
+ 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
+ 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
+ 	"DIF_4_P", "DIF_4_N"
+ };
+ 
++static const char * const gpio_aobus_groups[] = {
++	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
++	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
++	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
++	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
++};
 +
-+	if (!test_opt(sbi, EXTENT_CACHE) ||
- 			is_inode_flag_set(inode, FI_NO_EXTENT))
- 		return false;
+ static const char * const sd_a_groups[] = {
+ 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
+ 	"sd_cmd_a"
+@@ -871,6 +873,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
+ };
  
-+	/*
-+	 * for recovered files during mount do not create extents
-+	 * if shrinker is not registered.
-+	 */
-+	if (list_empty(&sbi->s_list))
-+		return false;
-+
- 	return S_ISREG(inode->i_mode);
- }
- 
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index 9e13db994fdf..a467aca29cfe 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -135,6 +135,6 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi)
- 	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
- 
- 	spin_lock(&f2fs_list_lock);
--	list_del(&sbi->s_list);
-+	list_del_init(&sbi->s_list);
- 	spin_unlock(&f2fs_list_lock);
- }
+ static struct meson_pmx_func meson8b_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+ 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
