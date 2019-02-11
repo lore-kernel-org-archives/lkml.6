@@ -2,74 +2,41 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23E9C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430C7C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FBF2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ChzDAc/n"
+	by mail.kernel.org (Postfix) with ESMTP id 0656C2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfBKM1m (ORCPT
+        id S1727856AbfBKM1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:27:42 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35678 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbfBKM0n (ORCPT
+        Mon, 11 Feb 2019 07:27:46 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37408 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727650AbfBKM1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:26:43 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t18so134098wrx.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=ChzDAc/nPzQ1itzXH8bi+m2nz+pQr+ANDOkVbdJzNc7verHaAZiMnVY1ACJSn9B+EB
-         0eG1sXID3RmweoMqRSaA6WetZJGgdQCspz5gUmaA0NrrQZgS8KhV8r5fE2LkjyzL/E1A
-         u1JQqwYVKRdctP1tUETQuGaaHbDKFKR06Wji/NFUhpvKB5hBClhtQx13udz2nfL5QN6F
-         i/a8Ua+1BDAJyHV0I9EKJsNovC9NC23iQw1/rLE/bTgRDRcVqLR58YOm/MeTyy9Co+Ia
-         RCx+LKzzgRVtVyhRFwMwqXXediW4BCRsP3jeO9TKdkbzIhXZKdohjY6oc2+gQvrZb8DL
-         jg7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=pD1Ywz+DqKJHyIK3W1Lyk+awPQYi8HfKtRl64OJezwt17Oh2fXr3QYs6PDHsR/C3E+
-         IWFysnzbpGz4hnWJFYP+0jwr6LtPZVrUBSEPItO2eYtkFOWH/NyvJV0yPueVMFVBafLa
-         t0QYjotPBHNdHtaR8bTDCoZ/lQreYJvlWz0Krn4/FxgbCHZKwTJE8M48k+/hT0J78mrd
-         BY7Rq7lENgShpnwqhkH8gF5lIKEs6N+RxeLOjNVdTid8pNtsXRO90afme5wXEGEmt5Ms
-         2XG9XSAw37j7M/LHkheauL1LVmw7V6ZbEfd5nMOnUNdBgIOi3Zq5s0hw1A+de/luIBqV
-         uPZA==
-X-Gm-Message-State: AHQUAua8YVsC8o1twTfgQf0XUimT6GFBSbkKToMQD2oTrJiJoi6j8aQY
-        NZS4u/36s6RJIR91USKA899eHA==
-X-Google-Smtp-Source: AHgI3IYhvsmFc5p/2tuDLQwk9Olw42LLTml9psi0oQ82E7mg48NLA9SQ+agB+U+msqGAabTiH8HDkA==
-X-Received: by 2002:a5d:6b09:: with SMTP id v9mr28496782wrw.304.1549888001474;
-        Mon, 11 Feb 2019 04:26:41 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:26:40 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v2 23/33] ARM: davinci: cp-intc: add the new config structures for da8xx SoCs
-Date:   Mon, 11 Feb 2019 13:25:56 +0100
-Message-Id: <20190211122606.8662-24-brgl@bgdev.pl>
+        Mon, 11 Feb 2019 07:27:42 -0500
+Received: from hades.home (unknown [IPv6:2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5DDC627DA4B;
+        Mon, 11 Feb 2019 12:27:39 +0000 (GMT)
+From:   Martyn Welch <martyn.welch@collabora.com>
+To:     Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc:     Martyn Welch <martyn.welch@collabora.com>,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org
+Subject: [PATCH] ARM: dts: am335x: Add support for Bosch Guardian
+Date:   Mon, 11 Feb 2019 12:27:27 +0000
+Message-Id: <20190211122727.5582-1-martyn.welch@collabora.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
-References: <20190211122606.8662-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,73 +44,555 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The Bosch Guardian is a TI am335x based device.
 
-Add the new-style config structures for da8xx SoCs. They will be used
-once we make the cp-intc driver stop using davinci_soc_info.
+It's hardware specifications are as follows:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+ * 256 MB DDR3 memory
+ * 512 MB NAND Flash
+ * USB OTG
+ * RS232
+ * MicroSD external storage
+ * LCD Display interface
+
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+
 ---
- arch/arm/mach-davinci/da830.c | 10 ++++++++++
- arch/arm/mach-davinci/da850.c | 10 ++++++++++
- 2 files changed, 20 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 5cfd30c57429..38af72be1a85 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -12,6 +12,7 @@
- #include <linux/clk/davinci.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
-@@ -821,6 +822,15 @@ void __init da830_init(void)
- 	WARN(!da8xx_syscfg0_base, "Unable to map syscfg0 module");
- }
- 
-+static const struct davinci_cp_intc_config da830_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA830_N_CP_INTC_IRQ,
+ arch/arm/boot/dts/Makefile            |   1 +
+ arch/arm/boot/dts/am335x-guardian.dts | 511 ++++++++++++++++++++++++++
+ 2 files changed, 512 insertions(+)
+ create mode 100644 arch/arm/boot/dts/am335x-guardian.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index bd40148a15b2..1ad9a6307b0a 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -719,6 +719,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
+ 	am335x-cm-t335.dtb \
+ 	am335x-evm.dtb \
+ 	am335x-evmsk.dtb \
++	am335x-guardian.dtb \
+ 	am335x-icev2.dtb \
+ 	am335x-lxm.dtb \
+ 	am335x-moxa-uc-2101.dtb \
+diff --git a/arch/arm/boot/dts/am335x-guardian.dts b/arch/arm/boot/dts/am335x-guardian.dts
+new file mode 100644
+index 000000000000..d8652ab014b2
+--- /dev/null
++++ b/arch/arm/boot/dts/am335x-guardian.dts
+@@ -0,0 +1,511 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
++ * Copyright (C) 2018 Robert Bosch Power Tools GmbH
++ */
++/dts-v1/;
++
++#include "am33xx.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	model = "Bosch AM335x Guardian";
++	compatible = "bosch,am335x-guardian", "ti,am33xx";
++
++	chosen {
++		stdout-path = &uart0;
++		tick-timer = &timer2;
++	};
++
++	cpus {
++		cpu@0 {
++			cpu0-supply = <&dcdc2_reg>;
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x80000000 0x10000000>; /* 256 MB */
++	};
++
++	gpio_keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_keys_pins>;
++
++		button21 {
++			label = "guardian-power-button";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpio2 21 0>;
++			wakeup-source;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&leds_pins>;
++
++		led1 {
++			label = "green:heartbeat";
++			gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++			default-state = "off";
++		};
++
++		led2 {
++			label = "green:mmc0";
++			gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "mmc0";
++			default-state = "off";
++		};
++	};
++
++	panel {
++		compatible = "ti,tilcdc,panel";
++		pinctrl-names = "default", "sleep";
++		pinctrl-0 = <&lcd_pins_default &lcd_disen_pins>;
++		pinctrl-1 = <&lcd_pins_sleep>;
++
++		display-timings {
++			320x240 {
++				hactive         = <320>;
++				vactive         = <240>;
++				hback-porch     = <68>;
++				hfront-porch    = <20>;
++				hsync-len       = <1>;
++				vback-porch     = <18>;
++				vfront-porch    = <4>;
++				vsync-len       = <1>;
++				clock-frequency = <9000000>;
++				hsync-active    = <0>;
++				vsync-active    = <0>;
++			};
++		};
++		panel-info {
++			ac-bias           = <255>;
++			ac-bias-intrpt    = <0>;
++			dma-burst-sz      = <16>;
++			bpp               = <24>;
++			bus-width         = <16>;
++			fdd               = <0x80>;
++			sync-edge         = <0>;
++			sync-ctrl         = <1>;
++			raster-order      = <0>;
++			fifo-th           = <0>;
++		};
++
++	};
++
++	pwm7: dmtimer-pwm {
++		compatible = "ti,omap-dmtimer-pwm";
++		ti,timers = <&timer7>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&dmtimer7_pins>;
++	};
++
++	vmmcsd_fixed: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vmmcsd_fixed";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
 +};
 +
- void __init da830_init_irq(void)
- {
- 	cp_intc_init();
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 6df6994c0f26..9a3ce68c0de4 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -18,6 +18,7 @@
- #include <linux/cpufreq.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/mfd/da8xx-cfgchip.h>
- #include <linux/platform_data/clk-da8xx-cfgchip.h>
- #include <linux/platform_data/clk-davinci-pll.h>
-@@ -759,6 +760,15 @@ void __init da850_init(void)
- 	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
- }
- 
-+static const struct davinci_cp_intc_config da850_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA850_N_CP_INTC_IRQ,
++&cppi41dma  {
++	status = "okay";
 +};
 +
- void __init da850_init_irq(void)
- {
- 	cp_intc_init();
++&elm {
++	status = "okay";
++};
++
++&gpmc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&nandflash_pins>;
++	ranges = <0 0 0x08000000 0x1000000>;  /* CS0: 16MB for NAND */
++	status = "okay";
++
++	nand@0,0 {
++		compatible = "ti,omap2-nand";
++		reg = <0 0 4>; /* CS0, offset 0, IO size 4 */
++		interrupt-parent = <&gpmc>;
++		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
++			     <1 IRQ_TYPE_NONE>; /* termcount */
++		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
++		ti,nand-ecc-opt = "bch16";
++		ti,elm-id = <&elm>;
++		nand-bus-width = <8>;
++		gpmc,device-width = <1>;
++		gpmc,sync-clk-ps = <0>;
++		gpmc,cs-on-ns = <0>;
++		gpmc,cs-rd-off-ns = <44>;
++		gpmc,cs-wr-off-ns = <44>;
++		gpmc,adv-on-ns = <6>;
++		gpmc,adv-rd-off-ns = <34>;
++		gpmc,adv-wr-off-ns = <44>;
++		gpmc,we-on-ns = <0>;
++		gpmc,we-off-ns = <40>;
++		gpmc,oe-on-ns = <0>;
++		gpmc,oe-off-ns = <54>;
++		gpmc,access-ns = <64>;
++		gpmc,rd-cycle-ns = <82>;
++		gpmc,wr-cycle-ns = <82>;
++		gpmc,bus-turnaround-ns = <0>;
++		gpmc,cycle2cycle-delay-ns = <0>;
++		gpmc,clk-activation-ns = <0>;
++		gpmc,wr-access-ns = <40>;
++		gpmc,wr-data-mux-bus-ns = <0>;
++
++		/*
++		 * MTD partition table
++		 *
++		 * All SPL-* partitions are sized to minimal length which can
++		 * be independently programmable. For NAND flash this is equal
++		 * to size of erase-block.
++		 */
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			label = "SPL";
++			reg = <0x0 0x40000>;
++		};
++
++		partition@1 {
++			label = "SPL.backup1";
++			reg = <0x40000  0x40000>;
++		};
++
++		partition@2 {
++			label = "SPL.backup2";
++			reg = <0x80000  0x40000>;
++		};
++
++		partition@3 {
++			label = "SPL.backup3";
++			reg = <0xc0000  0x40000>;
++		};
++
++		partition@4 {
++			label = "u-boot";
++			reg = <0x100000 0x100000>;
++		};
++
++		partition@5 {
++			label = "u-boot.backup1";
++			reg = <0x200000 0x100000>;
++		};
++
++		partition@6 {
++			label = "u-boot-env";
++			reg = <0x300000 0x40000>;
++		};
++
++		partition@7 {
++			label = "u-boot-env.backup1";
++			reg = <0x340000 0x40000>;
++		};
++
++		partition@8 {
++			label = "UBI";
++			reg = <0x380000 0x1fc80000>;
++		};
++	};
++};
++
++&i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_pins>;
++	clock-frequency = <400000>;
++	status = "okay";
++
++	tps: tps@24 {
++		reg = <0x24>;
++	};
++};
++
++&lcdc {
++	blue-and-red-wiring = "crossed";
++	status = "okay";
++};
++
++&mmc1 {
++	bus-width = <0x4>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pins>;
++	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
++	vmmc-supply = <&vmmcsd_fixed>;
++	status = "okay";
++};
++
++&rtc {
++	clocks = <&clk_32768_ck>, <&clk_24mhz_clkctrl AM3_CLK_24MHZ_CLKDIV32K_CLKCTRL 0>;
++	clock-names = "ext-clk", "int-clk";
++	system-power-controller;
++};
++
++&spi0 {
++	ti,pindir-d0-out-d1-in;
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi0_pins>;
++	status = "okay";
++};
++
++/include/ "tps65217.dtsi"
++
++&tps {
++	ti,pmic-shutdown-controller;
++	interrupt-parent = <&intc>;
++	interrupts = <7>; /* NMI */
++
++	backlight {
++		isel = <1>;  /* 1 - ISET1, 2 ISET2 */
++		fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
++		default-brightness = <100>;
++	};
++
++	regulators {
++		dcdc1_reg: regulator@0 {
++			regulator-name = "vdds_dpr";
++			regulator-always-on;
++		};
++
++		dcdc2_reg: regulator@1 {
++			regulator-name = "vdd_mpu";
++			regulator-min-microvolt = <925000>;
++			regulator-max-microvolt = <1351500>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++
++		dcdc3_reg: regulator@2 {
++			regulator-name = "vdd_core";
++			regulator-min-microvolt = <925000>;
++			regulator-max-microvolt = <1150000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++
++		ldo1_reg: regulator@3 {
++			regulator-name = "vio,vrtc,vdds";
++			regulator-always-on;
++		};
++
++		ldo2_reg: regulator@4 {
++			regulator-name = "vdd_3v3aux";
++			regulator-always-on;
++		};
++
++		ldo3_reg: regulator@5 {
++			regulator-name = "vdd_1v8";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++		};
++
++		ldo4_reg: regulator@6 {
++			regulator-name = "vdd_3v3a";
++			regulator-always-on;
++		};
++	};
++};
++
++&tscadc {
++	status = "okay";
++
++	adc {
++		ti,adc-channels = <0 1 2 3 4 5 6>;
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins>;
++	status = "okay";
++};
++
++&usb {
++	status = "okay";
++};
++
++&usb_ctrl_mod {
++	status = "okay";
++};
++
++&usb0 {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
++&usb0_phy {
++	status = "okay";
++};
++
++&usb1 {
++	dr_mode = "host";
++	status = "okay";
++};
++
++&usb1_phy {
++	status = "okay";
++};
++
++&am33xx_pinmux {
++	pinctrl-names = "default";
++	pinctrl-0 = <&clkout2_pin &gpio_pins>;
++
++	clkout2_pin: pinmux_clkout2_pin {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x9b4, PIN_OUTPUT_PULLDOWN | MUX_MODE3)
++		>;
++	};
++
++	dmtimer7_pins: pinmux_dmtimer7_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x968, PIN_OUTPUT | MUX_MODE5)
++		>;
++	};
++
++	gpio_keys_pins: pinmux_gpio_keys_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x940, PIN_INPUT | MUX_MODE7)
++		>;
++	};
++
++	gpio_pins: pinmux_gpio_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x928, PIN_OUTPUT | MUX_MODE7)
++			AM33XX_IOPAD(0x990, PIN_OUTPUT | MUX_MODE7)
++		>;
++	};
++
++	i2c0_pins: pinmux_i2c0_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x988, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x98c, PIN_INPUT_PULLUP | MUX_MODE0)
++		>;
++	};
++
++	lcd_disen_pins: pinmux_lcd_disen_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x9a4, PIN_OUTPUT_PULLUP | SLEWCTRL_SLOW | MUX_MODE7)
++		>;
++	};
++
++	lcd_pins_default: pinmux_lcd_pins_default {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x820, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x824, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x828, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x82c, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x830, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x834, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x838, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x83c, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
++			AM33XX_IOPAD(0x8a0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8a4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8a8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8ac, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8b0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8b4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8b8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8bc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8c0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8c4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8c8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8cc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8d0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8d4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8d8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8dc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8e0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8e4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8e8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++			AM33XX_IOPAD(0x8ec, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
++		>;
++	};
++
++	lcd_pins_sleep: pinmux_lcd_pins_sleep {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x8a0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8a4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8a8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8ac, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8b0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8b4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8b8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8bc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8c0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8c4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8c8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8cc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8d0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8d4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8d8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8dc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8e0, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8e4, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8e8, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
++			AM33XX_IOPAD(0x8ec, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
++		>;
++	};
++
++	leds_pins: pinmux_leds_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x868, PIN_OUTPUT | MUX_MODE7)
++			AM33XX_IOPAD(0x86c, PIN_OUTPUT | MUX_MODE7)
++		>;
++	};
++
++	mmc1_pins: pinmux_mmc1_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x8f0, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x8f4, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x8f8, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x8fc, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x900, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)
++		>;
++	};
++
++	spi0_pins: pinmux_spi0_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x950, PIN_OUTPUT_PULLDOWN | MUX_MODE0)
++			AM33XX_IOPAD(0x954, PIN_OUTPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x958, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x95c, PIN_OUTPUT_PULLUP | MUX_MODE0)
++		>;
++	};
++
++	uart0_pins: pinmux_uart0_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x970, PIN_INPUT_PULLUP | MUX_MODE0)
++			AM33XX_IOPAD(0x974, PIN_OUTPUT_PULLDOWN | MUX_MODE0)
++		>;
++	};
++
++	nandflash_pins: pinmux_nandflash_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x800, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x804, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x808, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x80c, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x810, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x814, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x818, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x81c, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x870, PIN_INPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x874, PIN_OUTPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x87c, PIN_OUTPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x890, PIN_OUTPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x894, PIN_OUTPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x898, PIN_OUTPUT | MUX_MODE0)
++			AM33XX_IOPAD(0x89c, PIN_OUTPUT | MUX_MODE0)
++		>;
++	};
++};
 -- 
 2.20.1
 
