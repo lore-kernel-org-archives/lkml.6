@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC808C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2147BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB7D20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6C6920818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895786;
-	bh=YuVAhEN0Ld1visHBnDvYg2hUCWSQiEck47KDKOE8G9I=;
+	s=default; t=1549895790;
+	bh=S9ZU50Us0aiowbJCNg2cE8aEg7nvx8Y2AVMFpMsfzGI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Dk6drGb7s2HFTa56h/1mRs3ARJ+723zMA0Lo0Xm+Oqt7yMgRyHY2v7yHQ1+Yrp99d
-	 T4VENVYVjp5XVu80AP8VcKTR4vKn19WDfk7Nmeb7YhVoU73q5yAtenPe3GXdi1Rv1E
-	 lwXysrGN8CGAz1/4ydSCbpM3UVOCP4B1JR9PstSA=
+	b=2iij0D05hxtxoiXsPHsRpMntinem5C8/RA7OgX4M0J1uRLLjdoYJYCDPkGVzlZWny
+	 L4ZB3zaS3oB70qL/d7WKuhTa8yqjvJTLuaBGPzQp72u70cCsTVJ/Wm7XEYOFoDJdWh
+	 dHl4e4GlhjZEmzMmvyJlNkXJg6qNPmrE2We42MlU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730872AbfBKOgZ (ORCPT
+        id S1731253AbfBKOg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:36:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45298 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:36:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730541AbfBKOgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:16 -0500
+        id S1730383AbfBKOgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:36:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D45DE2080F;
-        Mon, 11 Feb 2019 14:36:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E058320700;
+        Mon, 11 Feb 2019 14:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895775;
-        bh=YuVAhEN0Ld1visHBnDvYg2hUCWSQiEck47KDKOE8G9I=;
+        s=default; t=1549895781;
+        bh=S9ZU50Us0aiowbJCNg2cE8aEg7nvx8Y2AVMFpMsfzGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kmb+BZcJDmaqvS1cPp2Oz5yJwluaNs4nHURGaRc7oWMU0Yyu9TMBy+OmhZWMl5Dui
-         37hJCshTrq1kqte1CoLtWLGnaXQYDdFjPnMEQjh1DUMvSuwdAluqKSiItu0rTT4eIB
-         R1g3ojFX6GDPuZeGVqmxmiMBjF/Jojxf2XN4UUhc=
+        b=QJ7tocLziKn7OyxtLfIB7cJ7lnFcsJ3pflGhG0e9kTjfZ2rN21m8/zuK9lGuBsP+t
+         0ha6SoLYAMQjHG3JjK7gTMVruhyvVsbt83ULVxcirIoRmUi6dEY8AMAO3XSXuvEBcv
+         B8wBMUKZGQMRv3/wNSMrANPKCAOu68KQCy+JE43I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Soller <jeremy@system76.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 319/352] ALSA: hda/realtek - Headset microphone support for System76 darp5
-Date:   Mon, 11 Feb 2019 15:19:06 +0100
-Message-Id: <20190211141907.129057844@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.20 321/352] fuse: decrement NR_WRITEBACK_TEMP on the right page
+Date:   Mon, 11 Feb 2019 15:19:08 +0100
+Message-Id: <20190211141907.243470004@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,60 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Soller <jeremy@system76.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 89e3a5682edaa4e5bb334719afb180256ac7bf78 upstream.
+commit a2ebba824106dabe79937a9f29a875f837e1b6d4 upstream.
 
-On the System76 Darter Pro (darp5), there is a headset microphone
-input attached to 0x1a that does not have a jack detect.  In order to
-get it working, the pin configuration needs to be set correctly, and
-the ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC fixup needs to be applied.
-This is similar to the MIC_NO_PRESENCE fixups for some Dell laptops,
-except we have a separate microphone jack that is already configured
-correctly.
+NR_WRITEBACK_TEMP is accounted on the temporary page in the request, not
+the page cache page.
 
-Signed-off-by: Jeremy Soller <jeremy@system76.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 8b284dc47291 ("fuse: writepages: handle same page rewrites")
+Cc: <stable@vger.kernel.org> # v3.13
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/fuse/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5572,6 +5572,7 @@ enum {
- 	ALC294_FIXUP_ASUS_MIC,
- 	ALC294_FIXUP_ASUS_HEADSET_MIC,
- 	ALC294_FIXUP_ASUS_SPK,
-+	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
- };
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1782,7 +1782,7 @@ static bool fuse_writepage_in_flight(str
+ 		spin_unlock(&fc->lock);
  
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6496,6 +6497,15 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
- 	},
-+	[ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x1a, 0x01a1913c }, /* use as headset mic, without its own jack detect */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -6674,6 +6684,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1462, 0xb120, "MSI Cubi MS-B120", ALC283_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1462, 0xb171, "Cubi N 8GL (MS-B171)", ALC283_FIXUP_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1558, 0x1325, "System76 Darter Pro (darp5)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x17aa, 0x1036, "Lenovo P520", ALC233_FIXUP_LENOVO_MULTI_CODECS),
- 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Thinkpad SL410/510", ALC269_FIXUP_SKU_IGNORE),
- 	SND_PCI_QUIRK(0x17aa, 0x215e, "Thinkpad L512", ALC269_FIXUP_SKU_IGNORE),
+ 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+-		dec_node_page_state(page, NR_WRITEBACK_TEMP);
++		dec_node_page_state(new_req->pages[0], NR_WRITEBACK_TEMP);
+ 		wb_writeout_inc(&bdi->wb);
+ 		fuse_writepage_free(fc, new_req);
+ 		fuse_request_free(new_req);
 
 
