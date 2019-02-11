@@ -2,99 +2,73 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03519C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9BB421B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B6721B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391937AbfBKPX1 (ORCPT
+        id S2391946AbfBKPXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:23:27 -0500
-Received: from mga05.intel.com ([192.55.52.43]:40484 "EHLO mga05.intel.com"
+        Mon, 11 Feb 2019 10:23:31 -0500
+Received: from ms.lwn.net ([45.79.88.28]:46104 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390619AbfBKPXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:23:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 07:23:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="274157759"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 07:23:24 -0800
-Date:   Mon, 11 Feb 2019 08:23:04 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     Brice Goglin <Brice.Goglin@inria.fr>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [PATCHv4 10/13] node: Add memory caching attributes
-Message-ID: <20190211152303.GA4525@localhost.localdomain>
-References: <20190116175804.30196-1-keith.busch@intel.com>
- <20190116175804.30196-11-keith.busch@intel.com>
- <4a7d1c0c-c269-d7b2-11cb-88ad62b70a06@inria.fr>
- <20190210171958.00003ab2@huawei.com>
+        id S1730282AbfBKPX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:23:26 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id CBDD99AE;
+        Mon, 11 Feb 2019 15:23:25 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 08:23:24 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation/DMA-ISA-LPC: fix an incorrect reference
+Message-ID: <20190211082324.40baa0cd@lwn.net>
+In-Reply-To: <20190211134323.30856-1-hch@lst.de>
+References: <20190211134323.30856-1-hch@lst.de>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210171958.00003ab2@huawei.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 09:19:58AM -0800, Jonathan Cameron wrote:
-> On Sat, 9 Feb 2019 09:20:53 +0100
-> Brice Goglin <Brice.Goglin@inria.fr> wrote:
+On Mon, 11 Feb 2019 14:43:23 +0100
+Christoph Hellwig <hch@lst.de> wrote:
+
+> AFAIK we never had a isa_virt_to_phys, it always was
+> isa_virt_to_bus.
 > 
-> > Hello Keith
-> > 
-> > Could we ever have a single side cache in front of two NUMA nodes ? I
-> > don't see a way to find that out in the current implementation. Would we
-> > have an "id" and/or "nodemap" bitmask in the sidecache structure ?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  Documentation/DMA-ISA-LPC.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> This is certainly a possible thing for hardware to do.
->
-> ACPI IIRC doesn't provide any means of representing that - your best
-> option is to represent it as two different entries, one for each of the
-> memory nodes.  Interesting question of whether you would then claim
-> they were half as big each, or the full size.  Of course, there are
-> other possible ways to get this info beyond HMAT, so perhaps the interface
-> should allow it to be exposed if available?
+> diff --git a/Documentation/DMA-ISA-LPC.txt b/Documentation/DMA-ISA-LPC.txt
+> index 8c2b8be6e45b..b1ec7b16c21f 100644
+> --- a/Documentation/DMA-ISA-LPC.txt
+> +++ b/Documentation/DMA-ISA-LPC.txt
+> @@ -52,8 +52,8 @@ Address translation
+>  -------------------
+>  
+>  To translate the virtual address to a bus address, use the normal DMA
+> -API. Do _not_ use isa_virt_to_phys() even though it does the same
+> -thing. The reason for this is that the function isa_virt_to_phys()
+> +API. Do _not_ use isa_virt_to_bus() even though it does the same
+> +thing. The reason for this is that the function isa_virt_to_bus()
+>  will require a Kconfig dependency to ISA, not just ISA_DMA_API which
+>  is really all you need. Remember that even though the DMA controller
+>  has its origins in ISA it is used elsewhere.
 
-HMAT doesn't do this, but I want this interface abstracted enough from
-HMAT to express whatever is necessary.
+Applied, thanks.
 
-The CPU cache is the closest existing exported attributes to this,
-and they provide "shared_cpu_list". To that end, I can export a
-"shared_node_list", though previous reviews strongly disliked multi-value
-sysfs entries. :(
-
-Would shared-node symlinks capture the need, and more acceptable?
- 
-> Also, don't know if it's just me, but calling these sidecaches is
-> downright confusing.  In ACPI at least they are always
-> specifically referred to as Memory Side Caches.
-> I'd argue there should even by a hyphen Memory-Side Caches, the point
-> being that that they are on the memory side of the interconnected
-> rather than the processor side.  Of course an implementation
-> choice might be to put them off to the side (as implied by sidecaches)
-> in some sense, but it's not the only one.
-> 
-> </terminology rant> :)
-
-Now that you mention it, I agree "side" is ambiguous.  Maybe call it
-"numa_cache" or "node_cache"?
+jon
