@@ -4,52 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45061C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C48DC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098DC21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F39121855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899928;
-	bh=Nf/F5AKUn6Eadyi4XSpw4xl4/Hs0Ci4eWLXn+tOfRfQ=;
+	s=default; t=1549899935;
+	bh=TjdZGDSFRA/ujpx3vtaNoIfPDhJo+TFeGBbevVgNp9E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hNhUGLThcjXW8rEx8050qcU4qtHlV4IV/lveeIgzk1uuAvrFZogCbEMkOB8L0PtX2
-	 t7cvEffHeJ6eOmAAiRFILOLfdGu3BvoZyzYq/jR1tX+RrBRkhkdvFjW3bputQmF3Kd
-	 QLHk2H7mWO40z1ZUIRZv0vCrCgM8RJ8F51goEbXQ=
+	b=K2uOCi8qtuTWMlQf2fkcQjwjqNcKaoMedqvEf0wZwgoGgKM/7QNaNcv7PKSFLRD7O
+	 mSQu07BMJG3fD0kbLloC0qvB0bEmMH5hF/w5N+2UKmWpdrLe12CS9aCFxWLKWSV8EL
+	 lcomWnJJGVIArN0qPFGTAxlW64O4zaNfhC2Kcad8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732011AbfBKOnd (ORCPT
+        id S1732618AbfBKOnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55674 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732636AbfBKOn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:29 -0500
+        id S1732599AbfBKOnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1739020700;
-        Mon, 11 Feb 2019 14:43:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59D1220700;
+        Mon, 11 Feb 2019 14:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896208;
-        bh=Nf/F5AKUn6Eadyi4XSpw4xl4/Hs0Ci4eWLXn+tOfRfQ=;
+        s=default; t=1549896199;
+        bh=TjdZGDSFRA/ujpx3vtaNoIfPDhJo+TFeGBbevVgNp9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ssGmLofI9J4l5WL2uIcjLYP4vR9iOXcQKXtlzPIe1Rl8/KIRA29be2TvYLt5x4Wfh
-         wzbVZaGOXIT1TDYJloA/GV2DQ6Lkupv3Bkksc7iLxeJQthpyF4chjZEHD9m8fjXgH8
-         EnMvydaQgAtzel79PsaUKQQ0pcafskXTAHirnrJQ=
+        b=kr2JPEXVncRGmMXwZTC+JOE3uUUgwWvU+x56r+3/TfEjPGmH6Wq+dZezjG9eEQon+
+         9prUG7Bu2bepR4uzlf/+As5vJnudV0ddLs5pHlDCBbpKSDTuJIElSoJQVC+n+76mGS
+         +wLUWc6+ubKb1kn1jd8rrM6qk5Rmw/swCuQB5rSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 108/313] gpio: mt7621: report failure of devm_kasprintf()
-Date:   Mon, 11 Feb 2019 15:16:28 +0100
-Message-Id: <20190211141901.075658356@linuxfoundation.org>
+Subject: [PATCH 4.19 106/313] IB/hfi1: Unreserve a reserved request when it is completed
+Date:   Mon, 11 Feb 2019 15:16:26 +0100
+Message-Id: <20190211141900.939285097@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,36 +69,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 59d646c775d6ae688ee90fda9f2a4270c47b7490 ]
+[ Upstream commit ca95f802ef5139722acc8d30aeaab6fe5bbe939e ]
 
-kasprintf() may return NULL on failure of internal allocation thus the
-assigned  label  is not safe if not explicitly checked. On error
-mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
-(unlikely) failure case should be fine here.
+Currently, When a reserved operation is completed, its entry in the send
+queue will not be unreserved, which leads to the miscalculation of
+qp->s_avail and thus the triggering of a WARN_ON call trace. This patch
+fixes the problem by unreserving the reserved operation when it is
+completed.
 
-Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Sean Wang <sean.wang@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 856cc4c237ad ("IB/hfi1: Add the capability for reserved operations")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mt7621.c | 2 ++
+ drivers/infiniband/hw/hfi1/rc.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index d72af6f6cdbd..1ec95bc18f5b 100644
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -244,6 +244,8 @@ mediatek_gpio_bank_probe(struct device *dev,
- 	rg->chip.of_xlate = mediatek_gpio_xlate;
- 	rg->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
- 					dev_name(dev), bank);
-+	if (!rg->chip.label)
-+		return -ENOMEM;
+diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
+index 9bd63abb2dfe..6f013a565353 100644
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -1157,6 +1157,7 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
+ 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
+ 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
+ 			break;
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
+@@ -1209,6 +1210,7 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
+ 		u32 s_last;
  
- 	ret = devm_gpiochip_add_data(dev, &rg->chip, mtk);
- 	if (ret < 0) {
+ 		rvt_put_swqe(wqe);
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
 -- 
 2.19.1
 
