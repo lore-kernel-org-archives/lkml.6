@@ -2,112 +2,110 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AACEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3F6C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE443222A8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898157;
-	bh=taayahmU25J/e4dGCWqIjKRtUqp/czGZov06HAhEIp4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YPvHTWGvm1MOHcqv6LTNnNgZq3Sd4ZQmfSA8V8CrfkspYJkmElpz3DOZ3SV0SrWMi
-	 eAt0k7bd7/eykY8BvE9VaIrtSeWmNmspVJQel753HpJaPK76ULDSu6LUjbg7dH/8CZ
-	 dxq/XKyKzLlPMAq+DZclOzTjXRMpPB0SFbWMnJbI=
+	by mail.kernel.org (Postfix) with ESMTP id 2E853222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:16:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmExmgQN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391351AbfBKPHa (ORCPT
+        id S2391658AbfBKPQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731524AbfBKPHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F30D2217D9;
-        Mon, 11 Feb 2019 15:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897644;
-        bh=taayahmU25J/e4dGCWqIjKRtUqp/czGZov06HAhEIp4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RnbhpX7f08Z3kIKZ4fpP5NHi4wzIrX/SaMZE1hfOqFRWl4zpboJG/zh2dneE90kmK
-         Ti2qzHwRYotRwkmOemyv2A/wlpJsyAgLJqG99loeilhrSNwECSfunMiMsFRm2DYDmy
-         pGz4Dh13ZiNpikbz57DGlVvNcYvoD1apBQGqgRBs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murthy Bhat <murthy.bhat@microsemi.com>,
-        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 066/137] scsi: smartpqi: correct volume status
-Date:   Mon, 11 Feb 2019 15:19:07 +0100
-Message-Id: <20190211141818.115114357@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
-References: <20190211141811.964925535@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:16:00 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35415 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391346AbfBKPH3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:29 -0500
+Received: by mail-it1-f194.google.com with SMTP id v72so2054560itc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:07:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xQqZlYHAY6HjAeSYpVOSflml6k7zg9teSdrJm8leEUk=;
+        b=HmExmgQNH5IAGNs2+AgmsD+/8/vrqIeob15MBtVs/D3GSqX9h+b4Fyu8CZTUvGCPW6
+         9LdgclqoNgCNZgXqtpceGLrp76mk467FWtUyG59VEEkeS95SFmFm5F/KRwLbrG1Vu5DI
+         vKcYi0M0ThTTT1KnPRF8l+L67yvAx/JaI0yKeljZVgrU70IiYHP0r9Z3SVQatMowOlK6
+         W9aPZQrw1EKMZcHDKUqYZ3SjYQs/o35gQ96cInVB/JB2xpL12M89H2p3ttcJTUjByjnJ
+         VAEUhhTKd0dBi3Hulxq7nsq3ZzsLXtnLTnniyzgIB6k7gkkUnsJrrU963Jn9WKiC401r
+         lgJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xQqZlYHAY6HjAeSYpVOSflml6k7zg9teSdrJm8leEUk=;
+        b=H8su8ei+r9/U0GEHdrjzopzkDGQ1ai8eJq8EUknpr43kRIL0jgCzH3ZMjimBkpAXrx
+         cILiokLi+FJ9svnEyPc+P/HHApjBy7RdqFxrDb1KeeMj5+0PD/0bFJLBK8vUDUZG8f2y
+         OXd8S2nKREngnhUE9eNapsEp7okaU4Ya5UCrpj9oLi7+YTVuY1dEIb2rbNrJezM30JUH
+         oRjnkSoQJIdsiu8AmVQpaGa8dWqwWujgOz6uzNDl908O6scBgZv8HF0AivpNqiZV2S+x
+         nvQO9jnyBG5qwc0c2+SwqbKqveiGkZPJIu9LkNTeLRYv6fxGvbvxfQdFXaCXmlyGK2pA
+         TtxQ==
+X-Gm-Message-State: AHQUAuY3NhjvpCkRYRdNQi6jeDftBgF94/FLmtF8l9NPf0Io+y0nGLyq
+        y10g1XqLlACMhdd40X5R81E=
+X-Google-Smtp-Source: AHgI3IZmq0Wcl4jw3ZGGwMalNA0I8DLN1B3MVKmlOJ0rQRedSwiLS415yoRt58VHhhp8O1qD0/WEjQ==
+X-Received: by 2002:a24:4653:: with SMTP id j80mr5381444itb.177.1549897648834;
+        Mon, 11 Feb 2019 07:07:28 -0800 (PST)
+Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
+        by smtp.gmail.com with ESMTPSA id y190sm4322446itb.26.2019.02.11.07.07.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 07:07:28 -0800 (PST)
+Date:   Mon, 11 Feb 2019 02:01:18 -0500
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>, devel@linuxdriverproject.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Display nothing in sysfs if
+ monitor_allocated not set
+Message-ID: <20190211070118.GA2977@ubu-Virtual-Machine>
+References: <cover.1549619051.git.kimbrownkd@gmail.com>
+ <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
+ <20190208143148.052c8d9c@hermes.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208143148.052c8d9c@hermes.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Feb 08, 2019 at 02:32:09PM -0800, Stephen Hemminger wrote:
+> On Fri, 8 Feb 2019 05:01:12 -0500
+> Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> 
+> You are right, the current behavior is broken.
+> It would be good to add a description of under what conditions
+> monitor is not used. Is this some part of a project emulating
+> Hyper-V?
+> 
 
-------------------
+I'm not sure which conditions determine whether the monitor mechanism is
+used. I've searched the Hypervisor TLFS, and I couldn't find any
+information. If you have any suggestions for where I can find this
+information, please let me know.
 
-[ Upstream commit 7ff44499bafbd376115f0bb6b578d980f56ee13b ]
-
-- fix race condition when a unit is deleted after an RLL,
-  and before we have gotten the LV_STATUS page of the unit.
-  - In this case we will get a standard inquiry, rather than
-    the desired page.  This will result in a unit presented
-    which no longer exists.
-  - If we ask for LV_STATUS, insure we get LV_STATUS
-
-Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
-Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 9a208961cc0b..06a062455404 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -983,6 +983,9 @@ static void pqi_get_volume_status(struct pqi_ctrl_info *ctrl_info,
- 	if (rc)
- 		goto out;
- 
-+	if (vpd->page_code != CISS_VPD_LV_STATUS)
-+		goto out;
-+
- 	page_length = offsetof(struct ciss_vpd_logical_volume_status,
- 		volume_status) + vpd->page_length;
- 	if (page_length < sizeof(*vpd))
--- 
-2.19.1
+No, I'm not working on a project emulating Hyper-V.
 
 
+> 
+> > +
+> > +	if (!hv_dev->channel->offermsg.monitor_allocated)
+> > +		return sprintf(buf, "\n");
+> 
+> If monitor is not used, why not return an error instead of empty
+> data. Any program (or user) would have to handle that already.
 
+I think that returning an error instead is fine. I'll make this change
+in the next version of the patch.
