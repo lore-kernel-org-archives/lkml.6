@@ -2,112 +2,81 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF5CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45B5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE4FD21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900689;
-	bh=b6d8O255nCXmwJuBRwu4m98qo4PkWhtTo90ihypKWqw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WPXI7VIdNRPpp86Spqm5bdgwIPMJytUDOpovKGtg0X9TVHYKsmISFE+Edtnu9PaL5
-	 5PCuwuzHTuKuU7fgoSboYIojR0I/WJttr4Ck4CnkH8SIGpL2F2ppifrtwu4++BP2GK
-	 DtLFFv4fVfaouHTVub83GH+zV1ajj0OABbcbGGws=
+	by mail.kernel.org (Postfix) with ESMTP id AD40D21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731176AbfBKP6H (ORCPT
+        id S1731475AbfBKP6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:58:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40884 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:58:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729994AbfBKOdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:12 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729994AbfBKP6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:58:11 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C521218A3;
-        Mon, 11 Feb 2019 14:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895591;
-        bh=b6d8O255nCXmwJuBRwu4m98qo4PkWhtTo90ihypKWqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gfc+bSobaN9KRFrSJD2MTQsze9KpTVWG2ZSFBd7qYGBRBYHDUYqsiMFrAfI1I4PEH
-         tzDSYvkPpf9bEudLs3zJk2mBSsS/DiR74n9p7YF4VviEedaGvV0P7wf/Si7G8VM1g8
-         xZ6ZPIoQV7exxgo9Zn3shiRjsKXBh06/bWhBMCoE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 257/352] cifs: check ntwrk_buf_start for NULL before dereferencing it
-Date:   Mon, 11 Feb 2019 15:18:04 +0100
-Message-Id: <20190211141903.431384683@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id 672F42DD2A;
+        Mon, 11 Feb 2019 15:58:10 +0000 (UTC)
+Received: from parsley.fieldses.org (ovpn-123-64.rdu2.redhat.com [10.10.123.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FA9619741;
+        Mon, 11 Feb 2019 15:58:05 +0000 (UTC)
+Received: by parsley.fieldses.org (Postfix, from userid 2815)
+        id 395D81801AB; Mon, 11 Feb 2019 10:58:04 -0500 (EST)
+Date:   Mon, 11 Feb 2019 10:58:04 -0500
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        David Howells <dhowells@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shaohua Li <shli@fb.com>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 0/7] Eliminate delegation self-conflicts
+Message-ID: <20190211155803.GA28714@parsley.fieldses.org>
+References: <1549656647-25115-1-git-send-email-bfields@redhat.com>
+ <bbc264481c2368f1e7a386cafb0cd5fba6af7ecf.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbc264481c2368f1e7a386cafb0cd5fba6af7ecf.camel@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 11 Feb 2019 15:58:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Sat, Feb 09, 2019 at 07:43:54AM -0500, Jeff Layton wrote:
+> On Fri, 2019-02-08 at 15:10 -0500, J. Bruce Fields wrote:
+> > From: "J. Bruce Fields" <bfields@redhat.com>
+> > 
+> > These patches allow NFSv4 clients holding delegations to keep them when
+> > the operation that would break a delegation comes from the same client.
+> > 
+> > To do that, we somehow need to pass the identity of the
+> > delegation-breaker down through the VFS.
+> > 
+> > This series uses the tgid, a solution suggested by Trond.  To do that we
+> > need nfsd tasks to share the same tgid.  I do that by extending the
+> > kthread code slightly to allow knfsd to run the kthreadd main loop in a
+> > task of its own, and spawn its server threads off of that task.
+...
+> Nice work! I like the basic idea, the changes seem to be well-organized, 
+> and the tgid semantics are clear and make sense.
+> 
+> Would this preclude us from moving to a workqueue-based model for knfsd
+> later? It's likely to still be worth it, but it'd be good to understand
+> the potential drawbacks.
 
-------------------
+I was wondering about that too, but I haven't looked into it yet.
+Workqueues look a lot more complicated than kthreads.
 
-[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
-
-RHBZ: 1021460
-
-There is an issue where when multiple threads open/close the same directory
-ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
-later to oops with a NULL deref.
-
-The real bug is why this happens and why this can become NULL for an
-open cfile, which should not be allowed.
-This patch tries to avoid a oops until the time when we fix the underlying
-issue.
-
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cifs/readdir.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index e169e1a5fd35..3925a7bfc74d 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -655,7 +655,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 		/* scan and find it */
- 		int i;
- 		char *cur_ent;
--		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
-+		char *end_of_smb;
-+
-+		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
-+			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
-+			return -EIO;
-+		}
-+
-+		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
- 			server->ops->calc_smb_size(
- 					cfile->srch_inf.ntwrk_buf_start,
- 					server);
--- 
-2.19.1
-
-
-
+--b.
