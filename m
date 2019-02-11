@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B38C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D74C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BC22081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 160C42081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896366;
-	bh=XFVkHy9NppUGab/fwUAgRvGzBAv4tFiSQ5QGlWYg7iE=;
+	s=default; t=1549896370;
+	bh=l834Psl9nZOCjPUyC6DZ1YnQQzDj4egt9fCRUFEOrjM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SWAVf8hStIXE7zkL4BdHEdSQJRqEl4+89TvyzuIGJj/UkRW/M1FhWKZ2px55/TaM4
-	 PdkOoE6H21ZiXb+LsKOL0Ikebp/VvkoQ8EodGktMA/6C7Y2yFAuQ8tm8NFCv6zENfd
-	 lIb/2RcQpBBgC49c7406cuTrEFxIeXfBSgT1Zs9I=
+	b=Qu+ilDoAFMpYNOFhKjxc/sYmMia6vDS+0dnV4T+xsfiwUCDF+LlmaBgJN+MVRTQkx
+	 2Wyjg/cWkaus5olnTxm4//URO/5ZQ8EN8BDz/qwZiodo7e1jFGgLJ3SZ9LuBjlpWar
+	 BDo5MNdwOfJ6iXOzBHX5D5M9SfJDgqTLhFx0ewig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733167AbfBKOqE (ORCPT
+        id S1733174AbfBKOqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:46:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59138 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:46:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732585AbfBKOqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:46:01 -0500
+        id S1733165AbfBKOqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D0022081B;
-        Mon, 11 Feb 2019 14:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C853206BA;
+        Mon, 11 Feb 2019 14:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896360;
-        bh=XFVkHy9NppUGab/fwUAgRvGzBAv4tFiSQ5QGlWYg7iE=;
+        s=default; t=1549896363;
+        bh=l834Psl9nZOCjPUyC6DZ1YnQQzDj4egt9fCRUFEOrjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dfflP8SeTD0CIcURc5pmOQupBx08yMCGNaeJwyKCO+maVWlaNVBrdJokT50hiE6UU
-         nBFGFacVE1BVDwAOi1fequYcPLlxNdHMCl1eG3wziykk6Qwn6HvYRCpW9HPpYhdcf2
-         aTuabtzH6nkCtlrE7KyT3DQK8H9SjjXvsxFf+Znc=
+        b=pSi9jT7hvDJRM9Nnja3PTz2uFHXGY+P5ceCRwIQX9hMwNNE4rH9/ih+Zb9iJriK2v
+         Mnask1NLWoxSdDebza4XBuHQzGg4spn+96Lktz104C23pH+29VvZi2uZaXK5MDgGEH
+         nNB8I4YvrbWyUzOJBKwF3bDaGoFyPfxTtDtW5Q1Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 129/313] drm/msm/dsi: fix dsi clock names in DSI 10nm PLL driver
-Date:   Mon, 11 Feb 2019 15:16:49 +0100
-Message-Id: <20190211141902.361364183@linuxfoundation.org>
+Subject: [PATCH 4.19 120/313] iommu/arm-smmu-v3: Avoid memory corruption from Hisilicon MSI payloads
+Date:   Mon, 11 Feb 2019 15:16:40 +0100
+Message-Id: <20190211141901.833693497@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,64 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c1866d44d149a1ea5c303632114fb6aa08cfd263 ]
+[ Upstream commit 84a9a75774961612d0c7dd34a1777e8f98a65abd ]
 
-Fix the dsi clock names in the DSI 10nm PLL driver to
-match the names in the dispcc driver as those are
-according to the clock plan of the chipset.
+The GITS_TRANSLATER MMIO doorbell register in the ITS hardware is
+architected to be 4 bytes in size, yet on hi1620 and earlier, Hisilicon
+have allocated the adjacent 4 bytes to carry some IMPDEF sideband
+information which results in an 8-byte MSI payload being delivered when
+signalling an interrupt:
 
-Changes in v2:
-- Update the clock diagram with the new clock name
+MSIAddr:
+	 |----4bytes----|----4bytes----|
+	 |    MSIData   |    IMPDEF    |
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+This poses no problem for the ITS hardware because the adjacent 4 bytes
+are reserved in the memory map. However, when delivering MSIs to memory,
+as we do in the SMMUv3 driver for signalling the completion of a SYNC
+command, the extended payload will corrupt the 4 bytes adjacent to the
+"sync_count" member in struct arm_smmu_device. Fortunately, the current
+layout allocates these bytes to padding, but this is fragile and we
+should make this explicit.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+[will: Rewrote commit message and comment]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-index 41bec570c518..31205625c734 100644
---- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-+++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-@@ -17,7 +17,7 @@
-  *                              |                |
-  *                              |                |
-  *                 +---------+  |  +----------+  |  +----+
-- *  dsi0vco_clk ---| out_div |--o--| divl_3_0 |--o--| /8 |-- dsi0pllbyte
-+ *  dsi0vco_clk ---| out_div |--o--| divl_3_0 |--o--| /8 |-- dsi0_phy_pll_out_byteclk
-  *                 +---------+  |  +----------+  |  +----+
-  *                              |                |
-  *                              |                |         dsi0_pll_by_2_bit_clk
-@@ -25,7 +25,7 @@
-  *                              |                |  +----+  |  |\  dsi0_pclk_mux
-  *                              |                |--| /2 |--o--| \   |
-  *                              |                |  +----+     |  \  |  +---------+
-- *                              |                --------------|  |--o--| div_7_4 |-- dsi0pll
-+ *                              |                --------------|  |--o--| div_7_4 |-- dsi0_phy_pll_out_dsiclk
-  *                              |------------------------------|  /     +---------+
-  *                              |          +-----+             | /
-  *                              -----------| /4? |--o----------|/
-@@ -690,7 +690,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 3e02aace38b1..4afb9cb99ea3 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -586,7 +586,11 @@ struct arm_smmu_device {
  
- 	hws[num++] = hw;
+ 	struct arm_smmu_strtab_cfg	strtab_cfg;
  
--	snprintf(clk_name, 32, "dsi%dpllbyte", pll_10nm->id);
-+	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_10nm->id);
- 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
+-	u32				sync_count;
++	/* Hi16xx adds an extra 32 bits of goodness to its MSI payload */
++	union {
++		u32			sync_count;
++		u64			padding;
++	};
  
- 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
-@@ -739,7 +739,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
- 
- 	hws[num++] = hw;
- 
--	snprintf(clk_name, 32, "dsi%dpll", pll_10nm->id);
-+	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_10nm->id);
- 	snprintf(parent, 32, "dsi%d_pclk_mux", pll_10nm->id);
- 
- 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+ 	/* IOMMU core code handle */
+ 	struct iommu_device		iommu;
 -- 
 2.19.1
 
