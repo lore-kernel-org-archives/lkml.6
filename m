@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4678C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D8DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E2121B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C3B521B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898996;
-	bh=17C+e4Rx04dNxPd+DGh6qj55NiNqW35Zn0mCXJE/FCg=;
+	s=default; t=1549899002;
+	bh=usmsxEwHND3VTQqYdDSIJzHse3Q3MqF6x6QAR4ohg3w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GK1543Y+24DLqyVGaob0yHUdzDTOVSC8jtuCl/vL8AIaf1OLz8ekEcQkQEKIXGAkk
-	 gAWHHm2g6NTaEhTMU9W19Pcdfct7Ne7Zf0wdo6imWJ22isG8/HG+yOT26Dljp/wUh4
-	 QPX0ITI1841QcHOw8RepWlaJ/E7XIiB3IM4mVgEE=
+	b=KOLE48ejub4hvsk41e5kDhDgNTk2K3pDaUy9ggdWNt37+EYls6yBl71umpd7oRDT7
+	 yGEemnEaokXohZV7MHKYJaMNAzzAdUjuNuvLFZE9+8D2lsNKHmJf1cXo5HFaIwRgA2
+	 D2ynln2/09bKNkx+q9j+Zyz2hlUCmFFAyUmaIhHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389278AbfBKO5G (ORCPT
+        id S2389713AbfBKPaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:57:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44428 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:30:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388616AbfBKO5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:04 -0500
+        id S2389253AbfBKO4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:56:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66E3D222A8;
-        Mon, 11 Feb 2019 14:57:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0E76222A1;
+        Mon, 11 Feb 2019 14:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897023;
-        bh=17C+e4Rx04dNxPd+DGh6qj55NiNqW35Zn0mCXJE/FCg=;
+        s=default; t=1549897014;
+        bh=usmsxEwHND3VTQqYdDSIJzHse3Q3MqF6x6QAR4ohg3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u/z0xI2Rb9O1xwkJ4Ntjpp7z7Q0pUUOtFRpHWbStQNMqUOux5VEQxTwRyCcsh4XPy
-         p75OC+8sgCVHhzBHIy4dGcaRt0Tha015GKLfxehfe+Cf/ArYZ4GkucEgzxgc2w1j8B
-         EDoXG9k8sOT3w29j1WLcJdutHpKNOAbYRiBOrJxw=
+        b=sL0yD0JWjYeqEmcpHoA2hBldoDFCUNkF1+vEV5hLC1S7lQF0UDECeHLBGy3SbQ39+
+         8rrjx9EpmHLc+dv8WDpjumLDbIXLdHt9iVaWDVYYzmpqgCFt4AT2b3e2fLGeg7/bV0
+         S2jG5V7oWSS3tAvHSYUvj4WTqs8c1GDbsDM6ZBJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 066/205] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Mon, 11 Feb 2019 15:17:44 +0100
-Message-Id: <20190211141833.083046917@linuxfoundation.org>
+Subject: [PATCH 4.14 063/205] usb: hub: delay hub autosuspend if USB3 port is still link training
+Date:   Mon, 11 Feb 2019 15:17:41 +0100
+Message-Id: <20190211141832.917450762@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,51 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
+[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+When initializing a hub we want to give a USB3 port in link training
+the same debounce delay time before autosuspening the hub as already
+trained, connected enabled ports.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+USB3 ports won't reach the enabled state with "current connect status" and
+"connect status change" bits set until the USB3 link training finishes.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Catching the port in link training (polling) and adding the debounce delay
+prevents unnecessary failed attempts to autosuspend the hub.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/core/hub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..c40d572a7602 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a073cb5be013..4a4e666a8e09 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1110,6 +1110,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 						   USB_PORT_FEAT_ENABLE);
+ 		}
  
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
- 
++		/*
++		 * Add debounce if USB3 link is in polling/link training state.
++		 * Link will automatically transition to Enabled state after
++		 * link training completes.
++		 */
++		if (hub_is_superspeed(hdev) &&
++		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
++						USB_SS_PORT_LS_POLLING))
++			need_debounce_delay = true;
++
+ 		/* Clear status-change flags; we'll debounce later */
+ 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
+ 			need_debounce_delay = true;
 -- 
 2.19.1
 
