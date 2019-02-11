@@ -2,83 +2,166 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833F7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0ABC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5296F20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B2232084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfBKH0V (ORCPT
+        id S1726834AbfBKH3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:26:21 -0500
-Received: from protonic.xs4all.nl ([83.163.252.89]:38889 "EHLO protonic.nl"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725939AbfBKH0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:26:21 -0500
-Received: from erd987 (erd987.prtnl [192.168.237.3])
-        by sparta (Postfix) with ESMTP id 2CA3F44A00D2;
-        Mon, 11 Feb 2019 08:27:36 +0100 (CET)
-Date:   Mon, 11 Feb 2019 08:26:19 +0100
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] auxdisplay: ht16k33: fix potential user-after-free on
- module unload
-Message-ID: <20190211082619.14d3f6f1@erd987>
-In-Reply-To: <20190209001522.GA11769@gmail.com>
-References: <20190209001522.GA11769@gmail.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 11 Feb 2019 02:29:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfBKH3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 02:29:51 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FE6986679;
+        Mon, 11 Feb 2019 07:29:49 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 17F2110E81C6;
+        Mon, 11 Feb 2019 07:29:49 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 7CADE3F953;
+        Mon, 11 Feb 2019 07:29:47 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 02:29:46 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>, dchinner@redhat.com
+Cc:     jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
+        linux-nvdimm@ml01.01.org, jasowang@redhat.com,
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        dave jiang <dave.jiang@intel.com>,
+        darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, imammedo@redhat.com,
+        dan j williams <dan.j.williams@intel.com>,
+        lcapitulino@redhat.com, kwolf@redhat.com,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        pbonzini@redhat.com
+Message-ID: <888328358.132676.1549870186945.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190204170515-mutt-send-email-mst@kernel.org>
+References: <20190109144736.17452-1-pagupta@redhat.com> <20190204170515-mutt-send-email-mst@kernel.org>
+Subject: Re: [Qemu-devel] security implications of caching with virtio pmem
+ (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.161.61, 10.4.195.19]
+Thread-Topic: security implications of caching with virtio pmem (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
+Thread-Index: eo4IVwxetZkhE1cACT4xOrhFj2XlEw==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 11 Feb 2019 07:29:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Feb 2019 01:15:22 +0100
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
 
-> On module unload/remove, we need to ensure that work does not run
-> after we have freed resources. Concretely, cancel_delayed_work()
-> may return while the callback function is still running.
-> 
-> From kernel/workqueue.c:
-> 
->     The work callback function may still be running on return,
->     unless it returns true and the work doesn't re-arm itself.
->     Explicitly flush or use cancel_delayed_work_sync() to wait on it.
-> 
-> Link: https://lore.kernel.org/lkml/20190204220952.30761-1-TheSven73@googlemail.com/
-> Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> ---
->  drivers/auxdisplay/ht16k33.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index a43276c76fc6..21393ec3b9a4 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -509,7 +509,7 @@ static int ht16k33_remove(struct i2c_client *client)
->  	struct ht16k33_priv *priv = i2c_get_clientdata(client);
->  	struct ht16k33_fbdev *fbdev = &priv->fbdev;
->  
-> -	cancel_delayed_work(&fbdev->work);
-> +	cancel_delayed_work_sync(&fbdev->work);
->  	unregister_framebuffer(fbdev->info);
->  	framebuffer_release(fbdev->info);
->  	free_page((unsigned long) fbdev->buffer);
+Hi Michael, 
 
-Looks good
+Thanks for looking into this and summarizing in detail. 
 
-Acked-by: Robin van der Gracht <robin@protonic.nl>
+> >  This patch series has implementation for "virtio pmem".
+> >  "virtio pmem" is fake persistent memory(nvdimm) in guest
+> >  which allows to bypass the guest page cache. This also
+> >  implements a VIRTIO based asynchronous flush mechanism.
+> 
+> 
+> At Pankaj's request I looked at information leak implications of virtio
+> pmem in light of the recent page cache side channels paper
+> (https://arxiv.org/pdf/1901.01161.pdf) - to see what
+> kind of side channels it might create if any.  TLDR - I think that
+> depending on the host side implementation there could be some, but this
+> might be addressable by better documentation in both code and spec.
+> The fake dax approach backing the guest memory by a host page cache
+> does seem to have potential issues.
+> 
+> For clarity: we are talking about leaking information either to a VM, or
+> within a VM (I did not look into leaks to hypervisor in configurations
+> such as SEV) through host page cache.
+> 
+> Leaks into a VM: It seems clear that while pmem allows memory accesses
+> versus read/write with e.g. a block device, from host page cache point
+> of view this doesn't matter much: reads populate cache in the same way
+> as memory faults.  Thus ignoring presence of information leaks (which is
+> an interesting question e.g. in light of recent discard support) pmem
+> doesn't seem to be any better or worse for leaking information into a
+> VM.
+> 
+> Leaks within VM: Right now pmem seems to bypass the guest page cache
+> completely.  Whether pmem memory is then resident in a page cache would
+> be up to the device/host. Assuming that it is, the "Preventing
+> Efficient Eviction while Increasing the System Performance"
+> countermeasure for the page cache side channel attack would appear to
+> become ineffective with pmem. What is suggested is a per-process
+> management of the page cache, and host does not have visibility of
+> processes within a VM. Another possible countermeasure - not discussed
+> in the paper - could be modify the applications to lock the security
+> relevant pages in memory.  Again this becomes impractical with pmem as
+> host does not have visibility into that. However note that as long
+> as the only countermeasure linux uses is "Privileged Access"
+> (i.e. blocking mincore) nothing can be done as guest page cache
+> remains as vulnerable as host page cache.
+> 
+> 
+> Countermeasures: which host-side countermeasures can be designed would
+> depend on which countermeasures are used guest-side - we would need to
+> make sure they are not broken by pmem.  For "Preventing Efficient
+> Eviction while Increasing the System Performance" modifying the host
+> implementation to ensure that pmem device bypasses the host page cache
+> would seem to address the security problem.Similarly, ensuring that a
+> real memory device (e.g. DAX, RAM such as hugetlbfs, pmem for nested
+> virt) is used for pmem would make the memory locking countermeasure
+> work.  Whether with such limitations the device is still useful
+> performance wise is an open question.  These questions probably should
+> be addressed in the documentation, spec and possible qemu code.
+> 
+> 
+> 
+> Severity of the security implications: some people argue that the
+> security implications of the page cache leaks are minor.  I do not have
+> an opinion on this: the severity would seem to depend on the specific
+> configuration.
+> 
+> 
+> Other security implications: recent discussion seems to suggest there
+> are other concerns around e.g. resource management and thus DOS
+> potential. If that's so, it's a matter for a separate discussion
+> as I didn't look into that in depth.
+> 
+> Some or all of the above might be based on a misunderstanding of the
+> current pmem code, the whitepaper and linux page cache in general.
+> If so I apologise, do not hesitate to call out any mistakes.
+
+I agree similar to any guest VM(without virtio-pmem) or any host 
+userspace process, virtio-pmem may also have some security implications.
+We need to document these in virtio-pmem host device specification
+and in qemu code. This is to make sure while creating virtio-pmem
+device, we are aware of these implications and create/use 
+host side device backing file accordingly as per the use-case
+described by David here [1].
+
+I will document these in next version of my patch series.
+
+Hello Dave,
+Are we okay with this?
+
+Thank you everyone for the discussion.
+
+[1] https://marc.info/?l=linux-kernel&m=154946989419403&w=2
+
+Best regards,
+Pankaj    
