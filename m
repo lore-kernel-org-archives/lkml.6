@@ -2,88 +2,101 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14E5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35486C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3EE20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF6421736
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:44:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyUVgcEB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfBKIm1 (ORCPT
+        id S1727132AbfBKIoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:42:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42834 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727074AbfBKIm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:42:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C83D6ACB8;
-        Mon, 11 Feb 2019 08:42:25 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6A6211E09A8; Mon, 11 Feb 2019 09:42:25 +0100 (CET)
-Date:   Mon, 11 Feb 2019 09:42:25 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Steve Magnani <steve.magnani@digidescorp.com>
-Cc:     jack@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] udf: Fix corrupt on-disk integrity descriptor
- following sync()
-Message-ID: <20190211084225.GB19029@quack2.suse.cz>
-References: <20190208173455.20151-1-steve@digidescorp.com>
- <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
+        Mon, 11 Feb 2019 03:44:17 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44501 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfBKIoQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:44:16 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y1so4640463pgk.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:44:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/iyvwIiLL+/J3ZsFRLfEOyGYB0t9tKZjd1RN306gWBI=;
+        b=oyUVgcEBt1dgVUBvv1kEtl4HL97a3+dvdr5a7I83OZI9L6+jaPTMwoECuFCN9ZSxda
+         L1Tc3VceaNpjC5xPtpt1lELHg6H9RiPZWNTj/YnGuu744BLc0jox35s0ZxnOy+G65PMD
+         V0mxM5DYomfhubXDUb3UP7tFWxJUcL6YrKzWrBtv1khGLcamzrEPKVzwAlRuf7XPIcSw
+         dyES9mOQMrxZTm1TlyhOjNa38rI6AlCCABgAqZydbNSUE9kh299lcbNp/5yeUW5ZBfFo
+         z6l9HH79ZMLbnyLIlyQg3o3yquviJpyEZTcKzUZ/JQkCYFQ8Tvq8fnk3gazkSPTwMF9P
+         vHdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/iyvwIiLL+/J3ZsFRLfEOyGYB0t9tKZjd1RN306gWBI=;
+        b=rmhBgWRWLqaAUtSGvP5v5nVbCLAAU15lzr3sMYVsaebmXfLwbQrJNuX4MfmqHSR3d2
+         FAkJS1HukDHPXvWrxhVN2HcPqavJ15YF829iXYHIp617ADOIr2kGhgKf1JpuMCfiJJgK
+         cMCuzi8ey6KZpxEYkbSOS5eYRPoJq9z+EeLstJ0mAUpNnCagOWuW+a3iN+kFA/KT3TBO
+         8GUAk/KK+xSCUeW8fuzajba9S0KXWLMaYnhjjlKhb+24ZPLmkQwERkf3rCke7ggZP2Mr
+         d22HUT/6dOixF7TenHjrTVI9CQAm0dOO2VsuOBGaNShUxMLbAoy+3VeSvZj3ctE3aRlL
+         VqWQ==
+X-Gm-Message-State: AHQUAubEsvLA0ig7MbzTQ9kxYrdg9YbQprCEjKkHOCocRphbZk6Fgq7O
+        1DbmNrqyGg5HxYJjPGbgjMzQZg==
+X-Google-Smtp-Source: AHgI3IZwjWWSuq37r2sCvAcyjdn4L6w3lleHFXTa+dss2fskN7mZev6TTP0qoEr2/JJrJl86bZPVog==
+X-Received: by 2002:a63:ce08:: with SMTP id y8mr27515229pgf.388.1549874656025;
+        Mon, 11 Feb 2019 00:44:16 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id e24sm13517117pfi.153.2019.02.11.00.44.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 00:44:15 -0800 (PST)
+Date:   Mon, 11 Feb 2019 14:14:13 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Wolfram Sang <wsa@the-dreams.de>, Sudeep.Holla@arm.com
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Message-ID: <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190207122227.19873-1-m.szyprowski@samsung.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 08-02-19 22:06:59, Steve Magnani wrote:
-> On 2/8/19 11:34 AM, Steve Magnani wrote:
-> > In cases where the next unique ID or file/directory count of the
-> > in-core Logical Volume Integrity Descriptor have been updated,
-> > a sync() causes a (corrupt) LVID with a stale CRC to be written to disk.
-> > 
-> > Ordinarily, this is corrected by an update of the on-disk LVID that occurs
-> > when the filesystem is unmounted. However, if power is lost or the
-> > filesystem resides on a device that is surprise-removed, the corrupt LVID
-> > remains and can complicate later remounting or fsck/chkdsk.
-
-Thanks for the patches! I've added them to my tree. Just they seem to be
-based on some relatively old kernel which required me to fixup some patch
-conflicts. Please try to base your patches on current upstream kernel if
-possible. Thanks!
-
-> "Complicate later remounting" turns out to be an understatement.
-> Actually it seems that this one event can trigger more silent corruption
-> of the filesystem on future remounts.
+On 07-02-19, 13:22, Marek Szyprowski wrote:
+> Dear All,
 > 
-> The driver will mount without complaint a filesystem that lacks a valid LVID.
-> But in this scenario, every time lvid_get_unique_id() is called to generate
-> an ID for a new inode or link, it returns zero. It appears that callers
-> happily assign this zero to all new inodes or links, with no indication to
-> the user or in the syslog that a problem is brewing.
-> 
-> I lost the entire contents of a flash disk to what was probably an
-> instance of this kind of corruption, when I told Windows chkdsk to
-> repair it.
+> Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
+> i2c adapters") added a visible warning for an attempt to do i2c transfer
+> over a suspended i2c bus. This revealed a long standing issue in the
+> cpufreq-dt driver, which gives a following warning during system
+> suspend/resume cycle:
 
-Ah, I'm sorry to hear that.
+Marek,
 
-> I'll try to solve that in a separate followon patchset.
-> The simplest solution I can think of is to force read-only mount when
-> no LVID is available.
+I have sent a patchset which is not directly related to the problem
+you are facing, but it may solve your problem as a side effect. Can
+you please see if that works to solve this issue as well ?
 
-Agreed. OSTA UDF standard requires LVID to be present so forcing read-only
-mount is perfectly fine.
+https://lore.kernel.org/lkml/cover.1549874368.git.viresh.kumar@linaro.org/T/#u
 
-								Honza
+Thanks.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+viresh
