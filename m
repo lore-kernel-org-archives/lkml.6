@@ -4,51 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE99C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB955C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C941222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B9CA222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898104;
-	bh=IaoHV18dGEBx8ARebZYFx76s8A3WgxhUEW4rcF1PUa8=;
+	s=default; t=1549898117;
+	bh=j0myjtkWiB6bomQGjfEBoNo+dAzMNtNaw7LBQbTpOAw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DDmxi3HN5HHArwfoq45hjE0c4nbEG5BhwDVFEhD/xv1lui6FezggnonX+Y/G4ojHm
-	 g7nAtgbczZYVXB+2w7g5MQl+QohRj7tdPB5oaJhW6QPyLme3ciaDDch1vEGsx/54Iy
-	 Grb29TxGuG9mf2QvzDQybCXh1Xpc9CBsSidEgD/E=
+	b=xibfoW3wnrKyyMg+aRx5h1N5aQiaDtO9K6VZjoIqzzAh4wRuxAOQ5Yp+T40InuQaf
+	 8uaequ4gtpq9/opnFPCS7GjWNkBQc5WV5Iftf9Hnc76Huo3ENTMsILSENlo4k+DghN
+	 NdJThPR8HU0u35gzi73Y7HzTsmDSBAblqZFT7x4s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391431AbfBKPIH (ORCPT
+        id S2403816AbfBKPHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57918 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391417AbfBKPIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:01 -0500
+        id S1732667AbfBKPHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0862222A7;
-        Mon, 11 Feb 2019 15:08:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4645A217D9;
+        Mon, 11 Feb 2019 15:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897681;
-        bh=IaoHV18dGEBx8ARebZYFx76s8A3WgxhUEW4rcF1PUa8=;
+        s=default; t=1549897663;
+        bh=j0myjtkWiB6bomQGjfEBoNo+dAzMNtNaw7LBQbTpOAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zgmgm8xG3ZFXCZsTspYF5RKYaD/S5KF7UELg0ZW2JXfrsy/GYXGUPCafIjHdqivyB
-         R0/P9ADmMY4ldwHUf9Y27yKR87+GlUf0UMM967gPKpNexeLAZYEol3XgDfY4I9wwKk
-         Cfh2vApF4xkc4BsMVbYLk97eD4PZFJfS/C81URHw=
+        b=KivM3D4kIu3kxi02LoM0UtiRvi2gbX5Dv3ymeRR0gFVyegdEM2vy+/ko3OQSJ4+KR
+         gFMDCU7STUOmPe92TFzaTyOcDq0cBSyRdCXuvC2k6RjLhiqvjMTCgd5BRxgaVCuEQg
+         evqCedYk8XS8DLv8QDbdZtD/RwKwjq0l2Ugx7cbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 078/137] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
-Date:   Mon, 11 Feb 2019 15:19:19 +0100
-Message-Id: <20190211141819.255945744@linuxfoundation.org>
+Subject: [PATCH 4.9 073/137] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 11 Feb 2019 15:19:14 +0100
+Message-Id: <20190211141818.788239057@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,61 +71,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
+Add back this protection.
 
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
+
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index f87ef5a0ee6c..cbe5f5cbddb8 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -643,16 +643,18 @@ static const char * const gpio_groups[] = {
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
- 
--	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
--	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
--	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
--	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
--
- 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
- 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
- 	"DIF_4_P", "DIF_4_N"
- };
- 
-+static const char * const gpio_aobus_groups[] = {
-+	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
-+	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
-+	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-+	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
-+};
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 74273bc7ca9a..a1d93151c059 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
 +
- static const char * const sd_a_groups[] = {
- 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
- 	"sd_cmd_a"
-@@ -868,6 +870,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
- };
- 
- static struct meson_pmx_func meson8b_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
- 	FUNCTION(i2c_slave_ao),
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
