@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05953C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8639C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5C921855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB87B21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900014;
-	bh=cGCGHv9dbd+lcwuDi1w+9hYwTdgJ20KfnBJ2i6Dy52E=;
+	s=default; t=1549900026;
+	bh=GjmoIgc4b3xreTB4dKAg0kZLqaLxAG/TJnVNLNHMhLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TUlkSXbrSBtHXbVXUMGM76DNWKsMXqWfE+tyoGFGVMwgd1juct5iVVgl28ZRW/zMY
-	 yI8pIT1+69FVOhUs2QDskMIbYxeCWVU0041R3PVCExmJJ1kENLVsNYJiguOZ1+CqAi
-	 t233QntqOIRsDemNk/MKTHjHkrGsc/4N+ZrYvBRw=
+	b=sSOEFo0SiBUyqUnJJSHwdjp+ugNlFbmqEHTpyxqXYvJxwa+kG579QXzoLnDqmEiXS
+	 aEqLSIgcYY2kB0MgIkrKAgujowrmJPIBoPKJRDPM4NcgDriDi5FoDMZ1PD1+ZaqQfC
+	 LYVHs6E0oyXQ0Jsz8WhcBncqnMJRfYrliYipInj8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732843AbfBKPqx (ORCPT
+        id S1732306AbfBKOlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:46:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53802 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732362AbfBKOmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:07 -0500
+        id S1731509AbfBKOlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ECCD20700;
-        Mon, 11 Feb 2019 14:42:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27BC120700;
+        Mon, 11 Feb 2019 14:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896127;
-        bh=cGCGHv9dbd+lcwuDi1w+9hYwTdgJ20KfnBJ2i6Dy52E=;
+        s=default; t=1549896108;
+        bh=GjmoIgc4b3xreTB4dKAg0kZLqaLxAG/TJnVNLNHMhLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LQBfzsHezoeQ79VUcMCp3PmZNkaVyXlZuxqpEaUdO4TRILCzdhjzbKtguBm4GKOU1
-         DTlh670t7Rl2CpMSpxtarM4T6+sMQitzFlz4GWw7zsqEsc/TjaxNm66bLaaQ8nqccF
-         RA0dQe+wwP0mIcHoWYdvU7qhArEiY2PJwM9ZZP7Q=
+        b=QJcQE/uwOeLg4r0U913BsrhIff1BbJOXLhhz2GLAPGHOwIEKYYKeO94/01gqYoH2D
+         8k0pTQg+Xo0nMNouJU09mlOO7zY/hIPnMcTURcifRa9AatcFa748pInTnVQQtK+OaH
+         lt/j0wff4BglMLYmoFZfATqvY0E5wxEq4QYTz73o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thara Gopinath <thara.gopinath@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 081/313] thermal: Fix locking in cooling device sysfs update cur_state
-Date:   Mon, 11 Feb 2019 15:16:01 +0100
-Message-Id: <20190211141859.275905054@linuxfoundation.org>
+Subject: [PATCH 4.19 075/313] soc: bcm: brcmstb: Dont leak device tree node reference
+Date:   Mon, 11 Feb 2019 15:15:55 +0100
+Message-Id: <20190211141858.886188163@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,44 +66,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 68000a0d983f539c95ebe5dccd4f29535c7ac0af ]
+[ Upstream commit 1861a7f07e02292830a1ca256328d370deefea30 ]
 
-Sysfs interface to update cooling device cur_state does not
-currently holding cooling device lock sometimes leading to
-stale values in cur_state if getting updated simultanelously
-from user space and thermal framework. Adding the proper locking
-code fixes this issue.
+of_find_node_by_path() acquires a reference to the node returned by it
+and that reference needs to be dropped by its caller. soc_is_brcmstb()
+doesn't do that, so fix it.
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+[treding: slightly rewrite to avoid inline comparison]
+
+Fixes: d52fad262041 ("soc: add stubs for brcmstb SoC's")
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_sysfs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/soc/bcm/brcmstb/common.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 2241ceae7d7f..aa99edb4dff7 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -712,11 +712,14 @@ cur_state_store(struct device *dev, struct device_attribute *attr,
- 	if ((long)state < 0)
- 		return -EINVAL;
+diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
+index 14185451901d..bf9123f727e8 100644
+--- a/drivers/soc/bcm/brcmstb/common.c
++++ b/drivers/soc/bcm/brcmstb/common.c
+@@ -31,13 +31,17 @@ static const struct of_device_id brcmstb_machine_match[] = {
  
-+	mutex_lock(&cdev->lock);
+ bool soc_is_brcmstb(void)
+ {
++	const struct of_device_id *match;
+ 	struct device_node *root;
+ 
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return false;
+ 
+-	return of_match_node(brcmstb_machine_match, root) != NULL;
++	match = of_match_node(brcmstb_machine_match, root);
++	of_node_put(root);
 +
- 	result = cdev->ops->set_cur_state(cdev, state);
--	if (result)
--		return result;
--	thermal_cooling_device_stats_update(cdev, state);
--	return count;
-+	if (!result)
-+		thermal_cooling_device_stats_update(cdev, state);
-+
-+	mutex_unlock(&cdev->lock);
-+	return result ? result : count;
++	return match != NULL;
  }
  
- static struct device_attribute
+ u32 brcmstb_get_family_id(void)
 -- 
 2.19.1
 
