@@ -2,96 +2,116 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0437C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4A4C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B080F21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87260218F0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:21:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3aTLf/r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbfBKQUG (ORCPT
+        id S1728407AbfBKQU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:20:06 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53554 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727224AbfBKQUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:20:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 237D380D;
-        Mon, 11 Feb 2019 08:20:05 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1064D3F675;
-        Mon, 11 Feb 2019 08:20:02 -0800 (PST)
-Date:   Mon, 11 Feb 2019 16:19:57 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     kishon@ti.com, bhelgaas@google.com, gustavo.pimentel@synopsys.com,
-        niklas.cassel@axis.com, baijiaju1990@gmail.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: Re: [PATCH] PCI: endpoint: functions: use
- memcpy_fromio()/memcpy_toio()
-Message-ID: <20190211161957.GA27797@e107981-ln.cambridge.arm.com>
-References: <1549875840-10582-1-git-send-email-wen.yang99@zte.com.cn>
+        Mon, 11 Feb 2019 11:20:58 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:38979 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbfBKQU6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:20:58 -0500
+Received: by mail-vs1-f66.google.com with SMTP id e16so6592633vsq.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 08:20:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QpoC6b089m3cHPWY6E0d/JIlPYC7gPZGxcGnMybyD6I=;
+        b=A3aTLf/r6CWzQhbpbUQOsV3DXU5s5XVGyos7gQ7IcCSu/9ALQdQhuOSuQGWqIjhv9E
+         rdruRJQ/0c9PXLYvCAQl5cbDrok1ZO7rBCNtS3UqL1fcn+fN7TJvgbgWZjpWKytrI/7T
+         7RliajYd9lJWIqMeH7CplWopycSz5SMti0a7eCLFpgrkQJkuDt/isPQiVHtCyxlSXj3i
+         /BtndvKBqcJ9PUU+yv80o/XapeoqdyiW+w1OQS1IYJR/yt0k7VUH9bU7WGoYtt+/iTOc
+         PUyEhn8Ai5BAHFKGlJCzat4Gpu+6GjXWQylvKWQ38tjHQxvdH+QtpV1Wjj9vNPihlxeE
+         4zwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QpoC6b089m3cHPWY6E0d/JIlPYC7gPZGxcGnMybyD6I=;
+        b=RoEiYKejeFG2RcYH+ZUodSLKZsghujexjv31LrpCuVn5vZ4JrLNAupIa9N5BRx0zYc
+         qOwy7GnSGrCJ+j2sJ7yAEJISl4FrdYOx1zNyHakXq289O+xMVXvu05uXDLtkbBl4oBqj
+         LpRc+Inbt1zTY5osr/KCIwc6eNyfLTTxwKCZmDvZdKB5qbDMGD+0rk6vb6l61u7fpb0U
+         NRed9/HudW0nHWuBS/78Ppat9rWFSY8VzzkDJqZcUBQyrjNh5Zaps/u7cj1TPvOISbPm
+         0WdX7HNOMMvcsAh1d06OQEygQclv1YijWGyZuYyY9X0R3tqrGzc19uI9ZxtlpScOBT2b
+         3cwQ==
+X-Gm-Message-State: AHQUAubt4pslpuAVNIuhvJ8IFK73nkClASjj5u/7dKeu5RuFpDy0XZ3q
+        BuiJSlpkdPKoJbpv8LkfoifvfAipjCb3kjsCY64vkg==
+X-Google-Smtp-Source: AHgI3IalhMcTKGmsV4UyYAjLPQpl3Sya9HV6AUIw0JgCJJoKzQ8h2EXdZHRN/OlnpCjRmlL4gSPweviMDHbIrzV331E=
+X-Received: by 2002:a67:1a84:: with SMTP id a126mr15252838vsa.165.1549902056747;
+ Mon, 11 Feb 2019 08:20:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549875840-10582-1-git-send-email-wen.yang99@zte.com.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190206150935.12140-1-sudeep.holla@arm.com> <CAPDyKFr2qwXoOL3SRy7Crf-pg4FMn_qecPrw__BE+YpVAjAFZA@mail.gmail.com>
+ <20190207103600.GA14464@e107155-lin> <CAPDyKFpkiaP0J_LJxP6tRUOyz3QKtDgA+PuhL-9vew7-RfKyNA@mail.gmail.com>
+ <20190207150638.GB14464@e107155-lin> <CAPDyKFoenSDhYk_xNLFn6kB+rqvQQ+p71F27Mvevu-H9Nhxhuw@mail.gmail.com>
+ <20190207152908.GC14464@e107155-lin>
+In-Reply-To: <20190207152908.GC14464@e107155-lin>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 11 Feb 2019 17:20:20 +0100
+Message-ID: <CAPDyKFrV7XpKK-Pds=BNgJm9EC50C0wB_f99DK-6N7+K8aZXZw@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: add support to skip power management in
+ device/driver model
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 05:04:00PM +0800, Wen Yang wrote:
-> Use the IO memcpy() functions when copying from/to IO memory.
-> These locations were found via sparse.
-> 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Suggested-by: Kishon Vijay Abraham I <kishon@ti.com>
-> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> CC: Niklas Cassel <niklas.cassel@axis.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-> CC: linux-pci@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 7 Feb 2019 at 16:29, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Thu, Feb 07, 2019 at 04:18:57PM +0100, Ulf Hansson wrote:
+> > On Thu, 7 Feb 2019 at 16:06, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> [...]
+>
+> > > Indeed, I was ignoring knowing that it's harmless. But more people
+> > > started to complain, and Rafael suggested this which I agree as we
+> > > have several pseudo devices created in the kernel that we can bypass
+> > > some of these pm handling knowing we won't need it.
+> >
+> > Okay, I see.
+> >
+> > Anyway, I will likely need to restore part of this change, via my
+> > cluster idling series then. As from that point, the cpu device that
+> > you call device_set_pm_not_required() for, starts to be used from both
+> > PM core and runtime PM point of view. But I guess that's okay then.
+> >
+>
+> Ah I see. I can drop for CPU devices then. Since I didn't see any use for
+> them, I set the flag, but I can drop it now or you can do that as part
+> of that series.
 
-Applied, with updated tags to pci/endpoint for v5.1, thanks.
+Well, I prefer if you drop it for CPU devices, as least for now.
 
-Lorenzo
+> There are quite a few devices(especially the ones
+> registered under system subsys can set this but I would take it separate
+> once we settle on this). Also Rafael may have seen use for few more
+> devices when he suggested this.
 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 3e86fa3..4bbd26e 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -175,7 +175,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
->  		goto err_map_addr;
->  	}
->  
-> -	memcpy(buf, src_addr, reg->size);
-> +	memcpy_fromio(buf, src_addr, reg->size);
->  
->  	crc32 = crc32_le(~0, buf, reg->size);
->  	if (crc32 != reg->checksum)
-> @@ -230,7 +230,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
->  	get_random_bytes(buf, reg->size);
->  	reg->checksum = crc32_le(~0, buf, reg->size);
->  
-> -	memcpy(dst_addr, buf, reg->size);
-> +	memcpy_toio(dst_addr, buf, reg->size);
->  
->  	/*
->  	 * wait 1ms inorder for the write to complete. Without this delay L3
-> -- 
-> 2.9.5
-> 
+Yep, let's find another first user of this.
+
+Additionally, it seems like we should drop the print in device_pm_add().
+
+Kind regards
+Uffe
