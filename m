@@ -2,77 +2,221 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAE9C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEF0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3B421B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1326B20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549901333;
+	bh=Kh06wUfyOne3w8UomsLxv1FO+m58Zr7iOFMI7Udcu44=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=XuZwpOt0ZdaCYd4ULtd5kWM/E8m4AAffj9mtae7b4zWDbSPzRj78c87kFiW9qoUq5
+	 Ff1Po5E9NnBsTDmJ4oTNG1yO5wwRJh1xQp0hWiGSeEwoqfAnNAP7lzBnAvSzs3tnIp
+	 XWGuBbS2nTGwutyeQnN8CizvoGx92HxxvzCmAXX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730111AbfBKQIj (ORCPT
+        id S2387672AbfBKQIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:08:39 -0500
-Received: from mga04.intel.com ([192.55.52.120]:58769 "EHLO mga04.intel.com"
+        Mon, 11 Feb 2019 11:08:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbfBKQIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:08:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:08:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="132712129"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Feb 2019 08:08:32 -0800
-Received: from andy by smile with local (Exim 4.92-RC5)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gtE8E-0006NQ-UH; Mon, 11 Feb 2019 18:08:30 +0200
-Date:   Mon, 11 Feb 2019 18:08:30 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH v1] dma-mapping: Move debug configuration options to
- kernel/dma
-Message-ID: <20190211160830.GF9224@smile.fi.intel.com>
-References: <20190211155409.41465-1-andriy.shevchenko@linux.intel.com>
- <20190211155450.GA27697@lst.de>
+        id S1729439AbfBKOZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:49 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9372075C;
+        Mon, 11 Feb 2019 14:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895147;
+        bh=Kh06wUfyOne3w8UomsLxv1FO+m58Zr7iOFMI7Udcu44=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qWo5lHw8Py5UWa6Sv+xamVOAMHvz15oENCTEoJyIKS3CMy40mRdEsUvRG7TlCTVl5
+         mVu3xnb6meJuOKHBfUlYNqSKs7/yCBriQgPRnIUKrykUHKQcGoN8J7ADz5Y0C5288O
+         G0jX+ZjXDdYmB648YN0qYu6BWhTCdaVtgEy3r+5w=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 107/352] platform/x86: Fix config space access for intel_atomisp2_pm
+Date:   Mon, 11 Feb 2019 15:15:34 +0100
+Message-Id: <20190211141852.600463874@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211155450.GA27697@lst.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 04:54:50PM +0100, Christoph Hellwig wrote:
-> On Mon, Feb 11, 2019 at 05:54:09PM +0200, Andy Shevchenko wrote:
-> > This is a follow up to the commit cf65a0f6f6ff
-> > 
-> >   ("dma-mapping: move all DMA mapping code to kernel/dma")
-> > 
-> > which moved source code of DMA API to kernel/dma folder. Since there is
-> > no file left in the lib that require DMA API debugging options move the
-> > latter to kernel/dma as well.
-> 
-> Can we do this without the separate Kconfig.debug file?
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Sure.
+------------------
 
-> 
-> Otherwise this looks good to me.
+[ Upstream commit 6a31061833a52a79c99221b6251db08cf377470e ]
 
+We lose even config space access when we power gate the ISP
+via the PUNIT. That makes lspci & co. produce gibberish.
+
+To fix that let's try to implement actual runtime pm hooks
+and inform the pci core that the device always goes to
+D3cold. That will cause the pci core to resume the device
+before attempting config space access.
+
+This introduces another annoyance though. We get the
+following error every time we try to resume the device:
+intel_atomisp2_pm 0000:00:03.0: Refused to change power state, currently in D3
+
+The reason being that the pci core tries to put the device
+back into D0 via the standard PCI PM mechanism before
+calling the driver resume hook. To fix this properly
+we'd need to infiltrate the platform pm hooks (could
+turn ugly real fast), or use pm domains (which don't
+seem to exist on x86), or some extra early resume
+hook for the driver (which doesn't exist either).
+So maybe we just choose to live with the error?
+
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Alan Cox <alan@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/platform/x86/intel_atomisp2_pm.c | 68 +++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_atomisp2_pm.c b/drivers/platform/x86/intel_atomisp2_pm.c
+index 9371603a0ac9..2a8c7a4cea35 100644
+--- a/drivers/platform/x86/intel_atomisp2_pm.c
++++ b/drivers/platform/x86/intel_atomisp2_pm.c
+@@ -33,46 +33,45 @@
+ #define ISPSSPM0_IUNIT_POWER_ON		0x0
+ #define ISPSSPM0_IUNIT_POWER_OFF	0x3
+ 
+-static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
++static int isp_set_power(struct pci_dev *dev, bool enable)
+ {
+ 	unsigned long timeout;
+-	u32 val;
+-
+-	pci_write_config_dword(dev, PCI_INTERRUPT_CTRL, 0);
+-
+-	/*
+-	 * MRFLD IUNIT DPHY is located in an always-power-on island
+-	 * MRFLD HW design need all CSI ports are disabled before
+-	 * powering down the IUNIT.
+-	 */
+-	pci_read_config_dword(dev, PCI_CSI_CONTROL, &val);
+-	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
+-	pci_write_config_dword(dev, PCI_CSI_CONTROL, val);
++	u32 val = enable ? ISPSSPM0_IUNIT_POWER_ON :
++		ISPSSPM0_IUNIT_POWER_OFF;
+ 
+-	/* Write 0x3 to ISPSSPM0 bit[1:0] to power off the IUNIT */
++	/* Write to ISPSSPM0 bit[1:0] to power on/off the IUNIT */
+ 	iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0,
+-			ISPSSPM0_IUNIT_POWER_OFF, ISPSSPM0_ISPSSC_MASK);
++			val, ISPSSPM0_ISPSSC_MASK);
+ 
+ 	/*
+ 	 * There should be no IUNIT access while power-down is
+ 	 * in progress HW sighting: 4567865
+ 	 * Wait up to 50 ms for the IUNIT to shut down.
++	 * And we do the same for power on.
+ 	 */
+ 	timeout = jiffies + msecs_to_jiffies(50);
+ 	while (1) {
+-		/* Wait until ISPSSPM0 bit[25:24] shows 0x3 */
+-		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &val);
+-		val = (val & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
+-		if (val == ISPSSPM0_IUNIT_POWER_OFF)
++		u32 tmp;
++
++		/* Wait until ISPSSPM0 bit[25:24] shows the right value */
++		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &tmp);
++		tmp = (tmp & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
++		if (tmp == val)
+ 			break;
+ 
+ 		if (time_after(jiffies, timeout)) {
+-			dev_err(&dev->dev, "IUNIT power-off timeout.\n");
++			dev_err(&dev->dev, "IUNIT power-%s timeout.\n",
++				enable ? "on" : "off");
+ 			return -EBUSY;
+ 		}
+ 		usleep_range(1000, 2000);
+ 	}
+ 
++	return 0;
++}
++
++static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
+ 	pm_runtime_allow(&dev->dev);
+ 	pm_runtime_put_sync_suspend(&dev->dev);
+ 
+@@ -87,11 +86,40 @@ static void isp_remove(struct pci_dev *dev)
+ 
+ static int isp_pci_suspend(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
++	u32 val;
++
++	pci_write_config_dword(pdev, PCI_INTERRUPT_CTRL, 0);
++
++	/*
++	 * MRFLD IUNIT DPHY is located in an always-power-on island
++	 * MRFLD HW design need all CSI ports are disabled before
++	 * powering down the IUNIT.
++	 */
++	pci_read_config_dword(pdev, PCI_CSI_CONTROL, &val);
++	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
++	pci_write_config_dword(pdev, PCI_CSI_CONTROL, val);
++
++	/*
++	 * We lose config space access when punit power gates
++	 * the ISP. Can't use pci_set_power_state() because
++	 * pmcsr won't actually change when we write to it.
++	 */
++	pci_save_state(pdev);
++	pdev->current_state = PCI_D3cold;
++	isp_set_power(pdev, false);
++
+ 	return 0;
+ }
+ 
+ static int isp_pci_resume(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	isp_set_power(pdev, true);
++	pdev->current_state = PCI_D0;
++	pci_restore_state(pdev);
++
+ 	return 0;
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.19.1
+
 
 
