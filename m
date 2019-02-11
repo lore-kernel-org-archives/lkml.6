@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B54C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C960C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458F5218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629E4218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfBKWDG (ORCPT
+        id S1727412AbfBKWDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:03:06 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:34198 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfBKWDF (ORCPT
+        Mon, 11 Feb 2019 17:03:14 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:56217 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbfBKWDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 17:03:05 -0500
-Received: by mail-it1-f198.google.com with SMTP id a3so1175288itd.1
+Received: by mail-it1-f197.google.com with SMTP id j3so813858itf.5
         for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:03:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/kqlLrEbDdKTleMLkBf29hunJs7TuCx1ryWaMns/sKQ=;
-        b=WkW/Pp9R+sKz45MVo1en1Sw8Swhc9M+Nnlp2T0OrbZ6/Kb5ZMa8GxSHeMASfTgwLo4
-         LGdj1kRbuC/N+p1bFgdPw2NUnhFFk5KIKE8eWp/PzraCwvFcdwi72jpzS0AmF2WrP7YK
-         amAd2taJXn3KzJlqqxZK4ECPpYyPlbeIQ+KBVQERr4nYYjkqQrchsZnM+t6gtMC/GJHW
-         X7W5VT6crW38dGr9vbftzztxjvSQn3jHrv4KBnGpIqI0yZWAFph2c44yrYVJPSiks8UG
-         x2En8on9cr+XNpNl88y7wVYf4cFoFQ8HoD8lLlVJ/UQiXf/XvNIgmBmk6s6LPW05PQ9m
-         7jeA==
-X-Gm-Message-State: AHQUAuZXaOrUDiHQOFB6J8p0Jd7a1CFP0vaJd0SXuz/cQ4kvjunR0gL+
-        AoqreAAON2oJlPnZLVjsYnuw7CKdu1HrVBsDvZOnIrVVWPaW
-X-Google-Smtp-Source: AHgI3IZP2nc6zXcI000r5sNv89XPY8i0HnvUwJM0HFXDFNy3mxQiolh6Nx5jJX0lT9D7es7RM1tsV3us9J0zFCkLz0rskssh5a2h
+        bh=j3AXgMNaVIGsmCPfsHrZp4AOejYK8ex22vlRJApwzzM=;
+        b=KQC8UH7la1VrYJ+pjY1cQdlUfKksZycCBwEL46BDuQJmwRo3sfZraf6hDXekT5gpsN
+         H0vQr18Ym6Nhb1pTJlK9tDMOGglvMyBx7PvrGi0JnU3AyZjQ4yGlqy8QkYRLpkwZyM6U
+         RcaSgxJeRum/5gvsIm/eCS+oTK/kiY/ARxAzQ7U6CvN23uTqO8it++jmwcICCzVSqF3f
+         74foULYKtoaseGaurQm4h+qyLP/oHq2pUN7C+ubQBzdfe5FY6U9uLUkOudlW334CEDC+
+         lKRHJDQuaq9RoGbshzY71gzkZYTqu/Qx83no+6NtLTFG+OFV0RomJcgEDDHvJYdoeGBy
+         YNhg==
+X-Gm-Message-State: AHQUAuYku7VS+mdvVdrDZCst6tr0Gqsu5cFb5Af5GEXdmxSaKsWksVX8
+        iwPbMs6F3CZBI5Itz4hEUdDq8Ya9sKU0+8eiCQieWEsbZhuI
+X-Google-Smtp-Source: AHgI3IaEDIVjPhOTEhVm/BBKobX69CHKa4/OMVzt14iPIum5HWBEJtciLpWX9jUoBvhkuTAPzkb9GC3HVw8lVWL/ETAl/wV1koIW
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c80b:: with SMTP id y11mr329232iol.20.1549922584112;
+X-Received: by 2002:a6b:c30a:: with SMTP id t10mr334465iof.10.1549922584346;
  Mon, 11 Feb 2019 14:03:04 -0800 (PST)
 Date:   Mon, 11 Feb 2019 14:03:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000e35f00581a579cd@google.com>
-Subject: KMSAN: uninit-value in capi_write
-From:   syzbot <syzbot+0849c524d9c634f5ae66@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com, isdn@linux-pingi.de,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, rdunlap@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <00000000000011c9310581a579e8@google.com>
+Subject: WARNING in vkms_vblank_simulate
+From:   syzbot <syzbot+0871b14ca2e2fb64f6e3@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
+        rodrigosiqueiramelo@gmail.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,72 +57,96 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    11587f6ee534 kmsan: remove pr_err
-git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=120bd84f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8a62a4eb8ea3e9f
-dashboard link: https://syzkaller.appspot.com/bug?extid=0849c524d9c634f5ae66
-compiler:       clang version 8.0.0 (trunk 350161)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c53cd3400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e2794b400000
+HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e74624c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8a112d3b0d6719b
+dashboard link: https://syzkaller.appspot.com/bug?extid=0871b14ca2e2fb64f6e3
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d8e6b0c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c6c804c00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0849c524d9c634f5ae66@syzkaller.appspotmail.com
+Reported-by: syzbot+0871b14ca2e2fb64f6e3@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KMSAN: uninit-value in capi_write+0x791/0xa90  
-drivers/isdn/capi/capi.c:700
-CPU: 0 PID: 10025 Comm: syz-executor379 Not tainted 4.20.0-rc7+ #2
+WARNING: CPU: 1 PID: 7773 at drivers/gpu/drm/vkms/vkms_crtc.c:40  
+vkms_vblank_simulate+0x262/0x2c0 drivers/gpu/drm/vkms/vkms_crtc.c:40
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 7773 Comm: syz-executor184 Not tainted 5.0.0-rc5-next-20190211  
+#32
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
-  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:313
-  capi_write+0x791/0xa90 drivers/isdn/capi/capi.c:700
-  do_loop_readv_writev fs/read_write.c:703 [inline]
-  do_iter_write+0x83e/0xd80 fs/read_write.c:961
-  vfs_writev fs/read_write.c:1004 [inline]
-  do_writev+0x397/0x840 fs/read_write.c:1039
-  __do_sys_writev fs/read_write.c:1112 [inline]
-  __se_sys_writev+0x9b/0xb0 fs/read_write.c:1109
-  __x64_sys_writev+0x4a/0x70 fs/read_write.c:1109
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440079
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x45 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:vkms_vblank_simulate+0x262/0x2c0  
+drivers/gpu/drm/vkms/vkms_crtc.c:40
+Code: c7 c7 a0 bc bd 87 e8 5d 3d bb ff e9 2c fe ff ff e8 13 0e 9b fd 48 8b  
+45 d0 49 89 86 40 02 00 00 e9 7a ff ff ff e8 fe 0d 9b fd <0f> 0b e9 f4 fe  
+ff ff e8 b2 d2 d2 fd e9 34 fe ff ff e8 08 d3 d2 fd
+RSP: 0018:ffff8880ae907dd8 EFLAGS: 00010006
+RAX: ffff888098fb2480 RBX: ffff8880ae925d80 RCX: ffffffff83d53af3
+RDX: 0000000000010000 RSI: ffffffff83d53c02 RDI: 0000000000000007
+RBP: ffff8880ae907e08 R08: ffff888098fb2480 R09: ffffffff899a5048
+R10: ffffffff899a5050 R11: 0000000000000001 R12: 0000000000055ce8
+R13: ffff8881d09a99c0 R14: 0000000000000000 R15: ffff8881d09a8e98
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:767  
+[inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
+[inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x95/0xe0  
+kernel/locking/spinlock.c:184
+Code: 48 c7 c0 f0 89 92 88 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c  
+10 00 75 39 48 83 3d c2 86 8b 01 00 74 24 48 89 df 57 9d <0f> 1f 44 00 00  
+bf 01 00 00 00 e8 cc c2 46 fa 65 8b 05 45 ea fa 78
+RSP: 0018:ffff88801de8f938 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff112513e RBX: 0000000000000286 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000006 RDI: 0000000000000286
+RBP: ffff88801de8f948 R08: ffff888098fb2480 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d09a8430
+R13: 0000000000000000 R14: ffff8881d09a8430 R15: ffff888066cda608
+  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
+  drm_vblank_get+0x150/0x1e0 drivers/gpu/drm/drm_vblank.c:1006
+  drm_wait_vblank_ioctl+0x4f8/0x17a0 drivers/gpu/drm/drm_vblank.c:1627
+  drm_ioctl_kernel+0x23e/0x2e0 drivers/gpu/drm/drm_ioctl.c:758
+  drm_ioctl+0x545/0xa50 drivers/gpu/drm/drm_ioctl.c:858
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd6e/0x1390 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x443ca9
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd84911358 EFLAGS: 00000207 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440079
-RDX: 0000000000000001 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000401900
-R13: 0000000000401990 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
-  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
-  kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
-  kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
-  slab_post_alloc_hook mm/slab.h:446 [inline]
-  slab_alloc_node mm/slub.c:2759 [inline]
-  __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
-  __kmalloc_reserve net/core/skbuff.c:137 [inline]
-  __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
-  alloc_skb include/linux/skbuff.h:998 [inline]
-  capi_write+0x12f/0xa90 drivers/isdn/capi/capi.c:691
-  do_loop_readv_writev fs/read_write.c:703 [inline]
-  do_iter_write+0x83e/0xd80 fs/read_write.c:961
-  vfs_writev fs/read_write.c:1004 [inline]
-  do_writev+0x397/0x840 fs/read_write.c:1039
-  __do_sys_writev fs/read_write.c:1112 [inline]
-  __se_sys_writev+0x9b/0xb0 fs/read_write.c:1109
-  __x64_sys_writev+0x4a/0x70 fs/read_write.c:1109
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-==================================================================
+ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff8472a0d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443ca9
+RDX: 0000000020000000 RSI: 00000000c018643a RDI: 0000000000000003
+RBP: 00000000006ce018 R08: 0000000000000000 R09: 00000000004002e0
+R10: 000000000000000f R11: 0000000000000246 R12: 00000000004019b0
+R13: 0000000000401a40 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
