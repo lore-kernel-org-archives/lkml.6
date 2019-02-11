@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D41FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68589C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F145B222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC4E20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896918;
-	bh=UFKjV4ai0ILYYqeJXiUrKwtAo1MGnP+JmjOpPn+UVRQ=;
+	s=default; t=1549896922;
+	bh=zbk7SqNJ7efIYq2sgDwoiy0FrdC6MKgCTS3/1A05Qao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xCdxSmfABfBKl8Hwregh8xVfuN49Qu0lCJJMULgu1EayM8r7PHki8D7+mrhiyw1xL
-	 EI+MzBclTl/1Vhpe+ThFFcObd+dPqsm9UaJOk20COdjpdAtnzNqlEDVKQL0yXm1BYk
-	 +AuLD51zGeiKVBfEhGoNuqeK8d8E/Upo/xiRlHHY=
+	b=AJ0I9Xek63LVcrSYDqCFZvpkgbQCTAgQ/r9fB7Rn9LMJzVcyOhnm/iPT1E4c1F05O
+	 KwlRNQDWQNKDDCbTsQm4z5babvYCnwKfdEgLb9NViTcVO+0oCZwk8jQ0KcY+H6eb8A
+	 UA2rHroAA08RSA9vSAgllh7cuS4M6W/ch18boYMs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388939AbfBKOzP (ORCPT
+        id S2387773AbfBKOzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388536AbfBKOzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:12 -0500
+        id S1728874AbfBKOzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B62B222A1;
-        Mon, 11 Feb 2019 14:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF96A2229E;
+        Mon, 11 Feb 2019 14:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896911;
-        bh=UFKjV4ai0ILYYqeJXiUrKwtAo1MGnP+JmjOpPn+UVRQ=;
+        s=default; t=1549896914;
+        bh=zbk7SqNJ7efIYq2sgDwoiy0FrdC6MKgCTS3/1A05Qao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BjK1gBiYTqr9ElEzTUXdpm+WiV9S6XtQYOXp8mJJoaVnKgMCRjsU2lM9+y0t1bMwe
-         4+UbYLFnseJb5UacMdGAojAgPIEzyqosF4ZRIDWkf0P8Kd2zrHBOkMO7VFZvHEKB7R
-         LrM2Q0b93hJsoFsoT/OHGltzPS57XnaZo8Ue/Y7E=
+        b=mO2BD9qhbu5ZCMxVFSlbBctwAaRGgd2Ql5BCNM21dboi1aWtZCdqTtMFCSxBkNBxW
+         aESBkUXW2Ulf2RSTirTWBrq/5A2tL56ir5q6Za+O+LHwX/48HzrnYa1NU3mPnB+A0t
+         /pY5EPAXO2z3eBg5WGcxlG37q+jbWVb/LmxI4CZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 029/205] net/mlx5: EQ, Use the right place to store/read IRQ affinity hint
-Date:   Mon, 11 Feb 2019 15:17:07 +0100
-Message-Id: <20190211141829.685918147@linuxfoundation.org>
+Subject: [PATCH 4.14 030/205] modpost: validate symbol names also in find_elf_symbol
+Date:   Mon, 11 Feb 2019 15:17:08 +0100
+Message-Id: <20190211141829.730972001@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,95 +66,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1e86ace4c140fd5a693e266c9b23409358f25381 ]
+[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
 
-Currently the cpu affinity hint mask for completion EQs is stored and
-read from the wrong place, since reading and storing is done from the
-same index, there is no actual issue with that, but internal irq_info
-for completion EQs stars at MLX5_EQ_VEC_COMP_BASE offset in irq_info
-array, this patch changes the code to use the correct offset to store
-and read the IRQ affinity hint.
+If an ARM mapping symbol shares an address with a valid symbol,
+find_elf_symbol can currently return the mapping symbol instead, as the
+symbol is not validated. This can result in confusing warnings:
 
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
+  from the function set_reset_devices() to the variable .init.text:$x.0
+
+This change adds a call to is_valid_name to find_elf_symbol, similarly
+to how it's already used in find_elf_symbol2.
+
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/main.c    | 14 ++++++++------
- include/linux/mlx5/driver.h                       |  2 +-
- 3 files changed, 10 insertions(+), 8 deletions(-)
+ scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index bf34264c734b..14bab8a5550d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1605,7 +1605,7 @@ static void mlx5e_close_cq(struct mlx5e_cq *cq)
- 
- static int mlx5e_get_cpu(struct mlx5e_priv *priv, int ix)
- {
--	return cpumask_first(priv->mdev->priv.irq_info[ix].mask);
-+	return cpumask_first(priv->mdev->priv.irq_info[ix + MLX5_EQ_VEC_COMP_BASE].mask);
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 18bc8738e989..e36a673833ae 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1215,6 +1215,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	return 1;
  }
  
- static int mlx5e_open_tx_cqs(struct mlx5e_channel *c,
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index e99f1382a4f0..558fc6a05e2a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -619,18 +619,19 @@ u64 mlx5_read_internal_timer(struct mlx5_core_dev *dev)
- static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
- {
- 	struct mlx5_priv *priv  = &mdev->priv;
--	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
-+	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
-+	int irq = pci_irq_vector(mdev->pdev, vecidx);
- 
--	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
-+	if (!zalloc_cpumask_var(&priv->irq_info[vecidx].mask, GFP_KERNEL)) {
- 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
- 		return -ENOMEM;
- 	}
- 
- 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
--			priv->irq_info[i].mask);
-+			priv->irq_info[vecidx].mask);
- 
- 	if (IS_ENABLED(CONFIG_SMP) &&
--	    irq_set_affinity_hint(irq, priv->irq_info[i].mask))
-+	    irq_set_affinity_hint(irq, priv->irq_info[vecidx].mask))
- 		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
- 
- 	return 0;
-@@ -638,11 +639,12 @@ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
- 
- static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
- {
-+	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
- 	struct mlx5_priv *priv  = &mdev->priv;
--	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
-+	int irq = pci_irq_vector(mdev->pdev, vecidx);
- 
- 	irq_set_affinity_hint(irq, NULL);
--	free_cpumask_var(priv->irq_info[i].mask);
-+	free_cpumask_var(priv->irq_info[vecidx].mask);
++static inline int is_arm_mapping_symbol(const char *str)
++{
++	return str[0] == '$' && strchr("axtd", str[1])
++	       && (str[2] == '\0' || str[2] == '.');
++}
++
++/*
++ * If there's no name there, ignore it; likewise, ignore it if it's
++ * one of the magic symbols emitted used by current ARM tools.
++ *
++ * Otherwise if find_symbols_between() returns those symbols, they'll
++ * fail the whitelist tests and cause lots of false alarms ... fixable
++ * only by merging __exit and __init sections into __text, bloating
++ * the kernel (which is especially evil on embedded platforms).
++ */
++static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
++{
++	const char *name = elf->strtab + sym->st_name;
++
++	if (!name || !strlen(name))
++		return 0;
++	return !is_arm_mapping_symbol(name);
++}
++
+ /**
+  * Find symbol based on relocation record info.
+  * In some cases the symbol supplied is a valid symbol so
+@@ -1240,6 +1264,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 			continue;
+ 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
+ 			continue;
++		if (!is_valid_name(elf, sym))
++			continue;
+ 		if (sym->st_value == addr)
+ 			return sym;
+ 		/* Find a symbol nearby - addr are maybe negative */
+@@ -1258,30 +1284,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 		return NULL;
  }
  
- static int mlx5_irq_set_affinity_hints(struct mlx5_core_dev *mdev)
-diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
-index fb677e4f902d..88f0c530fe9c 100644
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1195,7 +1195,7 @@ enum {
- static inline const struct cpumask *
- mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
- {
--	return dev->priv.irq_info[vector].mask;
-+	return dev->priv.irq_info[vector + MLX5_EQ_VEC_COMP_BASE].mask;
- }
- 
- #endif /* MLX5_DRIVER_H */
+-static inline int is_arm_mapping_symbol(const char *str)
+-{
+-	return str[0] == '$' && strchr("axtd", str[1])
+-	       && (str[2] == '\0' || str[2] == '.');
+-}
+-
+-/*
+- * If there's no name there, ignore it; likewise, ignore it if it's
+- * one of the magic symbols emitted used by current ARM tools.
+- *
+- * Otherwise if find_symbols_between() returns those symbols, they'll
+- * fail the whitelist tests and cause lots of false alarms ... fixable
+- * only by merging __exit and __init sections into __text, bloating
+- * the kernel (which is especially evil on embedded platforms).
+- */
+-static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
+-{
+-	const char *name = elf->strtab + sym->st_name;
+-
+-	if (!name || !strlen(name))
+-		return 0;
+-	return !is_arm_mapping_symbol(name);
+-}
+-
+ /*
+  * Find symbols before or equal addr and after addr - in the section sec.
+  * If we find two symbols with equal offset prefer one with a valid name.
 -- 
 2.19.1
 
