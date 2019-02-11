@@ -2,52 +2,56 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B748BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3593C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853A52080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C21B52080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895704;
-	bh=Ulr7Rre4oXYGZZxyvBojj8MVzNEtZN1CndoW0dkeFI0=;
+	s=default; t=1549895708;
+	bh=Zn9JiRD1ga91bt9+izdjohaVEZpbLMNbcTT02MTffs8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DZBDAKE9n9hyXILBscHD4DDQLql3OgGelFlPPItBoeG5F/0Wgku+fIFoZutWnwTkR
-	 +lhr6Hs7Fb6Nr7jr6hZIDJ+VIpegVIJz2lvqQCG4F6YjmL9eM8i4Kh7GoOKBYj0304
-	 j+6ldpCvmsP6hhqC82n0coSz/Kr5PQnzJrvm8qDI=
+	b=q0Qa99pLgArT5Hy/E6X9IlvsrZA+PRWHkFwjdN2kJNuw6h8CyICBfe83l4BiL73JD
+	 aiiFD0tbi9B9a64e+IJsOc092JGQmM6Klja6bvYG78KxpEb9CQtbJbastrCkamWuHk
+	 ZCWXQZkg83TKW12/EeviEc07CgPI+H2tLBbjRhVI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730957AbfBKOfC (ORCPT
+        id S1730970AbfBKOfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43390 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730620AbfBKOe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:34:56 -0500
+        id S1730620AbfBKOfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B60D220844;
-        Mon, 11 Feb 2019 14:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 897D7204EC;
+        Mon, 11 Feb 2019 14:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895695;
-        bh=Ulr7Rre4oXYGZZxyvBojj8MVzNEtZN1CndoW0dkeFI0=;
+        s=default; t=1549895703;
+        bh=Zn9JiRD1ga91bt9+izdjohaVEZpbLMNbcTT02MTffs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0OXP6BCgL45A1Oh0nXTc/s2G23mW/x4TBrONKGNjiiXb9BLlwsM4zA33KWEdcSGe
-         WoK+tteE4G+81YYazrm9KOaaBMGY7+4T1obXowMx114VYJ7N46Pe5CANgWOaqFRA4P
-         lqD4ApIpog7lT7wuQp6F7FJFFC4mx9XO65qHAVOE=
+        b=ESQ1uX8gKW56G5pELIeE1fKOqMT6B2NIUD71/XcjCcEq3xhIoxqUV6ZgHZte7G+tv
+         kKR/HBmmiGH9XnWW1E+fomd50gnvMCrI63lvBueeSyeNkt1H4COKPm+tyja11EuKXA
+         +txO7DPbBT6lKJ3LetCubtVizeYT2PkXzo4tN4w0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 292/352] dccp: fool proof ccid_hc_[rt]x_parse_options()
-Date:   Mon, 11 Feb 2019 15:18:39 +0100
-Message-Id: <20190211141905.474821060@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sven Van Asbroeck <TheSven73@googlemail.com>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 277/352] PCI: imx: Enable MSI from downstream components
+Date:   Mon, 11 Feb 2019 15:18:24 +0100
+Message-Id: <20190211141904.588959791@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,106 +70,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit 75cb8d20c112aba70f23d98e3f8d0a38ace16006 ]
 
-[ Upstream commit 9b1f19d810e92d6cdc68455fbc22d9f961a58ce1 ]
+The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2) controls
+whether a Function can request service using MSI.
 
-Similarly to commit 276bdb82dedb ("dccp: check ccid before dereferencing")
-it is wise to test for a NULL ccid.
+i.MX6 Root Ports implement the MSI Capability and may use MSI to request
+service for events like PME, hotplug, AER, etc.  In addition, on i.MX6, the
+MSI Enable bit controls delivery of MSI interrupts from components below
+the Root Port.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.0.0-rc3+ #37
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
-RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
-Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-kobject: 'loop5' (0000000080f78fc1): kobject_uevent_env
-RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
-RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
-RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
-R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0defa33518 CR3: 000000008db5e000 CR4: 00000000001406e0
-kobject: 'loop5' (0000000080f78fc1): fill_kobj_path: path = '/devices/virtual/block/loop5'
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- dccp_rcv_state_process+0x2b6/0x1af6 net/dccp/input.c:654
- dccp_v4_do_rcv+0x100/0x190 net/dccp/ipv4.c:688
- sk_backlog_rcv include/net/sock.h:936 [inline]
- __sk_receive_skb+0x3a9/0xea0 net/core/sock.c:473
- dccp_v4_rcv+0x10cb/0x1f80 net/dccp/ipv4.c:880
- ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
- ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
- NF_HOOK include/linux/netfilter.h:289 [inline]
- NF_HOOK include/linux/netfilter.h:283 [inline]
- ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
- dst_input include/net/dst.h:450 [inline]
- ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
- NF_HOOK include/linux/netfilter.h:289 [inline]
- NF_HOOK include/linux/netfilter.h:283 [inline]
- ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
- __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
- __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
- process_backlog+0x206/0x750 net/core/dev.c:5923
- napi_poll net/core/dev.c:6346 [inline]
- net_rx_action+0x76d/0x1930 net/core/dev.c:6412
- __do_softirq+0x30b/0xb11 kernel/softirq.c:292
- run_ksoftirqd kernel/softirq.c:654 [inline]
- run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
- smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
- kthread+0x357/0x430 kernel/kthread.c:246
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 58a0ba03bea2c376 ]---
-RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
-RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
-Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
-RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
-RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
-R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0defa33518 CR3: 0000000009871000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also enabled
+CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports, it set the MSI
+Enable bit so it could use PME, hotplug, AER, etc.  As a side effect, that
+also enabled delivery of MSI interrupts from downstream components.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The imx6q-pcie driver itself does not depend on portdrv, so set MSI Enable
+in imx6q-pcie so MSI from downstream components works even if nobody uses
+MSI for the Root Port events.
+
+Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Tested-by: Trent Piepho <tpiepho@impinj.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/dccp/ccid.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/net/dccp/ccid.h
-+++ b/net/dccp/ccid.h
-@@ -202,7 +202,7 @@ static inline void ccid_hc_tx_packet_rec
- static inline int ccid_hc_tx_parse_options(struct ccid *ccid, struct sock *sk,
- 					   u8 pkt, u8 opt, u8 *val, u8 len)
- {
--	if (ccid->ccid_ops->ccid_hc_tx_parse_options == NULL)
-+	if (!ccid || !ccid->ccid_ops->ccid_hc_tx_parse_options)
- 		return 0;
- 	return ccid->ccid_ops->ccid_hc_tx_parse_options(sk, pkt, opt, val, len);
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 88af6bff945f..6b54528b5f0c 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -67,6 +67,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+ 
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCIE_RC_IMX6_MSI_CAP			0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -840,6 +841,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	struct resource *dbi_base;
+ 	struct device_node *node = dev->of_node;
+ 	int ret;
++	u16 val;
+ 
+ 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -981,6 +983,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (pci_msi_enabled()) {
++		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++					PCI_MSI_FLAGS);
++		val |= PCI_MSI_FLAGS_ENABLE;
++		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP + PCI_MSI_FLAGS,
++				   val);
++	}
++
+ 	return 0;
  }
-@@ -214,7 +214,7 @@ static inline int ccid_hc_tx_parse_optio
- static inline int ccid_hc_rx_parse_options(struct ccid *ccid, struct sock *sk,
- 					   u8 pkt, u8 opt, u8 *val, u8 len)
- {
--	if (ccid->ccid_ops->ccid_hc_rx_parse_options == NULL)
-+	if (!ccid || !ccid->ccid_ops->ccid_hc_rx_parse_options)
- 		return 0;
- 	return ccid->ccid_ops->ccid_hc_rx_parse_options(sk, pkt, opt, val, len);
- }
+ 
+-- 
+2.19.1
+
 
 
