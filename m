@@ -2,83 +2,201 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3150C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FE9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E5B2229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 238ED2229F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:32:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+GjWDae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731552AbfBKRcl (ORCPT
+        id S1731601AbfBKRcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:32:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41784 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727393AbfBKRck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:32:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92D67AF7A;
-        Mon, 11 Feb 2019 17:32:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 34B831E09A8; Mon, 11 Feb 2019 18:32:39 +0100 (CET)
-Date:   Mon, 11 Feb 2019 18:32:39 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Steve Magnani <steve.magnani@digidescorp.com>
-Cc:     jack@suse.com, linux-kernel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: Re: [PATCH] udf: disallow RW mount without valid integrity descriptor
-Message-ID: <20190211173239.GL19029@quack2.suse.cz>
-References: <20190211142438.16599-1-steve@digidescorp.com>
+        Mon, 11 Feb 2019 12:32:50 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45815 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727393AbfBKRcu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:32:50 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j3so5560575pfi.12;
+        Mon, 11 Feb 2019 09:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8dewQ+QRBsLUTDs5tTnXH6nYs5k+9GPCW5qSagw6W4c=;
+        b=f+GjWDaeQePi8+Ib9pOjOFVd6dnByWNZtyICJm/t2xhcZCWfy++gjfEvnsX5QxuD6C
+         ISBaCa63kgPwKcV2POh5AfLWQ3LagbKNz8woAHUMMjmhY3wK0FfTtmSezhsDTj3ZDDaj
+         CkurwgdY9m9HluJDyVoxPrqDnCN9i6Wp6XHNvtYoPF0vGNuIYujRO8B96KOUQufxtjwF
+         Wn1pvasdDTk1YZKma4UG0wGAPsRmUrCpR7mays6XIPmP9O7BGMBCHcmgxQJs3vT7AWFK
+         Kd4VxnaTq4DsUnQtz3CV2hPrG8yoNv2YPMrs2dMdR8IVOCkJckNZtL08DRyHUHl6o6AE
+         JekA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8dewQ+QRBsLUTDs5tTnXH6nYs5k+9GPCW5qSagw6W4c=;
+        b=W9ebWU8iE0jXoC9m6CB8AYifR2vdE6/RIvPrHfaEVrFypsKi4QOHgS/+ItTvm4NBqq
+         b8NzKXZm6nHF+uFjymM0yjfvR++tUUyvpe7h2ov6/Nf4eqswJX7LmjpmSZ49rK8ovhPH
+         p0YOq+Smajci2uMDpMCGRAJx/6ctuaD4nHvYogFk21Myo072Z8jL9YaMW34teo50JZe1
+         ZnRcgh9zwP6EL7K+iWtIyIZeXjIr3ItwRWC21feSRqJJEtrL9G5h5jTgHuZ9kbcMDxpA
+         JGa2K0sTeCGxCoCVvAkyGyaOjPFI7IhB4xjKxszVArOMLwSJ4KBYwV8lM02Pbrrkts9x
+         aWNg==
+X-Gm-Message-State: AHQUAuaM6Wg1oceG/jg810ZyEidqNPr7jdC5ai4eoCdwAGsveoefkrRW
+        u6MhApbSQaXchPDvg2e4l4U=
+X-Google-Smtp-Source: AHgI3IZbRUsYiiBWB9dyeTjk1R/C5FYlWugysBMGhd4+16r60SfqgTrAkTXrXUyBHiaehyck0H/lnA==
+X-Received: by 2002:a63:2ad4:: with SMTP id q203mr10197265pgq.43.1549906368596;
+        Mon, 11 Feb 2019 09:32:48 -0800 (PST)
+Received: from [10.67.49.102] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id j21sm15762059pfn.175.2019.02.11.09.32.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 09:32:47 -0800 (PST)
+Subject: Re: [PATCH net-next v3 0/9] net: Remove switchdev_ops
+To:     netdev@vger.kernel.org
+Cc:     idosch@mellanox.com, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, bridge@lists.linux-foundation.org,
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+References: <20190210234007.16173-1-f.fainelli@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <7ece5de8-1bab-0f0e-e7db-ffeef12ba1d7@gmail.com>
+Date:   Mon, 11 Feb 2019 09:31:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211142438.16599-1-steve@digidescorp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190210234007.16173-1-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 11-02-19 08:24:38, Steve Magnani wrote:
-> Refuse to mount a volume read-write without a coherent Logical Volume
-> Integrity Descriptor, because we can't generate truly unique IDs without 
-> one.
+On 2/10/19 3:39 PM, Florian Fainelli wrote:
+> Hi all,
 > 
-> This fixes a bug where all inodes created on a UDF filesystem following
-> mount without a coherent LVID are assigned UID 0.
+> This patch series finishes by the removal of switchdev_ops. To get there
+> we need to do a few things:
 > 
-> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-
-Thanks. Added to my tree.
-
-								Honza
-
-> ---
-> --- a/fs/udf/super.c	2018-11-16 06:43:00.622344354 -0600
-> +++ b/fs/udf/super.c	2019-02-11 08:08:00.478331631 -0600
-> @@ -1474,6 +1474,17 @@ static int udf_load_logicalvol(struct su
->  	if (lvd->integritySeqExt.extLength)
->  		udf_load_logicalvolint(sb, leea_to_cpu(lvd->integritySeqExt));
->  	ret = 0;
-> +
-> +	if (!sbi->s_lvid_bh) {
-> +		/* We can't generate UIDs without a valid LVID */
-> +		if (sb_rdonly(sb))
-> +			UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
-> +		else {
-> +			udf_warn(sb, "Damaged or missing LVID, forcing "
-> +				     "readonly mount\n");
-> +			ret = -EACCES;
-> +		}
-> +	}
->  out_bh:
->  	brelse(bh);
->  	return ret;
+> - get rid of the one and only call to switchdev_port_attr_get() which is
+>   used to fetch the device's bridge port flags capabilities, instead we
+>   can just check what flags are being programmed during the prepare
+>   phase
 > 
+> - once we get rid of getting switchdev port attributes we convert the
+>   setting of such attributes using a blocking notifier
+> 
+> And then remove switchdev_ops completely.
+> 
+> Please review and let me know what you think!
+> 
+> David, I would like to get Ido's feedback on this to make sure I did not
+> miss something, thank you!
+
+David, I will be reposting a v4 with Jiri's Acked-by as well as adding
+fallthrough switch/case annotations so we don't regress on that front.
+Thank you.
+
+> 
+> Changes in v3:
+> - dropped patches removing te need to get the attribute since we
+>   still need that in order to support different sleeping vs.
+>   non-sleeping contexts
+> 
+> Changes in v2:
+> - fixed bisectability issues in patch #15
+> - added Acked-by from Jiri where necessary
+> - fixed a few minor issues according to Jiri's feedback:
+> 	- rename port_attr_event -> port_attr_set_event
+> 	- moved SWITCHDEV_PORT_ATTR_SET closer to other blocking events
+> 
+> Florian Fainelli (9):
+>   Documentation: networking: switchdev: Update port parent ID section
+>   switchdev: Add SWITCHDEV_PORT_ATTR_SET, SWITCHDEV_PORT_ATTR_GET
+>   rocker: Handle SWITCHDEV_PORT_ATTR_GET/SET
+>   mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_GET/SET
+>   net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_GET/SET
+>   staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_GET/SET
+>   net: dsa: Handle SWITCHDEV_PORT_ATTR_GET/SET
+>   net: switchdev: Replace port attr get/set SDO with a notification
+>   net: Remove switchdev_ops
+> 
+>  Documentation/networking/switchdev.txt        |  10 +-
+>  .../net/ethernet/mellanox/mlxsw/spectrum.c    |  12 --
+>  .../net/ethernet/mellanox/mlxsw/spectrum.h    |   2 -
+>  .../mellanox/mlxsw/spectrum_switchdev.c       |  36 +++---
+>  drivers/net/ethernet/mscc/ocelot.c            |  26 ++++-
+>  drivers/net/ethernet/rocker/rocker_main.c     |  30 ++++-
+>  drivers/staging/fsl-dpaa2/ethsw/ethsw.c       |  30 ++++-
+>  include/linux/netdevice.h                     |   3 -
+>  include/net/switchdev.h                       |  28 ++---
+>  net/dsa/slave.c                               |  30 ++++-
+>  net/switchdev/switchdev.c                     | 107 ++++++------------
+>  11 files changed, 168 insertions(+), 146 deletions(-)
+> 
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Florian
