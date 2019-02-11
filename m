@@ -4,65 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69704C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD83C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37806222B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59AD5222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897402;
-	bh=ONOjJsaOCKjQkYA2tyyWrFpf4yEp0NOnyVOm0prXK1c=;
+	s=default; t=1549897405;
+	bh=oM6RimPWdCaN+aTIneenUuPPVTj4mAkGF9j+0ZFPal0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TL2zVIOE1sWtZx8zOkr7mvDmPhZPGZPmE0C/FOaYvg+YmgFRfsdOSucMZ+svsgBXz
-	 Ypig5mevsaDFXqFGaNkpuuJ3S/qOP/HEhvchA9D8Ho6Lxeo84DVqnUBxiBLgKFM3Hk
-	 ppAUlhN1UJnFwmAJ6xobUGmFsl42MJQowDVb+glE=
+	b=w/oQ4XImMb6NVrr8ERGBzVQwCviMhEo/SvJyOugh0yjInQ0UNJYIPb6llV1mT/pLV
+	 Th0wNxSRPEJ8OG0uyLI2Eqz7UgkIOar4eHic3XE0kCwAS2chlaHLm53q+HoVVPTxS2
+	 bQGy2NI1OZsETTwDer5TTPS0MGVy8bi8jGPA9ndQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBKPDV (ORCPT
+        id S2390617AbfBKPDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:03:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51656 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:03:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390580AbfBKPDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:16 -0500
+        id S2390589AbfBKPDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96B89222A7;
-        Mon, 11 Feb 2019 15:03:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FED3222B0;
+        Mon, 11 Feb 2019 15:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897395;
-        bh=ONOjJsaOCKjQkYA2tyyWrFpf4yEp0NOnyVOm0prXK1c=;
+        s=default; t=1549897398;
+        bh=oM6RimPWdCaN+aTIneenUuPPVTj4mAkGF9j+0ZFPal0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZGFZhgquzAzieJMyumn3tb9+Dc9n2WPayrYvkT2KfhVLKGwe8hIwXhnkdgxKwsUtu
-         pFCadvtR7bzqNCuodK9CPUKw7e7qoEmQyb68skZjcucF38zsiA6IhW88MUn9F0naur
-         C43+2coGecuh3N6kQFuc9o55nrlaeg9zB3T0oXYw=
+        b=rdcoYsp84SFHxN7iJwJy9uC2F14RT7Lp7Qvs/TEpg6yn78acAZtxdLgS3ef6zHqfc
+         3jQPcD8fKDYnREtBqQlWSQnvLxlMW1Oz5xnwCg/va+tgmjBIRXcCcOnEJ99VWIcd+y
+         BXv0bn3KAjY7v/xYaPy9SP7JMUWAU83BU81X1Frg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Gordon <bmgordon@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 158/205] fs/proc/base.c: use ns_capable instead of capable for timerslack_ns
-Date:   Mon, 11 Feb 2019 15:19:16 +0100
-Message-Id: <20190211141838.688916345@linuxfoundation.org>
+Subject: [PATCH 4.14 149/205] ocfs2: improve ocfs2 Makefile
+Date:   Mon, 11 Feb 2019 15:19:07 +0100
+Message-Id: <20190211141838.087868626@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -81,75 +72,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8da0b4f692c6d90b09c91f271517db746a22ff67 ]
+[ Upstream commit 9e6aea22802b5684c7e1d69822aeb0844dd01953 ]
 
-Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-in its effective capability set, but the current check looks in the root
-namespace instead of the process' user namespace.  Since a process is
-allowed to do other activities controlled by CAP_SYS_NICE inside a
-namespace, it should also be able to adjust timerslack_ns.
+Included file path was hard-wired in the ocfs2 makefile, which might
+causes some confusion when compiling ocfs2 as an external module.
 
-Link: http://lkml.kernel.org/r/20181030180012.232896-1-bmgordon@google.com
-Signed-off-by: Benjamin Gordon <bmgordon@google.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Oren Laadan <orenl@cellrox.com>
-Cc: Ruchi Kandoi <kandoiruchi@google.com>
-Cc: Rom Lemarchand <romlem@android.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Colin Cross <ccross@android.com>
-Cc: Nick Kralevich <nnk@google.com>
-Cc: Dmitry Shmidt <dimitrysh@google.com>
-Cc: Elliott Hughes <enh@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Say if we compile ocfs2 module as following.
+cp -r /kernel/tree/fs/ocfs2 /other/dir/ocfs2
+cd /other/dir/ocfs2
+make -C /path/to/kernel_source M=`pwd` modules
+
+Acutally, the compiler wil try to find included file in
+/kernel/tree/fs/ocfs2, rather than the directory /other/dir/ocfs2.
+
+To fix this little bug, we introduce the var $(src) provided by kbuild.
+$(src) means the absolute path of the running kbuild file.
+
+Link: http://lkml.kernel.org/r/20181108085546.15149-1-lchen@suse.com
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/base.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/ocfs2/Makefile       | 2 +-
+ fs/ocfs2/dlm/Makefile   | 2 +-
+ fs/ocfs2/dlmfs/Makefile | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9063738ff1f0..e26155a97afa 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2374,10 +2374,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
- 		return -ESRCH;
+diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
+index 99ee093182cb..cc9b32b9db7c 100644
+--- a/fs/ocfs2/Makefile
++++ b/fs/ocfs2/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)
  
- 	if (p != current) {
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			count = -EPERM;
- 			goto out;
- 		}
-+		rcu_read_unlock();
+ obj-$(CONFIG_OCFS2_FS) += 	\
+ 	ocfs2.o			\
+diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
+index bd1aab1f49a4..ef2854422a6e 100644
+--- a/fs/ocfs2/dlm/Makefile
++++ b/fs/ocfs2/dlm/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)/..
  
- 		err = security_task_setscheduler(p);
- 		if (err) {
-@@ -2410,11 +2413,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
- 		return -ESRCH;
+ obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
  
- 	if (p != current) {
--
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			err = -EPERM;
- 			goto out;
- 		}
-+		rcu_read_unlock();
-+
- 		err = security_task_getscheduler(p);
- 		if (err)
- 			goto out;
+diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
+index eed3db8c5b49..33431a0296a3 100644
+--- a/fs/ocfs2/dlmfs/Makefile
++++ b/fs/ocfs2/dlmfs/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)/..
+ 
+ obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
+ 
 -- 
 2.19.1
 
