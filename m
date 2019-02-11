@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699C4C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45CEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27BAD20675
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7765B20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895573;
-	bh=dPemYv0rjZQuY5DXmr2RSjreztvPnxszXmtgiXSCzlk=;
+	s=default; t=1549895576;
+	bh=Egzy29Qcqt8OzDM5OLctP+MXQwYRzMvHGuC++Iz2Oag=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xN+Rq4Z/yrc5ci6LP27s4y+XVyCGDXalHbieMuJ2T7Ipwm8jRgFYk3l6zeoXspoiJ
-	 FTfiFeAMLWcGAPIyu1C39WE/KNWRsvTgd/N+GyrtsrHqvaJ3hc6s3DbmeU/03pfUKf
-	 d3qo4GiCLck92FKI76TXNF7s0OwjacHk2Z0YGbZs=
+	b=GAAfAC0c4S6ClA8oIotmo/hln6qbvOzFe2rA3WRdY+8AhVr0Z48nk3V26wHl0abV8
+	 A33oA14ATeMSsgty9cAsYhSw5n9dcavmxfsVbWgGf5rPX6kEIey7t6pc1Xo7PJxwu9
+	 KSVtC1AoI19T4Htfzm4VQ8Di29BBCF0iMZXNMFwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730537AbfBKOcv (ORCPT
+        id S1730548AbfBKOcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:32:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40336 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:32:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730522AbfBKOct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:32:49 -0500
+        id S1730522AbfBKOcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:32:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFCEB20844;
-        Mon, 11 Feb 2019 14:32:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E65A214DA;
+        Mon, 11 Feb 2019 14:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895568;
-        bh=dPemYv0rjZQuY5DXmr2RSjreztvPnxszXmtgiXSCzlk=;
+        s=default; t=1549895571;
+        bh=Egzy29Qcqt8OzDM5OLctP+MXQwYRzMvHGuC++Iz2Oag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNebl4Uy6G7/qGmuaNgvqily/hepp1ETe/W9eYdiqc5caGqatzSG1iFNd+VoijzSE
-         ZGcDyMG1f7MlCvsTRfVaP6v551EoC2rp+11lQpHkBmElJJD0jKpVz5GDtHfav6NtGP
-         8UMu+I6t/INWbbLQ/D6aK4FaELJXRz+5Bh6E14HE=
+        b=LGc1fHPsDb1ocbwkYbVA211w+suWcLb5H+53VdfWTEN9Iq7mqKRqlCDQVrsH8V4vh
+         KvQuRM4MFHXxOeMnrgqFqb3D0zNtT/BZR3EO/fpQtWqZ/4zYWKYJgjD+VayazcjRUR
+         0nKRbwBudhwNiEDJTnu+oCFxX1RUrwKvuwIr9Q2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 219/352] net: hns3: fix the descriptor index when get rss type
-Date:   Mon, 11 Feb 2019 15:17:26 +0100
-Message-Id: <20190211141901.154302125@linuxfoundation.org>
+Subject: [PATCH 4.20 210/352] powerpc/uaccess: fix warning/error with access_ok()
+Date:   Mon, 11 Feb 2019 15:17:17 +0100
+Message-Id: <20190211141900.546117792@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,44 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31a16f99e02c2e0b40a5fb05d66f5e56721027e2 ]
+[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
 
-Driver gets rss information from the last descriptor of the packet.
-When driver handle the rss type, ring->next_to_clean indicates the
-first descriptor of next packet.
+With the following piece of code, the following compilation warning
+is encountered:
 
-This patch fix the descriptor index with "ring->next_to_clean - 1".
+	if (_IOC_DIR(ioc) != _IOC_NONE) {
+		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
 
-Fixes: 232fc64b6e62 ("net: hns3: Add HW RSS hash information to RX skb")
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
+
+drivers/platform/test/dev.c: In function 'my_ioctl':
+drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
+   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+
+This patch fixes it by referencing 'type' in the macro allthough
+doing nothing with it.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/uaccess.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index beb5dbd5e98d..d424d5bc0507 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2332,9 +2332,16 @@ static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
- static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
- 				     struct sk_buff *skb)
- {
--	struct hns3_desc *desc = &ring->desc[ring->next_to_clean];
- 	struct hnae3_handle *handle = ring->tqp->handle;
- 	enum pkt_hash_types rss_type;
-+	struct hns3_desc *desc;
-+	int last_bd;
-+
-+	/* When driver handle the rss type, ring->next_to_clean indicates the
-+	 * first descriptor of next packet, need -1 here.
-+	 */
-+	last_bd = (ring->next_to_clean - 1 + ring->desc_num) % ring->desc_num;
-+	desc = &ring->desc[last_bd];
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 15bea9a0f260..ebc0b916dcf9 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -63,7 +63,7 @@ static inline int __access_ok(unsigned long addr, unsigned long size,
+ #endif
  
- 	if (le32_to_cpu(desc->rx.rss_hash))
- 		rss_type = handle->kinfo.rss_type;
+ #define access_ok(type, addr, size)		\
+-	(__chk_user_ptr(addr),			\
++	(__chk_user_ptr(addr), (void)(type),		\
+ 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
+ 
+ /*
 -- 
 2.19.1
 
