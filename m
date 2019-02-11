@@ -2,84 +2,96 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE17C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0437C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB7C21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B080F21B24
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbfBKQTp (ORCPT
+        id S1728658AbfBKQUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:19:45 -0500
-Received: from sauhun.de ([88.99.104.3]:56306 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbfBKQTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:19:45 -0500
-Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
-        by pokefinder.org (Postfix) with ESMTPSA id 6A25D2E3542;
-        Mon, 11 Feb 2019 17:19:43 +0100 (CET)
-Date:   Mon, 11 Feb 2019 17:19:43 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Federico Vaga <federico.vaga@cern.ch>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 5/5] i2c:ocores: checkpatch fixes
-Message-ID: <20190211161942.ckuys4vyagbwaklq@ninjato>
-References: <20190211160529.23858-1-federico.vaga@cern.ch>
- <20190211160529.23858-6-federico.vaga@cern.ch>
- <bbaaa303-75f1-9272-c01f-914175237f05@axentia.se>
+        Mon, 11 Feb 2019 11:20:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53554 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727224AbfBKQUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:20:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 237D380D;
+        Mon, 11 Feb 2019 08:20:05 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1064D3F675;
+        Mon, 11 Feb 2019 08:20:02 -0800 (PST)
+Date:   Mon, 11 Feb 2019 16:19:57 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     kishon@ti.com, bhelgaas@google.com, gustavo.pimentel@synopsys.com,
+        niklas.cassel@axis.com, baijiaju1990@gmail.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+Subject: Re: [PATCH] PCI: endpoint: functions: use
+ memcpy_fromio()/memcpy_toio()
+Message-ID: <20190211161957.GA27797@e107981-ln.cambridge.arm.com>
+References: <1549875840-10582-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ilmmbb5oktml3kgo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bbaaa303-75f1-9272-c01f-914175237f05@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1549875840-10582-1-git-send-email-wen.yang99@zte.com.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 11, 2019 at 05:04:00PM +0800, Wen Yang wrote:
+> Use the IO memcpy() functions when copying from/to IO memory.
+> These locations were found via sparse.
+> 
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Suggested-by: Kishon Vijay Abraham I <kishon@ti.com>
+> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> CC: Bjorn Helgaas <bhelgaas@google.com>
+> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> CC: Niklas Cassel <niklas.cassel@axis.com>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+> CC: linux-pci@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
---ilmmbb5oktml3kgo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, with updated tags to pci/endpoint for v5.1, thanks.
 
+Lorenzo
 
-> > -	oc_setreg(i2c, OCI2C_CONTROL, ctrl & ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
-> > +	ctrl =3D oc_getreg(i2c, OCI2C_CONTROL);
->=20
-> There's a pointless double oc_getreg(i2c, OCI2C_CONTROL).
-
-In case you need to resend, please update $subject of all patches to
-have a space after "i2c:"
-
-
---ilmmbb5oktml3kgo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhoJoACgkQFA3kzBSg
-Kba1Jg//Y2TAKnvmcdIGORStIcuiD/0IlmwxPPAVZeBtUgU2an8cczAtGq/dNPNl
-gN1bCNz/GsHf4f/52RFV8VIQGBUfEYCLeS5vnaIAUefnG6IT7+i6OSwDAucnxWz4
-zsJBJ5VFmojraNVuIo3x5RjOBHqeuKhMyIlwcl4GkRYMTp/vwqXs09GwIMltsq8c
-hJ71wJMHD61J1U2zv5aOuzXrlnn+WqSQsaOWv+zF5AcdxCkSrWyZMBKa00EBBxAM
-u+h7Y8zwDy28MO92ZLRngAUHsdM6zA2sjGFCelg9XYUl/3mgcABiIXfDVuYbuiv/
-DmYfRILT6voASocPS2kLInjjNpKBojw9FuWnDt1fos9i/KU9Hd1hR8sialiLOL46
-0EpDuOAx0D7PmAHiOiNbBi6jM5N/cPj+ZeacpCwdGaHuF6IdrUwBrtkrM9ZDw8jm
-+yEQyvhVwQrAZaFBqHunsC0CMnMbuT/xxyTxMWxBcZCub6e2bSBHaAFEfuodT1Yh
-gLJZ8FBlMTl/5pJsCzN+EcPUqGWQEmUbFK4BmmJUmPYboa3syz2C7W2l3hmu/6Xk
-9BzKkFWz2MBnRp/d2aKl7LZ2NaZhwNjvJriXBcBSsU+wtTA80ylCI8bdyyMclPPi
-uHl127swpiVim4KgBYjAQFIeNbv8AlovjRle8C9R8Cj5F8kO0/o=
-=GpBh
------END PGP SIGNATURE-----
-
---ilmmbb5oktml3kgo--
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 3e86fa3..4bbd26e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -175,7 +175,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
+>  		goto err_map_addr;
+>  	}
+>  
+> -	memcpy(buf, src_addr, reg->size);
+> +	memcpy_fromio(buf, src_addr, reg->size);
+>  
+>  	crc32 = crc32_le(~0, buf, reg->size);
+>  	if (crc32 != reg->checksum)
+> @@ -230,7 +230,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+>  	get_random_bytes(buf, reg->size);
+>  	reg->checksum = crc32_le(~0, buf, reg->size);
+>  
+> -	memcpy(dst_addr, buf, reg->size);
+> +	memcpy_toio(dst_addr, buf, reg->size);
+>  
+>  	/*
+>  	 * wait 1ms inorder for the write to complete. Without this delay L3
+> -- 
+> 2.9.5
+> 
