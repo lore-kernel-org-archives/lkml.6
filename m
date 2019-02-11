@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E585C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2831EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4054F20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC45D2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896106;
-	bh=G2SkOh9dlrlUid8qi+B7zV2CvdAjaa3fJSafC6Cd36s=;
+	s=default; t=1549896110;
+	bh=bLQkxQSCY8vq+4vjwcatb8YQCUnKnJ1FRhNPgxWKA68=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=clFqOSGkbOZLDXz5YT0LMmynhn1NCoaH/RjR5xkpdvQCeKSu9nOzyp0esHMOsIIIw
-	 cTBOcq/L27iFpvjO8l0HYr23fKV/27OnxNPmVzZnSmuZASkGQdoiVF13Dbp1BkhzBO
-	 vL7K8H84gd3S/l7SqBIlBvQ3j7pd17zxX4oTgh1E=
+	b=nvETay5NTAyhCOe2WZ7nVeqjnxWfoO/N6vHe9OOAuNH/6rDdOA5lON42Ss9N9f2ja
+	 IHkz96Bg+5kF1MnC9QVggp8+WY1l7SklxXbv99HgSKgGHgzqKuOqaGT87f5Dq6tdd2
+	 FNYpB3xeSrPqnPoeIG7rAIeYXKWYsCNEt7Rkt+nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732289AbfBKOlp (ORCPT
+        id S1732299AbfBKOls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53122 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731214AbfBKOln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:43 -0500
+        id S1731214AbfBKOlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E313320700;
-        Mon, 11 Feb 2019 14:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91C8421B18;
+        Mon, 11 Feb 2019 14:41:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896102;
-        bh=G2SkOh9dlrlUid8qi+B7zV2CvdAjaa3fJSafC6Cd36s=;
+        s=default; t=1549896105;
+        bh=bLQkxQSCY8vq+4vjwcatb8YQCUnKnJ1FRhNPgxWKA68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jBg+7x5c3aLBTw6dpFjnfXxo+tiC3/rzCnBwoYzRHEFoYvs0xs1WUYQNf+irKw5SJ
-         wzch2MbZmQxP9WghQcrwzxxa9YlNjNypegaX/ET+Z+rBl+/nAt5VSBAw6Z9g+dMvaQ
-         wlL6gyKsHDbgWqX++OGbIRfpT5MyyhE+RnFMZHek=
+        b=2Cdyc/lzihZvCw8HR0nRmlKnBwb8Wg280TIqtyPmmpQ70fZaIFg7HJj5LjNG5qwNh
+         +ITvbVi56bQULe2yriyqlljKh7QqLo5dBKjDKq0839+JEajnZp/EJAyNzfpHCngriq
+         ToLgMckR8g3zcopMZ3bN0yqOUaR/zuAnW7wAuGZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 056/313] clk: meson: meson8b: fix the width of the cpu_scale_div clock
-Date:   Mon, 11 Feb 2019 15:15:36 +0100
-Message-Id: <20190211141857.536028832@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 074/313] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
+Date:   Mon, 11 Feb 2019 15:15:54 +0100
+Message-Id: <20190211141858.839269480@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,46 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a8662eadd1032018f31e37deda811790b2326662 ]
+[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
 
-According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
-the register for the CPU scale_div clock. This matches the code in
-Amlogic's 3.10 GPL kernel sources:
-N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
+__vdc_tx_trigger should only loop on EAGAIN a finite
+number of times.
 
-This means that the divider register is 10 bit wide instead of 9 bits.
-So far this is not a problem since all u-boot versions I have seen are
-not using the cpu_scale_div clock at all (instead they are configuring
-the CPU clock to run off cpu_in_sel directly).
+See commit adddc32d6fde ("sunvnet: Do not spin in an
+infinite loop when vio_ldc_send() returns EAGAIN") for detail.
 
-The fixes tag points to the latest rework of the CPU clocks. However,
-even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
-Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
-drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
-this only carries the fixes tag for the CPU clock rewordk.
-
-Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20180927085921.24627-3-martin.blumenstingl@googlemail.com
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/sunvdc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 580a86d120e8..0da8334f2e43 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -583,7 +583,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
- 	.data = &(struct clk_regmap_div_data){
- 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 20,
--		.width = 9,
-+		.width = 10,
- 		.table = cpu_scale_table,
- 		.flags = CLK_DIVIDER_ALLOW_ZERO,
- 	},
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index f68e9baffad7..5d7024057540 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -45,6 +45,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
+ #define WAITING_FOR_GEN_CMD	0x04
+ #define WAITING_FOR_ANY		-1
+ 
++#define	VDC_MAX_RETRIES	10
++
+ static struct workqueue_struct *sunvdc_wq;
+ 
+ struct vdc_req_entry {
+@@ -431,6 +433,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		.end_idx		= dr->prod,
+ 	};
+ 	int err, delay;
++	int retries = 0;
+ 
+ 	hdr.seq = dr->snd_nxt;
+ 	delay = 1;
+@@ -443,6 +446,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		udelay(delay);
+ 		if ((delay <<= 1) > 128)
+ 			delay = 128;
++		if (retries++ > VDC_MAX_RETRIES)
++			break;
+ 	} while (err == -EAGAIN);
+ 
+ 	if (err == -ENOTCONN)
 -- 
 2.19.1
 
