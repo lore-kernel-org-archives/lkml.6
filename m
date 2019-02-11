@@ -2,92 +2,170 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD19FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A802084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:13:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CtHhDo7p";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hhN+W4gr"
+	by mail.kernel.org (Postfix) with ESMTP id A7E562146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfBKGNB (ORCPT
+        id S1726157AbfBKGQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 01:13:01 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKGNA (ORCPT
+        Mon, 11 Feb 2019 01:16:04 -0500
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:36967 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKGQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 01:13:00 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7CF03601C4; Mon, 11 Feb 2019 06:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549865579;
-        bh=QSCWo3myd9rw235N+ghKCosnt3d1cWY3+YpgMoWMvSI=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=CtHhDo7pQaoujkE1+rTY/yzmpKZfIDNPcP+VBkHSZG7jXBLR7YSOydqfDIW0JXajh
-         ZcYAwpvreCXi1cVN887KlSyqrkABWHFRI+byKrI5FiEgOkmb1mDrDqBvfAJS6damKZ
-         vqTkJJKGAhJZUcm5SGDPuvR+bGaGbkIm+hLFjHbo=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0681601C4;
-        Mon, 11 Feb 2019 06:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549865577;
-        bh=QSCWo3myd9rw235N+ghKCosnt3d1cWY3+YpgMoWMvSI=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=hhN+W4gr+lblluiJphewlLfSUTvTnAo4Jv++tFldWXXXYfgmYMC+9y9F2M0TBq4xR
-         BUxcOY+VIDQcbG6FogzJ3hPrWd07pTyHB9QtxaH4CVFD5D3T2TRETQIUJSEzYWFvt7
-         kTsSYInJch8YUuBcvqe5So/9ZDSxmmpYoiowKdf8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0681601C4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        ath10k@lists.infradead.org
-Subject: Re: linux-next: Signed-off-by missing for commit in the wireless-drivers-next tree
-References: <20190211072814.7428f192@canb.auug.org.au>
-Date:   Mon, 11 Feb 2019 08:12:52 +0200
-In-Reply-To: <20190211072814.7428f192@canb.auug.org.au> (Stephen Rothwell's
-        message of "Mon, 11 Feb 2019 07:28:14 +1100")
-Message-ID: <87lg2m7t0b.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 11 Feb 2019 01:16:04 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4C1BD100D942C;
+        Mon, 11 Feb 2019 07:16:01 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id E78EE10875; Mon, 11 Feb 2019 07:16:00 +0100 (CET)
+Date:   Mon, 11 Feb 2019 07:16:00 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 13/28] thunderbolt: Add helper function to iterate
+ from one port to another
+Message-ID: <20190211061600.6ty733qfagk7f6fp@wunner.de>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+ <20190206131738.43696-14-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206131738.43696-14-mika.westerberg@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ ath10k
+On Wed, Feb 06, 2019 at 04:17:23PM +0300, Mika Westerberg wrote:
+> We need to be able to walk from one port to another when we are creating
+> paths where there are multiple switches between two ports. For this
+> reason introduce a new function tb_port_get_next() and a new macro
+> tb_for_each_port().
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+These names seem fairly generic, they might as well refer to the next port
+on a switch or iterate over the ports on a switch.  E.g. I've proposed a
+tb_sw_for_each_port() macro in this patch:
 
-> Hi all,
->
-> Commit
->
->   768ec4c012ac ("ath10k: update HOST capability qmi message")
->
-> is missing a Signed-off-by from its author.
+https://lore.kernel.org/patchwork/patch/983863/
 
-Oh, I had missed that. Thanks for reporting.
+I'd suggest renaming tb_port_get_next() to something like
+tb_next_port_on_path() or tb_path_next_port() or tb_path_walk().
 
-Unfortunately it would be difficult to rebase wireless-drivers-next so I
-can't (easily) fix this. But v1 had s-o-b so at least we have the sign
-off publically available:
+And I'd suggest dropping tb_for_each_port() because there are only
+two occurrences where it's used, one calculates the path length,
+and I think that's simply the route string length plus 2, and the
+other one in patch 17 isn't even interested in the ports along a path,
+but rather in the switches between the root switch and the end of a path.
+It seems simpler to just iterate from the switch at the end upwards to
+the root switch by following the parent pointer in the switch's
+struct device, or alternatively by bytewise iterating over the route
+string and calling get_switch_at_route() each time.
 
-https://patchwork.kernel.org/patch/10688563/
 
--- 
-Kalle Valo
+> +/**
+> + * tb_port_get_next() - Return next port for given port
+> + * @start: Start port of the walk
+> + * @end: End port of the walk
+> + * @prev: Previous port (%NULL if this is the first)
+> + *
+> + * This function can be used to walk from one port to another if they
+> + * are connected through zero or more switches. If the @prev is dual
+> + * link port, the function follows that link and returns another end on
+> + * that same link.
+> + *
+> + * If the walk cannot be continued, returns %NULL.
+
+This sounds as if NULL is returned if an error occurs but that doesn't
+seem to be what the function does.  I'd suggest:
+
+"If the @end port has been reached, return %NULL."
+
+
+> +struct tb_port *tb_port_get_next(struct tb_port *start, struct tb_port *end,
+> +				 struct tb_port *prev)
+> +{
+> +	struct tb_port *port, *next;
+> +
+> +	if (!prev)
+> +		return start;
+> +
+> +	if (prev->sw == end->sw) {
+> +		if (prev != end)
+> +			return end;
+> +		return NULL;
+> +	}
+> +
+> +	/* Switch back to use primary links for walking */
+
+"Switch back" requires that you switched to something else before,
+which you didn't.  I'd suggest something like:
+
+"use primary link to discover next port"
+
+Why is it necessary to use the primary link anyway?  Is the
+->remote member not set on the secondary link port?  The reason
+should probably be spelled out in the code comment.
+
+
+> +	if (prev->dual_link_port && prev->link_nr)
+> +		port = prev->dual_link_port;
+> +	else
+> +		port = prev;
+> +
+> +	if (start->sw->config.depth < end->sw->config.depth) {
+> +		if (port->remote &&
+> +		    port->remote->sw->config.depth > port->sw->config.depth)
+
+Can we use "if (!tb_is_upstream_port(port))" for consistency with the
+if-clause below?
+
+
+> +			next = port->remote;
+> +		else
+> +			next = tb_port_at(tb_route(end->sw), port->sw);
+> +	} else if (start->sw->config.depth > end->sw->config.depth) {
+> +		if (tb_is_upstream_port(port))
+> +			next = port->remote;
+> +		else
+> +			next = tb_upstream_port(port->sw);
+> +	} else {
+> +		/* Must be the same switch then */
+> +		if (start->sw != end->sw)
+> +			return NULL;
+> +		return end;
+> +	}
+
+The else-clause here appears to be dead code, you've already checked
+further up whether prev and end are on the same switch.
+
+
+> +
+> +	/* If prev was dual link return another end of that link then */
+
+*Here* a "switch back" comment would be appropriate.  Nit: Please either
+end code comments with a period or don't start them with an upper case
+letter.
+
+> +	if (next->dual_link_port && next->link_nr != prev->link_nr)
+> +		return next->dual_link_port;
+> +
+> +	return next;
+> +}
+
+Thanks,
+
+Lukas
