@@ -2,95 +2,106 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AF2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5443C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8D4218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qXjFd8K0"
+	by mail.kernel.org (Postfix) with ESMTP id 74937218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549891238;
+	bh=iWE1Vy+0yXnSIpYP/ZsG46U3GrPVxFILE2p2FJEPm0k=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=eGgIC0oa1BZw+KNgm9XK0UFXNllpRbGlX7nImVLz9ITv6JJ1X8H9aXUvGet8nEB6+
+	 PXmFSDJIjtaNNO6t+Gfkky0CkcdXd5pFZJy3y0wadrTzJC6zcF71hzPefuc/kyQqga
+	 g8C9ZRA1Tgfaua4dq8YMmvJTiJE99sUBgz7XUvaw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfBKNUd (ORCPT
+        id S1727956AbfBKNUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Feb 2019 08:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727931AbfBKNUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 08:20:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57694 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727905AbfBKNUa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:20:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ADQN8F5PCXYj+x0CbbvQvw4EJN+59pQQ+mq6k+aKmHg=; b=qXjFd8K0r4US2pdVgQVdDxYF6b
-        77+3Eg1ttL7HMBvVyRM0mgKWBZxRzyPUSZHboHGg9C9cGTVGgkxdF+FHY7oI7xz5iTNa7eF6usbhr
-        p+dHJnyWIhuSXsME1mt0aoMut5wVHIDoGCObKifRPJ/b99aWmsmSJQwYzlZUsFx1eaRzk0Y+CMHWc
-        WgFAgVqQyRL63jcUw4eoGk7a7YmNkSM6bLOd7zPUEeRdJhxDbgZsqZKMkKBWiNn88xyhB0Ra9huXn
-        5ugK5eA/mDrna/8CRhyc8MNKZckglDjVXYnOE5ZllwNAHCBBCAt055hEPzWctI721nAOwqdtLqZjq
-        3yHkbSyQ==;
-Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtBVd-0000Wp-CC; Mon, 11 Feb 2019 13:20:29 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] smc911x: pass struct device to DMA API functions
-Date:   Mon, 11 Feb 2019 14:20:04 +0100
-Message-Id: <20190211132004.29143-9-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211132004.29143-1-hch@lst.de>
-References: <20190211132004.29143-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51E21218D8;
+        Mon, 11 Feb 2019 13:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549891232;
+        bh=iWE1Vy+0yXnSIpYP/ZsG46U3GrPVxFILE2p2FJEPm0k=;
+        h=From:To:Subject:Date:From;
+        b=SID44oMJ9Y+vu813XsoApujNMIuEjKHzUXPe1088vAo1dDA8UpOdkLNtpkXqpiSjS
+         KeSFLNKD9oZzsWLASPg5LxajM6kV4s60KvZTbxO9v80ZbapayOaA1DDODKhtjc/Hh6
+         U2d2hO4QaaY2ybiBovsWWAFUfWXIJKNMIlhgbzL4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2] mfd: sec-core: Cleanup formatting to a consistent style
+Date:   Mon, 11 Feb 2019 14:20:23 +0100
+Message-Id: <1549891223-14269-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA API generally relies on a struct device to work properly, and
-only barely works without one for legacy reasons.  Pass the easily
-available struct device from the platform_device to remedy this.
+Cleanup the formatting to have consistent style across the file (only
+white-space issues).  No expected difference in code.
 
-Note that smc911x apparently is a PIO chip with an external DMA
-handshake, and we probably use the wrong device here.  But at least
-it matches the mapping side, which apparently works or at least
-worked in the not too distant past.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/net/ethernet/smsc/smc911x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
-index 8355dfbb8ec3..b550e624500d 100644
---- a/drivers/net/ethernet/smsc/smc911x.c
-+++ b/drivers/net/ethernet/smsc/smc911x.c
-@@ -1188,7 +1188,7 @@ smc911x_tx_dma_irq(void *data)
+Changes since v1:
+1. Leave one-liners as is.
+---
+ drivers/mfd/sec-core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 00321011de0a..521319086c81 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -114,7 +114,8 @@ static const struct mfd_cell s2mpu02_devs[] = {
  
- 	DBG(SMC_DEBUG_TX | SMC_DEBUG_DMA, dev, "TX DMA irq handler\n");
- 	BUG_ON(skb == NULL);
--	dma_unmap_single(NULL, tx_dmabuf, tx_dmalen, DMA_TO_DEVICE);
-+	dma_unmap_single(lp->dev, tx_dmabuf, tx_dmalen, DMA_TO_DEVICE);
- 	netif_trans_update(dev);
- 	dev_kfree_skb_irq(skb);
- 	lp->current_tx_skb = NULL;
-@@ -1219,7 +1219,7 @@ smc911x_rx_dma_irq(void *data)
+ #ifdef CONFIG_OF
+ static const struct of_device_id sec_dt_match[] = {
+-	{	.compatible = "samsung,s5m8767-pmic",
++	{
++		.compatible = "samsung,s5m8767-pmic",
+ 		.data = (void *)S5M8767X,
+ 	}, {
+ 		.compatible = "samsung,s2mps11-pmic",
+@@ -309,8 +310,8 @@ static void sec_pmic_configure(struct sec_pmic_dev *sec_pmic)
+  * the sub-modules need not instantiate another instance while parsing their
+  * platform data.
+  */
+-static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+-					struct device *dev)
++static struct sec_platform_data *
++sec_pmic_i2c_parse_dt_pdata(struct device *dev)
+ {
+ 	struct sec_platform_data *pd;
  
- 	DBG(SMC_DEBUG_FUNC, dev, "--> %s\n", __func__);
- 	DBG(SMC_DEBUG_RX | SMC_DEBUG_DMA, dev, "RX DMA irq handler\n");
--	dma_unmap_single(NULL, rx_dmabuf, rx_dmalen, DMA_FROM_DEVICE);
-+	dma_unmap_single(lp->dev, rx_dmabuf, rx_dmalen, DMA_FROM_DEVICE);
- 	BUG_ON(skb == NULL);
- 	lp->current_rx_skb = NULL;
- 	PRINT_PKT(skb->data, skb->len);
+@@ -331,8 +332,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+ 	return pd;
+ }
+ #else
+-static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+-					struct device *dev)
++static struct sec_platform_data *
++sec_pmic_i2c_parse_dt_pdata(struct device *dev)
+ {
+ 	return NULL;
+ }
 -- 
-2.20.1
+2.7.4
 
