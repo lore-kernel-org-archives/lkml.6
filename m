@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B311C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0273C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACC921855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A322221855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900160;
-	bh=mSYDMOGWbsJyezJStT81GvQKllGjBGGs8LwvKVbg0YY=;
+	s=default; t=1549900170;
+	bh=r73udR+Q3mSYZcz3Om2YB86lATPMF149DBRO4gpBFyg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uXGfbOcqbDdB4jdvI3Bl+ma5AhgnL+ijs/b+6GoCmtRWM1iWT6jre6wXToJQvNKZn
-	 bXuVgstXTCGxhbXcyAWl1weZe97t3AT1FhsHysrNdGph732oUwN/KvSZiV4vaft290
-	 OJ/RIFTdJOYqfLsQBkuceMWV99YCUxyMx0B96+J0=
+	b=yArdYHhZ8PuQOFrTP7FVQ0OoO+gr0ebYigbYRzzbWtS2TVh9mdRkOZYp6WvaIFamG
+	 y1nqrLXU57DOov90bby84X9LRRnWV+62dTF30hbJu0Ove4twra3VP9MjNaoNKV8I7e
+	 FuUr1Xf4LOWPFym9vt9aIAd2vxvpGplHta4+Dhmg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbfBKPtS (ORCPT
+        id S1732404AbfBKPt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50528 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731544AbfBKOj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:56 -0500
+        id S1731932AbfBKOjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8C9F20838;
-        Mon, 11 Feb 2019 14:39:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 172B420838;
+        Mon, 11 Feb 2019 14:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895995;
-        bh=mSYDMOGWbsJyezJStT81GvQKllGjBGGs8LwvKVbg0YY=;
+        s=default; t=1549895986;
+        bh=r73udR+Q3mSYZcz3Om2YB86lATPMF149DBRO4gpBFyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TUkyhaCYZT1lUDFyq7SUyGO51K8XJaLOJ7QGIjI0FVZVFYJvH4V593yQe+yu/f2W2
-         kLNAESHwBLGhacqKSiPqPvCLAa9vJXy1QHsQZXE4YY3Nf6gJbSMyaZtxpYkEmlYWoj
-         w3D9gfHOx5028j9bjr1qcZnCxqXcigmweJRVB6sg=
+        b=FWuVOWLVeIkKTIIVbNafeckgzR5NnAGHVLpzR7sM47llajyH5wKIoVyedQI/dWEEV
+         sa2+vl25ijAe6b+mJRv8jPhidl6avWWpYUkLQHivtOJ6BkQI7oB3QpKuXh7ui//bXe
+         xXV6EVdu6rLdfmFB5LEEGoUQFIwYSsmr3hD7K6Hw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Renato Lui Geh <renatogeh@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 039/313] staging: iio: ad7780: update voltage on read
-Date:   Mon, 11 Feb 2019 15:15:19 +0100
-Message-Id: <20190211141856.155515141@linuxfoundation.org>
+Subject: [PATCH 4.19 036/313] platform/chrome: dont report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
+Date:   Mon, 11 Feb 2019 15:15:16 +0100
+Message-Id: <20190211141855.892355941@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,42 +66,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
+[ Upstream commit 6ad16b78a039b45294b1ad5d69c14ac57b2fe706 ]
 
-The ad7780 driver previously did not read the correct device output, as
-it read an outdated value set at initialization. It now updates its
-voltage on read.
+EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
+reasons, and there are very few cases in which they should be treated as
+wakeup interrupts (particularly, when a certain
+MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
+mainline cros_ec_sensor driver yet). Most of the time, they are benign
+sensor readings. In any case, the top-level cros_ec device doesn't know
+enough to determine that they should wake the system, and so it should
+not report the event. This would be the job of the cros_ec_sensors
+driver to parse.
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This patch adds checks to cros_ec_get_next_event() such that it doesn't
+signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
+
+This patch is particularly relevant on devices like Scarlet (Rockchip
+RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
+reports sensor events much more frequently. This was causing
+/sys/power/wakeup_count to increase very frequently, often needlessly
+interrupting our ability to suspend the system.
+
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7780.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index 16d72072c076..8bcb5d5de749 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 			   long m)
- {
- 	struct ad7780_state *st = iio_priv(indio_dev);
-+	int voltage_uv;
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index b6fd4838f60f..e5d5b1adb5a9 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -575,6 +575,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
  
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
- 	case IIO_CHAN_INFO_SCALE:
--		*val = st->int_vref_mv * st->gain;
-+		voltage_uv = regulator_get_voltage(st->reg);
-+		if (voltage_uv < 0)
-+			return voltage_uv;
-+		*val = (voltage_uv / 1000) * st->gain;
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
+ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ {
++	u8 event_type;
+ 	u32 host_event;
+ 	int ret;
+ 
+@@ -594,11 +595,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ 		return ret;
+ 
+ 	if (wake_event) {
++		event_type = ec_dev->event_data.event_type;
+ 		host_event = cros_ec_get_host_event(ec_dev);
+ 
+-		/* Consider non-host_event as wake event */
+-		*wake_event = !host_event ||
+-			      !!(host_event & ec_dev->host_event_wake_mask);
++		/*
++		 * Sensor events need to be parsed by the sensor sub-device.
++		 * Defer them, and don't report the wakeup here.
++		 */
++		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
++			*wake_event = false;
++		/* Masked host-events should not count as wake events. */
++		else if (host_event &&
++			 !(host_event & ec_dev->host_event_wake_mask))
++			*wake_event = false;
++		/* Consider all other events as wake events. */
++		else
++			*wake_event = true;
+ 	}
+ 
+ 	return ret;
 -- 
 2.19.1
 
