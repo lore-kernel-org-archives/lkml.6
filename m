@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEF0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D106C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1326B20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E26E20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901333;
-	bh=Kh06wUfyOne3w8UomsLxv1FO+m58Zr7iOFMI7Udcu44=;
+	s=default; t=1549901344;
+	bh=qx4hahrax8tBrxETbcVO7VUaMjKq/sFlO+ix9E28xE4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XuZwpOt0ZdaCYd4ULtd5kWM/E8m4AAffj9mtae7b4zWDbSPzRj78c87kFiW9qoUq5
-	 Ff1Po5E9NnBsTDmJ4oTNG1yO5wwRJh1xQp0hWiGSeEwoqfAnNAP7lzBnAvSzs3tnIp
-	 XWGuBbS2nTGwutyeQnN8CizvoGx92HxxvzCmAXX0=
+	b=VQf6Mjy/G3lElPy4aabB51JoZkgyqDO4C6TodK8J3NjvfftBOUc7FBnLta7X/dEpw
+	 WaKNRPgQS9klgBbYTqdwdaoNFbqfHCNPyg2XcHDmGXh+HOV09rsxwHAm0f1Bl5oQGH
+	 NoMY1kLH4nUVvvUdd0Y9ykDg1qn6kVOk6UKRjE+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387672AbfBKQIv (ORCPT
+        id S1729408AbfBKQJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59414 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:09:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729439AbfBKOZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:49 -0500
+        id S1729425AbfBKOZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E9372075C;
-        Mon, 11 Feb 2019 14:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7885320821;
+        Mon, 11 Feb 2019 14:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895147;
-        bh=Kh06wUfyOne3w8UomsLxv1FO+m58Zr7iOFMI7Udcu44=;
+        s=default; t=1549895144;
+        bh=qx4hahrax8tBrxETbcVO7VUaMjKq/sFlO+ix9E28xE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qWo5lHw8Py5UWa6Sv+xamVOAMHvz15oENCTEoJyIKS3CMy40mRdEsUvRG7TlCTVl5
-         mVu3xnb6meJuOKHBfUlYNqSKs7/yCBriQgPRnIUKrykUHKQcGoN8J7ADz5Y0C5288O
-         G0jX+ZjXDdYmB648YN0qYu6BWhTCdaVtgEy3r+5w=
+        b=tZ6xVmt6eCAurW/iyHwl6eyYoHFUo3WOKIvK1PRzr5b61ytiKHfKH1e4Af0VFrwl8
+         zFFpDY+O/App0tnUDW4uW89WMDAiAVbJV6K1ebspU/War4FPgHcuyaX2mlVJopuUCH
+         MPRc7/ARP0wKQGryForQoELp/5DFheBda42enDPs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 107/352] platform/x86: Fix config space access for intel_atomisp2_pm
-Date:   Mon, 11 Feb 2019 15:15:34 +0100
-Message-Id: <20190211141852.600463874@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 106/352] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
+Date:   Mon, 11 Feb 2019 15:15:33 +0100
+Message-Id: <20190211141852.529609218@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,152 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6a31061833a52a79c99221b6251db08cf377470e ]
+[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
 
-We lose even config space access when we power gate the ISP
-via the PUNIT. That makes lspci & co. produce gibberish.
+If vpbe_set_default_output() or vpbe_set_default_mode() fails,
+vpbe_initialize() returns error code without releasing resources.
 
-To fix that let's try to implement actual runtime pm hooks
-and inform the pci core that the device always goes to
-D3cold. That will cause the pci core to resume the device
-before attempting config space access.
+The patch adds error handling for that case.
 
-This introduces another annoyance though. We get the
-following error every time we try to resume the device:
-intel_atomisp2_pm 0000:00:03.0: Refused to change power state, currently in D3
+Found by Linux Driver Verification project (linuxtesting.org).
 
-The reason being that the pci core tries to put the device
-back into D0 via the standard PCI PM mechanism before
-calling the driver resume hook. To fix this properly
-we'd need to infiltrate the platform pm hooks (could
-turn ugly real fast), or use pm domains (which don't
-seem to exist on x86), or some extra early resume
-hook for the driver (which doesn't exist either).
-So maybe we just choose to live with the error?
-
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Alan Cox <alan@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Darren Hart <dvhart@infradead.org>
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_atomisp2_pm.c | 68 +++++++++++++++++-------
- 1 file changed, 48 insertions(+), 20 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_atomisp2_pm.c b/drivers/platform/x86/intel_atomisp2_pm.c
-index 9371603a0ac9..2a8c7a4cea35 100644
---- a/drivers/platform/x86/intel_atomisp2_pm.c
-+++ b/drivers/platform/x86/intel_atomisp2_pm.c
-@@ -33,46 +33,45 @@
- #define ISPSSPM0_IUNIT_POWER_ON		0x0
- #define ISPSSPM0_IUNIT_POWER_OFF	0x3
- 
--static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
-+static int isp_set_power(struct pci_dev *dev, bool enable)
- {
- 	unsigned long timeout;
--	u32 val;
--
--	pci_write_config_dword(dev, PCI_INTERRUPT_CTRL, 0);
--
--	/*
--	 * MRFLD IUNIT DPHY is located in an always-power-on island
--	 * MRFLD HW design need all CSI ports are disabled before
--	 * powering down the IUNIT.
--	 */
--	pci_read_config_dword(dev, PCI_CSI_CONTROL, &val);
--	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
--	pci_write_config_dword(dev, PCI_CSI_CONTROL, val);
-+	u32 val = enable ? ISPSSPM0_IUNIT_POWER_ON :
-+		ISPSSPM0_IUNIT_POWER_OFF;
- 
--	/* Write 0x3 to ISPSSPM0 bit[1:0] to power off the IUNIT */
-+	/* Write to ISPSSPM0 bit[1:0] to power on/off the IUNIT */
- 	iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0,
--			ISPSSPM0_IUNIT_POWER_OFF, ISPSSPM0_ISPSSC_MASK);
-+			val, ISPSSPM0_ISPSSC_MASK);
- 
- 	/*
- 	 * There should be no IUNIT access while power-down is
- 	 * in progress HW sighting: 4567865
- 	 * Wait up to 50 ms for the IUNIT to shut down.
-+	 * And we do the same for power on.
- 	 */
- 	timeout = jiffies + msecs_to_jiffies(50);
- 	while (1) {
--		/* Wait until ISPSSPM0 bit[25:24] shows 0x3 */
--		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &val);
--		val = (val & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
--		if (val == ISPSSPM0_IUNIT_POWER_OFF)
-+		u32 tmp;
-+
-+		/* Wait until ISPSSPM0 bit[25:24] shows the right value */
-+		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &tmp);
-+		tmp = (tmp & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
-+		if (tmp == val)
- 			break;
- 
- 		if (time_after(jiffies, timeout)) {
--			dev_err(&dev->dev, "IUNIT power-off timeout.\n");
-+			dev_err(&dev->dev, "IUNIT power-%s timeout.\n",
-+				enable ? "on" : "off");
- 			return -EBUSY;
- 		}
- 		usleep_range(1000, 2000);
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 18c035ef84cf..df1ae6b5c854 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -740,7 +740,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
+ 			 def_output);
+-		return ret;
++		goto fail_kfree_amp;
  	}
  
-+	return 0;
-+}
-+
-+static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
-+{
- 	pm_runtime_allow(&dev->dev);
- 	pm_runtime_put_sync_suspend(&dev->dev);
- 
-@@ -87,11 +86,40 @@ static void isp_remove(struct pci_dev *dev)
- 
- static int isp_pci_suspend(struct device *dev)
- {
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	u32 val;
-+
-+	pci_write_config_dword(pdev, PCI_INTERRUPT_CTRL, 0);
-+
-+	/*
-+	 * MRFLD IUNIT DPHY is located in an always-power-on island
-+	 * MRFLD HW design need all CSI ports are disabled before
-+	 * powering down the IUNIT.
-+	 */
-+	pci_read_config_dword(pdev, PCI_CSI_CONTROL, &val);
-+	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
-+	pci_write_config_dword(pdev, PCI_CSI_CONTROL, val);
-+
-+	/*
-+	 * We lose config space access when punit power gates
-+	 * the ISP. Can't use pci_set_power_state() because
-+	 * pmcsr won't actually change when we write to it.
-+	 */
-+	pci_save_state(pdev);
-+	pdev->current_state = PCI_D3cold;
-+	isp_set_power(pdev, false);
-+
+ 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
+@@ -748,12 +748,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
+ 			 def_mode);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
+ 	vpbe_dev->initialized = 1;
+ 	/* TBD handling of bootargs for default output and mode */
  	return 0;
- }
  
- static int isp_pci_resume(struct device *dev)
- {
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+
-+	isp_set_power(pdev, true);
-+	pdev->current_state = PCI_D0;
-+	pci_restore_state(pdev);
-+
- 	return 0;
- }
- 
++fail_kfree_amp:
++	mutex_lock(&vpbe_dev->lock);
++	kfree(vpbe_dev->amp);
+ fail_kfree_encoders:
+ 	kfree(vpbe_dev->encoders);
+ fail_dev_unregister:
 -- 
 2.19.1
 
