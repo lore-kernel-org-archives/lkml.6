@@ -2,178 +2,104 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FD9C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5E7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C50F217FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="isiWo2Y9"
+	by mail.kernel.org (Postfix) with ESMTP id 927FF217FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388739AbfBKUSe (ORCPT
+        id S2388759AbfBKUSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:18:34 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:9419 "EHLO nat-hk.nvidia.com"
+        Mon, 11 Feb 2019 15:18:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41846 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729137AbfBKUSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:18:30 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c61d8910000>; Tue, 12 Feb 2019 04:18:26 +0800
-Received: from HKMAIL103.nvidia.com ([10.18.16.12])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 12:18:26 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Mon, 11 Feb 2019 12:18:26 -0800
-Received: from DRBGMAIL104.nvidia.com (10.18.16.23) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 20:18:22 +0000
-Received: from HKMAIL104.nvidia.com (10.18.16.13) by DRBGMAIL104.nvidia.com
- (10.18.16.23) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 20:18:21 +0000
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (104.47.38.55) by
- HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Mon, 11 Feb 2019 20:18:20 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB2631.namprd12.prod.outlook.com (20.176.255.208) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.22; Mon, 11 Feb 2019 20:18:16 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
- 20:18:15 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        "Shardar Mohammed" <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "peda@axentia.se" <peda@axentia.se>,
-        "digetx@gmail.com" <digetx@gmail.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V18 2/6] i2c: tegra: add bus clear Master Support
-Thread-Topic: [PATCH V18 2/6] i2c: tegra: add bus clear Master Support
-Thread-Index: AQHUv+CBmuT/TkSWHkeDVsjV+R6JNKXaj1EAgAB+O5A=
-Date:   Mon, 11 Feb 2019 20:18:15 +0000
-Message-ID: <BYAPR12MB3398A2CABD430EA15FE15CC3C2640@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
- <1549652382-5476-2-git-send-email-skomatineni@nvidia.com>
- <20190211124431.kys66uzp5hwa5ret@ninjato>
-In-Reply-To: <20190211124431.kys66uzp5hwa5ret@ninjato>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB2631;6:WnQe+TYNX7INWWYjuZ+lNI08FaRl2GiZgE9GmX79vQ1o2rWK4dS3cL+2A4vEh5R77rjNEbknuPPsOslPhw0tFD8/bfVTFHA7EbW8HIGNnLw0NUg0bqu3JcB4tTDnk9+FkccLvhGpOLySknkZa7bq/6+d5sMq8aagSaPv9sngnv6PFi8UoUWcC3qjLF8Kx//7km52BPhlvUJEzOaT0Fmd4Tg5ME25wUuECGc/27ZIMLbgrrzNagKNSjeZvZoNefQGaM8VoFRZAzPFEWXPqrG86NLgbDFUmaSn45I6JDkMvZecDPWnakbY35cMoHhQi9CFCaHcPpWU0YvB0XdOKTYjuZU2vBUD4Do8vuRXX9hDpnGDAp0XYpu0OaWpTC1R3zRvIdf20z9/Xv7V4B4p+Vmq+eaHZXZE98V5kusQUG+LQwqTGYcxgV2ywfi5wDJovw6CsvTh0dZgY3MLLej7Bi9HHg==;5:CZ/dR54+8Iwh8OI78BcjTbHAy9kx1Lk+vFG3QZD5QYEfme0QVtdIJBimrgRvXIKTwf5/cXCIojCnbhIrBIzgHhrqgDEcXHV6J5FaO8cN9QrfMd+q2bNh1s9WfWeS2nOSZX4zV71GV1Pp5IDYquyGYs8YICMZQt7UaVXE8HDo+bo0AFZf/ZYs7dF7olByv1KWes7NIN7WQ2UFWehLKgKiog==;7:kM6yP6x0ql7h6NZ5Xow5n1FleSaeFDQL3Z7hE625+1cj6aTwdaQCoZUlOMfrbTH0APjntHMWRFfbGvbKcJ9F171VrN4LNSxbqxf2F0GqlfUtXmDsfbwLUYFbDCcmERaOw4LE7p8IokhpR+T0pBF8Lg==
-x-ms-office365-filtering-correlation-id: 4dcd042c-47f1-45a7-b030-08d6905e0e40
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2631;
-x-ms-traffictypediagnostic: BYAPR12MB2631:
-x-microsoft-antispam-prvs: <BYAPR12MB2631348DA5D7D14B10DA3ACAC2640@BYAPR12MB2631.namprd12.prod.outlook.com>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(376002)(136003)(396003)(189003)(199004)(229853002)(9686003)(478600001)(68736007)(14454004)(2906002)(6116002)(3846002)(305945005)(55016002)(74316002)(7736002)(26005)(6436002)(4326008)(25786009)(71190400001)(106356001)(71200400001)(105586002)(99286004)(186003)(7696005)(6916009)(102836004)(76176011)(476003)(66066001)(446003)(5024004)(14444005)(86362001)(6506007)(33656002)(11346002)(486006)(316002)(54906003)(81166006)(81156014)(53936002)(6246003)(97736004)(8936002)(8676002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2631;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 14bVt/Zo0NSd6us0UhpPSE1jd3Ugz2E8P0NvT+WKeJnW/DnV+CXIDm1Dt9tKQHkTezdT65EA7BLEVYJKMwfDJwET7euVWGob2osEIDy3zVd+L1zyP3Nr2Cwxl80o5GedE2NvhvuhNZaIUMey4UbakhcrtQASqBly3TAlOFA99fQ0YpWITV+5A6eUsIN027c2M9zF4Q4KZUjITIysge14I9oM93036itqeKwQxv14ItMcm+Mig7zlsAFw9XgpV8T5+ar2mXtx/uHWapvL8bsr2duSxaZl8/lN0A9OXXCc47/HH96C0YNtd7YSjUqJVGld6yfa1mEzKzM46Rfeqt3+iAbiySXUd27HKSXKBN9G0FLsP4t2gAIOo3mDtQSF3oTEFGW4QqWyk4SPLAAf72duRTS+YXpP70eGl0Ypo30KUks=
+        id S1729137AbfBKUSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 15:18:36 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CB3B5821CC;
+        Mon, 11 Feb 2019 20:18:35 +0000 (UTC)
+Received: from krava (ovpn-204-173.brq.redhat.com [10.40.204.173])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0490610018E0;
+        Mon, 11 Feb 2019 20:18:32 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 21:18:31 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190211201831.GE5046@krava>
+References: <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org>
+ <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava>
+ <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava>
+ <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+ <20190211185306.GD5046@krava>
+ <20190211193202.GG3269@kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dcd042c-47f1-45a7-b030-08d6905e0e40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 20:18:15.8718
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2631
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549916306; bh=SFBj+GdHZ+m77WdYRGtFl6VyUufJmfVlkKZjDpFmVh4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=isiWo2Y9bZygx64ByFiIvDTjW3t2fl2Bk8QOPIN3mirKs7YmTSCQHSbwNmNWeDmse
-         KAPTP+AA3C9j8iNXnZBDAOTC6uMaGd+Q8Bk8bAQ2y1peGL7Qz/G2UMZrx7TREEs1bG
-         zwzFurJvE/5farNIBAjBO4KAoqMlTZ7smhla71l4z6kcTvKuuoW1/BvQrR7A73MoJ/
-         jdyyuEjz0yGxTI9B3cOs+0IEuarCrV0096Q3JjYE1FIJWZySwhi7SS6zGamB80Hqp9
-         mho+G2t6g4Kt1HAu+8Pl8rChMp8QDtl39IbU+cm5ofF2igyVdRKfVYWv7aXPwVwud6
-         ojw4zmOEasqFw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211193202.GG3269@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 20:18:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Bus clear feature of Tegra I2C controller helps to recover from bus=20
-> > hang when I2C master loses the bus arbitration due to the slave device=
-=20
-> > holding SDA LOW continuously for some unknown reasons.
-> >=20
-> > Per I2C specification, the device that held the bus LOW should release=
-=20
-> > it within 9 clock pulses.
-> >=20
-> > During bus clear operation, Tegra I2C controller sends 9 clock pulses=20
-> > and terminates the transaction with STOP condition.
-> > Upon successful bus clear operation, bus goes to idle state and driver=
-=20
-> > retries the transaction.
-> >=20
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->
-> We have a bus recovery infrastructure in the core. Tying your code into i=
-t should be easy. You probably just need a 'struct i2c_bus_recovery_info', =
-populate the 'recover_bus' callback with 'tegra_i2c_issue_bus_clear()', and=
- attach this struct to the 'struct adapter' if the IP core supports bus rec=
-overy, otherwise leave it empty.
-> Then, you can...
->
-> > +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev) {
-> > +	int err;
-> > +	unsigned long time_left;
-> > +	u32 reg;
-> > +
-> > +	if (i2c_dev->hw->supports_bus_clear) {
->
->... remove the if here because the core will check for a valid i2c_bus_rec=
-overy_info...
->
-> > @@ -759,6 +818,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev=
- *i2c_dev,
-> >  		return 0;
-> > =20
-> >  	tegra_i2c_init(i2c_dev);
-> > +	/* start recovery upon arbitration loss in single master mode */
-> > +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> > +		if (!i2c_dev->is_multimaster_mode)
-> > +			return tegra_i2c_issue_bus_clear(i2c_dev);
->
->... and use simply i2c_recover_bus() here.
->
-> This will help making bus recovery use consistent across drivers.
->
->
-OK, Will update to use i2c_bus_recovery_info
+On Mon, Feb 11, 2019 at 04:32:02PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Feb 11, 2019 at 07:53:06PM +0100, Jiri Olsa escreveu:
+> > On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
+> > > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
+> > > > I think all could be added and worked around with exception
+> > > > of BUILD_ID, which we store at the end (after processing
+> > > > all data) and we need it early in the report phase
+> 
+> > > Buildids are injected after the fact via perf inject when in pipe mode.
+> 
+> > > > maybe it's time to re-think that buildid -> mmap event
+> > > > association again, because it's pain in current implementation
+> > > > as well
+> 
+> > > Sure, but what do you propose?
+> 
+> > this:
+> > 
+> > > > looks like bpf code is actualy getting build ids and storing
+> > > > it for the callchains in kernel.. we can check if we can do
+> > > > something similar for mmap events
+> 
+> kernel/bpf/stackmap.c
+> 
+> /* Parse build ID from 64-bit ELF */
+> static int stack_map_get_build_id_64(void *page_addr,
+>                                      unsigned char *build_id)
+> 
+> yeah, wasn't aware of that, good thing doing backports, huh? :-)
+> 
+> So do you thing about having a PERF_SAMPLE_BUILDID in sample_type and go
+> and stash that thing in PERF_RECORD_MMAP2?
 
-Sowjanya
+I thought having new MMAP3 event version with buildid field in it
+if available and/or enabled by bit in perf_event_attr
+
+jirka
