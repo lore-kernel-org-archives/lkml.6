@@ -2,105 +2,160 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733FBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80683C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D45218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:57:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vaYzKu60"
+	by mail.kernel.org (Postfix) with ESMTP id 58B91218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:00:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfBKM5b (ORCPT
+        id S1727492AbfBKNAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:57:31 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38383 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbfBKM5b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:57:31 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h58so1504312edb.5;
-        Mon, 11 Feb 2019 04:57:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tv4TgAYhDYmOnoLw7U2uAxQBjPNqBC/ZnQfdFp3DWwk=;
-        b=vaYzKu60uFz4TJ/6AV3HStPXob84K6l+YdNgOBbHPO9Q2g9qCELpXBTBeVoHkuNvfw
-         VIOHRiRaWAvFA+O0vLVIYxDgLhcD1hWkCMfi8owBHvrVAeHt1HJX6CqmVqJq+unQDlS8
-         3aBNbmm21mC9pJPg/ByumS1jmTPDaQGjrSBWjqrKU7AB0Sih9ir97YeDbwXIm+Bvm34E
-         SEGKTadneFty754DLcRY39UoCug8KNMYhv5zgAgRQ44oqpu4iYPiylaL7QxFnN/dwOTc
-         j8yo/mW9KKITveKQqzA6Ys+dXRTGiGad5UZYX9LIHRgvH2w1hbEQSv9NB/kDzdp49TFx
-         zyAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Tv4TgAYhDYmOnoLw7U2uAxQBjPNqBC/ZnQfdFp3DWwk=;
-        b=nC6ecfKEw6JPCks668Y0xvjSWc+1Ve1fb2M9SRa4pKIbBZGE+SlPHbDAD6VLqYVB+Z
-         2qjk4P6BpjxM1yXrIovu9g6WBUuYuw7AV8Wi1OijlfLcpOBkLp3OSBA8o2Szk/iioapn
-         Zn3LOznAc9Jy6voj1qVU6ZHOT8dIVPdPcfkyzoL0jVWXZ6pjRwDuaNYeJyePp6LBG5IP
-         JInzCim44/jhuWpW2ZWjbe8FrMTq3WiGh7ejwXDRGNj4FigndiqEEOGSglOpWU8UvxCh
-         U4u/TQzv1Ea2i/8onMBTeh/HMHowbISiBTMmSECMJQthUArrz5HsJRu2jay1BgQ64nGC
-         bVUw==
-X-Gm-Message-State: AHQUAuYmRLeOPx9DtLQfwohYwfvacmkrLLX9KWPk6IDGPVgmCBRCTcP1
-        KkRV9ux4qZKS11kN2vXQzK4=
-X-Google-Smtp-Source: AHgI3IYa+XOeNcBVI3boGhrkQODVb103ScuJGjNHmdH9MDEc4/6DVt+6qhhDFfWnQIFH1U/vJubECA==
-X-Received: by 2002:a50:c281:: with SMTP id o1mr304890edf.136.1549889849522;
-        Mon, 11 Feb 2019 04:57:29 -0800 (PST)
-Received: from neptune.fritz.box ([178.19.216.175])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm2390684ejk.50.2019.02.11.04.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 04:57:28 -0800 (PST)
-From:   Alban Crequy <alban.crequy@gmail.com>
-X-Google-Original-From: Alban Crequy <alban@kinvolk.io>
-To:     ast@kernel.org, daniel@iogearbox.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        john.fastabend@gmail.com, alban@kinvolk.io
-Subject: [PATCH] bpf: bpftool, fix documentation for attach types
-Date:   Mon, 11 Feb 2019 13:54:26 +0100
-Message-Id: <20190211125426.21072-1-alban@kinvolk.io>
-X-Mailer: git-send-email 2.20.1
+        Mon, 11 Feb 2019 08:00:45 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47804 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfBKNAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:00:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C5AC80D;
+        Mon, 11 Feb 2019 05:00:44 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 211E93F557;
+        Mon, 11 Feb 2019 05:00:42 -0800 (PST)
+Subject: Re: [RESEND PATCH v2 17/33] ARM: davinci: aintc: move timer-specific
+ irq_set_handler() out of irq.c
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190211122606.8662-1-brgl@bgdev.pl>
+ <20190211122606.8662-18-brgl@bgdev.pl>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <67127a57-3d1f-5cf4-efb8-f1a2a49b3a2a@arm.com>
+Date:   Mon, 11 Feb 2019 13:00:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211122606.8662-18-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Crequy <alban@kinvolk.io>
+On 11/02/2019 12:25, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> I've been unable to figure out exactly why, but it seems that the
+> IRQ_TINT1_TINT34 interrupt for timer 1 needs to be handled as a
+> level irq, not edge like all others.
 
-bpftool has support for attach types "stream_verdict" and
-"stream_parser" but the documentation was referring to them with
-"skb_verdict" and "skb_parse". The inconsistency comes from commit
-b7d3826c2ed6 ("bpf: bpftool, add support for attaching programs to
-maps").
+That's probably because its comparator maintains the interrupt asserted
+as long as its value is less than the counter.
 
-This patch changes the documentation to match the implementation.
+Level-trigger timers are the most common thing on this side of the known
+universe.
 
-Signed-off-by: Alban Crequy <alban@kinvolk.io>
----
- tools/bpf/bpftool/prog.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Let's move the handler setup out of the aintc driver where it's lived
+> since the beginning and into the dm* SoC-specific files where it
+> belongs.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/mach-davinci/dm355.c  | 8 ++++++++
+>  arch/arm/mach-davinci/dm365.c  | 8 ++++++++
+>  arch/arm/mach-davinci/dm644x.c | 8 ++++++++
+>  arch/arm/mach-davinci/dm646x.c | 8 ++++++++
+>  arch/arm/mach-davinci/irq.c    | 3 ---
+>  5 files changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+> index c7cd765114af..a732f2ea1d9a 100644
+> --- a/arch/arm/mach-davinci/dm355.c
+> +++ b/arch/arm/mach-davinci/dm355.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/dmaengine.h>
+>  #include <linux/init.h>
+> +#include <linux/irq.h>
+>  #include <linux/irqchip/irq-davinci-aintc.h>
+>  #include <linux/platform_data/edma.h>
+>  #include <linux/platform_data/gpio-davinci.h>
+> @@ -744,6 +745,13 @@ void __init dm355_init_time(void)
+>  	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
+>  	dm355_psc_init(NULL, psc);
+>  
+> +	/*
+> +	 * Nobody knows why anymore, but this interrupt has been handled as
+> +	 * a level irq from the very beginning of davinci support in mainline
+> +	 * linux.
+> +	 */
+> +	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
+> +
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 0640e9bc0ada..dfaa019a60f0 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -1198,7 +1198,7 @@ static int do_help(int argc, char **argv)
- 		"                 cgroup/bind4 | cgroup/bind6 | cgroup/post_bind4 |\n"
- 		"                 cgroup/post_bind6 | cgroup/connect4 | cgroup/connect6 |\n"
- 		"                 cgroup/sendmsg4 | cgroup/sendmsg6 }\n"
--		"       ATTACH_TYPE := { msg_verdict | skb_verdict | skb_parse |\n"
-+		"       ATTACH_TYPE := { msg_verdict | stream_verdict | stream_parser |\n"
- 		"                        flow_dissector }\n"
- 		"       " HELP_SPEC_OPTIONS "\n"
- 		"",
+Now, the real question is: why isn't that set as part of the
+set_irq_type() callback, instead of hardcoding it in the platform?
+
+This is exactly the kind of information that should come as part of the
+DT or from the driver as one of the request_irq() flags.
+
+It would save quite a bit of boilerplate code.
+
+Thanks,
+
+	M.
 -- 
-2.20.1
-
+Jazz is not dead. It just smells funny...
