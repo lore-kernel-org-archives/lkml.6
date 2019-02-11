@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D827C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44E2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC8F222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B645222A8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897251;
-	bh=aCJfhwHXmx/qLPNtEBO5lh3oM/AafAbznhfC82lpq4M=;
+	s=default; t=1549897253;
+	bh=g3Tyt/RJpRvjJqvPXAJ2gQYIu+bAnx68EegKD2ytITc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lHCia14NJdS1d0RMvKHN3zS2KFmhfPvhzkEsu3cuD1Ccx0Jq+cPrPC/fPi9BtJU5F
-	 cA6puIdFBG1e6OximuaW6FmyweYhmiUthxRQcxwwfKuiBUpvR/8EMTTvz3ARpom0cb
-	 VyxKrmpitgXWYCVFmjaItHevCpCGeYLjtqxZjDRc=
+	b=ZXdSkF4kNYkcEU0Q4GCmFPiwSADTSOa+SyDctEgPfxCzQ1MlIyd6R8ypq+/eTadnC
+	 m5sz+Os8xRLRNlCPigFK42jRHF/t0zjA4+oAuFZlsvpPKwMMBM8s7qv9KaTQ02bmYX
+	 Kpe372kruyVXOWZGoMMTll8x2FDJdHZHFqwjaeGg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390076AbfBKPAt (ORCPT
+        id S2389665AbfBKPAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48694 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390060AbfBKPAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:43 -0500
+        id S2390072AbfBKPAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B12206BA;
-        Mon, 11 Feb 2019 15:00:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 022FC222A7;
+        Mon, 11 Feb 2019 15:00:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897242;
-        bh=aCJfhwHXmx/qLPNtEBO5lh3oM/AafAbznhfC82lpq4M=;
+        s=default; t=1549897248;
+        bh=g3Tyt/RJpRvjJqvPXAJ2gQYIu+bAnx68EegKD2ytITc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2IDEq9C+3czZRAFVH6lYw8j2hjaS1FENaOOs3fnifHi1BDGoYTID7agE5swFt1eah
-         JehUFn7v5A5BAaw7Jnd46FMzlXTtmNHYEFxaTY7DcGUo6IuTCS/f80YrMPrU35oL3W
-         D1qDkzJbzsCI37iEkz+x1JxJNPo70XZ6YIm2uUGY=
+        b=1Ql/Esuhc7+RIm36Sr5E5CnzFB/A9VlqGvCyXzJpKKdyP2gU222UVYuN0t5g8XfVZ
+         JZu01F4VqIqj2nMdRKj3z4LjeIvu8ngb4Btyt2KpsX7LQT2V9SpNmEk++GBy6SAIzC
+         C6FA0RFkcQ/MB0FSCphR+Dn04HzQ0gtsNM3QJZks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 137/205] hwmon: (lm80) fix a missing check of bus read in lm80 probe
-Date:   Mon, 11 Feb 2019 15:18:55 +0100
-Message-Id: <20190211141837.344278836@linuxfoundation.org>
+Subject: [PATCH 4.14 139/205] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
+Date:   Mon, 11 Feb 2019 15:18:57 +0100
+Message-Id: <20190211141837.472851151@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,51 +68,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9aa3aa15f4c2f74f47afd6c5db4b420fadf3f315 ]
+[ Upstream commit 9d880c5945c748d8edcac30965f3349a602158c4 ]
 
-In lm80_probe(), if lm80_read_value() fails, it returns a negative
-error number which is stored to data->fan[f_min] and will be further
-used. We should avoid using the data if the read fails.
+Clang warns when one enumerated type is implicitly converted to another:
 
-The fix checks if lm80_read_value() fails, and if so, returns with the
-error number.
+drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction, DMA_CTRL_ACK);
+                                ^~~~~~~~~
+drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction,
+                                ^~~~~~~~~
+2 warnings generated.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
+Because we know the value of the dma_data_direction enum from the
+switch statement, we can just use the proper value from
+dma_transfer_direction so there is no more conversion.
+
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/lm80.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index 04f9df0d2341..0e30fa00204c 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -628,6 +628,7 @@ static int lm80_probe(struct i2c_client *client,
- 	struct device *dev = &client->dev;
- 	struct device *hwmon_dev;
- 	struct lm80_data *data;
-+	int rv;
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 790f7cadc1ed..efebc484e371 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -555,7 +555,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_src,
+ 				ctx->device->dma.sg_src_len,
+-				direction, DMA_CTRL_ACK);
++				DMA_MEM_TO_DEV, DMA_CTRL_ACK);
+ 		break;
  
- 	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
- 	if (!data)
-@@ -640,8 +641,14 @@ static int lm80_probe(struct i2c_client *client,
- 	lm80_init_client(client);
+ 	case DMA_FROM_DEVICE:
+@@ -579,7 +579,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_dst,
+ 				ctx->device->dma.sg_dst_len,
+-				direction,
++				DMA_DEV_TO_MEM,
+ 				DMA_CTRL_ACK |
+ 				DMA_PREP_INTERRUPT);
  
- 	/* A few vars need to be filled upon startup */
--	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
--	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][0] = rv;
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][1] = rv;
- 
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
- 							   data, lm80_groups);
 -- 
 2.19.1
 
