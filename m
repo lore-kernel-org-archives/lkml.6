@@ -2,597 +2,116 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430C7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5E8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0656C2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C43A2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o4DD2IWc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfBKM1q (ORCPT
+        id S1727655AbfBKM0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:27:46 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37408 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727650AbfBKM1m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:27:42 -0500
-Received: from hades.home (unknown [IPv6:2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: martyn)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5DDC627DA4B;
-        Mon, 11 Feb 2019 12:27:39 +0000 (GMT)
-From:   Martyn Welch <martyn.welch@collabora.com>
-To:     Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc:     Martyn Welch <martyn.welch@collabora.com>,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org
-Subject: [PATCH] ARM: dts: am335x: Add support for Bosch Guardian
-Date:   Mon, 11 Feb 2019 12:27:27 +0000
-Message-Id: <20190211122727.5582-1-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 11 Feb 2019 07:26:41 -0500
+Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:16664
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727604AbfBKM0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:26:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VejCmhzdMwe7UHPjg65TGKridhcxr8VDBPkQaURJW0A=;
+ b=o4DD2IWcf5b+832xty9lF6/epH+mFWwcno+1uSfinM2rLb99MH6lrtZQz6hzHP8Hj3Rm/NzqEsWZ3Mmzc2b2X5/uy/Quk8K/dptsSqcSt82EucDgC8J6/sF/MWT/HgBPsljP3CPsTmAQZB4qaLnxLukJ18MpIVC7QFPGSY6XtHk=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.16) by
+ DB7PR04MB4873.eurprd04.prod.outlook.com (20.176.234.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Mon, 11 Feb 2019 12:26:30 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::fd45:a391:7591:1aa5]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::fd45:a391:7591:1aa5%6]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
+ 12:26:29 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+CC:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "ghackmann@android.com" <ghackmann@android.com>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>
+Subject: RE: [PATCH] arm64: use memblocks_present
+Thread-Topic: [PATCH] arm64: use memblocks_present
+Thread-Index: AQHUwSMEW3Pz/Bimd06u3YBihOcWUKXahhcAgAABDcA=
+Date:   Mon, 11 Feb 2019 12:26:28 +0000
+Message-ID: <DB7PR04MB4490C1F037EB7C82A4EB218D88640@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190210093738.30923-1-peng.fan@nxp.com>
+ <20190211122032.GC165128@arrakis.emea.arm.com>
+In-Reply-To: <20190211122032.GC165128@arrakis.emea.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4873;6:5KkH0yWiFphfYnNf6BzJIFYtvGI5aFuM5v0C0f2l5GnqYv9p6FCV8VKqIVyhLasXfRTSOJi3oz9dBkubYPvtZu/mX9QFyk4aw3mQodTaTv+eOhAhT0IvxcY6ep8JF3tC6XcvdgK86aWvsrJnnP23gVezONpufv/LwKtynKJ/n1ochDWgwLB2dkgo/4Z5JImH0ednBaXMSVgAUFbW5Elpz+EfmTKJNBeQ7x2MRrQIis/1+jMWD7QugVqZLqJUVzT4rLD1upgdcVA+iKqvVUNvkCg5c4HAL1Yb+UPUGamlEb6/T1whO3RS9B3KIlwP8jg9t/HuwFH/8bX1t2DEb4jRxNDIt3fm/9hzRmA8iNTQnWwVrLMtU3ZpGoD8sai1HiVkf2qw8kHmMv0t3vCs5c1eD4XMBqszp6HPQA1OpK8GVAAxFdVFcMgfCs/rSSiQ2TeiyjHl3DwKIwOasr6L/OdBzQ==;5:UttVO7BASdEZjTdh44S1qZawZtJq72jEBtO7aVn5HxCh8L9s+mkl6C9R56RlwWNDJrc2zRiccNQCfr7KfDVksI92AehdWNhR1hjo7NoZm1gcAztgbmWBVwhVjGSTwIGopilkUCrbK7VnjgpUta87cTbM1p9gFjChvXaoR7KXo0N78bBaMerVx2dMdJBieP7UaMcxbUw6wrsMq4/h/2+Lzw==;7:mFh26dPRKm9FhZaucrBJGb6OlXfUpbpBDiWOu00tyHHyNPSQxTB+jLRA4EtTqSlpxKWZiJG52Wa82A6PWuMV16B/SW3HKs5XEuersR0LIKCnJ/zsdRAVsTbrMaE0WmavVOpOVl0RHyxJ8zNa5e5/4Q==
+x-ms-office365-filtering-correlation-id: 723b3afa-62c7-4006-d449-08d6901c268d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4873;
+x-ms-traffictypediagnostic: DB7PR04MB4873:
+x-microsoft-antispam-prvs: <DB7PR04MB4873200B3BDE861A96E2484A88640@DB7PR04MB4873.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0945B0CC72
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(396003)(366004)(13464003)(189003)(199004)(99286004)(105586002)(26005)(7696005)(66066001)(4326008)(86362001)(97736004)(53546011)(6506007)(25786009)(102836004)(6246003)(71200400001)(53936002)(106356001)(68736007)(76176011)(71190400001)(2906002)(6436002)(316002)(11346002)(229853002)(14454004)(446003)(7416002)(305945005)(256004)(54906003)(486006)(6116002)(33656002)(3846002)(74316002)(44832011)(55016002)(9686003)(8936002)(6916009)(8676002)(81156014)(81166006)(476003)(7736002)(478600001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4873;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: eH67NXaJc91SYXMt+SwE/gS0FCAfC+hLRunznnCCmNkrxdp70JLdltkHEsXlSdg3eWmgtgzDCRcU2MOs4iUo9QLN5ZfY7xwm76RNBuwLiKIXG9eu3rO7EvNF1QOYE4Yr56jQgTFwOsUjYBgXCsuuKejYQFsAQFyFH+JYSDe4UJGdW9bSN1okD8D7bRmcxzrKfYlHGmvCwLzGextVSA+bg1/DFrPnKW17q1NnfE8d1s3eYpVzN4Pl6P2b/VYPQSPDWueJxq6iGf5+QLTFN7DGZOadGrBi7TN0zk7tNDW/XJGdCmyxqrex9MH0A0gW94jI3ZpfGFgIQYgRlvMkXvkyva90kbeGUtKEV0yI0r3gAO85+0w1720MQQlSwaLRqLjUO9Ygp5sRF0fxBRQNXaKI2D02viWU6LHTeb/sOyZ80rk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 723b3afa-62c7-4006-d449-08d6901c268d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 12:26:29.9506
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4873
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Bosch Guardian is a TI am335x based device.
-
-It's hardware specifications are as follows:
-
- * 256 MB DDR3 memory
- * 512 MB NAND Flash
- * USB OTG
- * RS232
- * MicroSD external storage
- * LCD Display interface
-
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-
----
-
- arch/arm/boot/dts/Makefile            |   1 +
- arch/arm/boot/dts/am335x-guardian.dts | 511 ++++++++++++++++++++++++++
- 2 files changed, 512 insertions(+)
- create mode 100644 arch/arm/boot/dts/am335x-guardian.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index bd40148a15b2..1ad9a6307b0a 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -719,6 +719,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
- 	am335x-cm-t335.dtb \
- 	am335x-evm.dtb \
- 	am335x-evmsk.dtb \
-+	am335x-guardian.dtb \
- 	am335x-icev2.dtb \
- 	am335x-lxm.dtb \
- 	am335x-moxa-uc-2101.dtb \
-diff --git a/arch/arm/boot/dts/am335x-guardian.dts b/arch/arm/boot/dts/am335x-guardian.dts
-new file mode 100644
-index 000000000000..d8652ab014b2
---- /dev/null
-+++ b/arch/arm/boot/dts/am335x-guardian.dts
-@@ -0,0 +1,511 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
-+ * Copyright (C) 2018 Robert Bosch Power Tools GmbH
-+ */
-+/dts-v1/;
-+
-+#include "am33xx.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Bosch AM335x Guardian";
-+	compatible = "bosch,am335x-guardian", "ti,am33xx";
-+
-+	chosen {
-+		stdout-path = &uart0;
-+		tick-timer = &timer2;
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			cpu0-supply = <&dcdc2_reg>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>; /* 256 MB */
-+	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_keys_pins>;
-+
-+		button21 {
-+			label = "guardian-power-button";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpio2 21 0>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&leds_pins>;
-+
-+		led1 {
-+			label = "green:heartbeat";
-+			gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "off";
-+		};
-+
-+		led2 {
-+			label = "green:mmc0";
-+			gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "mmc0";
-+			default-state = "off";
-+		};
-+	};
-+
-+	panel {
-+		compatible = "ti,tilcdc,panel";
-+		pinctrl-names = "default", "sleep";
-+		pinctrl-0 = <&lcd_pins_default &lcd_disen_pins>;
-+		pinctrl-1 = <&lcd_pins_sleep>;
-+
-+		display-timings {
-+			320x240 {
-+				hactive         = <320>;
-+				vactive         = <240>;
-+				hback-porch     = <68>;
-+				hfront-porch    = <20>;
-+				hsync-len       = <1>;
-+				vback-porch     = <18>;
-+				vfront-porch    = <4>;
-+				vsync-len       = <1>;
-+				clock-frequency = <9000000>;
-+				hsync-active    = <0>;
-+				vsync-active    = <0>;
-+			};
-+		};
-+		panel-info {
-+			ac-bias           = <255>;
-+			ac-bias-intrpt    = <0>;
-+			dma-burst-sz      = <16>;
-+			bpp               = <24>;
-+			bus-width         = <16>;
-+			fdd               = <0x80>;
-+			sync-edge         = <0>;
-+			sync-ctrl         = <1>;
-+			raster-order      = <0>;
-+			fifo-th           = <0>;
-+		};
-+
-+	};
-+
-+	pwm7: dmtimer-pwm {
-+		compatible = "ti,omap-dmtimer-pwm";
-+		ti,timers = <&timer7>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&dmtimer7_pins>;
-+	};
-+
-+	vmmcsd_fixed: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmmcsd_fixed";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+&cppi41dma  {
-+	status = "okay";
-+};
-+
-+&elm {
-+	status = "okay";
-+};
-+
-+&gpmc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&nandflash_pins>;
-+	ranges = <0 0 0x08000000 0x1000000>;  /* CS0: 16MB for NAND */
-+	status = "okay";
-+
-+	nand@0,0 {
-+		compatible = "ti,omap2-nand";
-+		reg = <0 0 4>; /* CS0, offset 0, IO size 4 */
-+		interrupt-parent = <&gpmc>;
-+		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
-+			     <1 IRQ_TYPE_NONE>; /* termcount */
-+		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
-+		ti,nand-ecc-opt = "bch16";
-+		ti,elm-id = <&elm>;
-+		nand-bus-width = <8>;
-+		gpmc,device-width = <1>;
-+		gpmc,sync-clk-ps = <0>;
-+		gpmc,cs-on-ns = <0>;
-+		gpmc,cs-rd-off-ns = <44>;
-+		gpmc,cs-wr-off-ns = <44>;
-+		gpmc,adv-on-ns = <6>;
-+		gpmc,adv-rd-off-ns = <34>;
-+		gpmc,adv-wr-off-ns = <44>;
-+		gpmc,we-on-ns = <0>;
-+		gpmc,we-off-ns = <40>;
-+		gpmc,oe-on-ns = <0>;
-+		gpmc,oe-off-ns = <54>;
-+		gpmc,access-ns = <64>;
-+		gpmc,rd-cycle-ns = <82>;
-+		gpmc,wr-cycle-ns = <82>;
-+		gpmc,bus-turnaround-ns = <0>;
-+		gpmc,cycle2cycle-delay-ns = <0>;
-+		gpmc,clk-activation-ns = <0>;
-+		gpmc,wr-access-ns = <40>;
-+		gpmc,wr-data-mux-bus-ns = <0>;
-+
-+		/*
-+		 * MTD partition table
-+		 *
-+		 * All SPL-* partitions are sized to minimal length which can
-+		 * be independently programmable. For NAND flash this is equal
-+		 * to size of erase-block.
-+		 */
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partition@0 {
-+			label = "SPL";
-+			reg = <0x0 0x40000>;
-+		};
-+
-+		partition@1 {
-+			label = "SPL.backup1";
-+			reg = <0x40000  0x40000>;
-+		};
-+
-+		partition@2 {
-+			label = "SPL.backup2";
-+			reg = <0x80000  0x40000>;
-+		};
-+
-+		partition@3 {
-+			label = "SPL.backup3";
-+			reg = <0xc0000  0x40000>;
-+		};
-+
-+		partition@4 {
-+			label = "u-boot";
-+			reg = <0x100000 0x100000>;
-+		};
-+
-+		partition@5 {
-+			label = "u-boot.backup1";
-+			reg = <0x200000 0x100000>;
-+		};
-+
-+		partition@6 {
-+			label = "u-boot-env";
-+			reg = <0x300000 0x40000>;
-+		};
-+
-+		partition@7 {
-+			label = "u-boot-env.backup1";
-+			reg = <0x340000 0x40000>;
-+		};
-+
-+		partition@8 {
-+			label = "UBI";
-+			reg = <0x380000 0x1fc80000>;
-+		};
-+	};
-+};
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	tps: tps@24 {
-+		reg = <0x24>;
-+	};
-+};
-+
-+&lcdc {
-+	blue-and-red-wiring = "crossed";
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	bus-width = <0x4>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pins>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&vmmcsd_fixed>;
-+	status = "okay";
-+};
-+
-+&rtc {
-+	clocks = <&clk_32768_ck>, <&clk_24mhz_clkctrl AM3_CLK_24MHZ_CLKDIV32K_CLKCTRL 0>;
-+	clock-names = "ext-clk", "int-clk";
-+	system-power-controller;
-+};
-+
-+&spi0 {
-+	ti,pindir-d0-out-d1-in;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi0_pins>;
-+	status = "okay";
-+};
-+
-+/include/ "tps65217.dtsi"
-+
-+&tps {
-+	ti,pmic-shutdown-controller;
-+	interrupt-parent = <&intc>;
-+	interrupts = <7>; /* NMI */
-+
-+	backlight {
-+		isel = <1>;  /* 1 - ISET1, 2 ISET2 */
-+		fdim = <100>; /* TPS65217_BL_FDIM_100HZ */
-+		default-brightness = <100>;
-+	};
-+
-+	regulators {
-+		dcdc1_reg: regulator@0 {
-+			regulator-name = "vdds_dpr";
-+			regulator-always-on;
-+		};
-+
-+		dcdc2_reg: regulator@1 {
-+			regulator-name = "vdd_mpu";
-+			regulator-min-microvolt = <925000>;
-+			regulator-max-microvolt = <1351500>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+
-+		dcdc3_reg: regulator@2 {
-+			regulator-name = "vdd_core";
-+			regulator-min-microvolt = <925000>;
-+			regulator-max-microvolt = <1150000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+
-+		ldo1_reg: regulator@3 {
-+			regulator-name = "vio,vrtc,vdds";
-+			regulator-always-on;
-+		};
-+
-+		ldo2_reg: regulator@4 {
-+			regulator-name = "vdd_3v3aux";
-+			regulator-always-on;
-+		};
-+
-+		ldo3_reg: regulator@5 {
-+			regulator-name = "vdd_1v8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+
-+		ldo4_reg: regulator@6 {
-+			regulator-name = "vdd_3v3a";
-+			regulator-always-on;
-+		};
-+	};
-+};
-+
-+&tscadc {
-+	status = "okay";
-+
-+	adc {
-+		ti,adc-channels = <0 1 2 3 4 5 6>;
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins>;
-+	status = "okay";
-+};
-+
-+&usb {
-+	status = "okay";
-+};
-+
-+&usb_ctrl_mod {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usb0_phy {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb1_phy {
-+	status = "okay";
-+};
-+
-+&am33xx_pinmux {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&clkout2_pin &gpio_pins>;
-+
-+	clkout2_pin: pinmux_clkout2_pin {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x9b4, PIN_OUTPUT_PULLDOWN | MUX_MODE3)
-+		>;
-+	};
-+
-+	dmtimer7_pins: pinmux_dmtimer7_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x968, PIN_OUTPUT | MUX_MODE5)
-+		>;
-+	};
-+
-+	gpio_keys_pins: pinmux_gpio_keys_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x940, PIN_INPUT | MUX_MODE7)
-+		>;
-+	};
-+
-+	gpio_pins: pinmux_gpio_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x928, PIN_OUTPUT | MUX_MODE7)
-+			AM33XX_IOPAD(0x990, PIN_OUTPUT | MUX_MODE7)
-+		>;
-+	};
-+
-+	i2c0_pins: pinmux_i2c0_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x988, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x98c, PIN_INPUT_PULLUP | MUX_MODE0)
-+		>;
-+	};
-+
-+	lcd_disen_pins: pinmux_lcd_disen_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x9a4, PIN_OUTPUT_PULLUP | SLEWCTRL_SLOW | MUX_MODE7)
-+		>;
-+	};
-+
-+	lcd_pins_default: pinmux_lcd_pins_default {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x820, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x824, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x828, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x82c, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x830, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x834, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x838, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x83c, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE1)
-+			AM33XX_IOPAD(0x8a0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8a4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8a8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8ac, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8b0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8b4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8b8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8bc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8c0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8c4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8c8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8cc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8d0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8d4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8d8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8dc, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8e0, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8e4, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8e8, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+			AM33XX_IOPAD(0x8ec, PIN_OUTPUT | SLEWCTRL_SLOW | MUX_MODE0)
-+		>;
-+	};
-+
-+	lcd_pins_sleep: pinmux_lcd_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x8a0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8a4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8a8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8ac, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8b0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8b4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8b8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8bc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8c0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8c4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8c8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8cc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8d0, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8d4, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8d8, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8dc, PULL_DISABLE | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8e0, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8e4, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8e8, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
-+			AM33XX_IOPAD(0x8ec, PIN_INPUT_PULLDOWN | SLEWCTRL_SLOW | MUX_MODE7)
-+		>;
-+	};
-+
-+	leds_pins: pinmux_leds_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x868, PIN_OUTPUT | MUX_MODE7)
-+			AM33XX_IOPAD(0x86c, PIN_OUTPUT | MUX_MODE7)
-+		>;
-+	};
-+
-+	mmc1_pins: pinmux_mmc1_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x8f0, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x8f4, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x8f8, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x8fc, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x900, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)
-+		>;
-+	};
-+
-+	spi0_pins: pinmux_spi0_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x950, PIN_OUTPUT_PULLDOWN | MUX_MODE0)
-+			AM33XX_IOPAD(0x954, PIN_OUTPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x958, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x95c, PIN_OUTPUT_PULLUP | MUX_MODE0)
-+		>;
-+	};
-+
-+	uart0_pins: pinmux_uart0_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x970, PIN_INPUT_PULLUP | MUX_MODE0)
-+			AM33XX_IOPAD(0x974, PIN_OUTPUT_PULLDOWN | MUX_MODE0)
-+		>;
-+	};
-+
-+	nandflash_pins: pinmux_nandflash_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x800, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x804, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x808, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x80c, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x810, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x814, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x818, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x81c, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x870, PIN_INPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x874, PIN_OUTPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x87c, PIN_OUTPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x890, PIN_OUTPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x894, PIN_OUTPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x898, PIN_OUTPUT | MUX_MODE0)
-+			AM33XX_IOPAD(0x89c, PIN_OUTPUT | MUX_MODE0)
-+		>;
-+	};
-+};
--- 
-2.20.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2F0YWxpbiBNYXJpbmFz
+IFttYWlsdG86Y2F0YWxpbi5tYXJpbmFzQGFybS5jb21dDQo+IFNlbnQ6IDIwMTnlubQy5pyIMTHm
+l6UgMjA6MjENCj4gVG86IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiBDYzogd2lsbC5k
+ZWFjb25AYXJtLmNvbTsgYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsNCj4gcnBwdEBsaW51eC52
+bmV0LmlibS5jb207IGFyZC5iaWVzaGV1dmVsQGxpbmFyby5vcmc7IGYuZmFpbmVsbGlAZ21haWwu
+Y29tOw0KPiByb2Jpbi5tdXJwaHlAYXJtLmNvbTsgamFtZXMubW9yc2VAYXJtLmNvbTsgZ2hhY2tt
+YW5uQGFuZHJvaWQuY29tOw0KPiBzdGVmYW5AYWduZXIuY2g7IGhhbm5lc0BjbXB4Y2hnLm9yZzsg
+bG9nYW5nQGRlbHRhdGVlLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiB2YW4uZnJlZW5peEBnbWFpbC5j
+b20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gYXJtNjQ6IHVzZSBtZW1ibG9ja3NfcHJlc2VudA0K
+PiANCj4gT24gU3VuLCBGZWIgMTAsIDIwMTkgYXQgMDk6Mjg6NDNBTSArMDAwMCwgUGVuZyBGYW4g
+d3JvdGU6DQo+ID4gYXJtNjRfbWVtb3J5X3ByZXNlbnQgaXMgZG9pbmcgc2FtZSB0aGluZyBhcyBt
+ZW1ibG9ja3NfcHJlc2VudCwgc28NCj4gPiBsZXQncyB1c2UgY29tbW9uIGNvZGUgbWVtYmxvY2tz
+X3ByZXNlbnQgaW5zdGVhZCBvZiBwbGF0Zm9ybSBzcGVjaWZpYw0KPiA+IGFybTY0X21lbW9yeV9w
+cmVzZW50Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5j
+b20+DQo+IA0KPiBJIGFscmVhZHkgbWVyZ2VkIGEgc2ltaWxhciBvbmUgKHNlZSBjb21taXQNCj4g
+YTJjODAxYzUzZDE2ODI4NzFmYmExZTAzN2M5ZDNiMGM5ZmZmZWU4YSBpbiAtbmV4dCkuDQoNCkkg
+c2hvdWxkIGNoZWNrIHlvdXIgdHJlZSBmaXJzdCBiZWZvcmUgc2VuZGluZyBwYXRjaGVzLg0KDQpU
+aGUgYXJtMzIgY29kZSBjb3VsZCBhbHNvIHVzZSBzaW1pbGFyIGxvZ2ljLCBuZWVkIGNoZWNrIGFy
+bSB0cmVlIDopDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+IC0tDQo+IENhdGFsaW4NCg==
