@@ -2,116 +2,203 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5E8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D787C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C43A2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4324A2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o4DD2IWc"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="sjLvAsJu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfBKM0l (ORCPT
+        id S1727864AbfBKM1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Feb 2019 07:27:55 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39510 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfBKM0l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 07:26:41 -0500
-Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:16664
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727604AbfBKM0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:26:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VejCmhzdMwe7UHPjg65TGKridhcxr8VDBPkQaURJW0A=;
- b=o4DD2IWcf5b+832xty9lF6/epH+mFWwcno+1uSfinM2rLb99MH6lrtZQz6hzHP8Hj3Rm/NzqEsWZ3Mmzc2b2X5/uy/Quk8K/dptsSqcSt82EucDgC8J6/sF/MWT/HgBPsljP3CPsTmAQZB4qaLnxLukJ18MpIVC7QFPGSY6XtHk=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.16) by
- DB7PR04MB4873.eurprd04.prod.outlook.com (20.176.234.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Mon, 11 Feb 2019 12:26:30 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::fd45:a391:7591:1aa5]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::fd45:a391:7591:1aa5%6]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
- 12:26:29 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-CC:     "will.deacon@arm.com" <will.deacon@arm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "ghackmann@android.com" <ghackmann@android.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "logang@deltatee.com" <logang@deltatee.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: RE: [PATCH] arm64: use memblocks_present
-Thread-Topic: [PATCH] arm64: use memblocks_present
-Thread-Index: AQHUwSMEW3Pz/Bimd06u3YBihOcWUKXahhcAgAABDcA=
-Date:   Mon, 11 Feb 2019 12:26:28 +0000
-Message-ID: <DB7PR04MB4490C1F037EB7C82A4EB218D88640@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <20190210093738.30923-1-peng.fan@nxp.com>
- <20190211122032.GC165128@arrakis.emea.arm.com>
-In-Reply-To: <20190211122032.GC165128@arrakis.emea.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4873;6:5KkH0yWiFphfYnNf6BzJIFYtvGI5aFuM5v0C0f2l5GnqYv9p6FCV8VKqIVyhLasXfRTSOJi3oz9dBkubYPvtZu/mX9QFyk4aw3mQodTaTv+eOhAhT0IvxcY6ep8JF3tC6XcvdgK86aWvsrJnnP23gVezONpufv/LwKtynKJ/n1ochDWgwLB2dkgo/4Z5JImH0ednBaXMSVgAUFbW5Elpz+EfmTKJNBeQ7x2MRrQIis/1+jMWD7QugVqZLqJUVzT4rLD1upgdcVA+iKqvVUNvkCg5c4HAL1Yb+UPUGamlEb6/T1whO3RS9B3KIlwP8jg9t/HuwFH/8bX1t2DEb4jRxNDIt3fm/9hzRmA8iNTQnWwVrLMtU3ZpGoD8sai1HiVkf2qw8kHmMv0t3vCs5c1eD4XMBqszp6HPQA1OpK8GVAAxFdVFcMgfCs/rSSiQ2TeiyjHl3DwKIwOasr6L/OdBzQ==;5:UttVO7BASdEZjTdh44S1qZawZtJq72jEBtO7aVn5HxCh8L9s+mkl6C9R56RlwWNDJrc2zRiccNQCfr7KfDVksI92AehdWNhR1hjo7NoZm1gcAztgbmWBVwhVjGSTwIGopilkUCrbK7VnjgpUta87cTbM1p9gFjChvXaoR7KXo0N78bBaMerVx2dMdJBieP7UaMcxbUw6wrsMq4/h/2+Lzw==;7:mFh26dPRKm9FhZaucrBJGb6OlXfUpbpBDiWOu00tyHHyNPSQxTB+jLRA4EtTqSlpxKWZiJG52Wa82A6PWuMV16B/SW3HKs5XEuersR0LIKCnJ/zsdRAVsTbrMaE0WmavVOpOVl0RHyxJ8zNa5e5/4Q==
-x-ms-office365-filtering-correlation-id: 723b3afa-62c7-4006-d449-08d6901c268d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4873;
-x-ms-traffictypediagnostic: DB7PR04MB4873:
-x-microsoft-antispam-prvs: <DB7PR04MB4873200B3BDE861A96E2484A88640@DB7PR04MB4873.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(396003)(366004)(13464003)(189003)(199004)(99286004)(105586002)(26005)(7696005)(66066001)(4326008)(86362001)(97736004)(53546011)(6506007)(25786009)(102836004)(6246003)(71200400001)(53936002)(106356001)(68736007)(76176011)(71190400001)(2906002)(6436002)(316002)(11346002)(229853002)(14454004)(446003)(7416002)(305945005)(256004)(54906003)(486006)(6116002)(33656002)(3846002)(74316002)(44832011)(55016002)(9686003)(8936002)(6916009)(8676002)(81156014)(81166006)(476003)(7736002)(478600001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4873;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eH67NXaJc91SYXMt+SwE/gS0FCAfC+hLRunznnCCmNkrxdp70JLdltkHEsXlSdg3eWmgtgzDCRcU2MOs4iUo9QLN5ZfY7xwm76RNBuwLiKIXG9eu3rO7EvNF1QOYE4Yr56jQgTFwOsUjYBgXCsuuKejYQFsAQFyFH+JYSDe4UJGdW9bSN1okD8D7bRmcxzrKfYlHGmvCwLzGextVSA+bg1/DFrPnKW17q1NnfE8d1s3eYpVzN4Pl6P2b/VYPQSPDWueJxq6iGf5+QLTFN7DGZOadGrBi7TN0zk7tNDW/XJGdCmyxqrex9MH0A0gW94jI3ZpfGFgIQYgRlvMkXvkyva90kbeGUtKEV0yI0r3gAO85+0w1720MQQlSwaLRqLjUO9Ygp5sRF0fxBRQNXaKI2D02viWU6LHTeb/sOyZ80rk=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Received: by mail-wr1-f66.google.com with SMTP id t27so4481924wra.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yRSCRg5rDKszKeNaGzOxkxAIRW2gEt2oxrvbVDGGZhU=;
+        b=sjLvAsJudbkXVSzQ8CPz7SCsSgXURENM83m3sNg6hjlmzreJbbrvEt01lfcI/MV4b+
+         9J/TRakS9+ln5YkIAyydO5URpbAs4in7RFLafAWSw/jOFc6WhTKx2fyyOXzVCK/QIpoC
+         zwx5C/Tk+DbN0KVnwdS9vKJu0jc+YYOXDLSldKN25vz2T9TkX8AKf96RbgeQ5WuNH8+r
+         gdEi9hLMQmvxywJH1w5ln/Nb82MdhCfIljAUjnfM/dZ3yRv2uvtr3EjTzGg8Po/USY8d
+         zKVZHwqEcGoR/v7/9Re1PYMg47T/VPYnjhJqV7vJrHHxmheUhyOq59jWQWU1cMUki0aH
+         35dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yRSCRg5rDKszKeNaGzOxkxAIRW2gEt2oxrvbVDGGZhU=;
+        b=YVnPjGIQpSBJlUNGyjo4Xs+T2Y6LjvCLmUOAl7lF63+i9BfALtqKTXcZFIn33FDjU1
+         m7QlyTbqqmYklHBj8o8ZRru/PyDAKUGqzTCoGZ3IDW5NXvfhRt78M3I/LYTYHKm1xlyT
+         BQ23X1xz2f6a70pEXi7baC4iV4jWYo2gUI2xglHKxqiJvaKNlfqK7WwpOe41kfwbWpEN
+         tYByW48+ZOhJcEIUHyOsVWHIzdyr7exhrBKbv5wl3CvCj/2Te9eDOHNiqLvZFqqHm5qj
+         sdOkwyZ+5KJ6FpBvJpAFFM+xeRL3mr+vWf9dgPCiZbqdJFlcoxWAq1uyPEcI15YlkY8h
+         sUpg==
+X-Gm-Message-State: AHQUAuYE3gNl8O470GfJ6h3qx5sDAcf8gZdl7VCfKeNlwCr6lFl4R929
+        XQpBfvv2/aZgEV0FQ3O4WGivfg==
+X-Google-Smtp-Source: AHgI3IZG2L2nMr9fmd1GTt4GdmMENgvYt+Qdh4SBSE0YB8U2kBjXpEba6LQse1mA04KDmHg43s4drA==
+X-Received: by 2002:a5d:4dd0:: with SMTP id f16mr25665384wru.127.1549887999048;
+        Mon, 11 Feb 2019 04:26:39 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 04:26:38 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [RESEND PATCH v2 21/33] ARM: davinci: cp-intc: add a wrapper around cp_intc_init()
+Date:   Mon, 11 Feb 2019 13:25:54 +0100
+Message-Id: <20190211122606.8662-22-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
+References: <20190211122606.8662-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 723b3afa-62c7-4006-d449-08d6901c268d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 12:26:29.9506
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4873
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2F0YWxpbiBNYXJpbmFz
-IFttYWlsdG86Y2F0YWxpbi5tYXJpbmFzQGFybS5jb21dDQo+IFNlbnQ6IDIwMTnlubQy5pyIMTHm
-l6UgMjA6MjENCj4gVG86IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiBDYzogd2lsbC5k
-ZWFjb25AYXJtLmNvbTsgYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsNCj4gcnBwdEBsaW51eC52
-bmV0LmlibS5jb207IGFyZC5iaWVzaGV1dmVsQGxpbmFyby5vcmc7IGYuZmFpbmVsbGlAZ21haWwu
-Y29tOw0KPiByb2Jpbi5tdXJwaHlAYXJtLmNvbTsgamFtZXMubW9yc2VAYXJtLmNvbTsgZ2hhY2tt
-YW5uQGFuZHJvaWQuY29tOw0KPiBzdGVmYW5AYWduZXIuY2g7IGhhbm5lc0BjbXB4Y2hnLm9yZzsg
-bG9nYW5nQGRlbHRhdGVlLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiB2YW4uZnJlZW5peEBnbWFpbC5j
-b20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gYXJtNjQ6IHVzZSBtZW1ibG9ja3NfcHJlc2VudA0K
-PiANCj4gT24gU3VuLCBGZWIgMTAsIDIwMTkgYXQgMDk6Mjg6NDNBTSArMDAwMCwgUGVuZyBGYW4g
-d3JvdGU6DQo+ID4gYXJtNjRfbWVtb3J5X3ByZXNlbnQgaXMgZG9pbmcgc2FtZSB0aGluZyBhcyBt
-ZW1ibG9ja3NfcHJlc2VudCwgc28NCj4gPiBsZXQncyB1c2UgY29tbW9uIGNvZGUgbWVtYmxvY2tz
-X3ByZXNlbnQgaW5zdGVhZCBvZiBwbGF0Zm9ybSBzcGVjaWZpYw0KPiA+IGFybTY0X21lbW9yeV9w
-cmVzZW50Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5j
-b20+DQo+IA0KPiBJIGFscmVhZHkgbWVyZ2VkIGEgc2ltaWxhciBvbmUgKHNlZSBjb21taXQNCj4g
-YTJjODAxYzUzZDE2ODI4NzFmYmExZTAzN2M5ZDNiMGM5ZmZmZWU4YSBpbiAtbmV4dCkuDQoNCkkg
-c2hvdWxkIGNoZWNrIHlvdXIgdHJlZSBmaXJzdCBiZWZvcmUgc2VuZGluZyBwYXRjaGVzLg0KDQpU
-aGUgYXJtMzIgY29kZSBjb3VsZCBhbHNvIHVzZSBzaW1pbGFyIGxvZ2ljLCBuZWVkIGNoZWNrIGFy
-bSB0cmVlIDopDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+IC0tDQo+IENhdGFsaW4NCg==
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+We're going to extend the cp_intc_init() function with a config
+structure so we can drop the intc-related fields from davinci_soc_info.
+
+Once we do it, we won't be able to use this routine directly as the
+init_irq callback. Wrap the calls in additional helpers that don't
+take parameters and can be assigned to init_irq.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/board-da830-evm.c     | 2 +-
+ arch/arm/mach-davinci/board-da850-evm.c     | 2 +-
+ arch/arm/mach-davinci/board-mityomapl138.c  | 2 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 2 +-
+ arch/arm/mach-davinci/da830.c               | 5 +++++
+ arch/arm/mach-davinci/da850.c               | 5 +++++
+ arch/arm/mach-davinci/include/mach/da8xx.h  | 2 ++
+ 7 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index f81c92b9cf07..1ae7dcb8f59d 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -694,7 +694,7 @@ static void __init da830_evm_map_io(void)
+ MACHINE_START(DAVINCI_DA830_EVM, "DaVinci DA830/OMAP-L137/AM17x EVM")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= da830_evm_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da830_init_irq,
+ 	.init_time	= da830_init_time,
+ 	.init_machine	= da830_evm_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 1cc49e7bf128..8022ca8ac4ef 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -1522,7 +1522,7 @@ static void __init da850_evm_map_io(void)
+ MACHINE_START(DAVINCI_DA850_EVM, "DaVinci DA850/OMAP-L138/AM18x EVM")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= da850_evm_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= da850_evm_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index eb6a9465f229..815f155eb349 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -623,7 +623,7 @@ static void __init mityomapl138_map_io(void)
+ MACHINE_START(MITYOMAPL138, "MityDSP-L138/MityARM-1808")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= mityomapl138_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= mityomapl138_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 7f852722ff08..673d890c2e3e 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -461,7 +461,7 @@ static void __init omapl138_hawk_map_io(void)
+ MACHINE_START(OMAPL138_HAWKBOARD, "AM18x/OMAP-L138 Hawkboard")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= omapl138_hawk_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= omapl138_hawk_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index ca903c9105e4..5cfd30c57429 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -821,6 +821,11 @@ void __init da830_init(void)
+ 	WARN(!da8xx_syscfg0_base, "Unable to map syscfg0 module");
+ }
+ 
++void __init da830_init_irq(void)
++{
++	cp_intc_init();
++}
++
+ void __init da830_init_time(void)
+ {
+ 	void __iomem *pll;
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 486d53481636..6df6994c0f26 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -759,6 +759,11 @@ void __init da850_init(void)
+ 	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
+ }
+ 
++void __init da850_init_irq(void)
++{
++	cp_intc_init();
++}
++
+ void __init da850_init_time(void)
+ {
+ 	void __iomem *pll0;
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index ab4a57f433f4..1618b30661a9 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -88,10 +88,12 @@ extern unsigned int da850_max_speed;
+ #define DA8XX_ARM_RAM_BASE	0xffff0000
+ 
+ void da830_init(void);
++void da830_init_irq(void);
+ void da830_init_time(void);
+ void da830_register_clocks(void);
+ 
+ void da850_init(void);
++void da850_init_irq(void);
+ void da850_init_time(void);
+ void da850_register_clocks(void);
+ 
+-- 
+2.20.1
+
