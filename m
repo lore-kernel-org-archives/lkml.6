@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A30C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2564C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8204921855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A04F521855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895244;
-	bh=Bk+O1RQbFMW+8e+NNcY5/o11lv27BXUgu6HTXY3ReXw=;
+	s=default; t=1549895247;
+	bh=tBK3CZdNZWewbfthLWZ6W3lb359IMP6SAZUEkKAm6b4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oNgvQQDpkUQpOBS9XiMjBLRNSuelS0RlteGOyleD3+RGuOYH3X3iBZGyHuTGTcnvw
-	 umSR1J1uIGvIsdZ1vYzK3iJzfinJF0nqFdExCA5n72sSSh+32ZpffzDI13b+MxR+Y6
-	 OG+BFkmG8mddr4aC13Ki4tyx4njA28n0TaOZokpg=
+	b=f3SzPXg5GS2gpPgYTI/RModMESUWWEBZRc66mgPRzFIBxTQmvUdRKM0BsSAnPYm53
+	 zt572kdH87sT0K6muj5G+01UZvlOuMT+7Lys34/dJJ/l0ww7fjrlvnZ1mJYNpMFqAB
+	 vrR5RKy5d6ecLAhpZYiHR1bsuv9pAgpshcuIC6oA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbfBKO1W (ORCPT
+        id S1727846AbfBKO1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:27:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33094 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727150AbfBKO1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:19 -0500
+        id S1729709AbfBKO1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:27:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE90120838;
-        Mon, 11 Feb 2019 14:27:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8806620844;
+        Mon, 11 Feb 2019 14:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895238;
-        bh=Bk+O1RQbFMW+8e+NNcY5/o11lv27BXUgu6HTXY3ReXw=;
+        s=default; t=1549895242;
+        bh=tBK3CZdNZWewbfthLWZ6W3lb359IMP6SAZUEkKAm6b4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hkk1SSdYmi+dyGvCRVbooKDdi+qTj2CQfT5xWZfsIBW9kn5e8pi7KAygosIIxSSlu
-         SAlMRZs0AC8kh1tcmtxurXRBgdGRsWKA5EbSKvs+0nY+eCp+1eBXtYnKwwiRySbC1/
-         /zbV4Og6+f/QjF2BZYMPZ+s/eXR7yJkNeic9j5v4=
+        b=XAGhrt1fDD4Lru0haTDzvWbeqbvpW7U4HgKGjV1fHo1Ms+ImYvyXSYoDpwcp9vYLP
+         GyonMhwDnf7NtSFLOf5AMYQHMVFsyaRJwJ+ByaYFp+yLjMmu5O3CjEgOKA9jNHmWXJ
+         CDm3HTNL08T6h8rv6ESmQPVCYwWL1MGzu8oAry28=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 112/352] usb: dwc2: Disable power down feature on Samsung SoCs
-Date:   Mon, 11 Feb 2019 15:15:39 +0100
-Message-Id: <20190211141852.920704641@linuxfoundation.org>
+Subject: [PATCH 4.20 139/352] watchdog: renesas_wdt: dont set divider while watchdog is running
+Date:   Mon, 11 Feb 2019 15:16:06 +0100
+Message-Id: <20190211141855.362756843@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,51 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 35a6054132286a4ab92b536595093b82e6bdfcbc ]
+[ Upstream commit e990e12741877e9bfac402ca468f4007a75f6e2a ]
 
-Power down feature of DWC2 module integrated in Samsung SoCs doesn't work
-properly or needs some additional handling in PHY or SoC glue layer, so
-disable it for now. Without disabling power down, DWC2 causes random memory
-trashes and fails enumeration if there is no USB link to host on driver
-probe.
+The datasheet says we must stop the timer before changing the clock
+divider. This can happen when the restart handler is called while the
+watchdog is running.
 
-Fixes: 03ea6d6e9e1ff1 ("usb: dwc2: Enable power down")
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc2/params.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/watchdog/renesas_wdt.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index 38c813b1d203..24ff5f21cb25 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -71,6 +71,13 @@ static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)
- 	p->power_down = false;
- }
- 
-+static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)
-+{
-+	struct dwc2_core_params *p = &hsotg->params;
-+
-+	p->power_down = 0;
-+}
-+
- static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 0d74c3e48979..55c9eb6c6e51 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -74,12 +74,17 @@ static int rwdt_init_timeout(struct watchdog_device *wdev)
+ static int rwdt_start(struct watchdog_device *wdev)
  {
- 	struct dwc2_core_params *p = &hsotg->params;
-@@ -152,7 +159,8 @@ const struct of_device_id dwc2_of_match_table[] = {
- 	{ .compatible = "lantiq,arx100-usb", .data = dwc2_set_ltq_params },
- 	{ .compatible = "lantiq,xrx200-usb", .data = dwc2_set_ltq_params },
- 	{ .compatible = "snps,dwc2" },
--	{ .compatible = "samsung,s3c6400-hsotg" },
-+	{ .compatible = "samsung,s3c6400-hsotg",
-+	  .data = dwc2_set_s3c6400_params },
- 	{ .compatible = "amlogic,meson8-usb",
- 	  .data = dwc2_set_amlogic_params },
- 	{ .compatible = "amlogic,meson8b-usb",
+ 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++	u8 val;
+ 
+ 	pm_runtime_get_sync(wdev->parent);
+ 
+-	rwdt_write(priv, 0, RWTCSRB);
+-	rwdt_write(priv, priv->cks, RWTCSRA);
++	/* Stop the timer before we modify any register */
++	val = readb_relaxed(priv->base + RWTCSRA) & ~RWTCSRA_TME;
++	rwdt_write(priv, val, RWTCSRA);
++
+ 	rwdt_init_timeout(wdev);
++	rwdt_write(priv, priv->cks, RWTCSRA);
++	rwdt_write(priv, 0, RWTCSRB);
+ 
+ 	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+ 		cpu_relax();
 -- 
 2.19.1
 
