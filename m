@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A912C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D387DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3B02081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3D9221B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895676;
-	bh=471p3E0aVKn+D59PmlE8kZS00zNQFH7ptb7h0xFTbj4=;
+	s=default; t=1549895680;
+	bh=HHr9pb+0odZX35N5oWawstpR2w7buBbmxeYyGWtJB9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ETt0Cw6pQaN8Ql8U5Ajp0yUaQQxhw4WhFOBZeBIK9JTaY5apscY8GmWaFvdkJ/s0X
-	 FALcb2AMoSZOcNzVadYNEJyCzIbCZOH/m3tIKrGpBlxDF6Co0cHZpYaPvf/vXDLTKH
-	 sOanBAp1L1/R2hpzq1TklXuRm8yKFQh3B348qxEU=
+	b=quCpKG7/Nb3xAiVLGXI4PAMnx8QwlYaXE2rk4GWei6mwrArnHK2Ww8eYCsw9oVIpQ
+	 WEhZslenK4K8p8KpvmNYvE/yJEq5WbmBhiXBaXt/WEEY+65klCQoEdspHCsF6/JzP8
+	 9uuAcY3iMD2ArqcferGPg6/tRF6KCigWpmo5DlGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfBKOef (ORCPT
+        id S1730890AbfBKOei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:34:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:34:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730867AbfBKOeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:34:31 -0500
+        id S1730875AbfBKOef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:34:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1EF2081B;
-        Mon, 11 Feb 2019 14:34:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D4C02080F;
+        Mon, 11 Feb 2019 14:34:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895671;
-        bh=471p3E0aVKn+D59PmlE8kZS00zNQFH7ptb7h0xFTbj4=;
+        s=default; t=1549895674;
+        bh=HHr9pb+0odZX35N5oWawstpR2w7buBbmxeYyGWtJB9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PB6dfXuj2HQmZIXeIw0w15v5Juc8x+DiXSn3FJsJ4u2CqOANzai19kqRSRTpwkN05
-         pu17ybx00am5McQBTCCSbs4X/DJ6cb/AZtXSYDqXNbWiV/5OWKWsS6kTkoeCRV9RtQ
-         Fgf/gNmJ5jjEhTVqi3DTeTQDczrZPSnZLLXuToKE=
+        b=sVTBVBQUxBusg5JViBfrbQ3t51MbT90bpB1Tgx2bLFGMiYoymAXR4UUAlbS4Q6BAg
+         zYiijR42j2nx2h3cAPZdKMlZ5/mtJ5nLQ2U/BxyR9AgDHZpKUcZZcMO+OkCoKqYLaB
+         3zzHQHwuLG4VnUGmfnJl+/xhwsJCIH0O4VCpOb6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 276/352] thermal: tsens: qcom: do not create duplicate regmap debugfs entries
-Date:   Mon, 11 Feb 2019 15:18:23 +0100
-Message-Id: <20190211141904.535641198@linuxfoundation.org>
+Subject: [PATCH 4.20 285/352] kernel/hung_task.c: force console verbose before panic
+Date:   Mon, 11 Feb 2019 15:18:32 +0100
+Message-Id: <20190211141905.071750690@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,56 +70,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4ab248b3b10a58e379e2d32333fff99ea5ca256c ]
+[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
 
-Regmap would use device name to create debugfs entries. If the device
-has multiple regmaps it is recommended to use name field in regmap_config.
-Fix this by providing name to the regmap configs correctly.
+Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
+before panic"), we could get the call stack of hung task.
 
-Without this patch we would see below error on DB820c.
+However, if the console loglevel is not high, we still can not see the
+useful panic information in practice, and in most cases users don't set
+console loglevel to high level.
 
-qcom-tsens 4a9000.thermal-sensor: Failed to create 4a9000.thermal-sensor
-debugfs directory
+This patch is to force console verbose before system panic, so that the
+real useful information can be seen in the console, instead of being
+like the following, which doesn't have hung task information.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+  INFO: task init:1 blocked for more than 120 seconds.
+        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  Kernel panic - not syncing: hung_task: blocked tasks
+  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  Call Trace:
+   dump_stack+0x4f/0x65
+   panic+0xde/0x231
+   watchdog+0x290/0x410
+   kthread+0x12c/0x150
+   ret_from_fork+0x35/0x40
+  reboot: panic mode set: p,w
+  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/qcom/tsens-common.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ kernel/hung_task.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-index 3be4be2e0465..78652cac7f3d 100644
---- a/drivers/thermal/qcom/tsens-common.c
-+++ b/drivers/thermal/qcom/tsens-common.c
-@@ -114,6 +114,14 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 444b8b5dd69f..4a9191617076 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -112,8 +112,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 
+ 	trace_sched_process_hang(t);
+ 
+-	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-		return;
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_show_lock = true;
++		hung_task_call_panic = true;
++	}
+ 
+ 	/*
+ 	 * Ok, the task did not get scheduled for more than 2 minutes,
+@@ -135,11 +138,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	}
+ 
+ 	touch_nmi_watchdog();
+-
+-	if (sysctl_hung_task_panic) {
+-		hung_task_show_lock = true;
+-		hung_task_call_panic = true;
+-	}
  }
  
- static const struct regmap_config tsens_config = {
-+	.name		= "tm",
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+};
-+
-+static const struct regmap_config tsens_srot_config = {
-+	.name		= "srot",
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
- 	.reg_stride	= 4,
-@@ -139,8 +147,8 @@ int __init init_common(struct tsens_device *tmdev)
- 		if (IS_ERR(srot_base))
- 			return PTR_ERR(srot_base);
- 
--		tmdev->srot_map = devm_regmap_init_mmio(tmdev->dev,
--							srot_base, &tsens_config);
-+		tmdev->srot_map = devm_regmap_init_mmio(tmdev->dev, srot_base,
-+							&tsens_srot_config);
- 		if (IS_ERR(tmdev->srot_map))
- 			return PTR_ERR(tmdev->srot_map);
- 
+ /*
 -- 
 2.19.1
 
