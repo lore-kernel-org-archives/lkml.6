@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FC5C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32336C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB5C2080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 025D420700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895715;
-	bh=Dr1l0440dgOJDXyj97wxxFlq0Y5GM7D36xZz+qeN1KY=;
+	s=default; t=1549895718;
+	bh=KnMjIeF8CQZy2S3wB8Nn1HWcXCk5bRKtLmItD1uwALs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Cw3nWlIGCLbd8fNj090gf5GBQSZWsfiXGIHXQYpEjC3kJnmCOqm+9cXDqQZvjRV9N
-	 Dzo1nG/wagrCjcaEIvqvIFviv0yT2U+LlqLI6SHvTTo6qMSLM8ozxHN2buU4A3Cm3D
-	 aa8nfiwgpkNjbQBux3qT3wQyXeQFvlGR76pPVuTo=
+	b=icY/uOfnroCNG0V0AzKVtGfB+dA6/aeehRhukaDuoxA317L3odDyEtRjAS4Qg8Rgh
+	 kLhH7BaQB0JFIuYadVekcXMSRwMUBe91bB+j5rM5S06aord3j06mnROu2pAZsKB6Rt
+	 8+LlElmZ04hNhr/QQ/ydqH+R2a+WqnRQ2HIO0lJc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730990AbfBKOfN (ORCPT
+        id S1731001AbfBKOfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43776 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730434AbfBKOfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:11 -0500
+        id S1730434AbfBKOfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C379F204EC;
-        Mon, 11 Feb 2019 14:35:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6578A20700;
+        Mon, 11 Feb 2019 14:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895711;
-        bh=Dr1l0440dgOJDXyj97wxxFlq0Y5GM7D36xZz+qeN1KY=;
+        s=default; t=1549895713;
+        bh=KnMjIeF8CQZy2S3wB8Nn1HWcXCk5bRKtLmItD1uwALs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTJRTwDQ/72xO/CKx9RZVUjsTz36jH0i3vNGofSUBBxNme1zfWOuS2uPlO0MCRxak
-         C8Z94mt07iEScN3gTM/aSFXs7Ba0ROrq8uJijdbzlB7u/apSGkYUWSxyCGIK6GEebr
-         p7s2azDJV5ugKMJP/syWMMsCS/8vVhy684s6j4V4=
+        b=JtA9j4UNGMZFr8I1sU13HHDx0X5b+h78wvoDqXMCKUQ2WxtwRLnD2JsWlxuqbTujs
+         +R/4AhhYoltTh0oyP0KqSwPk0qkz3UnXJGNVAQSligULdchi/i1dzJj1M/gmMJpEyW
+         MSucmOMejB5Ai3ZMGJ0tqNGcG16D2XZCQRJgZmPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
+        stable@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 297/352] net: dsa: Fix NULL checking in dsa_slave_set_eee()
-Date:   Mon, 11 Feb 2019 15:18:44 +0100
-Message-Id: <20190211141905.778484294@linuxfoundation.org>
+Subject: [PATCH 4.20 298/352] net: dsa: mv88e6xxx: Fix counting of ATU violations
+Date:   Mon, 11 Feb 2019 15:18:45 +0100
+Message-Id: <20190211141905.841758239@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,42 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 00670cb8a73b10b10d3c40f045c15411715e4465 ]
+[ Upstream commit 75c05a74e745ae7d663b04d75777af80ada2233c ]
 
-This function can't succeed if dp->pl is NULL.  It will Oops inside the
-call to return phylink_ethtool_get_eee(dp->pl, e);
+The ATU port vector contains a bit per port of the switch. The code
+wrongly used it as a port number, and incremented a port counter. This
+resulted in the wrong interfaces counter being incremented, and
+potentially going off the end of the array of ports.
 
-Fixes: 1be52e97ed3e ("dsa: slave: eee: Allow ports to use phylink")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Fix this by using the source port ID for the violation, which really
+is a port number.
+
+Reported-by: Chris Healy <Chris.Healy@zii.aero>
+Tested-by: Chris Healy <Chris.Healy@zii.aero>
+Fixes: 65f60e4582bd ("net: dsa: mv88e6xxx: Keep ATU/VTU violation statistics")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/slave.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/dsa/mv88e6xxx/global1_atu.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -639,7 +639,7 @@ static int dsa_slave_set_eee(struct net_
- 	int ret;
+--- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
++++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
+@@ -314,6 +314,7 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
+ {
+ 	struct mv88e6xxx_chip *chip = dev_id;
+ 	struct mv88e6xxx_atu_entry entry;
++	int spid;
+ 	int err;
+ 	u16 val;
  
- 	/* Port's PHY and MAC both need to be EEE capable */
--	if (!dev->phydev && !dp->pl)
-+	if (!dev->phydev || !dp->pl)
- 		return -ENODEV;
+@@ -336,6 +337,8 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
+ 	if (err)
+ 		goto out;
  
- 	if (!ds->ops->set_mac_eee)
-@@ -659,7 +659,7 @@ static int dsa_slave_get_eee(struct net_
- 	int ret;
++	spid = entry.state;
++
+ 	if (val & MV88E6XXX_G1_ATU_OP_AGE_OUT_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+ 				    "ATU age out violation for %pM\n",
+@@ -344,23 +347,23 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
  
- 	/* Port's PHY and MAC both need to be EEE capable */
--	if (!dev->phydev && !dp->pl)
-+	if (!dev->phydev || !dp->pl)
- 		return -ENODEV;
+ 	if (val & MV88E6XXX_G1_ATU_OP_MEMBER_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU member violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_member_violation++;
++				    "ATU member violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_member_violation++;
+ 	}
  
- 	if (!ds->ops->get_mac_eee)
+ 	if (val & MV88E6XXX_G1_ATU_OP_MISS_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU miss violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_miss_violation++;
++				    "ATU miss violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_miss_violation++;
+ 	}
+ 
+ 	if (val & MV88E6XXX_G1_ATU_OP_FULL_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+-				    "ATU full violation for %pM portvec %x\n",
+-				    entry.mac, entry.portvec);
+-		chip->ports[entry.portvec].atu_full_violation++;
++				    "ATU full violation for %pM portvec %x spid %d\n",
++				    entry.mac, entry.portvec, spid);
++		chip->ports[spid].atu_full_violation++;
+ 	}
+ 	mutex_unlock(&chip->reg_lock);
+ 
 
 
