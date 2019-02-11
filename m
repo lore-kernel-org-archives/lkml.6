@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E7DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE28C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33EE220844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D2AC20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895265;
-	bh=1p/ts9oQsmRA3M5pNXkniRf3yCAbvPDJ8I2731+OzkA=;
+	s=default; t=1549895268;
+	bh=cVWs3dzqpzD0TytiUjV1qj1k8bV8pxkjOb0ykI+ErwA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2iMpY6+IA+VB4K8qF+s5O8XrFF09n1lb2aF7lAkUoRxtAXk41npolc6KA6Xxd6f3z
-	 TseGXiVLVSvag2ZfMgkn2h1OWpAIONKaUzxCIszazUBgOOEOb7/AMzykXbFl1vkmGj
-	 Re53oNil+9huFR7eUraYcsEuitu3HOjdHpwn/hWY=
+	b=2io1KV2apQ/AFPEVjDEuiCN3K4qEldZJ5lMkQSoazCuFXgD31/I4KQQwgeqyf1b//
+	 3htTUM2la4kuftZnFBFIvl6AmPwcgK5dkCjHNH36GYdELJMIdD6sbH3w/PlCdBOJdt
+	 U+buAwvp3+9OnwxS9eTKqgZfUA3/M6PSssqO96t4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfBKO1n (ORCPT
+        id S1728733AbfBKO1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:27:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33526 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729749AbfBKO1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:40 -0500
+        id S1729760AbfBKO1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:27:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C725B21B18;
-        Mon, 11 Feb 2019 14:27:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B4102075C;
+        Mon, 11 Feb 2019 14:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895260;
-        bh=1p/ts9oQsmRA3M5pNXkniRf3yCAbvPDJ8I2731+OzkA=;
+        s=default; t=1549895263;
+        bh=cVWs3dzqpzD0TytiUjV1qj1k8bV8pxkjOb0ykI+ErwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yZGNqKCtzt/XfJXtBXS7+CH7yAa6Wy6CY3k3YbMlp8cSsBL9Hm3zd5bMDMLJjIENn
-         FFWSh9urB1XA5ryp/JsFsKgxQmtJ5TuN46MnvVoxiDqspgPmm6fO2troRvyS/i1JN3
-         W7Bi7+Yp9bH2HhHcrMbkv3LY/bqv/hhWtfRLI7Cs=
+        b=vCU4lts1A7J7k80MmC+iuAg/2QBUvIKqKKoD4mj5fo0yV26fuvIHXnWcPfkItgXsT
+         owNTAIa6+U5Nsv0IXM77bWc3/jk9bcwOdfMNMYHvp7EWirBUW/bgc0+kZw2td3RvDn
+         rMWwsdrMZMp03WIrtqeUaU9WBCYRoQqKuqgY8Dqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 116/352] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Mon, 11 Feb 2019 15:15:43 +0100
-Message-Id: <20190211141853.258242509@linuxfoundation.org>
+Subject: [PATCH 4.20 117/352] media: imx274: select REGMAP_I2C
+Date:   Mon, 11 Feb 2019 15:15:44 +0100
+Message-Id: <20190211141853.355163958@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,51 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
+[ Upstream commit 4f9d7225c70dd9d3f406b79e60f8dbd2cd5ae743 ]
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+The imx274 driver uses regmap and the build will fail without it.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+Fixes:
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+  drivers/media/i2c/imx274.c:142:21: error: variable ‘imx274_regmap_config’ has initializer but incomplete type
+   static const struct regmap_config imx274_regmap_config = {
+                       ^~~~~~~~~~~~~
+  drivers/media/i2c/imx274.c:1869:19: error: implicit declaration of function ‘devm_regmap_init_i2c’ [-Werror=implicit-function-declaration]
+    imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
+                     ^~~~~~~~~~~~~~~~~~~~
+
+and others.
+
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..c40d572a7602 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
- 
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index f4714bd6fef0..421e2fd2481d 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -611,6 +611,7 @@ config VIDEO_IMX274
+ 	tristate "Sony IMX274 sensor support"
+ 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+ 	depends on MEDIA_CAMERA_SUPPORT
++	select REGMAP_I2C
+ 	---help---
+ 	  This is a V4L2 sensor driver for the Sony IMX274
+ 	  CMOS image sensor.
 -- 
 2.19.1
 
