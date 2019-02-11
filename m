@@ -2,73 +2,107 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375C7C282C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6767CC282C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F360C213F2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549854403;
-	bh=gg0u0TYlHQQUf7L3h4uIvaMqXbs6dHwS+JCO6nvGyWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lHZUf7UNOMJ/QcQhulEbkJOtwvW8eroTtRn2ANWTMt0YWQo684YT/v4QyK5l3369N
-	 8PlJC57fUqR2sLewY10Cbdm1qYbgvIh1bf5RcQMNeew6KOwMzlYbPPyK0Vt1ddHKRL
-	 23oDM1JA7lTzm6sD/extCb79DqwE7voUgDLItHvQ=
+	by mail.kernel.org (Postfix) with ESMTP id 2D53F20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:19:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1FHUPmj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfBKDGl (ORCPT
+        id S1726565AbfBKDT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:06:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbfBKDGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:06:40 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7418D2084D;
-        Mon, 11 Feb 2019 03:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549854400;
-        bh=gg0u0TYlHQQUf7L3h4uIvaMqXbs6dHwS+JCO6nvGyWc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fg7neW5rUiyHViHvoge2kZApad/jCy2qJyKCi/RFOMWe/QZ/2b754A8KA2ov4vYZ7
-         w26PCTu+fWp9XY7WnhlxFoOt3zBNNGTv3RbPWvWWj5yVX2bBzmaLKgDx7AZh0O4Dvk
-         JUY0kHHjHo2WHkGY80B+HZDdhOYUu5hKvIoyhWYQ=
-Date:   Mon, 11 Feb 2019 11:06:28 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/4] ARM: dts: imx6qdl-sabresd: add regulator control for
- isl29023 sensor
-Message-ID: <20190211030627.GL22487@dragon>
-References: <1549552397-22798-1-git-send-email-Anson.Huang@nxp.com>
+        Sun, 10 Feb 2019 22:19:29 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42382 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfBKDT3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 22:19:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s1so4626723plp.9;
+        Sun, 10 Feb 2019 19:19:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cgWdB6v4yNctpIKdtKMVW1ScVMcY97smR1mEsSPfDuI=;
+        b=M1FHUPmjSK57TxjL2P1/MQd2BfP3pj1pGX2JOAPafMj2Tt1D/b0gFLGCQ+I3EZT40G
+         /nJAxgI941+GBxn+XWA4fbkvfFBWb+6ayV3dcQ50vxFlqrlACWhdg8bLrzjdqt5SO/eb
+         JHt7ygX5zMH2lkZ+N/nsMiFU1AhzcP7PUSYieifXy5bopYAzDiu2hsUrfaNYta7ZKiAK
+         U5Xv2HeI8IxFWdRdKavnJjUy/0HPNLTTib8eJsGaq+KubzH5iQDlraQzriM7tHDlM1hb
+         4iQpbjQ3JzZTd4fjJQhJKd9UbySqMiGqi/tgPNX/tMBMi9cMAUd4Tu7E7H6MNGy75nhO
+         Nj2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cgWdB6v4yNctpIKdtKMVW1ScVMcY97smR1mEsSPfDuI=;
+        b=e0h4sByzw3FSMOjEOyyJPFCTLi2wITtz8Fj6ESAHvD3IiSczr07zc2rCsKaCoZwSgi
+         3fHDVPZK3qAiLwDXsktu+MGV7a3Y/cBS0aM25EE5dXiejmtYxsUQ5Hq9nAMVyI1vcYAp
+         z6hq/Wz95naopE6SAUxA4mXKdG6G/XpeSWSomdXr1sjSukxl10hmFngP9YB5COqzqY7+
+         NXzcFt3RUGNnPM1yeuN9rZpx1GDPgQQ2215UD1ZF8CKCQu5hH2xV2MYGF4qHYvhuZYID
+         IxBhiQs1cdNdqteRpr5tqGFVJPgyXXa4/i12L+YrGJk3SZ/qm/TqdwF3iF4zai6koCyg
+         WXDQ==
+X-Gm-Message-State: AHQUAubl1k84n/FN/QwgZoEnFZGg93U/nP/TI/oPtFSX3W2a0XHnzHXU
+        zfqzhDtfJQAaqtDmMImCtNU=
+X-Google-Smtp-Source: AHgI3Ia39vAWwofp+SKZImbwpxIBNWMVYQTtQQURXtt8oBG7YaQPUGzWh172HmCsgaaO4qeCKQ3YxQ==
+X-Received: by 2002:a17:902:9893:: with SMTP id s19mr9750250plp.165.1549855167336;
+        Sun, 10 Feb 2019 19:19:27 -0800 (PST)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id m67sm14997730pfm.73.2019.02.10.19.19.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Feb 2019 19:19:26 -0800 (PST)
+Date:   Sun, 10 Feb 2019 19:19:23 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     pr-tracker-bot@kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Thermal-SoC management fixes for v5.0-rc6
+Message-ID: <20190211031921.GA1799@localhost.localdomain>
+References: <20190210041721.GA2805@localhost.localdomain>
+ <154977271617.2362.11794417398216386913.pr-tracker-bot@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1549552397-22798-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <154977271617.2362.11794417398216386913.pr-tracker-bot@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 03:18:30PM +0000, Anson Huang wrote:
-> The isl29023 light sensor driver has supported regulator control,
-> assign the power supply for isl29023 to enable the control.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Hey,
 
-Applied all, thanks.
+Thanks for the note, but..
+
+On Sun, Feb 10, 2019 at 04:25:16AM +0000, pr-tracker-bot@kernel.org wrote:
+> The pull request you sent on Sat, 9 Feb 2019 20:17:23 -0800:
+> 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
+> 
+> has been merged into torvalds/linux.git:
+> https://git.kernel.org/torvalds/c/7ad915f5ebf5b9e7ca98a7048d8f84a631fe388b
+
+I think the bot is off here because the above commit is about a merge
+from the linux-omap tree from Tony.
+
+7ad915f5ebf5 ("Merge tag 'omap-for-v3.10-rc1/fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into fixes")
+
+not the above pull. In fact, this pull was not merged so far, as per the log
+of v5.0-rc6. I mean, this is a very late fixes pull anyways and I can always
+resend the pull, but I believe the bot got confused this time.
+
+
+> 
+> Thank you!
+> 
+> -- 
+> Deet-doot-dot, I am a bot.
+> https://korg.wiki.kernel.org/userdoc/prtracker
