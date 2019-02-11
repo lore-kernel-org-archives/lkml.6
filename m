@@ -2,175 +2,130 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8188C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1306C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98FF21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549863577;
-	bh=FvQdnsYS6AZuendbS1RL03u7n4yaYMZ+qRCQPQqZkXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RW6xO1JT5swlP7R2UBmqReK8bRO14IrCUzYr/9UbywxeTG2iynf9IZ6VWuZC9aSMc
-	 lJ/aXjtb/c7fPI4upyPd2B3rq7VH2ApHguRXihMd78xlFfqvK7BmEnWfqGOd4tbESH
-	 6uI/vQwDD5tv3vyY+FzV/B4xHsnc70C1sXtbDlrk=
+	by mail.kernel.org (Postfix) with ESMTP id AD8842146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:40:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AqA/ikAQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfBKFjg (ORCPT
+        id S1726896AbfBKFkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:39:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKFjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:39:36 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 642FF2146F;
-        Mon, 11 Feb 2019 05:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549863574;
-        bh=FvQdnsYS6AZuendbS1RL03u7n4yaYMZ+qRCQPQqZkXQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fj1+dY2Gtu0lZIhnaHAbgyfqXPmB/heqFYFouuI31LdP34pZwL2o2aa/lKDOiIuJU
-         S9LJhFjBh22m1BW3c839Z+dGYWumeJO95mcf3GJFgzMnMQ5sTe1NhxHN4/5H2sXiug
-         Wytv44uboO1/yU3L1u15gTldguR7hmNXTNV2oU5Q=
-Date:   Mon, 11 Feb 2019 13:39:22 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [v5 2/2] arm64: dts: lx2160a: add sata node support
-Message-ID: <20190211053920.GM22487@dragon>
-References: <20190125081013.21663-1-peng.ma@nxp.com>
- <20190125081013.21663-2-peng.ma@nxp.com>
- <20190201063011.GL19882@dragon>
- <VI1PR04MB44313B08539AA7081DC53BAFED640@VI1PR04MB4431.eurprd04.prod.outlook.com>
+        Mon, 11 Feb 2019 00:40:07 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35650 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKFkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 00:40:07 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1B5e44r054401;
+        Sun, 10 Feb 2019 23:40:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549863604;
+        bh=iqHS0P40nM+mjia0ZQ7kC83B2fcK82Mp2OcRu8R+Ucg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AqA/ikAQI3xyBh8FcrNNNxTpqtzCAIJdcbgv2RFJmwFw5Q7IvAqevOpxj1A0fkey8
+         KOT1pzeKW3prVa5t0bGgKc620bIfdqH4K6XBcYjyncOA8e5V7TNjYWxUdk56Y1Bhjt
+         mO3hN4674C3Wcbfiah1z1w8gCg8JTRfQAeSecNp0=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1B5e4Zo120277
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 10 Feb 2019 23:40:04 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 10
+ Feb 2019 23:40:03 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Sun, 10 Feb 2019 23:40:04 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1B5e1p3016023;
+        Sun, 10 Feb 2019 23:40:02 -0600
+Subject: Re: [PATCH v2] dt-bindings: input: ti-tsc-adc: Add new compatible for
+ AM654 SoCs
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>, <linux-input@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20190108052631.4169-1-vigneshr@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <3623af02-063d-9077-1e59-99d8cfe93ddd@ti.com>
+Date:   Mon, 11 Feb 2019 11:10:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR04MB44313B08539AA7081DC53BAFED640@VI1PR04MB4431.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190108052631.4169-1-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:53:18AM +0000, Peng Ma wrote:
-> 
-> 
-> >-----Original Message-----
-> >From: Shawn Guo <shawnguo@kernel.org>
-> >Sent: 2019年2月1日 14:30
-> >To: Peng Ma <peng.ma@nxp.com>
-> >Cc: axboe@kernel.dk; robh+dt@kernel.org; mark.rutland@arm.com; Leo Li
-> ><leoyang.li@nxp.com>; linux-ide@vger.kernel.org; devicetree@vger.kernel.org;
-> >linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Andy Tang
-> ><andy.tang@nxp.com>
-> >Subject: Re: [v5 2/2] arm64: dts: lx2160a: add sata node support
-> >
-> >On Fri, Jan 25, 2019 at 08:10:13AM +0000, Peng Ma wrote:
-> >> Add SATA device nodes for fsl-lx2160a and enable support for QDS and
-> >> RDB boards.
-> >>
-> >> Signed-off-by: Peng Ma <peng.ma@nxp.com>
-> >> ---
-> >> changed for V5:
-> >> 	- no change
-> >>
-> >>  arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts |   16 +++++++
-> >>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |   16 +++++++
-> >>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    |   44
-> >+++++++++++++++++++++
-> >>  3 files changed, 76 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-> >> b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-> >> index 99a22ab..1a5acf6 100644
-> >> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-> >> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-> >> @@ -95,6 +95,22 @@
-> >>  	};
-> >>  };
-> >>
-> >> +&sata0 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata1 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata2 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata3 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >>  &uart0 {
-> >>  	status = "okay";
-> >>  };
-> >> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> >> b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> >> index 6481e5f..5b6799e 100644
-> >> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> >> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> >> @@ -102,6 +102,22 @@
-> >>  	};
-> >>  };
-> >>
-> >> +&sata0 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata1 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata2 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >> +&sata3 {
-> >> +	status = "okay";
-> >> +};
-> >> +
-> >>  &uart0 {
-> >>  	status = "okay";
-> >>  };
-> >> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> >> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> >> index a79f5c1..592034b 100644
-> >> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> >> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> >> @@ -671,6 +671,50 @@
-> >>  			status = "disabled";
-> >>  		};
-> >>
-> >> +		sata0: sata@3200000 {
-> >> +			compatible = "fsl,lx2160a-ahci";
-> >
-> >Has the kernel driver been patched to probe the compatible?
-> >
-> >Shawn
-> Yes, the driver patch is http://patchwork.ozlabs.org/patch/1034083/
+Hi Dmitry,
 
-Ping me when the driver patch is accepted.  Ideally, we only accept dts
-changes after the driver counterpart lands on mainline.
+On 08/01/19 10:56 AM, Vignesh R wrote:
+> AM654 SoCs has ADC IP which is similar to AM335x, but without the
+> touchscreen part. Add new compatible to handle AM654 SoCs. Also, it
+> seems that existing compatible strings used in the kernel DTs were never
+> documented. So, document them now.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-Shawn
+If there are no comments, could you queue this bindings patch? This will
+help me in getting ADC DT nodes to be merged into ARM SoC tree.
+
+Regards
+Vignesh
+
+> v2:
+> Fix subject line to include subsystem name
+> Rebase onto v5.0-rc1
+> v1: https://lkml.org/lkml/2018/11/19/313
+> 
+>  .../devicetree/bindings/input/touchscreen/ti-tsc-adc.txt  | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
+> index b1163bf97146..aad5e34965eb 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
+> @@ -2,7 +2,12 @@
+>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  
+>  Required properties:
+> +- mfd
+> +	compatible: Should be
+> +		"ti,am3359-tscadc" for AM335x/AM437x SoCs
+> +		"ti,am654-tscadc", "ti,am3359-tscadc" for AM654 SoCs
+>  - child "tsc"
+> +	compatible: Should be "ti,am3359-tsc".
+>  	ti,wires: Wires refer to application modes i.e. 4/5/8 wire touchscreen
+>  		  support on the platform.
+>  	ti,x-plate-resistance: X plate resistance
+> @@ -25,6 +30,9 @@ Required properties:
+>  			AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
+>  			XP  = 0, XN = 1, YP = 2, YN = 3.
+>  - child "adc"
+> +	compatible: Should be
+> +		    "ti,am3359-adc" for AM335x/AM437x SoCs
+> +		    "ti,am654-adc", "ti,am3359-adc" for AM654 SoCs
+>  	ti,adc-channels: List of analog inputs available for ADC.
+>  			 AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
+>  
+> 
+
+-- 
+Regards
+Vignesh
