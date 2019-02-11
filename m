@@ -2,130 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39C5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E42C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A94F8218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A54C218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="n/TlEoQ8"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dndHrDQS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfBKMh4 (ORCPT
+        id S1727470AbfBKMiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:37:56 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54926 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfBKMh4 (ORCPT
+        Mon, 11 Feb 2019 07:38:11 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55780 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbfBKMiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:37:56 -0500
-Received: by mail-it1-f196.google.com with SMTP id i145so25836589ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uNFH6w4Gy4uKEZhuZeiRBbvSCjujATtfuhBq8C9Cazs=;
-        b=n/TlEoQ8bZb5eihGCfmnVh9pL0fX8MsMYeXoJ/NgIdo1ypegyOCVv2ox2G4oa1dg7m
-         SL+lj6om4336eSDGaTnp7eOqeVOw1m/IKFjs3UP4scTZCRTF5Ko7kEflckxhpJXzWAYi
-         0l2LgVOymq8jhNvXvGZB/3JjlxdYmIJv3iVe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uNFH6w4Gy4uKEZhuZeiRBbvSCjujATtfuhBq8C9Cazs=;
-        b=LOYAPzI521vUEM3DAFJtaqD3I/qWGHBlvl0UfJN5gYJHZy2WoIlb3hqzqF3vkHcU+P
-         fhf9d8rpDQXsidpYdp7ApIgIN8TAWHPKnNxNpAYiOfryBw3HPTrcbQQgwuYoH8sNeKtd
-         afXfxRQokCjRtXvlwBBEjr2Sqc7OgmuJcKhixWwJwE6Y/j2mxlFm8KnmCrRvlEeLuHja
-         hktgpMqx1gnDRpDMkyK8YLKLc6xhRnXlIErC1WCybYHNp+Imuh58roWuW8wtIkbaKtPK
-         jZORyGzrMaPbQJh/fMLpo8ZtNL7NB71aXucnBnb5NEX93ohdCrOBbL7tfRpIcIieT/eN
-         ixrQ==
-X-Gm-Message-State: AHQUAuYTUup23Ha3kdW8JWj/Z08tC9hyqKhCkVXQBcSeYYrJgc4GSQTk
-        5K5WxgNYLagxxNUoFM2jZcbJUiI7X5qX6g74c2NCXA==
-X-Google-Smtp-Source: AHgI3IYZrRTvfHP2jioVTbQED+vu1rQusktbW3k95D+sx4H5VwRiK8Izt1SLFFl9c10umi55rLr3U6ixy7XeMw1DP60=
-X-Received: by 2002:a5e:d803:: with SMTP id l3mr13331687iok.144.1549888674884;
- Mon, 11 Feb 2019 04:37:54 -0800 (PST)
+        Mon, 11 Feb 2019 07:38:11 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1BCbxZY071925;
+        Mon, 11 Feb 2019 06:37:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549888679;
+        bh=dv1w3WK91cUXPAdWZvGkj+HejO42UrAup40etPBxbrI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=dndHrDQSk/Q9hPcLF/dIszPOLnFLCbbwJT5lgJTm1SbUfdCgzI0f3Z0gGINxNPi1x
+         GKoUEIPCNhB0nqm67W+RIPn6auGZ5nvWXeOzYhfQbazOmtS/CtanCpptiB6l/aUFsR
+         fpTzPHgnWYP9lzYMcgYnCgTQhSS0CWXId8dt21ow=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1BCbxch025432
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 06:37:59 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 11
+ Feb 2019 06:37:58 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 11 Feb 2019 06:37:58 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1BCbsm7005477;
+        Mon, 11 Feb 2019 06:37:56 -0600
+Subject: Re: [PATCH v2] PCI: endpoint: functions: Use kmemdup instead of
+ duplicating its function
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wen Yang <wen.yang99@zte.com.cn>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhong.weidong@zte.com.cn" <zhong.weidong@zte.com.cn>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+References: <20181206125225.9497-1-wen.yang99@zte.com.cn>
+ <20190208122027.GE13009@e107981-ln.cambridge.arm.com>
+ <aa4280f5-9750-05e9-7737-044d8f127521@ti.com>
+ <ba5489d4-671b-5b52-3917-ea478f7233e0@synopsys.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <64f74be5-1d49-012c-46de-e49c6006997f@ti.com>
+Date:   Mon, 11 Feb 2019 18:07:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <000000000000701c3305818e4814@google.com> <CAOQ4uxhhRs6kBH2rgbPyjd=tXoxxuJG76Y2vpCYmD0c0HzLwhA@mail.gmail.com>
- <CAJfpegvjLgXa1HOCZkz6RKup7UdioMGyY7W4miyqcRtn9PL4QA@mail.gmail.com>
-In-Reply-To: <CAJfpegvjLgXa1HOCZkz6RKup7UdioMGyY7W4miyqcRtn9PL4QA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 11 Feb 2019 13:37:43 +0100
-Message-ID: <CAJfpegsJo8X+efgWSa4QwSGpAGADpoossZZg=m7x5ApPXhxCoA@mail.gmail.com>
-Subject: Re: possible deadlock in pipe_lock (2)
-To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+31d8b84465a7cbfd8515@syzkaller.appspotmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ba5489d4-671b-5b52-3917-ea478f7233e0@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 1:06 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, Feb 11, 2019 at 8:38 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Sun, Feb 10, 2019 at 8:23 PM syzbot
-> > <syzbot+31d8b84465a7cbfd8515@syzkaller.appspotmail.com> wrote:
->
-> > > -> #1 (&ovl_i_mutex_key[depth]){+.+.}:
-> > >         down_write+0x38/0x90 kernel/locking/rwsem.c:70
-> > >         inode_lock include/linux/fs.h:757 [inline]
-> > >         ovl_write_iter+0x148/0xc20 fs/overlayfs/file.c:231
-> > >         call_write_iter include/linux/fs.h:1863 [inline]
-> > >         new_sync_write fs/read_write.c:474 [inline]
-> > >         __vfs_write+0x613/0x8e0 fs/read_write.c:487
-> > > kobject: 'loop4' (000000009e2b886d): kobject_uevent_env
-> > >         __kernel_write+0x110/0x3b0 fs/read_write.c:506
-> > >         write_pipe_buf+0x15d/0x1f0 fs/splice.c:797
-> > >         splice_from_pipe_feed fs/splice.c:503 [inline]
-> > >         __splice_from_pipe+0x39a/0x7e0 fs/splice.c:627
-> > >         splice_from_pipe+0x108/0x170 fs/splice.c:662
-> > >         default_file_splice_write+0x3c/0x90 fs/splice.c:809
->
-> Irrelevant to the lockdep splat, but why isn't there an
-> ovl_splice_write() that just recurses into realfile->splice_write()?
-> Sounds like a much more efficient way to handle splice read and
-> write...
->
-> [...]
->
-> > Miklos,
-> >
-> > Its good that this report popped up again, because I went to
-> > look back at my notes from previous report [1].
-> > If I was right in my previous analysis then we must have a real
-> > deadlock in current "lazy copy up" WIP patches. Right?
->
-> Hmm, AFAICS this circular dependency translated into layman's terms:
->
-> pipe lock -> ovl inode lock  (splice to ovl file)
->
-> ovl inode lock -> upper freeze lock (truncate of ovl file)
->
-> upper freeze lock -> pipe lock (splice to upper file)
+Hi Gustavo,
 
-So what can we do with this?
+On 11/02/19 2:45 PM, Gustavo Pimentel wrote:
+> On 11/02/2019 05:48, Kishon Vijay Abraham I wrote:
+>> Hi Lorenzo,
+>>
+>> On 08/02/19 5:50 PM, Lorenzo Pieralisi wrote:
+>>> On Thu, Dec 06, 2018 at 08:52:25PM +0800, Wen Yang wrote:
+>>>> kmemdup has implemented the function that kmalloc() + memcpy().
+>>>> We prefer to kmemdup rather than code opened implementation.
+>>>>
+>>>> This issue was detected with the help of coccinelle.
+>>>>
+>>>> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+>>>> CC: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>>> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>> CC: Niklas Cassel <niklas.cassel@axis.com>
+>>>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+>>>> CC: linux-pci@vger.kernel.org (open list:PCI ENDPOINT SUBSYSTEM)
+>>>> CC: linux-kernel@vger.kernel.org (open list)
+>>>> ---
+>>>>  drivers/pci/endpoint/functions/pci-epf-test.c | 4 +---
+>>>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> Kishon,
+>>>
+>>> this looks OK to me, anything I am missing ?
+>>
+>> For the existing code this might seem the right thing to do but ideally the
+>> memcpy here should be changed to memcpy_fromio/memcpy_toio.
+>>
+>> Also later when we plan to use DMA (on the endpoint) for data transfer, we have
+>> to use kzalloc and dma_map_single APIs.
+> 
+> Are you considering to use the eDMA driver that I'm developing?
 
-The "freeze lock -> inode lock" dependency is fixed.   This is
-reversed in overlay to "ovl inode lock -> upper freeze lock", which is
-okay, because this is a nesting that cannot be reversed.   But in
-splice the pipe locks comes in between: "freeze lock -> pipe lock ->
-inode lock" which breaks this nesting direction and creates a true
-reverse dependency between ovl inode lock and upper freeze lock.
+I used system DMA for my testing. But in the DesignWare driver, we should be
+able to choose between system DMA or any other DMA based on the platforms
+capabilities.
 
-The only way I see this could be fixed is to move the freeze lock
-inside the pipe lock.  But that would mean splice/sendfile/etc could
-be frozen with the pipe lock held.  It doesn't look nice.
-
-Any other ideas?
-
-Thanks,
-Miklos
+Thanks
+Kishon
