@@ -2,174 +2,116 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB2DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E20C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD8F2186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 382BA218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MkSN3Yip"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IgD0EQVv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388216AbfBKTaV (ORCPT
+        id S2388235AbfBKTaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:30:21 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34317 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731515AbfBKTaU (ORCPT
+        Mon, 11 Feb 2019 14:30:35 -0500
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:44277 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731469AbfBKTae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:30:20 -0500
-Received: by mail-ua1-f66.google.com with SMTP id x15so32013uaq.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:19 -0800 (PST)
+        Mon, 11 Feb 2019 14:30:34 -0500
+Received: by mail-vs1-f73.google.com with SMTP id o132so24536vsd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XxJxqy0JVpfH4MMaRLx8EkJwpOL/lVshLgZXsB8rvVQ=;
-        b=MkSN3Yip13MwZeTXwcPcT7re/hNwbn6Q453vFdNi/YC+/m9O+VQ/GRMqf+7rZt5UkL
-         HJaCvV3478Ygw50nHVfkTdOajVmdBfDxQn20UetDMpQ2dBhcpkl6soxIqWL47su5sAQM
-         D6Fo5iPu+K24rxLsTodm8ELzodQ2oCsCJOnBsGlb4xMt4M+jk6U/VmUa87RZ1o1XKg58
-         vZcLAwUV8DwXP8XUGf5XHFmeQiJSzWxpgG6q6QxSpv1TJEzLIPIT7KMLiP1jZ+a6axR1
-         FTOLUQXv7ZibW0JbIUQXBZLdwJ3ACNrNCUji7qDMWXgG8WWYfgSx/1tlNQIp/3pB3TPh
-         tpbg==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=yTmTM4lUWy38wNpJAAj82b5/JRtPQPUWiVhvkLc+GmU=;
+        b=IgD0EQVvZuRTW8V34xCcsd5j+kuukE2iC4AfflnsyCWMauneJH9QQAwi3n3dFkIVl1
+         yQswrFqCX01hxOU9LOZO0jzflZSDdobLsqRH5CHZZS9fyZhRZN6ud1RvJO39OL8fdmbt
+         yLJy++glVR3+LvhqrpbOMBvg79T3MIgcnDdm7OK9ePSvhksVKeSMnZwAsu1RJPhY8pVF
+         UAUdVqmig6Bg1NRh1FsbaVldgBDaN9hsdr5ZXzn4pVerj9lk7g8t8xyKGo6LarW5hRMs
+         Q3HUQFQaraxBEnLMlaCLxHCQs0YFbjOCOpL7Jt8ePKT/VScKQENAsWNu/THSYgipbRiR
+         /zDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XxJxqy0JVpfH4MMaRLx8EkJwpOL/lVshLgZXsB8rvVQ=;
-        b=Dz+JjINUc/ufLS4WyAW6KXa9Th3yf3KYa5+gIqESAfNL5U3D9CzWd3BGtpNDdeQArn
-         +1njr4ZGt0bQ826Gtpk0urSiJc1MX5X2CIXDM77VUPCk5fiHf1Zrr0VH1ytFN4o7pK/M
-         U4SyKMNzzjT+6kuqli56kZsgyFbzQXEDjewK8HmH4R4OJf2WTfbzrBd/mO6IkJKnQiQ8
-         uZ2N5/wI3ASxgyE0ixo+IjdQcJzbb5gqjh2coY8ywj/+sgVlH+VMaePx64Ps89KsBhwi
-         fnbhGhwhM82pIQrmopdmpDRNrKEz90wfqLD03uOCKeVtRgf6rtvzjHcRRHgnd7UwQ7Uz
-         eegg==
-X-Gm-Message-State: AHQUAuaRiTlmp3CaORJ6FP0Wf963xwQj541d8FXh+dXJ+aM3szqgrH5S
-        vunfRS/zBWpX8kAmII3iHiA3PqwzBNC08+Hobk+9Wg==
-X-Google-Smtp-Source: AHgI3IYwqnsnm6YiHaI6YzcXCGowgb6ZK5KOjGt+XTBdoFzmLZ1i9GmWZMigXVBkh4sJfIPZrsLaLJ5vMFCHh2S/bMU=
-X-Received: by 2002:ab0:5590:: with SMTP id v16mr14827577uaa.132.1549913419017;
- Mon, 11 Feb 2019 11:30:19 -0800 (PST)
-MIME-Version: 1.0
-References: <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
- <20190204114144.GC18141@krava> <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
- <20190204192721.GI5593@kernel.org> <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
- <20190204202818.GC4794@krava> <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
- <20190205133727.GF4794@krava> <20190211101957.GB14253@krava>
- <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com> <20190211185510.GF3269@kernel.org>
-In-Reply-To: <20190211185510.GF3269@kernel.org>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Mon, 11 Feb 2019 11:30:07 -0800
-Message-ID: <CABPqkBTOM2gLvv89ywkpWDKniS2L37XhKPjNLtR8WCY3VuYXzw@mail.gmail.com>
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=yTmTM4lUWy38wNpJAAj82b5/JRtPQPUWiVhvkLc+GmU=;
+        b=Hij+j741/9dG4TJXNJ+M5xl/pORQm7UTUanNurKoqGLyE/5e7hAEsLVPaRvPql9OnW
+         R2z8tkDgNdHfRG2FdJiAi003yiGjp5jtGQgMj1N+FNZ8sSBFCIzw/L1Ff3esRUsUtJma
+         xsYyNhyVmnHZN4PcT2MiGnyvG3KIp6CRbTdexBAOL8YYtRaBlXH+yoxxXzb3ZHuhLbhS
+         azg7LzrdeBX8wUsn3M4/qGwcva2/8Xbt8AZmlkOhu0+hZ87r9J7ZbjMB5duyjIRQhO/V
+         bRAqRKEdC2Tu08rm42QA0h2LI5Xu9a6J6o4FJrI1zOV3ZE8FKutgU0tzJolvUywg6VbT
+         coUw==
+X-Gm-Message-State: AHQUAubimfz/4whBWKOaxyDBCCNLDRESPpkWCxcjJM6hIEwgeuXhnEsI
+        W6LGOzG4+vVoQXIbdfH3ftEPQ7oh+PlbtWEm8g4=
+X-Google-Smtp-Source: AHgI3IYWVYrxBcjc7ylnGQXBCE4Ft/swEAMJWDf3/5UvXBH/BklzcuSloD6V+Nqifugd/XtXLW3Gdz3KUFbiE1Nntpo=
+X-Received: by 2002:ab0:4e23:: with SMTP id g35mr23818918uah.0.1549913433804;
+ Mon, 11 Feb 2019 11:30:33 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:30:03 -0800
+Message-Id: <20190211193008.24101-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+Subject: [PATCH v2 1/4] init/Kconfig: add config support for detecting linker
+From:   ndesaulniers@google.com
+To:     yamada.masahiro@socionext.com
+Cc:     natechancellor@gmail.com, sedat.dilek@gmail.com,
+        keescook@chromium.org, samitolvanen@google.com,
+        michal.lkml@markovi.net, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, peterz@infradead.org,
+        linux@dominikbrodowski.net, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, gor@linux.ibm.com, adrian@lisas.de,
+        rgb@redhat.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnaldo,
+Similar to how we differentiate between CONFIG_CC_IS_GCC and
+CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+CONFIG_LD_IS_LLD.
 
-On Mon, Feb 11, 2019 at 10:55 AM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> Em Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian escreveu:
-> > Jiri,
-> >
-> > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> > >
-> > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
-> > > > On Mon, Feb 04, 2019 at 02:44:37PM -0800, Stephane Eranian wrote:
-> > > > > Jiri,
-> > > > >
-> > > > > While you're looking at the output format, I think it would be good
-> > > > > time to simplify the code handling perf.data file.
-> > > > > Today, perf record can emit in two formats: file mode or pipe mode.
-> > > > > This adds complexity in the code and
-> > > > > is error prone as the file mode path is tested more than the pipe mode
-> > > > > path. We have run into multiple issues with
-> > > > > the pipe mode in recent years. There is no real reason why we need to
-> > > > > maintain two formats. If I recall, the pipe format
-> > > > > was introduced because on pipes you cannot lseek to update the headers
-> > > > > and therefore some of the information present as tables
-> > > > > updated on the fly needed to be generated as pseudo records by the
-> > > > > tool. I believe that the pipe format covers all the needs and could
-> > > > > supersede the file mode format. That would simplify code in perf
-> > > > > record and eliminate the risk of errors when new headers
-> > > > > are introduced.
-> > > >
-> > > > yep, I think we have almost all the features covered for pipe mode,
-> > > > and we have all necessary events to describe events features
-> > > >
-> > > > so with some effort we could switch off the superfluos file header
-> > > > and use only events to describe events ;-) make sense, I'll check
-> > > > on it
-> > >
-> > > so following features are not synthesized:
-> > >
-> > >         FEAT_OPN(TRACING_DATA,  tracing_data,   false),
-> > >         FEAT_OPN(BUILD_ID,      build_id,       false),
-> > >         FEAT_OPN(BRANCH_STACK,  branch_stack,   false),
-> > >         FEAT_OPN(AUXTRACE,      auxtrace,       false),
-> > >         FEAT_OPN(STAT,          stat,           false),
-> > >         FEAT_OPN(CACHE,         cache,          true),
-> > >
-> > What do you need for BRANCH_STACK?
-> >
-> > > I think all could be added and worked around with exception
-> > > of BUILD_ID, which we store at the end (after processing
-> > > all data) and we need it early in the report phase
-> > >
-> > Buildids are injected after the fact via perf inject when in pipe mode.
-> >
-> > > maybe it's time to re-think that buildid -> mmap event
-> > > association again, because it's pain in current implementation
-> > > as well
-> > >
-> > Sure, but what do you propose?
->
-> this keeps resurfacing, the idea is to have the building go together
-> with the PERF_RECORD_MMAP3 event, i.e. as part of setting up an
-> executable mapping the loader would get the buildid and ask the kernel
-> to keep it aroung, then when a PERF_RECORD_MMAP needs to be issued, it
-> can include the build id, so tooling will not need to get it.
->
-And how would the dynamic loader (ld.so) communicate the buildid to the kernel?
-How would that work for statically linked binaries.
-I think you're say the kernel would parse the ELF header looking for
-that note section
-and extract the buildid from there. Is that what you are proposing?
+This simiplifies patches to Makefiles that need to do different things
+for different linkers.
 
-> Alternatively, we would have a separate thread to process
-> PERF_RECORD_MMAP events, and as soon as it gets one from the kernel,
-> augment it straight away with the build-id it reads from the ELF file,
-> i.e. no need to have the kernel provide it, do it just like we do with
-> PERF_RECORD_BPF_EVENT, which reminds me Song probably already posted
-> thise bits...
->
-But that would not work in pipe mode, wouldn't it?
-Unless that thread intercepts everything pushed to the pipe looking
-for MMAP records.
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+Changes V1->V2:
+* Add suggested, reviewed, and tested by tags.
 
-> > > looks like bpf code is actualy getting build ids and storing
-> > > it for the callchains in kernel.. we can check if we can do
-> > > something similar for mmap events
-> > >
-> > > jirka
->
-> --
->
-> - Arnaldo
+ init/Kconfig | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index c9386a365eea..b6046dcf7794 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -26,6 +26,15 @@ config CLANG_VERSION
+ config CC_HAS_ASM_GOTO
+ 	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+ 
++config LD_IS_BFD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU ld')
++
++config LD_IS_GOLD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU gold')
++
++config LD_IS_LLD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'LLD')
++
+ config CONSTRUCTORS
+ 	bool
+ 	depends on !UML
+-- 
+2.20.1.791.gb4d0f1c61a-goog
+
