@@ -2,132 +2,125 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 377D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B94C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F5A214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03675214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:14:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="F2wnBIUI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfBKVNJ (ORCPT
+        id S1727375AbfBKVOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:13:09 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726177AbfBKVNI (ORCPT
+        Mon, 11 Feb 2019 16:14:04 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2296 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbfBKVOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:13:08 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BKxOrR047463
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 16:13:07 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qkf57m0mu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 16:13:07 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 11 Feb 2019 21:13:06 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 21:13:03 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BLD2v318022632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 21:13:02 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2619FB2067;
-        Mon, 11 Feb 2019 21:13:02 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0630EB205F;
-        Mon, 11 Feb 2019 21:13:01 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Feb 2019 21:13:01 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 12E9B16C4066; Mon, 11 Feb 2019 13:13:02 -0800 (PST)
-Date:   Mon, 11 Feb 2019 13:13:02 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/atomic_t: Clarify signed vs unsigned
-Reply-To: paulmck@linux.ibm.com
-References: <20190211170943.GP32477@hirez.programming.kicks-ass.net>
- <20190211172800.GA2994@fuggles.cambridge.arm.com>
+        Mon, 11 Feb 2019 16:14:03 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c61e5960000>; Mon, 11 Feb 2019 13:13:58 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 11 Feb 2019 13:13:57 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 11 Feb 2019 13:13:57 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
+ 2019 21:13:57 +0000
+Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+To:     Jason Gunthorpe <jgg@ziepe.ca>, <ira.weiny@intel.com>
+CC:     <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, Daniel Borkmann <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, <netdev@vger.kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
+Date:   Mon, 11 Feb 2019 13:13:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211172800.GA2994@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19021121-0068-0000-0000-000003924103
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010578; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01159668; UDB=6.00605192; IPR=6.00940214;
- MB=3.00025531; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-11 21:13:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021121-0069-0000-0000-000047797406
-Message-Id: <20190211211302.GT4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=863 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110153
+In-Reply-To: <20190211203916.GA2771@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549919638; bh=jCNJwm22GIJyJ9ioZIwP6IZZLdb+CRCGAEh9x8vIK40=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=F2wnBIUIyRcBk9XPZBwpp+6XeprxUtoGbDdGoNtn6k9OQQtZ9hMy5XhGDUFmFyQvs
+         Cu4YHNkIG9qjaEMUQRhkvvSf6cPgpUW2gmtvWNL+JD0qKEsXO1dtgAKkGacgp3a61z
+         hDrnGMFtLb6t8+segCjn0hgTBqZawFIRjqtd2pbLIpINclPAYE7V/jLZ3XWY+1RIYS
+         Wb23jh/Eent8W8fBllFt3+5gBhmFuUN1816D0bLEeGbozqN0PoFUTf21suiDx53cUq
+         mbkf2aV9MvY/0qnZtPfLUUi7+mmxWEN7SRwLDUmyfCOq+aEEkWj1a6xvxBd0MgIHbx
+         odNPsrr5kqBmg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 05:28:00PM +0000, Will Deacon wrote:
-> On Mon, Feb 11, 2019 at 06:09:43PM +0100, Peter Zijlstra wrote:
-> > 
-> > Clarify the whole signed vs unsigned issue for atomic_t.
-> > 
-> > There has been enough confusion on this topic to warrant a few explicit
-> > words I feel.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  Documentation/atomic_t.txt | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-> > index 913396ac5824..dca3fb0554db 100644
-> > --- a/Documentation/atomic_t.txt
-> > +++ b/Documentation/atomic_t.txt
-> > @@ -56,6 +56,23 @@ The 'full' API consists of (atomic64_ and atomic_long_ prefixes omitted for
-> >    smp_mb__{before,after}_atomic()
-> >  
-> >  
-> > +TYPES (signed vs unsigned)
-> > +-----
-> > +
-> > +While atomic_t, atomic_long_t and atomic64_t use int, long and s64
-> > +respectively (for hysterical raisins), the kernel uses -fno-strict-overflow
-> > +(which implies -fwrapv) and defines signed overflow to behave like
-> > +2s-complement.
-> > +
-> > +Therefore, an explicitly unsigned variant of the atomic ops is strictly
-> > +unnecessary and we can simply cast, there is no UB.
-> > +
-> > +There was a bug in UBSAN prior to GCC-8 that would generate UB warnings for
-> > +signed types.
-> > +
-> > +With this we also conform to the C/C++ _Atomic behaviour and things like
-> > +P1236R1.
-> > +
+On 2/11/19 12:39 PM, Jason Gunthorpe wrote:
+> On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
+>> From: Ira Weiny <ira.weiny@intel.com>
+[...]
+>> +static inline int get_user_pages_fast_longterm(unsigned long start, int nr_pages,
+>> +					       bool write, struct page **pages)
+>> +{
+>> +	return get_user_pages_fast(start, nr_pages, write, pages);
+>> +}
+>>  #endif /* CONFIG_FS_DAX */
+>>  
+>>  int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>> @@ -2615,6 +2622,7 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+>>  #define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
+>>  #define FOLL_COW	0x4000	/* internal GUP flag */
+>>  #define FOLL_ANON	0x8000	/* don't do file mappings */
+>> +#define FOLL_LONGTERM	0x10000	/* mapping is intended for a long term pin */
 > 
-> Acked-by: Will Deacon <will.deacon@arm.com>
+> If we are adding a new flag, maybe we should get rid of the 'longterm'
+> entry points and just rely on the callers to pass the flag?
+> 
+> Jason
+> 
 
-Queued with Will's ack, thank you both!
++1, I agree that the overall get_user_pages*() API family will be cleaner
+*without* get_user_pages_longterm*() calls. And this new flag makes that possible.
+So I'd like to see the "longerm" call replaced with just passing this flag. Maybe
+even as part of this patchset, but either way.
 
-								Thanx, Paul
+Taking a moment to reflect on where I think this might go eventually (the notes
+below do not need to affect your patchset here, but this seems like a good place
+to mention this):
 
+It seems to me that the longterm vs. short-term is of questionable value.
+It's actually better to just call get_user_pages(), and then if it really is
+long-term enough to matter internally, we'll see the pages marked as gup-pinned.
+If the gup pages are released before anyone (filesystem, that is) notices, then
+it must have been short term.
+
+Doing it that way is self-maintaining. Of course, this assumes that we end up with
+a design that doesn't require being told, by the call sites, that a given gup
+call is intended for "long term" use. So I could be wrong about this direction, but
+let's please consider the possibility.
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
