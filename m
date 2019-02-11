@@ -2,129 +2,118 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F8CC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D258FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B2A2080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 955202080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAI9zsoi"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bgb37aKS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfBKWaa (ORCPT
+        id S1727567AbfBKWal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:30:30 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36658 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbfBKWaa (ORCPT
+        Mon, 11 Feb 2019 17:30:41 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36128 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbfBKWak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:30:30 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k98so1054219otk.3;
-        Mon, 11 Feb 2019 14:30:29 -0800 (PST)
+        Mon, 11 Feb 2019 17:30:40 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t13so382245vsk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+4DiyzXag6XNoVFg7/d5HN9eMmepXSzwGkMkkAmuU/8=;
-        b=gAI9zsoiS+b8AipSsD3qpmpSVAIW5/G7uFMxls8BlcL0p6KlnSmYUwQrEsuAZv59RS
-         J0ckt/R0/qNNVPHfVe6EzF48QNBXkdLwHfEuDJzqVRrRiJ89nY6SkdXZY9W6GnxRvr+8
-         R+tVnLBWegg2TjG0HzLx7aYHnu0H04CbSIDC6zT6k1xOB052iSPjfP2sOHG0c344sVcv
-         0g96GIv/boIMiVs2ljk4SXkg2KEBQOrUb0nRjfvSMfT4gDKyO2CgG11Oo1+SOaHhpZ7Z
-         S7Tveo2AQ+EgDDFOzjjItJVoNErQ3IR7xUgZznq0IImXoiQbhX7xdPzbkHH9SBbdiMzf
-         RfUg==
+        bh=tixZFh62XyTVWJSfqeuBwFv5ridgMOTpg3/m+r1Nj0c=;
+        b=Bgb37aKSltcuKSGwpBVqzyXnEUBe+9cErktDjz6l4NlTnPdqdW47s1c4dXvVabeTfk
+         uBj5ufRi2nbGcd5+H8A8rnEKnAUYX+gyaWmNd3b1kkuaIoFEaqwsP5kQShjGItCR1E5E
+         CVHeep1BIhwk4ts3qcGlj0DHa+feM3XyCZTM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+4DiyzXag6XNoVFg7/d5HN9eMmepXSzwGkMkkAmuU/8=;
-        b=hMBSZxHQNIDNa4It/YHul5vXrxzUF3BUsx1hcO3uR2a68yZ1LJri+CwKNss0y3E9za
-         uD93vVqFzDEWy2P4SflBSAjMd8VER7t+p0sMTZUSyKX2f+u+O5MwN0dKR7A6cpCs+GAh
-         YClv48DlypLoJHZLWuvmc6qAJV2By/5NGmwQlVADEgD60cCCdhKJzJQNa0rilet4y+kH
-         K7Cas4pe/eKdxl6j7v0dfVi+urazsq9MyVcxDC9MiE0VTYitbsNqofaN5ePcv3Kn6K3x
-         Je6gXBKui7srkxki3mrwZF3qJaHoburLCNjB3aGJgDaXXyK9u3dk+iBuU5ZKRvepbI4p
-         yB4Q==
-X-Gm-Message-State: AHQUAuYEmEtVSNPRcPu5jDCxMnbqOplhl24J5Z28OVuZudn72e5IA8Jg
-        zMqblmMlJOJLUU8ItfoNcL3FoxECALhl0ow5Gdo=
-X-Google-Smtp-Source: AHgI3IZhD7O4g5bItcIGHccEsp/VM0w2o3YHVdQQabhaSJqXsdQyqAsDdGkumEPecYUDiSZg9pitkHYTNbDDqPT8eyA=
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr487355otn.95.1549924229014;
- Mon, 11 Feb 2019 14:30:29 -0800 (PST)
+        bh=tixZFh62XyTVWJSfqeuBwFv5ridgMOTpg3/m+r1Nj0c=;
+        b=A8VjHNRh2hrWDNzebPbzsVpFDwSq6SPzc1T0y88JLoonYOqZUIo5xnnfiWhlILoc2/
+         IxOggXaoHtAV/CGn0H3n+7TeKMxdVwWpgpQrtwNSfDMgBuH86PNIXYGJRLv36bAepBaA
+         uKU3L1x5Fo9gboe6iaGovLWd9VunzT6ktcxgZ6E73eVRwikLOO3hA2qg8RaBBZLZltff
+         qa2Y9vxdzmNpgy5h7n+ivSekftNkrS9h7izAS77SeNwa4Qj3yOfR8It8IjiHfjpLo6QC
+         F1LhnZyGgYDAFCbwSTZ2BuWYGBb1aaRw6JxwtL9jJVfkqzvZe46tU3SS8e8CdbbBEYSs
+         DY2Q==
+X-Gm-Message-State: AHQUAuYmCRPnufoB6JeHpskfEim3bgz0PhtELtqQ6F+YivRNnzMeW3JI
+        d+xN1BL74SzuURizRc39hcotH1TeewM=
+X-Google-Smtp-Source: AHgI3IZAxV9Z3hUxW8L7dm1qHjiic7Su6AqLIGHpmPYbhVjM0VE3ocVQtUxRwFMMWUCu32+l0H20Og==
+X-Received: by 2002:a67:705:: with SMTP id 5mr67760vsh.59.1549924239011;
+        Mon, 11 Feb 2019 14:30:39 -0800 (PST)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id e67sm9866185vsd.32.2019.02.11.14.30.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 14:30:38 -0800 (PST)
+Received: by mail-vs1-f51.google.com with SMTP id u64so345172vsc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:30:37 -0800 (PST)
+X-Received: by 2002:a67:81c1:: with SMTP id c184mr243840vsd.111.1549924237496;
+ Mon, 11 Feb 2019 14:30:37 -0800 (PST)
 MIME-Version: 1.0
-References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
- <CAGngYiV6zm12XhB6WChSXNndLMSJ3e4NAB=BLq_mrXtWLKEruQ@mail.gmail.com> <20190211212734.01909e62@archlinux>
-In-Reply-To: <20190211212734.01909e62@archlinux>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Mon, 11 Feb 2019 17:30:18 -0500
-Message-ID: <CAGngYiV_6MzKOSomAWs1znp8ThPRAL-e2CVZfn+ZHZOq8DiD0A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org
+References: <20190206051335.23799-1-bjorn.andersson@linaro.org> <20190206051335.23799-6-bjorn.andersson@linaro.org>
+In-Reply-To: <20190206051335.23799-6-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 11 Feb 2019 14:30:26 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WDnKgiqP7Ta0xJtm5COTApYQ2DPTcUXH95O7S_vUJBCA@mail.gmail.com>
+Message-ID: <CAD=FV=WDnKgiqP7Ta0xJtm5COTApYQ2DPTcUXH95O7S_vUJBCA@mail.gmail.com>
+Subject: Re: [PATCH v6 5/8] soc: qcom: Add AOSS QMP communication driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 4:27 PM Jonathan Cameron <jic23@kernel.org> wrote:
->
-> Agreed.  Or potentially just use regmap_bulk_read and rely on
-> the regmap internal locking to do it for you.
+Hi,
 
-Neat solution. But it may only work correctly iff regmap_bulk_read()
-reads the low
-address first. I'm not sure if this function has that guarantee. If
-somebody changes
-the read order, the driver will break. But I think I'm being overly
-paranoid here :)
+On Tue, Feb 5, 2019 at 9:13 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> +       if (of_property_read_bool(pdev->dev.of_node, "#power-domain-cells")) {
+> +               qmp->pd_pdev = platform_device_register_data(&pdev->dev,
+> +                                                            "aoss_qmp_pd",
+> +                                                            PLATFORM_DEVID_NONE,
+> +                                                            NULL, 0);
+> +               if (IS_ERR(qmp->pd_pdev)) {
+> +                       dev_err(&pdev->dev, "failed to register AOSS PD\n");
 
-> So yes, it's more than possible that userspace won't get the same number
-> of events as samples taken over the limit, but I don't know why we care.
-> We can about missing a threshold being passed entirely, not about knowing
-> how many samples we were above it for.
+nit: not worth spinning just for this, but if you happen to spin you
+could print the error number in your message.
 
-I suspect that we run a small risk of losing an event, like so:
 
-PS (12.5 ms)
---> interrupt -> iio event
-ALS (100 ms)
---> interrupt -> iio event
-PS (12.5 ms)
---> interrupt ========= no iio event generated
-ALS (100 ms)
---> interrupt -> iio event
+> +                       ret = PTR_ERR(qmp->pd_pdev);
+> +                       goto err_close_qmp;
+> +               }
+> +       }
 
-To see why, imagine that the scheduler decides to move away from the
-threaded interrupt
-handler right before ap3216c_clear_int(). Say 20ms, which I know is a
-loooong time,
-but bear with me, the point is that it _could_ happen as we're not a RTOS.
+As discussed in v5 I wonder if the complexity of a separate driver is
+really worth it or if everything would be a lot easier to just link
+the two ".c" files together.  Now that it's a full error case if
+"aoss_qmp_pd" doesn't probe I'd vote for linking the two ".c" files
+together, but part of that is because I don't really want to dig into
+all the details of how you're supposed to call
+platform_device_register_data() for sub-devices and double-checking
+that you've got all the corner cases correct.
 
-static irqreturn_t ap3216c_event_handler(int irq, void *p)
-{
-        /* imagine ALS interrupt came in, INT_STATUS is 0b01 */
-        regmap_read(data->regmap, AP3216C_INT_STATUS, &status);
-        if (status & mask1) iio_push_event(PROX);
-        if (status & mask2) iio_push_event(LIGHT);
+...NOTE: presumably if you just change it to a straight-up function
+call then you can also get rid of the above "dev_err" since
+(presumably) you'll know that the init code of aoss_qmp_pd will print
+any relevant errors?
 
-        /* imagine schedule happens here */
-        msleep(20);
-        /* while we were not running, PS interrupt came in
-           INT_STATUS is now 0b11
-           yet no new interrupt is generated, as we are ONESHOT
-        */
-        ap3216c_clear_int(data);
-        /* clears both bits, interrupt line goes low.
-            knowledge that the PS interrupt came in is now lost */
-}
 
-Not sure if that's acceptable driver behaviour. In real life it
-probably wouldn't matter much,
-except for occasional added latency maybe ?
+-Doug
