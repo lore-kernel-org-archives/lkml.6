@@ -2,125 +2,140 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B48C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122F5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D39A4217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D56792184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h69/8aLc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="PjyK/zne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfBKXMM (ORCPT
+        id S1727284AbfBKXPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:12:12 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:47468 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfBKXMM (ORCPT
+        Mon, 11 Feb 2019 18:15:48 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33507 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbfBKXPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:12:12 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BN8lYP097599;
-        Mon, 11 Feb 2019 23:11:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ga+yuNAdN5EDRIg9ZPoAnKRUBklhIkTaF8GwpER6yuw=;
- b=h69/8aLchyz1bOEzsVbEL12ex24x41iHgKUkVrwI2tdVl2pvNgzF2CVbB+9+XUW4pN4d
- bl9vR+y4J9EMrCCQ5llzSpmryKAwte5EQnwEnawq2ien/vrHLSsd6JOMlls3kU+lvsJW
- PT08I9Q2N5KweZXEp+4rSAVoD77ka9orD/Q+b1yO1ccO1PNqK8ykHoP+Wdo1s4kHAPHB
- IsrtNH7jey307PkgCXznIEFiBmEZ6WVutPqCFE6Q7xfImKruBX2+e/+J5Zf73XeaHABu
- aE1PZmOGQ6oN+gnBJUtGRlrqCl3mGAj+YbEuaazQ/okXBVk3PhEEnlqDhkKd1fuI8M66 9w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2qhredrtp7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 23:11:42 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1BNBZgL029359
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 23:11:36 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BNBX8o019495;
-        Mon, 11 Feb 2019 23:11:33 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 11 Feb 2019 15:11:32 -0800
-Date:   Mon, 11 Feb 2019 18:11:53 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
-        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
-        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
-Subject: Re: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to
- account pinned pages
-Message-ID: <20190211231152.qflff6g2asmkb6hr@ca-dmjordan1.us.oracle.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
- <20190211224437.25267-2-daniel.m.jordan@oracle.com>
- <20190211225620.GO24692@ziepe.ca>
+        Mon, 11 Feb 2019 18:15:48 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y10so305670plp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oTcqWST6FEXJ74L2S+lCuUw15fC4Ilj/dXbcjgcG3xM=;
+        b=PjyK/zne0r0uU0KjFb2MjfOUEgPt4FBbq3g29lo58TfUVF2glXRcTZCtb9vd6WmgLW
+         V/oLi72B6NcncK39FwgcumOXs/P5vaX7Gqc3B7aJMVq7ysq9xG9aMRfJXG3gbOHxCF0Y
+         rhDtp8UUsWci5fnsHx3/GkswWqP3/dn3dzz6cljCzP4wA59DRlZZhSzNIbQfMO8x2ECD
+         0trsoIO23nue9tiKe4o2Jl06J+ytaT0oKfXWJcRzToVA8pB3mfkNPEp0nTnyhsokrSK8
+         fHMix1/jCQCqE1pNWP0YL1t6uwcR1/DNHMBL9GaKFRVAFbtVFoKBi+vLZDLpoIEtDxJ9
+         CfPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oTcqWST6FEXJ74L2S+lCuUw15fC4Ilj/dXbcjgcG3xM=;
+        b=mFiRpL440fsB3x2pyyC9ONXK/rkLgBcSEJee8IDOLhu9QVJMpo6Na5R6aOvA8TPppu
+         TxabXP+UD3WA7I5w47HaOPYZj6DAYSnuef6J+2mbAQJpavfG3TDgVLsyzJ3kzjKyWpog
+         E7Mbuf07Chd2bhnjBG+rM7YekVlUdd+fnzEo/qIHFiHkyFbiXGoBeY/dCpndLJpAb1tP
+         cQFtiXCEKYeTfw8UBgHZLfStCj7Un4sFo0HwLUj2Kav7WCKNqNCZdPkZK3wRnZx11pwZ
+         GQHN9YVRjq5tGs2crzKbrxYRiAVVQt+weTA+o+DEgCbZNjlIF3Ksb8tdvh0gpGy93VzE
+         sAGg==
+X-Gm-Message-State: AHQUAubt/MTTd4yjP+Q6JTgWvPtR3UOaGMWdvyI2dkbUko9SBxKFOikw
+        X4DIdnZr73dh5U6DDzEgVM7yG/ccqP+Smg==
+X-Google-Smtp-Source: AHgI3Iagtg+Ski2iLOlXUjAqdPa1pJyiBEQeMB1JSHNWwnBSeRq5wHwfVbSvAV4dYsdoGN5C8k1Qvg==
+X-Received: by 2002:a17:902:b214:: with SMTP id t20mr762524plr.248.1549926947026;
+        Mon, 11 Feb 2019 15:15:47 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id g128sm8693659pfb.121.2019.02.11.15.15.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 15:15:46 -0800 (PST)
+Subject: Re: [PATCH] blk-mq: insert rq with DONTPREP to hctx dispatch list
+ when requeue
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1549863665-1691-1-git-send-email-jianchao.w.wang@oracle.com>
+ <937e9207-dcf7-dab5-1917-8a10303edc67@kernel.dk>
+Message-ID: <82deee13-a4ff-9bf5-5e01-0e4df01b7ff7@kernel.dk>
+Date:   Mon, 11 Feb 2019 16:15:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211225620.GO24692@ziepe.ca>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9164 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902110164
+In-Reply-To: <937e9207-dcf7-dab5-1917-8a10303edc67@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 03:56:20PM -0700, Jason Gunthorpe wrote:
-> On Mon, Feb 11, 2019 at 05:44:33PM -0500, Daniel Jordan wrote:
-> > @@ -266,24 +267,15 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
-> >  	if (!mm)
-> >  		return -ESRCH; /* process exited */
-> >  
-> > -	ret = down_write_killable(&mm->mmap_sem);
-> > -	if (!ret) {
-> > -		if (npage > 0) {
-> > -			if (!dma->lock_cap) {
-> > -				unsigned long limit;
-> > -
-> > -				limit = task_rlimit(dma->task,
-> > -						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
-> > +	pinned_vm = atomic64_add_return(npage, &mm->pinned_vm);
-> >  
-> > -				if (mm->locked_vm + npage > limit)
-> > -					ret = -ENOMEM;
-> > -			}
-> > +	if (npage > 0 && !dma->lock_cap) {
-> > +		unsigned long limit = task_rlimit(dma->task, RLIMIT_MEMLOCK) >>
-> > +
-> > -					PAGE_SHIFT;
+On 2/11/19 8:59 AM, Jens Axboe wrote:
+> On 2/10/19 10:41 PM, Jianchao Wang wrote:
+>> When requeue, if RQF_DONTPREP, rq has contained some driver
+>> specific data, so insert it to hctx dispatch list to avoid any
+>> merge. Take scsi as example, here is the trace event log (no
+>> io scheduler, because RQF_STARTED would prevent merging),
+>>
+>>    kworker/0:1H-339   [000] ...1  2037.209289: block_rq_insert: 8,0 R 4096 () 32768 + 8 [kworker/0:1H]
+>> scsi_inert_test-1987  [000] ....  2037.220465: block_bio_queue: 8,0 R 32776 + 8 [scsi_inert_test]
+>> scsi_inert_test-1987  [000] ...2  2037.220466: block_bio_backmerge: 8,0 R 32776 + 8 [scsi_inert_test]
+>>    kworker/0:1H-339   [000] ....  2047.220913: block_rq_issue: 8,0 R 8192 () 32768 + 16 [kworker/0:1H]
+>> scsi_inert_test-1996  [000] ..s1  2047.221007: block_rq_complete: 8,0 R () 32768 + 8 [0]
+>> scsi_inert_test-1996  [000] .Ns1  2047.221045: block_rq_requeue: 8,0 R () 32776 + 8 [0]
+>>    kworker/0:1H-339   [000] ...1  2047.221054: block_rq_insert: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+>>    kworker/0:1H-339   [000] ...1  2047.221056: block_rq_issue: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+>> scsi_inert_test-1986  [000] ..s1  2047.221119: block_rq_complete: 8,0 R () 32776 + 8 [0]
+>>
+>> (32768 + 8) was requeued by scsi_queue_insert and had RQF_DONTPREP.
+>> Then it was merged with (32776 + 8) and issued. Due to RQF_DONTPREP,
+>> the sdb only contained the part of (32768 + 8), then only that part
+>> was completed. The lucky thing was that scsi_io_completion detected
+>> it and requeued the remaining part. So we didn't get corrupted data.
+>> However, the requeue of (32776 + 8) is not expected.
 > 
-> I haven't looked at this super closely, but how does this stuff work?
-> 
-> do_mlock doesn't touch pinned_vm, and this doesn't touch locked_vm...
-> 
-> Shouldn't all this be 'if (locked_vm + pinned_vm < RLIMIT_MEMLOCK)' ?
->
-> Otherwise MEMLOCK is really doubled..
+> Good catch, but how about something like this? Makes it more integrated,
+> I think that's cleaner.
 
-So this has been a problem for some time, but it's not as easy as adding them
-together, see [1][2] for a start.
+This is probably better (and safer):
 
-The locked_vm/pinned_vm issue definitely needs fixing, but all this series is
-trying to do is account to the right counter.
 
-Daniel
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 8f5b533764ca..b3908eb3881c 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -737,12 +737,21 @@ static void blk_mq_requeue_work(struct work_struct *work)
+ 	spin_unlock_irq(&q->requeue_lock);
+ 
+ 	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
+-		if (!(rq->rq_flags & RQF_SOFTBARRIER))
++		if (!(rq->rq_flags & (RQF_SOFTBARRIER | RQF_DONTPREP)))
+ 			continue;
+ 
+ 		rq->rq_flags &= ~RQF_SOFTBARRIER;
+ 		list_del_init(&rq->queuelist);
+-		blk_mq_sched_insert_request(rq, true, false, false);
++
++		/*
++		 * If RQF_DONTPREP is set, rq may contain some driver
++		 * specific data. Insert it to hctx dispatch list to avoid
++		 * any merge.
++		 */
++		if (rq->rq_flags & RQF_DONTPREP)
++			blk_mq_sched_insert_request(rq, true, false, false);
++		else
++			blk_mq_request_bypass_insert(rq, false);
+ 	}
+ 
+ 	while (!list_empty(&rq_list)) {
 
-[1] http://lkml.kernel.org/r/20130523104154.GA23650@twins.programming.kicks-ass.net
-[2] http://lkml.kernel.org/r/20130524140114.GK23650@twins.programming.kicks-ass.net
+-- 
+Jens Axboe
+
