@@ -2,92 +2,108 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384A1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2BFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041D42081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549921210;
-	bh=X8nyMZaX8g9bROqPca2gsdYJzKggW3PW7TreKzmYl0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DmV7nwbnpOFkkAzVOAmjGjtX48TLVtRrCKGxRf+U/x38oqulmZSFASA+aiYzG1wj9
-	 0bKmwJXiz1OWImsb+5YFsIGgTzpUpD+E//rdjELaGvuuCbTvAfP618jux7vyKBRHDP
-	 Y9XyXTkCIpkq0YkCxF0d1WugEXf+IeTiMoS2DBso=
+	by mail.kernel.org (Postfix) with ESMTP id 025482081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:40:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="XSJ62TRf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbfBKVkI (ORCPT
+        id S1727822AbfBKVkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:40:08 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36452 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbfBKVkH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:40:07 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so189110plo.3;
-        Mon, 11 Feb 2019 13:40:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=APc3Hq3mdGruWVAqmBh1tq9sv+fjeQxPqPpf4EiyTAA=;
-        b=Pa/KzfYsHesR5GVZdWN4wktRse4vrMSfLEE0bh+zKxztYRSJWT+lWiXwAol35GVgah
-         IzVtehzKFOJZ4ZiA25Nec6Cbqir/QvBT/nqgzXXkO//ZaJruJJGjwthxaK5NN+1q8PQR
-         LO5eKLm6Y5jzLK5+HF77y/TL7jRxsp12CqjGYDU3wvSI7pXBmhSlbLNbJBUxv6yObUvM
-         Y7K1KQxTVmkyqS4GviJBJVHM/e6wkPuJDKUZ08G/7WpqhGccXpCIBEI7Il4gAidYEbsd
-         pOH6kT+w04WQeM3cTlTmQLoqMa/8T7BouZNSDsgNJ3eh6iYDp3SI0ePkTVelGwjSZDUD
-         OnTQ==
-X-Gm-Message-State: AHQUAuabAPYwxZEAyqMxQmSefeMJr56eTGIXJ42XQhzikJStFTCzrtrh
-        oKmcnQfLa7p3miIKYkNIIA0=
-X-Google-Smtp-Source: AHgI3IY7CBFQBfM0GstZzQ6PY67Jy6v+5sYc4jJ5dwTRzrUXAHh91smlxMfGP6GvxTqlLkrmbIXucg==
-X-Received: by 2002:a17:902:7c83:: with SMTP id y3mr377914pll.260.1549921206921;
-        Mon, 11 Feb 2019 13:40:06 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id m67sm19219328pfb.25.2019.02.11.13.40.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 13:40:05 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 11 Feb 2019 13:40:02 -0800
-Date:   Mon, 11 Feb 2019 13:40:02 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
-Cc:     shuah@kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v2] selftests: kmod: worked on errors which breaks the
- overall execution of the test script. i have manually edited for v2 of the
- patch by changing the date and also commit log.
-Message-ID: <20190211214002.GV11489@garbanzo.do-not-panic.com>
-References: <20190131183109.10919-1-jeffrin@rajagiritech.edu.in>
+        Mon, 11 Feb 2019 16:40:49 -0500
+Received: from mail-eopbgr150089.outbound.protection.outlook.com ([40.107.15.89]:41328
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726228AbfBKVks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:40:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rMXcoMtY4tfRD+KIYYini9vBDpBrUAnADMOFbEeoq5I=;
+ b=XSJ62TRfDSl3xtQXnI02rGJJ6H3KjZ8/eoU6dpqQjUfS37i/wsieoIjLaWhrAp4/WDDXED11lFW0RNe/344oDTNl4bh9aAIeNC4wX4UMTwB2n+dRcriLSMfyUFjpFgOeq+oMVvsEIxhLI9MHgbCw0DNrbNBP4kIK8XOD+TK8xvs=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB6518.eurprd05.prod.outlook.com (20.179.7.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Mon, 11 Feb 2019 21:40:45 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
+ 21:40:45 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "bridge@lists.linux-foundation.org" 
+        <bridge@lists.linux-foundation.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
+Subject: Re: [PATCH net-next v4 0/9] net: Remove switchdev_ops
+Thread-Topic: [PATCH net-next v4 0/9] net: Remove switchdev_ops
+Thread-Index: AQHUwj1zxqFH0ZbG6U+8BvdVKYhXX6XbCP6AgAAXY4A=
+Date:   Mon, 11 Feb 2019 21:40:44 +0000
+Message-ID: <20190211214039.GA4947@splinter>
+References: <20190211191001.8623-1-f.fainelli@gmail.com>
+ <20190211.121657.2204380606625115977.davem@davemloft.net>
+In-Reply-To: <20190211.121657.2204380606625115977.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0406.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:f::34) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [79.176.7.115]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR05MB6518;6:gWkVTD/dBaVXBP5l0LMTp8hJsCwqaO9k4Wxoxer7clu9nHcow9Ja6sg7qLbkLtGcsqG7rEgPzS3/QUUmCZmeN+/DAEFKPHX2Q5aDHi5xDkI/cf/c4OuPAHL3ToO44d1iV+RPnAFjD7JsU4gBKgwzUzsjUTlJkAOu3Mnk4/8+IHWaxqQ2yMaMXRzTFm4+5ZnUNjrjw5e7g9pMRH3jQafcGf4l4RihmCBR77uI1UTPp6Hl9OUwK8meXL1T9YeJunqEStveJU4AVddQZtgiViQlcS355JkkPVC3479z7YcxvvxmQK40b+LkqR6RVTjK584QAl5X+GabyRE+QmuDUKmDjfS7yTcs/U4WlF+EWN0FMMkxjBdmyzDKiynP72Slpi6ssw19m7Gs+kGzCpiZPbdIm0E7e6/wKVS+ZthkOC4t1XypPuV8CEW9XcS2m21omtYFpV6zq6usnJQB5j4F8M924w==;5:ocTaK45SE3+rFteHq2+FJaAJJ0L52AoTX80dE+xIZdIR+ethWPAsJJEdtqL/KhJaGG3H7u5i0sWTwcyIv/5wmZBOI4uxeYTjbtyzDaZC304emWOMb8hwgpnB8O3WOXVFcZq6oHClJvzY1bBO5TFlX1R4QD3Diq06GevdcUJGwhRsLdcktY24r1lbtwbd3PODyjqE7XMPnpvOGOODahd2Iw==;7:6Nebpwj7V0BS1Ij8uzKc9yRU1QiejxDHhgfLYYI5WcnsFfJ51nyV5YzhQw9WHC5FqhObA+rmrwq6zjyOtGQCKXc2yhXhu0yHwh6/ptN45rPfWU/8QBgc+YYIoOhR9smVrhoEJASgmOrGavSC1MaYyg==
+x-ms-office365-filtering-correlation-id: 65c331c5-8c91-4276-e334-08d6906993eb
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB6518;
+x-ms-traffictypediagnostic: AM6PR05MB6518:
+x-microsoft-antispam-prvs: <AM6PR05MB6518A39949A9EA84526F97E9BF640@AM6PR05MB6518.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0945B0CC72
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(199004)(386003)(6506007)(4326008)(478600001)(486006)(14454004)(26005)(106356001)(71200400001)(9686003)(6512007)(186003)(6116002)(53936002)(3846002)(71190400001)(8936002)(6916009)(66066001)(256004)(33716001)(68736007)(6486002)(6436002)(6246003)(476003)(8676002)(229853002)(86362001)(52116002)(305945005)(54906003)(102836004)(4744005)(97736004)(105586002)(33656002)(446003)(11346002)(99286004)(33896004)(2906002)(7736002)(76176011)(25786009)(316002)(81166006)(1076003)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6518;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oF/44Z0bEoAR9rvRuaoXUeY89OQYXBDcjDzGk8ul1o2PQ+Xc9XGAKJO+gnauG34MtdX/aajNNXkGvm6OhWs232YxynEiKG72GwW8DlEmIS8E7SS8ckfDwWzHbHgTXsC2hxCpdcgwC5CERKtUIAQo8OD7thcfOWUJh33MicQsakdtgnXFEIxjJoSPFY+7hk2tDNcrzc17zvl9kNBjlJ/Tf94aM1jf1RdfQd0Ysf+UconlcnDMryDt+UJZK2c26oOl3X8AUzJXbGj5RFvi72BqALhFLrf7LtYYVnGaQihEbbjy/0LDDzMXsr5bogNyOnaBLd6C+DXafcJmEwIC5bOk1q5CBFlRfghMNsWcBJpLPUSdmk72BOlXDhLBskcbFAoRBM0mrwtpDBnVpey7k2cH9LdZmUCbsn76VP8FCvy7eew=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A59CAE415BE5F943B2174DFFA1A0595D@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131183109.10919-1-jeffrin@rajagiritech.edu.in>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65c331c5-8c91-4276-e334-08d6906993eb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 21:40:44.4857
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Your subject is too long.
+On Mon, Feb 11, 2019 at 12:16:57PM -0800, David Miller wrote:
+> From: Florian Fainelli <f.fainelli@gmail.com>
+> Date: Mon, 11 Feb 2019 11:09:52 -0800
+>=20
+> > David, I would like to get Ido's feedback on this to make sure I did no=
+t
+> > miss something, thank you!
+>=20
+> Ok, Ido please look at this when you can.
 
-On Fri, Feb 01, 2019 at 12:01:09AM +0530, Jeffrin Jose T wrote:
-> The kmod.sh script breaks because an array is passed as input
-> instead of a single element input.This patch takes elements
-> one at a time and passed as input to the condition statement
-> which in turn fixes the error.There was an issue which had
-> the need for passing a single digit to the condition statement
-> which is fixed using regular expression.
-> Distribution: Debian GNU/Linux buster/sid
-> Bash Version: 5.0.0(1)-release
-
-I just tried Debian unstabe with bash 5.0-2 and the issue is not
-present there. Debian testing was on 4.4.18-3.1 for me prior to
-the upgrade.
-
-*both* work fine.
-
-Please upgrade bash?
-
-  Luis
+Will review tomorrow. I was occupied with other stuff last couple of
+days. Sorry
