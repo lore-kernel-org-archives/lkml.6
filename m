@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC5CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61688C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E85222B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FE70222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897840;
-	bh=RmUYbN3dtLB0wrBAgT4mbgZeijK7kMC9EgVAtAzyi6w=;
+	s=default; t=1549897848;
+	bh=XUSGyvmOUkQJ7dwYK0blmSHCqr6Ly1JG9LpDL0GAsec=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fvwT+qAtoUkx4a8fmwyVEAH3si1yjbo1A6FDYwK3MGMkfJETMR4SlFEe/2jm4PXJZ
-	 AGhMCk6aDi/vdj4G7p/jmsxAH1zJbPUnFr33vd6GAp02Oi+OZ9DgL2QkBdXXjLYLj6
-	 jOV+xR61qC0YgTU9kWdXRysEgUfiDO3y3wwKEDjw=
+	b=bP5FtHP6FdLbHwytNauiAu1z8Ya1XdAY5YPowKIG7jHgVTEKEVHqceiWRGHDcJlxR
+	 1rpt/cXpLBtCgRMqKdoPQzR+rK1jG5+IrbGRs08zd6VM+Kybz2+fPwFO7dgJyUos0z
+	 XLoZw8ItJcmMmcAZ085wowZY8NxhnJQm7G6H2icY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391833AbfBKPKj (ORCPT
+        id S2403983AbfBKPKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60670 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391819AbfBKPKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:35 -0500
+        id S2403964AbfBKPKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CB16222B2;
-        Mon, 11 Feb 2019 15:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB50E222B0;
+        Mon, 11 Feb 2019 15:10:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897834;
-        bh=RmUYbN3dtLB0wrBAgT4mbgZeijK7kMC9EgVAtAzyi6w=;
+        s=default; t=1549897841;
+        bh=XUSGyvmOUkQJ7dwYK0blmSHCqr6Ly1JG9LpDL0GAsec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m45+lZoAOc/C/sNIx9dk7/r9l/UM6Whp/OsGt1EVEKQPNO5B5v7zZ6ituQn/f7QIE
-         PvYJaS5xc0qAwjHIMB264/35FEIXCrQGYflylxVUvEZZ5kcSBjf3ln1G9/dqvWUl7Y
-         poPnFNZo9veb7hYc+rg/RCB66tZrvKwK4ctz+0bY=
+        b=WGIDnV2tjxwt8EfA9KNpDJtQPISQUy78BtXstKrfSAQDLWC+bXUG9To860jvKmbSG
+         ronMVzUtGYwg12bw/7qS1lL3w50AroE7g7AKaoF3C5aJg6oulTFRYJMygUDoGsqkQK
+         lSTscU0d7mYd7UEO477hYUOSlLaYCQcHwAcDiNek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 114/137] ALSA: compress: Fix stop handling on compressed capture streams
-Date:   Mon, 11 Feb 2019 15:19:55 +0100
-Message-Id: <20190211141822.748959984@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Wang Li <wangli39@baidu.com>, Zhang Yu <zhangyu31@baidu.com>
+Subject: [PATCH 4.9 133/137] serial: fix race between flush_to_ldisc and tty_open
+Date:   Mon, 11 Feb 2019 15:20:14 +0100
+Message-Id: <20190211141824.454970895@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,51 +65,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 4f2ab5e1d13d6aa77c55f4914659784efd776eb4 upstream.
+commit fedb5760648a291e949f2380d383b5b2d2749b5e upstream.
 
-It is normal user behaviour to start, stop, then start a stream
-again without closing it. Currently this works for compressed
-playback streams but not capture ones.
+There still is a race window after the commit b027e2298bd588
+("tty: fix data race between tty_init_dev and flush of buf"),
+and we encountered this crash issue if receive_buf call comes
+before tty initialization completes in tty_open and
+tty->driver_data may be NULL.
 
-The states on a compressed capture stream go directly from OPEN to
-PREPARED, unlike a playback stream which moves to SETUP and waits
-for a write of data before moving to PREPARED. Currently however,
-when a stop is sent the state is set to SETUP for both types of
-streams. This leaves a capture stream in the situation where a new
-start can't be sent as that requires the state to be PREPARED and
-a new set_params can't be sent as that requires the state to be
-OPEN. The only option being to close the stream, and then reopen.
+CPU0                                    CPU1
+----                                    ----
+                                  tty_open
+                                   tty_init_dev
+                                     tty_ldisc_unlock
+                                       schedule
+flush_to_ldisc
+ receive_buf
+  tty_port_default_receive_buf
+   tty_ldisc_receive_buf
+    n_tty_receive_buf_common
+      __receive_buf
+       uart_flush_chars
+        uart_start
+        /*tty->driver_data is NULL*/
+                                   tty->ops->open
+                                   /*init tty->driver_data*/
 
-Correct this issues by allowing snd_compr_drain_notify to set the
-state depending on the stream direction, as we already do in
-set_params.
+it can be fixed by extending ldisc semaphore lock in tty_init_dev
+to driver_data initialized completely after tty->ops->open(), but
+this will lead to get lock on one function and unlock in some other
+function, and hard to maintain, so fix this race only by checking
+tty->driver_data when receiving, and return if tty->driver_data
+is NULL, and n_tty_receive_buf_common maybe calls uart_unthrottle,
+so add the same check.
 
-Fixes: 49bb6402f1aa ("ALSA: compress_core: Add support for capture streams")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Because the tty layer knows nothing about the driver associated with the
+device, the tty layer can not do anything here, it is up to the tty
+driver itself to check for this type of race.  Fix up the serial driver
+to correctly check to see if it is finished binding with the device when
+being called, and if not, abort the tty calls.
+
+[Description and problem report and testing from Li RongQing, I rewrote
+the patch to be in the serial layer, not in the tty core - gregkh]
+
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Tested-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Wang Li <wangli39@baidu.com>
+Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/compress_driver.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/include/sound/compress_driver.h
-+++ b/include/sound/compress_driver.h
-@@ -185,7 +185,11 @@ static inline void snd_compr_drain_notif
- 	if (snd_BUG_ON(!stream))
- 		return;
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -141,6 +141,9 @@ static void uart_start(struct tty_struct
+ 	struct uart_port *port;
+ 	unsigned long flags;
  
--	stream->runtime->state = SNDRV_PCM_STATE_SETUP;
-+	if (stream->direction == SND_COMPRESS_PLAYBACK)
-+		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
-+	else
-+		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
++	if (!state)
++		return;
 +
- 	wake_up(&stream->runtime->sleep);
- }
+ 	port = uart_port_lock(state, flags);
+ 	__uart_start(tty);
+ 	uart_port_unlock(port, flags);
+@@ -717,6 +720,9 @@ static void uart_unthrottle(struct tty_s
+ 	struct uart_port *port;
+ 	upstat_t mask = 0;
  
++	if (!state)
++		return;
++
+ 	port = uart_port_ref(state);
+ 	if (!port)
+ 		return;
 
 
