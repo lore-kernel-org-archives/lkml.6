@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD9DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E93B21A80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE21C218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901086;
-	bh=7iOROcqyaUcX2UXjDcWYzmbQqsO2UMxdIiaDQlsG+4g=;
+	s=default; t=1549901090;
+	bh=vOZblrMHiMPy/N2g4ULaI1y/2bqLsgO3ZEKp9zyj7Vk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ETNBCBB5DSoBC0AG1zKEjTC3wo2W2/ScutVjlXKjkxBQMbnJNB3DEFuU009t0etoQ
-	 AkvHSxOW8P9ddCpypWcXL8Vz8Wavn6k0+DHC8pc7igd0MajeAHTgqr3xZtwyG+6iUa
-	 q/j6xWkwXCJzBVFXLzuRc2bJa6TLIJffIdjtg5ro=
+	b=ozY8ntR9qJj3QbIWwBwmsCYiTu6Gz+P1qd2gz9DoLJagHNOYN/tIuzG0naIFQPxc9
+	 MI5ZARcZGWU6A1/vTU5EZkvVaN9kquYiQTHJ04BJEvXA5O/uSiUcZAzc3oYBfwa0bY
+	 adp2TUXoXSPBMQFIqmbdoV88I85ZA6vOZsw8N38w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbfBKO2Y (ORCPT
+        id S1730138AbfBKQEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:28:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34134 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:04:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729819AbfBKO2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:14 -0500
+        id S1728875AbfBKO2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D179220838;
-        Mon, 11 Feb 2019 14:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E07520838;
+        Mon, 11 Feb 2019 14:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895294;
-        bh=7iOROcqyaUcX2UXjDcWYzmbQqsO2UMxdIiaDQlsG+4g=;
+        s=default; t=1549895302;
+        bh=vOZblrMHiMPy/N2g4ULaI1y/2bqLsgO3ZEKp9zyj7Vk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8OHMckay90O4CCJgnx8jW4xtLwFh+evsgIA80eZVxBY8gIqyqSHunzlVeDG+k55s
-         nR8szRo+O63L9tPd4G0ev0aTKNmTssJPTkc3hho9DbeyGj7bIlD7c6p3hDRE+ZqyDR
-         OlkT2HKCDMvm5AycC8oZl0OcZ4NrNz9MFi9DJCrQ=
+        b=yjPQwIxv5rNDOY/AODBVuzZqee2UYIUIXjwkmWWdollwcdUD6DE/BpBrOhBxbULpN
+         r9oj0MAPQJU8cYEWqk+hGmE1BCpq2afKLvJp00ZfW7P3vf1GVeJcdBmQ2nvH/CZ7QV
+         4YcDBfDjjZ/pPtazi7TmYdEfsJLVlt640t/TwfNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 158/352] mlxsw: spectrum_acl: Limit priority value
-Date:   Mon, 11 Feb 2019 15:16:25 +0100
-Message-Id: <20190211141856.882877007@linuxfoundation.org>
+Subject: [PATCH 4.20 161/352] selftests/bpf: use __bpf_constant_htons in test_prog.c
+Date:   Mon, 11 Feb 2019 15:16:28 +0100
+Message-Id: <20190211141857.142945451@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,43 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d7263ab35be25505ab57ebecd93cbc5dba8be717 ]
+[ Upstream commit a0517a0f7ef23550b4484c37e2b9c2d32abebf64 ]
 
-In Spectrum-2, higher priority value wins and priority valid values are in
-the range of {1,cap_kvd_size-1}. mlxsw_sp_acl_tcam_priority_get converts
-from lower-bound priorities alike tc flower to Spectrum-2 HW range. Up
-until now tc flower did not provide priority 0 or reached the maximal
-value, however multicast routing does provide priority 0.
+For some reason, my older GCC (< 4.8) isn't smart enough to optimize the
+!__builtin_constant_p() branch in bpf_htons, I see:
+  error: implicit declaration of function '__builtin_bswap16'
 
-Therefore, Change mlxsw_sp_acl_tcam_priority_get to verify priority is in
-the correct range. Make sure priority is never set to zero and never
-exceeds the maximal allowed value.
+Let's use __bpf_constant_htons as suggested by Daniel Borkmann.
 
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+I tried to use simple htons, but it produces the following:
+  test_progs.c:54:17: error: braced-group within expression allowed only
+  inside a function
+    .eth.h_proto = htons(ETH_P_IP),
+
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/testing/selftests/bpf/test_progs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-index e171513bb32a..30931a2c025b 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-@@ -95,8 +95,9 @@ int mlxsw_sp_acl_tcam_priority_get(struct mlxsw_sp *mlxsw_sp,
- 	if (!MLXSW_CORE_RES_VALID(mlxsw_sp->core, KVD_SIZE))
- 		return -EIO;
+diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+index 2d3c04f45530..6ac7232b0fde 100644
+--- a/tools/testing/selftests/bpf/test_progs.c
++++ b/tools/testing/selftests/bpf/test_progs.c
+@@ -51,10 +51,10 @@ static struct {
+ 	struct iphdr iph;
+ 	struct tcphdr tcp;
+ } __packed pkt_v4 = {
+-	.eth.h_proto = bpf_htons(ETH_P_IP),
++	.eth.h_proto = __bpf_constant_htons(ETH_P_IP),
+ 	.iph.ihl = 5,
+ 	.iph.protocol = 6,
+-	.iph.tot_len = bpf_htons(MAGIC_BYTES),
++	.iph.tot_len = __bpf_constant_htons(MAGIC_BYTES),
+ 	.tcp.urg_ptr = 123,
+ };
  
--	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE);
--	if (rulei->priority > max_priority)
-+	/* Priority range is 1..cap_kvd_size-1. */
-+	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE) - 1;
-+	if (rulei->priority >= max_priority)
- 		return -EINVAL;
+@@ -64,9 +64,9 @@ static struct {
+ 	struct ipv6hdr iph;
+ 	struct tcphdr tcp;
+ } __packed pkt_v6 = {
+-	.eth.h_proto = bpf_htons(ETH_P_IPV6),
++	.eth.h_proto = __bpf_constant_htons(ETH_P_IPV6),
+ 	.iph.nexthdr = 6,
+-	.iph.payload_len = bpf_htons(MAGIC_BYTES),
++	.iph.payload_len = __bpf_constant_htons(MAGIC_BYTES),
+ 	.tcp.urg_ptr = 123,
+ };
  
- 	/* Unlike in TC, in HW, higher number means higher priority. */
 -- 
 2.19.1
 
