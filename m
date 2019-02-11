@@ -7,65 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75679C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56475C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE68214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A84214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895114;
-	bh=H1XiidvR2QRokR5q1iyRDj+4qD+rHETh9G0NSRp55kg=;
+	s=default; t=1549895120;
+	bh=DrV65zrKwH/sv9GZ3Anv8n2YUPa/YjTcWzuX2qNIafk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q/ZCTBpjdeTvGYC7GVGzVGCWgxQdfRqqJLgljGwIkjaSKS1Lr4OjuXO1gAus7t8oA
-	 usjnKKTYELEVdKtliJ87txud0BPuWrNjYWyKHyva/5/8+OdBrvRZuo4yF4PyDjPEQS
-	 nhPd4ubPMfTfpHGY18qGL4HGuvPLj1iHxvEM+xNw=
+	b=KXnTnA36ydpOed1qy9GRvSEnTJRS/UYSJ6g9/tAGkbQtT7gGbCg+N13YHr553EYV9
+	 UU7Wvzrtfwb49H/jw3Pi0h5RhiSd77SUciXnkAJ6IYVgC+mpZj6RM5WA3Ta2PJf14A
+	 wMcjX5ptQErXU24goJNoa/JnVPG4XpNIYCCi4zz0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbfBKOZM (ORCPT
+        id S1728078AbfBKOZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:25:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58498 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:25:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbfBKOZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:09 -0500
+        id S1726228AbfBKOZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C127020838;
-        Mon, 11 Feb 2019 14:25:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08BDD20821;
+        Mon, 11 Feb 2019 14:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895108;
-        bh=H1XiidvR2QRokR5q1iyRDj+4qD+rHETh9G0NSRp55kg=;
+        s=default; t=1549895114;
+        bh=DrV65zrKwH/sv9GZ3Anv8n2YUPa/YjTcWzuX2qNIafk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1efAymIIxNiXFjfX0vSXSdrJSppQ1oYEd9hWJhfcvYk4fpfBiBsSBkolCqk7fQrGz
-         Y7+yBa3u8s/HOVMQ5Ukw7wZGzi1aJeXaRAXjnmSZyb2khWedfPce6Y2rtbQsVHQN13
-         pNNqxlwh67XzQ9vZwVJpXxcxGqsIzbaZgmMmL+kw=
+        b=JNiU5RXfOeEQL17JT6/8XBznlggjhBWkzaxxnmPN+m1xpvM8WRRg9LCblA2MwkRrI
+         8hOPa8wbW47iCrJA42AlPz+EaseuqFRp112k2LuFFan9QxORL5LMuW4ZoEvke1yC+o
+         DafNuwpzLeQdkUgQviW/mI2/We/+W+yIUrJd0mu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        YiFei Zhu <zhuyifei1999@gmail.com>, linux-efi@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 095/352] firmware/efi: Add NULL pointer checks in efivars API functions
-Date:   Mon, 11 Feb 2019 15:15:22 +0100
-Message-Id: <20190211141851.903235207@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 096/352] s390/zcrypt: improve special ap message cmd handling
+Date:   Mon, 11 Feb 2019 15:15:23 +0100
+Message-Id: <20190211141851.957203560@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -84,316 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ab2180a15ce54739fed381efb4cb12e78dfb1561 ]
+[ Upstream commit be534791011100d204602e2e0496e9e6ce8edf63 ]
 
-Since commit:
+There exist very few ap messages which need to have the 'special' flag
+enabled. This flag tells the firmware layer to do some pre- and maybe
+postprocessing. However, it may happen that this special flag is
+enabled but the firmware is unable to deal with this kind of message
+and thus returns with reply code 0x41. For example older firmware may
+not know the newest messages triggered by the zcrypt device driver and
+thus react with reject and the named reply code. Unfortunately this
+reply code is not known to the zcrypt error routines and thus default
+behavior is to switch the ap queue offline.
 
-   ce2e6db554fa ("brcmfmac: Add support for getting nvram contents from EFI variables")
+This patch now makes the ap error routine aware of the reply code and
+so userspace is informed about the bad processing result but the queue
+is not switched to offline state any more.
 
-we have a device driver accessing the efivars API. Several functions in
-the efivars API assume __efivars is set, i.e., that they will be accessed
-only after efivars_register() has been called. However, the following NULL
-pointer access was reported calling efivar_entry_size() from the brcmfmac
-device driver:
-
-  Unable to handle kernel NULL pointer dereference at virtual address 00000008
-  pgd = 60bfa5f1
-  [00000008] *pgd=00000000
-  Internal error: Oops: 5 [#1] SMP ARM
-  ...
-  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-  Workqueue: events request_firmware_work_func
-  PC is at efivar_entry_size+0x28/0x90
-  LR is at brcmf_fw_complete_request+0x3f8/0x8d4 [brcmfmac]
-  pc : [<c0c40718>]    lr : [<bf2a3ef4>]    psr: a00d0113
-  sp : ede7fe28  ip : ee983410  fp : c1787f30
-  r10: 00000000  r9 : 00000000  r8 : bf2b2258
-  r7 : ee983000  r6 : c1604c48  r5 : ede7fe88  r4 : edf337c0
-  r3 : 00000000  r2 : 00000000  r1 : ede7fe88  r0 : c17712c8
-  Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-  Control: 10c5387d  Table: ad16804a  DAC: 00000051
-
-Disassembly showed that the local static variable __efivars is NULL,
-which is not entirely unexpected given that it is a non-EFI platform.
-
-So add a NULL pointer check to efivar_entry_size(), and to related
-functions while at it. In efivars_register() a couple of sanity checks
-are added as well.
-
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: YiFei Zhu <zhuyifei1999@gmail.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-9-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/vars.c | 99 +++++++++++++++++++++++++++++--------
- 1 file changed, 78 insertions(+), 21 deletions(-)
+ arch/s390/include/uapi/asm/zcrypt.h | 4 ++--
+ drivers/s390/crypto/zcrypt_error.h  | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-index 9336ffdf6e2c..fceaafd67ec6 100644
---- a/drivers/firmware/efi/vars.c
-+++ b/drivers/firmware/efi/vars.c
-@@ -318,7 +318,12 @@ EXPORT_SYMBOL_GPL(efivar_variable_is_removable);
- static efi_status_t
- check_var_size(u32 attributes, unsigned long size)
- {
--	const struct efivar_operations *fops = __efivars->ops;
-+	const struct efivar_operations *fops;
-+
-+	if (!__efivars)
-+		return EFI_UNSUPPORTED;
-+
-+	fops = __efivars->ops;
- 
- 	if (!fops->query_variable_store)
- 		return EFI_UNSUPPORTED;
-@@ -329,7 +334,12 @@ check_var_size(u32 attributes, unsigned long size)
- static efi_status_t
- check_var_size_nonblocking(u32 attributes, unsigned long size)
- {
--	const struct efivar_operations *fops = __efivars->ops;
-+	const struct efivar_operations *fops;
-+
-+	if (!__efivars)
-+		return EFI_UNSUPPORTED;
-+
-+	fops = __efivars->ops;
- 
- 	if (!fops->query_variable_store)
- 		return EFI_UNSUPPORTED;
-@@ -429,13 +439,18 @@ static void dup_variable_bug(efi_char16_t *str16, efi_guid_t *vendor_guid,
- int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 		void *data, bool duplicates, struct list_head *head)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	unsigned long variable_name_size = 1024;
- 	efi_char16_t *variable_name;
- 	efi_status_t status;
- 	efi_guid_t vendor_guid;
- 	int err = 0;
- 
-+	if (!__efivars)
-+		return -EFAULT;
-+
-+	ops = __efivars->ops;
-+
- 	variable_name = kzalloc(variable_name_size, GFP_KERNEL);
- 	if (!variable_name) {
- 		printk(KERN_ERR "efivars: Memory allocation failed.\n");
-@@ -583,12 +598,14 @@ static void efivar_entry_list_del_unlock(struct efivar_entry *entry)
-  */
- int __efivar_entry_delete(struct efivar_entry *entry)
- {
--	const struct efivar_operations *ops = __efivars->ops;
- 	efi_status_t status;
- 
--	status = ops->set_variable(entry->var.VariableName,
--				   &entry->var.VendorGuid,
--				   0, 0, NULL);
-+	if (!__efivars)
-+		return -EINVAL;
-+
-+	status = __efivars->ops->set_variable(entry->var.VariableName,
-+					      &entry->var.VendorGuid,
-+					      0, 0, NULL);
- 
- 	return efi_status_to_err(status);
- }
-@@ -607,12 +624,17 @@ EXPORT_SYMBOL_GPL(__efivar_entry_delete);
-  */
- int efivar_entry_delete(struct efivar_entry *entry)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_status_t status;
- 
- 	if (down_interruptible(&efivars_lock))
- 		return -EINTR;
- 
-+	if (!__efivars) {
-+		up(&efivars_lock);
-+		return -EINVAL;
-+	}
-+	ops = __efivars->ops;
- 	status = ops->set_variable(entry->var.VariableName,
- 				   &entry->var.VendorGuid,
- 				   0, 0, NULL);
-@@ -650,13 +672,19 @@ EXPORT_SYMBOL_GPL(efivar_entry_delete);
- int efivar_entry_set(struct efivar_entry *entry, u32 attributes,
- 		     unsigned long size, void *data, struct list_head *head)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_status_t status;
- 	efi_char16_t *name = entry->var.VariableName;
- 	efi_guid_t vendor = entry->var.VendorGuid;
- 
- 	if (down_interruptible(&efivars_lock))
- 		return -EINTR;
-+
-+	if (!__efivars) {
-+		up(&efivars_lock);
-+		return -EINVAL;
-+	}
-+	ops = __efivars->ops;
- 	if (head && efivar_entry_find(name, vendor, head, false)) {
- 		up(&efivars_lock);
- 		return -EEXIST;
-@@ -687,12 +715,17 @@ static int
- efivar_entry_set_nonblocking(efi_char16_t *name, efi_guid_t vendor,
- 			     u32 attributes, unsigned long size, void *data)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_status_t status;
- 
- 	if (down_trylock(&efivars_lock))
- 		return -EBUSY;
- 
-+	if (!__efivars) {
-+		up(&efivars_lock);
-+		return -EINVAL;
-+	}
-+
- 	status = check_var_size_nonblocking(attributes,
- 					    size + ucs2_strsize(name, 1024));
- 	if (status != EFI_SUCCESS) {
-@@ -700,6 +733,7 @@ efivar_entry_set_nonblocking(efi_char16_t *name, efi_guid_t vendor,
- 		return -ENOSPC;
- 	}
- 
-+	ops = __efivars->ops;
- 	status = ops->set_variable_nonblocking(name, &vendor, attributes,
- 					       size, data);
- 
-@@ -727,9 +761,13 @@ efivar_entry_set_nonblocking(efi_char16_t *name, efi_guid_t vendor,
- int efivar_entry_set_safe(efi_char16_t *name, efi_guid_t vendor, u32 attributes,
- 			  bool block, unsigned long size, void *data)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_status_t status;
- 
-+	if (!__efivars)
-+		return -EINVAL;
-+
-+	ops = __efivars->ops;
- 	if (!ops->query_variable_store)
- 		return -ENOSYS;
- 
-@@ -829,13 +867,18 @@ EXPORT_SYMBOL_GPL(efivar_entry_find);
-  */
- int efivar_entry_size(struct efivar_entry *entry, unsigned long *size)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_status_t status;
- 
- 	*size = 0;
- 
- 	if (down_interruptible(&efivars_lock))
- 		return -EINTR;
-+	if (!__efivars) {
-+		up(&efivars_lock);
-+		return -EINVAL;
-+	}
-+	ops = __efivars->ops;
- 	status = ops->get_variable(entry->var.VariableName,
- 				   &entry->var.VendorGuid, NULL, size, NULL);
- 	up(&efivars_lock);
-@@ -861,12 +904,14 @@ EXPORT_SYMBOL_GPL(efivar_entry_size);
- int __efivar_entry_get(struct efivar_entry *entry, u32 *attributes,
- 		       unsigned long *size, void *data)
- {
--	const struct efivar_operations *ops = __efivars->ops;
- 	efi_status_t status;
- 
--	status = ops->get_variable(entry->var.VariableName,
--				   &entry->var.VendorGuid,
--				   attributes, size, data);
-+	if (!__efivars)
-+		return -EINVAL;
-+
-+	status = __efivars->ops->get_variable(entry->var.VariableName,
-+					      &entry->var.VendorGuid,
-+					      attributes, size, data);
- 
- 	return efi_status_to_err(status);
- }
-@@ -882,14 +927,19 @@ EXPORT_SYMBOL_GPL(__efivar_entry_get);
- int efivar_entry_get(struct efivar_entry *entry, u32 *attributes,
- 		     unsigned long *size, void *data)
- {
--	const struct efivar_operations *ops = __efivars->ops;
- 	efi_status_t status;
- 
- 	if (down_interruptible(&efivars_lock))
- 		return -EINTR;
--	status = ops->get_variable(entry->var.VariableName,
--				   &entry->var.VendorGuid,
--				   attributes, size, data);
-+
-+	if (!__efivars) {
-+		up(&efivars_lock);
-+		return -EINVAL;
-+	}
-+
-+	status = __efivars->ops->get_variable(entry->var.VariableName,
-+					      &entry->var.VendorGuid,
-+					      attributes, size, data);
- 	up(&efivars_lock);
- 
- 	return efi_status_to_err(status);
-@@ -921,7 +971,7 @@ EXPORT_SYMBOL_GPL(efivar_entry_get);
- int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
- 			      unsigned long *size, void *data, bool *set)
- {
--	const struct efivar_operations *ops = __efivars->ops;
-+	const struct efivar_operations *ops;
- 	efi_char16_t *name = entry->var.VariableName;
- 	efi_guid_t *vendor = &entry->var.VendorGuid;
- 	efi_status_t status;
-@@ -940,6 +990,11 @@ int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
- 	if (down_interruptible(&efivars_lock))
- 		return -EINTR;
- 
-+	if (!__efivars) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
- 	/*
- 	 * Ensure that the available space hasn't shrunk below the safe level
- 	 */
-@@ -956,6 +1011,8 @@ int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
- 		}
- 	}
- 
-+	ops = __efivars->ops;
-+
- 	status = ops->set_variable(name, vendor, attributes, *size, data);
- 	if (status != EFI_SUCCESS) {
- 		err = efi_status_to_err(status);
+diff --git a/arch/s390/include/uapi/asm/zcrypt.h b/arch/s390/include/uapi/asm/zcrypt.h
+index 42c81a95e97b..494c34c50716 100644
+--- a/arch/s390/include/uapi/asm/zcrypt.h
++++ b/arch/s390/include/uapi/asm/zcrypt.h
+@@ -150,8 +150,8 @@ struct ica_xcRB {
+  * @cprb_len:		CPRB header length [0x0020]
+  * @cprb_ver_id:	CPRB version id.   [0x04]
+  * @pad_000:		Alignment pad bytes
+- * @flags:		Admin cmd [0x80] or functional cmd [0x00]
+- * @func_id:		Function id / subtype [0x5434]
++ * @flags:		Admin bit [0x80], Special bit [0x20]
++ * @func_id:		Function id / subtype [0x5434] "T4"
+  * @source_id:		Source id [originator id]
+  * @target_id:		Target id [usage/ctrl domain id]
+  * @ret_code:		Return code
+diff --git a/drivers/s390/crypto/zcrypt_error.h b/drivers/s390/crypto/zcrypt_error.h
+index 240b27f3f5f6..f34ee41cbed8 100644
+--- a/drivers/s390/crypto/zcrypt_error.h
++++ b/drivers/s390/crypto/zcrypt_error.h
+@@ -51,6 +51,7 @@ struct error_hdr {
+ #define REP82_ERROR_FORMAT_FIELD	    0x29
+ #define REP82_ERROR_INVALID_COMMAND	    0x30
+ #define REP82_ERROR_MALFORMED_MSG	    0x40
++#define REP82_ERROR_INVALID_SPECIAL_CMD	    0x41
+ #define REP82_ERROR_INVALID_DOMAIN_PRECHECK 0x42
+ #define REP82_ERROR_RESERVED_FIELDO	    0x50 /* old value	*/
+ #define REP82_ERROR_WORD_ALIGNMENT	    0x60
+@@ -89,6 +90,7 @@ static inline int convert_error(struct zcrypt_queue *zq,
+ 	case REP88_ERROR_MESSAGE_MALFORMD:
+ 	case REP82_ERROR_INVALID_DOMAIN_PRECHECK:
+ 	case REP82_ERROR_INVALID_DOMAIN_PENDING:
++	case REP82_ERROR_INVALID_SPECIAL_CMD:
+ 	//   REP88_ERROR_INVALID_KEY		// '82' CEX2A
+ 	//   REP88_ERROR_OPERAND		// '84' CEX2A
+ 	//   REP88_ERROR_OPERAND_EVEN_MOD	// '85' CEX2A
 -- 
 2.19.1
 
