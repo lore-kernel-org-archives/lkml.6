@@ -2,58 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C34C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138E1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5030E222AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6772222BC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897386;
-	bh=pliT+uMc+09A6/BqO+Sdv+Q+W9b/3BBY7rhuxyEHKts=;
+	s=default; t=1549897390;
+	bh=wIWOWH3HA2DIffEyZV4Fudub1P2bjYq1DRACFiWv05k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nswce1eL80KfyvyPZcYRYHVJm/MH/xR7ma63OhEnSQRnLbSsL34w9pP6c0xcNshjI
-	 3JWpa+GDulKOi/pmtq99+teSf+A3IMgiHyk5p+hBPyHx5yI7lmvaSWhfad+x24M5k/
-	 Gruqf8p+lBdco69cmd3yYkGMRqU26w7qIJleCRzU=
+	b=X6BdNmzFLAEvJdCagvQxDIPnBWwv4y38bEabWzPAwt67SkJMfy+UKG8UOWWzuz6ja
+	 vlrEdAmWjY/mhVHt0vj73RRTebFmSuqU6EzxhrdLKKcNpVDFA2MBnLQ6xAbomQ0DLH
+	 EPznEt0BisqW+nwdrE5m/qvCJjGR8yCCJvpnS934=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390548AbfBKPDF (ORCPT
+        id S2390563AbfBKPDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:03:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51232 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:03:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390514AbfBKPC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:59 -0500
+        id S2390514AbfBKPDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E66222A6;
-        Mon, 11 Feb 2019 15:02:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D50222A7;
+        Mon, 11 Feb 2019 15:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897377;
-        bh=pliT+uMc+09A6/BqO+Sdv+Q+W9b/3BBY7rhuxyEHKts=;
+        s=default; t=1549897386;
+        bh=wIWOWH3HA2DIffEyZV4Fudub1P2bjYq1DRACFiWv05k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=njf5Dbi6V5FvnAU+wPBCUPHXyB3+S/vWt2A+f1qpb5Ewr8KnXQsBtf28h3HrHeIHX
-         48kjOliIPU5osZ084SZERCowNJp2yeWQRlHTI/r5zIb/GZxDFwHNRtNKKTRCSCh5AO
-         33hDezTO4xxywEasdqY1ryVY3Nayj8VRHeL63Wfs=
+        b=EYlUjayNQoidF/rXcdCr85tRf1wHBND32Y5VkCUliPTRqzofRa8XEpPpaRdvjR1Fb
+         kfFr1+iHXc/rJZGPHtugqWyCi7ZcQMP6pC2hpbpHgxe/vPcgrguxjp9NfdutNkMS/S
+         4JpDPo/pHZQwkAoUxqwWYyFG3DQVcNnKmW+hecUA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Florian Meier <florian.meier@koalo.de>,
-        Clive Messer <clive.m.messer@gmail.com>,
-        Matthias Reichl <hias@horus.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Kauer <florian.kauer@koalo.de>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.14 181/205] dmaengine: bcm2835: Fix abort of transactions
-Date:   Mon, 11 Feb 2019 15:19:39 +0100
-Message-Id: <20190211141840.225619230@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 155/205] kdb: Dont back trace on a cpu that didnt round up
+Date:   Mon, 11 Feb 2019 15:19:13 +0100
+Message-Id: <20190211141838.493949996@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -72,162 +66,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
 
-commit 9e528c799d17a4ac37d788c81440b50377dd592d upstream.
+If you have a CPU that fails to round up and then run 'btc' you'll end
+up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
+It's wise to also set the task to NULL when leaving the debugger so
+that if we fail to round up on a later entry into the debugger we
+won't backtrace a stale task.
 
-There are multiple issues with bcm2835_dma_abort() (which is called on
-termination of a transaction):
-
-* The algorithm to abort the transaction first pauses the channel by
-  clearing the ACTIVE flag in the CS register, then waits for the PAUSED
-  flag to clear.  Page 49 of the spec documents the latter as follows:
-
-  "Indicates if the DMA is currently paused and not transferring data.
-   This will occur if the active bit has been cleared [...]"
-   https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
-
-  So the function is entering an infinite loop because it is waiting for
-  PAUSED to clear which is always set due to the function having cleared
-  the ACTIVE flag.  The only thing that's saving it from itself is the
-  upper bound of 10000 loop iterations.
-
-  The code comment says that the intention is to "wait for any current
-  AXI transfer to complete", so the author probably wanted to check the
-  WAITING_FOR_OUTSTANDING_WRITES flag instead.  Amend the function
-  accordingly.
-
-* The CS register is only read at the beginning of the function.  It
-  needs to be read again after pausing the channel and before checking
-  for outstanding writes, otherwise writes which were issued between
-  the register read at the beginning of the function and pausing the
-  channel may not be waited for.
-
-* The function seeks to abort the transfer by writing 0 to the NEXTCONBK
-  register and setting the ABORT and ACTIVE flags.  Thereby, the 0 in
-  NEXTCONBK is sought to be loaded into the CONBLK_AD register.  However
-  experimentation has shown this approach to not work:  The CONBLK_AD
-  register remains the same as before and the CS register contains
-  0x00000030 (PAUSED | DREQ_STOPS_DMA).  In other words, the control
-  block is not aborted but merely paused and it will be resumed once the
-  next DMA transaction is started.  That is absolutely not the desired
-  behavior.
-
-  A simpler approach is to set the channel's RESET flag instead.  This
-  reliably zeroes the NEXTCONBK as well as the CS register.  It requires
-  less code and only a single MMIO write.  This is also what popular
-  user space DMA drivers do, e.g.:
-  https://github.com/metachris/RPIO/blob/master/source/c_pwm/pwm.c
-
-  Note that the spec is contradictory whether the NEXTCONBK register
-  is writeable at all.  On the one hand, page 41 claims:
-
-  "The value loaded into the NEXTCONBK register can be overwritten so
-  that the linked list of Control Block data structures can be
-  dynamically altered. However it is only safe to do this when the DMA
-  is paused."
-
-  On the other hand, page 40 specifies:
-
-  "Only three registers in each channel's register set are directly
-  writeable (CS, CONBLK_AD and DEBUG). The other registers (TI,
-  SOURCE_AD, DEST_AD, TXFR_LEN, STRIDE & NEXTCONBK), are automatically
-  loaded from a Control Block data structure held in external memory."
-
-Fixes: 96286b576690 ("dmaengine: Add support for BCM2835")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v3.14+
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Florian Meier <florian.meier@koalo.de>
-Cc: Clive Messer <clive.m.messer@gmail.com>
-Cc: Matthias Reichl <hias@horus.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Florian Kauer <florian.kauer@koalo.de>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/bcm2835-dma.c |   41 +++++++++--------------------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
+ kernel/debug/debug_core.c       |  4 ++++
+ kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
+ kernel/debug/kdb/kdb_debugger.c |  7 -------
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
---- a/drivers/dma/bcm2835-dma.c
-+++ b/drivers/dma/bcm2835-dma.c
-@@ -415,13 +415,11 @@ static void bcm2835_dma_fill_cb_chain_wi
- 	}
- }
+diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+index 65c0f1363788..94aa9ae0007a 100644
+--- a/kernel/debug/debug_core.c
++++ b/kernel/debug/debug_core.c
+@@ -535,6 +535,8 @@ return_normal:
+ 				arch_kgdb_ops.correct_hw_break();
+ 			if (trace_on)
+ 				tracing_on();
++			kgdb_info[cpu].debuggerinfo = NULL;
++			kgdb_info[cpu].task = NULL;
+ 			kgdb_info[cpu].exception_state &=
+ 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 			kgdb_info[cpu].enter_kgdb--;
+@@ -667,6 +669,8 @@ kgdb_restore:
+ 	if (trace_on)
+ 		tracing_on();
  
--static int bcm2835_dma_abort(void __iomem *chan_base)
-+static int bcm2835_dma_abort(struct bcm2835_chan *c)
- {
--	unsigned long cs;
-+	void __iomem *chan_base = c->chan_base;
- 	long int timeout = 10000;
- 
--	cs = readl(chan_base + BCM2835_DMA_CS);
--
- 	/*
- 	 * A zero control block address means the channel is idle.
- 	 * (The ACTIVE flag in the CS register is not a reliable indicator.)
-@@ -433,25 +431,16 @@ static int bcm2835_dma_abort(void __iome
- 	writel(0, chan_base + BCM2835_DMA_CS);
- 
- 	/* Wait for any current AXI transfer to complete */
--	while ((cs & BCM2835_DMA_ISPAUSED) && --timeout) {
-+	while ((readl(chan_base + BCM2835_DMA_CS) &
-+		BCM2835_DMA_WAITING_FOR_WRITES) && --timeout)
- 		cpu_relax();
--		cs = readl(chan_base + BCM2835_DMA_CS);
--	}
- 
--	/* We'll un-pause when we set of our next DMA */
-+	/* Peripheral might be stuck and fail to signal AXI write responses */
- 	if (!timeout)
--		return -ETIMEDOUT;
--
--	if (!(cs & BCM2835_DMA_ACTIVE))
--		return 0;
--
--	/* Terminate the control block chain */
--	writel(0, chan_base + BCM2835_DMA_NEXTCB);
--
--	/* Abort the whole DMA */
--	writel(BCM2835_DMA_ABORT | BCM2835_DMA_ACTIVE,
--	       chan_base + BCM2835_DMA_CS);
-+		dev_err(c->vc.chan.device->dev,
-+			"failed to complete outstanding writes\n");
- 
-+	writel(BCM2835_DMA_RESET, chan_base + BCM2835_DMA_CS);
- 	return 0;
- }
- 
-@@ -804,7 +793,6 @@ static int bcm2835_dma_terminate_all(str
- 	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
- 	struct bcm2835_dmadev *d = to_bcm2835_dma_dev(c->vc.chan.device);
- 	unsigned long flags;
--	int timeout = 10000;
- 	LIST_HEAD(head);
- 
- 	spin_lock_irqsave(&c->vc.lock, flags);
-@@ -818,18 +806,7 @@ static int bcm2835_dma_terminate_all(str
- 	if (c->desc) {
- 		bcm2835_dma_desc_free(&c->desc->vd);
- 		c->desc = NULL;
--		bcm2835_dma_abort(c->chan_base);
--
--		/* Wait for stopping */
--		while (--timeout) {
--			if (!readl(c->chan_base + BCM2835_DMA_ADDR))
--				break;
--
--			cpu_relax();
++	kgdb_info[cpu].debuggerinfo = NULL;
++	kgdb_info[cpu].task = NULL;
+ 	kgdb_info[cpu].exception_state &=
+ 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 	kgdb_info[cpu].enter_kgdb--;
+diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+index 7921ae4fca8d..7e2379aa0a1e 100644
+--- a/kernel/debug/kdb/kdb_bt.c
++++ b/kernel/debug/kdb/kdb_bt.c
+@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
+ 		kdb_printf("btc: cpu status: ");
+ 		kdb_parse("cpu\n");
+ 		for_each_online_cpu(cpu) {
+-			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
++			void *kdb_tsk = KDB_TSK(cpu);
++
++			/* If a CPU failed to round up we could be here */
++			if (!kdb_tsk) {
++				kdb_printf("WARNING: no task for cpu %ld\n",
++					   cpu);
++				continue;
++			}
++
++			sprintf(buf, "btt 0x%px\n", kdb_tsk);
+ 			kdb_parse(buf);
+ 			touch_nmi_watchdog();
+ 		}
+diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
+index 15e1a7af5dd0..53a0df6e4d92 100644
+--- a/kernel/debug/kdb/kdb_debugger.c
++++ b/kernel/debug/kdb/kdb_debugger.c
+@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
+ 	kdb_bp_remove();
+ 	KDB_STATE_CLEAR(DOING_SS);
+ 	KDB_STATE_SET(PAGER);
+-	/* zero out any offline cpu data */
+-	for_each_present_cpu(i) {
+-		if (!cpu_online(i)) {
+-			kgdb_info[i].debuggerinfo = NULL;
+-			kgdb_info[i].task = NULL;
 -		}
--
--		if (!timeout)
--			dev_err(d->ddev.dev, "DMA transfer could not be terminated\n");
-+		bcm2835_dma_abort(c);
- 	}
- 
- 	vchan_get_all_descriptors(&c->vc, &head);
+-	}
+ 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
+ 		ks->pass_exception = 1;
+ 		KDB_FLAG_SET(CATASTROPHIC);
+-- 
+2.19.1
+
 
 
