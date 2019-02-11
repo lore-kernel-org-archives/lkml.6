@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738BAC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8917C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43FEC222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D141222B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897538;
-	bh=HStk7Y+16fsspuWmzXS+isujHbOEQmX2S94v3M3u14Y=;
+	s=default; t=1549897541;
+	bh=p3uxImhjP4ZgXH3oZzDf9vXNm0HvsHH6rfqeElaz4Z8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xcb+V9Sk6im04jAy+ziKxtdnP70zEM48d5AYdQY7b1iEyMdHUof2JJVWNFf/1gxW9
-	 YQskg6lN3+B6cJOpEIR3W6raWsFp5XjFZJr2A7KAQg69MMYg9WH3z2auHHTSnLwtZx
-	 pumtGnULmWuHr6belcvAnbge5+8rFfB+w6vJE6BA=
+	b=OIqzbjjqxgmj0cmn9KucTu6CfIFzhyHnbV+chGkgxp4nexpSBiqQhRV3gtnDvfPrG
+	 duvilN7gi2ITnaKBogIjgA/ujSLhlK6g8AiBdrcDWiTsx6ZJszkTDTUmAgQIbV49XK
+	 hVrLW71eBVFlbw+mhdf6JCcIjDGFl9OsIP0JbIWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391038AbfBKPFg (ORCPT
+        id S2391050AbfBKPFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:05:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54876 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390996AbfBKPFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:05:34 -0500
+        id S2391020AbfBKPFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:05:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA99222A7;
-        Mon, 11 Feb 2019 15:05:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A302A222A7;
+        Mon, 11 Feb 2019 15:05:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897533;
-        bh=HStk7Y+16fsspuWmzXS+isujHbOEQmX2S94v3M3u14Y=;
+        s=default; t=1549897531;
+        bh=p3uxImhjP4ZgXH3oZzDf9vXNm0HvsHH6rfqeElaz4Z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GZHa99HiOXSYi7h9o5DdsbM5SkensG1VrD2MAAch7uXA+jZTHiNE3K7LfhEwppmbM
-         jqEw8eXIVnSUuZMQF5YmmBZA4cv0wOYFLNZW8aPpYhCfwyZU4lctCi8MIE7nTGy8vO
-         Tn5C9vQ3ITiW5JPeWJAIFQczo0fKirfwWOiBiHvA=
+        b=EdS3CF0ZAQc2JHpPynQLVHo8EJlNxWPD3cKD/qffJ/FJeI9YZzQcaU3laRKSOrumI
+         cArpRNvbWFTni7WgxRrVjmrN/p1upOTtCqKAtPmVAFK/SaJhuaFoMWjr0oEpr4bQKY
+         ixmzQnr7k4OW7Kg9ur4h0ae3F80DFoBAM6+qHL2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kame Wang <kamewang@google.com>,
-        Wei Wang <wvw@google.com>, Zhang Rui <rui.zhang@intel.com>,
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 030/137] Thermal: do not clear passive state during system sleep
-Date:   Mon, 11 Feb 2019 15:18:31 +0100
-Message-Id: <20190211141814.742768506@linuxfoundation.org>
+Subject: [PATCH 4.9 029/137] nfsd4: fix crash on writing v4_end_grace before nfsd startup
+Date:   Mon, 11 Feb 2019 15:18:30 +0100
+Message-Id: <20190211141814.649559189@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,66 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 964f4843a455d2ffb199512b08be8d5f077c4cac ]
+[ Upstream commit 62a063b8e7d1db684db3f207261a466fa3194e72 ]
 
-commit ff140fea847e ("Thermal: handle thermal zone device properly
-during system sleep") added PM hook to call thermal zone reset during
-sleep. However resetting thermal zone will also clear the passive state
-and thus cancel the polling queue which leads the passive cooling device
-state not being cleared properly after sleep.
+Anatoly Trosinenko reports that this:
 
-thermal_pm_notify => thermal_zone_device_reset set passive to 0
-thermal_zone_trip_update will skip update passive as `old_target ==
-instance->target'.
-monitor_thermal_zone => thermal_zone_device_set_polling will cancel
-tz->poll_queue, so the cooling device state will not be changed
-afterwards.
+1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
+2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
+3) From `kvm-xfstests shell`:
 
-Reported-by: Kame Wang <kamewang@google.com>
-Signed-off-by: Wei Wang <wvw@google.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+results in NULL dereference in locks_end_grace.
+
+Check that nfsd has been started before trying to end the grace period.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/nfsd/nfsctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 226b0b4aced6..cd82ae34ddfa 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -597,16 +597,20 @@ static void update_temperature(struct thermal_zone_device *tz)
- 			tz->last_temperature, tz->temperature);
- }
- 
--static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+static void thermal_zone_device_init(struct thermal_zone_device *tz)
- {
- 	struct thermal_instance *pos;
--
- 	tz->temperature = THERMAL_TEMP_INVALID;
--	tz->passive = 0;
- 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
- 		pos->initialized = false;
- }
- 
-+static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+{
-+	tz->passive = 0;
-+	thermal_zone_device_init(tz);
-+}
-+
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
-@@ -2297,7 +2301,7 @@ static int thermal_pm_notify(struct notifier_block *nb,
- 	case PM_POST_SUSPEND:
- 		atomic_set(&in_suspend, 0);
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
--			thermal_zone_device_reset(tz);
-+			thermal_zone_device_init(tz);
- 			thermal_zone_device_update(tz,
- 						   THERMAL_EVENT_UNSPECIFIED);
- 		}
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 36b2af931e06..797a155c9a67 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1103,6 +1103,8 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
+ 		case 'Y':
+ 		case 'y':
+ 		case '1':
++			if (nn->nfsd_serv)
++				return -EBUSY;
+ 			nfsd4_end_grace(nn);
+ 			break;
+ 		default:
 -- 
 2.19.1
 
