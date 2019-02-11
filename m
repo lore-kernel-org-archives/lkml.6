@@ -2,120 +2,242 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEF7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61223C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70800217FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:17:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmWwVFmg"
+	by mail.kernel.org (Postfix) with ESMTP id 2DE90217FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbfBKURv (ORCPT
+        id S2388701AbfBKUSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:17:51 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:40539 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729457AbfBKURt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:17:49 -0500
-Received: by mail-yw1-f65.google.com with SMTP id c67so79398ywa.7;
-        Mon, 11 Feb 2019 12:17:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YPf184+zrdt4QtTJ4m/wSSLQM/wvd6gNxP/hOiuCrD4=;
-        b=XmWwVFmgbUuKt0NERdkZ1wN/pHx6POzXHHLU2OmharbpiUTBMPWfBfOPG+4uXj7bNE
-         NI4EtUAtINrXHOr54IcZ4G+0IIlUpfly8YnkmZVG1uhpDFIrWbSH/OZz7Hif49n4X6al
-         bRepu0GiGYZJUyErzy+mcSPoVMmot5jbjt9uqkTOqeIpUGPlLJ1He36Fb/cpPSpS6wFP
-         kiyfB15hcdi8LVJmKeuve/QLathLLi5B9J1lSJ3NSn6rwpQH8bhqIoJoXySa8IyL/coQ
-         r2/L4Q0wSPedhpg5RwtqMryFxcIvvTAIrDGxmgZ4IrzHKukDUYcuyw+tOEgIQr3AnYGP
-         KAlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YPf184+zrdt4QtTJ4m/wSSLQM/wvd6gNxP/hOiuCrD4=;
-        b=f5ZnzqBZjSuCFVsNBmd2iSaoj0cozkS9giQFgVxVSKBMPT6hGSj4l9/MY09opfnKxg
-         85fDNJhnljW4a1pb2Kh1DDaVQZwoJDDmRz7kWUTUBju8ecxryMRQ9/Fzdwn8C0kvRY41
-         sHt8IIUEvg23S6fsPFEFnxGlzOE/SHjVnXlRnpSTt+LUzTstv9dPNjWAMSKawKlQcAju
-         sNY2u9mtHJTI43Ejz5sCzgjk78+lC0UzN45OQEfUa2CMztAWiD/tEzbp0hz2E2lx7IBd
-         T8xaV9UsO/3EvOgtrRHMXIuoR+df+YKwJqs1Q1tpv0EtroaWs7hcUZpPre9ES/Sl+hJE
-         yLxQ==
-X-Gm-Message-State: AHQUAub6z+Y1HeFyTu6xM5yN5B1JxMg03yRj8yD53ic/oud18NJHalWt
-        E3fAmSxXccURIFAsXDQo1vDUZAjEbP2+zklrUPQ=
-X-Google-Smtp-Source: AHgI3Ia7b/QxGc6lItic+npPZsO3Er9mdYQunM5nkPX8WrmcnRRyWch4c/zuPwylfgWxKwsm36gIiD4CKwRiVhjs5+Q=
-X-Received: by 2002:a81:4f14:: with SMTP id d20mr39516ywb.16.1549916268570;
- Mon, 11 Feb 2019 12:17:48 -0800 (PST)
+        Mon, 11 Feb 2019 15:18:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727377AbfBKUSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 15:18:10 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5B84C062EC2;
+        Mon, 11 Feb 2019 20:18:09 +0000 (UTC)
+Received: from gimli.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D7821A7CE;
+        Mon, 11 Feb 2019 20:18:06 +0000 (UTC)
+Subject: [PATCH] vfio/pci: Restore device state on PM transition
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     alex.williamson@redhat.com
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 11 Feb 2019 13:18:06 -0700
+Message-ID: <154991625844.2837.1741477468425673800.stgit@gimli.home>
+User-Agent: StGit/0.19-dirty
 MIME-Version: 1.0
-References: <1549653856-47409-1-git-send-email-justinpopo6@gmail.com>
- <20190209170042.69a78684@archlinux> <2e692086-4be5-10ea-34b0-4444995c4275@lechnology.com>
- <20190211200557.7648d447@archlinux>
-In-Reply-To: <20190211200557.7648d447@archlinux>
-From:   Justin Chen <justinpopo6@gmail.com>
-Date:   Mon, 11 Feb 2019 12:17:37 -0800
-Message-ID: <CAJx26kXdap3oSBREDfakwaWMz4oKxy=oaagP1jo4grD=kqJ2hA@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: ti-ads7950: add GPIO support
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     David Lechner <david@lechnology.com>, linux-iio@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bgolaszewski@baylibre.com,
-        Linus Walleij <linus.walleij@linaro.org>, knaack.h@gmx.de,
-        lars@metafoo.de, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 11 Feb 2019 20:18:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:06 PM Jonathan Cameron <jic23@kernel.org> wrote:
->
-> On Sat, 9 Feb 2019 12:56:11 -0600
-> David Lechner <david@lechnology.com> wrote:
->
-> > On 2/9/19 11:00 AM, Jonathan Cameron wrote:
-> > > Nope.  This is a state lock used to protect against transitions between
-> > > different modes of the IIO device (buffered vs polled), it
-> > > isn't suitable for general use.
-> > >
-> > > The driver should be modified to handle that correctly.
-> > > We have iio_claim_direct_mode etc that deal with the case
-> > > where a device can't do certain operations whilst in buffered
-> > > mode.  Note it can fail and should.
-> > >
-> > > Seems there are more drivers still doing this than I thought.
-> > > If anyone is bored and wants to clean them out, that would be
-> > > most appreciated!
-> > >
-> > > If you need locking to protect a local buffer or the device
-> > > state, define a new lock to do it with clearly documented
-> > > scope.
-> >
-> > Just as a reminder, there is a use case for this particular
-> > chip that requires buffered mode and direct mode at the same
-> > time.
-> >
-> > https://patchwork.kernel.org/patch/10539021/
-> > https://patchwork.kernel.org/patch/10527757/
->
-> Thanks, I had indeed forgotten that entirely.
-> So it should have a local lock and not take mlock explicitly at all.
->
-Thanks for all the feedback.
-So If I am understanding this correctly. I should create a local lock
-to synchronize three different type of transactions (buffered, direct,
-gpio).
-I do not want to use iio_claim_direct_mode because that doesn't allow
-simultaneous use of buffered mode and direct mode, which is necessary
-for this driver because of the above mentioned patch.
+PCI core handles save and restore of device state around reset, but
+when using pci_set_power_state() we can unintentionally trigger a soft
+reset of the device, where PCI core only restores the BAR state.  If
+we're using vfio-pci's idle D3 support to try to put devices into low
+power when unused, this might trigger a reset when the device is woken
+for use.  Also power state management by the user, or within a guest,
+can put the device into D3 power state with potentially limited
+ability to restore the device if it should undergo a reset.  The PCI
+spec does not define the extent of a soft reset and many devices
+reporting soft reset on D3->D0 transition do not undergo a PCI config
+space reset.  It's therefore assumed safe to unconditionally restore
+the remainder of the state if the device indicates soft reset
+support, even on a user initiated wakeup.
 
-Justin
-> Jonathan
+Implement a wrapper in vfio-pci to tag devices reporting PM reset
+support, save their state on transitions into D3 and restore on
+transitions back to D0.
+
+Reported-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ drivers/vfio/pci/vfio_pci.c         |   71 +++++++++++++++++++++++++++++++----
+ drivers/vfio/pci/vfio_pci_config.c  |    2 -
+ drivers/vfio/pci/vfio_pci_private.h |    6 +++
+ 3 files changed, 70 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index ff60bd1ea587..84b593b9fb1f 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -209,6 +209,57 @@ static bool vfio_pci_nointx(struct pci_dev *pdev)
+ 	return false;
+ }
+ 
++static void vfio_pci_probe_power_state(struct vfio_pci_device *vdev)
++{
++	struct pci_dev *pdev = vdev->pdev;
++	u16 pmcsr;
++
++	if (!pdev->pm_cap)
++		return;
++
++	pci_read_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL, &pmcsr);
++
++	vdev->needs_pm_restore = !(pmcsr & PCI_PM_CTRL_NO_SOFT_RESET);
++}
++
++/*
++ * pci_set_power_state() wrapper handling devices which perform a soft reset on
++ * D3->D0 transition.  Save state prior to D0/1/2->D3, stash it on the vdev,
++ * restore when returned to D0.  Saved separately from pci_saved_state for use
++ * by PM capability emulation and separately from pci_dev internal saved state
++ * to avoid it being overwritten and consumed around other resets.
++ */
++int vfio_pci_set_power_state(struct vfio_pci_device *vdev, pci_power_t state)
++{
++	struct pci_dev *pdev = vdev->pdev;
++	bool needs_restore = false, needs_save = false;
++	int ret;
++
++	if (vdev->needs_pm_restore) {
++		if (pdev->current_state < PCI_D3hot && state >= PCI_D3hot) {
++			pci_save_state(pdev);
++			needs_save = true;
++		}
++
++		if (pdev->current_state >= PCI_D3hot && state <= PCI_D0)
++			needs_restore = true;
++	}
++
++	ret = pci_set_power_state(pdev, state);
++
++	if (!ret) {
++		/* D3 might be unsupported via quirk, skip unless in D3 */
++		if (needs_save && pdev->current_state >= PCI_D3hot) {
++			vdev->pm_save = pci_store_saved_state(pdev);
++		} else if (needs_restore) {
++			pci_load_and_free_saved_state(pdev, &vdev->pm_save);
++			pci_restore_state(pdev);
++		}
++	}
++
++	return ret;
++}
++
+ static int vfio_pci_enable(struct vfio_pci_device *vdev)
+ {
+ 	struct pci_dev *pdev = vdev->pdev;
+@@ -216,7 +267,7 @@ static int vfio_pci_enable(struct vfio_pci_device *vdev)
+ 	u16 cmd;
+ 	u8 msix_pos;
+ 
+-	pci_set_power_state(pdev, PCI_D0);
++	vfio_pci_set_power_state(vdev, PCI_D0);
+ 
+ 	/* Don't allow our initial saved state to include busmaster */
+ 	pci_clear_master(pdev);
+@@ -407,7 +458,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
+ 	vfio_pci_try_bus_reset(vdev);
+ 
+ 	if (!disable_idle_d3)
+-		pci_set_power_state(pdev, PCI_D3hot);
++		vfio_pci_set_power_state(vdev, PCI_D3hot);
+ }
+ 
+ static void vfio_pci_release(void *device_data)
+@@ -1286,6 +1337,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 					vfio_pci_set_vga_decode(vdev, false));
+ 	}
+ 
++	vfio_pci_probe_power_state(vdev);
++
+ 	if (!disable_idle_d3) {
+ 		/*
+ 		 * pci-core sets the device power state to an unknown value at
+@@ -1296,8 +1349,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		 * be able to get to D3.  Therefore first do a D0 transition
+ 		 * before going to D3.
+ 		 */
+-		pci_set_power_state(pdev, PCI_D0);
+-		pci_set_power_state(pdev, PCI_D3hot);
++		vfio_pci_set_power_state(vdev, PCI_D0);
++		vfio_pci_set_power_state(vdev, PCI_D3hot);
+ 	}
+ 
+ 	return ret;
+@@ -1316,6 +1369,11 @@ static void vfio_pci_remove(struct pci_dev *pdev)
+ 	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
+ 	kfree(vdev->region);
+ 	mutex_destroy(&vdev->ioeventfds_lock);
++
++	if (!disable_idle_d3)
++		vfio_pci_set_power_state(vdev, PCI_D0);
++
++	kfree(vdev->pm_save);
+ 	kfree(vdev);
+ 
+ 	if (vfio_pci_is_vga(pdev)) {
+@@ -1324,9 +1382,6 @@ static void vfio_pci_remove(struct pci_dev *pdev)
+ 				VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM |
+ 				VGA_RSRC_LEGACY_IO | VGA_RSRC_LEGACY_MEM);
+ 	}
+-
+-	if (!disable_idle_d3)
+-		pci_set_power_state(pdev, PCI_D0);
+ }
+ 
+ static pci_ers_result_t vfio_pci_aer_err_detected(struct pci_dev *pdev,
+@@ -1551,7 +1606,7 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
+ 			tmp->needs_reset = false;
+ 
+ 			if (tmp != vdev && !disable_idle_d3)
+-				pci_set_power_state(tmp->pdev, PCI_D3hot);
++				vfio_pci_set_power_state(tmp, PCI_D3hot);
+ 		}
+ 
+ 		vfio_device_put(devs.devices[i]);
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index 423ea1f98441..e82b51114687 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -691,7 +691,7 @@ static int vfio_pm_config_write(struct vfio_pci_device *vdev, int pos,
+ 			break;
+ 		}
+ 
+-		pci_set_power_state(vdev->pdev, state);
++		vfio_pci_set_power_state(vdev, state);
+ 	}
+ 
+ 	return count;
+diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+index 8c0009f00818..1812cf22fc4f 100644
+--- a/drivers/vfio/pci/vfio_pci_private.h
++++ b/drivers/vfio/pci/vfio_pci_private.h
+@@ -114,7 +114,9 @@ struct vfio_pci_device {
+ 	bool			has_vga;
+ 	bool			needs_reset;
+ 	bool			nointx;
++	bool			needs_pm_restore;
+ 	struct pci_saved_state	*pci_saved_state;
++	struct pci_saved_state	*pm_save;
+ 	struct vfio_pci_reflck	*reflck;
+ 	int			refcnt;
+ 	int			ioeventfds_nr;
+@@ -161,6 +163,10 @@ extern int vfio_pci_register_dev_region(struct vfio_pci_device *vdev,
+ 					unsigned int type, unsigned int subtype,
+ 					const struct vfio_pci_regops *ops,
+ 					size_t size, u32 flags, void *data);
++
++extern int vfio_pci_set_power_state(struct vfio_pci_device *vdev,
++				    pci_power_t state);
++
+ #ifdef CONFIG_VFIO_PCI_IGD
+ extern int vfio_pci_igd_init(struct vfio_pci_device *vdev);
+ #else
+
