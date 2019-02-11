@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C275EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A01C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F88C222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CFB7222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894868;
-	bh=TanTB0KDQgZmcOBWT9B5gklZK3YP6POwLDT6GE68Mmo=;
+	s=default; t=1549894871;
+	bh=MWuz8As0fElrjSqDzMxgqYltaiWXMlwVlmGeAtuAt7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HusJ4aNSAZvQH7rmUEmkN6u/navXJYam+fJnzsXjM6MAykoK4rNotN5tbQpFRX1yT
-	 CdbR1Mz3+Vd09Bb1OKY2pEH1MqkI/Q5IQkWReD7XWt2fAJP8KfMr3S7gIOSvS38KH1
-	 SBN/ySUTEWEBrnctCrR8iWH+bIaZz1o21PgO22Xo=
+	b=AA2ln9AlqWkeF+jmnS8SQvpqesduHWDJLvEyGRSWeCKRCjwRSDEsfkbjq9kpjzbys
+	 i2U8Hvgs8KC1zczYOU72T5e8/vC8qeTo0PzIsE/PMM8GSR0YYNHt1v/mVir8ofPE8F
+	 NueUPPoVNWYejKZeeMI1RBuT4pTMbGYmKJj8yx9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbfBKOVG (ORCPT
+        id S1728479AbfBKOVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53880 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbfBKOVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:04 -0500
+        id S1728459AbfBKOVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF06D2073F;
-        Mon, 11 Feb 2019 14:21:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B50120838;
+        Mon, 11 Feb 2019 14:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894863;
-        bh=TanTB0KDQgZmcOBWT9B5gklZK3YP6POwLDT6GE68Mmo=;
+        s=default; t=1549894866;
+        bh=MWuz8As0fElrjSqDzMxgqYltaiWXMlwVlmGeAtuAt7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xwVNhnO53UYaYZ6yJKIkseENTTvOwZnB0yzuEEKiHSJiPRqDmMeAxL9Gy1b5K39vM
-         dwB5jmVepYNcHizNq56rVQgLyh3iw5YiPm5rNxYYlGtO6cQe42QQO9pFxRuL4A+ZPB
-         vu53K3/4B+KhwycOmJZ4Swtht8nHgLtDYGU+HunY=
+        b=VNgOTDTb6T2sIzuulpHa9UNPZGOqsqv0NP3xwBKzai7BL0hHo7t62BimiH69YxP51
+         Lk/c56QRX7GEvmQtyHi9Pk5q5iHcBJ7M39W2FUadz1kWXa7sVPr+vXq2XTr0YO2W2W
+         a0rSZz6LcenfdS2DScklZNXE22DM+rWz3GlTle00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Duckeck <m.duckeck@kunbus.de>,
-        Lukas Wunner <lukas@wunner.de>,
-        Julia Cartwright <julia@ni.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 005/352] pinctrl: bcm2835: Use raw spinlock for RT compatibility
-Date:   Mon, 11 Feb 2019 15:13:52 +0100
-Message-Id: <20190211141846.834956258@linuxfoundation.org>
+Subject: [PATCH 4.20 006/352] clk: sunxi-ng: h6: Set video PLLs limits
+Date:   Mon, 11 Feb 2019 15:13:53 +0100
+Message-Id: <20190211141846.888888662@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,100 +66,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3c7b30f704b6f5e53eed6bf89cf2c8d1b38b02c0 ]
+[ Upstream commit ed4433419d45bf8b58aef34c4450a27e1c8699e8 ]
 
-The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
-->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
-locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
-callbacks in atomic context may cause a hard lockup if at least two GPIO
-pins in the same bank are used as interrupts.  The issue doesn't occur
-with just a single interrupt pin per bank because the lock is never
-contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
-level-triggered interrupts, i.e. with ->irq_disable being invoked on
-reception of every IRQ.
+Video PLL factors can be set in a way that final PLL rate is outside
+stable range. H6 user manual specifically says that N factor should not
+be below 12. While it doesn't says anything about maximum stable rate, it
+is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
 
-The critical section protected by the spinlock is very small (one bitop
-and one RMW of an MMIO register), hence converting to a raw spinlock
-seems a better trade-off than converting the driver to threaded IRQ
-handling (which would increase latency to handle an interrupt).
+Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
+to 2.4 GHz, which is maximum in BSP driver.
 
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Julia Cartwright <julia@ni.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index fa530913a2c8..08925d24180b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -90,7 +90,7 @@ struct bcm2835_pinctrl {
- 	struct gpio_chip gpio_chip;
- 	struct pinctrl_gpio_range gpio_range;
- 
--	spinlock_t irq_lock[BCM2835_NUM_BANKS];
-+	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
- };
- 
- /* pins are just named GPIO0..GPIO53 */
-@@ -461,10 +461,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static void bcm2835_gpio_irq_disable(struct irq_data *data)
-@@ -476,12 +476,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	bcm2835_gpio_irq_config(pc, gpio, false);
- 	/* Clear events that were latched prior to clearing event sources */
- 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -584,7 +584,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 
- 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
- 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
-@@ -596,7 +596,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	else
- 		irq_set_handler_locked(data, handle_level_irq);
- 
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- 
- 	return ret;
- }
-@@ -1047,7 +1047,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		for_each_set_bit(offset, &events, 32)
- 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
- 
--		spin_lock_init(&pc->irq_lock[i]);
-+		raw_spin_lock_init(&pc->irq_lock[i]);
- 	}
- 
- 	err = gpiochip_add_data(&pc->gpio_chip, pc);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index 2193e1495086..19ff09f610e4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk = {
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+ 	.fixed_post_div	= 4,
++	.min_rate	= 288000000,
++	.max_rate	= 2400000000UL,
+ 	.common		= {
+ 		.reg		= 0x040,
+ 		.features	= CCU_FEATURE_FIXED_POSTDIV,
+@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk = {
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+ 	.fixed_post_div	= 4,
++	.min_rate	= 288000000,
++	.max_rate	= 2400000000UL,
+ 	.common		= {
+ 		.reg		= 0x048,
+ 		.features	= CCU_FEATURE_FIXED_POSTDIV,
 -- 
 2.19.1
 
