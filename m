@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9010FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7460C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6090721773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A65621773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897225;
-	bh=MmyuEjnkPAU9/CA178OGBpul18R6VIhsNM0PQs8jBq0=;
+	s=default; t=1549897228;
+	bh=dGafsh2wilVnDuQ+G3ffU27oUPJGLRA38xBb4596vPQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uDIpqRsjRlhbSskWKEudcL3f8O3LNH/mkMyqlUIF/7oA3bNnE/hG3bjKiEKG/6nBa
-	 cXDv1dSC88WWhpYW7nrM9yShIjXIKEKORN35yYegR0MyA06Kn1cXP0+MEZU4Jn1PEY
-	 IvSzrS8Q6ni1VoNikwYCwGI4c2wDRh213mJtFn58=
+	b=eJZlVCF5k0jhJUpIFmTFcc9+cVbXvHMZdHV3Y8Oo6++M9DpMnjCCtwTGrf1GSZDD8
+	 JYyRF3T8N3N80Bk9K7BnXE+zGl+aydTNfl61xtsyCbjp+FShuf7Gvp2h3JEDUqP6ND
+	 81S/YScznUDd2ZHPH8QAh6/c0wUJMKrt+PNVb2w4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390001AbfBKPAY (ORCPT
+        id S2390012AbfBKPA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48280 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389988AbfBKPAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:22 -0500
+        id S2389988AbfBKPAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 215A8206BA;
-        Mon, 11 Feb 2019 15:00:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C91AF206BA;
+        Mon, 11 Feb 2019 15:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897221;
-        bh=MmyuEjnkPAU9/CA178OGBpul18R6VIhsNM0PQs8jBq0=;
+        s=default; t=1549897224;
+        bh=dGafsh2wilVnDuQ+G3ffU27oUPJGLRA38xBb4596vPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQsvIqSoxzcbujXerfZebqawOrzNEVlb3rCKuWNY6KyC17y5T6ZOGuBMXsPv2jJj7
-         yLBdjCa1aJ4QDCAXP6kBcB4X3z97frrmGTRymeAX4yTpIm8KBhQ+8XtxbeFw9SkLCP
-         9Uj/77KiqqsIZ/8RlIvtTYwIbWdl6UqUUMVDL2u8=
+        b=G/iHRlnSrLRUhqi4uqGlEexfBKtJ59zWxmjhYSM8yu3kvEGvaP0svxMKlSYGb/QqR
+         OSK89tbY3MlVWdVsnMN/7eSkrjxdRpOOO2OpzStczQhJGPs9ik4+z3r9+QcxF9YYHk
+         rT+EdFWLajlrZOUm1h5dubnZ+oVUkfTQ6Us3if6c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 131/205] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
-Date:   Mon, 11 Feb 2019 15:18:49 +0100
-Message-Id: <20190211141836.988476469@linuxfoundation.org>
+Subject: [PATCH 4.14 132/205] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
+Date:   Mon, 11 Feb 2019 15:18:50 +0100
+Message-Id: <20190211141837.051415447@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,61 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
+[ Upstream commit e87555e550cef4941579cd879759a7c0dee24e68 ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
+knows nothing about it, however, this MSR is among emulated_msrs and
+thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
+of course, fails.
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
+Report the MSR as unsupported to not confuse userspace.
 
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/kvm/svm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 71f216b5b0b9..a6fff215e60f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -649,16 +649,18 @@ static const char * const gpio_groups[] = {
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 4dc79d139810..656ac12f5439 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5319,6 +5319,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
  
--	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
--	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
--	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
--	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
--
- 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
- 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
- 	"DIF_4_P", "DIF_4_N"
- };
- 
-+static const char * const gpio_aobus_groups[] = {
-+	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
-+	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
-+	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-+	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
-+};
+ static bool svm_has_emulated_msr(int index)
+ {
++	switch (index) {
++	case MSR_IA32_MCG_EXT_CTL:
++		return false;
++	default:
++		break;
++	}
 +
- static const char * const sd_a_groups[] = {
- 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
- 	"sd_cmd_a"
-@@ -874,6 +876,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
- };
+ 	return true;
+ }
  
- static struct meson_pmx_func meson8b_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
- 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
