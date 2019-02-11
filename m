@@ -2,121 +2,222 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EECC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336E0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03480218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04232218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:12:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kgyLyJLr"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pwToANPy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfBKMLX (ORCPT
+        id S1727192AbfBKMMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:11:23 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36340 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfBKMLX (ORCPT
+        Mon, 11 Feb 2019 07:12:24 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52144 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfBKMMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:11:23 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k98so17040747otk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KC8LXiCQQI99XcUi6fwU9wUEtaVFh0/UTHlyNNxO9Mw=;
-        b=kgyLyJLrMuAmA4gRztU+a6frP99l+jEVRu6XZkc+mmGb5hGMj+Fru4SrE+5Zrc2JKB
-         exV3XCzWUyLt0clgZIvwsLo7QTo5ZIPuwdPtsRzJF/HraLVbZNvLpsmeFVuOuU8yUrYx
-         jfvMV0IO5kThmEupWBu3w0TPCKs56HW7Q9mT00iWVQKFfXY0ASIeOy5reDd5nRjJawCo
-         6ICYAlpkfTrF+NEw4CUdgAAn6Md1n2ooljJzDE4l72wMBhDueyX3E285wu6oMfwmrJEl
-         H/o5MwWDe3mLAZm127dzFHKHF/CWH5GAFLOEh0oyY3b1KLJcMdA2nuJS8qFjRyYano8n
-         H+Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KC8LXiCQQI99XcUi6fwU9wUEtaVFh0/UTHlyNNxO9Mw=;
-        b=XfwtjoENh5UVudpeBP2hFtxyjpGYimjLYRmUujMy59tmcMKSmtUDDfpsK5yf+Bbjfc
-         ogw5bilkUprL1xPH2gpdc8+fhMNu5mj5ek408+lfn5VQ6PrswJYCtE9lGsFjQijqYNiD
-         IaIaKQTdLIDfiEWkPDLxMZe2GURZtwUcWHaxgVjvgSr88v/4J5PB95GgVWNxcDQ4pS5o
-         DWsXUn+M6sb8F22NF3vQj6GTY98vhQHzPOWlMUs7HzjJKVLTYLP3djsn1TVcp/UDbgGd
-         6mx9cLws1nNjgwt017KNy1O2vJ39cutrLMwmo5cZU1si7UeFErPnDXzNb/W/MU6P6Xz8
-         OUuw==
-X-Gm-Message-State: AHQUAuafBTihrYqmSJ4NaksXRypm4ezzwWy5X6/LYS+5+SNvDhoPgMJ7
-        +j3xaSa8NgHTT+n3eSBLzhZb1bhtsK59wHp21OhG/g==
-X-Google-Smtp-Source: AHgI3Ia1HjxvXShN20b9umX/+fo76bxp8cVITE8fngptLKa+cLPQSR1zsPoNl8LykasNpStTlif+dI6OY2wWt+99MBI=
-X-Received: by 2002:a9d:76c5:: with SMTP id p5mr26621538otl.108.1549887082094;
- Mon, 11 Feb 2019 04:11:22 -0800 (PST)
+        Mon, 11 Feb 2019 07:12:24 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1BCBV8B065230;
+        Mon, 11 Feb 2019 06:11:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549887091;
+        bh=nLJGr9HIid9oerfAWo/iG+WzCc+bgoeRiLmuDD+BNEo=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=pwToANPy/KXa1swN6MLuiyHoWKt9Jn4bwn/ycJ9Ci8WJXy+yibef+Gn3Se3tuTChO
+         94LjTqUhU+rlhrwqqnjgzHzxtC1lRTFNPjIzbEzhG/kLCKH9+ASwjGTv1JSdQWyuaT
+         wsr1qUrcvLFnEuR6bWdHHT6KmbwbZrx/V2CQJBoY=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1BCBVec128838
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 06:11:31 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 11
+ Feb 2019 06:11:29 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 11 Feb 2019 06:11:29 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1BCBQ5D010534;
+        Mon, 11 Feb 2019 06:11:26 -0600
+Subject: Re: [PATCH 2/4] bus: ti-sysc: Add support for PRUSS SYSC type
+To:     Tony Lindgren <tony@atomide.com>
+References: <1549295637-24890-1-git-send-email-rogerq@ti.com>
+ <1549295637-24890-3-git-send-email-rogerq@ti.com>
+ <20190204180031.GL5720@atomide.com>
+CC:     <s-anna@ti.com>, <nsekhar@ti.com>, <linux-omap@vger.kernel.org>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <david@lechnology.com>,
+        <woods.technical@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C61666D.3030308@ti.com>
+Date:   Mon, 11 Feb 2019 14:11:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <20190208173458.4801-1-brgl@bgdev.pl> <50671542-c055-1796-c58e-276ba3d414d0@ti.com>
-In-Reply-To: <50671542-c055-1796-c58e-276ba3d414d0@ti.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 11 Feb 2019 13:11:11 +0100
-Message-ID: <CAMpxmJV34X=C4HMGNiAUxoVkPP+1nY3186QHOisqQtwT9pNtyg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/33] ARM: davinci: modernize the irq support
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190204180031.GL5720@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 11 lut 2019 o 12:54 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
->
-> + Jason, Marc
->
-> Thomas, Jason, Marc,
->
-> On 08/02/19 11:04 PM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > This series ports the davinci platform to using SPARSE_IRQ, cleans up
-> > the irqchip drivers and moves them over to drivers/irqchip.
-> >
-> > The series can be logically split into four parts. The first (1-8) aims
-> > at introducing support for SPARSE_IRQ. It contains a couple changes
-> > required for that functionality and the final patch actually selecting
-> > it.
-> >
-> > Second part (9-19) makes the aintc driver suitable for drivers/irqchip
-> > and eventually moves it over there.
-> >
-> > Part 3 (20-32) does the same for the cp-intc driver.
-> >
-> > Last patch removes unnecessary code.
-> >
-> > The series has been tested on da850-lcdk (for cp-intc) and
-> > dm365-evm (for aintc).
->
-> With your ack, I would like to try get it merged to v5.1 via ARM SoC tree=
-.
->
-> Bartosz, I noticed that Jason and Marc were not originally CCed. You may
-> have to resend if they don't have the series in their inbox.
->
-> Thanks,
-> Sekhar
+Tony,
 
-Sorry for that, I'm not sure how this happened, since they do pop up
-in get_maintainer.pl output for that series.
+On 04/02/19 20:00, Tony Lindgren wrote:
+> * Roger Quadros <rogerq@ti.com> [190204 15:54]:
+>> +static int sysc_enable_pruss(struct sysc *sysc)
+>> +{
+>> +	int i;
+>> +	u32 reg;
+>> +	bool ready;
+>> +
+>> +	/* configure for Smart Idle & Smart Standby */
+>> +	reg = sysc_read(sysc, sysc->offsets[SYSC_SYSCONFIG]);
+>> +	reg &= ~(SYSC_PRUSS_STANDBY_MASK | SYSC_PRUSS_IDLE_MASK);
+>> +	reg |= SYSC_PRUSS_STANDBY_SMART | SYSC_IDLE_SMART;
+>> +	sysc_write(sysc, sysc->offsets[SYSC_SYSCONFIG], reg);
+> 
+> I think you can get rid of the SYSC_PRUSS_ defines here
+> if you define the bits for it in struct sysc_regbits. The
+> idle modes are SYSC_IDLE_* defines we already have in
+> include/dt-bindings/bus/ti-sysc.h.
+> 
+> My guess is these will just become generic sysc_enable()
+> and sysc_disable() functions :)
+> 
+> If you need module specific handling, you could add function
+> pointers for enable and disable to struct sysc_capabilities.
 
-I'll resend it.
+OK. I'll move all this to a generic handler then.
+> 
+>> @@ -649,6 +693,9 @@ static int __maybe_unused sysc_runtime_suspend(struct device *dev)
+>>  		goto idled;
+>>  	}
+>>  
+>> +	if (ddata->cap->type == TI_SYSC_PRUSS)
+>> +		sysc_disable_pruss(ddata);
+>> +
+>>  	for (i = 0; i < ddata->nr_clocks; i++) {
+>>  		if (IS_ERR_OR_NULL(ddata->clocks[i]))
+>>  			continue;
+> 
+> Ideally this would be just unconditional call to generic
+> sysc_disable() here for non-legacy mode. Then if module
+> specific enable and disable are there, sysc_enable() and
+> disable() can call them.
 
-Bart
+OK.
+
+> 
+>> +static const struct sysc_regbits sysc_regbits_pruss = {
+>> +	.midle_shift = -ENODEV,
+>> +	.clkact_shift = -ENODEV,
+>> +	.sidle_shift = -ENODEV,
+>> +	.enwkup_shift = -ENODEV,
+>> +	.srst_shift = -ENODEV,
+>> +	.autoidle_shift = -ENODEV,
+>> +	.dmadisable_shift = -ENODEV,
+>> +	.emufree_shift = -ENODEV,
+>> +};
+> 
+> So it seems you should populate at least midle_shift and sidle_shift
+> bits here as in PRUSS_SYSCFG. I think STANDBY_MODE offset should go
+> into the .midle_shift as it mentions initiator in TRM, and IDLE_MODE
+> offset should go into .sidle_shift. So this might be really just using
+> sysc_regbits_omap4_simple except it has an additional STANDBY_INIT
+> bit which you could add for struct sysc_regbits if we don't have
+> something similar already.
+
+Got it.
+
+> 
+>> @@ -1702,6 +1772,10 @@ static int sysc_probe(struct platform_device *pdev)
+>>  
+>>  	INIT_DELAYED_WORK(&ddata->idle_work, ti_sysc_idle);
+>>  
+>> +	/* FIXME: how to ensure PRUSS stays enabled? */
+>> +	if (ddata->cap->type == TI_SYSC_PRUSS)
+>> +		goto skip_pm_put;
+>> +
+
+This was my bad. I forgot to move the pm_runtime_enable/get from the old
+pruss_soc_bus.c to pruss.c :). It work after than and this hack is not required.
+
+>>  	/* At least earlycon won't survive without deferred idle */
+>>  	if (ddata->cfg.quirks & (SYSC_QUIRK_NO_IDLE_ON_INIT |
+>>  				 SYSC_QUIRK_NO_RESET_ON_INIT)) {
+> 
+> Hmm so do you need to specify ti,no-idle-on-init or what's
+> the logic needed here?
+
+I was using "ti,no-reset-on-init" but that was because sysc_reset() was returning error
+due to missing syss mask. That can be fixed like so.
+
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index 5b9c81a..f5f2000 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -941,6 +941,7 @@ static int sysc_reset(struct sysc *ddata)
+ 	int val;
+ 
+ 	if (ddata->legacy_mode || offset < 0 ||
++	    ddata->cap->regbits->srst_shift == -ENODEV ||
+ 	    ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
+ 		return 0;
+
+
+> 
+>> diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
+>> index 8ec78e8..7138384 100644
+>> --- a/include/dt-bindings/bus/ti-sysc.h
+>> +++ b/include/dt-bindings/bus/ti-sysc.h
+>> @@ -17,17 +17,6 @@
+>>  
+>>  #define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
+>>  
+>> -/* SYSCONFIG specific to PRUSS */
+>> -#define SYSC_PRUSS_SUB_MWAIT		(1 << 5)
+>> -#define SYSC_PRUSS_STANDBY_INIT		(1 << 4)
+>> -
+>> -#define SYSC_PRUSS_STANDBY_FORCE	(0 << 2)
+>> -#define SYSC_PRUSS_STANDBY_NO		(1 << 2)
+>> -#define SYSC_PRUSS_STANDBY_SMART	(2 << 2)
+>> -#define SYSC_PRUSS_STANDBY_MASK		(3 << 2)
+>> -
+>> -#define SYSC_PRUSS_IDLE_MASK		3
+>> -
+>>  /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
+>>  #define SYSC_IDLE_FORCE			0
+>>  #define SYSC_IDLE_NO			1
+> 
+> I suggest you make this series independent of the
+> rest of the PRUSS patches as we can add this
+> separately. So no need to define these bits at all
+> AFAIK.
+
+OK. Thanks.
+
+cheers,
+-roger
+
+> 
+> Regards,
+> 
+> Tony
+> 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
