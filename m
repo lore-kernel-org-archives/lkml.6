@@ -6,49 +6,54 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9265AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4726C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6076F2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F3D4222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895905;
-	bh=YDOL7bNZ5gzlTYR1zB3MeFJwNbUHJ3VUBEJPYBUHONI=;
+	s=default; t=1549895907;
+	bh=KadciLPKtyK9UhevPKcpJM0kOa3orDGN3fJjWT0gsl4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tK7ibGgvUk0x+iCLh5X+Gv1COB6RAx8u3DW7jB2O3mBw4itDcc/Jsqj52v4tBZ9A3
-	 LWuiUdmqP7NycxVfJo/SSH4P8hR87BYMIJHGhUahYTWyFJfHqym1sDQkR3v5BHVeHJ
-	 1ncbCcCZAwsqdRMAqtNNK7idYyRnjNR17xb8LTIc=
+	b=1A04Wz4KRBNpijccDoxJaVLOGJmUq4ynjoxLz9qGwa2rwKsXQn961MXOcrjBTga38
+	 QhqM+fL6p58B1hb4RdhZGhPMQBm70jdsgzzxunlqnAhzlasRlBwVNPrJGAESHhhBRK
+	 O5Dw6dl0KNmrVx/q6fWKeLVjdq+wpLa7NlWKap3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731105AbfBKOiX (ORCPT
+        id S1731672AbfBKOi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730875AbfBKOiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:21 -0500
+        id S1730875AbfBKOiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89D072081B;
-        Mon, 11 Feb 2019 14:38:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4577D20844;
+        Mon, 11 Feb 2019 14:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895901;
-        bh=YDOL7bNZ5gzlTYR1zB3MeFJwNbUHJ3VUBEJPYBUHONI=;
+        s=default; t=1549895903;
+        bh=KadciLPKtyK9UhevPKcpJM0kOa3orDGN3fJjWT0gsl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SyRYKULHI91q8WRHIjjjxaKGXQ8+ouUvZJ7mOAZNdruGSmmuevIxwPaZtSN+3vfqW
-         meQv3FdH7MOQL7AJgR/tmwKcsKxNqECsMzovzhPKwtfmtDRFQ+wA7iCd25bBiBQBfx
-         WpQhqHFHTKiVOspkKBPVW4SJVhf7ru3WcbpeeGms=
+        b=Z2QXszuXIM6eLnmgtZqKY6w/wjmzI+p7eFl6fIg5fS0MYsA0r1nqqFEKOqkJCbgdN
+         x63xTjPVY2jGW0398lzvYl3z0wL+z5AI6UEmj8OlOodwaM9QaGwZyuexZFOqc3RdCj
+         VT1hi/WJz/gkyqgoxjqjhrLcKXUwj0ERheFvgdv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.20 339/352] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
-Date:   Mon, 11 Feb 2019 15:19:26 +0100
-Message-Id: <20190211141908.744528005@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
+Subject: [PATCH 4.19 001/313] devres: Align data[] to ARCH_KMALLOC_MINALIGN
+Date:   Mon, 11 Feb 2019 15:14:41 +0100
+Message-Id: <20190211141852.846249902@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -60,51 +65,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Alexey Brodkin <alexey.brodkin@synopsys.com>
 
-commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
+commit a66d972465d15b1d89281258805eb8b47d66bd36 upstream.
 
-Bugzilla: 1671930
+Initially we bumped into problem with 32-bit aligned atomic64_t
+on ARC, see [1]. And then during quite lengthly discussion Peter Z.
+mentioned ARCH_KMALLOC_MINALIGN which IMHO makes perfect sense.
+If allocation is done by plain kmalloc() obtained buffer will be
+ARCH_KMALLOC_MINALIGN aligned and then why buffer obtained via
+devm_kmalloc() should have any other alignment?
 
-Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
-memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
-when passed an operand that points to an MMIO address.  The page fault
-will use uninitialized kernel stack memory as the CR2 and error code.
+This way we at least get the same behavior for both types of
+allocation.
 
-The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
-exit to userspace; however, it is not an easy fix, so for now just
-ensure that the error code and CR2 are zero.
+[1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004009.html
+[2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004036.html
 
-Embargoed until Feb 7th 2019.
-
-Reported-by: Felix Wilhelm <fwilhelm@google.com>
-Cc: stable@kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Greg KH <greg@kroah.com>
+Cc: <stable@vger.kernel.org> # 4.8+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/base/devres.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5041,6 +5041,13 @@ int kvm_read_guest_virt(struct kvm_vcpu
- {
- 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -24,8 +24,14 @@ struct devres_node {
  
+ struct devres {
+ 	struct devres_node		node;
+-	/* -- 3 pointers */
+-	unsigned long long		data[];	/* guarantee ull alignment */
 +	/*
-+	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
-+	 * is returned, but our callers are not ready for that and they blindly
-+	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
-+	 * uninitialized kernel stack memory into cr2 and error code.
++	 * Some archs want to perform DMA into kmalloc caches
++	 * and need a guaranteed alignment larger than
++	 * the alignment of a 64-bit integer.
++	 * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
++	 * buffer alignment as if it was allocated by plain kmalloc().
 +	 */
-+	memset(exception, 0, sizeof(*exception));
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
- 					  exception);
- }
++	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
+ };
+ 
+ struct devres_group {
 
 
