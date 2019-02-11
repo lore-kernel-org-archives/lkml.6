@@ -2,152 +2,115 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C42C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEEDC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9955620873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D5620873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYaANE8I"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OzmXhmms"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfBKDdj (ORCPT
+        id S1726684AbfBKDlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:33:39 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41089 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfBKDdi (ORCPT
+        Sun, 10 Feb 2019 22:41:05 -0500
+Received: from mail-ot1-f73.google.com ([209.85.210.73]:56829 "EHLO
+        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfBKDlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:33:38 -0500
-Received: by mail-qt1-f194.google.com with SMTP id v10so903783qtp.8
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 19:33:37 -0800 (PST)
+        Sun, 10 Feb 2019 22:41:04 -0500
+Received: by mail-ot1-f73.google.com with SMTP id q11so9733966otl.23
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 19:41:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=cM+zzXGhWaqF3fPIJowNeJ4tza9eMdnKD7TbXZ42D4k=;
-        b=dYaANE8ISZVTy8K9j2qBi30GCQrQq0ROn67Xv0kwipw1IxVPx1MbT9Q4txscDNVk8E
-         TpqUfdG5Bp4G7Y2jMQ99rDaIvI3vaoDvnabzkEqfDh956BmGAllK6qJcMicKVE1pHuXl
-         yzX1iiX2cKFs9A9KkVaDLkIkwn8aj0gdisZnqUXOHzDpHS+IHeYIwAmR5gr3MrYr5lKv
-         UJxUYUyoHXCRsnqlMdwI66IAPCj8u2yP6bV9kVuQ6m320mgJZctaQTzVeEHfzQ+Grjdo
-         SxUjmVwSL9qmLEr+x8lcPTASIYPNBqJcZjUtoNyMIK5pipYpiKgIscxiqmUq1Y51Gb5U
-         gJOg==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=qWPDfOlXuramtow7KSV1zTmIzyR/XqoO0VQtrh+RpUI=;
+        b=OzmXhmms4G5PmaQpbOY3Wr5Ov+FXdEZCIxbI6mgH1uBU7JB39ElREirrztNifIEgb6
+         E8vj5BduBgp1yk2iOSl7mv1mHYKC1z6JNVLktsUMdoF7WmyBb69uExzwkOBP1LSwS3cv
+         el6+2o4NmLEZ6x1OOOGkB4mTaq3PwuCzh6aDn20xyADlsGYc1FwW9ny+Ub7lIYltvuTK
+         HDbCykvUy58IccJKrjmB7VxHZo8abr3wWAOwWSZT9XHCUMcOqzDOQmfc1+CvURH+XAQb
+         Xv9arLUDpvKzEPKvBgJE2PEKCuDIUf5EttyC2OFKSO+VquqidoPzzn1H2i/aWlVNI8xX
+         H00w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=cM+zzXGhWaqF3fPIJowNeJ4tza9eMdnKD7TbXZ42D4k=;
-        b=Z+c1kzXmZoW+lGzkA19vSAYgCwsPbDA4bgyVuoI6nYQdomU8vTGTw03MJr8nCPs1YC
-         rxiiaHfNSpo1iweLn+bti+rvyLoLUL6huSMzDpoRK8JRpM3UNak/+Jf248uKBZBXgWOM
-         75UTPlVNbgplRltFSolGQ7SrYoAr40ngPh++nl7zUFKQaTclmFI2+6mBjqPuhrsDvokh
-         nruiYGqQlHRlxzYfM/nUhwExBUqom4WBmQBIDYZbTTzwWUDhDROeDCwqvHH8jxn0Cr8b
-         OWX1VMuuct+WTGgVPUg9FeWWkRlzNvnHjuPuDIq36iSjEanfxZ6Vw9KcCrp92T6v/iqw
-         YTvQ==
-X-Gm-Message-State: AHQUAuaecVgRBB4FH1xPf39tOYhHGYQXiPjY3j7yZfnJHjV8nPKyas7k
-        nidnFGUBHU6puXYunvEj2mw3H9e+0Dt4aEqTXTpm+zy3
-X-Google-Smtp-Source: AHgI3Ib/y7iuMGO3AOnanMNXeQYFAOdIvkEL1I/zslXT7qbqlj+0dB8+Ykt0TDSTpM/ln6HHlwdX8O5axB8hrHpY0CQ=
-X-Received: by 2002:a0c:b8ac:: with SMTP id y44mr25001986qvf.76.1549856017071;
- Sun, 10 Feb 2019 19:33:37 -0800 (PST)
-MIME-Version: 1.0
-References: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <154966356809.132359.5318207850182898116.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <63ae370c-2239-62c5-2378-98916608acc4@linux.intel.com>
-In-Reply-To: <63ae370c-2239-62c5-2378-98916608acc4@linux.intel.com>
-Reply-To: bjorn@helgaas.com
-From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Date:   Sun, 10 Feb 2019 21:33:25 -0600
-Message-ID: <CABhMZUUKe0b9RkscDX6WR0tpQmhW_nFoYKHTvthpKwZ4vMirOA@mail.gmail.com>
-Subject: Re: [PATCH v1 4/7] iommu/vt-d: Remove unnecessary local variable initializations
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=qWPDfOlXuramtow7KSV1zTmIzyR/XqoO0VQtrh+RpUI=;
+        b=plzF3CtmU4UBtKJpngRbJjK/gUoXo2B7E5D4X1gPppszIX/LQsVJf51VV6Q5g0dpP7
+         aFyF1P/gxVPwlPrWD9TwCCMxzY58ikzNoxsW7YMwk/8q7WxnIjbplpFgIU1I0XpZS804
+         tVdEz6Dc2FIVznQYy0rH3d+wUlGGx2/hTW4GNOanUCI5o9n2zxl7lzp74rvSiblnVoRJ
+         CkTVOaa1ZDrYwrv/kxVxetzqaIyLiSPqcFGXrONUt2Ypxwhe1HA8xBLq0z2aSYNnXMbR
+         RnRLxRvvWClwku4P9YLpKGBsncfQh8Ko5ZW4zY1P79sOT9J3U9B3+TNjXknbzSldRntz
+         dMAg==
+X-Gm-Message-State: AHQUAuYsDHiGTrE6OrqTfuEVkcjifKKeDNSHLjVIj37YbEoYBKPCocoa
+        AZAWjY7SC1syTy1OndM8Q9t225d9TcWFKE4=
+X-Google-Smtp-Source: AHgI3IZBz4Gd+NwrA2B5PfutrpzR9sWPcsJEhFCXzQSJcwUOTibbOmZpuHUSScHyQD07vCIfMK0m3NZKOKhOnH8=
+X-Received: by 2002:aca:5044:: with SMTP id e65mr2653040oib.11.1549856463576;
+ Sun, 10 Feb 2019 19:41:03 -0800 (PST)
+Date:   Sun, 10 Feb 2019 19:40:21 -0800
+In-Reply-To: <20190205190849.GA2686@kunai>
+Message-Id: <20190211034021.242932-1-jsperbeck@google.com>
+Mime-Version: 1.0
+References: <20190205190849.GA2686@kunai>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+Subject: [PATCH v2] i2c: core-smbus: don't trace smbus_reply data on errors
+From:   John Sperbeck <jsperbeck@google.com>
+To:     wsa@the-dreams.de
+Cc:     jsperbeck@google.com, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 8:00 PM Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> Hi,
->
-> On 2/9/19 6:06 AM, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > A local variable initialization is a hint that the variable will be used in
-> > an unusual way.  If the initialization is unnecessary, that hint becomes a
-> > distraction.
-> >
-> > Remove unnecessary initializations.  No functional change intended.
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >   drivers/iommu/intel-iommu.c |   27 +++++++++++++--------------
-> >   1 file changed, 13 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> > index 81077803880f..2acd08c82cdc 100644
-> > --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -865,7 +865,7 @@ static void free_context_table(struct intel_iommu *iommu)
-> >   static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
-> >                                     unsigned long pfn, int *target_level)
-> >   {
-> > -     struct dma_pte *parent, *pte = NULL;
-> > +     struct dma_pte *parent, *pte;
-> >       int level = agaw_to_level(domain->agaw);
-> >       int offset;
-> >
-> > @@ -922,7 +922,7 @@ static struct dma_pte *dma_pfn_level_pte(struct dmar_domain *domain,
-> >                                        unsigned long pfn,
-> >                                        int level, int *large_page)
-> >   {
-> > -     struct dma_pte *parent, *pte = NULL;
-> > +     struct dma_pte *parent, *pte;
-> >       int total = agaw_to_level(domain->agaw);
-> >       int offset;
-> >
-> > @@ -954,7 +954,7 @@ static void dma_pte_clear_range(struct dmar_domain *domain,
-> >                               unsigned long start_pfn,
-> >                               unsigned long last_pfn)
-> >   {
-> > -     unsigned int large_page = 1;
-> > +     unsigned int large_page;
-> >       struct dma_pte *first_pte, *pte;
-> >
-> >       BUG_ON(!domain_pfn_supported(domain, start_pfn));
-> > @@ -1132,7 +1132,7 @@ static struct page *domain_unmap(struct dmar_domain *domain,
-> >                                unsigned long start_pfn,
-> >                                unsigned long last_pfn)
-> >   {
-> > -     struct page *freelist = NULL;
-> > +     struct page *freelist;
->
-> I am afraid this change might cause problem. "freelist" might go through
-> dma_pte_clear_level() without any touches.
+If an smbus transfer fails, there's no guarantee that the output
+buffer was written.  So, avoid trying to show the output buffer when
+tracing after an error.  This was 'mostly harmless', but would trip
+up kasan checking if left-over cruft in byte 0 is a large length,
+causing us to read from unwritten memory.
 
-Thanks for your review!  Can you clarify your concern?  "freelist"
-isn't passed into dma_pte_clear_level().  Here's the existing code
-(before this patch).  I don't see a use of "freelist" before we assign
-the result of dma_pte_clear_level() to it.  But maybe I'm overlooking
-something.
+Signed-off-by: John Sperbeck <jsperbeck@google.com>
+---
+ drivers/i2c/i2c-core-smbus.c | 2 +-
+ include/trace/events/smbus.h | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-static struct page *domain_unmap(struct dmar_domain *domain,
-                                 unsigned long start_pfn,
-                                 unsigned long last_pfn)
-{
-        struct page *freelist = NULL;
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index 9cd66cabb84f..132119112596 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+ trace:
+ 	/* If enabled, the reply tracepoint is conditional on read_write. */
+ 	trace_smbus_reply(adapter, addr, flags, read_write,
+-			  command, protocol, data);
++			  command, protocol, data, res);
+ 	trace_smbus_result(adapter, addr, flags, read_write,
+ 			   command, protocol, res);
+ 
+diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
+index d2fb6e1d3e10..a4892a187842 100644
+--- a/include/trace/events/smbus.h
++++ b/include/trace/events/smbus.h
+@@ -138,9 +138,9 @@ TRACE_EVENT_CONDITION(smbus_reply,
+ 	TP_PROTO(const struct i2c_adapter *adap,
+ 		 u16 addr, unsigned short flags,
+ 		 char read_write, u8 command, int protocol,
+-		 const union i2c_smbus_data *data),
+-	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
+-	TP_CONDITION(read_write == I2C_SMBUS_READ),
++		 const union i2c_smbus_data *data, int res),
++	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
++	TP_CONDITION(res >= 0 && read_write == I2C_SMBUS_READ),
+ 	TP_STRUCT__entry(
+ 		__field(int,	adapter_nr		)
+ 		__field(__u16,	addr			)
+-- 
+2.20.1.791.gb4d0f1c61a-goog
 
-        BUG_ON(!domain_pfn_supported(domain, start_pfn));
-        BUG_ON(!domain_pfn_supported(domain, last_pfn));
-        BUG_ON(start_pfn > last_pfn);
-
-        /* we don't need lock here; nobody else touches the iova range */
-        freelist = dma_pte_clear_level(domain, agaw_to_level(domain->agaw),
-                                       domain->pgd, 0, start_pfn,
-last_pfn, NULL);
