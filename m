@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274F6C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1EAC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2E5921B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A92821B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898755;
-	bh=5RbqsYXNXRwIty+3ofiESqHYruU/j2jO7VhVxoy8w5k=;
+	s=default; t=1549898762;
+	bh=1GC4HfULWob7YTvC/Hklvifwku4eqzrErlcpxUSl53A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CmDHV376SQ2DHkGjeHRbYHU9qQuqLjZwp1Rsex9ElQJ7T9a80JG3Vzpd0xyno6k5r
-	 fNFeLtHI6z8Gk/TXnAw0ignu5TlEu+KtCfEzHsh/vWl2eABvV4P+Avx5DGbjVxZ2Q1
-	 p7Rld32YbnixxJiF3exyaQGTXLK1liZSuSQIhKwY=
+	b=z3rJw4vkRf8eManO5ryWi33d6AAfyp+r5QxQzSbjI99z7ST/vVGDjiV7ZpwG4f9mX
+	 NS1qf9ydorqZCKyq0NRwrKt5H1D8Jkcep6+LkzRNeBVzoMBZlG2qDQ21IoywW1HLqe
+	 Y5ijW55g7RMhmz5e1bCtaaJiS2LMBeIXLfRmMdzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390082AbfBKPA5 (ORCPT
+        id S2390581AbfBKP0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48856 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:26:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389667AbfBKPAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:53 -0500
+        id S2390069AbfBKPAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BE9D222A4;
-        Mon, 11 Feb 2019 15:00:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EB50222A6;
+        Mon, 11 Feb 2019 15:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897252;
-        bh=5RbqsYXNXRwIty+3ofiESqHYruU/j2jO7VhVxoy8w5k=;
+        s=default; t=1549897245;
+        bh=1GC4HfULWob7YTvC/Hklvifwku4eqzrErlcpxUSl53A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A9tl00bT6L95FELHIY9fGU8OGeuGNDfz6HIM7nEFdVLChovDvT+AHXRb1mTfRpHv1
-         +kLcWo9SQ6Dewxp0V/22n0Hg5kUXcilbWey+qV5hXxduetRDzfx90ahYhbo0BXtIbP
-         ND+UmQAlx9uHydnsxgRjnLeznbOdGcW+DdzrvkSI=
+        b=Jr4qrUNkCB6GBaVJf+W3mLwhokveOG4oMIqQW3siaO1VyVo4pDabkBa/sOeGi8DqG
+         wd8RAK+lvIuzyRaPOywNbeWM3ZBGhERdLOu8gobwPWNwk8OWYA2azKo+InuD9jAsSK
+         lEEGLc7mDtUhWJ20AINSHCmKtqHHLDqOFCV5ugGc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 140/205] crypto: ux500 - Use proper enum in hash_set_dma_transfer
-Date:   Mon, 11 Feb 2019 15:18:58 +0100
-Message-Id: <20190211141837.541151839@linuxfoundation.org>
+Subject: [PATCH 4.14 138/205] seq_buf: Make seq_buf_puts() null-terminate the buffer
+Date:   Mon, 11 Feb 2019 15:18:56 +0100
+Message-Id: <20190211141837.407050854@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,45 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5ac93f808338f4dd465402e91869702eb87db241 ]
+[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+Currently seq_buf_puts() will happily create a non null-terminated
+string for you in the buffer. This is particularly dangerous if the
+buffer is on the stack.
 
-drivers/crypto/ux500/hash/hash_core.c:169:4: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                        direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-                        ^~~~~~~~~
-1 warning generated.
+For example:
 
-dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
-We know that the only direction supported by this function is
-DMA_TO_DEVICE because of the check at the top of this function so we can
-just use the equivalent value from dma_transfer_direction.
+  char buf[8];
+  char secret = "secret";
+  struct seq_buf s;
 
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+  seq_buf_init(&s, buf, sizeof(buf));
+  seq_buf_puts(&s, "foo");
+  printk("Message is %s\n", buf);
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Can result in:
+
+  Message is fooªªªªªsecret
+
+We could require all users to memset() their buffer to zero before
+use. But that seems likely to be forgotten and lead to bugs.
+
+Instead we can change seq_buf_puts() to always leave the buffer in a
+null-terminated state.
+
+The only downside is that this makes the buffer 1 character smaller
+for seq_buf_puts(), but that seems like a good trade off.
+
+Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ux500/hash/hash_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/seq_buf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ux500/hash/hash_core.c b/drivers/crypto/ux500/hash/hash_core.c
-index 9acccad26928..17c8e2b28c42 100644
---- a/drivers/crypto/ux500/hash/hash_core.c
-+++ b/drivers/crypto/ux500/hash/hash_core.c
-@@ -165,7 +165,7 @@ static int hash_set_dma_transfer(struct hash_ctx *ctx, struct scatterlist *sg,
- 		__func__);
- 	desc = dmaengine_prep_slave_sg(channel,
- 			ctx->device->dma.sg, ctx->device->dma.sg_len,
--			direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-+			DMA_MEM_TO_DEV, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dev_err(ctx->device->dev,
- 			"%s: dmaengine_prep_slave_sg() failed!\n", __func__);
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index 11f2ae0f9099..6aabb609dd87 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+ 
+ 	WARN_ON(s->size == 0);
+ 
++	/* Add 1 to len for the trailing null byte which must be there */
++	len += 1;
++
+ 	if (seq_buf_can_fit(s, len)) {
+ 		memcpy(s->buffer + s->len, str, len);
+-		s->len += len;
++		/* Don't count the trailing null byte against the capacity */
++		s->len += len - 1;
+ 		return 0;
+ 	}
+ 	seq_buf_set_overflow(s);
 -- 
 2.19.1
 
