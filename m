@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F057C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDFFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC7D222AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0431A222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897357;
-	bh=Jztei4wtUJY23q7+WOE14c2Cnm/qGhQw5d89Fch0mR8=;
+	s=default; t=1549897361;
+	bh=hfEY1RH1kScw8epRhAsBXY4kzmH6dAv87wYbFk5AcJQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j85v9NYhn5DH8X5o6+7JFWq41fGoH+xOBKTXC5S7Gu3oIQEfyFnTHa23BgeBq39um
-	 VIl/Pz1NhYO/A+9eZvzIWNpVvtvYiss7TFitfLwTFMSt5WWEeKHmrxIo0xl0i7dHD6
-	 tEF/hMiqJop2znNOMP3ErLpeMLlgITaMXz245ddo=
+	b=S2tN+csObbAmhqBjI7nUyzNR/sVrzesyY78di+VxjQB7uSWPgNJTE9pF8D2sERjxU
+	 CzSlJdoGLwdWcBPR1ZbnHfpl1VkWSSbgrCcyJB7c9dcJTNe31Cl8DCTIjvb7MACopW
+	 vLnRZv8sxvuOBDrZ3eC+nwrxMzkw+gPw2KIfdoLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbfBKPCg (ORCPT
+        id S2390443AbfBKPCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:02:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50690 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389635AbfBKPC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:29 -0500
+        id S2390425AbfBKPCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 496DB222A7;
-        Mon, 11 Feb 2019 15:02:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC3EC222A7;
+        Mon, 11 Feb 2019 15:02:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897348;
-        bh=Jztei4wtUJY23q7+WOE14c2Cnm/qGhQw5d89Fch0mR8=;
+        s=default; t=1549897351;
+        bh=hfEY1RH1kScw8epRhAsBXY4kzmH6dAv87wYbFk5AcJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2umM1BNfSi7iS31ZnJukbb2PwG9alG97SsUtlTfjydt5JZ5NFTNK0qvZFCrJ/Q/et
-         16zf1ptG3eZaqDSIQ9RCyf1ac1vbtcLTgjdpdxc9d9m61PiQnrdBsqyETQ8UyiGWfk
-         5ddrYKkjdX1IAO4WykWXzuRFGhwgvIFzPMcvf9Gc=
+        b=UwGn64vRuyIo4hdgcBEt/3jdNecxLo0oK7X2aQw0MRqKZZpEKasAr9ztatWOwnlHl
+         hleCqFlRI6DHMu77mMoL8ooYMdA9ZxhmxVur8VfMBLE8+hx8t8v4wX6Qd3DoM71Hu8
+         XRKgSXJtTwmD56/aKcI10cmLe6XYcq0Gh0r+234E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 172/205] net: systemport: Fix WoL with password after deep sleep
-Date:   Mon, 11 Feb 2019 15:19:30 +0100
-Message-Id: <20190211141839.609290443@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 173/205] net/mlx5e: Force CHECKSUM_UNNECESSARY for short ethernet frames
+Date:   Mon, 11 Feb 2019 15:19:31 +0100
+Message-Id: <20190211141839.678919090@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,104 +68,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 8dfb8d2cceb76b74ad5b58cc65c75994329b4d5e ]
+[ Upstream commit e8c8b53ccaff568fef4c13a6ccaf08bf241aa01a ]
 
-Broadcom STB chips support a deep sleep mode where all register
-contents are lost. Because we were stashing the MagicPacket password
-into some of these registers a suspend into that deep sleep then a
-resumption would not lead to being able to wake-up from MagicPacket with
-password again.
+When an ethernet frame is padded to meet the minimum ethernet frame
+size, the padding octets are not covered by the hardware checksum.
+Fortunately the padding octets are usually zero's, which don't affect
+checksum. However, we have a switch which pads non-zero octets, this
+causes kernel hardware checksum fault repeatedly.
 
-Fix this by keeping a software copy of the password and program it
-during suspend.
+Prior to:
+commit '88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE ...")'
+skb checksum was forced to be CHECKSUM_NONE when padding is detected.
+After it, we need to keep skb->csum updated, like what we do for RXFCS.
+However, fixing up CHECKSUM_COMPLETE requires to verify and parse IP
+headers, it is not worthy the effort as the packets are so small that
+CHECKSUM_COMPLETE can't save anything.
 
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"),
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Tariq Toukan <tariqt@mellanox.com>
+Cc: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   25 ++++++++++---------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 ++
- 2 files changed, 12 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -519,7 +519,6 @@ static void bcm_sysport_get_wol(struct n
- 				struct ethtool_wolinfo *wol)
- {
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
--	u32 reg;
- 
- 	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE;
- 	wol->wolopts = priv->wolopts;
-@@ -527,11 +526,7 @@ static void bcm_sysport_get_wol(struct n
- 	if (!(priv->wolopts & WAKE_MAGICSECURE))
- 		return;
- 
--	/* Return the programmed SecureOn password */
--	reg = umac_readl(priv, UMAC_PSW_MS);
--	put_unaligned_be16(reg, &wol->sopass[0]);
--	reg = umac_readl(priv, UMAC_PSW_LS);
--	put_unaligned_be32(reg, &wol->sopass[2]);
-+	memcpy(wol->sopass, priv->sopass, sizeof(priv->sopass));
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -646,6 +646,8 @@ static u32 mlx5e_get_fcs(const struct sk
+ 	return __get_unaligned_cpu32(fcs_bytes);
  }
  
- static int bcm_sysport_set_wol(struct net_device *dev,
-@@ -547,13 +542,8 @@ static int bcm_sysport_set_wol(struct ne
- 	if (wol->wolopts & ~supported)
- 		return -EINVAL;
++#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
++
+ static inline void mlx5e_handle_csum(struct net_device *netdev,
+ 				     struct mlx5_cqe64 *cqe,
+ 				     struct mlx5e_rq *rq,
+@@ -661,6 +663,17 @@ static inline void mlx5e_handle_csum(str
+ 		return;
+ 	}
  
--	/* Program the SecureOn password */
--	if (wol->wolopts & WAKE_MAGICSECURE) {
--		umac_writel(priv, get_unaligned_be16(&wol->sopass[0]),
--			    UMAC_PSW_MS);
--		umac_writel(priv, get_unaligned_be32(&wol->sopass[2]),
--			    UMAC_PSW_LS);
--	}
-+	if (wol->wolopts & WAKE_MAGICSECURE)
-+		memcpy(priv->sopass, wol->sopass, sizeof(priv->sopass));
++	/* CQE csum doesn't cover padding octets in short ethernet
++	 * frames. And the pad field is appended prior to calculating
++	 * and appending the FCS field.
++	 *
++	 * Detecting these padded frames requires to verify and parse
++	 * IP headers, so we simply force all those small frames to be
++	 * CHECKSUM_UNNECESSARY even if they are not padded.
++	 */
++	if (short_frame(skb->len))
++		goto csum_unnecessary;
++
+ 	if (is_first_ethertype_ip(skb)) {
+ 		skb->ip_summed = CHECKSUM_COMPLETE;
+ 		skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
+@@ -672,6 +685,7 @@ static inline void mlx5e_handle_csum(str
+ 		return;
+ 	}
  
- 	/* Flag the device and relevant IRQ as wakeup capable */
- 	if (wol->wolopts) {
-@@ -2221,12 +2211,17 @@ static int bcm_sysport_suspend_to_wol(st
- 	unsigned int timeout = 1000;
- 	u32 reg;
- 
--	/* Password has already been programmed */
- 	reg = umac_readl(priv, UMAC_MPD_CTRL);
- 	reg |= MPD_EN;
- 	reg &= ~PSW_EN;
--	if (priv->wolopts & WAKE_MAGICSECURE)
-+	if (priv->wolopts & WAKE_MAGICSECURE) {
-+		/* Program the SecureOn password */
-+		umac_writel(priv, get_unaligned_be16(&priv->sopass[0]),
-+			    UMAC_PSW_MS);
-+		umac_writel(priv, get_unaligned_be32(&priv->sopass[2]),
-+			    UMAC_PSW_LS);
- 		reg |= PSW_EN;
-+	}
- 	umac_writel(priv, reg, UMAC_MPD_CTRL);
- 
- 	/* Make sure RBUF entered WoL mode as result */
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -11,6 +11,7 @@
- #ifndef __BCM_SYSPORT_H
- #define __BCM_SYSPORT_H
- 
-+#include <linux/ethtool.h>
- #include <linux/if_vlan.h>
- 
- /* Receive/transmit descriptor format */
-@@ -754,6 +755,7 @@ struct bcm_sysport_priv {
- 	unsigned int		crc_fwd:1;
- 	u16			rev;
- 	u32			wolopts;
-+	u8			sopass[SOPASS_MAX];
- 	unsigned int		wol_irq_disabled:1;
- 
- 	/* MIB related fields */
++csum_unnecessary:
+ 	if (likely((cqe->hds_ip_ext & CQE_L3_OK) &&
+ 		   (cqe->hds_ip_ext & CQE_L4_OK))) {
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
 
 
