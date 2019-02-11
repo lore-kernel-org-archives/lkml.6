@@ -7,47 +7,77 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAF8C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F69CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE3F222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDE7222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895015;
-	bh=nHKyCTtSyGaWHsFhIkI8uigj30ziT9W1hh6LoRHFdKs=;
+	s=default; t=1549895019;
+	bh=JuRwckUEgE8Xx66s83D/oR+WYpSvWrsv694SpzGZOnM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S5mRcUVEdUKXNFXHyQaFd2jd0afelhbuTZcph8n5n8jdNi0JjyoN/rzPghPxnmwcx
-	 wW86QrkAukQZbruM1pldQPXv+oocQVFCGPWZ04txzlQHJlm855ItwlLEbVRPVM/m9m
-	 v7A3tNVaqMlhNreHrm1gGOirBpbEcOcUEmWCzQqw=
+	b=zaB7+YCUypNefFSh55Lfp5pS8Dro9SrMI7DZVns5X/wUalQhx73/I+Tx4CgVGz6bK
+	 HCKWMHNbbNLNdd8ic8WHSuYIMONXPi4VcRNwFg+CuuOXTNsBmgw2xERSDjtey0IdyT
+	 FgOcFTf2iB82L8dl/L/Lw+sCrpiGVPNLeE8H9vAw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfBKOXe (ORCPT
+        id S1729029AbfBKOXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728999AbfBKOXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:30 -0500
+        id S1728123AbfBKOXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E99C222A1;
-        Mon, 11 Feb 2019 14:23:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29E5F20844;
+        Mon, 11 Feb 2019 14:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895009;
-        bh=nHKyCTtSyGaWHsFhIkI8uigj30ziT9W1hh6LoRHFdKs=;
+        s=default; t=1549895011;
+        bh=JuRwckUEgE8Xx66s83D/oR+WYpSvWrsv694SpzGZOnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sRr/LO85uoYudDzs5dvuH0Of7QxZZrPEEenLAzUVCGQnqEDU7RrWwcbWbXb1Mhen7
-         zhTkqjLXJS/Xal0AJ7liKAr1gnnRRDXglSQCM2g0JYjwXB4VNWku3glkEBfvWQic4P
-         2rXk8zWEPWb/VgkyGLwBwLliNcvQLiG2V/7i5z9Y=
+        b=NxYj5WDsRQ9sgOqEXl0FH2dB6efF/2JPKCWGLRTQnoPIzfAPJLBB/2HyWUgB8nai7
+         UGMsVrsDIIDiCVNvxSEJpM3kKsIcehYG8ocYX/fCDvmYvrbgf+EbtW4ovIqSD3AnMF
+         m4+OCPuuhypCEaz0OtUIFE57Gf4jhXUkpsYSPC3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 061/352] staging: erofs: fix race when the managed cache is enabled
-Date:   Mon, 11 Feb 2019 15:14:48 +0100
-Message-Id: <20190211141850.025536296@linuxfoundation.org>
+        stable@vger.kernel.org, Babu Moger <babu.moger@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
+        David Miller <davem@davemloft.net>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Dmitry Safonov <dima@arista.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Joerg Roedel <jroedel@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Pu Wen <puwen@hygon.cn>, qianyue.zj@alibaba-inc.com,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Rian Hunter <rian@alum.mit.edu>,
+        Sherry Hurwitz <sherry.hurwitz@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        xiaochen.shen@intel.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 062/352] x86/resctrl: Fixup the user-visible strings
+Date:   Mon, 11 Feb 2019 15:14:49 +0100
+Message-Id: <20190211141850.082586785@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,223 +96,464 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 51232df5e4b268936beccde5248f312a316800be ]
+[ Upstream commit 723f1a0dd8e26a7523ba068204bee11c95ded38d ]
 
-When the managed cache is enabled, the last reference count
-of a workgroup must be used for its workstation.
+Fix the messages in rdt_last_cmd_printf() and rdt_last_cmd_puts() to
+make them more meaningful and consistent.
 
-Otherwise, it could lead to incorrect (un)freezes in
-the reclaim path, and it would be harmful.
+ [ bp: s/cpu/CPU/; s/mem\W/memory ]
 
-A typical race as follows:
-
-Thread 1 (In the reclaim path)  Thread 2
-workgroup_freeze(grp, 1)                                refcnt = 1
-...
-workgroup_unfreeze(grp, 1)                              refcnt = 1
-                                workgroup_get(grp)      refcnt = 2 (x)
-workgroup_put(grp)                                      refcnt = 1 (x)
-                                ...unexpected behaviors
-
-* grp is detached but still used, which violates cache-managed
-  freeze constraint.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: David Miller <davem@davemloft.net>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: <qianyue.zj@alibaba-inc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Rian Hunter <rian@alum.mit.edu>
+Cc: Sherry Hurwitz <sherry.hurwitz@amd.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: <xiaochen.shen@intel.com>
+Link: https://lkml.kernel.org/r/20181121202811.4492-11-babu.moger@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/erofs/internal.h |   1 +
- drivers/staging/erofs/utils.c    | 134 ++++++++++++++++++++++---------
- 2 files changed, 96 insertions(+), 39 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 22 ++++++-------
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 34 +++++++++----------
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++-----------
+ 3 files changed, 46 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 048fb034b5aa..3ac4599bbe01 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -250,6 +250,7 @@ repeat:
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index c8b72aff55e0..6e76ada71211 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -71,7 +71,7 @@ int parse_bw(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	unsigned long bw_val;
+ 
+ 	if (d->have_new_ctrl) {
+-		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
++		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -97,12 +97,12 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+ 
+ 	ret = kstrtoul(buf, 16, &val);
+ 	if (ret) {
+-		rdt_last_cmd_printf("non-hex character in mask %s\n", buf);
++		rdt_last_cmd_printf("Non-hex character in the mask %s\n", buf);
+ 		return false;
+ 	}
+ 
+ 	if (val == 0 || val > r->default_ctrl) {
+-		rdt_last_cmd_puts("mask out of range\n");
++		rdt_last_cmd_puts("Mask out of range\n");
+ 		return false;
+ 	}
+ 
+@@ -110,12 +110,12 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+ 	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
+ 
+ 	if (find_next_bit(&val, cbm_len, zero_bit) < cbm_len) {
+-		rdt_last_cmd_printf("mask %lx has non-consecutive 1-bits\n", val);
++		rdt_last_cmd_printf("The mask %lx has non-consecutive 1-bits\n", val);
+ 		return false;
+ 	}
+ 
+ 	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
+-		rdt_last_cmd_printf("Need at least %d bits in mask\n",
++		rdt_last_cmd_printf("Need at least %d bits in the mask\n",
+ 				    r->cache.min_cbm_bits);
+ 		return false;
+ 	}
+@@ -135,7 +135,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	u32 cbm_val;
+ 
+ 	if (d->have_new_ctrl) {
+-		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
++		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -145,7 +145,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	 */
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
+ 	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
+-		rdt_last_cmd_printf("pseudo-locked region in hierarchy\n");
++		rdt_last_cmd_printf("Pseudo-locked region in hierarchy\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -164,14 +164,14 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	 * either is exclusive.
+ 	 */
+ 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
+-		rdt_last_cmd_printf("overlaps with exclusive group\n");
++		rdt_last_cmd_printf("Overlaps with exclusive group\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
+ 		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
+ 		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+-			rdt_last_cmd_printf("overlaps with other group\n");
++			rdt_last_cmd_printf("0verlaps with other group\n");
+ 			return -EINVAL;
+ 		}
+ 	}
+@@ -293,7 +293,7 @@ static int rdtgroup_parse_resource(char *resname, char *tok,
+ 		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
+ 			return parse_line(tok, r, rdtgrp);
+ 	}
+-	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
++	rdt_last_cmd_printf("Unknown or unsupported resource name '%s'\n", resname);
+ 	return -EINVAL;
  }
  
- #define __erofs_workgroup_get(grp)	atomic_inc(&(grp)->refcount)
-+#define __erofs_workgroup_put(grp)	atomic_dec(&(grp)->refcount)
+@@ -326,7 +326,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	 */
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("resource group is pseudo-locked\n");
++		rdt_last_cmd_puts("Resource group is pseudo-locked\n");
+ 		goto out;
+ 	}
  
- extern int erofs_workgroup_put(struct erofs_workgroup *grp);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 815b4e92522c..cde746d64600 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -213,7 +213,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
+ 	for_each_cpu(cpu, &plr->d->cpu_mask) {
+ 		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
+ 		if (!pm_req) {
+-			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
++			rdt_last_cmd_puts("Failure to allocate memory for PM QoS\n");
+ 			ret = -ENOMEM;
+ 			goto out_err;
+ 		}
+@@ -222,7 +222,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
+ 					     DEV_PM_QOS_RESUME_LATENCY,
+ 					     30);
+ 		if (ret < 0) {
+-			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
++			rdt_last_cmd_printf("Failed to add latency req CPU%d\n",
+ 					    cpu);
+ 			kfree(pm_req);
+ 			ret = -1;
+@@ -289,7 +289,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 	plr->cpu = cpumask_first(&plr->d->cpu_mask);
  
-diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
-index ea8a962e5c95..d2e3ace91046 100644
---- a/drivers/staging/erofs/utils.c
-+++ b/drivers/staging/erofs/utils.c
-@@ -83,12 +83,21 @@ int erofs_register_workgroup(struct super_block *sb,
+ 	if (!cpu_online(plr->cpu)) {
+-		rdt_last_cmd_printf("cpu %u associated with cache not online\n",
++		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
+ 				    plr->cpu);
+ 		ret = -ENODEV;
+ 		goto out_region;
+@@ -307,7 +307,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 	}
  
- 	grp = xa_tag_pointer(grp, tag);
+ 	ret = -1;
+-	rdt_last_cmd_puts("unable to determine cache line size\n");
++	rdt_last_cmd_puts("Unable to determine cache line size\n");
+ out_region:
+ 	pseudo_lock_region_clear(plr);
+ 	return ret;
+@@ -361,14 +361,14 @@ static int pseudo_lock_region_alloc(struct pseudo_lock_region *plr)
+ 	 * KMALLOC_MAX_SIZE.
+ 	 */
+ 	if (plr->size > KMALLOC_MAX_SIZE) {
+-		rdt_last_cmd_puts("requested region exceeds maximum size\n");
++		rdt_last_cmd_puts("Requested region exceeds maximum size\n");
+ 		ret = -E2BIG;
+ 		goto out_region;
+ 	}
  
--	err = radix_tree_insert(&sbi->workstn_tree,
--		grp->index, grp);
-+	/*
-+	 * Bump up reference count before making this workgroup
-+	 * visible to other users in order to avoid potential UAF
-+	 * without serialized by erofs_workstn_lock.
-+	 */
-+	__erofs_workgroup_get(grp);
+ 	plr->kmem = kzalloc(plr->size, GFP_KERNEL);
+ 	if (!plr->kmem) {
+-		rdt_last_cmd_puts("unable to allocate memory\n");
++		rdt_last_cmd_puts("Unable to allocate memory\n");
+ 		ret = -ENOMEM;
+ 		goto out_region;
+ 	}
+@@ -665,7 +665,7 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 * default closid associated with it.
+ 	 */
+ 	if (rdtgrp == &rdtgroup_default) {
+-		rdt_last_cmd_puts("cannot pseudo-lock default group\n");
++		rdt_last_cmd_puts("Cannot pseudo-lock default group\n");
+ 		return -EINVAL;
+ 	}
  
--	if (!err) {
--		__erofs_workgroup_get(grp);
--	}
-+	err = radix_tree_insert(&sbi->workstn_tree,
-+				grp->index, grp);
-+	if (unlikely(err))
-+		/*
-+		 * it's safe to decrease since the workgroup isn't visible
-+		 * and refcount >= 2 (cannot be freezed).
-+		 */
-+		__erofs_workgroup_put(grp);
+@@ -707,17 +707,17 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 */
+ 	prefetch_disable_bits = get_prefetch_disable_bits();
+ 	if (prefetch_disable_bits == 0) {
+-		rdt_last_cmd_puts("pseudo-locking not supported\n");
++		rdt_last_cmd_puts("Pseudo-locking not supported\n");
+ 		return -EINVAL;
+ 	}
  
- 	erofs_workstn_unlock(sbi);
- 	radix_tree_preload_end();
-@@ -97,19 +106,94 @@ int erofs_register_workgroup(struct super_block *sb,
+ 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
+-		rdt_last_cmd_puts("monitoring in progress\n");
++		rdt_last_cmd_puts("Monitoring in progress\n");
+ 		return -EINVAL;
+ 	}
  
- extern void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
+ 	if (rdtgroup_tasks_assigned(rdtgrp)) {
+-		rdt_last_cmd_puts("tasks assigned to resource group\n");
++		rdt_last_cmd_puts("Tasks assigned to resource group\n");
+ 		return -EINVAL;
+ 	}
  
-+static void  __erofs_workgroup_free(struct erofs_workgroup *grp)
-+{
-+	atomic_long_dec(&erofs_global_shrink_cnt);
-+	erofs_workgroup_free_rcu(grp);
-+}
-+
- int erofs_workgroup_put(struct erofs_workgroup *grp)
- {
- 	int count = atomic_dec_return(&grp->refcount);
+@@ -727,13 +727,13 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	}
  
- 	if (count == 1)
- 		atomic_long_inc(&erofs_global_shrink_cnt);
--	else if (!count) {
--		atomic_long_dec(&erofs_global_shrink_cnt);
--		erofs_workgroup_free_rcu(grp);
--	}
-+	else if (!count)
-+		__erofs_workgroup_free(grp);
- 	return count;
- }
+ 	if (rdtgroup_locksetup_user_restrict(rdtgrp)) {
+-		rdt_last_cmd_puts("unable to modify resctrl permissions\n");
++		rdt_last_cmd_puts("Unable to modify resctrl permissions\n");
+ 		return -EIO;
+ 	}
  
-+#ifdef EROFS_FS_HAS_MANAGED_CACHE
-+/* for cache-managed case, customized reclaim paths exist */
-+static void erofs_workgroup_unfreeze_final(struct erofs_workgroup *grp)
-+{
-+	erofs_workgroup_unfreeze(grp, 0);
-+	__erofs_workgroup_free(grp);
-+}
-+
-+bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
-+				    struct erofs_workgroup *grp,
-+				    bool cleanup)
-+{
-+	/*
-+	 * for managed cache enabled, the refcount of workgroups
-+	 * themselves could be < 0 (freezed). So there is no guarantee
-+	 * that all refcount > 0 if managed cache is enabled.
-+	 */
-+	if (!erofs_workgroup_try_to_freeze(grp, 1))
-+		return false;
-+
-+	/*
-+	 * note that all cached pages should be unlinked
-+	 * before delete it from the radix tree.
-+	 * Otherwise some cached pages of an orphan old workgroup
-+	 * could be still linked after the new one is available.
-+	 */
-+	if (erofs_try_to_free_all_cached_pages(sbi, grp)) {
-+		erofs_workgroup_unfreeze(grp, 1);
-+		return false;
-+	}
-+
-+	/*
-+	 * it is impossible to fail after the workgroup is freezed,
-+	 * however in order to avoid some race conditions, add a
-+	 * DBG_BUGON to observe this in advance.
-+	 */
-+	DBG_BUGON(xa_untag_pointer(radix_tree_delete(&sbi->workstn_tree,
-+						     grp->index)) != grp);
-+
-+	/*
-+	 * if managed cache is enable, the last refcount
-+	 * should indicate the related workstation.
-+	 */
-+	erofs_workgroup_unfreeze_final(grp);
-+	return true;
-+}
-+
-+#else
-+/* for nocache case, no customized reclaim path at all */
-+bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
-+				    struct erofs_workgroup *grp,
-+				    bool cleanup)
-+{
-+	int cnt = atomic_read(&grp->refcount);
-+
-+	DBG_BUGON(cnt <= 0);
-+	DBG_BUGON(cleanup && cnt != 1);
-+
-+	if (cnt > 1)
-+		return false;
-+
-+	DBG_BUGON(xa_untag_pointer(radix_tree_delete(&sbi->workstn_tree,
-+						     grp->index)) != grp);
-+
-+	/* (rarely) could be grabbed again when freeing */
-+	erofs_workgroup_put(grp);
-+	return true;
-+}
-+
-+#endif
-+
- unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
- 				       unsigned long nr_shrink,
- 				       bool cleanup)
-@@ -126,42 +210,14 @@ repeat:
- 		batch, first_index, PAGEVEC_SIZE);
+ 	ret = pseudo_lock_init(rdtgrp);
+ 	if (ret) {
+-		rdt_last_cmd_puts("unable to init pseudo-lock region\n");
++		rdt_last_cmd_puts("Unable to init pseudo-lock region\n");
+ 		goto out_release;
+ 	}
  
- 	for (i = 0; i < found; ++i) {
--		int cnt;
- 		struct erofs_workgroup *grp = xa_untag_pointer(batch[i]);
+@@ -770,7 +770,7 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+ 	if (rdt_mon_capable) {
+ 		ret = alloc_rmid();
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("out of RMIDs\n");
++			rdt_last_cmd_puts("Out of RMIDs\n");
+ 			return ret;
+ 		}
+ 		rdtgrp->mon.rmid = ret;
+@@ -1304,7 +1304,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 					"pseudo_lock/%u", plr->cpu);
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+-		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
++		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
+ 		goto out_cstates;
+ 	}
  
- 		first_index = grp->index + 1;
+@@ -1322,13 +1322,13 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		 * the cleared, but not freed, plr struct resulting in an
+ 		 * empty pseudo-locking loop.
+ 		 */
+-		rdt_last_cmd_puts("locking thread interrupted\n");
++		rdt_last_cmd_puts("Locking thread interrupted\n");
+ 		goto out_cstates;
+ 	}
  
--		cnt = atomic_read(&grp->refcount);
--		BUG_ON(cnt <= 0);
--
--		if (cleanup)
--			BUG_ON(cnt != 1);
--
--#ifndef EROFS_FS_HAS_MANAGED_CACHE
--		else if (cnt > 1)
--#else
--		if (!erofs_workgroup_try_to_freeze(grp, 1))
--#endif
-+		/* try to shrink each valid workgroup */
-+		if (!erofs_try_to_release_workgroup(sbi, grp, cleanup))
+ 	ret = pseudo_lock_minor_get(&new_minor);
+ 	if (ret < 0) {
+-		rdt_last_cmd_puts("unable to obtain a new minor number\n");
++		rdt_last_cmd_puts("Unable to obtain a new minor number\n");
+ 		goto out_cstates;
+ 	}
+ 
+@@ -1360,7 +1360,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 
+ 	if (IS_ERR(dev)) {
+ 		ret = PTR_ERR(dev);
+-		rdt_last_cmd_printf("failed to create character device: %d\n",
++		rdt_last_cmd_printf("Failed to create character device: %d\n",
+ 				    ret);
+ 		goto out_debugfs;
+ 	}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 951c61367688..17b63a4748bf 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -345,7 +345,7 @@ static int cpus_mon_write(struct rdtgroup *rdtgrp, cpumask_var_t newmask,
+ 	/* Check whether cpus belong to parent ctrl group */
+ 	cpumask_andnot(tmpmask, newmask, &prgrp->cpu_mask);
+ 	if (cpumask_weight(tmpmask)) {
+-		rdt_last_cmd_puts("can only add CPUs to mongroup that belong to parent\n");
++		rdt_last_cmd_puts("Can only add CPUs to mongroup that belong to parent\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -470,14 +470,14 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 	rdt_last_cmd_clear();
+ 	if (!rdtgrp) {
+ 		ret = -ENOENT;
+-		rdt_last_cmd_puts("directory was removed\n");
++		rdt_last_cmd_puts("Directory was removed\n");
+ 		goto unlock;
+ 	}
+ 
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
+ 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -487,7 +487,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 		ret = cpumask_parse(buf, newmask);
+ 
+ 	if (ret) {
+-		rdt_last_cmd_puts("bad cpu list/mask\n");
++		rdt_last_cmd_puts("Bad CPU list/mask\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -495,7 +495,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 	cpumask_andnot(tmpmask, newmask, cpu_online_mask);
+ 	if (cpumask_weight(tmpmask)) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("can only assign online cpus\n");
++		rdt_last_cmd_puts("Can only assign online CPUs\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -574,7 +574,7 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
+ 		 */
+ 		atomic_dec(&rdtgrp->waitcount);
+ 		kfree(callback);
+-		rdt_last_cmd_puts("task exited\n");
++		rdt_last_cmd_puts("Task exited\n");
+ 	} else {
+ 		/*
+ 		 * For ctrl_mon groups move both closid and rmid.
+@@ -692,7 +692,7 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
+ 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -1158,14 +1158,14 @@ static bool rdtgroup_mode_test_exclusive(struct rdtgroup *rdtgrp)
+ 		list_for_each_entry(d, &r->domains, list) {
+ 			if (rdtgroup_cbm_overlaps(r, d, d->ctrl_val[closid],
+ 						  rdtgrp->closid, false)) {
+-				rdt_last_cmd_puts("schemata overlaps\n");
++				rdt_last_cmd_puts("Schemata overlaps\n");
+ 				return false;
+ 			}
+ 		}
+ 	}
+ 
+ 	if (!has_cache) {
+-		rdt_last_cmd_puts("cannot be exclusive without CAT/CDP\n");
++		rdt_last_cmd_puts("Cannot be exclusive without CAT/CDP\n");
+ 		return false;
+ 	}
+ 
+@@ -1206,7 +1206,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 		goto out;
+ 
+ 	if (mode == RDT_MODE_PSEUDO_LOCKED) {
+-		rdt_last_cmd_printf("cannot change pseudo-locked group\n");
++		rdt_last_cmd_printf("Cannot change pseudo-locked group\n");
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1235,7 +1235,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 			goto out;
+ 		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
+ 	} else {
+-		rdt_last_cmd_printf("unknown/unsupported mode\n");
++		rdt_last_cmd_printf("Unknown orunsupported mode\n");
+ 		ret = -EINVAL;
+ 	}
+ 
+@@ -2540,7 +2540,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			tmp_cbm = d->new_ctrl;
+ 			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
+ 			    r->cache.min_cbm_bits) {
+-				rdt_last_cmd_printf("no space on %s:%d\n",
++				rdt_last_cmd_printf("No space on %s:%d\n",
+ 						    r->name, d->id);
+ 				return -ENOSPC;
+ 			}
+@@ -2557,7 +2557,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
  			continue;
+ 		ret = update_domains(r, rdtgrp->closid);
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("failed to initialize allocations\n");
++			rdt_last_cmd_puts("Failed to initialize allocations\n");
+ 			return ret;
+ 		}
+ 		rdtgrp->mode = RDT_MODE_SHAREABLE;
+@@ -2580,7 +2580,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	rdt_last_cmd_clear();
+ 	if (!prdtgrp) {
+ 		ret = -ENODEV;
+-		rdt_last_cmd_puts("directory was removed\n");
++		rdt_last_cmd_puts("Directory was removed\n");
+ 		goto out_unlock;
+ 	}
  
--		if (xa_untag_pointer(radix_tree_delete(&sbi->workstn_tree,
--			grp->index)) != grp) {
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--skip:
--			erofs_workgroup_unfreeze(grp, 1);
--#endif
--			continue;
--		}
--
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--		if (erofs_try_to_free_all_cached_pages(sbi, grp))
--			goto skip;
--
--		erofs_workgroup_unfreeze(grp, 1);
--#endif
--		/* (rarely) grabbed again when freeing */
--		erofs_workgroup_put(grp);
--
- 		++freed;
- 		if (unlikely(!--nr_shrink))
- 			break;
+@@ -2588,7 +2588,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
+ 	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto out_unlock;
+ 	}
+ 
+@@ -2596,7 +2596,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
+ 	if (!rdtgrp) {
+ 		ret = -ENOSPC;
+-		rdt_last_cmd_puts("kernel out of memory\n");
++		rdt_last_cmd_puts("Kernel out of memory\n");
+ 		goto out_unlock;
+ 	}
+ 	*r = rdtgrp;
+@@ -2637,7 +2637,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	if (rdt_mon_capable) {
+ 		ret = alloc_rmid();
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("out of RMIDs\n");
++			rdt_last_cmd_puts("Out of RMIDs\n");
+ 			goto out_destroy;
+ 		}
+ 		rdtgrp->mon.rmid = ret;
+@@ -2725,7 +2725,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 	kn = rdtgrp->kn;
+ 	ret = closid_alloc();
+ 	if (ret < 0) {
+-		rdt_last_cmd_puts("out of CLOSIDs\n");
++		rdt_last_cmd_puts("Out of CLOSIDs\n");
+ 		goto out_common_fail;
+ 	}
+ 	closid = ret;
 -- 
 2.19.1
 
