@@ -2,128 +2,117 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D375EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01668C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD07218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:39:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qtvcv1dQ"
+	by mail.kernel.org (Postfix) with ESMTP id CA2A12081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfBKVjP (ORCPT
+        id S1727792AbfBKVjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:39:15 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3741 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbfBKVjO (ORCPT
+        Mon, 11 Feb 2019 16:39:42 -0500
+Received: from chuckie.co.uk ([82.165.15.123]:40786 "EHLO
+        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726228AbfBKVjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:39:14 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c61eb820000>; Mon, 11 Feb 2019 13:39:14 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 13:39:13 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 13:39:13 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 21:39:13 +0000
-Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Davidlohr Bueso <dave@stgolabs.net>, <netdev@vger.kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
- <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
- <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
- <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
-Date:   Mon, 11 Feb 2019 13:39:12 -0800
+        Mon, 11 Feb 2019 16:39:41 -0500
+Received: from host86-133-194-245.range86-133.btcentralplus.com ([86.133.194.245] helo=[192.168.1.65])
+        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <mark.cave-ayland@ilande.co.uk>)
+        id 1gtJIt-0004Im-9W; Mon, 11 Feb 2019 21:39:52 +0000
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>, paulus@samba.org,
+        mpe@ellerman.id.au, npiggin@gmail.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org
+References: <20190208143319.11980-1-mark.cave-ayland@ilande.co.uk>
+ <41b02fb0-cdc6-6de0-d8fc-44d3d0a8ad70@c-s.fr>
+ <2ed8efb9-5cd4-31bf-6c7b-501b9d1925e6@ilande.co.uk>
+ <c2d6938902656f2829be8077c656cee9235c21b1.camel@kernel.crashing.org>
+From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
+ mQENBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
+ 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
+ E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
+ PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
+ PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
+ AAG0ME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPokB
+ OAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
+ NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
+ mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
+ z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
+ T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
+ DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63LkBDQRUCbs8AQgA
+ y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
+ 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
+ 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
+ YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
+ Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABiQEfBBgBAgAJ
+ BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
+ opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
+ NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
+ Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
+ KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
+ imgcU9TTGC5qd9g=
+Message-ID: <46205b6a-7671-5d90-9507-b5b20045b99d@ilande.co.uk>
+Date:   Mon, 11 Feb 2019 21:39:26 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549921154; bh=R+UlXOuMWfVxi1VL88CZYA09pYGWsh6bByyqUXE80pw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qtvcv1dQDcYvz4XLbG382DqyBtFs0gGgLPWo8Xn6GcqHHK/Q47qW1gn5PIm2Xqek0
-         gsbpKLrTKOVlrsCPC7xQHKj0uU0zX+fN8JCfmpHUZsqa6mspIwjvkroaL2vUqeQThB
-         quUlcyu2fED+SuC5Ielkoooxk21AXSf/qrNDpehuUvaP4RIOSyWK0CK5jbn9d/4ZRX
-         If5r4u/Fu3FG2rAgipSY8cm5Tm047SxqP/wKz9RzJgyp81HeZJMI+VZtahMpyOU0fk
-         Nk7XjF3ubZa+WGlxRmO2x0qbr3vD1iicYykjC7ShI8CoBdzWB4/xHEmZe3hVGYi4re
-         CqxTmm2qLEtWQ==
+In-Reply-To: <c2d6938902656f2829be8077c656cee9235c21b1.camel@kernel.crashing.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 86.133.194.245
+X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
+Subject: Re: [PATCH] powerpc: fix 32-bit KVM-PR lockup and panic with MacOS
+ guest
+X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
+X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 1:26 PM, Ira Weiny wrote:
-> On Mon, Feb 11, 2019 at 01:13:56PM -0800, John Hubbard wrote:
->> On 2/11/19 12:39 PM, Jason Gunthorpe wrote:
->>> On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
->>>> From: Ira Weiny <ira.weiny@intel.com>
->> [...]
->> It seems to me that the longterm vs. short-term is of questionable value.
+On 11/02/2019 00:30, Benjamin Herrenschmidt wrote:
+
+> On Fri, 2019-02-08 at 14:51 +0000, Mark Cave-Ayland wrote:
+>>
+>> Indeed, but there are still some questions to be asked here:
+>>
+>> 1) Why were these bits removed from the original bitmask in the first place without
+>> it being documented in the commit message?
+>>
+>> 2) Is this the right fix? I'm told that MacOS guests already run without this patch
+>> on a G5 under 64-bit KVM-PR which may suggest that this is a workaround for another
+>> bug elsewhere in the 32-bit powerpc code.
+>>
+>>
+>> If you think that these points don't matter, then I'm happy to resubmit the patch
+>> as-is based upon your comments above.
 > 
-> This is exactly why I did not post this before.  I've been waiting our other
-> discussions on how GUP pins are going to be handled to play out.  But with the
-> netdev thread today[1] it seems like we need to make sure we have a "safe" fast
-> variant for a while.  Introducing FOLL_LONGTERM seemed like the cleanest way to
-> do that even if we will not need the distinction in the future...  :-(
+> We should write a test case to verify that FE0/FE1 are properly
+> preserved/context-switched etc... I bet if we accidentally wiped them,
+> we wouldn't notice 99.9% of the time.
 
-Yes, I agree. Below...
+Right I guess it's more likely to cause in issue in the KVM PR case because the guest
+can alter the flags in a way that doesn't go through the normal process switch mechanism.
 
-> [...]
-> This is also why I did not change the get_user_pages_longterm because we could
-> be ripping this all out by the end of the year...  (I hope. :-)
-> 
-> So while this does "pollute" the GUP family of calls I'm hoping it is not
-> forever.
-> 
-> Ira
-> 
-> [1] https://lkml.org/lkml/2019/2/11/1789
-> 
+The original patchset at
+https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg98326.html does include
+some tests in the first few patches, but AFAICT they are concerned with the contents
+of the FP registers rather than the related MSRs.
 
-Yes, and to be clear, I think your patchset here is fine. It is easy to find
-the FOLL_LONGTERM callers if and when we want to change anything. I just think
-also it's appopriate to go a bit further, and use FOLL_LONGTERM all by itself.
-
-That's because in either design outcome, it's better that way:
-
--- If we keep the concept of "I'm a long-term gup call site", then FOLL_LONGTERM
-is just right. The gup API already has _fast and non-fast variants, and once
-you get past a couple, you end up with a multiplication of names that really
-work better as flags. We're there.
-
--- If we drop the concept, then you've already done part of the work, by removing
-the _longterm API variants.
+Who is the right person to ask about fixing issues related to context switching with
+KVM PR? I did add the original author's email address to my first few emails but have
+had no response back :/
 
 
+ATB,
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Mark.
