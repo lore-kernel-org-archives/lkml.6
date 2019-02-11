@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D77C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C6C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF322075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F342075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="tNVuQrmc"
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="rWXNsjXb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfBKMZu (ORCPT
+        id S1727447AbfBKMZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:25:50 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46487 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbfBKMZd (ORCPT
+        Mon, 11 Feb 2019 07:25:57 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37499 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727347AbfBKMZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:25:33 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f5so7535057lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:31 -0800 (PST)
+        Mon, 11 Feb 2019 07:25:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n23so7582925lfl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8V6tAD6ianDzVJV9jLJWZ3zCHF2Gv41r5hfwz3shMqg=;
-        b=tNVuQrmcOX9opYuNSkmd2cHthVde2CNQLD1Nz9ouyMyZuF4l0axH/ecLCeC8U2QYb6
-         FXh16jdx8F0F2KWMmOHDZ0oYURAMVU2RC0acvMSD1Y2zDVMgsm7sd1J3LVNqPqv2wuG9
-         tDgzlv1W2Dr+6l9OU6bBPaWgUP69BH+Jzh34xIoqU/yxSt6sU1PhF3p/PdrQK5fU9tdM
-         xTIQEX3sc2LhYsSrEqHd157OhaETG6cTZtSHsUo/+XR6SicJEyKjcD1JjNRPrp5XmAFF
-         0ymahKfDaQkGoiAr5t6lvY2d3B+d2XdlMEc75C4V38BS5iiZ1FMJ0tkQlbe+3twYZlg+
-         DODA==
+        bh=JYcMZJWwnYjs5lNvrgyZLyaYKBt0sZAp/myA2P7sIbo=;
+        b=rWXNsjXbmZRuP4V37SAe41A7qIqA7ZErIo6Hfvpds9wsuH7zdPODlASLsSnE7yWdHE
+         8K89N6rsJVc3pIr+yUi9Mk9h8xjcTe39T9A80gmusY+M4/WPD8hIJ3HC1kxv05biOCZw
+         cZQhVEsE2ZV/ESxWaEkDAQG9nh1+9s6w0r2MfcqHm41uCvGjkDksgDWaTV2kF5xb5l/S
+         QUcCsQsCQcXuT4xJtL1K7vpF6KETYUfT8S9NmQoniden8HUrS+XqBtRJ7QeImtQ9W7gS
+         +L69bITr6NV/dIRAbzx9qQhBlqiJLNZtpcnMDq6twhHzADTRhiOYChFOvwVRXlWSZImk
+         eMAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8V6tAD6ianDzVJV9jLJWZ3zCHF2Gv41r5hfwz3shMqg=;
-        b=IoD92eJykFJJhAaI1b0PNGuPz48qZXCi/3q/qGzuHq1FxQAAi+bQGGBdLJBEorIdDm
-         aKbFiqOc21grK63bytZyODhJDIXpoGdGfg7TEdAT7/juYpAIxk8TNCDCdS+NlGTLenGm
-         lluvWPuI6ongYpbcmGyAF6uV1SCLNjaoNXEVs7FsjQw7yYWS4TQ8ZHQhDtW3WTUuV+01
-         wF8gq76+/aqX5iN1gs5PEl36OWzN21McMPea1jsnvNhznV715gWlm2EoKsv942wyHkXM
-         txQo/xLPI4hgWM2XXQbOGjFaW3BfsJiDOTw7lzgatHfv0dFhnhH98jcMVCB+BoGOy47L
-         5k2g==
-X-Gm-Message-State: AHQUAubdMcxYgPzHUWFwfX4JnK8Vd+DRfH6+GOGvlhjeno2B70uhzStg
-        p5lKcNmSq+ec4bPcuNPxzwaFOoHVKwc=
-X-Google-Smtp-Source: AHgI3IZbPjmbsyg6LgZObXJHFaFiGAkIyErZ8bk/8BCvzRYONOMO/bUfFKP09S5CeJJIPdP891bZUQ==
-X-Received: by 2002:a19:2242:: with SMTP id i63mr6828146lfi.39.1549887930167;
-        Mon, 11 Feb 2019 04:25:30 -0800 (PST)
+        bh=JYcMZJWwnYjs5lNvrgyZLyaYKBt0sZAp/myA2P7sIbo=;
+        b=dUKyo8V8Rl7iPT9/UUFEWSt4vdoXyt3uxKqLJiShM006GP79/MZIh0lTHO8CkH0KDp
+         kljXzHo+rVXN/C6P8uGh1Ij3DnoZ5ifa7i8Qp7yHBbrdTz6AFskWQRdzC3+DKaWtiz4O
+         p8G068a8LgO2OolKL7kDcLfdFbIGNluD9xmlwvNp/sr4HRznxHqB0KtprNDMhUQ8bUqU
+         7FNmyrTGUpj3wLWmjalh3uQoHfv3FjecZp6KZkstkX9a//41YFWDsPZwpEhpBYMRx50E
+         PSyTLHRXrBra+6WETOu+1Ye1JTGHmVX+XraPnEnmh1ec45jlc4vBp8mnmkPoV4sD2UVv
+         NP2Q==
+X-Gm-Message-State: AHQUAuZyJhidwWUPkd20GsmSSpGrBJoi3552vKecJPAPHCjAHp0MggHa
+        76KSBmriGF32dfZuvzfoLXXT6w==
+X-Google-Smtp-Source: AHgI3IbaVOEWADoPTXHQsqYo7sf9mLdjXcq0ZGzfX1pYex22caB4DgD6cJDkjqcm1Vr1zG7p+xBQ+Q==
+X-Received: by 2002:a19:f013:: with SMTP id p19mr3370775lfc.154.1549887926166;
+        Mon, 11 Feb 2019 04:25:26 -0800 (PST)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id d70sm2278481lfe.14.2019.02.11.04.25.28
+        by smtp.gmail.com with ESMTPSA id d70sm2278481lfe.14.2019.02.11.04.25.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:25:29 -0800 (PST)
+        Mon, 11 Feb 2019 04:25:24 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 7/8] lightnvm: pblk: prevent stall due to wb threshold
-Date:   Mon, 11 Feb 2019 13:25:08 +0100
-Message-Id: <20190211122509.19910-8-mb@lightnvm.io>
+Subject: [GIT PULL 5/8] lightnvm: pblk: fix TRACE_INCLUDE_PATH
+Date:   Mon, 11 Feb 2019 13:25:06 +0100
+Message-Id: <20190211122509.19910-6-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190211122509.19910-1-mb@lightnvm.io>
 References: <20190211122509.19910-1-mb@lightnvm.io>
@@ -75,133 +75,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-In order to respect mw_cuinits, pblk's write buffer maintains a
-backpointer to protect data not yet persisted; when writing to the write
-buffer, this backpointer defines a threshold that pblk's rate-limiter
-enforces.
+As the comment block in include/trace/define_trace.h says,
+TRACE_INCLUDE_PATH should be a relative path to the define_trace.h
 
-On small PU configurations, the following scenarios might take place: (i)
-the threshold is larger than the write buffer and (ii) the threshold is
-smaller than the write buffer, but larger than the maximun allowed
-split bio - 256KB at this moment (Note that writes are not always
-split - we only do this when we the size of the buffer is smaller
-than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
-be written to the buffer, thus stalling.
+../../drivers/lightnvm is the correct relative path.
 
-This patch fixes the original backpointer implementation by considering
-the threshold both on buffer creation and on the rate-limiters path,
-when bio_split is triggered (case (ii) above).
+../../../drivers/lightnvm is working by coincidence because the top
+Makefile adds -I$(srctree)/arch/$(SRCARCH)/include as a header
+search path, but we should not rely on it.
 
-Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respected on writer stall")
-Signed-off-by: Javier González <javier@javigon.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
- drivers/lightnvm/pblk-rl.c |  5 ++---
- drivers/lightnvm/pblk.h    |  2 +-
- 3 files changed, 22 insertions(+), 10 deletions(-)
+ drivers/lightnvm/pblk-trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index d4ca8c64ee0f..a6133b50ed9c 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
- /*
-  * pblk_rb_calculate_size -- calculate the size of the write buffer
-  */
--static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
-+static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
-+					   unsigned int threshold)
- {
--	/* Alloc a write buffer that can at least fit 128 entries */
--	return (1 << max(get_count_order(nr_entries), 7));
-+	unsigned int thr_sz = 1 << (get_count_order(threshold + NVM_MAX_VLBA));
-+	unsigned int max_sz = max(thr_sz, nr_entries);
-+	unsigned int max_io;
-+
-+	/* Alloc a write buffer that can (i) fit at least two split bios
-+	 * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee that the
-+	 * threshold will be respected
-+	 */
-+	max_io = (1 << max((int)(get_count_order(max_sz)),
-+				(int)(get_count_order(NVM_MAX_VLBA << 1))));
-+	if ((threshold + NVM_MAX_VLBA) >= max_io)
-+		max_io <<= 1;
-+
-+	return max_io;
- }
+diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
+index 679e5c458ca6..9534503b69d9 100644
+--- a/drivers/lightnvm/pblk-trace.h
++++ b/drivers/lightnvm/pblk-trace.h
+@@ -139,7 +139,7 @@ TRACE_EVENT(pblk_state,
+ /* This part must be outside protection */
  
- /*
-@@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
- 	unsigned int alloc_order, order, iter;
- 	unsigned int nr_entries;
- 
--	nr_entries = pblk_rb_calculate_size(size);
-+	nr_entries = pblk_rb_calculate_size(size, threshold);
- 	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
- 	if (!entries)
- 		return -ENOMEM;
- 
--	power_size = get_count_order(size);
-+	power_size = get_count_order(nr_entries);
- 	power_seg_sz = get_count_order(seg_size);
- 
- 	down_write(&pblk_rb_lock);
-@@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
- 	 * Initialize rate-limiter, which controls access to the write buffer
- 	 * by user and GC I/O
- 	 */
--	pblk_rl_init(&pblk->rl, rb->nr_entries);
-+	pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
- 
- 	return 0;
- }
-diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
-index 76116d5f78e4..b014957dde0b 100644
---- a/drivers/lightnvm/pblk-rl.c
-+++ b/drivers/lightnvm/pblk-rl.c
-@@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
- 	del_timer(&rl->u_timer);
- }
- 
--void pblk_rl_init(struct pblk_rl *rl, int budget)
-+void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
- {
- 	struct pblk *pblk = container_of(rl, struct pblk, rl);
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
- 	int sec_meta, blk_meta;
- 	unsigned int rb_windows;
- 
--
- 	/* Consider sectors used for metadata */
- 	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
- 	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
-@@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
- 	/* To start with, all buffer is available to user I/O writers */
- 	rl->rb_budget = budget;
- 	rl->rb_user_max = budget;
--	rl->rb_max_io = budget >> 1;
-+	rl->rb_max_io = threshold ? (budget - threshold) : (budget - 1);
- 	rl->rb_gc_max = 0;
- 	rl->rb_state = PBLK_RL_HIGH;
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 72ae8755764e..a6386d5acd73 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force);
- /*
-  * pblk rate limiter
-  */
--void pblk_rl_init(struct pblk_rl *rl, int budget);
-+void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
- void pblk_rl_free(struct pblk_rl *rl);
- void pblk_rl_update_rates(struct pblk_rl *rl);
- int pblk_rl_high_thrs(struct pblk_rl *rl);
+ #undef TRACE_INCLUDE_PATH
+-#define TRACE_INCLUDE_PATH ../../../drivers/lightnvm
++#define TRACE_INCLUDE_PATH ../../drivers/lightnvm
+ #undef TRACE_INCLUDE_FILE
+ #define TRACE_INCLUDE_FILE pblk-trace
+ #include <trace/define_trace.h>
 -- 
 2.19.1
 
