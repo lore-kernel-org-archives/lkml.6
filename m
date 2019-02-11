@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB76C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACBDC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D3D206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDFE820700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896294;
-	bh=yGvcv5h7jZZjzuU8yDx9WX+u3gnEwVRIoRaJQedb/uo=;
+	s=default; t=1549896298;
+	bh=e87+Vc3YJpLGr3peU/K3ngDpkGFdPFP6JmH7ieLu73U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jm9IxVQHZfeRuhgjinjDRDPs9jPLgNcAd0dP7gJKCnENYeG+ZeD+Q48ZrVSgh8RtJ
-	 FNtTDGH3DaSPAG28FxaVGTC3oMPVNInml1pz3iwJT6lGcxywaCG2bjhbdQ8jzoJ7uH
-	 4/eS0qdiwX0228EYhKBLFkXncAeUjRy4C3OdZsts=
+	b=VyQqgGs4J9lAA1gxWVc+3ZdZX1Iqtw4dHi2JlJBD+JG97EZwYvnvUXZ0CB58jfwMz
+	 zGAEkDhRxtpAUB9VGKNaAZy+XgxoJ9knI8yUSVsMSagtg81aMFkeC6SiyYIkz8KZY9
+	 JlhM+k9V/nQZOqs1gYDa0inJa2vrqDDWjU7UXfNk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732726AbfBKOov (ORCPT
+        id S1732925AbfBKOoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57674 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732358AbfBKOos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:48 -0500
+        id S1732727AbfBKOov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40DAF206BA;
-        Mon, 11 Feb 2019 14:44:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC3FA206BA;
+        Mon, 11 Feb 2019 14:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896287;
-        bh=yGvcv5h7jZZjzuU8yDx9WX+u3gnEwVRIoRaJQedb/uo=;
+        s=default; t=1549896291;
+        bh=e87+Vc3YJpLGr3peU/K3ngDpkGFdPFP6JmH7ieLu73U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JXqMG+7+i3eysOnk57nrSh98ZLtWmF3S2L2VinY9Bc7lNw6Dh+EurovwuyiNl5w4K
-         3+wT6bzQlbt2AcMW/6CDW97X0EsLmgID94NNE9kZurDjbiXjtex/YjcIuSCVdm2i3A
-         yy7OdUxjOA98Np33AvNy9n2HLOW7nm3itcstpQA4=
+        b=ya5wIAnataPPYadLbXDCqNWS2x+NBYt2xJnkmapUdGUcFpmPyn4TujtuZS76RhKn4
+         dCsIx8ZxsFsyCWgXMBw58Moy50CiV1WATDP5/PGxMshtPeGM62YIRk1swuGWBbuNlE
+         +E/Fp/YDCn9Bbn6GnTWDXQGM855mUHVkDSQ/nCCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 135/313] mlxsw: spectrum_acl: Limit priority value
-Date:   Mon, 11 Feb 2019 15:16:55 +0100
-Message-Id: <20190211141902.712669999@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 136/313] udf: Fix BUG on corrupted inode
+Date:   Mon, 11 Feb 2019 15:16:56 +0100
+Message-Id: <20190211141902.772546212@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,43 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d7263ab35be25505ab57ebecd93cbc5dba8be717 ]
+[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
 
-In Spectrum-2, higher priority value wins and priority valid values are in
-the range of {1,cap_kvd_size-1}. mlxsw_sp_acl_tcam_priority_get converts
-from lower-bound priorities alike tc flower to Spectrum-2 HW range. Up
-until now tc flower did not provide priority 0 or reached the maximal
-value, however multicast routing does provide priority 0.
+When inode is corrupted so that extent type is invalid, some functions
+(such as udf_truncate_extents()) will just BUG. Check that extent type
+is valid when loading the inode to memory.
 
-Therefore, Change mlxsw_sp_acl_tcam_priority_get to verify priority is in
-the correct range. Make sure priority is never set to zero and never
-exceeds the maximal allowed value.
-
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/udf/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-index e171513bb32a..30931a2c025b 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-@@ -95,8 +95,9 @@ int mlxsw_sp_acl_tcam_priority_get(struct mlxsw_sp *mlxsw_sp,
- 	if (!MLXSW_CORE_RES_VALID(mlxsw_sp->core, KVD_SIZE))
- 		return -EIO;
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 5df554a9f9c9..ae796e10f68b 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1357,6 +1357,12 @@ reread:
  
--	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE);
--	if (rulei->priority > max_priority)
-+	/* Priority range is 1..cap_kvd_size-1. */
-+	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE) - 1;
-+	if (rulei->priority >= max_priority)
- 		return -EINVAL;
- 
- 	/* Unlike in TC, in HW, higher number means higher priority. */
+ 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
+ 							ICBTAG_FLAG_AD_MASK;
++	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
++		ret = -EIO;
++		goto out;
++	}
+ 	iinfo->i_unique = 0;
+ 	iinfo->i_lenEAttr = 0;
+ 	iinfo->i_lenExtents = 0;
 -- 
 2.19.1
 
