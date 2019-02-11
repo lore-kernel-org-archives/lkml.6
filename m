@@ -2,107 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F673C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062A7218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4D48218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:03:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfBKNDU (ORCPT
+        id S1727763AbfBKNDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:03:20 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33086 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727182AbfBKNDU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:03:20 -0500
-X-IronPort-AV: E=Sophos;i="5.58,358,1544457600"; 
-   d="scan'208";a="54061256"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Feb 2019 21:03:17 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 124094BAD925;
-        Mon, 11 Feb 2019 21:03:14 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 11 Feb 2019 21:03:20 +0800
-Date:   Mon, 11 Feb 2019 21:03:05 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Guenter Roeck <linux@roeck-us.net>, <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, <kirill.shutemov@linux.intel.com>,
-        <mingo@redhat.com>, <thomas.lendacky@amd.com>,
-        <yamada.masahiro@socionext.com>, <caoj.fnst@cn.fujitsu.com>,
-        <jgross@suse.com>, <mingo@kernel.org>, <keescook@chromium.org>,
-        <x86@kernel.org>, <hpa@zytor.com>,
-        <linux-tip-commits@vger.kernel.org>
-Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
- boot_params
-Message-ID: <20190211130304.GB5333@localhost.localdomain>
-References: <20190123110850.12433-6-fanc.fnst@cn.fujitsu.com>
- <tip-3a63f70bf4c3a17f5d9c9bf3bc3288a23bdfefce@git.kernel.org>
- <20190208190248.GA10854@roeck-us.net>
- <20190211093033.GA1651@localhost.localdomain>
- <20190211100800.GA19041@zn.tnic>
+        Mon, 11 Feb 2019 08:03:25 -0500
+Received: from sauhun.de ([88.99.104.3]:54372 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbfBKNDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:03:24 -0500
+Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
+        by pokefinder.org (Postfix) with ESMTPSA id 9C33F2E3542;
+        Mon, 11 Feb 2019 14:03:22 +0100 (CET)
+Date:   Mon, 11 Feb 2019 14:03:22 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
+        peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH V18 6/6] i2c: tegra: add i2c interface timing support
+Message-ID: <20190211130322.2kpoky3scnqnxulw@ninjato>
+References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
+ <1549652382-5476-6-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4bkye3humppkadhv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190211100800.GA19041@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 124094BAD925.ABFA0
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <1549652382-5476-6-git-send-email-skomatineni@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:08:00AM +0100, Borislav Petkov wrote:
->On Mon, Feb 11, 2019 at 05:30:33PM +0800, Chao Fan wrote:
->> Yes, I download your ovmf file in linux-build-test/rootfs/firmware/ from
->> your link. There are two files, efi32 and efi64. Then I try to run:
->
->You need both OVMF-pure-efi-32.fd and rootfs.squashfs from the repo. And
->then this works here. Just put the script below and the two files in a
->directory and point to the kernel where you're building with -kernel.
->
->---
->#!/bin/bash
->
->qemu-system-x86_64 -kernel ~/kernel/linux/arch/x86/boot/bzImage -M q35 -cpu SandyBridge \
->        -no-reboot -snapshot -smp 1 \
->        -gdb tcp::1235 \
->        -bios OVMF-pure-efi-32.fd \
->        -m 1G \
->        -net nic,model=rtl8139,macaddr=12:34:56:78:12:34 \
->        -usb -device usb-storage,drive=d0 \
->        -drive file=rootfs.squashfs,if=none,id=d0,format=raw \
->        --append 'earlycon=uart8250,io,0x3f8,9600n8 root=/dev/sda rootwait panic=-1 earlyprintk=ttyS0,115200,keep console=ttyS0,115200' \
->        -monitor pty \
->        -serial file:log
->
->I've added some options for debugging.
 
-So many thanks!
-Since I learn much about how to debug kernel code before
-start_kernel(). I only tried to debug code after start_kernel().
-Seems you can debug the code in compressed code.
+--4bkye3humppkadhv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Chao Fan
->
->-- 
->Regards/Gruss,
->    Boris.
->
->SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
->
->
+On Fri, Feb 08, 2019 at 10:59:42AM -0800, Sowjanya Komatineni wrote:
+> This patch adds I2C interface timing registers support for
+> proper bus rate configuration along with meeting the I2C spec
+> setup and hold times based on the tuning performed on Tegra210,
+> Tegra186 and Tegra194 platforms.
+>=20
+> I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
+> and Tegra I2C controller design uses them as a part of internal
+> clock divisor.
+>=20
+> I2C_INTERFACE_TIMING_1 register contains the setup and hold times
+> for start and stop conditions.
+>=20
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+
+Are you aware that we also have DT bindings for various I2C timing
+values? They are usually board dependent and not so much SoC dependent.
+Please check here:
+
+Documentation/devicetree/bindings/i2c/i2c.txt
+
+(Oops, I noticed 'i2c-sda-hold-time-ns' is missing from the docs. Will
+fix that ASAP)
+
+Just saying. The patch here is fine for me. DT support could be added
+later, if you want that.
 
 
+--4bkye3humppkadhv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhcpkACgkQFA3kzBSg
+KbbhlA/9FCo0jVarCrynNCdeB35XuleWof72pbNGpxamQ9xuXJDge95ebprLP2GK
+wQEe8JTJjcjjsPLhPWUBhEsRKVGQiS3mX3r96+jJkx/q43NyW+dMT/KE24QdO1Y7
+xHnrHdpwJcCLUwzlsHfyNCSWNkR/mXtjCOjI/5oeUmojIn4rGs2n+ML1RAYX3SaV
+KweLIpJmDzh5SSDo7rDq28sa4qrn3RTBm6tqKDu5v39neIN4OCVpv2tFIhRcqqFe
+YtFrfBnnSPqTHTwCZQsyreiYu2V0yhSQqWxgCfE9dHlv1vGG5RPuM6hld/3Iv9q0
+eaaEQzzmQD8cuJxoRp7Hq0Chyur+T66fq8D8EZxkQMUcfVo/jyPBm5ZYwRDebKxO
+6d/5RkfyUspYK+2XxVuppdZSheEtq3DQxm6agEMuBN12pI6473FX99U1EyVtDxzi
+utrVVF0pghKJhPOJ8aOLX3i35OE2/PijKgyyoWdCrmd1qktAzw7d8PWVL/BUDVgg
+I1yAh931HvmGwyCdn4QLlvoBBd9Kjm9B7jPE95vo66mHD3xODqnQF0gooUpGUoxh
+6PL0kpkIG7mMShLXPRK8ncS6ZBaPDCfBjcs3w6np/wEtR2xVoclaMquExwJpMxI7
+lFVNCavrRTz9KY5qVfP1RQdjWzI5zIZ/ycjc7CgWlwY8zFELSmY=
+=9Y5V
+-----END PGP SIGNATURE-----
+
+--4bkye3humppkadhv--
