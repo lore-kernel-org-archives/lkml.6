@@ -2,104 +2,73 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7CDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34347C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34487222B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 035D1222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbfBKONq (ORCPT
+        id S1727877AbfBKOQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:13:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54230 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbfBKONq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:13:46 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63805C0B0233;
-        Mon, 11 Feb 2019 14:13:45 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 70FDE746E5;
-        Mon, 11 Feb 2019 14:13:41 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 11 Feb 2019 15:13:44 +0100 (CET)
-Date:   Mon, 11 Feb 2019 15:13:40 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 11 Feb 2019 09:16:13 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39343 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbfBKOQN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:16:13 -0500
+Received: from [5.158.153.55] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gtCNN-0006vA-Hj; Mon, 11 Feb 2019 15:16:01 +0100
+Date:   Mon, 11 Feb 2019 15:15:55 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+cc:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH 1/2] signal: Always notice exiting tasks
-Message-ID: <20190211141340.GA21430@redhat.com>
-References: <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
- <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
- <8736p37xcn.fsf@xmission.com>
- <878syu7tcm.fsf@xmission.com>
- <87tvhi4vl7.fsf@xmission.com>
- <87o97q1cky.fsf_-_@xmission.com>
- <20190206180754.GA23476@redhat.com>
- <87imxwv9jp.fsf@xmission.com>
- <875ztwt7yy.fsf_-_@xmission.com>
- <87zhr8rtd6.fsf_-_@xmission.com>
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] perf-security: document perf_events/Perf resource
+ control
+In-Reply-To: <969b6ea5-a5bf-70b7-7031-38b07538f744@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1902111514550.3197@nanos.tec.linutronix.de>
+References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com> <a108c800-d6c1-fac1-b73b-e390e579e6ef@linux.intel.com> <alpine.DEB.2.21.1902102300210.8784@nanos.tec.linutronix.de> <969b6ea5-a5bf-70b7-7031-38b07538f744@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhr8rtd6.fsf_-_@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 11 Feb 2019 14:13:45 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sorry again for delay...
+On Mon, 11 Feb 2019, Alexey Budankov wrote:
+> On 11.02.2019 1:34, Thomas Gleixner wrote:
+> > On Thu, 7 Feb 2019, Alexey Budankov wrote:
+> > 
+> > General note: Please stay in the 80 char limit for all of the text.
+> 
+> Yes, sure. [PATCH v2 4/4] implements wrapping at 72 columns.
 
-On 02/07, Eric W. Biederman wrote:
->
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
->  		goto relock;
->  	}
->  
-> +	/* Has this task already been marked for death? */
-> +	ksig->info.si_signo = signr = SIGKILL;
-> +	if (signal_group_exit(signal))
-> +		goto fatal;
-> +
->  	for (;;) {
->  		struct k_sigaction *ka;
->  
-> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
->  			continue;
->  		}
->  
-> +	fatal:
->  		spin_unlock_irq(&sighand->siglock);
+So you provide crappy formatted stuff first, just to reformat it at the
+end. I'm missing the logic behind that.
 
-Eric, but this is wrong. At least this is the serious user-visible change.
+Thanks,
 
-Afaics, with this patch the tracee will never stop in PTRACE_EVENT_EXIT in case
-of group_exit/exec, because schedule() in TASK_TRACED state won't block due to
-__fatal_signal_pending().
-
-Yes, yes, as I said many times the semantics of PTRACE_EVENT_EXIT was never really
-defined, it depends on /dev/random, but still I don't think we should break it even
-more.
-
-Oleg.
-
+	tglx
