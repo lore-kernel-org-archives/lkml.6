@@ -2,265 +2,217 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F0BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E883AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C2B218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC1F214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:50:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mOjKTXgt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfBKMue (ORCPT
+        id S1727605AbfBKMut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:50:34 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47640 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfBKMud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:50:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E840E80D;
-        Mon, 11 Feb 2019 04:50:32 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D87F93F557;
-        Mon, 11 Feb 2019 04:50:30 -0800 (PST)
-Subject: Re: [RESEND PATCH v2 03/33] ARM: davinci: select
- GENERIC_IRQ_MULTI_HANDLER
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190211122606.8662-1-brgl@bgdev.pl>
- <20190211122606.8662-4-brgl@bgdev.pl>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <0220fbc8-a73f-0f40-2b62-14bec019ac7c@arm.com>
-Date:   Mon, 11 Feb 2019 12:50:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 07:50:49 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40538 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727106AbfBKMus (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:50:48 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q21so17096631wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:50:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IYdfIO659ekfh2qmLfnVYKVVL3PIdT/ZrVUac+z4oGw=;
+        b=mOjKTXgtmgHAhlNXAqDAQAFOc+ck/i25D/+GnzI0Fy1ZLymU2QEvUYCDXAYnwu6u4l
+         PUMInCv94IXFGCoN1qPmnzLC6O/0gO2GpVIjX6n1zjvomuMm2YJMKOO+5rQuMmo3tIbe
+         OjTvBj/JnQcvU//axxJNcXT3iz0oXP2OcmJoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IYdfIO659ekfh2qmLfnVYKVVL3PIdT/ZrVUac+z4oGw=;
+        b=cARIqBqieopfeUUS/o6JpdW8S2iL25rsv0+KZa4Ed+Td3VdB06VPA3v+DNDK8c6i3M
+         g0M9WiZiPZa9MYOE/R2MAiLKtX37xiddcoM0rs4zBwzOloEKAzpBOSDntjO453LFA4l1
+         0YMFE16nFQTfgfeh6Bko2rEBfYfBWIQe9s3133dOyEsUKvCpGxqGQRTvksRI7V8VmJll
+         bmQlQbDbGPX28PtfnxvkO6wdZPdQsMkgBiPYh3aZ7prZrhHhMPc0ytR6XJLdQiRPoHq1
+         uwR8HH6YLU/fHP8XzUSIqgpTULAvqsfmSy3JxYjz68Ocx/Ko5T3sNvgXjzDh6CHYHrT1
+         dVzQ==
+X-Gm-Message-State: AHQUAuYKx1McoYnDBIu6r6U+x8VNybeqB6EY+YwjyPdXH27Zdm/fWuQp
+        yh6dt4sUqSbXGP3BYKk5kO4CQQ==
+X-Google-Smtp-Source: AHgI3IZJewIdt3nWijY55oJ6pYTlFyID0dljRwI5euSZ2hc2v8NZnsiQe1AgML2F2QrtY42LopQLww==
+X-Received: by 2002:a1c:e242:: with SMTP id z63mr9037104wmg.2.1549889445404;
+        Mon, 11 Feb 2019 04:50:45 -0800 (PST)
+Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id c186sm12040999wmf.34.2019.02.11.04.50.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 04:50:44 -0800 (PST)
+Date:   Mon, 11 Feb 2019 13:50:35 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@ozlabs.org, akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com
+Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
+ description
+Message-ID: <20190211125035.GA1562@andrea>
+References: <20190207124635.3885-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190211122606.8662-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207124635.3885-1-mpe@ellerman.id.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2019 12:25, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Michael,
+
+
+On Thu, Feb 07, 2019 at 11:46:29PM +1100, Michael Ellerman wrote:
+> Arch code can set a "dump stack arch description string" which is
+> displayed with oops output to describe the hardware platform.
 > 
-> In order to support SPARSE_IRQ we first need to make davinci use the
-> generic irq handler for ARM. Translate the legacy assembly to C and
-> put the irq handlers into their respective drivers (aintc and cp-intc).
+> It is useful to initialise this as early as possible, so that an early
+> oops will have the hardware description.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> However in practice we discover the hardware platform in stages, so it
+> would be useful to be able to incrementally fill in the hardware
+> description as we discover it.
+> 
+> This patch adds that ability, by creating dump_stack_add_arch_desc().
+> 
+> If there is no existing string it behaves exactly like
+> dump_stack_set_arch_desc(). However if there is an existing string it
+> appends to it, with a leading space.
+> 
+> This makes it easy to call it multiple times from different parts of the
+> code and get a reasonable looking result.
+> 
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 > ---
->  arch/arm/Kconfig                              |  1 +
->  arch/arm/mach-davinci/cp_intc.c               | 28 +++++++++++++
->  .../mach-davinci/include/mach/entry-macro.S   | 39 -------------------
->  arch/arm/mach-davinci/irq.c                   | 23 +++++++++++
->  4 files changed, 52 insertions(+), 39 deletions(-)
->  delete mode 100644 arch/arm/mach-davinci/include/mach/entry-macro.S
+>  include/linux/printk.h |  5 ++++
+>  lib/dump_stack.c       | 58 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 63 insertions(+)
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 664e918e2624..f7770fdcad68 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -589,6 +589,7 @@ config ARCH_DAVINCI
->  	select GENERIC_ALLOCATOR
->  	select GENERIC_CLOCKEVENTS
->  	select GENERIC_IRQ_CHIP
-> +	select GENERIC_IRQ_MULTI_HANDLER
->  	select GPIOLIB
->  	select HAVE_IDE
->  	select PM_GENERIC_DOMAINS if PM
-> diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-> index 67805ca74ff8..4a372add8cf9 100644
-> --- a/arch/arm/mach-davinci/cp_intc.c
-> +++ b/arch/arm/mach-davinci/cp_intc.c
-> @@ -19,9 +19,13 @@
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  
-> +#include <asm/exception.h>
->  #include <mach/common.h>
->  #include "cp_intc.h"
->  
-> +#define DAVINCI_CP_INTC_PRI_INDX_MASK		GENMASK(9, 0)
-> +#define DAVINCI_CP_INTC_GPIR_NONE		BIT(31)
-> +
->  static inline unsigned int cp_intc_read(unsigned offset)
+> v3: No change, just widened Cc list.
+> 
+> v2: Add a smp_wmb() and comment.
+> 
+> v1 is here for reference https://lore.kernel.org/lkml/1430824337-15339-1-git-send-email-mpe@ellerman.id.au/
+> 
+> I'll take this series via the powerpc tree if no one minds?
+> 
+> 
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index 77740a506ebb..d5fb4f960271 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -198,6 +198,7 @@ u32 log_buf_len_get(void);
+>  void log_buf_vmcoreinfo_setup(void);
+>  void __init setup_log_buf(int early);
+>  __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...);
+> +__printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...);
+>  void dump_stack_print_info(const char *log_lvl);
+>  void show_regs_print_info(const char *log_lvl);
+>  extern asmlinkage void dump_stack(void) __cold;
+> @@ -256,6 +257,10 @@ static inline __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...)
 >  {
->  	return __raw_readl(davinci_intc_base + offset);
-> @@ -97,6 +101,28 @@ static struct irq_chip cp_intc_irq_chip = {
->  
->  static struct irq_domain *cp_intc_domain;
->  
-> +static asmlinkage void __exception_irq_entry
-> +cp_intc_handle_irq(struct pt_regs *regs)
-> +{
-> +	int gpir, irqnr, none;
-> +
-> +	/*
-> +	 * The interrupt number is in first ten bits. The NONE field set to 1
-> +	 * indicates a spurious irq.
-> +	 */
-> +
-> +	gpir = cp_intc_read(CP_INTC_PRIO_IDX);
-> +	irqnr = gpir & DAVINCI_CP_INTC_PRI_INDX_MASK;
-> +	none = gpir & DAVINCI_CP_INTC_GPIR_NONE;
-> +
-> +	if (unlikely(none)) {
-> +		pr_err_once("%s: spurious irq!\n", __func__);
-> +		return;
-> +	}
-> +
-> +	handle_domain_irq(cp_intc_domain, irqnr, regs);
-> +}
-> +
->  static int cp_intc_host_map(struct irq_domain *h, unsigned int virq,
->  			  irq_hw_number_t hw)
->  {
-> @@ -196,6 +222,8 @@ int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
->  		return -EINVAL;
->  	}
->  
-> +	set_handle_irq(cp_intc_handle_irq);
-> +
->  	/* Enable global interrupt */
->  	cp_intc_write(1, CP_INTC_GLOBAL_ENABLE);
->  
-> diff --git a/arch/arm/mach-davinci/include/mach/entry-macro.S b/arch/arm/mach-davinci/include/mach/entry-macro.S
-> deleted file mode 100644
-> index cf5f573eb5fd..000000000000
-> --- a/arch/arm/mach-davinci/include/mach/entry-macro.S
-> +++ /dev/null
-> @@ -1,39 +0,0 @@
-> -/*
-> - * Low-level IRQ helper macros for TI DaVinci-based platforms
-> - *
-> - * Author: Kevin Hilman, MontaVista Software, Inc. <source@mvista.com>
-> - *
-> - * 2007 (c) MontaVista Software, Inc. This file is licensed under
-> - * the terms of the GNU General Public License version 2. This program
-> - * is licensed "as is" without any warranty of any kind, whether express
-> - * or implied.
-> - */
-> -#include <mach/irqs.h>
-> -
-> -		.macro  get_irqnr_preamble, base, tmp
-> -		ldr \base, =davinci_intc_base
-> -		ldr \base, [\base]
-> -		.endm
-> -
-> -		.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
-> -#if defined(CONFIG_AINTC) && defined(CONFIG_CP_INTC)
-> -		ldr \tmp, =davinci_intc_type
-> -		ldr \tmp, [\tmp]
-> -		cmp \tmp, #DAVINCI_INTC_TYPE_CP_INTC
-> -		beq 1001f
-> -#endif
-> -#if defined(CONFIG_AINTC)
-> -		ldr \tmp, [\base, #0x14]
-> -		movs \tmp, \tmp, lsr #2
-> -		sub \irqnr, \tmp, #1
-> -		b 1002f
-> -#endif
-> -#if defined(CONFIG_CP_INTC)
-> -1001:		ldr \irqnr, [\base, #0x80] /* get irq number */
-> -		mov \tmp, \irqnr, lsr #31
-> -		and \irqnr, \irqnr, #0xff  /* irq is in bits 0-9 */
-> -		and \tmp, \tmp, #0x1
-> -		cmp \tmp, #0x1
-> -#endif
-> -1002:
-> -		.endm
-> diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-> index 07d8ef8037e4..3ce821a06e52 100644
-> --- a/arch/arm/mach-davinci/irq.c
-> +++ b/arch/arm/mach-davinci/irq.c
-> @@ -29,11 +29,13 @@
->  #include <mach/cputype.h>
->  #include <mach/common.h>
->  #include <asm/mach/irq.h>
-> +#include <asm/exception.h>
->  
->  #define FIQ_REG0_OFFSET		0x0000
->  #define FIQ_REG1_OFFSET		0x0004
->  #define IRQ_REG0_OFFSET		0x0008
->  #define IRQ_REG1_OFFSET		0x000C
-> +#define IRQ_IRQENTRY_OFFSET	0x0014
->  #define IRQ_ENT_REG0_OFFSET	0x0018
->  #define IRQ_ENT_REG1_OFFSET	0x001C
->  #define IRQ_INCTL_REG_OFFSET	0x0020
-> @@ -48,6 +50,11 @@ static inline void davinci_irq_writel(unsigned long value, int offset)
->  	__raw_writel(value, davinci_intc_base + offset);
 >  }
 >  
-> +static inline unsigned long davinci_irq_readl(int offset)
+> +static inline __printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...)
 > +{
-> +	return __raw_readl(davinci_intc_base + offset);
+> +}
+> +
+>  static inline void dump_stack_print_info(const char *log_lvl)
+>  {
+>  }
+> diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+> index 5cff72f18c4a..69b710ff92b5 100644
+> --- a/lib/dump_stack.c
+> +++ b/lib/dump_stack.c
+> @@ -35,6 +35,64 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+>  	va_end(args);
+>  }
+>  
+> +/**
+> + * dump_stack_add_arch_desc - add arch-specific info to show with task dumps
+> + * @fmt: printf-style format string
+> + * @...: arguments for the format string
+> + *
+> + * See dump_stack_set_arch_desc() for why you'd want to use this.
+> + *
+> + * This version adds to any existing string already created with either
+> + * dump_stack_set_arch_desc() or dump_stack_add_arch_desc(). If there is an
+> + * existing string a space will be prepended to the passed string.
+> + */
+> +void __init dump_stack_add_arch_desc(const char *fmt, ...)
+> +{
+> +	va_list args;
+> +	int pos, len;
+> +	char *p;
+> +
+> +	/*
+> +	 * If there's an existing string we snprintf() past the end of it, and
+> +	 * then turn the terminating NULL of the existing string into a space
+> +	 * to create one string separated by a space.
+> +	 *
+> +	 * If there's no existing string we just snprintf() to the buffer, like
+> +	 * dump_stack_set_arch_desc(), but without calling it because we'd need
+> +	 * a varargs version.
+> +	 */
+> +	len = strnlen(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str));
+> +	pos = len;
+> +
+> +	if (len)
+> +		pos++;
+> +
+> +	if (pos >= sizeof(dump_stack_arch_desc_str))
+> +		return; /* Ran out of space */
+> +
+> +	p = &dump_stack_arch_desc_str[pos];
+> +
+> +	va_start(args, fmt);
+> +	vsnprintf(p, sizeof(dump_stack_arch_desc_str) - pos, fmt, args);
+> +	va_end(args);
+> +
+> +	if (len) {
+> +		/*
+> +		 * Order the stores above in vsnprintf() vs the store of the
+> +		 * space below which joins the two strings. Note this doesn't
+> +		 * make the code truly race free because there is no barrier on
+> +		 * the read side. ie. Another CPU might load the uninitialised
+> +		 * tail of the buffer first and then the space below (rather
+> +		 * than the NULL that was there previously), and so print the
+> +		 * uninitialised tail. But the whole string lives in BSS so in
+> +		 * practice it should just see NULLs.
 
-I appreciate that you're converting assembly code dating from a while
-back, but if we're going to do this correctly, I don't think we should
-entertain the use of __raw_readl().
+The comment doesn't say _why_ we need to order these stores: IOW, what
+will or can go wrong without this order?  This isn't clear to me.
 
-Surely the bus has a fixed endianness (and I'd assume it to be LE). Why
-aren't you using readl_relaxed() instead, which will have the exact same
-generated code with an LE kernel, and will do the right thing should you
-run a BE kernel.
+Another good practice when adding smp_*-constructs (as discussed, e.g.,
+at KS'18) is to indicate the matching construct/synch. mechanism.
 
-Thanks,
+  Andrea
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+
+> +		 */
+> +		smp_wmb();
+> +
+> +		dump_stack_arch_desc_str[len] = ' ';
+> +	}
+> +}
+> +
+>  /**
+>   * dump_stack_print_info - print generic debug info for dump_stack()
+>   * @log_lvl: log level
+> -- 
+> 2.20.1
+> 
