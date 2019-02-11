@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03549C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E27C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D6121B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF4C21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899011;
-	bh=SOm/r3+4ZRDLcxNssYHn0tU9x3XO7ZzSamxI5a1GacU=;
+	s=default; t=1549899033;
+	bh=Y0dPi2mGIr5JlGUHcaSd429BMEAK2AjaFAiU6XL8lRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gVmcDynTdAiSTCVkAFEFgmFhPvermd3p866PA+rWilJgK0637yOmEIzyZzcKRnu6e
-	 WMV7APz084OBswLvzt9jIliIU7tmnS0e/eRpDZ3ZsE2ogoXMnXB6dyVbJuoJghzY+r
-	 wTEWaaGER2HfxIARck6ly7RyrIGZTUXPRfKE6RA8=
+	b=nUBtbpfeTTru8ZLRmyZeABbgVQSFukm3Jvm1MIXCqllDrwWYz/QTfOUB9Hw76JH80
+	 05KbRAeOxI1QXmlPAtmfd3hAFPoeYVN5xgnWVCsgeM120eb38xvvFSym3CpsFg9Nas
+	 PfKmej1VgZT+DpFMXimVAbzdTpYtHK5HS1xJgvew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389800AbfBKPaK (ORCPT
+        id S1732931AbfBKPac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:30:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:30:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389220AbfBKO4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:56:42 -0500
+        id S2389138AbfBKO4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:56:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4362229E;
-        Mon, 11 Feb 2019 14:56:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 404E0222A6;
+        Mon, 11 Feb 2019 14:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897002;
-        bh=SOm/r3+4ZRDLcxNssYHn0tU9x3XO7ZzSamxI5a1GacU=;
+        s=default; t=1549896977;
+        bh=Y0dPi2mGIr5JlGUHcaSd429BMEAK2AjaFAiU6XL8lRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vlUYIsb7HX94kwd2Tem3QxmX3BzcGfHGcoFJCAS7wEay+vbQqdAwm6lJFWlTZhDqB
-         8OWw1p0yV4lgHuuZgNGsV5GVm91XKSth/5NvtZ2c6C4XG6F1IWMEIM/W9wJijPcGc5
-         qk0wyriKil2DLMokY+ruisRlsUMnrSJez8bM8WIY=
+        b=1ZZ3SAI6BvxqVzW64pAkGexAdYSQ2m/DokWmn3zQle+LkJp9XMFpvFRTGYp2gvv2r
+         t0Gbh3dQf50ntsDatgCc3fCCwj6P8kys+tO4y+EFsIcDyht98e6i0uY2gBBOfQj/2F
+         WowNsdldzIC18F4HctdVI2hz8RAyn5+Nxw55WTFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 051/205] drm: Clear state->acquire_ctx before leaving drm_atomic_helper_commit_duplicated_state()
-Date:   Mon, 11 Feb 2019 15:17:29 +0100
-Message-Id: <20190211141832.192075380@linuxfoundation.org>
+Subject: [PATCH 4.14 049/205] soc: bcm: brcmstb: Dont leak device tree node reference
+Date:   Mon, 11 Feb 2019 15:17:27 +0100
+Message-Id: <20190211141832.058445058@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,52 +66,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aa394b0dd68cb00c483e151dcd84713d4d517ed1 ]
+[ Upstream commit 1861a7f07e02292830a1ca256328d370deefea30 ]
 
-drm_atomic_helper_commit_duplicated_state() sets state->acquire_ctx to
-the context given in the argument and leaves it in state after it
-quits. The lifetime of state and context are not guaranteed to be the
-same, so we shouldn't leave that pointer hanging around. This patch
-resets the context to NULL to avoid any oopses.
+of_find_node_by_path() acquires a reference to the node returned by it
+and that reference needs to be dropped by its caller. soc_is_brcmstb()
+doesn't do that, so fix it.
 
-Changes in v2:
-- Added to the set
+[treding: slightly rewrite to avoid inline comparison]
 
-Suggested-by: Daniel Vetter <daniel@ffwll.ch>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181129150423.239081-1-sean@poorly.run
+Fixes: d52fad262041 ("soc: add stubs for brcmstb SoC's")
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/soc/bcm/brcmstb/common.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 1f08d597b87a..d05ed0521e20 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2899,7 +2899,7 @@ EXPORT_SYMBOL(drm_atomic_helper_suspend);
- int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
- 					      struct drm_modeset_acquire_ctx *ctx)
+diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
+index 22e98a90468c..2f5ec424a390 100644
+--- a/drivers/soc/bcm/brcmstb/common.c
++++ b/drivers/soc/bcm/brcmstb/common.c
+@@ -31,13 +31,17 @@ static const struct of_device_id brcmstb_machine_match[] = {
+ 
+ bool soc_is_brcmstb(void)
  {
--	int i;
-+	int i, ret;
- 	struct drm_plane *plane;
- 	struct drm_plane_state *new_plane_state;
- 	struct drm_connector *connector;
-@@ -2918,7 +2918,11 @@ int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
- 	for_each_new_connector_in_state(state, connector, new_conn_state, i)
- 		state->connectors[i].old_state = connector->state;
++	const struct of_device_id *match;
+ 	struct device_node *root;
  
--	return drm_atomic_commit(state);
-+	ret = drm_atomic_commit(state);
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return false;
+ 
+-	return of_match_node(brcmstb_machine_match, root) != NULL;
++	match = of_match_node(brcmstb_machine_match, root);
++	of_node_put(root);
 +
-+	state->acquire_ctx = NULL;
-+
-+	return ret;
++	return match != NULL;
  }
- EXPORT_SYMBOL(drm_atomic_helper_commit_duplicated_state);
  
+ static const struct of_device_id sun_top_ctrl_match[] = {
 -- 
 2.19.1
 
