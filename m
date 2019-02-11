@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26978C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7D7B2229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89048222A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897161;
-	bh=Dpf4La3DAcKPg/Q9XEvfrIyt5D5klPBhsLOiyKdnt20=;
+	s=default; t=1549897165;
+	bh=GBhFM5vbTQl7D/ihm1dfBJ0b63r0qcX35NCBbGf1zwc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wa1Aud/gijVCT0IYurzteZhebyp9hqZW6qOU6QItB1SMX8buABpUgd8UYSUTvgJqo
-	 WMiv++yYRVwv/UR7FIyQFQUpP0J8otY6s9s2smtqsTkkpFuKNCtCYL0zFI7cwkg26U
-	 dfw/wL+6RvyJ8/r0L1JCfNHsLJiYZHbp5VWJiczg=
+	b=T/aavtYjkqaO/jIR0hk/YIPnI2lU10bqaJCm6aF++X3MzNikUz8wkUEK86dj5pYQv
+	 pYpjMPQVJXYEe0HGUBubmdwDMQh+X8fVQnLhFGIHDRzM8awRzdwKDLTdGMlFOqujwF
+	 of+ALB2Vl6w3ug54iZBq/rqRA1w0Kssbq7fGeDbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389779AbfBKO7T (ORCPT
+        id S2388030AbfBKO7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46988 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:59:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389755AbfBKO7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:15 -0500
+        id S2389742AbfBKO7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:59:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E87DF206BA;
-        Mon, 11 Feb 2019 14:59:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84150206BA;
+        Mon, 11 Feb 2019 14:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897154;
-        bh=Dpf4La3DAcKPg/Q9XEvfrIyt5D5klPBhsLOiyKdnt20=;
+        s=default; t=1549897158;
+        bh=GBhFM5vbTQl7D/ihm1dfBJ0b63r0qcX35NCBbGf1zwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rXhdFejNKRY/qflCvOSKsA8R0s8/RRMtj6aI/CnfNQ0ptwnPWYkUxTgDqhtYHCcj1
-         U7idOIx5QbNIeG2vA2P/zId3p6Gs9vwiDbXB6EVTVUVHgjJvqoOY9kBBkrfmK9syap
-         5gFL4Wzx2I2LmEYdXDVjx9WmgGF2/GSm+r6Ba8KE=
+        b=brHvOpyfA88dNT1kOHDTIT3cda9RE2vAAhQ8Z3Z3Il8tlb2HfwEiZyVx+n02+JwTe
+         t827sVwBOZu1Vc+bT/lPwhZhsd05XovwOwSb3fogcFGuYDdgcJnbVNZXeSJ2NBeOmk
+         MWHHrRTqwuJjuvXylLamCXOKLyNAXa2sapYrY6Po=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 108/205] powerpc/uaccess: fix warning/error with access_ok()
-Date:   Mon, 11 Feb 2019 15:18:26 +0100
-Message-Id: <20190211141835.604417744@linuxfoundation.org>
+Subject: [PATCH 4.14 109/205] mac80211: fix radiotap vendor presence bitmap handling
+Date:   Mon, 11 Feb 2019 15:18:27 +0100
+Message-Id: <20190211141835.663894608@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,43 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
+[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
 
-With the following piece of code, the following compilation warning
-is encountered:
+Due to the alignment handling, it actually matters where in the code
+we add the 4 bytes for the presence bitmap to the length; the first
+field is the timestamp with 8 byte alignment so we need to add the
+space for the extra vendor namespace presence bitmap *before* we do
+any alignment for the fields.
 
-	if (_IOC_DIR(ioc) != _IOC_NONE) {
-		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+Move the presence bitmap length accounting to the right place to fix
+the alignment for the data properly.
 
-		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
-
-drivers/platform/test/dev.c: In function 'my_ioctl':
-drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
-   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-
-This patch fixes it by referencing 'type' in the macro allthough
-doing nothing with it.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/rx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 565cead12be2..cf26e62b268d 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -54,7 +54,7 @@
- #endif
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 9e19ddbcb06e..c7ac1a480b1d 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -141,6 +141,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	/* allocate extra bitmaps */
+ 	if (status->chains)
+ 		len += 4 * hweight8(status->chains);
++	/* vendor presence bitmap */
++	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
++		len += 4;
  
- #define access_ok(type, addr, size)		\
--	(__chk_user_ptr(addr),			\
-+	(__chk_user_ptr(addr), (void)(type),		\
- 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
+ 	if (ieee80211_have_rx_timestamp(status)) {
+ 		len = ALIGN(len, 8);
+@@ -182,8 +185,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
+ 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
  
- /*
+-		/* vendor presence bitmap */
+-		len += 4;
+ 		/* alignment for fixed 6-byte vendor data header */
+ 		len = ALIGN(len, 2);
+ 		/* vendor data header */
 -- 
 2.19.1
 
