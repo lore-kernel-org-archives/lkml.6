@@ -4,57 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09F2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E83C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7AA20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37610222AA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895896;
-	bh=buwIrzeTtNxuDndP9yFI8r5S4TeNuCDP2K/6GxA0j70=;
+	s=default; t=1549895900;
+	bh=S4o7OIj/57ayV9M8bZ+wqRjqRphTcrD61lu22oS85qQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QxUvjdU9oTwIylQHxssYjGhcdaejlIQNwWE4C7mFabxOHAnsVNcfQ5Xj6POLKqrTQ
-	 OLBNS0nrP4JlaFjvyKK12T19Ft0KtJ69ZiXYrPlxP0j2m2ClnO1EM7qsGeMBlZHkpp
-	 hnuYzFqUoCQ0BXyr5qEnb/1TRKsi2UGU4Tjev47U=
+	b=xQfIk9axXM0Ihw+42SgO4+RjSj77wLBOa7gh9/DZTmLL6JkbZ0Htq9wGyIh2NhpO+
+	 Cj20KR+rS2pBudu8qabytqUFYKk0LcYIRFRPfsglMwM+NxtzUb3Ikln8YhBjiu1997
+	 04mP8BEX2Q/GbksxSXrLCoBoRqEP3FfIsa4GjSVs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731633AbfBKOiP (ORCPT
+        id S1731643AbfBKOiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47874 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731614AbfBKOiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:12 -0500
+        id S1731631AbfBKOiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EC03222A1;
-        Mon, 11 Feb 2019 14:38:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84FFB222A2;
+        Mon, 11 Feb 2019 14:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895891;
-        bh=buwIrzeTtNxuDndP9yFI8r5S4TeNuCDP2K/6GxA0j70=;
+        s=default; t=1549895895;
+        bh=S4o7OIj/57ayV9M8bZ+wqRjqRphTcrD61lu22oS85qQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X2zU8Lc5QoOFR4RKEpv0UTdd0Yb5iHKtfjelnF+6p2Sx3P+YgEMqWk+oYF/ZoIYCL
-         3+cbZaU1LWkmcyMkcoJNSvzoGU0nkjBb7VtlbMRnC4+boh2kUvW/iArcB54sa+F33N
-         /KKPXgGEZdel9PFbpH5gCgy4KRkJREzgGQK9gYeI=
+        b=VZfA/TsP1mUFE6hxrWjrcxseHCB4DgTs8iR0bBeDrr1z67ZOgp4oPXyJkVLrqhadE
+         fUmMWkEzzE/FaqB56QE44/QwW0i83fGg+rdhaFLOSKqhLXE+9BR1iQE95l4/f9P3sT
+         DewKMa25Iwrb4uSphd91affzQaWU4oZcZv6XkKek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.20 346/352] perf/core: Dont WARN() for impossible ring-buffer sizes
-Date:   Mon, 11 Feb 2019 15:19:33 +0100
-Message-Id: <20190211141909.196297884@linuxfoundation.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.20 347/352] perf tests evsel-tp-sched: Fix bitwise operator
+Date:   Mon, 11 Feb 2019 15:19:34 +0100
+Message-Id: <20190211141909.252984338@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -73,55 +69,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
+commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
 
-The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
-large its ringbuffer mmap should be. This can be configured to arbitrary
-values, which can be larger than the maximum possible allocation from
-kmalloc.
+Notice that the use of the bitwise OR operator '|' always leads to true
+in this particular case, which seems a bit suspicious due to the context
+in which this expression is being used.
 
-When this is configured to a suitably large value (e.g. thanks to the
-perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
-__alloc_pages_nodemask():
+Fix this by using bitwise AND operator '&' instead.
 
-   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
+This bug was detected with the help of Coccinelle.
 
-Let's avoid this by checking that the requested allocation is possible
-before calling kzalloc.
-
-Reported-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
+Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/ring_buffer.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/tests/evsel-tp-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -734,6 +734,9 @@ struct ring_buffer *rb_alloc(int nr_page
- 	size = sizeof(struct ring_buffer);
- 	size += nr_pages * sizeof(void *);
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -17,7 +17,7 @@ static int perf_evsel__test_field(struct
+ 		return -1;
+ 	}
  
-+	if (order_base_2(size) >= MAX_ORDER)
-+		goto fail;
-+
- 	rb = kzalloc(size, GFP_KERNEL);
- 	if (!rb)
- 		goto fail;
+-	is_signed = !!(field->flags | TEP_FIELD_IS_SIGNED);
++	is_signed = !!(field->flags & TEP_FIELD_IS_SIGNED);
+ 	if (should_be_signed && !is_signed) {
+ 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
+ 			 evsel->name, name, is_signed, should_be_signed);
 
 
