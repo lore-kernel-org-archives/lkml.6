@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CCFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2056BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A92620821
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6B1D2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895033;
-	bh=uRUPajl/UDhS5+zK1uXjxNruKuHrapUPjTqeP7I4JeU=;
+	s=default; t=1549895037;
+	bh=EWHTQJ4qCk4trEDNVL6G+bYuB14mDOVJ1gpx2DlQHhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MVcmlvQJg8AustMhUFFKfSpQdVyfZGMT+djpVBDwHcEPT+BjBfRCPZBxvDwhsOC8a
-	 00WKp8SIhAWMlR3Gam0CEk8ClT+81MFTgErN9iJJjk0JHKub0Rw5jwcwbPNNs5hfLM
-	 zTZa1qMiEBlLKhOYdRb6GgumOV+EqBz578uXpTzA=
+	b=e2NWFUsd2yNoxbGtx2vax1/ZeYR3lvF8sKj2tC5iYH08qEfqgb5rlVrR6xfGVhWf3
+	 cwgIxNeuGsLXbXHitreTni0NjSpz3YmTPz5r6USmjRf7w/UveavUy7mmklwo2ubYoA
+	 NnOZxOBqm23X1Hg6VCb+WV3pOi0JYu34F/iXbeX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfBKOXv (ORCPT
+        id S1728269AbfBKOXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56844 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727932AbfBKOXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:46 -0500
+        id S1727932AbfBKOXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE723222A1;
-        Mon, 11 Feb 2019 14:23:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE5BE205C9;
+        Mon, 11 Feb 2019 14:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895026;
-        bh=uRUPajl/UDhS5+zK1uXjxNruKuHrapUPjTqeP7I4JeU=;
+        s=default; t=1549895032;
+        bh=EWHTQJ4qCk4trEDNVL6G+bYuB14mDOVJ1gpx2DlQHhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mXjS/ac1iOlrGEeEdtTPYftA6XiTID7sTn+h/4O9K/JzKU/7a7OYY+SbOqIIlS1MB
-         HcKryziMguFwuK1DvC67lDehKGONF6nbkJq1aj5mHpNkozcGJXv5VSqB8kUbO+xXg/
-         mUsiyDwz5WF5arptD1jkD0NngzRtTx4IKo7JGRQI=
+        b=z9/TFc3RR0R+8CfXOo66eCbfOGandgqk4zgAuDz9bkHJYq812Aw+NsgDdg8Lc9bUw
+         9Ic8U60uCjFKY21J9jzMv+FNGWSUtGd+bdtP0XSMCqdi3CLVPggk6UR/4cBro/jrFt
+         TFi5iVzx1f45kY4SNnd9nco+267qHvEfdYrDcu9I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 066/352] ASoC: sunxi: sun50i-codec-analog: Add support for cpvdd regulator supply
-Date:   Mon, 11 Feb 2019 15:14:53 +0100
-Message-Id: <20190211141850.315232314@linuxfoundation.org>
+Subject: [PATCH 4.20 068/352] clk: meson: meson8b: fix the width of the cpu_scale_div clock
+Date:   Mon, 11 Feb 2019 15:14:55 +0100
+Message-Id: <20190211141850.431876133@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,43 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca0412a05756cd0b94751ca4d54fe6522f00b1f4 ]
+[ Upstream commit a8662eadd1032018f31e37deda811790b2326662 ]
 
-On the Allwinner A64 SoCs, the audio codec has a built-in headphone
-amplifier. This amplifier has a power supply separate from the rest of
-the analog audio circuitry, labeled cpvdd.
+According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
+the register for the CPU scale_div clock. This matches the code in
+Amlogic's 3.10 GPL kernel sources:
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
 
-This patch adds a DAPM widget for this supply, and ties it to the
-headphone amp widget.
+This means that the divider register is 10 bit wide instead of 9 bits.
+So far this is not a problem since all u-boot versions I have seen are
+not using the cpu_scale_div clock at all (instead they are configuring
+the CPU clock to run off cpu_in_sel directly).
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The fixes tag points to the latest rework of the CPU clocks. However,
+even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
+Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
+drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
+this only carries the fixes tag for the CPU clock rewordk.
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20180927085921.24627-3-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sunxi/sun50i-codec-analog.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
-index 8f5f999df631..df1fed0aa001 100644
---- a/sound/soc/sunxi/sun50i-codec-analog.c
-+++ b/sound/soc/sunxi/sun50i-codec-analog.c
-@@ -274,6 +274,7 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
- 	 * stream widgets at the card level.
- 	 */
- 
-+	SND_SOC_DAPM_REGULATOR_SUPPLY("hpvcc", 0, 0),
- 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
- 			 SND_SOC_NOPM, 0, 0, sun50i_codec_hp_src),
- 	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN50I_ADDA_HP_CTRL,
-@@ -361,6 +362,7 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
- 	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
- 	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
- 	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
-+	{ "Headphone Amp", NULL, "hpvcc" },
- 	{ "HP", NULL, "Headphone Amp" },
- 
- 	/* Microphone Routes */
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 328fcf50d9e8..9160a3b2e668 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -599,7 +599,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
+ 		.shift = 20,
+-		.width = 9,
++		.width = 10,
+ 		.table = cpu_scale_table,
+ 		.flags = CLK_DIVIDER_ALLOW_ZERO,
+ 	},
 -- 
 2.19.1
 
