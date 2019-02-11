@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2567C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AC4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B502081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A0C4222AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896569;
-	bh=Y5Kfbjt71kl81IKVqmEnx3Z3aOJcv+cMiUTwR7NFYLM=;
+	s=default; t=1549896573;
+	bh=TpjV7DA8BLZsiTGhJkCmRCQBRVyiuWRqNZTBM2c0KVw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WoXc+CYEdHuMf5a5vhJLW2a+n7QA33oWkfVoFscUVE1gPi+7+4tVZ5N1k3/IQeHwB
-	 joXaDmEw8lCwCriqbZBCvLDooWN2QN7vKkX2Zfio0rTmxpveU1DqzGu6XdVgisg2PZ
-	 u9UooAQ0VHZR61tPXs/Ak5WE3Jb881iKV+99lHGI=
+	b=i0vvWkGuuu1WcLj3e9zammZocoRxxg5Ae09sOb8kFaeveCVIEHHWczKVmyLk1UyEA
+	 P4rZfQdIM1oveJp3F4251LSg8pE8SMVGejHr7x1dPD+rqzqSvQVKk1QPBWjRzEmkhX
+	 6nSExnfe8Q1PajF6GQcDcQC01fpuCpSOpKg845pE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbfBKOt2 (ORCPT
+        id S1732657AbfBKOtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:49:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34966 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:49:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733158AbfBKOtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:49:24 -0500
+        id S2387885AbfBKOt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED14820700;
-        Mon, 11 Feb 2019 14:49:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A093F206BA;
+        Mon, 11 Feb 2019 14:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896564;
-        bh=Y5Kfbjt71kl81IKVqmEnx3Z3aOJcv+cMiUTwR7NFYLM=;
+        s=default; t=1549896567;
+        bh=TpjV7DA8BLZsiTGhJkCmRCQBRVyiuWRqNZTBM2c0KVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1WekbdXwKklmP8QNy2lurFCpgn7pK5D8pLGz04QokBEwH8bZDIXoEqczWiMzfGxZa
-         yU/myu16UGk2w7yClgJOooYTeRWEIg1Tgmz5s4HdaRV8Hliykt5AzlL0vzCOpA5PHi
-         jH0IEHW1S6iHfPnoO7m9XvkCdkMa8ceLAnyMdbSo=
+        b=tLlFhffL7hr9sXQvSgiMUv75OkRJSsha9kY0wUrQONT9qkqjtFZEoz+VhCWXAt7bk
+         iggtRO6TM+osC9eLbfN5n/vWGWMg8sjqE8RvjeNnR/2KNB3BpAc4FllostrYbGNQZf
+         SvPYjqoS7bpNBBkWtjxiK9onCUTXzslbrmK0G8D8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Shannon Nelson <shannon.lee.nelson@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 186/313] powerpc/perf: Fix thresholding counter data for unknown type
-Date:   Mon, 11 Feb 2019 15:17:46 +0100
-Message-Id: <20190211141905.709790095@linuxfoundation.org>
+Subject: [PATCH 4.19 220/313] niu: fix missing checks of niu_pci_eeprom_read
+Date:   Mon, 11 Feb 2019 15:18:20 +0100
+Message-Id: <20190211141907.889565744@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,42 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 17cfccc91545682513541924245abb876d296063 ]
+[ Upstream commit 26fd962bde0b15e54234fe762d86bc0349df1de4 ]
 
-MMCRA[34:36] and MMCRA[38:44] expose the thresholding counter value.
-Thresholding counter can be used to count latency cycles such as
-load miss to reload. But threshold counter value is not relevant
-when the sampled instruction type is unknown or reserved. Patch to
-fix the thresholding counter value to zero when sampled instruction
-type is unknown or reserved.
+niu_pci_eeprom_read() may fail, so we should check its return value
+before using the read data.
 
-Fixes: 170a315f41c6('powerpc/perf: Support to export MMCRA[TEC*] field to userspace')
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/perf/isa207-common.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/sun/niu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/perf/isa207-common.c b/arch/powerpc/perf/isa207-common.c
-index 177de814286f..6a2f65d3d088 100644
---- a/arch/powerpc/perf/isa207-common.c
-+++ b/arch/powerpc/perf/isa207-common.c
-@@ -226,8 +226,13 @@ void isa207_get_mem_weight(u64 *weight)
- 	u64 mmcra = mfspr(SPRN_MMCRA);
- 	u64 exp = MMCRA_THR_CTR_EXP(mmcra);
- 	u64 mantissa = MMCRA_THR_CTR_MANT(mmcra);
-+	u64 sier = mfspr(SPRN_SIER);
-+	u64 val = (sier & ISA207_SIER_TYPE_MASK) >> ISA207_SIER_TYPE_SHIFT;
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index 9319d84bf49f..d84501441edd 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -8100,6 +8100,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 		start += 3;
  
--	*weight = mantissa << (2 * exp);
-+	if (val == 0 || val == 7)
-+		*weight = 0;
-+	else
-+		*weight = mantissa << (2 * exp);
- }
+ 		prop_len = niu_pci_eeprom_read(np, start + 4);
++		if (prop_len < 0)
++			return prop_len;
+ 		err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
+ 		if (err < 0)
+ 			return err;
+@@ -8144,8 +8146,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 			netif_printk(np, probe, KERN_DEBUG, np->dev,
+ 				     "VPD_SCAN: Reading in property [%s] len[%d]\n",
+ 				     namebuf, prop_len);
+-			for (i = 0; i < prop_len; i++)
+-				*prop_buf++ = niu_pci_eeprom_read(np, off + i);
++			for (i = 0; i < prop_len; i++) {
++				err = niu_pci_eeprom_read(np, off + i);
++				if (err >= 0)
++					*prop_buf = err;
++				++prop_buf;
++			}
+ 		}
  
- int isa207_get_constraint(u64 event, unsigned long *maskp, unsigned long *valp)
+ 		start += len;
 -- 
 2.19.1
 
