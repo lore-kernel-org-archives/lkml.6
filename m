@@ -2,105 +2,148 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAE2C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B92C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D62721B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 244EC21B24
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfAztYj1"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="XoAVdGcR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mQ9cIm+M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbfBKNjf (ORCPT
+        id S1728031AbfBKNk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:39:35 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52722 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbfBKNje (ORCPT
+        Mon, 11 Feb 2019 08:40:28 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:34335 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727664AbfBKNk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:39:34 -0500
-Received: by mail-it1-f196.google.com with SMTP id r11so20913375itc.2;
-        Mon, 11 Feb 2019 05:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XwfpBCZF5NOsTvb05M7RC8PKzgolWriR9Dd/nmp5qug=;
-        b=EfAztYj1W7tIlHu13Auz9TG5r9/LbqtXTQuiGNqqk83n4TEkTnjMQFh7csbF77wiNo
-         BxNYXod7KIn7o20J1l1k6HCGy+iEGMe5NyZwd25t8krgCRVEskvPIsqiQui5D2XZnE+P
-         Kq7V3xXv7lEXkd0rsarzX/AYdIH2rzDQan+CM00gH6Fyy2I5NY7lzE8o2dYLcu2UgZnH
-         diJwa0ALGMY1HSJK8eqsNDG0xtHf3n+j+ykuTwf23MYi5Ekky/TQ0aFA/OSMeJWW4geO
-         qGDi0iEj8hp38UuS8jXfDpEiJfKyOEs1xoCtmF6/MvxNCLvD0Tl6Fdj0UidnjXG+SaiC
-         d41g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XwfpBCZF5NOsTvb05M7RC8PKzgolWriR9Dd/nmp5qug=;
-        b=UWyFHQaI43xXz0aHRD/DJ/ZgZPzyORLCYzMwMiw5LqO0ksKAQTl2nbSzWNlcl8Ff59
-         eBWk+xqQlX9AUnR1UK39PizSBUWKGq3ccMwZ5yX9DW6w473DIFgR8XKqcWEDVs2gF5AS
-         yw3uoutIA9YCoJWeV9XmhxErRYYYjlbeChK+TQxHkJ2ghP55e8cdAZoqP08BZufM78Zq
-         9t95Oq+XszL15LXIa+EswHnU3uQCncU5E863Q8N2+2u91pMMQOuEGdbl6WMaC0Ssx0Iz
-         7XJn89ohlq19OBv7I9/LuUBz6ol286Szglq9Z/zt8ogJz9tSMWSjqP3qfbxflPjdQE+8
-         HDIA==
-X-Gm-Message-State: AHQUAubkWFzaixhPrQo7WmW78DgcqL5dNBMdujWzunRUa4AC2mq2+RFH
-        6vpuEECTrEvFJNgvCaB3tOX7kvzMDjaDkMfKE04jOmCB
-X-Google-Smtp-Source: AHgI3IbipUVBORl4rft8ALP4aB96waphzZC1cvVJzd5EkGzTFNPT4GQ4pKI3dHaUPXcyW9FBRKp8UUMA1rofoXzvqo8=
-X-Received: by 2002:a02:15da:: with SMTP id 87mr822048jaq.2.1549892373982;
- Mon, 11 Feb 2019 05:39:33 -0800 (PST)
+        Mon, 11 Feb 2019 08:40:28 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id B956E22108;
+        Mon, 11 Feb 2019 08:40:26 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 11 Feb 2019 08:40:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=p6Q+Jtym291XvE1/SU6tLSFns2P
+        WwuGXi3SFBgo+DaI=; b=XoAVdGcRLaOS6RmOrewv195rVMref/2T5i5HzKdQl9t
+        drEVmYeGDR1cEeuRVDK9pH1IUTmjGndNcG4sX33sySloQ3W7Uo7r7aymqTduSA8G
+        z7kxc1mXkj/MiqNKQynpJEWPWgVCxceYg1oXk/qv1w29QNi4XlswEQAqUb6IZlru
+        i7KJHg9lX8jUEDYPmZBtKzIDqMOAihzK0pmXf/smyitiLU6tL4YKiKUa6Apoe/BD
+        SKMV+kgpS8/E6UY886IsyWa7WpB2ezewiDzS9/akCgVOdxLItm9a65V3SzGzSEaz
+        Q/YXeqZxsmSsIfPZxhjUb/hJ8U/HqqmzUkgEmfzC6lQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=p6Q+Jt
+        ym291XvE1/SU6tLSFns2PWwuGXi3SFBgo+DaI=; b=mQ9cIm+M68DCxPJrCuV4b3
+        MZVXgWoUQACx4twsRVot99ZWStgdgPtBDmPrhhFTr4QFU2HW6ZSejaMY95MYotWp
+        yjiBu9wSGpchzl4uyyDmSjnw2BOx0J8NcC4jXMqVj991ECdN/TMGihhILD+nEJuq
+        JQqdWR5hbqTViFU8aqYNmVrPzz79WqyVTz83F8nMWESbjE5Md4tODOWJk0ZQZD3S
+        NoHg09hncK9rSSC4QXj8w8LniEj8nBzUrQIxSn72TUhwzjH9Q7VGiGOF61CeEYkG
+        Oe7IYLMYybyWdIg5pyg+msyImN+fzl/fBTS4V9+48FrW0tmMtd+cPFqHusNC6E7Q
+        ==
+X-ME-Sender: <xms:SnthXC8xtMcgyEn4iPgnkZsgG4K4FCBRRx9V-m2qll4jhQ4cm8kuPw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrleelgdefkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgg
+    gtuggjfgesthdtredttdervdenucfhrhhomhepfdhgrhgvgheskhhrohgrhhdrtghomhdf
+    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutdejne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhu
+    shhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:SnthXD-sFqESJn2hP7bZRDx7CvrG4vwPIJbIboRaz4Sx0TZjqsdq5A>
+    <xmx:SnthXNWrG6_KgRBlqUoyoM8RaFMWx6S_QlDNtZpN4v1FJLO64vSTbw>
+    <xmx:SnthXIYZvljL0rl_r8ff49sQmopYuJFj4K2pO7wwdcgqTn3pMT1tfA>
+    <xmx:SnthXDaoy_-sKkFQH1hxzUR9U0YWqlo_KrdIzBZPhtSA61hoQX0x-g>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2CAFE1030F;
+        Mon, 11 Feb 2019 08:40:26 -0500 (EST)
+Date:   Mon, 11 Feb 2019 14:40:24 +0100
+From:   "greg@kroah.com" <greg@kroah.com>
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 4.14 "uio: Prevent device destruction while fds are open"
+Message-ID: <20190211134024.GD17709@kroah.com>
+References: <007d90a957944409abd32af82a3680444a1e4399.camel@nokia.com>
 MIME-Version: 1.0
-References: <20190210194811.18345-1-lkundrak@v3.sk>
-In-Reply-To: <20190210194811.18345-1-lkundrak@v3.sk>
-From:   Steve deRosier <derosier@gmail.com>
-Date:   Mon, 11 Feb 2019 05:38:57 -0800
-Message-ID: <CALLGbR+YCrY3SMC_1qgBpO2AKmRXXU4WrkBR-gmXqrCpi5L6qA@mail.gmail.com>
-Subject: Re: [PATCH] libertas_tf: move the banner to a more appropriate place
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <007d90a957944409abd32af82a3680444a1e4399.camel@nokia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 11:48 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> Also, turn it to a dev_info() to make checkpatch.pl happy.
->
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/net/wireless/marvell/libertas_tf/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/net/wireless/marvell/libertas_tf/main.c
-> index 1d45da187b9b..c71ad87cdc44 100644
-> --- a/drivers/net/wireless/marvell/libertas_tf/main.c
-> +++ b/drivers/net/wireless/marvell/libertas_tf/main.c
-> @@ -318,7 +318,6 @@ static int lbtf_op_start(struct ieee80211_hw *hw)
->                 goto err_prog_firmware;
->         }
->
-> -       printk(KERN_INFO "libertastf: Marvell WLAN 802.11 thinfirm adapter\n");
->         lbtf_deb_leave(LBTF_DEB_MACOPS);
->         return 0;
->
-> @@ -649,6 +648,7 @@ struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev)
->         if (ieee80211_register_hw(hw))
->                 goto err_init_adapter;
->
-> +       dev_info(dmdev, "libertastf: Marvell WLAN 802.11 thinfirm adapter\n");
->         goto done;
->
->  err_init_adapter:
-> --
-> 2.20.1
->
+On Wed, Feb 06, 2019 at 11:27:27AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
+> Hi,
+> 
+> I hit use-after-free issues in UIO in 4.14.x, and discovered that it's
+> already fixed in later kernel versions:
+> 
+> commit a93e7b331568227500186a465fee3c2cb5dffd1f
+> Author: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+> Date:   Mon May 14 13:32:23 2018 +1200
+> 
+>     uio: Prevent device destruction while fds are open
+> 
+> Can we have this in 4.14.y?
+> (good idea to older LTS kernels too)
+> I picked and tested the following commits in 4.14.x:
+> 
+> 
+> # Temporarily revert "uio: Fix an Oops on load",
+> # to avoid merge conflict later with "uio: use
+> # request_threaded_irq instead"
+> git revert f6a6ae4e0f345aa481535bfe2046cd33f4dc37b8
+> 
+> # "uio: Reduce return paths from uio_write()"
+> git cherry-pick 81daa406c2cc97d85eef9409400404efc2a3f756
+> 
+> # "uio: Prevent device destruction while fds are open"
+> # Also amend this, change __poll_t to plain unsigned int,
+> # the former not found in 4.14.
+> git cherry-pick a93e7b331568227500186a465fee3c2cb5dffd1f
+> sed -i "s/__poll_t/unsigned int/" drivers/uio/uio.c
+> git commit --amend drivers/uio/uio.c
+> 
+> # "uio: use request_threaded_irq instead"
+> git cherry-pick 9421e45f5ff3d558cf8b75a8cc0824530caf3453
+> 
+> # "uio: change to use the mutex lock instead of the spin lock"
+> # Resolve conflict due to __poll_t in patch context.
+> git cherry-pick 543af5861f41af0a5d2432f6fb5976af50f9cee5
+> sed -i -e '/<<<<<<</,/=======/d' -e '/>>>>>>>/d' \
+> -e 's/__poll_t/unsigned int/' drivers/uio/uio.c
+> git add drivers/uio/uio.c
+> git cherry-pick --continue
+> 
+> # uio: fix crash after the device is unregistered
+> git cherry-pick 57c5f4df0a5a0ee83df799991251e2ee93a5e4e9
+> 
+> # uio: fix wrong return value from uio_mmap()
+> git cherry-pick e7de2590f18a272e63732b9d519250d1b522b2c4
+> 
+> # uio: fix possible circular locking dependency
+> git cherry-pick b34e9a15b37b8ddbf06a4da142b0c39c74211eb4
+> 
+> # Revert "uio: use request_threaded_irq instead"
+> git cherry-pick 3d27c4de8d4fb2d4099ff324671792aa2578c6f9
+> 
+> # re-apply: uio: Fix an Oops on load
+> git cherry-pick 432798195bbce1f8cd33d1c0284d0538835e25fb
 
-Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
+That's a lot of work for me here, can you just send the patches properly
+backported as a series so that I can apply them that way to ensure that
+I got this all correct?
+
+thanks,
+
+greg k-h
