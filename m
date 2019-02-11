@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A29C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE9BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF7D20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4EC920700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901515;
-	bh=yb+7OU8AjDwtALOAyPqJSf3XJnC2ddy3gXsdSEkW/Aw=;
+	s=default; t=1549901524;
+	bh=2dlgSEQPCNM64eZ0TiG0I4uzFbDv5MmULrbjeJa7DEE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=STwoIa1O4JJdqeV0ZTkHPEnCQkkBKI7tzM1GxxGjO1xN1+LGfLKDymG2PMuaueNxm
-	 SDwOP1i1b/Aw5JcGPvsKd7QqMzXnBUn/Ob+KXHJrjFoYscIvWMcayHofGEIAv1fyE6
-	 dlJO7apSgdmSZOr4YxIIj59mb5j9qtHv6Ah6JkFk=
+	b=PEJB0pWQyM9MxejJDZxFLjyjE980tkECkpKQmp2Hg3dKIWM0vABJAVNb8KRTOIV/Y
+	 IYfJfGWCLV/FCBfUdpBAd6elK2036gMDB1DygaNPXn+hvanaraCffQCrtpCxwbhjOx
+	 D1gs1r0rQcMr/BmwvRq/isjMw38HqCy5gQD0VwzQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729042AbfBKOXl (ORCPT
+        id S1729522AbfBKQMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56716 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:12:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfBKOXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:38 -0500
+        id S1729018AbfBKOXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D176222AA;
-        Mon, 11 Feb 2019 14:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1573222A1;
+        Mon, 11 Feb 2019 14:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895017;
-        bh=yb+7OU8AjDwtALOAyPqJSf3XJnC2ddy3gXsdSEkW/Aw=;
+        s=default; t=1549895014;
+        bh=2dlgSEQPCNM64eZ0TiG0I4uzFbDv5MmULrbjeJa7DEE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vs9kKFSyvJc5Mr+ZENgzJZTka2qAbnk9NOarCoFHYKQVceeNunUAhFq6JtVtIYXNy
-         GTbtvVY9jTp/qebd6bxhaQTPmmGxzGbkp9SJwZRgAuXUHxHgwAuzfyvBtFoJB6xQFk
-         RtmjJ05mkInYw7qlcaHrNWzCL45z6nLpD0FkTV0w=
+        b=dtvDgkQxh+6TYD5uxovsl5aZ4R5egR2GjMe65X1gzVHilUBFWnVXmbPhns3wqwAYk
+         vKcL47wmJCCd5Jg/DGW0s0nB5Pr8HZIguNQ6WenX4g1N60aNp9TFIRiMw2BDyaml19
+         q25a42nbKBK8pgYJ6EYuHPeGQZDdjBTscby84BZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Renato Lui Geh <renatogeh@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 063/352] media: vivid: fill in media_device bus_info
-Date:   Mon, 11 Feb 2019 15:14:50 +0100
-Message-Id: <20190211141850.142407576@linuxfoundation.org>
+Subject: [PATCH 4.20 045/352] staging: iio: ad7780: update voltage on read
+Date:   Mon, 11 Feb 2019 15:14:32 +0100
+Message-Id: <20190211141849.159022864@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,33 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e10b40f3304360d3a2d07d690ff12197f828f2c8 ]
+[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
 
-If you create multiple vivid instances, each with their own media
-device, then there was no way to tell them apart.
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-Fill in the bus_info so each instance has a unique bus_info string.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vivid/vivid-core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/vivid/vivid-core.c b/drivers/media/platform/vivid/vivid-core.c
-index 626e2b24a403..ec1b1a8ea775 100644
---- a/drivers/media/platform/vivid/vivid-core.c
-+++ b/drivers/media/platform/vivid/vivid-core.c
-@@ -669,6 +669,8 @@ static int vivid_create_instance(struct platform_device *pdev, int inst)
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index b67412db0318..c7cb05cedbbc 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
  
- 	/* Initialize media device */
- 	strlcpy(dev->mdev.model, VIVID_MODULE_NAME, sizeof(dev->mdev.model));
-+	snprintf(dev->mdev.bus_info, sizeof(dev->mdev.bus_info),
-+		 "platform:%s-%03d", VIVID_MODULE_NAME, inst);
- 	dev->mdev.dev = &pdev->dev;
- 	media_device_init(&dev->mdev);
- 	dev->mdev.ops = &vivid_media_ops;
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (voltage_uv < 0)
++			return voltage_uv;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
 -- 
 2.19.1
 
