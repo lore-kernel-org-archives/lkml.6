@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B746CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABA3C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8703F21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F1E21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898979;
-	bh=DErTnLU0kcCUey6hUM5BBX9jcG6De/nceOOufX9VJC0=;
+	s=default; t=1549898989;
+	bh=pYU6QX0ofs/59rjzJqR5NjdiQt0xkzBj48gNMVhgClI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gpFMAvfkY2C7taKkBoQvnSohSiV4QNBfG3G0k38a0qVbmr0yhOSlApQ44pF6xyd4B
-	 kFrdxe7PV41FmWl8Rzmv0UQKCqn1Bq1g2hDT5cbVmiQK4T3yya3a7ZaKJHVWuo+abC
-	 2jvEAMREY7x6NKzXRJFrKtlmtLEpRfg8COLlgJVs=
+	b=K1aXpG0gTW5pa97uFcN2mOUUixQb8gWHIipGHXt5LRNVf/1hUHN+9F8rRRwSwBwmU
+	 771NbgSkMzXKzHfvuB1agqlr4bTNG35ElOpDaXGA3h+RYhAQCVc7DydngV1mR4qeJi
+	 fnaInBamx1NdVoHogf0kqMdP5JSwPLjjFMaq8xuw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389792AbfBKP3h (ORCPT
+        id S2389314AbfBKO5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:29:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389348AbfBKO5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:25 -0500
+        id S2389286AbfBKO5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:57:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07DE1222A6;
-        Mon, 11 Feb 2019 14:57:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC383222AB;
+        Mon, 11 Feb 2019 14:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897044;
-        bh=DErTnLU0kcCUey6hUM5BBX9jcG6De/nceOOufX9VJC0=;
+        s=default; t=1549897029;
+        bh=pYU6QX0ofs/59rjzJqR5NjdiQt0xkzBj48gNMVhgClI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gUm0+G7+YxEd4+tdMiJWl3eIp+ejS+Z/aS31nlLOQOjU8lUBL2SrPgcfa6gGhCDHs
-         9ONBttizRpBcXVrG622/d3ZHUxmOchx60nwgUXUaDfaHvQLjfjqJsrhzAoT4zs0cNn
-         5eKdFAEZt238Ua6uqC9w5M+Y2xeJqWbkdLapD0+0=
+        b=zUigxIojYmyVK3MhAR7slmMpfbGhuJ0fTU/4yp6ZNkMqYDw6QzVWvFp6SRP9OKXKW
+         Iy4ixnd/sbXLq19futkOMjYv/RkC0NpGjJhQV4n2XMG5HIfVWjOcTk8Q0X8MVqlqhA
+         1LY75UBSHo1ffwUZT5zdKMbJKk1ccgBo3l/UPbN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 072/205] iommu/amd: Fix amd_iommu=force_isolation
-Date:   Mon, 11 Feb 2019 15:17:50 +0100
-Message-Id: <20190211141833.443087975@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rajnoha <prajnoha@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 068/205] kobject: return error code if writing /sys/.../uevent fails
+Date:   Mon, 11 Feb 2019 15:17:46 +0100
+Message-Id: <20190211141833.203271900@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,53 +65,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
+[ Upstream commit df44b479654f62b478c18ee4d8bc4e9f897a9844 ]
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU v2
-capable device.
+Propagate error code back to userspace if writing the /sys/.../uevent
+file fails. Before, the write operation always returned with success,
+even if we failed to recognize the input string or if we failed to
+generate the uevent itself.
 
-We occasionally use this parameter to force v2 capable device into
-translation mode to debug memory corruption that we suspect is
-caused by DMA writes.
+With the error codes properly propagated back to userspace, we are
+able to react in userspace accordingly by not assuming and awaiting
+a uevent that is not delivered.
 
-To address the following comment from Joerg Roedel on the first
-version, v2 capability of device is completely ignored.
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
-
-And from Documentation/admin-guide/kernel-parameters.txt:
-  This option does not override iommu=pt
-
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Peter Rajnoha <prajnoha@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/base/bus.c  | 12 ++++++++----
+ drivers/base/core.c |  8 +++++++-
+ kernel/module.c     |  6 ++++--
+ 3 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index efa6cd2500b9..766103ea237e 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -442,7 +442,14 @@ static int iommu_init_device(struct device *dev)
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 1cf1460f8c90..3464c49dad0d 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -616,8 +616,10 @@ static void remove_probe_files(struct bus_type *bus)
+ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+ 			    size_t count)
+ {
+-	kobject_synth_uevent(&drv->p->kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&drv->p->kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static DRIVER_ATTR_WO(uevent);
  
- 	dev_data->alias = get_alias(dev);
+@@ -833,8 +835,10 @@ static void klist_devices_put(struct klist_node *n)
+ static ssize_t bus_uevent_store(struct bus_type *bus,
+ 				const char *buf, size_t count)
+ {
+-	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
  
--	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
-+	/*
-+	 * By default we use passthrough mode for IOMMUv2 capable device.
-+	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
-+	 * invalid address), we ignore the capability for the device so
-+	 * it'll be forced to go into translation mode.
-+	 */
-+	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
-+	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
- 		struct amd_iommu *iommu;
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index fc5bbb2519fe..1c67bf24bc23 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -991,8 +991,14 @@ out:
+ static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+-	if (kobject_synth_uevent(&dev->kobj, buf, count))
++	int rc;
++
++	rc = kobject_synth_uevent(&dev->kobj, buf, count);
++
++	if (rc) {
+ 		dev_err(dev, "uevent: failed to send synthetic uevent\n");
++		return rc;
++	}
  
- 		iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	return count;
+ }
+diff --git a/kernel/module.c b/kernel/module.c
+index 2a44c515f0d7..94528b891027 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1201,8 +1201,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
+ 			    struct module_kobject *mk,
+ 			    const char *buffer, size_t count)
+ {
+-	kobject_synth_uevent(&mk->kobj, buffer, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&mk->kobj, buffer, count);
++	return rc ? rc : count;
+ }
+ 
+ struct module_attribute module_uevent =
 -- 
 2.19.1
 
