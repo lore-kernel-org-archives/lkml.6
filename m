@@ -2,156 +2,100 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD49C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3471C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924A72084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8BF12084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8Dpw+3t"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="B1ITolKJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfBKUkd (ORCPT
+        id S1727625AbfBKUkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:40:33 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34990 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfBKUkd (ORCPT
+        Mon, 11 Feb 2019 15:40:51 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39038 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727277AbfBKUkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:40:33 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t18so284967wrx.2;
-        Mon, 11 Feb 2019 12:40:31 -0800 (PST)
+        Mon, 11 Feb 2019 15:40:51 -0500
+Received: by mail-pg1-f193.google.com with SMTP id r11so108013pgp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:40:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aRRtjcrcVo+Gfaj/zX8Bw1iJ3MLE2kmxEDTa4rlrB10=;
-        b=c8Dpw+3tPDH4dqPl8avgxjKxKfbxB7sXLA1eCltNVPmOgXV49okHrFlPpvJiBkUJOU
-         CVYJyM/WWWE95z+5t1CscflAI3ljDt7nltAPQlUSDZIFc5t/AWddrIWKXEM9hH27Kdjq
-         jdjkv7NcUJmEqxDJCg8LtVbyj7seo/r96FOuqwMvPlCY3RoyuPX6htWxj1KYM14PDxTy
-         mSZhMDVKDx8rIFLr+GnLXOsSJSvGRfJpiPZHRLyuOdwsslNOI2fR3CcyBkhnwxNhvUNA
-         2xLzXdhYPWsMcKwxYMl5P9Aub8MGdL9ZtQ7d334VMYiJgAqT3/4Rrumi2lxnQpiwtU+E
-         oGQA==
+        bh=nmT5nD2I7+KtQoUhHdkWUj1QqpObX7iHadIUM12uKwc=;
+        b=B1ITolKJ1NS4xWfX0ir0qavniH14XixPsbTXipQBHAPuub4IrbOyhFf0bD4uP6LHdP
+         yS1+dqUDzMVRvcvJyextDm7A370NcmuJxo2Gaef7ePt0XpBqOhxFxX2iUaAV1qVgKD0x
+         8m6rTHR7HFmADoOKyZvx1yyE1yoP+SI6StmEGtj2HeWi9jPom6Dy0b1cc6gXri860E8S
+         kQHnEctpa1aRKDiRprtEqWIL+49NLbsmfIpDYRnY35OR5Uu8inRWQLauyDfY8jHwPyGK
+         jQ5I0OxQrq32U5sCooP0X45Cvj7bJfLsaMeLrt/1ey7bbz7qywYulUwwn2Yi6R+AfX6q
+         36Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aRRtjcrcVo+Gfaj/zX8Bw1iJ3MLE2kmxEDTa4rlrB10=;
-        b=DKcs11v17xDSgz3Swb7/Co0G7XlUyJcKZSc+VsRWdKsn750FoE2MxdPuM0DMBXRlrv
-         pQvwVVDmtEMEhBU+3n1k/75jQfQfiI81hwv+7CUgWFNHy6Q7tSGvQxzW70ewL4GosIaq
-         XDOEKT22NFW59yr3xPWeQ1cdxaw/nRwHRto4ui7YsJoTPU8qw+CmAb1W1aLEYpeIf2vu
-         AS4jFSVxRj+YyExlrT4fy8xScDTnSGTDM/fGm4xY+lVltJK7wohDoOQ+lC55++XzXN7d
-         WpogTdVM5EI657zwzenrpuSadyO6O5ql2i8nRrWw9GXzMCjdFbu0IXI6wrbvPvTD6Vg3
-         H9GQ==
-X-Gm-Message-State: AHQUAua41+JeRoLjjEMY3mkLepKbsQjbmM9iaMCsRgcoq2ZoH/JxwxKy
-        /1yjZhTXkLRjI7D3eJCDWw==
-X-Google-Smtp-Source: AHgI3IY5TG3Z9EP68R9xnD7caOTWZlOc+FwnEu9lJPOMZgKlSDNrTR1qwhbn4mTnEhZftd2y09+ejQ==
-X-Received: by 2002:adf:ee82:: with SMTP id b2mr57625wro.185.1549917630648;
-        Mon, 11 Feb 2019 12:40:30 -0800 (PST)
-Received: from localhost ([95.238.120.247])
-        by smtp.gmail.com with ESMTPSA id e4sm10742811wrt.53.2019.02.11.12.40.29
+        bh=nmT5nD2I7+KtQoUhHdkWUj1QqpObX7iHadIUM12uKwc=;
+        b=NOtlIRJKlXgDLBmrCqqrgiMsl+j8Lo+07Vpb1BmtlhJ6hJlIaN6eClH1YIexxgiKnR
+         D4v03uSeYnnZBl5zHz5rN/nbzhevpx4UtrVR8tMQEp58FP5MxPcPbCjny93B/82ICPNr
+         WotQvaDv7dm9aUh7h9Llc4J3WDGmSF/y0EZqSTyNLfmhpjuQqMnt9ynSYAaPsD9fetX2
+         x+TEzZzW3KyrTvOE/bbakHc8mdf/jSN0oi6alVMmAZ3MAyJm9CTgvRjvcmYO85A5iDbP
+         SD0qCETjzg3Qtc+ZMlyWR+skNUca7Zj2nm2sBfzIU0kxpWSG+8Ut+Xw+xTKGTaqJ7GaP
+         FPBw==
+X-Gm-Message-State: AHQUAuYXQhl+KZYo1Sbd3ICN/kakb+QiU16yBO5d0A1Crk2rvJh2hzfS
+        rJpPBp9fwUy4oLtDV6jpYP8RsQ==
+X-Google-Smtp-Source: AHgI3IarME8mMwsDqp9azcXs3o7IJfhcXGKpA1KdQX8w0bLUJH9217uYklkSnkg2apnHfTrwcJGclg==
+X-Received: by 2002:a65:5243:: with SMTP id q3mr66002pgp.385.1549917650694;
+        Mon, 11 Feb 2019 12:40:50 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id m67sm19694020pfm.73.2019.02.11.12.40.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 12:40:30 -0800 (PST)
-Date:   Mon, 11 Feb 2019 21:40:29 +0100
-From:   Andrea Righi <righi.andrea@gmail.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] blkcg: prevent priority inversion problem during
- sync()
-Message-ID: <20190211204029.GB1520@xps-13>
-References: <20190209140749.GB1910@xps-13>
- <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
+        Mon, 11 Feb 2019 12:40:50 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gtINl-0000l1-L6; Mon, 11 Feb 2019 13:40:49 -0700
+Date:   Mon, 11 Feb 2019 13:40:49 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     ira.weiny@intel.com
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, netdev@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 0/3] Add gup fast + longterm and use it in HFI1
+Message-ID: <20190211204049.GB2771@ziepe.ca>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
+In-Reply-To: <20190211201643.7599-1-ira.weiny@intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:39:34AM -0500, Josef Bacik wrote:
-> On Sat, Feb 09, 2019 at 03:07:49PM +0100, Andrea Righi wrote:
-> > This is an attempt to mitigate the priority inversion problem of a
-> > high-priority blkcg issuing a sync() and being forced to wait the
-> > completion of all the writeback I/O generated by any other low-priority
-> > blkcg, causing massive latencies to processes that shouldn't be
-> > I/O-throttled at all.
-> > 
-> > The idea is to save a list of blkcg's that are waiting for writeback:
-> > every time a sync() is executed the current blkcg is added to the list.
-> > 
-> > Then, when I/O is throttled, if there's a blkcg waiting for writeback
-> > different than the current blkcg, no throttling is applied (we can
-> > probably refine this logic later, i.e., a better policy could be to
-> > adjust the throttling I/O rate using the blkcg with the highest speed
-> > from the list of waiters - priority inheritance, kinda).
-> > 
-> > This topic has been discussed here:
-> > https://lwn.net/ml/cgroups/20190118103127.325-1-righi.andrea@gmail.com/
-> > 
-> > But we didn't come up with any definitive solution.
-> > 
-> > This patch is not a definitive solution either, but it's an attempt to
-> > continue addressing this issue and handling the priority inversion
-> > problem with sync() in a better way.
-> > 
-> > Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+On Mon, Feb 11, 2019 at 12:16:40PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Talked with Tejun about this some and we agreed the following is probably the
-> best way forward
-
-First of all thanks for the update!
-
+> NOTE: This series depends on my clean up patch to remove the write parameter
+> from gup_fast_permitted()[1]
 > 
-> 1) Track the submitter of the wb work to the writeback code.
+> HFI1 uses get_user_pages_fast() due to it performance advantages.  Like RDMA,
+> HFI1 pages can be held for a significant time.  But get_user_pages_fast() does
+> not protect against mapping of FS DAX pages.
 
-Are we going to track the cgroup that originated the dirty pages (or
-maybe dirty inodes) or do you have any idea in particular?
+If HFI1 can use the _fast varient, can't all the general RDMA stuff
+use it too? 
 
-> 2) Sync() defaults to the root cg, and and it writes all the things as the root
->    cg.
+What is the guidance on when fast vs not fast should be use?
 
-OK.
-
-> 3) Add a flag to the cgroups that would make sync()'ers in that group only be
->    allowed to write out things that belong to its group.
-
-So, IIUC, when this flag is enabled a cgroup that is doing sync() would
-trigger the writeback of the pages that belong to that cgroup only and
-it waits only for these pages to be sync-ed, right? In this case
-writeback can still go at cgroup's speed.
-
-Instead when the flag is disabled, sync() would trigger writeback I/O
-globally, as usual, and it goes at full speed (root cgroup's speed).
-
-Am I understanding correctly?
-
-> 
-> This way we avoid the priority inversion of having things like systemd or random
-> logged in user doing sync() and having to wait, and we keep low prio cgroups
-> from causing big IO storms by syncing out stuff and getting upgraded to root
-> priority just to avoid the inversion.
-> 
-> Obviously by default we want this flag to be off since its such a big change,
-> but people/setups really worried about this behavior (Facebook for instance
-> would likely use this flag) can go ahead and set it and be sure we're getting
-> good isolation and still avoiding the priority inversion associated with running
-> sync from a high priority context.  Thanks,
-> 
-> Josef
-
-Thanks,
--Andrea
+Jason
