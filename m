@@ -2,87 +2,93 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371A6C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B38C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F266220855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rC23iQYo"
+	by mail.kernel.org (Postfix) with ESMTP id 3881021479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfBKDyS (ORCPT
+        id S1726796AbfBKD60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:54:18 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:38889 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfBKDyR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:54:17 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 02D86806A8;
-        Mon, 11 Feb 2019 16:54:15 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1549857255;
-        bh=nlIUaIN7SSb56zKhDUggf/vi13Ji6xlM/Rl46p5GXUQ=;
-        h=From:To:Cc:Subject:Date;
-        b=rC23iQYoREImjQtVOLCmIY0HZ2eo29Rfjf64B1tzPRdxztZ8dzNHkBue0R1ovf++5
-         H3o2RhGtjJrCjmYkpjpfa6mRyt9yrmTeVQii9r/+427UZ8177+LJpqVPwdWuuRLC6b
-         0WKRzucnn2XMoajqmhOFoRDPgB0axL++So/ddf2qoCBVo7nKYXwa1tkSIxhBlN8L34
-         /BydQj/yVjlPEGTsJy/3jWI9d93r+VPB8tfIPwZSdEKgYaxRaMCgi31GZAYl+nxNUt
-         qdjUbAzpmCYugcu1L8X/fwgkoBsxJICQ0TZoVoRdzisf7l3qyWtaf3re9W5Mw1lWuo
-         VIUTzy6++Feiw==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c60f1e70000>; Mon, 11 Feb 2019 16:54:15 +1300
-Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
-        by smtp (Postfix) with ESMTP id CD8B313EEB6;
-        Mon, 11 Feb 2019 16:54:14 +1300 (NZDT)
-Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
-        id C50143A09E6; Mon, 11 Feb 2019 16:54:14 +1300 (NZDT)
-From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     nicolas.dichtel@6wind.com,
-        Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-Subject: [PATCH net-next v3] ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
-Date:   Mon, 11 Feb 2019 16:54:11 +1300
-Message-Id: <20190211035412.29218-1-callum.sinclair@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.20.1
+        Sun, 10 Feb 2019 22:58:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50240 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726102AbfBKD6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 22:58:25 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9739888317;
+        Mon, 11 Feb 2019 03:58:25 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7030B611D1;
+        Mon, 11 Feb 2019 03:58:17 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 11:58:11 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 4/5] nvme-pci: simplify nvme_setup_irqs() via
+ .setup_affinity callback
+Message-ID: <20190211035810.GB8638@ming.t460p>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-5-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1902101731370.8784@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1902101731370.8784@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 03:58:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Created a way to clear the multicast forwarding cache on a socket
-without having to either remove the entries manually using the delete
-entry socket option or destroy and recreate the multicast socket.
+On Sun, Feb 10, 2019 at 05:39:20PM +0100, Thomas Gleixner wrote:
+> On Fri, 25 Jan 2019, Ming Lei wrote:
+> 
+> > Use the callback of .setup_affinity() to re-caculate number
+> > of queues, and build irqs affinity with help of irq_build_affinity().
+> > 
+> > Then nvme_setup_irqs() gets simplified a lot.
+> 
+> I'm pretty sure you can achieve the same by reworking the core code without
+> that callback.
 
-Calling the socket option MRT_FLUSH will allow any combination of the
-four flag options to be cleared.
+Could you share the idea a bit? As I mentioned, the re-distribution
+needs driver's knowledge.
 
-MRT_FLUSH_MFC will clear all non static mfc entries
-MRT_FLUSH_MFC_STATIC will clear all static mfc entries
-MRT_FLUSH_VIFS will clear all non static interfaces
-MRT_FLUSH_VIFS_STATIC will clear all static interfaces.
+>  
+> > +	/* Fill out vectors at the beginning that don't need affinity */
+> > +	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+> > +		cpumask_copy(&masks[curvec].mask, cpu_possible_mask);
+> 
+> cpu_possible_mask is wrong.  Why are you deliberately trying to make this
+> special? There is absolutely no reason to do so.
 
-Callum Sinclair (1):
-  ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
+It is just for avoiding to export 'irq_default_affinity'.
 
- include/uapi/linux/mroute.h  |  9 ++++-
- include/uapi/linux/mroute6.h |  9 ++++-
- net/ipv4/ipmr.c              | 73 ++++++++++++++++++++-------------
- net/ipv6/ip6mr.c             | 78 +++++++++++++++++++++++-------------
- 4 files changed, 112 insertions(+), 57 deletions(-)
+> 
+> These interrupts are not managed and therefore the initial affinity has to
+> be irq_default_affinity. Setting them to cpu_possible_mask can and probably
+> will evade a well thought out default affinity mask, which was set to
+> isolate a set of cores from general purpose interrupts.
+> 
+> This is exactly the thing which happens with driver special stuff and which
+> needs to be avoided. There is nothing special about this NVME setup and
+> yes, I can see why the current core code is a bit tedious to work with, but
+> that does not justify that extra driver magic by any means.
 
---=20
-2.20.1
+OK, thanks for your explanation.
 
+Thanks,
+Ming
