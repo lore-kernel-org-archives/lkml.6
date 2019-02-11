@@ -2,114 +2,135 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5262AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5201C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E6421A49
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:52:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5HQw67b"
+	by mail.kernel.org (Postfix) with ESMTP id B334A21A49
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfBKLwr (ORCPT
+        id S1727118AbfBKLxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 06:52:47 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35656 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbfBKLwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 06:52:47 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so5216090plo.2;
-        Mon, 11 Feb 2019 03:52:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bLRKQrsaNLy1Dh5l353LDKWm7bimiixlTL8gv5L3/P0=;
-        b=K5HQw67bJ7qNRDTh7g5Gm9dyuo02nO3XPvrATBhxGUKeR7Jpje39zW1zvqBkHms89u
-         HPmOTckHbaBJ9MTYxKogckuKf8b6Ed9jt9jr0/m5DOkV1mLTGxty1EotI+0BHMpZDJk/
-         hWnxPw/aUi37TSRumZ6EE2UAjrk/bPy+My0KL3DElHrEpIaww8+oARxhRUQgphfplLF3
-         iRI6wxzX74jH5iAVDtmA/dYvyu639yxXOdF8/sW+l69jot1llbK/c2Gj9ZMC6sf0eCUc
-         MpZQ6jANC7s8tH2QvZG1Zf2+YiaYlYOUevceARFflqokGEYcGvsqxDSEn7hr8IiEPp5I
-         vZxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bLRKQrsaNLy1Dh5l353LDKWm7bimiixlTL8gv5L3/P0=;
-        b=fFCpJFWog9e+8XTzOqghQ4q854JDM8izAHGA3QhKZbqZ/JjgU4BpRydJidb08Zv0IZ
-         D0HNRnL0uHEjjO/g7CSL0xARoO54PvMC/shlnNqT8aWfh8LaYiLs2xNGPykB/krvlxzm
-         8CsKE7pdZlBKsxRDnlCu1JNNEk5HcUOStgXfzJvcl9TBtuOsdfCFMKcZC+N8a8EAzkx9
-         Em7HAMIltrH25Dfk0cOkSbECm/ywszee79yjF0pdzExPSRN0xgj6HpEqr18MeIE7b6b8
-         rC9QHgqguy/mZnNjFdrr36OL28P6gLqN9RnDEIMEPbqoY6HJSqnvxmyCF2tuxkI4iCRO
-         Krjw==
-X-Gm-Message-State: AHQUAubUmJ9vkKNpyixH72SSdXECONovrTVN+dHEUVplc0+YuMIBV7fA
-        ZfBRwLMTcON67QS6LqfpJ8eEMJtddlLjJrOrZyA=
-X-Google-Smtp-Source: AHgI3IY/DU8R04w8kLli7QbWaR9nFBsjmQugSa6b0PaOUYik1S/9Z1Lb7753CqEyYefUofg/VEenmft+C+jq4ENLoYY=
-X-Received: by 2002:a17:902:2468:: with SMTP id m37mr37083584plg.314.1549885966484;
- Mon, 11 Feb 2019 03:52:46 -0800 (PST)
+        Mon, 11 Feb 2019 06:53:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46256 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbfBKLxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 06:53:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDBE380D;
+        Mon, 11 Feb 2019 03:53:01 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7B8C3F557;
+        Mon, 11 Feb 2019 03:52:59 -0800 (PST)
+Subject: Re: [PATCH] arm64/io: Don't use WZR in writel
+To:     Will Deacon <will.deacon@arm.com>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+References: <68b71c15f32341468a868f6418e4fcb375bc49ba.camel@gmail.com>
+ <20190211105755.GB30880@fuggles.cambridge.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <38d8965a-cd41-17cf-1b95-8dd58c079be4@arm.com>
+Date:   Mon, 11 Feb 2019 11:52:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
- <20190130160259.46919-8-heikki.krogerus@linux.intel.com> <CAHp75Vdq+T4vKsihhUJjV85-mkWfY2G=npJLPaGiGjbzD_m32w@mail.gmail.com>
- <20190131133537.GA13072@kuha.fi.intel.com> <20190211083929.GD16987@kuha.fi.intel.com>
-In-Reply-To: <20190211083929.GD16987@kuha.fi.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 11 Feb 2019 13:52:35 +0200
-Message-ID: <CAHp75VeP6aoiaERWdFJkNyGRwSVJqj_BBg6Tc4+aMjRNYff-MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] usb: typec: Find the ports by also matching
- against the device node
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190211105755.GB30880@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:39 AM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
-> On Thu, Jan 31, 2019 at 03:35:37PM +0200, Heikki Krogerus wrote:
-> > On Wed, Jan 30, 2019 at 06:51:56PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Jan 30, 2019 at 6:03 PM Heikki Krogerus
-> > > <heikki.krogerus@linux.intel.com> wrote:
-> > > >
-> > > > When the connections are defined in firmware, struct
-> > > > device_connection will have the fwnode member pointing to
-> > > > the device node (struct fwnode_handle) of the requested
-> > > > device, and the endpoint will not be used at all in that
-> > > > case.
-> > >
-> > > > +       /*
-> > > > +        * FIXME: Check does the fwnode supports the requested SVID. If it does
-> > > > +        * we need to return ERR_PTR(-PROBE_DEFER) when there is no device.
-> > > > +        */
-> > > > +       if (con->fwnode)
-> > > > +               return class_find_device(typec_class, NULL, con->fwnode,
-> > > > +                                        typec_port_fwnode_match);
-> > > > +
-> > > > +       dev = class_find_device(typec_class, NULL, con->endpoint[ep],
-> > > > +                               typec_port_name_match);
-> > > > +
-> > > > +       return dev ? dev : ERR_PTR(-EPROBE_DEFER);
-> > >
-> > > Just  to be clear, this one takes a reference on dev. Is it taken into account?
-> >
-> > Yes. That is what we want it to do.
->
-> Gentle ping. Is the series OK?
+On 11/02/2019 10:57, Will Deacon wrote:
+> On Sat, Feb 09, 2019 at 07:34:53PM +0100, AngeloGioacchino Del Regno wrote:
+>> From 33fb6d036de273bb71ac1c67d7a91b7a5148e659 Mon Sep 17 00:00:00 2001
+>> From: "Angelo G. Del Regno" <kholk11@gmail.com>
+>> Date: Sat, 9 Feb 2019 18:56:46 +0100
+>> Subject: [PATCH] arm64/io: Don't use WZR in writel
+>>
+>> This is a partial revert of commit ee5e41b5f21a
+>> ("arm64/io: Allow I/O writes to use {W,X}ZR")
+>>
+>> When we try to use the zero register directly on some SoCs,
+>> their security will make them freeze due to a firmware bug.>> This behavior is seen with the arm-smmu driver freezing on
+>> TLBI and TLBSYNC on MSM8996, MSM8998, SDM630, SDM660.
 
-From my prospective it's okay, so, FWIW
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+This looks similar to the issue these SoCs have with GICv3, worked
+around in 9c8114c20d18.
 
+> Hmm, this sounds very fragile. I hope they're not trapping and emulating
+> MMIO accesses and treating the zero register as the stack pointer...
 
--- 
-With Best Regards,
-Andy Shevchenko
+I bet this is the case. The same bug was there in both KVM and Xen. The
+only difference is that we fixed it back in December 2015 (at least for
+KVM), while some of these SoCs were announced in 2017, and are still
+shipping. Great stuff.
+
+> 
+> Wouldn't this also be triggerable from userspace by mmap()ing either
+> /dev/mem or e.g. a PCI bar via sysfs?
+> 
+>> Allocating a temporary register to store the zero for the
+>> write actually solves the issue on these SoCs.
+> 
+> I don't think this catches all MMIO accesses, so I think we need to
+> understand more about the actual issue here. For example, is it only the
+> SMMU that causes this problem? Also, any workaround should be specific to
+> the broken SoCs.
+
+Also, nothing would prevent a compiler from generating these accesses.
+
+	M.
+
+Jazz is not dead. It just smells funny...
