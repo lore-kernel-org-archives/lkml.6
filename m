@@ -2,96 +2,141 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD710C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000C3C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD0020823
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2CA42173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549874746;
-	bh=aNjOHNDg94ZkKvA1xr9xCksj4QuuBPIf/hPN1+P9Vu4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DxS8BdmpCHC3/HYilp1rYzrjwueHxkj+jvS/Q3EFkCKpqii3i19MJKF0uNXhtlzS4
-	 cMr5bvLC1R+zKW2uLmnUGsTQATOTY37dmDyeDMcPo0srVgV98GRN2rL9qRhd3fAPD0
-	 DgXOrpgQvSfGzaTWwpbl9x+UP5dar49F4sXntzW0=
+	s=default; t=1549874750;
+	bh=Qfkz17n6olhrae+s/cFWU755MEEZiKxaLHZ1EVMeOQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=K+UI6QxgMwbv9+/aJTn9w1iuZmw+S2D2rZxLrXuB+mKNj/ls5KQ2GG72wg9FAm622
+	 bKmpuQ04hQjLH4AiVDJh7xNFJHSb1D/Bf24NR/B7AqYvufV6pNva2xDdb7zi7O3Spl
+	 HRwSCJ2OwBxWg0Nmz6DmDeRELITXam2oE8Ia/RW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfBKIpp (ORCPT
+        id S1727216AbfBKIpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:45:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKIpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:45:44 -0500
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98FF52173C;
-        Mon, 11 Feb 2019 08:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549874743;
-        bh=aNjOHNDg94ZkKvA1xr9xCksj4QuuBPIf/hPN1+P9Vu4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wX2AA0uS56qLBfOdFDt+r/4X2GOU8Vf/rOr7bs38Pasr2nOruy3VQ5TXmUl9oDrOM
-         xPF/hDpnw4A/dv11LaXtqMxLPDcDgg5h4y4hJDMpf+mMn1LNA2oSxf/Ord6SlnNjiI
-         VzQASpXz0W9d+Dojai2X79ALMYO3rKescBCL18TY=
-Received: by mail-lj1-f179.google.com with SMTP id r10-v6so8027583ljj.4;
-        Mon, 11 Feb 2019 00:45:43 -0800 (PST)
-X-Gm-Message-State: AHQUAuaXy6v3CXGFfq+Zq5DNcqlJ90CPetNwKv52rArPyaN6CaDcisrg
-        Qq6DRWMf22F/gdN5N8+FeZUGQv5B9CsMlrDlOVI=
-X-Google-Smtp-Source: AHgI3IbzeKeYkKpuAfCg0dy/z/dT38QKh18bso1sBal8m+g0p0o2lxo+lLo4eccrdIB8UXtjJABSI3/qlbQRij3PWoQ=
-X-Received: by 2002:a2e:81da:: with SMTP id s26-v6mr21000889ljg.183.1549874741764;
- Mon, 11 Feb 2019 00:45:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
-In-Reply-To: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 09:45:30 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPe+G_gPNLQcaE5kvXFLFzhXo538w8-34k3gcK7yNL8txA@mail.gmail.com>
-Message-ID: <CAJKOXPe+G_gPNLQcaE5kvXFLFzhXo538w8-34k3gcK7yNL8txA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear
- timer interrupt when shutting down
-To:     Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc:     "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mon, 11 Feb 2019 03:45:49 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35418 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKIps (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:45:48 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t200so15474417wmt.0;
+        Mon, 11 Feb 2019 00:45:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JRKy4taTM4QJQjspOqNaz3J3mz7heehQq3+CMjxazpA=;
+        b=iv5HMlQ2DpMdOzv0QI3PLiYoKWwIwj7oXeURqfwv0AArKgg9ywNweDFLYTEBkt3mTf
+         osOVORBVxup0DtIy7VjcbTp0oQDyzR6Y1FggPfw72TmGnZOK1HKgE+qNIEgjUemY+lsb
+         F/yuuwaCYix0D1sY+XPlXNiCTgIyaH+I4hlNTiuyzkoTHblXVmWmvrmuoCPaeopvIdYg
+         xQ90uxr9GYXkVCugzPjgRGPeYqDZYZeS+gEFbVdaMXurdeM9HWYx/vIZfWfncUzTEhHE
+         F+8j7QSFl4M9gFE6v9ENOqNfnjMmcHrx+dFh7hSJqIDEIryWUlQueOXLcDaicy4sSXTk
+         t43A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JRKy4taTM4QJQjspOqNaz3J3mz7heehQq3+CMjxazpA=;
+        b=M8Xk6cFAM3uAl72TNuxmwDaYGFJGl7QtkzWG4N1SyXLVa+geKp2YNxIuQJ4UVeMy24
+         BFIBUenuL1NdajoSaJu7pi2aYW36k2EsX9vBEouLOpd4eghfjCF9GlMBpkP/vk3hSxFe
+         46M2o12EygKhqiUb9R97OyRtOXz+Prqre2rqarq2DRZmgECShmean/6JndRI76NFt7cx
+         N/I5sYCceRwVEIFeUgR+TcYF6uUcykwU6VUOHYOKuk8LawI1aWPI255C8A3VbkxMtbhI
+         fDOou8M6dy48t+JQy3jf7bN4lwES3304YB3Cu+haeixZCcGyankNA+Ddcyc6ZvSwy2F3
+         q1Xw==
+X-Gm-Message-State: AHQUAuZqizFPVYEG5WnlyFaEF3yySOQq1xMWyyLzSYqSPPJkjsDC7rtj
+        AKRx8V7yFQO6ndxtsFaS6VA=
+X-Google-Smtp-Source: AHgI3Iboi/ErRzZ8eJyqL8hYEviuk0egC4q3NLhWiyjRmYDYaTAxnWKpYGQ+DKP64BzTn9a+3lfSzg==
+X-Received: by 2002:a1c:7312:: with SMTP id d18mr7424716wmb.24.1549874746100;
+        Mon, 11 Feb 2019 00:45:46 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z18sm10362027wml.36.2019.02.11.00.45.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 00:45:45 -0800 (PST)
+Date:   Mon, 11 Feb 2019 09:45:43 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests/x86/fsgsbase: Indirect output through a
+ wrapper function
+Message-ID: <20190211084543.GA62722@gmail.com>
+References: <20190203134017.9375-1-broonie@kernel.org>
+ <20190203134017.9375-2-broonie@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190203134017.9375-2-broonie@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Feb 2019 at 23:51, Stuart Menefy
-<stuart.menefy@mathembedded.com> wrote:
->
-> When debugging suspend problems on Exynos 5260, I had a large number
-> of debugging prints going to the serial port after interrupts
-> had been disabled but before the timer interrupt was shutdown. This
-> was long enough for a timer tick to occur, but as interrupts were
-> disabled the ISR didn't run, and so the interrupt wasn't cleared.
-> Later when the timer was shutdown the interrupt was left asserted and
-> so the wfi at the heart of the suspend code didn't wait, causing
-> the suspend to fail.
->
-> Currently the code which stops the timer when it is on one-shot mode
-> and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
-> called this from the shutdown code exynos4_mct_tick_stop() could be
-> called twice. So first restructure the existing code, so the check for
-> one-shot mode and stopping the timer is moved to the ISR, leaving
-> exynos4_mct_tick_clear() just clearing the interrupt flag.
->
-> Once this has been done simply call exynos4_mct_tick_clear() from
-> set_state_shutdown().
 
-For sending the corrected version. This is second revision of the
-patchset so please remember to add v2 to the title and changelog in
-cover letter. v2 can be easily added with format-patch (-v2).
+* Mark Brown <broonie@kernel.org> wrote:
 
-Best regards,
-Krzysztof
+> In preparation for a change to make this test run repeatedly which
+> would generate huge amounts of output as is indirect all the printf()
+> calls in the program through a wrapper and add a quiet flag which can
+> be used to suppress the output.  This is fairly quick and dirty, I'm not
+> 100% sure what would be idiomatic here.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/x86/fsgsbase.c | 52 ++++++++++++++++----------
+>  1 file changed, 32 insertions(+), 20 deletions(-)
+
+So this really loses useful output when there is a failure. After this 
+patch I get:
+
+  dagon:~/tip/tools/testing/selftests/x86> ./fsgsbase_64 -vv
+  [FAIL] 24 errors detected in 1 tries
+
+Not very helpful, and no real command-line way to see the failures.
+
+While previously it would tell me what's going on:
+
+ dagon:~/tip/tools/testing/selftests/x86> ./fsgsbase_64  | grep FAIL
+ [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
+ [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
+ [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
+ [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
+
+So I believe at least failure messages need to be preserved.
+
+Thanks,
+
+	Ingo
