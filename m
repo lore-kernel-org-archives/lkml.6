@@ -2,184 +2,129 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF2EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47369C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D5720863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1452320863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="WNhfxihI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBKKsT (ORCPT
+        id S1727019AbfBKKs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:48:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58491 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfBKKsS (ORCPT
+        Mon, 11 Feb 2019 05:48:28 -0500
+Received: from rcdn-iport-4.cisco.com ([173.37.86.75]:20863 "EHLO
+        rcdn-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbfBKKs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:48:18 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BAm7Un3498438
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 11 Feb 2019 02:48:07 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BAm6op3498435;
-        Mon, 11 Feb 2019 02:48:06 -0800
-Date:   Mon, 11 Feb 2019 02:48:06 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-039ae8bcf7a5f4476f4487e6bf816885fb3fb617@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
-        vincent.guittot@linaro.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
-          vincent.guittot@linaro.org, torvalds@linux-foundation.org,
-          mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1549469662-13614-3-git-send-email-vincent.guittot@linaro.org>
-References: <1549469662-13614-3-git-send-email-vincent.guittot@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Fix O(nr_cgroups) in the load
- balancing path
-Git-Commit-ID: 039ae8bcf7a5f4476f4487e6bf816885fb3fb617
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Feb 2019 05:48:28 -0500
+X-Greylist: delayed 572 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 05:48:27 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1566; q=dns/txt; s=iport;
+  t=1549882107; x=1551091707;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=Yjaet96agtBDFV0rdr3iPLaMDx/7V0zcF1VNSs0/h8k=;
+  b=WNhfxihIIIuui08Bs1HFreFMGbJdTGgtRenFsph/RnkGNXSDoER+YMPS
+   kETdv+JLYJlMmIHt2pQT3572HCP/3Ei5CfnQ15AMTyPMKz/fXVLypUCGe
+   8JoPttKSgp3JS403AzFWps3GK1h4uCncdMHFblBciVcxESWgnR3AMQTRm
+   U=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAABnUGFc/5BdJa1jGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA4FqJwqMFIttgg2CYYZJjmmBewsBAYRsgz0?=
+ =?us-ascii?q?iNAkNAQMBAQIBAQJtKIVLAQUnEzQLEAIBCA4KHhAyJQIEAQ0FCIUGAxWqJTO?=
+ =?us-ascii?q?KJ4xDF4FAP4QjgleCKoVgAoltmH8zCQKPFIMyIYFthUuLKIozhmmKeQIRFIE?=
+ =?us-ascii?q?nHziBVnAVgyeCKBeOHkExi0OBHwEB?=
+X-IronPort-AV: E=Sophos;i="5.58,358,1544486400"; 
+   d="scan'208";a="515938707"
+Received: from rcdn-core-8.cisco.com ([173.37.93.144])
+  by rcdn-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:38:54 +0000
+Received: from XCH-ALN-015.cisco.com (xch-aln-015.cisco.com [173.36.7.25])
+        by rcdn-core-8.cisco.com (8.15.2/8.15.2) with ESMTPS id x1BAcsjq016723
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 10:38:54 GMT
+Received: from xch-aln-012.cisco.com (173.36.7.22) by XCH-ALN-015.cisco.com
+ (173.36.7.25) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
+ 2019 04:38:54 -0600
+Received: from xch-aln-012.cisco.com ([173.36.7.22]) by XCH-ALN-012.cisco.com
+ ([173.36.7.22]) with mapi id 15.00.1395.000; Mon, 11 Feb 2019 04:38:53 -0600
+From:   "Hans Verkuil (hansverk)" <hansverk@cisco.com>
+To:     Wen Yang <yellowriver2010@hotmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] media: cec-notifier: fix possible object reference
+ leak
+Thread-Topic: [PATCH 1/4] media: cec-notifier: fix possible object reference
+ leak
+Thread-Index: AQHUwCH951ryS7AxYU2IkMLJINPqbQ==
+Date:   Mon, 11 Feb 2019 10:38:53 +0000
+Message-ID: <3ed515b78a404ec4a22b5f69ed9d6e28@XCH-ALN-012.cisco.com>
+References: <HK0PR02MB363461179B3A702DB9CAEC55B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.61.175.13]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Outbound-SMTP-Client: 173.36.7.25, xch-aln-015.cisco.com
+X-Outbound-Node: rcdn-core-8.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  039ae8bcf7a5f4476f4487e6bf816885fb3fb617
-Gitweb:     https://git.kernel.org/tip/039ae8bcf7a5f4476f4487e6bf816885fb3fb617
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Wed, 6 Feb 2019 17:14:22 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Feb 2019 08:02:13 +0100
-
-sched/fair: Fix O(nr_cgroups) in the load balancing path
-
-This re-applies the commit reverted here:
-
-  commit c40f7d74c741 ("sched/fair: Fix infinite loop in update_blocked_averages() by reverting a9e7f6544b9c")
-
-I.e. now that cfs_rq can be safely removed/added in the list, we can re-apply:
-
- commit a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
-
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: sargun@sargun.me
-Cc: tj@kernel.org
-Cc: xiexiuqi@huawei.com
-Cc: xiezhipeng1@huawei.com
-Link: https://lkml.kernel.org/r/1549469662-13614-3-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 43 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 34 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 027f8e1b5b66..17a961522d1e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -368,9 +368,10 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
- 	SCHED_WARN_ON(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list);
- }
- 
--/* Iterate through all cfs_rq's on a runqueue in bottom-up order */
--#define for_each_leaf_cfs_rq(rq, cfs_rq) \
--	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
-+/* Iterate thr' all leaf cfs_rq's on a runqueue */
-+#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
-+	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
-+				 leaf_cfs_rq_list)
- 
- /* Do the two (enqueued) entities belong to the same group ? */
- static inline struct cfs_rq *
-@@ -461,8 +462,8 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
- {
- }
- 
--#define for_each_leaf_cfs_rq(rq, cfs_rq)	\
--		for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
-+#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
-+		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
- 
- static inline struct sched_entity *parent_entity(struct sched_entity *se)
- {
-@@ -7702,10 +7703,27 @@ static inline bool others_have_blocked(struct rq *rq)
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 
-+static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
-+{
-+	if (cfs_rq->load.weight)
-+		return false;
-+
-+	if (cfs_rq->avg.load_sum)
-+		return false;
-+
-+	if (cfs_rq->avg.util_sum)
-+		return false;
-+
-+	if (cfs_rq->avg.runnable_load_sum)
-+		return false;
-+
-+	return true;
-+}
-+
- static void update_blocked_averages(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
--	struct cfs_rq *cfs_rq;
-+	struct cfs_rq *cfs_rq, *pos;
- 	const struct sched_class *curr_class;
- 	struct rq_flags rf;
- 	bool done = true;
-@@ -7717,7 +7735,7 @@ static void update_blocked_averages(int cpu)
- 	 * Iterates the task_group tree in a bottom up fashion, see
- 	 * list_add_leaf_cfs_rq() for details.
- 	 */
--	for_each_leaf_cfs_rq(rq, cfs_rq) {
-+	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
- 		struct sched_entity *se;
- 
- 		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq))
-@@ -7728,6 +7746,13 @@ static void update_blocked_averages(int cpu)
- 		if (se && !skip_blocked_update(se))
- 			update_load_avg(cfs_rq_of(se), se, 0);
- 
-+		/*
-+		 * There can be a lot of idle CPU cgroups.  Don't let fully
-+		 * decayed cfs_rqs linger on the list.
-+		 */
-+		if (cfs_rq_is_decayed(cfs_rq))
-+			list_del_leaf_cfs_rq(cfs_rq);
-+
- 		/* Don't need periodic decay once load/util_avg are null */
- 		if (cfs_rq_has_blocked(cfs_rq))
- 			done = false;
-@@ -10609,10 +10634,10 @@ const struct sched_class fair_sched_class = {
- #ifdef CONFIG_SCHED_DEBUG
- void print_cfs_stats(struct seq_file *m, int cpu)
- {
--	struct cfs_rq *cfs_rq;
-+	struct cfs_rq *cfs_rq, *pos;
- 
- 	rcu_read_lock();
--	for_each_leaf_cfs_rq(cpu_rq(cpu), cfs_rq)
-+	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
- 		print_cfs_rq(m, cpu, cfs_rq);
- 	rcu_read_unlock();
- }
+On 09/02/2019 03:48, Wen Yang wrote:=0A=
+> put_device() should be called in cec_notifier_release(),=0A=
+> since the dev is being passed down to cec_notifier_get_conn(),=0A=
+> which holds reference. On cec_notifier destruction, it=0A=
+> should drop the reference to the device.=0A=
+> =0A=
+> Fixes: 6917a7b77413 ("[media] media: add CEC notifier support")=0A=
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>=0A=
+> ---=0A=
+>  drivers/media/cec/cec-notifier.c | 1 +=0A=
+>  1 file changed, 1 insertion(+)=0A=
+> =0A=
+> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-not=
+ifier.c=0A=
+> index dd2078b..621d4ae 100644=0A=
+> --- a/drivers/media/cec/cec-notifier.c=0A=
+> +++ b/drivers/media/cec/cec-notifier.c=0A=
+> @@ -66,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)=0A=
+>  		container_of(kref, struct cec_notifier, kref);=0A=
+>  =0A=
+>  	list_del(&n->head);=0A=
+> +	put_device(n->dev);=0A=
+>  	kfree(n->conn);=0A=
+>  	kfree(n);=0A=
+>  }=0A=
+> =0A=
+=0A=
+Sorry, no. The dev pointer is just a search key that the notifier code look=
+s=0A=
+for. It is not the notifier's responsibility to take a reference, that woul=
+d=0A=
+be the responsibility of the hdmi and cec drivers.=0A=
+=0A=
+If you can demonstrate that there is an object reference leak, then please=
+=0A=
+provide the details: it is likely a bug elsewhere and not in the notifier=
+=0A=
+code.=0A=
+=0A=
+BTW, your patch series didn't arrive on the linux-media mailinglist for=0A=
+some reason.=0A=
+=0A=
+Regards,=0A=
+=0A=
+	Hans=0A=
