@@ -1,147 +1,99 @@
 Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52B3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93743C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B9B222AA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D62A222AC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549892991;
-	bh=AKkS36lH1paxJiK/GEwJDWufneUPwfbNc7PQw0AXkbM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=k+V5GVcyh2r/PrYMB0CR4ZK76Qg3ya3uHdAX+zQf7FjHUNQK9lQ2IL77PTrJNGdmg
-	 tWrJY3tak0MDSB0vsn+7H3gaaqzDGrtNG77ZvV9ALxzk7J8kpcLxIjLhOdPLiW8oQ4
-	 7CaDGWnYr+J2274J1RR75HTcbwyZQKUoxGa7srdw=
+	s=default; t=1549893063;
+	bh=irJEMI34d+DDeIUnQE3jZfUAzy8S7XQTsuN9qFZX3rA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wf9iLfhvPCukgG5U9pA93zFVhIjgcFuDRQnwQLL2vTZi9z6bAqj0Ci0y54WAJDkj6
+	 HM9Qoo2sXmnDzwZPWJUr602nLH6akpg0+GCOdPMHnfHx5NoBApo/ka9EEU2FqCaCLF
+	 yT7ZRaRkrFhRcoCZsZjWCw/61UF09oB5yzcCEyE8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbfBKNtu (ORCPT
+        id S1728213AbfBKNvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:49:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728010AbfBKNtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:49:49 -0500
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35701222AA;
-        Mon, 11 Feb 2019 13:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549892988;
-        bh=AKkS36lH1paxJiK/GEwJDWufneUPwfbNc7PQw0AXkbM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=co1Frrhvh1Dm4h60iIb7/oEisWn0q0RKmuU2HeR7vltoZvTf4/BN3oDtAgK01snyz
-         GwlrW2MRA8XceUQJ6IXM5rJ3yNk2C6iUWROwam94dEQQ4X/y4Z2kxAmJSe/JVcgCBe
-         rn9mPNM0PyaojqMJABL4zeda1LSA7Kl6fkEakv8k=
-Received: by mail-lj1-f169.google.com with SMTP id z25-v6so8784724ljk.7;
-        Mon, 11 Feb 2019 05:49:48 -0800 (PST)
-X-Gm-Message-State: AHQUAubb/x4Sio/dTd1go4S9RB44CMx3VVhffrHwtagUSg79XsOG6lFE
-        Jqp30uRvcXUiaAdznAJ7B7SSZRx8m+xVTJWuOvE=
-X-Google-Smtp-Source: AHgI3IYZABqg+rE+90eHN6Xanvlf3LqVsluqcq3RPmG+ZIp6pxAxKvzNJlgP9S7d8J2vK7diCTyWuVzLoCSaglk5G4s=
-X-Received: by 2002:a2e:80cf:: with SMTP id r15-v6mr549629ljg.183.1549892986399;
- Mon, 11 Feb 2019 05:49:46 -0800 (PST)
+        Mon, 11 Feb 2019 08:51:01 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34805 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727705AbfBKNvB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:51:01 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so14634375wmd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 05:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tyuBF5omOjOWP2Wg1s+y5HPB2qWLu+Z4sR2RDbDp6C0=;
+        b=E/qjRiFxxjEFV0iY483YKbTXkYap9oCjJnefj58oZ5S4/fLnuvJalatMMTzmq2VTCi
+         vNppwIvF2FstC1LWaLxc+GFa+YVR5cA4FQn42SWFc/gizkA4vwB9oe3pUvDOakuB/CeZ
+         05DC5EwMxAppcNTBzz/gSihGVy7DRQSDXkNdeuwzTtnmCJNeVKPf2n4sD+wLIR7LhBBZ
+         DUL/Rsu6sbM5wNp2DoC8EPEDpYTc/O0W+4xGPnZz7lF7ovBrPj89kJN1ExnFWVeVB102
+         XwVQ+rq2uvRHHQrp1gPpgltNspTU3e3W1fJ1K32X4PZuvESO66aeuMFDBYRkOBZzQRVR
+         rhhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tyuBF5omOjOWP2Wg1s+y5HPB2qWLu+Z4sR2RDbDp6C0=;
+        b=bMB+buH/s0AbgbdoRxZoS+oLxVwpl9uYR14iXTwJzIR+65CGZw3TLpw6CoW3/F8Jsh
+         Wc9sWE/pY3+PPbRFzrOLDroSqhrAj2vbUh3PssZW5viVKAZM1FaC26gm21CKvTGr8ddV
+         YjOIWZblk9JREJxcbI7qT/DnLN1QicJBgUQz4LymQnA7pFhlcq8V3EcSTmB/bu85EK8D
+         sFP4DkFUkw3CTpHkmaG6IKjNvlbu5paXw8atRHD2PNVIvXQzwWI6+tub9SVa5aRtm4uT
+         QAnNQmgDSzKQyXt+eJASUO3vk3uPatnVf7bC2Kx/3ltxrSzNtf7bfbPpu+SZ9/AS5Zd+
+         0EAg==
+X-Gm-Message-State: AHQUAuZcoHok6ia60j7suVzPg5YIthpRX0T4KZocGApHXnHr7dM7w4P1
+        bCr4B1RaFAAj7KULU+4Mz8U=
+X-Google-Smtp-Source: AHgI3IZ5OtgUzJ2QSzjS9QRsKa8dPUexXV8yeFeGr4ImpwuEdK0WRAUNskx/H9bsNvvAXMO97IDwcQ==
+X-Received: by 2002:a1c:7016:: with SMTP id l22mr10137552wmc.70.1549893059421;
+        Mon, 11 Feb 2019 05:50:59 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id l12sm6865936wrt.87.2019.02.11.05.50.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 05:50:58 -0800 (PST)
+Date:   Mon, 11 Feb 2019 14:50:56 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>
+Subject: Re: [PATCH v2 0/9] kprobes: Fix and improve blacklist symbols
+Message-ID: <20190211135056.GA36142@gmail.com>
+References: <154725993986.18060.2759150647140353514.stgit@devbox>
+ <20190114111810.79016d7d@gandalf.local.home>
+ <20190201223153.0ccdf06378ac953eb2651ea9@kernel.org>
 MIME-Version: 1.0
-References: <CGME20190207170138epcas2p31134b2beee877922d27fab5c79fdc7b1@epcas2p3.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-16-s.nawrocki@samsung.com>
-In-Reply-To: <20190207170028.720-16-s.nawrocki@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 14:49:34 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPf1P3zH6b+uRMWEvcPL0K6Ufsgb4S5ZH6ndAHDiDFyiqQ@mail.gmail.com>
-Message-ID: <CAJKOXPf1P3zH6b+uRMWEvcPL0K6Ufsgb4S5ZH6ndAHDiDFyiqQ@mail.gmail.com>
-Subject: Re: [PATCH 15/22] ASoC: samsung: i2s: Move quirks data to common
- driver data structure
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201223153.0ccdf06378ac953eb2651ea9@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> The quirk flags are common for the primary and the secondary DAI
-> so move respective field from struct i2s_dai to common driver data
-> structure.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c | 36 ++++++++++++++----------------------
->  1 file changed, 14 insertions(+), 22 deletions(-)
->
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 6ea0f0050fc8..e11d678e9c1f 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -84,7 +84,6 @@ struct i2s_dai {
->         struct snd_dmaengine_dai_dma_data dma_capture;
->         struct snd_dmaengine_dai_dma_data idma_playback;
->         dma_filter_fn filter;
-> -       u32     quirks;
->
->         struct samsung_i2s_priv *priv;
->  };
-> @@ -122,19 +121,13 @@ struct samsung_i2s_priv {
->         u32 suspend_i2spsr;
->
->         const struct samsung_i2s_variant_regs *variant_regs;
-> +       u32 quirks;
->
->         /* The clock provider's data */
->         struct clk *clk_table[3];
->         struct clk_onecell_data clk_data;
->  };
->
-> -struct i2s_dai *samsung_i2s_get_pri_dai(struct device *dev)
-> -{
-> -       struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
-> -
-> -       return &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
-> -}
-> -
->  /* Returns true if this is the 'overlay' stereo DAI */
->  static inline bool is_secondary(struct i2s_dai *i2s)
->  {
-> @@ -343,7 +336,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
->  {
->         struct samsung_i2s_priv *priv = i2s->priv;
->         u32 mod = readl(priv->addr + I2SMOD);
-> -       int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-> +       int tdm = priv->quirks & QUIRK_SUPPORTS_TDM;
->         int bfs_shift = priv->variant_regs->bfs_off;
->
->         /* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-> @@ -563,7 +556,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
->         case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
->                 mask = 1 << i2s_regs->rclksrc_off;
->
-> -               if ((i2s->quirks & QUIRK_NO_MUXPSR)
-> +               if ((priv->quirks & QUIRK_NO_MUXPSR)
->                                 || (clk_id == SAMSUNG_I2S_RCLKSRC_0))
->                         clk_id = 0;
->                 else
-> @@ -830,8 +823,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
->
->  /* We set constraints on the substream acc to the version of I2S */
->  static int i2s_startup(struct snd_pcm_substream *substream,
-> -         struct snd_soc_dai *dai)
-> +       struct snd_soc_dai *dai)
 
-This change looks unrelated.
+* Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-For the rest:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Hi Ingo,
+> 
+> Can I ask you to pick this series and Andrea's patch?
+> Or would I better update this series on the latest tip/master?
 
-Best regards,
-Krzysztof
+Yeah, an updated series with Andrea's patch included, against latest 
+-tip, would be nice.
+
+Thanks!
+
+	Ingo
