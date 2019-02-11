@@ -2,81 +2,108 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22260C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDABC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01AD20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7391320838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfBKLgO (ORCPT
+        id S1727059AbfBKLh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 06:36:14 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3279 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726041AbfBKLgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 06:36:13 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AE710AE27DC14EEF17B9;
-        Mon, 11 Feb 2019 19:36:08 +0800 (CST)
-Received: from [127.0.0.1] (10.74.219.194) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Mon, 11 Feb 2019
- 19:36:00 +0800
-Subject: Re: [PATCH 1/6] scsi: hisi_sas: Add support for DIX feature for v3 hw
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.garry@huawei.com>
-References: <1549450376-114929-1-git-send-email-john.garry@huawei.com>
- <1549450376-114929-2-git-send-email-john.garry@huawei.com>
- <yq1zhr5vpos.fsf@oracle.com>
-CC:     <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-From:   "chenxiang (M)" <chenxiang66@hisilicon.com>
-Message-ID: <53c516cc-cce3-a3e1-718f-6fc465b6e401@hisilicon.com>
-Date:   Mon, 11 Feb 2019 19:36:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <yq1zhr5vpos.fsf@oracle.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.219.194]
-X-CFilter-Loop: Reflected
+        Mon, 11 Feb 2019 06:37:29 -0500
+Received: from shell.v3.sk ([90.176.6.54]:45151 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726041AbfBKLh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 06:37:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 4A63ECE8E3;
+        Mon, 11 Feb 2019 12:37:26 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id qAA8GgLWw8mB; Mon, 11 Feb 2019 12:37:22 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id B5856CE8E6;
+        Mon, 11 Feb 2019 12:37:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id B67ECSxCpi39; Mon, 11 Feb 2019 12:37:21 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 9F880CE8E3;
+        Mon, 11 Feb 2019 12:37:20 +0100 (CET)
+Message-ID: <48f658a78ddcd6cc67f6eb280dc2c3aa3399c459.camel@v3.sk>
+Subject: Re: [PATCH v5 2/7] x86, olpc: Use a correct version when making up
+ a battery node
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Date:   Mon, 11 Feb 2019 12:37:19 +0100
+In-Reply-To: <0adff00d4c4797fe1f9d593a7ba7c772ac3312c4.camel@v3.sk>
+References: <20190110174005.1202564-1-lkundrak@v3.sk>
+         <20190110174005.1202564-3-lkundrak@v3.sk>
+         <20190123205627.nbddtfuy6qdo2bgb@earth.universe>
+         <0adff00d4c4797fe1f9d593a7ba7c772ac3312c4.camel@v3.sk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+Hi Sebastian,
 
-ÔÚ 2019/2/9 7:13, Martin K. Petersen Ð´µÀ:
-> John,
->
-> Just noticed this while inspecting the resulting complete diff:
->
->>   static u32 get_prot_chk_msk_v3_hw(struct scsi_cmnd *scsi_cmnd)
->>   {
->>   	unsigned char prot_flags = scsi_cmnd->prot_flags;
->>   
->> -	if (prot_flags & SCSI_PROT_TRANSFER_PI) {
->> -		if (prot_flags & SCSI_PROT_REF_CHECK)
->> -			return 0xc << 16;
->> -		return 0xfc << 16;
->> -	}
->> -	return 0;
->> +	if (prot_flags & SCSI_PROT_REF_CHECK)
->> +		return T10_CHK_APP_TAG_MSK;
-> Polarity is a bit unclear here. Is this statement disabling checking of
-> the app tag?
+perhaps the message slipped through the cracks? I'm happy to do
+whatever is needed to get the patch set into 5.1, but it seems I need
+some help and clarifications.
 
-Yes, disabling checking of app tag.
-For here, 1'b0 presents the related byte in DIF will be checked, and 
-1'b1 presents the related byte in DIF will not be checked.
+Thank you,
+Lubo
 
-
->
->> +	return T10_CHK_REF_TAG_MSK | T10_CHK_APP_TAG_MSK;
->>   }
-
+On Thu, 2019-01-31 at 13:26 +0100, Lubomir Rintel wrote:
+> Hi,
+> 
+> On Wed, 2019-01-23 at 21:56 +0100, Sebastian Reichel wrote:
+> > Hi,
+> > 
+> > On Thu, Jan 10, 2019 at 06:40:00PM +0100, Lubomir Rintel wrote:
+> > > The XO-1 and XO-1.5 batteries apparently differ in an ability to report
+> > > ambient temperature. Add a different compatible string to the 1.5
+> > > battery.
+> > > 
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > 
+> > > ---
+> > 
+> > I either need an Acked-by from the x86 platform maintainers, that I
+> > can queue this through power-supply or a pull request for an immutable
+> > branch (probably the better idea).
+> 
+> I'm happy to prepare a branch that could be pulled from. In fact,
+> here's a branch with fixes for issues pointed out by the review that
+> could be pulled from:
+> 
+>   git pull https://github.com/hackerspace/olpc-xo175-linux lr/olpc-xo175-battery-for-v5.1
+> 
+> What do really not understand is how does this help. This is probably
+> just my unfamiliarity with the process; but perhaps you could help me
+> get less unfamiliar. Would it somehow help with a potential (though
+> unlikely) conflict resolution? Would an Ack from x86 crowd serve as an
+> altenative way off making sure things in their tree won't conflict with
+> this one?
+> 
+> > -- Sebastian
+> 
+> Thank you
+> Lubo
+> 
 
