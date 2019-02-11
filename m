@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A12EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D2FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA58222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 370D4222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899429;
-	bh=sR+OZmIQPbghi/5eTkcWgV9zYMnT0hSaF0MM8P37NA0=;
+	s=default; t=1549899434;
+	bh=08EROL8kChbKpcPpafWNh31j5TzGEgYfuhRVF7WnzxQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QMUZ+ltSFY3Hv7viDkA6Ekyw4rmVwwvEHICVFG1NO5ShG3YP449C/C7fD+EnPSZbD
-	 85LbQ0Tj8W+JK5wSpAQ/D6adLIkLpg4gVdGLz0ehVpIJvjkEuxnJJW4XiMMR2BUQ2p
-	 KhWvdq9HCbSUQQ21Ne7QNqlhY2lmDBkQpzHRevlo=
+	b=2jOhVXXTwxX39YLcy+i4j4Rw0mSHxAVfr8n2PTRHIZdfPXHFo0HNLMp4oHSXmT+RO
+	 A5NuaxZMWCFbdes/w/HuInrf/8O6WS6TeVop9e4fsZs55oA7DAYExP4oJlBbPO1Uyo
+	 Jjq40DHCnFjD98wxfumd0UqTI7MJB7KmOgK2JLlY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbfBKPhH (ORCPT
+        id S2388233AbfBKOvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:37:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37346 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:51:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388246AbfBKOvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:51:21 -0500
+        id S2388217AbfBKOvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D4C62081B;
-        Mon, 11 Feb 2019 14:51:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6939A2081B;
+        Mon, 11 Feb 2019 14:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896680;
-        bh=sR+OZmIQPbghi/5eTkcWgV9zYMnT0hSaF0MM8P37NA0=;
+        s=default; t=1549896669;
+        bh=08EROL8kChbKpcPpafWNh31j5TzGEgYfuhRVF7WnzxQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAJFstQemVxDSkCv0OdYJpMhD5r9TXoVcXvCt/wyrmI0bnmyQtoe74veOTrm4Ugxb
-         s1ad8P28Ak1kTeC7+vTxqjRnQcxYoRMcpoaKrCkPIPIgEUo8R7T1dpWjKb2rVD8ZmI
-         HRjD61hwRSu7pgRAq61ufQdQ7/a07O5vME9811Qc=
+        b=JXPpPs2rbC0Vn8vsZjTp+26e+O5J2VmeekqwWUvUuPFklyZJbz470g+6n+W376oiy
+         2hmL2UvmEJkp1rQM/n/HyGUczo3N+Ks7ZPbguaHp5heEQIzjCoFJF3qO7Vou2Lj2lk
+         tuH2oz1xgv4lBh0hVE2JGuKw4YBpay3pCcTFOLTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 266/313] net: dsa: slave: Dont propagate flag changes on down slave interfaces
-Date:   Mon, 11 Feb 2019 15:19:06 +0100
-Message-Id: <20190211141911.089358350@linuxfoundation.org>
+Subject: [PATCH 4.19 262/313] net: dp83640: expire old TX-skb
+Date:   Mon, 11 Feb 2019 15:19:02 +0100
+Message-Id: <20190211141910.816559687@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -64,54 +68,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rundong Ge <rdong.ge@gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
+[ Upstream commit 53bc8d2af08654659abfadfd3e98eb9922ff787c ]
 
-The unbalance of master's promiscuity or allmulti will happen after ifdown
-and ifup a slave interface which is in a bridge.
+During sendmsg() a cloned skb is saved via dp83640_txtstamp() in
+->tx_queue. After the NIC sends this packet, the PHY will reply with a
+timestamp for that TX packet. If the cable is pulled at the right time I
+don't see that packet. It might gets flushed as part of queue shutdown
+on NIC's side.
+Once the link is up again then after the next sendmsg() we enqueue
+another skb in dp83640_txtstamp() and have two on the list. Then the PHY
+will send a reply and decode_txts() attaches it to the first skb on the
+list.
+No crash occurs since refcounting works but we are one packet behind.
+linuxptp/ptp4l usually closes the socket and opens a new one (in such a
+timeout case) so those "stale" replies never get there. However it does
+not resume normal operation anymore.
 
-When we ifdown a slave interface , both the 'dsa_slave_close' and
-'dsa_slave_change_rx_flags' will clear the master's flags. The flags
-of master will be decrease twice.
-In the other hand, if we ifup the slave interface again, since the
-slave's flags were cleared the 'dsa_slave_open' won't set the master's
-flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
-will set the master's flags. The flags of master is increase once.
+Purge old skbs in decode_txts().
 
-Only propagating flag changes when a slave interface is up makes
-sure this does not happen. The 'vlan_dev_change_rx_flags' had the
-same problem and was fixed, and changes here follows that fix.
-
-Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
+Fixes: cb646e2b02b2 ("ptp: Added a clock driver for the National Semiconductor PHYTER.")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/slave.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/phy/dp83640.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -140,11 +140,14 @@ static int dsa_slave_close(struct net_de
- static void dsa_slave_change_rx_flags(struct net_device *dev, int change)
+--- a/drivers/net/phy/dp83640.c
++++ b/drivers/net/phy/dp83640.c
+@@ -896,14 +896,14 @@ static void decode_txts(struct dp83640_p
+ 			struct phy_txts *phy_txts)
  {
- 	struct net_device *master = dsa_slave_to_master(dev);
--
--	if (change & IFF_ALLMULTI)
--		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
--	if (change & IFF_PROMISC)
--		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
-+	if (dev->flags & IFF_UP) {
-+		if (change & IFF_ALLMULTI)
-+			dev_set_allmulti(master,
-+					 dev->flags & IFF_ALLMULTI ? 1 : -1);
-+		if (change & IFF_PROMISC)
-+			dev_set_promiscuity(master,
-+					    dev->flags & IFF_PROMISC ? 1 : -1);
-+	}
- }
+ 	struct skb_shared_hwtstamps shhwtstamps;
++	struct dp83640_skb_info *skb_info;
+ 	struct sk_buff *skb;
+-	u64 ns;
+ 	u8 overflow;
++	u64 ns;
  
- static void dsa_slave_set_rx_mode(struct net_device *dev)
+ 	/* We must already have the skb that triggered this. */
+-
++again:
+ 	skb = skb_dequeue(&dp83640->tx_queue);
+-
+ 	if (!skb) {
+ 		pr_debug("have timestamp but tx_queue empty\n");
+ 		return;
+@@ -918,6 +918,11 @@ static void decode_txts(struct dp83640_p
+ 		}
+ 		return;
+ 	}
++	skb_info = (struct dp83640_skb_info *)skb->cb;
++	if (time_after(jiffies, skb_info->tmo)) {
++		kfree_skb(skb);
++		goto again;
++	}
+ 
+ 	ns = phy2txts(phy_txts);
+ 	memset(&shhwtstamps, 0, sizeof(shhwtstamps));
+@@ -1470,6 +1475,7 @@ static bool dp83640_rxtstamp(struct phy_
+ static void dp83640_txtstamp(struct phy_device *phydev,
+ 			     struct sk_buff *skb, int type)
+ {
++	struct dp83640_skb_info *skb_info = (struct dp83640_skb_info *)skb->cb;
+ 	struct dp83640_private *dp83640 = phydev->priv;
+ 
+ 	switch (dp83640->hwts_tx_en) {
+@@ -1482,6 +1488,7 @@ static void dp83640_txtstamp(struct phy_
+ 		/* fall through */
+ 	case HWTSTAMP_TX_ON:
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
++		skb_info->tmo = jiffies + SKB_TIMESTAMP_TIMEOUT;
+ 		skb_queue_tail(&dp83640->tx_queue, skb);
+ 		break;
+ 
 
 
