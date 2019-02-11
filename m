@@ -2,131 +2,150 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C391C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8792BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7BE21B69
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54FD520863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="fR9XwG2I"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="N+v7LreT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfBKTBX (ORCPT
+        id S2387502AbfBKTCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:01:23 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:46585 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733289AbfBKTBS (ORCPT
+        Mon, 11 Feb 2019 14:02:33 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45803 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbfBKTCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:01:18 -0500
-Received: by mail-yw1-f68.google.com with SMTP id n12so4597265ywn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:01:18 -0800 (PST)
+        Mon, 11 Feb 2019 14:02:32 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y4so5350578pgc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:02:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s09oajM8sRG6VR42JLX9NXyJV4gfvXuCrn6cD3FbZqw=;
-        b=fR9XwG2IpAJnHWw0MPBfz0HAX7xH++BkHbFzdYsjyY2FzzSQFnOya2QKZoELQ/IC5O
-         8Dk/hBPxZ0V9ikPopvPDe6YxClqHJSPNu1lZ87Q2cVLMHwm3C8kKQ6WVmLFZXPEsz3HR
-         nk0JyG9P2MV9qyR1u2B3Xw3gJO/S9XhKwPznBWi+552PjkO8ma2qfoEUpctr7+xltiHq
-         U0S6AsRR2MhGChi8V+igCAz55oV0a1ftWgNSfONzCoxSz9AXXndTZ37wJ/dMBqvXEFXY
-         +XOiZ81yTVgf8Ej4uzhR7/jhIkE2VBZSgSaFyAlZwRqoU0RCaJewWGnOx0Db/jxAlBs3
-         WMrg==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+4TfL/o8ePF0fI2rvClWd5kU9XAo5kGOyfgSfeCu4R4=;
+        b=N+v7LreTPw8gE1xv4G41vgn5iaVikZDofR5Bg6lzAKfr8xutniUnq5QWpN8ufNMjkI
+         7D1J4ll9qbhPsjoUFXI6zc22/qahNaxYe8bhILwgc0PDsuECOUVtsyyXI8BWuoxUyFju
+         OUI3LOZR/v/by9cYctqbnDs9P3SbmITfn4RdG0pee2mivStr2gtQxPYnN3YpQUGC/MgZ
+         1SAHcpKB5OSBLVunX+2XrwhCVIHJ1Mfk3FJ3EnvWegA6jwWM9RyLxpx9yLBfCWXL2rHx
+         9n4CGJ7po/mYbwI3oLn22TdCLZeCbsbd7cKZX8NkP6kf8tgIrp9ItvFYsi+EQxoEJqp4
+         VIlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s09oajM8sRG6VR42JLX9NXyJV4gfvXuCrn6cD3FbZqw=;
-        b=TQuhH0BaxvHBjRihirdSSdXqn7AULVVWH1sr8U0A9WP2jR7O0A/BcuCQJsVoID7ZKe
-         o0XCK76pT+sVfc38dgOmchh9Ko7NO7ZlgcnlYOAegjtAiTXLf7XV9Y7SoHKcmj+Gum8W
-         FcRt6eqOxEv2OMGzgHzO4fc35HDGP/x4ATVeTojJsOZwe8tY+zE+wRwi9nSzJlUrZ6Mi
-         6e9kByySD5/pmeWrJtV/h+VezIg8q2WYEpwMYcd9odO5BzTlgpFGLjA0iMyaLbI21BKe
-         UhtOHKXNtTgF9xI87nRpqqGs0EovXPqBh38PRMkxRY0WL9buc/JwLry7pcjhJdZCoa8H
-         COQg==
-X-Gm-Message-State: AHQUAubucF0a/M65yKjn06Q5rSmntg9R5ucwiPj7Kp2GjHD9y0KAiM3C
-        88cR3wMXl3RKciat/G9V/E3oVA==
-X-Google-Smtp-Source: AHgI3IZLVsFOrLYBm0wpfHBVnBwYPYDxF1jVhbzc5rUhM1jl1nqzmd8gWWaX9ycIHhhicOSxmCRd/w==
-X-Received: by 2002:a81:a9ca:: with SMTP id g193mr30060659ywh.52.1549911677658;
-        Mon, 11 Feb 2019 11:01:17 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::5:6e5])
-        by smtp.gmail.com with ESMTPSA id h62sm4103600ywe.100.2019.02.11.11.01.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 11:01:16 -0800 (PST)
-Date:   Mon, 11 Feb 2019 14:01:15 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH v2 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190211190115.GC13953@cmpxchg.org>
-References: <20190208224319.GA23801@chrisdown.name>
- <20190208224419.GA24772@chrisdown.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208224419.GA24772@chrisdown.name>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=+4TfL/o8ePF0fI2rvClWd5kU9XAo5kGOyfgSfeCu4R4=;
+        b=EPP/PkHUtqKiSLcDF1k+zDnJ2t86iyygGBGz3ZNjHInDCYfID5eaE0beOCVLytyN6x
+         /wYzlJ8QaCq7i9prB47bb1IWKUpQ8E7peaw2bbMfLNBrPA312VBFkuVJZLyd4LroBDk4
+         qLHW88oQxrrqriXcY9k5WByh/Wpw00hglXIsV7vv1B3LwOcEUEkzK1izEo774o+N7yp+
+         6WCo52JObEPR69g2fy5aYA7q1id9fAwueMnHFYTuzBi7OoiBsR8fez/8a3L8pWjoxuLa
+         jFZbk9U/QLOVtOwgmXfd51bsezxBjev5ucrB3RJuzFTOj5d0rcw36dd5Fw1YqSWj3zKI
+         7Xrg==
+X-Gm-Message-State: AHQUAuYlEIkMVJ6fN4lJHMicu9dNwzFZXsfjSQNnEMaXluTxLbMFMnb5
+        aF9mSA4Wdr8q74Pb8OWnclJQJA==
+X-Google-Smtp-Source: AHgI3IbGUnYqq0gjNt56H6AiHggXnwVA1VyjwryXcIj6PKK6X7AOB8w35z8IOEfLIrQ9KeiEQchmCg==
+X-Received: by 2002:a63:9f19:: with SMTP id g25mr30120186pge.327.1549911751541;
+        Mon, 11 Feb 2019 11:02:31 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id e24sm15371893pfi.153.2019.02.11.11.02.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 11:02:30 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:02:30 -0800 (PST)
+X-Google-Original-Date: Mon, 11 Feb 2019 10:29:52 PST (-0800)
+Subject:     Re: [v3 PATCH 8/8] RISC-V: Assign hwcap only according to boot cpu.
+In-Reply-To: <CAEn-LTqx8CQ7kY3kRKWFoAkSSu_FNoZkd9JnNYDNLAYX1kLHSA@mail.gmail.com>
+CC:     atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
+        Damien.LeMoal@wdc.com, aou@eecs.berkeley.edu, jason@lakedaemon.net,
+        alankao@andestech.com, dmitriy@oss-tech.org, anup@brainfault.org,
+        daniel.lezcano@linaro.org, me@packi.ch,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        Paul Walmsley <paul.walmsley@sifive.com>, schwab@suse.de,
+        linux-riscv@lists.infradead.org, tglx@linutronix.de,
+        zongbox@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     david.abdurachmanov@gmail.com
+Message-ID: <mhng-baffacaa-599b-4c89-a5a0-e0c85ddb6d44@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 10:44:19PM +0000, Chris Down wrote:
-> memory.stat and other files already consider subtrees in their output,
-> and we should too in order to not present an inconsistent interface.
-> 
-> The current situation is fairly confusing, because people interacting
-> with cgroups expect hierarchical behaviour in the vein of memory.stat,
-> cgroup.events, and other files. For example, this causes confusion when
-> debugging reclaim events under low, as currently these always read "0"
-> at non-leaf memcg nodes, which frequently causes people to misdiagnose
-> breach behaviour. The same confusion applies to other counters in this
-> file when debugging issues.
-> 
-> Aggregation is done at write time instead of at read-time since these
-> counters aren't hot (unlike memory.stat which is per-page, so it does it
-> at read time), and it makes sense to bundle this with the file
-> notifications.
-> 
-> After this patch, events are propagated up the hierarchy:
-> 
->     [root@ktst ~]# cat /sys/fs/cgroup/system.slice/memory.events
->     low 0
->     high 0
->     max 0
->     oom 0
->     oom_kill 0
->     [root@ktst ~]# systemd-run -p MemoryMax=1 true
->     Running as unit: run-r251162a189fb4562b9dabfdc9b0422f5.service
->     [root@ktst ~]# cat /sys/fs/cgroup/system.slice/memory.events
->     low 0
->     high 0
->     max 7
->     oom 1
->     oom_kill 1
-> 
-> As this is a change in behaviour, this can be reverted to the old
-> behaviour by mounting with the `memory_localevents` flag set. However,
-> we use the new behaviour by default as there's a lack of evidence that
-> there are any current users of memory.events that would find this change
-> undesirable.
-> 
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Roman Gushchin <guro@fb.com>
-> Cc: Dennis Zhou <dennis@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: kernel-team@fb.com
+On Fri, 08 Feb 2019 20:26:07 PST (-0800), david.abdurachmanov@gmail.com wrote:
+> On Sat, Feb 9, 2019 at 12:03 AM Atish Patra <atish.patra@wdc.com> wrote:
+>>
+>> On 2/8/19 1:11 AM, Christoph Hellwig wrote:
+>> >> +     * We don't support running Linux on hertergenous ISA systems.
+>> >> +     * But first "okay" processor might not be the boot cpu.
+>> >> +     * Check the ISA of boot cpu.
+>> >
+>> > Please use up your available 80 characters per line in comments.
+>> >
+>> I will fix it.
+>>
+>> >> +            /*
+>> >> +             * All "okay" hart should have same isa. We don't know how to
+>> >> +             * handle if they don't. Throw a warning for now.
+>> >> +             */
+>> >> +            if (elf_hwcap && temp_hwcap != elf_hwcap)
+>> >> +                    pr_warn("isa mismatch: 0x%lx != 0x%lx\n",
+>> >> +                            elf_hwcap, temp_hwcap);
+>> >> +
+>> >> +            if (hartid == boot_cpu_hartid)
+>> >> +                    boot_hwcap = temp_hwcap;
+>> >> +            elf_hwcap = temp_hwcap;
+>> >
+>> > So we always set elf_hwcap to the capabilities of the previous cpu.
+>> >
+>> >> +            temp_hwcap = 0;
+>> >
+>> > I think tmp_hwcap should be declared and initialized inside the outer loop
+>> > instead having to manually reset it like this.
+>> >
+>> >> +    }
+>> >>
+>> >> +    elf_hwcap = boot_hwcap;
+>> >
+>> > And then reset it here to the boot cpu.
+>> >
+>> > Shoudn't we only report the features supported by all cores?  Otherwise
+>> > we'll still have problems if the boot cpu supports a feature, but not
+>> > others.
+>> >
+>>
+>> Hmm. The other side of the argument is boot cpu does have a feature that
+>> is not supported by other hart that didn't even boot.
+>> The user space may execute something based on boot cpu capability but
+>> that won't be enabled.
+>>
+>> At least, in this way we know that we are compatible completely with
+>> boot cpu capabilities. Thoughts ?
+>
+> There is one example on the market, e.g., Samsung Exynos 9810.
+>
+> Mongoose 3 (big cores) only support ARMv8.0, while Cortex-A55
+> (little ones) support ARMv8.2 (and that brings atomics support).
+> I think, it's the only ARM SOC that supports different ISA extensions
+> between cores on the same package.
+>
+> Kernel scheduler doesn't know that big cores are missing atomics
+> support or that applications needs it and moves the thread
+> resulting in illegal instruction.
+>
+> E.g., see Golang issue: https://github.com/golang/go/issues/28431
+>
+> I also recall Jon Masters (Computer Architect at Red Hat) advocating
+> against having cores with mismatched capabilities on the server market.
+>
+> It just causes more problems down the line.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+IMO the best bet is to only put extensions in HWCAP that are supported by all 
+the harts that userspace will be scheduled on.
