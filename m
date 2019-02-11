@@ -2,148 +2,116 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE720C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A12EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87116222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA58222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899429;
+	bh=sR+OZmIQPbghi/5eTkcWgV9zYMnT0hSaF0MM8P37NA0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=QMUZ+ltSFY3Hv7viDkA6Ekyw4rmVwwvEHICVFG1NO5ShG3YP449C/C7fD+EnPSZbD
+	 85LbQ0Tj8W+JK5wSpAQ/D6adLIkLpg4gVdGLz0ehVpIJvjkEuxnJJW4XiMMR2BUQ2p
+	 KhWvdq9HCbSUQQ21Ne7QNqlhY2lmDBkQpzHRevlo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbfBKPgx (ORCPT
+        id S2389168AbfBKPhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:36:53 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:51580 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388282AbfBKOve (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:51:34 -0500
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 6B28B3A115B;
-        Mon, 11 Feb 2019 15:39:10 +0100 (CET)
-X-Originating-IP: 185.94.189.187
-Received: from localhost (unknown [185.94.189.187])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 90400FF811;
-        Mon, 11 Feb 2019 14:39:05 +0000 (UTC)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se, ezequiel@collabora.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH v3 0/2] media: cedrus: Add H264 decoding support
-Date:   Mon, 11 Feb 2019 15:39:01 +0100
-Message-Id: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+        Mon, 11 Feb 2019 10:37:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388246AbfBKOvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:21 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D4C62081B;
+        Mon, 11 Feb 2019 14:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896680;
+        bh=sR+OZmIQPbghi/5eTkcWgV9zYMnT0hSaF0MM8P37NA0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kAJFstQemVxDSkCv0OdYJpMhD5r9TXoVcXvCt/wyrmI0bnmyQtoe74veOTrm4Ugxb
+         s1ad8P28Ak1kTeC7+vTxqjRnQcxYoRMcpoaKrCkPIPIgEUo8R7T1dpWjKb2rVD8ZmI
+         HRjD61hwRSu7pgRAq61ufQdQ7/a07O5vME9811Qc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 266/313] net: dsa: slave: Dont propagate flag changes on down slave interfaces
+Date:   Mon, 11 Feb 2019 15:19:06 +0100
+Message-Id: <20190211141911.089358350@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Here is a new version of the H264 decoding support in the cedrus
-driver.
+------------------
 
-As you might already know, the cedrus driver relies on the Request
-API, and is a reverse engineered driver for the video decoding engine
-found on the Allwinner SoCs.
+From: Rundong Ge <rdong.ge@gmail.com>
 
-This work has been possible thanks to the work done by the people
-behind libvdpau-sunxi found here:
-https://github.com/linux-sunxi/libvdpau-sunxi/
+[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
 
-I've tested the various ABI using this gdb script:
-http://code.bulix.org/jl4se4-505620?raw
+The unbalance of master's promiscuity or allmulti will happen after ifdown
+and ifup a slave interface which is in a bridge.
 
-And this test script:
-http://code.bulix.org/8zle4s-505623?raw
+When we ifdown a slave interface , both the 'dsa_slave_close' and
+'dsa_slave_change_rx_flags' will clear the master's flags. The flags
+of master will be decrease twice.
+In the other hand, if we ifup the slave interface again, since the
+slave's flags were cleared the 'dsa_slave_open' won't set the master's
+flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
+will set the master's flags. The flags of master is increase once.
 
-The application compiled is quite trivial:
-http://code.bulix.org/e34zp8-505624?raw
+Only propagating flag changes when a slave interface is up makes
+sure this does not happen. The 'vlan_dev_change_rx_flags' had the
+same problem and was fixed, and changes here follows that fix.
 
-The output is:
-arm:	builds/arm-test-v4l2-h264-structures
-	SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-x86:	builds/x86-test-v4l2-h264-structures
-	SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-x64:	builds/x64-test-v4l2-h264-structures
-	SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-arm64:	builds/arm64-test-v4l2-h264-structures
-	SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
+Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
+Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/dsa/slave.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Let me know if there's any flaw using that test setup, or if you have
-any comments on the patches.
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -140,11 +140,14 @@ static int dsa_slave_close(struct net_de
+ static void dsa_slave_change_rx_flags(struct net_device *dev, int change)
+ {
+ 	struct net_device *master = dsa_slave_to_master(dev);
+-
+-	if (change & IFF_ALLMULTI)
+-		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
+-	if (change & IFF_PROMISC)
+-		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
++	if (dev->flags & IFF_UP) {
++		if (change & IFF_ALLMULTI)
++			dev_set_allmulti(master,
++					 dev->flags & IFF_ALLMULTI ? 1 : -1);
++		if (change & IFF_PROMISC)
++			dev_set_promiscuity(master,
++					    dev->flags & IFF_PROMISC ? 1 : -1);
++	}
+ }
+ 
+ static void dsa_slave_set_rx_mode(struct net_device *dev)
 
-Maxime
 
-Changes from v2:
-  - Simplified _cedrus_write_ref_list as suggested by Jernej
-  - Set whether the frame is used as reference using nal_ref_idc
-  - Respect chroma_format_idc
-  - Fixes for the scaling list and prediction tables
-  - Wrote the documentation for the flags
-  - Added a bunch of defines to the driver bit fields
-  - Reworded the controls and data format descriptions as suggested
-    by Hans
-  - Reworked the controls' structure field size to avoid padding
-  - Removed the long term reference flag
-  - Reintroduced the neighbor info buffer
-  - Removed the ref_pic_list_p0/b0/b1 arrays that are redundant with the
-    one in the DPB
-  - used the timestamps instead of tags
-  - Rebased on 5.0-rc1
-
-Changes from v1:
-  - Rebased on 4.20
-  - Did the documentation for the userspace API
-  - Used the tags instead of buffer IDs
-  - Added a comment to explain why we still needed the swdec trigger
-  - Reworked the MV col buffer in order to have one slot per frame
-  - Removed the unused neighbor info buffer
-  - Made sure to have the same structure offset and alignments across
-    32 bits and 64 bits architecture
-
-Maxime Ripard (1):
-  media: cedrus: Add H264 decoding support
-
-Pawel Osciak (1):
-  media: uapi: Add H264 low-level decoder API compound controls.
-
- Documentation/media/uapi/v4l/biblio.rst            |   9 +-
- Documentation/media/uapi/v4l/extended-controls.rst | 530 +++++++++++++-
- Documentation/media/uapi/v4l/pixfmt-compressed.rst |  20 +-
- Documentation/media/uapi/v4l/vidioc-queryctrl.rst  |  30 +-
- Documentation/media/videodev2.h.rst.exceptions     |   5 +-
- drivers/media/v4l2-core/v4l2-ctrls.c               |  42 +-
- drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +-
- drivers/staging/media/sunxi/cedrus/Makefile        |   3 +-
- drivers/staging/media/sunxi/cedrus/cedrus.c        |  31 +-
- drivers/staging/media/sunxi/cedrus/cedrus.h        |  38 +-
- drivers/staging/media/sunxi/cedrus/cedrus_dec.c    |  15 +-
- drivers/staging/media/sunxi/cedrus/cedrus_h264.c   | 589 ++++++++++++++-
- drivers/staging/media/sunxi/cedrus/cedrus_hw.c     |   4 +-
- drivers/staging/media/sunxi/cedrus/cedrus_regs.h   |  91 ++-
- drivers/staging/media/sunxi/cedrus/cedrus_video.c  |   9 +-
- include/media/h264-ctrls.h                         | 179 ++++-
- include/media/v4l2-ctrls.h                         |  13 +-
- include/uapi/linux/videodev2.h                     |   1 +-
- 18 files changed, 1607 insertions(+), 3 deletions(-)
- create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_h264.c
- create mode 100644 include/media/h264-ctrls.h
-
-base-commit: e7552cc33320523b660dd1891bceb616ced7b47c
--- 
-git-series 0.9.1
