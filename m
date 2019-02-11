@@ -2,145 +2,133 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE74C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94BAC214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UP6aQIvZ"
+	by mail.kernel.org (Postfix) with ESMTP id 748F6214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfBKVJ7 (ORCPT
+        id S1727347AbfBKVKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:09:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35394 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfBKVJ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:09:59 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so151145pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 13:09:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jaq4bJN1qOEXyuMZs7wye4duFdAYcvHrSM8nzJ3aR2Y=;
-        b=UP6aQIvZmYiway7xzIgJzuIWXK4W48+TLF0JTke857tZ/pIM7SmP1S60I4O5T7XUQs
-         sDVaxnZPHxkGwRokhN95UYV7DGKXLE2zZ2ir7Iy1I5HLwleo9q8B9a60DSARBC8sYAn0
-         G45Rte8IxbVnsIsRmsxaB318I9Nfo+0ZKLtbweHoP5iev3mbg0SKHmUix5PSP6jdFB/k
-         p9XST+tFajeg3fnQJdzheDATzcj+db/tTvXCyS25fR0oQYq4A17FFHN9ZICkZeGndgmP
-         L2NkVYdD1vGBSwdon1iPwrccgVXz5EEQw/9EdbaVQKjc1oyQdQLKQJPsnqLvnzeHX3bd
-         GcZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jaq4bJN1qOEXyuMZs7wye4duFdAYcvHrSM8nzJ3aR2Y=;
-        b=dZgz3X7x8FSlVphiuhiYrkiKikzN5ScDUqDDNWUcJNlHFW6kRZEYpGRdCIwUvMI04+
-         Rdh7hIExGYEAQ7b8HRs0+zojQJ9tDvU0jiS5T0P9KAEkUOX2TPQM9IRuqF2/x2Mdxlb9
-         F80cFKpiBQ38cbjdnxO8JXSFhJhPg/7mmuZ7EbiuBcIn9tsnRCm5yAMGKdd3B6SHC4Zm
-         5t11LA6pQv0Akp5cY63I6Qd/F8Wexf4cggneiZm9/sp7gcV2YdlCF06ufkFrh8eQlatS
-         hooxW8/ymnQktnr+RKv4uDvtI5LfobkRqizT1/0qjsnDSkl9bj+LVfvqTX+BOFQrN6dT
-         eOAQ==
-X-Gm-Message-State: AHQUAuaUTs13gc8Cfi/pVJSrJ8U0wVV1lYSw7dooofxH1WZroEtd50Y4
-        VQ+Tcb3DkxLcba+TL1OLCMU7Eg==
-X-Google-Smtp-Source: AHgI3IZKm0M/wcRUHr9Xw8s/w6oT/zo2vcfzmLBQDdDtuXEOedsgFDBvgoX7Gkg+Ip8nE+Sz4JWwqA==
-X-Received: by 2002:a63:5861:: with SMTP id i33mr257286pgm.60.1549919398236;
-        Mon, 11 Feb 2019 13:09:58 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id u66sm26188695pfi.115.2019.02.11.13.09.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 13:09:57 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gtIpw-00011F-TG; Mon, 11 Feb 2019 14:09:56 -0700
-Date:   Mon, 11 Feb 2019 14:09:56 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190211210956.GG24692@ziepe.ca>
-References: <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
- <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
- <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
- <20190211182649.GD24692@ziepe.ca>
- <20190211184040.GF12668@bombadil.infradead.org>
- <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com>
- <20190211204945.GF24692@ziepe.ca>
- <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
+        Mon, 11 Feb 2019 16:10:13 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:48337 "EHLO mx2.cyber.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbfBKVKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:10:13 -0500
+To:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+From:   Meelis Roos <mroos@linux.ee>
+Subject: Undefined behaviour in drivers/gpu/drm/radeon/r200.c:480:34 - shift
+ exponent 4096 is too large
+Message-ID: <c49920e2-adf8-515c-89ae-9f6ffe7752f7@linux.ee>
+Date:   Mon, 11 Feb 2019 23:10:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: et-EE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:02:37PM -0800, Dan Williams wrote:
-> On Mon, Feb 11, 2019 at 12:49 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Mon, Feb 11, 2019 at 11:58:47AM -0800, Dan Williams wrote:
-> > > On Mon, Feb 11, 2019 at 10:40 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > On Mon, Feb 11, 2019 at 11:26:49AM -0700, Jason Gunthorpe wrote:
-> > > > > On Mon, Feb 11, 2019 at 10:19:22AM -0800, Ira Weiny wrote:
-> > > > > > What if user space then writes to the end of the file with a regular write?
-> > > > > > Does that write end up at the point they truncated to or off the end of the
-> > > > > > mmaped area (old length)?
-> > > > >
-> > > > > IIRC it depends how the user does the write..
-> > > > >
-> > > > > pwrite() with a given offset will write to that offset, re-extending
-> > > > > the file if needed
-> > > > >
-> > > > > A file opened with O_APPEND and a write done with write() should
-> > > > > append to the new end
-> > > > >
-> > > > > A normal file with a normal write should write to the FD's current
-> > > > > seek pointer.
-> > > > >
-> > > > > I'm not sure what happens if you write via mmap/msync.
-> > > > >
-> > > > > RDMA is similar to pwrite() and mmap.
-> > > >
-> > > > A pertinent point that you didn't mention is that ftruncate() does not change
-> > > > the file offset.  So there's no user-visible change in behaviour.
-> > >
-> > > ...but there is. The blocks you thought you freed, especially if the
-> > > system was under -ENOSPC pressure, won't actually be free after the
-> > > successful ftruncate().
-> >
-> > They won't be free after something dirties the existing mmap either.
-> >
-> > Blocks also won't be free if you unlink a file that is currently still
-> > open.
-> >
-> > This isn't really new behavior for a FS.
-> 
-> An mmap write after a fault due to a hole punch is free to trigger
-> SIGBUS if the subsequent page allocation fails.
+Got UBSAN warning from Dell D600 running 5.0.0-rc4-00218-g12491ed354d2.
+The warning did not happen on bootup but during xfce session start or console switch.
 
-Isn't that already racy? If the mmap user is fast enough can't it
-prevent the page from becoming freed in the first place today?
-
-Jason
+[   15.323113] radeon 0000:01:00.0: putting AGP V2 device into 4x mode
+[   15.323134] radeon 0000:01:00.0: GTT: 128M 0xE0000000 - 0xE7FFFFFF
+[   15.323142] radeon 0000:01:00.0: VRAM: 128M 0x00000000E8000000 - 0x00000000EFFFFFFF (32M used)
+[   15.323459] [drm] Detected VRAM RAM=128M, BAR=128M
+[   15.323463] [drm] RAM width 64bits DDR
+[   15.323566] [TTM] Zone  kernel: Available graphics memory: 412446 kiB
+[   15.323567] [TTM] Initializing pool allocator
+[   15.323580] [TTM] Initializing DMA pool allocator
+[   15.323609] [drm] radeon: 32M of VRAM memory ready
+[   15.323611] [drm] radeon: 128M of GTT memory ready.
+[   15.323621] [drm] radeon: power management initialized
+[   15.331289] radeon 0000:01:00.0: WB disabled
+[   15.331296] radeon 0000:01:00.0: fence driver on ring 0 use gpu addr 0x00000000e0000000 and cpu addr 0x712386dd
+[   15.331299] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[   15.331300] [drm] Driver supports precise vblank timestamp query.
+[   15.331315] [drm] radeon: irq initialized.
+[   15.331317] [drm] Loading R200 Microcode
+[...]
+[   15.795041] [drm] radeon: ring at 0x00000000E0001000
+[   15.795073] [drm] ring test succeeded in 1 usecs
+[   15.795316] [drm] ib test succeeded in 0 usecs
+[   15.801857] [drm] Panel ID String: 2K077141X13
+[   15.801861] [drm] Panel Size 1024x768
+[   15.801938] [drm] No TV DAC info found in BIOS
+[   15.802012] [drm] Radeon Display Connectors
+[   15.802015] [drm] Connector 0:
+[   15.802017] [drm]   VGA-1
+[   15.802023] [drm]   DDC: 0x60 0x60 0x60 0x60 0x60 0x60 0x60 0x60
+[   15.802024] [drm]   Encoders:
+[   15.802027] [drm]     CRT1: INTERNAL_DAC1
+[   15.802030] [drm] Connector 1:
+[   15.802031] [drm]   DVI-D-1
+[   15.802033] [drm]   HPD1
+[   15.802038] [drm]   DDC: 0x64 0x64 0x64 0x64 0x64 0x64 0x64 0x64
+[   15.802040] [drm]   Encoders:
+[   15.802042] [drm]     DFP1: INTERNAL_TMDS1
+[   15.802044] [drm] Connector 2:
+[   15.802046] [drm]   LVDS-1
+[   15.802047] [drm]   Encoders:
+[   15.802049] [drm]     LCD1: INTERNAL_LVDS
+[   15.802051] [drm] Connector 3:
+[   15.802053] [drm]   SVIDEO-1
+[   15.802054] [drm]   Encoders:
+[   15.802056] [drm]     TV1: INTERNAL_DAC2
+[   15.845987] [drm] fb mappable at 0xE8040000
+[   15.845988] [drm] vram apper at 0xE8000000
+[   15.845989] [drm] size 1572864
+[   15.845990] [drm] fb depth is 16
+[   15.845990] [drm]    pitch is 2048
+[   15.848183] fbcon: radeondrmfb (fb0) is primary device
+[   15.892233] Console: switching to colour frame buffer device 128x48
+[   15.901408] radeon 0000:01:00.0: fb0: radeondrmfb frame buffer device
+[   15.905786] [drm] Initialized radeon 2.50.0 20080528 for 0000:01:00.0 on minor 0
+[...]
+[  447.146334] ================================================================================
+[  447.146347] UBSAN: Undefined behaviour in drivers/gpu/drm/radeon/r200.c:480:34
+[  447.146351] shift exponent 4096 is too large for 32-bit type 'int'
+[  447.146357] CPU: 0 PID: 386 Comm: Xorg Not tainted 5.0.0-rc4-00218-g12491ed354d2 #7
+[  447.146358] Hardware name: Dell Computer Corporation Latitude D600                   /0X2034, BIOS A16 06/29/2005
+[  447.146359] Call Trace:
+[  447.146375]  dump_stack+0x16/0x19
+[  447.146379]  ubsan_epilogue+0xb/0x29
+[  447.146381]  __ubsan_handle_shift_out_of_bounds.cold.14+0x26/0x80
+[  447.146486]  ? radeon_cs_packet_next_reloc+0x3c/0x150 [radeon]
+[  447.146521]  ? r100_reloc_pitch_offset+0x27/0x150 [radeon]
+[  447.146551]  r200_packet0_check.cold.0+0xf/0x45 [radeon]
+[  447.146592]  ? r200_copy_dma+0x430/0x430 [radeon]
+[  447.146626]  r100_cs_parse_packet0+0x53/0xe0 [radeon]
+[  447.146661]  r100_cs_parse+0x12e/0x440 [radeon]
+[  447.146700]  ? r200_copy_dma+0x430/0x430 [radeon]
+[  447.146734]  radeon_cs_ioctl+0x256/0x890 [radeon]
+[  447.146743]  ? ttm_bo_init_reserved+0x338/0x390 [ttm]
+[  447.146779]  ? radeon_cs_parser_init+0x550/0x550 [radeon]
+[  447.146804]  drm_ioctl_kernel+0x96/0xe0 [drm]
+[  447.146816]  drm_ioctl+0x25f/0x530 [drm]
+[  447.146850]  ? radeon_cs_parser_init+0x550/0x550 [radeon]
+[  447.146855]  ? ktime_get_mono_fast_ns+0xb6/0x1f0
+[  447.146880]  radeon_drm_ioctl+0x40/0x80 [radeon]
+[  447.146905]  ? radeon_pci_shutdown+0x30/0x30 [radeon]
+[  447.146909]  do_vfs_ioctl+0x90/0x6c0
+[  447.146913]  ? handle_mm_fault+0xa48/0xfe0
+[  447.146918]  ? vm_mmap_pgoff+0x88/0xd0
+[  447.146923]  ? ktime_get_ts64+0x5f/0x1e0
+[  447.146925]  ksys_ioctl+0x39/0x70
+[  447.146927]  sys_ioctl+0x11/0x13
+[  447.146930]  do_fast_syscall_32+0x95/0x1d0
+[  447.146934]  entry_SYSENTER_32+0x6b/0xbd
+[  447.146936] EIP: 0xb7f937cd
+[  447.146939] Code: 54 cd ff ff 85 d2 8b 98 58 cd ff ff 89 c8 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+[  447.146941] EAX: ffffffda EBX: 0000000e ECX: c0206466 EDX: 02311c40
+[  447.146943] ESI: 02311a00 EDI: c0206466 EBP: 0000000e ESP: bff73058
+[  447.146945] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00203292
+[  447.146947] ================================================================================
