@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEED2C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D0BC282DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C16A214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A42C3214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqhiGIbX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQPLUdQ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfBKIlw (ORCPT
+        id S1727194AbfBKIl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:41:52 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46300 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbfBKIlu (ORCPT
+        Mon, 11 Feb 2019 03:41:57 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39418 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727153AbfBKIlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:41:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g6so1017535pfh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:41:50 -0800 (PST)
+        Mon, 11 Feb 2019 03:41:53 -0500
+Received: by mail-pl1-f194.google.com with SMTP id 101so4985780pld.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:41:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=f2xUPJ0VeEmUdzCbdA+JjT7JZvX3sMGSKBadMB0TcQ4=;
-        b=OqhiGIbXtzXUVI1C8avuY43tRwF3EkVCzY5e8qsW3p7NCUzasvuP1LktlvReVFTRpx
-         aeulSPvVltElImwNXVUGO8kmYv4UnEXPD3x2Dt8APpdYQOWIUnjyAno2yl5Hue7o1+8C
-         ygWbSPu+oVq015orwnRXaeuSdiMitSarbmy+Awgd4qzMnzA6cy7HYbkNNgeRqk2LpItS
-         0Tq1ZOg8XxGP3F442j/fiuua/Ygsq/3Q1tpj+qbqKPnxMT902PWqJZR5imWcrdsnOJEn
-         ucVNHl3qajdtkuzSx2jBJ/zqrjvHYRPN0SosL5SWB24Vm6/GdB6QvxIRcBOUZSpxMEWX
-         O+0A==
+        bh=y3+EyDegbUZpN+/R1MgR55TgRo8j8NBTJTSndSQPWD0=;
+        b=nQPLUdQ88SR8I618ybEF8PhcK/8OnkEyxsMH/TdZxs7qW3iSyHn7lUcaTr8GQ07QWH
+         iP8FXv5dSYeLNQ0lCSXM/MvC73lxeaWP0nVpsNe3lQNpbsuhWzrSMT7pBof4smocsBTv
+         0EFbGSxTAYh11BQc9kFDi2RgQXbMy4FK2V1k7PvPEiFEh9PV9h55in5F+Ec/wZdcarzQ
+         Dui1JyeqHyKrv6xU5PtT/ztO0z6rR6lLmaqtwCuVhLjcuih/x62+TvrlRHYvUQX9umqp
+         nIdG9qsZC5arJT66/GjlQcog2UhnNUaFYYKg3f6EU+PnezQFBUdn23SvQVqRdUHOxYt0
+         fcSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=f2xUPJ0VeEmUdzCbdA+JjT7JZvX3sMGSKBadMB0TcQ4=;
-        b=DMF1XcgeZnPZzTB89lfXx4+QYqfp8fjkCBA61OY8hx6ZBV6J7bO7TOnfReBwn2pAUt
-         zPxBsSIjUCYUDRdinr66IbA0qx3Ty5Wr0G9y2/CsQpH7WxflzuU6beux88VvARPO6n4w
-         YgrIxLfZ9j6Z0vzAqRBXxHYNA/jjbnxupohsx+SjEhLkWseuwrNcAuleM1UM7tcYBHcU
-         Uk1vMFgpiE9VZyVWIpA2113ZN2/M9YAbjQJl/KJeMULSzJbg596G1fJQkZQoaoBTccVv
-         k09oDSC/9634hUFhZw1Sh0hQlCq5rOSABXgrt1EBZLaPHCIENutfIGgWayHAPtXADtTO
-         lERA==
-X-Gm-Message-State: AHQUAuZMqFr2sW1JeIeWtEZTIfjVURKrOqino5pFbsSG0LBDV/oP2ejl
-        jayZdhDedbc5yVhTDpkqaS7fpQ==
-X-Google-Smtp-Source: AHgI3IaU1MNPbuSVZNCOYzHA5l8dfEqhq0rbN2Tgc2WmCaFSTeR9DAP7jRa77Jhd/J66FF2yewZQEg==
-X-Received: by 2002:a65:5c4b:: with SMTP id v11mr17775297pgr.333.1549874509763;
-        Mon, 11 Feb 2019 00:41:49 -0800 (PST)
+        bh=y3+EyDegbUZpN+/R1MgR55TgRo8j8NBTJTSndSQPWD0=;
+        b=Fen8zVYvkETPPPFfGrfcAxsuL/PpIpFHUMFlAtU8UtZ+bI4SScbvrX6xknsktRbKqD
+         kfD6mk8AVk3qfGdXigfCw/cSjr1fOw+GbafbPxim4ggajOxAlPceU1lSr1XshleBWPP/
+         Ofh21ExRV9Qq0/gNBSQypPHNA0f40zJUPzqlvaTRfupRthBRoR5ztRK4mEl7hE5SoPPH
+         x5rcpNPR60BsERHTNh3sznDdTgHAOAnvagP1dczx7XhIF35mtuNSHoZvGHG8WcUq3hN3
+         1yh4BKE4U4NQXvRZ1wXZmtDzJcttv3USzbzCMJGz6GWh9UVmJ0zSQH1u2fE8q6TXD/4x
+         LneQ==
+X-Gm-Message-State: AHQUAuZVkvNH6r0pjxL+fukkA1buIDe+a8/eOwrCWCfSo2hRDiOYtaX2
+        30InHYQgp3AdJGh7Q6vsbNA1xw==
+X-Google-Smtp-Source: AHgI3IZ7b5gWH4z0Fbn6KmUML8IyAYZ8dPzxF0dYqE9ATazTuoXrXzwyxYo2J/qghKJo3d6HDJtuqQ==
+X-Received: by 2002:a17:902:a411:: with SMTP id p17mr36083302plq.292.1549874512588;
+        Mon, 11 Feb 2019 00:41:52 -0800 (PST)
 Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id n10sm14833460pfj.14.2019.02.11.00.41.48
+        by smtp.gmail.com with ESMTPSA id m68sm3134173pfj.89.2019.02.11.00.41.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 00:41:49 -0800 (PST)
+        Mon, 11 Feb 2019 00:41:51 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rafael Wysocki <rjw@rjwysocki.net>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Sudeep Holla <sudeep.holla@arm.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] cpufreq: Allow light-weight tear down on CPU offline operation
-Date:   Mon, 11 Feb 2019 14:11:35 +0530
-Message-Id: <03ac36a174f6c28be0b3af9d2db8631d56695f1d.1549874368.git.viresh.kumar@linaro.org>
+Subject: [PATCH 2/2] cpufreq: dt: Implement light_weight_exit() callback
+Date:   Mon, 11 Feb 2019 14:11:36 +0530
+Message-Id: <742f4f42ae944a3ad13216f96fb0d03d394c395e.1549874368.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
 In-Reply-To: <cover.1549874368.git.viresh.kumar@linaro.org>
 References: <cover.1549874368.git.viresh.kumar@linaro.org>
@@ -76,74 +76,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpufreq core doesn't remove the cpufreq policy anymore on CPU
-offline operation, rather that happens when the CPU device gets
-unregistered from the kernel. This allows faster recovery when the CPU
-comes back online. This is also very useful during system wide
-suspend/resume where we offline all non-boot CPUs during suspend and
-then bring them back on resume.
-
-This commit takes the same idea a step ahead to allow drivers to do
-light weight tear-down during CPU offline operation.
-
-A new callback is introduced, light_weight_exit(), which gets called
-when all the CPUs of a policy are removed/offlined and the existing
-exit() callback gets called when the policy gets freed.
+Implement the light-weight tear down helper to reduce the amount of work
+to do on CPU offline/online operation.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/cpufreq.c | 16 +++++++++++-----
- include/linux/cpufreq.h   |  1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 96a69c67a545..215a8bfc78bb 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1421,11 +1421,12 @@ static int cpufreq_offline(unsigned int cpu)
- 		cpufreq_exit_governor(policy);
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 7ba392911cd0..69309a8121f0 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -160,6 +160,15 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	const char *name;
+ 	int ret;
  
- 	/*
--	 * Perform the ->exit() even during light-weight tear-down,
--	 * since this is a core component, and is essential for the
--	 * subsequent light-weight ->init() to succeed.
-+	 * Perform the ->light_weight_exit() during light-weight tear-down, as
-+	 * that allows fast recovery when the CPU comes back.
- 	 */
--	if (cpufreq_driver->exit) {
-+	if (cpufreq_driver->light_weight_exit) {
-+		cpufreq_driver->light_weight_exit(policy);
-+	} else if (cpufreq_driver->exit) {
- 		cpufreq_driver->exit(policy);
- 		policy->freq_table = NULL;
- 	}
-@@ -1454,8 +1455,13 @@ static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
- 	cpumask_clear_cpu(cpu, policy->real_cpus);
- 	remove_cpu_dev_symlink(policy, dev);
- 
--	if (cpumask_empty(policy->real_cpus))
-+	if (cpumask_empty(policy->real_cpus)) {
-+		/* We did light-weight exit earlier, do full tear down now */
-+		if (cpufreq_driver->light_weight_exit)
-+			cpufreq_driver->exit(policy);
-+
- 		cpufreq_policy_free(policy);
++	/*
++	 * We did light-weight shutdown earlier, nothing else to initialize here
++	 * apart from policy->cpus.
++	 */
++	if (policy->driver_data) {
++		cpumask_copy(policy->cpus, policy->related_cpus);
++		return 0;
 +	}
++
+ 	cpu_dev = get_cpu_device(policy->cpu);
+ 	if (!cpu_dev) {
+ 		pr_err("failed to get cpu%d device\n", policy->cpu);
+@@ -295,6 +304,15 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	return ret;
  }
  
- /**
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 9db074ecbbd7..36ce31516041 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -325,6 +325,7 @@ struct cpufreq_driver {
- 	/* optional */
- 	int		(*bios_limit)(int cpu, unsigned int *limit);
- 
-+	int		(*light_weight_exit)(struct cpufreq_policy *policy);
- 	int		(*exit)(struct cpufreq_policy *policy);
- 	void		(*stop_cpu)(struct cpufreq_policy *policy);
- 	int		(*suspend)(struct cpufreq_policy *policy);
++static int cpufreq_light_weight_exit(struct cpufreq_policy *policy)
++{
++	/*
++	 * Preserve policy->driver_data and don't free resources on light-weight
++	 * tear down.
++	 */
++	return 0;
++}
++
+ static int cpufreq_exit(struct cpufreq_policy *policy)
+ {
+ 	struct private_data *priv = policy->driver_data;
+@@ -319,6 +337,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.get = cpufreq_generic_get,
+ 	.init = cpufreq_init,
+ 	.exit = cpufreq_exit,
++	.light_weight_exit = cpufreq_light_weight_exit,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
+ 	.suspend = cpufreq_generic_suspend,
 -- 
 2.20.1.321.g9e740568ce00
 
