@@ -2,106 +2,77 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DDDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C087C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABDC2229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F285121B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbfBKRdD (ORCPT
+        id S1731706AbfBKRe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:33:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:54640 "EHLO foss.arm.com"
+        Mon, 11 Feb 2019 12:34:26 -0500
+Received: from mga01.intel.com ([192.55.52.88]:49856 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727393AbfBKRdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:33:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF954EBD;
-        Mon, 11 Feb 2019 09:33:01 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19D9A3F675;
-        Mon, 11 Feb 2019 09:32:58 -0800 (PST)
-Date:   Mon, 11 Feb 2019 17:32:56 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, Matthew Wilcox <willy@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Laight <David.Laight@aculab.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH RFC LKMM 5/7] docs/memory-barriers.txt: Enforce heavy
- ordering for port I/O accesses
-Message-ID: <20190211173256.GB2994@fuggles.cambridge.arm.com>
-References: <20190109210706.GA27268@linux.ibm.com>
- <20190109210748.29074-5-paulmck@linux.ibm.com>
- <20190211153043.GC32385@fuggles.cambridge.arm.com>
- <CAK8P3a3bkQoVfkV-+pNniirLN5Z_Wv3eG2TXW35kdJixCOH9_Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3bkQoVfkV-+pNniirLN5Z_Wv3eG2TXW35kdJixCOH9_Q@mail.gmail.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+        id S1727393AbfBKRe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:34:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 09:34:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="117035838"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 11 Feb 2019 09:34:25 -0800
+Message-ID: <96285ed154dbb92686ca0068e21f5e0500bb1ce7.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 2/4] kvm: Add host side support for free memory hints
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, rkrcmar@redhat.com, x86@kernel.org,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
+        tglx@linutronix.de, akpm@linux-foundation.org
+Date:   Mon, 11 Feb 2019 09:34:25 -0800
+In-Reply-To: <20190209194108-mutt-send-email-mst@kernel.org>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181546.12095.81356.stgit@localhost.localdomain>
+         <20190209194108-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Sat, 2019-02-09 at 19:44 -0500, Michael S. Tsirkin wrote:
+> On Mon, Feb 04, 2019 at 10:15:46AM -0800, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > 
+> > Add the host side of the KVM memory hinting support. With this we expose a
+> > feature bit indicating that the host will pass the messages along to the
+> > new madvise function.
+> > 
+> > This functionality is mutually exclusive with device assignment. If a
+> > device is assigned we will disable the functionality as it could lead to a
+> > potential memory corruption if a device writes to a page after KVM has
+> > flagged it as not being used.
+> 
+> I really dislike this kind of tie-in.
+> 
+> Yes right now assignment is not smart enough but generally
+> you can protect the unused page in the IOMMU and that's it,
+> it's safe.
+> 
+> So the policy should not leak into host/guest interface.
+> Instead it is better to just keep the pages pinned and
+> ignore the hint for now.
 
-On Mon, Feb 11, 2019 at 06:11:48PM +0100, Arnd Bergmann wrote:
-> On Mon, Feb 11, 2019 at 4:30 PM Will Deacon <will.deacon@arm.com> wrote:
-> 
-> > Given the lack of Intel response here, I went away to do some digging.
-> > As evidenced by the commit message, there is certainly an understanding
-> > amongst some developers that inX/outX() are strongly ordered on x86 and
-> > this was re-enforced by Linus in March last year:
-> >
-> > https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg131212.html
-> >
-> > It was this information on which I based my patch. The Intel SDM is not
-> > quite as assertive in its claims.
-> >
-> > However, it has also occurred to me that this patch is actually missing
-> > the point. memory-barriers.txt should be documenting the *Linux* memory
-> > model, not the x86 one, and so the port accessors should be defined to
-> > have the same ordering semantics as the MMIO accessors. If this wasn't
-> > the case, then macros such as ioreadX() and iowriteX() would be unusable
-> > in portable driver code.
-> 
-> My interpretation of the ioreadX() and iowriteX() semantics is that they
-> only guarantee readl()/writel() barrier semantics, even though they
-> may in fact provide stronger barriers for PIO on architectures that use
-> CONFIG_GENERIC_IOMAP (which falls back to inX()/outX()).
-> 
-> > The inX/outX implementation in asm-generic would
-> > also be bogus, despite being widely used.
-> 
-> They likely are. The asm-generic files tend to provide a generic
-> abstraction as much as that is possible, but without having access
-> to the architecture specific semantics, they raditionally don't know
-> what should be done here. We now have __io_pbw()/__io_paw()/
-> __io_pbr()/__io_par() to let architectures get it right, but that is
-> a fairly recent addition, so nothing other than riscv defines them
-> today.
-> To make things worse, a lot of machines are unable to provide
-> __io_paw(), e.g. when all bus writes are posted.
+Okay, I can do that. It also gives me a means of benchmarking just the
+hypercall cost versus the extra page faults and zeroing.
 
-So I've just sent an RFC (you're on cc) that attempts to rewrite this part
-of memory-barriers.txt to reflect reality. Hopefully that can act as a
-starting point for discussion if we decide we want to change the documented
-behaviour and/or implementation.
-
-Will
