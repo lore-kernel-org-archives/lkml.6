@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5F5C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E15C0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCBB2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B285420675
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895379;
-	bh=xd5acvtQcvElPKnope4Wr/VzdUtMc+tIoMV+NAEGtR8=;
+	s=default; t=1549895383;
+	bh=PzYSum2dKAw5nRTItD9Re6ziMpYE2Ehql/BW0xxdgp0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hjjz+W9K0vJJB6H4ADI4JmqhxAcKI2P7wdA4uFnotbyGREcyqnzOdRo61uqZqI6Gy
-	 WYagI0ZRLhNlH6ZYUqQUirNddEzisn4HAOHM1FoRQoBlefle/cejPYE0H2BK5HOkeT
-	 neAVusR8q/Vo020DeKrdANP6zbMRf8NvkJOh45wA=
+	b=WAZep88Cwk5z+0Oq5aEUjn9P0WtHtAQt0LzbCl+Hptywt8fa8VJ9gRxWx7L1TiHWT
+	 Z+Z0FjKyhRRrc31l7kOwvrQAY6ske9zzXgikSDhlk9DeNBGE3MPJKx+cZoz7KNJr+b
+	 q51HLV5WrXyX33ElYuDi7qNANossI66SOmSeiMQI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfBKO3i (ORCPT
+        id S1730015AbfBKO3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35652 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:29:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730001AbfBKO3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:29:32 -0500
+        id S1729546AbfBKO3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA1BB20675;
-        Mon, 11 Feb 2019 14:29:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02AB820675;
+        Mon, 11 Feb 2019 14:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895372;
-        bh=xd5acvtQcvElPKnope4Wr/VzdUtMc+tIoMV+NAEGtR8=;
+        s=default; t=1549895378;
+        bh=PzYSum2dKAw5nRTItD9Re6ziMpYE2Ehql/BW0xxdgp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xsfePqPsi/GA1VNzPcet8RS1snAXxFXHWTp5OcdzLVvucNGEqNolGpdpKs0VASC4Y
-         5gyIgfR7z/BH/Nv6t1zEEXyYbNHCvxZJ+H7wQEOu5IYcc/7ENA0Eo8csBeuH21PCRl
-         4LqVnkmVH9eBAoP6OAoUjt6ZhVq0l8m3uxVa6F/8=
+        b=kZHnK/q9RsNujOs5rFzXqOLxQDKPyKCrPKVhFBeff3fXlmoAf25zCKGXIo2kwW3jM
+         OY+AB2ojCeMaRK9XLiaskaXpRxm0y1aO304ApTK1MwN2EvKaYucyeun0kohcZgm9vA
+         CPOFglBP33BaBjoHq8MqY8F2K5PW0DBbACyCUwWw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 142/352] iommu/arm-smmu-v3: Avoid memory corruption from Hisilicon MSI payloads
-Date:   Mon, 11 Feb 2019 15:16:09 +0100
-Message-Id: <20190211141855.585453813@linuxfoundation.org>
+Subject: [PATCH 4.20 186/352] perf test: Fix perf_event_attr test failure
+Date:   Mon, 11 Feb 2019 15:16:53 +0100
+Message-Id: <20190211141858.950074781@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,52 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 84a9a75774961612d0c7dd34a1777e8f98a65abd ]
+[ Upstream commit 741dad88dde296999da30332157ca47f0543747d ]
 
-The GITS_TRANSLATER MMIO doorbell register in the ITS hardware is
-architected to be 4 bytes in size, yet on hi1620 and earlier, Hisilicon
-have allocated the adjacent 4 bytes to carry some IMPDEF sideband
-information which results in an 8-byte MSI payload being delivered when
-signalling an interrupt:
+Fix inconsistent use of tabs and spaces error:
 
-MSIAddr:
-	 |----4bytes----|----4bytes----|
-	 |    MSIData   |    IMPDEF    |
+  # perf test 16 -v
+  16: Setup struct perf_event_attr                          :
+  --- start ---
+  test child forked, pid 20224
+    File "/usr/libexec/perf-core/tests/attr.py", line 119
+      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+                                                                 ^
+  TabError: inconsistent use of tabs and spaces in indentation
+  test child finished with -1
+  ---- end ----
+  Setup struct perf_event_attr: FAILED!
 
-This poses no problem for the ITS hardware because the adjacent 4 bytes
-are reserved in the memory map. However, when delivering MSIs to memory,
-as we do in the SMMUv3 driver for signalling the completion of a SYNC
-command, the extended payload will corrupt the 4 bytes adjacent to the
-"sync_count" member in struct arm_smmu_device. Fortunately, the current
-layout allocates these bytes to padding, but this is fragile and we
-should make this explicit.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[will: Rewrote commit message and comment]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/tests/attr.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 71eda422c926..62ef4afc9ee5 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -576,7 +576,11 @@ struct arm_smmu_device {
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index ff9b60b99f52..44090a9a19f3 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -116,7 +116,7 @@ class Event(dict):
+             if not self.has_key(t) or not other.has_key(t):
+                 continue
+             if not data_equal(self[t], other[t]):
+-		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
++                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
  
- 	struct arm_smmu_strtab_cfg	strtab_cfg;
- 
--	u32				sync_count;
-+	/* Hi16xx adds an extra 32 bits of goodness to its MSI payload */
-+	union {
-+		u32			sync_count;
-+		u64			padding;
-+	};
- 
- 	/* IOMMU core code handle */
- 	struct iommu_device		iommu;
+ # Test file description needs to have following sections:
+ # [config]
 -- 
 2.19.1
 
