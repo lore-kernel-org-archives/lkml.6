@@ -2,347 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D229C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA975C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2744B218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A865921B1C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rY5NKcxY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWlBTld9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbfBKNgn (ORCPT
+        id S1728257AbfBKNg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:36:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48840 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfBKNgm (ORCPT
+        Mon, 11 Feb 2019 08:36:57 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56225 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbfBKNgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:36:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1PoKxQERjUXrkwa8UnK8aKAvU8Lvas8RJ4LigUG82rU=; b=rY5NKcxYEgUMcc8n/a0rS+JucJ
-        tFYVRt45r8kTnuWFFQobHIBY8SSPSsUu5TBhLSGj+LJbg7izQ6ufyzSMbR0QWPeBgm2/c9tX+1jek
-        reLcxUIEYBWdgRZ9Qy2XSRlMVeYp8rdbewYOBPxvY5y1yVzErxoK8yhqzrZ1XK+JbI6DYL1sQklSG
-        svi/f7Ub7FCq8KtavUjAiAa/RYPT/D2Td/m1v+QLlAIc/yQk7Wla8UNksodAqcjROLmxsTWZPHm4c
-        VIp0tqX8NXkPmUlJeyZK2Pu29hF879uANx7wWRlBk6ylwPP+GJlAavlXQT8XApVyi8EmbvSYoyvGZ
-        mIDGzH+g==;
-Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtBl4-0000KP-TN; Mon, 11 Feb 2019 13:36:27 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>, x86@kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/12] dma-mapping: simplify allocations from per-device coherent memory
-Date:   Mon, 11 Feb 2019 14:35:52 +0100
-Message-Id: <20190211133554.30055-11-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211133554.30055-1-hch@lst.de>
-References: <20190211133554.30055-1-hch@lst.de>
+        Mon, 11 Feb 2019 08:36:55 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r17so17610786wmh.5;
+        Mon, 11 Feb 2019 05:36:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oqBNnbIu4ogAFHQv0IkubaNotkX2xJx7RZvZ6dahxA0=;
+        b=dWlBTld9j8T52lCHFf1Ji9Oq9JA3yqNuZYTfA0CidfToNWajVNFt+SqVtGK8FZGIGS
+         dA7Zc26RNnFiDFZbMKadqPTEJvebkib38hlO0bTffDmt2zKmpj8YPtRVy3GyVWBSXRmn
+         5EknEw6wOsqXbSwRGAZURYB9Mh0VIxwYIRa+ViTmqxTOFxZGTu1rm8Fm5Vu1TFX3QNDO
+         32t/nYBTJiweu0/hYuvVvTWbnIxtk/BoZ+3jxcZ8RBGdqFeQKHEJB/llZQVJuknf6wHw
+         bevQJtKjc1OKoCQ/wUNTU8UnPP1AMyOFmO9rBW7v5YbTFqAmdhz5tixs407i2QbTEXl0
+         JDkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oqBNnbIu4ogAFHQv0IkubaNotkX2xJx7RZvZ6dahxA0=;
+        b=CjpQKkSj3HzDiD1yNeSE/336XwnvTCJ8/9t6EkNnAdvPpW4SBqbYCcngQ50okUK85N
+         0BhL6FJIpW/L4ZD6bz30tqqzEYmgOj8Tj9MWPuhaxKCyZi5cFvXNtFFnSj95RXuFvDRc
+         XGfPt92xxgfN5fqvp14UGNVRRNQYziHX7CSoxT7+bHiz5iqWTXP+c6rxr7rmQR8fcb5N
+         2yRdzfwluS+XzgHL+7RoeFrEkFyxMypwaMf2E+fHnWrE79dQXOpaEd8S/LXyTmBLG5rr
+         rM2eC2j2jqRhRnRqR5LagLle60u1par0clmg8TRB+iw1I9qqBSUHzsHKiDFAl4Ypvb/j
+         UCHg==
+X-Gm-Message-State: AHQUAub2HA2GLTQ4O+QxOcFKqiAqSSI/MluB83yu4RLnWSA6frZj4Gen
+        Mdzf9zWjVSL7H4bd6nfRO3f5x+F49bcJnT/BZUo=
+X-Google-Smtp-Source: AHgI3IZepcynd+Hv6C7k9ZWYerJsqdBdRwCbYM4kp8mARDKItdDCOe9hcRBOaK0i7Z7lpyAruqQFHGPkWDC3gLSxo/A=
+X-Received: by 2002:a05:600c:211a:: with SMTP id u26mr9215345wml.142.1549892213289;
+ Mon, 11 Feb 2019 05:36:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
+In-Reply-To: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date:   Mon, 11 Feb 2019 19:06:42 +0530
+Message-ID: <CAKfKVtFu0V7GVrZJ_THHAm-gAddp37iKv=JQQaWt_C+xZJEEWw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: zynq: properly support runtime PM for GPIO used as interrupts
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All users of per-device coherent memory are exclusive, that is if we can't
-allocate from the per-device pool we can't use the system memory either.
-Unfold the current dma_{alloc,free}_from_dev_coherent implementation and
-always use the per-device pool if it exists.
+Hi Thomas,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/arm/mm/dma-mapping-nommu.c | 12 ++---
- include/linux/dma-mapping.h     | 14 ++----
- kernel/dma/coherent.c           | 89 ++++++++-------------------------
- kernel/dma/internal.h           | 19 +++++++
- kernel/dma/mapping.c            | 12 +++--
- 5 files changed, 55 insertions(+), 91 deletions(-)
- create mode 100644 kernel/dma/internal.h
+Thanks for the patch.
 
-diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
-index f304b10e23a4..c72f024f1e82 100644
---- a/arch/arm/mm/dma-mapping-nommu.c
-+++ b/arch/arm/mm/dma-mapping-nommu.c
-@@ -70,16 +70,10 @@ static void arm_nommu_dma_free(struct device *dev, size_t size,
- 			       void *cpu_addr, dma_addr_t dma_addr,
- 			       unsigned long attrs)
- {
--	if (attrs & DMA_ATTR_NON_CONSISTENT) {
-+	if (attrs & DMA_ATTR_NON_CONSISTENT)
- 		dma_direct_free_pages(dev, size, cpu_addr, dma_addr, attrs);
--	} else {
--		int ret = dma_release_from_global_coherent(get_order(size),
--							   cpu_addr);
--
--		WARN_ON_ONCE(ret == 0);
--	}
--
--	return;
-+	else
-+		dma_release_from_global_coherent(size, cpu_addr);
- }
- 
- static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index b12fba725f19..018e37a0870e 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -158,30 +158,24 @@ static inline int is_device_dma_capable(struct device *dev)
-  * These three functions are only for dma allocator.
-  * Don't use them in device drivers.
-  */
--int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
--				       dma_addr_t *dma_handle, void **ret);
--int dma_release_from_dev_coherent(struct device *dev, int order, void *vaddr);
--
- int dma_mmap_from_dev_coherent(struct device *dev, struct vm_area_struct *vma,
- 			    void *cpu_addr, size_t size, int *ret);
- 
--void *dma_alloc_from_global_coherent(ssize_t size, dma_addr_t *dma_handle);
--int dma_release_from_global_coherent(int order, void *vaddr);
-+void *dma_alloc_from_global_coherent(size_t size, dma_addr_t *dma_handle);
-+void dma_release_from_global_coherent(size_t size, void *vaddr);
- int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *cpu_addr,
- 				  size_t size, int *ret);
- 
- #else
--#define dma_alloc_from_dev_coherent(dev, size, handle, ret) (0)
--#define dma_release_from_dev_coherent(dev, order, vaddr) (0)
- #define dma_mmap_from_dev_coherent(dev, vma, vaddr, order, ret) (0)
- 
--static inline void *dma_alloc_from_global_coherent(ssize_t size,
-+static inline void *dma_alloc_from_global_coherent(size_t size,
- 						   dma_addr_t *dma_handle)
- {
- 	return NULL;
- }
- 
--static inline int dma_release_from_global_coherent(int order, void *vaddr)
-+static inline void dma_release_from_global_coherent(size_t size, void *vaddr)
- {
- 	return 0;
- }
-diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
-index 29fd6590dc1e..d1da1048e470 100644
---- a/kernel/dma/coherent.c
-+++ b/kernel/dma/coherent.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/dma-mapping.h>
-+#include "internal.h"
- 
- struct dma_coherent_mem {
- 	void		*virt_base;
-@@ -21,13 +22,6 @@ struct dma_coherent_mem {
- 
- static struct dma_coherent_mem *dma_coherent_default_memory __ro_after_init;
- 
--static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *dev)
--{
--	if (dev && dev->dma_mem)
--		return dev->dma_mem;
--	return NULL;
--}
--
- static inline dma_addr_t dma_get_device_base(struct device *dev,
- 					     struct dma_coherent_mem * mem)
- {
-@@ -135,8 +129,8 @@ void dma_release_declared_memory(struct device *dev)
- }
- EXPORT_SYMBOL(dma_release_declared_memory);
- 
--static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
--		ssize_t size, dma_addr_t *dma_handle)
-+void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem, size_t size,
-+		dma_addr_t *dma_handle)
- {
- 	int order = get_order(size);
- 	unsigned long flags;
-@@ -165,33 +159,7 @@ static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
- 	return NULL;
- }
- 
--/**
-- * dma_alloc_from_dev_coherent() - allocate memory from device coherent pool
-- * @dev:	device from which we allocate memory
-- * @size:	size of requested memory area
-- * @dma_handle:	This will be filled with the correct dma handle
-- * @ret:	This pointer will be filled with the virtual address
-- *		to allocated area.
-- *
-- * This function should be only called from per-arch dma_alloc_coherent()
-- * to support allocation from per-device coherent memory pools.
-- *
-- * Returns 0 if dma_alloc_coherent should continue with allocating from
-- * generic memory areas, or !0 if dma_alloc_coherent should return @ret.
-- */
--int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
--		dma_addr_t *dma_handle, void **ret)
--{
--	struct dma_coherent_mem *mem = dev_get_coherent_memory(dev);
--
--	if (!mem)
--		return 0;
--
--	*ret = __dma_alloc_from_coherent(mem, size, dma_handle);
--	return 1;
--}
--
--void *dma_alloc_from_global_coherent(ssize_t size, dma_addr_t *dma_handle)
-+void *dma_alloc_from_global_coherent(size_t size, dma_addr_t *dma_handle)
- {
- 	if (!dma_coherent_default_memory)
- 		return NULL;
-@@ -200,48 +168,33 @@ void *dma_alloc_from_global_coherent(ssize_t size, dma_addr_t *dma_handle)
- 			dma_handle);
- }
- 
--static int __dma_release_from_coherent(struct dma_coherent_mem *mem,
--				       int order, void *vaddr)
-+static bool dma_in_coherent_range(struct dma_coherent_mem *mem, size_t size,
-+		void *vaddr)
- {
--	if (mem && vaddr >= mem->virt_base && vaddr <
--		   (mem->virt_base + (mem->size << PAGE_SHIFT))) {
--		int page = (vaddr - mem->virt_base) >> PAGE_SHIFT;
--		unsigned long flags;
--
--		spin_lock_irqsave(&mem->spinlock, flags);
--		bitmap_release_region(mem->bitmap, page, order);
--		spin_unlock_irqrestore(&mem->spinlock, flags);
--		return 1;
--	}
--	return 0;
-+	return vaddr >= mem->virt_base &&
-+		vaddr + size <= mem->virt_base + (mem->size << PAGE_SHIFT);
- }
- 
--/**
-- * dma_release_from_dev_coherent() - free memory to device coherent memory pool
-- * @dev:	device from which the memory was allocated
-- * @order:	the order of pages allocated
-- * @vaddr:	virtual address of allocated pages
-- *
-- * This checks whether the memory was allocated from the per-device
-- * coherent memory pool and if so, releases that memory.
-- *
-- * Returns 1 if we correctly released the memory, or 0 if the caller should
-- * proceed with releasing memory from generic pools.
-- */
--int dma_release_from_dev_coherent(struct device *dev, int order, void *vaddr)
-+void __dma_release_from_coherent(struct dma_coherent_mem *mem, size_t size,
-+		void *vaddr)
- {
--	struct dma_coherent_mem *mem = dev_get_coherent_memory(dev);
-+	int page = (vaddr - mem->virt_base) >> PAGE_SHIFT;
-+	unsigned long flags;
-+
-+	if (WARN_ON_ONCE(!dma_in_coherent_range(mem, size, vaddr)))
-+		return;
- 
--	return __dma_release_from_coherent(mem, order, vaddr);
-+	spin_lock_irqsave(&mem->spinlock, flags);
-+	bitmap_release_region(mem->bitmap, page, get_order(size));
-+	spin_unlock_irqrestore(&mem->spinlock, flags);
- }
- 
--int dma_release_from_global_coherent(int order, void *vaddr)
-+void dma_release_from_global_coherent(size_t size, void *vaddr)
- {
- 	if (!dma_coherent_default_memory)
--		return 0;
-+		return;
- 
--	return __dma_release_from_coherent(dma_coherent_default_memory, order,
--			vaddr);
-+	__dma_release_from_coherent(dma_coherent_default_memory, size, vaddr);
- }
- 
- static int __dma_mmap_from_coherent(struct dma_coherent_mem *mem,
-diff --git a/kernel/dma/internal.h b/kernel/dma/internal.h
-new file mode 100644
-index 000000000000..48a0a71487b1
---- /dev/null
-+++ b/kernel/dma/internal.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _DMA_INTERNAL_H
-+#define _DMA_INTERNAL_H
-+
-+static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *dev)
-+{
-+#ifdef DMA_DECLARE_COHERENT
-+	if (dev && dev->dma_mem)
-+		return dev->dma_mem;
-+#endif
-+	return NULL;
-+}
-+
-+void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem, size_t size,
-+		dma_addr_t *dma_handle);
-+void __dma_release_from_coherent(struct dma_coherent_mem *mem, size_t size,
-+		void *vaddr);
-+
-+#endif /* _DMA_INTERNAL_H */
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index a11006b6d8e8..d3c4363b2143 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -14,6 +14,7 @@
- #include <linux/of_device.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include "internal.h"
- 
- /*
-  * Managed DMA API
-@@ -248,12 +249,13 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		gfp_t flag, unsigned long attrs)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
-+	struct dma_coherent_mem *mem = dev_get_coherent_memory(dev);
- 	void *cpu_addr;
- 
- 	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
- 
--	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
--		return cpu_addr;
-+	if (mem)
-+		return __dma_alloc_from_coherent(mem, size, dma_handle);
- 
- 	/* let the implementation decide on the zone to allocate from: */
- 	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
-@@ -277,9 +279,11 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 		dma_addr_t dma_handle, unsigned long attrs)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
-+	struct dma_coherent_mem *mem = dev_get_coherent_memory(dev);
-+
-+	if (mem)
-+		return __dma_release_from_coherent(mem, size, cpu_addr);
- 
--	if (dma_release_from_dev_coherent(dev, get_order(size), cpu_addr))
--		return;
- 	/*
- 	 * On non-coherent platforms which implement DMA-coherent buffers via
- 	 * non-cacheable remaps, ops->free() may call vunmap(). Thus getting
--- 
-2.20.1
-
+On Fri, Feb 8, 2019 at 4:13 PM Thomas Petazzoni
+<thomas.petazzoni@bootlin.com> wrote:
+>
+> The Zynq GPIO driver currently implements runtime PM by:
+>
+>  - Enabling runtime PM support in ->probe() and letting the runtime PM
+>    reference counter drop to zero at the end of ->probe().
+>
+>  - Increasing the runtime PM reference counter in ->request() and
+>    decreasing it in ->free().
+>
+> However, the latter is not sufficient: when a GPIO is used as an
+> interrupt, ->request() and ->free() are not called. Due to this, the
+> runtime PM counter remains to zero when the only GPIOs in use are used
+> as interrupts, causing them to simply not work.
+>
+> To address this problem, this commit implement the
+> ->irq_request_resources() and ->irq_release_resources() hooks,
+> ensuring that the runtime PM counter is properly
+> incremented/decremented. Since we override the default hooks, we keep
+> the existing behavior by making sure they call gpiochip_reqres_irq() /
+> gpiochip_relres_irq() respectively.
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+> ---
+Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+>
