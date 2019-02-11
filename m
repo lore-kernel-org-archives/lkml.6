@@ -2,150 +2,168 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C98CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F9DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0024218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DE2218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LvDpk8rP"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EZQrmNGE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfBKWAY (ORCPT
+        id S1727311AbfBKWBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:00:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43578 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfBKWAE (ORCPT
+        Mon, 11 Feb 2019 17:01:13 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11285 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfBKWBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:00:04 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r2so449704wrv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xu9/37gH7GsD7XGP+9mY66oknw0IDCzNaIitxBdfe0s=;
-        b=LvDpk8rPB3n4BLRV+GWRak4fy4PQK/nUyEZdQO8ek2m2qmtOvn9x9BaisqKXQk6TIz
-         kI0YBJ3nAdG50wT9X9SbBsBC6H+lZyC9ZV201ioFawASZWLGJ9ZF+JPMsO3kjK/P2lra
-         SqXZnv1ATyfvt0QOyPl/Y6z1F3tocJYTZfc6Eh7eeli7zJ3RKCZRtC2r0YMrVKxi15S9
-         BfIeI5BrOB0Sje8/M66uiaWc+Hy6gQbTgIL7xNVqIvtvPlFYO6wlxPqYcQA8jXC/UbWW
-         xzqt8ab59GILV1YPmno+TCjFrlvUlQe1Y50UYnqEKlrgFrbPy77O/FZSbtd+zXVPxuuF
-         a4mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xu9/37gH7GsD7XGP+9mY66oknw0IDCzNaIitxBdfe0s=;
-        b=Yv45TncUPws3ECYfuFkjNXvj1CSges9qY3taR4yQ0q0o+NkSqwer9HRGYMxNYI96g5
-         g74QFJ/yzq0PxEwGTg2V+3225KHj77ehtfyF6GxaAXQHuYz8Fgwu0b+l/NsjXlxBa9ks
-         9ac6B6KaErSm/CfyvCseZXlHxTz8/rfPp2WZwtem5cidws3MJEC9wf1P+u/+13f+NtKN
-         aSIOnXjof/RxmsINjnrawR9sOl9Vygi8lOSEopIJ033F7AxT4+Po+/vx9uzflXf9vHNY
-         VfWTVu64qW3FS+7+w1fhdWLTQzYC6bsDm8I2J12rXvj4LugGmQda5XNd/q1SZFbhuXTZ
-         6+7w==
-X-Gm-Message-State: AHQUAuYzZNhpSShQYSEkSPgBIhU1MDXCvhnWeQwDqWn8uFhiiBYKeQt3
-        KLWHIMdTMNL/n37dkIFltoy9xA==
-X-Google-Smtp-Source: AHgI3IakbUaIb3vF6wxwPHL9o50hSBKxqinOgDtxfHR6KU/+RnrMyAuJM28Z+cs9oXYm/Eh5PEOx7A==
-X-Received: by 2002:adf:e747:: with SMTP id c7mr283433wrn.176.1549922402509;
-        Mon, 11 Feb 2019 14:00:02 -0800 (PST)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 14:00:01 -0800 (PST)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mon, 11 Feb 2019 17:01:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c61f0850002>; Mon, 11 Feb 2019 14:00:38 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 11 Feb 2019 14:01:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 14:01:12 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
+ 2019 22:01:11 +0000
+Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, <netdev@vger.kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 2/5] kasan, kmemleak: pass tagged pointers to kmemleak
-Date:   Mon, 11 Feb 2019 22:59:51 +0100
-Message-Id: <cd825aa4897b0fc37d3316838993881daccbe9f5.1549921721.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-In-Reply-To: <cover.1549921721.git.andreyknvl@google.com>
-References: <cover.1549921721.git.andreyknvl@google.com>
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
+ <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
+ <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
+ <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
+ <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <f392756e-f885-e32e-77a9-d3a51689bee0@nvidia.com>
+Date:   Mon, 11 Feb 2019 14:01:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549922438; bh=vWs2aKXh4VkvG7WO8haiJ5PzQmL2tFLJDsIxpuuhupo=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=EZQrmNGEqpt0sljknlDD5qDlmVF+KBcIX1F9PjPhl1qC3uyH76fvnqkaxSFw8QeFl
+         tNUm1VP4uk1PJDLX9jOZ49OA00wchP3s8+oAfLb+KGzX20/vXDU7FEpbLmMdwF0umt
+         uXq1LTcC5dbPzJBXMHz7UN1qZrTsDZQhV6n6hq+Xtozit/Y+gfpqTlgGuqWmJxoape
+         2RbUjashm8TFMTMfSmdQZ/D5QzO3aaX9CB1SzVlUWoWsWOcysXLS/+8mwvJsrnKBLM
+         sP9qgYuiorn9eS3zZkbff50xGSijAGyoiPxkSROf9nIPMLSb5T1O/uL854sjh/f9p+
+         oD9g8x5lI235Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now we call kmemleak hooks before assigning tags to pointers in
-KASAN hooks. As a result, when an objects gets allocated, kmemleak sees
-a differently tagged pointer, compared to the one it sees when the object
-gets freed. Fix it by calling KASAN hooks before kmemleak's ones.
+On 2/11/19 1:52 PM, Ira Weiny wrote:
+> On Mon, Feb 11, 2019 at 01:39:12PM -0800, John Hubbard wrote:
+>> On 2/11/19 1:26 PM, Ira Weiny wrote:
+>>> On Mon, Feb 11, 2019 at 01:13:56PM -0800, John Hubbard wrote:
+>>>> On 2/11/19 12:39 PM, Jason Gunthorpe wrote:
+>>>>> On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
+>>>>>> From: Ira Weiny <ira.weiny@intel.com>
+>>>> [...]
+> Fair enough.   But to do that correctly I think we will need to convert
+> get_user_pages_fast() to use flags as well.  I have a version of this series
+> which includes a patch does this, but the patch touched a lot of subsystems and
+> a couple of different architectures...[1]
+> 
+> I can't test them all.  If we want to go that way I'm up for submitting the
 
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- mm/slab.h        | 6 ++----
- mm/slab_common.c | 2 +-
- mm/slub.c        | 3 ++-
- 3 files changed, 5 insertions(+), 6 deletions(-)
+I have a similar problem, and a similar list of call sites, for the
+put_user_pages() conversion, so that file list looks familiar. And the
+arch-specific gup implementations are about to complicate my life too. :)
 
-diff --git a/mm/slab.h b/mm/slab.h
-index 4190c24ef0e9..638ea1b25d39 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -437,11 +437,9 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
- 
- 	flags &= gfp_allowed_mask;
- 	for (i = 0; i < size; i++) {
--		void *object = p[i];
--
--		kmemleak_alloc_recursive(object, s->object_size, 1,
-+		p[i] = kasan_slab_alloc(s, p[i], flags);
-+		kmemleak_alloc_recursive(p[i], s->object_size, 1,
- 					 s->flags, flags);
--		p[i] = kasan_slab_alloc(s, object, flags);
- 	}
- 
- 	if (memcg_kmem_enabled())
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 81732d05e74a..fe524c8d0246 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1228,8 +1228,8 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned int order)
- 	flags |= __GFP_COMP;
- 	page = alloc_pages(flags, order);
- 	ret = page ? page_address(page) : NULL;
--	kmemleak_alloc(ret, size, 1, flags);
- 	ret = kasan_kmalloc_large(ret, size, flags);
-+	kmemleak_alloc(ret, size, 1, flags);
- 	return ret;
- }
- EXPORT_SYMBOL(kmalloc_order);
-diff --git a/mm/slub.c b/mm/slub.c
-index 1e3d0ec4e200..4a3d7686902f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1374,8 +1374,9 @@ static inline void dec_slabs_node(struct kmem_cache *s, int node,
-  */
- static inline void *kmalloc_large_node_hook(void *ptr, size_t size, gfp_t flags)
- {
-+	ptr = kasan_kmalloc_large(ptr, size, flags);
- 	kmemleak_alloc(ptr, size, 1, flags);
--	return kasan_kmalloc_large(ptr, size, flags);
-+	return ptr;
- }
- 
- static __always_inline void kfree_hook(void *x)
+> patch...  But if we remove longterm in the future we may be left with a
+> get_user_pages_fast() which really only needs 1 flag.  But perhaps overall we
+> would be better off?
+> 
+> Ira
+
+I certainly think so, yes.
+
+
+thanks,
 -- 
-2.20.1.791.gb4d0f1c61a-goog
-
+John Hubbard
+NVIDIA
+> 
+> 
+> [1] mm/gup.c: Change GUP fast to use flags rather than write bool
+> 
+> To facilitate additional options to get_user_pages_fast change the
+> singular write parameter to be the more generic gup_flags.
+> 
+> This patch currently does not change any functionality.  New
+> functionality will follow in subsequent patches.
+> 
+> Many of the get_user_pages_fast call sites were unchanged because they
+> already used FOLL_WRITE or 0 as appropriate.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  arch/mips/mm/gup.c                         | 11 ++++++-----
+>  arch/powerpc/kvm/book3s_64_mmu_hv.c        |  4 ++--
+>  arch/powerpc/kvm/e500_mmu.c                |  2 +-
+>  arch/powerpc/mm/mmu_context_iommu.c        |  4 ++--
+>  arch/s390/kvm/interrupt.c                  |  2 +-
+>  arch/s390/mm/gup.c                         | 12 ++++++------
+>  arch/sh/mm/gup.c                           | 11 ++++++-----
+>  arch/sparc/mm/gup.c                        |  9 +++++----
+>  arch/x86/kvm/paging_tmpl.h                 |  2 +-
+>  arch/x86/kvm/svm.c                         |  2 +-
+>  drivers/fpga/dfl-afu-dma-region.c          |  2 +-
+>  drivers/gpu/drm/via/via_dmablit.c          |  3 ++-
+>  drivers/infiniband/hw/hfi1/user_pages.c    |  3 ++-
+>  drivers/misc/genwqe/card_utils.c           |  2 +-
+>  drivers/misc/vmw_vmci/vmci_host.c          |  2 +-
+>  drivers/misc/vmw_vmci/vmci_queue_pair.c    |  6 ++++--
+>  drivers/platform/goldfish/goldfish_pipe.c  |  3 ++-
+>  drivers/rapidio/devices/rio_mport_cdev.c   |  4 +++-
+>  drivers/sbus/char/oradax.c                 |  2 +-
+>  drivers/scsi/st.c                          |  3 ++-
+>  drivers/staging/gasket/gasket_page_table.c |  4 ++--
+>  drivers/tee/tee_shm.c                      |  2 +-
+>  drivers/vfio/vfio_iommu_spapr_tce.c        |  3 ++-
+>  drivers/vhost/vhost.c                      |  2 +-
+>  drivers/video/fbdev/pvr2fb.c               |  2 +-
+>  drivers/virt/fsl_hypervisor.c              |  2 +-
+>  drivers/xen/gntdev.c                       |  2 +-
+>  fs/orangefs/orangefs-bufmap.c              |  2 +-
+>  include/linux/mm.h                         |  4 ++--
+>  kernel/futex.c                             |  2 +-
+>  lib/iov_iter.c                             |  7 +++++--
+>  mm/gup.c                                   | 10 +++++-----
+>  mm/util.c                                  |  8 ++++----
+>  net/ceph/pagevec.c                         |  2 +-
+>  net/rds/info.c                             |  2 +-
+>  net/rds/rdma.c                             |  3 ++-
+>  36 files changed, 81 insertions(+), 65 deletions(-)
+> 
+> 
