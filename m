@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163B4C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83939C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75A5214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52C33214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896139;
-	bh=vhYnfjFTAEOSWg02IhWHDU/+Tt+ix4OCq45EqYnTNMY=;
+	s=default; t=1549896142;
+	bh=MfyxUor4WdtfFgvBbOflf2jkGPruXxJ0brK9fptM/tQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ANBrZb5Ldbq1ZVrSIGLZUR09t00b+oiMxnOAYZroFF47Uytyak/p7ItPpMiOL6fRa
-	 9R24h8zrjiBqJQOGdUn6bKAbfPFhTVKB/rC0waDYFVoVFJpx7GG/dQCnspPcxoE2ld
-	 55AnRRjPFP6PBbI0mid79x68+SIy5UClFTTX2P9o=
+	b=tlAfRXUbOpImnqZTuTxzMfnx7W/XBAvJVW9sXdbBVecb0WPLuINcDAn2pWXHaHrUW
+	 WpVydJksZHufdIg26hhCPipYKxN9chjo6y/lpeE3LgBJMGOmW/Kk/RWQM+N9/eq7ju
+	 Y+7KdI/ezu7cKOuNzKxAdwccQcmu1wQB82nlbf1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbfBKOmS (ORCPT
+        id S1732414AbfBKOmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:42:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53956 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:42:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbfBKOmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:14 -0500
+        id S1732018AbfBKOmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:42:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65D0020700;
-        Mon, 11 Feb 2019 14:42:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78C9020700;
+        Mon, 11 Feb 2019 14:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896132;
-        bh=vhYnfjFTAEOSWg02IhWHDU/+Tt+ix4OCq45EqYnTNMY=;
+        s=default; t=1549896139;
+        bh=MfyxUor4WdtfFgvBbOflf2jkGPruXxJ0brK9fptM/tQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WZcYM2wWC8ZIqlC9y0Fksi/siHsEYsJSZL/b2GELRr3rBTUR/BkNvz9TDi+fKyMTX
-         zc7BeEvlyUIFIoDYNTVxhs77Gwc2E38pxkxbUq9YoMCOfdCpRoOR3PV+uMiYNa13jX
-         fI+fWv5ktKWKaWF9MzEXsexJQH9Kk9zCDzw2OtXQ=
+        b=KXl39BvzfX2pZpbahQNJH0QE7WbeTVszLXmEngUxcoZSJV+28BZI9NBpE/svnab9R
+         zS5nvRn1WjmpKLkFewux1ZciwkUIOwC1fGUzadjAlOMC/lJ4Xf9z6sJgwG31hqAW6H
+         2VHkcMDnG6m1ot29VP2/GlKXf8WT/jiIED5qZHLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 083/313] s390/zcrypt: improve special ap message cmd handling
-Date:   Mon, 11 Feb 2019 15:16:03 +0100
-Message-Id: <20190211141859.399944073@linuxfoundation.org>
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Felix Fietkau <nbd@nbd.name>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 084/313] mt76x0: dfs: fix IBI_R11 configuration on non-radar channels
+Date:   Mon, 11 Feb 2019 15:16:04 +0100
+Message-Id: <20190211141859.468502300@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,65 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit be534791011100d204602e2e0496e9e6ce8edf63 ]
+[ Upstream commit 6bf4a8e902aad7df55d7f2b10b850cfa3f880996 ]
 
-There exist very few ap messages which need to have the 'special' flag
-enabled. This flag tells the firmware layer to do some pre- and maybe
-postprocessing. However, it may happen that this special flag is
-enabled but the firmware is unable to deal with this kind of message
-and thus returns with reply code 0x41. For example older firmware may
-not know the newest messages triggered by the zcrypt device driver and
-thus react with reject and the named reply code. Unfortunately this
-reply code is not known to the zcrypt error routines and thus default
-behavior is to switch the ap queue offline.
+Fix IBI_R11 configuration on non-radar channels for mt76x0e
+driver. This patch improve system stability under heavy load.
+Moreover use IBI_R11 name and remove magic numbers for
+0x212c register
 
-This patch now makes the ap error routine aware of the reply code and
-so userspace is informed about the bad processing result but the queue
-is not switched to offline state any more.
-
-Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 0c3b3abc9251 ("mt76x0: pci: add DFS support")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/uapi/asm/zcrypt.h | 4 ++--
- drivers/s390/crypto/zcrypt_error.h  | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/include/uapi/asm/zcrypt.h b/arch/s390/include/uapi/asm/zcrypt.h
-index 2bb1f3bb98ac..48c784f2101a 100644
---- a/arch/s390/include/uapi/asm/zcrypt.h
-+++ b/arch/s390/include/uapi/asm/zcrypt.h
-@@ -147,8 +147,8 @@ struct ica_xcRB {
-  * @cprb_len:		CPRB header length [0x0020]
-  * @cprb_ver_id:	CPRB version id.   [0x04]
-  * @pad_000:		Alignment pad bytes
-- * @flags:		Admin cmd [0x80] or functional cmd [0x00]
-- * @func_id:		Function id / subtype [0x5434]
-+ * @flags:		Admin bit [0x80], Special bit [0x20]
-+ * @func_id:		Function id / subtype [0x5434] "T4"
-  * @source_id:		Source id [originator id]
-  * @target_id:		Target id [usage/ctrl domain id]
-  * @ret_code:		Return code
-diff --git a/drivers/s390/crypto/zcrypt_error.h b/drivers/s390/crypto/zcrypt_error.h
-index 6f7ebc1dbe10..2e1a27bd97d1 100644
---- a/drivers/s390/crypto/zcrypt_error.h
-+++ b/drivers/s390/crypto/zcrypt_error.h
-@@ -52,6 +52,7 @@ struct error_hdr {
- #define REP82_ERROR_FORMAT_FIELD	    0x29
- #define REP82_ERROR_INVALID_COMMAND	    0x30
- #define REP82_ERROR_MALFORMED_MSG	    0x40
-+#define REP82_ERROR_INVALID_SPECIAL_CMD	    0x41
- #define REP82_ERROR_INVALID_DOMAIN_PRECHECK 0x42
- #define REP82_ERROR_RESERVED_FIELDO	    0x50 /* old value	*/
- #define REP82_ERROR_WORD_ALIGNMENT	    0x60
-@@ -90,6 +91,7 @@ static inline int convert_error(struct zcrypt_queue *zq,
- 	case REP88_ERROR_MESSAGE_MALFORMD:
- 	case REP82_ERROR_INVALID_DOMAIN_PRECHECK:
- 	case REP82_ERROR_INVALID_DOMAIN_PENDING:
-+	case REP82_ERROR_INVALID_SPECIAL_CMD:
- 	//   REP88_ERROR_INVALID_KEY		// '82' CEX2A
- 	//   REP88_ERROR_OPERAND		// '84' CEX2A
- 	//   REP88_ERROR_OPERAND_EVEN_MOD	// '85' CEX2A
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c b/drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c
+index 374cc655c11d..16e6b6970e28 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c
+@@ -799,7 +799,7 @@ static void mt76x2_dfs_set_bbp_params(struct mt76x2_dev *dev)
+ 
+ 	/* enable detection*/
+ 	mt76_wr(dev, MT_BBP(DFS, 0), MT_DFS_CH_EN << 16);
+-	mt76_wr(dev, 0x212c, 0x0c350001);
++	mt76_wr(dev, MT_BBP(IBI, 11), 0x0c350001);
+ }
+ 
+ void mt76x2_dfs_adjust_agc(struct mt76x2_dev *dev)
+@@ -842,7 +842,11 @@ void mt76x2_dfs_init_params(struct mt76x2_dev *dev)
+ 		mt76_wr(dev, MT_BBP(DFS, 0), 0);
+ 		/* clear detector status */
+ 		mt76_wr(dev, MT_BBP(DFS, 1), 0xf);
+-		mt76_wr(dev, 0x212c, 0);
++		if (mt76_chip(&dev->mt76) == 0x7610 ||
++		    mt76_chip(&dev->mt76) == 0x7630)
++			mt76_wr(dev, MT_BBP(IBI, 11), 0xfde8081);
++		else
++			mt76_wr(dev, MT_BBP(IBI, 11), 0);
+ 
+ 		mt76x2_irq_disable(dev, MT_INT_GPTIMER);
+ 		mt76_rmw_field(dev, MT_INT_TIMER_EN,
 -- 
 2.19.1
 
