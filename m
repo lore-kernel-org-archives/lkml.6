@@ -2,102 +2,88 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A6AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCCDC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DCA20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A8F20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895998;
-	bh=Rb2kKW7gI3nR1jHUFOorKn+g5I5NQQOzFtogUgbk454=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NlLGcS4crBLRKeKzQ/wgwoIFp4cOiiD3G6vyR8tx3XyJGALdSm8AhOjKr0K35tQcT
-	 /fi5kXxotivhA+oS6vAvyxWBa/5z2TGhSoN0dfjxz8OR7nckkp9N8MCHIkMIkaRwV2
-	 wpO23H2IZZNDfa885bWzv7TN1f3xtxpe+WdKerrU=
+	s=default; t=1549896001;
+	bh=wpXnhNuLSjedjv9fFo7VGMn842b7zsXpNQAWI/HTkdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tyS7aVuFJ8JeDWQrUDAJnhDf7Cy30nVdMTwh9O684Q0SWwTjWGf+Gszw1y7FzQ2mr
+	 52Ok/7g/2nuL/Iuew+FY42/vHKL1C1kQdUhQOLgdgv4ytdMVQFVj2LtEfkTeNB2Vk4
+	 Arv4YcjznNq24MCqR6aqxcPlge0ixUCG/TytWApg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731970AbfBKOj5 (ORCPT
+        id S1731983AbfBKOkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:40:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbfBKOjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731224AbfBKOjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 09:39:53 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30B242081B;
+        by mail.kernel.org (Postfix) with ESMTPSA id A55A42082F;
         Mon, 11 Feb 2019 14:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1549895992;
-        bh=Rb2kKW7gI3nR1jHUFOorKn+g5I5NQQOzFtogUgbk454=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KmPFoBrQnjhUzX7uUa2hixQDUBwfjg5k9KMg5nRMqT7Jadd0pKiTgbp2rkmtG9G0L
-         KdKPF6UaTqFepLlKuwcqSEwh7Ya368UtS2Gzwoo8LGysV2erd8AueffhmqcJxtj22Z
-         V391wnivxrZ7IE0S06OnoU4KLm80ZUyL6drwZBeI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/313] scsi: hisi_sas: change the time of SAS SSP connection
-Date:   Mon, 11 Feb 2019 15:15:18 +0100
-Message-Id: <20190211141856.058952741@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        bh=wpXnhNuLSjedjv9fFo7VGMn842b7zsXpNQAWI/HTkdo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PLaQrSIpftMG9hN334OOm1DOY5I+Mx/tcgq1A8vFdb93FVfy2Vdbs/dU98h4NVe+t
+         sEpt9l7IEEAMhUrX8AVizPonBiIwxdpb3Fqlt2GW/uJYPSzxewOMGwxpCsE+j1fLkb
+         oKR7hfry4UrfK3ZXFEAMwtRi+UF07JvUdCBVkdDo=
+Date:   Mon, 11 Feb 2019 08:39:50 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
+ affinity
+Message-ID: <20190211143950.GA151039@google.com>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-3-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1902101723400.8784@nanos.tec.linutronix.de>
+ <20190211035358.GA8638@ming.t460p>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211035358.GA8638@ming.t460p>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Feb 11, 2019 at 11:54:00AM +0800, Ming Lei wrote:
+> On Sun, Feb 10, 2019 at 05:30:41PM +0100, Thomas Gleixner wrote:
+> > On Fri, 25 Jan 2019, Ming Lei wrote:
+> > 
+> > > This patch introduces callback of .setup_affinity into 'struct
+> > > irq_affinity', so that:
+> > 
+> > Please see Documentation/process/submitting-patches.rst. Search for 'This
+> > patch' ....
+> 
+> Sorry for that, because I am not a native English speaker and it looks a bit
+> difficult for me to understand the subtle difference.
 
-------------------
+I think Thomas is saying that instead of "This patch introduces
+callback ...", you could say "Introduce callback of ...".
 
-[ Upstream commit 15bc43f31a074076f114e0b87931e3b220b7bff1 ]
+The changelog is *part* of the patch, so the context is obvious and
+there's no need to include the words "This patch".
 
-Currently the time of SAS SSP connection is 1ms, which means the link
-connection will fail if no IO response after this period.
+I make the same changes to patches I receive.  In fact, I would go
+even further and say "Add callback .setup_affinity() ..." because "add"
+means the same as "introduce" but is shorter and simpler.
 
-For some disks handling large IO (such as 512k), 1ms is not enough, so
-change it to 5ms.
-
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 687ff61bba9f..3922b17e2ea3 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -492,7 +492,7 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
- 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x1);
- 		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER, 0x7f7a120);
- 		hisi_sas_phy_write32(hisi_hba, i, CON_CFG_DRIVER, 0x2a0a01);
--
-+		hisi_sas_phy_write32(hisi_hba, i, SAS_SSP_CON_TIMER_CFG, 0x32);
- 		/* used for 12G negotiate */
- 		hisi_sas_phy_write32(hisi_hba, i, COARSETUNE_TIME, 0x1e);
- 	}
--- 
-2.19.1
-
-
-
+Bjorn
