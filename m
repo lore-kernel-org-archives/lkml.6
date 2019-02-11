@@ -2,80 +2,80 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA96EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684C8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2965218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E68218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:42:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWiD04B0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfBKMlt (ORCPT
+        id S1727505AbfBKMmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:41:49 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:36017 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbfBKMls (ORCPT
+        Mon, 11 Feb 2019 07:42:40 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33869 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfBKMmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:41:48 -0500
-Received: from [192.168.1.110] ([95.117.94.93]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Mcp7M-1hT3t42V8c-00Zztm; Mon, 11 Feb 2019 13:41:44 +0100
-Subject: Re: [PATCH] checkpatch: Add test for SPDX-License-Identifier on wrong
- line #
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <1549588593-4856-1-git-send-email-lkml@metux.net>
- <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
- <dfd0101f4a596600e2f0f8cf36886cf01c7dcb67.camel@perches.com>
- <9b74ee87f8c1b8fd310e213fcb4994d58610fcb6.camel@perches.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <e64adaf7-d7e2-76b7-cfe3-0cbb5c32c79d@metux.net>
-Date:   Mon, 11 Feb 2019 13:41:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 11 Feb 2019 07:42:40 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 98so4511131oty.1;
+        Mon, 11 Feb 2019 04:42:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O0p7R5ccWX7Wh4n4cFrXlgkXgGkmo1nTEtywc6I+NpE=;
+        b=IWiD04B0cgb8IRwjkCADRJq3tAldp72DGPwHlkvTHrircLni3fKk8wiXFNFx4tm9Lj
+         xAqODXZyEtO2HI+IvZCojQZ6CgFauzGWYzBiYROnDLo9yXLsACHHlgpyEZYlQr8Ou+fQ
+         YGWb0dgXj0TVDMvfzOJYIhDObIQ17oL9fqhiRJ9z5oB5w1C5Oz/Tx4vQVKu16vmX750I
+         cZk4j9c5JotvjbYPTm0uZ81I2CWQjdKuN+eCO7h2l+CmmiiAXzVqAQ5RjAl1PwfNd6H8
+         /NR/ms2mrxDu4+FUEa2AUkiV5QrjLCMNWqyWNNR3yIhQ1RbOG0CrDoVOtDJKwgyHtp5N
+         wv5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O0p7R5ccWX7Wh4n4cFrXlgkXgGkmo1nTEtywc6I+NpE=;
+        b=DvJZqqdyAHfEsxDqTU9Gucjw9d6bQuFNPU3HeIdqOuWOHhDaav7AtPXcD1qnciRKQj
+         ladV3c3XJByYufmDsDSArZicLys9PsONDRu3HROiW3nqnrufhVNVR7ABiOrUVgarA+It
+         G8MkXJAXjkN/7wnN1iFO6opGxFD+UAwMrNdZ2mWfP5AjrJ9Tko5I9yr+4Tt3ah7khr05
+         8VQ3Ky+DMUAk4dUnYHpVj4vYokibi05EGeDocU99zKg4gxmpKQfHW+KLUtXOrohPMhbO
+         XViDXtt66yY8HSXS1jHie+gu0xgZfxpjiXhOegDhkF9y0Ou5pfH4Znudr8C19Ni4OxZW
+         0bkg==
+X-Gm-Message-State: AHQUAuZz5TNtZH176gc9Bn8SY/nwEB/XDlrPfAQ6CDlVJdhqi6YmaLn0
+        NTZ7zMsLbzcdz58oVzjKYQe+7aiiAlMpO6sE5aA=
+X-Google-Smtp-Source: AHgI3IYXVhPE6p7VkjxlCCE0Q+lNMNC/dtysQfSN+HfbU7S815WQQ+KX02lLOGemOYt7PanwwGak33hK6mV6fOwIsk0=
+X-Received: by 2002:a9d:61c8:: with SMTP id h8mr26164342otk.279.1549888959247;
+ Mon, 11 Feb 2019 04:42:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9b74ee87f8c1b8fd310e213fcb4994d58610fcb6.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:FyO00gSKspRrn3msREYhe8CxkpJom+GkVulF5Z/mGSDbvSMcyDM
- 5DroIq8wleRIfhFB2/F6A1omg2QNl4lYjLoy5dSrL5TkHsLu4+Aw1axljkjm/+02YxUmuHo
- q26AM6ekr4ZAXx8AzwGBVDAEfc0tz8QpQdh7ehGPypWsRw18u31EqmI1JdKK+EdtBrqmr++
- h5LZsPOGImdWNXkhNv8Qw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:02lYvicO80U=:P0k/3VOwItiYH1cj+X5dm/
- mNDMjcBMSBRzjNWFUZPY4orwezb/30pgASer/IDe5AOsCVn4GNZnLhsAAdqW0XuZzXksDH1Vn
- VClJ1ZJJlg9lTnmsgulWjm6rguQH8gpPpCsvAp1JAVG6wCq9/dYQ5imYHJfYuh971y5HbyEc+
- 1zIeYfDQ3/Lf7qe0tjtuCeRfTHpAm6RVSm/cv/V/asDxfF+/MjKssuJnblqt7ciVnC2SvgyXt
- zOodXPuVFNFabkU5JLUXzaG+mYLWOR7A3LO70GkKmrmQx0GozMSKefrX3Ib9TbdO/E8+cBYZf
- 2nUhPPdJ3BUypCXFahIhdkgv4Xwm0XK/Ka+7bkjUY5OofitKKzqoNkGXS6W9DN3wvHG51k3z5
- hwAm0TlnLbMAF4zgFMKzWDlQQHL82MXcGtqrt0zx5qtUar2mXSxUWIWetJKG1yh6bUwH+ysH+
- GLygOztYa8LEkzbXVGRBzEnrR4viSElWPRWTLhsd+muKeoR8wls2atDTDou+kF4T0q/k016x+
- pUJZCX6AtHSUqnp39xMwnjufLo70AEMbasjGM+eWTFiLHuv5vPxu6UG8MlUpHXn0rYT5PX9QW
- Xd2mZVFksSpo7dtIe1WvBljRkQq08YTW3z8EIUmH9hEgFgvnaehQ2KWXfQ0+SYH8WKtYpl1TG
- BWJMpWf4FMq+XV1yllM11EjKUujm79oer6qPGyNJvMw+CNZMYm3dhnLekFk5sSR8Heum7ZtCN
- xioMkGqCPzQiwWntGIRVHNKQIcxu8AuDdX73XlyyD/iK46GqxpYmjGYDP/g=
+References: <20190207224650.GA49861@dtor-ws> <CAGngYiXytDjjAVh_gAaqJa0qLZAM-cTko92s6=PjS4tjZMvfHg@mail.gmail.com>
+ <20190211082902.GA95126@dtor-ws>
+In-Reply-To: <20190211082902.GA95126@dtor-ws>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 11 Feb 2019 07:42:27 -0500
+Message-ID: <CAGngYiXZ-vgX4MTJENRaPPoj12gBNFffjOef2F8NeOy0RT8hTw@mail.gmail.com>
+Subject: Re: [PATCH] Input: matrix_keypad - use flush_delayed_work()
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.02.19 21:44, Joe Perches wrote:
-> Warn when any SPDX-License-Identifier: tag is not created
-> on the proper line number.
+On Mon, Feb 11, 2019 at 3:29 AM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> It will not schedule new work because we check keypad->stopped flag
+> in ISR.
+>
 
-By the way: there are corner cases, which can't have it at the first
-line, eg. scripts.
+Yes, you are correct. Sorry for the confusion.
 
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Reviewed-by: Sven Van Asbroeck <TheSven73@gmail.com>
