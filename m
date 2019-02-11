@@ -2,104 +2,168 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEF5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84B8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151F021773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B28A218F0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:32:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfBKQbf (ORCPT
+        id S1728890AbfBKQcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:31:35 -0500
-Received: from mga09.intel.com ([134.134.136.24]:49284 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfBKQbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:31:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:31:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="117019570"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008.jf.intel.com with ESMTP; 11 Feb 2019 08:31:34 -0800
-Message-ID: <869a170e9232ffbc8ddbcf3d15535e8c6daedbde.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
- hints
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, rkrcmar@redhat.com, x86@kernel.org,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
-        tglx@linutronix.de, akpm@linux-foundation.org
-Date:   Mon, 11 Feb 2019 08:31:34 -0800
-In-Reply-To: <20190209194437-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181552.12095.46287.stgit@localhost.localdomain>
-         <20190209194437-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
+        Mon, 11 Feb 2019 11:32:48 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50070 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727084AbfBKQcr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:32:47 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BGUtYY018755;
+        Mon, 11 Feb 2019 17:32:33 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qjfy5yf5f-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Feb 2019 17:32:33 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 931EA34;
+        Mon, 11 Feb 2019 16:32:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5FC845235;
+        Mon, 11 Feb 2019 16:32:32 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.51) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 11 Feb
+ 2019 17:32:31 +0100
+Subject: Re: [PATCH v2 2/3] mfd: syscon: Add optional clock support
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1544604495-4082-1-git-send-email-fabrice.gasnier@st.com>
+ <1544604495-4082-3-git-send-email-fabrice.gasnier@st.com>
+ <CAK8P3a1MucNG86=bXwVVsasGBOLJ67kuRSpoeneF6M5aB6GmQA@mail.gmail.com>
+ <9e0ee154-a399-9bff-3beb-adfd9d6c6fee@st.com>
+ <CAK8P3a0kV4-OF7JPwM9cEqxaPvNM9dFZdyZetc47t+D5izkFwQ@mail.gmail.com>
+ <47a3fe9f-8adb-8f47-e7c1-342f8fc318aa@st.com>
+Message-ID: <01d49f11-a68e-1674-e6b7-d1b87aa973c9@st.com>
+Date:   Mon, 11 Feb 2019 17:32:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <47a3fe9f-8adb-8f47-e7c1-342f8fc318aa@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_11:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-02-09 at 19:49 -0500, Michael S. Tsirkin wrote:
-> On Mon, Feb 04, 2019 at 10:15:52AM -0800, Alexander Duyck wrote:
-> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > Add guest support for providing free memory hints to the KVM hypervisor for
-> > freed pages huge TLB size or larger. I am restricting the size to
-> > huge TLB order and larger because the hypercalls are too expensive to be
-> > performing one per 4K page.
+On 1/28/19 2:20 PM, Fabrice Gasnier wrote:
+> On 1/16/19 4:11 PM, Arnd Bergmann wrote:
+>> On Wed, Jan 16, 2019 at 3:10 PM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+>>>
+>>> On 1/16/19 1:14 PM, Arnd Bergmann wrote:
+>>>> (sorry for the late reply, I just realized that I had never sent out the
+>>>> mail after Lee asked me for a review last year and I had drafted
+>>>> my reply).
+>>>
+>>> Hi Arnd,
+>>>
+>>> Many thanks for reviewing, no worries :-)
+>>>
+>>>>
+>>>> On Wed, Dec 12, 2018 at 9:48 AM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+>>>>>
+>>>>> Some system control registers need to be clocked, so the registers can
+>>>>> be accessed. Add an optional clock and attach it to regmap.
+>>>>>
+>>>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>>>>
+>>>> This looks ok to me in principle, but I have one question: When we
+>>>> do a clk_get() and clk_prepare() as part of regmap_mmio_attach_clk(),
+>>>> does that change the behavior of syscon nodes that are otherwise
+>>>> unused?
+>>>
+>>> I'm not sure I correctly understand this question. I don't think it will
+>>> change the behavior for "unused" nodes. These should remain unused with
+>>> this patch.
+>>
+>> What I mean is that nodes that listed as 'compatible="syscon"' get
+>> probed by the syscon driver even when no other driver references
+>> them, and that in turn would acquire the clock, right?
 > 
-> Even 2M pages start to get expensive with a TB guest.
-
-Agreed.
-
-> Really it seems we want a virtio ring so we can pass a batch of these.
-> E.g. 256 entries, 2M each - that's more like it.
-
-The only issue I see with doing that is that we then have to defer the
-freeing. Doing that is going to introduce issues in the guest as we are
-going to have pages going unused for some period of time while we wait
-for the hint to complete, and we cannot just pull said pages back. I'm
-not really a fan of the asynchronous nature of Nitesh's patches for
-this reason.
-
-> > Using the huge TLB order became the obvious
-> > choice for the order to use as it allows us to avoid fragmentation of higher
-> > order memory on the host.
-> > 
-> > I have limited the functionality so that it doesn't work when page
-> > poisoning is enabled. I did this because a write to the page after doing an
-> > MADV_DONTNEED would effectively negate the hint, so it would be wasting
-> > cycles to do so.
+> Hi Arnd,
 > 
-> Again that's leaking host implementation detail into guest interface.
+> Sorry for the late reply.
 > 
-> We are giving guest page hints to host that makes sense,
-> weird interactions with other features due to host
-> implementation details should be handled by host.
+> When no other driver references them, nothing happens at probe time on
+> the clock: no calls to get/prepare... the clock.
+> 
+> => The clock will remain unrequested & unused until another driver calls
+> one of "of_syscon_register()" variants:
+> - syscon_node_to_regmap
+> - syscon_regmap_lookup_by_compatible
+> - syscon_regmap_lookup_by_phandle
+> 
+> When another driver references them (e.g. one of the above calls), then
+> it will acquire the optional clock and use it, e.g.:
+> - clk_prepare() upon of_syscon_register() variants
+> - clk_enable & clk_disable when accessing the registers
+> 
+> I hope this clarifies.
+> 
+> Please advise,
+> Best Regards,
+> Fabrice
 
-I don't view this as a host implementation detail, this is guest
-feature making use of all pages for debugging. If we are placing poison
-values in the page then I wouldn't consider them an unused page, it is
-being actively used to store the poison value. If we can achieve this
-and free the page back to the host then even better, but until the
-features can coexist we should not use the page hinting while page
-poisoning is enabled.
+Hi Arnd,
 
-This is one of the reasons why I was opposed to just disabling page
-poisoning when this feature was enabled in Nitesh's patches. If the
-guest has page poisoning enabled it is doing something with the page.
-It shouldn't be prevented from doing that because the host wants to
-have the option to free the pages.
+Gentlemen reminder for this. I would appreciate to have your
+feedback.
 
+Many thanks,
+Fabrice
+
+> 
+>>
+>>>> I think we have a bunch of devices that started out as a syscon but
+>>>> then we added a proper driver for them, which would handle the
+>>>> clocks explicitly. Is it guaranteed that this will keep working (including
+>>>> shutting down the clocks when they are unused) if we have two drivers
+>>>> that call clk_get() on the same device node?
+>>>
+>>> I'd expect nothing wrong happens when two drivers call clk_get() for the
+>>> same clock.
+>>> Are there some case where two drivers are bind (e.g. syscon driver +
+>>> another driver) for the same piece of hardware ?
+>>
+>> You won't actually have two drivers binding to the same device, but you
+>> could have a driver and a syscon user that does relies on the
+>> syscon_regmap_lookup_by_*() functions.
+>>
+>> I think we've had a couple of cases where we started out representing
+>> a device as syscon, and then later decided that a high-level abstraction
+>> would be needed because syscon didn't quite support all the needed
+>> features.
+>>
+>> Since each syscon node should also have a more specific
+>> compatible value, you can then have another driver that binds
+>> to that compatible string.
+>>
+>>       Arnd
+>>
