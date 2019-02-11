@@ -2,145 +2,162 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0153C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628C8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC79321855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ncentric-com.20150623.gappssmtp.com header.i=@ncentric-com.20150623.gappssmtp.com header.b="wWbj/JvR"
+	by mail.kernel.org (Postfix) with ESMTP id 26A1D21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549900136;
+	bh=d2xPbrNkKiInoeBzbLtPAvt1cBT4607jpx+LgKun7Oo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Ces/mfrgBWkJGQassEhL9xBHLFLerLcgdV/Gfr2FTz+dL7pjHRrn9HR9mz220aeFW
+	 qurIAVoQuQOxFmIUOOwzSZR9Z0Zb6XobeP+RE8FOGpXzHuM+qIN+yrSyygzPHfkLEf
+	 wNmx2lIKBegB/h8FVrUA6dPnH6or4jtLALncySuc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733042AbfBKPsg (ORCPT
+        id S1733193AbfBKPsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:48:36 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44450 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732112AbfBKPse (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:48:34 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y56so9243668edd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:48:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ncentric-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=aU5MNBGnX152eDQmWMpQK2TdiKRA+CVWKKM69YyusYs=;
-        b=wWbj/JvRDG0CdZ5ySV9rk2EBoLGCSBEcHg9W4y9vwPfTrV+rg6pTh1VGpoH7mONebD
-         uwleVhIPuPHU48kmclLNjSbfzfJrd8Nub6B8tPXy4+lC2ciryffn2FSH8WEkaoBWIV2N
-         6VwVl2XNETLVj6GoybSrm8AjJg29qxLINpdIEYYoliY9i92Ib42cVHeGWjZQyJCD1ZMW
-         gqmjVIjNUcVri89HG0r/DNuxkoAovUVz5qFRdghBZy7Aw7M/XW788K1IWt+uwYBOQ21F
-         qpqXDyr7rDujCNiqLx60ZrUqOZUs6tDhvh70i904sUjb05rYwXUOfqB8GbH7xOn9w6Ov
-         r+kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=aU5MNBGnX152eDQmWMpQK2TdiKRA+CVWKKM69YyusYs=;
-        b=A+7osk79JsG4OSDkCpYFCAzX7UqXlOAybzPn9pdkOfYZAG5AH55nqELTzPxYhFsAtU
-         1RRwV3Gl+XiozrmcZh1kFgLqftaaq2iYJaCZQV9ds87gPgVmy2xQco5pAM4Jj95Pwxf3
-         PMbUT2uZBb63qnkkMI+4lLxkhfLB/F8ojffo6Zq8J8t4naOGpbjugimMldJOe5FCbi1k
-         b38W2HhMT4iuDEbRniX7gG3E8GZvSHxJBXO7jes29Cwx248xhgWeuTm8ryDJWjSDqCpv
-         WhvFSGQ7HviLxy/Wtxxd71ovVM3FHpMsfXp13l3s3hQf5Q1DkwClRDTwWpr8hFCFcvKv
-         br3w==
-X-Gm-Message-State: AHQUAubzGBJ09jr/UI46EpjUArgBIqTTdtebZ7IENyJ+7NpLyir6CL9K
-        VCpDZU2Ifj+wA0XVjB1VoaI6HA==
-X-Google-Smtp-Source: AHgI3IY2v/FdQRrm/fFJ43BG6BY3Ir6lGoVxQktij5wkPJX7erZ64HvWvWjb+KRArI7exxFBNBQ7OQ==
-X-Received: by 2002:a50:bc12:: with SMTP id j18mr29715269edh.50.1549900111725;
-        Mon, 11 Feb 2019 07:48:31 -0800 (PST)
-Received: from [192.168.3.176] (d515300d8.static.telenet.be. [81.83.0.216])
-        by smtp.gmail.com with ESMTPSA id ge15sm2427938ejb.35.2019.02.11.07.48.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:48:31 -0800 (PST)
-Subject: Re: [PATCH 4.20 018/352] ath9k: dynack: use authentication messages
- for late ack
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Mon, 11 Feb 2019 10:48:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731616AbfBKOkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:40:20 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F8F22081B;
+        Mon, 11 Feb 2019 14:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896019;
+        bh=d2xPbrNkKiInoeBzbLtPAvt1cBT4607jpx+LgKun7Oo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FZa2dgY+PKU5nqpBR7+1cukIatq1mGGZZ4YYZ8+YDO1eHa0ZgvC134NKBQEEhAs/i
+         ldkQ2J8kujyaDaxqng/zzRcuNWIl/Q4UuSSyM5i5kJBmtU5tLdo5LpSGWfGnBTSbiP
+         BBFIQAt+onoL+BcAhPwiQqBNDSU9A9q+1FlX/wEs=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-References: <20190211141846.543045703@linuxfoundation.org>
- <20190211141847.541071852@linuxfoundation.org>
-From:   Koen Vandeputte <koen.vandeputte@ncentric.com>
-Message-ID: <e3740a06-8735-eed3-b427-e924f3e185ae@ncentric.com>
-Date:   Mon, 11 Feb 2019 16:48:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Subject: [PATCH 4.19 046/313] net/mlx5: EQ, Use the right place to store/read IRQ affinity hint
+Date:   Mon, 11 Feb 2019 15:15:26 +0100
+Message-Id: <20190211141856.704776722@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190211141847.541071852@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-On 11.02.19 15:14, Greg Kroah-Hartman wrote:
-> 4.20-stable review patch.  If anyone has any objections, please let me know.
->
-> ------------------
->
-> [ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
->
-> In order to properly support dynack in ad-hoc mode running
-> wpa_supplicant, take into account authentication frames for
-> 'late ack' detection. This patch has been tested on devices
-> mounted on offshore high-voltage stations connected through
-> ~24Km link
->
-> Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-> Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
-> index 7334c9b09e82..cc0dc966c512 100644
-> --- a/drivers/net/wireless/ath/ath9k/dynack.c
-> +++ b/drivers/net/wireless/ath/ath9k/dynack.c
-> @@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
->   	/* late ACK */
->   	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
->   		if (ieee80211_is_assoc_req(hdr->frame_control) ||
-> -		    ieee80211_is_assoc_resp(hdr->frame_control)) {
-> +		    ieee80211_is_assoc_resp(hdr->frame_control) ||
-> +		    ieee80211_is_auth(hdr->frame_control)) {
->   			ath_dbg(common, DYNACK, "late ack\n");
->   			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
->   			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
+------------------
 
-Dear Greg,
+[ Upstream commit 1e86ace4c140fd5a693e266c9b23409358f25381 ]
 
-No idea if this is the proper location to report this or if I should 
-inform stable@vger.. , but:
+Currently the cpu affinity hint mask for completion EQs is stored and
+read from the wrong place, since reading and storing is done from the
+same index, there is no actual issue with that, but internal irq_info
+for completion EQs stars at MLX5_EQ_VEC_COMP_BASE offset in irq_info
+array, this patch changes the code to use the correct offset to store
+and read the IRQ affinity hint.
 
-This backport alone is useless without backporting following 2 commits 
-below also, unless the 2 wifi devices using dynack start off at very 
-close distance.
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |  2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c    | 14 ++++++++------
+ include/linux/mlx5/driver.h                       |  2 +-
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-Their commits messages indicate them as improvements, but they should be 
-considered as fixes.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 7365899c3ac9..944f21f99d43 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -1758,7 +1758,7 @@ static void mlx5e_close_cq(struct mlx5e_cq *cq)
+ 
+ static int mlx5e_get_cpu(struct mlx5e_priv *priv, int ix)
+ {
+-	return cpumask_first(priv->mdev->priv.irq_info[ix].mask);
++	return cpumask_first(priv->mdev->priv.irq_info[ix + MLX5_EQ_VEC_COMP_BASE].mask);
+ }
+ 
+ static int mlx5e_open_tx_cqs(struct mlx5e_channel *c,
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index b5e9f664fc66..563ce3fedab4 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -640,18 +640,19 @@ u64 mlx5_read_internal_timer(struct mlx5_core_dev *dev)
+ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ {
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
+ 
+-	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
++	if (!zalloc_cpumask_var(&priv->irq_info[vecidx].mask, GFP_KERNEL)) {
+ 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
+-			priv->irq_info[i].mask);
++			priv->irq_info[vecidx].mask);
+ 
+ 	if (IS_ENABLED(CONFIG_SMP) &&
+-	    irq_set_affinity_hint(irq, priv->irq_info[i].mask))
++	    irq_set_affinity_hint(irq, priv->irq_info[vecidx].mask))
+ 		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
+ 
+ 	return 0;
+@@ -659,11 +660,12 @@ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ 
+ static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ {
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
+ 
+ 	irq_set_affinity_hint(irq, NULL);
+-	free_cpumask_var(priv->irq_info[i].mask);
++	free_cpumask_var(priv->irq_info[vecidx].mask);
+ }
+ 
+ static int mlx5_irq_set_affinity_hints(struct mlx5_core_dev *mdev)
+diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
+index 88a041b73abf..bbcfe2e5fd91 100644
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -1321,7 +1321,7 @@ enum {
+ static inline const struct cpumask *
+ mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
+ {
+-	return dev->priv.irq_info[vector].mask;
++	return dev->priv.irq_info[vector + MLX5_EQ_VEC_COMP_BASE].mask;
+ }
+ 
+ #endif /* MLX5_DRIVER_H */
+-- 
+2.19.1
 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=0c60c490830a1a756c80f8de8d33d9c6359d4a36
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=9d3d65a91f027b8a9af5e63752d9b78cb10eb92d
-
-
-It's safe to add them to all stables involved (4.20, 4.19, 4.14, 4.9)
-
-Thanks,
-
-Koen
 
