@@ -2,108 +2,100 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389F5C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B57C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058E02082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:10:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLmA4Rhf"
+	by mail.kernel.org (Postfix) with ESMTP id 0860E2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549905054;
+	bh=8uRcwZJwPnOimPfJFyavNGbH0OfpQCm9ZcYVcepkiX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WxB1/luJf5P2SPS6bsTDXJfs5VCOykLIZp97nIZwXel3jdUHNxsj/mni48663bMRM
+	 iUMloe+Xhxyta+ijRCJoekVxj3tBP7eRqMUIh5XQywbLJuOWsMQkzaMJH2w90WE8wv
+	 Oe6IcP04JNNi1kj0gC4+vv7m3kudLD4a7Vtn30aY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbfBKRKo (ORCPT
+        id S1730179AbfBKRKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:10:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51960 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBKRKo (ORCPT
+        Mon, 11 Feb 2019 12:10:52 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37722 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBKRKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:10:44 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so18584567wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 09:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mjoT+R6x7nhxzpe7uM0GaUFLAhkILZo0c3B68v2g49I=;
-        b=kLmA4Rhfed362QiXI6/yK2qmTWAjvYnV+tebew38CppOqXDxUMkZCUVL122trTmt76
-         Y/0/Tm2j6agtTHR3pegB27H65kJrY0GkP13lXM99wUv1YtbG0kzi1SlfLeO1eSdzW38K
-         UTy9qX8NRffI3VbO39JYYtyL2dBXSCVov08vIticjEBeeUCkZZTBIu/N4fJxUe+fy5XM
-         EvnnfLO+l/ACuqWFfhsY+LcO2vyJPT7uW91pOpk/HsLXCpweIJZ0kLZzMR0oJl8FVXz/
-         z/NC4H6CIN7DGrrvurz0x76txPeLRBba063g8pFYgBMZYUP5K0woc0+Kqw/e7jU9JLpj
-         +ngw==
+        Mon, 11 Feb 2019 12:10:52 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q206so1556244pgq.4;
+        Mon, 11 Feb 2019 09:10:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mjoT+R6x7nhxzpe7uM0GaUFLAhkILZo0c3B68v2g49I=;
-        b=HR26kQM1mh4Jc3A+f4dnrv0J4Ver3Y+KKFWdDCvGGnGmdQzn0levWO4Gh25T2qLbJw
-         9HvXpvFIvws7//NvfjGNGXq1jnId7hmyDwbWkG6KQwr/9NIbDj3XVYkoJ6AoPU3GqC5o
-         pPqKLLRlG28z9GRtSZRF5EguPgsPn4LmSKwAY9H3mpripz2is0s9Q08LrMtrkomqkoBR
-         vFjrm0PVRr6W1B42fM2UenIgmCLpSEoB9pKnjeplxewvjpo6D/k2blISNJOC8dunRUCn
-         MjDT6Ith2YF+sA6M4LDTt1tyiS6Cu4iwzFTT522iIDz3RejA0bChiVdQrt2u7pO8Xpx9
-         Z84A==
-X-Gm-Message-State: AHQUAuaAOuENo+ZiEM6ZZpgiNOW2VT3VbbJCtEJ1+1WG7A8U4BL6N/w2
-        FT13CbDNOPtxVuarDc6LXUOB9t0=
-X-Google-Smtp-Source: AHgI3Ibnl1TgPUD/3p/sgqNnmAhAFFKN5+AbCPTjboM1Ea3t7paiBCWA6CQc1xrmwUgdPwIeaHRWsw==
-X-Received: by 2002:a1c:7719:: with SMTP id t25mr409690wmi.7.1549905042366;
-        Mon, 11 Feb 2019 09:10:42 -0800 (PST)
-Received: from avx2 ([46.53.240.81])
-        by smtp.gmail.com with ESMTPSA id l20sm20456344wrb.93.2019.02.11.09.10.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 09:10:41 -0800 (PST)
-Date:   Mon, 11 Feb 2019 20:10:39 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v-1] x86_64: new and improved memset() + question
-Message-ID: <20190211171039.GA3574@avx2>
-References: <20190117222318.GA10338@avx2>
- <20190211124716.GA13062@gmail.com>
+        bh=29dzQVfMK9hg0VC5fWC+4ES2pHCwnokbgPvFubf905c=;
+        b=NWf3qLlpgfAXV6rFMrwsqGt/jAPuF+Voz9MZpGSb3Y3nn7zJF1zbUOiEb+3D8ktkSV
+         jl4SPELIWffUkyLOLLbV0eEaPvVwn3gfbRR27XZzzOgLVw1gSmWvvLOmijxg5M+TC0OU
+         fAPaOO2Ve3aG0ZGqFv5YNBBSHRHmGlW1qllq/mIuITYUyWRACXmq6EaxJynXHkTzd5nD
+         rOZ0ngP4QPDAcnictKN3nQXSUrmH10FY+5r3b0QTkdiqecPoMmiOswv71UHe89bAlm/j
+         /fpnHtN1vhjymLSS5+9L2k1xhkyKB4oaZdf8dr82hmE6A+M4HqCkkSwzxhnrdwHazdI8
+         e6sg==
+X-Gm-Message-State: AHQUAuZtCw/XTZbyc/KxXXeZvdZOr46Xl5dKHn2PXRuRwi9tXdcAtMpB
+        xpH9ugwJyCouIDRjMxijkkTTeuXbxi0=
+X-Google-Smtp-Source: AHgI3IYEBki+PTyLJmBYA5RUlmDksvxBWya+1fzEG1oh8QhGMsJzmILSvCe+KxGCeBRsz5XxBuUI+g==
+X-Received: by 2002:a63:ef50:: with SMTP id c16mr25721232pgk.3.1549905051229;
+        Mon, 11 Feb 2019 09:10:51 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id h75sm18871841pfd.162.2019.02.11.09.10.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 09:10:49 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 11 Feb 2019 09:10:47 -0800
+Date:   Mon, 11 Feb 2019 09:10:47 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg KH <greg@kroah.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the driver-core tree
+Message-ID: <20190211171047.GN11489@garbanzo.do-not-panic.com>
+References: <20190211074052.2407f1e3@canb.auug.org.au>
+ <20190211074402.GA7356@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211124716.GA13062@gmail.com>
+In-Reply-To: <20190211074402.GA7356@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:47:16PM +0100, Ingo Molnar wrote:
-> * Alexey Dobriyan <adobriyan@gmail.com> wrote:
-
-> > QUESTION: is it possible to tell gcc "this function is semantically
-> > equivalent to memset(3) so make high level optimizations but call it
-> > when it is necessary"? I suspect the answer is "no" :-\
+On Mon, Feb 11, 2019 at 08:44:02AM +0100, Greg KH wrote:
+> On Mon, Feb 11, 2019 at 07:40:52AM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > In commit
+> > 
+> >   344c0152d878 ("selftests: firmware: fix verify_reqs() return value")
+> > 
+> > Fixes tag
+> > 
+> >   Fixes: a6a9be9270c87 ("selftests: firmware: return Kselftest Skip code for for skipped tests")
+> > 
+> > has these problem(s):
+> > 
+> >   - Subject does not match target commit subject
 > 
-> No idea ...
+> I don't understand, what is wrong with the fixes: tag here?
 > 
-> > TODO:
-> > 	CONFIG_FORTIFY_SOURCE is enabled by distros
-> > 	benchmarks
-> > 	testing
-> > 	more comments
-> > 	check with memset_io() so that no surprises pop up
+> $ git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n" a6a9be9270c87
+> a6a9be9270c8 ("selftests: firmware: return Kselftest Skip code for skipped tests")
 > 
-> I'd only like to make happy noises here to make sure you continue with 
-> this work - it does look promising. :-)
+> How does that not match up?
+> 
+> Ah, an extra "for" in there.  Luis, you need to fix up your scripts, and
+> not be forced to manually type in those lines :)
 
-Thanks, Ingo.
+Will do.
 
-This is really the core of the problem: once memset() becomes something
-other than
-
-	static inline void *memset(void *p, int c, size_t len)
-	{
-		return __builtin_memset(p, c, len);
-	}
-
-GCC starts pretending that it doesn't know what memset() is and all those
-advertised space savings go to hell.
+  Luis
