@@ -2,200 +2,113 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DADD5C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91DEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FBC32082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:06:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xvO0dm9f"
+	by mail.kernel.org (Postfix) with ESMTP id B26A32082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbfBKXGp (ORCPT
+        id S1727859AbfBKXHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:06:45 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42020 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfBKXGp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:06:45 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BMrrtW086848;
-        Mon, 11 Feb 2019 23:06:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=GJsg/6iWF2zbUF5f0Vm/sN97tzeqEZu2i2wvGlJUiI8=;
- b=xvO0dm9fESHPjIZDvu+HKHoj2eJWeinOjCBZ+QYWFOdSF60P408v4p9TtaGBW7qbITto
- 8zK4YKPRPTNxekrU3ZuDvHEU+GKYznMlSw4E1A0CbD4syRCzGCmwcrAd28idwUM3yxt5
- urxkhQG+65WuwkZrSh9/lMcq/AaF+H+yFmY2aYHTvVlCrVEgO8Pp7eDCv8I22ADu4YAy
- TXtUEgeN3Ru7uHh/hsQ4qLTlPcuuqE4tTKh7EaYEmec4l/qnviwUefPpjItnjvM8MeFX
- erWjId4332O5ve2POd7eXVZ6WzGgKQFY3bd5BFta+92j9oEhdACS4h1Yk12zWRYRV7Im Tw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qhredrt4x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 23:06:31 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1BN6UkF005337
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 23:06:30 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BN6TUg027998;
-        Mon, 11 Feb 2019 23:06:29 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 11 Feb 2019 15:06:29 -0800
-Subject: Re: [PATCH] huegtlbfs: fix page leak during migration of file pages
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
+        Mon, 11 Feb 2019 18:07:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfBKXHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:07:16 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1FABB1B9C;
+        Mon, 11 Feb 2019 23:07:16 +0000 (UTC)
+Received: from redhat.com (ovpn-121-111.rdu2.redhat.com [10.10.121.111])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6B065101961F;
+        Mon, 11 Feb 2019 23:07:02 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 18:07:02 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Pankaj Gupta <pagupta@redhat.com>, dchinner@redhat.com,
+        jack@suse.cz, kvm@vger.kernel.org, linux-nvdimm@ml01.01.org,
+        jasowang@redhat.com, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org,
+        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
         Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20190130211443.16678-1-mike.kravetz@oracle.com>
- <917e7673-051b-e475-8711-ed012cff4c44@oracle.com>
- <20190208023132.GA25778@hori1.linux.bs1.fc.nec.co.jp>
- <07ce373a-d9ea-f3d3-35cc-5bc181901caf@oracle.com>
- <20190208073149.GA14423@hori1.linux.bs1.fc.nec.co.jp>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <ffe58925-a301-6791-44d5-e3bec7f9ebf3@oracle.com>
-Date:   Mon, 11 Feb 2019 15:06:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        dave jiang <dave.jiang@intel.com>,
+        darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, imammedo@redhat.com,
+        dan j williams <dan.j.williams@intel.com>,
+        lcapitulino@redhat.com, kwolf@redhat.com,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        pbonzini@redhat.com
+Subject: Re: [Qemu-devel] security implications of caching with virtio pmem
+ (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
+Message-ID: <20190211180449-mutt-send-email-mst@kernel.org>
+References: <20190109144736.17452-1-pagupta@redhat.com>
+ <20190204170515-mutt-send-email-mst@kernel.org>
+ <888328358.132676.1549870186945.JavaMail.zimbra@redhat.com>
+ <20190211222907.GR14116@dastard>
+ <b2be7796-9dee-b9fd-87e5-1ae570aa7db6@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208073149.GA14423@hori1.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9164 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902110163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2be7796-9dee-b9fd-87e5-1ae570aa7db6@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 11 Feb 2019 23:07:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/19 11:31 PM, Naoya Horiguchi wrote:
-> On Thu, Feb 07, 2019 at 09:50:30PM -0800, Mike Kravetz wrote:
->> On 2/7/19 6:31 PM, Naoya Horiguchi wrote:
->>> On Thu, Feb 07, 2019 at 10:50:55AM -0800, Mike Kravetz wrote:
->>>> On 1/30/19 1:14 PM, Mike Kravetz wrote:
->>>>> +++ b/fs/hugetlbfs/inode.c
->>>>> @@ -859,6 +859,16 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
->>>>>  	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
->>>>>  	if (rc != MIGRATEPAGE_SUCCESS)
->>>>>  		return rc;
->>>>> +
->>>>> +	/*
->>>>> +	 * page_private is subpool pointer in hugetlb pages, transfer
->>>>> +	 * if needed.
->>>>> +	 */
->>>>> +	if (page_private(page) && !page_private(newpage)) {
->>>>> +		set_page_private(newpage, page_private(page));
->>>>> +		set_page_private(page, 0);
->>>
->>> You don't have to copy PagePrivate flag?
->>>
->>
->> Well my original thought was no.  For hugetlb pages, PagePrivate is not
->> associated with page_private.  It indicates a reservation was consumed.
->> It is set  when a hugetlb page is newly allocated and the allocation is
->> associated with a reservation and the global reservation count is
->> decremented.  When the page is added to the page cache or rmap,
->> PagePrivate is cleared.  If the page is free'ed before being added to page
->> cache or rmap, PagePrivate tells free_huge_page to restore (increment) the
->> reserve count as we did not 'instantiate' the page.
->>
->> So, PagePrivate is only set from the time a huge page is allocated until
->> it is added to page cache or rmap.  My original thought was that the page
->> could not be migrated during this time.  However, I am not sure if that
->> reasoning is correct.  The page is not locked, so it would appear that it
->> could be migrated?  But, if it can be migrated at this time then perhaps
->> there are bigger issues for the (hugetlb) page fault code?
+On Mon, Feb 11, 2019 at 11:58:15PM +0100, David Hildenbrand wrote:
+> On 11.02.19 23:29, Dave Chinner wrote:
+> > On Mon, Feb 11, 2019 at 02:29:46AM -0500, Pankaj Gupta wrote:
+> >> Hello Dave,
+> >> Are we okay with this?
+> > 
+> > Sure.
+> > 
+> > I'm not sure I agree with all the analysis presented, but, well, I
+> > haven't looked any deeper because I'm tired of being shouted at and
+> > being called argumentative for daring to ask hard questions about
+> > this topic....
 > 
-> In my understanding, free hugetlb pages are not expected to be passed to
-> migrate_pages(), and currently that's ensured by each migration caller
-> which checks and avoids free hugetlb pages on its own.
-> migrate_pages() and its internal code are probably not aware of handling
-> free hugetlb pages, so if they are accidentally passed to migration code,
-> that's a big problem as you are concerned.
-> So the above reasoning should work at least this assumption is correct.
+> I think if you have concerns, they should definitely be discussed.
+> Making people frustrated that review code is not what we want. Not at all.
 > 
-> Most of migration callers are not intersted in moving free hugepages.
-> The one I'm not sure of is the code path from alloc_contig_range().
-> If someone think it's worthwhile to migrate free hugepage to get bigger
-> contiguous memory, he/she tries to enable that code path and the assumption
-> will be broken.
+> I suggest that Pankaj properly documents what we found out so far about
+> security concerns and properly describes intended use cases and answers
+> other questions you had in the cover letter / documentation of the
+> follow up series.
+> 
+> Thanks Dave!
 
-You are correct.  We do not migrate free huge pages.  I was thinking more
-about problems if we migrate a page while it is being added to a task's page
-table as in hugetlb_no_page.
+Right. Also, there's an open question that you posed:
+	Also other storage devices have caches like that (well, the caches size
+	depends on the device) - thinking especially about storage systems -
+	which would in my opinion, also allow similar leaks. How are such
+	security concerns handled there? Are they different (besides eventually
+	access speed)?
+and that needs some looking into, and reporting on.
 
-Commit bcc54222309c ("mm: hugetlb: introduce page_huge_active") addresses
-this issue, but I believe there is a bug in the implementation.
-isolate_huge_page contains this test:
 
-	if (!page_huge_active(page) || !get_page_unless_zero(page)) {
-		ret = false;
-		goto unlock;
-	}
-
-If the condition is not met, then the huge page can be isolated and migrated.
-
-In hugetlb_no_page, there is this block of code:
-
-                page = alloc_huge_page(vma, haddr, 0);
-                if (IS_ERR(page)) {
-                        ret = vmf_error(PTR_ERR(page));
-                        goto out;
-                }
-                clear_huge_page(page, address, pages_per_huge_page(h));
-                __SetPageUptodate(page);
-                set_page_huge_active(page);
-
-                if (vma->vm_flags & VM_MAYSHARE) {
-                        int err = huge_add_to_page_cache(page, mapping, idx);
-                        if (err) {
-                                put_page(page);
-                                if (err == -EEXIST)
-                                        goto retry;
-                                goto out;
-                        }
-                } else {
-                        lock_page(page);
-                        if (unlikely(anon_vma_prepare(vma))) {
-                                ret = VM_FAULT_OOM;
-                                goto backout_unlocked;
-                        }
-                        anon_rmap = 1;
-                }
-        } else {
-
-Note that we call set_page_huge_active BEFORE locking the page.  This
-means that we can isolate the page and have migration take place while
-we continue to add the page to page tables.  I was able to make this
-happen by adding a udelay() after set_page_huge_active to simulate worst
-case scheduling behavior.  It resulted in VM_BUG_ON while unlocking page.
-My test had several threads faulting in huge pages.  Another thread was
-offlining the memory blocks forcing migration.
-
-To fix this, we need to delay the set_page_huge_active call until after
-the page is locked.  I am testing a patch with this change.  Perhaps we
-should even delay calling set_page_huge_active until we know there are
-no errors and we know the page is actually in page tables?
-
-While looking at this, I think there is another issue.  When a hugetlb
-page is migrated, we do not migrate the 'page_huge_active' state of the
-page.  That should be moved as the page is migrated.  Correct?
--- 
-Mike Kravetz
+> > 
+> > Cheers,
+> > 
+> > Dave.
+> > 
+> 
+> 
+> -- 
+> 
+> Thanks,
+> 
+> David / dhildenb
