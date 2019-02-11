@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDC7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF4EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0DA20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E93B20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895728;
-	bh=1bpTAvtInffAGMrfRbwkwZB1SlXyrwFD3ojN2JkfZV4=;
+	s=default; t=1549895731;
+	bh=3SzWclKPZPnz2RWV8POlGw1gnVzi84FP4s+fVzn+f9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nG2Smktdc/kxsF3zuITxslxF6KHYvhL5BN0fZL2Y/GxMVxD5jVQnH26e6vzz5S87l
-	 nZ9J6EbHv+6fkbZGmtkrJx00k+gsphUNu33Uhl3MhsNsznx7v8V+k79sy/gDS5GICz
-	 4v8NWy1XGUFD2B+otBoA0NwvhrxlwrEyQUHqq2oc=
+	b=0/vurafL+TGFYo6YOTEbnH4AAzYq7q5JWC5lraGr8g87BVbNOhyhMpJ9Z9m2QuZ3q
+	 tirTUttBcc79myWuD4/sw9ecHToAe0yzk1ovoUmtcnA9ol+a0HB8bdFKZJZR5TVVMT
+	 9gGcHKCZvvNJ5GuCfsEV8aEtQ7n87Xmojr542Ol0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbfBKOf0 (ORCPT
+        id S1731035AbfBKOf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43908 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730434AbfBKOfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:17 -0500
+        id S1731021AbfBKOf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C699F204EC;
-        Mon, 11 Feb 2019 14:35:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926902080F;
+        Mon, 11 Feb 2019 14:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895717;
-        bh=1bpTAvtInffAGMrfRbwkwZB1SlXyrwFD3ojN2JkfZV4=;
+        s=default; t=1549895726;
+        bh=3SzWclKPZPnz2RWV8POlGw1gnVzi84FP4s+fVzn+f9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0X6NzZnQd8Df8GMC9F0zZJul0Cr5KZxbH3TkF0W5WMn+JX0PUJSb4hHWnXmRK1zXd
-         lhRxPZrJIScz56vighYIDflJZ8M1JjNPbBzA2p8biXQ3shATdQ+DUJwZLAmoNm/vxF
-         R+FgklD2v6C4WYvj83CHRRQAPd7xQMjOS8ilmRW0=
+        b=LwHHWnM9nhJhtMEonOGCoIWtsiPLvtmBb2e9ILTnOau/dkoywdPOxwpD7HwJmPMG6
+         GdnKaanfNMOEiqskqSKKDEjbtD/jKIpRVpapYUZxqf18t7DogNl6w+G42D17/1zQC8
+         oK30ETZPtDdH4aEzO/DyEbfuBUsQHdN3TWFmwV5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Yonglong Liu <liuyonglong@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 299/352] net: dsa: slave: Dont propagate flag changes on down slave interfaces
-Date:   Mon, 11 Feb 2019 15:18:46 +0100
-Message-Id: <20190211141905.895692087@linuxfoundation.org>
+Subject: [PATCH 4.20 302/352] Revert "net: phy: marvell: avoid pause mode on SGMII-to-Copper for 88e151x"
+Date:   Mon, 11 Feb 2019 15:18:49 +0100
+Message-Id: <20190211141906.069774846@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,54 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rundong Ge <rdong.ge@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
+[ Upstream commit c14f07c6211cc01d52ed92cce1fade5071b8d197 ]
 
-The unbalance of master's promiscuity or allmulti will happen after ifdown
-and ifup a slave interface which is in a bridge.
+This reverts commit 6623c0fba10ef45b64ca213ad5dec926f37fa9a0.
 
-When we ifdown a slave interface , both the 'dsa_slave_close' and
-'dsa_slave_change_rx_flags' will clear the master's flags. The flags
-of master will be decrease twice.
-In the other hand, if we ifup the slave interface again, since the
-slave's flags were cleared the 'dsa_slave_open' won't set the master's
-flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
-will set the master's flags. The flags of master is increase once.
+The original diagnosis was incorrect: it appears that the NIC had
+PHY polling mode enabled, which meant that it overwrote the PHYs
+advertisement register during negotiation.
 
-Only propagating flag changes when a slave interface is up makes
-sure this does not happen. The 'vlan_dev_change_rx_flags' had the
-same problem and was fixed, and changes here follows that fix.
-
-Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Tested-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/slave.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/phy/marvell.c |   12 ------------
+ 1 file changed, 12 deletions(-)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -140,11 +140,14 @@ static int dsa_slave_close(struct net_de
- static void dsa_slave_change_rx_flags(struct net_device *dev, int change)
- {
- 	struct net_device *master = dsa_slave_to_master(dev);
--
--	if (change & IFF_ALLMULTI)
--		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
--	if (change & IFF_PROMISC)
--		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
-+	if (dev->flags & IFF_UP) {
-+		if (change & IFF_ALLMULTI)
-+			dev_set_allmulti(master,
-+					 dev->flags & IFF_ALLMULTI ? 1 : -1);
-+		if (change & IFF_PROMISC)
-+			dev_set_promiscuity(master,
-+					    dev->flags & IFF_PROMISC ? 1 : -1);
-+	}
- }
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -847,8 +847,6 @@ static int m88e1510_config_init(struct p
  
- static void dsa_slave_set_rx_mode(struct net_device *dev)
+ 	/* SGMII-to-Copper mode initialization */
+ 	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
+-		u32 pause;
+-
+ 		/* Select page 18 */
+ 		err = marvell_set_page(phydev, 18);
+ 		if (err < 0)
+@@ -871,16 +869,6 @@ static int m88e1510_config_init(struct p
+ 		err = marvell_set_page(phydev, MII_MARVELL_COPPER_PAGE);
+ 		if (err < 0)
+ 			return err;
+-
+-		/* There appears to be a bug in the 88e1512 when used in
+-		 * SGMII to copper mode, where the AN advertisement register
+-		 * clears the pause bits each time a negotiation occurs.
+-		 * This means we can never be truely sure what was advertised,
+-		 * so disable Pause support.
+-		 */
+-		pause = SUPPORTED_Pause | SUPPORTED_Asym_Pause;
+-		phydev->supported &= ~pause;
+-		phydev->advertising &= ~pause;
+ 	}
+ 
+ 	return m88e1318_config_init(phydev);
 
 
