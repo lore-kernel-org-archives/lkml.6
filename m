@@ -2,104 +2,114 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C65DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC096C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE7220863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B6420863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:29:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mKBPUV0Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYTjgZiJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfBKI2B (ORCPT
+        id S1727036AbfBKI3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:28:01 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40045 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbfBKI2A (ORCPT
+        Mon, 11 Feb 2019 03:29:06 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39314 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfBKI3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:28:00 -0500
-Received: by mail-lf1-f68.google.com with SMTP id t14so7028898lfk.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:27:59 -0800 (PST)
+        Mon, 11 Feb 2019 03:29:06 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r11so4642725pgp.6;
+        Mon, 11 Feb 2019 00:29:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=d4OW+zzPyadCP4+f8UwijYToclAZ3Hu2NV1LWQcdDiQ=;
-        b=mKBPUV0QuGOpOTho3v9LYI9r/SXZ0JfHdDznAiusfl8Z2fFz9LP8pLGUHLhqPVzsng
-         hH23mJS/Z+RUCScJMxr4gIJI9bD9GFFxHiqPJtDXuf8gSYYbtpZ8kSS5DD5QmlnTU2yE
-         VZb0qyWeWAgDYX1iRni749cCwqg8U9z4kJQR4LTRdUUFb9JII0VJvh1M9PqDb55OLQt7
-         8uv1E9K4SwTNXzKPpKzn0tkiDDM5WPvzv1ojr92oqv5Jk3EnusK5bAgF7OSbWONKC9YQ
-         ZSiaEbHVB2FadDqROgSnylpbR4bDN9hKZ9jyj61sXCmHddJbbUp/EhdXgEpMHXWhlH8O
-         UNAQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yltjAFKS9GF5mtiDgNMgOQw/i68kr7Vg6EKoL/JMrV8=;
+        b=cYTjgZiJW6rxt/mmCNFw9qybkYWOC8p53SjnIj+NGm8P7TMFKo8a3lyUruJqn46f3i
+         Vqg2E0wPvrWVhQ4ZDa4Tzg42Bxqm3U+GQE51hKaQRgWp0coQbo8cHSK4CA0SZVBJoTqr
+         Z43Mm9GQvsPMOQWLln/kQ4skXQjWaPuDZj0Mk5zJiKdDRBhhCrMaU2g083E2Bhn9knS5
+         Rx1yYeOwLhIqD0Ds/NnFKGaz4s2gsol5lh18FLlDPjLmSyMDsutFOjLCYM1PKWylEtFr
+         tR98a09HGI97MstUJgISjs8FT/953K72JDLkK6EOemZPM6d8M9OvXZ2mGCxQt+r8b8d/
+         HZUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=d4OW+zzPyadCP4+f8UwijYToclAZ3Hu2NV1LWQcdDiQ=;
-        b=Ixj1B2omgvfoxTh/DwIJw8L4yGHraauoiMEvTB4kmwkjkpB9BMpEJFRlbFI2VtSLGn
-         sEiauU0ldEB6fgYR9K9Zm6lf3nQy7ejgmr1fPbA7vOfYQ8HZsnHfR71g75NBizwg2Ani
-         i8HQ4JtCnaIw0YhwEw4Z/DFsYE9B3h2YmpmZSzFNkV+8np62QXT2y1bFGDzHtC9YyyAa
-         zJXzQg8qHuwuOgeTAyaQaPA2wB0d4n5hesOwAVhm1PmNcuA1oYv4+SyIzRBmxi9v4Nw4
-         UrW6wEvLFB56b5jF/j9fK70aIQxa2rl9F2uEUKEhm2NejGDnZpiENNzwAlhluDh/kfkH
-         JUWA==
-X-Gm-Message-State: AHQUAuaH6eeVXsG7D1MsR19zuy357yAwbssrmmip5B7wC1mhTR6a8rcM
-        fmfukX18VM9AbNkeMFQHe/TcvEM77l3U1ayAjefY9g==
-X-Google-Smtp-Source: AHgI3IaBK92sdBl5F7VPoURPbFtqOj/aJXdebcSod84TcuQBzc9m0ANts1Da7U2yxSvfQqDONJlpLxYq82K2+SCDVvo=
-X-Received: by 2002:ac2:4219:: with SMTP id y25mr20880922lfh.130.1549873678834;
- Mon, 11 Feb 2019 00:27:58 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yltjAFKS9GF5mtiDgNMgOQw/i68kr7Vg6EKoL/JMrV8=;
+        b=mZjh6V8MonCJ/koIJhdkpuf2nSZT/K49z1PhQOkc+5FfULLvyMvM/sIbqxdt+he5tS
+         2Wn0vTSqx8ztEQicFXrlVmYF+xxmguhbzUI0g4j5cdHArebhbhyu94t9Mo8UVelseEVg
+         dWEFcrja24zS8WYCAdGIEuKm/nFWVJ/Z08BpC8BeLxehpDF5mtdgUnSbkzjQibAS0bYk
+         Mvr0KZ0Q6VkqsiV5WtLFnt2B78Ug8bhiLWtV6AxO+wxpm3Auodv70raDVdVe6ELY0j3n
+         mZvYTohnr7k2cIT8NURGPcsp+ODvh53wFwRiRKm5fd5Dx59fmtH+HbUXVcRt9fnmCLvG
+         ASjA==
+X-Gm-Message-State: AHQUAuaWzavi3RciL8J6LdczsM8Y7hBBYgLIDfIjZ9+M/DyVqExQQv9V
+        crMCCZwtMGmStXBjOr3byQE=
+X-Google-Smtp-Source: AHgI3IY98ex3WgD4epHUmKzrRyiDfHKbkiS699ZNBYNJkHr6gJyTcxcO++0hTrCjy+HXCC0dzzu2AQ==
+X-Received: by 2002:a63:e655:: with SMTP id p21mr17391343pgj.70.1549873745042;
+        Mon, 11 Feb 2019 00:29:05 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id f12sm11743822pgo.13.2019.02.11.00.29.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 00:29:04 -0800 (PST)
+Date:   Mon, 11 Feb 2019 00:29:02 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     linux-input@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Input: matrix_keypad - use flush_delayed_work()
+Message-ID: <20190211082902.GA95126@dtor-ws>
+References: <20190207224650.GA49861@dtor-ws>
+ <CAGngYiXytDjjAVh_gAaqJa0qLZAM-cTko92s6=PjS4tjZMvfHg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190210173109.12602-1-j.neuschaefer@gmx.net>
-In-Reply-To: <20190210173109.12602-1-j.neuschaefer@gmx.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 11 Feb 2019 09:27:47 +0100
-Message-ID: <CACRpkdZZvvd+yTuvfrBuCzXj==Eni4oiC0zj2LP1Mh4wUgdn5Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: spi: Fix card detection during probe
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGngYiXytDjjAVh_gAaqJa0qLZAM-cTko92s6=PjS4tjZMvfHg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 6:31 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+Hi Sven,
 
-> When using the mmc_spi driver with a card-detect pin, I noticed that the
-> card was not detected immediately after probe, but only after it was
-> unplugged and plugged back in (and the CD IRQ fired).
->
-> The call tree looks something like this:
->
-> mmc_spi_probe
->   mmc_add_host
->     mmc_start_host
->       _mmc_detect_change
->         mmc_schedule_delayed_work(&host->detect, 0)
->           mmc_rescan
->             host->bus_ops->detect(host)
->               mmc_detect
->                 _mmc_detect_card_removed
->                   host->ops->get_cd(host)
->                     mmc_gpio_get_cd -> -ENOSYS (ctx->cd_gpio not set)
->   mmc_gpiod_request_cd
->     ctx->cd_gpio =3D desc
->
-> To fix this issue, call mmc_detect_change after the card-detect GPIO/IRQ
-> is registered.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+On Sun, Feb 10, 2019 at 12:43:21PM -0500, Sven Van Asbroeck wrote:
+> Hi Dmitry,
+> 
+> On Thu, Feb 7, 2019 at 5:46 PM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >
+> > We should be using flush_delayed_work() instead of flush_work() in
+> > matrix_keypad_stop() to ensure that we are not missing work that is
+> > scheduled but not yet put in the workqueue (i.e. its delay timer has not
+> > expired yet).
+> >
+> 
+> Could the following scenario cause a use-after-free?
+> (I am adding comments on lines starting with -->)
+> 
+> a) user closes the device handle:
+> 
+> static void matrix_keypad_stop(struct input_dev *dev)
+> {
+>         struct matrix_keypad *keypad = input_get_drvdata(dev);
+> 
+>         spin_lock_irq(&keypad->lock);
+>         keypad->stopped = true;
+>         spin_unlock_irq(&keypad->lock);
+> 
+>         flush_work(&keypad->work.work);
+> -->
+> --> new interrupt comes in, and schedules new delayed keypad->work (1)
 
-Seems correct!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+It will not schedule new work because we check keypad->stopped flag
+in ISR.
 
-Yours,
-Linus Walleij
+Thanks.
+
+-- 
+Dmitry
