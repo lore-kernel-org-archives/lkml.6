@@ -2,168 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5220CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C52C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 141782184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549925278;
-	bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=K+DLFtvL6qluGBmgVoYex/Aui8IkE8N2i9gMovSKD/D6kaTBCixeGYHdmARjhZmkb
-	 2flgNf1q0j5Wnw3dw/3i7TqYX4vSv7TFfroaWdcqRC2WZKXaz8NNsmG28EFg4Z1hO1
-	 U6zCXLJlgNSxywsDYJUJcL6Og61EoMTUWMW8civA=
+	by mail.kernel.org (Postfix) with ESMTP id 31D3F2184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:48:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw7ugLkt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfBKWr4 (ORCPT
+        id S1727764AbfBKWsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:47:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727516AbfBKWr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:47:56 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50B2A218A3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 22:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549925274;
-        bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2qTB9vzRMdPY0stzJ7/VKb/Y1Z1BstTZsqOtQo7ivCGfDJ8FmzkIxv43/rrWP4x3F
-         yste5X5BVJeQIUceUmQ9K+mMQJ+St7Ye69qYVRSCNvV1Mc1QlgRp/BxHOMZ/iDkSXc
-         xCzKOmorFsxK6wArhlpHajpEWC36AB/b12KduuZk=
-Received: by mail-wm1-f46.google.com with SMTP id q21so936697wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:47:54 -0800 (PST)
-X-Gm-Message-State: AHQUAuav0GNutMtG3Y1aHolJm/B4XTVG2zujgOpJI+g+hYODO6gb+Kzi
-        gG17rxoY+rIgA1t9PF9fn5rW/ssyodc4Pm1AfjsGig==
-X-Google-Smtp-Source: AHgI3IYhqPQS6XNR2rbuUzIn1bPg4Vb52Sam8S3ebJby84Lwzx4pkjy45X+4hrjhxv9sDdjl1Ar3ML3HVCnAR1dksqs=
-X-Received: by 2002:a7b:cc13:: with SMTP id f19mr353124wmh.83.1549925272767;
- Mon, 11 Feb 2019 14:47:52 -0800 (PST)
+        Mon, 11 Feb 2019 17:48:19 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45200 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfBKWsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:48:19 -0500
+Received: by mail-pl1-f195.google.com with SMTP id r14so244646pls.12;
+        Mon, 11 Feb 2019 14:48:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+ebh/JLjqecjcJaYuZzLOgJ3lD0OPjhRaCM/qfNfEoI=;
+        b=Mw7ugLktMiwQQkXgMy+f5k+k11RxBvvYNHcK9GSXSNFXMtsIqF1IpI7YYdLlffCrqz
+         EDmMvC13ClMHsJIOo0F2QSgZ+LLa7n1DCIVKcRFg4SyyUSRedyl+CSByaw7K5XesOtfj
+         nE1Rtu47z7mv/xtKWNaabUvvTmy35ozMa4JhdC3zgH/BUW/wpjQOO9mhbOX87aMiGUvk
+         C1YHezAB4bRd+KkZjuDJPNtoFEZReSHgBepVQ5e6Vh5+BxQkt+YVSGAWdZfB7hz2rlDz
+         j7BauJ0wEySCVkJiKVEwCVeuFz0hU75OiEtix3MB+9h91CZGOQPJLXeBdQjbbpBMnpDH
+         sEDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+ebh/JLjqecjcJaYuZzLOgJ3lD0OPjhRaCM/qfNfEoI=;
+        b=eZuw2t4VqtWgTOa4WtNSI2/WSMPv+E3DK+zcF81beWAN7ZdNOsB5FG1J+Fe0J+yk2f
+         Dr8hdzf5EvzSrMsRyXNoA1bav5ZlzZkWjCo06tof5r69IfUBhaD0ODYERyQsE6AGEFh+
+         ydAuckLrm4rc1EOTxrqEZAa0QxfHDy6dRcaKWpUzMciz/uqKveOwTxElezfy2Tp8jDP/
+         xqfIHRIyXbsDwFCqR/EhBTdc0p6ZlUbCk2pwiTeJ4re24TKA77rwUqzkGcxkOwgllRqa
+         YxSv1ymg/Q1U7Pz4o9VSOKfN72hh9im3tNBCrNe6drPFhW9KJaZiVPD3UoKMtHfyRjai
+         6f4A==
+X-Gm-Message-State: AHQUAuZxNvxlVhmmLUHekXc6JPMQhCyeRyEC1XcG6tca+sCC9F7/3cj3
+        fvbKIUKoMavvF9dNl0yBvIQ=
+X-Google-Smtp-Source: AHgI3IbFgpLZQYT+w2ETVaUQcZYcVZERna9K2KFKSrqY5ww5ZgleUu0kCK+PYfzLnjR4VDdIbIpNnA==
+X-Received: by 2002:a17:902:2b8a:: with SMTP id l10mr653846plb.70.1549925298357;
+        Mon, 11 Feb 2019 14:48:18 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id f10sm2031188pfn.11.2019.02.11.14.48.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 14:48:17 -0800 (PST)
+Date:   Mon, 11 Feb 2019 14:48:16 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] Input: mark expected switch fall-through
+Message-ID: <20190211224816.GE149505@dtor-ws>
+References: <20190211222555.GA5472@embeddedor>
 MIME-Version: 1.0
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com> <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
- <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net> <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
- <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com> <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
-In-Reply-To: <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 11 Feb 2019 14:47:39 -0800
-X-Gmail-Original-Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211222555.GA5472@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:18 AM Nadav Amit <nadav.amit@gmail.com> wrote:
->
-> > On Feb 11, 2019, at 11:07 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > I'm certainly amenable to other solutions, but this one does seem the
-> > least messy.  I looked at my old patch, and it doesn't do what you
-> > want.  I'd suggest you just add a percpu variable like cpu_dr7 and rig
-> > up some accessors so that it stays up to date.  Then you can skip the
-> > dr7 writes if there are no watchpoints set.
-> >
-> > Also, EFI is probably a less interesting example than rare_write.
-> > With rare_write, especially the dynamically allocated variants that
-> > people keep coming up with, we'll need a swath of address space fully
-> > as large as the vmalloc area. and getting *that* right while still
-> > using the kernel address range might be more of a mess than we really
-> > want to deal with.
->
-> As long as you feel comfortable with this solution, I=E2=80=99m fine with=
- it.
->
-> Here is what I have (untested). I prefer to save/restore all the DRs,
-> because IIRC DR6 indications are updated even if breakpoints are disabled
-> (in DR7). And anyhow, that is the standard interface.
+On Mon, Feb 11, 2019 at 04:25:55PM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning:
+> 
+> drivers/input/joystick/db9.c: In function ‘db9_saturn_read_packet’:
+> drivers/input/joystick/db9.c:256:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (tmp == 0xff) {
+>       ^
+> drivers/input/joystick/db9.c:263:2: note: here
+>   default:
+>   ^~~~~~~
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Seems reasonable, but:
+Applied, thank you.
 
->
->
-> -- >8 --
->
-> From: Nadav Amit <namit@vmware.com>
-> Date: Mon, 11 Feb 2019 03:07:08 -0800
-> Subject: [PATCH] mm: save DRs when loading temporary mm
->
-> Signed-off-by: Nadav Amit <namit@vmware.com>
 > ---
->  arch/x86/include/asm/mmu_context.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mm=
-u_context.h
-> index d684b954f3c0..4f92ec3df149 100644
-> --- a/arch/x86/include/asm/mmu_context.h
-> +++ b/arch/x86/include/asm/mmu_context.h
-> @@ -13,6 +13,7 @@
->  #include <asm/tlbflush.h>
->  #include <asm/paravirt.h>
->  #include <asm/mpx.h>
-> +#include <asm/debugreg.h>
->
->  extern atomic64_t last_mm_ctx_id;
->
-> @@ -358,6 +359,7 @@ static inline unsigned long __get_current_cr3_fast(vo=
-id)
->
->  typedef struct {
->         struct mm_struct *prev;
-> +       unsigned short bp_enabled : 1;
->  } temp_mm_state_t;
->
->  /*
-> @@ -380,6 +382,15 @@ static inline temp_mm_state_t use_temporary_mm(struc=
-t mm_struct *mm)
->         lockdep_assert_irqs_disabled();
->         state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->         switch_mm_irqs_off(NULL, mm, current);
-> +
-> +       /*
-> +        * If breakpoints are enabled, disable them while the temporary m=
-m is
-> +        * used - they do not belong and might cause wrong signals or cra=
-shes.
-> +        */
+>  drivers/input/joystick/db9.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/joystick/db9.c b/drivers/input/joystick/db9.c
+> index 804b1b80a8be..5a52b65bef9a 100644
+> --- a/drivers/input/joystick/db9.c
+> +++ b/drivers/input/joystick/db9.c
+> @@ -259,7 +259,7 @@ static unsigned char db9_saturn_read_packet(struct parport *port, unsigned char
+>  			db9_saturn_write_sub(port, type, 3, powered, 0);
+>  			return data[0] = 0xe3;
+>  		}
+> -		/* else: fall through */
+> +		/* fall through */
+>  	default:
+>  		return data[0];
+>  	}
+> -- 
+> 2.20.1
+> 
 
-Maybe clarify this?  Add some mention that the specific problem is
-that user code could set a watchpoint on an address that is also used
-in the temporary mm.
-
-Arguably we should not disable *kernel* breakpoints a la perf, but
-that seems like quite a minor issue, at least as long as
-use_temporary_mm() doesn't get wider use.  But a comment that this
-also disables perf breakpoints and that this could be undesirable
-might be in order as well.
+-- 
+Dmitry
