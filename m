@@ -3,98 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63016C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4F6C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC6F2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A01020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:22:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ey8lmbJI"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jdAsyQ90"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfBKIV0 (ORCPT
+        id S1726914AbfBKIWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:21:26 -0500
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:45067 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfBKIVZ (ORCPT
+        Mon, 11 Feb 2019 03:22:51 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36487 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfBKIWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:21:25 -0500
-Received: by mail-pg1-f177.google.com with SMTP id y4so4619970pgc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:21:25 -0800 (PST)
+        Mon, 11 Feb 2019 03:22:51 -0500
+Received: by mail-it1-f196.google.com with SMTP id c9so24106475itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:22:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3LVTa2lFqZkXo4/ZgV4Wm39FYCcu0nNpMiRyih6YLI4=;
-        b=Ey8lmbJIAb5p78KdE4vQN7FCAq9rWmA2i3clrI0mcb0/ocfvHCmhqw/3p3OZDr5/ca
-         5jiDtmIw2rnq19U6cbrqBEJIFVPc87GMeheGYlhFubRdNGkI7mBcfbpXQSlL9Ovqyuly
-         hkrOtN2je+PgOLPuXuvKyxtfcBXGyANb9X7rT8ABcd+DOCKQkp2lfYONDzE9SvO5a6hE
-         txG+AWk498hnL/9tsMohecm14uAZIxwyURwq6qNFdWDw8Ih7TWVUBQOgjlugq9TWYaKi
-         bYG91Q2R1l3KO0dH2TgHcs7S4LZ/fOWiBWz6cAXVPnVZNpBeVKd7KtDvqJBTNSWkypyy
-         Bt4A==
+        bh=fvY2/yBGMwbngNDLa66cM3Z3OvAxuwsm6ud86Xu01mE=;
+        b=jdAsyQ90mli/1X4feqFov2FjxbYBaMp8oZXHDFKZAWdO1k84n+XBqCwxjtSJ8VoJM9
+         lFJCACs/k+wKAao0f9jIyuZozeIDbrBMETX3xuOOUCzseOUdxq3r8S3hsyqwQpGUgtNl
+         ern03whpopTdNC/7JyKsxVGGZJZy2bZm6hI00=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3LVTa2lFqZkXo4/ZgV4Wm39FYCcu0nNpMiRyih6YLI4=;
-        b=nqlL+DzHFoauzRSAJbor7fUkXePWvB18qw54BzB/xVJGj9t0+lC9aF2tVTeAv2gKzj
-         vZeus/WeKUp9dp88WqzwM8U9FHy66Yr5mTNkdtYHpCYo8pZbGV+YsQ36PnoLWd7xWCb5
-         zBrDHtzR8yB8M6Hn0wM2leQHLCeKCXXul77SZLv4tfvMM38j3nTvRxLjJwBwRkDzkXXQ
-         O2vzOH23debz7+Hp9ur2BB7G6mJXlUQmpNgYdIvj3hgcMleezXZSJJKsmkObS4h3iylV
-         aGCxWTVLtXvt30lwgOkO0QvFl8L3edL5kGM8wGi/mB0ZHENZZMAG7WZAvKXo7n/zkEM8
-         Enaw==
-X-Gm-Message-State: AHQUAuZ8a5UxkKz3YivYWT/U1SwFWW8atlt0SYv0Vd2nHDqCbWPaiGZx
-        uj1roYoOEo+rbNhU8YQCr42+fXKA+/yi8aKGavA=
-X-Google-Smtp-Source: AHgI3IYXPQSAvmtE759ivxmI4mmINx//s2wgLcOtOEzKuK00m45Y53bcGAMRvANAwApm+iVzDitK+ch5rq4HMpr1m6g=
-X-Received: by 2002:a63:6506:: with SMTP id z6mr32570199pgb.334.1549873285295;
- Mon, 11 Feb 2019 00:21:25 -0800 (PST)
+        bh=fvY2/yBGMwbngNDLa66cM3Z3OvAxuwsm6ud86Xu01mE=;
+        b=S0C4RMbQeU4wtPtceVnw5YU72ZEEixaWoEn8cjwKG0UsDSqqRur8AS2EbcSiwBZbfR
+         mFn3g75CTNc15uGB/UoHz0D/o/pNIAqjucyBP3h74t6U0iVUX3jKqvMIutvQF61xTkrI
+         Rq6ZEBywdqGOqrKO8OtPD/TvADKirHN/8/maQSWsNs+aLLbFvycdcsihWInmZNXjofml
+         TpuIkYp7AutNZkp1tQlLODRQeeb3PGQisNz9k33cidUgqugTX/yZBu8tECleJSb1nCnU
+         RpGtUj1gal3BCV+vRXq0GT3oHo1k5WK3/0udka+912xBjkZalgfS30v5qyEmSv4xet1U
+         lkJw==
+X-Gm-Message-State: AHQUAuZjxPsGhPkVkjG+qIM2f/5xVPTsjDKXAq7zoHwcqsWRkqEyDfi5
+        PEOiJuya/kBPALIsJfeoudCIGOzUeidyobFB5Rfm9w==
+X-Google-Smtp-Source: AHgI3IaFcZZL/2rH9QTpGunyScGyRTXN776wXOAZSs3378quUqLuNmzuocgC1Zo1SMOQDR5v96EwagPe0Xwc0kqbyPg=
+X-Received: by 2002:a6b:b790:: with SMTP id h138mr14110911iof.114.1549873370645;
+ Mon, 11 Feb 2019 00:22:50 -0800 (PST)
 MIME-Version: 1.0
-References: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com> <20190208145159.GA17854@aepfle.de>
-In-Reply-To: <20190208145159.GA17854@aepfle.de>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Mon, 11 Feb 2019 16:21:14 +0800
-Message-ID: <CAOLK0pyHt3pCiEA4nnrHLXc7gvbB0+vN3_aA+_D27KUi_Dkvdw@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-To:     Olaf Hering <olaf@aepfle.de>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20190128085847.7217-1-jagan@amarulasolutions.com>
+In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 11 Feb 2019 13:52:39 +0530
+Message-ID: <CAMty3ZCdm_RoVxoHy9u2-Xhg4_tf7Mr0Gedcrz-jVhc5ceL0CQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] media/sun6i: Allwinner A64 CSI support
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olaf:
-             Thanks for your review.
+Mauro and Maxime,
 
-On Fri, Feb 8, 2019 at 10:52 PM Olaf Hering <olaf@aepfle.de> wrote:
+On Mon, Jan 28, 2019 at 2:29 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
 >
-> On Thu, Feb 07, lantianyu1986@gmail.com wrote:
+> Add CSI support for Allwinner A64. Here is previous series[1]
 >
-> > +++ b/drivers/iommu/Kconfig
-> > +config HYPERV_IOMMU
-> > +     bool "Hyper-V x2APIC IRQ Handling"
-> > +     depends on HYPERV
-> > +     select IOMMU_API
-> > +     help
+> Changes for v8:
+> - update proper enable and disable sequnce for clk_mod
+> - fix warning for patch "media: sun6i: Add A64 CSI block support"
+> - collect Maxime Acked-by
+> Changes for v7:
+> - Drop quirk change, and add as suggusted by Maxime
+> - Use csi instead csi0 in pinctrl function
+> Changes for v6:
+> - set the mod rate in seett_power instead of probe
+> Changes for v5:
+> - Add mod_rate quirk for better handling clk_set code
+> Changes for v4:
+> - update the compatible string order
+> - add proper commit message
+> - included BPI-M64 patch
+> - skipped amarula-a64 patch
+> Changes for v3:
+> - update dt-bindings for A64
+> - set mod clock via csi driver
+> - remove assign clocks from dtsi
+> - remove i2c-gpio opendrian
+> - fix avdd and dovdd supplies
+> - remove vcc-csi pin group supply
 >
+> [1] https://patchwork.kernel.org/cover/10779831/
 >
-> Consider adding 'default HYPERV' like some other drivers already do it.
->
-> Olaf
+> Jagan Teki (5):
+>   dt-bindings: media: sun6i: Add A64 CSI compatible
+>   media: sun6i: Add A64 CSI block support
+>   arm64: dts: allwinner: a64: Add A64 CSI controller
+>   arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
 
-Good suggestion and will update. Thanks.
-
--- 
-Best regards
-Tianyu Lan
+Any chance to apply this patches? dtsi patch is already been merged
+and all been Acked as well.
