@@ -1,208 +1,117 @@
 Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0C3C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF2BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0361920873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AAA220838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549882546;
+	bh=SsKlMn5w9nyiAatHpJxqKE/lpoMbVdgn+GWqtKas180=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hQb8bkA1U9DnuNohE7uVeDgwREb0KDYgU/jZdUye4mbwYc4xFp8I5CioEOKM2U1g2
+	 r1lrngTa/Y6AUggQCnvDh4uxCwHJLzobw3FUHOImHSqlAhCSD237H8FJZY24xA+L5B
+	 1f9WgiAGVOWQM/XKgnvr8D15KyvtCpc4rhPJtzD4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfBKKzQ (ORCPT
+        id S1727068AbfBKKzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:55:16 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45509 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKKzP (ORCPT
+        Mon, 11 Feb 2019 05:55:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52336 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKKzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:55:15 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BAsxg83499604
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 11 Feb 2019 02:54:59 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BAswIk3499601;
-        Mon, 11 Feb 2019 02:54:58 -0800
-Date:   Mon, 11 Feb 2019 02:54:58 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Elena Reshetova <tipbot@zytor.com>
-Message-ID: <tip-49262de2270e09882d7bd8866a691cdd69ab32f6@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        paulmck@linux.vnet.ibm.com, elena.reshetova@intel.com,
-        dwindsor@gmail.com, akpm@linux-foundation.org,
-        peterz@infradead.org, ishkamiel@gmail.com
-Reply-To: mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-          elena.reshetova@intel.com, akpm@linux-foundation.org,
-          dwindsor@gmail.com, ishkamiel@gmail.com, peterz@infradead.org,
-          keescook@chromium.org, torvalds@linux-foundation.org,
-          will.deacon@arm.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <1549369467-3505-1-git-send-email-elena.reshetova@intel.com>
-References: <1549369467-3505-1-git-send-email-elena.reshetova@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] futex: Convert futex_pi_state.refcount to
- refcount_t
-Git-Commit-ID: 49262de2270e09882d7bd8866a691cdd69ab32f6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Feb 2019 05:55:43 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so16944112wml.2;
+        Mon, 11 Feb 2019 02:55:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KMN64kOtJBFkKLD7eH5E1tsIkp4xo4LmSrCHlHm3ADQ=;
+        b=QDtcr3wyAWwC1Feiwyp3X/8YTfaIdNpEWSGZejYjQTG/rj0trYk0vC6rQn4y2cNbXv
+         il1Avd23/d1Hd8k+uTbZBtAoIRuLEkjW3uPerX4NcbTux104Th18LvFAtlUMw0zOO1LL
+         tLmqEa0y4zRbQ5L3wXHA0BYGnh9on2hBdn58O1L8DaUmAwdWpiMdKB6WiTyS7C6wf6Bh
+         MC78xcq2N19Sr8d1ee6X2SFh4BhB3mZOszFFAIe2XAVy/T1Xcb8vx1blQzxEH3d3ygOa
+         1lUqargunUNH4IWUAEw1tmMjRZ4VOjSK4lFppReznME5P372JKKIbFQpvePfCELqMthw
+         iSVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KMN64kOtJBFkKLD7eH5E1tsIkp4xo4LmSrCHlHm3ADQ=;
+        b=pne4pS2JNvI7BA1U8r2TvIXJxOUUITozzkbhA2bMYD3ZsLqYf9hrPrAd3mwh6L8Vl9
+         wuJqLQVWpu2/ruYuQ6Oa2KHA9Y1tKkQqkwnblf0EPg2YJ8PC2Vl2EiVr9eXejr7oxb5A
+         YUykoU4FhYzRuVGs01dyYqr2h7b2Kr+Gj9Y7lsH72SJ+1wrurRTA0BukymPJEdqmcfPz
+         fCKAAiDW2MYQR8XSB8Lh6jiAC6HZA6s5YhBjg4pF8qAMbMwcVsGI5HXnE2YggHeKjuRT
+         GnWu3HBI4fSOkCq0ZzFuDIgEzP52qdGKQ4hnZiI03EIVFgPHzfQH8w5bxvmHp2N7NOS1
+         hnDw==
+X-Gm-Message-State: AHQUAuYeqGJ7bP/gtMix7eJrHHwAfQIFB9YGQYPNd27ttTAd048mfTs+
+        EP/F93LyJtTPev6eQiw/t2Q=
+X-Google-Smtp-Source: AHgI3IYfCwXm72SvHpZjHfYZL/JOp3IzO2HnfloWBghOcIo+EQ24FCA5PhxAIN+bIRKZbXHjD7QYjw==
+X-Received: by 2002:a1c:a6c9:: with SMTP id p192mr2919879wme.58.1549882540793;
+        Mon, 11 Feb 2019 02:55:40 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id s8sm22757121wrn.44.2019.02.11.02.55.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 02:55:40 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:55:37 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH] locking/rwsem: Remove arch specific rwsem files
+Message-ID: <20190211105537.GA59133@gmail.com>
+References: <1549850450-10171-1-git-send-email-longman@redhat.com>
+ <a610aeb2-b1cb-0d57-8078-97d1051481f9@redhat.com>
+ <20190211071159.GA55579@gmail.com>
+ <20190211103927.GA118071@gmail.com>
+ <20190211105214.GA30880@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190211105214.GA30880@fuggles.cambridge.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  49262de2270e09882d7bd8866a691cdd69ab32f6
-Gitweb:     https://git.kernel.org/tip/49262de2270e09882d7bd8866a691cdd69ab32f6
-Author:     Elena Reshetova <elena.reshetova@intel.com>
-AuthorDate: Tue, 5 Feb 2019 14:24:27 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Feb 2019 11:37:16 +0100
 
-futex: Convert futex_pi_state.refcount to refcount_t
+* Will Deacon <will.deacon@arm.com> wrote:
 
-atomic_t variables are currently used to implement reference
-counters with the following properties:
+> On Mon, Feb 11, 2019 at 11:39:27AM +0100, Ingo Molnar wrote:
+> > 
+> > * Ingo Molnar <mingo@kernel.org> wrote:
+> > 
+> > > Sounds good to me - I've merged this patch, will push it out after 
+> > > testing.
+> > 
+> > Based on Peter's feedback I'm delaying this - performance testing on at 
+> > least one key ll/sc arch would be nice indeed.
+> 
+> Once Waiman has posted a new version, I can take it for a spin on some
+> arm64 boxen if he shares his workload.
 
- - counter is initialized to 1 using atomic_set()
- - a resource is freed upon counter reaching zero
- - once counter reaches zero, its further
-   increments aren't allowed
- - counter schema uses basic atomic operations
-   (set, inc, inc_not_zero, dec_and_test, etc.)
+Cool, thanks!
 
-Such atomic variables should be converted to a newly provided
-refcount_t type and API that prevents accidental counter overflows
-and underflows. This is important since overflows and underflows
-can lead to use-after-free situation and be exploitable.
-
-The variable futex_pi_state.refcount is used as pure
-reference counter. Convert it to refcount_t and fix up
-the operations.
-
-**Important note for maintainers:
-
-Some functions from refcount_t API defined in lib/refcount.c
-have different memory ordering guarantees than their atomic
-counterparts. Please check Documentation/core-api/refcount-vs-atomic.rst
-for more information.
-
-Normally the differences should not matter since refcount_t provides
-enough guarantees to satisfy the refcounting use cases, but in
-some rare cases it might matter.
-Please double check that you don't have some undocumented
-memory guarantees for this variable usage.
-
-For the futex_pi_state.refcount it might make a difference
-in following places:
-
- - get_pi_state() and exit_pi_state_list(): increment in
-   refcount_inc_not_zero() only guarantees control dependency
-   on success vs. fully ordered atomic counterpart
- - put_pi_state(): decrement in refcount_dec_and_test() provides
-   RELEASE ordering and ACQUIRE ordering on success
-   vs. fully ordered atomic counterpart
-
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-Reviewed-by: David Windsor <dwindsor@gmail.com>
-Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: dvhart@infradead.org
-Link: http://lkml.kernel.org/r/1549369467-3505-1-git-send-email-elena.reshetova@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/futex.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 2abe1a0b3062..113f1c042250 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -68,6 +68,7 @@
- #include <linux/freezer.h>
- #include <linux/memblock.h>
- #include <linux/fault-inject.h>
-+#include <linux/refcount.h>
- 
- #include <asm/futex.h>
- 
-@@ -212,7 +213,7 @@ struct futex_pi_state {
- 	struct rt_mutex pi_mutex;
- 
- 	struct task_struct *owner;
--	atomic_t refcount;
-+	refcount_t refcount;
- 
- 	union futex_key key;
- } __randomize_layout;
-@@ -799,7 +800,7 @@ static int refill_pi_state_cache(void)
- 	INIT_LIST_HEAD(&pi_state->list);
- 	/* pi_mutex gets initialized later */
- 	pi_state->owner = NULL;
--	atomic_set(&pi_state->refcount, 1);
-+	refcount_set(&pi_state->refcount, 1);
- 	pi_state->key = FUTEX_KEY_INIT;
- 
- 	current->pi_state_cache = pi_state;
-@@ -819,7 +820,7 @@ static struct futex_pi_state *alloc_pi_state(void)
- 
- static void get_pi_state(struct futex_pi_state *pi_state)
- {
--	WARN_ON_ONCE(!atomic_inc_not_zero(&pi_state->refcount));
-+	WARN_ON_ONCE(!refcount_inc_not_zero(&pi_state->refcount));
- }
- 
- /*
-@@ -831,7 +832,7 @@ static void put_pi_state(struct futex_pi_state *pi_state)
- 	if (!pi_state)
- 		return;
- 
--	if (!atomic_dec_and_test(&pi_state->refcount))
-+	if (!refcount_dec_and_test(&pi_state->refcount))
- 		return;
- 
- 	/*
-@@ -861,7 +862,7 @@ static void put_pi_state(struct futex_pi_state *pi_state)
- 		 * refcount is at 0 - put it back to 1.
- 		 */
- 		pi_state->owner = NULL;
--		atomic_set(&pi_state->refcount, 1);
-+		refcount_set(&pi_state->refcount, 1);
- 		current->pi_state_cache = pi_state;
- 	}
- }
-@@ -904,7 +905,7 @@ void exit_pi_state_list(struct task_struct *curr)
- 		 * In that case; drop the locks to let put_pi_state() make
- 		 * progress and retry the loop.
- 		 */
--		if (!atomic_inc_not_zero(&pi_state->refcount)) {
-+		if (!refcount_inc_not_zero(&pi_state->refcount)) {
- 			raw_spin_unlock_irq(&curr->pi_lock);
- 			cpu_relax();
- 			raw_spin_lock_irq(&curr->pi_lock);
-@@ -1060,7 +1061,7 @@ static int attach_to_pi_state(u32 __user *uaddr, u32 uval,
- 	 * and futex_wait_requeue_pi() as it cannot go to 0 and consequently
- 	 * free pi_state before we can take a reference ourselves.
- 	 */
--	WARN_ON(!atomic_read(&pi_state->refcount));
-+	WARN_ON(!refcount_read(&pi_state->refcount));
- 
- 	/*
- 	 * Now that we have a pi_state, we can acquire wait_lock
+	Ingo
