@@ -2,92 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7513C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52612C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F2A9214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CDF0214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:18:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cupuk+a+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vcGK190f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfBKVRW (ORCPT
+        id S1727413AbfBKVSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:17:22 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:40084 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfBKVRV (ORCPT
+        Mon, 11 Feb 2019 16:18:13 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39721 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbfBKVSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:17:21 -0500
-Received: by mail-wm1-f50.google.com with SMTP id q21so707885wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 13:17:20 -0800 (PST)
+        Mon, 11 Feb 2019 16:18:12 -0500
+Received: by mail-pf1-f195.google.com with SMTP id f132so158061pfa.6;
+        Mon, 11 Feb 2019 13:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V1nWj6dTvQBLqLy2OMcT5c06edDRc3MnyEzI3K4DcIE=;
-        b=Cupuk+a+4ZaqABXLSXclBfzY40jgWQMBzDzTtvKZ861zi9y01nM9Hzb+NaKZ1nWEde
-         vO+Oq8/d2JdH2MX94MnhzyDIKsvkwVDIR1IQ0SG8a9dDyS7igVA8eAmI17byBa/bD8z2
-         hPAcA3aodVx4aGFycozEaxJa2Yog5JLFN4Jqc0hJrzw9bofN+m05400vuoNzmMyYS1/F
-         By3WkLBqHi2UiVTywMrwerdNXoekKlqyyCoJLRCjF1HIdE6VvOyuDfJjVG1cJf+giCrg
-         PSb3JzFOVC8sEv706CfyW28S1rI0RWsNLOw51vZAkxF26W4ccWrWXvC8KKeqwVFCcRnD
-         r6RA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Dk33WpR7T6/ZBSK4ANXuVhEiabNiC++NqI2VNDCsbEo=;
+        b=vcGK190fzb6qPmbRgU8H1IIYd1aRWwkutxxkc3qOLUpH7aFk8LgRuePLOfJ7OlCDF2
+         ELWQ9CdD2sfrWO5c4x1wTm/p7ngbPTqs8NPHXKvSeyzSk0v2g6Y51n1ta3S3JVWVNrvT
+         VWMkUpJ2JOkCTlWMsNOPD8Uu/bzbuDV3DdMrA1HRoG9MUyEVN5kpdGQq/4fGKS9RA3Iy
+         1YBmQUeDRlIlXoxdWjfDnT9h9rCuPlNdFQLy9iuYomabgo67i5e1sDcG9OZ+JK+15qCC
+         genOlZFzEFjBvY4AMZOZZLE+0nLI2olJIeZ0q4N/XcIx+dg7AMvMnyXXJL+BfTusU2VL
+         FbNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V1nWj6dTvQBLqLy2OMcT5c06edDRc3MnyEzI3K4DcIE=;
-        b=iYDgWhTD6x7J165aSdCAJePhAyaVoFVexu6YuASKJNOiR7Iw8rLMgBkWBIOCT/StSo
-         NH4h1NisJt0L+W4PpVp/Z6rLZoffipJyqtSNZvoEfT7ve/VvoEZQ3A0KD0V775N2iLGo
-         3rRGrydtZQ27FnlC5+8KcCQgrygdvKdiqUTDaaUKbwmGA+TvVsfAgi7jGITaG/WRTebY
-         X0gu/BHo7AoAKuIkhjeHv319DwtQFdUut/NUXwWII/oAr5QyVtogtNhkKCH8IrqnGkLt
-         qSuqYwfsa49fz+ToABLFlatq1wwCWZTBtOST08Gjxwu3gIv0PPLmjPk543EyCUYZGTyo
-         Z9Rw==
-X-Gm-Message-State: AHQUAubpHCTm6c6FwUgtoZ0WHxYDMHy7gUmSCu1SvzIW01YQiKRmBbsq
-        3lZ+T4x/RljwHYL7aEDi0A==
-X-Google-Smtp-Source: AHgI3IbJ9UGt6VRGuco/FxR0EmeBZ1zkhqQYQmWwDNy4lpUToG3bBi+jB5NZ6hqykX+BEmGfs4nfJg==
-X-Received: by 2002:a05:600c:2113:: with SMTP id u19mr199136wml.14.1549919839501;
-        Mon, 11 Feb 2019 13:17:19 -0800 (PST)
-Received: from avx2 ([46.53.242.247])
-        by smtp.gmail.com with ESMTPSA id t12sm837629wmi.11.2019.02.11.13.17.17
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Dk33WpR7T6/ZBSK4ANXuVhEiabNiC++NqI2VNDCsbEo=;
+        b=lyBrhVnxxbBolPMuMh2qpxxJifnu1mFKEQt3rURZiuZkUqN81iXvNAE83SIrivU/GM
+         IoHKMi6MJxhL0W0heFFlLCx/iwqGvVGBOM91Z89Oz7j6LTfzY81+yTlUkA84QRNM6Z3O
+         7kZk+vH9EHBZNhbmQ7o6J9321mALNNz3Xoko5399YWbGJ96AZ2t7UUiYXjU09gvjMMcc
+         ZXh4OJeto16ZY9BajNKFNI1VRWlIlcn6k3TQtZwflD3HeEjuqViQ1jh44ROlK3IAmk/H
+         zt9zcBsPAcfgfnRFCOaXifz2uGF+oZCwItSiKEHCWQUbgQcVuaR+A9IpXMl5RYB9nJ5U
+         dxXQ==
+X-Gm-Message-State: AHQUAubBqi1XevUWvqnA9R+16nYCYbaaQyuvLu3DVn/BSodUcibL30du
+        9IHz0+OPox2qzM3OUmrJ60bUVTAx
+X-Google-Smtp-Source: AHgI3IYvEmu/OEong6fO6dyMHc1XKICqzejhQFN0zvFagYH0ZtxeD92unZ42YarOnaIkbnNVzUPzhw==
+X-Received: by 2002:a62:fb07:: with SMTP id x7mr262025pfm.71.1549919891253;
+        Mon, 11 Feb 2019 13:18:11 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id 24sm15213029pfr.75.2019.02.11.13.18.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 13:17:18 -0800 (PST)
-Date:   Tue, 12 Feb 2019 00:17:16 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        mcgrof@kernel.org, longman@redhat.com, linux@dominikbrodowski.net,
-        keescook@chromium.org, joe.lawrence@redhat.com,
-        ebiederm@xmission.com, christian@brauner.io
-Subject: Re: + sysctl-return-einval-if-val-violates-minmax.patch added to -mm
- tree
-Message-ID: <20190211211716.GA31039@avx2>
-References: <20190211210632.Nfd0f%akpm@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190211210632.Nfd0f%akpm@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 11 Feb 2019 13:18:10 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: [PATCH net-next 0/3] Remove getting SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
+Date:   Mon, 11 Feb 2019 13:17:46 -0800
+Message-Id: <20190211211749.19847-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:06:32PM -0800, akpm@linux-foundation.org wrote:
+Hi all,
 
-> @@ -2848,8 +2848,10 @@ static int __do_proc_doulongvec_minmax(v
+AFAICT there is no code that attempts to get the value of the attribute
+SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS while it is used with
+switchdev_port_attr_set().
 
-> -			if ((min && val < *min) || (max && val > *max))
-> -				continue;
-> +			if ((min && val < *min) || (max && val > *max)) {
-> +				err = -EINVAL;
+This is effectively no doing anything and it can slow down future work
+that tries to make modifications in these areas so remove that.
 
-I was asked to return ERANGE in kstrto*().
-If nothing, it gives better error message:
+David, there should be no dependency with previous patch series, but
+again, feedback from Ido and Jiri would be welcome in case this was
+added for a reason.
 
-	$ ./a.out
-	foo: Numerical result out of range
+Thanks!
+
+Florian Fainelli (3):
+  mlxsw: spectrum_switchdev: Remove getting PORT_BRIDGE_FLAGS
+  rocker: Remove getting PORT_BRIDGE_FLAGS
+  staging: fsl-dpaa2: ethsw: Remove getting PORT_BRIDGE_FLAGS
+
+ .../mellanox/mlxsw/spectrum_switchdev.c         | 17 -----------------
+ drivers/net/ethernet/rocker/rocker.h            |  2 --
+ drivers/net/ethernet/rocker/rocker_main.c       | 15 ---------------
+ drivers/net/ethernet/rocker/rocker_ofdpa.c      | 10 ----------
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c         |  5 -----
+ 5 files changed, 49 deletions(-)
+
+-- 
+2.17.1
+
