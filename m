@@ -2,312 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 536A4C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C95C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23604214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C2AC20818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfBKMdT (ORCPT
+        id S1727380AbfBKMfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:33:19 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:53970 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfBKMdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:33:19 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gtAlp-0004HU-9q; Mon, 11 Feb 2019 13:33:09 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Peter Robinson <pbrobinson@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, ezequiel@collabora.com,
-        tom@vamrs.com, dev@vamrs.com, linux-kernel@vger.kernel.org,
-        mani@kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add on-board WiFi/BT support for Rock960 boards
-Date:   Mon, 11 Feb 2019 13:33:08 +0100
-Message-ID: <10789434.psaOHqdiec@diego>
-In-Reply-To: <20190211113128.GA22843@mani>
-References: <20190207055349.27919-1-manivannan.sadhasivam@linaro.org> <CALeDE9MNa+CDJR8bvS05f2UTKrhwMRo8jzdS5o8Ndu7H8V8Ldg@mail.gmail.com> <20190211113128.GA22843@mani>
+        Mon, 11 Feb 2019 07:35:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34936 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727090AbfBKMfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:35:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9DEAAAD38;
+        Mon, 11 Feb 2019 12:35:17 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH v2 1/2] x86: respect memory size limiting via
+ mem= parameter
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     sstabellini@kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, tglx@linutronix.de
+References: <20190130082233.23840-1-jgross@suse.com>
+ <20190130082233.23840-2-jgross@suse.com> <20190211120650.GA74879@gmail.com>
+ <bd5863a2-291a-43e5-7633-c84c1026a31b@suse.com>
+ <20190211122308.GA119972@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <39e8f05b-868b-8ab7-a310-b4ea7ef92bcc@suse.com>
+Date:   Mon, 11 Feb 2019 13:35:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190211122308.GA119972@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 11. Februar 2019, 12:31:28 CET schrieb Manivannan Sadhasivam:
-> Hi Peter,
+On 11/02/2019 13:23, Ingo Molnar wrote:
 > 
-> On Fri, Feb 08, 2019 at 04:45:01PM +0000, Peter Robinson wrote:
-> > Hi Mani,
-> > 
-> > On Thu, Feb 7, 2019 at 5:54 AM Manivannan Sadhasivam
-> > 
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > > Add on-board WiFi/BT support for Rock960 boards such as Rock960 based
-> > > on AP6356S and Ficus based on AP6354 wireless modules.
-> > > 
-> > > Firmwares for the respective boards are available here:
-> > > 
-> > > http://people.linaro.org/~manivannan.sadhasivam/rock960_wifi/
-> > > http://people.linaro.org/~manivannan.sadhasivam/ficus_wifi/
-> > > 
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > There's some warnings on building these I noticed in testing this on 
-Fedora:
-> >   DTC     arch/arm64/boot/dts/rockchip/rk3399-ficus.dtb
-> > 
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:490.3-13: Warning
-> > (reg_format): /dwmmc@fe310000/wifi@1:reg: property has invalid length
-> > (4 bytes) (#address-cells == 2, #size-cells == 1)
-> > arch/arm64/boot/dts/rockchip/rk3399-ficus.dtb: Warning
-> > (pci_device_bus_num): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-ficus.dtb: Warning (i2c_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-ficus.dtb: Warning (spi_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:488.16-496.4: Warning
-> > (avoid_default_addr_size): /dwmmc@fe310000/wifi@1: Relying on default
-> > #address-cells value
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:488.16-496.4: Warning
-> > (avoid_default_addr_size): /dwmmc@fe310000/wifi@1: Relying on default
-> > #size-cells value
-> > 
-> >   DTC     arch/arm64/boot/dts/rockchip/rk3399-rock960.dtb
-> > 
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:490.3-13: Warning
-> > (reg_format): /dwmmc@fe310000/wifi@1:reg: property has invalid length
-> > (4 bytes) (#address-cells == 2, #size-cells == 1)
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtb: Warning
-> > (pci_device_bus_num): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtb: Warning
-> > (i2c_bus_reg): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtb: Warning
-> > (spi_bus_reg): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:488.16-496.4: Warning
-> > (avoid_default_addr_size): /dwmmc@fe310000/wifi@1: Relying on default
-> > #address-cells value
-> > arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi:488.16-496.4: Warning
-> > (avoid_default_addr_size): /dwmmc@fe310000/wifi@1: Relying on default
-> > #size-cells value
+> * Juergen Gross <jgross@suse.com> wrote:
 > 
-> Hmm. Since the parent node "sdio0" is missing the address/size cells
-> property, the default value has been used by the DTC. I think it would
-> make sense to just drop the reg property from "wifi" node instead of
-> modifying the parent "sdio0" node.
+>>> If PCI devices had physical mmio memory areas above this range, we'd 
+>>> still expect them to work - the option was really only meant to limit 
+>>> RAM.
+>>
+>> No, in this case it seems to be real RAM added via PCI. The RAM is 
+>> initially present in the E820 map, but the "mem=" will remove it from 
+>> there again. During ACPI scan it is found (again) and will be added via 
+>> hotplug mechanism, so "mem=" has no effect for that memory.
 > 
-> If no one has any issue over this, I'll send out another revision with the
-> reg property removed.
+> OK. With that background:
+> 
+> Acked-by: Ingo Molnar <mingo@kernel.org>
+> 
+> I suppose you want this to go upstream via the Xen tree, which is the 
+> main testcase for the bug to begin with?
 
-actually I do think you might just want to add address+size-cells
-to your &sdio0 instance instead. Especially as I'm not sure that the
-system will find the card-node when matching against the card itself
-without the reg property?
-
-The core sdio0 does not necessarily have subnodes, so I guess
-the *-cells may just live in the board dts?
+Yes, I'd prefer that.
 
 
-Heiko
-
-
-
-> > > ---
-> > > 
-> > >  .../boot/dts/rockchip/rk3399-rock960.dtsi     | 96 ++++++++++++++++++-
-> > >  1 file changed, 95 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> > > b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi index
-> > > 56abbb08c133..1b2f7cd82244 100644
-> > > --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> > > @@ -9,6 +9,15 @@
-> > > 
-> > >  #include "rk3399-opp.dtsi"
-> > >  
-> > >  / {
-> > > 
-> > > +       sdio_pwrseq: sdio-pwrseq {
-> > > +               compatible = "mmc-pwrseq-simple";
-> > > +               clocks = <&rk808 1>;
-> > > +               clock-names = "ext_clock";
-> > > +               pinctrl-names = "default";
-> > > +               pinctrl-0 = <&wifi_enable_h>;
-> > > +               reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> > > +       };
-> > > +
-> > > 
-> > >         vcc1v8_s0: vcc1v8-s0 {
-> > >         
-> > >                 compatible = "regulator-fixed";
-> > >                 regulator-name = "vcc1v8_s0";
-> > > 
-> > > @@ -362,6 +371,20 @@
-> > > 
-> > >  };
-> > >  
-> > >  &pinctrl {
-> > > 
-> > > +       bt {
-> > > +               bt_enable_h: bt-enable-h {
-> > > +                       rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO
-> > > &pcfg_pull_none>; +               };
-> > > +
-> > > +               bt_host_wake_l: bt-host-wake-l {
-> > > +                       rockchip,pins = <0 RK_PA4 RK_FUNC_GPIO
-> > > &pcfg_pull_none>; +               };
-> > > +
-> > > +               bt_wake_l: bt-wake-l {
-> > > +                       rockchip,pins = <2 RK_PD3 RK_FUNC_GPIO
-> > > &pcfg_pull_none>; +               };
-> > > +       };
-> > > +
-> > > 
-> > >         sdmmc {
-> > >         
-> > >                 sdmmc_bus1: sdmmc-bus1 {
-> > >                 
-> > >                         rockchip,pins =
-> > > 
-> > > @@ -387,6 +410,26 @@
-> > > 
-> > >                 };
-> > >         
-> > >         };
-> > > 
-> > > +       sdio0 {
-> > > +               sdio0_bus4: sdio0-bus4 {
-> > > +                       rockchip,pins =
-> > > +                               <2 20 RK_FUNC_1 &pcfg_pull_up_20ma>,
-> > > +                               <2 21 RK_FUNC_1 &pcfg_pull_up_20ma>,
-> > > +                               <2 22 RK_FUNC_1 &pcfg_pull_up_20ma>,
-> > > +                               <2 23 RK_FUNC_1 &pcfg_pull_up_20ma>;
-> > > +               };
-> > > +
-> > > +               sdio0_cmd: sdio0-cmd {
-> > > +                       rockchip,pins =
-> > > +                               <2 24 RK_FUNC_1 &pcfg_pull_up_20ma>;
-> > > +               };
-> > > +
-> > > +               sdio0_clk: sdio0-clk {
-> > > +                       rockchip,pins =
-> > > +                               <2 25 RK_FUNC_1 &pcfg_pull_none_20ma>;
-> > > +               };
-> > > +       };
-> > > +
-> > > 
-> > >         pmic {
-> > >         
-> > >                 pmic_int_l: pmic-int-l {
-> > >                 
-> > >                         rockchip,pins =
-> > > 
-> > > @@ -403,6 +446,19 @@
-> > > 
-> > >                                 <1 14 RK_FUNC_GPIO &pcfg_pull_down>;
-> > >                 
-> > >                 };
-> > >         
-> > >         };
-> > > 
-> > > +
-> > > +       sdio-pwrseq {
-> > > +               wifi_enable_h: wifi-enable-h {
-> > > +                       rockchip,pins =
-> > > +                               <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-> > > +               };
-> > > +       };
-> > > +
-> > > +       wifi {
-> > > +               wifi_host_wake_l: wifi-host-wake-l {
-> > > +                       rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO
-> > > &pcfg_pull_none>; +               };
-> > > +       };
-> > > 
-> > >  };
-> > >  
-> > >  &pwm2 {
-> > > 
-> > > @@ -413,6 +469,33 @@
-> > > 
-> > >         status = "okay";
-> > >  
-> > >  };
-> > > 
-> > > +&sdio0 {
-> > > +       clock-frequency = <50000000>;
-> > > +       bus-width = <4>;
-> > > +       cap-sdio-irq;
-> > > +       cap-sd-highspeed;
-> > > +       no-emmc;
-> > > +       keep-power-in-suspend;
-> > > +       mmc-pwrseq = <&sdio_pwrseq>;
-> > > +       non-removable;
-> > > +       num-slots = <1>;
-> > > +       pinctrl-names = "default";
-> > > +       pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
-> > > +       sd-uhs-sdr104;
-> > > +
-> > > +       status = "okay";
-> > > +
-> > > +       brcmf: wifi@1 {
-> > > +               compatible = "brcm,bcm4329-fmac";
-> > > +               reg = <1>;
-> > > +               interrupt-parent = <&gpio0>;
-> > > +               interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
-> > > +               interrupt-names = "host-wake";
-> > > +               pinctrl-names = "default";
-> > > +               pinctrl-0 = <&wifi_host_wake_l>;
-> > > +       };
-> > > +};
-> > > +
-> > > 
-> > >  &sdhci {
-> > >  
-> > >         bus-width = <8>;
-> > >         mmc-hs400-1_8v;
-> > > 
-> > > @@ -439,8 +522,19 @@
-> > > 
-> > >  &uart0 {
-> > >  
-> > >         pinctrl-names = "default";
-> > > 
-> > > -       pinctrl-0 = <&uart0_xfer &uart0_cts>;
-> > > +       pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
-> > > 
-> > >         status = "okay";
-> > > 
-> > > +
-> > > +       bluetooth {
-> > > +               compatible = "brcm,bcm43438-bt";
-> > > +               clocks = <&rk808 1>;
-> > > +               clock-names = "ext_clock";
-> > > +               device-wakeup-gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
-> > > +               host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
-> > > +               shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
-> > > +               pinctrl-names = "default";
-> > > +               pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
-> > > +       };
-> > > 
-> > >  };
-> > >  
-> > >  &uart2 {
-> > > 
-> > > --
-> > > 2.17.1
-
-
-
-
+Juergen
