@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4CBC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5F9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2C3222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA082229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897063;
-	bh=FG3095bnqdiVETj46N+LBKOQTzFZXUU6FtaQrbcj46o=;
+	s=default; t=1549897067;
+	bh=94Bzif+YofnvqvpvdZJ0SzyDrJ5/IO/ilMOUOm/w2MU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=12CqbF/i+nN4CkwdLJ0+M0Vu9DWMrfJWr4UBzC/FTtToH4GXllNoeNR8JyZp//lBa
-	 3FejQXf3Vi1NbcOnsfJgOhCXzwdbeGS6NQfvMRyhnxyk2UjUZVOiubxw6W7WOuc+6F
-	 d8qa2VGyHaUYaT9BJctgQn7SQV8CyBUqJTevOAbk=
+	b=ZBfoWCoDFTHikZUWz14lxz/ajSb4b1ldTeVyMrA98p0ftJEb3MHF4hmco1oOukpME
+	 MIMIMuX+mpkTHEBuczLv5XCv+l16MSdmSePE7Jyp5deSO1K/QyTC8h79AfIfDn8dp9
+	 q9gntgt4ugs5scK4fzGvEnYQLk2vb9WY0fF5XlWI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389402AbfBKO5m (ORCPT
+        id S2389412AbfBKO5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45086 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:57:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389388AbfBKO5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:37 -0500
+        id S2388779AbfBKO5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:57:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 255C620700;
-        Mon, 11 Feb 2019 14:57:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56949222A1;
+        Mon, 11 Feb 2019 14:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897056;
-        bh=FG3095bnqdiVETj46N+LBKOQTzFZXUU6FtaQrbcj46o=;
+        s=default; t=1549897062;
+        bh=94Bzif+YofnvqvpvdZJ0SzyDrJ5/IO/ilMOUOm/w2MU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ou8cdjhGjYPQorgueT8bL3H5DPVhKRbZ/E2Fl0gTJxTwUC+eXPWHmcX1+psi1+xG0
-         qAJCrTkNBpDrdyfQc3thKTR35FLWBqEC2zzwgZKihHoxVLyOxf7u5jETeaNYMCfOX/
-         veXEh5p2yebu/sSpXhOm6oUI4jvXV8u9sM/X5iRE=
+        b=avVesrD145iTDY9y13wtwEUZUW3kV88JPmEoxVhjvBJel+T9VtFWd3cN6tW+oqJZk
+         AT7shmS0OU6TxNcxxQyS67aj8UOtulShpxe5oORK1DfbYGeCMToZ/NJuhe/VSkEQF6
+         KozcdDfNS2NAXlHryuGbLDImtglnEr2XDG4BMFZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 076/205] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
-Date:   Mon, 11 Feb 2019 15:17:54 +0100
-Message-Id: <20190211141833.683512387@linuxfoundation.org>
+Subject: [PATCH 4.14 078/205] watchdog: renesas_wdt: dont set divider while watchdog is running
+Date:   Mon, 11 Feb 2019 15:17:56 +0100
+Message-Id: <20190211141833.802533062@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,72 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
+[ Upstream commit e990e12741877e9bfac402ca468f4007a75f6e2a ]
 
-The vendor firmware was analyzed to get the right idea about
-this flash layout. /proc/mtd contains:
+The datasheet says we must stop the timer before changing the clock
+divider. This can happen when the restart handler is called while the
+watchdog is running.
 
-dev:    size   erasesize  name
-mtd0: 01e7ff40 00020000 "rootfs"
-mtd1: 01f40000 00020000 "upgrade"
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd4: 00040000 00020000 "RedBoot"
-mtd5: 00020000 00020000 "LangPack"
-mtd6: 02000000 00020000 "flash"
-
-Here "flash" is obviously the whole device and we know "rootfs"
-is a bogus hack to point to a squashfs rootfs inside of the main
-"upgrade partition". We know "RedBoot" is the first 0x40000 of
-the flash and the "upgrade" partition follows from 0x40000 to
-0x1f8000. So we have mtd0, 1, 4 and 6 covered.
-
-Remains:
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd5: 00020000 00020000 "LangPack"
-
-Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
-these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
-"rgdb" of 0x40000.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-index e75e2d44371c..d6f752ab07bb 100644
---- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-+++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-@@ -128,20 +128,16 @@
- 				read-only;
- 			};
- 			/*
--			 * Between the boot loader and the rootfs is the kernel
--			 * in a custom Storlink format flashed from the boot
--			 * menu. The rootfs is in squashfs format.
-+			 * This firmware image contains the kernel catenated
-+			 * with the squashfs root filesystem. For some reason
-+			 * this is called "upgrade" on the vendor system.
- 			 */
--			partition@1800c0 {
--				label = "rootfs";
--				reg = <0x001800c0 0x01dbff40>;
--				read-only;
--			};
--			partition@1f40000 {
-+			partition@40000 {
- 				label = "upgrade";
--				reg = <0x01f40000 0x00040000>;
-+				reg = <0x00040000 0x01f40000>;
- 				read-only;
- 			};
-+			/* RGDB, Residental Gateway Database? */
- 			partition@1f80000 {
- 				label = "rgdb";
- 				reg = <0x01f80000 0x00040000>;
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83f6de1..c4a17d72d025 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -74,12 +74,17 @@ static int rwdt_init_timeout(struct watchdog_device *wdev)
+ static int rwdt_start(struct watchdog_device *wdev)
+ {
+ 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++	u8 val;
+ 
+ 	pm_runtime_get_sync(wdev->parent);
+ 
+-	rwdt_write(priv, 0, RWTCSRB);
+-	rwdt_write(priv, priv->cks, RWTCSRA);
++	/* Stop the timer before we modify any register */
++	val = readb_relaxed(priv->base + RWTCSRA) & ~RWTCSRA_TME;
++	rwdt_write(priv, val, RWTCSRA);
++
+ 	rwdt_init_timeout(wdev);
++	rwdt_write(priv, priv->cks, RWTCSRA);
++	rwdt_write(priv, 0, RWTCSRB);
+ 
+ 	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+ 		cpu_relax();
 -- 
 2.19.1
 
