@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824DCC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D8AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDC2222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 656E6222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899715;
-	bh=OY9+b9H2QrM+RoBN7aOJV1Vy5f6SRqNw9GSLdal+bQc=;
+	s=default; t=1549899721;
+	bh=kH4FaGw0nRJdSn2wcUmLK3AnZLJRAY6Bs+S/3dxbj1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r/yPDHQ7S90DRL4pj+HsVeOE0OEOGrY90g/RO76R6yPy1qJRzku3plC8C02T4LuMR
-	 AlG8D1+AuVqt8i6Z31n37PmXHhsTQ4Bn7IBWEVCkR7+mZShe4NgExfhZvEcKNm12kk
-	 7PyqSazMf6s9JDtWYrs6O5l5K4akLJNn0LK4T1hU=
+	b=Yk3thv+BQIM62OGEFlR0A72LO45Jm/FdTiZoZqYqesh41m/GFm4KrZgyZ4g6lDL1s
+	 STDQhtayetAmz73I2WJnCp3j394Mdyx067mKB+tFYd+R5/F3byhwLmsGGpF2z8oEzp
+	 3UqRk3mqDRnX+9sTJVy7eNezHaSPPVCrTKmhrpvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732752AbfBKOrX (ORCPT
+        id S2387476AbfBKPl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:47:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60540 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:41:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387486AbfBKOrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:17 -0500
+        id S1732738AbfBKOrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D306E206BA;
-        Mon, 11 Feb 2019 14:47:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB78B20700;
+        Mon, 11 Feb 2019 14:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896436;
-        bh=OY9+b9H2QrM+RoBN7aOJV1Vy5f6SRqNw9GSLdal+bQc=;
+        s=default; t=1549896433;
+        bh=kH4FaGw0nRJdSn2wcUmLK3AnZLJRAY6Bs+S/3dxbj1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W4EDwZh/lu5HF3ktuJ/RsbmDbB3pkw9J6hJJXCSeXP+4G7CZbZSwj4NPxhOnLFBOH
-         rWzzMTzqpGcwPmw3ljvMk6yMKz6uOnMjt1knSr6G7Hy9P14dfRRyEycgoNwtQ3Rjl+
-         sPr2DkMoV8rfCL7AwdAEifGbK3ZDABDaNTXUpKqI=
+        b=ACCTKYd1zdRzhTHg/B/VHw7j+A09JR6iN0G9KX85RFbXF1g7GWUUd3EQFoMcc6aMA
+         MQG0pWZbp9Nyk+hlfO29rAkhWPySp6ytCwUzYaG+hlPvAAoVAWb9aq3lB4zsz4Z+pD
+         7Od2/InS66pqrXVw6A/h/mQQriwk8oQZJiQhRKZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murthy Bhat <murthy.bhat@microsemi.com>,
-        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 182/313] scsi: smartpqi: correct volume status
-Date:   Mon, 11 Feb 2019 15:17:42 +0100
-Message-Id: <20190211141905.473740799@linuxfoundation.org>
+Subject: [PATCH 4.19 155/313] serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
+Date:   Mon, 11 Feb 2019 15:17:15 +0100
+Message-Id: <20190211141903.871575519@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -71,41 +68,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7ff44499bafbd376115f0bb6b578d980f56ee13b ]
+[ Upstream commit 71ab1c0336c71ace5725740f200beca9667a339f ]
 
-- fix race condition when a unit is deleted after an RLL,
-  and before we have gotten the LV_STATUS page of the unit.
-  - In this case we will get a standard inquiry, rather than
-    the desired page.  This will result in a unit presented
-    which no longer exists.
-  - If we ask for LV_STATUS, insure we get LV_STATUS
+On (H)SCIF, sci_submit_rx() is called in the receive interrupt handler.
+Hence if DMA submission fails, the interrupt handler should resume
+handling reception using PIO, else no more data is received.
 
-Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
-Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Make sci_submit_rx() return an error indicator, so the receive interrupt
+handler can act appropriately.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/tty/serial/sh-sci.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 58eb0d31d8d9..3781e8109dd7 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -1184,6 +1184,9 @@ static void pqi_get_volume_status(struct pqi_ctrl_info *ctrl_info,
- 	if (rc)
- 		goto out;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 5fdd7944b73b..c6e8ca2e5f7d 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
+ 	dma_release_channel(chan);
+ }
  
-+	if (vpd->page_code != CISS_VPD_LV_STATUS)
-+		goto out;
+-static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
++static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
+ {
+ 	struct dma_chan *chan = s->chan_rx;
+ 	struct uart_port *port = &s->port;
+@@ -1359,7 +1359,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
+ 	s->active_rx = s->cookie_rx[0];
+ 
+ 	dma_async_issue_pending(chan);
+-	return;
++	return 0;
+ 
+ fail:
+ 	/* Switch to PIO */
+@@ -1374,6 +1374,7 @@ fail:
+ 	sci_start_rx(port);
+ 	if (!port_lock_held)
+ 		spin_unlock_irqrestore(&port->lock, flags);
++	return -EAGAIN;
+ }
+ 
+ static void work_fn_tx(struct work_struct *work)
+@@ -1668,8 +1669,10 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ 			disable_irq_nosync(irq);
+ 			scr |= SCSCR_RDRQE;
+ 		} else {
++			if (sci_submit_rx(s, false) < 0)
++				goto handle_pio;
 +
- 	page_length = offsetof(struct ciss_vpd_logical_volume_status,
- 		volume_status) + vpd->page_length;
- 	if (page_length < sizeof(*vpd))
+ 			scr &= ~SCSCR_RIE;
+-			sci_submit_rx(s, false);
+ 		}
+ 		serial_port_out(port, SCSCR, scr);
+ 		/* Clear current interrupt */
+@@ -1681,6 +1684,8 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ 
+ 		return IRQ_HANDLED;
+ 	}
++
++handle_pio:
+ #endif
+ 
+ 	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
 -- 
 2.19.1
 
