@@ -2,142 +2,161 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A420C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C54CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E9D20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D8E20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:39:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="eKfCkoHJ"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hv4PSwGO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfBKMiy (ORCPT
+        id S1727521AbfBKMjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:38:54 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36577 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfBKMiv (ORCPT
+        Mon, 11 Feb 2019 07:39:00 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55862 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfBKMi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:38:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id o17so173629wrw.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/VS21sFG84GLc3QRG/1Shmpp1t22LuWOgpCsdW2q5MI=;
-        b=eKfCkoHJwa5rJdq3xftrKkvXc8fvfxnYDun5gP2peH2RKr58HgnLOdo/QSlwziCgQp
-         y/JJ9FlCSP+4U7+p53mJt5tyJ9uUgnNIgn2rFmMXURCW62/NBHOLaCq8KLhZtIfuss0U
-         L5t0KmsEOQEs9Gf0GKzSg4TCoM5vBhzOzufNGxfya490z5f2Ub9uzomzuDEGiTAjLv7/
-         snBPJVk1+xaQNOuV9LgMuu81wc5047ACCbLlizZGLwtcB+2QpsNoaMM23/LkJuIdJ2rB
-         yfLVmK4glcdPGTST/HafryR54Ta9NzjxBimB3noRB+zOgN4NBJjMTMx8E0gHILZV1fCX
-         bzRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/VS21sFG84GLc3QRG/1Shmpp1t22LuWOgpCsdW2q5MI=;
-        b=Hlyl5c/dnZTaJ2CFOwF9v9AE2Yt+sCssqzo2p8VKAGQTix0dSLz2EdDf0mYFZ3lPlw
-         xelCBvUUzk/gdTh1jW5vO/jZNYYQX/D2t+9qB9oZBwBJxFok1QvgAg6dF17YIkvBm6ol
-         89pQvtI5EwYmArTNQelLPlr29w58XpAzjyguSyviylswMbn7j/+iUPR10qNRrtIdFChw
-         aEEAN73Rluxd3aFykidVo+XFiiiWTlQOr9QiRSC8ypZH6Z8/JKOkKv4Oj9oQzV1Yj7oB
-         VcHwhZVPpRsdPuUDyjJm8zXcMO0MQYZrezqdTBSTQooQJIzoYrAGsThh7PNi/MZv0OfE
-         iJBg==
-X-Gm-Message-State: AHQUAuYkKTD7ZR1j7Y9vWiv+50q0RSB+GYslD1ylJ4ijclT5mt7wf1ju
-        b7dxMnsdnfSkfp7tK8zKbaWUKA==
-X-Google-Smtp-Source: AHgI3IauEcJE8ohfUn8CL1IyuVTPHVe5Iw6rHAKO5AeZlfwAp9O0uE9+zGFX/W4msyWYlZ7TVotR+w==
-X-Received: by 2002:adf:ffca:: with SMTP id x10mr28771190wrs.289.1549888729807;
-        Mon, 11 Feb 2019 04:38:49 -0800 (PST)
-Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
-        by smtp.gmail.com with ESMTPSA id y24sm20762871wma.0.2019.02.11.04.38.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 04:38:49 -0800 (PST)
-Date:   Mon, 11 Feb 2019 13:29:26 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, idosch@mellanox.com,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        bridge@lists.linux-foundation.org, jiri@mellanox.com,
-        andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: Re: [PATCH net-next v3 5/9] net: mscc: ocelot: Handle
- SWITCHDEV_PORT_ATTR_GET/SET
-Message-ID: <20190211122926.GH2251@nanopsycho>
-References: <20190210234007.16173-1-f.fainelli@gmail.com>
- <20190210234007.16173-6-f.fainelli@gmail.com>
+        Mon, 11 Feb 2019 07:38:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1BCcapj072013;
+        Mon, 11 Feb 2019 06:38:36 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549888716;
+        bh=Sj1ePXFFVvvlr+AO5ifm1mvyLi0nizVQYZ4N7X7ewWs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Hv4PSwGOnqmmuRJZrQoL7ingQGkqdUCd1RtmGGCInkqgG7V4YVn17TFdMGK4qq9TD
+         XuPbqZtX+eTvredbb8aAcn9V/qKqdEIf7HkEslmbH3lsMnCSTK5XxUaastPHzYdN7E
+         liG9WOw+z1YxyOuFeUS2UCeFlqTo7h3y0lv48KBU=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1BCcaaM024129
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 06:38:36 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 11
+ Feb 2019 06:38:35 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 11 Feb 2019 06:38:35 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1BCcV2a006336;
+        Mon, 11 Feb 2019 06:38:32 -0600
+Subject: Re: [PATCH v2 00/15] PCI: endpoint: Cleanup EPC features
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190114111513.21618-1-kishon@ti.com>
+ <a0b12a7f-b341-28a2-edb8-b573d39f6e1b@synopsys.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <47f1a416-6f8b-0c29-21ed-756ba76fc3f5@ti.com>
+Date:   Mon, 11 Feb 2019 18:07:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210234007.16173-6-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a0b12a7f-b341-28a2-edb8-b573d39f6e1b@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Feb 11, 2019 at 12:40:03AM CET, f.fainelli@gmail.com wrote:
->Following patches will change the way we communicate getting or setting
->a port's attribute and use a blocking notifier to perform those tasks.
->
->Prepare ocelot to support receiving notifier events targeting
->SWITCHDEV_PORT_ATTR_GET/SET and simply translate that into the existing
->ocelot_port_attr_{set,get} calls.
->
->Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->---
-> drivers/net/ethernet/mscc/ocelot.c | 21 +++++++++++++++++++++
-> 1 file changed, 21 insertions(+)
->
->diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
->index 195306d05bcd..850a49033a30 100644
->--- a/drivers/net/ethernet/mscc/ocelot.c
->+++ b/drivers/net/ethernet/mscc/ocelot.c
->@@ -1582,6 +1582,24 @@ struct notifier_block ocelot_netdevice_nb __read_mostly = {
-> };
-> EXPORT_SYMBOL(ocelot_netdevice_nb);
+
+
+On 11/02/19 3:49 PM, Gustavo Pimentel wrote:
+> Hi,
 > 
->+static int
->+ocelot_switchdev_port_attr_event(unsigned long event,
->+		struct net_device *netdev,
->+		struct switchdev_notifier_port_attr_info *port_attr_info)
->+{
->+	int err = -EOPNOTSUPP;
->+
->+	switch (event) {
->+	case SWITCHDEV_PORT_ATTR_SET:
->+		err = ocelot_port_attr_set(netdev, port_attr_info->attr,
->+					   port_attr_info->trans);
->+		break;
->+	}
->+
->+	port_attr_info->handled = true;
->+	return notifier_from_errno(err);
->+}
->+
-> static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
-> 					   unsigned long event, void *ptr)
-> {
->@@ -1600,6 +1618,9 @@ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
-> 						    ocelot_netdevice_dev_check,
-> 						    ocelot_port_obj_del);
-> 		return notifier_from_errno(err);
->+	case SWITCHDEV_PORT_ATTR_SET:
->+	case SWITCHDEV_PORT_ATTR_GET: /* fallthrough */
-
-I think that the "fallthrough" comment should be for "ATTR_SET" case.
-
-Anyway:
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-
-
-
->+		return ocelot_switchdev_port_attr_event(event, dev, ptr);
-> 	}
+> On 14/01/2019 11:14, Kishon Vijay Abraham I wrote:
+>> Hi Lorenzo,
+>>
+>> The Endpoint controller driver uses features member in 'struct pci_epc'
+>> to advertise the list of supported features to the endpoint function
+>> driver.
+>>
+>> There are a few shortcomings with this approach.
+>>   *) Certain endpoint controllers support fixed size BAR (e.g. TI's
+>>      AM654 uses Designware configuration with fixed size BAR). The
+>>      size of each BARs cannot be passed to the endpoint function
+>>      driver.
+>>   *) Too many macros for handling EPC features.
+>>      (EPC_FEATURE_NO_LINKUP_NOTIFIER, EPC_FEATURE_BAR_MASK,
+>>       EPC_FEATURE_MSIX_AVAILABLE, EPC_FEATURE_SET_BAR,
+>>       EPC_FEATURE_GET_BAR)
+>>   *) Endpoint controllers are directly modifying struct pci_epc
+>>      members. (I have plans to move struct pci_epc to
+>>      drivers/pci/endpoint so that pci_epc members are referenced
+>>      only by endpoint core).
+>>
+>> To overcome the above shortcomings, introduced pci_epc_get_features()
+>> API, pci_epc_features structure and a ->get_features() callback.
+>>
+>> Also added a patch to set BAR flags in pci_epf_alloc_space and
+>> remove it from pci-epf-test function driver.
+>>
+>> Changes from v1:
+>> *) Fixed helper function to return '0' (or BAR_0) for any incorrect
+>>    values in reserved BAR.
+>> *) Do not set_bar or alloc space for BARs if the BARs are reserved
+>> *) Fix incorrect check of epc_features in pci_epf_test_bind
+>>
+>> Tested on TI's DRA7xx platform and AM654 platform. Support for PCIe
+>> in AM654 platform will be posted shortly.
+>>
+>> Kishon Vijay Abraham I (15):
+>>   PCI: endpoint: Add new pci_epc_ops to get EPC features
+>>   PCI: dwc: Add ->get_features() callback function in dw_pcie_ep_ops
+>>   PCI: designware-plat: Populate ->get_features() dw_pcie_ep_ops
+>>   PCI: pci-dra7xx: Populate ->get_features() dw_pcie_ep_ops
+>>   PCI: rockchip: Populate ->get_features() dw_pcie_ep_ops
+>>   PCI: cadence: Populate ->get_features() cdns_pcie_epc_ops
+>>   PCI: endpoint: Add helper to get first unreserved BAR
+>>   PCI: endpoint: Fix pci_epf_alloc_space to set correct MEM TYPE flags
+>>   PCI: pci-epf-test: Remove setting epf_bar flags in function driver
+>>   PCI: pci-epf-test: Do not allocate next BARs memory if current BAR is
+>>     64Bit
+>>   PCI: pci-epf-test: Use pci_epc_get_features to get EPC features
+>>   PCI: cadence: Remove pci_epf_linkup from Cadence EP driver
+>>   PCI: rockchip: Remove pci_epf_linkup from Rockchip EP driver
+>>   PCI: designware-plat: Remove setting epc->features in Designware plat
+>>     EP driver
+>>   PCI: endpoint: Remove features member in struct pci_epc
+>>
+>>  drivers/pci/controller/dwc/pci-dra7xx.c       | 13 +++
+>>  .../pci/controller/dwc/pcie-designware-ep.c   | 12 +++
+>>  .../pci/controller/dwc/pcie-designware-plat.c | 17 +++-
+>>  drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+>>  drivers/pci/controller/pcie-cadence-ep.c      | 25 ++---
+>>  drivers/pci/controller/pcie-rockchip-ep.c     | 16 +++-
+>>  drivers/pci/endpoint/functions/pci-epf-test.c | 93 ++++++++++++-------
+>>  drivers/pci/endpoint/pci-epc-core.c           | 53 +++++++++++
+>>  drivers/pci/endpoint/pci-epf-core.c           |  4 +-
+>>  include/linux/pci-epc.h                       | 31 +++++--
+>>  10 files changed, 201 insertions(+), 64 deletions(-)
+>>
 > 
-> 	return NOTIFY_DONE;
->-- 
->2.19.1
->
+> Sorry for the delay, I had a problem with my setup.
+> 
+> Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+
+Thank you Gustavo!
+
+-Kishon
