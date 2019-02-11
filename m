@@ -2,132 +2,129 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC03FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB5AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54B8321B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=stwm.de header.i=@stwm.de header.b="M22rJE+g"
+	by mail.kernel.org (Postfix) with ESMTP id 58DEE21B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549898501;
+	bh=rO6xCw52fkUG7/SrWPI+bvZsnRhNxOyUkgrSMQuSl6U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=WxyxXgUfqQGkkUi+UOx1KBCt/Bk4yMbf6GurWv06xcOi7hfJuAXT3aVyFojepA4wA
+	 4ZYM6Rev6UtF3oUfeNO1osMIiaomCMEZTrYBHuQAJVyeZlWlpz2yQSDurq0DvXBPj9
+	 hJz8uZS6Wm8ZnmNl9MKBr4ITSjPnnIrpPai68/eU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391377AbfBKPVd (ORCPT
+        id S2390794AbfBKPE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:21:33 -0500
-Received: from mailin.studentenwerk.mhn.de ([141.84.225.229]:57622 "EHLO
-        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731645AbfBKPVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:21:31 -0500
-X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 10:21:29 EST
-Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
-        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 43yq6K0NxhzRhS8;
-        Mon, 11 Feb 2019 16:12:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
-        s=stwm-20170627; t=1549897977;
-        bh=rKA+/UvRXDP6sz6M9fyG+cbLCzZgCeRXhftfoPNLaCA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=M22rJE+glZIlij0kG+tSwGfqE/3zKPHHiobPhIMKiSkBH/6Wmar1NLeaNDBrZ2Afv
-         d2ByGng9zdVlxZg84yxXvC0hZFsgkXU65QUVSEM5fyi2D1bSN7u3Vk927ff0x3o4cH
-         NRC9Vs0KvD35dpeCaB3pC60EDM2UfDN+9+cLW54/i9CTcga7FoMGc4E69eeLHFm5bR
-         Eud7vNziyXzbPv5mmEvZ2jiSRABwI0tNSAJsyxu4cwnp7PSmEOVpge2t+fSa60mdAr
-         kjTdUkKPMCQ8YBv9pqni1MYTpEjNGWCEeXDpoJnc8AVVxi6HCwCbRbdGNel97uanQX
-         3P+NicGXn1jng==
-From:   Wolfgang Walter <linux@stwm.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guoqing Jiang <gqjiang@suse.com>
-Subject: linux 4.19.19: md0_raid:1317 blocked for more than 120 seconds.
-Date:   Mon, 11 Feb 2019 16:12:56 +0100
-Message-ID: <2131016.q2kFhguZXe@stwm.de>
-User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
+        Mon, 11 Feb 2019 10:04:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390776AbfBKPE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:26 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26D22222A7;
+        Mon, 11 Feb 2019 15:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549897465;
+        bh=rO6xCw52fkUG7/SrWPI+bvZsnRhNxOyUkgrSMQuSl6U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W6QBcnsc6R8tJMuNXvwMVVBp9wFmDEcfuLCwFKQyfLDKbRc/STfN+4bp7V1s+ISb5
+         rqxKOFyHM273AMbL1JAokJqgdD4F6x3qwWUYEI7dW+P0h8o7OWE0WQ41LmueBBnQvZ
+         OkNNxdlZ8S3/IrXG4IDaEJ7P12BGrlCxBTiplDhc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 191/205] scsi: aic94xx: fix module loading
+Date:   Mon, 11 Feb 2019 15:19:49 +0100
+Message-Id: <20190211141840.900755496@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
+References: <20190211141827.214852402@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With 4.19.19 we see sometimes the following issue (practically only wit=
-h blk_mq, though):
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Feb  4 20:04:46 tettnang kernel: [252300.060165] INFO: task md0_raid1:3=
-17 blocked for more than 120 seconds.
-Feb  4 20:04:46 tettnang kernel: [252300.060188]       Not tainted 4.19=
-.19-debian64.all+1.1 #1
-Feb  4 20:04:46 tettnang kernel: [252300.060197] "echo 0 > /proc/sys/ke=
-rnel/hung_task_timeout_secs" disables this message.
-Feb  4 20:04:46 tettnang kernel: [252300.060207] md0_raid1       D    0=
-   317      2 0x80000000
-Feb  4 20:04:46 tettnang kernel: [252300.060211] Call Trace:
-Feb  4 20:04:46 tettnang kernel: [252300.060222]  ? __schedule+0x2a2/0x=
-8c0
-Feb  4 20:04:46 tettnang kernel: [252300.060226]  ? _raw_spin_unlock_ir=
-qrestore+0x20/0x40
-Feb  4 20:04:46 tettnang kernel: [252300.060229]  schedule+0x32/0x90
-Feb  4 20:04:46 tettnang kernel: [252300.060241]  md_super_wait+0x69/0x=
-a0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060247]  ? finish_wait+0x80/0x=
-80
-Feb  4 20:04:46 tettnang kernel: [252300.060255]  md_bitmap_wait_writes=
-+0x8e/0xa0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060263]  ? md_bitmap_get_count=
-er+0x42/0xd0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060271]  md_bitmap_daemon_work=
-+0x1e8/0x380 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060278]  ? md_rdev_init+0xb0/0=
-xb0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060285]  md_check_recovery+0x2=
-6/0x540 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060290]  raid1d+0x5c/0xf00 [ra=
-id1]
-Feb  4 20:04:46 tettnang kernel: [252300.060294]  ? preempt_count_add+0=
-x79/0xb0
-Feb  4 20:04:46 tettnang kernel: [252300.060298]  ? lock_timer_base+0x6=
-7/0x80
-Feb  4 20:04:46 tettnang kernel: [252300.060302]  ? _raw_spin_unlock_ir=
-qrestore+0x20/0x40
-Feb  4 20:04:46 tettnang kernel: [252300.060304]  ? try_to_del_timer_sy=
-nc+0x4d/0x80
-Feb  4 20:04:46 tettnang kernel: [252300.060306]  ? del_timer_sync+0x35=
-/0x40
-Feb  4 20:04:46 tettnang kernel: [252300.060309]  ? schedule_timeout+0x=
-17a/0x3b0
-Feb  4 20:04:46 tettnang kernel: [252300.060312]  ? preempt_count_add+0=
-x79/0xb0
-Feb  4 20:04:46 tettnang kernel: [252300.060315]  ? _raw_spin_lock_irqs=
-ave+0x25/0x50
-Feb  4 20:04:46 tettnang kernel: [252300.060321]  ? md_rdev_init+0xb0/0=
-xb0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060327]  ? md_thread+0xf9/0x16=
-0 [md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060330]  ? r1bio_pool_alloc+0x=
-20/0x20 [raid1]
-Feb  4 20:04:46 tettnang kernel: [252300.060336]  md_thread+0xf9/0x160 =
-[md_mod]
-Feb  4 20:04:46 tettnang kernel: [252300.060340]  ? finish_wait+0x80/0x=
-80
-Feb  4 20:04:46 tettnang kernel: [252300.060344]  kthread+0x112/0x130
-Feb  4 20:04:46 tettnang kernel: [252300.060346]  ? kthread_create_work=
-er_on_cpu+0x70/0x70
-Feb  4 20:04:46 tettnang kernel: [252300.060350]  ret_from_fork+0x35/0x=
-40
+------------------
 
-I saw that there was a similar problem with raid10 and an upstream patc=
-h
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-e820d55cb99dd93ac2dc949cf486bb187e5cd70d
-md: fix raid10 hang issue caused by barrier
-by  Guoqing Jiang
+commit 42caa0edabd6a0a392ec36a5f0943924e4954311 upstream.
 
-I wonder if there is a similar fix needed for raid1?
+The aic94xx driver is currently failing to load with errors like
 
-Regards,
---=20
-Wolfgang Walter
-Studentenwerk M=FCnchen
-Anstalt des =F6ffentlichen Rechts
+sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:02:00.3/0000:07:02.0/revision'
+
+Because the PCI code had recently added a file named 'revision' to every
+PCI device.  Fix this by renaming the aic94xx revision file to
+aic_revision.  This is safe to do for us because as far as I can tell,
+there's nothing in userspace relying on the current aic94xx revision file
+so it can be renamed without breaking anything.
+
+Fixes: 702ed3be1b1b (PCI: Create revision file in sysfs)
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/scsi/aic94xx/aic94xx_init.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -281,7 +281,7 @@ static ssize_t asd_show_dev_rev(struct d
+ 	return snprintf(buf, PAGE_SIZE, "%s\n",
+ 			asd_dev_rev[asd_ha->revision_id]);
+ }
+-static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
++static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
+ 
+ static ssize_t asd_show_dev_bios_build(struct device *dev,
+ 				       struct device_attribute *attr,char *buf)
+@@ -478,7 +478,7 @@ static int asd_create_dev_attrs(struct a
+ {
+ 	int err;
+ 
+-	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	if (err)
+ 		return err;
+ 
+@@ -500,13 +500,13 @@ err_update_bios:
+ err_biosb:
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ err_rev:
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	return err;
+ }
+ 
+ static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
+ {
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
+
+
