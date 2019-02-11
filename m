@@ -2,129 +2,93 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6B0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD28218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549889268;
-	bh=UqSEr17L1LV7h086WnSlCEdxYbi+eJNQ8bJcDoWTSf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IncV7savrjrR626oEii77A1JTb4BPemnkO/XkIG80mLRXvRVDVh/RZCZUFE+W8hXH
-	 +tLH3lvQzzblv1vq99DI3j79OqFKKq7ZV4Wbcj54rtmcMPQ4T25gqMCi7Kth8QsY9v
-	 JCwkMMX8Qr259T1leoCDTFZ+43TGw6801Cf715oI=
+	by mail.kernel.org (Postfix) with ESMTP id 38DA1218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:49:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="CtUHcEzq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbfBKMrr (ORCPT
+        id S1727532AbfBKMtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:47:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49500 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbfBKMrq (ORCPT
+        Mon, 11 Feb 2019 07:49:05 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52880 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727385AbfBKMtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:47:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EgW1/CMsijd/ta8j2zHhGem0ZITrh7t2nrqav3hnthQ=; b=CbVS7SjHZM3vG63P0L6Bw5Chi
-        O9G7gQFNt7Du07TJJBqgwQA1TaX32px0pTdb4/0JSWeFeibZMlN1zDv+LccXuQzYZJ5ibdDV5Amb5
-        eNSxKxnzsWQogSmvyu9W131l7ntnB1qmKjNH7fQCfsS5De3rZ29tfPXHmSPmjHkY8yxsU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gtAzq-00033K-UT; Mon, 11 Feb 2019 12:47:38 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2804211280BD; Mon, 11 Feb 2019 12:47:38 +0000 (GMT)
-Date:   Mon, 11 Feb 2019 12:47:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org, Dan Rue <dan.rue@linaro.org>
-Subject: Re: [PATCH 2/2] selftests/x86/fsgsbase: Default to trying to run the
- test repeatedly
-Message-ID: <20190211124738.GA22391@sirena.org.uk>
-References: <20190203134017.9375-1-broonie@kernel.org>
- <20190203134017.9375-3-broonie@kernel.org>
- <20190211084916.GB62722@gmail.com>
+        Mon, 11 Feb 2019 07:49:04 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m1so17562265wml.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:49:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=80MVU5byieRQ94ouyCQrnHT9UeWUF1wGlI/rU+Uki4E=;
+        b=CtUHcEzqamlPSw20NfrdwePGfvI8mG2khfdUY76EQ9eDBaOPGbb2hdNpi+8My2379R
+         Hb+XBFrjpA3/HgOxxEpD9DJfkAEthvDrdWS5O+HWP9XmaVXqOe5iyFieW/gN+cWrKieC
+         iCJGkVHd89HeOfXvp9IlLfCjmoiYw6ulHHjqg8TYNYW1wMC4FozSs+xrGXZ6j5XinAmW
+         QNhfBBlErVLyK4LvrekpDfgQmrQSjFXtzIFzRez+1ayhJntpleUXPZAdWNObgl7iLwSb
+         MI3UKCkOix5GntOQmT0bv8U+sjhtHlgzgAR68TSqIy84uUPUptePAaB/FO4tdmTaZoBL
+         jxFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=80MVU5byieRQ94ouyCQrnHT9UeWUF1wGlI/rU+Uki4E=;
+        b=XW00eYfryOqwCD94NwKdcGQcLPzM5EJ1G27V5EV3LTToR6l7DHeBjkrYf7Ih3se/yc
+         1j8VU6c3Y6bMGG84imb7KsUDVpculmlIDYvqbnC0UeECslQgmePd6fTKnf7Ep5EmGpuy
+         aVmqhLl3cHkLB9q4ct10wBuBmMOnzm38V2nBoreVmJ8tHd4YzZDebKJX3R/poIExNr2Z
+         pJm15BNavrNCB89kOpAVKUjb9MiAf1gb7KQhPRzbcIBOX/ziRHcDKb4DEa1lRURl6fF6
+         TRZQeBYHxmgZBTNDJGA1FakcfZ/BZzOdzCVmJqlgSR+Uwqy7zkK9o5kOVghzkp/kVzYW
+         qgLg==
+X-Gm-Message-State: AHQUAuZ6WJLW8y1BK2Uc8jFR94FqE93nijw984qe0W7dAXOJ5HU4XPTj
+        Bn6sUou/iInsod2YARZ04YKUSw==
+X-Google-Smtp-Source: AHgI3IbMMETtW7Vnm2Ctl6GHaHGhyqlPft2zCDOI2Jpbf5tJmajXob1V9jgljtPu9+6Dtr0gG9Lzzg==
+X-Received: by 2002:a1c:e71a:: with SMTP id e26mr1345122wmh.111.1549889342753;
+        Mon, 11 Feb 2019 04:49:02 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id c9sm8746441wrs.84.2019.02.11.04.49.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 04:49:02 -0800 (PST)
+Date:   Mon, 11 Feb 2019 13:39:38 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, idosch@mellanox.com,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        bridge@lists.linux-foundation.org, jiri@mellanox.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: Re: [PATCH net-next v3 8/9] net: switchdev: Replace port attr
+ get/set SDO with a notification
+Message-ID: <20190211123938.GK2251@nanopsycho>
+References: <20190210234007.16173-1-f.fainelli@gmail.com>
+ <20190210234007.16173-9-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211084916.GB62722@gmail.com>
-X-Cookie: Tell me what to think!!!
+In-Reply-To: <20190210234007.16173-9-f.fainelli@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mon, Feb 11, 2019 at 12:40:06AM CET, f.fainelli@gmail.com wrote:
+>Drop switchdev_ops.switchdev_port_attr_get and _set. Drop the uses of
+>this field from all clients, which were migrated to use switchdev
+>notification in the previous patches.
+>
+>Add a new function switchdev_port_attr_notify() that sends the switchdev
+>notifications SWITCHDEV_PORT_ATTR_GET and _SET.
+>
+>Update switchdev_port_attr_get() to dispatch to this new function. Drop
+>__switchdev_port_attr_set() and update switchdev_port_attr_set()
+>likewise.
+>
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 11, 2019 at 09:49:16AM +0100, Ingo Molnar wrote:
-
-> So this isn't very user-friendly either, previously it would run a=20
-> testcase and immediately provide output.
-
-> Now it's just starting and 'hanging':
-
->   galatea:~/linux/linux/tools/testing/selftests/x86> ./fsgsbase_64=20
-
-> I got bored and Ctrl-C-ed it after ~30 seconds.
-
-> How long is this supposed to run, and why isn't the user informed?
-
-On Intel systems I've got access to it's tended to only run for less
-than 10 seconds for me with excursions up to ~30s at most, I'd have
-projected it to be about a minute if the tests pass.  However retesting
-with Debian's v4.19 kernel it seems to be running a lot more stably so
-we're now seeing it run to completion reliably when just one copy of the
-test is running.
-
-AFAICT it's not terribly idiomatic to provide much output, and anything
-that was per iteration would be *way* too spammy.
-
-> Also, testcases should really be short, so I think a better approach=20
-> would be to thread the test-case and start an instance on every CPU. That=
-=20
-> should also excercise SMP bugs, if any.
-
-Well, a *better* approach would be for the underlying issue that the
-test is finding to be fixed.
-
-I didn't look at adding more threads as the test case is already
-threaded, it does seem that running multiple copies simultaneously makes
-things reproduce more quickly so it's definitely useful though it's
-still taking multiple iterations.
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhbukACgkQJNaLcl1U
-h9A1OAf/WKQVAqmx50jv0448xrLZi5lNwENWc3ftX6oIrPCwGtTpjjVYQIaoZZZk
-53RhJrMSwfxfEkVomotBTjpQCip6R1O5QbmZlBBl6VFoDs+YYTWb6/ovCggD/imS
-dqyeab1KZXo7ivBalS1i/byVqiXBF9A4T57VN4Ss+qm3EXStABH0kOERTo8boz74
-+wVjzzwmhsly0yBt92YK0NAvS+O8eu6IrrIDU19Ev90Hgspu7E4vCncrMRRVXkpJ
-Sk8eYCfD0WXZNAjcLq1LE1Qo74WAGjRfKSETo7IyU1daPAMiWOWV7vB9tE1+AIaf
-Qbf9D3Vg+eqfADxpxKwD8qnFP3bVVg==
-=kLSu
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+Acked-by: Jiri Pirko <jiri@mellanox.com>
