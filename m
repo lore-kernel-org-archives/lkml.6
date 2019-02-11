@@ -2,52 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAF5C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A93222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB601222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898134;
-	bh=Y3TXwuo+SJUVUUDUZEIXxC39W34nrJY8Jy3TKGO32RU=;
+	s=default; t=1549898142;
+	bh=hSQxcZ1MXmRyFVByP3mi0tAkGAyC/osrP7mQdvspwSQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yhQ050YraKsSSW2htnjF9cw4pZ1kIvmNXkLtEvWXyOl7kc9dTqETFpo29l2rEbmxK
-	 XP+zZtRCO0GD2sgijoYGxISCPmBhB5ee46dtgFnxsrQdZvi6e8H2mYwyU+58rljbTR
-	 YFD+dalfeBsxsYFv6mLReZW6pM8OZHaV6YoRiHvQ=
+	b=ZnPyIbomg2ma0nDMYLCJkF0VMo1rMEikrMaCwoG3H9qkuKPUWWT9jPz4Tz9IyyeMh
+	 2qRKKgikcX4DNMNjF4uf20mBgUnHDJz29adcC9I3IxU+qolIZEOF5EPUyREZgD+eLQ
+	 PB5y4HBA0Z7GxC6VitMFDO2qPhUrznFi0Nuv0JAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403889AbfBKPPd (ORCPT
+        id S2391374AbfBKPHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:15:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57430 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390932AbfBKPHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:39 -0500
+        id S2390905AbfBKPH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2DBE222A7;
-        Mon, 11 Feb 2019 15:07:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A460222A7;
+        Mon, 11 Feb 2019 15:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897658;
-        bh=Y3TXwuo+SJUVUUDUZEIXxC39W34nrJY8Jy3TKGO32RU=;
+        s=default; t=1549897647;
+        bh=hSQxcZ1MXmRyFVByP3mi0tAkGAyC/osrP7mQdvspwSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HffKP1PtQZ3H4/17DtpLMsqZx/VoxjPvGo/Z11tTb8VOyREJQPaUABXWy/TOVkL6V
-         sO7wGK09bRbF0Ez4ipN41cmBDS6wbGimGrQRmnEpSbeifcTvLhJr87893EtpVjASoH
-         i98vWVLiAPGfOhqmMlpEDdnCqLKklLr1unr5zd5E=
+        b=IxNMim13xWTy6vOPoyyBqVGbq9IXsr1W8EavfnKwuxcQZRRvZvPK2E4cWd1gy3kAu
+         jtcBIhgzitHJvSe6LwB07E5E9QXtxRlI3Wf4IYYSckVQOlqSOl7L0iT/mLRb/5R3uK
+         PFd9yH/FAsWnN7Tzw1SM6ki3Os5cp6dAAN6xh6pU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 071/137] drbd: Avoid Clang warning about pointless switch statment
-Date:   Mon, 11 Feb 2019 15:19:12 +0100
-Message-Id: <20190211141818.593043625@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 067/137] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 11 Feb 2019 15:19:08 +0100
+Message-Id: <20190211141818.191080414@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,69 +66,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-There are several warnings from Clang about no case statement matching
-the constant 0:
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
-In file included from drivers/block/drbd/drbd_receiver.c:48:
-In file included from drivers/block/drbd/drbd_int.h:48:
-In file included from ./include/linux/drbd_genl_api.h:54:
-In file included from ./include/linux/genl_magic_struct.h:236:
-./include/linux/drbd_genl.h:321:1: warning: no case matching constant
-switch condition '0'
-GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
-'GENL_struct'
-        switch (0) {
-                ^
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
 
-Silence this warning by adding a 'case 0:' statement. Additionally,
-adjust the alignment of the statements in the ct_assert_unique macro to
-avoid a checkpatch warning.
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
 
-This solution was originally sent by Arnd Bergmann with a default case
-statement: https://lore.kernel.org/patchwork/patch/756723/
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/43
-Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/genl_magic_struct.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
-index 6270a56e5edc..d0d6fdc22698 100644
---- a/include/linux/genl_magic_struct.h
-+++ b/include/linux/genl_magic_struct.h
-@@ -190,6 +190,7 @@ static inline void ct_assert_unique_operations(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index 0a0ff7e31f5b..c5492d792f43 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
+ 
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
++
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
+ 
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
  	}
- }
-@@ -208,6 +209,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
  	}
- }
-@@ -217,7 +219,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
- static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
- {									\
- 	switch (0) {							\
--		s_fields						\
-+	s_fields							\
-+	case 0:								\
- 			;						\
- 	}								\
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
  }
 -- 
 2.19.1
