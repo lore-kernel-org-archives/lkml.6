@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EE7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6F421B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E85D20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895601;
-	bh=0Hbv8y3jXssBHkC2LFIKj7kdQF8Ty88VXIN7SUvIA0I=;
+	s=default; t=1549895606;
+	bh=J4zK+wuGlmBjQ7i7sehrwEICdZa3OottXBU/BN69jls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WK9bHzIqaZnBHQS3p/ROhCF8bdjL0gJNgD/gKLcqMPh9ThsWee8AOFHzJIUpHnWEG
-	 5rOq6MtM1cKRfbvRif5GR0v95sODFmrB8jolomiaNm2I4PSRvnibEgSyBSBTkT9Ct4
-	 Y10/AmCp0eGiGQi+WOmcDFO/ZzFhwyV59excxpKo=
+	b=WRnZNesXMeXL/oiwcjBO43pUS2yhNMAh3u10T1NxUfXGMnV7Vp3Aqs+Rd9jQwyo9P
+	 PhZzb5FC4Bcufe+loBOjY7l38V0m3O9/8yu2K/uEJc6v5QfDNZRfxU/kikuPiSbMd9
+	 7BmJcAzWQNbn+YlgmT+EAKF8AKHmIvDCwJFf68zE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbfBKOdU (ORCPT
+        id S1730638AbfBKOdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40934 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:33:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730611AbfBKOdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:16 -0500
+        id S1730624AbfBKOdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 543EC218A3;
-        Mon, 11 Feb 2019 14:33:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 058D920675;
+        Mon, 11 Feb 2019 14:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895594;
-        bh=0Hbv8y3jXssBHkC2LFIKj7kdQF8Ty88VXIN7SUvIA0I=;
+        s=default; t=1549895597;
+        bh=J4zK+wuGlmBjQ7i7sehrwEICdZa3OottXBU/BN69jls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNrhCUQxO9tZEEhvxpLclmA+jAyoLcQa6sInTxR1Hm2c+WIC+gA3sdCckkbRCby+R
-         M+t6y84Ld3Vfd+Eb5r93yKHtcNNTp35Drzrl0Zv6M8sqjI9xyh6rrFuHFQPNwj7W82
-         781dR1qbl+qLtuW9hqRRngGlIvgJp2yRYhd/C4Rg=
+        b=Px6Kr0YnSIdCk6+QDyxBrFNe9vOQwJ1M2O3uSDvwWQzhWHYF/ZBfDgYTlVIrdType
+         1iwe0WQALWiMyI8L8ot/Dg77+FfM9P5FXCHrIZf90A4QZ1ae4EygUVUB5tS8KfoPSQ
+         dDxwMIYIgVPlJXmdIu6aJ0nwtJRTPzflVGfIeUK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 258/352] f2fs: fix use-after-free issue when accessing sbi->stat_info
-Date:   Mon, 11 Feb 2019 15:18:05 +0100
-Message-Id: <20190211141903.494985465@linuxfoundation.org>
+Subject: [PATCH 4.20 259/352] um: Avoid marking pages with "changed protection"
+Date:   Mon, 11 Feb 2019 15:18:06 +0100
+Message-Id: <20190211141903.552540891@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,118 +67,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 60aa4d5536ab7fe32433ca1173bd9d6633851f27 ]
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
 
-iput() on sbi->node_inode can update sbi->stat_info
-in the below context, if the f2fs_write_checkpoint()
-has failed with error.
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
 
-f2fs_balance_fs_bg+0x1ac/0x1ec
-f2fs_write_node_pages+0x4c/0x260
-do_writepages+0x80/0xbc
-__writeback_single_inode+0xdc/0x4ac
-writeback_single_inode+0x9c/0x144
-write_inode_now+0xc4/0xec
-iput+0x194/0x22c
-f2fs_put_super+0x11c/0x1e8
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
+While the condition is not particularly common it is worth
+avoiding.
 
-Fix this by moving f2fs_destroy_stats() further below iput() in
-both f2fs_put_super() and f2fs_fill_super() paths.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 855a622fb052..a239472f405a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
- 		f2fs_write_checkpoint(sbi, &cpc);
- 	}
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index 7485398d0737..9c04562310b3 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
  
--	/* f2fs_write_checkpoint can update stat informaion */
--	f2fs_destroy_stats(sbi);
--
- 	/*
- 	 * normally superblock is clean, so we need to release this.
- 	 * In addition, EIO will skip do checkpoint, we need this as well.
-@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
- 	iput(sbi->node_inode);
- 	iput(sbi->meta_inode);
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
+ }
  
-+	/*
-+	 * iput() can update stat information, if f2fs_write_checkpoint()
-+	 * above failed with error.
-+	 */
-+	f2fs_destroy_stats(sbi);
-+
- 	/* destroy f2fs internal modules */
- 	f2fs_destroy_node_manager(sbi);
- 	f2fs_destroy_segment_manager(sbi);
-@@ -3256,30 +3259,30 @@ try_onemore:
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
  
- 	f2fs_build_gc_manager(sbi);
- 
-+	err = f2fs_build_stats(sbi);
-+	if (err)
-+		goto free_nm;
-+
- 	/* get an inode for node space */
- 	sbi->node_inode = f2fs_iget(sb, F2FS_NODE_INO(sbi));
- 	if (IS_ERR(sbi->node_inode)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read node inode");
- 		err = PTR_ERR(sbi->node_inode);
--		goto free_nm;
-+		goto free_stats;
- 	}
- 
--	err = f2fs_build_stats(sbi);
--	if (err)
--		goto free_node_inode;
--
- 	/* read root inode and dentry */
- 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
- 	if (IS_ERR(root)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read root inode");
- 		err = PTR_ERR(root);
--		goto free_stats;
-+		goto free_node_inode;
- 	}
- 	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
- 			!root->i_size || !root->i_nlink) {
- 		iput(root);
- 		err = -EINVAL;
--		goto free_stats;
-+		goto free_node_inode;
- 	}
- 
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
-@@ -3403,12 +3406,12 @@ free_meta:
- free_root_inode:
- 	dput(sb->s_root);
- 	sb->s_root = NULL;
--free_stats:
--	f2fs_destroy_stats(sbi);
- free_node_inode:
- 	f2fs_release_ino_entry(sbi, true);
- 	truncate_inode_pages_final(NODE_MAPPING(sbi));
- 	iput(sbi->node_inode);
-+free_stats:
-+	f2fs_destroy_stats(sbi);
- free_nm:
- 	f2fs_destroy_node_manager(sbi);
- free_sm:
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
 -- 
 2.19.1
 
