@@ -2,155 +2,206 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC841C282DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA4DC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1A4218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0256B218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="S1eK1s2W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxKDH3V1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbfBKSWa (ORCPT
+        id S1730052AbfBKSYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:22:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43098 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbfBKSW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:22:29 -0500
-Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D5B721EC01B6;
-        Mon, 11 Feb 2019 19:22:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549909348;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mBrHsqt4hUkstq7VFx24ziqfy/NU+TGvc1tFvnBJ8PA=;
-        b=S1eK1s2WDNc/02K3VAa86oPXXo4XoDwFmtP0wbeZYty5vAp9mprYozKcOct+xRxW15U4++
-        c3/M3JS0QgDRn5peV2kEMuTIRbxVT2WR5+ldKaRyWQt5dV1T85uygPXDKqWdlXpoIgzsRL
-        kYmIwrctHP4YCZkqztXDQC87SbD3/S8=
-Date:   Mon, 11 Feb 2019 19:22:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v2 09/20] x86/kprobes: instruction pages initialization
- enhancements
-Message-ID: <20190211182221.GM19618@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-10-rick.p.edgecombe@intel.com>
+        Mon, 11 Feb 2019 13:24:36 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34160 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbfBKSYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:24:36 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y185so460414wmd.1;
+        Mon, 11 Feb 2019 10:24:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=TLKBKF1BreLbqnfwvB7Foi1Osm+u55Do0GkwG7DdJOM=;
+        b=bxKDH3V1tRUJZkt1XLyFzFqH/szDPRu9wh1ZGEEn4Pyy3fpNYwjIpN2JaE0GXYcekb
+         s3sMcTwkK2CALFXVZNkRCx6A3+m5cVS3HtMLkeeAmycyB9yNDKI7M5P4kZ5snTYZsA/V
+         nsgRQBmQfC3V4GpPv9z2W/SAq7zb/fSSqIoTpkMfyPXDjRDdMOLdAgaF5j39lqCiQAa2
+         FKDIKTWOsFKGzUky4GXVu9HmXSFtyZeaJwiVKPXQJLvZuH+2mZZ9zZYkmdRem/h4f2YM
+         2paJVEVb/8rYx16Mlp/QEZyLGtenRhY0HY2xCVD8CQstxs7iYUpxTOMiFJ5ELjLKV+jM
+         XTew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=TLKBKF1BreLbqnfwvB7Foi1Osm+u55Do0GkwG7DdJOM=;
+        b=e+FjJlIgCoNHXdQ0ZHg7BbnEF1noE/hj1hyewnd5zKu4mSa13bXM5q7a0qnFUV9uxg
+         im6V1Rd4LN54UFPpMvJLjjgVgqDuSSGkKNptrlM9dpLbVXWd53+Zh/K8DInO9GVORNUi
+         49qPjy2nNB+EMOCO01Azu5VvTjqMAHFEMfvvQk5U0Bg/r4m1bHH5M5blqKJzZmwUJegh
+         PXUYPmNi0dlwGVI4VCZ6yfVL7zEHQeOkOkfiW5sTdHi5uRM/0S0n6G6+VPqj43ZeMzoP
+         XBPMTNdIyPqBkpPihb/qdJ9qO8YtcKs5cBmMW8QFEAEQb+oz90R+xdbattjmOnPiA9/Q
+         26Yw==
+X-Gm-Message-State: AHQUAuZk501VQkaFK3rJIUZUmb6afwm/p4FaANBxdP/taOd4tgUL63WP
+        AfDSrSr0DsMUa+ROvu/g7zmPyykA
+X-Google-Smtp-Source: AHgI3IaMvxQ0EaU3anpCu/zbZqEp5eVnVm8o2LakiAxnASVtwBVB4aajRcEcic3wIUXiUpupHrswoA==
+X-Received: by 2002:a7b:c5d2:: with SMTP id n18mr683175wmk.30.1549909473159;
+        Mon, 11 Feb 2019 10:24:33 -0800 (PST)
+Received: from [172.30.89.184] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id o9sm113121wmh.3.2019.02.11.10.24.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 10:24:32 -0800 (PST)
+Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
+ matrices
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+ <20190209014748.10427-2-slongerbeam@gmail.com>
+ <1549879117.7687.2.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <0f987e19-e6e9-a56e-00ec-61e7e300a92e@gmail.com>
+Date:   Mon, 11 Feb 2019 10:24:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-10-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1549879117.7687.2.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only nitpicks:
+Hi Philipp,
 
-> Subject: Re: [PATCH v2 09/20] x86/kprobes: instruction pages initialization enhancements
+On 2/11/19 1:58 AM, Philipp Zabel wrote:
+> On Fri, 2019-02-08 at 17:47 -0800, Steve Longerbeam wrote:
+>> The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+>> coefficients, so rename them to indicate that. And add some comments
+>> to make clear these are BT.601 coefficients encoding between YUV limited
+>> range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
+>> matrix, so rename to ic_csc_identity. No functional changes.
+>>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> ---
+>> Changes in v2:
+>> - rename ic_csc_rgb2rgb matrix to ic_csc_identity.
+>> ---
+>>   drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
+>>   1 file changed, 14 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+>> index 594c3cbc8291..3ef61f0b509b 100644
+>> --- a/drivers/gpu/ipu-v3/ipu-ic.c
+>> +++ b/drivers/gpu/ipu-v3/ipu-ic.c
+>> @@ -183,11 +183,13 @@ struct ic_csc_params {
+>>   };
+>>   
+>>   /*
+>> + * BT.601 encoding from RGB full range to YUV limited range:
+>> + *
+>>    * Y = R *  .299 + G *  .587 + B *  .114;
+>>    * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+>>    * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
+> Hm, this is a conversion to full range BT.601. For limited range, the
+> matrix coefficients
+>
+>     0.2990  0.5870  0.1140
+>    -0.1687 -0.3313  0.5000
+>     0.5000 -0.4187 -0.0813
+>
+> should be multiplied with 219/255 (Y) and 224/255 (U,V), respectively:
+>
+>    Y = R *  .2568 + G *  .5041 + B *  .0979 + 16;
+>    U = R * -.1482 + G * -.2910 + B *  .4392 + 128;
+>    V = R *  .4392 + G * -.3678 + B * -.0714 + 128;
 
-Subject needs a verb.
+Looking more closely at these coefficients now, I see you are right, 
+they are the BT.601 YUV full-range coefficients (Y range 0 to 1, U and V 
+range -0.5 to 0.5). Well, not even that -- the coefficients are not 
+being scaled to the limited ranges, but the 0.5 offset (128) _is_ being 
+added to U/V, but no offset for Y. So it is even more messed up.
 
-On Mon, Jan 28, 2019 at 04:34:11PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> Make kprobes instruction pages read-only (and executable) after they are
-> set to prevent them from mistaken or malicious modifications.
-> 
-> This is a preparatory patch for a following patch that makes module
-> allocated pages non-executable and sets the page as executable after
-> allocation.
-> 
-> While at it, do some small cleanup of what appears to be unnecessary
-> masking.
-> 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 4ba75afba527..fac692e36833 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -431,8 +431,20 @@ void *alloc_insn_page(void)
->  	void *page;
->  
->  	page = module_alloc(PAGE_SIZE);
-> -	if (page)
-> -		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-> +	if (page == NULL)
-> +		return NULL;
+Your corrected coefficients and offsets look correct to me: Y 
+coefficients scaled to (235 - 16) / 255 and U/V coefficients scaled to 
+(240 - 16)  / 255, and add the offsets for both Y and U/V.
 
-Null tests we generally do like this:
+But what about this "SAT_MODE" field in the IC task parameter memory? 
+According to the manual the hardware will automatically convert the 
+written coefficients to the correct limited ranges. I see there is a 
+"sat" field defined in the struct but is not being set in the tables.
 
-	if (! ...
+So what should we do, define the full range coefficients, and make use 
+of SAT_MODE h/w feature, or scale/offset the coefficients ourselves and 
+not use SAT_MODE? I'm inclined to do the former.
+
+Steve
 
 
-like in the rest of this file.
 
-> +
-> +	/*
-> +	 * First make the page read-only, and then only then make it executable
+>
+>>    */
+>> -static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+>> +static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+>>   	.coeff = {
+>>   		{ 77, 150, 29 },
+>>   		{ 469, 427, 128 },
+>> @@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+>>   	.scale = 1,
+>>   };
+>>   
+>> -/* transparent RGB->RGB matrix for graphics combining */
+>> -static const struct ic_csc_params ic_csc_rgb2rgb = {
+>> +/*
+>> + * identity matrix, used for transparent RGB->RGB graphics
+>> + * combining.
+>> + */
+>> +static const struct ic_csc_params ic_csc_identity = {
+>>   	.coeff = {
+>>   		{ 128, 0, 0 },
+>>   		{ 0, 128, 0 },
+>> @@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+>>   };
+>>   
+>>   /*
+>> + * Inverse BT.601 encoding from YUV limited range to RGB full range:
+>> + *
+>>    * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+>>    * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+>>    * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+>>    */
+> This looks correct.
+>
+>> -static const struct ic_csc_params ic_csc_ycbcr2rgb = {
+>> +static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+>>   	.coeff = {
+>>   		{ 149, 0, 204 },
+>>   		{ 149, 462, 408 },
+>> @@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+>>   		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
+>>   
+>>   	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+>> -		params = &ic_csc_ycbcr2rgb;
+>> +		params = &ic_csc_ycbcr2rgb_bt601;
+>>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+>> -		params = &ic_csc_rgb2ycbcr;
+>> +		params = &ic_csc_rgb2ycbcr_bt601;
+>>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+>> -		params = &ic_csc_rgb2rgb;
+>> +		params = &ic_csc_identity;
+>>   	else {
+>>   		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+>>   		return -EINVAL;
+> regards
+> Philipp
 
- s/then only then/only then/
-
-ditto below.
-
-> +	 * to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_ro((unsigned long)page, 1);
-> +
-> +	/*
-> +	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-> +	 * that the page was not maliciously altered and it is still zeroed.
-> +	 */
-> +	set_memory_x((unsigned long)page, 1);
->  
->  	return page;
->  }
-> @@ -440,8 +452,12 @@ void *alloc_insn_page(void)
->  /* Recover page to RW mode before releasing it */
->  void free_insn_page(void *page)
->  {
-> -	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
-> -	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-> +	/*
-> +	 * First make the page non-executable, and then only then make it
-> +	 * writable to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_nx((unsigned long)page, 1);
-> +	set_memory_rw((unsigned long)page, 1);
->  	module_memfree(page);
->  }
->  
-> -- 
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
