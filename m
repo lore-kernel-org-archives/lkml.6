@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB05DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990BFC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C89A21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6889F21B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898790;
-	bh=aJligqYiTrIGFkjstkHYEok9EJY4Ibw3GViDJGyyz/I=;
+	s=default; t=1549898799;
+	bh=XcyQ8FX7UTxIUBcY0ZfcRpbg6DZWjb4V37Y4hykWqMU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BtnqVsk/GfCf7BxnmfvVHD2muqxIWUHhXDHHBGtgYfCVfbKVFALWS4Q436oaersiD
-	 pyeYbiWxdQO4TthYVHv/gHCntqhNflX81jKJD7YPRh+Rh2lncOfLORAzpJ3WfzljkE
-	 IrvwGh9m/OFhTvrKstyZ7OOCWojSGAsQpwRo7hj4=
+	b=TOXVto2SQwfxCCOGz36TCER4Aak2ucMvD6walbi4REe42hMNtqhQK7NgN9g3QcG6O
+	 FkGwvgH0rI3mxF480ibwk1B+g4/xXbsCKhNiFTX8H5fIGsAPxKZ5YkWc+I+F5wA7Tt
+	 rjaCtDATiT9BSj+LrtULPwHhJuBYfI5YrANvG7XA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389990AbfBKPAW (ORCPT
+        id S2389958AbfBKPAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48212 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389973AbfBKPAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:18 -0500
+        id S2389946AbfBKPAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D68206BA;
-        Mon, 11 Feb 2019 15:00:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92B08206BA;
+        Mon, 11 Feb 2019 15:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897217;
-        bh=aJligqYiTrIGFkjstkHYEok9EJY4Ibw3GViDJGyyz/I=;
+        s=default; t=1549897209;
+        bh=XcyQ8FX7UTxIUBcY0ZfcRpbg6DZWjb4V37Y4hykWqMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XWWunx7m/pmH30hmP2Nd7S9YlyruzzROO10gQ0w9Irr2eHBd4OfMOGsGpjo0zoYCE
-         RUGAmgpKXL8nnm7weZ5hmNU4wv5f6oRbrUef1VHUNgmNEL6spxn7DmYt1tvZYctMJE
-         uEv3WTD4yRhk/NWCKpJw4wbjhpW+Y0a7SagfQKeg=
+        b=b4GX8SeGKASzVau0TCXQS5PioNY2PwnOG956/Iw8hLiks+Gzey9VP/84ppVKaniup
+         TG0d9huKzlidUsj/bEEfdZPDwQUAEiagsXuOJ1NoJ8oPspvrZPfV2sT6D0n8YN+Xnx
+         KFcAK/zFWykSwgkQWJuItvyjMzlXF8G2wJRA/YrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        David Arcari <darcari@redhat.com>,
+        Tyler Baicar <baicar.tyler@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 130/205] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
-Date:   Mon, 11 Feb 2019 15:18:48 +0100
-Message-Id: <20190211141836.930733542@linuxfoundation.org>
+Subject: [PATCH 4.14 127/205] ACPI/APEI: Clear GHES block_status before panic()
+Date:   Mon, 11 Feb 2019 15:18:45 +0100
+Message-Id: <20190211141836.763596106@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,47 +69,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 42f9b48cc5402be11d2364275eb18c257d2a79e8 ]
+[ Upstream commit 98cff8b23ed1c763a029ee81ea300df0d153d07d ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+In __ghes_panic() clear the block status in the APEI generic
+error status block for that generic hardware error source before
+calling panic() to prevent a second panic() in the crash kernel
+for exactly the same fatal error.
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
+Otherwise ghes_probe(), running in the crash kernel, would see
+an unhandled error in the APEI generic error status block and
+panic again, thereby precluding any crash dump.
 
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: David Arcari <darcari@redhat.com>
+Tested-by: Tyler Baicar <baicar.tyler@gmail.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/apei/ghes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 970f6f14502c..591b01657378 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -808,7 +808,9 @@ static const char * const gpio_groups[] = {
- 	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
-+};
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index f14695e744d0..5889f6407fea 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -675,6 +675,8 @@ static void __ghes_panic(struct ghes *ghes)
+ {
+ 	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
  
-+static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
- 	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
- 	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-@@ -1030,6 +1032,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- };
- 
- static struct meson_pmx_func meson8_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(remote),
- 	FUNCTION(i2c_slave_ao),
++	ghes_clear_estatus(ghes);
++
+ 	/* reboot to log the error! */
+ 	if (!panic_timeout)
+ 		panic_timeout = ghes_panic_timeout;
 -- 
 2.19.1
 
