@@ -4,51 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCFEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824DCC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C910A222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BDC2222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899710;
-	bh=O79/nziKHT+4jgZn0NrKMraHOr8/nypyTjJ866ZxegE=;
+	s=default; t=1549899715;
+	bh=OY9+b9H2QrM+RoBN7aOJV1Vy5f6SRqNw9GSLdal+bQc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c913nPctGpr7tZCJD+uQcFivnjQF0z2qRS45z16QZUQf/Q7TAHAiEjfVDxKSFp3Gj
-	 VS6u+Wlfpdn4aIPKmGEJRMnKT3ynxjH0mg44wB0armfXCBQ2bUUbNOXTwJojZ2mz67
-	 Ag9f2LyGLJnvLq1xPwLYQC0dAUVdkFQlt3t2z2kw=
+	b=r/yPDHQ7S90DRL4pj+HsVeOE0OEOGrY90g/RO76R6yPy1qJRzku3plC8C02T4LuMR
+	 AlG8D1+AuVqt8i6Z31n37PmXHhsTQ4Bn7IBWEVCkR7+mZShe4NgExfhZvEcKNm12kk
+	 7PyqSazMf6s9JDtWYrs6O5l5K4akLJNn0LK4T1hU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387861AbfBKPlt (ORCPT
+        id S1732752AbfBKOrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:41:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60714 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:47:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387496AbfBKOrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:25 -0500
+        id S2387486AbfBKOrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D70D6206BA;
-        Mon, 11 Feb 2019 14:47:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D306E206BA;
+        Mon, 11 Feb 2019 14:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896445;
-        bh=O79/nziKHT+4jgZn0NrKMraHOr8/nypyTjJ866ZxegE=;
+        s=default; t=1549896436;
+        bh=OY9+b9H2QrM+RoBN7aOJV1Vy5f6SRqNw9GSLdal+bQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AIJVhccnsR9ldgN9auXna+e+KBUYhKwh0RbyZLB6/qPnHi4hTFNxQ+g8pPHr6G2lj
-         /l5Z4+CPklpoCMyGlFFFXZJQ9XNU5bA+/hwyJCXNot8gEJcm5grw8TS/Tk152vq40f
-         HB1ARRJRSr6VfvLtCtK1zqfmyhUQjaaanQrj/ExQ=
+        b=W4EDwZh/lu5HF3ktuJ/RsbmDbB3pkw9J6hJJXCSeXP+4G7CZbZSwj4NPxhOnLFBOH
+         rWzzMTzqpGcwPmw3ljvMk6yMKz6uOnMjt1knSr6G7Hy9P14dfRRyEycgoNwtQ3Rjl+
+         sPr2DkMoV8rfCL7AwdAEifGbK3ZDABDaNTXUpKqI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Murthy Bhat <murthy.bhat@microsemi.com>,
+        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+        Scott Teel <scott.teel@microsemi.com>,
+        Kevin Barnett <kevin.barnett@microsemi.com>,
+        Dave Carroll <david.carroll@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 185/313] net: hns3: add max vector number check for pf
-Date:   Mon, 11 Feb 2019 15:17:45 +0100
-Message-Id: <20190211141905.651294737@linuxfoundation.org>
+Subject: [PATCH 4.19 182/313] scsi: smartpqi: correct volume status
+Date:   Mon, 11 Feb 2019 15:17:42 +0100
+Message-Id: <20190211141905.473740799@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,44 +71,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 75edb610860fda65ceedb017fc69afabd2806b8b ]
+[ Upstream commit 7ff44499bafbd376115f0bb6b578d980f56ee13b ]
 
-Each pf supports max 64 vectors and 128 tqps. For 2p/4p core scenario,
-there may be more than 64 cpus online. So the result of min_t(u16,
-num_Online_cpus(), tqp_num) may be more than 64. This patch adds check
-for the vector number.
+- fix race condition when a unit is deleted after an RLL,
+  and before we have gotten the LV_STATUS page of the unit.
+  - In this case we will get a standard inquiry, rather than
+    the desired page.  This will result in a unit presented
+    which no longer exists.
+  - If we ask for LV_STATUS, insure we get LV_STATUS
 
-Fixes: dd38c72604dc ("net: hns3: fix for coalesce configuration lost during reset")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
+Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
+Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index d5f15d8d18a9..0ccfa6a84535 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2691,6 +2691,8 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index 58eb0d31d8d9..3781e8109dd7 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -1184,6 +1184,9 @@ static void pqi_get_volume_status(struct pqi_ctrl_info *ctrl_info,
+ 	if (rc)
+ 		goto out;
  
- static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
- {
-+#define HNS3_VECTOR_PF_MAX_NUM		64
++	if (vpd->page_code != CISS_VPD_LV_STATUS)
++		goto out;
 +
- 	struct hnae3_handle *h = priv->ae_handle;
- 	struct hns3_enet_tqp_vector *tqp_vector;
- 	struct hnae3_vector_info *vector;
-@@ -2703,6 +2705,8 @@ static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
- 	/* RSS size, cpu online and vector_num should be the same */
- 	/* Should consider 2p/4p later */
- 	vector_num = min_t(u16, num_online_cpus(), tqp_num);
-+	vector_num = min_t(u16, vector_num, HNS3_VECTOR_PF_MAX_NUM);
-+
- 	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
- 			      GFP_KERNEL);
- 	if (!vector)
+ 	page_length = offsetof(struct ciss_vpd_logical_volume_status,
+ 		volume_status) + vpd->page_length;
+ 	if (page_length < sizeof(*vpd))
 -- 
 2.19.1
 
