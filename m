@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11761C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180E4C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2FE021855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF6F5214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895073;
-	bh=QVA1vZRMxU56s2OSJtL/LlaOuDeiCH1S7spM/sMeGO0=;
+	s=default; t=1549895082;
+	bh=w5WSb/uEfpoz2iAjZ2JSfX3Bn7DGypH0y3LbchJEjzU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OB4lU8aFI6vSe0S3KMJb5CV6lFWo8htg9eLuaTRtzh4Y2Nqf4VvJZip/p8FRG7vze
-	 V2iIlVenViIxlpUWmQn9zFsl2x/siZVGL4ltq8cyZeCbWXGI8hkI4vobZyfkHQovP5
-	 E+rDK04cNu6Va3o5XR2WkgO7R6MpOQqfplH3txp8=
+	b=lE8aW6ADOj7obHiQ12A5G+LkVfFX96pouvb5mqh9XVtMmxXk0jUc6/0gAi70iqMQL
+	 9f+z0PRwr68Eoe2a6STxgGKQE1bqeFF9egynQksVoXTbY1fwBwufwjTGv1p9vfdoyU
+	 4oPPiyaejCvqSfDZ49jAFGPUgo6ijWPk2DdNpzbc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfBKOYb (ORCPT
+        id S1729257AbfBKOYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:24:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57744 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:24:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729201AbfBKOYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:24:30 -0500
+        id S1729242AbfBKOYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:24:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4326A20821;
-        Mon, 11 Feb 2019 14:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E70642075C;
+        Mon, 11 Feb 2019 14:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895069;
-        bh=QVA1vZRMxU56s2OSJtL/LlaOuDeiCH1S7spM/sMeGO0=;
+        s=default; t=1549895078;
+        bh=w5WSb/uEfpoz2iAjZ2JSfX3Bn7DGypH0y3LbchJEjzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x5kaWWAhon7vXxcoECnT8nHgmeGLe2lm3lQ6bAdjDLGjmvOK9AmrCUixGSRFnpDcC
-         z7Az4ebCsLYhVEdSwrjK30QK7Wm0yynBSKBlu2pqy9IZYa9/MmF6wbFylAailomhD2
-         1lFTxjgqITGdEHM46bO7qtLRQydmjQj5djKXD/40=
+        b=wyP3QgtFBNYwhf+3oqn8OWBSnF9czKrgB3Qna6mozrwatCmhG5KDUoc+OJbDk6lxT
+         9NzkkEKx/zpSp4iBP5me+9/G/GMYruXDNCLO+KGTH0Hoaeo/D5310Dq1HPInK8qATb
+         k+XG/gZAgVqdPqKLbKqmnEYUJJPmzSqUJfJFJ41Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 051/352] bpf: libbpf: retry map creation without the name
-Date:   Mon, 11 Feb 2019 15:14:38 +0100
-Message-Id: <20190211141849.476010499@linuxfoundation.org>
+Subject: [PATCH 4.20 077/352] ACPI: SPCR: Consider baud rate 0 as preconfigured state
+Date:   Mon, 11 Feb 2019 15:15:04 +0100
+Message-Id: <20190211141850.947607772@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,53 +68,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 23499442c319412aa8e54e7a939e2eb531bdd77d ]
+[ Upstream commit b413b1abeb21b4a152c0bf8d1379efa30759b6e3 ]
 
-Since commit 88cda1c9da02 ("bpf: libbpf: Provide basic API support
-to specify BPF obj name"), libbpf unconditionally sets bpf_attr->name
-for maps. Pre v4.14 kernels don't know about map names and return an
-error about unexpected non-zero data. Retry sys_bpf without a map
-name to cover older kernels.
+Since SPCR 1.04 [1] the baud rate of 0 means a preconfigured state of UART.
+Assume firmware or bootloader configures console correctly.
 
-v2 changes:
-* check for errno == EINVAL as suggested by Daniel Borkmann
+[1]: https://docs.microsoft.com/en-us/windows-hardware/drivers/serports/serial-port-console-redirection-table
 
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/bpf.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/acpi/spcr.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 03f9bcc4ef50..961e1b9fc592 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -69,6 +69,7 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
- {
- 	__u32 name_len = create_attr->name ? strlen(create_attr->name) : 0;
- 	union bpf_attr attr;
-+	int ret;
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index 9d52743080a4..c336784d0bcb 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -148,6 +148,13 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 	}
  
- 	memset(&attr, '\0', sizeof(attr));
- 
-@@ -86,7 +87,15 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
- 	attr.map_ifindex = create_attr->map_ifindex;
- 	attr.inner_map_fd = create_attr->inner_map_fd;
- 
--	return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
-+	ret = sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
-+	if (ret < 0 && errno == EINVAL && create_attr->name) {
-+		/* Retry the same syscall, but without the name.
-+		 * Pre v4.14 kernels don't support map names.
+ 	switch (table->baud_rate) {
++	case 0:
++		/*
++		 * SPCR 1.04 defines 0 as a preconfigured state of UART.
++		 * Assume firmware or bootloader configures console correctly.
 +		 */
-+		memset(attr.map_name, 0, sizeof(attr.map_name));
-+		return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
++		baud_rate = 0;
++		break;
+ 	case 3:
+ 		baud_rate = 9600;
+ 		break;
+@@ -196,6 +203,10 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 		 * UART so don't attempt to change to the baud rate state
+ 		 * in the table because driver cannot calculate the dividers
+ 		 */
++		baud_rate = 0;
 +	}
-+	return ret;
- }
- 
- int bpf_create_map_node(enum bpf_map_type map_type, const char *name,
++
++	if (!baud_rate) {
+ 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype,
+ 			 table->serial_port.address);
+ 	} else {
 -- 
 2.19.1
 
