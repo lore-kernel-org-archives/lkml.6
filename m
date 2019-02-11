@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B2DC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDB0C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC8E222AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0083222AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897349;
-	bh=V958nLWppYx+37qg+PqLz2JfypNUSeHxylTcn2/MPr8=;
+	s=default; t=1549897353;
+	bh=o1z0bXgxIgjjDyvyVUcXxxBh3tbXePopYalGmLIwlcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yAy1Bh2LBwXFp7wNQ/LLbj93YaZu6KVmhxGGdX8b/fhFuN0PQAV6Yx6m0EepW8a4L
-	 8j4ZjKcjczjNoC1eCaNzhINoGNRBdFCeGJxswNpsvtqwmgQeBaEl1V707UFiG46KEp
-	 wVzuCZUJC7L05LZYC7oQH0rN8P59FK0Fkn9Br4wY=
+	b=ZeUfApXEwDBl0LIG5PACSasSwj1RI1Yd0ccM8QUEnAyDIWPJPVhzQP4YCcFh52F2F
+	 EGRDJjLZF3MeXak6FimTOXj5A8QIEFKwICEhviCY9aHS9u8ws1PhahsIFEAhgAbdMV
+	 4J7VkXM78qXt+PgAt0mB6E+nHODwEOvfrW4DuFSk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390415AbfBKPC1 (ORCPT
+        id S2390426AbfBKPCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:02:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390405AbfBKPCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:24 -0500
+        id S2390408AbfBKPC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A860222AB;
-        Mon, 11 Feb 2019 15:02:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD4F4222A6;
+        Mon, 11 Feb 2019 15:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897343;
-        bh=V958nLWppYx+37qg+PqLz2JfypNUSeHxylTcn2/MPr8=;
+        s=default; t=1549897346;
+        bh=o1z0bXgxIgjjDyvyVUcXxxBh3tbXePopYalGmLIwlcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RkanaOrjSuBugxEks5rknjM4+Oc8hLm8oKuBNQfE/qTJvP2Eh2HWeQhZZmWogDX5J
-         BdRV1A8dFeIzWjUfgjzV0RPRRKTBdJhLEvV7MmKYnPwTkufL9ve909dSFGPrTFCrq0
-         fs1UjgDy5RsnvZa13QP2/eoI26O63Eq/8TLQZOG4=
+        b=jWPNALjnvjL14lsDUupe4kD/LeLx1b0VcOMlVlCFSRPvfLf3PZIbFGpjqvOP5/FMv
+         +hD0pwEuVGN0vn433NZKsY3qaSo+ffQ6rP4Jc7xNXhJfhQtQ78TWGb0Glz9C+bFdFV
+         6Gg0ZTlZqRrytSQFcwbek+VJWURK3tI1F8B/BYlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 170/205] skge: potential memory corruption in skge_get_regs()
-Date:   Mon, 11 Feb 2019 15:19:28 +0100
-Message-Id: <20190211141839.479602359@linuxfoundation.org>
+Subject: [PATCH 4.14 171/205] rds: fix refcount bug in rds_sock_addref
+Date:   Mon, 11 Feb 2019 15:19:29 +0100
+Message-Id: <20190211141839.545367399@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,37 +69,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 294c149a209c6196c2de85f512b52ef50f519949 ]
+[ Upstream commit 6fa19f5637a6c22bc0999596bcc83bdcac8a4fa6 ]
 
-The "p" buffer is 0x4000 bytes long.  B3_RI_WTO_R1 is 0x190.  The value
-of "regs->len" is in the 1-0x4000 range.  The bug here is that
-"regs->len - B3_RI_WTO_R1" can be a negative value which would lead to
-memory corruption and an abrupt crash.
+syzbot was able to catch a bug in rds [1]
 
-Fixes: c3f8be961808 ("[PATCH] skge: expand ethtool debug register dump")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The issue here is that the socket might be found in a hash table
+but that its refcount has already be set to 0 by another cpu.
+
+We need to use refcount_inc_not_zero() to be safe here.
+
+[1]
+
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 1 PID: 23129 at lib/refcount.c:153 refcount_inc_checked lib/refcount.c:153 [inline]
+WARNING: CPU: 1 PID: 23129 at lib/refcount.c:153 refcount_inc_checked+0x61/0x70 lib/refcount.c:151
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 23129 Comm: syz-executor3 Not tainted 5.0.0-rc4+ #53
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+ panic+0x2cb/0x65c kernel/panic.c:214
+ __warn.cold+0x20/0x48 kernel/panic.c:571
+ report_bug+0x263/0x2b0 lib/bug.c:186
+ fixup_bug arch/x86/kernel/traps.c:178 [inline]
+ fixup_bug arch/x86/kernel/traps.c:173 [inline]
+ do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+ do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+ invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:refcount_inc_checked lib/refcount.c:153 [inline]
+RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:151
+Code: 1d 51 63 c8 06 31 ff 89 de e8 eb 1b f2 fd 84 db 75 dd e8 a2 1a f2 fd 48 c7 c7 60 9f 81 88 c6 05 31 63 c8 06 01 e8 af 65 bb fd <0f> 0b eb c1 90 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 41 54 49
+RSP: 0018:ffff8880a0cbf1e8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc90006113000
+RDX: 000000000001047d RSI: ffffffff81685776 RDI: 0000000000000005
+RBP: ffff8880a0cbf1f8 R08: ffff888097c9e100 R09: ffffed1015ce5021
+R10: ffffed1015ce5020 R11: ffff8880ae728107 R12: ffff8880723c20c0
+R13: ffff8880723c24b0 R14: dffffc0000000000 R15: ffffed1014197e64
+ sock_hold include/net/sock.h:647 [inline]
+ rds_sock_addref+0x19/0x20 net/rds/af_rds.c:675
+ rds_find_bound+0x97c/0x1080 net/rds/bind.c:82
+ rds_recv_incoming+0x3be/0x1430 net/rds/recv.c:362
+ rds_loop_xmit+0xf3/0x2a0 net/rds/loop.c:96
+ rds_send_xmit+0x1355/0x2a10 net/rds/send.c:355
+ rds_sendmsg+0x323c/0x44e0 net/rds/send.c:1368
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg+0xdd/0x130 net/socket.c:631
+ __sys_sendto+0x387/0x5f0 net/socket.c:1788
+ __do_sys_sendto net/socket.c:1800 [inline]
+ __se_sys_sendto net/socket.c:1796 [inline]
+ __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+ do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458089
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc266df8c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000458089
+RDX: 0000000000000000 RSI: 00000000204b3fff RDI: 0000000000000005
+RBP: 000000000073bf00 R08: 00000000202b4000 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc266df96d4
+R13: 00000000004c56e4 R14: 00000000004d94a8 R15: 00000000ffffffff
+
+Fixes: cc4dfb7f70a3 ("rds: fix two RCU related problems")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: rds-devel@oss.oracle.com
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/skge.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/rds/bind.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -152,8 +152,10 @@ static void skge_get_regs(struct net_dev
- 	memset(p, 0, regs->len);
- 	memcpy_fromio(p, io, B3_RAM_ADDR);
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -62,10 +62,10 @@ struct rds_sock *rds_find_bound(__be32 a
  
--	memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
--		      regs->len - B3_RI_WTO_R1);
-+	if (regs->len > B3_RI_WTO_R1) {
-+		memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
-+			      regs->len - B3_RI_WTO_R1);
-+	}
- }
+ 	rcu_read_lock();
+ 	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
+-	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
+-		rds_sock_addref(rs);
+-	else
++	if (rs && (sock_flag(rds_rs_to_sk(rs), SOCK_DEAD) ||
++		   !refcount_inc_not_zero(&rds_rs_to_sk(rs)->sk_refcnt)))
+ 		rs = NULL;
++
+ 	rcu_read_unlock();
  
- /* Wake on Lan only supported on Yukon chips with rev 1 or above */
+ 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
 
 
