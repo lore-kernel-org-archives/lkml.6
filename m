@@ -2,323 +2,104 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDABDC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE06C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8091218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ADE8218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVk4ZTyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfBKNXj (ORCPT
+        id S1727946AbfBKNXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:23:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34075 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbfBKNXi (ORCPT
+        Mon, 11 Feb 2019 08:23:55 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51563 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbfBKNXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:23:38 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BDMUqj3548045
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 11 Feb 2019 05:22:30 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BDMToY3548040;
-        Mon, 11 Feb 2019 05:22:29 -0800
-Date:   Mon, 11 Feb 2019 05:22:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        jolsa@redhat.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com, eranian@google.com, stable@vger.kernel.org,
-        mingo@kernel.org, ravi.bangoria@linux.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com, acme@kernel.org,
-        vincent.weaver@maine.edu, hpa@zytor.com
-Reply-To: jolsa@kernel.org, linux-kernel@vger.kernel.org, jolsa@redhat.com,
-          peterz@infradead.org, alexander.shishkin@linux.intel.com,
-          tglx@linutronix.de, torvalds@linux-foundation.org, hpa@zytor.com,
-          vincent.weaver@maine.edu, acme@kernel.org,
-          naveen.n.rao@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
-          mingo@kernel.org, stable@vger.kernel.org, eranian@google.com,
-          acme@redhat.com
-In-Reply-To: <20190204123532.GA4794@krava>
-References: <20190204123532.GA4794@krava>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86: Add check_period PMU callback
-Git-Commit-ID: 81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Feb 2019 08:23:55 -0500
+Received: by mail-it1-f195.google.com with SMTP id y184so19886016itc.1;
+        Mon, 11 Feb 2019 05:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5uLOz++MITu17HAQVYwsjQDpj8/P8DP456xdXTRIqPo=;
+        b=tVk4ZTyXrLA4/9MOzRCA7QEFgRgdi29Hp7cze2Moul8aj9nBaNKYkRlZtW4JD/lu07
+         Q4BZsdVl1TIMtCs5HsWWPoaRGL/DK//OrQlDOeKKN91GAiELRM5tdYU5WoqrLUvniB9C
+         Fz8qN8QCZaztMQZQkJQsR1Q5rala7PK6sX0O97aITLWUynZ4qpNQ3LD+5AZOsRLCEXTd
+         F5Wk8q2mBHKdxSZqJbRYXLScpG+6n61tXKoQ7KTJC4Olhr3LVHBulloldJBtafF8ECJb
+         b8cUEhYwrEEOMS3J9RaV5BeyzPgtnV5mpSk523kDg3jupkNXOJid+sJdLGAfbpJ39RGt
+         +eSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5uLOz++MITu17HAQVYwsjQDpj8/P8DP456xdXTRIqPo=;
+        b=Un0Cwq7iOPYd43ovjOYkfzKiyQ/o3U5UkDWYverB55rYEX75kP5VZd7OSC4r0fH9H0
+         Lb+r/XYrrsXEcw9Mi4WOXrSEeMvFHmHUNKCnoOyQ/47OEDTkRF5rv/6WOij0h0F3crJL
+         kvclwH2m3Yh9Hks4tRHpB43ncNHJB6W2YsaKOpH22GYhmu/x/KBOgSzCuxe/SBaLf2vO
+         sy5rP2/qpSt1Koj09PrYkt3QneQcvINlu2nJFOhcCzl0RETj0p4IQh2+UczRRGk1/v/w
+         RG03D+FTjPtmxfS2bDktuOLRHdADuKpYd4pnjNs5s1+dydDtNfeyzeslD+mVy4ROe7oz
+         CO2Q==
+X-Gm-Message-State: AHQUAuZlu31EebiTUMUwZUu5OLS7HmmCVp3EKgtPjpQgMGeMvT3wOcug
+        bElLtBwSz72/ydWytgWwPq3+ODoYosLxBv4CzXKSpg==
+X-Google-Smtp-Source: AHgI3IZUsuTKU8CY8hyyMZVMwclBomsz9/WBXBL7Tp7g7U16+fEv64LuA0h33JbMWx7ijf7zGwvL2ja/OKHr1+LfRwo=
+X-Received: by 2002:a5e:de06:: with SMTP id e6mr6285983iok.4.1549891433974;
+ Mon, 11 Feb 2019 05:23:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190210194735.17939-1-lkundrak@v3.sk>
+In-Reply-To: <20190210194735.17939-1-lkundrak@v3.sk>
+From:   Steve deRosier <derosier@gmail.com>
+Date:   Mon, 11 Feb 2019 05:23:17 -0800
+Message-ID: <CALLGbRLZGJGjJuYsno-y8=5UWZ9xjwvgTeM4hZRGNXS-Y+WF9Q@mail.gmail.com>
+Subject: Re: [PATCH] libertas_tf: lower the debug level of command trace
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb
-Gitweb:     https://git.kernel.org/tip/81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Mon, 4 Feb 2019 13:35:32 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Feb 2019 11:46:43 +0100
+On Sun, Feb 10, 2019 at 11:47 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+>
+> Logging each and every command response is way too much for INFO level.
+> Silence this, unless CONFIG_LIBERTAS_THINFIRM_DEBUG has been enabled.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  drivers/net/wireless/marvell/libertas_tf/cmd.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/wireless/marvell/libertas_tf/cmd.c b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+> index 909ac3685010..64b147dd2432 100644
+> --- a/drivers/net/wireless/marvell/libertas_tf/cmd.c
+> +++ b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+> @@ -737,10 +737,9 @@ int lbtf_process_rx_command(struct lbtf_private *priv)
+>         respcmd = le16_to_cpu(resp->command);
+>         result = le16_to_cpu(resp->result);
+>
+> -       if (net_ratelimit())
+> -               pr_info("libertastf: cmd response 0x%04x, seq %d, size %d\n",
+> -                       respcmd, le16_to_cpu(resp->seqnum),
+> -                       le16_to_cpu(resp->size));
+> +       lbtf_deb_cmd("libertastf: cmd response 0x%04x, seq %d, size %d\n",
+> +                    respcmd, le16_to_cpu(resp->seqnum),
+> +                    le16_to_cpu(resp->size));
+>
+>         if (resp->seqnum != priv->cur_cmd->cmdbuf->seqnum) {
+>                 spin_unlock_irqrestore(&priv->driver_lock, flags);
+> --
+> 2.20.1
+>
 
-perf/x86: Add check_period PMU callback
-
-Vince (and later on Ravi) reported crashes in the BTS code during
-fuzzing with the following backtrace:
-
-  general protection fault: 0000 [#1] SMP PTI
-  ...
-  RIP: 0010:perf_prepare_sample+0x8f/0x510
-  ...
-  Call Trace:
-   <IRQ>
-   ? intel_pmu_drain_bts_buffer+0x194/0x230
-   intel_pmu_drain_bts_buffer+0x160/0x230
-   ? tick_nohz_irq_exit+0x31/0x40
-   ? smp_call_function_single_interrupt+0x48/0xe0
-   ? call_function_single_interrupt+0xf/0x20
-   ? call_function_single_interrupt+0xa/0x20
-   ? x86_schedule_events+0x1a0/0x2f0
-   ? x86_pmu_commit_txn+0xb4/0x100
-   ? find_busiest_group+0x47/0x5d0
-   ? perf_event_set_state.part.42+0x12/0x50
-   ? perf_mux_hrtimer_restart+0x40/0xb0
-   intel_pmu_disable_event+0xae/0x100
-   ? intel_pmu_disable_event+0xae/0x100
-   x86_pmu_stop+0x7a/0xb0
-   x86_pmu_del+0x57/0x120
-   event_sched_out.isra.101+0x83/0x180
-   group_sched_out.part.103+0x57/0xe0
-   ctx_sched_out+0x188/0x240
-   ctx_resched+0xa8/0xd0
-   __perf_event_enable+0x193/0x1e0
-   event_function+0x8e/0xc0
-   remote_function+0x41/0x50
-   flush_smp_call_function_queue+0x68/0x100
-   generic_smp_call_function_single_interrupt+0x13/0x30
-   smp_call_function_single_interrupt+0x3e/0xe0
-   call_function_single_interrupt+0xf/0x20
-   </IRQ>
-
-The reason is that while event init code does several checks
-for BTS events and prevents several unwanted config bits for
-BTS event (like precise_ip), the PERF_EVENT_IOC_PERIOD allows
-to create BTS event without those checks being done.
-
-Following sequence will cause the crash:
-
-If we create an 'almost' BTS event with precise_ip and callchains,
-and it into a BTS event it will crash the perf_prepare_sample()
-function because precise_ip events are expected to come
-in with callchain data initialized, but that's not the
-case for intel_pmu_drain_bts_buffer() caller.
-
-Adding a check_period callback to be called before the period
-is changed via PERF_EVENT_IOC_PERIOD. It will deny the change
-if the event would become BTS. Plus adding also the limit_period
-check as well.
-
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20190204123532.GA4794@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/core.c       | 14 ++++++++++++++
- arch/x86/events/intel/core.c |  9 +++++++++
- arch/x86/events/perf_event.h | 16 ++++++++++++++--
- include/linux/perf_event.h   |  5 +++++
- kernel/events/core.c         | 16 ++++++++++++++++
- 5 files changed, 58 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 374a19712e20..b684f0294f35 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2278,6 +2278,19 @@ void perf_check_microcode(void)
- 		x86_pmu.check_microcode();
- }
- 
-+static int x86_pmu_check_period(struct perf_event *event, u64 value)
-+{
-+	if (x86_pmu.check_period && x86_pmu.check_period(event, value))
-+		return -EINVAL;
-+
-+	if (value && x86_pmu.limit_period) {
-+		if (x86_pmu.limit_period(event, value) > value)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static struct pmu pmu = {
- 	.pmu_enable		= x86_pmu_enable,
- 	.pmu_disable		= x86_pmu_disable,
-@@ -2302,6 +2315,7 @@ static struct pmu pmu = {
- 	.event_idx		= x86_pmu_event_idx,
- 	.sched_task		= x86_pmu_sched_task,
- 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
-+	.check_period		= x86_pmu_check_period,
- };
- 
- void arch_perf_update_userpage(struct perf_event *event,
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index daafb893449b..730978dff63f 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3587,6 +3587,11 @@ static void intel_pmu_sched_task(struct perf_event_context *ctx,
- 	intel_pmu_lbr_sched_task(ctx, sched_in);
- }
- 
-+static int intel_pmu_check_period(struct perf_event *event, u64 value)
-+{
-+	return intel_pmu_has_bts_period(event, value) ? -EINVAL : 0;
-+}
-+
- PMU_FORMAT_ATTR(offcore_rsp, "config1:0-63");
- 
- PMU_FORMAT_ATTR(ldlat, "config1:0-15");
-@@ -3667,6 +3672,8 @@ static __initconst const struct x86_pmu core_pmu = {
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
- 	.cpu_dead		= intel_pmu_cpu_dead,
-+
-+	.check_period		= intel_pmu_check_period,
- };
- 
- static struct attribute *intel_pmu_attrs[];
-@@ -3711,6 +3718,8 @@ static __initconst const struct x86_pmu intel_pmu = {
- 
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
-+
-+	.check_period		= intel_pmu_check_period,
- };
- 
- static __init void intel_clovertown_quirk(void)
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 78d7b7031bfc..d46fd6754d92 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -646,6 +646,11 @@ struct x86_pmu {
- 	 * Intel host/guest support (KVM)
- 	 */
- 	struct perf_guest_switch_msr *(*guest_get_msrs)(int *nr);
-+
-+	/*
-+	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
-+	 */
-+	int (*check_period) (struct perf_event *event, u64 period);
- };
- 
- struct x86_perf_task_context {
-@@ -857,7 +862,7 @@ static inline int amd_pmu_init(void)
- 
- #ifdef CONFIG_CPU_SUP_INTEL
- 
--static inline bool intel_pmu_has_bts(struct perf_event *event)
-+static inline bool intel_pmu_has_bts_period(struct perf_event *event, u64 period)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	unsigned int hw_event, bts_event;
-@@ -868,7 +873,14 @@ static inline bool intel_pmu_has_bts(struct perf_event *event)
- 	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
- 	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
- 
--	return hw_event == bts_event && hwc->sample_period == 1;
-+	return hw_event == bts_event && period == 1;
-+}
-+
-+static inline bool intel_pmu_has_bts(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	return intel_pmu_has_bts_period(event, hwc->sample_period);
- }
- 
- int intel_pmu_save_and_restart(struct perf_event *event);
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551a5add..e1a051724f7e 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -447,6 +447,11 @@ struct pmu {
- 	 * Filter events for PMU-specific reasons.
- 	 */
- 	int (*filter_match)		(struct perf_event *event); /* optional */
-+
-+	/*
-+	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
-+	 */
-+	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
- };
- 
- enum perf_addr_filter_action_t {
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e5ede6918050..26d6edab051a 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4963,6 +4963,11 @@ static void __perf_event_period(struct perf_event *event,
- 	}
- }
- 
-+static int perf_event_check_period(struct perf_event *event, u64 value)
-+{
-+	return event->pmu->check_period(event, value);
-+}
-+
- static int perf_event_period(struct perf_event *event, u64 __user *arg)
- {
- 	u64 value;
-@@ -4979,6 +4984,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
- 	if (event->attr.freq && value > sysctl_perf_event_sample_rate)
- 		return -EINVAL;
- 
-+	if (perf_event_check_period(event, value))
-+		return -EINVAL;
-+
- 	event_function_call(event, __perf_event_period, &value);
- 
- 	return 0;
-@@ -9391,6 +9399,11 @@ static int perf_pmu_nop_int(struct pmu *pmu)
- 	return 0;
- }
- 
-+static int perf_event_nop_int(struct perf_event *event, u64 value)
-+{
-+	return 0;
-+}
-+
- static DEFINE_PER_CPU(unsigned int, nop_txn_flags);
- 
- static void perf_pmu_start_txn(struct pmu *pmu, unsigned int flags)
-@@ -9691,6 +9704,9 @@ got_cpu_context:
- 		pmu->pmu_disable = perf_pmu_nop_void;
- 	}
- 
-+	if (!pmu->check_period)
-+		pmu->check_period = perf_event_nop_int;
-+
- 	if (!pmu->event_idx)
- 		pmu->event_idx = perf_event_idx_default;
- 
+Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
