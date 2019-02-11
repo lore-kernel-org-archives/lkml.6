@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D996C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3402C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4232186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87DC72186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZBVmQgwn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EUfDjdob"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388259AbfBKTal (ORCPT
+        id S2388285AbfBKTar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:30:41 -0500
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:33427 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388240AbfBKTak (ORCPT
+        Mon, 11 Feb 2019 14:30:47 -0500
+Received: from mail-it1-f201.google.com ([209.85.166.201]:39705 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388241AbfBKTaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:30:40 -0500
-Received: by mail-pl1-f201.google.com with SMTP id o23so69260pll.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:39 -0800 (PST)
+        Mon, 11 Feb 2019 14:30:46 -0500
+Received: by mail-it1-f201.google.com with SMTP id k133so16344ite.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=d5X1DHNjDUb5NLL3O4YMEIQYPjCFJAnKD/tNSL5RNTA=;
-        b=ZBVmQgwn6wPvQ808Q2qhEWWaFjM6+9X1q8IZ4ZIKeyEJduZfSgRN2FFUZoJEnmFB61
-         2izQC8j/FEojBJj296AnNPhLv0IHe8E/75uimTQC+TQnX9aMXrNSlUNjZNg56yooRaO3
-         LiGHDs/lGY3lEEWv4ziLOkQSDdDXbM9uCuY/bJ1px4k5FfpKNqeLnjCcldjnuDEaeP1a
-         +Z0PuNJIMAGlUG0CtpTgdrTQo/fErysoynGFb9yZi+Qk1oiC93I3p2jnrcTrBRflFBW9
-         Q5bvbEwRTjz3Rb5FX/HMP5FfhF7CmjZrBR8lM5fozm4sNYfqsPTTIpmougO9/NdQOWik
-         vYVw==
+        bh=A+p5CcPbc67CNJ+HtkbKBMLEqE5iK/BxBkcy0srR2f4=;
+        b=EUfDjdobRLMV2Tk3lGBtNvj9QujsHoJi9ZqtEcH+YVtBCw0t/FCOOKOLjYPLz2olUE
+         +TKRIo6Qkhd4/yl5EoeB93P6IDHZzfNjrzFK7iELdrQbe/FgB6/rqt0ScvP0xuzVt8hB
+         z3fEBdPiKZndqh/aWqmvhVbI4J2B7eYEVxxuxU9Axu+akFPva/9Qj60M9PMrdYG72vSq
+         Gubv63+gi2EzkY3wnIv2NYmvI/aEm0HnzTlhgrrxsVzTrjldQ24LgR14yr2G4DK4e8hr
+         yPFkN2CogT0A25zsQf9ZCs9OjpRlwz3HR/KZ4hDpMclFW4EC5h+L1Va45mhPLcZKJY2J
+         lLGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=d5X1DHNjDUb5NLL3O4YMEIQYPjCFJAnKD/tNSL5RNTA=;
-        b=J2SaVCLX8+k0Wjt3Fbr2ay7w0ryA6/TapJZxxO3F2EAMAlYEwkXZX9CruPLcSthk9+
-         rTzC9cpBCyeS/f0MWhD8hVhJpZ4l56nC1ftAhYyzrPp5ujdqVSNmvAlz5a7yLs3yH/24
-         TUG5NB2iErWa/Z1LLTw6nkRR9VRYDnzxYlBtW8KGK6dskmwcBjoLSGRJW0yod43+om5v
-         6wF6c4bHowKqOSgdVEr8vscQvCkvQAit2FGvvvr/zqP7qYoUccv4vw138ctncnLm7f9+
-         nFD+7RCKapihZLXlko6upVmg3w6Evp1hD0uLBxXcCjDNFwDtweb2xEBiJeEoFTeC/Dtw
-         OJXg==
-X-Gm-Message-State: AHQUAub8FmaVWXdDEPqG7eNGjupoGIUKG+gHuqYk/6Q9/u5P9r0T5895
-        F2FH6INgCEKpRZlFVeWwnxk6VVD0vzRiUpVqcuA=
-X-Google-Smtp-Source: AHgI3Ib3P7TggZpwqevlzSKuItbQf2rXHsRRYH3FFQnxMn84Vtvz0Kpep/2mKvDgaWdyk6EZ2VrQF8XPawp0tYV1UB0=
-X-Received: by 2002:aa7:8acb:: with SMTP id b11mr1064903pfd.72.1549913438630;
- Mon, 11 Feb 2019 11:30:38 -0800 (PST)
-Date:   Mon, 11 Feb 2019 11:30:04 -0800
+        bh=A+p5CcPbc67CNJ+HtkbKBMLEqE5iK/BxBkcy0srR2f4=;
+        b=TfYv2Iel5R29UNe5jfMHAEhuu3XDISufMYE3miPc22kAmC/MOX1rU6Cv/q4o6wPhQv
+         gAh+aWF/9JapQxJSlUkUf3TObRculUmt0z+/zYupSwqtSVCnofdIVWjDVU3vKPWEymkt
+         jfWoFd+H3BQ0i0RULfxmIpIW4v8NckFXU4JPc2kTx59os/HQMgklodZctuRLvRzrWg71
+         zfi8lQjRKV+i5/F37rLh+jy/8reuTVPiwL+1O+0hMMpCSIvcBo64YrCDL1mgbSbGxWIv
+         fjO6pwhIAg3EDTxmV0lv7anHJ8CwQboyL1NwIFagEVigjq9H2hIF7IvgUpi3UAO7g87E
+         vXYg==
+X-Gm-Message-State: AHQUAubHMbdwMGw4mdTcjvnsT0j+FacqmoWxTPCt8cUzJfVRau9/NYbO
+        ciWiWHP4LKFUn6q2UBHKNPc+Sq3FovsqcZzjCZU=
+X-Google-Smtp-Source: AHgI3IYF+PQlndRP+6W1b1+rJPutoAPanw6IRHwvLut+f1J4HrBcdzpQTR7g4ywG2Ll0njjvZe7wN/kSkeOVBeIn3MA=
+X-Received: by 2002:a24:d82:: with SMTP id 124mr794567itx.10.1549913443054;
+ Mon, 11 Feb 2019 11:30:43 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:30:05 -0800
 In-Reply-To: <20190211193008.24101-1-ndesaulniers@google.com>
-Message-Id: <20190211193008.24101-2-ndesaulniers@google.com>
+Message-Id: <20190211193008.24101-3-ndesaulniers@google.com>
 Mime-Version: 1.0
 References: <20190211193008.24101-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH v2 2/4] Makefile: clang: choose GCC_TOOLCHAIN_DIR not on LD
+Subject: [PATCH v2 3/4] Makefile: lld: tell clang to use lld
 From:   ndesaulniers@google.com
 To:     yamada.masahiro@socionext.com
 Cc:     natechancellor@gmail.com, sedat.dilek@gmail.com,
@@ -76,43 +76,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This causes an issue when trying to build with `make LD=ld.lld` if
-ld.lld and the rest of your cross tools aren't in the same directory
-(ex. /usr/local/bin) (as is the case for Android's build system), as the
-GCC_TOOLCHAIN_DIR then gets set based on `which $(LD)` which will point
-where LLVM tools are, not GCC/binutils tools are located.
+This is needed because clang doesn't select which linker to use based on
+$LD but rather -fuse-ld=lld. This is problematic especially for
+cc-ldoption, which checks for linker flag support via invoking the
+compiler, rather than the linker.
 
-Instead, select the GCC_TOOLCHAIN_DIR based on another tool provided by
-binutils for which LLVM does not provide a substitute for, such as
-elfedit.
-
-Fixes commit 785f11aa595b ("kbuild: Add better clang cross build support")
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/341
+Link: https://github.com/ClangBuiltLinux/linux/issues/342
 Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
 Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
 Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
 Changes V1->V2:
-* add reviewed and tested tags.
+* add reviewed and tested by tags.
+* move this addition up 2 statments so that it's properly added to
+  KBUILD_*FLAGS as per Nathan.
 
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index 86cf35d1d79d..d3b65e96d183 100644
+index d3b65e96d183..00e8e01d23fc 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -492,7 +492,7 @@ endif
- ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
- ifneq ($(CROSS_COMPILE),)
- CLANG_FLAGS	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
--GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
-+GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
- CLANG_FLAGS	+= --prefix=$(GCC_TOOLCHAIN_DIR)
- GCC_TOOLCHAIN	:= $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+@@ -500,6 +500,9 @@ ifneq ($(GCC_TOOLCHAIN),)
+ CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
  endif
+ CLANG_FLAGS	+= -no-integrated-as
++ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
++CLANG_FLAGS	+= -fuse-ld=lld
++endif
+ KBUILD_CFLAGS	+= $(CLANG_FLAGS)
+ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+ export CLANG_FLAGS
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
