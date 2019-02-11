@@ -2,141 +2,117 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000C3C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E332C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2CA42173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549874750;
-	bh=Qfkz17n6olhrae+s/cFWU755MEEZiKxaLHZ1EVMeOQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=K+UI6QxgMwbv9+/aJTn9w1iuZmw+S2D2rZxLrXuB+mKNj/ls5KQ2GG72wg9FAm622
-	 bKmpuQ04hQjLH4AiVDJh7xNFJHSb1D/Bf24NR/B7AqYvufV6pNva2xDdb7zi7O3Spl
-	 HRwSCJ2OwBxWg0Nmz6DmDeRELITXam2oE8Ia/RW4=
+	by mail.kernel.org (Postfix) with ESMTP id 13D5620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfBKIpt (ORCPT
+        id S1727241AbfBKIqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:45:49 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35418 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKIps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:45:48 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t200so15474417wmt.0;
-        Mon, 11 Feb 2019 00:45:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JRKy4taTM4QJQjspOqNaz3J3mz7heehQq3+CMjxazpA=;
-        b=iv5HMlQ2DpMdOzv0QI3PLiYoKWwIwj7oXeURqfwv0AArKgg9ywNweDFLYTEBkt3mTf
-         osOVORBVxup0DtIy7VjcbTp0oQDyzR6Y1FggPfw72TmGnZOK1HKgE+qNIEgjUemY+lsb
-         F/yuuwaCYix0D1sY+XPlXNiCTgIyaH+I4hlNTiuyzkoTHblXVmWmvrmuoCPaeopvIdYg
-         xQ90uxr9GYXkVCugzPjgRGPeYqDZYZeS+gEFbVdaMXurdeM9HWYx/vIZfWfncUzTEhHE
-         F+8j7QSFl4M9gFE6v9ENOqNfnjMmcHrx+dFh7hSJqIDEIryWUlQueOXLcDaicy4sSXTk
-         t43A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JRKy4taTM4QJQjspOqNaz3J3mz7heehQq3+CMjxazpA=;
-        b=M8Xk6cFAM3uAl72TNuxmwDaYGFJGl7QtkzWG4N1SyXLVa+geKp2YNxIuQJ4UVeMy24
-         BFIBUenuL1NdajoSaJu7pi2aYW36k2EsX9vBEouLOpd4eghfjCF9GlMBpkP/vk3hSxFe
-         46M2o12EygKhqiUb9R97OyRtOXz+Prqre2rqarq2DRZmgECShmean/6JndRI76NFt7cx
-         N/I5sYCceRwVEIFeUgR+TcYF6uUcykwU6VUOHYOKuk8LawI1aWPI255C8A3VbkxMtbhI
-         fDOou8M6dy48t+JQy3jf7bN4lwES3304YB3Cu+haeixZCcGyankNA+Ddcyc6ZvSwy2F3
-         q1Xw==
-X-Gm-Message-State: AHQUAuZqizFPVYEG5WnlyFaEF3yySOQq1xMWyyLzSYqSPPJkjsDC7rtj
-        AKRx8V7yFQO6ndxtsFaS6VA=
-X-Google-Smtp-Source: AHgI3Iboi/ErRzZ8eJyqL8hYEviuk0egC4q3NLhWiyjRmYDYaTAxnWKpYGQ+DKP64BzTn9a+3lfSzg==
-X-Received: by 2002:a1c:7312:: with SMTP id d18mr7424716wmb.24.1549874746100;
-        Mon, 11 Feb 2019 00:45:46 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id z18sm10362027wml.36.2019.02.11.00.45.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 00:45:45 -0800 (PST)
-Date:   Mon, 11 Feb 2019 09:45:43 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] selftests/x86/fsgsbase: Indirect output through a
- wrapper function
-Message-ID: <20190211084543.GA62722@gmail.com>
-References: <20190203134017.9375-1-broonie@kernel.org>
- <20190203134017.9375-2-broonie@kernel.org>
+        Mon, 11 Feb 2019 03:46:03 -0500
+Received: from mga12.intel.com ([192.55.52.136]:18720 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfBKIqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:46:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 00:46:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="116930851"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga008.jf.intel.com with SMTP; 11 Feb 2019 00:45:59 -0800
+Received: by lahna (sSMTP sendmail emulation); Mon, 11 Feb 2019 10:45:58 +0200
+Date:   Mon, 11 Feb 2019 10:45:58 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 14/28] thunderbolt: Extend tunnel creation to more
+ than 2 adjacent switches
+Message-ID: <20190211084558.GU7875@lahna.fi.intel.com>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+ <20190206131738.43696-15-mika.westerberg@linux.intel.com>
+ <20190210153328.44ur6o5z2xjae42c@wunner.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190203134017.9375-2-broonie@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190210153328.44ur6o5z2xjae42c@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Mark Brown <broonie@kernel.org> wrote:
-
-> In preparation for a change to make this test run repeatedly which
-> would generate huge amounts of output as is indirect all the printf()
-> calls in the program through a wrapper and add a quiet flag which can
-> be used to suppress the output.  This is fairly quick and dirty, I'm not
-> 100% sure what would be idiomatic here.
+On Sun, Feb 10, 2019 at 04:33:28PM +0100, Lukas Wunner wrote:
+> On Wed, Feb 06, 2019 at 04:17:24PM +0300, Mika Westerberg wrote:
+> > Now that we can allocate hop IDs per port on a path, we can take
+> > advantage of this and create tunnels covering longer paths than just
+> > between two adjacent switches. PCIe actually does not need this as it is
+> > always a daisy chain between two adjacent switches but this way we do
+> > not need to hard-code creation of the tunnel.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/x86/fsgsbase.c | 52 ++++++++++++++++----------
->  1 file changed, 32 insertions(+), 20 deletions(-)
+> That doesn't seem to be correct, at the bottom of this page there's
+> a figure showing a PCI tunnel between non-adjacent switches (blue line):
+> 
+> https://developer.apple.com/library/archive/documentation/HardwareDrivers/Conceptual/ThunderboltDevGuide/Basics/Basics.html
+> 
+> I'm not sure if there are advantages to such tunnels:  Reduced latency
+> perhaps because packets need not pass through PCIe adapters on the
+> in-between device?  Or maybe this allows for more fine-grained traffic
+> prioritization?
 
-So this really loses useful output when there is a failure. After this 
-patch I get:
+Interesting.
 
-  dagon:~/tip/tools/testing/selftests/x86> ./fsgsbase_64 -vv
-  [FAIL] 24 errors detected in 1 tries
+Are you sure Apple actually uses setup like that? I think I have never
+seen such configuration happening on any of the devices I have.
 
-Not very helpful, and no real command-line way to see the failures.
+I can update the changelog to mention that if you think it is useful.
+Something like below maybe?
 
-While previously it would tell me what's going on:
+ PCIe actually does not need this as it is typically a daisy chain
+ between two adjacent switches but this way we do not need to hard-code
+ creation of the tunnel.
 
- dagon:~/tip/tools/testing/selftests/x86> ./fsgsbase_64  | grep FAIL
- [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x1 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x1 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x1 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
- [FAIL]	GS/BASE changed from 0x1/0x200000000 to 0x1/0x0
- [FAIL]	GS/BASE changed from 0x2/0x200000000 to 0x2/0x0
- [FAIL]	GS/BASE changed from 0x3/0x200000000 to 0x3/0x0
+> > +	i = 0;
+> > +	tb_for_each_port(in_port, src, dst)
+> > +		i++;
+> 
+> This looks more complicated than necessary.  Isn't the path length
+> always the length of the route string from in_port switch to out_port
+> switch, plus 2 for the adapter on each end?  Or do paths without
+> adapters exist?
 
-So I believe at least failure messages need to be preserved.
+Yes, I think you are right.
 
-Thanks,
+> > +	for (i = 0; i < num_hops; i++) {
+> > +		in_port = tb_port_get_next(src, dst, out_port);
+> > +
+> > +		if (in_port->dual_link_port && in_port->link_nr != link_nr)
+> > +			in_port = in_port->dual_link_port;
+> > +
+> > +		ret = tb_port_alloc_in_hopid(in_port, in_hopid, -1);
+> > +		if (ret < 0)
+> > +			goto err;
+> > +		in_hopid = ret;
+> > +
+> > +		out_port = tb_port_get_next(src, dst, in_port);
+> > +		if (!out_port)
+> > +			goto err;
+> 
+> There's a NULL pointer check here, but the invocation of tb_port_get_next()
+> further up to assign in_port lacks such a check.  Is it guaranteed to never
+> be NULL?
 
-	Ingo
+No, I'll add NULL check there.
