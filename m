@@ -2,50 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52A3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E45C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 683DE222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06EDD222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897374;
-	bh=xBhMphdUPayMhzcwE8atPzeY7WUOtsvXP3KH6HnfIhM=;
+	s=default; t=1549897379;
+	bh=sblv1Pqwftr6XEr5ddLhtV1bJ7zyJX4CbgkQa0b1XWE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y4qMA9AdFW1A7I+mBLNTfNOSS0C03zDUKGH1dD+X/2rPQrGFnVCY51GWsoLt3GAfg
-	 jVbyzp7e0Tgx+IeyLtcun+seYC//cFC/WdoHNqRRfxGBCrlsDEzVlEBzOjXoVJu0/n
-	 YzniMfLwGyz+3nJ7UCzNpTJyTVfbWDav06wc9Hxg=
+	b=pVnWt4vdNV8VX6F+NiZ35RmUN3KyMR8qZY8GkZ4uzKnraNkwiM17hbgov2ynNSwRR
+	 h5k8MoIDvAZL6BiKSWgSB3Xp98F40TYkOAhhhNvVL+s6gvmGRhfGvXW80WjEwoXbqG
+	 Hpb4dOrxy5MrPD7S84gv31yuMsiLsqoCTKnnNKko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390498AbfBKPCx (ORCPT
+        id S2390512AbfBKPC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:02:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50994 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390480AbfBKPCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:46 -0500
+        id S2390457AbfBKPCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8990C222A7;
-        Mon, 11 Feb 2019 15:02:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F171222AE;
+        Mon, 11 Feb 2019 15:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897366;
-        bh=xBhMphdUPayMhzcwE8atPzeY7WUOtsvXP3KH6HnfIhM=;
+        s=default; t=1549897368;
+        bh=sblv1Pqwftr6XEr5ddLhtV1bJ7zyJX4CbgkQa0b1XWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dCC7yLPMcWKjjCV8Jo4KNxU0uWUowj7p8fAdBnEmJBYKgXXdtiz8rfxSaEbWoA3yy
-         KVWfqGt8fyYGSuNhWp1eFzzhpBp1IKQxQnM830KBMdHIdI1vYVqDvHlEKRLk1+mWxQ
-         YbM6OZnCAPPqqr0V8f2MNcbfI18liNggHbeUdZ/o=
+        b=OI8gWrl356JtZl9ihfRCPkVL3oXTOT0nxH5GGZR1ARnWWNyHnzxSUQ9y3+yR/Nod0
+         y9STBsHwlouBB4e42iYvUmTsIinNvEPFdWwHv/lvxth9vdRFpXQnbWhWdFm7nJikui
+         pEmPYkGqI6zXomkZ6DAAaJ8OccBc/wg87aAfaG0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 178/205] fuse: decrement NR_WRITEBACK_TEMP on the right page
-Date:   Mon, 11 Feb 2019 15:19:36 +0100
-Message-Id: <20190211141840.020762776@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Wood <oss@buserror.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 152/205] fsl/fman: Use GFP_ATOMIC in {memac,tgec}_add_hash_mac_address()
+Date:   Mon, 11 Feb 2019 15:19:10 +0100
+Message-Id: <20190211141838.283433316@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -64,32 +66,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+[ Upstream commit 0d9c9a238faf925823bde866182c663b6d734f2e ]
 
-commit a2ebba824106dabe79937a9f29a875f837e1b6d4 upstream.
+These functions are called from atomic context:
 
-NR_WRITEBACK_TEMP is accounted on the temporary page in the request, not
-the page cache page.
+[    9.150239] BUG: sleeping function called from invalid context at /home/scott/git/linux/mm/slab.h:421
+[    9.158159] in_atomic(): 1, irqs_disabled(): 0, pid: 4432, name: ip
+[    9.163128] CPU: 8 PID: 4432 Comm: ip Not tainted 4.20.0-rc2-00169-g63d86876f324 #29
+[    9.163130] Call Trace:
+[    9.170701] [c0000002e899a980] [c0000000009c1068] .dump_stack+0xa8/0xec (unreliable)
+[    9.177140] [c0000002e899aa10] [c00000000007a7b4] .___might_sleep+0x138/0x164
+[    9.184440] [c0000002e899aa80] [c0000000001d5bac] .kmem_cache_alloc_trace+0x238/0x30c
+[    9.191216] [c0000002e899ab40] [c00000000065ea1c] .memac_add_hash_mac_address+0x104/0x198
+[    9.199464] [c0000002e899abd0] [c00000000065a788] .set_multi+0x1c8/0x218
+[    9.206242] [c0000002e899ac80] [c0000000006615ec] .dpaa_set_rx_mode+0xdc/0x17c
+[    9.213544] [c0000002e899ad00] [c00000000083d2b0] .__dev_set_rx_mode+0x80/0xd4
+[    9.219535] [c0000002e899ad90] [c00000000083d334] .dev_set_rx_mode+0x30/0x54
+[    9.225271] [c0000002e899ae10] [c00000000083d4a0] .__dev_open+0x148/0x1c8
+[    9.230751] [c0000002e899aeb0] [c00000000083d934] .__dev_change_flags+0x19c/0x1e0
+[    9.230755] [c0000002e899af60] [c00000000083d9a4] .dev_change_flags+0x2c/0x80
+[    9.242752] [c0000002e899aff0] [c0000000008554ec] .do_setlink+0x350/0xf08
+[    9.248228] [c0000002e899b170] [c000000000857ad0] .rtnl_newlink+0x588/0x7e0
+[    9.253965] [c0000002e899b740] [c000000000852424] .rtnetlink_rcv_msg+0x3e0/0x498
+[    9.261440] [c0000002e899b820] [c000000000884790] .netlink_rcv_skb+0x134/0x14c
+[    9.267607] [c0000002e899b8e0] [c000000000851840] .rtnetlink_rcv+0x18/0x2c
+[    9.274558] [c0000002e899b950] [c000000000883c8c] .netlink_unicast+0x214/0x318
+[    9.281163] [c0000002e899ba00] [c000000000884220] .netlink_sendmsg+0x348/0x444
+[    9.287076] [c0000002e899bae0] [c00000000080d13c] .sock_sendmsg+0x2c/0x54
+[    9.287080] [c0000002e899bb50] [c0000000008106c0] .___sys_sendmsg+0x2d0/0x2d8
+[    9.298375] [c0000002e899bd30] [c000000000811a80] .__sys_sendmsg+0x5c/0xb0
+[    9.303939] [c0000002e899be20] [c0000000000006b0] system_call+0x60/0x6c
 
-Fixes: 8b284dc47291 ("fuse: writepages: handle same page rewrites")
-Cc: <stable@vger.kernel.org> # v3.13
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fman/fman_memac.c | 2 +-
+ drivers/net/ethernet/freescale/fman/fman_tgec.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1777,7 +1777,7 @@ static bool fuse_writepage_in_flight(str
- 		spin_unlock(&fc->lock);
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
+index c0296880feba..75ce773c21a6 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.c
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
+@@ -927,7 +927,7 @@ int memac_add_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr)
+ 	hash = get_mac_addr_hash_code(addr) & HASH_CTRL_ADDR_MASK;
  
- 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
--		dec_node_page_state(page, NR_WRITEBACK_TEMP);
-+		dec_node_page_state(new_req->pages[0], NR_WRITEBACK_TEMP);
- 		wb_writeout_inc(&bdi->wb);
- 		fuse_writepage_free(fc, new_req);
- 		fuse_request_free(new_req);
+ 	/* Create element to be added to the driver hash table */
+-	hash_entry = kmalloc(sizeof(*hash_entry), GFP_KERNEL);
++	hash_entry = kmalloc(sizeof(*hash_entry), GFP_ATOMIC);
+ 	if (!hash_entry)
+ 		return -ENOMEM;
+ 	hash_entry->addr = addr;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+index 4b0f3a50b293..e575259d20f4 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+@@ -551,7 +551,7 @@ int tgec_add_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr)
+ 	hash = (crc >> TGEC_HASH_MCAST_SHIFT) & TGEC_HASH_ADR_MSK;
+ 
+ 	/* Create element to be added to the driver hash table */
+-	hash_entry = kmalloc(sizeof(*hash_entry), GFP_KERNEL);
++	hash_entry = kmalloc(sizeof(*hash_entry), GFP_ATOMIC);
+ 	if (!hash_entry)
+ 		return -ENOMEM;
+ 	hash_entry->addr = addr;
+-- 
+2.19.1
+
 
 
