@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D095C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9618AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C39A222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66417222BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897411;
-	bh=ujrmTL1psGT0NESvHo1Ptdg8RDNSs6BCHgsT0cSmpc0=;
+	s=default; t=1549897415;
+	bh=FhoaBL/cpQ1pqM6roGfID7I7UfWb9nY/sa4bWOM+GsI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yanGiN2n8ZSz2S9QHBj1ent8CkTDtLrpRVyXiaoI8fSn/o9VesgnUKKjB2mFCJtjv
-	 eYtMeuhRI2bf/tiriIQnrpKPTcqt2mrbpPeRZWy5NVveK6k+09NFAlzwk1Lk77rblX
-	 hAyXk4Gqbv++hGUNG/ELbkVJn3WvVnhnerK96c7g=
+	b=fV/0XJA9sNbKkriFX52tb6ZcaUTzFIw3L2rJ1PTSFJOYiYlDe08KldACbAfveO+61
+	 jtHVb0C7zuGSsbBtEc9KwkZjGlM3Ep8qXi8tpCmPovXyDP/gbpwO5yz5mYCJ9tH3BI
+	 hqOafFZMy1+5xag95dKtGkco6zuW/b+2doSlw/b4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390629AbfBKPD3 (ORCPT
+        id S2390643AbfBKPDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:03:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390604AbfBKPDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:22 -0500
+        id S2390604AbfBKPDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A01FF222B1;
-        Mon, 11 Feb 2019 15:03:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C84C222AF;
+        Mon, 11 Feb 2019 15:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897401;
-        bh=ujrmTL1psGT0NESvHo1Ptdg8RDNSs6BCHgsT0cSmpc0=;
+        s=default; t=1549897410;
+        bh=FhoaBL/cpQ1pqM6roGfID7I7UfWb9nY/sa4bWOM+GsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KGQKigCOGWM9dAlDjaUOyAhVUDpor8HdrTq0r9LOlWMmC5pKGCNgei7NKRWSok5sz
-         I4IW5t1ZKsjjlveD+A2xCifElPHh8R7PykmA81NuytbYwRmYg1D2x/NRtYpEQNvO75
-         kq4FPTxFIP0e3Y6VLqLc6CcdV1eGQcogcmSVOLns=
+        b=oMfDNjnSUhCBRs6y7qFKhVm7YM6bBA0vGhxUK/G/fRKm5v60G49Rh/srWQvQHYtSF
+         G8tcDqoTAI7XhVpRmwpPCujAR6GqR7w6QLrEgj24to8ibc6z1JJCVhOI9JF5qGeDdW
+         5Qm/2wcEGdS3zCieFUxZ8wJRxqobHomHfhIcApII=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Sebastian Sewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.14 183/205] futex: Handle early deadlock return correctly
-Date:   Mon, 11 Feb 2019 15:19:41 +0100
-Message-Id: <20190211141840.358126079@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Shier <pshier@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Felix Wilhelm <fwilhelm@google.com>, stable@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 194/205] KVM: nVMX: unconditionally cancel preemption timer in free_nested (CVE-2019-7221)
+Date:   Mon, 11 Feb 2019 15:19:52 +0100
+Message-Id: <20190211141841.102106498@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -69,226 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Peter Shier <pshier@google.com>
 
-commit 1a1fb985f2e2b85ec0d3dc2e519ee48389ec2434 upstream.
+commit ecec76885bcfe3294685dc363fd1273df0d5d65f upstream.
 
-commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
-rtmutex") changed the locking rules in the futex code so that the hash
-bucket lock is not longer held while the waiter is enqueued into the
-rtmutex wait list. This made the lock and the unlock path symmetric, but
-unfortunately the possible early exit from __rt_mutex_proxy_start() due to
-a detected deadlock was not updated accordingly. That allows a concurrent
-unlocker to observe inconsitent state which triggers the warning in the
-unlock path.
+Bugzilla: 1671904
 
-futex_lock_pi()                         futex_unlock_pi()
-  lock(hb->lock)
-  queue(hb_waiter)				lock(hb->lock)
-  lock(rtmutex->wait_lock)
-  unlock(hb->lock)
-                                        // acquired hb->lock
-                                        hb_waiter = futex_top_waiter()
-                                        lock(rtmutex->wait_lock)
-  __rt_mutex_proxy_start()
-     ---> fail
-          remove(rtmutex_waiter);
-     ---> returns -EDEADLOCK
-  unlock(rtmutex->wait_lock)
-                                        // acquired wait_lock
-                                        wake_futex_pi()
-                                        rt_mutex_next_owner()
-					  --> returns NULL
-                                          --> WARN
+There are multiple code paths where an hrtimer may have been started to
+emulate an L1 VMX preemption timer that can result in a call to free_nested
+without an intervening L2 exit where the hrtimer is normally
+cancelled. Unconditionally cancel in free_nested to cover all cases.
 
-  lock(hb->lock)
-  unqueue(hb_waiter)
+Embargoed until Feb 7th 2019.
 
-The problem is caused by the remove(rtmutex_waiter) in the failure case of
-__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
-hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
-
-The original commit handles this correctly for the other early return cases
-(timeout, signal) by delaying the removal of the rtmutex waiter until the
-returning task reacquired the hash bucket lock.
-
-Treat the failure case of __rt_mutex_proxy_start() in the same way and let
-the existing cleanup code handle the eventual handover of the rtmutex
-gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
-removal for the failure case, so that the other callsites are still
-operating correctly.
-
-Add proper comments to the code so all these details are fully documented.
-
-Thanks to Peter for helping with the analysis and writing the really
-valuable code comments.
-
-Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
-Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Co-developed-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Cc: Stefan Liebler <stli@linux.ibm.com>
-Cc: Sebastian Sewior <bigeasy@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de
+Signed-off-by: Peter Shier <pshier@google.com>
+Reported-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
+Cc: stable@kernel.org
+Message-Id: <20181011184646.154065-1-pshier@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/futex.c           |   28 ++++++++++++++++++----------
- kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 50 insertions(+), 15 deletions(-)
+ arch/x86/kvm/vmx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2811,35 +2811,39 @@ retry_private:
- 	 * and BUG when futex_unlock_pi() interleaves with this.
- 	 *
- 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
--	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
--	 * serializes against futex_unlock_pi() as that does the exact same
--	 * lock handoff sequence.
-+	 * latter before calling __rt_mutex_start_proxy_lock(). This
-+	 * interleaves with futex_unlock_pi() -- which does a similar lock
-+	 * handoff -- such that the latter can observe the futex_q::pi_state
-+	 * before __rt_mutex_start_proxy_lock() is done.
- 	 */
- 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
- 	spin_unlock(q.lock_ptr);
-+	/*
-+	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
-+	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
-+	 * it sees the futex_q::pi_state.
-+	 */
- 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
- 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -7708,6 +7708,7 @@ static void free_nested(struct vcpu_vmx
+ 	if (!vmx->nested.vmxon)
+ 		return;
  
- 	if (ret) {
- 		if (ret == 1)
- 			ret = 0;
--
--		spin_lock(q.lock_ptr);
--		goto no_block;
-+		goto cleanup;
- 	}
- 
--
- 	if (unlikely(to))
- 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
- 
- 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
- 
-+cleanup:
- 	spin_lock(q.lock_ptr);
- 	/*
--	 * If we failed to acquire the lock (signal/timeout), we must
-+	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
- 	 * first acquire the hb->lock before removing the lock from the
--	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
--	 * wait lists consistent.
-+	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
-+	 * lists consistent.
- 	 *
- 	 * In particular; it is important that futex_unlock_pi() can not
- 	 * observe this inconsistency.
-@@ -2963,6 +2967,10 @@ retry:
- 		 * there is no point where we hold neither; and therefore
- 		 * wake_futex_pi() must observe a state consistent with what we
- 		 * observed.
-+		 *
-+		 * In particular; this forces __rt_mutex_start_proxy() to
-+		 * complete such that we're guaranteed to observe the
-+		 * rt_waiter. Also see the WARN in wake_futex_pi().
- 		 */
- 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
- 		spin_unlock(&hb->lock);
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
- 	rt_mutex_set_owner(lock, NULL);
- }
- 
-+/**
-+ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
-+ * @lock:		the rt_mutex to take
-+ * @waiter:		the pre-initialized rt_mutex_waiter
-+ * @task:		the task to prepare
-+ *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: does _NOT_ remove the @waiter on failure; must either call
-+ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
-+ *
-+ * Returns:
-+ *  0 - task blocked on lock
-+ *  1 - acquired the lock for task, caller should wake it up
-+ * <0 - error
-+ *
-+ * Special API call for PI-futex support.
-+ */
- int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
- 			      struct task_struct *task)
- {
- 	int ret;
- 
-+	lockdep_assert_held(&lock->wait_lock);
-+
- 	if (try_to_take_rt_mutex(lock, task, NULL))
- 		return 1;
- 
-@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
- 		ret = 0;
- 	}
- 
--	if (unlikely(ret))
--		remove_waiter(lock, waiter);
--
- 	debug_rt_mutex_print_deadlock(waiter);
- 
- 	return ret;
-@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  * @task:		the task to prepare
-  *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
-+ * on failure.
-+ *
-  * Returns:
-  *  0 - task blocked on lock
-  *  1 - acquired the lock for task, caller should wake it up
-  * <0 - error
-  *
-- * Special API call for FUTEX_REQUEUE_PI support.
-+ * Special API call for PI-futex support.
-  */
- int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
-@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
- 
- 	raw_spin_lock_irq(&lock->wait_lock);
- 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
-+	if (unlikely(ret))
-+		remove_waiter(lock, waiter);
- 	raw_spin_unlock_irq(&lock->wait_lock);
- 
- 	return ret;
-@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
-  * @lock:		the rt_mutex we were woken on
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  *
-- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
-+ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
-+ * rt_mutex_wait_proxy_lock().
-  *
-  * Unless we acquired the lock; we're still enqueued on the wait-list and can
-  * in fact still be granted ownership until we're removed. Therefore we can
++	hrtimer_cancel(&vmx->nested.preemption_timer);
+ 	vmx->nested.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
+ 	vmx->nested.posted_intr_nv = -1;
 
 
