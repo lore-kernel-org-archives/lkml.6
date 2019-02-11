@@ -2,53 +2,54 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15C0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E78C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B285420675
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 576662075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895383;
-	bh=PzYSum2dKAw5nRTItD9Re6ziMpYE2Ehql/BW0xxdgp0=;
+	s=default; t=1549895389;
+	bh=rTQ1VR6/QIOGmKCRJ/pqxfp4QwvGEmI2GenRRCqKYgI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WAZep88Cwk5z+0Oq5aEUjn9P0WtHtAQt0LzbCl+Hptywt8fa8VJ9gRxWx7L1TiHWT
-	 Z+Z0FjKyhRRrc31l7kOwvrQAY6ske9zzXgikSDhlk9DeNBGE3MPJKx+cZoz7KNJr+b
-	 q51HLV5WrXyX33ElYuDi7qNANossI66SOmSeiMQI=
+	b=TqmnGFNAMkCvZs49cHliojaeSpv3ko/TUkes92wTVjUlKnM1ZPZrPbDc3yu17qggs
+	 w5wnIHWaUkkqgeUChBVWuYvd2cdtB5epLZS+fu6TNRk//so3Yf2fr8SqDVxzR25ioD
+	 2XjXlODmexffWlr96zE1Z1uSBlpR9mtXYSfj5b3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbfBKO3l (ORCPT
+        id S1730032AbfBKO3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:29:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35764 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:29:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729546AbfBKO3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:29:38 -0500
+        id S1730020AbfBKO3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02AB820675;
-        Mon, 11 Feb 2019 14:29:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D99C20675;
+        Mon, 11 Feb 2019 14:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895378;
-        bh=PzYSum2dKAw5nRTItD9Re6ziMpYE2Ehql/BW0xxdgp0=;
+        s=default; t=1549895384;
+        bh=rTQ1VR6/QIOGmKCRJ/pqxfp4QwvGEmI2GenRRCqKYgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZHnK/q9RsNujOs5rFzXqOLxQDKPyKCrPKVhFBeff3fXlmoAf25zCKGXIo2kwW3jM
-         OY+AB2ojCeMaRK9XLiaskaXpRxm0y1aO304ApTK1MwN2EvKaYucyeun0kohcZgm9vA
-         CPOFglBP33BaBjoHq8MqY8F2K5PW0DBbACyCUwWw=
+        b=y7jwxC91nhkn0EuPbHJY6vP0s4za+h+NwctpneKtuGHgAUasUpDc49TejO3kBK1cW
+         IxsBcUMveYd/bH3p04nqoWNknVlg3pr59Hgjg/PVS8C0Z5mxOISvqOgHtEaIX1bQr8
+         u745JHLyFghZsyCrBs4pnBhrVQ6PJsRGW3rIHFtA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 186/352] perf test: Fix perf_event_attr test failure
-Date:   Mon, 11 Feb 2019 15:16:53 +0100
-Message-Id: <20190211141858.950074781@linuxfoundation.org>
+Subject: [PATCH 4.20 188/352] perf header: Fix unchecked usage of strncpy()
+Date:   Mon, 11 Feb 2019 15:16:55 +0100
+Message-Id: <20190211141859.079329086@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,44 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 741dad88dde296999da30332157ca47f0543747d ]
+[ Upstream commit 7572588085a13d5db02bf159542189f52fdb507e ]
 
-Fix inconsistent use of tabs and spaces error:
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-  # perf test 16 -v
-  16: Setup struct perf_event_attr                          :
-  --- start ---
-  test child forked, pid 20224
-    File "/usr/libexec/perf-core/tests/attr.py", line 119
-      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-                                                                 ^
-  TabError: inconsistent use of tabs and spaces in indentation
-  test child finished with -1
-  ---- end ----
-  Setup struct perf_event_attr: FAILED!
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
+  util/header.c: In function 'perf_event__synthesize_event_update_unit':
+  util/header.c:3586:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->unit, size);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3579:16: note: length computed here
+    size_t size = strlen(evsel->unit);
+                  ^~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-fiikh5nay70bv4zskw2aa858@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/attr.py | 2 +-
+ tools/perf/util/header.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
-index ff9b60b99f52..44090a9a19f3 100644
---- a/tools/perf/tests/attr.py
-+++ b/tools/perf/tests/attr.py
-@@ -116,7 +116,7 @@ class Event(dict):
-             if not self.has_key(t) or not other.has_key(t):
-                 continue
-             if not data_equal(self[t], other[t]):
--		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-+                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 4fd45be95a43..13a2251a37c5 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3544,7 +3544,7 @@ perf_event__synthesize_event_update_unit(struct perf_tool *tool,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
  
- # Test file description needs to have following sections:
- # [config]
+-	strncpy(ev->data, evsel->unit, size);
++	strlcpy(ev->data, evsel->unit, size + 1);
+ 	err = process(tool, (union perf_event *)ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
 -- 
 2.19.1
 
