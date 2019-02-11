@@ -2,178 +2,153 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F9FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1913DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCCF3222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549905986;
-	bh=ipfLTZpgOOTeDcV2MToD3yQuXojKV6NejI8rlFygJF0=;
-	h=Date:From:To:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:List-ID:From;
-	b=LGVwAG5s+/IKJibMfLQI4A+DwusI0ymDG8SN/8vomNGRIMKMMPxxoAJ1OketGOHQ6
-	 1k2us5QG0LSPIcW+I1U6ynLiyAnXsCWdHc50Kh0yi1XUoFT3CSJPjUcOhWXymaVMnD
-	 djh9Jm15JodrML/Y6P5EIjuLpYgaYm8S9G8vtR7g=
+	by mail.kernel.org (Postfix) with ESMTP id E5B062229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfBKR0Z (ORCPT
+        id S1728663AbfBKR1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:26:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbfBKR0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:26:23 -0500
-Received: from localhost (unknown [23.100.24.84])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D06AD2229F;
-        Mon, 11 Feb 2019 17:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549905982;
-        bh=ipfLTZpgOOTeDcV2MToD3yQuXojKV6NejI8rlFygJF0=;
-        h=Date:From:To:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:From;
-        b=fF/KjstpqhN4traoyNOMvKowEMQdPgKv3Ki3XQmsp86GyRLeDBFEafYNGdPMwz27o
-         UgS63yMh2nsBwXZJ/2LT4byIZe4AKXSnvZrogwinmAUUst5EvCBRNtyZNO8uRqceX9
-         J1k3HNP2x7lEwBb9xQOuZd9KlP3n4a7wQnK6qEY4=
-Date:   Mon, 11 Feb 2019 17:26:21 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-To:     Peter Shier <pshier@google.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Peter Shier <pshier@google.com>, stable@kernel.org
-Cc:     stable@kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH] KVM: nVMX: unconditionally cancel preemption timer in free_nested (CVE-2019-7221)
-In-Reply-To: <1549562945-5503-3-git-send-email-pbonzini@redhat.com>
-Message-Id: <20190211172621.D06AD2229F@mail.kernel.org>
+        Mon, 11 Feb 2019 12:27:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54432 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbfBKR1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:27:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0176180D;
+        Mon, 11 Feb 2019 09:27:41 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33F3D3F675;
+        Mon, 11 Feb 2019 09:27:39 -0800 (PST)
+Subject: Re: [PATCH 1/2] arm64: dts: marvell: mcbin: Adding SPI-NOR Flash
+ Config
+To:     Alexander Syring <alex@asyring.de>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190211171401.434-1-alex@asyring.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <3040714f-471c-6773-57dd-455e7d1f195c@arm.com>
+Date:   Mon, 11 Feb 2019 17:27:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190211171401.434-1-alex@asyring.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<20181011184646.154065-1-pshier@google.com>
-References: <1549562945-5503-3-git-send-email-pbonzini@redhat.com>
-<20181011184646.154065-1-pshier@google.com>
+On 11/02/2019 17:14, Alexander Syring wrote:
+> According to U-Boot dts file enabling the SPI-NOR flash for use in
+> Linux
+> 
+> Signed-off-by: Alexander Syring <alex@asyring.de>
+> ---
+>  .../boot/dts/marvell/armada-8040-mcbin.dtsi   | 23 +++++++++++++++----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> index 329f8ceeebea..83994ff46e2d 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> @@ -333,11 +333,24 @@
+>  	status = "okay";
+>  
+>  	spi-flash@0 {
+> -		compatible = "st,w25q32";
+> -		spi-max-frequency = <50000000>;
+> -		reg = <0>;
+> -	};
+> -};
+> +		compatible = "st,w25q32", "jedec,spi-nor";
+> +		reg = <0>;
+> +		spi-max-frequency = <50000000>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +
+> +			partition@0 {
+> +				label = "U-Boot";
+> +				reg = <0 0x200000>;
+> +			};
+> +			partition@400000 {
+> +				label = "U-Boot Env";
+> +				reg = <0x200000 0xce0000>;
+> +			};
+> +		};
+> +	};
+> +};
+>  
+>  &cp1_usb3_0 {
+>  	/* CPS Lane 2 - CON7 */
+> 
 
-Hi,
+Really?
 
-[This is an automated email]
+My mcbin SPI flash doesn't have this partitioning, and doesn't have
+u-boot at all. This should be provided by the bootloader itself, and not
+baked into the reference DT.
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: .+
-
-The bot has tested the following trees: v4.20.7, v4.19.20, v4.14.98, v4.9.155, v4.4.173, v3.18.134.
-
-v4.20.7: Failed to apply! Possible dependencies:
-    199b118ab3d5 ("KVM: VMX: Alphabetize the includes in vmx.c")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    609363cf81fc ("KVM: nVMX: Move vmcs12 code to dedicated files")
-    75edce8a4548 ("KVM: VMX: Move eVMCS code to dedicated files")
-    a821bab2d1ee ("KVM: VMX: Move VMX specific files to a "vmx" subdirectory")
-
-v4.19.20: Failed to apply! Possible dependencies:
-    09abb5e3e5e5 ("KVM: nVMX: call kvm_skip_emulated_instruction in nested_vmx_{fail,succeed}")
-    09abe3200266 ("KVM: nVMX: split pieces of prepare_vmcs02() to prepare_vmcs02_early()")
-    1438921c6dc1 ("KVM: nVMX: Flush TLB entries tagged by dest EPTP on L1<->L2 transitions")
-    199b118ab3d5 ("KVM: VMX: Alphabetize the includes in vmx.c")
-    1abf23fb42f5 ("KVM: nVMX: use vm_exit_controls_init() to write exit controls for vmcs02")
-    327c072187f7 ("KVM: nVMX: Flush linear and combined mappings on VPID02 related flushes")
-    3d5bdae8b164 ("KVM: nVMX: Use correct VPID02 when emulating L1 INVVPID")
-    3df5c37e55c8 ("KVM: nVMX: try to set EFER bits correctly when initializing controls")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    5b8ba41dafd7 ("KVM: nVMX: move vmcs12 EPTP consistency check to check_vmentry_prereqs()")
-    609363cf81fc ("KVM: nVMX: Move vmcs12 code to dedicated files")
-    75edce8a4548 ("KVM: VMX: Move eVMCS code to dedicated files")
-    7671ce21b13b ("KVM: nVMX: move check_vmentry_postreqs() call to nested_vmx_enter_non_root_mode()")
-    945679e301ea ("KVM: nVMX: add enlightened VMCS state")
-    a633e41e7362 ("KVM: nVMX: assimilate nested_vmx_entry_failure() into nested_vmx_enter_non_root_mode()")
-    a821bab2d1ee ("KVM: VMX: Move VMX specific files to a "vmx" subdirectory")
-    b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
-    d63907dc7dd1 ("KVM: nVMX: rename enter_vmx_non_root_mode to nested_vmx_enter_non_root_mode")
-    efebf0aaec3d ("KVM: nVMX: Do not flush TLB on L1<->L2 transitions if L1 uses VPID and EPT")
-
-v4.14.98: Failed to apply! Possible dependencies:
-    0234bf885236 ("KVM: x86: introduce ISA specific SMM entry/exit callbacks")
-    199b118ab3d5 ("KVM: VMX: Alphabetize the includes in vmx.c")
-    44900ba65e16 ("KVM: VMX: optimize shadow VMCS copying")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    5b15706dbf5b ("kvm: vmx: Introduce VMCS12_MAX_FIELD_INDEX")
-    609363cf81fc ("KVM: nVMX: Move vmcs12 code to dedicated files")
-    6677f3dad874 ("KVM: nVMX: introduce struct nested_vmx_msrs")
-    72d7b374b14d ("KVM: x86: introduce ISA specific smi_allowed callback")
-    72e9cbdb4338 ("KVM: nVMX: fix SMI injection in guest mode")
-    736fdf72518b ("KVM: VMX: rename RDSEED and RDRAND vmx ctrls to reflect exiting")
-    74a497fae754 ("KVM: nVMX: track dirty state of non-shadowed VMCS fields")
-    75edce8a4548 ("KVM: VMX: Move eVMCS code to dedicated files")
-    945679e301ea ("KVM: nVMX: add enlightened VMCS state")
-    a821bab2d1ee ("KVM: VMX: Move VMX specific files to a "vmx" subdirectory")
-    b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
-    c5d167b27e00 ("KVM: vmx: shadow more fields that are read/written on every vmexits")
-    c9e9deae76b8 ("KVM: VMX: split list of shadowed VMCS field to a separate file")
-    f4160e459c57 ("kvm: nVMX: Add support for "VMWRITE to any supported field"")
-
-v4.9.155: Failed to apply! Possible dependencies:
-    1279a6b124e4 ("KVM: nVMX: single function for switching between vmcs")
-    199b118ab3d5 ("KVM: VMX: Alphabetize the includes in vmx.c")
-    27c42a1bb867 ("KVM: nVMX: Enable VMFUNC for the L1 hypervisor")
-    2a499e49c2ec ("KVM: vmx: Enable VMFUNCs")
-    3899152ccbf4 ("KVM: nVMX: fix checks on CR{0,4} during virtual VMX operation")
-    44900ba65e16 ("KVM: VMX: optimize shadow VMCS copying")
-    4f350c6dbcb9 ("kvm: nVMX: Handle deferred early VMLAUNCH/VMRESUME failure properly")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    5a6a9748b4b4 ("KVM: nVMX: load GUEST_EFER after GUEST_CR0 during emulated VM-entry")
-    609363cf81fc ("KVM: nVMX: Move vmcs12 code to dedicated files")
-    62cc6b9dc61e ("KVM: nVMX: support restore of VMX capability MSRs")
-    72e9cbdb4338 ("KVM: nVMX: fix SMI injection in guest mode")
-    74a497fae754 ("KVM: nVMX: track dirty state of non-shadowed VMCS fields")
-    75edce8a4548 ("KVM: VMX: Move eVMCS code to dedicated files")
-    7ca29de21362 ("KVM: nVMX: fix CR3 load if L2 uses PAE paging and EPT")
-    858e25c06fb0 ("kvm: nVMX: Refactor nested_vmx_run()")
-    85fd514e2423 ("kvm: nVMX: Shadow "high" parts of shadowed 64-bit VMCS fields")
-    945679e301ea ("KVM: nVMX: add enlightened VMCS state")
-    9ed38ffad473 ("KVM: nVMX: introduce nested_vmx_load_cr3 and call it on vmentry")
-    a821bab2d1ee ("KVM: VMX: Move VMX specific files to a "vmx" subdirectory")
-    a8bc284eb70f ("kvm: nVMX: Refactor handle_vmptrld()")
-    b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
-    c5d167b27e00 ("KVM: vmx: shadow more fields that are read/written on every vmexits")
-    c7c2c709b60e ("kvm: nVMX: Validate CR3 target count on nested VM-entry")
-    c9e9deae76b8 ("KVM: VMX: split list of shadowed VMCS field to a separate file")
-    ca0bde28f2ed ("kvm: nVMX: Split VMCS checks from nested_vmx_run()")
-    cf3215d9394a ("kvm: nVMX: Fetch VM_INSTRUCTION_ERROR from vmcs02 on vmx->fail")
-    ee146c1c100d ("KVM: nVMX: propagate errors from prepare_vmcs02")
-
-v4.4.173: Failed to apply! Possible dependencies:
-    199b118ab3d5 ("KVM: VMX: Alphabetize the includes in vmx.c")
-    355f4fb1405e ("kvm: nVMX: VMCLEAR an active shadow VMCS after last use")
-    4f2777bc9797 ("kvm: x86: nVMX: maintain internal copy of current VMCS")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    609363cf81fc ("KVM: nVMX: Move vmcs12 code to dedicated files")
-    6308630bd3db ("kvm/x86: split ioapic-handled and EOI exit bitmaps")
-    74a497fae754 ("KVM: nVMX: track dirty state of non-shadowed VMCS fields")
-    75edce8a4548 ("KVM: VMX: Move eVMCS code to dedicated files")
-    945679e301ea ("KVM: nVMX: add enlightened VMCS state")
-    a821bab2d1ee ("KVM: VMX: Move VMX specific files to a "vmx" subdirectory")
-    a8bc284eb70f ("kvm: nVMX: Refactor handle_vmptrld()")
-    b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
-    bb3541f175a9 ("KVM: x86: Fix typos")
-    d62caabb41f3 ("kvm/x86: per-vcpu apicv deactivation support")
-
-v3.18.134: Failed to apply! Possible dependencies:
-    394457a928e0 ("KVM: x86: some apic broadcast modes does not work")
-    55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-    6ef768fac9df ("kvm: x86: move ioapic.c and irq_comm.c back to arch/x86/")
-    70109e7d9d4a ("KVM: MTRR: remove mtrr_state.have_fixed")
-    c274e03af705 ("kvm: x86: move assigned-dev.c and iommu.c to arch/x86/")
-    e83d58874ba1 ("kvm/x86: move Hyper-V MSR's/hypercall code into hyperv.c file")
-    ff53604b40b4 ("KVM: x86: move MTRR related code to a separate file")
-
-
-How should we proceed with this patch?
-
---
 Thanks,
-Sasha
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
