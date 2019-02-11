@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83192C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FD3C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530F82081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4126D2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896041;
-	bh=fVJsEgpP6yg91NLf4cVaN+XZw5PAW+PHWDIUNzaw+9k=;
+	s=default; t=1549896043;
+	bh=g0L3fmG5qIHaFyy/ATDr4Vg8DTeLCXnP6oCMpA0GBBQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rsqueXJSmVbZrCw3vdfdhHsLKS0MUn/xy+phnyD7ogOGcjMJQDiXN4ZOUcgfhPvXJ
-	 YzN/RwU5n7KEW6ybNXC9DkNW2Z8VtB2i09GqSw8SoBFvwVuxdW4ZFoUkjJmJ+CDhC7
-	 /xw5XCCsnAaS+jS8nVWJ2Fg02BfUlGcpDI3ZPmHk=
+	b=x9+C44kBb6v9IOpA5X14qjHnuqbMtERn3os+DhTIGx//Zs4Slu+Tw2GPpfKiqTfwi
+	 uqv8Ys2JjL3hXCXDMfnkEk+JbeHtACo7l1czeJRIN2uaNFENEHqKta0l8l9tyzM71G
+	 nBjZvKLXkeFGBMZDlsfvIDsJbWBo8DSh3JHQNUMU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbfBKOkj (ORCPT
+        id S1732113AbfBKOkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51470 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:40:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730771AbfBKOkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:40:36 -0500
+        id S1732083AbfBKOkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:40:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39AEF20700;
-        Mon, 11 Feb 2019 14:40:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94B6B2081B;
+        Mon, 11 Feb 2019 14:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896035;
-        bh=fVJsEgpP6yg91NLf4cVaN+XZw5PAW+PHWDIUNzaw+9k=;
+        s=default; t=1549896033;
+        bh=g0L3fmG5qIHaFyy/ATDr4Vg8DTeLCXnP6oCMpA0GBBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=usC6/xxTE3QL5ANka0J18tYxhR2Sssz4iwUy8u75ITzap6j1MFR+z1kpztM+v2s3c
-         vKJQHTQLQ/tWftKWSfQKWrAyvHJaAPYhCKMEES0icpPJ2OBvI5dKclIauHYAsU0vqV
-         NZhKmafEVXxnA57dgSay8hsJyxrS+ccVdzpTYDLQ=
+        b=Uid74dFoGjZjNTenA9OZ+m8PcFGaCEcAARQeR0F9rx29Keeu2W0OHp9oTxQ8AgvII
+         y2I9zfjs2mEMMZQYmPw6KowOKPwUGJA11wvvmTKpvyvGjaMwNjsjqiMaRgnRQUT9xB
+         1ZquoCoW8cWVPAIZfMeC2RDh3HMCmswlaRtgQAUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/313] media: video-i2c: avoid accessing released memory area when removing driver
-Date:   Mon, 11 Feb 2019 15:15:31 +0100
-Message-Id: <20190211141857.146103533@linuxfoundation.org>
+Subject: [PATCH 4.19 050/313] media: rc: ensure close() is called on rc_unregister_device
+Date:   Mon, 11 Feb 2019 15:15:30 +0100
+Message-Id: <20190211141857.072327793@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,60 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c764da98a600a4b068d25c77164f092f159cecec ]
+[ Upstream commit 8e782fcf78275f505194e767c515202d4fd274bc ]
 
-The video device release() callback for video-i2c driver frees the whole
-struct video_i2c_data.  If there is no user left for the video device
-when video_unregister_device() is called, the release callback is executed.
+If userspace has an open file descriptor on the rc input device or lirc
+device when rc_unregister_device() is called, then the rc close() is
+never called.
 
-However, in video_i2c_remove() some fields (v4l2_dev, lock, and queue_lock)
-in struct video_i2c_data are still accessed after video_unregister_device()
-is called.
+This ensures that the receiver is turned off on the nuvoton-cir driver
+during shutdown.
 
-This fixes the use after free by moving the code from video_i2c_remove()
-to the release() callback.
-
-Fixes: 5cebaac60974 ("media: video-i2c: add video-i2c driver")
-
-Reviewed-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/video-i2c.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/rc/rc-main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
-index 06d29d8f6be8..f27d294dcbef 100644
---- a/drivers/media/i2c/video-i2c.c
-+++ b/drivers/media/i2c/video-i2c.c
-@@ -510,7 +510,12 @@ static const struct v4l2_ioctl_ops video_i2c_ioctl_ops = {
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index 8b2c16dd58bd..0f218afdadaa 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1956,6 +1956,8 @@ void rc_unregister_device(struct rc_dev *dev)
+ 	rc_free_rx_device(dev);
  
- static void video_i2c_release(struct video_device *vdev)
- {
--	kfree(video_get_drvdata(vdev));
-+	struct video_i2c_data *data = video_get_drvdata(vdev);
-+
-+	v4l2_device_unregister(&data->v4l2_dev);
-+	mutex_destroy(&data->lock);
-+	mutex_destroy(&data->queue_lock);
-+	kfree(data);
- }
+ 	mutex_lock(&dev->lock);
++	if (dev->users && dev->close)
++		dev->close(dev);
+ 	dev->registered = false;
+ 	mutex_unlock(&dev->lock);
  
- static int video_i2c_probe(struct i2c_client *client,
-@@ -608,10 +613,6 @@ static int video_i2c_remove(struct i2c_client *client)
- 	struct video_i2c_data *data = i2c_get_clientdata(client);
- 
- 	video_unregister_device(&data->vdev);
--	v4l2_device_unregister(&data->v4l2_dev);
--
--	mutex_destroy(&data->lock);
--	mutex_destroy(&data->queue_lock);
- 
- 	return 0;
- }
 -- 
 2.19.1
 
