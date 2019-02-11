@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5ADC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 765BBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6BA218F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C79A218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901073;
-	bh=YesfyB77uoqVavKwPbuzrIcRFrA8Dge76HX1MiGQi/U=;
+	s=default; t=1549901081;
+	bh=52xie6WsGn9BCubo4IoY3gc+/cB0iV7mZ3QvIe5vCFQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YzARZA+Onjxogwhie6kzKe+KIGdDDaw43RI+sjOD0XoX6pvH+n9AZJLzCq0eEOJMp
-	 Z5hLzxKWahB5+kJnGgokEVSA3kf3YMpOLCwqSxdimG9gluodrOeObxzvwk34QS2fdj
-	 74btiHLGj9CbZ9F0GUMluoASrru8K30g8Wp+w0lU=
+	b=nXq37j5Pxw/eWTuBvFJ5M0jhI4L6Vucq8g8XCVY8IpDiE9RuQCq+oy03gYePBOU98
+	 fIOECCLbn9gQmDvB3enWPgFVJCcIz4eIZNIHZ2DyHd85YD+xz7Rn3ZMpB+b1cJDoMS
+	 uvlvl7AnPKalWDrCJQXpToTQ4kvaeGAPZ1tI7M9E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbfBKQEc (ORCPT
+        id S1729856AbfBKO2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:04:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34438 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:28:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729063AbfBKO23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:29 -0500
+        id S1728966AbfBKO2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26B2520821;
-        Mon, 11 Feb 2019 14:28:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9247E20821;
+        Mon, 11 Feb 2019 14:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895308;
-        bh=YesfyB77uoqVavKwPbuzrIcRFrA8Dge76HX1MiGQi/U=;
+        s=default; t=1549895297;
+        bh=52xie6WsGn9BCubo4IoY3gc+/cB0iV7mZ3QvIe5vCFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hqOR5s0MZMRKSQellNMCLvoQ9di46YLo38kQ4DZ7DbKqPQGiUpVgbnrwaNUdu54l+
-         NwoV8Pp4HSsziDQZciN0tkJVdBEU3/lDQSTtNfgz0onNYalu1IhSX5S/3RshChcXwz
-         vcPSESg2rP2PmA0VL1ATn4yryIzlzkViBIxwaQhI=
+        b=kBbTsQa3q9m60GMA3EzQAaUCmpZJ21p/FlPm7D0vmiD8WZ3ePAcvgIwf7aNMsU6Qv
+         wzguOnOIQsmyI1mARVpX+sN3Nb0/yvJcDtcNURKvB7PEBjji10AkS3/5RnKgDe4gJm
+         tIwEj6yTl2Mx9IjL6kUdEwLpPAt42Afcy9h6+i78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 162/352] ARM: pxa: avoid section mismatch warning
-Date:   Mon, 11 Feb 2019 15:16:29 +0100
-Message-Id: <20190211141857.235849449@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 159/352] udf: Fix BUG on corrupted inode
+Date:   Mon, 11 Feb 2019 15:16:26 +0100
+Message-Id: <20190211141856.989360193@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,74 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 88af3209aa0881aa5ffd99664b6080a4be5f24e5 ]
+[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
 
-WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
-The function littleton_init_lcd() references
-the function __init pxa_set_fb_info().
-This is often because littleton_init_lcd lacks a __init
-annotation or the annotation of pxa_set_fb_info is wrong.
+When inode is corrupted so that extent type is invalid, some functions
+(such as udf_truncate_extents()) will just BUG. Check that extent type
+is valid when loading the inode to memory.
 
-WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
-The function zeus_register_ohci() references
-the function __init pxa_set_ohci_info().
-This is often because zeus_register_ohci lacks a __init
-annotation or the annotation of pxa_set_ohci_info is wrong.
-
-WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
-The function cm_x300_init_u2d() references
-the function __init pxa3xx_set_u2d_info().
-This is often because cm_x300_init_u2d lacks a __init
-annotation or the annotation of pxa3xx_set_u2d_info is wrong.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-pxa/cm-x300.c   | 2 +-
- arch/arm/mach-pxa/littleton.c | 2 +-
- arch/arm/mach-pxa/zeus.c      | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/udf/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
-index c5c0ab8ac9f9..024c1fbcc55a 100644
---- a/arch/arm/mach-pxa/cm-x300.c
-+++ b/arch/arm/mach-pxa/cm-x300.c
-@@ -558,7 +558,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
- 	.exit		= cm_x300_u2d_exit,
- };
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 5df554a9f9c9..ae796e10f68b 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1357,6 +1357,12 @@ reread:
  
--static void cm_x300_init_u2d(void)
-+static void __init cm_x300_init_u2d(void)
- {
- 	pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
- }
-diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
-index 9e132b3e48c6..9960ea158829 100644
---- a/arch/arm/mach-pxa/littleton.c
-+++ b/arch/arm/mach-pxa/littleton.c
-@@ -184,7 +184,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
- 	.lcd_conn		= LCD_COLOR_TFT_16BPP,
- };
- 
--static void littleton_init_lcd(void)
-+static void __init littleton_init_lcd(void)
- {
- 	pxa_set_fb_info(NULL, &littleton_lcd_info);
- }
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index d53ea12fc766..54a32f0433a2 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -576,7 +576,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
- 	.flags		= ENABLE_PORT_ALL | POWER_SENSE_LOW,
- };
- 
--static void zeus_register_ohci(void)
-+static void __init zeus_register_ohci(void)
- {
- 	/* Port 2 is shared between host and client interface. */
- 	UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
+ 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
+ 							ICBTAG_FLAG_AD_MASK;
++	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
++		ret = -EIO;
++		goto out;
++	}
+ 	iinfo->i_unique = 0;
+ 	iinfo->i_lenEAttr = 0;
+ 	iinfo->i_lenExtents = 0;
 -- 
 2.19.1
 
