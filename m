@@ -2,248 +2,221 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C937C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC97C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D089C21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVVWrgmM"
+	by mail.kernel.org (Postfix) with ESMTP id 7E91821B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfBKRFt (ORCPT
+        id S1728541AbfBKRHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:05:49 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46587 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbfBKRFs (ORCPT
+        Mon, 11 Feb 2019 12:07:04 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:40078 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfBKRHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:05:48 -0500
-Received: by mail-qt1-f196.google.com with SMTP id y20so12924418qtm.13;
-        Mon, 11 Feb 2019 09:05:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vFwn7GEWMpP/i4XyftTnajRK6DEXakDFFBDSz4b5xng=;
-        b=EVVWrgmMIaEc3Ky39Iw2hoU6rQtr4imhypZWSkM6MPFSaACWcuqOiChyId97OjUTzY
-         LGLg0GNOKPu0JeqpvU138kyKa3TsdVsgbI7ErIELYaU5xBJGzyZEyS2yOCMD9F+FVdq1
-         MbT+72GSDam1h6aLddHfeW1Ulkt6yDwQV3f6b93Cnav+tNvgFh7A3oC/Pjn3ItLs4+sz
-         PlH6kuXC5xZVFqFC/0hFrtb59qtwtFV1+mltE/Ya+vslBSXWt5nW3UopZve+FNHww3DA
-         rEtH6rWAsuh8jaIPXMaoNV1J2xy/w8zaZQRJVUhJJIXAGYahncb15z6nNmAgevDYk1MQ
-         X0MA==
+        Mon, 11 Feb 2019 12:07:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id 135so21642888itk.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 09:07:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vFwn7GEWMpP/i4XyftTnajRK6DEXakDFFBDSz4b5xng=;
-        b=aW+L7C/EJXN1M1xi60vl5Fgz2bTyrQdmC4IHahow/4IQatrVK2ftrHU64xgPOSQDDk
-         IRWnurahf8ow6TEcWqxt7EhfhVolVd2rq/p8t9/l059irnzjclOMdCJG21AUkpIEKUtw
-         Mb7Nplymm16vSUSwge7T+XaK8+IaogPqIoZSP7MJV55xKkXJj6+ecFkzoo+KONL8ni1s
-         UBh9Ta0otQGg3YgbkmE7p86QxKhJH2igAQBaDHWIZrAUE8zNm66xgQVAktRK8vyPBDE5
-         lZjY9J13CbvALNXkKeAm5RMzgCzL39aAUfKV+BavCz+I6cdTyLtR+2RPCmpDP6xJLPMA
-         8lIg==
-X-Gm-Message-State: AHQUAuYTAeQ1oUbFGDpjv6bjfSG98pA64tyblzanCiBw+qktFiNRosuE
-        crzlq5faMgmTVs7XqUddUdc=
-X-Google-Smtp-Source: AHgI3IZVqMQEQjWeqlRcLO8dX2I/3QGABEuUgDaC2Ra7SsfdeFgC0YBjT/hwhpf0Eb3R//SEYj/A4Q==
-X-Received: by 2002:ac8:7153:: with SMTP id h19mr26614136qtp.92.1549904747076;
-        Mon, 11 Feb 2019 09:05:47 -0800 (PST)
-Received: from localhost.localdomain ([168.194.160.109])
-        by smtp.gmail.com with ESMTPSA id d21sm8849626qtr.34.2019.02.11.09.05.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 09:05:45 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id F04B1180B77; Mon, 11 Feb 2019 15:05:42 -0200 (-02)
-Date:   Mon, 11 Feb 2019 15:05:42 -0200
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     David Miller <davem@davemloft.net>, julien@arista.com,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vyasevich@gmail.com,
-        lucien.xin@gmail.com
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Message-ID: <20190211170542.GF10665@localhost.localdomain>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <20190209.151217.175627323493244750.davem@davemloft.net>
- <20190210124616.GG13621@localhost.localdomain>
- <20190211150432.GA13525@hmswarspite.think-freely.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=/EhU+OIX75I087Lx3z1ppxFRbVl25KXxvfpamY5coQw=;
+        b=PA9GxS0dsQi6ZQJRUI0lYF6yz22kV3teu137xGGBSbojKtHrbXpJnlDD6GeCbubEZY
+         3jHVZh5t90gJW7blhZzTnM0EvPjEDyo6XkUbu940vWXQlmm18udrRLXSynLl2DsbzMq+
+         K9u2kJyX0iMIQX5xRfAYFFuj3szjjDKrzDFhhccYIXS3lKfE3FZX0vHYJ7Yzk+s90hpC
+         gO4mqwlRw30uf7/ZLoJN8WzZ+OJJlm1qYofY276iiv7ypMbZKgbYHvayo9vJxk+90caU
+         VhSJem2uIyQEJbR4jDlN4c8L6Fyn1VCgtlsvTRhkxFuCI8K+jZyT4ObCsYyRDuRSYQri
+         t6mw==
+X-Gm-Message-State: AHQUAuZOlX2lkcUCP7K6grs5in1KR+qDvZHH/Xwp8FcBLqb8dntLk8MD
+        tgo+iLub/c3Tj16XUENFEwED8fw0n5Z6m1ox6EyX3G1O8Kga
+X-Google-Smtp-Source: AHgI3IbJFuatCgHrHMjlq1a5Kb8dKcLrywE5j6K+5ehV3kfrzbjZmSDmnHcx+o7cfkXZydOQ1RhDkG9j3SNVGAZ4g3lc44SDMmAv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211150432.GA13525@hmswarspite.think-freely.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:a945:: with SMTP id x5mr340102iti.26.1549904823006;
+ Mon, 11 Feb 2019 09:07:03 -0800 (PST)
+Date:   Mon, 11 Feb 2019 09:07:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006941590581a15637@google.com>
+Subject: INFO: trying to register non-static key in hci_uart_flush
+From:   syzbot <syzbot+e8cd9d8b4dfedf394390@syzkaller.appspotmail.com>
+To:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marcel@holtmann.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:04:32AM -0500, Neil Horman wrote:
-> On Sun, Feb 10, 2019 at 10:46:16AM -0200, Marcelo Ricardo Leitner wrote:
-> > On Sat, Feb 09, 2019 at 03:12:17PM -0800, David Miller wrote:
-> > > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> > > Date: Wed, 6 Feb 2019 18:37:54 -0200
-> > > 
-> > > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
-> > > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
-> > > >> structures longer than the current definitions.
-> > > >> 
-> > > >> This should prevent unjustified setsockopt() failures due to struct
-> > > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
-> > > >> binaries that should be compatible, but were built with later kernel
-> > > >> uapi headers.
-> > > > 
-> > > > Not sure if we support backwards compatibility like this?
-> > > 
-> > > What a complete mess we have here.
-> > > 
-> > > Use new socket option numbers next time, do not change the size and/or
-> > > layout of existing socket options.
-> > 
-> > What about reusing the same socket option, but defining a new struct?
-> > Say, MYSOCKOPT supports struct mysockopt, struct mysockopt2, struct
-> > mysockopt3...
-> > 
-> > That way we have a clear definition of the user's intent.
-> > 
-> Thats possible, but I think thats pretty equivalaent to what daves saying, in
-> that he wants us to identify all the sizes of this struct and the git history
-> and act on them accordingly.  Having internal versions of the struct seems like
-> a fine way to get there, but I think we need to consider how we got to this
-> situations before we go down the implementation path.
+Hello,
 
-I was more referring to future stuff, but yes. I find it a bit easier
-to handle than having to switch the sockopt too and so far I couldn't
-find drawbacks to it.
+syzbot found the following crash on:
 
-That is, when using a new sockopt, we could accept a buffer larger
-than the needed, but I'm not considering that as a valid point
-anymore. Putting this compatibility aside for a moment, that pretty
-much means the user doesn't know what it wants and so we also don't.
+HEAD commit:    df3865f8f568 Merge branch 'i2c/for-current' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11274624c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f00801d7b7c4fe6
+dashboard link: https://syzkaller.appspot.com/bug?extid=e8cd9d8b4dfedf394390
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-> 
-> > > 
-> > > This whole thread, if you read it, is basically "if we compatability
-> > > this way, that breaks, and if we do compatability this other way oh
-> > > shit this other thing doesn't work."
-> > > 
-> > > I think we really need to specifically check for the difference sizes
-> > > that existed one by one, clear out the part not given by the user, and
-> > > backport this as far back as possible in a way that in the older kernels
-> > > we see if the user is actually trying to use the new features and if so
-> > > error out.
-> > 
-> > I'm afraid clearing out may not be enough, though seems it's the best
-> > we can do so far. If the struct is allocated but not fully initialized
-> > via a memset, but by setting its fields one by one, the remaining new
-> > fields will be left uninitinialized.
-> > 
-> 
-> I'm not sure this even makes sense.  Currently (as I understood it), the issue
-> we are facing is the one in which an application is built against a newer kernel
-> and run on an older one, the implication there being that the application will
-> pass in a buffer that is larger than what the kernel expects.  In that
-> situation, clearing isn't needed, all thats needed (I think), is a memcmp of the
-> space between the sizeof(kernel struct version), and sizeof(userspace struct
-> version) to see if any bits are non-zero.  If they are, we error out, otherwise,
-> we ignore the space and move forward as though that overage doesn't exist.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-That's exactly what I tried to mean. :-)
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e8cd9d8b4dfedf394390@syzkaller.appspotmail.com
 
-> 
-> Mind you, I'm not (yet) advocating for that approach, just trying to clarify
-> whats needed.
-
-Ok.
-
-> > > 
-> > > Which, btw, is terrible behavior.  Newly compiled apps should work on
-> > > older kernels if they don't try to use the new features, and if they
-> > 
-> > One use case here is: a given distro is using kernel X and app Foo is
-> > built against it. Then upgrades to X+1, Foo is patched to fix an issue
-> > and is rebuilt against X+1. The user upgrades Foo package but for
-> > whatever reason, doesn't upgrade kernel or reboot the system. Here,
-> > Foo doesn't work anymore until the new kernel is also running.
-> > 
-> Yes, thats the use case that we're trying to address.
-> 
-> > > can the ones that want to try to use the new features should be able
-> > > to fall back when that feature isn't available in a non-ambiguous
-> > > and precisely defined way.
-> > > 
-> > > The fact that the use of the new feature is hidden in the new
-> > > structure elements is really rotten.
-> > > 
-> > > This patch, at best, needs some work and definitely a longer and more
-> > > detailed commit message.
-> > 
-> FWIW, before we decide on a course of action, I think I need to point out that,
-> over the last 10 years, we've extended this structure 6 times, in the following
-> commits:
-> 0f3fffd8ab1db
-> 7e8616d8e7731
-> e1cdd553d482c
-> 35ea82d611da5
-> c95129d127c6d
-> b444153fb5a64
-> 
-> The first two I believe were modifications during a period when sctp was
-> actually getting integrated to the kernel, but the last 4 were definately done
-> during more recent development periods and wen't in without any commentary about
-> the impact to UAPI compatibility.  The check for optlen > sizeof(struct
-> sctp_event_subscribe) was made back in 2008, and while not spelled out, seems
-> pretty clearly directed at enforcing compatibility with older appliations, not
-> compatibility with newer applications running on older kernels.
-> 
-> I really worry about situations in which we need to support applications
-> expecting features that the running kernel doesn't have.  In this particular
-> situation it seems like a fixable thing, but I could envision situations in
-> which we just can't do it, and I don't want to set that expectation when we
-> can't consistently meet it.
-> 
-> So, if the consensus is that we need to support applications built on newer
-> kernels, but run on older kernels (and I'd like to get verbal consensus on
-
-Yes from my side.
-
-> that), then we need to identify a method to fix this.  I'm still hesitant to
-> do anything that involves us accepting any size buffer over the kernel expected
-> size, as that puts us in a position to have to read large amounts of user data
-> (i.e. possible DOS), and just picking an arbitrary large number to limit the
-> buffer size seems wrong.  What if, on receipt of a structure from a newer kernel
-> (implying a size larger than what the kernel expects), we clamp optlen to the
-> kernel size, and put_user it back to the application?  i.e. we don't check any
-
-We can't do that on setsockopt calls, as optlen is R/O there.
-Returning > 0 is not specified on setsockopt(2).
-
-> data above and beyond what the the kernel knows about, but we use the optlen as
-> an indicator to user space that not all the data was processed?  That allows the
-> kernel to ignore the overage safely, and while its not in the socket api
-> extension RFC, its not violating anything, and is something we can document in
-> the sctp(7) man page as a linux only behavior.
-> 
-> Thoughts?
-> Neil
-
-I also need to dig deeper on this, but in general what if we draw
-a line based on the current implementation:
-- Current struct is X bytes long
-- Patch current and older kernels to accept up to X bytes, as long as
-  the trailing bytes are zeroed. Otherwise, EINVAL.
-  X may be a magic number for old kernel, but this way we avoid
-  unbounded buffers and the limit is not random.
-- On further changes, create a new, explicitly versioned struct.
-  Older kernels will EINVAL if this new struct is used, which is
-  expected.
-  Newer kernels will then have to cope with the different
-  sizes/structs accordingly.
+IPVS: ftp: loaded support on port[0] = 21
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+kobject: 'sit0' (00000000268f641e): kobject_add_internal: parent: 'net',  
+set: 'devices'
+turning off the locking correctness validator.
+CPU: 1 PID: 19154 Comm: syz-executor.5 Not tainted 5.0.0-rc5+ #66
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  assign_lock_key kernel/locking/lockdep.c:731 [inline]
+  register_lock_class+0x1bdc/0x1bf0 kernel/locking/lockdep.c:757
+kobject: 'sit0' (00000000268f641e): kobject_uevent_env
+kobject: 'sit0' (00000000268f641e): fill_kobj_path: path  
+= '/devices/virtual/net/sit0'
+  __lock_acquire+0x11f/0x4700 kernel/locking/lockdep.c:3224
+kobject: 'queues' (000000008049d3e4): kobject_add_internal: parent: 'sit0',  
+set: '<NULL>'
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+kobject: 'queues' (000000008049d3e4): kobject_uevent_env
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  hci_uart_flush+0x110/0x3f0 drivers/bluetooth/hci_ldisc.c:248
+kobject: 'queues' (000000008049d3e4): kobject_uevent_env: filter function  
+caused the event to drop!
+  hci_uart_close drivers/bluetooth/hci_ldisc.c:274 [inline]
+  hci_uart_tty_close+0x8e/0x260 drivers/bluetooth/hci_ldisc.c:528
+  tty_ldisc_close.isra.0+0x100/0x180 drivers/tty/tty_ldisc.c:485
+  tty_ldisc_kill+0x9c/0x160 drivers/tty/tty_ldisc.c:633
+  tty_ldisc_release+0xc6/0x280 drivers/tty/tty_ldisc.c:805
+  tty_release_struct+0x1b/0x50 drivers/tty/tty_io.c:1610
+  tty_release+0xbce/0xe90 drivers/tty/tty_io.c:1783
+  __fput+0x2df/0x8d0 fs/file_table.c:278
+kobject: 'rx-0' (00000000542b41ce): kobject_add_internal: parent: 'queues',  
+set: 'queues'
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+  get_signal+0x1969/0x1d60 kernel/signal.c:2388
+kobject: 'rx-0' (00000000542b41ce): kobject_uevent_env
+kobject: 'rx-0' (00000000542b41ce): fill_kobj_path: path  
+= '/devices/virtual/net/sit0/queues/rx-0'
+  do_signal+0x87/0x1940 arch/x86/kernel/signal.c:816
+kobject: 'tx-0' (0000000073d51d99): kobject_add_internal: parent: 'queues',  
+set: 'queues'
+kobject: 'tx-0' (0000000073d51d99): kobject_uevent_env
+  exit_to_usermode_loop+0x244/0x2c0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+kobject: 'tx-0' (0000000073d51d99): fill_kobj_path: path  
+= '/devices/virtual/net/sit0/queues/tx-0'
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6abc510c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+kobject: 'ip6tnl0' (00000000dd9201d6): kobject_add_internal: parent: 'net',  
+set: 'devices'
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000009 RSI: 00000000400455c8 RDI: 0000000000000005
+RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6abc5116d4
+R13: 00000000004c06ce R14: 00000000004d2338 R15: 00000000ffffffff
+kobject: 'ip6tnl0' (00000000dd9201d6): kobject_uevent_env
+kobject: 'loop1' (0000000056803190): kobject_uevent_env
+kobject: 'loop1' (0000000056803190): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'ip6tnl0' (00000000dd9201d6): fill_kobj_path: path  
+= '/devices/virtual/net/ip6tnl0'
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 19154 Comm: syz-executor.5 Not tainted 5.0.0-rc5+ #66
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__wake_up_common+0xdf/0x620 kernel/sched/wait.c:85
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 69 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 12 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff88808d02f768 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff888052f6eb78 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 1ffffffff12b951f RDI: 0000000000000000
+RBP: ffff88808d02f7c0 R08: ffffffffffffffe8 R09: ffff88808d02f818
+R10: ffffed1011a05ee6 R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f6abc511700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fede4724000 CR3: 00000000587d0000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __wake_up_common_lock+0xe9/0x190 kernel/sched/wait.c:121
+  __wake_up+0xe/0x10 kernel/sched/wait.c:145
+  rcu_sync_enter+0x193/0x310 kernel/rcu/sync.c:132
+  percpu_down_write+0x61/0x440 kernel/locking/percpu-rwsem.c:143
+  hci_uart_tty_close+0x13a/0x260 drivers/bluetooth/hci_ldisc.c:531
+  tty_ldisc_close.isra.0+0x100/0x180 drivers/tty/tty_ldisc.c:485
+  tty_ldisc_kill+0x9c/0x160 drivers/tty/tty_ldisc.c:633
+  tty_ldisc_release+0xc6/0x280 drivers/tty/tty_ldisc.c:805
+  tty_release_struct+0x1b/0x50 drivers/tty/tty_io.c:1610
+  tty_release+0xbce/0xe90 drivers/tty/tty_io.c:1783
+  __fput+0x2df/0x8d0 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+  get_signal+0x1969/0x1d60 kernel/signal.c:2388
+  do_signal+0x87/0x1940 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x244/0x2c0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6abc510c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000009 RSI: 00000000400455c8 RDI: 0000000000000005
+RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6abc5116d4
+R13: 00000000004c06ce R14: 00000000004d2338 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 3e8fad1d5cab0c4e ]---
+RIP: 0010:__wake_up_common+0xdf/0x620 kernel/sched/wait.c:85
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 69 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 12 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff88808d02f768 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff888052f6eb78 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 1ffffffff12b951f RDI: 0000000000000000
+RBP: ffff88808d02f7c0 R08: ffffffffffffffe8 R09: ffff88808d02f818
+R10: ffffed1011a05ee6 R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f6abc511700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fede4724000 CR3: 00000000587d0000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-  Marcelo
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
