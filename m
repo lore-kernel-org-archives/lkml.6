@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF59BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D363C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D9F222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2DF2222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894986;
-	bh=bGWQvt2vJHuXOPBWevXYSK3eq8xODly7B/b5Amv0adE=;
+	s=default; t=1549894990;
+	bh=U/9h99nLKA47X6kOrmNOcoWkY2Y/e+0nPNfnQyvXe2o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xtmrVc7VPzcI9UvrBAfWqQVCs84sAUFSF6iPjMao7yb3VuYf2FALZTOBf1Nz70AQ0
-	 dLE0qkzQasvz5k0UEIQdUA6a5x7tJF0tr5sGaMTCXmunnJlShRQXVUs33te8nwYGDB
-	 Dt9VOozSlpFx8w5p+DByy4LFLklTCjy+4uTiaLGE=
+	b=yh0nvRtkexQ8fCUKrx9NRDX+YOe98Jb58oO4KGZzqCbGTV0k34TbjlWKHDgNy0CSd
+	 AbtL6tm8O4IdI9sbi3hgF/3v24nRbJRznEVKMc0D7ruMTBqXybYGg94+FOQYHOyxQL
+	 tY9g0if7yamPvcTTHfwsUs24s7VZg2ItVfGn5AGU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbfBKOXF (ORCPT
+        id S1728938AbfBKOXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbfBKOXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:01 -0500
+        id S1728916AbfBKOXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B92920838;
-        Mon, 11 Feb 2019 14:22:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C02B8222AA;
+        Mon, 11 Feb 2019 14:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894980;
-        bh=bGWQvt2vJHuXOPBWevXYSK3eq8xODly7B/b5Amv0adE=;
+        s=default; t=1549894983;
+        bh=U/9h99nLKA47X6kOrmNOcoWkY2Y/e+0nPNfnQyvXe2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HAjL8bOG4BVPsbFmDTDU4VI9neO8NSbh2U2HN2v44EUZFwStN2fk6ju4P2JVB4QXG
-         ugc4rro1kAP6LBfXkZ6TgNhLZ3e9PXTogieF0OJBrwfsYsrQgPRasUa4Q/aV4IyOwC
-         NRMT7vSfNxEZ88NunDe7a+3phJwur1caM3ee3A2M=
+        b=MTSTxAL5oeI49kmq+ietQXC+uiZmp3exBtauORwlUvXTWPnqqPcc/cqLlb0reQVJH
+         O0kUNNLxpBvXZEU7542c1iaN1GTxWG1vB/ae30kCF8s2z0mIU6i5ge+9nexG3sHJDY
+         cQoYCUH7ZLenK3ir4GAh+xdtyt2ActZI/75ztg4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 044/352] scsi: hisi_sas: change the time of SAS SSP connection
-Date:   Mon, 11 Feb 2019 15:14:31 +0100
-Message-Id: <20190211141849.105817332@linuxfoundation.org>
+Subject: [PATCH 4.20 053/352] modpost: validate symbol names also in find_elf_symbol
+Date:   Mon, 11 Feb 2019 15:14:40 +0100
+Message-Id: <20190211141849.585491761@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,35 +66,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 15bc43f31a074076f114e0b87931e3b220b7bff1 ]
+[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
 
-Currently the time of SAS SSP connection is 1ms, which means the link
-connection will fail if no IO response after this period.
+If an ARM mapping symbol shares an address with a valid symbol,
+find_elf_symbol can currently return the mapping symbol instead, as the
+symbol is not validated. This can result in confusing warnings:
 
-For some disks handling large IO (such as 512k), 1ms is not enough, so
-change it to 5ms.
+  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
+  from the function set_reset_devices() to the variable .init.text:$x.0
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This change adds a call to is_valid_name to find_elf_symbol, similarly
+to how it's already used in find_elf_symbol2.
+
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a369450a1fa7..c3e0be90e19f 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -494,7 +494,7 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
- 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x1);
- 		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER, 0x7f7a120);
- 		hisi_sas_phy_write32(hisi_hba, i, CON_CFG_DRIVER, 0x2a0a01);
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 5a5b3780456f..5a77efd39b3f 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1204,6 +1204,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	return 1;
+ }
+ 
++static inline int is_arm_mapping_symbol(const char *str)
++{
++	return str[0] == '$' && strchr("axtd", str[1])
++	       && (str[2] == '\0' || str[2] == '.');
++}
++
++/*
++ * If there's no name there, ignore it; likewise, ignore it if it's
++ * one of the magic symbols emitted used by current ARM tools.
++ *
++ * Otherwise if find_symbols_between() returns those symbols, they'll
++ * fail the whitelist tests and cause lots of false alarms ... fixable
++ * only by merging __exit and __init sections into __text, bloating
++ * the kernel (which is especially evil on embedded platforms).
++ */
++static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
++{
++	const char *name = elf->strtab + sym->st_name;
++
++	if (!name || !strlen(name))
++		return 0;
++	return !is_arm_mapping_symbol(name);
++}
++
+ /**
+  * Find symbol based on relocation record info.
+  * In some cases the symbol supplied is a valid symbol so
+@@ -1229,6 +1253,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 			continue;
+ 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
+ 			continue;
++		if (!is_valid_name(elf, sym))
++			continue;
+ 		if (sym->st_value == addr)
+ 			return sym;
+ 		/* Find a symbol nearby - addr are maybe negative */
+@@ -1247,30 +1273,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 		return NULL;
+ }
+ 
+-static inline int is_arm_mapping_symbol(const char *str)
+-{
+-	return str[0] == '$' && strchr("axtd", str[1])
+-	       && (str[2] == '\0' || str[2] == '.');
+-}
 -
-+		hisi_sas_phy_write32(hisi_hba, i, SAS_SSP_CON_TIMER_CFG, 0x32);
- 		/* used for 12G negotiate */
- 		hisi_sas_phy_write32(hisi_hba, i, COARSETUNE_TIME, 0x1e);
- 		hisi_sas_phy_write32(hisi_hba, i, AIP_LIMIT, 0x2ffff);
+-/*
+- * If there's no name there, ignore it; likewise, ignore it if it's
+- * one of the magic symbols emitted used by current ARM tools.
+- *
+- * Otherwise if find_symbols_between() returns those symbols, they'll
+- * fail the whitelist tests and cause lots of false alarms ... fixable
+- * only by merging __exit and __init sections into __text, bloating
+- * the kernel (which is especially evil on embedded platforms).
+- */
+-static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
+-{
+-	const char *name = elf->strtab + sym->st_name;
+-
+-	if (!name || !strlen(name))
+-		return 0;
+-	return !is_arm_mapping_symbol(name);
+-}
+-
+ /*
+  * Find symbols before or equal addr and after addr - in the section sec.
+  * If we find two symbols with equal offset prefer one with a valid name.
 -- 
 2.19.1
 
