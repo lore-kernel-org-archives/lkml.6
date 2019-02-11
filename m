@@ -2,187 +2,322 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270F5C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C93C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF6FF2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8953C2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="qdkB2bHQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZzSiAq60"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfBKMZe (ORCPT
+        id S1727417AbfBKMZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:25:34 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36348 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfBKMZa (ORCPT
+        Mon, 11 Feb 2019 07:25:40 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42525 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727237AbfBKMZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:25:30 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q11so7590631lfd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:29 -0800 (PST)
+        Mon, 11 Feb 2019 07:25:36 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s1so5221808plp.9
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=horUJaYN1AtPap9Tf3+ti1ICSvr2tumzRYfiNboXyUE=;
-        b=qdkB2bHQC/o2xcAnKZMyX7sQM6OtYJVunYcRuZpTUU5MWef4Wu/5X7VcEHyruwl2DJ
-         aiHkB/BV4PVUjVABDCT2ui+/3H+mkiJNGBqxNuEmOyTWkxP12wIopAZGOMRiUcra48EK
-         pxEnFE38dJgZul2XO+jq3pY/NLMntCuolNkI0zVX1BtEtAI39DqbQeN0NyWAruQm7l/V
-         aCGoxbQT+181G1LNP9mEO9dG9OSrDL3ZcUr+gg3HKc3H17d5WoN2vYAaAd2Jg/5AFJ1Y
-         6qs5Y2L/EPuGcKFVgifa6vTSeQ+NRNq8UP6IaYfQl19F/RCb72C8GHIcOUZ/FxScDn+Q
-         qIGQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sCyib29/TDyxQaimgzlPTWBxPHLjbGAY4DKzfFTRAWk=;
+        b=ZzSiAq60GOu8fxBrqqllxVRdjUj/yTiH33wVnm+ESLsvpz2IauCgZFduqLex/dYQhy
+         9JhEL5Z0cOO1Jn8J/ucUgpB3bUTWJJgf9JWzQmPOMd8aSOQY28UoDESz0CKyqXtpexR7
+         FP7B7kWc1H8NNo3XHODNpAVIVXCeDDqzQCEig5O+Zwm/EK95NTyByfQUrU8Z7AwCBaBx
+         NjLtuG2BOrjxkxyzi9TUnCOI51DhX9YIXE1Q1UhXtyGm+fTQmJvLg5uVO6CqZ7eyUuVB
+         3tvc8X2HyvOpmV7jbFAYNSdVXDjFjmCWalg5f5d7IewSCrSz/xLMsp8tWqkQDa1t8m/d
+         9VRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=horUJaYN1AtPap9Tf3+ti1ICSvr2tumzRYfiNboXyUE=;
-        b=CJ5wbYGgVCyfSBWAqgX4JAKhz/jRiR9lQiIkDyYQYpaOKRf2Bc9wCMxGAXsI12fvai
-         j608FKrXxTTWJ6oazYRQw5F0eLabXlEH2GTF982mXD+nLe4wLRLn0yvcFScZxVkdwk9N
-         e8E4RVopxleDRi3yKute/8gQ0rX0mAQ1M6jcYL1Um8xQsmM0YSVYqwx+MO7Zt769apNE
-         doNrAYUCDwIlA3mOndNs69q5j7MMSN3oq6zpr5eEgxF/a6Ef5OopPgwaQ8dkr+SaeIGa
-         5kK5/G5wNAkWsyqafkZZ8azXMRlYibXWfyeEXspbkFv5nEZKJyHgqBLGAlQqiiRqbkM7
-         dNWA==
-X-Gm-Message-State: AHQUAuaxBlr/Da+WbdlQhAhhb0db1xngukqYPWiVJOYaFYj9uPGzSC0J
-        GJs6FvjSexo2JkkqgHDJnga+9A==
-X-Google-Smtp-Source: AHgI3IbygmPsrWZPYgAX+rA3ObHONfRmKTMYSb3mt49tm2O2rMaNdVESnZBVJbL2WBN8vSgxfmMalg==
-X-Received: by 2002:ac2:5085:: with SMTP id f5mr21611025lfm.30.1549887928681;
-        Mon, 11 Feb 2019 04:25:28 -0800 (PST)
-Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id d70sm2278481lfe.14.2019.02.11.04.25.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:25:27 -0800 (PST)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     axboe@fb.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 6/8] lightnvm: pblk: extend line wp balance check
-Date:   Mon, 11 Feb 2019 13:25:07 +0100
-Message-Id: <20190211122509.19910-7-mb@lightnvm.io>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190211122509.19910-1-mb@lightnvm.io>
-References: <20190211122509.19910-1-mb@lightnvm.io>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sCyib29/TDyxQaimgzlPTWBxPHLjbGAY4DKzfFTRAWk=;
+        b=Q71MocFiuM1EvTL09Lq0I6DNUBrm3EEuGFB8w2xoghq9IKIJD96Bii/1cNBR8slst2
+         vEn6VYa3h5RThI411U/aROtf1kE6TPFD5nL7nYv+wOn+ezDDvgr0OjBdqah8LNTF9bEm
+         eoxCoJ+eAYb5ZGIsJwA6WC/v+arOrwVJ/acUwmWfjHlUc0u7LpKCJC+uM9zAqK7SsbdG
+         eymgeuVCEznWJAbqKMNah6jVvAAKBvglscLBZIqvchQ3qTzoL98s2oxqHbrQ5nOPYcQO
+         BHhpCW8pxWZMPfmbv2/wdsND5hRuxe9kC0UGqofrQ3rLW6ZSh48Hh9b274WBDIbanpJ2
+         bB1A==
+X-Gm-Message-State: AHQUAubGuLSXil4YUp2bEddMvaRH1cOAl5h7B1BSIW1hVtY7hK9OR28w
+        dAYpRdWaasOTISnAUKbZ7EbCo1N9VGbgVPcGSfj9cg==
+X-Google-Smtp-Source: AHgI3IafbaWIVIfXyO8jrDe376WblbEqEBC/kZg7g+kVGlOk/gdYOd4YBVPGCvm5ZtXHEkF7rgW6Hpx4eq+iCvZdimo=
+X-Received: by 2002:a17:902:1122:: with SMTP id d31mr37182411pla.246.1549887935379;
+ Mon, 11 Feb 2019 04:25:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1548166824.git.christophe.leroy@c-s.fr> <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
+ <87ef8i45km.fsf@dja-thinkpad.axtens.net> <69720148-fd19-0810-5a1d-96c45e2ec00c@c-s.fr>
+ <CAAeHK+wcUwLiSQffUkcyiH2fuox=VihJadEqQqRG1YfU3Y2gDA@mail.gmail.com> <f8b9e9ec-991b-6824-46c2-f7fc0aaa7fb8@c-s.fr>
+In-Reply-To: <f8b9e9ec-991b-6824-46c2-f7fc0aaa7fb8@c-s.fr>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 11 Feb 2019 13:25:24 +0100
+Message-ID: <CAAeHK+zop5ajOJQ4KEYbuxMRegk2GM1LvuGcSbCU1O5EZxB0MA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
+To:     christophe leroy <christophe.leroy@c-s.fr>
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On Sat, Feb 9, 2019 at 12:55 PM christophe leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+> Hi Andrey,
+>
+> Le 08/02/2019 =C3=A0 18:40, Andrey Konovalov a =C3=A9crit :
+> > On Fri, Feb 8, 2019 at 6:17 PM Christophe Leroy <christophe.leroy@c-s.f=
+r> wrote:
+> >>
+> >> Hi Daniel,
+> >>
+> >> Le 08/02/2019 =C3=A0 17:18, Daniel Axtens a =C3=A9crit :
+> >>> Hi Christophe,
+> >>>
+> >>> I've been attempting to port this to 64-bit Book3e nohash (e6500),
+> >>> although I think I've ended up with an approach more similar to Anees=
+h's
+> >>> much earlier (2015) series for book3s.
+> >>>
+> >>> Part of this is just due to the changes between 32 and 64 bits - we n=
+eed
+> >>> to hack around the discontiguous mappings - but one thing that I'm
+> >>> particularly puzzled by is what the kasan_early_init is supposed to d=
+o.
+> >>
+> >> It should be a problem as my patch uses a 'for_each_memblock(memory,
+> >> reg)' loop.
+> >>
+> >>>
+> >>>> +void __init kasan_early_init(void)
+> >>>> +{
+> >>>> +    unsigned long addr =3D KASAN_SHADOW_START;
+> >>>> +    unsigned long end =3D KASAN_SHADOW_END;
+> >>>> +    unsigned long next;
+> >>>> +    pmd_t *pmd =3D pmd_offset(pud_offset(pgd_offset_k(addr), addr),=
+ addr);
+> >>>> +    int i;
+> >>>> +    phys_addr_t pa =3D __pa(kasan_early_shadow_page);
+> >>>> +
+> >>>> +    BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
+> >>>> +
+> >>>> +    if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
+> >>>> +            panic("KASAN not supported with Hash MMU\n");
+> >>>> +
+> >>>> +    for (i =3D 0; i < PTRS_PER_PTE; i++)
+> >>>> +            __set_pte_at(&init_mm, (unsigned long)kasan_early_shado=
+w_page,
+> >>>> +                         kasan_early_shadow_pte + i,
+> >>>> +                         pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
+> >>>> +
+> >>>> +    do {
+> >>>> +            next =3D pgd_addr_end(addr, end);
+> >>>> +            pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_p=
+te);
+> >>>> +    } while (pmd++, addr =3D next, addr !=3D end);
+> >>>> +}
+> >>>
+> >>> As far as I can tell it's mapping the early shadow page, read-only, o=
+ver
+> >>> the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the ea=
+rly
+> >>> shadow PTE array from the generic code.
+> >>>
+> >>> I haven't been able to find an answer to why this is in the docs, so =
+I
+> >>> was wondering if you or anyone else could explain the early part of
+> >>> kasan init a bit better.
+> >>
+> >> See https://www.kernel.org/doc/html/latest/dev-tools/kasan.html for an
+> >> explanation of the shadow.
+> >>
+> >> When shadow is 0, it means the memory area is entirely accessible.
+> >>
+> >> It is necessary to setup a shadow area as soon as possible because all
+> >> data accesses check the shadow area, from the begining (except for a f=
+ew
+> >> files where sanitizing has been disabled in Makefiles).
+> >>
+> >> Until the real shadow area is set, all access are granted thanks to th=
+e
+> >> zero shadow area beeing for of zeros.
+> >
+> > Not entirely correct. kasan_early_init() indeed maps the whole shadow
+> > memory range to the same kasan_early_shadow_page. However as kernel
+> > loads and memory gets allocated this shadow page gets rewritten with
+> > non-zero values by different KASAN allocator hooks. Since these values
+> > come from completely different parts of the kernel, but all land on
+> > the same page, kasan_early_shadow_page's content can be considered
+> > garbage. When KASAN checks memory accesses for validity it detects
+> > these garbage shadow values, but doesn't print any reports, as the
+> > reporting routine bails out on the current->kasan_depth check (which
+> > has the value of 1 initially). Only after kasan_init() completes, when
+> > the proper shadow memory is mapped, current->kasan_depth gets set to 0
+> > and we start reporting bad accesses.
+>
+> That's surprising, because in the early phase I map the shadow area
+> read-only, so I do not expect it to get modified unless RO protection is
+> failing for some reason.
 
-pblk stripes writes of minimal write size across all non-offline chunks
-in a line, which means that the maximum write pointer delta should not
-exceed the minimal write size.
+Actually it might be that the allocator hooks don't modify shadow at
+this point, as the allocator is not yet initialized. However stack
+should be getting poisoned and unpoisoned from the very start. But the
+generic statement that early shadow gets dirtied should be correct.
+Might it be that you don't use stack instrumentation?
 
-Extend the line write pointer balance check to cover this case, and
-ignore the offline chunk wps.
-
-This will render us a warning during recovery if something unexpected
-has happened to the chunk write pointers (i.e. powerloss,  a spurious
-chunk reset, ..).
-
-Reported-by: Zhoujie Wu <zjwu@marvell.com>
-Tested-by: Zhoujie Wu <zjwu@marvell.com>
-Reviewed-by: Javier González <javier@javigon.com>
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-recovery.c | 56 ++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 6761d2afa4d0..d86f580036d3 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -302,35 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
- 	return (distance > line->left_msecs) ? line->left_msecs : distance;
- }
- 
--static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
--				      struct pblk_line *line)
-+/* Return a chunk belonging to a line by stripe(write order) index */
-+static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-+						  struct pblk_line *line,
-+						  int index)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_lun *rlun;
--	struct nvm_chk_meta *chunk;
- 	struct ppa_addr ppa;
--	u64 line_wp;
--	int pos, i;
-+	int pos;
- 
--	rlun = &pblk->luns[0];
-+	rlun = &pblk->luns[index];
- 	ppa = rlun->bppa;
- 	pos = pblk_ppa_to_pos(geo, ppa);
--	chunk = &line->chks[pos];
- 
--	line_wp = chunk->wp;
-+	return &line->chks[pos];
-+}
- 
--	for (i = 1; i < lm->blk_per_line; i++) {
--		rlun = &pblk->luns[i];
--		ppa = rlun->bppa;
--		pos = pblk_ppa_to_pos(geo, ppa);
--		chunk = &line->chks[pos];
-+static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-+				      struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	int blk_in_line = lm->blk_per_line;
-+	struct nvm_chk_meta *chunk;
-+	u64 max_wp, min_wp;
-+	int i;
- 
--		if (chunk->wp > line_wp)
-+	i = find_first_zero_bit(line->blk_bitmap, blk_in_line);
-+
-+	/* If there is one or zero good chunks in the line,
-+	 * the write pointers can't be unbalanced.
-+	 */
-+	if (i >= (blk_in_line - 1))
-+		return 0;
-+
-+	chunk = pblk_get_stripe_chunk(pblk, line, i);
-+	max_wp = chunk->wp;
-+	if (max_wp > pblk->max_write_pgs)
-+		min_wp = max_wp - pblk->max_write_pgs;
-+	else
-+		min_wp = 0;
-+
-+	i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-+	while (i < blk_in_line) {
-+		chunk = pblk_get_stripe_chunk(pblk, line, i);
-+		if (chunk->wp > max_wp || chunk->wp < min_wp)
- 			return 1;
--		else if (chunk->wp < line_wp)
--			line_wp = chunk->wp;
-+
-+		i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
- 	}
- 
- 	return 0;
-@@ -356,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	int ret;
- 	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
- 
--	if (pblk_line_wp_is_unbalanced(pblk, line))
-+	if (pblk_line_wps_are_unbalanced(pblk, line))
- 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
- 
- 	ppa_list = p.ppa_list;
--- 
-2.19.1
-
+>
+> Next week I'll add a test in early_init() to check the content of the
+> early shadow area.
+>
+> Christophe
+>
+> >
+> >>
+> >> I mainly used ARM arch as an exemple when I implemented KASAN for ppc3=
+2.
+> >>
+> >>>
+> >>> At the moment, I don't do any early init, and like Aneesh's series fo=
+r
+> >>> book3s, I end up needing a special flag to disable kasan until after
+> >>> kasan_init. Also, as with Balbir's seris for Radix, some tests didn't
+> >>> fire, although my missing tests are a superset of his. I suspect the
+> >>> early init has something to do with these...?
+> >>
+> >> I think you should really focus on establishing a zero shadow area as
+> >> early as possible instead of trying to ack the core parts of KASAN.
+> >>
+> >>>
+> >>> (I'm happy to collate answers into a patch to the docs, btw!)
+> >>
+> >> We can also have the discussion going via
+> >> https://github.com/linuxppc/issues/issues/106
+> >>
+> >>>
+> >>> In the long term I hope to revive Aneesh's and Balbir's series for ha=
+sh
+> >>> and radix as well.
+> >>
+> >> Great.
+> >>
+> >> Christophe
+> >>
+> >>>
+> >>> Regards,
+> >>> Daniel
+> >>>
+> >>>> +
+> >>>> +static void __init kasan_init_region(struct memblock_region *reg)
+> >>>> +{
+> >>>> +    void *start =3D __va(reg->base);
+> >>>> +    void *end =3D __va(reg->base + reg->size);
+> >>>> +    unsigned long k_start, k_end, k_cur, k_next;
+> >>>> +    pmd_t *pmd;
+> >>>> +
+> >>>> +    if (start >=3D end)
+> >>>> +            return;
+> >>>> +
+> >>>> +    k_start =3D (unsigned long)kasan_mem_to_shadow(start);
+> >>>> +    k_end =3D (unsigned long)kasan_mem_to_shadow(end);
+> >>>> +    pmd =3D pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), =
+k_start);
+> >>>> +
+> >>>> +    for (k_cur =3D k_start; k_cur !=3D k_end; k_cur =3D k_next, pmd=
+++) {
+> >>>> +            k_next =3D pgd_addr_end(k_cur, k_end);
+> >>>> +            if ((void *)pmd_page_vaddr(*pmd) =3D=3D kasan_early_sha=
+dow_pte) {
+> >>>> +                    pte_t *new =3D pte_alloc_one_kernel(&init_mm);
+> >>>> +
+> >>>> +                    if (!new)
+> >>>> +                            panic("kasan: pte_alloc_one_kernel() fa=
+iled");
+> >>>> +                    memcpy(new, kasan_early_shadow_pte, PTE_TABLE_S=
+IZE);
+> >>>> +                    pmd_populate_kernel(&init_mm, pmd, new);
+> >>>> +            }
+> >>>> +    };
+> >>>> +
+> >>>> +    for (k_cur =3D k_start; k_cur < k_end; k_cur +=3D PAGE_SIZE) {
+> >>>> +            void *va =3D memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+> >>>> +            pte_t pte =3D pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
+> >>>> +
+> >>>> +            if (!va)
+> >>>> +                    panic("kasan: memblock_alloc() failed");
+> >>>> +            pmd =3D pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cu=
+r), k_cur);
+> >>>> +            pte_update(pte_offset_kernel(pmd, k_cur), ~0, pte_val(p=
+te));
+> >>>> +    }
+> >>>> +    flush_tlb_kernel_range(k_start, k_end);
+> >>>> +}
+> >>>> +
+> >>>> +void __init kasan_init(void)
+> >>>> +{
+> >>>> +    struct memblock_region *reg;
+> >>>> +
+> >>>> +    for_each_memblock(memory, reg)
+> >>>> +            kasan_init_region(reg);
+> >>>> +
+> >>>> +    kasan_init_tags();
+> >>>> +
+> >>>> +    /* At this point kasan is fully initialized. Enable error messa=
+ges */
+> >>>> +    init_task.kasan_depth =3D 0;
+> >>>> +    pr_info("KASAN init done\n");
+> >>>> +}
+> >>>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> >>>> index 33cc6f676fa6..ae7db88b72d6 100644
+> >>>> --- a/arch/powerpc/mm/mem.c
+> >>>> +++ b/arch/powerpc/mm/mem.c
+> >>>> @@ -369,6 +369,10 @@ void __init mem_init(void)
+> >>>>       pr_info("  * 0x%08lx..0x%08lx  : highmem PTEs\n",
+> >>>>               PKMAP_BASE, PKMAP_ADDR(LAST_PKMAP));
+> >>>>    #endif /* CONFIG_HIGHMEM */
+> >>>> +#ifdef CONFIG_KASAN
+> >>>> +    pr_info("  * 0x%08lx..0x%08lx  : kasan shadow mem\n",
+> >>>> +            KASAN_SHADOW_START, KASAN_SHADOW_END);
+> >>>> +#endif
+> >>>>    #ifdef CONFIG_NOT_COHERENT_CACHE
+> >>>>       pr_info("  * 0x%08lx..0x%08lx  : consistent mem\n",
+> >>>>               IOREMAP_TOP, IOREMAP_TOP + CONFIG_CONSISTENT_SIZE);
+> >>>> --
+> >>>> 2.13.3
+> >>
+> >> --
+> >> You received this message because you are subscribed to the Google Gro=
+ups "kasan-dev" group.
+> >> To unsubscribe from this group and stop receiving emails from it, send=
+ an email to kasan-dev+unsubscribe@googlegroups.com.
+> >> To post to this group, send email to kasan-dev@googlegroups.com.
+> >> To view this discussion on the web visit https://groups.google.com/d/m=
+sgid/kasan-dev/69720148-fd19-0810-5a1d-96c45e2ec00c%40c-s.fr.
+> >> For more options, visit https://groups.google.com/d/optout.
+>
+> ---
+> L'absence de virus dans ce courrier =C3=A9lectronique a =C3=A9t=C3=A9 v=
+=C3=A9rifi=C3=A9e par le logiciel antivirus Avast.
+> https://www.avast.com/antivirus
+>
