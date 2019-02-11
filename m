@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F2FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5D6C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B9B218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85AE218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ecNB/AWi"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AXw7e0VU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfBKWAN (ORCPT
+        id S1727139AbfBKWAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:00:13 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50896 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfBKWAI (ORCPT
+        Mon, 11 Feb 2019 17:00:17 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42693 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbfBKWAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:00:08 -0500
-Received: by mail-wm1-f68.google.com with SMTP id x7so848751wmj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:07 -0800 (PST)
+        Mon, 11 Feb 2019 17:00:09 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q18so456993wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=btZJYBzt9vwgeXYpITL7uF1uBvgohSdy08HPUQnLqO0=;
-        b=ecNB/AWi4z4l8AQ/we8wnm6SjWCcMGvpTpyc2v3pJeyC298tLkxxD+qZ+Dc4FG3rj9
-         Is7o1YdjBZrw6wO7CC7sUPKmkF79J3SHPlM3cJuQIw3hapgPTfRqb3QmGNoHjpGNjd2a
-         E5VB0Rr0IZCVZaefBRWqvksJUlJXSXnPTRrusgyT3iE0cM+0VImSK8Lo0JsnRB3OamDC
-         DDWqXeWHiRXE+x+w+BJtw0Q7swK1uB+cQ0Z7KgYBnMNv8POPkCjGRZ7w+YzkfIllkThW
-         hppiMFeEeGWSNvgHGToS/XafOlG4jTCytop5hi0mhlxw4WfxKE/YotFjBPiUY7IJJiXe
-         2DlQ==
+        bh=/+CAbD8bU+nyd3L0sYTP0WbxN9sT6g9T2UAB46YxuA8=;
+        b=AXw7e0VUVwpxGIBaconhcN6hqrC4WQR4zPt8o0rYjlgynPJ6dGhpuRpD7+aAnAGkqn
+         dKfMliiAoNqHNajceLpH3nZ/VwnE9iP8MwkrBmswHsu7N60/z3wXikIVui2Hf/L3bjVU
+         rmkXHSaBgSZX+zs0yMP1i3+QHzOtBbNKruR1isCq1cYSSGdDyVjYXn4WRlBTvY6W+eIq
+         xKGTI49OWsqkTTjeeWo2X/2xCbVq7p/jp8qnMO0aBqEWhAmXoWNEqSp9t6nbdJC+h9Pt
+         +FTBq6sEkiVZ+9tpWtj5WBaTDMnEMuayhPLfyLBnWLIcikTGHPe4mqcefLqMxHmDkgzS
+         CAtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=btZJYBzt9vwgeXYpITL7uF1uBvgohSdy08HPUQnLqO0=;
-        b=NNbuYNmivJVjsG4wD72dTZzdMhzoE5Gvs/D90yhGprcHtpBSR/BYh0oI32AnwUo1hU
-         u/42XBrPIx+rX7EpNGfG9MglR3vWBGuqeaHWXIbiOKXla8qex8LrxeFoGwedIJ016as8
-         xzp3ojYonOb958GFyNsosTctqo/oEp9hP4rx7adZfkSVjnu+t9BAsmJTDH4i1Bq/bQGV
-         EDdOAtpLBFA2TPMusmekEIPwNu6ia0/FsCUFSuQRctX+sdS4DctWWPHofAMBNNhzukXW
-         hUUeIE1PX2xPFRI592OnR1eJaN/yjqVlVZ23jWnSiAPf3uxwgnyyWgKeeSLQO2eNpTnA
-         Dw7A==
-X-Gm-Message-State: AHQUAuZUbQWp1nG1u8RHkoyWXEsfRqSFC7mkmxDheG1Flfy+AiNv2nVT
-        b/DNb1YU6CQlNTxm4CitORRsXg==
-X-Google-Smtp-Source: AHgI3Ibt/OjbLqwefA76DBGGG/kA1FhuGgmWovyjKZmYdbeOvuJB1FGXQZ8bX9M3I7w4XDLhekXwKw==
-X-Received: by 2002:a1c:ce8a:: with SMTP id e132mr302513wmg.12.1549922406276;
-        Mon, 11 Feb 2019 14:00:06 -0800 (PST)
+        bh=/+CAbD8bU+nyd3L0sYTP0WbxN9sT6g9T2UAB46YxuA8=;
+        b=COl/c8/C2LuMZVH6dRPbTl5TArKG+EiGFa/fZ/HXuJTq+ZnPTWvDZnP+kKOKZ2nAkS
+         xtLfalLIWxWUsnbiycxO8bZ7WDk09dzEurdVXT65R3CYv/8Ll3sNqo5gQLwKNKhOZm1H
+         zTKKtIGr11623sSTtRqNAWs0fE1+5JlKgOLBB4P0+g517mhRWdnlyTTOXefY2GJwPXnY
+         1bP/kx/9Mqu0MyO4UmfopGBzlVstoKnCvno/1v291/eizomJ1zVES5g9V87D1zrMXU6E
+         iGbkftgQ4/J+C1oyz09w1eqs3x4FL6YFVLSXH0ExqK2v/RfIlqOFjZwCaAd2cTfU4d5U
+         qikg==
+X-Gm-Message-State: AHQUAuZrQC68e7q95btGp3/qzo3R6UjWq+pKDJeGQURTgAL25581XqQ1
+        H9m1uYMRz+KRWxBo5TNyKgEQbw==
+X-Google-Smtp-Source: AHgI3Ibr24Su8y7sxS10natSgYZC4T4Yaa/HmavywUcKbRoFeE8GXeKiZeBTQW0K67qDQuE3IdbBbA==
+X-Received: by 2002:adf:dd43:: with SMTP id u3mr240892wrm.259.1549922408030;
+        Mon, 11 Feb 2019 14:00:08 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.04
+        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 14:00:05 -0800 (PST)
+        Mon, 11 Feb 2019 14:00:06 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -73,9 +73,9 @@ Cc:     Qian Cai <cai@lca.pw>,
         Kostya Serebryany <kcc@google.com>,
         Evgeniy Stepanov <eugenis@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 4/5] kasan, slub: move kasan_poison_slab hook before page_address
-Date:   Mon, 11 Feb 2019 22:59:53 +0100
-Message-Id: <cd895d627465a3f1c712647072d17f10883be2a1.1549921721.git.andreyknvl@google.com>
+Subject: [PATCH 5/5] kasan, slub: fix conflicts with CONFIG_SLAB_FREELIST_HARDENED
+Date:   Mon, 11 Feb 2019 22:59:54 +0100
+Message-Id: <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 In-Reply-To: <cover.1549921721.git.andreyknvl@google.com>
 References: <cover.1549921721.git.andreyknvl@google.com>
@@ -86,41 +86,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With tag based KASAN page_address() looks at the page flags to see
-whether the resulting pointer needs to have a tag set. Since we don't
-want to set a tag when page_address() is called on SLAB pages, we call
-page_kasan_tag_reset() in kasan_poison_slab(). However in allocate_slab()
-page_address() is called before kasan_poison_slab(). Fix it by changing
-the order.
+CONFIG_SLAB_FREELIST_HARDENED hashes freelist pointer with the address
+of the object where the pointer gets stored. With tag based KASAN we don't
+account for that when building freelist, as we call set_freepointer() with
+the first argument untagged. This patch changes the code to properly
+propagate tags throughout the loop.
 
+Reported-by: Qian Cai <cai@lca.pw>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/slub.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ mm/slub.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
 diff --git a/mm/slub.c b/mm/slub.c
-index 4a3d7686902f..ce874a5c9ee7 100644
+index ce874a5c9ee7..0d32f8d30752 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -1642,12 +1642,15 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 	if (page_is_pfmemalloc(page))
- 		SetPageSlabPfmemalloc(page);
+@@ -303,11 +303,6 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
+ 		__p < (__addr) + (__objects) * (__s)->size; \
+ 		__p += (__s)->size)
  
-+	kasan_poison_slab(page);
-+
- 	start = page_address(page);
- 
--	if (unlikely(s->flags & SLAB_POISON))
-+	if (unlikely(s->flags & SLAB_POISON)) {
-+		metadata_access_enable();
- 		memset(start, POISON_INUSE, PAGE_SIZE << order);
+-#define for_each_object_idx(__p, __idx, __s, __addr, __objects) \
+-	for (__p = fixup_red_left(__s, __addr), __idx = 1; \
+-		__idx <= __objects; \
+-		__p += (__s)->size, __idx++)
 -
--	kasan_poison_slab(page);
-+		metadata_access_disable();
-+	}
- 
+ /* Determine object index from a given position */
+ static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
+ {
+@@ -1655,17 +1650,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
  	shuffle = shuffle_freelist(s, page);
  
+ 	if (!shuffle) {
+-		for_each_object_idx(p, idx, s, start, page->objects) {
+-			if (likely(idx < page->objects)) {
+-				next = p + s->size;
+-				next = setup_object(s, page, next);
+-				set_freepointer(s, p, next);
+-			} else
+-				set_freepointer(s, p, NULL);
+-		}
+ 		start = fixup_red_left(s, start);
+ 		start = setup_object(s, page, start);
+ 		page->freelist = start;
++		for (idx = 0, p = start; idx < page->objects - 1; idx++) {
++			next = p + s->size;
++			next = setup_object(s, page, next);
++			set_freepointer(s, p, next);
++			p = next;
++		}
++		set_freepointer(s, p, NULL);
+ 	}
+ 
+ 	page->inuse = page->objects;
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
