@@ -2,283 +2,109 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4BEC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874B4C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DC420844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="Ksoo+IaF"
+	by mail.kernel.org (Postfix) with ESMTP id 58E99222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549895509;
+	bh=zLHrc2OzcgeA1w0N76dq/vN6TewAHJFZk5jmeVT6vCg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ie8MbYU20xwrwxCbjpKVTI3pKOPOBU5ACzgb9REbn7miMngExhZ7nU+++EkYcK8uC
+	 sBrntTVknk4me5jNGQs6BtdHZCOwWGKMiGmThObLQqe7TYnETuhWdrbbhBLogKXW2N
+	 lzC/l9B0S7ttJOcQIW46StTb8jW3QDqlgnGiTbFI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbfBKObp (ORCPT
+        id S1729957AbfBKObr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:31:45 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40527 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730329AbfBKObi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:38 -0500
-Received: by mail-lf1-f68.google.com with SMTP id t14so7895435lfk.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
-        b=Ksoo+IaFbmKFle9VdM18OBfuhuq0AORuU9TMZhqnGG4BhuOcpzLfP39+nSSNz7guOj
-         XUj4NweOocnRBgkvfUoJK0CMB9l4DHseIMOriF3dxaLxaJ/+iQRiPRIbsoxL6mcO8HCN
-         vPmU884prGZIfUgXceoHizmjqzdssXSpY4R50ThjS33EhEcvzPDUgD1FYMeBqIgG2+eZ
-         0S2IfTSoAd86+Dv20Iqj+LOvwAT/FFAqaUxExdYsPFcfIqHCeI1IdBETTMMWaSb43ohW
-         FUiCCNZV8GHyPxOVHkYJu8Gmfd1L2KIHdIwWpCLLuy2ILht2E7alJHc2LpUjgf2e9iQz
-         LdwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
-        b=NXd/+LBcxtaOzRHRgWcW9TI7zDPDe2q9ohIi1t3fTZW40xJ7O5ohuRCZI6lv2BdxRh
-         SdvrE6zucIyzTbV82IeVHXYMN7O/KaLF4nBHGgvOu6S/tlz4JN4jywY5IV6oLXF6D79V
-         zjqxmdkWRgN6Rx8h25z/jzeWurQxe0zresYBDwRY0geFRidacbnJjFliyEERDHy7GRae
-         IeH3+DbMp+BLwM0W7plJkCICsWZ4ubTnh+/7l1LQNTyWrr5cmohUUlqcJ7gbU5Nr/7eb
-         sZSf4+eJDUvfJip9RyiJFDeeUMMXVHbbefIAHwQmSy6FvMIhNpYIIEm93/8gjd4lknRc
-         u3Jw==
-X-Gm-Message-State: AHQUAuZKMKanEPoFQbcihVfGzMU7XfL/t7hCq430jRwMFiJ9I/T9p4tZ
-        exDO5ZKtB8bWKQ1Wh9LdYOhhVQ==
-X-Google-Smtp-Source: AHgI3IaaYuqW+RAhaTPZ6ViRMxwgnwsPAunrxKxxCVBGSYpoOIexho4j8rBEhxeUbmll5qa8kaVNag==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr21587542lfb.118.1549895495351;
-        Mon, 11 Feb 2019 06:31:35 -0800 (PST)
-Received: from bsz-kubuntu.semihalf.local (31-172-191-173.noc.fibertech.net.pl. [31.172.191.173])
-        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 06:31:34 -0800 (PST)
-From:   bsz@semihalf.com
-To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, ard.biesheuvel@linaro.org
-Cc:     tweek@google.com, mingo@kernel.org, hdegoede@redhat.com,
-        leif.lindholm@linaro.org, mw@semihalf.com,
-        Bartosz Szczepanek <bsz@semihalf.com>
-Subject: [PATCH 3/5] tpm: Use library version of calc_tpm2_event_size in sysfs code
-Date:   Mon, 11 Feb 2019 15:30:50 +0100
-Message-Id: <20190211143052.3128-4-bsz@semihalf.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190211143052.3128-1-bsz@semihalf.com>
-References: <20190211143052.3128-1-bsz@semihalf.com>
+        Mon, 11 Feb 2019 09:31:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730346AbfBKObl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8654520844;
+        Mon, 11 Feb 2019 14:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895501;
+        bh=zLHrc2OzcgeA1w0N76dq/vN6TewAHJFZk5jmeVT6vCg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VPOgZuit918HOSqEPFkU/jlO6OIb96oMnVn542QjEad7CtUkMmCQlUvGM3K3u475v
+         HpuCTZWe0s9obE1p4RoJLQ4pMXi55ta+PhpwbstGAod1mJ5ZuKMPX8NugyoMvPR10G
+         wWdrP0vQPelZCTfxragC3yIa9KIsWmDuyjtoTFGA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 226/352] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
+Date:   Mon, 11 Feb 2019 15:17:33 +0100
+Message-Id: <20190211141901.611942537@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Szczepanek <bsz@semihalf.com>
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Expect negative values from calc_tpm2_event_size as error codes.
-Pass efispecid instead of event header to calc_tpm2_event_size.
+------------------
 
-Also, include tpm library in the build.
+[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
 
-Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
+With "on-no-data-accessible suspend-io", DRBD requires the next attach
+or connect to be to the very same data generation uuid tag it lost last.
+
+If we first lost connection to the peer,
+then later lost connection to our own disk,
+we would usually refuse to re-connect to the peer,
+because it presents the wrong data set.
+
+However, if the peer first connects without a disk,
+and then attached its disk, we accepted that same wrong data set,
+which would be "unexpected" by any user of that DRBD
+and cause "undefined results" (read: very likely data corruption).
+
+The fix is to forcefully disconnect as soon as we notice that the peer
+attached to the "wrong" dataset.
+
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/tpm/eventlog/tpm2.c | 89 ++++++++--------------------------------
- include/linux/tpm_eventlog.h     |  3 ++
- lib/Makefile                     |  2 +
- 3 files changed, 22 insertions(+), 72 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 1b8fa9de2cac..5230821d5b1c 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -26,80 +26,20 @@
- #include "../tpm.h"
- #include "common.h"
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 1b9822f264d2..e3da52b524d3 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4143,7 +4143,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	kfree(device->p_uuid);
+ 	device->p_uuid = p_uuid;
  
--/*
-- * calc_tpm2_event_size() - calculate the event size, where event
-- * is an entry in the TPM 2.0 event log. The event is of type Crypto
-- * Agile Log Entry Format as defined in TCG EFI Protocol Specification
-- * Family "2.0".
--
-- * @event: event whose size is to be calculated.
-- * @event_header: the first event in the event log.
-- *
-- * Returns size of the event. If it is an invalid event, returns 0.
-- */
--static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
--				struct tcg_pcr_event *event_header)
--{
--	struct tcg_efi_specid_event *efispecid;
--	struct tcg_event_field *event_field;
--	void *marker;
--	void *marker_start;
--	u32 halg_size;
--	size_t size;
--	u16 halg;
--	int i;
--	int j;
--
--	marker = event;
--	marker_start = marker;
--	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
--		+ sizeof(event->count);
--
--	efispecid = (struct tcg_efi_specid_event *)event_header->event;
--
--	/* Check if event is malformed. */
--	if (event->count > efispecid->num_algs)
--		return 0;
--
--	for (i = 0; i < event->count; i++) {
--		halg_size = sizeof(event->digests[i].alg_id);
--		memcpy(&halg, marker, halg_size);
--		marker = marker + halg_size;
--		for (j = 0; j < efispecid->num_algs; j++) {
--			if (halg == efispecid->digest_sizes[j].alg_id) {
--				marker +=
--					efispecid->digest_sizes[j].digest_size;
--				break;
--			}
--		}
--		/* Algorithm without known length. Such event is unparseable. */
--		if (j == efispecid->num_algs)
--			return 0;
--	}
--
--	event_field = (struct tcg_event_field *)marker;
--	marker = marker + sizeof(event_field->event_size)
--		+ event_field->event_size;
--	size = marker - marker_start;
--
--	if ((event->event_type == 0) && (event_field->event_size == 0))
--		return 0;
--
--	return size;
--}
--
- static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- {
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	void *addr = log->bios_event_log;
- 	void *limit = log->bios_event_log_end;
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event *event_header;
- 	struct tcg_pcr_event2 *event;
--	size_t size;
-+	ssize_t size;
- 	int i;
- 
- 	event_header = addr;
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
- 	size = sizeof(struct tcg_pcr_event) - sizeof(event_header->event)
- 		+ event_header->event_size;
- 
-@@ -115,16 +55,16 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- 	if (*pos > 0) {
- 		addr += size;
- 		event = addr;
--		size = calc_tpm2_event_size(event, event_header);
--		if ((addr + size >=  limit) || (size == 0))
-+		size = calc_tpm2_event_size(event, efispecid);
-+		if ((addr + size >=  limit) || (size < 0))
- 			return NULL;
- 	}
- 
- 	for (i = 0; i < (*pos - 1); i++) {
- 		event = addr;
--		size = calc_tpm2_event_size(event, event_header);
-+		size = calc_tpm2_event_size(event, efispecid);
- 
--		if ((addr + size >= limit) || (size == 0))
-+		if ((addr + size >= limit) || (size < 0))
- 			return NULL;
- 		addr += size;
- 	}
-@@ -135,6 +75,7 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 					 loff_t *pos)
- {
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event *event_header;
- 	struct tcg_pcr_event2 *event;
- 	struct tpm_chip *chip = m->private;
-@@ -144,6 +85,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 	void *marker;
- 
- 	event_header = log->bios_event_log;
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
- 
- 	if (v == SEQ_START_TOKEN) {
- 		event_size = sizeof(struct tcg_pcr_event) -
-@@ -151,8 +93,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 		marker = event_header;
- 	} else {
- 		event = v;
--		event_size = calc_tpm2_event_size(event, event_header);
--		if (event_size == 0)
-+		event_size = calc_tpm2_event_size(event, efispecid);
-+		if (event_size < 0)
- 			return NULL;
- 		marker = event;
- 	}
-@@ -163,8 +105,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 	v = marker;
- 	event = v;
- 
--	event_size = calc_tpm2_event_size(event, event_header);
--	if (((v + event_size) >= limit) || (event_size == 0))
-+	event_size = calc_tpm2_event_size(event, efispecid);
-+	if (((v + event_size) >= limit) || (event_size < 0))
- 		return NULL;
- 
- 	(*pos)++;
-@@ -180,10 +122,13 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	struct tcg_pcr_event *event_header = log->bios_event_log;
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event2 *event = v;
- 	void *temp_ptr;
- 	size_t size;
- 
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
-+
- 	if (v == SEQ_START_TOKEN) {
- 		size = sizeof(struct tcg_pcr_event) -
- 			sizeof(event_header->event) + event_header->event_size;
-@@ -193,7 +138,7 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
- 		if (size > 0)
- 			seq_write(m, temp_ptr, size);
- 	} else {
--		size = calc_tpm2_event_size(event, event_header);
-+		size = calc_tpm2_event_size(event, efispecid);
- 		temp_ptr = event;
- 		if (size > 0)
- 			seq_write(m, temp_ptr, size);
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 20d9da77fc11..872ab1545456 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -121,4 +121,7 @@ struct tcg_pcr_event2 {
- 	struct tcg_event_field event;
- } __packed;
- 
-+ssize_t calc_tpm2_event_size(struct tcg_pcr_event2 *event,
-+			     struct tcg_efi_specid_event *efispecid);
-+
- #endif
-diff --git a/lib/Makefile b/lib/Makefile
-index e1b59da71418..4458d914f40b 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -276,3 +276,5 @@ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
- obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
- obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
- obj-$(CONFIG_OBJAGG) += objagg.o
-+
-+obj-$(CONFIG_TCG_TPM) += tpm.o
+-	if (device->state.conn < C_CONNECTED &&
++	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
+ 	    device->state.disk < D_INCONSISTENT &&
+ 	    device->state.role == R_PRIMARY &&
+ 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
 -- 
-2.14.4
+2.19.1
+
+
 
