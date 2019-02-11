@@ -2,55 +2,55 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BF7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44C3C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100B2222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F90217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897624;
-	bh=x+4cdjcRrBN46aI9zMlPsJ9RLAEkWmrPyanBtvLUwFc=;
+	s=default; t=1549897628;
+	bh=VLOGDh3v2PElIJQ6+ApKFxdc1MNV2LVkkQbktmNpXqA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sk1zqYJcFB3dVcR+u5yUWo6HSIFA3woCqBJTltHc3Q3Gg0WtYzELgKW1/pmaXm3Wf
-	 XU29x62o28mpg8PNyaCDLc6I0wVbarFfJEwdhSr9hDpsYCYBGaf27Sam/XdI2KVKue
-	 DTWmOEv4VuPreMdt0V54PToP41BXhm9Q2a1VBu7w=
+	b=UMieM1g91szsywxi/iCuD1/WFFApUWsCXSzbMVKoZ1qS1kY+aWHjOBYzWWfrUNtHH
+	 WrqznZXGUSa/vGpQuZ4EWMvdUhyioZeDcH1vXedHrFeEv2jMbH0jlpS1mCFYoGZ2s6
+	 +GVVB/rYETKT0+07Hg2OepfFIMmYCWaTRQxPZPV8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391311AbfBKPHC (ORCPT
+        id S2391318AbfBKPHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56656 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391299AbfBKPG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:06:58 -0500
+        id S1728952AbfBKPHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913BD222A7;
-        Mon, 11 Feb 2019 15:06:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0109217D9;
+        Mon, 11 Feb 2019 15:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897618;
-        bh=x+4cdjcRrBN46aI9zMlPsJ9RLAEkWmrPyanBtvLUwFc=;
+        s=default; t=1549897624;
+        bh=VLOGDh3v2PElIJQ6+ApKFxdc1MNV2LVkkQbktmNpXqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBwOy5Ni3VntKUHESevij2O+PbefiWW6wJ12nRtMPcq8RiYvlb4gX28tubBBa/2oS
-         8tUu7KBUH2pAqRH21gVHV1Rx5stNxfx1b3aEqYZoIUvvC3loGturfPGfz6ns2kXI7w
-         7PCM8sCToBMXbClDnp/tN+im+ooeFyP4wReTrprk=
+        b=XH4CCm20XoIi0NC6zkUf7AUm2uHdT3UbSlDhFcI3D1HxygE5NJXlnuhzOTGfjWeKn
+         Q2p2sKvqHJ7FZi2aNkQf4v84jLGoUST4DcFroMC8dlLPKK4NV+lyKyS4xaIs54utMS
+         OCSe4CUQlzdGbXWJQfLO7mxfmrWI0ZZkCpgnkBG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Peter Maydell <peter.maydell@linaro.org>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 058/137] perf probe: Fix unchecked usage of strncpy()
-Date:   Mon, 11 Feb 2019 15:18:59 +0100
-Message-Id: <20190211141817.339394391@linuxfoundation.org>
+Subject: [PATCH 4.9 060/137] arm64: KVM: Skip MMIO insn after emulation
+Date:   Mon, 11 Feb 2019 15:19:01 +0100
+Message-Id: <20190211141817.519548108@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -69,51 +69,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bef0b8970f27da5ca223e522a174d03e2587761d ]
+[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+When we emulate an MMIO instruction, we advance the CPU state within
+decode_hsr(), before emulating the instruction effects.
 
-In this case the 'target' buffer is coming from a list of build-ids that
-are expected to have a len of at most (SBUILD_ID_SIZE - 1) chars, so
-probably we're safe, but since we're using strncpy() here, use strlcpy()
-instead to provide the intended safety checking without the using the
-problematic strncpy() function.
+Having this logic in decode_hsr() is opaque, and advancing the state
+before emulation is problematic. It gets in the way of applying
+consistent single-step logic, and it prevents us from being able to fail
+an MMIO instruction with a synchronous exception.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+Clean this up by only advancing the CPU state *after* the effects of the
+instruction are emulated.
 
-  util/probe-file.c: In function 'probe_cache__open.isra.5':
-  util/probe-file.c:427:3: error: 'strncpy' specified bound 41 equals destination size [-Werror=stringop-truncation]
-     strncpy(sbuildid, target, SBUILD_ID_SIZE);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 1f3736c9c833 ("perf probe: Show all cached probes")
-Link: https://lkml.kernel.org/n/tip-l7n8ggc9kl38qtdlouke5yp5@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/probe-file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kvm/mmio.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
-index 436b64731f65..b9507a8d0e30 100644
---- a/tools/perf/util/probe-file.c
-+++ b/tools/perf/util/probe-file.c
-@@ -414,7 +414,7 @@ static int probe_cache__open(struct probe_cache *pcache, const char *target)
- 
- 	if (target && build_id_cache__cached(target)) {
- 		/* This is a cached buildid */
--		strncpy(sbuildid, target, SBUILD_ID_SIZE);
-+		strlcpy(sbuildid, target, SBUILD_ID_SIZE);
- 		dir_name = build_id_cache__linkname(sbuildid, NULL, 0);
- 		goto found;
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index dac7ceb1a677..08443a15e6be 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -117,6 +117,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
  	}
+ 
++	/*
++	 * The MMIO instruction is emulated and should not be re-executed
++	 * in the guest.
++	 */
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
++
+ 	return 0;
+ }
+ 
+@@ -144,11 +150,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
+ 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
+ 	vcpu->arch.mmio_decode.rt = rt;
+ 
+-	/*
+-	 * The MMIO instruction is emulated and should not be re-executed
+-	 * in the guest.
+-	 */
+-	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
