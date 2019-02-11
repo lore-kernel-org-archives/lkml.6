@@ -2,57 +2,132 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E199C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17240C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36075222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9511222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899370;
+	bh=CQGd5LzaUn7C2NhDPBV0EuPRysNIdLNPMzDt+6H/jRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uOJNqMLYAoCsxI9bLtZiNtpWTnlkJCI69Gt0cy2TBdruWI9Z5kiP+mDENjtQWP+uK
+	 o2cqHjNnI4bv8sBJ8nXg+tyZqTmrDxSItB97qIxoOPdSxuQAWm5IHhRLQ2jS/3DWK2
+	 UYoQvcsQzAcc8CM6fy46Su3HzZmssPR8ZyAuStmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731036AbfBKPgC (ORCPT
+        id S2388751AbfBKPgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:36:02 -0500
-Received: from foss.arm.com ([217.140.101.70]:52046 "EHLO foss.arm.com"
+        Mon, 11 Feb 2019 10:36:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729140AbfBKPf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:35:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEFB980D;
-        Mon, 11 Feb 2019 07:35:57 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A735A3F589;
-        Mon, 11 Feb 2019 07:35:55 -0800 (PST)
-Date:   Mon, 11 Feb 2019 15:35:53 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, rafael.j.wysocki@intel.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        robert.moore@intel.com, linux-acpi@vger.kernel.org,
-        lenb@kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        erik.schmauss@intel.com, devel@acpica.org
-Subject: Re: [RFC 3/3] perf: arm_spe: Enable ACPI/Platform automatic module
- loading
-Message-ID: <20190211153553.GB4792@e107155-lin>
-References: <20190209004718.3292087-1-jeremy.linton@arm.com>
- <20190209004718.3292087-4-jeremy.linton@arm.com>
+        id S1731856AbfBKOwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:52:08 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0845214DA;
+        Mon, 11 Feb 2019 14:52:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896728;
+        bh=CQGd5LzaUn7C2NhDPBV0EuPRysNIdLNPMzDt+6H/jRA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NhxqB+fLxESqSn/NNdHyFMtQI9kxJfsgL5ezWfOn7tML8Qr6IeJIKkvOm1dIZawmd
+         7NwWla4HDpP1gYz4HL3pkolqD4zJ2ii4sNTS5e4xZSYLu18HH14AQacDFuvCp2+Pph
+         2SPcW1ndBXPq9z0gr6vs1cmB+ePnhb2jf6UrvIAA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 280/313] ALSA: hda - Serialize codec registrations
+Date:   Mon, 11 Feb 2019 15:19:20 +0100
+Message-Id: <20190211141911.942118857@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190209004718.3292087-4-jeremy.linton@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 06:47:18PM -0600, Jeremy Linton wrote:
-> Lets add the MODULE_TABLE and platform id_table entries so that
-> the SPE driver can attach to the ACPI platform device created by
-> the core pmu code.
->
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+------------------
+
+From: Takashi Iwai <tiwai@suse.de>
+
+commit 305a0ade180981686eec1f92aa6252a7c6ebb1cf upstream.
+
+In the current code, the codec registration may happen both at the
+codec bind time and the end of the controller probe time.  In a rare
+occasion, they race with each other, leading to Oops due to the still
+uninitialized card device.
+
+This patch introduces a simple flag to prevent the codec registration
+at the codec bind time as long as the controller probe is going on.
+The controller probe invokes snd_card_register() that does the whole
+registration task, and we don't need to register each piece
+beforehand.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/pci/hda/hda_bind.c  |    3 ++-
+ sound/pci/hda/hda_codec.h |    1 +
+ sound/pci/hda/hda_intel.c |    2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -109,7 +109,8 @@ static int hda_codec_driver_probe(struct
+ 	err = snd_hda_codec_build_controls(codec);
+ 	if (err < 0)
+ 		goto error_module;
+-	if (codec->card->registered) {
++	/* only register after the bus probe finished; otherwise it's racy */
++	if (!codec->bus->bus_probing && codec->card->registered) {
+ 		err = snd_card_register(codec->card);
+ 		if (err < 0)
+ 			goto error_module;
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -68,6 +68,7 @@ struct hda_bus {
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
+ 	unsigned int no_response_fallback:1; /* don't fallback at RIRB error */
++	unsigned int bus_probing :1;	/* during probing process */
+ 
+ 	int primary_dig_out_type;	/* primary digital out PCM type */
+ 	unsigned int mixer_assigned;	/* codec addr for mixer name */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2315,6 +2315,7 @@ static int azx_probe_continue(struct azx
+ 	int dev = chip->dev_index;
+ 	int err;
+ 
++	to_hda_bus(bus)->bus_probing = 1;
+ 	hda->probe_continued = 1;
+ 
+ 	/* bind with i915 if needed */
+@@ -2410,6 +2411,7 @@ i915_power_fail:
+ 	if (err < 0)
+ 		hda->init_failed = 1;
+ 	complete_all(&hda->probe_wait);
++	to_hda_bus(bus)->bus_probing = 0;
+ 	return err;
+ }
+ 
+
+
