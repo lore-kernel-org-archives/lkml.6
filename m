@@ -1,140 +1,130 @@
 Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAA0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719D4218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD28218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549889242;
-	bh=0imaeGbWBOJfVodMAIpCCr44kw0QHoPTzdcy0AoAdzo=;
+	s=default; t=1549889268;
+	bh=UqSEr17L1LV7h086WnSlCEdxYbi+eJNQ8bJcDoWTSf4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wM6m6c/FuP8rPrs7F8r54QGNWfWKrLVN5YBjiprSMX9AnfgXlTEvXRoRozRe0ns69
-	 1chFlQTphANo1cLHtJXp/fo90xeR6i/VE3U5lWe/GTxpmUnauSmX7EcvSrpHxd0gJd
-	 TayOiyp5ICgG1Hcu23VJhDMEujc2nq54uiHXA70U=
+	b=IncV7savrjrR626oEii77A1JTb4BPemnkO/XkIG80mLRXvRVDVh/RZCZUFE+W8hXH
+	 +tLH3lvQzzblv1vq99DI3j79OqFKKq7ZV4Wbcj54rtmcMPQ4T25gqMCi7Kth8QsY9v
+	 JCwkMMX8Qr259T1leoCDTFZ+43TGw6801Cf715oI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbfBKMrU (ORCPT
+        id S1727568AbfBKMrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:47:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55655 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbfBKMrU (ORCPT
+        Mon, 11 Feb 2019 07:47:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49500 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727216AbfBKMrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:47:20 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r17so17430364wmh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:47:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p0SsjOnZ7YvXnZciAVQIblpSdwgRLGmpnJCcS6cQ51I=;
-        b=PasV01QHJZVaE5jOIl0f/dQ7nVnXNxmN40iWZnTU+GYFOmrKGsAnhi7iPs25s0WYeh
-         iQI0HJ5psr0GfMhwcK8PDMvF5PjIOOt0ZCeXeX4d69Ah8Z+MxBSEpnqeMN9Vw89G/8v0
-         XluczRecKUaR+aPxNU0ft8MbMbk0nTQ50miQSpzxMdn0sgV3EYH15hjX8PcEB7XCTecb
-         dhA9Ogv3myI37pN4PWuttGeM6oazQtS6nuy5BPHOPK5KlBdY/qFl/6R8yaL1uPUssylF
-         CesKx6EFptiOuKm0n1ju0L/n7VMRqttFDwBIh3nccxyuUwzZWwks54x1VCxvl5JssJcW
-         TozA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p0SsjOnZ7YvXnZciAVQIblpSdwgRLGmpnJCcS6cQ51I=;
-        b=RrgPkdrBSiusx9LyY5waLEtaoCaSk1Lf3ZDXcBpi3w0ChxFX36e58A33HvN5h1sRcd
-         Zc7eEN0zXrN6TroZcLyj7RQImK9E9wsnbskvhrjm9xib2sAUPGgJYdKqpDB4Z6rYdqaq
-         dYlMaW8C96lJfiHeE4Mdqe6jQwPmDjxyZU1DK0oZaIHC0nxNgPy0NlTNGwPbvcfXaQ7D
-         oAVfv6Uk3hvO/6wjN2tF9N/ZadZ9y6rwTh/0fiLnjhvm2i7RKDnDJpZVJheGTe6TPKiw
-         1ZDoO4BB/isqCrIK5ClOdggbIRwsjsRaa6MLpzdfL/jfZ98cZXzT1u5UaY9impItc5qC
-         JKrQ==
-X-Gm-Message-State: AHQUAuah9ZYTOgWFeXQ6oU50lJ7t8Eb8hw9QhnFfX2Koj5GovYGOLp+C
-        ElsumdULyQ+cHivcYkN0dGA=
-X-Google-Smtp-Source: AHgI3IbNqvFmYrIpVtnIoQWxtEI1FdQqmxNNWLvuj5bRmug93OmN1XL68MlvOKeqtuUlvCDKs69LLg==
-X-Received: by 2002:a1c:2e43:: with SMTP id u64mr9432451wmu.52.1549889238909;
-        Mon, 11 Feb 2019 04:47:18 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c129sm10726357wma.48.2019.02.11.04.47.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 04:47:18 -0800 (PST)
-Date:   Mon, 11 Feb 2019 13:47:16 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v-1] x86_64: new and improved memset() + question
-Message-ID: <20190211124716.GA13062@gmail.com>
-References: <20190117222318.GA10338@avx2>
+        Mon, 11 Feb 2019 07:47:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EgW1/CMsijd/ta8j2zHhGem0ZITrh7t2nrqav3hnthQ=; b=CbVS7SjHZM3vG63P0L6Bw5Chi
+        O9G7gQFNt7Du07TJJBqgwQA1TaX32px0pTdb4/0JSWeFeibZMlN1zDv+LccXuQzYZJ5ibdDV5Amb5
+        eNSxKxnzsWQogSmvyu9W131l7ntnB1qmKjNH7fQCfsS5De3rZ29tfPXHmSPmjHkY8yxsU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtAzq-00033K-UT; Mon, 11 Feb 2019 12:47:38 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2804211280BD; Mon, 11 Feb 2019 12:47:38 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 12:47:38 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kselftest@vger.kernel.org, Dan Rue <dan.rue@linaro.org>
+Subject: Re: [PATCH 2/2] selftests/x86/fsgsbase: Default to trying to run the
+ test repeatedly
+Message-ID: <20190211124738.GA22391@sirena.org.uk>
+References: <20190203134017.9375-1-broonie@kernel.org>
+ <20190203134017.9375-3-broonie@kernel.org>
+ <20190211084916.GB62722@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
 Content-Disposition: inline
-In-Reply-To: <20190117222318.GA10338@avx2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190211084916.GB62722@gmail.com>
+X-Cookie: Tell me what to think!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Alexey Dobriyan <adobriyan@gmail.com> wrote:
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Current memset() implementation does silly things:
-> * multiplication to get wide constant:
-> 	waste of cycles if filler is known at compile time,
-> 
-> * REP STOSQ followed by REP STOSB:
-> 	this code is used when REP STOSB is slow but still it is used
-> 	for small length (< 8) when setup overhead is relatively big,
-> 
-> * suboptimal calling convention:
-> 	REP STOSB/STOSQ favours (rdi, rcx)
-> 
-> * memset_orig():
-> 	it is hard to even look at it :^)
-> 
-> New implementation is based on the following observations:
-> * c == 0 is the most common form,
-> 	filler can be done with "xor eax, eax" and pushed into memset()
-> 	saving 2 bytes per call and multiplication
-> 
-> * len divisible by 8 is the most common form:
-> 	all it takes is one pointer or unsigned long inside structure,
-> 	dispatch at compile time to code without those ugly "lets fill
-> 	at most 7 bytes" tails,
-> 
-> * multiplication to get wider filler value can be done at compile time
->   for "c != 0" with 1 insn/10 bytes at most saving multiplication.
-> 
-> * those leaner forms of memset can be done withing 3/4 registers (RDI,
->   RCX, RAX, [RSI]) saving the rest from clobbering.
+On Mon, Feb 11, 2019 at 09:49:16AM +0100, Ingo Molnar wrote:
 
-Ok, sorry about the belated reply - all that sounds like very nice 
-improvements!
+> So this isn't very user-friendly either, previously it would run a=20
+> testcase and immediately provide output.
 
-> Note: "memset0" name is chosen because "bzero" is officially deprecated.
-> Note: memset(,0,) form is interleaved into memset(,c,) form to save
-> space.
-> 
-> QUESTION: is it possible to tell gcc "this function is semantically
-> equivalent to memset(3) so make high level optimizations but call it
-> when it is necessary"? I suspect the answer is "no" :-\
+> Now it's just starting and 'hanging':
 
-No idea ...
+>   galatea:~/linux/linux/tools/testing/selftests/x86> ./fsgsbase_64=20
 
-> TODO:
-> 	CONFIG_FORTIFY_SOURCE is enabled by distros
-> 	benchmarks
-> 	testing
-> 	more comments
-> 	check with memset_io() so that no surprises pop up
+> I got bored and Ctrl-C-ed it after ~30 seconds.
 
-I'd only like to make happy noises here to make sure you continue with 
-this work - it does look promising. :-)
- 
-Thanks,
+> How long is this supposed to run, and why isn't the user informed?
 
-	Ingo
+On Intel systems I've got access to it's tended to only run for less
+than 10 seconds for me with excursions up to ~30s at most, I'd have
+projected it to be about a minute if the tests pass.  However retesting
+with Debian's v4.19 kernel it seems to be running a lot more stably so
+we're now seeing it run to completion reliably when just one copy of the
+test is running.
+
+AFAICT it's not terribly idiomatic to provide much output, and anything
+that was per iteration would be *way* too spammy.
+
+> Also, testcases should really be short, so I think a better approach=20
+> would be to thread the test-case and start an instance on every CPU. That=
+=20
+> should also excercise SMP bugs, if any.
+
+Well, a *better* approach would be for the underlying issue that the
+test is finding to be fixed.
+
+I didn't look at adding more threads as the test case is already
+threaded, it does seem that running multiple copies simultaneously makes
+things reproduce more quickly so it's definitely useful though it's
+still taking multiple iterations.
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhbukACgkQJNaLcl1U
+h9A1OAf/WKQVAqmx50jv0448xrLZi5lNwENWc3ftX6oIrPCwGtTpjjVYQIaoZZZk
+53RhJrMSwfxfEkVomotBTjpQCip6R1O5QbmZlBBl6VFoDs+YYTWb6/ovCggD/imS
+dqyeab1KZXo7ivBalS1i/byVqiXBF9A4T57VN4Ss+qm3EXStABH0kOERTo8boz74
++wVjzzwmhsly0yBt92YK0NAvS+O8eu6IrrIDU19Ev90Hgspu7E4vCncrMRRVXkpJ
+Sk8eYCfD0WXZNAjcLq1LE1Qo74WAGjRfKSETo7IyU1daPAMiWOWV7vB9tE1+AIaf
+Qbf9D3Vg+eqfADxpxKwD8qnFP3bVVg==
+=kLSu
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
