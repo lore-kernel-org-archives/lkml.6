@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBE1C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46B9C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D86B21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8B720821
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895105;
-	bh=Jk8H50YROFZSpleFUTHOxSdIKyuY4+ZZTMNVfSaxIDA=;
+	s=default; t=1549895110;
+	bh=RqXEecHFDKiNEipWvm3W0Z9ee7U90ah7LNRDdk1sa70=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pWqSZg+S9mjbuArB+V7IKp8Ck6Nf+sMW2oZhbe6JmZxcAFy8+Xtn4N6XjiLpDV8wp
-	 0+wugjTIH7nE39NfVnuok/04me0UnSrUe9at9j4twf/NJLERx+tUKQm+4UQEhe5Pwa
-	 oE4LNYEKVQVS8uvo4ikbBoBYWp7pqsd42qWBKG+w=
+	b=RQsGAYoM0IDSqQZsCcTE9eEgiK3BAtBjoM20KvFPC0t6zvgx8+zCfSVJfrSgb6dS9
+	 b3XXvxunnHU1H1j/nReMqhblqBh9a1wit/FyA8RNOu3QbAJa2o+6U/pdXr7DKhcvqg
+	 d+tZZ7IRTkYpRp0K4pF2XvQPU5ujzF1GHaxz00Ek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbfBKOZD (ORCPT
+        id S1729335AbfBKOZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:25:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58332 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:25:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729306AbfBKOY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:24:59 -0500
+        id S1728284AbfBKOZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3F94214DA;
-        Mon, 11 Feb 2019 14:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A491420821;
+        Mon, 11 Feb 2019 14:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895099;
-        bh=Jk8H50YROFZSpleFUTHOxSdIKyuY4+ZZTMNVfSaxIDA=;
+        s=default; t=1549895105;
+        bh=RqXEecHFDKiNEipWvm3W0Z9ee7U90ah7LNRDdk1sa70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nuM39LtTuawoGH25/XO9uFXfh+NhmgWmcrimMqHll/m8+sXix8AhiwafY0ylmM9KQ
-         6jqky5dBzaysRAQSlmBKAoqaHxwCCIn5PSDCLN9In/oFi+et+gqBWZY5PBEAN+gXfr
-         m/VLtLm3b7bEyw5UEiC4+J66u6r+tsYqNOj3qWrA=
+        b=TxvWU8d4PZ93BxjT4dKbJEWp6fo2AMAuxodK5pd6sdgipfj0xMohUt1WEsAfX9Roj
+         CKZysntmKnrAHHXM1QfmlTo3ME/WrzohqIfAm8JN6rIUTtUhmo3+7C+Ux+cfzJQ5AT
+         d5We9gKQc5GHuCzYvJebjngCxeYEziWt65RiZqUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Thara Gopinath <thara.gopinath@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 092/352] arm64: io: Ensure value passed to __iormb() is held in a 64-bit register
-Date:   Mon, 11 Feb 2019 15:15:19 +0100
-Message-Id: <20190211141851.743766379@linuxfoundation.org>
+Subject: [PATCH 4.20 094/352] thermal: Fix locking in cooling device sysfs update cur_state
+Date:   Mon, 11 Feb 2019 15:15:21 +0100
+Message-Id: <20190211141851.856039832@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,50 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1b57ec8c75279b873639eb44a215479236f93481 ]
+[ Upstream commit 68000a0d983f539c95ebe5dccd4f29535c7ac0af ]
 
-As of commit 6460d3201471 ("arm64: io: Ensure calls to delay routines
-are ordered against prior readX()"), MMIO reads smaller than 64 bits
-fail to compile under clang because we end up mixing 32-bit and 64-bit
-register operands for the same data processing instruction:
+Sysfs interface to update cooling device cur_state does not
+currently holding cooling device lock sometimes leading to
+stale values in cur_state if getting updated simultanelously
+from user space and thermal framework. Adding the proper locking
+code fixes this issue.
 
-./include/asm-generic/io.h:695:9: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
-        return readb(addr);
-               ^
-./arch/arm64/include/asm/io.h:147:58: note: expanded from macro 'readb'
-                                                                       ^
-./include/asm-generic/io.h:695:9: note: use constraint modifier "w"
-./arch/arm64/include/asm/io.h:147:50: note: expanded from macro 'readb'
-                                                               ^
-./arch/arm64/include/asm/io.h:118:24: note: expanded from macro '__iormb'
-        asm volatile("eor       %0, %1, %1\n"                           \
-                                    ^
-
-Fix the build by casting the macro argument to 'unsigned long' when used
-as an input to the inline asm.
-
-Reported-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/thermal/thermal_sysfs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index d42d00d8d5b6..ee723835c1f4 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -117,7 +117,8 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
- 	 */								\
- 	asm volatile("eor	%0, %1, %1\n"				\
- 		     "cbnz	%0, ."					\
--		     : "=r" (tmp) : "r" (v) : "memory");		\
-+		     : "=r" (tmp) : "r" ((unsigned long)(v))		\
-+		     : "memory");					\
- })
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 2241ceae7d7f..aa99edb4dff7 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -712,11 +712,14 @@ cur_state_store(struct device *dev, struct device_attribute *attr,
+ 	if ((long)state < 0)
+ 		return -EINVAL;
  
- #define __iowmb()		wmb()
++	mutex_lock(&cdev->lock);
++
+ 	result = cdev->ops->set_cur_state(cdev, state);
+-	if (result)
+-		return result;
+-	thermal_cooling_device_stats_update(cdev, state);
+-	return count;
++	if (!result)
++		thermal_cooling_device_stats_update(cdev, state);
++
++	mutex_unlock(&cdev->lock);
++	return result ? result : count;
+ }
+ 
+ static struct device_attribute
 -- 
 2.19.1
 
