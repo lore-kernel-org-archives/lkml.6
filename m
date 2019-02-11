@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1410C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1331C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A413C21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D29222A9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900050;
-	bh=FHB90N5fEfZP/zDYrFDSsltrq4qE/bqFm9wauKsl3zA=;
+	s=default; t=1549900059;
+	bh=BajOmQAOaXSRmd1MZd3MV/pJa6XEgm/miZN9Eu7VeRE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GO3S7vW5iF0+ZUrl/Zv5/fU8b23d1MLC+Aggd7MAhR5lu8psbU95hqsD9yKgj5akK
-	 nB/OmaQ3Rn8lo/QOxQWIF1Xheo9luLlTHTABlICbILylJSlJzgqkuh+qn6ep+V52Lj
-	 3YR9yA3Ua0I8BWofGZcyM+fDYYynmXNvlwaDUW+4=
+	b=AiIrptcLIBXiE7uVVcgnTwusnjDDbwbI9JWV8y9+yE7u7QsNcYKl51XWnwNG7ngfP
+	 UFKKssZP1cY8gbfLjzomDatBdjdcgExbI9HVSMDXenCfQgvHHp7G5IeKRu6ZqBXhCv
+	 sVRGKy+dWiQ3TBvP/tH8Gc8c5SZGIPeIiH1pVF6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732955AbfBKPr3 (ORCPT
+        id S1732231AbfBKOl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52996 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732272AbfBKOlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:39 -0500
+        id S1732202AbfBKOlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8824120838;
-        Mon, 11 Feb 2019 14:41:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A758F20700;
+        Mon, 11 Feb 2019 14:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896099;
-        bh=FHB90N5fEfZP/zDYrFDSsltrq4qE/bqFm9wauKsl3zA=;
+        s=default; t=1549896084;
+        bh=BajOmQAOaXSRmd1MZd3MV/pJa6XEgm/miZN9Eu7VeRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGo/V2hvHV0vSerGHoueKolNmLpCN+xJGViUuvBo6bReFpQw3kvil0JObuIyILUe2
-         nKrZC/TkpAPdWOEk0o02FSGSKJKDvvpZ0cZc9+fDXdAkh+RWwz8mAbiWJhtfr0ZwCX
-         Nj1glSVF2ea/ZiO63WHi3vPamucG+cnwlaDNMVmc=
+        b=d47vjXX8UB54M5CIh5RgNnPtgIubZ8eDqYYS0ibgSl57IZ11i8eqGCn4OJlcOZBar
+         q5J161I9Ff7CfRXfX7nxIU2UqbvwE3LX0xo/X7jAovcilXhy5YtdM02croKxtQxBch
+         yb+SbWklv4Glagu/Gr0+NzBhTPKj6fbvMMrrwWWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 073/313] net: aquantia: return err if set MPI_DEINIT state fails
-Date:   Mon, 11 Feb 2019 15:15:53 +0100
-Message-Id: <20190211141858.770364628@linuxfoundation.org>
+Subject: [PATCH 4.19 068/313] f2fs: avoid build warn of fall_through
+Date:   Mon, 11 Feb 2019 15:15:48 +0100
+Message-Id: <20190211141858.400816358@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,37 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4e3c7c00bba0636b97eb23d582c20b0f5d95ce20 ]
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:260:7:
- warning: variable 'err' set but not used [-Wunused-but-set-variable]
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
 
-'err' should be returned while set MPI_DEINIT state fails
-in hw_atl_utils_soft_reset.
+ Exposed by my use of -Wimplicit-fallthrough
 
-Fixes: cce96d1883da ("net: aquantia: Regression on reset with 1.x firmware")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-index c965e65d07db..9939ccaeb125 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-@@ -262,6 +262,8 @@ int hw_atl_utils_soft_reset(struct aq_hw_s *self)
- 		AQ_HW_WAIT_FOR((aq_hw_read_reg(self, HW_ATL_MPI_STATE_ADR) &
- 			       HW_ATL_MPI_STATE_MSK) == MPI_DEINIT,
- 			       10, 1000U);
-+		if (err)
-+			return err;
- 	}
- 
- 	if (self->rbl_enabled)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ecb735142276..462a2fb8aa69 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2311,6 +2311,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_NEW_INODE:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
 -- 
 2.19.1
 
