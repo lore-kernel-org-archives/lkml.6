@@ -2,140 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7AEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5007C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4640E20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549882282;
-	bh=FNzkkT6AfU1uYks/NNGeFD2TCbAC8Xua+umZtmYu74I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=o6ybaE4cC9V5y+FnhOky/2w/49Wevjc9c4xmcb2l6aqFUwSY3NP1VzbFZ4xy1tuoW
-	 /hvyjDbm9IUq68soljv+jvzqPlCZQ8G9d5XFQEVvROwynIB+DL/XMfY9yzDodNtpwQ
-	 MH3hxUEkQ3hVGNCSg/gs2VHMBJCA5S0jkws4xMig=
+	by mail.kernel.org (Postfix) with ESMTP id 98E6E20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfBKKvU (ORCPT
+        id S1727099AbfBKKv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:51:20 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46620 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKKvU (ORCPT
+        Mon, 11 Feb 2019 05:51:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51123 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKKvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:51:20 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so16580844otm.13;
-        Mon, 11 Feb 2019 02:51:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ic4LJwtH6696vNmZdjpk5xP0gtKSELq4x6VhSZ/Ny5Q=;
-        b=fHybl2+KlwMSFu6PnSz+0T8EZJE0IccypLqwKGSK5naU5tA42tKO3hUAOgsI7FycXB
-         WUohHFR3CWjh7oj5Bu/svClAVPu7tdskbBmL+M6+IoE+CUE3x582vU9JjE89S7Oospel
-         efuqWmrdGXaQgCMaTmnr114mTfg9vsedPlFIxZnvVDCUc52Zig/SHnyOjXLOhr2fbF8f
-         D2A94Y4Fxby14t0HFQSiYcB9kLp59uZVIoiIHwM++9SG2/AwIjdKkagognfKtNYK0MTm
-         fKGzYWya+wmcLwtk9E1e3TPB5PhPS8atzn9o7fl4DSUXJKMjJi730+z0lkOZeagK9Cxt
-         T8kw==
-X-Gm-Message-State: AHQUAuYcIAxRtbKdmcUeqOhHN3tIFhqbSOP7yO1Jd07G5pYXORowriAL
-        BfiqkNtYKyzQHg1h/6kKsq0EIrjkIk1t/8aE9RQ=
-X-Google-Smtp-Source: AHgI3IanjKo39zrTNezkSEYw4ljU/kGAEBLjj9t0ip0VhgVAu7iLLnZbL/hJ6nF85Ahpjzp1OPwROv8QgHUAfS3tFig=
-X-Received: by 2002:a9d:7990:: with SMTP id h16mr19708326otm.222.1549882279240;
- Mon, 11 Feb 2019 02:51:19 -0800 (PST)
+        Mon, 11 Feb 2019 05:51:25 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BApDTr3499004
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 11 Feb 2019 02:51:13 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BApCpa3499000;
+        Mon, 11 Feb 2019 02:51:12 -0800
+Date:   Mon, 11 Feb 2019 02:51:12 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Valentin Schneider <tipbot@zytor.com>
+Message-ID: <tip-892d59c22208be820a5463b5f74eb7f0b7f2b03a@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, torvalds@linux-foundation.org,
+        valentin.schneider@arm.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
+          torvalds@linux-foundation.org, valentin.schneider@arm.com
+In-Reply-To: <20190117153411.2390-3-valentin.schneider@arm.com>
+References: <20190117153411.2390-3-valentin.schneider@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Explain LLC nohz kick condition
+Git-Commit-ID: 892d59c22208be820a5463b5f74eb7f0b7f2b03a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <cover.1549874368.git.viresh.kumar@linaro.org> <03ac36a174f6c28be0b3af9d2db8631d56695f1d.1549874368.git.viresh.kumar@linaro.org>
-In-Reply-To: <03ac36a174f6c28be0b3af9d2db8631d56695f1d.1549874368.git.viresh.kumar@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 11 Feb 2019 11:51:07 +0100
-Message-ID: <CAJZ5v0hhxUQxf9VbhU_6B29MYspNo0Go+o4_OkxgnBe8+bGTdw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cpufreq: Allow light-weight tear down on CPU offline operation
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 9:41 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> The cpufreq core doesn't remove the cpufreq policy anymore on CPU
-> offline operation, rather that happens when the CPU device gets
-> unregistered from the kernel. This allows faster recovery when the CPU
-> comes back online. This is also very useful during system wide
-> suspend/resume where we offline all non-boot CPUs during suspend and
-> then bring them back on resume.
->
-> This commit takes the same idea a step ahead to allow drivers to do
-> light weight tear-down during CPU offline operation.
->
-> A new callback is introduced, light_weight_exit(), which gets called
-> when all the CPUs of a policy are removed/offlined and the existing
-> exit() callback gets called when the policy gets freed.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq.c | 16 +++++++++++-----
->  include/linux/cpufreq.h   |  1 +
->  2 files changed, 12 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 96a69c67a545..215a8bfc78bb 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1421,11 +1421,12 @@ static int cpufreq_offline(unsigned int cpu)
->                 cpufreq_exit_governor(policy);
->
->         /*
-> -        * Perform the ->exit() even during light-weight tear-down,
-> -        * since this is a core component, and is essential for the
-> -        * subsequent light-weight ->init() to succeed.
-> +        * Perform the ->light_weight_exit() during light-weight tear-down, as
-> +        * that allows fast recovery when the CPU comes back.
->          */
-> -       if (cpufreq_driver->exit) {
-> +       if (cpufreq_driver->light_weight_exit) {
-> +               cpufreq_driver->light_weight_exit(policy);
-> +       } else if (cpufreq_driver->exit) {
->                 cpufreq_driver->exit(policy);
->                 policy->freq_table = NULL;
->         }
-> @@ -1454,8 +1455,13 @@ static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
->         cpumask_clear_cpu(cpu, policy->real_cpus);
->         remove_cpu_dev_symlink(policy, dev);
->
-> -       if (cpumask_empty(policy->real_cpus))
-> +       if (cpumask_empty(policy->real_cpus)) {
-> +               /* We did light-weight exit earlier, do full tear down now */
-> +               if (cpufreq_driver->light_weight_exit)
-> +                       cpufreq_driver->exit(policy);
-> +
->                 cpufreq_policy_free(policy);
-> +       }
->  }
->
->  /**
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index 9db074ecbbd7..36ce31516041 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -325,6 +325,7 @@ struct cpufreq_driver {
->         /* optional */
->         int             (*bios_limit)(int cpu, unsigned int *limit);
->
-> +       int             (*light_weight_exit)(struct cpufreq_policy *policy);
+Commit-ID:  892d59c22208be820a5463b5f74eb7f0b7f2b03a
+Gitweb:     https://git.kernel.org/tip/892d59c22208be820a5463b5f74eb7f0b7f2b03a
+Author:     Valentin Schneider <valentin.schneider@arm.com>
+AuthorDate: Thu, 17 Jan 2019 15:34:08 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 11 Feb 2019 08:02:17 +0100
 
-Can you call it "offline"?
+sched/fair: Explain LLC nohz kick condition
 
->         int             (*exit)(struct cpufreq_policy *policy);
->         void            (*stop_cpu)(struct cpufreq_policy *policy);
->         int             (*suspend)(struct cpufreq_policy *policy);
-> --
+Provide a comment explaining the LLC related nohz kick in
+nohz_balancer_kick().
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar.Eggemann@arm.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: morten.rasmussen@arm.com
+Cc: vincent.guittot@linaro.org
+Link: https://lkml.kernel.org/r/20190117153411.2390-3-valentin.schneider@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0692c8ff6ff6..ac6b52d8c79e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9601,8 +9601,13 @@ static void nohz_balancer_kick(struct rq *rq)
+ 	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
+ 	if (sds) {
+ 		/*
+-		 * XXX: write a coherent comment on why we do this.
+-		 * See also: http://lkml.kernel.org/r/20111202010832.602203411@sbsiddha-desk.sc.intel.com
++		 * If there is an imbalance between LLC domains (IOW we could
++		 * increase the overall cache use), we need some less-loaded LLC
++		 * domain to pull some load. Likewise, we may need to spread
++		 * load within the current LLC domain (e.g. packed SMT cores but
++		 * other CPUs are idle). We can't really know from here how busy
++		 * the others are - so just get a nohz balance going if it looks
++		 * like this LLC domain has tasks we could move.
+ 		 */
+ 		nr_busy = atomic_read(&sds->nr_busy_cpus);
+ 		if (nr_busy > 1) {
