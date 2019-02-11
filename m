@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61874C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A29C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E0B20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF7D20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901506;
-	bh=OkE/gxmnnjMpfLPHAwquAZmEpqjZzVHf/CGkR6L76WY=;
+	s=default; t=1549901515;
+	bh=yb+7OU8AjDwtALOAyPqJSf3XJnC2ddy3gXsdSEkW/Aw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zd4OnG6ZlxplkIPbiyte5vZLTTXndjVwu94oXJiUFIBCzMws4vSfbNRXzkFiXuW8c
-	 sF+Y3mU0Favegszgr23BScog/a7zMkATrSeLe5rka+t8DCmjGEgENNhuSgSaE59hvI
-	 LUCHzNQ3ybMxUYmEH7NqizkkTT9fCHOswcwLVJEY=
+	b=STwoIa1O4JJdqeV0ZTkHPEnCQkkBKI7tzM1GxxGjO1xN1+LGfLKDymG2PMuaueNxm
+	 SDwOP1i1b/Aw5JcGPvsKd7QqMzXnBUn/Ob+KXHJrjFoYscIvWMcayHofGEIAv1fyE6
+	 dlJO7apSgdmSZOr4YxIIj59mb5j9qtHv6Ah6JkFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfBKQLp (ORCPT
+        id S1729042AbfBKOXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:11:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56898 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729082AbfBKOXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:50 -0500
+        id S1727054AbfBKOXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18183222A1;
-        Mon, 11 Feb 2019 14:23:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D176222AA;
+        Mon, 11 Feb 2019 14:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895029;
-        bh=OkE/gxmnnjMpfLPHAwquAZmEpqjZzVHf/CGkR6L76WY=;
+        s=default; t=1549895017;
+        bh=yb+7OU8AjDwtALOAyPqJSf3XJnC2ddy3gXsdSEkW/Aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjJCsoBboIbKpaQVT03oYJjhJpHNurKwvt66hG/lkHsk2d1+T1sqyX3jNbCVcAajm
-         sueJ+lnlYpRKSjIwkXoH2B2drpE9WNNurRUORe6xocYgE65ppPTICBabEuAjRLBZpL
-         /fm77Pq9cTqfCvpuMAQq4SujXPNEW9e/GpiZ5BeM=
+        b=vs9kKFSyvJc5Mr+ZENgzJZTka2qAbnk9NOarCoFHYKQVceeNunUAhFq6JtVtIYXNy
+         GTbtvVY9jTp/qebd6bxhaQTPmmGxzGbkp9SJwZRgAuXUHxHgwAuzfyvBtFoJB6xQFk
+         RtmjJ05mkInYw7qlcaHrNWzCL45z6nLpD0FkTV0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 067/352] clk: meson: meson8b: do not use cpu_div3 for cpu_scale_out_sel
-Date:   Mon, 11 Feb 2019 15:14:54 +0100
-Message-Id: <20190211141850.381750045@linuxfoundation.org>
+Subject: [PATCH 4.20 063/352] media: vivid: fill in media_device bus_info
+Date:   Mon, 11 Feb 2019 15:14:50 +0100
+Message-Id: <20190211141850.142407576@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,62 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a5ac1ead32c9aac285f6436e09b4f6111996e9b8 ]
+[ Upstream commit e10b40f3304360d3a2d07d690ff12197f828f2c8 ]
 
-The cpu_div3 clock (cpu_in divided by 3) generates a signal with a duty
-cycle of 33%. The CPU clock however requires a clock signal with a duty
-cycle of 50% to run stable.
-cpu_div3 was observed to be problematic when cycling through all
-available CPU frequencies (with additional patches on top of this one)
-while running "stress --cpu 4" in the background. This caused sporadic
-hangs where the whole system would fully lock up.
+If you create multiple vivid instances, each with their own media
+device, then there was no way to tell them apart.
 
-Amlogic's 3.10 kernel code also does not use the cpu_div3 clock either
-when changing the CPU clock.
+Fill in the bus_info so each instance has a unique bus_info string.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20181115224048.13511-3-martin.blumenstingl@googlemail.com
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/media/platform/vivid/vivid-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 1d39273d7a04..328fcf50d9e8 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -612,20 +612,27 @@ static struct clk_regmap meson8b_cpu_scale_div = {
- 	},
- };
+diff --git a/drivers/media/platform/vivid/vivid-core.c b/drivers/media/platform/vivid/vivid-core.c
+index 626e2b24a403..ec1b1a8ea775 100644
+--- a/drivers/media/platform/vivid/vivid-core.c
++++ b/drivers/media/platform/vivid/vivid-core.c
+@@ -669,6 +669,8 @@ static int vivid_create_instance(struct platform_device *pdev, int inst)
  
-+static u32 mux_table_cpu_scale_out_sel[] = { 0, 1, 3 };
- static struct clk_regmap meson8b_cpu_scale_out_sel = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = HHI_SYS_CPU_CLK_CNTL0,
- 		.mask = 0x3,
- 		.shift = 2,
-+		.table = mux_table_cpu_scale_out_sel,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_scale_out_sel",
- 		.ops = &clk_regmap_mux_ro_ops,
-+		/*
-+		 * NOTE: We are skipping the parent with value 0x2 (which is
-+		 * "cpu_div3") because it results in a duty cycle of 33% which
-+		 * makes the system unstable and can result in a lockup of the
-+		 * whole system.
-+		 */
- 		.parent_names = (const char *[]) { "cpu_in_sel",
- 						   "cpu_div2",
--						   "cpu_div3",
- 						   "cpu_scale_div" },
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
+ 	/* Initialize media device */
+ 	strlcpy(dev->mdev.model, VIVID_MODULE_NAME, sizeof(dev->mdev.model));
++	snprintf(dev->mdev.bus_info, sizeof(dev->mdev.bus_info),
++		 "platform:%s-%03d", VIVID_MODULE_NAME, inst);
+ 	dev->mdev.dev = &pdev->dev;
+ 	media_device_init(&dev->mdev);
+ 	dev->mdev.ops = &vivid_media_ops;
 -- 
 2.19.1
 
