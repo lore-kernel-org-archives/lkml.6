@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBE6C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D93C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB5B222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7FFA222B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897817;
-	bh=JH+P7SWt544y3G0ArnXQ+F9HECBxjRLfgkNxQPkj2Dg=;
+	s=default; t=1549897820;
+	bh=Kh2U6wJ57jQjG2t7QzNwmcw1pJI6ZSXu8Izbdr+tnYA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eKsPz4f7qHzvHBjSr42N7AVXrmj410AAmvOVpg67fbC1/+6qgUYfHF3vtp+mLU1fl
-	 +QmvqxnS+h+YAIRGrjh+Xaaw9skA/mKDrl/11dSr3iB5zNX0E4Aw7AEAyT0rHTnrOB
-	 yhuw1H70jLCIbz5Ew3wiLu0Eo2cIt/han2XbSE5I=
+	b=E7pN4jfxRC1LjPyBeJYZw+v5Dsu7HtUlI5uKOZLnHbLRR1hKkI9YDz+kvghXw2hNM
+	 dfG+AlNBp2qmCYXmjlM4cxl3LfUF+75bC8mGJKYFKmTilST72WVzUMCfP1rrUaLDKp
+	 5I82IByAYaSW4W09qBs+vw5XUdKHoRQWrDUDmVf0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391771AbfBKPKQ (ORCPT
+        id S2391785AbfBKPKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60232 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391213AbfBKPKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:13 -0500
+        id S1731302AbfBKPKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90F71222A7;
-        Mon, 11 Feb 2019 15:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25866222A7;
+        Mon, 11 Feb 2019 15:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897813;
-        bh=JH+P7SWt544y3G0ArnXQ+F9HECBxjRLfgkNxQPkj2Dg=;
+        s=default; t=1549897815;
+        bh=Kh2U6wJ57jQjG2t7QzNwmcw1pJI6ZSXu8Izbdr+tnYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VXXkJWOgZj6LOVARO8XvtLwNGlyA7UhRASp19HCfPXOWWuL+tL5VJYk1PxurZmox5
-         CIEFUhIFt6RptwE6xw6xW4W7A/DKlXE3+eoV/JBPoGgVnx1MJezl7JC0vLKPFuSdVc
-         /jPd+3+UjjlrOifSWhPorPam9bIS8KNCRofZVvBA=
+        b=zwf+txwK4eR9x2q0+3w7+UdIlVMiD+62rSWKKNsdZvNgR2FFgLrmjA7ImfusEERmf
+         ZRl3gwRgOixyab4fsb/1gwpgtNuvdNBAFoxAQl7ae9pVlAulyuM+INRD/Ego75e5d5
+         tfi08GdLyAlb1nPTPgEwmUBZo++toZff8bTsZmH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Elder <paul.elder@ideasonboard.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 124/137] usb: gadget: musb: fix short isoc packets with inventra dma
-Date:   Mon, 11 Feb 2019 15:20:05 +0100
-Message-Id: <20190211141823.678207226@linuxfoundation.org>
+        stable@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 125/137] scsi: aic94xx: fix module loading
+Date:   Mon, 11 Feb 2019 15:20:06 +0100
+Message-Id: <20190211141823.762972263@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -64,114 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Elder <paul.elder@ideasonboard.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-commit c418fd6c01fbc5516a2cd1eaf1df1ec86869028a upstream.
+commit 42caa0edabd6a0a392ec36a5f0943924e4954311 upstream.
 
-Handling short packets (length < max packet size) in the Inventra DMA
-engine in the MUSB driver causes the MUSB DMA controller to hang. An
-example of a problem that is caused by this problem is when streaming
-video out of a UVC gadget, only the first video frame is transferred.
+The aic94xx driver is currently failing to load with errors like
 
-For short packets (mode-0 or mode-1 DMA), MUSB_TXCSR_TXPKTRDY must be
-set manually by the driver. This was previously done in musb_g_tx
-(musb_gadget.c), but incorrectly (all csr flags were cleared, and only
-MUSB_TXCSR_MODE and MUSB_TXCSR_TXPKTRDY were set). Fixing that problem
-allows some requests to be transferred correctly, but multiple requests
-were often put together in one USB packet, and caused problems if the
-packet size was not a multiple of 4. Instead, set MUSB_TXCSR_TXPKTRDY
-in dma_controller_irq (musbhsdma.c), just like host mode transfers.
+sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:02:00.3/0000:07:02.0/revision'
 
-This topic was originally tackled by Nicolas Boichat [0] [1] and is
-discussed further at [2] as part of his GSoC project [3].
+Because the PCI code had recently added a file named 'revision' to every
+PCI device.  Fix this by renaming the aic94xx revision file to
+aic_revision.  This is safe to do for us because as far as I can tell,
+there's nothing in userspace relying on the current aic94xx revision file
+so it can be renamed without breaking anything.
 
-[0] https://groups.google.com/forum/?hl=en#!topic/beagleboard-gsoc/k8Azwfp75CU
-[1] https://gitorious.org/beagleboard-usbsniffer/beagleboard-usbsniffer-kernel/commit/b0be3b6cc195ba732189b04f1d43ec843c3e54c9?p=beagleboard-usbsniffer:beagleboard-usbsniffer-kernel.git;a=patch;h=b0be3b6cc195ba732189b04f1d43ec843c3e54c9
-[2] http://beagleboard-usbsniffer.blogspot.com/2010/07/musb-isochronous-transfers-fixed.html
-[3] http://elinux.org/BeagleBoard/GSoC/USBSniffer
-
-Fixes: 550a7375fe72 ("USB: Add MUSB and TUSB support")
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 702ed3be1b1b (PCI: Create revision file in sysfs)
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_gadget.c |   13 +------------
- drivers/usb/musb/musbhsdma.c   |   21 +++++++++++----------
- 2 files changed, 12 insertions(+), 22 deletions(-)
+ drivers/scsi/aic94xx/aic94xx_init.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -477,13 +477,10 @@ void musb_g_tx(struct musb *musb, u8 epn
- 	}
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -281,7 +281,7 @@ static ssize_t asd_show_dev_rev(struct d
+ 	return snprintf(buf, PAGE_SIZE, "%s\n",
+ 			asd_dev_rev[asd_ha->revision_id]);
+ }
+-static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
++static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
  
- 	if (request) {
--		u8	is_dma = 0;
--		bool	short_packet = false;
+ static ssize_t asd_show_dev_bios_build(struct device *dev,
+ 				       struct device_attribute *attr,char *buf)
+@@ -478,7 +478,7 @@ static int asd_create_dev_attrs(struct a
+ {
+ 	int err;
  
- 		trace_musb_req_tx(req);
+-	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	if (err)
+ 		return err;
  
- 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
--			is_dma = 1;
- 			csr |= MUSB_TXCSR_P_WZC_BITS;
- 			csr &= ~(MUSB_TXCSR_DMAENAB | MUSB_TXCSR_P_UNDERRUN |
- 				 MUSB_TXCSR_TXPKTRDY | MUSB_TXCSR_AUTOSET);
-@@ -501,16 +498,8 @@ void musb_g_tx(struct musb *musb, u8 epn
- 		 */
- 		if ((request->zero && request->length)
- 			&& (request->length % musb_ep->packet_sz == 0)
--			&& (request->actual == request->length))
--				short_packet = true;
-+			&& (request->actual == request->length)) {
+@@ -500,13 +500,13 @@ err_update_bios:
+ err_biosb:
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ err_rev:
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	return err;
+ }
  
--		if ((musb_dma_inventra(musb) || musb_dma_ux500(musb)) &&
--			(is_dma && (!dma->desired_mode ||
--				(request->actual &
--					(musb_ep->packet_sz - 1)))))
--				short_packet = true;
--
--		if (short_packet) {
- 			/*
- 			 * On DMA completion, FIFO may not be
- 			 * available yet...
---- a/drivers/usb/musb/musbhsdma.c
-+++ b/drivers/usb/musb/musbhsdma.c
-@@ -320,12 +320,10 @@ static irqreturn_t dma_controller_irq(in
- 				channel->status = MUSB_DMA_STATUS_FREE;
- 
- 				/* completed */
--				if ((devctl & MUSB_DEVCTL_HM)
--					&& (musb_channel->transmit)
--					&& ((channel->desired_mode == 0)
--					    || (channel->actual_len &
--					    (musb_channel->max_packet_sz - 1)))
--				    ) {
-+				if (musb_channel->transmit &&
-+					(!channel->desired_mode ||
-+					(channel->actual_len %
-+					    musb_channel->max_packet_sz))) {
- 					u8  epnum  = musb_channel->epnum;
- 					int offset = musb->io.ep_offset(epnum,
- 								    MUSB_TXCSR);
-@@ -337,11 +335,14 @@ static irqreturn_t dma_controller_irq(in
- 					 */
- 					musb_ep_select(mbase, epnum);
- 					txcsr = musb_readw(mbase, offset);
--					txcsr &= ~(MUSB_TXCSR_DMAENAB
-+					if (channel->desired_mode == 1) {
-+						txcsr &= ~(MUSB_TXCSR_DMAENAB
- 							| MUSB_TXCSR_AUTOSET);
--					musb_writew(mbase, offset, txcsr);
--					/* Send out the packet */
--					txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						musb_writew(mbase, offset, txcsr);
-+						/* Send out the packet */
-+						txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						txcsr |= MUSB_TXCSR_DMAENAB;
-+					}
- 					txcsr |=  MUSB_TXCSR_TXPKTRDY;
- 					musb_writew(mbase, offset, txcsr);
- 				}
+ static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
+ {
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
 
 
