@@ -4,51 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03095C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B78C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C134C2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED99320844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896651;
-	bh=S47UbfxCnMZrVjIb3793MTQjZ9Z/+kdp1ePIyc/Jquc=;
+	s=default; t=1549896657;
+	bh=hscZEE/dX0BAdei2Om3y2jOfioejD+yHeDxP14eIvDg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EACnbc/4WCJeNCdJZTmrAtAYhFac+o+eQRiuOGR3/vaCTHGzmcBdcP/5WAzK9zBCW
-	 lv9CJ8c35cvUeASyE8UUsjcjcxlxxagTr5WO1OqIutDWKBS1BQz12bqUAllkTWsVeo
-	 vAxnVy+QkS2N2pbMgGfA7+v7XTtsuK6494bg4h3w=
+	b=igjN8oRbWW0XTFKR9niNjD98qZ+biEJJ2+fRwjgZvFcRk496+wqnX5dSxN9MKTEvC
+	 LALkx7LYp1/hqInFNIVKhUyfkCjn21rzDKrv27sejIFvRfREHU4/KEzSidz03m6yfA
+	 m1/0fTHtPbWZFRHZrgPbRK8UqatgTG4NnVhELlck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387753AbfBKOuv (ORCPT
+        id S2387769AbfBKOuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387748AbfBKOss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:48:48 -0500
+        id S2387765AbfBKOuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1935920700;
-        Mon, 11 Feb 2019 14:48:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AA9E214DA;
+        Mon, 11 Feb 2019 14:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896527;
-        bh=S47UbfxCnMZrVjIb3793MTQjZ9Z/+kdp1ePIyc/Jquc=;
+        s=default; t=1549896651;
+        bh=hscZEE/dX0BAdei2Om3y2jOfioejD+yHeDxP14eIvDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQyzyVT3ytQs7y/dy66Rv47tBSSIz6KsKjAI8U40+fJiJmonTbz0FH4k6bj2H9qCA
-         KczZmpF/jn74e3NfHc3yq8H8XtcuJl1mrudf/FNIQP0lxZmehZhHAvMP6sDiYNMLl3
-         y9gn+iVr7gAwXx9//tSaLLc8Y59ZpNs+VECtaWY4=
+        b=c7lFLsRZBgyMMmXuUOf+EuTTwTs0Pe7xjZDNA96ImbnU5j2WnTmvdvHcTGq1PG1jU
+         UB5S61eW19C2polrYHRiMoBuw7yw++6KPZYnYveP8Dfki/LVb0uoq4Dxa3qFSV9TvK
+         1JEwl4KyD3AQSTN+rrRNMVNnA/DtVfVwMIFf1E0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 213/313] seq_buf: Make seq_buf_puts() null-terminate the buffer
-Date:   Mon, 11 Feb 2019 15:18:13 +0100
-Message-Id: <20190211141907.401866869@linuxfoundation.org>
+Subject: [PATCH 4.19 228/313] mm/page_alloc.c: dont call kasan_free_pages() at deferred mem init
+Date:   Mon, 11 Feb 2019 15:18:28 +0100
+Message-Id: <20190211141908.627702250@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,64 +73,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
+[ Upstream commit 3c0c12cc8f00ca5f81acb010023b8eb13e9a7004 ]
 
-Currently seq_buf_puts() will happily create a non null-terminated
-string for you in the buffer. This is particularly dangerous if the
-buffer is on the stack.
+When CONFIG_KASAN is enabled on large memory SMP systems, the deferrred
+pages initialization can take a long time.  Below were the reported init
+times on a 8-socket 96-core 4TB IvyBridge system.
 
-For example:
+  1) Non-debug kernel without CONFIG_KASAN
+     [    8.764222] node 1 initialised, 132086516 pages in 7027ms
 
-  char buf[8];
-  char secret = "secret";
-  struct seq_buf s;
+  2) Debug kernel with CONFIG_KASAN
+     [  146.288115] node 1 initialised, 132075466 pages in 143052ms
 
-  seq_buf_init(&s, buf, sizeof(buf));
-  seq_buf_puts(&s, "foo");
-  printk("Message is %s\n", buf);
+So the page init time in a debug kernel was 20X of the non-debug kernel.
+The long init time can be problematic as the page initialization is done
+with interrupt disabled.  In this particular case, it caused the
+appearance of following warning messages as well as NMI backtraces of all
+the cores that were doing the initialization.
 
-Can result in:
+[   68.240049] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+[   68.241000] rcu: 	25-...0: (100 ticks this GP) idle=b72/1/0x4000000000000000 softirq=915/915 fqs=16252
+[   68.241000] rcu: 	44-...0: (95 ticks this GP) idle=49a/1/0x4000000000000000 softirq=788/788 fqs=16253
+[   68.241000] rcu: 	54-...0: (104 ticks this GP) idle=03a/1/0x4000000000000000 softirq=721/825 fqs=16253
+[   68.241000] rcu: 	60-...0: (103 ticks this GP) idle=cbe/1/0x4000000000000000 softirq=637/740 fqs=16253
+[   68.241000] rcu: 	72-...0: (105 ticks this GP) idle=786/1/0x4000000000000000 softirq=536/641 fqs=16253
+[   68.241000] rcu: 	84-...0: (99 ticks this GP) idle=292/1/0x4000000000000000 softirq=537/537 fqs=16253
+[   68.241000] rcu: 	111-...0: (104 ticks this GP) idle=bde/1/0x4000000000000000 softirq=474/476 fqs=16253
+[   68.241000] rcu: 	(detected by 13, t=65018 jiffies, g=249, q=2)
 
-  Message is fooªªªªªsecret
+The long init time was mainly caused by the call to kasan_free_pages() to
+poison the newly initialized pages.  On a 4TB system, we are talking about
+almost 500GB of memory probably on the same node.
 
-We could require all users to memset() their buffer to zero before
-use. But that seems likely to be forgotten and lead to bugs.
+In reality, we may not need to poison the newly initialized pages before
+they are ever allocated.  So KASAN poisoning of freed pages before the
+completion of deferred memory initialization is now disabled.  Those pages
+will be properly poisoned when they are allocated or freed after deferred
+pages initialization is done.
 
-Instead we can change seq_buf_puts() to always leave the buffer in a
-null-terminated state.
+With this change, the new page initialization time became:
 
-The only downside is that this makes the buffer 1 character smaller
-for seq_buf_puts(), but that seems like a good trade off.
+[   21.948010] node 1 initialised, 132075466 pages in 18702ms
 
-Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
+This was still about double the non-debug kernel time, but was much
+better than before.
 
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Link: http://lkml.kernel.org/r/1544459388-8736-1-git-send-email-longman@redhat.com
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/seq_buf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ mm/page_alloc.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 11f2ae0f9099..6aabb609dd87 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9e45553cabd6..a9de1dbb9a6c 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -294,6 +294,32 @@ EXPORT_SYMBOL(nr_online_nodes);
+ int page_group_by_mobility_disabled __read_mostly;
  
- 	WARN_ON(s->size == 0);
- 
-+	/* Add 1 to len for the trailing null byte which must be there */
-+	len += 1;
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++/*
++ * During boot we initialize deferred pages on-demand, as needed, but once
++ * page_alloc_init_late() has finished, the deferred pages are all initialized,
++ * and we can permanently disable that path.
++ */
++static DEFINE_STATIC_KEY_TRUE(deferred_pages);
 +
- 	if (seq_buf_can_fit(s, len)) {
- 		memcpy(s->buffer + s->len, str, len);
--		s->len += len;
-+		/* Don't count the trailing null byte against the capacity */
-+		s->len += len - 1;
- 		return 0;
- 	}
- 	seq_buf_set_overflow(s);
++/*
++ * Calling kasan_free_pages() only after deferred memory initialization
++ * has completed. Poisoning pages during deferred memory init will greatly
++ * lengthen the process and cause problem in large memory systems as the
++ * deferred pages initialization is done with interrupt disabled.
++ *
++ * Assuming that there will be no reference to those newly initialized
++ * pages before they are ever allocated, this should have no effect on
++ * KASAN memory tracking as the poison will be properly inserted at page
++ * allocation time. The only corner case is when pages are allocated by
++ * on-demand allocation and then freed again before the deferred pages
++ * initialization is done, but this is not likely to happen.
++ */
++static inline void kasan_free_nondeferred_pages(struct page *page, int order)
++{
++	if (!static_branch_unlikely(&deferred_pages))
++		kasan_free_pages(page, order);
++}
++
+ /* Returns true if the struct page for the pfn is uninitialised */
+ static inline bool __meminit early_page_uninitialised(unsigned long pfn)
+ {
+@@ -326,6 +352,8 @@ static inline bool update_defer_init(pg_data_t *pgdat,
+ 	return true;
+ }
+ #else
++#define kasan_free_nondeferred_pages(p, o)	kasan_free_pages(p, o)
++
+ static inline bool early_page_uninitialised(unsigned long pfn)
+ {
+ 	return false;
+@@ -1030,7 +1058,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	arch_free_page(page, order);
+ 	kernel_poison_pages(page, 1 << order, 0);
+ 	kernel_map_pages(page, 1 << order, 0);
+-	kasan_free_pages(page, order);
++	kasan_free_nondeferred_pages(page, order);
+ 
+ 	return true;
+ }
+@@ -1593,13 +1621,6 @@ static int __init deferred_init_memmap(void *data)
+ 	return 0;
+ }
+ 
+-/*
+- * During boot we initialize deferred pages on-demand, as needed, but once
+- * page_alloc_init_late() has finished, the deferred pages are all initialized,
+- * and we can permanently disable that path.
+- */
+-static DEFINE_STATIC_KEY_TRUE(deferred_pages);
+-
+ /*
+  * If this zone has deferred pages, try to grow it by initializing enough
+  * deferred pages to satisfy the allocation specified by order, rounded up to
 -- 
 2.19.1
 
