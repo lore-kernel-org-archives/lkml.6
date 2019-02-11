@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58007C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD79C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220E8222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F5A2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896190;
-	bh=TshDJp4rhht05eVUbSaIMCMxJGIebZdz/BibrXPO5jQ=;
+	s=default; t=1549896206;
+	bh=ZTMgYY7tYir6iFTl6JGcnUTQeDK3XEGMwgJfM8MSKHk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L2LRKgwvofQANt167yKGtlHSaTVAbCgb00OwqCO1n2xIjhmbVdy6FK674M2XTvC2O
-	 iXglJdiKyq9Maw7c5xuuXcvabqzHU8oKlnozcuyOkHtuGhoMr02yj5ODCzhOLJsE37
-	 eQ9T3ehFovr4aJ6ygAjR1PkAXpC+6cMEsTD6v/JY=
+	b=r7b8qwxdzki5UpNVmn/zWbmSk0Dzb8ZTlFVyHdJCw5dQT+Wc9DbjiSajRaxXqjD4v
+	 Lmkw31TdW+B7i1YGcxMNmGHiwcRtvmgPiYr/2T6CPjWKxcUZN/vkSkk+HIoLRiMHNh
+	 +rJQhLJ1Qn+tbmqs+f3Wzc3XtqMIz4MNewhSsKwc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbfBKOnI (ORCPT
+        id S1732631AbfBKOnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55206 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731778AbfBKOnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:05 -0500
+        id S1732613AbfBKOnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AABAF2081B;
-        Mon, 11 Feb 2019 14:43:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEF6A21B18;
+        Mon, 11 Feb 2019 14:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896185;
-        bh=TshDJp4rhht05eVUbSaIMCMxJGIebZdz/BibrXPO5jQ=;
+        s=default; t=1549896202;
+        bh=ZTMgYY7tYir6iFTl6JGcnUTQeDK3XEGMwgJfM8MSKHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rvYEAE3GcOE/cVsovpuuOsyjTyNic+zcRyo5UxVX78Z2VJjn3EodtDO5CM6RwP+4y
-         /ayinqY6yVOfqXEoxCI0YE8oVIIWoN71Nem7rw00oeWvBFPKNcuUA4t2xjuvbevJmu
-         o82ecEbaFzN/jXIy2Otg07/QcLbj18suIdp41tYU=
+        b=khXaVXvbYyZtW0p8TZre9wAhGS775l1WvGz/Fqlre/HzvJjBIN0y8JsGtcLqkXgS0
+         u3ti2myR0KZSKRoV3tffFZOpoBfsgqyFvz0uqYzVVEMXhrUZdqIwX2xTX51NdO1FdI
+         +rU/m0lhCax4P1giq20IcnEqgdhn4dg6usxKYM2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 101/313] media: imx274: select REGMAP_I2C
-Date:   Mon, 11 Feb 2019 15:16:21 +0100
-Message-Id: <20190211141900.611214578@linuxfoundation.org>
+Subject: [PATCH 4.19 089/313] ARM: dts: aspeed: add missing memory unit-address
+Date:   Mon, 11 Feb 2019 15:16:09 +0100
+Message-Id: <20190211141859.802233380@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,41 +69,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f9d7225c70dd9d3f406b79e60f8dbd2cd5ae743 ]
+[ Upstream commit 8ef86955fe59f7912a40d57ae4c6d511f0187b4d ]
 
-The imx274 driver uses regmap and the build will fail without it.
+The base aspeed-g5.dtsi already defines a '/memory@80000000' node, so
+'/memory' in the board files create a duplicate node. We're probably
+getting lucky that the bootloader fixes up the memory node that the
+kernel ends up using. Add the unit-address so it's merged with the base
+node.
 
-Fixes:
+Found with DT json-schema checks.
 
-  drivers/media/i2c/imx274.c:142:21: error: variable ‘imx274_regmap_config’ has initializer but incomplete type
-   static const struct regmap_config imx274_regmap_config = {
-                       ^~~~~~~~~~~~~
-  drivers/media/i2c/imx274.c:1869:19: error: implicit declaration of function ‘devm_regmap_init_i2c’ [-Werror=implicit-function-declaration]
-    imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
-                     ^~~~~~~~~~~~~~~~~~~~
-
-and others.
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-aspeed@lists.ozlabs.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts | 2 +-
+ arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts       | 2 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts         | 3 +--
+ arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts    | 2 +-
+ 4 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 041a777dfdee..63c9ac2c6a5f 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -611,6 +611,7 @@ config VIDEO_IMX274
- 	tristate "Sony IMX274 sensor support"
- 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on MEDIA_CAMERA_SUPPORT
-+	select REGMAP_I2C
- 	---help---
- 	  This is a V4L2 sensor driver for the Sony IMX274
- 	  CMOS image sensor.
+diff --git a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
+index df1227613d48..c2ece0b91885 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
+@@ -13,7 +13,7 @@
+ 		bootargs = "console=ttyS4,115200 earlyprintk";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
+index 7a291de02543..22dade6393d0 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
+@@ -13,7 +13,7 @@
+ 		bootargs = "earlyprintk";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
+index d598b6391362..024e52a6cd0f 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
+@@ -14,7 +14,7 @@
+ 		bootargs = "console=ttyS4,115200 earlyprintk";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+@@ -322,4 +322,3 @@
+ &adc {
+ 	status = "okay";
+ };
+-
+diff --git a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+index 43ed13963d35..33d704541de6 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+@@ -17,7 +17,7 @@
+ 		bootargs = "console=ttyS4,115200 earlyprintk";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
+ 
 -- 
 2.19.1
 
