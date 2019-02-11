@@ -2,112 +2,109 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 893BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4094FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5733A2186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549913530;
-	bh=cfX8DX3l2wzEnNG//tlP5z7+OR8oD2yFr0C+I8fn1hA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bO+RC9mfTeaRB4F+13deiIyVIbqDEZngmqFJyNC8KB7RubnpGn2Deouwp83dx703W
-	 DQnP2zReMxr1msSXTjATUQNJ0JtD2eNACRXEIFZciA7Jgrqol65l5fcUeYlyAWUKHL
-	 TLCxy2fC/Ew47Uvr+Cs5OPP2U30q9sXF4K1/VKIs=
+	by mail.kernel.org (Postfix) with ESMTP id 107D4218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JMMMgpkZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388471AbfBKTcI (ORCPT
+        id S2388492AbfBKTcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:32:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727862AbfBKTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:32:06 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13BD12186A;
-        Mon, 11 Feb 2019 19:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549913526;
-        bh=cfX8DX3l2wzEnNG//tlP5z7+OR8oD2yFr0C+I8fn1hA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UHy7ykWYPWae0ll8Zqzz+HFhtWiyOmsz0DMBKxKLqNBWTwiXu/IzJGO0/SujmU5w3
-         w/faDZbZEcE+RT4DpsE0VvWOKv7QDQagVI2ZXfTzewJ4rOozFHnEroxwdjWgJfDA1J
-         Z6iHIO2vrLIdBz8HnYu08RyICDB7tn0f/kDNpra8=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 63360410D5; Mon, 11 Feb 2019 16:32:02 -0300 (-03)
-Date:   Mon, 11 Feb 2019 16:32:02 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
- directory
-Message-ID: <20190211193202.GG3269@kernel.org>
-References: <20190204114144.GC18141@krava>
- <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
- <20190204192721.GI5593@kernel.org>
- <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
- <20190204202818.GC4794@krava>
- <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
- <20190205133727.GF4794@krava>
- <20190211101957.GB14253@krava>
- <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
- <20190211185306.GD5046@krava>
+        Mon, 11 Feb 2019 14:32:45 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40329 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727862AbfBKTco (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:32:44 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so24955pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I7Vpcu98+gD4EE9XrIJ1Ld431U8bHMH0CQZqIbdv5bY=;
+        b=JMMMgpkZaL2uQe6u3kh/dp6JfWAYAY4mUstktQDziTUDn4xOkiprw7u00P6Duo4mUB
+         9d5sfDK185GUxoFERNF5b5yE7ltchm0dtKnGklyKpk1werDE6JajKR/pZuYsZCj15WML
+         XMExT0DNgug8knBLbB+LBxJnYB9gl5Qylm65AEUvk3Q2vOXvTFBb/IlLDEmsS5BC2UbK
+         lPV7+fZCAPk05neN6OAZVUtTCuVNucrcBcNx1uZOB91pYx8vfnunf4enmV2SEeiPioZW
+         NwvKegm9vANQ6HJJcqzwuwEsBZ8D7KHYUVzlBmqbxZpLsWuQLZ9ZFO4vB/Esn69kvcPK
+         nzng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I7Vpcu98+gD4EE9XrIJ1Ld431U8bHMH0CQZqIbdv5bY=;
+        b=bwpmmC9S5ZanIovSmQNMR3qYmhMAP6D38fmOFrURv3Q/CPiN65gWOOEnGW7bk3VdG1
+         /DtUQbKlaZAD334Z9EpAjp75jzNT2JYz4xka9YB+T4MF2LocjSUtB1AH/ZK9wLlKdV51
+         I3HHz3z4pFnAEsB9PZSKR/Y7OzNCNCW+M3+n3nJAF+erlkfo+IiD218hbLeG7KdK963w
+         Ef890wfSZBLrMcgh1dGI/ZiiTJ5e4QFUjSjd+PtZyIBz74WIYU1Ix5w+ScCmeNwwvi6q
+         KcwsitrIE142BA5yvrtsrByIXskuqS66nMPpX3fUYSiWbQxoKJH8W/vpMruG1WQd80eg
+         zYQA==
+X-Gm-Message-State: AHQUAub3qgMm/RFED3zx2y5YUMvyR0ot7ABlqXJBKHwLBs4sZi+0Vr0L
+        TaDHyDWxCiiZNEZm+GgTGpK9WE1Xs0TqNh70juIUEA==
+X-Google-Smtp-Source: AHgI3IYkIXQFUoOwTRsLPav5lTuQQJ+1C038vJfUOPDGrW3cHz4kCk7LJwgEsblUVQUypbKAgeWwjMQTqfKOkRyyXlk=
+X-Received: by 2002:a63:ce0e:: with SMTP id y14mr35278528pgf.145.1549913172124;
+ Mon, 11 Feb 2019 11:26:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211185306.GD5046@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190207220155.81351-1-ndesaulniers@google.com>
+ <20190207220155.81351-3-ndesaulniers@google.com> <20190208055059.GD9647@archlinux-ryzen>
+In-Reply-To: <20190208055059.GD9647@archlinux-ryzen>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 11 Feb 2019 11:26:00 -0800
+Message-ID: <CAKwvOdnSStbZ35RqSoy-B8sdx+MCR867gKTu4UA5g8wvUHwVFw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] Makefile: lld: tell clang to use lld
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 11, 2019 at 07:53:06PM +0100, Jiri Olsa escreveu:
-> On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
-> > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
-> > > I think all could be added and worked around with exception
-> > > of BUILD_ID, which we store at the end (after processing
-> > > all data) and we need it early in the report phase
+On Thu, Feb 7, 2019 at 9:51 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Thu, Feb 07, 2019 at 02:01:51PM -0800, ndesaulniers@google.com wrote:
+> > This is needed because clang doesn't select which linker to use based on
+> > $LD but rather -fuse-ld=$(LD). This is problematic especially for
+> > cc-ldoption, which checks for linker flag support via invoking the
+> > compiler, rather than the linker.
+> >
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/342
+> > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > ---
+> >  Makefile | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 0eae4277206e..6307c17259ea 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -502,6 +502,9 @@ endif
+> >  CLANG_FLAGS  += -no-integrated-as
+> >  KBUILD_CFLAGS        += $(CLANG_FLAGS)
+> >  KBUILD_AFLAGS        += $(CLANG_FLAGS)
+> > +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
+> > +CLANG_FLAGS  += -fuse-ld=lld
+> > +endif
+>
+> This section needs to be moved up above KBUILD_CFLAGS otherwise it never
+> actually gets passed along.
 
-> > Buildids are injected after the fact via perf inject when in pipe mode.
+Great catch! I had that correct in my Pixel kernel patches; messed
+that up forward porting them.  Included in v2 (sending imminently).
 
-> > > maybe it's time to re-think that buildid -> mmap event
-> > > association again, because it's pain in current implementation
-> > > as well
-
-> > Sure, but what do you propose?
-
-> this:
-> 
-> > > looks like bpf code is actualy getting build ids and storing
-> > > it for the callchains in kernel.. we can check if we can do
-> > > something similar for mmap events
-
-kernel/bpf/stackmap.c
-
-/* Parse build ID from 64-bit ELF */
-static int stack_map_get_build_id_64(void *page_addr,
-                                     unsigned char *build_id)
-
-yeah, wasn't aware of that, good thing doing backports, huh? :-)
-
-So do you thing about having a PERF_SAMPLE_BUILDID in sample_type and go
-and stash that thing in PERF_RECORD_MMAP2?
-
-- Arnaldo
+-- 
+Thanks,
+~Nick Desaulniers
