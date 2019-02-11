@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF71C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6320DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7782206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 294F020700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896275;
-	bh=sQ2gEQO5P1T+V2YB5xtzCD7ihV7wHzRzt95WwyM90no=;
+	s=default; t=1549896283;
+	bh=y60sTBUmHMn+uHplmAuHA+nOtfMgyE/Xgr3wEZsEeR4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cBMw+CT5gHvU8eIDIwrwVzCfMdfOMzxV8xjd1CAbh8AgDRZpQVWjeGU1t7k25kdOt
-	 9w3L+PlcMsxF1idlhIdPXOHBgU1URLdyscZAJGcy/0sJB/mpA+ZadXYzMwssU7hDyo
-	 ZEGnWEdkm6Qk8Lv7g8ya59yBzscCDwMrPXHjR0zM=
+	b=eWy0yjKUvG8HBBxdM5hBO9Q5xQxfKTjFHJ34BfboSZVHe8S60xN3dJS+nR/nsmmLu
+	 oUui3RfuZd1cPhiXv0yo+Xvz65TuvQ+4ltYAEyx4/bxCEqzpBXvoMvnK+FiyaoT/JF
+	 6QtZ6+sCMLPYD7OtXGnMVZBtl4rjc5MeL3CYkyKs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732858AbfBKOod (ORCPT
+        id S1732893AbfBKOol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57294 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732847AbfBKOoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:30 -0500
+        id S1732876AbfBKOoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16D1520700;
-        Mon, 11 Feb 2019 14:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33B1206BA;
+        Mon, 11 Feb 2019 14:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896269;
-        bh=sQ2gEQO5P1T+V2YB5xtzCD7ihV7wHzRzt95WwyM90no=;
+        s=default; t=1549896279;
+        bh=y60sTBUmHMn+uHplmAuHA+nOtfMgyE/Xgr3wEZsEeR4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uwUlvOp603bHjoQudaoaJLmYe3n9nyseYSnR+bbRahdiqzz+iR97agXM05Cs4NKym
-         yaVQiX4fUneWoDh26cAsljR/NgaWSiWaRO36lyJjFMKpQRAMhTfHBDAsZQHc7cYllm
-         AWe9pdbG64CWPgDjkWkGUgNcTOlHkrAF+8KS9jS0=
+        b=Ki+GOROVHHk8wSZ/y33wYOeAMSllCJCyv0MZ1cJWRcgFC/wy3Dw5MZcrpiT+zHHYh
+         RfLH28yQQbj4GJ+xQg+650hBPTd4wc5PPUUF1JCad4qdDHeB8jzfJz6oakrhsLrBd3
+         +qtK37onVBKPK/gCpWgyFHyHD0cRK7IE15G+WnA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/313] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Mon, 11 Feb 2019 15:16:41 +0100
-Message-Id: <20190211141901.893907130@linuxfoundation.org>
+        stable@vger.kernel.org, Hua Su <suhua.tanke@gmail.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 132/313] lightnvm: pblk: add lock protection to list operations
+Date:   Mon, 11 Feb 2019 15:16:52 +0100
+Message-Id: <20190211141902.525901417@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,53 +67,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
+[ Upstream commit fde201a466c6ad5efd72cb54fdf2cefa8b6c6ad7 ]
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements.
-On msm8996, multiple cores, viz. mdss, video, etc. use this
-smmu. On sdm845, this smmu is used with gpu.
-Add bindings for the same.
+Protect the list_add on the pblk_line_init_bb() error
+path in case this code is used for some other purpose
+in the future.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Hua Su <suhua.tanke@gmail.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/lightnvm/pblk-core.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index e7cbf4fcf61d..ce119cb279c3 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -118,6 +118,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 2940cdc87af1..95be6e36c7dd 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1252,15 +1252,22 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
  
- struct arm_smmu_s2cr {
-@@ -1912,6 +1913,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
-+ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
+ 	ret = pblk_line_alloc_bitmaps(pblk, line);
+ 	if (ret)
+-		return ret;
++		goto fail;
  
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
-@@ -1920,6 +1922,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ 	if (!pblk_line_init_bb(pblk, line, 0)) {
+-		list_add(&line->list, &l_mg->free_list);
+-		return -EINTR;
++		ret = -EINTR;
++		goto fail;
+ 	}
+ 
+ 	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+ 	return 0;
++
++fail:
++	spin_lock(&l_mg->free_lock);
++	list_add(&line->list, &l_mg->free_list);
++	spin_unlock(&l_mg->free_lock);
++
++	return ret;
+ }
+ 
+ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
 -- 
 2.19.1
 
