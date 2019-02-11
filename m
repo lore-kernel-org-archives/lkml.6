@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ED8C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F34CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A0B222B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4BE1222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897697;
-	bh=0l7JFCr135AclVB2A/E2/O7I/PlcTA8I99gRbCZrzmA=;
+	s=default; t=1549897701;
+	bh=UK3zoHE57SEipjc7rjrvsuHQSx7cDZ7MqGKuDUGP7qk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WffirUMSfWOx0Ky0vuM6fuxx4aSGUqU1/sb3mQwmxYkiVOgW9zsp4EzlB3yZZtc9S
-	 OYSGd0IEbCKjiKkfAftHyq7RO5V+Eir884D0YTEpVqs/XSUcHaI6QEZ58TACuXtRPe
-	 +ubL1Y5BQM45RhoOY8MEubYElA2wuLAyiUA7a2kg=
+	b=G/EEPQH3F0w6bnBaE/Pp2W26xZDDFX+crcFWkNdaPGzOpLto+zvbnN+ERdGCGdMTv
+	 5dD8b/gt8EGDe43EgLhwxAR7zynf1K58WkenocuRs6DuPgk2VL2vbAit4LCMtkRWcm
+	 4Slyk2NjLDB0zsu+q/VcNcWvYyPYE3EqF5tYKzOE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391462AbfBKPIP (ORCPT
+        id S2391476AbfBKPIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58088 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391446AbfBKPIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:11 -0500
+        id S2391457AbfBKPIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77374222AD;
-        Mon, 11 Feb 2019 15:08:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 253A5217D9;
+        Mon, 11 Feb 2019 15:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897690;
-        bh=0l7JFCr135AclVB2A/E2/O7I/PlcTA8I99gRbCZrzmA=;
+        s=default; t=1549897693;
+        bh=UK3zoHE57SEipjc7rjrvsuHQSx7cDZ7MqGKuDUGP7qk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/SWUZi2pNVHYq9SzDlQxt3RdLXMD7/MVopdZ1iHSnhaRxfCITNQDS62KYb27QYOT
-         +6IItXHydPO6Jo7pEagLIZDNKA9U0V7BHdxSbtgIR1PnoUSIir/pkTe6OyVtU5hGDu
-         +nikzu4Ixq1Z4nJelR5XI6tCTjI8gAHLBkNSEUjk=
+        b=kWk2TB7cOaPvDZCqjiYQuPDTbPpk3k4+6Af5+aZVar8PBiu3GpvgedVCLGrEeyOoE
+         pZr48cKQYEfOzBGLzWwWqukbmDrtOIOm/BFHxKc/4fNfZEw37bWx/Lbt6jx6FX2E34
+         TWDDzmuWNGTllsDokBGFqhW+qeGSG9R9IZ3CWJCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 051/137] udf: Fix BUG on corrupted inode
-Date:   Mon, 11 Feb 2019 15:18:52 +0100
-Message-Id: <20190211141816.732184283@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 052/137] ARM: pxa: avoid section mismatch warning
+Date:   Mon, 11 Feb 2019 15:18:53 +0100
+Message-Id: <20190211141816.787756332@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,36 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
+[ Upstream commit 88af3209aa0881aa5ffd99664b6080a4be5f24e5 ]
 
-When inode is corrupted so that extent type is invalid, some functions
-(such as udf_truncate_extents()) will just BUG. Check that extent type
-is valid when loading the inode to memory.
+WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
+The function littleton_init_lcd() references
+the function __init pxa_set_fb_info().
+This is often because littleton_init_lcd lacks a __init
+annotation or the annotation of pxa_set_fb_info is wrong.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
+The function zeus_register_ohci() references
+the function __init pxa_set_ohci_info().
+This is often because zeus_register_ohci lacks a __init
+annotation or the annotation of pxa_set_ohci_info is wrong.
+
+WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
+The function cm_x300_init_u2d() references
+the function __init pxa3xx_set_u2d_info().
+This is often because cm_x300_init_u2d lacks a __init
+annotation or the annotation of pxa3xx_set_u2d_info is wrong.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-pxa/cm-x300.c   | 2 +-
+ arch/arm/mach-pxa/littleton.c | 2 +-
+ arch/arm/mach-pxa/zeus.c      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 035943501b9f..fd817022cb9b 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1372,6 +1372,12 @@ reread:
+diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+index 868448d2cd82..38ab30869821 100644
+--- a/arch/arm/mach-pxa/cm-x300.c
++++ b/arch/arm/mach-pxa/cm-x300.c
+@@ -547,7 +547,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
+ 	.exit		= cm_x300_u2d_exit,
+ };
  
- 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
- 							ICBTAG_FLAG_AD_MASK;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = -EIO;
-+		goto out;
-+	}
- 	iinfo->i_unique = 0;
- 	iinfo->i_lenEAttr = 0;
- 	iinfo->i_lenExtents = 0;
+-static void cm_x300_init_u2d(void)
++static void __init cm_x300_init_u2d(void)
+ {
+ 	pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
+ }
+diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
+index 051c554776a6..ebdef6661f5f 100644
+--- a/arch/arm/mach-pxa/littleton.c
++++ b/arch/arm/mach-pxa/littleton.c
+@@ -183,7 +183,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
+ 	.lcd_conn		= LCD_COLOR_TFT_16BPP,
+ };
+ 
+-static void littleton_init_lcd(void)
++static void __init littleton_init_lcd(void)
+ {
+ 	pxa_set_fb_info(NULL, &littleton_lcd_info);
+ }
+diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+index 3b94ecfb9426..3fcd5854bf5b 100644
+--- a/arch/arm/mach-pxa/zeus.c
++++ b/arch/arm/mach-pxa/zeus.c
+@@ -557,7 +557,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
+ 	.flags		= ENABLE_PORT_ALL | POWER_SENSE_LOW,
+ };
+ 
+-static void zeus_register_ohci(void)
++static void __init zeus_register_ohci(void)
+ {
+ 	/* Port 2 is shared between host and client interface. */
+ 	UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
 -- 
 2.19.1
 
