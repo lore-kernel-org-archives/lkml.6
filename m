@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C221C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6494C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C130222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93B75222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899520;
-	bh=yAtpNdE9k2J1QG0wDC94ANOwj0S+++ZwKJgC/emeGnw=;
+	s=default; t=1549899529;
+	bh=2XyTmJuyRXWTrVdY5BH80z4KBiZ23Mv/qNU24VN8O+E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f6z/c9Mjr0BWmIXPoP459TLlrGvlXlKJdMXQIYjDckzJyvotUSm3BgqQk61GeKmF8
-	 RXNmU0VkljE5Fjw8uuWNEL/DU9vdhHj8zA31tDKpwQBSRc3Z6lOT5RlQp5PkW0gL6h
-	 iUKOYIw9TnIuUrhkgu+kulC+CWc6rUFhWVf/oLq0=
+	b=rClykgJhG88SJyGF2LR3qCuAlTqM606UHQgNcCy1RtD/E0BR7huOM9Gv3gMzNh/rg
+	 fzeyK5gCHl9WoBBBu7QB2ffbOdDkeEKDeuioUf/Iz69F2OChWVVFwiiptFzWh0oqin
+	 VW0uox/RiSXY1aotcUndbMRGQkj4lvIihezWBQ+U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388013AbfBKOuE (ORCPT
+        id S2387989AbfBKOuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35716 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbfBKOuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:02 -0500
+        id S2387961AbfBKOtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3349C2081B;
-        Mon, 11 Feb 2019 14:50:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01D4120700;
+        Mon, 11 Feb 2019 14:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896600;
-        bh=yAtpNdE9k2J1QG0wDC94ANOwj0S+++ZwKJgC/emeGnw=;
+        s=default; t=1549896591;
+        bh=2XyTmJuyRXWTrVdY5BH80z4KBiZ23Mv/qNU24VN8O+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YnI4baDINjuQiiLPri8tznDjX/e4yOC9qJecN1u/8BVLyoFnnZ0/6vLd5Z92+Ix35
-         V6SvRJQMOwGNAEQBDz4UbVfYX8z+OBwkd0v6o3cdLAk0yb/eDrlPfrjth8zX97hzBo
-         Jyd6+ZM/2wQRxDl8096g3V3bmw2ZMB7ebRjRdHE4=
+        b=ezEJ+PChq+GYLBY0UqIkd1QhqK6ZNfq7M/AkRowTBfbzExd2D3FM3UuB6omi6rZa2
+         fWCe1LPePDwxp+Wxt8OWzb4PCTJmLKRQUN0o32hBwA1/muze1d1czmLyuGal9R/CtX
+         aEASxI8PVZ1501BIND1rZNqnHRk4fMnZdCBOkVcg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sven Van Asbroeck <TheSven73@googlemail.com>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 221/313] f2fs: fix sbi->extent_list corruption issue
-Date:   Mon, 11 Feb 2019 15:18:21 +0100
-Message-Id: <20190211141907.978430394@linuxfoundation.org>
+Subject: [PATCH 4.19 236/313] PCI: imx: Enable MSI from downstream components
+Date:   Mon, 11 Feb 2019 15:18:36 +0100
+Message-Id: <20190211141909.200237439@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,90 +70,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e4589fa545e0020dbbc3c9bde35f35f949901392 ]
+[ Upstream commit 75cb8d20c112aba70f23d98e3f8d0a38ace16006 ]
 
-When there is a failure in f2fs_fill_super() after/during
-the recovery of fsync'd nodes, it frees the current sbi and
-retries again. This time the mount is successful, but the files
-that got recovered before retry, still holds the extent tree,
-whose extent nodes list is corrupted since sbi and sbi->extent_list
-is freed up. The list_del corruption issue is observed when the
-file system is getting unmounted and when those recoverd files extent
-node is being freed up in the below context.
+The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2) controls
+whether a Function can request service using MSI.
 
-list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-<...>
-kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-lr : __list_del_entry_valid+0x94/0xb4
-pc : __list_del_entry_valid+0x94/0xb4
-<...>
-Call trace:
-__list_del_entry_valid+0x94/0xb4
-__release_extent_node+0xb0/0x114
-__free_extent_tree+0x58/0x7c
-f2fs_shrink_extent_tree+0xdc/0x3b0
-f2fs_leave_shrinker+0x28/0x7c
-f2fs_put_super+0xfc/0x1e0
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
-__cleanup_mnt+0x1c/0x28
-task_work_run+0x48/0xd0
-do_notify_resume+0x678/0xe98
-work_pending+0x8/0x14
+i.MX6 Root Ports implement the MSI Capability and may use MSI to request
+service for events like PME, hotplug, AER, etc.  In addition, on i.MX6, the
+MSI Enable bit controls delivery of MSI interrupts from components below
+the Root Port.
 
-Fix this by not creating extents for those recovered files if shrinker is
-not registered yet. Once mount is successful and shrinker is registered,
-those files can have extents again.
+Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also enabled
+CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports, it set the MSI
+Enable bit so it could use PME, hotplug, AER, etc.  As a side effect, that
+also enabled delivery of MSI interrupts from downstream components.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The imx6q-pcie driver itself does not depend on portdrv, so set MSI Enable
+in imx6q-pcie so MSI from downstream components works even if nobody uses
+MSI for the Root Port events.
+
+Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Tested-by: Trent Piepho <tpiepho@impinj.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h     | 11 ++++++++++-
- fs/f2fs/shrinker.c |  2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 462a2fb8aa69..eea2811dc672 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2614,10 +2614,19 @@ static inline bool is_dot_dotdot(const struct qstr *str)
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 975050a69494..3826b444298c 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -66,6 +66,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
  
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	if (!test_opt(sbi, EXTENT_CACHE) ||
- 			is_inode_flag_set(inode, FI_NO_EXTENT))
- 		return false;
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCIE_RC_IMX6_MSI_CAP			0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -682,6 +683,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	struct resource *dbi_base;
+ 	struct device_node *node = dev->of_node;
+ 	int ret;
++	u16 val;
  
-+	/*
-+	 * for recovered files during mount do not create extents
-+	 * if shrinker is not registered.
-+	 */
-+	if (list_empty(&sbi->s_list))
-+		return false;
+ 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -816,6 +818,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (pci_msi_enabled()) {
++		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++					PCI_MSI_FLAGS);
++		val |= PCI_MSI_FLAGS_ENABLE;
++		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP + PCI_MSI_FLAGS,
++				   val);
++	}
 +
- 	return S_ISREG(inode->i_mode);
+ 	return 0;
  }
  
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index 36cfd816c160..29042e6d5126 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -138,6 +138,6 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi)
- 	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
- 
- 	spin_lock(&f2fs_list_lock);
--	list_del(&sbi->s_list);
-+	list_del_init(&sbi->s_list);
- 	spin_unlock(&f2fs_list_lock);
- }
 -- 
 2.19.1
 
