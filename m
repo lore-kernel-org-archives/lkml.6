@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B51CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541C5C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4819D218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258AB21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900380;
-	bh=6ONwM5jc09VvTP0hGZEfUBlta5HYtxspVyFlDlbYsz4=;
+	s=default; t=1549900387;
+	bh=oVsxzA2Nv1Tteqi/LWuSaHWh7lcGiUGHNHGInbkNUds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XI455emC1MGzGcCxs2lfAh3gQm0PIb9Zm3X9leUT7RbbJms5glb6HAGMvyW4m2yJe
-	 TDfgbtQ1HcvW1ywqEKXsRibx7Df6H+bWy0GqgunG6hFNGrvmwBAtzkWGBmEgcQ/i+W
-	 mSKHBpAo3NlggnV7018mkgPbTOzrzjcq7GELj00s=
+	b=KWBfgvXlBe9vQPk5bIM6WZ/BiW313aoDQDeIMxyKZK4pIOuGQzmb4hM3kevi3+dDg
+	 udjz8NMlVSyFcaXIbwbyoESim9sjF4bJaWh4o8iQqY+AnkOh6qbD86p+/ich1ePU7m
+	 e2tDenYqJZSY7u/F3piqU7yiPT/lIQOzxgg+FpC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbfBKPw7 (ORCPT
+        id S1731313AbfBKOgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:52:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46146 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:36:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729891AbfBKOgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:53 -0500
+        id S1731302AbfBKOgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:36:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C16C2081B;
-        Mon, 11 Feb 2019 14:36:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF49C20700;
+        Mon, 11 Feb 2019 14:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895813;
-        bh=6ONwM5jc09VvTP0hGZEfUBlta5HYtxspVyFlDlbYsz4=;
+        s=default; t=1549895802;
+        bh=oVsxzA2Nv1Tteqi/LWuSaHWh7lcGiUGHNHGInbkNUds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=thyhgax1vD+si98cV9Y4oi4+ZT5ek7dgDktPGLbIDZ9g7UCpWpvL2asYAfbrurbok
-         On20U7NrB3QxBx6ZAzMIwW/uJxsmNnZUjoIdZVe/nCf1isBHcoMwJ7LP2p4nsoFet8
-         pVsf2K/xE94+b/s4EDRSOhsfN+tDUUw/nev71LtE=
+        b=c+PoIS2KrS5BE8He90iJpQMYtXieLOOfjQeDJNol5AHfTGlDndU/j8HViGiKllEOr
+         5Huwd7DUOmaql/LfN7WRLKT2sTV4IFqk0Ktc6yvBubT9Ulke5sCqzKKMouHUE8/ySu
+         ymQeS8d1ovnTitkJsPWLBakImJVb/fIpv40ZF+rQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.20 331/352] usb: phy: am335x: fix race condition in _probe
-Date:   Mon, 11 Feb 2019 15:19:18 +0100
-Message-Id: <20190211141908.003076691@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Leonid Iziumtsev <leonid.iziumtsev@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.20 327/352] dmaengine: imx-dma: fix wrong callback invoke
+Date:   Mon, 11 Feb 2019 15:19:14 +0100
+Message-Id: <20190211141907.651753990@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -64,45 +66,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
 
-commit a53469a68eb886e84dd8b69a1458a623d3591793 upstream.
+commit 341198eda723c8c1cddbb006a89ad9e362502ea2 upstream.
 
-power off the phy should be done before populate the phy. Otherwise,
-am335x_init() could be called by the phy owner to power on the phy first,
-then am335x_phy_probe() turns off the phy again without the caller knowing
-it.
+Once the "ld_queue" list is not empty, next descriptor will migrate
+into "ld_active" list. The "desc" variable will be overwritten
+during that transition. And later the dmaengine_desc_get_callback_invoke()
+will use it as an argument. As result we invoke wrong callback.
 
-Fixes: 2fc711d76352 ("usb: phy: am335x: Enable USB remote wakeup using PHY wakeup")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+That behaviour was in place since:
+commit fcaaba6c7136 ("dmaengine: imx-dma: fix callback path in tasklet").
+But after commit 4cd13c21b207 ("softirq: Let ksoftirqd do its job")
+things got worse, since possible delay between tasklet_schedule()
+from DMA irq handler and actual tasklet function execution got bigger.
+And that gave more time for new DMA request to be submitted and
+to be put into "ld_queue" list.
+
+It has been noticed that DMA issue is causing problems for "mxc-mmc"
+driver. While stressing the system with heavy network traffic and
+writing/reading to/from sd card simultaneously the timeout may happen:
+
+10013000.sdhci: mxcmci_watchdog: read time out (status = 0x30004900)
+
+That often lead to file system corruption.
+
+Signed-off-by: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/phy/phy-am335x.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/dma/imx-dma.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/phy/phy-am335x.c
-+++ b/drivers/usb/phy/phy-am335x.c
-@@ -61,9 +61,6 @@ static int am335x_phy_probe(struct platf
- 	if (ret)
- 		return ret;
+--- a/drivers/dma/imx-dma.c
++++ b/drivers/dma/imx-dma.c
+@@ -618,7 +618,7 @@ static void imxdma_tasklet(unsigned long
+ {
+ 	struct imxdma_channel *imxdmac = (void *)data;
+ 	struct imxdma_engine *imxdma = imxdmac->imxdma;
+-	struct imxdma_desc *desc;
++	struct imxdma_desc *desc, *next_desc;
+ 	unsigned long flags;
  
--	ret = usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
--	if (ret)
--		return ret;
- 	am_phy->usb_phy_gen.phy.init = am335x_init;
- 	am_phy->usb_phy_gen.phy.shutdown = am335x_shutdown;
+ 	spin_lock_irqsave(&imxdma->lock, flags);
+@@ -648,10 +648,10 @@ static void imxdma_tasklet(unsigned long
+ 	list_move_tail(imxdmac->ld_active.next, &imxdmac->ld_free);
  
-@@ -82,7 +79,7 @@ static int am335x_phy_probe(struct platf
- 	device_set_wakeup_enable(dev, false);
- 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, am_phy->dr_mode, false);
- 
--	return 0;
-+	return usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
- }
- 
- static int am335x_phy_remove(struct platform_device *pdev)
+ 	if (!list_empty(&imxdmac->ld_queue)) {
+-		desc = list_first_entry(&imxdmac->ld_queue, struct imxdma_desc,
+-					node);
++		next_desc = list_first_entry(&imxdmac->ld_queue,
++					     struct imxdma_desc, node);
+ 		list_move_tail(imxdmac->ld_queue.next, &imxdmac->ld_active);
+-		if (imxdma_xfer_desc(desc) < 0)
++		if (imxdma_xfer_desc(next_desc) < 0)
+ 			dev_warn(imxdma->dev, "%s: channel: %d couldn't xfer desc\n",
+ 				 __func__, imxdmac->channel);
+ 	}
 
 
