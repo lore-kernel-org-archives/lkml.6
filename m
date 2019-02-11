@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DABC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133F4C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20C221B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF85921B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900701;
-	bh=solmUYJmoAXlBx3fcMi3Ik7oo4BWKRqAIJlm0lHO8Bk=;
+	s=default; t=1549900707;
+	bh=skodRZHPagfcY5wFC5JBsGBnN9ZtHOFFfCiW5EYNEPw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gvz7D2d2EMfXsIwnoe0p6l6mUyiUcUd8mxWGUJ/Vm0y7QTJbPrSKhCmZm8LP+ah/I
-	 4AvPZNcHLzspiFeqTPjQAwfMe73E3C6MuvAaNtXmAIFo+9/vKyiS27IOq3Q51I9ou6
-	 0BGQTzbyqMhssznKj+BH+TYMd0kT+I9VHrgLZi50=
+	b=fwi+27mSJY4R4o3wd6qyhSoN4bMRAY4JB00uKanGIs692bVKX7EHn3jEjU2QEVZeW
+	 zESuEUCp/fqGcyKG3DbiWS2zV//Dnw+qm9gvEdscrZbPq0T6YE++SRzYLho4k6q9vO
+	 hyGio8K4hUaxsoHW0kSkjzRQ6dF+MloICY0mEZhE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730592AbfBKOdK (ORCPT
+        id S1730258AbfBKOc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40670 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:32:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729111AbfBKOdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:03 -0500
+        id S1730549AbfBKOcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:32:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70470214DA;
-        Mon, 11 Feb 2019 14:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CB8D20844;
+        Mon, 11 Feb 2019 14:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895582;
-        bh=solmUYJmoAXlBx3fcMi3Ik7oo4BWKRqAIJlm0lHO8Bk=;
+        s=default; t=1549895574;
+        bh=skodRZHPagfcY5wFC5JBsGBnN9ZtHOFFfCiW5EYNEPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fy2WiDbaMpRqIPdp2zfIb/XP/VmEGGPA3hqzz5suQ5kSGKiC7Sb0goSWMJl0DQuv6
-         TcK93TmCPXnNlqMLSgj0Pwdv5wTj985ReQkNlRdz95aRk+rZbk8YKm8eBtdaeKcxnV
-         OSWC/X4xnOebgBveuajZRbeRW509fqX9TX2VzH0o=
+        b=Vm11GPLgpMMnpONgZJWs3+rOla/9Nm42f18G8n7puv2nprrp1sxYBTdpPGjXby7RE
+         FtDJnyKCCTu5REn2g/3A8d9eDrDn2xhBO/hJ0vdX9zjs0ksKcua1Ln44ze2O+Rd/w7
+         JWKP1Lz1Xvopm2J7ScfztT6ClXiby5AkigpkPgl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 254/352] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
-Date:   Mon, 11 Feb 2019 15:18:01 +0100
-Message-Id: <20190211141903.249657548@linuxfoundation.org>
+Subject: [PATCH 4.20 243/352] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
+Date:   Mon, 11 Feb 2019 15:17:50 +0100
+Message-Id: <20190211141902.612334397@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,60 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9d880c5945c748d8edcac30965f3349a602158c4 ]
+[ Upstream commit 42f9b48cc5402be11d2364275eb18c257d2a79e8 ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
+only belong to the pin controller in the AO domain. With the current
+definition these pins cannot be referred to in .dts files as group
+(which is possible on GXBB and GXL for example).
 
-drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                                direction, DMA_CTRL_ACK);
-                                ^~~~~~~~~
-drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                                direction,
-                                ^~~~~~~~~
-2 warnings generated.
+Add a separate "gpio_aobus" function to fix the mapping between the pin
+controller and the GPIO pins in the AO domain. This is similar to how
+the GXBB and GXL drivers implement this functionality.
 
-dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
-Because we know the value of the dma_data_direction enum from the
-switch statement, we can just use the proper value from
-dma_transfer_direction so there is no more conversion.
-
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index d2663a4e1f5e..a92a66b1ff46 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -556,7 +556,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
- 		desc = dmaengine_prep_slave_sg(channel,
- 				ctx->device->dma.sg_src,
- 				ctx->device->dma.sg_src_len,
--				direction, DMA_CTRL_ACK);
-+				DMA_MEM_TO_DEV, DMA_CTRL_ACK);
- 		break;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
+index 86466173114d..e482672e833a 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+@@ -807,7 +807,9 @@ static const char * const gpio_groups[] = {
+ 	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
+ 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
+ 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
++};
  
- 	case DMA_FROM_DEVICE:
-@@ -580,7 +580,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
- 		desc = dmaengine_prep_slave_sg(channel,
- 				ctx->device->dma.sg_dst,
- 				ctx->device->dma.sg_dst_len,
--				direction,
-+				DMA_DEV_TO_MEM,
- 				DMA_CTRL_ACK |
- 				DMA_PREP_INTERRUPT);
++static const char * const gpio_aobus_groups[] = {
+ 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
+ 	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
+ 	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
+@@ -1030,6 +1032,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
+ };
  
+ static struct meson_pmx_func meson8_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(remote),
+ 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
