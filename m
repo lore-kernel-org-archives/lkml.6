@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65351C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B42DBC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3542F20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A1D20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895814;
-	bh=aeS0HaRu88W588LAV7Pqmmwb43YV6Uw7p9Mbe1DbYDE=;
+	s=default; t=1549895816;
+	bh=RGvVVdQSRR7FvcIEW6KyEwi9jK4bBCQJsv4MEHSrAD0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g1bKAC8NAiWK3Ipl54RjaBF9TjIb8GGIdGZ/WFYE9ivwS+5TH13hpPCJGUULWY9vv
-	 y62Dvh9dyRcU6xHaQSZl7h2Hb8sk8Wlo4C5DJ8fj2cdTIaRLCCXvyxxVrEv2P61mL5
-	 U1XpCiTGZiUSHX6tkorDTp0QLvuzu+31MV9ZB/YA=
+	b=ZDBxa2Z0r7S1ZqW+rV7oLmk1pEEfe/IGUQ5f7HKdigbModRpBYbGdTyHFCfvvEZq0
+	 oap1fDK4kViWduI4iwxVZ9hi/gj6IKUGtxKzf6TEOG8re4cp0Sh/nHoG0nKcUP23qG
+	 2C6rwiPQA/EwDmzQv2oPuX1COJJ+m8BooIC/ujVc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbfBKOgw (ORCPT
+        id S1731351AbfBKOgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:36:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46038 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:36:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731312AbfBKOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:48 -0500
+        id S1730424AbfBKOgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:36:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 440642081B;
-        Mon, 11 Feb 2019 14:36:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE80920844;
+        Mon, 11 Feb 2019 14:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895807;
-        bh=aeS0HaRu88W588LAV7Pqmmwb43YV6Uw7p9Mbe1DbYDE=;
+        s=default; t=1549895810;
+        bh=RGvVVdQSRR7FvcIEW6KyEwi9jK4bBCQJsv4MEHSrAD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJTwRxJ8uS2fNa80obyzCnis+MV0J3bJNF1WWiG71rNqpz2uVFCoGBfNxMIq3qo0L
-         3d4BeVYrih9ApSlCw8Lxc6aDy7IINoIfZIPbjOj8PpDGQMr7EywhMwNdDyaFDU/F68
-         2JFIkaNb9pCoKd2OwKNRL667NbZgCxR2CkS3eTlM=
+        b=hRGx0VsLFmW+ZwdV+TYfV0xAMxvkA3WzA3HP73z68B02A7lV6XqX7xU9KTTRHSydz
+         76Ki8OZ+BxGuzLuXw33xTVc0rSkVBr8vr+oG1BPLo3fK7fyjRrbkhYKJLaCQ0+IDou
+         q1PUyjoGNppXr6yita5/23dF3kvNdYNIC2SCqyMY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zheng Xiang <zhengxiang9@huawei.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.20 329/352] irqchip/gic-v3-its: Plug allocation race for devices sharing a DevID
-Date:   Mon, 11 Feb 2019 15:19:16 +0100
-Message-Id: <20190211141907.813555844@linuxfoundation.org>
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.20 330/352] arm64: dts: allwinner: a64: Fix USB OTG regulator
+Date:   Mon, 11 Feb 2019 15:19:17 +0100
+Message-Id: <20190211141907.896089827@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,145 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-commit 9791ec7df0e7b4d80706ccea8f24b6542f6059e9 upstream.
+commit b1360dcfdaa1d55952e5ec8dd9d99f88965d7ac9 upstream.
 
-On systems or VMs where multiple devices share a single DevID
-(because they sit behind a PCI bridge, or because the HW is
-broken in funky ways), we reuse the save its_device structure
-in order to reflect this.
+Currently, AXP803 driver assumes that reg_drivevbus is input which is
+wrong. Unfortunate consequence of that is that none of the USB ports
+work on the board, even USB HOST port, because USB PHY driver probing
+fails due to missing regulator.
 
-It turns out that there is a distinct lack of locking when looking
-up the its_device, and two device being probed concurrently can result
-in double allocations. That's obviously not nice.
+Fix that by adding "x-powers,drive-vbus-en" property to AXP803 node.
 
-A solution for this is to have a per-ITS mutex that serializes device
-allocation.
+Fixes: 14ff5d8f9151 ("arm64: dts: allwinner: a64: Orange Pi Win: Enable USB OTG socket")
 
-A similar issue exists on the freeing side, which can run concurrently
-with the allocation. On top of now taking the appropriate lock, we
-also make sure that a shared device is never freed, as we have no way
-to currently track the life cycle of such object.
-
-Reported-by: Zheng Xiang <zhengxiang9@huawei.com>
-Tested-by: Zheng Xiang <zhengxiang9@huawei.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |   32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -97,9 +97,14 @@ struct its_device;
-  * The ITS structure - contains most of the infrastructure, with the
-  * top-level MSI domain, the command queue, the collections, and the
-  * list of devices writing to it.
-+ *
-+ * dev_alloc_lock has to be taken for device allocations, while the
-+ * spinlock must be taken to parse data structures such as the device
-+ * list.
-  */
- struct its_node {
- 	raw_spinlock_t		lock;
-+	struct mutex		dev_alloc_lock;
- 	struct list_head	entry;
- 	void __iomem		*base;
- 	phys_addr_t		phys_base;
-@@ -156,6 +161,7 @@ struct its_device {
- 	void			*itt;
- 	u32			nr_ites;
- 	u32			device_id;
-+	bool			shared;
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -188,6 +188,7 @@
+ 		reg = <0x3a3>;
+ 		interrupt-parent = <&r_intc>;
+ 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
+ 	};
  };
  
- static struct {
-@@ -2422,6 +2428,7 @@ static int its_msi_prepare(struct irq_do
- 	struct its_device *its_dev;
- 	struct msi_domain_info *msi_info;
- 	u32 dev_id;
-+	int err = 0;
- 
- 	/*
- 	 * We ignore "dev" entierely, and rely on the dev_id that has
-@@ -2444,6 +2451,7 @@ static int its_msi_prepare(struct irq_do
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&its->dev_alloc_lock);
- 	its_dev = its_find_device(its, dev_id);
- 	if (its_dev) {
- 		/*
-@@ -2451,18 +2459,22 @@ static int its_msi_prepare(struct irq_do
- 		 * another alias (PCI bridge of some sort). No need to
- 		 * create the device.
- 		 */
-+		its_dev->shared = true;
- 		pr_debug("Reusing ITT for devID %x\n", dev_id);
- 		goto out;
- 	}
- 
- 	its_dev = its_create_device(its, dev_id, nvec, true);
--	if (!its_dev)
--		return -ENOMEM;
-+	if (!its_dev) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
- 
- 	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
- out:
-+	mutex_unlock(&its->dev_alloc_lock);
- 	info->scratchpad[0].ptr = its_dev;
--	return 0;
-+	return err;
- }
- 
- static struct msi_domain_ops its_msi_domain_ops = {
-@@ -2566,6 +2578,7 @@ static void its_irq_domain_free(struct i
- {
- 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
-+	struct its_node *its = its_dev->its;
- 	int i;
- 
- 	for (i = 0; i < nr_irqs; i++) {
-@@ -2580,8 +2593,14 @@ static void its_irq_domain_free(struct i
- 		irq_domain_reset_irq_data(data);
- 	}
- 
--	/* If all interrupts have been freed, start mopping the floor */
--	if (bitmap_empty(its_dev->event_map.lpi_map,
-+	mutex_lock(&its->dev_alloc_lock);
-+
-+	/*
-+	 * If all interrupts have been freed, start mopping the
-+	 * floor. This is conditionned on the device not being shared.
-+	 */
-+	if (!its_dev->shared &&
-+	    bitmap_empty(its_dev->event_map.lpi_map,
- 			 its_dev->event_map.nr_lpis)) {
- 		its_lpi_free(its_dev->event_map.lpi_map,
- 			     its_dev->event_map.lpi_base,
-@@ -2593,6 +2612,8 @@ static void its_irq_domain_free(struct i
- 		its_free_device(its_dev);
- 	}
- 
-+	mutex_unlock(&its->dev_alloc_lock);
-+
- 	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
- }
- 
-@@ -3517,6 +3538,7 @@ static int __init its_probe_one(struct r
- 	}
- 
- 	raw_spin_lock_init(&its->lock);
-+	mutex_init(&its->dev_alloc_lock);
- 	INIT_LIST_HEAD(&its->entry);
- 	INIT_LIST_HEAD(&its->its_device_list);
- 	typer = gic_read_typer(its_base + GITS_TYPER);
 
 
