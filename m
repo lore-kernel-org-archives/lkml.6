@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F13C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7F0C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 597092081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F95B2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896053;
-	bh=Iju7zvCK3IUyEXHXAavvQOMNcvWcKt3ISIkw3kWrNPg=;
+	s=default; t=1549896059;
+	bh=PydW0YDZknXimo8mvWD/NZEe7P9K2HpG6x63754TK5U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d8tZcLW2hTFlMjq02uTFFw5ucvG7NXWeCY8qOri0S7M9RrEKc4EiL3sioIzNQ+62t
-	 A8AZ8kQZ1qGzKovMJIexiSsekG7Q1Ox+aS+V9/DAGdeFKTFQW+av3YMTYU58n6PWqe
-	 TqdwuUD7NlEd9EL1qMznGFAC/QHHpe6ouU3WcLF8=
+	b=DxNzUj3ToHczrchOLPEQ68t57VcfV1XEdTnZY2+DjramrM9LOA0YSFcWmID4aTLYp
+	 hJ+7HB6zYKxB4p/3Iudb5Enkzt+uTHG5o1VBJ54rKe22feiDJTsFiTga2Vq4T/kEF+
+	 EA5StUMl9SxohqYRr79CdSUDVAkyGABqcrbhY3tE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731780AbfBKOkw (ORCPT
+        id S1732150AbfBKOk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:40:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51702 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:40:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732119AbfBKOkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:40:45 -0500
+        id S1732096AbfBKOky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:40:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE0B82082F;
-        Mon, 11 Feb 2019 14:40:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67DF22082F;
+        Mon, 11 Feb 2019 14:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896044;
-        bh=Iju7zvCK3IUyEXHXAavvQOMNcvWcKt3ISIkw3kWrNPg=;
+        s=default; t=1549896053;
+        bh=PydW0YDZknXimo8mvWD/NZEe7P9K2HpG6x63754TK5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EG517t4MOAjJc18jw1dF/ZGke8hEMszttHf9LSvg+CpTugkKIx+Ab/DJFaj3ekddK
-         cWmIRvVdYzxWW1cucj/Vl88Xv/iGeVIALfrrAY6mWclLqradSkAIA2gurHBeFqx3D4
-         nzjQ5yGQN2vFCTfbOxSWPzlfcOOldbgdUHbBclVE=
+        b=wtTX0xQRcrR/iqPhDAbgalQdVFJvGoylkqxtimopGReJIlZoBuqG9201nZdP0e6ft
+         BLXhJoL66T3+kb5AVg97gcMN3oZZKzDOySig1Sll+LfTDCC7opeRJhsvmA2ZTWIhzr
+         hLg+gqH4DnNFs5SgIjhvJzj+IM1ZneCk1hRElp+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/313] staging: erofs: fix the definition of DBG_BUGON
-Date:   Mon, 11 Feb 2019 15:15:33 +0100
-Message-Id: <20190211141857.302650912@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 028/313] MIPS: Boston: Disable EG20T prefetch
+Date:   Mon, 11 Feb 2019 15:15:08 +0100
+Message-Id: <20190211141855.302860400@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,46 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit eef168789866514e5d4316f030131c9fe65b643f ]
+[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
 
-It's better not to positively BUG_ON the kernel, however developers
-need a way to locate issues as soon as possible.
+The Intel EG20T Platform Controller Hub used on the MIPS Boston
+development board supports prefetching memory to optimize DMA transfers.
+Unfortunately for unknown reasons this doesn't work well with some MIPS
+CPUs such as the P6600, particularly when using an I/O Coherence Unit
+(IOCU) to provide cache-coherent DMA. In these systems it is common for
+DMA data to be lost, resulting in broken access to EG20T devices such as
+the MMC or SATA controllers.
 
-DBG_BUGON is introduced and it could only crash when EROFS_FS_DEBUG
-(EROFS developping feature) is on. It is helpful for developers
-to find and solve bugs quickly by eng builds.
+Support for a DT property to configure the prefetching was added a while
+back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
+device tree if passed") but we never added the DT snippet to make use of
+it. Add that now in order to disable the prefetching & fix DMA on the
+affected systems.
 
-Previously, DBG_BUGON is defined as ((void)0) if EROFS_FS_DEBUG is off,
-but some unused variable warnings as follows could occur:
-
-drivers/staging/erofs/unzip_vle.c: In function `init_alway:':
-drivers/staging/erofs/unzip_vle.c:61:33: warning: unused variable `work' [-Wunused-variable]
-  struct z_erofs_vle_work *const work =
-                                 ^~~~
-
-Fix it to #define DBG_BUGON(x) ((void)(x)).
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21068/
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/erofs/internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/boot/dts/img/boston.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 367b39fe46e5..e6313c54e3ad 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -39,7 +39,7 @@
- #define debugln(x, ...)         ((void)0)
+diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
+index 65af3f6ba81c..84328afa3a55 100644
+--- a/arch/mips/boot/dts/img/boston.dts
++++ b/arch/mips/boot/dts/img/boston.dts
+@@ -141,6 +141,12 @@
+ 				#size-cells = <2>;
+ 				#interrupt-cells = <1>;
  
- #define dbg_might_sleep()       ((void)0)
--#define DBG_BUGON(...)          ((void)0)
-+#define DBG_BUGON(x)            ((void)(x))
- #endif
- 
- #ifdef CONFIG_EROFS_FAULT_INJECTION
++				eg20t_phub@2,0,0 {
++					compatible = "pci8086,8801";
++					reg = <0x00020000 0 0 0 0>;
++					intel,eg20t-prefetch = <0>;
++				};
++
+ 				eg20t_mac@2,0,1 {
+ 					compatible = "pci8086,8802";
+ 					reg = <0x00020100 0 0 0 0>;
 -- 
 2.19.1
 
