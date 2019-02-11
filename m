@@ -2,301 +2,214 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660AEC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B3CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1815B21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:41:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dv0+q00f"
+	by mail.kernel.org (Postfix) with ESMTP id 0E53821B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbfBKQlw (ORCPT
+        id S1729087AbfBKQoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:41:52 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:58720 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfBKQlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:41:52 -0500
-Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 1BB6010C06E4;
-        Mon, 11 Feb 2019 08:41:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549903311; bh=fBVZ5ijoAMyIT1n3yfPcdbUEUPLWh1eYHuDbKsa91gs=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=dv0+q00fCFs4pjqEqjDW022Gj86wwmenhj7sxULppaLz9XTmnE1qwPgO+M5Snnh/5
-         3yAejhcnKuMHGnBULPbnX5bzljCKSP4D603vWHfQexIM/1JWUk5hSbU94MKZDRmI/I
-         59fXoxelopUD8kIBH9nnPjP7ck59qYrprejFu0XXCSEiIM/Yv5eg5ckhefoU6u7zpO
-         /jdc9ueytJT0JXdDaOni0f1/lGpIbm3ScBESJXngF58eOBW515ceZnB0NG13BDusPf
-         y+j8X5QjGliAATvF9a0v53fn1F1n1Ych188DsPxayjsZkOYknUv8iMQXuzN/u+Y7eb
-         ii535rHZSmDpg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 3013DA005A;
-        Mon, 11 Feb 2019 16:41:49 +0000 (UTC)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
- 11 Feb 2019 08:41:49 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Burton <paul.burton@mips.com>
-CC:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dma-mapping: add a kconfig symbol for
- arch_setup_dma_ops availability
-Thread-Topic: [PATCH 1/2] dma-mapping: add a kconfig symbol for
- arch_setup_dma_ops availability
-Thread-Index: AQHUvGGrA+k+qWH4WEmqF3XgiW9roA==
-Date:   Mon, 11 Feb 2019 16:41:49 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA230750146433294@US01WEMBX2.internal.synopsys.com>
-References: <20190204081420.15083-1-hch@lst.de>
- <20190204081420.15083-2-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Feb 2019 11:44:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:45291 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfBKQoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:44:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:44:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="143324624"
+Received: from genxfsim-desktop.iind.intel.com (HELO genxfsim-desktop) ([10.223.26.105])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Feb 2019 08:44:21 -0800
+Date:   Mon, 11 Feb 2019 22:11:18 +0530
+From:   Anshuman Gupta <anshuman.gupta@intel.com>
+To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
+        andy@infradead.org, linux-kernel@vger.kernel.org,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 09/10] platform/x86: intel_pmc_core: Add Package cstates
+ residency info
+Message-ID: <20190211164118.GA23796@genxfsim-desktop>
+References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+ <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC Eugeniy=0A=
-=0A=
-As resident ARC DMA expert can you please this a quick spin.=0A=
-=0A=
--Vineet=0A=
-=0A=
-On 2/4/19 12:14 AM, Christoph Hellwig wrote:=0A=
-> Signed-off-by: Christoph Hellwig <hch@lst.de>=0A=
-> ---=0A=
->  arch/arc/Kconfig                     |  1 +=0A=
->  arch/arc/include/asm/Kbuild          |  1 +=0A=
->  arch/arc/include/asm/dma-mapping.h   | 13 -------------=0A=
->  arch/arm/Kconfig                     |  1 +=0A=
->  arch/arm/include/asm/dma-mapping.h   |  4 ----=0A=
->  arch/arm64/Kconfig                   |  1 +=0A=
->  arch/arm64/include/asm/dma-mapping.h |  4 ----=0A=
->  arch/mips/Kconfig                    |  1 +=0A=
->  arch/mips/include/asm/dma-mapping.h  | 10 ----------=0A=
->  arch/mips/mm/dma-noncoherent.c       |  8 ++++++++=0A=
->  include/linux/dma-mapping.h          | 12 ++++++++----=0A=
->  kernel/dma/Kconfig                   |  3 +++=0A=
->  12 files changed, 24 insertions(+), 35 deletions(-)=0A=
->  delete mode 100644 arch/arc/include/asm/dma-mapping.h=0A=
->=0A=
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig=0A=
-> index 376366a7db81..2ab27d88eb1c 100644=0A=
-> --- a/arch/arc/Kconfig=0A=
-> +++ b/arch/arc/Kconfig=0A=
-> @@ -11,6 +11,7 @@ config ARC=0A=
->  	select ARC_TIMERS=0A=
->  	select ARCH_HAS_DMA_COHERENT_TO_PFN=0A=
->  	select ARCH_HAS_PTE_SPECIAL=0A=
-> +	select ARCH_HAS_SETUP_DMA_OPS=0A=
->  	select ARCH_HAS_SYNC_DMA_FOR_CPU=0A=
->  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE=0A=
->  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC=0A=
-> diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild=0A=
-> index caa270261521..b41f8881ecc8 100644=0A=
-> --- a/arch/arc/include/asm/Kbuild=0A=
-> +++ b/arch/arc/include/asm/Kbuild=0A=
-> @@ -3,6 +3,7 @@ generic-y +=3D bugs.h=0A=
->  generic-y +=3D compat.h=0A=
->  generic-y +=3D device.h=0A=
->  generic-y +=3D div64.h=0A=
-> +generic-y +=3D dma-mapping.h=0A=
->  generic-y +=3D emergency-restart.h=0A=
->  generic-y +=3D extable.h=0A=
->  generic-y +=3D ftrace.h=0A=
-> diff --git a/arch/arc/include/asm/dma-mapping.h b/arch/arc/include/asm/dm=
-a-mapping.h=0A=
-> deleted file mode 100644=0A=
-> index c946c0a83e76..000000000000=0A=
-> --- a/arch/arc/include/asm/dma-mapping.h=0A=
-> +++ /dev/null=0A=
-> @@ -1,13 +0,0 @@=0A=
-> -// SPDX-License-Identifier:  GPL-2.0=0A=
-> -// (C) 2018 Synopsys, Inc. (www.synopsys.com)=0A=
-> -=0A=
-> -#ifndef ASM_ARC_DMA_MAPPING_H=0A=
-> -#define ASM_ARC_DMA_MAPPING_H=0A=
-> -=0A=
-> -#include <asm-generic/dma-mapping.h>=0A=
-> -=0A=
-> -void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,=0A=
-> -			const struct iommu_ops *iommu, bool coherent);=0A=
-> -#define arch_setup_dma_ops arch_setup_dma_ops=0A=
-> -=0A=
-> -#endif=0A=
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig=0A=
-> index 664e918e2624..c1cf44f00870 100644=0A=
-> --- a/arch/arm/Kconfig=0A=
-> +++ b/arch/arm/Kconfig=0A=
-> @@ -12,6 +12,7 @@ config ARM=0A=
->  	select ARCH_HAS_MEMBARRIER_SYNC_CORE=0A=
->  	select ARCH_HAS_PTE_SPECIAL if ARM_LPAE=0A=
->  	select ARCH_HAS_PHYS_TO_DMA=0A=
-> +	select ARCH_HAS_SETUP_DMA_OPS=0A=
->  	select ARCH_HAS_SET_MEMORY=0A=
->  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL=0A=
->  	select ARCH_HAS_STRICT_MODULE_RWX if MMU=0A=
-> diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dm=
-a-mapping.h=0A=
-> index 31d3b96f0f4b..a224b6e39e58 100644=0A=
-> --- a/arch/arm/include/asm/dma-mapping.h=0A=
-> +++ b/arch/arm/include/asm/dma-mapping.h=0A=
-> @@ -96,10 +96,6 @@ static inline unsigned long dma_max_pfn(struct device =
-*dev)=0A=
->  }=0A=
->  #define dma_max_pfn(dev) dma_max_pfn(dev)=0A=
->  =0A=
-> -#define arch_setup_dma_ops arch_setup_dma_ops=0A=
-> -extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 siz=
-e,=0A=
-> -			       const struct iommu_ops *iommu, bool coherent);=0A=
-> -=0A=
->  #ifdef CONFIG_MMU=0A=
->  #define arch_teardown_dma_ops arch_teardown_dma_ops=0A=
->  extern void arch_teardown_dma_ops(struct device *dev);=0A=
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig=0A=
-> index a4168d366127..63909f318d56 100644=0A=
-> --- a/arch/arm64/Kconfig=0A=
-> +++ b/arch/arm64/Kconfig=0A=
-> @@ -22,6 +22,7 @@ config ARM64=0A=
->  	select ARCH_HAS_KCOV=0A=
->  	select ARCH_HAS_MEMBARRIER_SYNC_CORE=0A=
->  	select ARCH_HAS_PTE_SPECIAL=0A=
-> +	select ARCH_HAS_SETUP_DMA_OPS=0A=
->  	select ARCH_HAS_SET_MEMORY=0A=
->  	select ARCH_HAS_STRICT_KERNEL_RWX=0A=
->  	select ARCH_HAS_STRICT_MODULE_RWX=0A=
-> diff --git a/arch/arm64/include/asm/dma-mapping.h b/arch/arm64/include/as=
-m/dma-mapping.h=0A=
-> index 95dbf3ef735a..de96507ee2c1 100644=0A=
-> --- a/arch/arm64/include/asm/dma-mapping.h=0A=
-> +++ b/arch/arm64/include/asm/dma-mapping.h=0A=
-> @@ -29,10 +29,6 @@ static inline const struct dma_map_ops *get_arch_dma_o=
-ps(struct bus_type *bus)=0A=
->  	return NULL;=0A=
->  }=0A=
->  =0A=
-> -void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,=0A=
-> -			const struct iommu_ops *iommu, bool coherent);=0A=
-> -#define arch_setup_dma_ops	arch_setup_dma_ops=0A=
-> -=0A=
->  #ifdef CONFIG_IOMMU_DMA=0A=
->  void arch_teardown_dma_ops(struct device *dev);=0A=
->  #define arch_teardown_dma_ops	arch_teardown_dma_ops=0A=
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig=0A=
-> index 0d14f51d0002..dc5d70f674e0 100644=0A=
-> --- a/arch/mips/Kconfig=0A=
-> +++ b/arch/mips/Kconfig=0A=
-> @@ -1118,6 +1118,7 @@ config DMA_MAYBE_COHERENT=0A=
->  =0A=
->  config DMA_PERDEV_COHERENT=0A=
->  	bool=0A=
-> +	select ARCH_HAS_SETUP_DMA_OPS=0A=
->  	select DMA_NONCOHERENT=0A=
->  =0A=
->  config DMA_NONCOHERENT=0A=
-> diff --git a/arch/mips/include/asm/dma-mapping.h b/arch/mips/include/asm/=
-dma-mapping.h=0A=
-> index 20dfaad3a55d..34de7b17b41b 100644=0A=
-> --- a/arch/mips/include/asm/dma-mapping.h=0A=
-> +++ b/arch/mips/include/asm/dma-mapping.h=0A=
-> @@ -15,14 +15,4 @@ static inline const struct dma_map_ops *get_arch_dma_o=
-ps(struct bus_type *bus)=0A=
->  #endif=0A=
->  }=0A=
->  =0A=
-> -#define arch_setup_dma_ops arch_setup_dma_ops=0A=
-> -static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,=
-=0A=
-> -				      u64 size, const struct iommu_ops *iommu,=0A=
-> -				      bool coherent)=0A=
-> -{=0A=
-> -#ifdef CONFIG_DMA_PERDEV_COHERENT=0A=
-> -	dev->dma_coherent =3D coherent;=0A=
-> -#endif=0A=
-> -}=0A=
-> -=0A=
->  #endif /* _ASM_DMA_MAPPING_H */=0A=
-> diff --git a/arch/mips/mm/dma-noncoherent.c b/arch/mips/mm/dma-noncoheren=
-t.c=0A=
-> index cb38461391cb..0606fc87b294 100644=0A=
-> --- a/arch/mips/mm/dma-noncoherent.c=0A=
-> +++ b/arch/mips/mm/dma-noncoherent.c=0A=
-> @@ -159,3 +159,11 @@ void arch_dma_cache_sync(struct device *dev, void *v=
-addr, size_t size,=0A=
->  =0A=
->  	dma_sync_virt(vaddr, size, direction);=0A=
->  }=0A=
-> +=0A=
-> +#ifdef CONFIG_DMA_PERDEV_COHERENT=0A=
-> +void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,=0A=
-> +		const struct iommu_ops *iommu, bool coherent)=0A=
-> +{=0A=
-> +	dev->dma_coherent =3D coherent;=0A=
-> +}=0A=
-> +#endif=0A=
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h=0A=
-> index b904d55247ab..2b20d60e6158 100644=0A=
-> --- a/include/linux/dma-mapping.h=0A=
-> +++ b/include/linux/dma-mapping.h=0A=
-> @@ -671,11 +671,15 @@ static inline int dma_coerce_mask_and_coherent(stru=
-ct device *dev, u64 mask)=0A=
->  	return dma_set_mask_and_coherent(dev, mask);=0A=
->  }=0A=
->  =0A=
-> -#ifndef arch_setup_dma_ops=0A=
-> +#ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS=0A=
-> +void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,=0A=
-> +		const struct iommu_ops *iommu, bool coherent);=0A=
-> +#else=0A=
->  static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,=
-=0A=
-> -				      u64 size, const struct iommu_ops *iommu,=0A=
-> -				      bool coherent) { }=0A=
-> -#endif=0A=
-> +		u64 size, const struct iommu_ops *iommu, bool coherent)=0A=
-> +{=0A=
-> +}=0A=
-> +#endif /* CONFIG_ARCH_HAS_SETUP_DMA_OPS */=0A=
->  =0A=
->  #ifndef arch_teardown_dma_ops=0A=
->  static inline void arch_teardown_dma_ops(struct device *dev) { }=0A=
-> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig=0A=
-> index ca88b867e7fe..c44599d128e8 100644=0A=
-> --- a/kernel/dma/Kconfig=0A=
-> +++ b/kernel/dma/Kconfig=0A=
-> @@ -19,6 +19,9 @@ config ARCH_HAS_DMA_COHERENCE_H=0A=
->  config HAVE_GENERIC_DMA_COHERENT=0A=
->  	bool=0A=
->  =0A=
-> +config ARCH_HAS_SETUP_DMA_OPS=0A=
-> +	bool=0A=
-> +=0A=
->  config ARCH_HAS_SYNC_DMA_FOR_DEVICE=0A=
->  	bool=0A=
->  =0A=
-=0A=
+On Fri, Feb 01, 2019 at 01:02:33PM +0530, Rajneesh Bhardwaj wrote:
+> This patch introduces a new debugfs entry to read current Package
+> cstate residency counters. A similar variant of this patch was discussed
+> earlier "https://patchwork.kernel.org/patch/9908563/" but didn't make it
+> into mainline for various reasons. Current version only adds debugfs
+> entry which is quite useful for S0ix debug but excludes the exported API
+> that was there in initial version. Though there are tools like turbostat
+> and socwatch which can also show this info but sometimes its more
+> practical to have it here as it's hard to switch between various tools for
+> S0ix debug when pmc_core driver is the primary debug tool. Internal and
+> external customers have requested for this patch to be included in the
+> PMC driver on many occasions and Google Chrome OS team has already included
+> it in their builds. This becomes handy when requesting logs from external
+> customers who may not always have above mentioned tools in their integrated
+> kernel builds.
+> 
+> Package cstate residency MSRs provide useful debug information about
+> system idle states. In idle states system must enter deeper Package
+> cstates. Package cstates depend not only on Core cstates but also on
+> various IP block's power gating status and LTR values.
+> 
+> For Intel Core SoCs Package C10 entry is a must for deeper sleep states
+> such as S0ix. "Suspend-to-idle"  should ideally take this path:
+> PC0 -> PC10 -> S0ix. For S0ix debug, its logical to check for
+> Package C10 residency first if for some reason system fails to enter S0ix.
+> 
+> Please refer to this link for MSR details:
+> https://software.intel.com/sites/default/files/managed/22/0d/335592-sdm-vol-4.pdf
+> 
+> Usage:
+> cat /sys/kernel/debug/pmc_core/package_cstate_show
+> Package C2       : 0xec2e21735f
+> Package C3       : 0xc30113ba4
+> Package C6       : 0x9ef4be15c5
+> Package C7       : 0x1e011904
+> Package C8       : 0x3c5653cfe5a
+> Package C9       : 0x0
+> Package C10      : 0x16fff4289
+> 
+> Cc: Arjan van de Ven <arjan@linux.intel.com>
+> Cc: "David E. Box" <david.e.box@intel.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: Anshuman Gupta <anshuman.gupta@intel.com>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+  Tested-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
+  Acked-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
+> ---
+>  drivers/platform/x86/intel_pmc_core.c | 38 +++++++++++++++++++++++++++
+>  drivers/platform/x86/intel_pmc_core.h |  1 +
+>  2 files changed, 39 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 400946b7a3b5..4e7aa1711148 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -22,11 +22,24 @@
+>  
+>  #include <asm/cpu_device_id.h>
+>  #include <asm/intel-family.h>
+> +#include <asm/msr.h>
+>  
+>  #include "intel_pmc_core.h"
+>  
+>  static struct pmc_dev pmc;
+>  
+> +/* PKGC MSRs are common across Intel Core SoCs */
+> +static const struct pmc_bit_map msr_map[] = {
+> +	{"Package C2",                  MSR_PKG_C2_RESIDENCY},
+> +	{"Package C3",                  MSR_PKG_C3_RESIDENCY},
+> +	{"Package C6",                  MSR_PKG_C6_RESIDENCY},
+> +	{"Package C7",                  MSR_PKG_C7_RESIDENCY},
+> +	{"Package C8",                  MSR_PKG_C8_RESIDENCY},
+> +	{"Package C9",                  MSR_PKG_C9_RESIDENCY},
+> +	{"Package C10",                 MSR_PKG_C10_RESIDENCY},
+> +	{}
+> +};
+> +
+>  static const struct pmc_bit_map spt_pll_map[] = {
+>  	{"MIPI PLL",			SPT_PMC_BIT_MPHY_CMN_LANE0},
+>  	{"GEN2 USB2PCIE2 PLL",		SPT_PMC_BIT_MPHY_CMN_LANE1},
+> @@ -129,6 +142,7 @@ static const struct pmc_reg_map spt_reg_map = {
+>  	.mphy_sts = spt_mphy_map,
+>  	.pll_sts = spt_pll_map,
+>  	.ltr_show_sts = spt_ltr_show_map,
+> +	.msr_sts = msr_map,
+>  	.slp_s0_offset = SPT_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>  	.ltr_ignore_offset = SPT_PMC_LTR_IGNORE_OFFSET,
+>  	.regmap_length = SPT_PMC_MMIO_REG_LEN,
+> @@ -318,6 +332,7 @@ static const struct pmc_reg_map cnp_reg_map = {
+>  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>  	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+>  	.ltr_show_sts = cnp_ltr_show_map,
+> +	.msr_sts = msr_map,
+>  	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+> @@ -333,6 +348,7 @@ static const struct pmc_reg_map icl_reg_map = {
+>  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>  	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+>  	.ltr_show_sts = cnp_ltr_show_map,
+> +	.msr_sts = msr_map,
+>  	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+> @@ -709,6 +725,25 @@ static int pmc_core_ltr_show(struct seq_file *s, void *unused)
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(pmc_core_ltr);
+>  
+> +static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
+> +{
+> +	struct pmc_dev *pmcdev = s->private;
+> +	const struct pmc_bit_map *map = pmcdev->map->msr_sts;
+> +	u64 pcstate_count;
+> +	int index;
+> +
+> +	for (index = 0; map[index].name ; index++) {
+> +		if (rdmsrl_safe(map[index].bit_mask, &pcstate_count))
+> +			continue;
+> +
+> +		seq_printf(s, "%-8s : 0x%llx\n", map[index].name,
+> +			   pcstate_count);
+> +	}
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(pmc_core_pkgc);
+> +
+>  static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+>  {
+>  	debugfs_remove_recursive(pmcdev->dbgfs_dir);
+> @@ -735,6 +770,9 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+>  
+>  	debugfs_create_file("ltr_show", 0444, dir, pmcdev, &pmc_core_ltr_fops);
+>  
+> +	debugfs_create_file("package_cstate_show", 0444, dir, pmcdev,
+> +			    &pmc_core_pkgc_fops);
+> +
+>  	if (pmcdev->map->pll_sts)
+>  		debugfs_create_file("pll_status", 0444, dir, pmcdev,
+>  				    &pmc_core_pll_fops);
+> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+> index 78dd4229489d..6f1b64808075 100644
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -214,6 +214,7 @@ struct pmc_reg_map {
+>  	const struct pmc_bit_map *pll_sts;
+>  	const struct pmc_bit_map **slps0_dbg_maps;
+>  	const struct pmc_bit_map *ltr_show_sts;
+> +	const struct pmc_bit_map *msr_sts;
+>  	const u32 slp_s0_offset;
+>  	const u32 ltr_ignore_offset;
+>  	const int regmap_length;
+> -- 
+> 2.17.1
+> 
+
+-- 
