@@ -2,144 +2,112 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAFDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893BBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 852D021B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5733A2186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549913530;
+	bh=cfX8DX3l2wzEnNG//tlP5z7+OR8oD2yFr0C+I8fn1hA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bO+RC9mfTeaRB4F+13deiIyVIbqDEZngmqFJyNC8KB7RubnpGn2Deouwp83dx703W
+	 DQnP2zReMxr1msSXTjATUQNJ0JtD2eNACRXEIFZciA7Jgrqol65l5fcUeYlyAWUKHL
+	 TLCxy2fC/Ew47Uvr+Cs5OPP2U30q9sXF4K1/VKIs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388456AbfBKTbx (ORCPT
+        id S2388471AbfBKTcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:31:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38802 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 14:32:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727862AbfBKTbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:31:52 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727862AbfBKTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:32:06 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D62ECC0CD165;
-        Mon, 11 Feb 2019 19:31:51 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA6275C236;
-        Mon, 11 Feb 2019 19:31:49 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 2/2] locking/rwsem: Optimize down_read_trylock()
-Date:   Mon, 11 Feb 2019 14:31:26 -0500
-Message-Id: <1549913486-16799-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1549913486-16799-1-git-send-email-longman@redhat.com>
-References: <1549913486-16799-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 11 Feb 2019 19:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13BD12186A;
+        Mon, 11 Feb 2019 19:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549913526;
+        bh=cfX8DX3l2wzEnNG//tlP5z7+OR8oD2yFr0C+I8fn1hA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UHy7ykWYPWae0ll8Zqzz+HFhtWiyOmsz0DMBKxKLqNBWTwiXu/IzJGO0/SujmU5w3
+         w/faDZbZEcE+RT4DpsE0VvWOKv7QDQagVI2ZXfTzewJ4rOozFHnEroxwdjWgJfDA1J
+         Z6iHIO2vrLIdBz8HnYu08RyICDB7tn0f/kDNpra8=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 63360410D5; Mon, 11 Feb 2019 16:32:02 -0300 (-03)
+Date:   Mon, 11 Feb 2019 16:32:02 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190211193202.GG3269@kernel.org>
+References: <20190204114144.GC18141@krava>
+ <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org>
+ <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava>
+ <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava>
+ <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+ <20190211185306.GD5046@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211185306.GD5046@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify __down_read_trylock() to make it generate slightly better code
-(smaller and maybe a tiny bit faster).
+Em Mon, Feb 11, 2019 at 07:53:06PM +0100, Jiri Olsa escreveu:
+> On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
+> > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
+> > > I think all could be added and worked around with exception
+> > > of BUILD_ID, which we store at the end (after processing
+> > > all data) and we need it early in the report phase
 
-Before this patch, down_read_trylock:
+> > Buildids are injected after the fact via perf inject when in pipe mode.
 
-   0x0000000000000000 <+0>:     callq  0x5 <down_read_trylock+5>
-   0x0000000000000005 <+5>:     jmp    0x18 <down_read_trylock+24>
-   0x0000000000000007 <+7>:     lea    0x1(%rdx),%rcx
-   0x000000000000000b <+11>:    mov    %rdx,%rax
-   0x000000000000000e <+14>:    lock cmpxchg %rcx,(%rdi)
-   0x0000000000000013 <+19>:    cmp    %rax,%rdx
-   0x0000000000000016 <+22>:    je     0x23 <down_read_trylock+35>
-   0x0000000000000018 <+24>:    mov    (%rdi),%rdx
-   0x000000000000001b <+27>:    test   %rdx,%rdx
-   0x000000000000001e <+30>:    jns    0x7 <down_read_trylock+7>
-   0x0000000000000020 <+32>:    xor    %eax,%eax
-   0x0000000000000022 <+34>:    retq
-   0x0000000000000023 <+35>:    mov    %gs:0x0,%rax
-   0x000000000000002c <+44>:    or     $0x3,%rax
-   0x0000000000000030 <+48>:    mov    %rax,0x20(%rdi)
-   0x0000000000000034 <+52>:    mov    $0x1,%eax
-   0x0000000000000039 <+57>:    retq
+> > > maybe it's time to re-think that buildid -> mmap event
+> > > association again, because it's pain in current implementation
+> > > as well
 
-After patch, down_read_trylock:
+> > Sure, but what do you propose?
 
-   0x0000000000000000 <+0>:     callq  0x5 <down_read_trylock+5>
-   0x0000000000000005 <+5>:     mov    (%rdi),%rax
-   0x0000000000000008 <+8>:     test   %rax,%rax
-   0x000000000000000b <+11>:    js     0x2f <down_read_trylock+47>
-   0x000000000000000d <+13>:    lea    0x1(%rax),%rdx
-   0x0000000000000011 <+17>:    lock cmpxchg %rdx,(%rdi)
-   0x0000000000000016 <+22>:    jne    0x8 <down_read_trylock+8>
-   0x0000000000000018 <+24>:    mov    %gs:0x0,%rax
-   0x0000000000000021 <+33>:    or     $0x3,%rax
-   0x0000000000000025 <+37>:    mov    %rax,0x20(%rdi)
-   0x0000000000000029 <+41>:    mov    $0x1,%eax
-   0x000000000000002e <+46>:    retq
-   0x000000000000002f <+47>:    xor    %eax,%eax
-   0x0000000000000031 <+49>:    retq
+> this:
+> 
+> > > looks like bpf code is actualy getting build ids and storing
+> > > it for the callchains in kernel.. we can check if we can do
+> > > something similar for mmap events
 
-By using a rwsem microbenchmark, the down_read_trylock() rate on a
-x86-64 system before and after the patch were:
+kernel/bpf/stackmap.c
 
-                 Before Patch    After Patch
-   # of Threads     rlock           rlock
-   ------------     -----           -----
-        1           27,787          28,259
-        2            8,359           9,234
+/* Parse build ID from 64-bit ELF */
+static int stack_map_get_build_id_64(void *page_addr,
+                                     unsigned char *build_id)
 
-On a ARM64 system, the performance results were:
+yeah, wasn't aware of that, good thing doing backports, huh? :-)
 
-                 Before Patch    After Patch
-   # of Threads     rlock           rlock
-   ------------     -----           -----
-        1           24,155          25,000
-        2            6,820           8,699
+So do you thing about having a PERF_SAMPLE_BUILDID in sample_type and go
+and stash that thing in PERF_RECORD_MMAP2?
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/rwsem.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index 067e265..028bc33 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -175,11 +175,11 @@ static inline int __down_read_killable(struct rw_semaphore *sem)
- 
- static inline int __down_read_trylock(struct rw_semaphore *sem)
- {
--	long tmp;
-+	long tmp = atomic_long_read(&sem->count);
- 
--	while ((tmp = atomic_long_read(&sem->count)) >= 0) {
--		if (tmp == atomic_long_cmpxchg_acquire(&sem->count, tmp,
--				   tmp + RWSEM_ACTIVE_READ_BIAS)) {
-+	while (tmp >= 0) {
-+		if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
-+					tmp + RWSEM_ACTIVE_READ_BIAS)) {
- 			return 1;
- 		}
- 	}
--- 
-1.8.3.1
-
+- Arnaldo
