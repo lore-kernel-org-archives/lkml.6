@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EE1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8746C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB442229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AB2A222A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896997;
-	bh=Ca/mosViybdn5KNL/uUS1wAIWa+Bvp5RC3a/HCE9uPQ=;
+	s=default; t=1549897000;
+	bh=NbvDV21sUjvgGSqyz98zIZ/vew5igTVlPA0iJzPK/KI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=llII76769UzUATyHfg5ZahHLP5m/LGa9l4XPfnkFnhAtdOj1YMpqvhncVQMB6Keyw
-	 qqTPp+tHfjF/8DyN8oqrfsS9tGgpFR5mMTGB4u6hRCfeb0zO+iY281xLUkeTQ4hfIU
-	 nhejRvbVUSCPlwoN8zZOAeZDaX6fSBAyVn1AH+t4=
+	b=h6P5vLBSAQWe3VHcwZVXvsxxzmLvkqxyboZmfW7RJCcmd1wA6ET5kpyXden6HRFoQ
+	 +F4Ft6DCNIhx/rWZt6xUg50CXesi8+Nc0v1ayM7pLUGQfrTHIlUGA3xxXZN5N/0syr
+	 rw0nub9zYCZE1C1uHD/QJ2Yf2yyWyBh1Bf3yyB0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388558AbfBKO4f (ORCPT
+        id S2389209AbfBKO4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:56:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43732 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:56:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388780AbfBKO4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:56:30 -0500
+        id S2388780AbfBKO4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:56:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79CDF2229E;
-        Mon, 11 Feb 2019 14:56:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5358F222A1;
+        Mon, 11 Feb 2019 14:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896990;
-        bh=Ca/mosViybdn5KNL/uUS1wAIWa+Bvp5RC3a/HCE9uPQ=;
+        s=default; t=1549896995;
+        bh=NbvDV21sUjvgGSqyz98zIZ/vew5igTVlPA0iJzPK/KI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a34CKk5zXmdJO9A/RsBu2GlGs3X/wpvLyPdSK0lW9mQvKhMDg8Cnk4EWz9U1sZzlM
-         r1kTEyCrt59QO5V7iSKAf8r4AkV6XDgbwTlGhJuN6PpSoDJnKtQCX6xH/xheAriYKX
-         Jl2RwVq4c4lqe1Smhqg9uE7QErydGKPXp/j1yjDo=
+        b=QoHxzvl9etgGTZ/gaAEc896b0eY6Bp9fcSw0Bmz13/uxOGwm/c8vz5esKuOrGuyhS
+         blEIa8/zX7gwVj9j5hLPdC7vvOUC4V+tTGMer13MOsfQKEMok6jmUayxd5iLjokXVJ
+         yh8WAnNLBoFWqvAwnPRSBlYO/2C54mOdIXTyoe0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 024/205] platform/chrome: dont report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
-Date:   Mon, 11 Feb 2019 15:17:02 +0100
-Message-Id: <20190211141828.701928806@linuxfoundation.org>
+Subject: [PATCH 4.14 026/205] usbnet: smsc95xx: fix rx packet alignment
+Date:   Mon, 11 Feb 2019 15:17:04 +0100
+Message-Id: <20190211141829.419580083@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,72 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6ad16b78a039b45294b1ad5d69c14ac57b2fe706 ]
+[ Upstream commit 810eeb1f41a9a272eedc94ca18c072e75678ede4 ]
 
-EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
-reasons, and there are very few cases in which they should be treated as
-wakeup interrupts (particularly, when a certain
-MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
-mainline cros_ec_sensor driver yet). Most of the time, they are benign
-sensor readings. In any case, the top-level cros_ec device doesn't know
-enough to determine that they should wake the system, and so it should
-not report the event. This would be the job of the cros_ec_sensors
-driver to parse.
+The smsc95xx driver already takes into account the NET_IP_ALIGN
+parameter when setting up the receive packet data, which means
+we do not need to worry about aligning the packets in the usbnet
+driver.
 
-This patch adds checks to cros_ec_get_next_event() such that it doesn't
-signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
+Adding the EVENT_NO_IP_ALIGN means that the IPv4 header is now
+passed to the ip_rcv() routine with the start on an aligned address.
 
-This patch is particularly relevant on devices like Scarlet (Rockchip
-RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
-reports sensor events much more frequently. This was causing
-/sys/power/wakeup_count to increase very frequently, often needlessly
-interrupting our ability to suspend the system.
+Tested on Raspberry Pi B3.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/net/usb/smsc95xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index e7bbdf947bbc..2ac4a7178470 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -551,6 +551,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 2f65975a121f..fc48da1c702d 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -1295,6 +1295,7 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 		dev->net->features |= NETIF_F_RXCSUM;
  
- int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- {
-+	u8 event_type;
- 	u32 host_event;
- 	int ret;
+ 	dev->net->hw_features = NETIF_F_IP_CSUM | NETIF_F_RXCSUM;
++	set_bit(EVENT_NO_IP_ALIGN, &dev->flags);
  
-@@ -570,11 +571,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- 		return ret;
+ 	smsc95xx_init_mac_address(dev);
  
- 	if (wake_event) {
-+		event_type = ec_dev->event_data.event_type;
- 		host_event = cros_ec_get_host_event(ec_dev);
- 
--		/* Consider non-host_event as wake event */
--		*wake_event = !host_event ||
--			      !!(host_event & ec_dev->host_event_wake_mask);
-+		/*
-+		 * Sensor events need to be parsed by the sensor sub-device.
-+		 * Defer them, and don't report the wakeup here.
-+		 */
-+		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
-+			*wake_event = false;
-+		/* Masked host-events should not count as wake events. */
-+		else if (host_event &&
-+			 !(host_event & ec_dev->host_event_wake_mask))
-+			*wake_event = false;
-+		/* Consider all other events as wake events. */
-+		else
-+			*wake_event = true;
- 	}
- 
- 	return ret;
 -- 
 2.19.1
 
