@@ -2,149 +2,85 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEAFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2405C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204F521B1C
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB90921B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfBKNef (ORCPT
+        id S1728013AbfBKNep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:34:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38829 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfBKNef (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:34:35 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BDYACB3552753
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 11 Feb 2019 05:34:11 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BDYA9r3552750;
-        Mon, 11 Feb 2019 05:34:10 -0800
-Date:   Mon, 11 Feb 2019 05:34:10 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Aubrey Li <tipbot@zytor.com>
-Message-ID: <tip-2f7726f955572e587d5f50fbe9b2deed5334bd90@git.kernel.org>
-Cc:     oleg@redhat.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com,
-        dave.hansen@intel.com, tim.c.chen@linux.intel.com, luto@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        dave.hansen@linux.intel.com, fenghua.yu@intel.com,
-        aubrey.li@intel.com, aubrey.li@linux.intel.com,
-        arjan@linux.intel.com, bp@alien8.de
-Reply-To: luto@kernel.org, tglx@linutronix.de, peterz@infradead.org,
-          oleg@redhat.com, hpa@zytor.com, torvalds@linux-foundation.org,
-          dave.hansen@intel.com, tim.c.chen@linux.intel.com, bp@alien8.de,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          dave.hansen@linux.intel.com, fenghua.yu@intel.com,
-          aubrey.li@intel.com, aubrey.li@linux.intel.com,
-          arjan@linux.intel.com
-In-Reply-To: <20190117183822.31333-1-aubrey.li@intel.com>
-References: <20190117183822.31333-1-aubrey.li@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/fpu: Track AVX-512 usage of tasks
-Git-Commit-ID: 2f7726f955572e587d5f50fbe9b2deed5334bd90
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Feb 2019 08:34:45 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:64132 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727728AbfBKNeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:34:44 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 8433B13F86F;
+        Mon, 11 Feb 2019 14:33:49 +0100 (CET)
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v5 0/2] Clean up UFSHC driver
+To:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Ohad Sharabi <ohad.sharabi@wdc.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        Gilad Broner <gbroner@codeaurora.org>,
+        Raviv Shvili <rshvili@codeaurora.org>,
+        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+Message-ID: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
+Date:   Mon, 11 Feb 2019 14:31:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2f7726f955572e587d5f50fbe9b2deed5334bd90
-Gitweb:     https://git.kernel.org/tip/2f7726f955572e587d5f50fbe9b2deed5334bd90
-Author:     Aubrey Li <aubrey.li@intel.com>
-AuthorDate: Fri, 18 Jan 2019 02:38:20 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Feb 2019 14:28:56 +0100
+Casting a wide net to get as many eyeballs on the subject as possible.
 
-x86/fpu: Track AVX-512 usage of tasks
+I'm splitting this mini series off from the main "UFS on APQ8098/MSM8998"
+as it's 1) ufs/scsi specific 2) controversial (to my surprise)
 
-User space tools which do automated task placement need information
-about AVX-512 usage of tasks, because AVX-512 usage could cause core
-turbo frequency drop and impact the running task on the sibling CPU.
+Please send all your Reviewed-by: tags if you agree with the patch,
+and/or voice your concerns ASAP.
 
-The XSAVE hardware structure has bits that indicate when valid state
-is present in registers unique to AVX-512 use.  Use these bits to
-indicate when AVX-512 has been in use and add per-task AVX-512 state
-timestamp tracking to context switch.
+This series removes the "disable-VCCQ-power-rail-for-some-Flash-chips" quirk,
+and cleans up after the dust settles.
 
-Well-written AVX-512 applications are expected to clear the AVX-512
-state when not actively using AVX-512 registers, so the tracking
-mechanism is imprecise and can theoretically miss AVX-512 usage during
-context switch. But it has been measured to be precise enough to be
-useful under real-world workloads like tensorflow and linpack.
+Marc Gonzalez (2):
+  scsi: ufs: Do not disable vccq in UFSHC driver
+  scsi: ufs: Remove unused device quirks
 
-If higher precision is required, suggest user space tools to use the
-PMU-based mechanisms in combination.
+ drivers/scsi/ufs/ufs.h        |  1 -
+ drivers/scsi/ufs/ufs_quirks.h | 29 ----------------
+ drivers/scsi/ufs/ufshcd.c     | 63 +++--------------------------------
+ 3 files changed, 4 insertions(+), 89 deletions(-)
 
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: aubrey.li@intel.com
-Link: http://lkml.kernel.org/r/20190117183822.31333-1-aubrey.li@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/fpu/internal.h | 7 +++++++
- arch/x86/include/asm/fpu/types.h    | 7 +++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5d536e3dcc6d..fb04a3ded7dd 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -376,6 +376,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
- {
- 	if (likely(use_xsave())) {
- 		copy_xregs_to_kernel(&fpu->state.xsave);
-+
-+		/*
-+		 * AVX512 state is tracked here because its use is
-+		 * known to slow the max clock speed of the core.
-+		 */
-+		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
-+			fpu->avx512_timestamp = jiffies;
- 		return 1;
- 	}
- 
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 202c53918ecf..2e32e178e064 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -302,6 +302,13 @@ struct fpu {
- 	 */
- 	unsigned char			initialized;
- 
-+	/*
-+	 * @avx512_timestamp:
-+	 *
-+	 * Records the timestamp of AVX512 use during last context switch.
-+	 */
-+	unsigned long			avx512_timestamp;
-+
- 	/*
- 	 * @state:
- 	 *
+-- 
+2.17.1
