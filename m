@@ -2,105 +2,134 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BBDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0611EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2220421B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:50:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="AjRLzuWc"
+	by mail.kernel.org (Postfix) with ESMTP id D129221B25
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732600AbfBKSud (ORCPT
+        id S1731840AbfBKSxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:50:33 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39398 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbfBKSuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:50:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id a6so784094itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jZapxLI32VqhEKflGXevWywiAvo1ir7SljgRNwS7jPI=;
-        b=AjRLzuWca5LpycTlRylxklTmrZ1UcCXX7morNM2jwrCwPDbbxytn0nJjH8VTsEhTEH
-         9GRqnPVQCfeeVHtjEjvGzL9WejY7j/GSrzqKAV0wM0iYf/6IkYNVRofiRGXyWakLBuCj
-         MhRsSheQs5Oe/Rxq8QsEiu3piYjtd9GEhH8eQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jZapxLI32VqhEKflGXevWywiAvo1ir7SljgRNwS7jPI=;
-        b=MRtZqcGyocOA7y8DwI2zZyhD5zLCGfwtBivj2zvdkE7B/EIHQ/fAf1vRpdA9HRYqKL
-         J3+VNEdEEJBcekXY3ixZHtvc6S5Mg2FCYS/fuiYwZzLbtIVRoFWrOraz9YehelfJ2MJH
-         adD9A+sBIAw08On1kEVmN8WYwRKU9Mi5BuiWWVUw/ctOk0NoIDO+0+GaPyS7QqvXspS3
-         Gk3rodzV3fIBuSf2H9asdnoQz32bKpgjojY7JbGmmMHcE8fsKpNnzWEsvMh/UWpbNeeS
-         EX0u3saJJOtjxKuP4fvZMCzif1IojfSRHGSxY5Qlvo8/qgOh7EUOxKmirYXlzKF7gwiT
-         2cng==
-X-Gm-Message-State: AHQUAuaC71SzgjGhDMUgkzJqhq82dzc6FqspnPP9lrNgZFPwGqHImJU9
-        fGy9W9gY1XsHvqz7Pz1gd0/N8XflRCGA/d+6U2mpRg==
-X-Google-Smtp-Source: AHgI3IYyt389es4MTjSJj5nsOQKdJ2WCwhHq/87ZPFXunfbfoFUhI11Q0lcvdVGd7Yye4Sg+GFfDqQsxwsSHaQqYgNU=
-X-Received: by 2002:a02:c943:: with SMTP id u3mr19551276jao.96.1549911032276;
- Mon, 11 Feb 2019 10:50:32 -0800 (PST)
+        Mon, 11 Feb 2019 13:53:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41304 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726228AbfBKSxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:53:10 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 08A12C01DE05;
+        Mon, 11 Feb 2019 18:53:10 +0000 (UTC)
+Received: from krava (ovpn-204-173.brq.redhat.com [10.40.204.173])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 08E6160A9A;
+        Mon, 11 Feb 2019 18:53:06 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 19:53:06 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190211185306.GD5046@krava>
+References: <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
+ <20190204114144.GC18141@krava>
+ <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org>
+ <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava>
+ <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava>
+ <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAKMK7uHU37VLbe4RBZ3GOow+=pupYAHotkVrpqJeiUcpSfjX8Q@mail.gmail.com>
- <20190211182512.GA28363@ravnborg.org>
-In-Reply-To: <20190211182512.GA28363@ravnborg.org>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 11 Feb 2019 19:50:21 +0100
-Message-ID: <CAKMK7uENU2dc6eKqzTYwNs=4uAVhDv1GSA1KpuAEB8ZANCsS1A@mail.gmail.com>
-Subject: Re: [PULL] topic/component-typed
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        "DRM maintainer tools announcements, discussion, and development" 
-        <dim-tools@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 11 Feb 2019 18:53:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 7:25 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Daniel.
->
-> On Mon, Feb 11, 2019 at 06:15:20PM +0100, Daniel Vetter wrote:
-> > Hi all,
+On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
+> Jiri,
+> 
+> On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
 > >
-> > Here's the typed component topic branch.
+> > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
+> > > On Mon, Feb 04, 2019 at 02:44:37PM -0800, Stephane Eranian wrote:
+> > > > Jiri,
+> > > >
+> > > > While you're looking at the output format, I think it would be good
+> > > > time to simplify the code handling perf.data file.
+> > > > Today, perf record can emit in two formats: file mode or pipe mode.
+> > > > This adds complexity in the code and
+> > > > is error prone as the file mode path is tested more than the pipe mode
+> > > > path. We have run into multiple issues with
+> > > > the pipe mode in recent years. There is no real reason why we need to
+> > > > maintain two formats. If I recall, the pipe format
+> > > > was introduced because on pipes you cannot lseek to update the headers
+> > > > and therefore some of the information present as tables
+> > > > updated on the fly needed to be generated as pseudo records by the
+> > > > tool. I believe that the pipe format covers all the needs and could
+> > > > supersede the file mode format. That would simplify code in perf
+> > > > record and eliminate the risk of errors when new headers
+> > > > are introduced.
+> > >
+> > > yep, I think we have almost all the features covered for pipe mode,
+> > > and we have all necessary events to describe events features
+> > >
+> > > so with some effort we could switch off the superfluos file header
+> > > and use only events to describe events ;-) make sense, I'll check
+> > > on it
 > >
-> > drm-intel maintainers: Please pull, I need this for the mei hdcp work from Ram.
+> > so following features are not synthesized:
 > >
-> > drm-misc maintainers: Please pull, there's a drm doc patch follow-up
-> > that I want to stuff into drm-misc-next.
+> >         FEAT_OPN(TRACING_DATA,  tracing_data,   false),
+> >         FEAT_OPN(BUILD_ID,      build_id,       false),
+> >         FEAT_OPN(BRANCH_STACK,  branch_stack,   false),
+> >         FEAT_OPN(AUXTRACE,      auxtrace,       false),
+> >         FEAT_OPN(STAT,          stat,           false),
+> >         FEAT_OPN(CACHE,         cache,          true),
 > >
-> > Greg: The drm side missed our feature cutoff, so will only land in 5.2.
->
-> With all the dependencies why not bend the rule a little and get this in now?
-> It is not like this is a huge patchset.
+> What do you need for BRANCH_STACK?
 
-The feature that depends upon this is almost 40 patches. That's a bit
-much for bending :-) Hence why I'm asking Greg to pull this, so it's
-not stuck out of tree for 3 months for no good reason.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+nothing, I think it's just the flag
+
+> 
+> > I think all could be added and worked around with exception
+> > of BUILD_ID, which we store at the end (after processing
+> > all data) and we need it early in the report phase
+> >
+> Buildids are injected after the fact via perf inject when in pipe mode.
+> 
+> > maybe it's time to re-think that buildid -> mmap event
+> > association again, because it's pain in current implementation
+> > as well
+> >
+> Sure, but what do you propose?
+> 
+
+this:
+
+> > looks like bpf code is actualy getting build ids and storing
+> > it for the callchains in kernel.. we can check if we can do
+> > something similar for mmap events
+> >
+> > jirka
+
+jirka
