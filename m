@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C91C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FD1C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E090E21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 274DA21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898952;
-	bh=5tA/6eRripWo2fhI498TkLgxAn28UlvrGcLs4vyKt7Q=;
+	s=default; t=1549898966;
+	bh=qQVVisWLrG+14GC3Tu8GD+5RQRblYfACaS/IJCFpWGw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EcpjGFjP/8lJk7VM/Ak+Q2aDBi6ChO3pToiYxFLDvlz4c/6bFLyxBpxm/zAI+c7Cg
-	 KlVjbMsNMS6xIs+b8+2e5Pg5Abx/hVp3OzNnlIDYpdHUoEUtzpIxKN45KebkewF5G7
-	 7xF+U26fPyxy5dgWQ65b9wi8159MFymCHAFqzM1Q=
+	b=TaVhXtYmiMfe6gPt+9njabieaiaIbVuJU6kKYwkWVkakSffSYoSi9omI5QBm7pMNq
+	 E7Noz4p9rRfIZt7SHJOsmbEj+tCaIPXnU9Wp4t9KFEWMJinwMitfpAXhUbD9mVq4Ev
+	 dnIRTqlpzq2AqpuoeJxricCHbjAo4CmTlGp27cYQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389363AbfBKP3K (ORCPT
+        id S2389342AbfBKP3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:29:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45470 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:29:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389432AbfBKO5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:55 -0500
+        id S1728869AbfBKO5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:57:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A9D9222A8;
-        Mon, 11 Feb 2019 14:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4FEC20700;
+        Mon, 11 Feb 2019 14:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897075;
-        bh=5tA/6eRripWo2fhI498TkLgxAn28UlvrGcLs4vyKt7Q=;
+        s=default; t=1549897059;
+        bh=qQVVisWLrG+14GC3Tu8GD+5RQRblYfACaS/IJCFpWGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UA6jqDLABjf/G4rtFAH7uy8cHUihEtN4/HvuOoHBNO0uPRsgipFQPB0q/oItXpw0v
-         LMI4Tx2Ua89sgB2nwTwCJjPC4REVToW2tItJQBigMUHgHnDAWjrtT5wNThZvRTKNRJ
-         aG9oLDTbRpjbNYweVM8Vh6I4rDCa/n1zVPcqBcFg=
+        b=R0bT78ypgj3btCwZRl4nMQFwevzFABEXUoJEV0p1CztnQzIGvW5V0CGKwXHS8d47H
+         5J1W8IRZR6qj2Y8vZ3kie09lM60EiLIgZj9QyBi08crx6blnZV2ErV55mXfN/ThuXo
+         p8W6Ro6WiFXL/MLngeQFk5y1s39P7/DCl3NfGUEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 081/205] iommu/arm-smmu-v3: Use explicit mb() when moving cons pointer
-Date:   Mon, 11 Feb 2019 15:17:59 +0100
-Message-Id: <20190211141833.995228441@linuxfoundation.org>
+Subject: [PATCH 4.14 077/205] tracing: Have trace_stack nr_entries compare not be so subtle
+Date:   Mon, 11 Feb 2019 15:17:55 +0100
+Message-Id: <20190211141833.742514107@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,46 +66,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a868e8530441286342f90c1fd9c5f24de3aa2880 ]
+[ Upstream commit ca16b0fbb05242f18da9d810c07d3882ffed831c ]
 
-After removing an entry from a queue (e.g. reading an event in
-arm_smmu_evtq_thread()) it is necessary to advance the MMIO consumer
-pointer to free the queue slot back to the SMMU. A memory barrier is
-required here so that all reads targetting the queue entry have
-completed before the consumer pointer is updated.
+Dan Carpenter reviewed the trace_stack.c code and figured he found an off by
+one bug.
 
-The implementation of queue_inc_cons() relies on a writel() to complete
-the previous reads, but this is incorrect because writel() is only
-guaranteed to complete prior writes. This patch replaces the call to
-writel() with an mb(); writel_relaxed() sequence, which gives us the
-read->write ordering which we require.
+ "From reviewing the code, it seems possible for
+  stack_trace_max.nr_entries to be set to .max_entries and in that case we
+  would be reading one element beyond the end of the stack_dump_trace[]
+  array.  If it's not set to .max_entries then the bug doesn't affect
+  runtime."
 
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Although it looks to be the case, it is not. Because we have:
+
+ static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] =
+	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
+
+ struct stack_trace stack_trace_max = {
+	.max_entries		= STACK_TRACE_ENTRIES - 1,
+	.entries		= &stack_dump_trace[0],
+ };
+
+And:
+
+	stack_trace_max.nr_entries = x;
+	for (; x < i; x++)
+		stack_dump_trace[x] = ULONG_MAX;
+
+Even if nr_entries equals max_entries, indexing with it into the
+stack_dump_trace[] array will not overflow the array. But if it is the case,
+the second part of the conditional that tests stack_dump_trace[nr_entries]
+to ULONG_MAX will always be true.
+
+By applying Dan's patch, it removes the subtle aspect of it and makes the if
+conditional slightly more efficient.
+
+Link: http://lkml.kernel.org/r/20180620110758.crunhd5bfep7zuiz@kili.mountain
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/trace/trace_stack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 26e99c03390f..09eb258a9a7d 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -730,7 +730,13 @@ static void queue_inc_cons(struct arm_smmu_queue *q)
- 	u32 cons = (Q_WRP(q, q->cons) | Q_IDX(q, q->cons)) + 1;
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 719a52a4064a..ba662010542c 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -282,7 +282,7 @@ __next(struct seq_file *m, loff_t *pos)
+ {
+ 	long n = *pos - 1;
  
- 	q->cons = Q_OVF(q, q->cons) | Q_WRP(q, cons) | Q_IDX(q, cons);
--	writel(q->cons, q->cons_reg);
-+
-+	/*
-+	 * Ensure that all CPU accesses (reads and writes) to the queue
-+	 * are complete before we update the cons pointer.
-+	 */
-+	mb();
-+	writel_relaxed(q->cons, q->cons_reg);
- }
+-	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
++	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
+ 		return NULL;
  
- static int queue_sync_prod(struct arm_smmu_queue *q)
+ 	m->private = (void *)n;
 -- 
 2.19.1
 
