@@ -2,77 +2,88 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCF3C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D95C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75CC320844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6507E21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:10:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saW8/hGe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbfBKIIU (ORCPT
+        id S1726891AbfBKIKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:08:20 -0500
-Received: from gate.crashing.org ([63.228.1.57]:51600 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKIIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:08:19 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x1B86w2Y026260;
-        Mon, 11 Feb 2019 02:07:00 -0600
-Message-ID: <5dadc1b0aee62ce8371cabaa35ea4bbe6b71f48f.camel@kernel.crashing.org>
-Subject: Re: [PATCH v1 03/16] powerpc/32: move LOAD_MSR_KERNEL() into
- head_32.h and use it
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 11 Feb 2019 19:06:58 +1100
-In-Reply-To: <b074648b-8896-5591-16fe-3ecaf5c7553a@c-s.fr>
-References: <cover.1549630193.git.christophe.leroy@c-s.fr>
-         <1946d8ed86a92a9a6827ec260d0d9c99e0d88184.1549630193.git.christophe.leroy@c-s.fr>
-         <749f719a0881531cad2071a7011dc5e894812d3d.camel@kernel.crashing.org>
-         <b074648b-8896-5591-16fe-3ecaf5c7553a@c-s.fr>
+        Mon, 11 Feb 2019 03:10:16 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44256 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfBKIKQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:10:16 -0500
+Received: by mail-lj1-f196.google.com with SMTP id a16so3830377ljb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HTufqxdwVyd5xvnixmRcXTj5wWcKWgsmg6B4AXxL778=;
+        b=saW8/hGeXOlXC4KQdSwD/ePjV+PWNSwUhaQU/ZZt0zElqGSuzdyV2JQ4OzQGUNxlrZ
+         puxkNe1wC9LfRIzqJHT/YIh6oHJTOQ+ipH4cCcapEB+ARt68rnP/bifs9Qr6MNpNny8k
+         mB7UIEtz8/8udtzfKshYqHiPqSA/74wEiS7nNoFIcClqRgxjlUwsXYGeOJU1U34J3+gN
+         U+MVXgdwe/xHWXXBESQWGWN5csIkt4eg7MK5EguKxMaYNV9GFvDFwfPxR5Ym6iqr8LcK
+         A8zIRGmvKt4CU1+bqpyg2xZHTwaRD6aSqhT8T0aLHFkcYzf641kywbP/p5jpvA2PEutK
+         9ckg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HTufqxdwVyd5xvnixmRcXTj5wWcKWgsmg6B4AXxL778=;
+        b=FxT0cgoRViqMak2sXQP5VNCTLsKHkEM1DxW50EHuNfa9VTP0WwoUFhzqWIvGvstGIG
+         +oaI3KCSJt+9tMUqQBM+6OZvLlAsd3hK0OuOCJSOliajJq0IsJ2jRY6N3jbO3BzQkBRJ
+         disTTZ6nLMCQcXNZ/DyeQfWXjV4naZw9XucPL7KFcCU+bbmb3VouSH8ZdQy9/o3K97E3
+         Npfzkn/wrqoiEtg4r6XVTcDs7SDNGKKlX45blS94Uq3yqLhalzvLxRNxpOzQMjt3nLks
+         a+OVIupPqZtBrfajeeG9O7LcbgwoL13I3RJG6bw9w7Pa/JbRp9Av+BUqdpctcpTVU8Wj
+         DWiQ==
+X-Gm-Message-State: AHQUAuZYl6htvDRgLUqok1lC3k5yodLR8CJvzZJ1mrPfN7/kz01Eq2jd
+        DBkeDTcoc0+Iqzd304e6e0xWpdpxDii+7EKAIMlgCQ==
+X-Google-Smtp-Source: AHgI3IYtAGtrQysea3hu7s2wg7C8AGK93eOXhuR30JYV0qZQ1Bl8JmGH6irtUBqh9d1hB6s+UJv+Xks3vAV140PumUQ=
+X-Received: by 2002:a2e:874b:: with SMTP id q11-v6mr941391ljj.97.1549872614339;
+ Mon, 11 Feb 2019 00:10:14 -0800 (PST)
+MIME-Version: 1.0
+References: <13290065-5568-c0d0-9e7b-7a02ad71dbb0@infradead.org>
+In-Reply-To: <13290065-5568-c0d0-9e7b-7a02ad71dbb0@infradead.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Feb 2019 09:10:03 +0100
+Message-ID: <CACRpkdb+YefEc4nWifPm1pjOuDLg=DiAPOM9gaftJAc4xmDODA@mail.gmail.com>
+Subject: Re: [PATCH] Documenation: driver-api: fix gpio/board.rst warning
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-11 at 07:26 +0100, Christophe Leroy wrote:
-> 
-> Le 11/02/2019 à 01:21, Benjamin Herrenschmidt a écrit :
-> > On Fri, 2019-02-08 at 12:52 +0000, Christophe Leroy wrote:
-> > >   /*
-> > > + * MSR_KERNEL is > 0x8000 on 4xx/Book-E since it include MSR_CE.
-> > > + */
-> > > +.macro __LOAD_MSR_KERNEL r, x
-> > > +.if \x >= 0x8000
-> > > +       lis \r, (\x)@h
-> > > +       ori \r, \r, (\x)@l
-> > > +.else
-> > > +       li \r, (\x)
-> > > +.endif
-> > > +.endm
-> > > +#define LOAD_MSR_KERNEL(r, x) __LOAD_MSR_KERNEL r, x
-> > > +
-> > 
-> > You changed the limit from >= 0x10000 to >= 0x8000 without a
-> > corresponding explanation as to why...
-> 
-> Yes, the existing LOAD_MSR_KERNEL() was buggy because 'li' takes a 
-> signed u16, ie between -0x8000 and 0x7999.
+On Mon, Feb 11, 2019 at 7:28 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Ah yes, I was only looking at the "large" case which is fine...
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix markup warning: insert a blank line before the list.
+>
+> Documentation/driver-api/gpio/board.rst:209: WARNING: Unexpected indentation.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: linux-gpio@vger.kernel.org
 
-> By chance it was working because until now nobody was trying to set 
-> MSR_KERNEL | MSR_EE.
-> 
-> Christophe
+Patch applied.
 
+Yours,
+Linus Walleij
