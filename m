@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C6C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFB0C4151A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85F342075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56202075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="rWXNsjXb"
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="XTK1ndTu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfBKMZ5 (ORCPT
+        id S1727463AbfBKM0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:25:57 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37499 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbfBKMZ2 (ORCPT
+        Mon, 11 Feb 2019 07:26:04 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40276 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfBKMZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:25:28 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n23so7582925lfl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:27 -0800 (PST)
+        Mon, 11 Feb 2019 07:25:20 -0500
+Received: by mail-lj1-f195.google.com with SMTP id z25-v6so8550318ljk.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:25:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JYcMZJWwnYjs5lNvrgyZLyaYKBt0sZAp/myA2P7sIbo=;
-        b=rWXNsjXbmZRuP4V37SAe41A7qIqA7ZErIo6Hfvpds9wsuH7zdPODlASLsSnE7yWdHE
-         8K89N6rsJVc3pIr+yUi9Mk9h8xjcTe39T9A80gmusY+M4/WPD8hIJ3HC1kxv05biOCZw
-         cZQhVEsE2ZV/ESxWaEkDAQG9nh1+9s6w0r2MfcqHm41uCvGjkDksgDWaTV2kF5xb5l/S
-         QUcCsQsCQcXuT4xJtL1K7vpF6KETYUfT8S9NmQoniden8HUrS+XqBtRJ7QeImtQ9W7gS
-         +L69bITr6NV/dIRAbzx9qQhBlqiJLNZtpcnMDq6twhHzADTRhiOYChFOvwVRXlWSZImk
-         eMAw==
+        bh=aPqNfQfc1x7Ctx+Hrva5vIaSgQJbQvQq7LNoEgp6zBs=;
+        b=XTK1ndTuzO9MANc3qb+2im7yByKWCMX3ge+mWO5pzGVkpwprpwSmohjsTEEW5kMDap
+         BrsU6SCHss4pStE9FLL9oHQ7JUmlETI6aY0a3M7PkbU5wK7IRs73ZDVvX/p1Hv7s5/7/
+         URcpggj/hOfyFmBaZH5441VUsLGWAOOQXiqib8jfDgO6wtmM2V9buvp+QJzR0xbTxXn6
+         YwG6adZcCv+NXzPvtzREyVSlstQrXRavPjkOojgkimCiC9/lRU1oEEkkZsnu3feyncoX
+         Vm/ukWS9PpJIuFH2BPqnUowRyHZw4XYix5ac1SOo8XDQLO0Bn/9A5OiGPaeoTDpv98mV
+         6emw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JYcMZJWwnYjs5lNvrgyZLyaYKBt0sZAp/myA2P7sIbo=;
-        b=dUKyo8V8Rl7iPT9/UUFEWSt4vdoXyt3uxKqLJiShM006GP79/MZIh0lTHO8CkH0KDp
-         kljXzHo+rVXN/C6P8uGh1Ij3DnoZ5ifa7i8Qp7yHBbrdTz6AFskWQRdzC3+DKaWtiz4O
-         p8G068a8LgO2OolKL7kDcLfdFbIGNluD9xmlwvNp/sr4HRznxHqB0KtprNDMhUQ8bUqU
-         7FNmyrTGUpj3wLWmjalh3uQoHfv3FjecZp6KZkstkX9a//41YFWDsPZwpEhpBYMRx50E
-         PSyTLHRXrBra+6WETOu+1Ye1JTGHmVX+XraPnEnmh1ec45jlc4vBp8mnmkPoV4sD2UVv
-         NP2Q==
-X-Gm-Message-State: AHQUAuZyJhidwWUPkd20GsmSSpGrBJoi3552vKecJPAPHCjAHp0MggHa
-        76KSBmriGF32dfZuvzfoLXXT6w==
-X-Google-Smtp-Source: AHgI3IbaVOEWADoPTXHQsqYo7sf9mLdjXcq0ZGzfX1pYex22caB4DgD6cJDkjqcm1Vr1zG7p+xBQ+Q==
-X-Received: by 2002:a19:f013:: with SMTP id p19mr3370775lfc.154.1549887926166;
-        Mon, 11 Feb 2019 04:25:26 -0800 (PST)
+        bh=aPqNfQfc1x7Ctx+Hrva5vIaSgQJbQvQq7LNoEgp6zBs=;
+        b=KhIFjjDOg+BBaTZBTxGTHAoax1mJ04BhJbvOrMaOICb2U5pn61F+PHn5GfbVXYxqf7
+         U+b/faN2nd8On9uSumDYY/RgEvf0Rk8VEQCL+51NSiyUeVMFOMBC/HF7Q3amfzRnDa6Y
+         /BQWQqOdKSKaDSxmYcAI97gPfS5NqCsdJfodyFvizTAluE9bMCvQMqFfmr/mQrkk2wXi
+         yjSgC6JSmjpirTVZLsrhxi4Kk4zMGFmBvzdQQUQlvnzwrQuEzf+1TQ/G+Fh/7a0wR4Uh
+         RQQbWAdPF2rlJg1HogFssQvMgWhBLTzzRM67jcTX0uJJLIHU1uZCNvzOeQL7KaPDSC3P
+         n0DQ==
+X-Gm-Message-State: AHQUAuai77sdxk5pgfsi0YmPrY9dfonucbAHld9hk7qPAAZia+/oonVS
+        8AVzvwnF/h2pTVTLPBtnnfWGwA==
+X-Google-Smtp-Source: AHgI3IYx5x5MagVlcrHSOfbNqh+KmAib2TjETzeyEeQP9W5L1l1Bl6/t0Ut89x2xO6fanMv65iyK4Q==
+X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr21153964lja.46.1549887918637;
+        Mon, 11 Feb 2019 04:25:18 -0800 (PST)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id d70sm2278481lfe.14.2019.02.11.04.25.24
+        by smtp.gmail.com with ESMTPSA id d70sm2278481lfe.14.2019.02.11.04.25.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:25:24 -0800 (PST)
+        Mon, 11 Feb 2019 04:25:17 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 5/8] lightnvm: pblk: fix TRACE_INCLUDE_PATH
-Date:   Mon, 11 Feb 2019 13:25:06 +0100
-Message-Id: <20190211122509.19910-6-mb@lightnvm.io>
+Subject: [GIT PULL 2/8] lightnvm: pblk: use vfree to free metadata on error path
+Date:   Mon, 11 Feb 2019 13:25:03 +0100
+Message-Id: <20190211122509.19910-3-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190211122509.19910-1-mb@lightnvm.io>
 References: <20190211122509.19910-1-mb@lightnvm.io>
@@ -75,37 +75,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-As the comment block in include/trace/define_trace.h says,
-TRACE_INCLUDE_PATH should be a relative path to the define_trace.h
+As chunk metadata is allocated using vmalloc, we need to free it
+using vfree.
 
-../../drivers/lightnvm is the correct relative path.
-
-../../../drivers/lightnvm is working by coincidence because the top
-Makefile adds -I$(srctree)/arch/$(SRCARCH)/include as a header
-search path, but we should not rely on it.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Fixes: 090ee26fd512 ("lightnvm: use internal allocation for chunk log page")
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-trace.h | 2 +-
+ drivers/lightnvm/pblk-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
-index 679e5c458ca6..9534503b69d9 100644
---- a/drivers/lightnvm/pblk-trace.h
-+++ b/drivers/lightnvm/pblk-trace.h
-@@ -139,7 +139,7 @@ TRACE_EVENT(pblk_state,
- /* This part must be outside protection */
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 1ff165351180..1b5ff51faa63 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -141,7 +141,7 @@ struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
  
- #undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH ../../../drivers/lightnvm
-+#define TRACE_INCLUDE_PATH ../../drivers/lightnvm
- #undef TRACE_INCLUDE_FILE
- #define TRACE_INCLUDE_FILE pblk-trace
- #include <trace/define_trace.h>
+ 	ret = nvm_get_chunk_meta(dev, ppa, geo->all_chunks, meta);
+ 	if (ret) {
+-		kfree(meta);
++		vfree(meta);
+ 		return ERR_PTR(-EIO);
+ 	}
+ 
 -- 
 2.19.1
 
