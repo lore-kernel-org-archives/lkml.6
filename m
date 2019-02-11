@@ -2,133 +2,189 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82174C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8085AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A1D21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F6B421B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="Mq48zZ/A"
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="KDLdSrsf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbfBKOfd (ORCPT
+        id S1731433AbfBKPyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:33 -0500
-Received: from mail-eopbgr150040.outbound.protection.outlook.com ([40.107.15.40]:64150
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730195AbfBKOfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:54:49 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:42745 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbfBKOfb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 09:35:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-ch;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qn5dlR+B2td/Ngk7WZ1AhB7SCQ1Guz2DCmtGHTntTlM=;
- b=Mq48zZ/A6o46PnKiNhTRMnpfTPvbrJZO9lLmyYKjl7nyxWN7AcEu66g5YABBMwwE/GyrXTuUDt8lFGNbv1TBKFZRtG97rq9D7EIK5xX/GHxS8L4R0SKnb6xdZLLi1+EnTTxZzVZ5r5+S0C1dBWaa6hP8ONat4V6aiHu5SPM1XyQ=
-Received: from VI1PR06CA0088.eurprd06.prod.outlook.com (2603:10a6:803:8c::17)
- by DB6PR0601MB2151.eurprd06.prod.outlook.com (2603:10a6:4:4f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.17; Mon, 11 Feb
- 2019 14:34:48 +0000
-Received: from VE1EUR02FT045.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e06::207) by VI1PR06CA0088.outlook.office365.com
- (2603:10a6:803:8c::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.17 via Frontend
- Transport; Mon, 11 Feb 2019 14:34:47 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.50)
- smtp.mailfrom=cern.ch; lunn.ch; dkim=none (message not signed)
- header.d=none;lunn.ch; dmarc=bestguesspass action=none header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
- VE1EUR02FT045.mail.protection.outlook.com (10.152.12.192) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Mon, 11 Feb 2019 14:34:47 +0000
-Received: from cernfe02.cern.ch (188.184.36.47) by cernmxgwlb4.cern.ch
- (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
- 2019 15:34:36 +0100
-Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
- (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
- Mon, 11 Feb 2019 15:34:35 +0100
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     Andrew Lunn <andrew@lunn.ch>
-Reply-To: <federico.vaga@cern.ch>
-CC:     Wolfram Sang <wsa@the-dreams.de>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/5] i2c:ocores: stop transfer on timeout
-Date:   Mon, 11 Feb 2019 15:34:36 +0100
-Message-ID: <17223650.b0dSvDl2uj@pcbe13614>
-In-Reply-To: <20190211140138.GA19023@lunn.ch>
-References: <20190211083122.32485-1-federico.vaga@cern.ch> <20190211102424.5xnzyxvfd2yhf6ui@ninjato> <20190211140138.GA19023@lunn.ch>
+Received: by mail-yw1-f66.google.com with SMTP id v201so4242058ywa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:35:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4/ImNS1yXJLm8G3VHIxKbSUM3pE9Dqal6VICgbppRIs=;
+        b=KDLdSrsfximhw41hAPhk6l1dJQ6PE9+Ap/MBf3SRToOREXKCmGwFVexwAWO6utq42S
+         2pbX2rTrcef7aQvMnkc30kczQp82MQYBQmWxxYgpCgaIGLJRvkMCVK/hd+GiNnVahPA1
+         J4bAV4xCVWfxMCUiBuACnPU6DCOoicXR0Ku2NS6nItZxsWgDyZKfLVZ+bxE6eJQAsXJj
+         CDBFrB7aDHXe6/5AqlPOTqJusn8sHOKoCUuRhh3nd4DfDopSh18XW4NHdr0fDl3moFUo
+         5AN3Wx1Qmhd8zLf0e/px9+1GbNMfihyfib09qb68YUEaEKE9gS2fust0ZomqVa5bfpqw
+         5t6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4/ImNS1yXJLm8G3VHIxKbSUM3pE9Dqal6VICgbppRIs=;
+        b=ToYEmHEUOBONu8GP+xo7QBxzV1Dezz1W/2gqVm++/r3P3aIDhnLNh3rTWEGU36VGAR
+         i5LXOugfB4IrL0mNoBJSgB++23dTl6BN/7qRrQdoH/1SZr8sQnVTk4Ki7vGzcM64gAcZ
+         ojznrkktUeO3b3oCjfH3YGFYCruYBCv9GlGD70OuEazaqtWKZg+UB3xhEOXzZllCnrwO
+         vqvzmLqg0rZXNVz7PUKogGou35qpiCdXThYVc3Jvwszo6ZgGJVqBmAayQEMdslTYYp2o
+         Cf8oOQgs+Ii6AeRNrwXO8KT+Qd/FB6rPU76UhUlGkMaCTM5ggvBRSACkRCDXkwlHm9u7
+         bmJA==
+X-Gm-Message-State: AHQUAuaBdn9kag7GG7pX8xJzYlhyeLPIn0svcBQvTSUbhYXiG4Iqzmg5
+        XUSYbOUzgTz8TBZ0x/v1IiFLJw==
+X-Google-Smtp-Source: AHgI3IaVpuZykSjrQDBJ4YzxY5sy0agnazgLo+sAmR1TggdPJjmKvuGkmVgxLfF9Ux7BzZVui5MI+g==
+X-Received: by 2002:a81:6604:: with SMTP id a4mr130258ywc.510.1549895730478;
+        Mon, 11 Feb 2019 06:35:30 -0800 (PST)
+Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id j69sm3561847ywa.41.2019.02.11.06.35.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 06:35:29 -0800 (PST)
+Date:   Mon, 11 Feb 2019 09:35:28 -0500
+From:   Jon Mason <jdmason@kudzu.us>
+To:     Dave Jiang <dave.jiang@intel.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Allen Hubbe <allenbh@gmail.com>
+Subject: Re: [PATCH] NTB: ntb_transport: Ensure the destination buffer is
+ mapped for TX DMA
+Message-ID: <20190211143527.GB13951@kudzu.us>
+References: <20190119001001.13087-1-logang@deltatee.com>
+ <34680d2e-ec3f-7cb4-4f42-2398fc14dd5e@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [2001:1458:202:121::100:40]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(346002)(39860400002)(2980300002)(189003)(199004)(44832011)(229853002)(9686003)(4326008)(356004)(46406003)(86362001)(446003)(6246003)(106466001)(476003)(126002)(11346002)(47776003)(486006)(426003)(53546011)(33716001)(33896004)(7736002)(7636002)(305945005)(23726003)(106002)(230700001)(478600001)(43066004)(16526019)(186003)(3450700001)(76176011)(336012)(26005)(316002)(9576002)(786003)(4744005)(2906002)(74482002)(54906003)(6116002)(8936002)(6916009)(97756001)(8676002)(246002)(50466002)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0601MB2151;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b0ca022a-6aa8-41be-4e1e-08d6902e12d6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:DB6PR0601MB2151;
-X-MS-TrafficTypeDiagnostic: DB6PR0601MB2151:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2151;20:jZiz593bvBnKVtpMm6gLzeiw60tZ7GH0miwfjySmnMieKRqd8ZIB5TR+4EPdxTN3enYTErXAcPifkpguFhKpdgSn7FLcsepATf/onf6dSrbv9CseZZ12/WUWF+u13zvtzelg7zBEyStkTc/QlWtTrLVP7gNp7ZhMB81JLAfdzSsIZ/BlKsngACMFb5PAwWcdemHcBZpeYkiakNbrhHISDxiSxIw7zxzcouVfmed0CTq0BKudu6tMiRvF8AB8/mK9wh1RxRbwcwQ1+XoxSLJ5sBUSR/sSK9VR53H1KqR3h0gAub02jAaUSS30/I5gQRwRyjniH3nY4tUWwMCpItgNML8VJfh27RLnC2kjS+613Ril4ng2sPXgqpI5yEUVEx773Xp3M9HX0u8E7TptFUZvWbE4JMsVmsNI4+k5Ym6LV6UGwqF99utswqeWM3uK/IYeeCDxQH686ZtJh3g5jfY74OMdsGVnQduhC9e7e1FnSS0eJnM+lG0HOtx5K81sp907;4:1PWh+fdDizJmCUV++MskId9id+qag2KhyJWxOc//PM27iAR3tA1/G9fSwaq0K1KymrR1/MjblMV0TqiRjEBeVHQ+gAiaclRTOkFoHUA3j9extVt3nLB+b9VDomdd4II/keEu8oR++9O47HU63YKletfM0/4lwSe1pNMe3/660VfrdBcr6CfLfGRzt6FwOMYVMXvcVqKL64H4SErBP4BhM0zGH8fp5UzB88TJBCIi/lY+0RHonqOm37Ex5cpvJ/rEqrY14ipTrYwGzaYqwxQ+toX/4II0lhPPxfP020xQKqJZ1QEKnFUYtPq7eFtBJh57
-X-Microsoft-Antispam-PRVS: <DB6PR0601MB2151D93D149C496918FC212EEF640@DB6PR0601MB2151.eurprd06.prod.outlook.com>
-X-Forefront-PRVS: 0945B0CC72
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0601MB2151;23:kCm10mMKYia7nrwCDtNCMMzoUqtAkFpYeU8S7X2?=
- =?us-ascii?Q?MYlNFNbIyPUVpdW74fAw4adW8yQlGHFpmrQKQxM3rvwWzo9MOben9cpZJaI4?=
- =?us-ascii?Q?YgShwsAT5OGnQ4kAHokczk6kU6HwYH9+zWi/Hj4k1cQcUmdjb7DzXJHJVWVU?=
- =?us-ascii?Q?XV0rKoXbNkxtPepE1/rYbcPltFZMpzSQeCf1glxBvjQWuRNMvOSRTKyXIa5B?=
- =?us-ascii?Q?1YkR5EZz/uQ6YyD2m+0tqVLGBc5E6ojU53nKkmbej5VAh+iKQDK1qc0coetd?=
- =?us-ascii?Q?I7zp6xJ+Mc+r6oUMKWHl+i4MqQPR9w39GEa8D10orhfI2Ct0d2+85E9zhUjU?=
- =?us-ascii?Q?nMJgaTRAGptEsNLJSaO9YVPcjZlxpME4Orp+mZCiiKD954LhKaGzb9CV7Vvo?=
- =?us-ascii?Q?GU4xJ66sR48NxR67XgvFeIKVdjKJTGPKcf/T8Jd4QJFIXahpC6qGQm8WFlRt?=
- =?us-ascii?Q?CgePJzssmvUMh6lxtMkZgkGVc/PonWZGeAUjAgrz9JHonrZAb668w3u8QvFS?=
- =?us-ascii?Q?e3sm739rnrl8AGZEr+rpNxBldzBRbfKNBvcUf5ClnxZuuUGnUvW1leIKxfrc?=
- =?us-ascii?Q?7y4FR+SJ0k1o13h2P84XufoWAuWRqJx/ncU6DYWdBmChetR/FAZahVDJk0JB?=
- =?us-ascii?Q?s8U054wmVmflG7UhKqTSzs3ubuoFXDwjdIxLxmWkAL9s8YaLIAqrtFhbf02k?=
- =?us-ascii?Q?E3heWq/A2pMVn7jIFtchin5gtb0AaUWS/GrAAQm77qcz0hRU6rJo6AZRQ/Cf?=
- =?us-ascii?Q?L1tDqxUoEM5Tr4Ts40oenpawGOBDV99s9sncMnRysCmpkpcSihBoLMUvKfqQ?=
- =?us-ascii?Q?2x1DfKoK6cft7IYYBVHEwhnvyAd3A2WIZAGuK4HvFNfVk4djUhN6C4cwSQa+?=
- =?us-ascii?Q?yyg5fg5faZKULzjYIoHR+hMTYmiK5Zk0UokPR+E6B3DbKcSVpEDz1GY2+QbX?=
- =?us-ascii?Q?DBZ0+EbzVDJzCG0ZZ8+rfMLTlzy+4KfqNeDygo4ywn13PbAPuWv/leUap4o4?=
- =?us-ascii?Q?mWrDWj8omC+qI/K1qeitfQpArkMRKwgw4q0qah0dHeEG9aSBVzMhLWN7snjY?=
- =?us-ascii?Q?bZ/oneLNz1WUVPhjC6OcCGmKyyPxlKcztlfyBu6ceZ2eXB7neJYJAvU4DLw9?=
- =?us-ascii?Q?PkW/X/MwarpOXzfrociZF6VEou4DBX6W1C6lrTbKAUGzCXDxNZV1EHXeLal9?=
- =?us-ascii?Q?UxJfQe8405LOsMOiWvchyxfiNl50BJlHV+EU9Pgxr5aIclgDN2bMy63wucQ?=
- =?us-ascii?Q?=3D=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: UjLe9hjLvf/FUjtvkPJNOsG5zR9DJjSPMMS6upllFEE7U5ovTdSDP2NIs4J/rKXjWuEp2+0ZGDtcFnTWEHt0LZNTrrEXHOt1uqBYTJUDego83eARIRaRTW9tlsw40efNEahlEy2mSW/vddd8mYUHmH5pnFFvdsY7N2DS68CrL8YrNH+Y9FW6+52ED+zQBW9us4e3eqFJ+ov4URwOefEQoBnGqFWDwLnS9Pu7k3cejJtYVDzPGeX59qkG3sAGgDwruUxXwQvKwoY8CGOj9jRLdhWo5vX7lu3pYQOPkBHZwM+MFzthFPQhHMRd3FwRyuCvlQg3xToFRuCb61Xmm0+MT41bQTakxGOGhIBfsvUBuPl1nNMJsZAN41xGAqG1cXbPFS1DYOTdRO/3EXNj+JTY5YN67uqu6Lr40iMGxmunvNM=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2151;6:m0vj58OTYzW7Cg7CdYmgIiFqTifRdLXIitJm5zgnft/8Wqwy9Zg6qWMl1ASpqcSxxOPA+pH3c1nm64TPVC/PWO/SeFxmvxJxPMdpQmREvyJjnSql+6vkintI+vLTUPGT5nShdakeUrQthIZ40KEmhoHBGZpJEKgKDKW1YuhjPVV20tUQf8iJp6BvlkcTv4f8wgtqepjji0CHV7PBh/3xhw8Nh51LnCguF4Ddsvxxgk+SmZRBNqltwRTYMYwJyFJy//62G8lMOx5HP8mhsG67TfXsFv7A99rxVykL9mDK5O8DYEL9xpky9aCfvDaspOLJhI0JYiNsBKbVmKTotgew62l5ZCThvHMxhbhJWsQeRVs8U3rXxgmqP1+TP7T8rSY1yKMSmUV0IQvuaL5kuiHlSyf5qMt/mdxOImjz2txZv1uVFb9/UeTv6zimh67XC4QiosXtrS919zCueXTwu6kHqQ==;5:zsJ6LQv2pkwnOHStHLT0zqZwle+7U2gdZQhcZN+8w1muXTdkaXMqR6MQB7P/LnBAFiaWPE62yZpQUKJJHHLieG0td2Fv2MHSlGPXcuaZzMQwirf1ef5ApRAeqBStKpnxutMyXUFMZCZQQlofzA3lf5yiseBfTAbSuGWBZCkc+aGKfMH16c5vgbhhXANEH6EggfPint5CzE0Yn2AVJ8wK8A==;7:eWiiwjwRYbqaNeqnkQzHk53/DHcDioHbSWZIrZ6+dsmFqWLyokit/8imyyKuQJqCEuhM3b/aXHpYjde+4/ijsR3rG9SnbAnq753c4tBtD+Lf0zabmlovH5ye6rKGMI3uyLZNn194m2UT1FCxLge4xw==
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2019 14:34:47.5691
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ca022a-6aa8-41be-4e1e-08d6902e12d6
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0601MB2151
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34680d2e-ec3f-7cb4-4f42-2398fc14dd5e@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 11, 2019 3:01:38 PM CET Andrew Lunn wrote:
-> > Applied to for-next, thanks!
+On Fri, Jan 18, 2019 at 05:25:20PM -0700, Dave Jiang wrote:
 > 
-> Hi Wolfram
 > 
-> Could you drop these patches and wait for a new version?  I don't
-> think you have pushed it out yet? So it won't be a visible rebase.
+> On 1/18/19 5:10 PM, Logan Gunthorpe wrote:
+> > Presently, when ntb_transport is used with DMA and the IOMMU turned on,
+> > it fails with errors from the IOMMU such as:
+> > 
+> >   DMAR: DRHD: handling fault status reg 202
+> >   DMAR: [DMA Write] Request device [00:04.0] fault addr
+> > 	381fc0340000 [fault reason 05] PTE Write access is not set
+> > 
+> > This is because ntb_transport does not map the BAR space with the IOMMU.
+> > 
+> > To fix this, we map the entire MW region for each QP after we assign
+> > the DMA channel. This prevents needing an extra DMA map in the fast
+> > path.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/499934e7-3734-1aee-37dd-b42a5d2a2608@intel.com/
+> > Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> > Cc: Jon Mason <jdmason@kudzu.us>
+> > Cc: Dave Jiang <dave.jiang@intel.com>
+> > Cc: Allen Hubbe <allenbh@gmail.com>
+> 
+> Nice! I actually never encountered this on the Intel NTB with IOMMU on.
+> It also could be that the Intel BIOS already took care of it for all
+> embedded device BARs on the uncore. Nevertheless it's needed. Thanks!
+> 
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-I will wait to send v5: full patch set, or just PATCH 3 and 5 ?
+Added to the ntb branch, thanks!
 
 > 
-> Thanks
-> 	Andrew
-
-
-
-
+> > ---
+> >  drivers/ntb/ntb_transport.c | 28 ++++++++++++++++++++++++++--
+> >  1 file changed, 26 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+> > index 3bfdb4562408..526b65afc16a 100644
+> > --- a/drivers/ntb/ntb_transport.c
+> > +++ b/drivers/ntb/ntb_transport.c
+> > @@ -144,7 +144,9 @@ struct ntb_transport_qp {
+> >  	struct list_head tx_free_q;
+> >  	spinlock_t ntb_tx_free_q_lock;
+> >  	void __iomem *tx_mw;
+> > -	dma_addr_t tx_mw_phys;
+> > +	phys_addr_t tx_mw_phys;
+> > +	size_t tx_mw_size;
+> > +	dma_addr_t tx_mw_dma_addr;
+> >  	unsigned int tx_index;
+> >  	unsigned int tx_max_entry;
+> >  	unsigned int tx_max_frame;
+> > @@ -1049,6 +1051,7 @@ static int ntb_transport_init_queue(struct ntb_transport_ctx *nt,
+> >  	tx_size = (unsigned int)mw_size / num_qps_mw;
+> >  	qp_offset = tx_size * (qp_num / mw_count);
+> >  
+> > +	qp->tx_mw_size = tx_size;
+> >  	qp->tx_mw = nt->mw_vec[mw_num].vbase + qp_offset;
+> >  	if (!qp->tx_mw)
+> >  		return -EINVAL;
+> > @@ -1644,7 +1647,7 @@ static int ntb_async_tx_submit(struct ntb_transport_qp *qp,
+> >  	dma_cookie_t cookie;
+> >  
+> >  	device = chan->device;
+> > -	dest = qp->tx_mw_phys + qp->tx_max_frame * entry->tx_index;
+> > +	dest = qp->tx_mw_dma_addr + qp->tx_max_frame * entry->tx_index;
+> >  	buff_off = (size_t)buf & ~PAGE_MASK;
+> >  	dest_off = (size_t)dest & ~PAGE_MASK;
+> >  
+> > @@ -1863,6 +1866,18 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
+> >  		qp->rx_dma_chan = NULL;
+> >  	}
+> >  
+> > +	if (qp->tx_dma_chan) {
+> > +		qp->tx_mw_dma_addr =
+> > +			dma_map_resource(qp->tx_dma_chan->device->dev,
+> > +					 qp->tx_mw_phys, qp->tx_mw_size,
+> > +					 DMA_FROM_DEVICE, 0);
+> > +		if (dma_mapping_error(qp->tx_dma_chan->device->dev,
+> > +				      qp->tx_mw_dma_addr)) {
+> > +			qp->tx_mw_dma_addr = 0;
+> > +			goto err1;
+> > +		}
+> > +	}
+> > +
+> >  	dev_dbg(&pdev->dev, "Using %s memcpy for TX\n",
+> >  		qp->tx_dma_chan ? "DMA" : "CPU");
+> >  
+> > @@ -1904,6 +1919,10 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
+> >  	qp->rx_alloc_entry = 0;
+> >  	while ((entry = ntb_list_rm(&qp->ntb_rx_q_lock, &qp->rx_free_q)))
+> >  		kfree(entry);
+> > +	if (qp->tx_mw_dma_addr)
+> > +		dma_unmap_resource(qp->tx_dma_chan->device->dev,
+> > +				   qp->tx_mw_dma_addr, qp->tx_mw_size,
+> > +				   DMA_FROM_DEVICE, 0);
+> >  	if (qp->tx_dma_chan)
+> >  		dma_release_channel(qp->tx_dma_chan);
+> >  	if (qp->rx_dma_chan)
+> > @@ -1945,6 +1964,11 @@ void ntb_transport_free_queue(struct ntb_transport_qp *qp)
+> >  		 */
+> >  		dma_sync_wait(chan, qp->last_cookie);
+> >  		dmaengine_terminate_all(chan);
+> > +
+> > +		dma_unmap_resource(chan->device->dev,
+> > +				   qp->tx_mw_dma_addr, qp->tx_mw_size,
+> > +				   DMA_FROM_DEVICE, 0);
+> > +
+> >  		dma_release_channel(chan);
+> >  	}
+> >  
+> > 
