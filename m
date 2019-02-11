@@ -2,189 +2,296 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E531C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCA2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AABA214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B40214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:34:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tfJMpQia"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a+Oh3++W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfBKXd3 (ORCPT
+        id S1727898AbfBKXeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:33:29 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51886 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727424AbfBKXd3 (ORCPT
+        Mon, 11 Feb 2019 18:34:31 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10946 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbfBKXeb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:33:29 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so1029749wmj.1;
-        Mon, 11 Feb 2019 15:33:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=4YsmXbJZrgA9KlysuvIxL9L2aT/wmgrin1tjWxSQvBE=;
-        b=tfJMpQiazUSzR2qIVuT0xukmGuQjxoqz3KItn52+wHoAjme1fx6romoXUzRZ1SBMvS
-         RLKIyyL4vgaArpImqkRlTjYMJLCPdupolf199NH/Ucx3FGnRKWIo7h/Aahkg7pOz0dm4
-         BTEmf/K/5ZylkFK+OwbLAda1X/JEcFGOYva7Q4+OdHrxFh8adWEYqmQUldEkv3wZQcOu
-         rH2Wa7ekxk/LSrfrY4dEFqLW2zQzxNiTo9dPwva+75WoSm6KV8qMvIq5rbN7CGMiWcoA
-         bLK0GCGOJhny9IcVb+2lxC51hzyq+GcKMkjtopuk4UkTFU3gKQjaOrk21RvUb3ixZaDY
-         ZUTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=4YsmXbJZrgA9KlysuvIxL9L2aT/wmgrin1tjWxSQvBE=;
-        b=sFcn8V3n6iSsRmYPmqXdPBBGIqsvTqBgxqy0C1lc78nz00BTFPl2pl15c/5f++Y8Fq
-         DXK1sknvF3c5IFk0gzRm2Qhs579A0/D/3byGDOEhwD3bC1qqBWiY1WlSYlSENJIne401
-         Jv/gbhgzvKQSwIXY3cwgL2oVFf8E376q46lT2qlCHmwIiJ5TG7p3m90si6K1xF8b1rKF
-         mKizLdpxMQpjOH091V5aCpr8CM3cCS6fkdDg1al+7t9IB088f9UOtE3v4aXtn2dwbKn+
-         nQo/0AMT+my5jgw0Qi07K7pzqqdZkJf5WJ1AgPiy72pKoBVtmi/UeVJAztz2YAI8+sf8
-         0qow==
-X-Gm-Message-State: AHQUAubwLrdAnPjTv5+6OQwYub+x8hFMA5K8iJUfc7/RKNLkcZhR78uv
-        1MKWPzB6aQ+J/zeRrPJjWwLN0TAR
-X-Google-Smtp-Source: AHgI3IZ0kop33OzKaHrXPmJt6bncCCyRrsJQLIVm+Xbf2Eied9mtC8rmTcBToP0r5QKsFAyzUkND7w==
-X-Received: by 2002:a7b:c854:: with SMTP id c20mr506627wml.153.1549928005622;
-        Mon, 11 Feb 2019 15:33:25 -0800 (PST)
-Received: from [172.30.89.184] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id q21sm934970wmc.14.2019.02.11.15.33.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:33:24 -0800 (PST)
-Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
- matrices
-To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
-Cc:     Tim Harvey <tharvey@gateworks.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190209014748.10427-1-slongerbeam@gmail.com>
- <20190209014748.10427-2-slongerbeam@gmail.com>
- <1549879117.7687.2.camel@pengutronix.de>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <8a3a9c63-d466-e328-d49a-1810952d2e9a@gmail.com>
-Date:   Mon, 11 Feb 2019 15:33:20 -0800
+        Mon, 11 Feb 2019 18:34:31 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6206850001>; Mon, 11 Feb 2019 15:34:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 11 Feb 2019 15:34:28 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 11 Feb 2019 15:34:28 -0800
+Received: from [172.17.136.14] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
+ 2019 23:34:27 +0000
+Subject: Re: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
+From:   Bo Yan <byan@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548959754-3941-1-git-send-email-byan@nvidia.com>
+ <20190131222517.GB13156@mithrandir>
+ <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <a94ab8ed-e8e7-b239-d9f1-498f6f9348e1@nvidia.com>
+Date:   Mon, 11 Feb 2019 15:34:27 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1549879117.7687.2.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549928069; bh=1glK6oxJf2jb2Gzl0u5WmusBmAGiqR6gudPU2GymtYU=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=a+Oh3++WvJ1KcToIdihDS+zk6JpMwjP7yevmjLO34NFQMoBCh9hK7s7IoxOmEgoH1
+         4Sm7UdL8MsBoYFXvd/jLTSw7EJJloM3oTQ/LpQGY8nradvagaGxxS964Mz/wyfyukO
+         wMjn9EAgy5ZmiCX/yUl/8Kq6kVY49CEa8BMXEwB+BgRpte9sMNC8lxtHGd5Lwj7LzM
+         7nBJFMfHOcYD4b8b8e9Y8UVe5RRtJvk6MKkgASojjdViBcYZE/vsfzTy7lE4mHK8A8
+         yCz+bKYD9zsp42DVJKDrdhsNDsGSaPViOEF7qrNH00Wkl491dYBlZdLWxjTr1RyZ7Y
+         tSLpgO51wvpFA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To make this simpler, I think it's best to isolate the cache information=20
+in its own patch. So I will amend this patch to include topology=20
+information only.
 
-
-On 2/11/19 1:58 AM, Philipp Zabel wrote:
-> On Fri, 2019-02-08 at 17:47 -0800, Steve Longerbeam wrote:
->> The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
->> coefficients, so rename them to indicate that. And add some comments
->> to make clear these are BT.601 coefficients encoding between YUV limited
->> range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
->> matrix, so rename to ic_csc_identity. No functional changes.
+On 1/31/19 3:29 PM, Bo Yan wrote:
+>=20
+> On 1/31/19 2:25 PM, Thierry Reding wrote:
+>> On Thu, Jan 31, 2019 at 10:35:54AM -0800, Bo Yan wrote:
+>>> The xavier CPU architecture includes 8 CPU cores organized in
+>>> 4 clusters. Add cpu-map data for topology initialization, add
+>>> cache data for cache node creation in sysfs.
+>>>
+>>> Signed-off-by: Bo Yan <byan@nvidia.com>
+>>> ---
+>>> =A0 arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148=20
+>>> +++++++++++++++++++++++++++++--
+>>> =A0 1 file changed, 140 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi=20
+>>> b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> index 6dfa1ca..7c2a1fb 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>>> @@ -870,63 +870,195 @@
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;
+>=20
+>> These don't seem to be well-defined. They are mentioned in a very weird
+>> locations (Documentation/devicetree/booting-without-of.txt) but there
+>> seem to be examples and other device tree files that use them so maybe
+>> those are all valid. It might be worth mentioning these in other places
+>> where people can more easily find them.
+>=20
+> It might be logical to place a reference to this document=20
+> (booting-without-of.txt) in architecture specific documents, for=20
+> example, arm/cpus.txt. I see the need for improved documentation, but=20
+> this probably should be best done in a separate change.
 >>
->> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
->> ---
->> Changes in v2:
->> - rename ic_csc_rgb2rgb matrix to ic_csc_identity.
->> ---
->>   drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
->>   1 file changed, 14 insertions(+), 7 deletions(-)
+>> According to the above document, {i,d}-cache-line-size are deprecated in
+>> favour of {i,d}-cache-block-size.
+>=20
+> Mostly, this seems to be derived from the oddity of PowerPC, which might=
+=20
+> have different cache-line-size and cache-block-size. I don't know if=20
+> there are other examples? It looks like the {i,d}-cache-line-size are=20
+> being used in dts files for almost all architectures, the only exception=
+=20
+> is arch/sh/boot/dts/j2_mimas_v2.dts. On ARM and ARM64, cache-line-size=20
+> is the same as cache-block-size. So I am wondering whether the=20
+> booting-without-of.txt should be fixed instead? just to keep it=20
+> consistent among dts files, especially in arm64.
+>=20
 >>
->> diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
->> index 594c3cbc8291..3ef61f0b509b 100644
->> --- a/drivers/gpu/ipu-v3/ipu-ic.c
->> +++ b/drivers/gpu/ipu-v3/ipu-ic.c
->> @@ -183,11 +183,13 @@ struct ic_csc_params {
->>   };
->>   
->>   /*
->> + * BT.601 encoding from RGB full range to YUV limited range:
->> + *
->>    * Y = R *  .299 + G *  .587 + B *  .114;
->>    * U = R * -.169 + G * -.332 + B *  .500 + 128.;
->>    * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
-> Hm, this is a conversion to full range BT.601. For limited range, the
-> matrix coefficients
->
->     0.2990  0.5870  0.1140
->    -0.1687 -0.3313  0.5000
->     0.5000 -0.4187 -0.0813
->
-> should be multiplied with 219/255 (Y) and 224/255 (U,V), respectively:
->
->    Y = R *  .2568 + G *  .5041 + B *  .0979 + 16;
->    U = R * -.1482 + G * -.2910 + B *  .4392 + 128;
->    V = R *  .4392 + G * -.3678 + B * -.0714 + 128;
->
->>    */
->> -static const struct ic_csc_params ic_csc_rgb2ycbcr = {
->> +static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
->>   	.coeff = {
->>   		{ 77, 150, 29 },
->>   		{ 469, 427, 128 },
->> @@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
->>   	.scale = 1,
->>   };
->>   
->> -/* transparent RGB->RGB matrix for graphics combining */
->> -static const struct ic_csc_params ic_csc_rgb2rgb = {
->> +/*
->> + * identity matrix, used for transparent RGB->RGB graphics
->> + * combining.
->> + */
->> +static const struct ic_csc_params ic_csc_identity = {
->>   	.coeff = {
->>   		{ 128, 0, 0 },
->>   		{ 0, 128, 0 },
->> @@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
->>   };
->>   
->>   /*
->> + * Inverse BT.601 encoding from YUV limited range to RGB full range:
->> + *
->>    * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
->>    * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
->>    * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
->>    */
-> This looks correct.
-
-Agreed, the coefficients in the comments are correct, but the actual 
-table values were a bit off. I will correct them for v5 (Green offset 
-should be 272 in the table, not 266).
-
-Steve
-
->
->> -static const struct ic_csc_params ic_csc_ycbcr2rgb = {
->> +static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
->>   	.coeff = {
->>   		{ 149, 0, 204 },
->>   		{ 149, 462, 408 },
->> @@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
->>   		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
->>   
->>   	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
->> -		params = &ic_csc_ycbcr2rgb;
->> +		params = &ic_csc_ycbcr2rgb_bt601;
->>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
->> -		params = &ic_csc_rgb2ycbcr;
->> +		params = &ic_csc_rgb2ycbcr_bt601;
->>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
->> -		params = &ic_csc_rgb2rgb;
->> +		params = &ic_csc_identity;
->>   	else {
->>   		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
->>   		return -EINVAL;
-> regards
-> Philipp
-
+>> I also don't see any mention of {i,d}-cache_sets in the device tree
+>> bindings, though riscv/cpus.txt mentions {i,d}-cache-sets (note the
+>> hyphen instead of underscore) in the examples. arm/l2c2x0.txt and
+>> arm/uniphier/cache-unifier.txt describe cache-sets, though that's
+>> slightly different.
+>>
+>> Might make sense to document all these in more standard places. Maybe
+>> adding them to arm/cpus.txt. For consistency with other properties, I
+>> think there should be called {i,d}-cache-sets like for RISC-V.
+>>
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_0>;
+>>
+>> This seems to be called next-level-cache everywhere else, though it's
+>> only formally described in arm/uniphier/cache-uniphier.txt. So might
+>> also make sense to add this to arm/cpus.txt.
+>=20
+> the improved documentation is certainly desired, I agree.
+>>
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@1 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl0_1: cpu@1 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10001>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_0>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@2 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl1_0: cpu@2 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x100>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@3 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl1_1: cpu@3 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x101>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_1>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@4 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl2_0: cpu@4 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x200>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_2>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@5 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl2_1: cpu@5 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x201>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_2>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@6 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl3_0: cpu@6 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10300>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_3>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> -=A0=A0=A0=A0=A0=A0=A0 cpu@7 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cl3_1: cpu@7 {
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra194=
+-carmel", "arm,armv8";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "cpu";
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x10301>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enable-method =3D "psci";
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-size =3D <131072>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 i-cache-sets =3D <512>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-size =3D <65536>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d-cache_sets =3D <256>;
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 l2-cache =3D <&l2_3>;
+>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
+>>> =A0=A0=A0=A0=A0 };
+>>> +=A0=A0=A0 l2_0: l2-cache0 {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-size =3D <2097152>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-sets =3D <2048>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 next-level-cache =3D <&l3>;
+>>> +=A0=A0=A0 };
+>>
+>> Does this need a compatible string? Also, are there controllers behind
+>> these caches? I'm just wondering if these also need reg properties and
+>> unit-addresses.
+>=20
+> No need for compatible string. No reg properties and addresses. These=20
+> will be parsed by drivers/of/base.c and drivers/base/cacheinfo.c, they=20
+> are generic.
+>>
+>> arm/l2c2x0.txt and arm/uniphier/cache-uniphier.txt describe an
+>> additional property that you don't specify here: cache-level. This
+>> sounds useful to have so that we don't have to guess the cache level
+>> from the name, which may or may not work depending on what people name
+>> the nodes.
+>=20
+> the cache level property is implied in device tree hierarchy, so after=20
+> system boots up, I can find cache level in related sysfs nodes:
+>=20
+>  =A0=A0=A0 [root@alarm cache]# cat index*/level
+>  =A0=A0=A0 1
+>  =A0=A0=A0 1
+>  =A0=A0=A0 2
+>  =A0=A0=A0 3
+>=20
+>=20
+>>
+>> Also, similar to the L1 cache, cache-block-size is preferred over
+>> cache-line-size.
+>>
+>>> +=A0=A0=A0 l3: l3-cache {
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-size =3D <4194304>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-line-size =3D <64>;
+>>> +=A0=A0=A0=A0=A0=A0=A0 cache-sets =3D <4096>;
+>>> +=A0=A0=A0 };
+>>
+>> The same comments apply as for the L2 caches.
+>>
+>> Thierry
+>>
