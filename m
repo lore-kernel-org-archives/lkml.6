@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB35C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFE0C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196C021855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E77F721855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899907;
-	bh=IxCrc7PbCNczko9ZZtIIgWesD/wJh+U1NF5xehBROEI=;
+	s=default; t=1549899911;
+	bh=A2DZ+MSvyOohz41YdRakkGxktNHoidN9mQKYpP30khA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ovy+Zndm9ZG4RrOg3fFKz8OwoOLiMcXmoHr1MDZ/msD1eziA6pGqgkX+MSU9dvaYC
-	 MuWDzm4wK9auDNg/PLpNuQNHn8MDZOgI08tiTi3C1xUZrbAGQsNh1n3dJQshmAlqEa
-	 FhqtYphbHvqEUFg2EwRC9b+8YTsScIT3eYuiekwU=
+	b=qk6Alb6ix/jjOlWFQhOHrW1LJemonEgV8R5KZK7c9b+FY0qnIRuCECp06qaAATAzf
+	 GS8+TZOY32chLXArCF+oka62vcNppDz9023txODBTmsXeT94mY0rtncXM1i9TYPMJD
+	 +mEH0s+87aBCXvcP0kU+rJ3vF8hnn1j+g40578hA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733110AbfBKPpF (ORCPT
+        id S1732741AbfBKOnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732744AbfBKOnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 09:43:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732713AbfBKOns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B569B206BA;
-        Mon, 11 Feb 2019 14:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A1BA222A1;
+        Mon, 11 Feb 2019 14:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896233;
-        bh=IxCrc7PbCNczko9ZZtIIgWesD/wJh+U1NF5xehBROEI=;
+        s=default; t=1549896227;
+        bh=A2DZ+MSvyOohz41YdRakkGxktNHoidN9mQKYpP30khA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q7H+zrvN6Yalhk1X/QyV96XzQHIRkA0T8o1H5zZgWWroGCE+6bsnsXJxuyThWtF1u
-         WAz/L9EHOixRo0goalYSKMDMuoEw2J08NOQGqBh/OAggYdoK3kk8NpIng4x9ETyR5o
-         Ig9LXS+GS2ZyEFlNdVIJiOLu29hDESlzxLMqWWq0=
+        b=a6Eo08gvcDLANL1pSbTuK9qr7ZT8yUQihFYicjQSvCAd+CoQTetLuR4InWcIX7Z9E
+         tEX6TRGmaIW15fr2r0AJv4kS1MTWm/aNQQXig25l9N7sGtI02H3V8H1LpD8NPb3WO2
+         ZFpBOshK0CVJ5edUaIdX3N5zoOFNsn5sa0kZxgps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 116/313] tracing: Have trace_stack nr_entries compare not be so subtle
-Date:   Mon, 11 Feb 2019 15:16:36 +0100
-Message-Id: <20190211141901.601656547@linuxfoundation.org>
+Subject: [PATCH 4.19 114/313] media: coda: fix H.264 deblocking filter controls
+Date:   Mon, 11 Feb 2019 15:16:34 +0100
+Message-Id: <20190211141901.477620178@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,63 +67,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca16b0fbb05242f18da9d810c07d3882ffed831c ]
+[ Upstream commit 75fa6e4f83a0923fe753827d354998d448b4fd6a ]
 
-Dan Carpenter reviewed the trace_stack.c code and figured he found an off by
-one bug.
+Add support for the third loop filter mode
+V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_DISABLED_AT_SLICE_BOUNDARY,
+and fix V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_ALPHA and
+V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_BETA controls.
 
- "From reviewing the code, it seems possible for
-  stack_trace_max.nr_entries to be set to .max_entries and in that case we
-  would be reading one element beyond the end of the stack_dump_trace[]
-  array.  If it's not set to .max_entries then the bug doesn't affect
-  runtime."
+The filter offset controls are signed values in the -6 to 6 range and
+are stored into the slice header fields slice_alpha_c0_offset_div2 and
+slice_beta_offset_div2. The actual filter offsets FilterOffsetA/B are
+double their value, in range of -12 to 12.
 
-Although it looks to be the case, it is not. Because we have:
+Rename variables to more closely match the nomenclature in the H.264
+specification.
 
- static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] =
-	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
-
- struct stack_trace stack_trace_max = {
-	.max_entries		= STACK_TRACE_ENTRIES - 1,
-	.entries		= &stack_dump_trace[0],
- };
-
-And:
-
-	stack_trace_max.nr_entries = x;
-	for (; x < i; x++)
-		stack_dump_trace[x] = ULONG_MAX;
-
-Even if nr_entries equals max_entries, indexing with it into the
-stack_dump_trace[] array will not overflow the array. But if it is the case,
-the second part of the conditional that tests stack_dump_trace[nr_entries]
-to ULONG_MAX will always be true.
-
-By applying Dan's patch, it removes the subtle aspect of it and makes the if
-conditional slightly more efficient.
-
-Link: http://lkml.kernel.org/r/20180620110758.crunhd5bfep7zuiz@kili.mountain
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_stack.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/coda/coda-bit.c    | 19 +++++++++----------
+ drivers/media/platform/coda/coda-common.c | 15 +++++++--------
+ drivers/media/platform/coda/coda.h        |  6 +++---
+ drivers/media/platform/coda/coda_regs.h   |  2 +-
+ 4 files changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 4237eba4ef20..6e3edd745c68 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
- {
- 	long n = *pos - 1;
- 
--	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
-+	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
- 		return NULL;
- 
- 	m->private = (void *)n;
+diff --git a/drivers/media/platform/coda/coda-bit.c b/drivers/media/platform/coda/coda-bit.c
+index d26c2d85a009..d20d3df5778b 100644
+--- a/drivers/media/platform/coda/coda-bit.c
++++ b/drivers/media/platform/coda/coda-bit.c
+@@ -991,16 +991,15 @@ static int coda_start_encoding(struct coda_ctx *ctx)
+ 		else
+ 			coda_write(dev, CODA_STD_H264,
+ 				   CODA_CMD_ENC_SEQ_COD_STD);
+-		if (ctx->params.h264_deblk_enabled) {
+-			value = ((ctx->params.h264_deblk_alpha &
+-				  CODA_264PARAM_DEBLKFILTEROFFSETALPHA_MASK) <<
+-				 CODA_264PARAM_DEBLKFILTEROFFSETALPHA_OFFSET) |
+-				((ctx->params.h264_deblk_beta &
+-				  CODA_264PARAM_DEBLKFILTEROFFSETBETA_MASK) <<
+-				 CODA_264PARAM_DEBLKFILTEROFFSETBETA_OFFSET);
+-		} else {
+-			value = 1 << CODA_264PARAM_DISABLEDEBLK_OFFSET;
+-		}
++		value = ((ctx->params.h264_disable_deblocking_filter_idc &
++			  CODA_264PARAM_DISABLEDEBLK_MASK) <<
++			 CODA_264PARAM_DISABLEDEBLK_OFFSET) |
++			((ctx->params.h264_slice_alpha_c0_offset_div2 &
++			  CODA_264PARAM_DEBLKFILTEROFFSETALPHA_MASK) <<
++			 CODA_264PARAM_DEBLKFILTEROFFSETALPHA_OFFSET) |
++			((ctx->params.h264_slice_beta_offset_div2 &
++			  CODA_264PARAM_DEBLKFILTEROFFSETBETA_MASK) <<
++			 CODA_264PARAM_DEBLKFILTEROFFSETBETA_OFFSET);
+ 		coda_write(dev, value, CODA_CMD_ENC_SEQ_264_PARA);
+ 		break;
+ 	case V4L2_PIX_FMT_JPEG:
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index bf7b8417c27f..19d92edcc981 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -1793,14 +1793,13 @@ static int coda_s_ctrl(struct v4l2_ctrl *ctrl)
+ 		ctx->params.h264_max_qp = ctrl->val;
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_ALPHA:
+-		ctx->params.h264_deblk_alpha = ctrl->val;
++		ctx->params.h264_slice_alpha_c0_offset_div2 = ctrl->val;
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_BETA:
+-		ctx->params.h264_deblk_beta = ctrl->val;
++		ctx->params.h264_slice_beta_offset_div2 = ctrl->val;
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_MODE:
+-		ctx->params.h264_deblk_enabled = (ctrl->val ==
+-				V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_ENABLED);
++		ctx->params.h264_disable_deblocking_filter_idc = ctrl->val;
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+ 		/* TODO: switch between baseline and constrained baseline */
+@@ -1882,13 +1881,13 @@ static void coda_encode_ctrls(struct coda_ctx *ctx)
+ 	v4l2_ctrl_new_std(&ctx->ctrls, &coda_ctrl_ops,
+ 		V4L2_CID_MPEG_VIDEO_H264_MAX_QP, 0, 51, 1, 51);
+ 	v4l2_ctrl_new_std(&ctx->ctrls, &coda_ctrl_ops,
+-		V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_ALPHA, 0, 15, 1, 0);
++		V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_ALPHA, -6, 6, 1, 0);
+ 	v4l2_ctrl_new_std(&ctx->ctrls, &coda_ctrl_ops,
+-		V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_BETA, 0, 15, 1, 0);
++		V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_BETA, -6, 6, 1, 0);
+ 	v4l2_ctrl_new_std_menu(&ctx->ctrls, &coda_ctrl_ops,
+ 		V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_MODE,
+-		V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_DISABLED, 0x0,
+-		V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_ENABLED);
++		V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_DISABLED_AT_SLICE_BOUNDARY,
++		0x0, V4L2_MPEG_VIDEO_H264_LOOP_FILTER_MODE_ENABLED);
+ 	v4l2_ctrl_new_std_menu(&ctx->ctrls, &coda_ctrl_ops,
+ 		V4L2_CID_MPEG_VIDEO_H264_PROFILE,
+ 		V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE, 0x0,
+diff --git a/drivers/media/platform/coda/coda.h b/drivers/media/platform/coda/coda.h
+index 19ac0b9dc6eb..2469ca1dc598 100644
+--- a/drivers/media/platform/coda/coda.h
++++ b/drivers/media/platform/coda/coda.h
+@@ -115,9 +115,9 @@ struct coda_params {
+ 	u8			h264_inter_qp;
+ 	u8			h264_min_qp;
+ 	u8			h264_max_qp;
+-	u8			h264_deblk_enabled;
+-	u8			h264_deblk_alpha;
+-	u8			h264_deblk_beta;
++	u8			h264_disable_deblocking_filter_idc;
++	s8			h264_slice_alpha_c0_offset_div2;
++	s8			h264_slice_beta_offset_div2;
+ 	u8			h264_profile_idc;
+ 	u8			h264_level_idc;
+ 	u8			mpeg4_intra_qp;
+diff --git a/drivers/media/platform/coda/coda_regs.h b/drivers/media/platform/coda/coda_regs.h
+index 5e7b00a97671..e675e38f3475 100644
+--- a/drivers/media/platform/coda/coda_regs.h
++++ b/drivers/media/platform/coda/coda_regs.h
+@@ -292,7 +292,7 @@
+ #define		CODA_264PARAM_DEBLKFILTEROFFSETALPHA_OFFSET	8
+ #define		CODA_264PARAM_DEBLKFILTEROFFSETALPHA_MASK	0x0f
+ #define		CODA_264PARAM_DISABLEDEBLK_OFFSET		6
+-#define		CODA_264PARAM_DISABLEDEBLK_MASK		0x01
++#define		CODA_264PARAM_DISABLEDEBLK_MASK		0x03
+ #define		CODA_264PARAM_CONSTRAINEDINTRAPREDFLAG_OFFSET	5
+ #define		CODA_264PARAM_CONSTRAINEDINTRAPREDFLAG_MASK	0x01
+ #define		CODA_264PARAM_CHROMAQPOFFSET_OFFSET		0
 -- 
 2.19.1
 
