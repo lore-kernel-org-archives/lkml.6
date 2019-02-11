@@ -2,89 +2,104 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE211C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECEFC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABDC3214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F2DE21A49
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:32:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="yPKhQIva"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="DOaXH4tV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfBKMaI (ORCPT
+        id S1727341AbfBKMco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:30:08 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55227 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfBKMaH (ORCPT
+        Mon, 11 Feb 2019 07:32:44 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40725 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfBKMco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:30:07 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so17489904wmh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:30:06 -0800 (PST)
+        Mon, 11 Feb 2019 07:32:44 -0500
+Received: by mail-qt1-f195.google.com with SMTP id j36so11852446qta.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:32:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2vy/txD1OCIhjROwrdgRGMQFbSUcIxpXB03F3im1d8g=;
-        b=yPKhQIvaje/L2j0CrlyRwhQXLZmwPPRwHwQKVNuWxYZ5tN8mMS3h1u/0VqNlTC1RxS
-         JPLJnV8oqPrdbGjq/zheDoFQ7IQeEjINO8tPW0de3q4G4QtlKKCsuYH1aWOf2qmjAG0i
-         uzSJQopcJFEf00Hn51H2uagVCR9GYiM85ftORR+4UXiwGL6bLHjMDUge/5Z5KTUdPFCY
-         7CH1OfR0b1Fm3A1NqeXLw074Plhk8tc8UP0GUOdFp/F1mtUA9cKHEcxmXGemIeGrUFT0
-         r8rlJZOddXW4iCTrWR/iVhU41r3YuGuWp0N+njFPG3/p2gjQkvSOoaPuC1eEIZXni9un
-         Pspg==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=B2ouR+Ang/LItZ96PM06UJ1jkDO7ifCmte1uKNl4m9I=;
+        b=DOaXH4tV21cFMhS2mNjs93TTzRjlPcp6GZc1CMQpstAl5juxcg/1cjuESUfksfEHgn
+         G4S9Bt5bOsfRdiABthYNSGVPYfsN/boEz1HhcDHYnY5PvIyvfvouH7XxSO4z+xUzVQmd
+         J7RGbKOKuwCfRAHs72OaP/kGWwixvPuOPl+10olToEi8hLtH3Trjj83pEdhDJ2X7XJfd
+         loq8Js20flsGzcr+x0tlRpyIK+4HzBmLNtOrb/heJ3tAl2FUJvXSXNAmiqqiIana0YHw
+         wr8QAn+4etl5LYRdb57khbJhfYReZ9//WzlWCh9vR68Joz3Wsrhf+d262NcEd/EQOUaL
+         NLbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2vy/txD1OCIhjROwrdgRGMQFbSUcIxpXB03F3im1d8g=;
-        b=raXd+AYTE2NG0BIhIc2omCwkkgIJf4DHNYWf0+oLOBfIKnym+uozb7WtHtNVIJ829Z
-         esU7Znk4uR8US3eqOuWtUxVgOE6ETXm5Yd25/xi0L3OWG5qAc3XuusIr+6SE17rMRVxM
-         x/qPLuftyRZwIjsK1i3jtOiHb+bsZCoTlusta1pwMGkbqGXmgrZ15Nz7pPRqGmM819pM
-         SKqPuIVALi4UjQz59cYxJQ2VphZEOi/Z5JY8MlhtEZUXGnrY0M+3KIECgUYeC2cikufb
-         KuRKZ/7NhlOB/ztJj3jZisaSeAisohOlDb1uaAXcIssQCAcqKapNwzo0qX/MdUyUSFJ4
-         FIsA==
-X-Gm-Message-State: AHQUAuaISVne4KBkBYBmrvvW+2C+LPG3d2bcqyoqD15wd+IzoptrZs9P
-        4fmxe2wAQhx59kX6vC0DOQh17w==
-X-Google-Smtp-Source: AHgI3IbSZaPSyNJG4glfK7Y1zhTfm36XeOWnyI4F4LVWMZ5yH/enutwQBp1XxpwgHr/ofT/zs7T4Tw==
-X-Received: by 2002:a1c:9cce:: with SMTP id f197mr9048271wme.135.1549888205797;
-        Mon, 11 Feb 2019 04:30:05 -0800 (PST)
-Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
-        by smtp.gmail.com with ESMTPSA id l12sm6634282wrt.87.2019.02.11.04.30.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 04:30:05 -0800 (PST)
-Date:   Mon, 11 Feb 2019 13:20:42 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, idosch@mellanox.com,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        bridge@lists.linux-foundation.org, jiri@mellanox.com,
-        andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: Re: [PATCH net-next v3 3/9] rocker: Handle
- SWITCHDEV_PORT_ATTR_GET/SET
-Message-ID: <20190211122042.GF2251@nanopsycho>
-References: <20190210234007.16173-1-f.fainelli@gmail.com>
- <20190210234007.16173-4-f.fainelli@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210234007.16173-4-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B2ouR+Ang/LItZ96PM06UJ1jkDO7ifCmte1uKNl4m9I=;
+        b=FdXwFJbIJxRLZSAPc+KnzuduKPncCqYIBnYF+CjfvgYBlo88el6+Vwu20I42Res1uC
+         pzInzbqZTlTiMKoAm3z1713hptpNbDNXBDANNpEg+Q6CjoTuH3CsOkZ4n4sLc4pO1Nlh
+         nGzDu55y7nS1VpXCXtrlOv19JS1g464QKHFF0dl7Zh5L8v89EuGQCs9pJn4VIwXdWgyq
+         GZWTW3RqLnJQ+UOgB8XY48iM/QF8mXLJAHWFyXpwnM/JE9HCkYtc556vw3CCiiHVXLAg
+         rxQkC8SBKuXAMyXUTcyy0iYhlxd/0vLVG7Bbmg+25y3rPwgrJY6TAiw70XRWTVTB7uD2
+         exQQ==
+X-Gm-Message-State: AHQUAuZ7buvjmDQEJSdvCqgDRgCbRqgcECleasn21x9yajpU2UUulvGd
+        YDUYIOY3x/0UXNx5KhuWaIEoXQ==
+X-Google-Smtp-Source: AHgI3IbvcpJ8B5DrC2p58gNY0AExMmGTOFsI9dp4XE+ccMuoyiaUgF3QtJJ0xmiuI3Bf9otjzRsTsg==
+X-Received: by 2002:a0c:8425:: with SMTP id l34mr26545005qva.101.1549888362886;
+        Mon, 11 Feb 2019 04:32:42 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id i33sm6236445qti.74.2019.02.11.04.32.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 04:32:42 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com
+Cc:     labbott@fedoraproject.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] slub: remove an unused addr argument
+Date:   Mon, 11 Feb 2019 07:32:14 -0500
+Message-Id: <20190211123214.35592-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Feb 11, 2019 at 12:40:01AM CET, f.fainelli@gmail.com wrote:
->Following patches will change the way we communicate getting or setting
->a port's attribute and use a blocking notifier to perform those tasks.
->
->Prepare rocker to support receiving notifier events targeting
->SWITCHDEV_PORT_ATTR_GET/SET and simply translate that into the existing
->rocker_port_attr_{set,get} calls.
->
->Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+"addr" function argument is not used in alloc_consistency_checks() at
+all, so remove it.
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: becfda68abca ("slub: convert SLAB_DEBUG_FREE to SLAB_CONSISTENCY_CHECKS")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/slub.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index 075ebc529788..4a61959e1887 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1077,8 +1077,7 @@ static void setup_object_debug(struct kmem_cache *s, struct page *page,
+ }
+ 
+ static inline int alloc_consistency_checks(struct kmem_cache *s,
+-					struct page *page,
+-					void *object, unsigned long addr)
++					struct page *page, void *object)
+ {
+ 	if (!check_slab(s, page))
+ 		return 0;
+@@ -1099,7 +1098,7 @@ static noinline int alloc_debug_processing(struct kmem_cache *s,
+ 					void *object, unsigned long addr)
+ {
+ 	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
+-		if (!alloc_consistency_checks(s, page, object, addr))
++		if (!alloc_consistency_checks(s, page, object))
+ 			goto bad;
+ 	}
+ 
+-- 
+2.17.2 (Apple Git-113)
+
