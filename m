@@ -7,48 +7,53 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91664C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89170C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61AB3222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7D5222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897905;
-	bh=7rpeOJkq0lavqs0KdUdRIV2w7Y1mapqvKRGhtq43OHE=;
+	s=default; t=1549897917;
+	bh=MaazP+ObdzU1i8xkn4/z5S/6e+AQpzbJRS/haPVpXm8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H0Bo2cbdEuojJscICNkkaZPmuSgT5VHGbJuAYtP33bTtyAwxYnZkte8Mb/rEEKY0/
-	 Ohf3+Gnx4341oYMixrHZbX072rtOqfhPU2Q5D/pOItT20E7rjKpmtR9vx6da3GQ3OX
-	 yr3x+acYHErmZ+wSz1PbLb7lY555Y4VwEc4ETxzk=
+	b=R8UL18vNYdPlVCzfhrxMmJDRxNXs8Dmqmg0XkWcbzWZ1UiBhupw4Vx4D+vOagU1m/
+	 zs1rE2OzvfMYwCQWFSYlFUzOUYiDXmjI4LZN4OFwQC7K+86A06R4WDKr4etBS4B33X
+	 H8tjDxrORTeQzp2sGfgFmsEesg5rGnVo+nnHMbrc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404020AbfBKPK4 (ORCPT
+        id S2391524AbfBKPLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60986 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403880AbfBKPKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:53 -0500
+        id S2403973AbfBKPKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2774E222A7;
-        Mon, 11 Feb 2019 15:10:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7719B222A7;
+        Mon, 11 Feb 2019 15:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897852;
-        bh=7rpeOJkq0lavqs0KdUdRIV2w7Y1mapqvKRGhtq43OHE=;
+        s=default; t=1549897844;
+        bh=MaazP+ObdzU1i8xkn4/z5S/6e+AQpzbJRS/haPVpXm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YbxP/BOfBSRtUuYZu1r/xAgLGXbaFEzVjEXgo9gnwBgGCjn5gurSLXJB/cHBvliuZ
-         hrjQJqAZ4qfhaN6XozUbj8bbchhdjU9nnU++VKeCby2DOBg5EG1iSo5mJREUSZHtYF
-         AeL+hS7E2F8aqo06zmsVPa4QvnufJsMfF2zq3bXY=
+        b=WZlnw+IeDOpWpTAGCZwHs+vGxOy2oxS4+Gpw2GBOO+MV84lD92anI9a+MCr2JBk4M
+         +euKzGgBUTW7DSLXaYYKs8nn7H4oIbYoXWZjBBILSXp1JECHR/w8GQnEmsyjSNKlXz
+         yjBw+DFtIkQSF3CK6lD2jU5zSQFgJ0kvTdCWAWiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Lin Ming <ming.m.lin@intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Ingo Molnar <mingo@elte.hu>, He Zhe <zhe.he@windriver.com>
-Subject: [PATCH 4.9 137/137] perf: Add support for supplementary event registers
-Date:   Mon, 11 Feb 2019 15:20:18 +0100
-Message-Id: <20190211141824.827389473@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Arkadiusz Miskiewicz <arekm@maven.pl>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, Aleksa Sarai <asarai@suse.de>,
+        Jay Kamat <jgkamat@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 134/137] oom, oom_reaper: do not enqueue same task twice
+Date:   Mon, 11 Feb 2019 15:20:15 +0100
+Message-Id: <20190211141824.547690140@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,98 +72,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit a7e3ed1e470116c9d12c2f778431a481a6be8ab6 upstream.
+commit 9bcdeb51bd7d2ae9fe65ea4d60643d2aeef5bfe3 upstream.
 
-Change logs against Andi's original version:
+Arkadiusz reported that enabling memcg's group oom killing causes
+strange memcg statistics where there is no task in a memcg despite the
+number of tasks in that memcg is not 0.  It turned out that there is a
+bug in wake_oom_reaper() which allows enqueuing same task twice which
+makes impossible to decrease the number of tasks in that memcg due to a
+refcount leak.
 
-- Extends perf_event_attr:config to config{,1,2} (Peter Zijlstra)
-- Fixed a major event scheduling issue. There cannot be a ref++ on an
-  event that has already done ref++ once and without calling
-  put_constraint() in between. (Stephane Eranian)
-- Use thread_cpumask for percore allocation. (Lin Ming)
-- Use MSR names in the extra reg lists. (Lin Ming)
-- Remove redundant "c = NULL" in intel_percore_constraints
-- Fix comment of perf_event_attr::config1
+This bug existed since the OOM reaper became invokable from
+task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
 
-Intel Nehalem/Westmere have a special OFFCORE_RESPONSE event
-that can be used to monitor any offcore accesses from a core.
-This is a very useful event for various tunings, and it's
-also needed to implement the generic LLC-* events correctly.
+  T1@P1     |T2@P1     |T3@P1     |OOM reaper
+  ----------+----------+----------+------------
+                                   # Processing an OOM victim in a different memcg domain.
+                        try_charge()
+                          mem_cgroup_out_of_memory()
+                            mutex_lock(&oom_lock)
+             try_charge()
+               mem_cgroup_out_of_memory()
+                 mutex_lock(&oom_lock)
+  try_charge()
+    mem_cgroup_out_of_memory()
+      mutex_lock(&oom_lock)
+                            out_of_memory()
+                              oom_kill_process(P1)
+                                do_send_sig_info(SIGKILL, @P1)
+                                mark_oom_victim(T1@P1)
+                                wake_oom_reaper(T1@P1) # T1@P1 is enqueued.
+                            mutex_unlock(&oom_lock)
+                 out_of_memory()
+                   mark_oom_victim(T2@P1)
+                   wake_oom_reaper(T2@P1) # T2@P1 is enqueued.
+                 mutex_unlock(&oom_lock)
+      out_of_memory()
+        mark_oom_victim(T1@P1)
+        wake_oom_reaper(T1@P1) # T1@P1 is enqueued again due to oom_reaper_list == T2@P1 && T1@P1->oom_reaper_list == NULL.
+      mutex_unlock(&oom_lock)
+                                   # Completed processing an OOM victim in a different memcg domain.
+                                   spin_lock(&oom_reaper_lock)
+                                   # T1P1 is dequeued.
+                                   spin_unlock(&oom_reaper_lock)
 
-Unfortunately this event requires programming a mask in a separate
-register. And worse this separate register is per core, not per
-CPU thread.
+but memcg's group oom killing made it easier to trigger this bug by
+calling wake_oom_reaper() on the same task from one out_of_memory()
+request.
 
-This patch:
+Fix this bug using an approach used by commit 855b018325737f76 ("oom,
+oom_reaper: disable oom_reaper for oom_kill_allocating_task").  As a
+side effect of this patch, this patch also avoids enqueuing multiple
+threads sharing memory via task_will_free_mem(current) path.
 
-- Teaches perf_events that OFFCORE_RESPONSE needs extra parameters.
-  The extra parameters are passed by user space in the
-  perf_event_attr::config1 field.
-
-- Adds support to the Intel perf_event core to schedule per
-  core resources. This adds fairly generic infrastructure that
-  can be also used for other per core resources.
-  The basic code has is patterned after the similar AMD northbridge
-  constraints code.
-
-Thanks to Stephane Eranian who pointed out some problems
-in the original version and suggested improvements.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Lin Ming <ming.m.lin@intel.com>
-Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-LKML-Reference: <1299119690-13991-2-git-send-email-ming.m.lin@intel.com>
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
-[ He Zhe: Fixes conflict caused by missing disable_counter_freeze which is
- introduced since v4.20 af3bdb991a5cb. ]
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Link: http://lkml.kernel.org/r/e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp
+Link: http://lkml.kernel.org/r/5ee34fc6-1485-34f8-8790-903ddabaa809@i-love.sakura.ne.jp
+Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: Arkadiusz Miskiewicz <arekm@maven.pl>
+Tested-by: Arkadiusz Miskiewicz <arekm@maven.pl>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Aleksa Sarai <asarai@suse.de>
+Cc: Jay Kamat <jgkamat@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/core.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ include/linux/sched.h |    1 +
+ mm/oom_kill.c         |    4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3235,6 +3235,11 @@ static void free_excl_cntrs(int cpu)
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -527,6 +527,7 @@ static inline int get_dumpable(struct mm
+ #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
+ #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+ #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
++#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
  
- static void intel_pmu_cpu_dying(int cpu)
- {
-+	fini_debug_store_on_cpu(cpu);
-+}
-+
-+static void intel_pmu_cpu_dead(int cpu)
-+{
- 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
- 	struct intel_shared_regs *pc;
+ #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK)
  
-@@ -3246,8 +3251,6 @@ static void intel_pmu_cpu_dying(int cpu)
- 	}
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -626,8 +626,8 @@ static void wake_oom_reaper(struct task_
+ 	if (!oom_reaper_th)
+ 		return;
  
- 	free_excl_cntrs(cpu);
--
--	fini_debug_store_on_cpu(cpu);
- }
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	/* mm is already queued? */
++	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
+ 		return;
  
- static void intel_pmu_sched_task(struct perf_event_context *ctx,
-@@ -3324,6 +3327,7 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
- };
- 
- static __initconst const struct x86_pmu intel_pmu = {
-@@ -3359,6 +3363,8 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
-+
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
- };
+ 	get_task_struct(tsk);
 
 
