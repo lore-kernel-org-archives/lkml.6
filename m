@@ -2,146 +2,95 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6B1C282DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E34DEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D7C2229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dj10XbPz"
+	by mail.kernel.org (Postfix) with ESMTP id BDADD2229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731590AbfBKSaA (ORCPT
+        id S1731808AbfBKSaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:30:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44204 "EHLO mail.skyhub.de"
+        Mon, 11 Feb 2019 13:30:14 -0500
+Received: from mga09.intel.com ([134.134.136.24]:58990 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbfBKSaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:30:00 -0500
-Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C0D71EC037B;
-        Mon, 11 Feb 2019 19:29:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549909798;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Yw+RK9f/S+johjl1gYKTeZptuEY0P9nfhJd0XlVQGCo=;
-        b=dj10XbPzFbFnu9Nya4W5OkkNbXxJnnkj4Hr1SOpZ2asDUWMbDzAbKRWRj/tjz/qk4tl7WJ
-        0em21jvddg2A3nLTY/GpXAXUxfmJCaIUKjSFW1JC6HHKlJLE1/k9VIlZrqJLUkJ0JPA/M4
-        LmZjPdIjqu1x0Cyl6ehJazATSPz8JTc=
-Date:   Mon, 11 Feb 2019 19:29:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
- loading
-Message-ID: <20190211182956.GN19618@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-11-rick.p.edgecombe@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-11-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727968AbfBKSaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:30:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:30:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="137749085"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 11 Feb 2019 10:30:10 -0800
+Message-ID: <58e57acd628f2d6535fc45a028af50855158fda6.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 2/4] kvm: Add host side support for free memory hints
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+        akpm@linux-foundation.org
+Date:   Mon, 11 Feb 2019 10:30:10 -0800
+In-Reply-To: <20190211124203-mutt-send-email-mst@kernel.org>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181546.12095.81356.stgit@localhost.localdomain>
+         <20190209194108-mutt-send-email-mst@kernel.org>
+         <39c915a7-e317-db01-0286-579230f37da2@intel.com>
+         <20190211124203-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules loading
-
-For your next submission, please fix all your subjects:
-
-The tip tree preferred format for patch subject prefixes is
-'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
-'genirq/core:'. Please do not use file names or complete file paths as
-prefix. 'git log path/to/file' should give you a reasonable hint in most
-cases.
-
-The condensed patch description in the subject line should start with a
-uppercase letter and should be written in imperative tone.
-
-
-On Mon, Jan 28, 2019 at 04:34:12PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+On Mon, 2019-02-11 at 12:48 -0500, Michael S. Tsirkin wrote:
+> On Mon, Feb 11, 2019 at 09:41:19AM -0800, Dave Hansen wrote:
+> > On 2/9/19 4:44 PM, Michael S. Tsirkin wrote:
+> > > So the policy should not leak into host/guest interface.
+> > > Instead it is better to just keep the pages pinned and
+> > > ignore the hint for now.
+> > 
+> > It does seems a bit silly to have guests forever hinting about freed
+> > memory when the host never has a hope of doing anything about it.
+> > 
+> > Is that part fixable?
 > 
-> When modules and BPF filters are loaded, there is a time window in
-> which some memory is both writable and executable. An attacker that has
-> already found another vulnerability (e.g., a dangling pointer) might be
-> able to exploit this behavior to overwrite kernel code.
 > 
-> Prevent having writable executable PTEs in this stage. In addition,
-> avoiding having W+X mappings can also slightly simplify the patching of
-> modules code on initialization (e.g., by alternatives and static-key),
-> as would be done in the next patch.
+> Yes just not with existing IOMMU APIs.
 > 
-> To avoid having W+X mappings, set them initially as RW (NX) and after
-> they are set as RO set them as X as well. Setting them as executable is
-> done as a separate step to avoid one core in which the old PTE is cached
-> (hence writable), and another which sees the updated PTE (executable),
-> which would break the W^X protection.
+> It's in the paragraph just above that you cut out:
+> 	Yes right now assignment is not smart enough but generally
+> 	you can protect the unused page in the IOMMU and that's it,
+> 	it's safe.
 > 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Suggested-by: Andy Lutomirski <luto@amacapital.net>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
->  arch/x86/kernel/module.c      |  2 +-
->  include/linux/filter.h        |  2 +-
->  kernel/module.c               |  5 +++++
->  4 files changed, 28 insertions(+), 9 deletions(-)
+> So e.g.
+> 	extern int iommu_remap(struct iommu_domain *domain, unsigned long iova,
+> 				     phys_addr_t paddr, size_t size, int prot);
 > 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 76d482a2b716..69f3e650ada8 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -667,15 +667,29 @@ void __init alternative_instructions(void)
->   * handlers seeing an inconsistent instruction while you patch.
->   */
->  void *__init_or_module text_poke_early(void *addr, const void *opcode,
-> -					      size_t len)
-> +				       size_t len)
->  {
->  	unsigned long flags;
-> -	local_irq_save(flags);
-> -	memcpy(addr, opcode, len);
-> -	local_irq_restore(flags);
-> -	sync_core();
-> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
-> -	   that causes hangs on some VIA CPUs. */
-> +
-> +	if (static_cpu_has(X86_FEATURE_NX) &&
+> 
+> I can elaborate if you like but generally we would need an API that
+> allows you to atomically update a mapping for a specific page without
+> perturbing the mapping for other pages.
+> 
 
-Not a fast path - boot_cpu_has() is fine here.
+I still don't see how this would solve anything unless you have the
+guest somehow hinting on what pages it is providing to the devices. 
+You would have to have the host invalidating the pages when the hint is
+provided, and have a new hint tied to arch_alloc_page that would
+rebuild the IOMMU mapping when a page is allocated.
 
--- 
-Regards/Gruss,
-    Boris.
+I'm pretty certain that the added cost of that would make the hinting
+pretty pointless as my experience has been that the IOMMU is too much
+of a bottleneck to have multiple CPUs trying to create and invalidate
+mappings simultaneously.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
