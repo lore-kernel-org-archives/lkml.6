@@ -2,54 +2,51 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1DCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1950C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155D3222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D97C222AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897339;
-	bh=09BxljRR+I3MLk0mcth2Ext/qkTV01fOcb3itM2o3X0=;
+	s=default; t=1549897342;
+	bh=d66DD7EgnL/Y+6u0zRkkaYRK3GzFHeqU38PwiQtrYb8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L30n9vc0PsAuXtJ17iV+JR3UsafYIGlKztAlk/bNmKsdGczV/Zh7QqI85tU6pfHPY
-	 l7MDzkI9POGLUY5gkSZj28aNLLhJHwhH4nskCHWdvPst6ISDPvloqFGbsdS4xmO2yi
-	 pSpaTzsQQ7zqH4b/jlK4Dg5IfQHCtbNqpT5qVXiM=
+	b=s8qAPdowktB5BGfEgFgBrxFqda3Bk/1x4qpxU/DqqcLU0FYGbiqVkwEzLMHYha8Mg
+	 4oqMbhQxtFTCPADe5VNjErkVUgl6ErDrcNxkzetbIkEevVXPUQxakjeKIcItS11cvK
+	 1S+QikFQFZtb/7RGo4TcASvap6MXLaie9yMCjtyQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390382AbfBKPCR (ORCPT
+        id S2390393AbfBKPCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:02:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50422 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390373AbfBKPCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:15 -0500
+        id S2389628AbfBKPCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A73A4222A6;
-        Mon, 11 Feb 2019 15:02:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEC48222A7;
+        Mon, 11 Feb 2019 15:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897334;
-        bh=09BxljRR+I3MLk0mcth2Ext/qkTV01fOcb3itM2o3X0=;
+        s=default; t=1549897337;
+        bh=d66DD7EgnL/Y+6u0zRkkaYRK3GzFHeqU38PwiQtrYb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nz+XA9/dLCQAaUCOZbqPqe6nGJjoHSTL9l5/B3PiyKhq5q+mFct6c2klwkwM65/cu
-         73W2RXn+JmNMyQM3tP10nekOmO57ymxz+mHAFgILYnsfSXPKVrKJ8yU1v+/44xiDXy
-         QpkFRLtHCUZyYzBlPqeHwjX1CgVu02ciYrjsi6L4=
+        b=MQ915OoNHOyz8la13op7dmR3hUpVnNGhsRH/Y4HmD2STHxhknPNoyqlJRp8O1PsFL
+         bQGQy3Sx/2Xch9+5jCIShtUCW1CXYywruLAOMhjap8yDPe2HAcDW/M7vp55BxwKIkM
+         u8IZUuK0jfc64Lpn0VzCIj/3G8nL9R6xhYOwO0Xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 168/205] net: dp83640: expire old TX-skb
-Date:   Mon, 11 Feb 2019 15:19:26 +0100
-Message-Id: <20190211141839.345736028@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 151/205] gdrom: fix a memory leak bug
+Date:   Mon, 11 Feb 2019 15:19:09 +0100
+Message-Id: <20190211141838.222719515@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,83 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+[ Upstream commit 093c48213ee37c3c3ff1cf5ac1aa2a9d8bc66017 ]
 
-[ Upstream commit 53bc8d2af08654659abfadfd3e98eb9922ff787c ]
+In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
+kzalloc() and is used to hold the information of the gdrom device. To
+register and unregister the device, the pointer 'gd.cd_info' is passed to
+the functions register_cdrom() and unregister_cdrom(), respectively.
+However, this buffer is not freed after it is used, which can cause a
+memory leak bug.
 
-During sendmsg() a cloned skb is saved via dp83640_txtstamp() in
-->tx_queue. After the NIC sends this packet, the PHY will reply with a
-timestamp for that TX packet. If the cable is pulled at the right time I
-don't see that packet. It might gets flushed as part of queue shutdown
-on NIC's side.
-Once the link is up again then after the next sendmsg() we enqueue
-another skb in dp83640_txtstamp() and have two on the list. Then the PHY
-will send a reply and decode_txts() attaches it to the first skb on the
-list.
-No crash occurs since refcounting works but we are one packet behind.
-linuxptp/ptp4l usually closes the socket and opens a new one (in such a
-timeout case) so those "stale" replies never get there. However it does
-not resume normal operation anymore.
+This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
+above issue.
 
-Purge old skbs in decode_txts().
-
-Fixes: cb646e2b02b2 ("ptp: Added a clock driver for the National Semiconductor PHYTER.")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/dp83640.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/cdrom/gdrom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -893,14 +893,14 @@ static void decode_txts(struct dp83640_p
- 			struct phy_txts *phy_txts)
- {
- 	struct skb_shared_hwtstamps shhwtstamps;
-+	struct dp83640_skb_info *skb_info;
- 	struct sk_buff *skb;
--	u64 ns;
- 	u8 overflow;
-+	u64 ns;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index ae3a7537cf0f..72cd96a8eb19 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -889,6 +889,7 @@ static void __exit exit_gdrom(void)
+ 	platform_device_unregister(pd);
+ 	platform_driver_unregister(&gdrom_driver);
+ 	kfree(gd.toc);
++	kfree(gd.cd_info);
+ }
  
- 	/* We must already have the skb that triggered this. */
--
-+again:
- 	skb = skb_dequeue(&dp83640->tx_queue);
--
- 	if (!skb) {
- 		pr_debug("have timestamp but tx_queue empty\n");
- 		return;
-@@ -915,6 +915,11 @@ static void decode_txts(struct dp83640_p
- 		}
- 		return;
- 	}
-+	skb_info = (struct dp83640_skb_info *)skb->cb;
-+	if (time_after(jiffies, skb_info->tmo)) {
-+		kfree_skb(skb);
-+		goto again;
-+	}
- 
- 	ns = phy2txts(phy_txts);
- 	memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-@@ -1466,6 +1471,7 @@ static bool dp83640_rxtstamp(struct phy_
- static void dp83640_txtstamp(struct phy_device *phydev,
- 			     struct sk_buff *skb, int type)
- {
-+	struct dp83640_skb_info *skb_info = (struct dp83640_skb_info *)skb->cb;
- 	struct dp83640_private *dp83640 = phydev->priv;
- 
- 	switch (dp83640->hwts_tx_en) {
-@@ -1478,6 +1484,7 @@ static void dp83640_txtstamp(struct phy_
- 		/* fall through */
- 	case HWTSTAMP_TX_ON:
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+		skb_info->tmo = jiffies + SKB_TIMESTAMP_TIMEOUT;
- 		skb_queue_tail(&dp83640->tx_queue, skb);
- 		break;
- 
+ module_init(init_gdrom);
+-- 
+2.19.1
+
 
 
