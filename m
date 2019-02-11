@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD957C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9C9C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30C220838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4FA20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894961;
-	bh=nwe5s4NRFI2SssgFOqe+xo4uBmd8N0lfiYXW80rFqxs=;
+	s=default; t=1549894964;
+	bh=kfx7zmtPJCmPyN/tCf5TJdPo1pBtC/LoCzcRNNT83xI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=olO7QHtu0ITHlsb+QzfpEm2DUzH/OPTeETQ2YnVZex7GXWnQNr434eiDs38rejLmW
-	 gAMU5MXFyXC5slrYeqa29YUD7s9yOJVeP0VC0x4OnuASZVWzipuw6sbYR3pjQXBgy/
-	 PkdJ7hqquWy6UzXwAFVmUXrmDD5JayMeK3fnYGqc=
+	b=lvTbbeti3+GKTpyfgngymK55LexkauUEN11QP3+QDISvlPHdSsfBS6KOTu8EkrpJ/
+	 VxfzqN7OT8jNtIJZc5a6mhJ9LDnvwT4vJohz6ZOHwllrx3dmYkH1W9fxHbjMHbVEtU
+	 t/Hp9QA3bB3C2s7gakSRxJSpNWFwox07vNQzOgsk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfBKOWk (ORCPT
+        id S1728832AbfBKOWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:22:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55590 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728788AbfBKOWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:37 -0500
+        id S1728818AbfBKOWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:22:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 284E920838;
-        Mon, 11 Feb 2019 14:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D139E20838;
+        Mon, 11 Feb 2019 14:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894956;
-        bh=nwe5s4NRFI2SssgFOqe+xo4uBmd8N0lfiYXW80rFqxs=;
+        s=default; t=1549894959;
+        bh=kfx7zmtPJCmPyN/tCf5TJdPo1pBtC/LoCzcRNNT83xI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBo2KF6eYEZNpNXM44MnxihAd6loNm6u7tqQCCz1ubUpa/B+AYaAX6IlQm8liwamd
-         JVn6NgKKJeUuGPKeoejpHeM1pU1WTODoWqCXY4Qf9vdI+IxOqBsEXVoRVVZWbiSyXE
-         VeUbjsZxj5OMQZV/yTgaDXuZpHjiE5kvo28tqnFY=
+        b=bkC65y1d8y0f2KVTehqVJ1qjm39TRqMvAMzFU0LbTEbzJvH/c2NZO7KXXrXtIbVLb
+         T8N9Y3RKIDQnSyz7ln7EZ9YGyq+FEkrwUWn90hzrQNgUHoN9eckQ79WtL4Pxm6arFp
+         Hes1SpDtkc7zVGYs1TqwImsH02l0bVudyBSNV+N8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mitch Williams <mitch.a.williams@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Alexei Avshalom Lazar <ailizaro@codeaurora.org>,
+        Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 042/352] i40e: suppress bogus error message
-Date:   Mon, 11 Feb 2019 15:14:29 +0100
-Message-Id: <20190211141848.983190844@linuxfoundation.org>
+Subject: [PATCH 4.20 015/352] wil6210: fix reset flow for Talyn-mb
+Date:   Mon, 11 Feb 2019 15:14:02 +0100
+Message-Id: <20190211141847.365632431@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,39 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7cd8eb0861981ad212ce4242a1870c4b5831ceff ]
+[ Upstream commit d083b2e2b7db5cca1791643d036e6597af27f49b ]
 
-The i40e driver complains about unprivileged VFs trying to configure
-promiscuous mode each time a VF reset occurs. This isn't the fault of
-the poor VF driver - the PF driver itself is making the request.
+With current reset flow, Talyn sometimes get stuck causing PCIe
+enumeration to fail. Fix this by removing some reset flow operations
+that are not relevant for Talyn.
+Setting bit 15 in RGF_HP_CTRL is WBE specific and is not in use for
+all wil6210 devices.
+For Sparrow, BIT_HPAL_PERST_FROM_PAD and BIT_CAR_PERST_RST were set
+as a WA an HW issue.
 
-To fix this, skip the privilege check if the request is to disable all
-promiscuous activity. This gets rid of the bogus message, but doesn't
-affect privilege checks, since we really only care if the unprivileged
-VF is trying to enable promiscuous mode.
-
-Signed-off-by: Mitch Williams <mitch.a.williams@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Alexei Avshalom Lazar <ailizaro@codeaurora.org>
+Signed-off-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/main.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index ac5698ed0b11..c41e8ada23d1 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -1112,7 +1112,8 @@ static i40e_status i40e_config_vf_promiscuous_mode(struct i40e_vf *vf,
- 	if (!i40e_vc_isvalid_vsi_id(vf, vsi_id) || !vsi)
- 		return I40E_ERR_PARAM;
+diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
+index 398900a1c29e..c54b008996ee 100644
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -998,10 +998,13 @@ static int wil_target_reset(struct wil6210_priv *wil, int no_flash)
  
--	if (!test_bit(I40E_VIRTCHNL_VF_CAP_PRIVILEGE, &vf->vf_caps)) {
-+	if (!test_bit(I40E_VIRTCHNL_VF_CAP_PRIVILEGE, &vf->vf_caps) &&
-+	    (allmulti || alluni)) {
- 		dev_err(&pf->pdev->dev,
- 			"Unprivileged VF %d is attempting to configure promiscuous mode\n",
- 			vf->vf_id);
+ 	wil_dbg_misc(wil, "Resetting \"%s\"...\n", wil->hw_name);
+ 
+-	/* Clear MAC link up */
+-	wil_s(wil, RGF_HP_CTRL, BIT(15));
+-	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_HPAL_PERST_FROM_PAD);
+-	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
++	if (wil->hw_version < HW_VER_TALYN) {
++		/* Clear MAC link up */
++		wil_s(wil, RGF_HP_CTRL, BIT(15));
++		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0,
++		      BIT_HPAL_PERST_FROM_PAD);
++		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
++	}
+ 
+ 	wil_halt_cpu(wil);
+ 
 -- 
 2.19.1
 
