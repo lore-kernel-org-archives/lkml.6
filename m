@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ADCC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA5EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA092081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B164204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895654;
-	bh=hepuA9x5vf8MzH0/lhlK4Bb10SReS8VXED0zX66dIXE=;
+	s=default; t=1549895660;
+	bh=kFi2/JZpQSaYq/fAbyFCu0cZqUCHqBMqtoY0V0ukxpM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dEjDDIkiw2rzI35+KVQYn81xzY3DMlt3XoW73EGSjSeK+nhHig+xjEXCeraHTdbbC
-	 WLZSaikfOWLDnLJv5Pegx9486VijwnwQVael64znWIxzOyouyndsF9xX0Dg0wMlSjl
-	 h3sC/X3GvA4q2JhfH032yKNoBaqxBM3NUZzjb3bM=
+	b=CVuxETwVdiEmNivYZyWVKUcOtAmjG1LO3J0G/j854/tvmeOWDYLbR1CjHMJTuGee+
+	 gFTYrPl6rL7w1lE6mz9LK/lr4DfPnyMjaDN0UUuq4WYTAJ91/meg1UBVOq+vnFaG27
+	 ljELZFPsCyYRU0KzNLlkpPlDGOVc9Fj0GFLsKfrw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbfBKOeN (ORCPT
+        id S1730822AbfBKOeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42342 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:34:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbfBKOeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:34:11 -0500
+        id S1730806AbfBKOeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:34:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29452081B;
-        Mon, 11 Feb 2019 14:34:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A48EF204EC;
+        Mon, 11 Feb 2019 14:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895650;
-        bh=hepuA9x5vf8MzH0/lhlK4Bb10SReS8VXED0zX66dIXE=;
+        s=default; t=1549895656;
+        bh=kFi2/JZpQSaYq/fAbyFCu0cZqUCHqBMqtoY0V0ukxpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ychBdCNUGc5PwHVp3xTUdQW7CSU6eyCjTKvkvMtc7Bb074exRWtp3NKw1uleCdHeE
-         6b8fcYsBjMo0MueKSjGwKkpcakCBFwBoDgHg2GOxbuPRaoL7zdfn+u7MiT8IGXPX1k
-         CelMQ244YyA7tgxr4eeEf7WjutfUS6J7AjH9Tbqo=
+        b=cJ06OSFQtKGzZ2bW9qNjOwrv865xeFqjzAC7RgqNmajnx8V+c4GdhddPUSuqdtXVC
+         7mGpetbfwFonSvOLOy5RF4HqYOtwzOvbogIxYqmTGnqy+GFfods31ekCt3ouyZMva0
+         zn5EmjoCrP9h2GiPSA22K+70Gc+C7sR88JdTz+g0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Cfir Cohen <cfir@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Peter Shier <pshier@google.com>,
+        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 246/352] powerpc/fadump: Do not allow hot-remove memory from fadump reserved area.
-Date:   Mon, 11 Feb 2019 15:17:53 +0100
-Message-Id: <20190211141902.785114907@linuxfoundation.org>
+Subject: [PATCH 4.20 248/352] kvm: Change offset in kvm_write_guest_offset_cached to unsigned
+Date:   Mon, 11 Feb 2019 15:17:55 +0100
+Message-Id: <20190211141902.901779005@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,86 +70,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0db6896ff6332ba694f1e61b93ae3b2640317633 ]
+[ Upstream commit 7a86dab8cf2f0fdf508f3555dddfc236623bff60 ]
 
-For fadump to work successfully there should not be any holes in reserved
-memory ranges where kernel has asked firmware to move the content of old
-kernel memory in event of crash. Now that fadump uses CMA for reserved
-area, this memory area is now not protected from hot-remove operations
-unless it is cma allocated. Hence, fadump service can fail to re-register
-after the hot-remove operation, if hot-removed memory belongs to fadump
-reserved region. To avoid this make sure that memory from fadump reserved
-area is not hot-removable if fadump is registered.
+Since the offset is added directly to the hva from the
+gfn_to_hva_cache, a negative offset could result in an out of bounds
+write. The existing BUG_ON only checks for addresses beyond the end of
+the gfn_to_hva_cache, not for addresses before the start of the
+gfn_to_hva_cache.
 
-However, if user still wants to remove that memory, he can do so by
-manually stopping fadump service before hot-remove operation.
+Note that all current call sites have non-negative offsets.
 
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 4ec6e8636256 ("kvm: Introduce kvm_write_guest_offset_cached()")
+Reported-by: Cfir Cohen <cfir@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Cfir Cohen <cfir@google.com>
+Reviewed-by: Peter Shier <pshier@google.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/fadump.h               |  2 +-
- arch/powerpc/kernel/fadump.c                    | 10 ++++++++--
- arch/powerpc/platforms/pseries/hotplug-memory.c |  7 +++++--
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ include/linux/kvm_host.h | 3 ++-
+ virt/kvm/kvm_main.c      | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/fadump.h b/arch/powerpc/include/asm/fadump.h
-index 1e7a33592e29..15bc07a31c46 100644
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -200,7 +200,7 @@ struct fad_crash_memory_ranges {
- 	unsigned long long	size;
- };
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index c926698040e0..a03d5e264e5e 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -694,7 +694,8 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
+ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			   void *data, unsigned long len);
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len);
++				  void *data, unsigned int offset,
++				  unsigned long len);
+ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			      gpa_t gpa, unsigned long len);
+ int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2679e476b6c3..065ee2fb4034 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1965,7 +1965,8 @@ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ EXPORT_SYMBOL_GPL(kvm_gfn_to_hva_cache_init);
  
--extern int is_fadump_boot_memory_area(u64 addr, ulong size);
-+extern int is_fadump_memory_area(u64 addr, ulong size);
- extern int early_init_dt_scan_fw_dump(unsigned long node,
- 		const char *uname, int depth, void *data);
- extern int fadump_reserve_mem(void);
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 761b28b1427d..7fd9b3e1fa39 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -118,13 +118,19 @@ int __init early_init_dt_scan_fw_dump(unsigned long node,
- 
- /*
-  * If fadump is registered, check if the memory provided
-- * falls within boot memory area.
-+ * falls within boot memory area and reserved memory area.
-  */
--int is_fadump_boot_memory_area(u64 addr, ulong size)
-+int is_fadump_memory_area(u64 addr, ulong size)
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len)
++				  void *data, unsigned int offset,
++				  unsigned long len)
  {
-+	u64 d_start = fw_dump.reserve_dump_area_start;
-+	u64 d_end = d_start + fw_dump.reserve_dump_area_size;
-+
- 	if (!fw_dump.dump_registered)
- 		return 0;
- 
-+	if (((addr + size) > d_start) && (addr <= d_end))
-+		return 1;
-+
- 	return (addr + size) > RMA_START && addr <= fw_dump.boot_memory_size;
- }
- 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index 2a983b5a52e1..2318ab29d5dd 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -355,8 +355,11 @@ static bool lmb_is_removable(struct drmem_lmb *lmb)
- 	phys_addr = lmb->base_addr;
- 
- #ifdef CONFIG_FA_DUMP
--	/* Don't hot-remove memory that falls in fadump boot memory area */
--	if (is_fadump_boot_memory_area(phys_addr, block_sz))
-+	/*
-+	 * Don't hot-remove memory that falls in fadump boot memory area
-+	 * and memory that is reserved for capturing old kernel memory.
-+	 */
-+	if (is_fadump_memory_area(phys_addr, block_sz))
- 		return false;
- #endif
- 
+ 	struct kvm_memslots *slots = kvm_memslots(kvm);
+ 	int r;
 -- 
 2.19.1
 
