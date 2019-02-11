@@ -2,272 +2,136 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17354C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B95B4C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C322075D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899247;
-	bh=34/VyHKr4X+baCasjU2BC/sSLQcMmQV+Vh2760V5jOE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LCc3CLEQ/PsTjBwD5alHP6l68PDF7PM684vSggVjdb92cfgUq9dD+qEte8lzvgqFM
-	 SsFc+41X3VyjaFojFQa2IV9a4yO3yBhOPi/3I6vtI6vUTVzRr86/JEHfaubVEIE/o9
-	 Ucto5RQav+B5TuFKLZeMM6aP+NNkgI+Cyl2W49gc=
+	by mail.kernel.org (Postfix) with ESMTP id 9317021B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388597AbfBKOxQ (ORCPT
+        id S2389241AbfBKPeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388583AbfBKOxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BC7B20700;
-        Mon, 11 Feb 2019 14:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896792;
-        bh=34/VyHKr4X+baCasjU2BC/sSLQcMmQV+Vh2760V5jOE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fef/OlQ5AbroEvdBIZC85dGEnfWuNUo7l++cL9YRg2xgQ3VgiRR7SaDZh1pTa0RzZ
-         O9KiofyblS1gaNd7jxt5ze3ssJsV7IpVCyBO6OXMjGVJeat5oiHNLC8NUA/jpvaxZ6
-         wTyK40liqVcEJ60ZqW46uo8MxNkypmGtDvVlx7PA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Mammedov <imammedo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joe Mario <jmario@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kvm@vger.kernel.org
-Subject: [PATCH 4.19 303/313] cpu/hotplug: Fix "SMT disabled by BIOS" detection for KVM
-Date:   Mon, 11 Feb 2019 15:19:43 +0100
-Message-Id: <20190211141913.099586695@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:34:09 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53417 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388389AbfBKPeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:34:06 -0500
+X-Originating-IP: 90.88.22.177
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 973E11C0013;
+        Mon, 11 Feb 2019 15:34:02 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 16:34:02 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190211153402.s5qij5idvhbtsw2y@flea>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+ <20190206092000.f46nsn4fw2n4crub@flea>
+ <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
+ <20190206155227.wbkzvsdgykir4wn5@flea>
+ <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wbna365u3tl67kxz"
+Content-Disposition: inline
+In-Reply-To: <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--wbna365u3tl67kxz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+On Mon, Feb 11, 2019 at 02:35:52PM +0000, Priit Laes wrote:
+> On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
+> > > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> > > > > all of them, except the HRTIMER, expect the clock rate to stay
+> > > > > the same and not change underneath them. And SATA expects it to
+> > > > > be at 600 MHz, as the datasheet says. And while it may not direct=
+ly
+> > > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slight=
+ly
+> > > > > reduced rate of 50 MHz just fine.
+> > > > >=20
+> > > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
+> > > > > should be using the old code (now in the if conditional block),
+> > > > > i.e. the behavior should not have changed.
+> > > > >=20
+> > > > > I don't think this actually "fixes" whatever bug was introduced,
+> > > > > but only papers over the issue, and possible introduces further
+> > > > > issues for other users.
+> > > >=20
+> > > > You're right, I've overlooked that it was pll-periph being
+> > > > affected. I've dropped it for now.
+> > >=20
+> > > Any ideas what could be done. I currently have no time to debug it,
+> > > but it affects existing systems.
+> >=20
+> > I can't find what would change with that commit either if the flag
+> > isn't set, so looking at the register state before and after that
+> > commit would help I guess?
+>=20
+> Register dump without the patch:
+>=20
+> $ busybox devmem 0x01c20090
+> 0x0250030E
+>=20
+> pll-ddr-base     2 2 0   768000000          0     0  50000
+>    pll-ddr-other 1 1 0   768000000          0     0  50000
+>       mmc2       3 3 0    51200000          0     0  50000
+>=20
+> Register dump with patch applied, booted from mmc0 and after mounting emm=
+c:
+>=20
+> $ busybox devmem 0x01c20090
+> 0x8140020B
+>=20
+> pll-periph-base  3 3 0  1200000000          0     0  50000
+>    pll-periph    6 6 0   600000000          0     0  50000
+>       mmc2       3 3 0    50000000          0     0  50000
 
-commit b284909abad48b07d3071a9fc9b5692b3e64914b upstream.
+I meant the whole Clock controller, ideally a diff between the two
+states would be great.
 
-With the following commit:
+Maxime
 
-  73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-... the hotplug code attempted to detect when SMT was disabled by BIOS,
-in which case it reported SMT as permanently disabled.  However, that
-code broke a virt hotplug scenario, where the guest is booted with only
-primary CPU threads, and a sibling is brought online later.
+--wbna365u3tl67kxz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The problem is that there doesn't seem to be a way to reliably
-distinguish between the HW "SMT disabled by BIOS" case and the virt
-"sibling not yet brought online" case.  So the above-mentioned commit
-was a bit misguided, as it permanently disabled SMT for both cases,
-preventing future virt sibling hotplugs.
+-----BEGIN PGP SIGNATURE-----
 
-Going back and reviewing the original problems which were attempted to
-be solved by that commit, when SMT was disabled in BIOS:
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGGV6gAKCRDj7w1vZxhR
+xSb0AQD60HG8McEgeqDKFTSbYkbsOD8CLdNxRxAkFYF53Ne4OAD+Ml7PXxYFoTB5
+cofsj/UmY7nxosZX0nApMceCtLp4Kwg=
+=ryVE
+-----END PGP SIGNATURE-----
 
-  1) /sys/devices/system/cpu/smt/control showed "on" instead of
-     "notsupported"; and
-
-  2) vmx_vm_init() was incorrectly showing the L1TF_MSG_SMT warning.
-
-I'd propose that we instead consider #1 above to not actually be a
-problem.  Because, at least in the virt case, it's possible that SMT
-wasn't disabled by BIOS and a sibling thread could be brought online
-later.  So it makes sense to just always default the smt control to "on"
-to allow for that possibility (assuming cpuid indicates that the CPU
-supports SMT).
-
-The real problem is #2, which has a simple fix: change vmx_vm_init() to
-query the actual current SMT state -- i.e., whether any siblings are
-currently online -- instead of looking at the SMT "control" sysfs value.
-
-So fix it by:
-
-  a) reverting the original "fix" and its followup fix:
-
-     73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
-     bc2d8d262cba ("cpu/hotplug: Fix SMT supported evaluation")
-
-     and
-
-  b) changing vmx_vm_init() to query the actual current SMT state --
-     instead of the sysfs control value -- to determine whether the L1TF
-     warning is needed.  This also requires the 'sched_smt_present'
-     variable to exported, instead of 'cpu_smt_control'.
-
-Fixes: 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
-Reported-by: Igor Mammedov <imammedo@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joe Mario <jmario@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kvm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/e3a85d585da28cc333ecbc1e78ee9216e6da9396.1548794349.git.jpoimboe@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
----
- arch/x86/kernel/cpu/bugs.c |    2 +-
- arch/x86/kvm/vmx.c         |    3 ++-
- include/linux/cpu.h        |    2 --
- kernel/cpu.c               |   33 ++++-----------------------------
- kernel/sched/fair.c        |    1 +
- kernel/smp.c               |    2 --
- 6 files changed, 8 insertions(+), 35 deletions(-)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -69,7 +69,7 @@ void __init check_bugs(void)
- 	 * identify_boot_cpu() initialized SMT support information, let the
- 	 * core code know.
- 	 */
--	cpu_smt_check_topology_early();
-+	cpu_smt_check_topology();
- 
- 	if (!IS_ENABLED(CONFIG_SMP)) {
- 		pr_info("CPU: ");
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -27,6 +27,7 @@
- #include <linux/mm.h>
- #include <linux/highmem.h>
- #include <linux/sched.h>
-+#include <linux/sched/smt.h>
- #include <linux/moduleparam.h>
- #include <linux/mod_devicetable.h>
- #include <linux/trace_events.h>
-@@ -11129,7 +11130,7 @@ static int vmx_vm_init(struct kvm *kvm)
- 			 * Warn upon starting the first VM in a potentially
- 			 * insecure environment.
- 			 */
--			if (cpu_smt_control == CPU_SMT_ENABLED)
-+			if (sched_smt_active())
- 				pr_warn_once(L1TF_MSG_SMT);
- 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
- 				pr_warn_once(L1TF_MSG_L1D);
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
--extern void cpu_smt_check_topology_early(void);
- extern void cpu_smt_check_topology(void);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
--static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
- 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -355,9 +355,6 @@ void __weak arch_smt_update(void) { }
- 
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
--EXPORT_SYMBOL_GPL(cpu_smt_control);
--
--static bool cpu_smt_available __read_mostly;
- 
- void __init cpu_smt_disable(bool force)
- {
-@@ -375,25 +372,11 @@ void __init cpu_smt_disable(bool force)
- 
- /*
-  * The decision whether SMT is supported can only be done after the full
-- * CPU identification. Called from architecture code before non boot CPUs
-- * are brought up.
-- */
--void __init cpu_smt_check_topology_early(void)
--{
--	if (!topology_smt_supported())
--		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
--}
--
--/*
-- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
-- * brought online. This ensures the smt/l1tf sysfs entries are consistent
-- * with reality. cpu_smt_available is set to true during the bringup of non
-- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
-- * cpu_smt_control's previous setting.
-+ * CPU identification. Called from architecture code.
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!topology_smt_supported())
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
- }
- 
-@@ -406,18 +389,10 @@ early_param("nosmt", smt_cmdline_disable
- 
- static inline bool cpu_smt_allowed(unsigned int cpu)
- {
--	if (topology_is_primary_thread(cpu))
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
- 		return true;
- 
--	/*
--	 * If the CPU is not a 'primary' thread and the booted_once bit is
--	 * set then the processor has SMT support. Store this information
--	 * for the late check of SMT support in cpu_smt_check_topology().
--	 */
--	if (per_cpu(cpuhp_state, cpu).booted_once)
--		cpu_smt_available = true;
--
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (topology_is_primary_thread(cpu))
- 		return true;
- 
- 	/*
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5932,6 +5932,7 @@ static inline int find_idlest_cpu(struct
- 
- #ifdef CONFIG_SCHED_SMT
- DEFINE_STATIC_KEY_FALSE(sched_smt_present);
-+EXPORT_SYMBOL_GPL(sched_smt_present);
- 
- static inline void set_idle_cores(int cpu, int val)
- {
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -584,8 +584,6 @@ void __init smp_init(void)
- 		num_nodes, (num_nodes > 1 ? "s" : ""),
- 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
- 
--	/* Final decision about SMT support */
--	cpu_smt_check_topology();
- 	/* Any cleanup work */
- 	smp_cpus_done(setup_max_cpus);
- }
-
-
+--wbna365u3tl67kxz--
