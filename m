@@ -1,95 +1,101 @@
 Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB26CC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5A1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF5B214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549870907;
-	bh=a3ot5/4+RnkUVxI5+HTCvnv3chTgcSs4+C7t6TrAu9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YkIyYbGkgVewQ4Xlw1/4m6iF2LLB/fTDDU0bL9d0ewZtaAm2HSrG2BXHRkw70nVZe
-	 fxQnAaZyWCJH/zOcILehfpJwkbv9zHc4etKizSnFG5AM99EpuwzQNYUTzlzWinfRsv
-	 aprcVJxA4QL0DbQ+ftZ9wds6t+/eIBTKHEFlXd7s=
+	by mail.kernel.org (Postfix) with ESMTP id 5CB2920811
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:43:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vQXX5IB2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfBKHlq (ORCPT
+        id S1726847AbfBKHnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:41:46 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40659 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfBKHlp (ORCPT
+        Mon, 11 Feb 2019 02:43:17 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37461 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBKHnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:41:45 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q21so14962986wmc.5;
-        Sun, 10 Feb 2019 23:41:44 -0800 (PST)
+        Mon, 11 Feb 2019 02:43:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so4935850plr.4;
+        Sun, 10 Feb 2019 23:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=1+SiEUMJe3itEB9pavdt/Mrwkq8kfBFGEm8QB6Sr0TM=;
-        b=gvAgSc5fQVT1eXrxaKFex8XrK07f8DhxiNk5YRsGG/3QNaYBNxmVyUzPkY5Ku+cf7F
-         v/xmmGzgEqJ69Y8v2uWvFkYXFJb3OT+N10IEHUgBH+Hx5a9SzlLauR2Vhl93KTrNjTsA
-         ZV5q3TlMCrzrAQeK17lHm/qV0Kse5u29BI/kzpyIojEfRUI5ZpCXdxrdzCG/3G9CwxE0
-         6uyYOYdbTFXdXobktmBnwAKJa7+lRqZkMI5jMeohFRRCuhBzphWFoXSNjx4o5JcMWCn6
-         QmdWRkHRZk5T9gShvAe4ILj2A+ePc3M1wICQlAKYo2DOsxMwU5QmP3XJX7SO/viqh7OM
-         ddXA==
+        bh=LzdxB19zhApMwZH0H6vEn1LPmCbo2CeSOy3HttPM3Rk=;
+        b=vQXX5IB20a2Re4fUEbSuRpgaZX4KGwVOHSTJWplqnNZf+8Y7r/l1ONh6IHkDNA/Hdk
+         z4jy8vmTkP0N8GPyswCSk7dZkh4GpRNyvSP+7GFwGQ3NB1CwAUCKztvNaS37l+aTRjE9
+         XGRKCtF/TDhLHml8qClvXaoORE2FZvSgzDJ+RB/xyyo53aT24zEsbPs3i/bBcVqpouO5
+         mHRXz8GLZfJSYshQLLWnsIob2pZSHLkbzbpPlPUXA0yg2OITeDEpXfInkfKtTcnZxDs4
+         vVBOpFe+QLlo5RH60Dae8kxggrxrtJ7c/qrPDyvObgEkLDnc5bAGcXiogTGN8FR7mzNz
+         l30w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1+SiEUMJe3itEB9pavdt/Mrwkq8kfBFGEm8QB6Sr0TM=;
-        b=meer9xaGiKQx4gYh4xt6Zan0S+CIC+9nfpytf9JVy7y1kIp4s3eQhWmYwJjBqC08uk
-         53btAacZ8NOMpVYTTtsa2To4P9Yt+OHTgfmWTbBxVlPlmhwmolruRNFlSu9LjGtVSle1
-         60rPCv8l4gibdama4o0o0zJxoqaZCyPSTvASzcGjQgUu2TyOlwTCC0zfDUOSJPBrvmwC
-         9ZyIMmqGVvqpIf1l0a9bz8igApT4niydizaY4xj6t1sCk4tvymxBwojd1pyE3o4eecz0
-         HNz7FJvRvfeZV2ZBWxRDL0rYoGKnEcrft/wvcfCL5fSB9gq1xPkRsYPOMrpEjt/1g4iu
-         U8Eg==
-X-Gm-Message-State: AHQUAubYwuhxjn1bP+TRBoN5Y9ZYoOR8hWTw+GrhriRBJ2tsw1gKD0GZ
-        f9C3m2UG2pFSkvWiArN2ceM=
-X-Google-Smtp-Source: AHgI3IZAhIuw2pNaovEh62rnUpxkEcyKdImxdHRMhmz5sf6S4tGtJNdS5HPmUQVqEgZ1BV34LEhEvg==
-X-Received: by 2002:a7b:c0c5:: with SMTP id s5mr7780119wmh.56.1549870903881;
-        Sun, 10 Feb 2019 23:41:43 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id i20sm7286229wml.9.2019.02.10.23.41.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LzdxB19zhApMwZH0H6vEn1LPmCbo2CeSOy3HttPM3Rk=;
+        b=b0/s5BJrlOvveJMTYl5P5eQU7k+q7Sa18p+vpL+qbVRB6rtsa5JHepzNAQKCgZw+yA
+         fX3HcdgLPah9bql50SO1Iqm+lybBOzSdbtRjxtw9c81uNAciqXP+qCutRigokMFKBb81
+         gjT1y7nViOyUHblYenOtHTs5Q2dLPl8hNwGOGygHCQise24HAf7j+itPc4azEpYrXpJC
+         AKMh4kuF+xz0c51AG/hFoi28Nm0eP9iKP5uUa0N8XH+OUV2dwo3WF4+lwkNCc83OFgB2
+         xl9fAvjPOabec2Ud4iiSTeDL47BlqzuCTbLu2uJ98oWzoGcEu3g/gy4CYhm0Ih2vST4o
+         0H9Q==
+X-Gm-Message-State: AHQUAuat3Dr3PIvsgQeYAWaAH7CIUdeiOcJvS+bne4S88SbhjIAmTDxz
+        dLDhOq0AqyyAFzZfChaKw34=
+X-Google-Smtp-Source: AHgI3Iaf1MpBbJJ8uTMAYdhLdQxO4kI5hHbwP4MylJcKIuOLER1MTDBVTSxWgqEvQA/FP/c65uS2YA==
+X-Received: by 2002:a17:902:2bc9:: with SMTP id l67mr1863808plb.241.1549870996468;
+        Sun, 10 Feb 2019 23:43:16 -0800 (PST)
+Received: from localhost ([175.223.48.87])
+        by smtp.gmail.com with ESMTPSA id a90sm17164079pfj.109.2019.02.10.23.43.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Feb 2019 23:41:43 -0800 (PST)
-Date:   Mon, 11 Feb 2019 08:41:41 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Fixup the RTIT_BAR of Intel TH on Denverton
-Message-ID: <20190211074141.GA49295@gmail.com>
-References: <20190207133005.67328-1-alexander.shishkin@linux.intel.com>
+        Sun, 10 Feb 2019 23:43:15 -0800 (PST)
+Date:   Mon, 11 Feb 2019 16:43:12 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH] Documentation: fix vm/slub.rst warning
+Message-ID: <20190211074312.GA26364@jagdpanzerIV>
+References: <1e992162-c4ac-fe4e-f1b0-d8a16a51d5e7@infradead.org>
+ <20190211073537.GA25868@rapoport-lnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190207133005.67328-1-alexander.shishkin@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190211073537.GA25868@rapoport-lnx>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (02/11/19 09:35), Mike Rapoport wrote:
+> On Sun, Feb 10, 2019 at 10:34:11PM -0800, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@infradead.org>
+> > 
+> > Fix markup warning by quoting the '*' character with a backslash.
+> > 
+> > Documentation/vm/slub.rst:71: WARNING: Inline emphasis start-string without end-string.
+> > 
+> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Christoph Lameter <cl@linux.com>
+> > Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> 
+> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 
-* Alexander Shishkin <alexander.shishkin@linux.intel.com> wrote:
+FWIW,
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-> On Denverton's integration of the Intel(R) Trace Hub (for a reference
-> and overview see Documentation/trace/intel_th.txt) the reported size of
-> one of its resources (RTIT_BAR) doesn't match its actual size, which
-> leads to overlaps with other devices' resources.
-
-Note that in the latest kernels it's Documentation/trace/intel_th.rst, 
-not .txt.
-
-Thanks,
-
-	Ingo
+	-ss
