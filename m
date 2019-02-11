@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71CBC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 057ABC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99CC6222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CADA8222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896957;
-	bh=mARF47O0D5nVTxYJxxD7HT11uHV1Eiq11l3r3ptlChA=;
+	s=default; t=1549896960;
+	bh=VQ/3WoVlo/9d7KFML1aB3x94LoA26dWhCYjKqsYX5cI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TUR3ospbYT4C7TqXKvM+t0aolkPotIvNDPZl62+9QZT4FQxjy5RNnL5Yk3Zmujerh
-	 YgxITGf/8CHLy3nBa9SkPvzRpGFH9jmgxAc2Gq1lkYZTWmVcGGv+od4/FDgcZFx2/i
-	 nZWtRHy8j+HUyweoBucy3QCZsOv/0KCjw9l7KW8c=
+	b=XK0O1TzhRWzm8FJEIu/U42sEjkNHk/hDf33Scd8sM+JS4dqbkReGHKbkwWjf7ABzQ
+	 E6zrK/krw5P6/0G7tB/q4SIs5A6DL9gpJJMHv82t5Du9r8xVmGuiyByWA4EitRtpcr
+	 Vt2qgknlsVCVjZhyGgrSgJVcGUVZ6wdeRa0JsdQw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389073AbfBKOzz (ORCPT
+        id S2389085AbfBKOz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43022 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388675AbfBKOzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:54 -0500
+        id S2389075AbfBKOz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 160BC2229E;
-        Mon, 11 Feb 2019 14:55:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B65D920700;
+        Mon, 11 Feb 2019 14:55:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896953;
-        bh=mARF47O0D5nVTxYJxxD7HT11uHV1Eiq11l3r3ptlChA=;
+        s=default; t=1549896956;
+        bh=VQ/3WoVlo/9d7KFML1aB3x94LoA26dWhCYjKqsYX5cI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xFLzZ3vNo9BHAUd1qTerx+NVfHxnbriz5mfg83th1UFoCnDE7MBKIK7h6NhTeY4y/
-         q1ExK+wTgBucXNh2EjJnBsQ1Jxy8WOfcWorUsA6zEZ82eQCaS+NhAa5wwRQKaXddUZ
-         oBNMOclirbC0rllARzdPs3hNg8M3Vit8kArEoVxA=
+        b=qVA1RR5qPUE245sRA47dM4Os241WG6Dtg4ote2CtYmo//WNLzF07rVoVWS44M6uuC
+         AQtn68WTxPBh9BgdDoKE1n67G7LpvRXa2tjW6zH0NHvg3ev6YE7lbfZtbc/HN+RxS1
+         92iwQhrrV6xtyGYO/1HgMkcas46BRJQinForBwlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 042/205] f2fs: move dir data flush to write checkpoint process
-Date:   Mon, 11 Feb 2019 15:17:20 +0100
-Message-Id: <20190211141831.046406364@linuxfoundation.org>
+Subject: [PATCH 4.14 043/205] f2fs: avoid build warn of fall_through
+Date:   Mon, 11 Feb 2019 15:17:21 +0100
+Message-Id: <20190211141831.547063186@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,46 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-This patch move dir data flush to write checkpoint process, by
-doing this, it may reduce some time for dir fsync.
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-pre:
-	-f2fs_do_sync_file enter
-		-file_write_and_wait_range  <- flush & wait
-		-write_checkpoint
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
 
-now:
-	-f2fs_do_sync_file enter
-		-write_checkpoint
-			-block_operations   <- flush dir & no wait
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
+ Exposed by my use of -Wimplicit-fallthrough
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7d3189f1941c..5f549bc4e097 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -205,6 +205,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (S_ISDIR(inode->i_mode))
-+		goto go_write;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3f1a44696036..d2873f227072 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2014,6 +2014,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_INLINE_DENTRY:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 		f2fs_mark_inode_dirty_sync(inode, true);
 -- 
 2.19.1
 
