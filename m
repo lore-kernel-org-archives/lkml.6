@@ -2,46 +2,58 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A383C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1408AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23B9E20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39CE2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549895159;
+	bh=v0fL9qyT72ydRlPUQJxbEs3tlHue6ciXLOf3bta2xAc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=bNne6XAFTtfPu+Qz/28F5fh2NtvPMMc0pDPV98xqVgxO+XdOLSKl9d/qNEhGPdlh2
+	 tMcGBzL4KfXWEUscHMbyO6molLsFEDUJI2YPHBsNGYVoIZONWWl7j7dnZRo+i3jid8
+	 jJV7IOh6Cnq9AmXgjtWvrgLr0vLUA+Khh9hI9qLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbfBKOZx (ORCPT
+        id S1729480AbfBKOZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:25:53 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:34449 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbfBKOZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:43 -0500
-X-Originating-IP: 90.88.22.177
-Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 6B4EC240010;
-        Mon, 11 Feb 2019 14:25:38 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH net-next 0/4] net: phy: Add 2.5G/5GBASET PHYs support
-Date:   Mon, 11 Feb 2019 15:25:25 +0100
-Message-Id: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 11 Feb 2019 09:25:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729464AbfBKOZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:56 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7833B20844;
+        Mon, 11 Feb 2019 14:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895155;
+        bh=v0fL9qyT72ydRlPUQJxbEs3tlHue6ciXLOf3bta2xAc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gB5I2P+U4oBWv1XYgbwvT2Klc8YzGCN//W1KfYgPyOwy4hv+HIe34wCB+ansRT36+
+         vH1pff/oXP17xSYu0qjnwO/5Oi0Nn+WkCwL9Ysj00Ybj08qt3ApeEoLNGmjqTLceYH
+         EwONLzp7LJwNsEn+cgPGJG4gc0avkacImFMbhtHo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 081/352] f2fs: avoid build warn of fall_through
+Date:   Mon, 11 Feb 2019 15:15:08 +0100
+Message-Id: <20190211141851.175526205@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,43 +62,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 802.3bz standard defines 2 modes based on the NBASET alliance work
-that allow to use 2.5Gbps and 5Gbps speeds on Cat 5e, 6 and 7 cables.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-This series adds the necessary infrastructure to handle these modes with
-C45 PHYs. This series was originally part of a bigger one, that has
-seen 2 iterations [1] [2] that added support for these modes on Marvell
-Alaska PHYs.
+------------------
 
-Following some discussions with Heiner and Andrew [3], we decided to
-split-out the generic parts so that we can work together on the
-following steps to get these mode fully working with Aquantia and
-Marvell PHYS.
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-The first 3 patches are reworking some of the internal network phy
-infrastructure to handle the new modes in a more generic way.
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-The 4th patch adds all the C45 register definition and accesses that
-follows the 802.3bz standard to support 2.5GBASET and 5GBASET.
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
 
-[1] : https://lore.kernel.org/netdev/20190118152352.26417-1-maxime.chevallier@bootlin.com/
-[2] : https://lore.kernel.org/netdev/20190207094939.27369-1-maxime.chevallier@bootlin.com/
-[3] : https://lore.kernel.org/netdev/81c340ea-54b0-1abf-94af-b8dc4ee83e3a@gmail.com/
+ Exposed by my use of -Wimplicit-fallthrough
 
-Maxime Chevallier (4):
-  net: phy: Mask-out non-compatible modes when setting the max-speed
-  net: phy: Move of_set_phy_eee_broken to phy-core.c
-  net: phy: Extract genphy_c45_pma_read_abilities from marvell10g
-  net: phy: Add generic support for 2.5GBaseT and 5GBaseT
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/net/phy/marvell10g.c |  78 +++---------------------
- drivers/net/phy/phy-c45.c    | 111 +++++++++++++++++++++++++++++++++++
- drivers/net/phy/phy-core.c   |  72 +++++++++++++++++++++++
- drivers/net/phy/phy_device.c |  81 -------------------------
- include/linux/phy.h          |   3 +
- include/uapi/linux/mdio.h    |  16 +++++
- 6 files changed, 210 insertions(+), 151 deletions(-)
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1e031971a466..ebad864c031c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2370,6 +2370,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_NEW_INODE:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
 -- 
-2.19.2
+2.19.1
+
+
 
