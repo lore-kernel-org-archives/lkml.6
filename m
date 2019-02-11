@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1E6C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0767BC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D47F20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC88218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895183;
-	bh=iAmXmKhWMvtt/dvpv+Equa+wtykspa9hlJWEMviRN8A=;
+	s=default; t=1549895185;
+	bh=AaxbHy0b+4seBHfJiloA2E6VY/47av3S3drPFAc7384=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X5ZdgHcaBdc7W4vBjRR5+Eo0oyiL0hTeBraAdWCUmNFB4IlybgtfvOEF7BbtVdL9Q
-	 pmvV/EFcbWJ4o20sj8UhIjoSjL9cAAHLPi/Cw/OnV3b7NDTcNUJashWGwN9SHtx2Pj
-	 8DExIV0bACMxsz9TgjHw86qT5WIVWAKVsyqLlIq0=
+	b=CUiOZOMqlgrJyduy1FDHqOAHFawjXRi89HntCrsWRaKfPPyzaEA6FV6wvZlCl+9rz
+	 lcDgdyahqOX14vUvvL1xsNQMR0+6YtDS+JfcsObhAjjZ7izj/2Frvn0QAFO8noU+WI
+	 ceY2o+ka6Po5dhgPJilkWaSNp1wTT2Uwd2ttgEx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfBKO0W (ORCPT
+        id S1729555AbfBKO0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:26:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:26:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729530AbfBKO0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:26:13 -0500
+        id S1727236AbfBKO0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:26:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F6E2075C;
-        Mon, 11 Feb 2019 14:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2026D20838;
+        Mon, 11 Feb 2019 14:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895173;
-        bh=iAmXmKhWMvtt/dvpv+Equa+wtykspa9hlJWEMviRN8A=;
+        s=default; t=1549895175;
+        bh=AaxbHy0b+4seBHfJiloA2E6VY/47av3S3drPFAc7384=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bvydq2f/+PpWMw4e1PD9pBm9Hw1JKpAjn9c4AiUc/u0fHD3+3ffz0cogBexya19og
-         9eJLLgyc1s3dZWKyfj1VY4VMkCLYOT0WTCD3vlBl3jRsdjndt9IXSKKXww4lg79ahz
-         Boe5izw99j8EWOGMVWRsJFVvYyKed6Oji+eOk5xo=
+        b=zObQTEUtxO74PADj4aYuB/TeB4UUY8x81b+1rSnJ1dbHfQmSNd0IEnCBWRnQnPxfX
+         tNGaGYAQzP8zEub1B5jKgBbuB5Y6Ofenc6H1Zbv8lncOs0pniHq/DOYmAW3Hl1in8U
+         RD2Ar9KtK2amGsmgm9ElAZ67P6x+5vU4Vf8jF49c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 110/352] usb: dwc3: Correct the logic for checking TRB full in __dwc3_prepare_one_trb()
-Date:   Mon, 11 Feb 2019 15:15:37 +0100
-Message-Id: <20190211141852.802209154@linuxfoundation.org>
+Subject: [PATCH 4.20 119/352] pinctrl: nuvoton: check for devm_kasprintf() failure
+Date:   Mon, 11 Feb 2019 15:15:46 +0100
+Message-Id: <20190211141853.621905595@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,71 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b7a4fbe2300a8965ea760c7e871507b84aea17f6 ]
+[ Upstream commit 4be1eaf322f07bb9694618fd2763a3a1f0a3dd25 ]
 
-Availability of TRB's is calculated using dwc3_calc_trbs_left(), which
-determines total available TRB's based on the HWO bit set in a TRB.
+devm_kasprintf() may return NULL on failure of internal allocation thus
+the assignment to  .label  is not safe if not checked. On error
+npcm7xx_gpio_of() returns negative values so -ENOMEM in the
+(unlikely) failure case of devm_kasprintf() should be fine here.
 
-In the present code, __dwc3_prepare_one_trb() is called with a TRB which
-needs to be prepared for transfer. This __dwc3_prepare_one_trb() calls
-dwc3_calc_trbs_left() to determine total available TRBs and set IOC bit
-if the total available TRBs are zero. Since the present working TRB (which
-is passed as an argument to __dwc3_prepare_one_trb() )  doesn't yet have
-the HWO bit set before calling dwc3_calc_trbs_left(), there are chances
-that dwc3_calc_trbs_left() wrongly calculates this present working TRB
-as free(since the HWO bit is not yet set) and returns the total available
-TRBs as greater than zero (including the present working TRB). This could
-be a problem.
-
-This patch corrects the above mentioned problem in __dwc3_prepare_one_trb()
-by increementing the dep->trb_enqueue at the last (after preparing the TRB)
-instead of increementing at the start and setting the IOC bit only if the
-total available TRBs returned by dwc3_calc_trbs_left() is 1 . Since we are
-increementing the dep->trb_enqueue at the last, the present working TRB is
-also considered as available by dwc3_calc_trbs_left() and non zero value is
-returned . So, according to the modified logic, when the total available
-TRBs is equal to 1 that means the total available TRBs in the pool are 0.
-
-Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
-Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 3b588e43ee5c ("pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 2a4ea9a1b1e3..88f69d823be5 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -921,8 +921,6 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 	struct usb_gadget	*gadget = &dwc->gadget;
- 	enum usb_device_speed	speed = gadget->speed;
- 
--	dwc3_ep_inc_enq(dep);
--
- 	trb->size = DWC3_TRB_SIZE_LENGTH(length);
- 	trb->bpl = lower_32_bits(dma);
- 	trb->bph = upper_32_bits(dma);
-@@ -1001,7 +999,7 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 	}
- 
- 	if ((!no_interrupt && !chain) ||
--			(dwc3_calc_trbs_left(dep) == 0))
-+			(dwc3_calc_trbs_left(dep) == 1))
- 		trb->ctrl |= DWC3_TRB_CTRL_IOC;
- 
- 	if (chain)
-@@ -1012,6 +1010,8 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 
- 	trb->ctrl |= DWC3_TRB_CTRL_HWO;
- 
-+	dwc3_ep_inc_enq(dep);
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+index 7ad50d9268aa..3bda620d18bb 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+@@ -1932,6 +1932,9 @@ static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
+ 			pctrl->gpio_bank[id].gc.label =
+ 				devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOF",
+ 					       np);
++			if (pctrl->gpio_bank[id].gc.label == NULL)
++				return -ENOMEM;
 +
- 	trace_dwc3_prepare_trb(dep, trb);
- }
- 
+ 			pctrl->gpio_bank[id].gc.dbg_show = npcmgpio_dbg_show;
+ 			pctrl->gpio_bank[id].direction_input =
+ 				pctrl->gpio_bank[id].gc.direction_input;
 -- 
 2.19.1
 
