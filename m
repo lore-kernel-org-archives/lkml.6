@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FA0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B285C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E741A2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC1F2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896588;
-	bh=sYKo25pF9MzGc+kfn62dmRbuQY9VdBPJSM4dDqUS4CU=;
+	s=default; t=1549896591;
+	bh=w1zqwxMjaFBqHZh3kCmHe+fQQ63XD4ZVW5BBBBKFCiQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=loVS5AhTuEuDcqrPslctIiwtOPVYmcKKf78n3/BQihOAhM0X7MMjdlx5R82i092NE
-	 nkQcXu3eUDswIx+XvWjcgkH2ik8wp2dDFf/fW9mzfE1y3uDXEcbi87faGubggjry8N
-	 6e5gMonaj28SIdEZU1RUy7gc5TZLKs8RB7C+cjKQ=
+	b=gGZWIrD7byfdt1ilf0cxUPsHfRGc+I8Snn5C9qmYnyszsGw9clGFxDdr23p8FoIWB
+	 4r6O2UvUI4bWKS4WCQZDrJVY2qKzoV9ExjVle6BtL7eyBemNX4DaPjQFg2RR0mkwep
+	 YOxQEObPDNuqzmu5NoInYK5ImK6XZ4aBvURBkLIg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387944AbfBKOtq (ORCPT
+        id S2387957AbfBKOtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:49:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35324 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfBKOtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:49:43 -0500
+        id S1732121AbfBKOtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15ECF206BA;
-        Mon, 11 Feb 2019 14:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2BCF20700;
+        Mon, 11 Feb 2019 14:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896582;
-        bh=sYKo25pF9MzGc+kfn62dmRbuQY9VdBPJSM4dDqUS4CU=;
+        s=default; t=1549896586;
+        bh=w1zqwxMjaFBqHZh3kCmHe+fQQ63XD4ZVW5BBBBKFCiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z0FimzGRXpuppts5IYXCBoaBSaIT8XMU8WgNuxG2wFxUjjwuRDIvCJDmyWNNeWbSz
-         ngBiTA4VU35ESjed2p5F+n2+2zsuT73zTryt+HnTTMR+ITNfzZod3ZZxgqrhFe+0RK
-         d74pM9b3euSzAE8huN4y2E7bi7Y+Lz+qJ+f/mLh0=
+        b=Gk0m06nB7nUgbb/GFVpw5pYZ3Rk2TEoOLUS7Dcbx7v98t01r/jS4ylDVibpLjZbqC
+         zHRhu8bCAu4mrGunkSPZlKpJwK9poKEnQ7YtBE0Wau4NzIMRmFGzHWvBHlC9ltIlrV
+         qEKD8tsZeKZWvtb/U7gLNTNOdiXnvOya78dBLyVg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        Stan Johnson <userm57@yahoo.com>
-Subject: [PATCH 4.19 233/313] block/swim3: Fix -EBUSY error when re-opening device after unmount
-Date:   Mon, 11 Feb 2019 15:18:33 +0100
-Message-Id: <20190211141909.013500453@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 234/313] thermal: bcm2835: enable hwmon explicitly
+Date:   Mon, 11 Feb 2019 15:18:34 +0100
+Message-Id: <20190211141909.079048486@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,40 +67,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 296dcc40f2f2e402facf7cd26cf3f2c8f4b17d47 ]
+[ Upstream commit d56c19d07e0bc3ceff366a49b7d7a2440c967b1b ]
 
-When the block device is opened with FMODE_EXCL, ref_count is set to -1.
-This value doesn't get reset when the device is closed which means the
-device cannot be opened again. Fix this by checking for refcount <= 0
-in the release method.
+By defaul of-based thermal driver do not enable hwmon.
+This patch does this explicitly, so that the temperature can be read
+through the common hwmon sysfs.
 
-Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/swim3.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/thermal/broadcom/bcm2835_thermal.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index 469541c1e51e..20907a0a043b 100644
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -1026,7 +1026,11 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
- 	struct swim3 __iomem *sw = fs->swim3;
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 23ad4f9f2143..24b006a95142 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -27,6 +27,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/thermal.h>
  
- 	mutex_lock(&swim3_mutex);
--	if (fs->ref_count > 0 && --fs->ref_count == 0) {
-+	if (fs->ref_count > 0)
-+		--fs->ref_count;
-+	else if (fs->ref_count == -1)
-+		fs->ref_count = 0;
-+	if (fs->ref_count == 0) {
- 		swim3_action(fs, MOTOR_OFF);
- 		out_8(&sw->control_bic, 0xff);
- 		swim3_select(fs, RELAX);
++#include "../thermal_hwmon.h"
++
+ #define BCM2835_TS_TSENSCTL			0x00
+ #define BCM2835_TS_TSENSSTAT			0x04
+ 
+@@ -275,6 +277,15 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, tz);
+ 
++	/*
++	 * Thermal_zone doesn't enable hwmon as default,
++	 * enable it here
++	 */
++	tz->tzp->no_hwmon = false;
++	err = thermal_add_hwmon_sysfs(tz);
++	if (err)
++		goto err_tz;
++
+ 	bcm2835_thermal_debugfs(pdev);
+ 
+ 	return 0;
 -- 
 2.19.1
 
