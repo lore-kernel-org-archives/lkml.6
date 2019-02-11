@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B57CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128BEC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5BA2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6F272075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:28:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="AXEDg7Kk"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Ob2V0uLk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfBKM0c (ORCPT
+        id S1727901AbfBKM2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:26:32 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52490 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbfBKM01 (ORCPT
+        Mon, 11 Feb 2019 07:28:38 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46906 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfBKM0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:26:27 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m1so17485112wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:25 -0800 (PST)
+        Mon, 11 Feb 2019 07:26:31 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so4428823wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EVbb/kmDGnz2R06A9Y+sRzR+uJXik+IbWekFAYRY3NY=;
-        b=AXEDg7KklUenWcoBF2Tt9JIwcxAg0z5HlJa0TWbNeQNwbacsdqkwMeXuuyqsCOc7Ms
-         IMPLR+O3M1KC/1RqnWOSCspIfZeNAXxmm5Rn6HmWUybW9Pretx6s1cJgfp0cTotrZQPD
-         LCFoVwW52YTdE28yKm/wZmu+ogrYs0RlqYtR737s4i0Vg+DjnfjU+Xqf2iSYzYFiwci8
-         SENRBCAilwDZnPHWJxaFPJgJg9r495z9T89oxc8scpgP7vEiVEquLXUu00rBNbv9k2eM
-         6zYLgCT4BuqtUofPvva7KxVeWC/H9GPzhgwcN1V7BvMwzcx7nnppoF4jAWbseXbv4pEw
-         V33w==
+        bh=5xoYgZeFd4jbYH06UIuAag4pMtuSlF7B4aVziE0WwaQ=;
+        b=Ob2V0uLkmrtuwWtPxVud0yokG4gomj2iZaQcTLHVWFokz4yCSMGB8kUdD1F5saDez/
+         KqmOMG5mMi4nkjI1W43r+rrCdfaWJYE6T+EdJW1wUyPMsgZ6N8kBXLhpxfLCx04jRfgx
+         KD4ZMBv/6Awwst3KuHkoFz91hPJphJZQlteMEzkr9tQT9LS3lNDvYrXAuIW8n4/yzEG2
+         NyeiivWPLiJ3fWVjHRmwfYy1tkgFkXZGw/mPV9zQJ8ai9ee2Z1VYFL/nM/86NpFoPvMV
+         O5tBGl0b9u4u3QyHX+0M5KaYPm9inYKXLjAE3uMpCEBGYtW3uy7RQQKiYRtlatJ6/hxd
+         EKKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EVbb/kmDGnz2R06A9Y+sRzR+uJXik+IbWekFAYRY3NY=;
-        b=oc+YTTSpqCtzxrUawzc8NRxGzRZ8G1KwGPdRAE6SdULJVeAM7Nrlaq2wA4HhxDIFP4
-         nb92wwQQZVsEKcAYDj/udBQF2UrclvyXzxqAP0/PjJE2EY/DFLXyt8U8SBBLFu0Kjl7o
-         V0QAqrfLteMDspFaJP6cGfjBALFjknVijiXJoeQoUknwmMAMXsr3CfCYwo3Su81JBWiN
-         4zvWhzrNMt2na9ALVjcaBC8OotMq8f034Z35QKd1FafT/FhrgtyoX5co0t0q+LdRKgBi
-         THB1POV6LVseezEHPcMPf1RZS6YhGHRHdLExXlFN+m+HJhkHRTzKC+odMLGdAyPT8gom
-         AnfA==
-X-Gm-Message-State: AHQUAuaiMdVeDKogdSwFOTHoDVXO9bt/NjlTiS3fFMfXznwH9r0jg+LQ
-        4kT7ofN70nbcoKJoyxY386HOnw==
-X-Google-Smtp-Source: AHgI3Ib/DPvgBo2reENCghlhxMh3WiDOjeD7oK6R0Li2KY+cahwbev0DMRk1xiQehHjSAv5CAD6R3g==
-X-Received: by 2002:a1c:7dd6:: with SMTP id y205mr8674098wmc.121.1549887984740;
-        Mon, 11 Feb 2019 04:26:24 -0800 (PST)
+        bh=5xoYgZeFd4jbYH06UIuAag4pMtuSlF7B4aVziE0WwaQ=;
+        b=GStt56R88nmi2DyjiKm+zawn+/i1+EEyzIZ9NrqKb+CPv5fkIm94TsbTQ1uo+Wmq8z
+         lfRtX47u5fNCYyaTRabVI0pvPjWakrEkxByYAwWs/SHaav16QdilEsytm25fM+Ajfofg
+         EMr9rj2o4QVJgovLapl/wnS9edsbXt7LsyZHQWrtFA4EIcaa2q8aneT3wcqPIGWxTCqx
+         BoF2gp1FMOMQhuMZvwlMpu679lcYaZt/WIchMLJkhX+wfiQ7MX5JP3Uk8luKbWnHtfme
+         nXjmbqytzligFS92bDbu3eZH/WKx/Uf0ON76LDMN46jnMON4RuPOeTLx5k6anS1fs73g
+         kgPw==
+X-Gm-Message-State: AHQUAuZ2+3ZvnJw7sGu+oR8xI8EIBTTmAdaf0ZJzuH4YQZHfvvl47+KV
+        L8mZc5zrxbMEjpsiQYma/gfNgA==
+X-Google-Smtp-Source: AHgI3Ib3ufdV3JJ8HpUVVBn3lmc7RDQ/jNotQIrcWskt+PH5iDrdUGEcOKKjtpnyRjeyGH5t4kkUdQ==
+X-Received: by 2002:adf:ee46:: with SMTP id w6mr28055297wro.261.1549887989765;
+        Mon, 11 Feb 2019 04:26:29 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.23
+        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:26:24 -0800 (PST)
+        Mon, 11 Feb 2019 04:26:29 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v2 09/33] ARM: davinci: aintc: drop GPL license boilerplate
-Date:   Mon, 11 Feb 2019 13:25:42 +0100
-Message-Id: <20190211122606.8662-10-brgl@bgdev.pl>
+Subject: [RESEND PATCH v2 13/33] ARM: davinci: aintc: use readl/writel_relaxed()
+Date:   Mon, 11 Feb 2019 13:25:46 +0100
+Message-Id: <20190211122606.8662-14-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
 References: <20190211122606.8662-1-brgl@bgdev.pl>
@@ -79,47 +79,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Replace the GPLv2 or later license boilerplate with an SPDX identifier.
+Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed()
+and writel_relaxed() respectively. It's safe to do as there's no
+endianness conversion being done in the code.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/irq.c | 26 ++++++--------------------
- 1 file changed, 6 insertions(+), 20 deletions(-)
+ arch/arm/mach-davinci/irq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 88c30759d1c5..1301adc569e2 100644
+index 148c23728bdb..6a7205a844e1 100644
 --- a/arch/arm/mach-davinci/irq.c
 +++ b/arch/arm/mach-davinci/irq.c
-@@ -1,23 +1,9 @@
--/*
-- * Interrupt handler for DaVinci boards.
-- *
-- * Copyright (C) 2006 Texas Instruments.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2006, 2019 Texas Instruments.
-+//
-+// Interrupt handler for DaVinci boards.
-+
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
+@@ -36,12 +36,12 @@ static struct irq_domain *davinci_aintc_irq_domain;
+ 
+ static inline void davinci_aintc_writel(unsigned long value, int offset)
+ {
+-	__raw_writel(value, davinci_aintc_base + offset);
++	writel_relaxed(value, davinci_aintc_base + offset);
+ }
+ 
+ static inline unsigned long davinci_aintc_readl(int offset)
+ {
+-	return __raw_readl(davinci_aintc_base + offset);
++	return readl_relaxed(davinci_aintc_base + offset);
+ }
+ 
+ static __init void
 -- 
 2.20.1
 
