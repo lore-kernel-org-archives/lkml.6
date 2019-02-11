@@ -2,127 +2,189 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB12C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C35CFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A542184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F454217FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549924918;
+	bh=bFQv2jL8l7LsVrBnjJxllnBM4ycB3n+bbsg7aa18+d4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=XnMDoGUXSbf9S+B8ehgLMpwPoT5zklUDeS9PTJj/nYG02qkS8VcqZ2pVqc5/4NMOP
+	 D+j67hs7hhHyenAGYIZ9MeXzE8hXVvv0qDoDtLsZArVlfmxY9jmnS0Yi3QkY0ZksR1
+	 aogqdBtsePIh56cd7LPHPjTQ9CPzub1yVE0azVNQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfBKWkM convert rfc822-to-8bit (ORCPT
+        id S1727683AbfBKWl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:40:12 -0500
-Received: from mga17.intel.com ([192.55.52.151]:38976 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfBKWkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:40:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 14:40:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="123707844"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Feb 2019 14:40:08 -0800
-Received: from fmsmsx116.amr.corp.intel.com (10.18.116.20) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 14:40:08 -0800
-Received: from crsmsx151.amr.corp.intel.com (172.18.7.86) by
- fmsmsx116.amr.corp.intel.com (10.18.116.20) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 14:40:06 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
- CRSMSX151.amr.corp.intel.com ([169.254.3.79]) with mapi id 14.03.0415.000;
- Mon, 11 Feb 2019 16:40:03 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH 0/3] Add gup fast + longterm and use it in HFI1
-Thread-Topic: [PATCH 0/3] Add gup fast + longterm and use it in HFI1
-Thread-Index: AQHUwkbGJiw3VF3kpESe1yhfT7MilqXbcliAgAADmgD//4l5gIAAkQ8A//+b9cA=
-Date:   Mon, 11 Feb 2019 22:40:02 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BCF37B@CRSMSX101.amr.corp.intel.com>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
- <20190211203417.a2c2kbmjai43flyz@linux-r8p5>
- <20190211204710.GE24692@ziepe.ca>
- <20190211214257.GA7891@iweiny-DESK2.sc.intel.com>
- <20190211222208.GJ24692@ziepe.ca>
-In-Reply-To: <20190211222208.GJ24692@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGMyMmNiMGEtNzUwMC00NDMxLWE1ZmMtNWMwYjg2ZmU5ZDRlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiT2hFSXpPU0p0Mlg2VVJBcFR2RStXWkpkNTRTck9rOXAzR3pXUUF0MytVcXQ2c2VMa28wc2huVkI0ODJEN3lBNiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 11 Feb 2019 17:41:56 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37591 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfBKWl4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:41:56 -0500
+Received: by mail-ot1-f66.google.com with SMTP id b3so1085256otp.4;
+        Mon, 11 Feb 2019 14:41:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bF4alEILY9CICyqtP82YT446lOAQzqM3kGIWefidkfM=;
+        b=WTfX3+QJf3jgeqKt4wGjZ8xb1sZ9ozv8RI2U6NW8z9fzPJqN3oe/XgU99ArNbNoOFN
+         BdRBf6xqqMNz1ijsv+pa9lz4QIHQl1KTPfMPcTYtR+dcUDABA36mhpVVSd3BK0u3irqS
+         OKZ+TDXn3g0X4rOa4fYTysYKJsbhEX/IYEmDjV+pnn8t7z5/K2jJLQdBE+99OZeS4qXE
+         XOnMhvNWB6IKrkCGO/vZAjQUbNQqKIfGeMapxEOVmcxCp3HaESUuxC2b5i79I0gP1I3U
+         945QAOQYjWpbXHUzKLtEwJFYgm27o785zcOZbxiu7HgtrhZNDChnqlVjwwYFaURkg7RE
+         6gKA==
+X-Gm-Message-State: AHQUAub0Sx9oX3EPNoGoyW2MBEzF43WgumV7nfWrlpSfE1PV8P8cr73i
+        fa2LnDt6joylYBE6D+pc0ysj+Z05bZxzAeM2TNg=
+X-Google-Smtp-Source: AHgI3IYzytf+HPkXCaBfMzSU4VhijBb1TSgv6ajUqMxP6TQY3Wz4v3SNEMoIKPXn89xyCzQSws285/o8icmroNtgvJ8=
+X-Received: by 2002:a9d:7e8f:: with SMTP id m15mr566998otp.124.1549924915024;
+ Mon, 11 Feb 2019 14:41:55 -0800 (PST)
 MIME-Version: 1.0
+References: <3917694.ab5GGAjohB@aspire.rjw.lan> <1634058.cXDNg15SOd@aspire.rjw.lan>
+ <CAPDyKFpWCT9CcmxqqWk+S8tSPz_at56UCnk3EVBab-TnScHw8Q@mail.gmail.com>
+In-Reply-To: <CAPDyKFpWCT9CcmxqqWk+S8tSPz_at56UCnk3EVBab-TnScHw8Q@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 11 Feb 2019 23:41:43 +0100
+Message-ID: <CAJZ5v0j2Gi7uG7TWSXdmQ09VWT+ZZF=woUFAnoFBDLx9zy-Cng@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: Take suppliers into account in __pm_runtime_set_status()
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Mon, Feb 11, 2019 at 01:42:57PM -0800, Ira Weiny wrote:
-> > On Mon, Feb 11, 2019 at 01:47:10PM -0700, Jason Gunthorpe wrote:
-> > > On Mon, Feb 11, 2019 at 12:34:17PM -0800, Davidlohr Bueso wrote:
-> > > > On Mon, 11 Feb 2019, ira.weiny@intel.com wrote:
-> > > > > Ira Weiny (3):
-> > > > >  mm/gup: Change "write" parameter to flags
-> > > > >  mm/gup: Introduce get_user_pages_fast_longterm()
-> > > > >  IB/HFI1: Use new get_user_pages_fast_longterm()
-> > > >
-> > > > Out of curiosity, are you planning on having all rdma drivers use
-> > > > get_user_pages_fast_longterm()? Ie:
-> > > >
-> > > > hw/mthca/mthca_memfree.c:       ret = get_user_pages_fast(uaddr &
-> PAGE_MASK, 1, FOLL_WRITE, pages);
-> > >
-> > > This one is certainly a mistake - this should be done with a umem.
+ On Mon, Feb 11, 2019 at 2:28 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Thu, 7 Feb 2019 at 19:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 > >
-> > It looks like this is mapping a page allocated by user space for a
-> > doorbell?!?!
-> 
-> Many drivers do this, the 'doorbell' is a PCI -> CPU thing of some sort
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If the target device has any suppliers, as reflected by device links
+> > to them, __pm_runtime_set_status() does not take them into account,
+> > which is not consistent with the other parts of the PM-runtime
+> > framework and may lead to programming mistakes.
+> >
+> > Modify __pm_runtime_set_status() to take suppliers into account by
+> > activating them upfront if the new status is RPM_ACTIVE and
+> > deactivating them on exit if the new status is RPM_SUSPENDED.
+> >
+> > If the activation of one of the suppliers fails, the new status
+> > will be RPM_SUSPENDED and the (remaining) suppliers will be
+> > deactivated on exit (the child count of the device's parent
+> > will be dropped too then).
+> >
+> > Of course, adding device links locking to __pm_runtime_set_status()
+> > means that it cannot be run fron interrupt context, so make it use
+> > spin_lock_irq() and spin_unlock_irq() instead of spin_lock_irqsave()
+> > and spin_unlock_irqrestore(), respectively.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Rafael, thanks for working on this!
+>
+> I am running some tests at my side, but still not achieving the
+> behavior I expect to. Will let you know when I have more details, but
+> first some comments below.
+>
+> > ---
+> >  drivers/base/power/runtime.c |   45 ++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 40 insertions(+), 5 deletions(-)
+> >
+> > Index: linux-pm/drivers/base/power/runtime.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/base/power/runtime.c
+> > +++ linux-pm/drivers/base/power/runtime.c
+> > @@ -1102,20 +1102,43 @@ EXPORT_SYMBOL_GPL(pm_runtime_get_if_in_u
+> >   * and the device parent's counter of unsuspended children is modified to
+> >   * reflect the new status.  If the new status is RPM_SUSPENDED, an idle
+> >   * notification request for the parent is submitted.
+> > + *
+> > + * If @dev has any suppliers (as reflected by device links to them), and @status
+> > + * is RPM_ACTIVE, they will be activated upfront and if the activation of one
+> > + * of them fails, the status of @dev will be changed to RPM_SUSPENDED (instead
+> > + * of the @status value) and the suppliers will be deacticated on exit.  The
+> > + * error returned by the failing supplier activation will be returned in that
+> > + * case.
+> >   */
+> >  int __pm_runtime_set_status(struct device *dev, unsigned int status)
+> >  {
+> >         struct device *parent = dev->parent;
+> > -       unsigned long flags;
+> >         bool notify_parent = false;
+> >         int error = 0;
+> >
+> >         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
+> >                 return -EINVAL;
+> >
+> > -       spin_lock_irqsave(&dev->power.lock, flags);
+> > +       /*
+> > +        * If the new status is RPM_ACTIVE, the suppliers can be activated
+> > +        * upfront regardless of the current status, because next time
+> > +        * rpm_put_suppliers() runs, the rpm_active refcounts of the links
+> > +        * involved will be dropped down to one anyway.
+> > +        */
+> > +       if (status == RPM_ACTIVE) {
+> > +               int idx = device_links_read_lock();
+> > +
+> > +               error = rpm_get_suppliers(dev);
+> > +               if (error)
+> > +                       status = RPM_SUSPENDED;
+> > +
+> > +               device_links_read_unlock(idx);
+> > +       }
+>
+> This doesn't look right to me, and more importantly, this isn't
+> consistent with how we treat a parent/child.
 
-My surprise is why does _userspace_ allocate this memory?
+It cannot be entirely consistent with that, because you cannot walk
+the suppliers under the device's power.lock.
 
-> 
-> > This does not seem to be allocating memory regions.  Jason, do you
-> > want a patch to just convert these calls and consider it legacy code?
-> 
-> It needs to use umem like all the other drivers on this path.
-> Otherwise it doesn't get the page pinning logic right
+The idea here is that activating suppliers upfront if the new status
+is RPM_ACTIVE shouldn't hurt regardless.
 
-Not sure what you mean regarding the pinning logic?
+> More precisely, I think you need to check "if
+> (!dev->power.runtime_error && !dev->power.disable_depth)" and also
+> whether "dev->power.runtime_status == status", before deciding to call
+> rpm_get_suppliers() above. Otherwise you may end up resuming suppliers
+> and/or increasing the link->rpm_active count, when you shouldn't.
 
-> 
-> There is also something else rotten with these longterm callsites, they seem
-> to have very different ideas how to handle RLIMIT_MEMLOCK.
-> 
-> ie vfio doesn't even touch pinned_vm.. and rdma is applying
-> RLIMIT_MEMLOCK to mm->pinned_vm, while vfio is using locked_vm.. No
-> idea which is right, but they should be the same, and this pattern should
-> probably be in core code someplace.
+Resuming suppliers unnecessarily is not particularly efficient, but it
+is not incorrect.  Incrementing their rpm_active temporarily also
+isn't incorrect as long as the rpm_active values are correct on exit
+(and note that incementing them if the consumer's status is RPM_ACTIVE
+doesn't even matter).
 
-Neither do I.  But AFAIK pinned_vm is a subset of locked_vm.
+> In other words, expecting __pm_runtime_set_status() to be called in
+> "balanced" manner isn't correct.
 
-So should we be accounting both of the counters?
+There is no such expectation here.
 
-Ira
+There is a possible race between __pm_runtime_set_status() and runtime
+suspend or resume of the device in case PM-runtime is enabled for it
+when __pm_runtime_set_status() is called, but it shouldn't occur if
+__pm_runtime_set_status() is used correctly (that is, when PM-runtime
+is disabled for the device).
 
+I think I know how to avoid that race, though, so I'm going to post an
+incremental fix if that works out.
