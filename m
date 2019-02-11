@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3983C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50358C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 732E320844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20FE120700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896394;
-	bh=RKp6cQP8MhzJlcyBBeHthL/6qRG1osCiFPt+NcNB74w=;
+	s=default; t=1549896399;
+	bh=Bj0tR+1MSMXlK8KkE3YYqhnhOyunEgRR9JJQmJg27Ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BL5pkim3IUVX7X135iE0hnfnOGCebb3M/RWZexIgHH7cdyeG6+MO4rRNRdfMb7FKv
-	 +p83GKve7VrSiSv0AYzwc/jo28z6jh+MeHTtwz+WTL4XNvdwdOsp8R+ppWOb9w7XcT
-	 6tXu6tZqEFZOTwVPlB5YARWJ0CboOSxgr9foF83g=
+	b=nirO52zADX6f/L67aLq6yRDbgyRZaakbwA/k2af4J0SsrYM2Y3j65gUvpgZcsCU4s
+	 /IIU0APvPE9QM9kKN3CZPPvkY4NDbGq0OZK7v0yRBjwFK4ea6dqbs3Zg1SMB/XhFlE
+	 H/z1eMviHv0ruulTWeSpiZaIs43KPKp9FMhUoE1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733253AbfBKOqd (ORCPT
+        id S1733270AbfBKOqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:46:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59606 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:46:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733247AbfBKOq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:46:29 -0500
+        id S1733254AbfBKOqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D484220700;
-        Mon, 11 Feb 2019 14:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77ED4206BA;
+        Mon, 11 Feb 2019 14:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896388;
-        bh=RKp6cQP8MhzJlcyBBeHthL/6qRG1osCiFPt+NcNB74w=;
+        s=default; t=1549896390;
+        bh=Bj0tR+1MSMXlK8KkE3YYqhnhOyunEgRR9JJQmJg27Ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+lZidd4xc+54OHLj3kNb63hOgMgcFdQ0wN2Np978tBPkPIgYzU4a77wzJ2tjqc1Z
-         tDtmAAcHuEXqQMQ5gl6mZuRuHROx7sx7oV8fHsPwNvOt/kRP3gpKIRxJU2G0b3s4/z
-         Xrgy2djD68SaFhlUSl5Ao9Z7xzcRBoWHS1D1hvpw=
+        b=WrHApATHAF4LVibb46Nhouiu8AYnvpRubqkysqYfiD1mC7ChNLL1tGFP05c7j7fDo
+         87C2bFplOkmkTW6K9bJd6+Rw0VdE6NEH4yTc2tPpmh4YNCbEkRZu43yY6VulDJ2Cqa
+         NfWwhYXRltjMoh1GypnASxiG0BkNZoP8g0AtbP0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 168/313] usb: musb: dsps: fix otg state machine
-Date:   Mon, 11 Feb 2019 15:17:28 +0100
-Message-Id: <20190211141904.645025754@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Bin Liu <b-liu@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 169/313] usb: musb: dsps: fix runtime pm for peripheral mode
+Date:   Mon, 11 Feb 2019 15:17:29 +0100
+Message-Id: <20190211141904.701598932@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -65,49 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6010abf2c2c0e382d7e8ee44bd11f343aae90cce ]
+[ Upstream commit 54578ee883e34d2d1c518d48f1c1e2dd3f387188 ]
 
-Due to lack of ID pin interrupt event on AM335x devices, the musb dsps
-driver uses polling to detect usb device attach for dual-role port.
+Since the runtime PM support was added in musb, dsps relies on the timer
+calling otg_timer() to activate the usb subsystem. However the driver
+doesn't enable the timer for peripheral port, then the peripheral port is
+unable to be enumerated by a host if the other usb port is disabled or in
+peripheral mode too.
 
-But in the case if a micro-A cable adapter is attached without a USB device
-attached to the cable, the musb state machine gets stuck in a_wait_vrise
-state waiting for the MUSB_CONNECT interrupt which won't happen due to the
-usb device is not attached. The state is stuck in a_wait_vrise even after
-the micro-A cable is detached, which could cause VBUS retention if then the
-dual-role port is attached to a host port.
+So let's start the timer for peripheral port too.
 
-To fix the problem, make a_wait_vrise as a transient state, then move the
-state to either a_wait_bcon for host port or a_idle state for dual-role
-port, if no usb device is attached to the port.
-
+Fixes: ea2f35c01d5e ("usb: musb: Fix sleeping function called from invalid context for hdrc glue")
+Acked-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/musb_dsps.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/musb/musb_dsps.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
-index 23a0df79ef21..1e6d78b1334e 100644
+index 1e6d78b1334e..403eb97915f8 100644
 --- a/drivers/usb/musb/musb_dsps.c
 +++ b/drivers/usb/musb/musb_dsps.c
-@@ -227,8 +227,13 @@ static int dsps_check_status(struct musb *musb, void *unused)
+@@ -181,9 +181,11 @@ static void dsps_musb_enable(struct musb *musb)
  
- 	switch (musb->xceiv->otg->state) {
- 	case OTG_STATE_A_WAIT_VRISE:
--		dsps_mod_timer_optional(glue);
--		break;
-+		if (musb->port_mode == MUSB_HOST) {
-+			musb->xceiv->otg->state = OTG_STATE_A_WAIT_BCON;
-+			dsps_mod_timer_optional(glue);
-+			break;
-+		}
-+		/* fall through */
+ 	musb_writel(reg_base, wrp->epintr_set, epmask);
+ 	musb_writel(reg_base, wrp->coreintr_set, coremask);
+-	/* start polling for ID change in dual-role idle mode */
+-	if (musb->xceiv->otg->state == OTG_STATE_B_IDLE &&
+-			musb->port_mode == MUSB_OTG)
++	/*
++	 * start polling for runtime PM active and idle,
++	 * and for ID change in dual-role idle mode.
++	 */
++	if (musb->xceiv->otg->state == OTG_STATE_B_IDLE)
+ 		dsps_mod_timer(glue, -1);
+ }
+ 
+@@ -254,6 +256,10 @@ static int dsps_check_status(struct musb *musb, void *unused)
+ 				musb->xceiv->otg->state = OTG_STATE_A_IDLE;
+ 				MUSB_HST_MODE(musb);
+ 			}
 +
- 	case OTG_STATE_A_WAIT_BCON:
- 		/* keep VBUS on for host-only mode */
- 		if (musb->port_mode == MUSB_HOST) {
++			if (musb->port_mode == MUSB_PERIPHERAL)
++				skip_session = 1;
++
+ 			if (!(devctl & MUSB_DEVCTL_SESSION) && !skip_session)
+ 				musb_writeb(mregs, MUSB_DEVCTL,
+ 					    MUSB_DEVCTL_SESSION);
 -- 
 2.19.1
 
