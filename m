@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0570C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6693C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0FF6222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9526D222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896882;
-	bh=kAR3eazKGe/yltSyV1caCVb7AGSePrmZfyQuZyxLCnk=;
+	s=default; t=1549896886;
+	bh=qIeJ22VZVpxP0RcNKWd5JgBOVomm0is9qi8bm9hdNzs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lUpFK2B+EbcbHqSHZczQiopZqGT8+eGI9o1ayD4fEOEe77R1XW+OCGuKGkEfmzpi9
-	 z4xWaLM6Ng392cwWpuHcy1WpdFis7MtnyvP8gZszCTvNJjuu9oEZciflITxP7c5fmw
-	 5zssCshybTN9mIeTBITz6//umsoeoncvY+Ir0nhw=
+	b=ucqajVLeU8G19Ioxx5ghkS1KZu9tjPmX4tl+O9k1loSoWKvrdc6NVaGD0IUP9SKm9
+	 jNa+LV4/mJ9O/r4ElZahrBZT+EysWiPwHwxvELBdVwKZkwcQaUZqH3Y/eDcPTy2ftp
+	 ePyT2B8pxkcb1G8IAFAwt1euPtSz/yCgbEwWRe74=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388866AbfBKOyl (ORCPT
+        id S2388447AbfBKOyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:54:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41392 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:54:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388223AbfBKOyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:37 -0500
+        id S2388862AbfBKOyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4BA222A1;
-        Mon, 11 Feb 2019 14:54:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0809520855;
+        Mon, 11 Feb 2019 14:54:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896877;
-        bh=kAR3eazKGe/yltSyV1caCVb7AGSePrmZfyQuZyxLCnk=;
+        s=default; t=1549896880;
+        bh=qIeJ22VZVpxP0RcNKWd5JgBOVomm0is9qi8bm9hdNzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xiiRrbfaqLGG0YOomSI9iflxnNoxHTy/biaJq/WlIZXVmFzqvnsCa9l5dEDCxSha1
-         SOuTjO/akk8ANusse5Pyb9n50yp2g6yolVKBKep0MMXeHvBAzfQjK1NFiRbr6A2XUk
-         f1D6hhako2JBTloAYlBFTrsXfv/Df1E6fCdrBgBo=
+        b=hi+hcBy2DTTHaJToAw0s3E4GrGZbmSc/MP0HGdRp3Ga4szDaS7KGekcSXaI4jlit/
+         GJrY/9DyguuxJTc6U4dwb9dNCkzTRAl/er8hbvo8oueBmEgnNyVTpIqkIXP/eupgWE
+         C5wO7abfCdn+248jCfx5JNiR0s5axqSciiPludlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Deepak Sharma <deepak.sharma@amd.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
+        stable@vger.kernel.org, Mathias Duckeck <m.duckeck@kunbus.de>,
+        Lukas Wunner <lukas@wunner.de>,
+        Julia Cartwright <julia@ni.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 003/205] drm/vgem: Fix vgem_init to get drm device available.
-Date:   Mon, 11 Feb 2019 15:16:41 +0100
-Message-Id: <20190211141827.408084036@linuxfoundation.org>
+Subject: [PATCH 4.14 004/205] pinctrl: bcm2835: Use raw spinlock for RT compatibility
+Date:   Mon, 11 Feb 2019 15:16:42 +0100
+Message-Id: <20190211141827.453627932@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,69 +68,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d5c04dff24870ef07ce6453a3f4e1ffd9cf88d27 ]
+[ Upstream commit 3c7b30f704b6f5e53eed6bf89cf2c8d1b38b02c0 ]
 
-Modify vgem_init to take platform dev as parent in drm_dev_init.
-This will make drm device available at "/sys/devices/platform/vgem"
-in x86 chromebook.
+The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
+->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
+locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
+callbacks in atomic context may cause a hard lockup if at least two GPIO
+pins in the same bank are used as interrupts.  The issue doesn't occur
+with just a single interrupt pin per bank because the lock is never
+contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
+level-triggered interrupts, i.e. with ->irq_disable being invoked on
+reception of every IRQ.
 
-v2: rebase, address checkpatch typo and line over 80 characters
+The critical section protected by the spinlock is very small (one bitop
+and one RMW of an MMIO register), hence converting to a raw spinlock
+seems a better trade-off than converting the driver to threaded IRQ
+handling (which would increase latency to handle an interrupt).
 
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Deepak Sharma <deepak.sharma@amd.com>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181023163550.15211-1-emil.l.velikov@gmail.com
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Acked-by: Julia Cartwright <julia@ni.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 16 ++++++++--------
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
  1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 2524ff116f00..81c7ab10c083 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -472,31 +472,31 @@ static int __init vgem_init(void)
- 	if (!vgem_device)
- 		return -ENOMEM;
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index ff782445dfb7..e72bf2502eca 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -92,7 +92,7 @@ struct bcm2835_pinctrl {
+ 	struct gpio_chip gpio_chip;
+ 	struct pinctrl_gpio_range gpio_range;
  
--	ret = drm_dev_init(&vgem_device->drm, &vgem_driver, NULL);
--	if (ret)
--		goto out_free;
--
- 	vgem_device->platform =
- 		platform_device_register_simple("vgem", -1, NULL, 0);
- 	if (IS_ERR(vgem_device->platform)) {
- 		ret = PTR_ERR(vgem_device->platform);
--		goto out_fini;
-+		goto out_free;
+-	spinlock_t irq_lock[BCM2835_NUM_BANKS];
++	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
+ };
+ 
+ /* pins are just named GPIO0..GPIO53 */
+@@ -471,10 +471,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	set_bit(offset, &pc->enabled_irq_map[bank]);
+ 	bcm2835_gpio_irq_config(pc, gpio, true);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+@@ -486,12 +486,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	bcm2835_gpio_irq_config(pc, gpio, false);
+ 	/* Clear events that were latched prior to clearing event sources */
+ 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
+ 	clear_bit(offset, &pc->enabled_irq_map[bank]);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
+@@ -594,7 +594,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 
+ 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
+ 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
+@@ -606,7 +606,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	else
+ 		irq_set_handler_locked(data, handle_level_irq);
+ 
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ 
+ 	return ret;
+ }
+@@ -1021,7 +1021,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 		for_each_set_bit(offset, &events, 32)
+ 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
+ 
+-		spin_lock_init(&pc->irq_lock[i]);
++		raw_spin_lock_init(&pc->irq_lock[i]);
  	}
  
- 	dma_coerce_mask_and_coherent(&vgem_device->platform->dev,
- 				     DMA_BIT_MASK(64));
-+	ret = drm_dev_init(&vgem_device->drm, &vgem_driver,
-+			   &vgem_device->platform->dev);
-+	if (ret)
-+		goto out_unregister;
- 
- 	/* Final step: expose the device/driver to userspace */
- 	ret  = drm_dev_register(&vgem_device->drm, 0);
- 	if (ret)
--		goto out_unregister;
-+		goto out_fini;
- 
- 	return 0;
- 
--out_unregister:
--	platform_device_unregister(vgem_device->platform);
- out_fini:
- 	drm_dev_fini(&vgem_device->drm);
-+out_unregister:
-+	platform_device_unregister(vgem_device->platform);
- out_free:
- 	kfree(vgem_device);
- 	return ret;
+ 	err = gpiochip_add_data(&pc->gpio_chip, pc);
 -- 
 2.19.1
 
