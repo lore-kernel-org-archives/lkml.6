@@ -2,138 +2,92 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B343C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FABC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A88C222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899381;
-	bh=dcOVIART2IzLvjZPnq7Tr59A29Nr8oIiJe/yaKrkE6E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tv9NX56VFWcAZoxpNyY3kjh1AiPvKWv2wmXRgWae4s90KKbHzstXtygOcAcAR9bcT
-	 KAUiJKWvCW6mGREVndu3Kqp3yPHMsLJIroKpxMObYvX3XRi4dpsc2YCMUmZtqqSFCu
-	 x/BMwIXqbIyUr5XX+GqEfaJ8fy+Awa8Jsg4e7n/M=
+	by mail.kernel.org (Postfix) with ESMTP id 298A8222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388378AbfBKPgT (ORCPT
+        id S2388314AbfBKOvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:36:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38230 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:51:45 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:50780 "EHLO smtp.gentoo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388356AbfBKOwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:52:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388296AbfBKOvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:38 -0500
+Received: from a1i15 (host2092.kph.uni-mainz.de [134.93.134.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B864B2081B;
-        Mon, 11 Feb 2019 14:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896722;
-        bh=dcOVIART2IzLvjZPnq7Tr59A29Nr8oIiJe/yaKrkE6E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2Zu6XRRoeUwaDldwrCqYBnIBlbB8sM/KA6Tg6mEKncP670csPF0O7SdD3H1ioNxC
-         NK68PSSHR8ThSFYEPnrnrvExPp2N0OHXJG8ZAwh41/vQduVNv2Tf8mu7jLqJhXwmnb
-         2qOl2cUsNFFueTDSDFOZ55k3vmDLsnpa4/1gIe/w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 252/313] xfs: fix shared extent data corruption due to missing cow reservation
-Date:   Mon, 11 Feb 2019 15:18:52 +0100
-Message-Id: <20190211141910.169800156@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        (Authenticated sender: ulm)
+        by smtp.gentoo.org (Postfix) with ESMTPSA id 5B008335C9F;
+        Mon, 11 Feb 2019 14:51:35 +0000 (UTC)
+From:   Ulrich Mueller <ulm@gentoo.org>
+To:     Domenico Andreoli <cavok@debian.org>
+Cc:     Kristian Fiskerstrand <k_f@gentoo.org>,
+        Ben Finney <bignose@debian.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        919356@bugs.debian.org, debian-legal@lists.debian.org,
+        linux-kernel@vger.kernel.org,
+        Martin Steigerwald <martin.steigerwald@proact.de>,
+        Jens Axboe <jens.axboe@oracle.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: Licensing of include/linux/hash.h
+References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
+        <20190123085000.fp7lhtjxcyzw3m4x@dumbo>
+        <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
+        <20190211072259.GA19224@nouveau> <w6gva1qzea4.fsf@kph.uni-mainz.de>
+Date:   Mon, 11 Feb 2019 15:51:32 +0100
+In-Reply-To: <w6gva1qzea4.fsf@kph.uni-mainz.de> (Ulrich Mueller's message of
+        "Mon, 11 Feb 2019 13:43:31 +0100")
+Message-ID: <w6go97iz8cr.fsf@kph.uni-mainz.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+>>>>> On Mon, 11 Feb 2019, Ulrich Mueller wrote:
 
-------------------
+>>>>> On Mon, 11 Feb 2019, Domenico Andreoli wrote:
+>> On Mon, Feb 11, 2019 at 12:08:32AM +0100, Kristian Fiskerstrand wrote:
+>>> It was [pointed out] by one of our license group that [hash.h]  is the
+>>> same that has a GPL-2+ in [fio] which has a signed-off-by.
+>>> 
+>>> References:
+>>> [pointed out]
+>>> https://bugs.gentoo.org/677586#c1
+>>> 
+>>> [hash.h]
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/fio.git/commit/hash.h?id=bdc7211e190482f0c17c109a0d90834a6611be1c
 
-commit 59e4293149106fb92530f8e56fa3992d8548c5e6 upstream.
+>> Yes, the Signed-off-by is from Jens Axboe (in CC) but he's not the
+>> original author, I guess he just copied the file as Arnaldo did. The
+>> file he committed has not any reference to the license.
 
-Page writeback indirectly handles shared extents via the existence
-of overlapping COW fork blocks. If COW fork blocks exist, writeback
-always performs the associated copy-on-write regardless if the
-underlying blocks are actually shared. If the blocks are shared,
-then overlapping COW fork blocks must always exist.
+>>> [fio]
+>>> https://metadata.ftp-master.debian.org/changelogs/main/f/fio/fio_3.12-2_copyright
 
-fstests shared/010 reproduces a case where a buffered write occurs
-over a shared block without performing the requisite COW fork
-reservation.  This ultimately causes writeback to the shared extent
-and data corruption that is detected across md5 checks of the
-filesystem across a mount cycle.
+>> I'm afraid that this entry in wrong. I'll seek confirmation with
+>> Martin Steigerwald.
 
-The problem occurs when a buffered write lands over a shared extent
-that crosses an extent size hint boundary and that also happens to
-have a partial COW reservation that doesn't cover the start and end
-blocks of the data fork extent.
+> Not sure if this will help, but hash.h originally appeared in
+> Linux 2.5.7. In the following commit one can see that most of its code
+> was moved or copied from mm/filemap.c:
+> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=882ad449046cec136c484dd2b3659fb4c683e0a3
 
-For example, a buffered write occurs across the file offset (in FSB
-units) range of [29, 57]. A shared extent exists at blocks [29, 35]
-and COW reservation already exists at blocks [32, 34]. After
-accommodating a COW extent size hint of 32 blocks and the existing
-reservation at offset 32, xfs_reflink_reserve_cow() allocates 32
-blocks of reservation at offset 0 and returns with COW reservation
-across the range of [0, 34]. The associated data fork extent is
-still [29, 35], however, which isn't fully covered by the COW
-reservation.
+> filemap.c has a copyright line by Linus, but git blame shows that
+> the relevant code was added in 2002 with a commit by Rik van Riel:
+> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=e5191c50d12621e04f8bc247dcb6a0f4ad76ae26
 
-This leads to a buffered write at file offset 35 over a shared
-extent without associated COW reservation. Writeback eventually
-kicks in, performs an overwrite of the underlying shared block and
-causes the associated data corruption.
+> The relevant thread in LKML is here:
+> https://lkml.org/lkml/2002/2/18/1970
 
-Update xfs_reflink_reserve_cow() to accommodate the fact that a
-delalloc allocation request may not fully cover the extent in the
-data fork. Trim the data fork extent appropriately, just as is done
-for shared extent boundaries and/or existing COW reservations that
-happen to overlap the start of the data fork extent. This prevents
-shared/010 failures due to data corruption on reflink enabled
-filesystems.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/xfs/xfs_reflink.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index 42ea7bab9144..7088f44c0c59 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -302,6 +302,7 @@ xfs_reflink_reserve_cow(
- 	if (error)
- 		return error;
- 
-+	xfs_trim_extent(imap, got.br_startoff, got.br_blockcount);
- 	trace_xfs_reflink_cow_alloc(ip, &got);
- 	return 0;
- }
--- 
-2.19.1
-
-
-
+Sorry, that link should read:
+https://lkml.org/lkml/2002/2/18/197
