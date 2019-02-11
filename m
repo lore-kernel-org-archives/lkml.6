@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3355DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970ADC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E9B222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 679B220700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896936;
-	bh=iY5M5hu6gCPhds5GjYUofegTk1rdXj3jRGV6zEwR1yI=;
+	s=default; t=1549896940;
+	bh=ETFiV5DaBSdzle91qOZKMG018vNCbfgcJez5Ws9ae1Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lzhqcV5a/71XTQXIobjR3Hu+1wGPxD1co93tE25egHOO6LYdzg6/sqx0qaYkdLrCo
-	 fjuY/pr0X+Z2H06HM5iN+MvU7OdnusSgt2pbiv+Y/Qm6uGjHBwXsPiUKqYBLqTEvJ4
-	 1GQIa7lzxzkM4x6EwulLpycckRVQn8J8HX/oM5o4=
+	b=LY+mLSsOvHiIHdTbEOyP73Wdz9ZK1ti2WoYjHqlapteADrXDBTyxP3gQOidA2eBjp
+	 ruLRX/jsOaJNBhc1PdmkWJfjkQhxUWtd1j1UrOK9/SyN2Tc5AbHrdOClEOQAxbDzFG
+	 wngPKFhYUtnybsU5dFNR4bL3t7xKH7fUed2lvKpI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388994AbfBKOze (ORCPT
+        id S2389015AbfBKOzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42562 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388982AbfBKOza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:30 -0500
+        id S2388998AbfBKOzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D3F2229E;
-        Mon, 11 Feb 2019 14:55:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF01D2229E;
+        Mon, 11 Feb 2019 14:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896929;
-        bh=iY5M5hu6gCPhds5GjYUofegTk1rdXj3jRGV6zEwR1yI=;
+        s=default; t=1549896935;
+        bh=ETFiV5DaBSdzle91qOZKMG018vNCbfgcJez5Ws9ae1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LsQHFyz5AXqMWfmW3DbLmnpX25ziVe+Zj4Zn1YnPm7Kl7vOvXJSsmHt/YVpA0pGe8
-         2C3ckATvgG4l+batpJGd45ghn1212bGsz/XK0iUJEnuIFqGL479ZfkwuWBWLjxSEVD
-         1vOPrUlBDKFuYEAwbgd7OUSXLN3sHypWVkYObOl4=
+        b=qGGEdjVGgwvLKqYRAw+9E18fwUeXwp0ckr/gU67h4yWcTrgmBOMSoReix2VQd9RNQ
+         7wabZj373yTZRx8yTio37liBho6hImt+yWNDKGHXsIPCQagsHIRm0u8imqDffg6LeJ
+         mSYQ8//OQSRaLssYyhVz9Cc5q4ySVsm//6P00EJ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 035/205] dmaengine: xilinx_dma: Remove __aligned attribute on zynqmp_dma_desc_ll
-Date:   Mon, 11 Feb 2019 15:17:13 +0100
-Message-Id: <20190211141830.140048992@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 019/205] ptp: check gettime64 return code in PTP_SYS_OFFSET ioctl
+Date:   Mon, 11 Feb 2019 15:16:57 +0100
+Message-Id: <20190211141828.403909563@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,48 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aeaebcc17cdf37065d2693865eeb1ff1c7dc5bf3 ]
+[ Upstream commit 83d0bdc7390b890905634186baaa294475cd6a06 ]
 
-Clang warns:
+If a gettime64 call fails, return the error and avoid copying data back
+to user.
 
-drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
-ignored, place it after "struct" to apply attribute to type declaration
-[-Wignored-attributes]
-}; __aligned(64)
-   ^
-./include/linux/compiler_types.h:200:38: note: expanded from macro
-'__aligned'
-                                               ^
-1 warning generated.
-
-As Nick pointed out in the previous version of this patch, the author
-likely intended for this struct to be 8-byte (64-bit) aligned, not
-64-byte, which is the default. Remove the hanging __aligned attribute.
-
-Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/xilinx/zynqmp_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ptp/ptp_chardev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
-index 5cc8ed31f26b..6d86d05e53aa 100644
---- a/drivers/dma/xilinx/zynqmp_dma.c
-+++ b/drivers/dma/xilinx/zynqmp_dma.c
-@@ -159,7 +159,7 @@ struct zynqmp_dma_desc_ll {
- 	u32 ctrl;
- 	u64 nxtdscraddr;
- 	u64 rsvd;
--}; __aligned(64)
-+};
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index a421d6c551b6..ecb41eacd74b 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -228,7 +228,9 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 			pct->sec = ts.tv_sec;
+ 			pct->nsec = ts.tv_nsec;
+ 			pct++;
+-			ptp->info->gettime64(ptp->info, &ts);
++			err = ptp->info->gettime64(ptp->info, &ts);
++			if (err)
++				goto out;
+ 			pct->sec = ts.tv_sec;
+ 			pct->nsec = ts.tv_nsec;
+ 			pct++;
+@@ -281,6 +283,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
  
- /**
-  * struct zynqmp_dma_desc_sw - Per Transaction structure
++out:
+ 	kfree(sysoff);
+ 	return err;
+ }
 -- 
 2.19.1
 
