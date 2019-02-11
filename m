@@ -2,116 +2,119 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361C0C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3B3C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B98421B25
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 541B82186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWinqYJ/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733295AbfBKT2G (ORCPT
+        id S2388161AbfBKT3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:28:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:19452 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730233AbfBKT2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:28:06 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A055C05001B;
-        Mon, 11 Feb 2019 19:28:05 +0000 (UTC)
-Received: from redhat.com (ovpn-123-21.rdu2.redhat.com [10.10.123.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 402F760A9A;
-        Mon, 11 Feb 2019 19:27:58 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 14:27:56 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] uprobes: use set_pte_at() not set_pte_at_notify()
-Message-ID: <20190211192755.GC3908@redhat.com>
-References: <20190131183706.20980-1-jglisse@redhat.com>
- <20190131183706.20980-2-jglisse@redhat.com>
- <20190202005022.GC12463@redhat.com>
+        Mon, 11 Feb 2019 14:29:13 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38973 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732364AbfBKT3N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:29:13 -0500
+Received: by mail-vs1-f65.google.com with SMTP id e16so39833vsq.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:29:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
+        b=hWinqYJ/c2te/mMDwRkz4RGJ6q9hQd0b9oB5Su5BNgJ1rB5H/5fLVvhH/JNk9EGi3I
+         cUYGO6xtpyJQIVlRvwmMIOzI1g9QV1tBJeYO6s//zxjUBEsxfOSKnTrRGWLK7rc0mqqv
+         gnhBDMILghoWVTItSD6WU3WZfQx2F7FgO0T7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
+        b=HUfVGtCVUu4cErOq/x5P58dR43Cs2RcEwMalYlaaSqRbvhTntdfaalOoG5Cfv9Aq2u
+         AueUpEcSijHxUP87XWAx/rJwn9XRzF+M5ISQa+sk+Tu3gK29UQfYJtGt7841c+K/50Vq
+         DbQFHeC3V+EIIbK4Szp/ZjhyDf1cxScXB6vEnvqva5BGGzv7G3lXzKOPcl3ERKktQOMa
+         UNOOw0Z3vfN+4SgHQsi/omgvFW9FG1LSTTm1QDaY8rhjVFbXrOS1ozWhMQPsuMvq7H/7
+         zszFv1OU88Rec7KzoISvEkTJKjP2irM8THyM5LwTmnr+wssOiDCdvhxLWYddlsOMETgA
+         k33A==
+X-Gm-Message-State: AHQUAua7NSknze7qvYwODQREtAdulqM0FpMukEcID+8AOwuhGmY1gtiT
+        nNgRED9JQ0O2GVxnAZPLC34eRZHIo7U=
+X-Google-Smtp-Source: AHgI3Ia9NuD19p/SbmJrHv676AmYQr6mgr81ec8Wi2FQm7VY4rB7ykwr4Pdr5fl0z39VV9+7aGqbpw==
+X-Received: by 2002:a67:fc48:: with SMTP id p8mr8735768vsq.17.1549913351587;
+        Mon, 11 Feb 2019 11:29:11 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id p6sm163828uaa.2.2019.02.11.11.29.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 11:29:10 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id v70so13955vkv.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:29:09 -0800 (PST)
+X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr15096131vkh.92.1549913349277;
+ Mon, 11 Feb 2019 11:29:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190202005022.GC12463@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 11 Feb 2019 19:28:05 +0000 (UTC)
+References: <cover.1549540487.git.efremov@ispras.ru>
+In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 11 Feb 2019 11:28:57 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
+Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] LSM documentation update
+To:     Denis Efremov <efremov@ispras.ru>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Background we are discussing __replace_page() in:
-    kernel/events/uprobes.c
+On Thu, Feb 7, 2019 at 4:45 AM Denis Efremov <efremov@ispras.ru> wrote:
+>
+> Recent "New LSM Hooks" discussion has led me to the
+> thought that it might be a good idea to slightly
+> update the current documentation. The patchset adds
+> nothing new to the documentation, only fixes the old
+> description of hooks to reflect their current state.
 
-and wether this can be call on page that can be written too through
-its virtual address mapping.
+Do these fixes silence any warnings during the documentation build?
+(i.e. how did you verify the results beyond eyeballing the changes)
 
-On Fri, Feb 01, 2019 at 07:50:22PM -0500, Andrea Arcangeli wrote:
-> On Thu, Jan 31, 2019 at 01:37:03PM -0500, Jerome Glisse wrote:
-> > @@ -207,8 +207,7 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
-> >  
-> >  	flush_cache_page(vma, addr, pte_pfn(*pvmw.pte));
-> >  	ptep_clear_flush_notify(vma, addr, pvmw.pte);
-> > -	set_pte_at_notify(mm, addr, pvmw.pte,
-> > -			mk_pte(new_page, vma->vm_page_prot));
-> > +	set_pte_at(mm, addr, pvmw.pte, mk_pte(new_page, vma->vm_page_prot));
-> >  
-> >  	page_remove_rmap(old_page, false);
-> >  	if (!page_mapped(old_page))
-> 
-> This seems racy by design in the way it copies the page, if the vma
-> mapping isn't readonly to begin with (in which case it'd be ok to
-> change the pfn with change_pte too, it'd be a from read-only to
-> read-only change which is ok).
-> 
-> If the code copies a writable page there's no much issue if coherency
-> is lost by other means too.
+-Kees
 
-I am not sure the race exist but i am not familiar with the uprobe
-code so maybe the page is already write protected and thus the copy
-is fine and in fact that is likely the case but there is not check
-for that. Maybe there should be a check ?
+>
+> Denis Efremov (10):
+>   security: fix documentation for the sb_copy_data hook
+>   security: fix documentation for the syslog hook
+>   security: fix documentation for the socket_post_create hook
+>   security: fix documentation for the task_setscheduler hook
+>   security: fix documentation for the socket_getpeersec_dgram hook
+>   security: fix documentation for the path_chmod hook
+>   security: fix documentation for the audit_* hooks
+>   security: fix documentation for the msg_queue_* hooks
+>   security: fix documentation for the sem_* hooks
+>   security: fix documentation for the shm_* hooks
+>
+>  include/linux/lsm_hooks.h | 127 ++++++++++++++++++--------------------
+>  1 file changed, 61 insertions(+), 66 deletions(-)
+>
+> --
+> 2.17.2
+>
 
-Maybe someone familiar with this code can chime in.
 
-> 
-> Said that this isn't a worthwhile optimization for uprobes so because
-> of the lack of explicit read-only enforcement, I agree it's simpler to
-> skip change_pte above.
-> 
-> It's orthogonal, but in this function the
-> mmu_notifier_invalidate_range_end(&range); can be optimized to
-> mmu_notifier_invalidate_range_only_end(&range); otherwise there's no
-> point to retain the _notify in ptep_clear_flush_notify.
-
-We need to keep the _notify for IOMMU otherwise it would break IOMMU.
-IOMMU can walk the page table at any time and thus we need to first
-clear the table then notify the IOMMU to flush TLB on all the devices
-that might have a TLB entry. Only then can we set the new pte.
-
-But yes the mmu_notifier_invalidate_range_end can be optimized to
-only end. I will do a separate patch for this. As it is orthogonal as
-you pointed out :)
-
-Cheers,
-Jérôme
+-- 
+Kees Cook
