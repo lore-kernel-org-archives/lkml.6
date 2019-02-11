@@ -2,124 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C2CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A73C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3787821B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 742E621B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ou1Wfg2g"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="r2L6NSU+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbfBKShE (ORCPT
+        id S1732791AbfBKShx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:37:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45856 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732413AbfBKShE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:37:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so5320270pgc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:37:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nArp1SIyjhYvkr2+dj1tRdHY+8xTs51Con5kosXTkNg=;
-        b=Ou1Wfg2gwsp34FXdvlHuufYk5gVul5L2Ro9KR6BvE3BRAlTR790QoyHzGbM/uNVBLQ
-         9YbQsoUx68UcTcZbpBEJdvDC3hadlcSJv7Xg1vKzP8v2m/Woxv9Eb9kt3huX2WBijydL
-         HBKIukouO2OxxZR6LBpt8Elfp0RTFiktZ9OrPMR4R7QcY9Kqwhiy94Ke4UzHGoT0JCWF
-         4HhmEHM4HPUzMODyxMElHSOTS1ngr4ZRrs6DO8nKDS9k1mRnlyC1zqe2H00QqIDMYovU
-         cmvXy3LlaAYNyk2VBiwQvdIuLnbTgVIGLxwiqhkyDX4Hd7Z5uJFY22eK7QFPQRnmOMZd
-         PvjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nArp1SIyjhYvkr2+dj1tRdHY+8xTs51Con5kosXTkNg=;
-        b=WA/zsu5RKXNXYMQrNVZ10ULrqGDM07UD0jbCqWw/S7XtNaIVMa5YSUVo5IXQbEjBTW
-         RHt5Z5sWpTXsGituUaZTNKuUAjPB2yS5QpOYpO7QmmoWuSDYc1FLpKANjapulpIT/jio
-         VVJQFn3PpHMF+YNABiPFyYg+4JQCI2/uZBZq1K6iFk7hRCs53skqllUB61Th5CrQRu63
-         RcXw9l7LA0dB+4YOu20ZfqMR6gWcI3IqMFRfpL83ir+jQRUoP+1VEBuGT36oAF3X5LrL
-         IKenS473I8tKhMmJiQXXk04bSyaprrkRkj+6qLK7gv9eDA6PQ+AflADJKisFAcc1vrXO
-         uQ8Q==
-X-Gm-Message-State: AHQUAuaD8E6jVBADLX7SREa9FoYV/ygd6tHLTwAkVG1JOkx0pmPnYiiW
-        6B9ZLbe1EK3JVG0PFM4tkYXpljWdCxHk3QY0ogxXbw==
-X-Google-Smtp-Source: AHgI3IZRCGIkI4dkr6ro49y2f980ZD58xHLurbFNA4K1NZ1glC4lklDpVIZEEFW6qPAc21qEb2yerPFGg14vIXT2dVw=
-X-Received: by 2002:a63:40c1:: with SMTP id n184mr7885032pga.225.1549910222886;
- Mon, 11 Feb 2019 10:37:02 -0800 (PST)
-MIME-Version: 1.0
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
- <20181022234357.82217-1-ndesaulniers@google.com> <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
- <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
-In-Reply-To: <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 11 Feb 2019 10:36:51 -0800
-Message-ID: <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        jarkko.sakkinen@linux.intel.com, zohar@linux.vnet.ibm.com
-Cc:     David Howells <dhowells@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        David.Laight@aculab.com, denkenz@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, keyrings@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+        Mon, 11 Feb 2019 13:37:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45408 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729552AbfBKShx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:37:53 -0500
+Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 21C861EC01B6;
+        Mon, 11 Feb 2019 19:37:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549910271;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=MfO9iraTHgQ5nRXoFHrsSYSHTedG1aQEDckVc6y+oB0=;
+        b=r2L6NSU+gQRc9eP6vhleihhYe7ChDGrNf8u5AA7D2wpuQbAZ9Bm0Fz5kkiiOWDABu5rgBs
+        As+h0/3tG84bT+jrIjuMOOYQO8XGlUjnVh44QvtfpZ1OITxv8f66lXFCe/4GWyL1/RzF2I
+        qLvosFPyppk1t5t1d/CoLxnOtlB6MAQ=
+Date:   Mon, 11 Feb 2019 19:37:50 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 11/20] x86/jump-label: remove support for custom poker
+Message-ID: <20190211183749.GO19618@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-12-rick.p.edgecombe@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190129003422.9328-12-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:54 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
-> > > Fixes the warning reported by Clang:
-> > > security/keys/trusted.c:146:17: warning: passing an object that
-> > > undergoes default
-> > >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-> > >        va_start(argp, h3);
-> > >                       ^
-> > > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > > char' is declared here
-> > > unsigned char *h2, unsigned char h3, ...)
-> > >                               ^
-> > > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> > > standards explicitly call this out as undefined behavior:
-> > >
-> > > The parameter parmN is the identifier of the rightmost parameter in
-> > > the variable parameter list in the function definition (the one just
-> > > before the ...). If the parameter parmN is declared with ... or with a
-> > > type that is not compatible with the type that results after
-> > > application of the default argument promotions, the behavior is
-> > > undefined.
-> > >
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> > > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> > > Suggested-by: David Laight <David.Laight@aculab.com>
-> > > Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> > > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> >
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >
-> > /Jarkko
->
-> Bumping the maintainers if this isn't already picked up?
+On Mon, Jan 28, 2019 at 04:34:13PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
+> 
+> There are only two types of poking: early and breakpoint based. The use
+> of a function pointer to perform poking complicates the code and is
+> probably inefficient due to the use of indirect branches.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/kernel/jump_label.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
 
-James, Jarkko, or Mimi, can you please pick this up (and let me know
-what tree it lands in)?
-https://lkml.org/lkml/2018/10/23/116
+...
+
+> @@ -80,16 +71,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+>  		bug_at((void *)jump_entry_code(entry), line);
+>  
+>  	/*
+> -	 * Make text_poke_bp() a default fallback poker.
+> +	 * As long as we're UP and not yet marked RO, we can use
+> +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+> +	 * SYSTEM_SCHEDULING before going either.
+
+s/going/doing/ ?
+
 -- 
-Thanks,
-~Nick Desaulniers
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
