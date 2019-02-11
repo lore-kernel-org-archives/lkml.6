@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB4DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF1C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D579222A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FFC82075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895344;
-	bh=C7N1cyhPDUEi0fBjXBCft4Aq+RaJXqkYBHSjs/oJ+EA=;
+	s=default; t=1549895349;
+	bh=2ixxrOCCPc75tFGe8uFRQTiVFtRKtS0FNlv9rR9+Ue0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PuS3p0KyNy9Ez9h0nvG33EzESOu7D5RQZECmGF61h2aTUaZE++oWJJ5I3xhdX7ZOf
-	 6xZV92RvC9GQUGGdP3ioJqRRPbJhGbuEKFfE1spDXha8Nbq/HBMSnDG5n+dTX9mMW1
-	 8+kvJr/+7t05dyq5dE/sRV+UYNm28TJeIlsMo6r0=
+	b=qCWYzhb5Ljb2ud9lZDeCR8l+Zba9ClyHjBimSvRoI4su+kwelUIv3xApQVEqaGx+m
+	 KST09BH2khQ3CNHo0h2MU3SasqW1hDsBr9fm48Wr+RsGp2fKF1OhulbImGBYZ4Jj9f
+	 +dvROyqLzJ1XkHtuP2pd3KNE2ZpNXJ4wJde5tvSw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfBKO3C (ORCPT
+        id S1729934AbfBKO3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:29:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35006 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:29:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbfBKO3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:29:00 -0500
+        id S1728058AbfBKO3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B278120675;
-        Mon, 11 Feb 2019 14:28:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 566E720838;
+        Mon, 11 Feb 2019 14:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895339;
-        bh=C7N1cyhPDUEi0fBjXBCft4Aq+RaJXqkYBHSjs/oJ+EA=;
+        s=default; t=1549895341;
+        bh=2ixxrOCCPc75tFGe8uFRQTiVFtRKtS0FNlv9rR9+Ue0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQxJKilcRlplApfaWQ59vGBWuuzq9rcIewHLjCbIyT4mUzXrd3C9T6hyomgz6iqcH
-         y28RCh3HsVFE+yRebwwoziIOb4Fhj7W9cztdx0aXfVHzviKwxs5Kw28lZFRoXrYUU9
-         oDCM9YHMliuIaT8wO4UPWIZjd9pDuzBIJrZjfE34=
+        b=r4MsGYaImsSw6DCmQlrhsew3dT7RpuyVH2hInK92uZ6q2rlQuTBBEyDyhrjXdEnhh
+         Pks3W85RahmNRxI+Pt+XIN2INWjaw5OS+U4zUEoF+ZhFLzHnTB8eqUKNsO56HpJhg6
+         ltkwT4BLjZBAgNhKDGllXLaXWdykUWWYXnurNR3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 145/352] sata_rcar: fix deferred probing
-Date:   Mon, 11 Feb 2019 15:16:12 +0100
-Message-Id: <20190211141855.786017467@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 172/352] mmc: bcm2835: reset host on timeout
+Date:   Mon, 11 Feb 2019 15:16:39 +0100
+Message-Id: <20190211141858.031888480@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,39 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
+[ Upstream commit f6000a4eb34e6462bc0dd39809c1bb99f9633269 ]
 
-The driver overrides the error codes returned by platform_get_irq() to
--EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
-permanently instead of the deferred probing. Switch to propagating the
-error code upstream, still checking/overriding IRQ0 as libata regards it
-as "no IRQ" (thus polling) anyway...
+The bcm2835 mmc host tends to lock up for unknown reason so reset it on
+timeout. The upper mmc block layer tries retransimitting with single
+blocks which tends to work out after a long wait.
 
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This is better than giving up and leaving the machine broken for no
+obvious reason.
+
+Fixes: 660fc733bd74 ("mmc: bcm2835: Add new driver for the sdhost controller.")
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/sata_rcar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/bcm2835.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 4b1ff5bc256a..59b2317acea9 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -891,7 +891,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	int ret = 0;
+diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+index abf1f3c8b0c3..5301302fb531 100644
+--- a/drivers/mmc/host/bcm2835.c
++++ b/drivers/mmc/host/bcm2835.c
+@@ -286,6 +286,7 @@ static void bcm2835_reset(struct mmc_host *mmc)
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
-+	if (irq < 0)
-+		return irq;
-+	if (!irq)
- 		return -EINVAL;
+ 	if (host->dma_chan)
+ 		dmaengine_terminate_sync(host->dma_chan);
++	host->dma_chan = NULL;
+ 	bcm2835_reset_internal(host);
+ }
  
- 	priv = devm_kzalloc(dev, sizeof(struct sata_rcar_priv), GFP_KERNEL);
+@@ -846,6 +847,8 @@ static void bcm2835_timeout(struct work_struct *work)
+ 		dev_err(dev, "timeout waiting for hardware interrupt.\n");
+ 		bcm2835_dumpregs(host);
+ 
++		bcm2835_reset(host->mmc);
++
+ 		if (host->data) {
+ 			host->data->error = -ETIMEDOUT;
+ 			bcm2835_finish_data(host);
 -- 
 2.19.1
 
