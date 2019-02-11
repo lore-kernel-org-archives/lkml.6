@@ -2,111 +2,239 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C26C282C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB455C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A25B920863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9E5214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VaEWkJXd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQvVKtfi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfBKAW3 (ORCPT
+        id S1726207AbfBKAj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 19:22:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:51434 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbfBKAW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 19:22:28 -0500
-Received: from zn.tnic (p200300EC2BE58200B5A7B0033B3D5267.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:8200:b5a7:b003:3b3d:5267])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CB3661EC0586;
-        Mon, 11 Feb 2019 01:22:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549844546;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=iqPcVkwpo0LqSXzvTcGk1Z+ISLJHnx+I+d44+z93YWs=;
-        b=VaEWkJXdD3d18A8jmDIN49HXuhZ2H+kQdkPII0U/13UW+oRO+coS80zOqBqK1Lxm8MVoIh
-        8sHFbm2jUh1cu9VPbHBCPSn2NSh3nuSz22rm99f5oZGJkYVQlhbvzINOz8FT/NiyL7dDo5
-        IiYz18L96SoroB9Qb+3LH4YjGV8T/S8=
-Date:   Mon, 11 Feb 2019 01:22:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     fanc.fnst@cn.fujitsu.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        mingo@redhat.com, thomas.lendacky@amd.com,
-        yamada.masahiro@socionext.com, caoj.fnst@cn.fujitsu.com,
-        jgross@suse.com, mingo@kernel.org, keescook@chromium.org,
-        x86@kernel.org, hpa@zytor.com, linux-tip-commits@vger.kernel.org,
+        Sun, 10 Feb 2019 19:39:26 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33188 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfBKAjZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 19:39:25 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so4453104pfb.0;
+        Sun, 10 Feb 2019 16:39:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
+        b=UQvVKtfiCr2EL7+vDHwobTr3K/ATiEL/6IaQ02QiiMOUdtOTSwVzMksz6CS8ZV0yRJ
+         +ba/xxOchi8VyXAnM7fVo60oRNFj2udtb1MmjepZeHgrxDVhybrDVbj5WnMxeBHOoSbd
+         0Z4ougOyd3gTbL/2dtgAdkuVZoPi7UgLUoLhCdvNzCWYP7JyWQGoErFnT2bIT8jpwJmW
+         nl39hGFURBJeHi1zjBdzVmWXygssw8dBEZN8YX3pDj+23Sy5XTbd9Z4jeitLC9T6yCR+
+         E1iLowwEvYjOZ49Ev4OpC1K+CVW6/aZvC6taNcnStgVkXC3RxCvWyjQ73aHhhLIXT7n4
+         svbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
+        b=WFmylVds/qwlFy7kn9NP/xhxD8x8/bQXNsJGdwsPJcxY/cXTssYcfC3JHGoVmCMSWS
+         +5Z2YY6kKFJUDgXi/SZ7vIJtR6USqcUP3X9ROzZ9jyWVg0LLL0gBe4nJWDnpeJeKOiIm
+         SvVghhN/WghUPkS/5G1Kl8c2hZ6/+nVOPtGxdUPX0VNwEaNvDOrM69EMyKPWRSqLPHOh
+         TAh7zDC20b4St3abwL0RpiS4mBcYijS+/ha4bYQCJhZjBEl20PyOnUKEF8rfs4EorXeY
+         ngXgys6XSkgZL7P6CV//bM56RQquIWhvxOlO5wDIfF0ZVzPyk0NAoW069X/h65zwPZqB
+         TwGA==
+X-Gm-Message-State: AHQUAuYmyPEhADTKFF60l7j+f7QYPR1Uh8MncpwJKHBf0A0xD9AqbsAv
+        L9NP499sd4+2qU/VxBpQHFU=
+X-Google-Smtp-Source: AHgI3Ia6ifDLiDziehHa+LGRKtMr/aFcCrLoukw/oRH9ekCRaSYyb/4JRm26BQzyIcR0N6IRbjlQYw==
+X-Received: by 2002:a63:5d20:: with SMTP id r32mr15872762pgb.329.1549845563697;
+        Sun, 10 Feb 2019 16:39:23 -0800 (PST)
+Received: from [10.50.121.96] (c-73-202-78-81.hsd1.ca.comcast.net. [73.202.78.81])
+        by smtp.gmail.com with ESMTPSA id x2sm13973798pfx.78.2019.02.10.16.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Feb 2019 16:39:22 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+Date:   Sun, 10 Feb 2019 16:39:19 -0800
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
- boot_params
-Message-ID: <20190211002220.GD14948@zn.tnic>
-References: <20190123110850.12433-6-fanc.fnst@cn.fujitsu.com>
- <tip-3a63f70bf4c3a17f5d9c9bf3bc3288a23bdfefce@git.kernel.org>
- <20190208190248.GA10854@roeck-us.net>
- <20190208191024.GL674@zn.tnic>
- <20190208204451.GA14024@roeck-us.net>
- <20190208215322.GO674@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190208215322.GO674@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 10:53:22PM +0100, Borislav Petkov wrote:
-> On Fri, Feb 08, 2019 at 12:44:51PM -0800, Guenter Roeck wrote:
-> > Yes, the kernel boots if I comment out that function and have it return 0.
-> 
-> Thanks, this localizes the issue significantly.
+> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>=20
+> From: Nadav Amit <namit@vmware.com>
+>=20
+> To prevent improper use of the PTEs that are used for text patching, =
+we
+> want to use a temporary mm struct. We initailize it by copying the =
+init
+> mm.
+>=20
+> The address that will be used for patching is taken from the lower =
+area
+> that is usually used for the task memory. Doing so prevents the need =
+to
+> frequently synchronize the temporary-mm (e.g., when BPF programs are
+> installed), since different PGDs are used for the task memory.
+>=20
+> Finally, we randomize the address of the PTEs to harden against =
+exploits
+> that use these PTEs.
+>=20
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> arch/x86/include/asm/pgtable.h       |  3 +++
+> arch/x86/include/asm/text-patching.h |  2 ++
+> arch/x86/kernel/alternative.c        |  3 +++
+> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
+> init/main.c                          |  3 +++
+> 5 files changed, 47 insertions(+)
+>=20
+> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+> index 40616e805292..e8f630d9a2ed 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1021,6 +1021,9 @@ static inline void __meminit =
+init_trampoline_default(void)
+> 	/* Default trampoline pgd value */
+> 	trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
+> }
+> +
+> +void __init poking_init(void);
+> +
+> # ifdef CONFIG_RANDOMIZE_MEMORY
+> void __meminit init_trampoline(void);
+> # else
+> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+> index f8fc8e86cf01..a75eed841eed 100644
+> --- a/arch/x86/include/asm/text-patching.h
+> +++ b/arch/x86/include/asm/text-patching.h
+> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
+*opcode, size_t len);
+> extern int poke_int3_handler(struct pt_regs *regs);
+> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, =
+void *handler);
+> extern int after_bootmem;
+> +extern __ro_after_init struct mm_struct *poking_mm;
+> +extern __ro_after_init unsigned long poking_addr;
+>=20
+> #endif /* _ASM_X86_TEXT_PATCHING_H */
+> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+> index 12fddbc8c55b..ae05fbb50171 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, =
+const void *opcode,
+> 	return addr;
+> }
+>=20
+> +__ro_after_init struct mm_struct *poking_mm;
+> +__ro_after_init unsigned long poking_addr;
+> +
+> static void *__text_poke(void *addr, const void *opcode, size_t len)
+> {
+> 	unsigned long flags;
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index bccff68e3267..125c8c48aa24 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -53,6 +53,7 @@
+> #include <asm/init.h>
+> #include <asm/uv/uv.h>
+> #include <asm/setup.h>
+> +#include <asm/text-patching.h>
+>=20
+> #include "mm_internal.h"
+>=20
+> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+> 	return memory_block_size_probed;
+> }
+>=20
+> +/*
+> + * Initialize an mm_struct to be used during poking and a pointer to =
+be used
+> + * during patching.
+> + */
+> +void __init poking_init(void)
+> +{
+> +	spinlock_t *ptl;
+> +	pte_t *ptep;
+> +
+> +	poking_mm =3D copy_init_mm();
+> +	BUG_ON(!poking_mm);
+> +
+> +	/*
+> +	 * Randomize the poking address, but make sure that the =
+following page
+> +	 * will be mapped at the same PMD. We need 2 pages, so find =
+space for 3,
+> +	 * and adjust the address if the PMD ends after the first one.
+> +	 */
+> +	poking_addr =3D TASK_UNMAPPED_BASE;
+> +	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+> +		poking_addr +=3D (kaslr_get_random_long("Poking") & =
+PAGE_MASK) %
+> +			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * =
+PAGE_SIZE);
+> +
+> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
+> +		poking_addr +=3D PAGE_SIZE;
 
-Some observations:
+Further thinking about it, I think that allocating the virtual address =
+for
+poking from user address-range is problematic. The user can set =
+watchpoints
+on different addresses, cause some static-keys to be enabled/disabled, =
+and
+monitor the signals to derandomize the poking address.
 
-                } else {
-                        efi_config_table_32_t *tmp_table;
+Andy, I think you were pushing this change. Can I go back to use a =
+vmalloc=E2=80=99d
+address instead, or do you have a better solution? I prefer not to
+save/restore DR7, of course.
 
-                        tmp_table = config_tables;
-                        guid = tmp_table->guid;			<--- *
-                        table = tmp_table->table;
-                }
-
-It blows up at that tmp_table->guid deref above. Singlestepping through
-it with gdb shows:
-
-# arch/x86/boot/compressed/acpi.c:114: 			guid = tmp_table->guid;
-	movq	(%rdi), %rax	# MEM[(struct efi_config_table_32_t *)config_tables_37].guid, guid
-	movq	8(%rdi), %rsi	# MEM[(struct efi_config_table_32_t *)config_tables_37].guid, guid
-# arch/x86/boot/compressed/acpi.c:115: 			table = tmp_table->table;
-	movl	16(%rdi), %r10d	# MEM[(struct efi_config_table_32_t *)config_tables_37].table, table
-	jmp	.L30	#
-
-and %rdi has:
-
-	rdi            0x630646870
-
-which is an address above 4G but we're using a 32-bit EFI BIOS.
-
-Which begs the question whether EFI system tables can even be mapped at
-something above 4G with a 32-bit EFI and whether that could work ok.
-Hmm.
-
-Lemme add Ard and mfleming for insight here.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
