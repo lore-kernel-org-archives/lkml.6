@@ -2,125 +2,100 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A454EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E010BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73EF420838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE700222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895970;
-	bh=zOVSQ8PZ89S8cs0q2VNE6PyEw+f40T5yc4wbtIhbmuw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QKRZIDm7YvjFw95b8GmKhlM2d9Kezg3JGVkCxnFtz4Mjuwnt1+rnY0LgY7/XISvBW
-	 X/Nme2eQXbSMsEKMvdV/MTFLFKZnlhYYZt+674KvXhVSiWET3wB96cZqiXE0lRTeme
-	 MeyHCCVsX4Q/pcOKlPhoPi3wJMz789EAH3BX/Oec=
+	s=default; t=1549895974;
+	bh=gfQxNgsl6yCjYeA8gu5K8uJhodht2Oyh/nzKvxCIfSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UqusCU9Gxi6d/zWGumyjD15UwMP8t1VgxXFv9kcJbIG80alWCadotvzSQjOqCw7nZ
+	 CDsWifohOVczF3wqWYREGFc24grrLQeOsoC/sGF88qjbaR24VPXaKm4YV3ZmEKXggD
+	 cKKKPjCA4Rm5KJ+sI0Q0n/V73dRs6ca95jdFD+2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731439AbfBKOj2 (ORCPT
+        id S1731902AbfBKOjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbfBKOj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5D1120700;
-        Mon, 11 Feb 2019 14:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895965;
-        bh=zOVSQ8PZ89S8cs0q2VNE6PyEw+f40T5yc4wbtIhbmuw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MeCG1DhiekYMSUE5p/oLyOFDYaZqhJQJyNfdgkZ6SvBhlHcH6OJixoa+sRmjoyjoV
-         pgT++Iwalo7jyqzJBDE+NL4FwmLSxcCl5B4AHKd0z/k8hGBlxhsfzsTU90YdB+Vixl
-         oKphD0Nz2bJpeJrGT/bE0q5MgjMvRhAWefJTwisw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Michael Kelley <mikelley@microsoft.com>,
+        Mon, 11 Feb 2019 09:39:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39458 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728002AbfBKOja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gfQxNgsl6yCjYeA8gu5K8uJhodht2Oyh/nzKvxCIfSU=; b=Nv6b67kiqrkWS2aBzU4bzMp2h
+        yQTrI6Fg4gXoOEEbMs4oEhstPoGWZM9jYvGZL8DyWjU4UZfwM3uMDSPN8wYpx49BSaqo1pDM+lvMw
+        0Ds6PpTCd7AWLHrIBDB60Stm/dTfBCt5D3Eva3vH1Kso0xwGiR9F4V7k28d8/fqCE7NIo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtCk0-0003gF-Sm; Mon, 11 Feb 2019 14:39:24 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 22DF711280BD; Mon, 11 Feb 2019 14:39:24 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 14:39:24 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/313] genirq/affinity: Spread IRQs to all available NUMA nodes
-Date:   Mon, 11 Feb 2019 15:14:49 +0100
-Message-Id: <20190211141853.580982643@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Subject: Re: [PATCH 4.20 066/352] ASoC: sunxi: sun50i-codec-analog: Add
+ support for cpvdd regulator supply
+Message-ID: <20190211143924.GD22391@sirena.org.uk>
+References: <20190211141846.543045703@linuxfoundation.org>
+ <20190211141850.315232314@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
+Content-Disposition: inline
+In-Reply-To: <20190211141850.315232314@linuxfoundation.org>
+X-Cookie: Tell me what to think!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--veXX9dWIonWZEC6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[ Upstream commit b82592199032bf7c778f861b936287e37ebc9f62 ]
+On Mon, Feb 11, 2019 at 03:14:53PM +0100, Greg Kroah-Hartman wrote:
 
-If the number of NUMA nodes exceeds the number of MSI/MSI-X interrupts
-which are allocated for a device, the interrupt affinity spreading code
-fails to spread them across all nodes.
+> On the Allwinner A64 SoCs, the audio codec has a built-in headphone
+> amplifier. This amplifier has a power supply separate from the rest of
+> the analog audio circuitry, labeled cpvdd.
 
-The reason is, that the spreading code starts from node 0 and continues up
-to the number of interrupts requested for allocation. This leaves the nodes
-past the last interrupt unused.
+> This patch adds a DAPM widget for this supply, and ties it to the
+> headphone amp widget.
 
-This results in interrupt concentration on the first nodes which violates
-the assumption of the block layer that all nodes are covered evenly. As a
-consequence the NUMA nodes above the number of interrupts are all assigned
-to hardware queue 0 and therefore NUMA node 0, which results in bad
-performance and has CPU hotplug implications, because queue 0 gets shut
-down when the last CPU of node 0 is offlined.
+This is more a new feature than a bug fix, it doesn't look like obvious
+stable material.
 
-Go over all NUMA nodes and assign them round-robin to all requested
-interrupts to solve this.
+--veXX9dWIonWZEC6h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[ tglx: Massaged changelog ]
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Long Li <longli@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
-Link: https://lkml.kernel.org/r/20181102180248.13583-1-longli@linuxonhyperv.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/irq/affinity.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhiRsACgkQJNaLcl1U
+h9DHcwf+NmG9GjdRMUlbcBVpGX7WDOP7PsZpvBBYtA/+mrvUG6oKsvVmE2Cfd+6z
+/BdnnOofowF1L58VE4PDDc7ymRX24iryc/pFSYxy5teKjlisLQo+xI07YwFEPw4f
+48qeKE8mEaoICbFodEbsSjiPk/y2DjAS8OrTsNqL2e6UHZSMuw/1DshQ1mWbS9K/
+LxGdfg/5a0kRZqnUZ/P/NEgE1cNWVlHfO/fhcAev+kmoYe34XHakZ/Hki5g10e+U
+kKJGSrKZvTIqKmlH5RXwBau1eMr+KJDCwCy6RbnXx5nrZT4+8xCh3QUFSJAfUNu0
+ufA+6ZfB6HB4bSBbCKLn1J2mvWKC4A==
+=TWIs
+-----END PGP SIGNATURE-----
 
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index f4f29b9d90ee..e12cdf637c71 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -117,12 +117,11 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	 */
- 	if (numvecs <= nodes) {
- 		for_each_node_mask(n, nodemsk) {
--			cpumask_copy(masks + curvec, node_to_cpumask[n]);
--			if (++done == numvecs)
--				break;
-+			cpumask_or(masks + curvec, masks + curvec, node_to_cpumask[n]);
- 			if (++curvec == last_affv)
- 				curvec = affd->pre_vectors;
- 		}
-+		done = numvecs;
- 		goto out;
- 	}
- 
--- 
-2.19.1
-
-
-
+--veXX9dWIonWZEC6h--
