@@ -2,74 +2,84 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BBCC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54027C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDD8D2229F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549904130;
-	bh=M1kLY/NFl2v5YnniEhkTfVO3u+ko0q5SP+co4gjIzcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xMwvV+r2oXcTw6z0ewX1Dzj1T2mK6WymUeZcdj6vXBRY5SloZzW6o1euWQxbxk1go
-	 QdTcIQGzVbrZqtQgMXXFwIIJGzjB0QbdtXgHZhjvDiV5cdnBd9QTC6KHUrcXKCBpof
-	 L/d5+yL1M+9l0JJhM/0fzCzK0j843H2QuwphNm0M=
+	by mail.kernel.org (Postfix) with ESMTP id 2400321B69
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfBKQz2 (ORCPT
+        id S1727884AbfBKQ4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:55:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbfBKQz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:55:27 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75DED21B69;
-        Mon, 11 Feb 2019 16:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549904127;
-        bh=M1kLY/NFl2v5YnniEhkTfVO3u+ko0q5SP+co4gjIzcY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=njo+I0lGo1q7U3kmohF24pWpm2RujeI3Ops9j1G5ssDMljE6dT3Q0eYMzY5itG5/J
-         60NO9OfT+k3ZiikLNQ4Z+dAjXoY7M5U+fudL1W/cvZMWIU8cHAl5Rz7pLR17TkcapU
-         600ZnuBTQSQaA2GRz149y7DgurgWxoKNDuiNtZMs=
-Date:   Mon, 11 Feb 2019 17:55:24 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.20 138/352] tracing: Have trace_stack nr_entries
- compare not be so subtle
-Message-ID: <20190211165524.GD21634@kroah.com>
-References: <20190211141846.543045703@linuxfoundation.org>
- <20190211141855.296924278@linuxfoundation.org>
- <20190211094907.41712c44@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211094907.41712c44@gandalf.local.home>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Mon, 11 Feb 2019 11:56:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52011 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbfBKQ4S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:56:18 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gtEsI-0001OV-SV; Mon, 11 Feb 2019 17:56:06 +0100
+Message-ID: <1549904165.2546.14.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] pci: imx6: avoid dereferencing program counter
+ from user mode
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Stefan Agner <stefan@agner.ch>, hongxing.zhu@nxp.com
+Cc:     robin.murphy@arm.com, tpiepho@impinj.com, linux@armlinux.org.uk,
+        leonard.crestez@nxp.com, andrew.smirnov@gmail.com,
+        festevam@gmail.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 11 Feb 2019 17:56:05 +0100
+In-Reply-To: <20181204132733.14422-1-stefan@agner.ch>
+References: <20181204132733.14422-1-stefan@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 09:49:07AM -0500, Steven Rostedt wrote:
-> On Mon, 11 Feb 2019 15:16:05 +0100
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Am Dienstag, den 04.12.2018, 14:27 +0100 schrieb Stefan Agner:
+> The custom fault handler is currently only meant to handle kernel
+> mode bus faults. Exit in case the abort happened in user mode.
 > 
-> > 4.20-stable review patch.  If anyone has any objections, please let me know.
-> > 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> This is not a bug fix and was not meant for stable. Please do not apply.
-
-Thanks for letting me know, now dropped from all queues.
-
-greg k-h
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 69f86234f7c0..54a29e441303 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -270,8 +270,14 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
+>  		unsigned int fsr, struct pt_regs *regs)
+>  {
+>  	unsigned long pc = instruction_pointer(regs);
+> -	unsigned long instr = *(unsigned long *)pc;
+> -	int reg = (instr >> 12) & 15;
+> +	unsigned long instr;
+> +	int reg;
+> +
+> +	if (user_mode(regs))
+> +		return 1;
+> +
+> +	instr = *(unsigned long *)pc;
+> +	reg = (instr >> 12) & 15;
+>  
+>  	/*
+>  	 * If the instruction being executed was a read,
