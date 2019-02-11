@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC7AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9764C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ECF0222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9776222AA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894970;
-	bh=mKXOuhyOWV/gQ49PzzIUsRuW6alb92Gq6f2fIqI79m0=;
+	s=default; t=1549894972;
+	bh=JJJ9dKX0HErZAFKF8jSaYmeKt/DX3RM5E4n+LfIDBk8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=co2uUiLNfNSnwPvEmg6L21iiiLfuKNMzRd4pJNjngC35IamWiou50h+zS8f78T2Hd
-	 xZddJLVijQvQqmE/oJX17tvWb0flT6MLCfK5QtehG2F1CtZuBJoDVTOem/RrkeewLl
-	 P9GubDLpcr3gqe8UEW+Mm2V9LfSOhddDgT+x/xZ8=
+	b=1u6gttVnIHLcXA4w/s37E0MGZqPKFlyg6SC4EyDu/hSPr5E9XAqItEdXL7whOGqdK
+	 ykBqAnp2d6NDZgU5gTL5Sj+/wsLzTHQJMI4bV9sN89mPHa1PCgwbbWCn5onQ2sDWYX
+	 cvKbKNigJD8cZyfSebjteCSaMXm5HemDqIZfO9vI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbfBKOWs (ORCPT
+        id S1728873AbfBKOWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:22:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55746 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:22:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbfBKOWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:45 -0500
+        id S1728859AbfBKOWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:22:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B97E2222A1;
-        Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F094120838;
+        Mon, 11 Feb 2019 14:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894965;
-        bh=mKXOuhyOWV/gQ49PzzIUsRuW6alb92Gq6f2fIqI79m0=;
+        s=default; t=1549894968;
+        bh=JJJ9dKX0HErZAFKF8jSaYmeKt/DX3RM5E4n+LfIDBk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zGavbFGEhMQH3hwCQGnsRQp7OFmbPPEwqjjjxY9bT48NDNfA+5E7swzgsV7rx/z57
-         3AXd4RpfQwolT7MT/n4pjJO5LKiGge3aczH9PrtFYwKc2HWmTq4fJds36qKHTbq2ci
-         u8ANI3IzgjTl03Dq3/+Ln95bGt+AC14xozmgql88=
+        b=HUacjVbC2yMd7A60nCVB1B5L4Ge0vQctI8zHYBXMHUk3aVFnoqwkUPXTW0LzpVOmv
+         YFbD+2ZAF6aqnq7gFJ+Vom4Tws5ng8XSpcwsh5NdU4OrLpRIT7rte47Whf8PMPN5fb
+         PNfSTMaxIlk1hWCT66nm6j4SK09EIZXsM588IDxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rakesh Pillai <pillair@qti.qualcomm.com>,
-        Govind Singh <govinds@qti.qualcomm.com>,
-        Brian Norris <briannorris@chromium.org>,
+        stable@vger.kernel.org,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 017/352] ath10k: assign n_cipher_suites for WCN3990
-Date:   Mon, 11 Feb 2019 15:14:04 +0100
-Message-Id: <20190211141847.474232906@linuxfoundation.org>
+Subject: [PATCH 4.20 018/352] ath9k: dynack: use authentication messages for late ack
+Date:   Mon, 11 Feb 2019 15:14:05 +0100
+Message-Id: <20190211141847.541071852@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,40 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2bd345cd2bfc0bd44528896313c0b45f087bdf67 ]
+[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
 
-Commit 2ea9f12cefe4 ("ath10k: add new cipher suite support") added a new
-n_cipher_suites HW param with a fallback value and a warning log. Commit
-03a72288c546 ("ath10k: wmi: add hw params entry for wcn3990") later
-added WCN3990 HW entries, but it missed the n_cipher_suites.
+In order to properly support dynack in ad-hoc mode running
+wpa_supplicant, take into account authentication frames for
+'late ack' detection. This patch has been tested on devices
+mounted on offshore high-voltage stations connected through
+~24Km link
 
-Rather than seeing this warning every boot
-
-  ath10k_snoc 18800000.wifi: invalid hw_params.n_cipher_suites 0
-
-let's provide the appropriate value.
-
-Cc: Rakesh Pillai <pillair@qti.qualcomm.com>
-Cc: Govind Singh <govinds@qti.qualcomm.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index d210b0ed59be..59fdda67f89f 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -561,6 +561,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
- 		.hw_ops = &wcn3990_ops,
- 		.decap_align_bytes = 1,
- 		.num_peers = TARGET_HL_10_TLV_NUM_PEERS,
-+		.n_cipher_suites = 8,
- 		.ast_skid_limit = TARGET_HL_10_TLV_AST_SKID_LIMIT,
- 		.num_wds_entries = TARGET_HL_10_TLV_NUM_WDS_ENTRIES,
- 		.target_64bit = true,
+diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
+index 7334c9b09e82..cc0dc966c512 100644
+--- a/drivers/net/wireless/ath/ath9k/dynack.c
++++ b/drivers/net/wireless/ath/ath9k/dynack.c
+@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
+ 	/* late ACK */
+ 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
+ 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
+-		    ieee80211_is_assoc_resp(hdr->frame_control)) {
++		    ieee80211_is_assoc_resp(hdr->frame_control) ||
++		    ieee80211_is_auth(hdr->frame_control)) {
+ 			ath_dbg(common, DYNACK, "late ack\n");
+ 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
+ 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
 -- 
 2.19.1
 
