@@ -2,176 +2,141 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62338C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0150CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30D7321B69
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:10:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA1521B24
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbfBKSKK (ORCPT
+        id S1731187AbfBKSLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:10:10 -0500
-Received: from mga11.intel.com ([192.55.52.93]:4941 "EHLO mga11.intel.com"
+        Mon, 11 Feb 2019 13:11:55 -0500
+Received: from mga18.intel.com ([134.134.136.126]:26467 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbfBKSKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:10:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727007AbfBKSLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:11:55 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:10:07 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:11:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="137744035"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 11 Feb 2019 10:10:06 -0800
-Message-ID: <44d0848e62f6d5237b60d209265dbcdf58ade1b9.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
- hints
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
-        akpm@linux-foundation.org
-Date:   Mon, 11 Feb 2019 10:10:06 -0800
-In-Reply-To: <20190211122321-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181552.12095.46287.stgit@localhost.localdomain>
-         <20190209194437-mutt-send-email-mst@kernel.org>
-         <869a170e9232ffbc8ddbcf3d15535e8c6daedbde.camel@linux.intel.com>
-         <20190211122321-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="137744596"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga001.jf.intel.com with ESMTP; 11 Feb 2019 10:11:53 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id E623030125E; Mon, 11 Feb 2019 10:11:53 -0800 (PST)
+Date:   Mon, 11 Feb 2019 10:11:53 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lin Ming <ming.m.lin@intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@elte.hu>, He Zhe <zhe.he@windriver.com>
+Subject: Re: [PATCH 4.9 137/137] perf: Add support for supplementary event
+ registers
+Message-ID: <20190211181153.GF16922@tassilo.jf.intel.com>
+References: <20190211141811.964925535@linuxfoundation.org>
+ <20190211141824.827389473@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211141824.827389473@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-11 at 12:36 -0500, Michael S. Tsirkin wrote:
-> On Mon, Feb 11, 2019 at 08:31:34AM -0800, Alexander Duyck wrote:
-> > On Sat, 2019-02-09 at 19:49 -0500, Michael S. Tsirkin wrote:
-> > > On Mon, Feb 04, 2019 at 10:15:52AM -0800, Alexander Duyck wrote:
-> > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > 
-> > > > Add guest support for providing free memory hints to the KVM hypervisor for
-> > > > freed pages huge TLB size or larger. I am restricting the size to
-> > > > huge TLB order and larger because the hypercalls are too expensive to be
-> > > > performing one per 4K page.
-> > > 
-> > > Even 2M pages start to get expensive with a TB guest.
-> > 
-> > Agreed.
-> > 
-> > > Really it seems we want a virtio ring so we can pass a batch of these.
-> > > E.g. 256 entries, 2M each - that's more like it.
-> > 
-> > The only issue I see with doing that is that we then have to defer the
-> > freeing. Doing that is going to introduce issues in the guest as we are
-> > going to have pages going unused for some period of time while we wait
-> > for the hint to complete, and we cannot just pull said pages back. I'm
-> > not really a fan of the asynchronous nature of Nitesh's patches for
-> > this reason.
+On Mon, Feb 11, 2019 at 03:20:18PM +0100, Greg Kroah-Hartman wrote:
+> 4.9-stable review patch.  If anyone has any objections, please let me know.
 > 
-> Well nothing prevents us from doing an extra exit to the hypervisor if
-> we want. The asynchronous nature is there as an optimization
-> to allow hypervisor to do its thing on a separate CPU.
-> Why not proceed doing other things meanwhile?
-> And if the reason is that we are short on memory, then
-> maybe we should be less aggressive in hinting?
+> ------------------
 > 
-> E.g. if we just have 2 pages:
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> hint page 1
-> page 1 hint processed?
-> 	yes - proceed to page 2
-> 	no - wait for interrupt
+> commit a7e3ed1e470116c9d12c2f778431a481a6be8ab6 upstream.
+
+The patch doesn't seem to match the commit log.
+
+Did something got mixed up?
+
+> Unfortunately this event requires programming a mask in a separate
+> register. And worse this separate register is per core, not per
+> CPU thread.
 > 
-> get interrupt that page 1 hint is processed
-> hint page 2
+> This patch:
+> 
+> - Teaches perf_events that OFFCORE_RESPONSE needs extra parameters.
+>   The extra parameters are passed by user space in the
+>   perf_event_attr::config1 field.
+> 
+> - Adds support to the Intel perf_event core to schedule per
+>   core resources. This adds fairly generic infrastructure that
+>   can be also used for other per core resources.
+>   The basic code has is patterned after the similar AMD northbridge
+>   constraints code.
+> 
+> Thanks to Stephane Eranian who pointed out some problems
+> in the original version and suggested improvements.
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Lin Ming <ming.m.lin@intel.com>
+> Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+> LKML-Reference: <1299119690-13991-2-git-send-email-ming.m.lin@intel.com>
+> Signed-off-by: Ingo Molnar <mingo@elte.hu>
+> [ He Zhe: Fixes conflict caused by missing disable_counter_freeze which is
+>  introduced since v4.20 af3bdb991a5cb. ]
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  arch/x86/events/intel/core.c |   10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3235,6 +3235,11 @@ static void free_excl_cntrs(int cpu)
+>  
+>  static void intel_pmu_cpu_dying(int cpu)
+>  {
+> +	fini_debug_store_on_cpu(cpu);
+> +}
+> +
+> +static void intel_pmu_cpu_dead(int cpu)
+> +{
+>  	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+>  	struct intel_shared_regs *pc;
+>  
+> @@ -3246,8 +3251,6 @@ static void intel_pmu_cpu_dying(int cpu)
+>  	}
+>  
+>  	free_excl_cntrs(cpu);
+> -
+> -	fini_debug_store_on_cpu(cpu);
+>  }
+>  
+>  static void intel_pmu_sched_task(struct perf_event_context *ctx,
+> @@ -3324,6 +3327,7 @@ static __initconst const struct x86_pmu
+>  	.cpu_prepare		= intel_pmu_cpu_prepare,
+>  	.cpu_starting		= intel_pmu_cpu_starting,
+>  	.cpu_dying		= intel_pmu_cpu_dying,
+> +	.cpu_dead		= intel_pmu_cpu_dead,
+>  };
+>  
+>  static __initconst const struct x86_pmu intel_pmu = {
+> @@ -3359,6 +3363,8 @@ static __initconst const struct x86_pmu
+>  	.cpu_prepare		= intel_pmu_cpu_prepare,
+>  	.cpu_starting		= intel_pmu_cpu_starting,
+>  	.cpu_dying		= intel_pmu_cpu_dying,
+> +	.cpu_dead		= intel_pmu_cpu_dead,
+> +
+>  	.guest_get_msrs		= intel_guest_get_msrs,
+>  	.sched_task		= intel_pmu_sched_task,
+>  };
 > 
 > 
-> If hypervisor happens to be running on same CPU it
-> can process things synchronously and we never enter
-> the no branch.
-> 
-
-Another concern I would have about processing this asynchronously is
-that we have the potential for multiple guest CPUs to become
-bottlenecked by a single host CPU. I am not sure if that is something
-that would be desirable.
-
-> > > > Using the huge TLB order became the obvious
-> > > > choice for the order to use as it allows us to avoid fragmentation of higher
-> > > > order memory on the host.
-> > > > 
-> > > > I have limited the functionality so that it doesn't work when page
-> > > > poisoning is enabled. I did this because a write to the page after doing an
-> > > > MADV_DONTNEED would effectively negate the hint, so it would be wasting
-> > > > cycles to do so.
-> > > 
-> > > Again that's leaking host implementation detail into guest interface.
-> > > 
-> > > We are giving guest page hints to host that makes sense,
-> > > weird interactions with other features due to host
-> > > implementation details should be handled by host.
-> > 
-> > I don't view this as a host implementation detail, this is guest
-> > feature making use of all pages for debugging. If we are placing poison
-> > values in the page then I wouldn't consider them an unused page, it is
-> > being actively used to store the poison value.
-> 
-> Well I guess it's a valid point of view for a kernel hacker, but they are
-> unused from application's point of view.
-> However poisoning is transparent to users and most distro users
-> are not aware of it going on. They just know that debug kernels
-> are slower.
-> User loading a debug kernel and immediately breaking overcommit
-> is an unpleasant experience.
-
-How would that be any different then a user loading an older kernel
-that doesn't have this feature and breaking overcommit as a result?
-
-I still think it would be better if we left the poisoning enabled in
-such a case and just displayed a warning message if nothing else that
-hinting is disabled because of page poisoning.
-
-One other thought I had on this is that one side effect of page
-poisoning is probably that KSM would be able to merge all of the poison
-pages together into a single page since they are all set to the same
-values. So even with the poisoned pages it would be possible to reduce
-total memory overhead.
-
-> > If we can achieve this
-> > and free the page back to the host then even better, but until the
-> > features can coexist we should not use the page hinting while page
-> > poisoning is enabled.
-> 
-> Existing hinting in balloon allows them to coexist so I think we
-> need to set the bar just as high for any new variant.
-
-That is what I heard. I will have to look into this.
-
-> > This is one of the reasons why I was opposed to just disabling page
-> > poisoning when this feature was enabled in Nitesh's patches. If the
-> > guest has page poisoning enabled it is doing something with the page.
-> > It shouldn't be prevented from doing that because the host wants to
-> > have the option to free the pages.
-> 
-> I agree but I think the decision belongs on the host. I.e.
-> hint the page but tell the host it needs to be careful
-> about the poison value. It might also mean we
-> need to make sure poisoning happens after the hinting, not before.
-
-The only issue with poisoning after instead of before is that the hint
-is ignored and we end up triggering a page fault and zero as a result.
-It might make more sense to have an architecture specific call that can
-be paravirtualized to handle the case of poisoning the page for us if
-we have the unused page hint enabled. Otherwise the write to the page
-is a given to invalidate the hint.
-
