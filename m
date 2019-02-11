@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22BDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B265DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3CB3222BF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 840D4222AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897461;
-	bh=IoJfbleuqX7emJ+16Td9msXUctHxndTl6HIVHYpn3fE=;
+	s=default; t=1549897467;
+	bh=oM1ycKiAYlMVQTyFT8HD1tuwk+dtPPXaouvmVQaPiGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YejAWMY4jtI/hFBdgDYa+aNPvy8JerV2hHLI6NLE6a5qlppzgKQEKYzV6o1r+Zv8Z
-	 pXxlbWiSTh05w8E23brdgohWawKCzSwSo+B1COseT1/SeAqe+mhzbLdKcbNJBwILCB
-	 69lYLeSI+MTZKevmDd68Z0JajwcIAJy9eiUhGTvY=
+	b=ZHOvku3Co6QIk6y9qEL2hxL/0QpVG17+FA7BuuwRiZKWLeoN4kL0Ujm4qdr81s+Bf
+	 lvMrTUVtTDTYLyX0I2ZVxKnPnkFuBzrcpzQaR4fPN/X/iY0XSIs03XajiP094KE+ZF
+	 0fNt7gM5jaPc8y8mA5rUL0Nb2q2a8FfX8PRvGLnA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390756AbfBKPET (ORCPT
+        id S2390781AbfBKPE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:04:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53214 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:04:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390743AbfBKPEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:16 -0500
+        id S2390760AbfBKPEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785DA222B1;
-        Mon, 11 Feb 2019 15:04:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E6D1222B0;
+        Mon, 11 Feb 2019 15:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897456;
-        bh=IoJfbleuqX7emJ+16Td9msXUctHxndTl6HIVHYpn3fE=;
+        s=default; t=1549897462;
+        bh=oM1ycKiAYlMVQTyFT8HD1tuwk+dtPPXaouvmVQaPiGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bNrjbFukbhX1XxcGMWKH7qjSBdv/pjJLUa4FakbwJhqOZWtVJKL0V2UZCgOCtStEV
-         wvlSig9VpkRKzxw+1uRz1rTmMZAs5XvHjrv9GbA9y77k0/FsfkCZxAkmnDUAFqmRt1
-         rnK8D25ee0HpHQkfhewTaoIXw4HLKhGhXqSWn510=
+        b=IhprpRczVK3UX5RkphBKyxox4PjsTXb4L3MDRmBnGAZhCBGO3Z/i7jDR9Sh59BUgZ
+         zM+8VTKCw7ebIRbLWaFcv8o7aLnPHeiJyTLnGnQ52jk41PE9PXXi3AbWDEoVYWsC7T
+         cRSkNi559MHJ3caYX4DzkhNqWuPHrNCE0J6Hj8YI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Elder <paul.elder@ideasonboard.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.14 188/205] usb: gadget: musb: fix short isoc packets with inventra dma
-Date:   Mon, 11 Feb 2019 15:19:46 +0100
-Message-Id: <20190211141840.700280636@linuxfoundation.org>
+        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 190/205] scsi: cxlflash: Prevent deadlock when adapter probe fails
+Date:   Mon, 11 Feb 2019 15:19:48 +0100
+Message-Id: <20190211141840.848393594@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,114 +64,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Elder <paul.elder@ideasonboard.com>
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
 
-commit c418fd6c01fbc5516a2cd1eaf1df1ec86869028a upstream.
+commit bb61b843ffd46978d7ca5095453e572714934eeb upstream.
 
-Handling short packets (length < max packet size) in the Inventra DMA
-engine in the MUSB driver causes the MUSB DMA controller to hang. An
-example of a problem that is caused by this problem is when streaming
-video out of a UVC gadget, only the first video frame is transferred.
+Presently when an error is encountered during probe of the cxlflash
+adapter, a deadlock is seen with cpu thread stuck inside
+cxlflash_remove(). Below is the trace of the deadlock as logged by
+khungtaskd:
 
-For short packets (mode-0 or mode-1 DMA), MUSB_TXCSR_TXPKTRDY must be
-set manually by the driver. This was previously done in musb_g_tx
-(musb_gadget.c), but incorrectly (all csr flags were cleared, and only
-MUSB_TXCSR_MODE and MUSB_TXCSR_TXPKTRDY were set). Fixing that problem
-allows some requests to be transferred correctly, but multiple requests
-were often put together in one USB packet, and caused problems if the
-packet size was not a multiple of 4. Instead, set MUSB_TXCSR_TXPKTRDY
-in dma_controller_irq (musbhsdma.c), just like host mode transfers.
+cxlflash 0006:00:00.0: cxlflash_probe: init_afu failed rc=-16
+INFO: task kworker/80:1:890 blocked for more than 120 seconds.
+       Not tainted 5.0.0-rc4-capi2-kexec+ #2
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+kworker/80:1    D    0   890      2 0x00000808
+Workqueue: events work_for_cpu_fn
 
-This topic was originally tackled by Nicolas Boichat [0] [1] and is
-discussed further at [2] as part of his GSoC project [3].
+Call Trace:
+ 0x4d72136320 (unreliable)
+ __switch_to+0x2cc/0x460
+ __schedule+0x2bc/0xac0
+ schedule+0x40/0xb0
+ cxlflash_remove+0xec/0x640 [cxlflash]
+ cxlflash_probe+0x370/0x8f0 [cxlflash]
+ local_pci_probe+0x6c/0x140
+ work_for_cpu_fn+0x38/0x60
+ process_one_work+0x260/0x530
+ worker_thread+0x280/0x5d0
+ kthread+0x1a8/0x1b0
+ ret_from_kernel_thread+0x5c/0x80
+INFO: task systemd-udevd:5160 blocked for more than 120 seconds.
 
-[0] https://groups.google.com/forum/?hl=en#!topic/beagleboard-gsoc/k8Azwfp75CU
-[1] https://gitorious.org/beagleboard-usbsniffer/beagleboard-usbsniffer-kernel/commit/b0be3b6cc195ba732189b04f1d43ec843c3e54c9?p=beagleboard-usbsniffer:beagleboard-usbsniffer-kernel.git;a=patch;h=b0be3b6cc195ba732189b04f1d43ec843c3e54c9
-[2] http://beagleboard-usbsniffer.blogspot.com/2010/07/musb-isochronous-transfers-fixed.html
-[3] http://elinux.org/BeagleBoard/GSoC/USBSniffer
+The deadlock occurs as cxlflash_remove() is called from cxlflash_probe()
+without setting 'cxlflash_cfg->state' to STATE_PROBED and the probe thread
+starts to wait on 'cxlflash_cfg->reset_waitq'. Since the device was never
+successfully probed the 'cxlflash_cfg->state' never changes from
+STATE_PROBING hence the deadlock occurs.
 
-Fixes: 550a7375fe72 ("USB: Add MUSB and TUSB support")
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Cc: stable <stable@vger.kernel.org>
+We fix this deadlock by setting the variable 'cxlflash_cfg->state' to
+STATE_PROBED in case an error occurs during cxlflash_probe() and just
+before calling cxlflash_remove().
+
+Cc: stable@vger.kernel.org
+Fixes: c21e0bbfc485("cxlflash: Base support for IBM CXL Flash Adapter")
+Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_gadget.c |   13 +------------
- drivers/usb/musb/musbhsdma.c   |   21 +++++++++++----------
- 2 files changed, 12 insertions(+), 22 deletions(-)
+ drivers/scsi/cxlflash/main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -477,13 +477,10 @@ void musb_g_tx(struct musb *musb, u8 epn
- 	}
+--- a/drivers/scsi/cxlflash/main.c
++++ b/drivers/scsi/cxlflash/main.c
+@@ -3659,6 +3659,7 @@ static int cxlflash_probe(struct pci_dev
+ 	host->max_cmd_len = CXLFLASH_MAX_CDB_LEN;
  
- 	if (request) {
--		u8	is_dma = 0;
--		bool	short_packet = false;
+ 	cfg = shost_priv(host);
++	cfg->state = STATE_PROBING;
+ 	cfg->host = host;
+ 	rc = alloc_mem(cfg);
+ 	if (rc) {
+@@ -3741,6 +3742,7 @@ out:
+ 	return rc;
  
- 		trace_musb_req_tx(req);
- 
- 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
--			is_dma = 1;
- 			csr |= MUSB_TXCSR_P_WZC_BITS;
- 			csr &= ~(MUSB_TXCSR_DMAENAB | MUSB_TXCSR_P_UNDERRUN |
- 				 MUSB_TXCSR_TXPKTRDY | MUSB_TXCSR_AUTOSET);
-@@ -501,16 +498,8 @@ void musb_g_tx(struct musb *musb, u8 epn
- 		 */
- 		if ((request->zero && request->length)
- 			&& (request->length % musb_ep->packet_sz == 0)
--			&& (request->actual == request->length))
--				short_packet = true;
-+			&& (request->actual == request->length)) {
- 
--		if ((musb_dma_inventra(musb) || musb_dma_ux500(musb)) &&
--			(is_dma && (!dma->desired_mode ||
--				(request->actual &
--					(musb_ep->packet_sz - 1)))))
--				short_packet = true;
--
--		if (short_packet) {
- 			/*
- 			 * On DMA completion, FIFO may not be
- 			 * available yet...
---- a/drivers/usb/musb/musbhsdma.c
-+++ b/drivers/usb/musb/musbhsdma.c
-@@ -320,12 +320,10 @@ static irqreturn_t dma_controller_irq(in
- 				channel->status = MUSB_DMA_STATUS_FREE;
- 
- 				/* completed */
--				if ((devctl & MUSB_DEVCTL_HM)
--					&& (musb_channel->transmit)
--					&& ((channel->desired_mode == 0)
--					    || (channel->actual_len &
--					    (musb_channel->max_packet_sz - 1)))
--				    ) {
-+				if (musb_channel->transmit &&
-+					(!channel->desired_mode ||
-+					(channel->actual_len %
-+					    musb_channel->max_packet_sz))) {
- 					u8  epnum  = musb_channel->epnum;
- 					int offset = musb->io.ep_offset(epnum,
- 								    MUSB_TXCSR);
-@@ -337,11 +335,14 @@ static irqreturn_t dma_controller_irq(in
- 					 */
- 					musb_ep_select(mbase, epnum);
- 					txcsr = musb_readw(mbase, offset);
--					txcsr &= ~(MUSB_TXCSR_DMAENAB
-+					if (channel->desired_mode == 1) {
-+						txcsr &= ~(MUSB_TXCSR_DMAENAB
- 							| MUSB_TXCSR_AUTOSET);
--					musb_writew(mbase, offset, txcsr);
--					/* Send out the packet */
--					txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						musb_writew(mbase, offset, txcsr);
-+						/* Send out the packet */
-+						txcsr &= ~MUSB_TXCSR_DMAMODE;
-+						txcsr |= MUSB_TXCSR_DMAENAB;
-+					}
- 					txcsr |=  MUSB_TXCSR_TXPKTRDY;
- 					musb_writew(mbase, offset, txcsr);
- 				}
+ out_remove:
++	cfg->state = STATE_PROBED;
+ 	cxlflash_remove(pdev);
+ 	goto out;
+ }
 
 
