@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D5AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4445C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59D921B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744B521B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899093;
-	bh=Ik6nIoSd0YJD17c3CJwXtxh0eY3CDBSEWw7xAyI3Eu8=;
+	s=default; t=1549899106;
+	bh=yEUxfryGy9lfpQmMwqWdnw6sdLF3NIzoNXHPlLOapA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c5YTjWx6RYAFF40/Kcoyl2twcSuWwEcFOuNOtonApx/upc7//9YaeIbMyX/N0FQnD
-	 qDN12v6kVb2WVlv18ED4Q40E0vNG/ritSgclrMEyRPMwuXWpQSPAqcIwKoNGivK7zl
-	 jY6VmOjj2b0zzTczabINn/1yhY942zsjTtVUEzFg=
+	b=Da+6PoIxxKhaqQ4rNGTa09hmvpyQQDGLdDuyfq6JT1aoFzf5vtnJo1RnMhUWepQfa
+	 WrhZwL2ag25J1Yyh+BSrYDDGMI/T7tsiywPE3byb+KbApETYf+IWJLFWnGmbc1S+0h
+	 8y6qTqFxxS99MyNNiS95eH6tEo0DyTGpElYfWbyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389376AbfBKPbb (ORCPT
+        id S2389002AbfBKOzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:31:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42940 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389048AbfBKOzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:50 -0500
+        id S2388978AbfBKOzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81ABD20700;
-        Mon, 11 Feb 2019 14:55:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97DD720700;
+        Mon, 11 Feb 2019 14:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896950;
-        bh=Ik6nIoSd0YJD17c3CJwXtxh0eY3CDBSEWw7xAyI3Eu8=;
+        s=default; t=1549896932;
+        bh=yEUxfryGy9lfpQmMwqWdnw6sdLF3NIzoNXHPlLOapA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FKPjstD60poexLoYsYXNC9eEvvw8ZL5exuqargkYb7hbC1xnhlaxJ21xnavFiIImr
-         jvviqEDf5aJOM4xCn0tisyw+fel7TOukKkT1i+SNNQkUR4eaKLw4tk0nqDuW4UqKYK
-         pwozwvk/XhJogve8c6XrHycShwafrfbNHtyK22QM=
+        b=h2DqTfIW8IGaU38uX7UvBZM2K8Tkm2bJbrVgDzG4EOM/6qwT2GZPFnhaNutYBT1zf
+         k5ziZM84+R5eFxLw1NlOlNe2QaW2Ab8y3tYF+seTnDv4K9/pteIb171ZI66zI97eNx
+         yK76tG4kWJYeiwKw6Xw6oFl4MEBxA4J6v2zi8NNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 041/205] staging: pi433: fix potential null dereference
-Date:   Mon, 11 Feb 2019 15:17:19 +0100
-Message-Id: <20190211141830.771869543@linuxfoundation.org>
+Subject: [PATCH 4.14 036/205] iio: adc: meson-saradc: check for devm_kasprintf failure
+Date:   Mon, 11 Feb 2019 15:17:14 +0100
+Message-Id: <20190211141830.272767751@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,34 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 64c4c4ca6c129a4191e8e1e91b2d5d9b8d08c518 ]
+[ Upstream commit aad172b017617994343e36d8659c69e14cd694fd ]
 
-Add a test for successful call to cdev_alloc() to avoid
-potential null dereference. Issue reported by smatch.
+devm_kasprintf() may return NULL on failure of internal allocation thus
+the assignments to  init.name  are not safe if not checked. On error
+meson_sar_adc_clk_init() returns negative values so -ENOMEM in the
+(unlikely) failure case of devm_kasprintf() should be fine here.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Fixes: 874bcba65f9a ("staging: pi433: New driver")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/pi433/pi433_if.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iio/adc/meson_saradc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 93c01680f016..5be40bdc191b 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -1210,6 +1210,10 @@ static int pi433_probe(struct spi_device *spi)
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 11484cb38b84..9a52a91166d2 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -585,6 +585,9 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
  
- 	/* create cdev */
- 	device->cdev = cdev_alloc();
-+	if (!device->cdev) {
-+		dev_dbg(device->dev, "allocation of cdev failed");
-+		goto cdev_failed;
-+	}
- 	device->cdev->owner = THIS_MODULE;
- 	cdev_init(device->cdev, &pi433_fops);
- 	retval = cdev_add(device->cdev, device->devt, 1);
+ 	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_div",
+ 				   indio_dev->dev.of_node);
++	if (!init.name)
++		return -ENOMEM;
++
+ 	init.flags = 0;
+ 	init.ops = &clk_divider_ops;
+ 	clk_parents[0] = __clk_get_name(priv->clkin);
+@@ -604,6 +607,9 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
+ 
+ 	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_en",
+ 				   indio_dev->dev.of_node);
++	if (!init.name)
++		return -ENOMEM;
++
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.ops = &clk_gate_ops;
+ 	clk_parents[0] = __clk_get_name(priv->adc_div_clk);
 -- 
 2.19.1
 
