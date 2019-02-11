@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3402C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D5EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DC72186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 139FD2186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EUfDjdob"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P33ZEVn9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388285AbfBKTar (ORCPT
+        id S2388318AbfBKTau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:30:47 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:39705 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388241AbfBKTaq (ORCPT
+        Mon, 11 Feb 2019 14:30:50 -0500
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:42865 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388241AbfBKTat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:30:46 -0500
-Received: by mail-it1-f201.google.com with SMTP id k133so16344ite.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:45 -0800 (PST)
+        Mon, 11 Feb 2019 14:30:49 -0500
+Received: by mail-qk1-f201.google.com with SMTP id 207so5175451qkf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:30:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=A+p5CcPbc67CNJ+HtkbKBMLEqE5iK/BxBkcy0srR2f4=;
-        b=EUfDjdobRLMV2Tk3lGBtNvj9QujsHoJi9ZqtEcH+YVtBCw0t/FCOOKOLjYPLz2olUE
-         +TKRIo6Qkhd4/yl5EoeB93P6IDHZzfNjrzFK7iELdrQbe/FgB6/rqt0ScvP0xuzVt8hB
-         z3fEBdPiKZndqh/aWqmvhVbI4J2B7eYEVxxuxU9Axu+akFPva/9Qj60M9PMrdYG72vSq
-         Gubv63+gi2EzkY3wnIv2NYmvI/aEm0HnzTlhgrrxsVzTrjldQ24LgR14yr2G4DK4e8hr
-         yPFkN2CogT0A25zsQf9ZCs9OjpRlwz3HR/KZ4hDpMclFW4EC5h+L1Va45mhPLcZKJY2J
-         lLGw==
+        bh=fgo15CY3NgYRpF97TzDUfVV2bSFDYAqgksNtaJxXuEA=;
+        b=P33ZEVn9lWw4ExXF0pVb2kRhsMzsHIZnSCIoTjgHA67m1TBvJkvTccmmchHplJnzYi
+         tK2h0WoALbgU2nZkZBJ2SxgLYpjlLfwsyM0qPDqW+WBGaVbVrCsDmIH6NfN+z6JfOa8G
+         T+CWOFyTf+3H6TpEGTUvVR3EWZKAFrVXa/1HeoxRLcFre021WqnSEaB0okT2cdrUH/Zp
+         j6/LfS6vWUOX8eAWpEshZ9EdhfKAPlTBxfbG9fyzxahFURQCfQqWoyJvynTy4bLNZmAd
+         Fru81lvlu6FIits75GNMSWZETZYzfa/xtYGwkz6eLWKT5EO6vuFx7ZpACi8+YI0l12y3
+         10LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=A+p5CcPbc67CNJ+HtkbKBMLEqE5iK/BxBkcy0srR2f4=;
-        b=TfYv2Iel5R29UNe5jfMHAEhuu3XDISufMYE3miPc22kAmC/MOX1rU6Cv/q4o6wPhQv
-         gAh+aWF/9JapQxJSlUkUf3TObRculUmt0z+/zYupSwqtSVCnofdIVWjDVU3vKPWEymkt
-         jfWoFd+H3BQ0i0RULfxmIpIW4v8NckFXU4JPc2kTx59os/HQMgklodZctuRLvRzrWg71
-         zfi8lQjRKV+i5/F37rLh+jy/8reuTVPiwL+1O+0hMMpCSIvcBo64YrCDL1mgbSbGxWIv
-         fjO6pwhIAg3EDTxmV0lv7anHJ8CwQboyL1NwIFagEVigjq9H2hIF7IvgUpi3UAO7g87E
-         vXYg==
-X-Gm-Message-State: AHQUAubHMbdwMGw4mdTcjvnsT0j+FacqmoWxTPCt8cUzJfVRau9/NYbO
-        ciWiWHP4LKFUn6q2UBHKNPc+Sq3FovsqcZzjCZU=
-X-Google-Smtp-Source: AHgI3IYF+PQlndRP+6W1b1+rJPutoAPanw6IRHwvLut+f1J4HrBcdzpQTR7g4ywG2Ll0njjvZe7wN/kSkeOVBeIn3MA=
-X-Received: by 2002:a24:d82:: with SMTP id 124mr794567itx.10.1549913443054;
- Mon, 11 Feb 2019 11:30:43 -0800 (PST)
-Date:   Mon, 11 Feb 2019 11:30:05 -0800
+        bh=fgo15CY3NgYRpF97TzDUfVV2bSFDYAqgksNtaJxXuEA=;
+        b=U2F65+YXMKudz+1Yr7Ch+CT4ZLPc0aERcASVopTdV12tIoJAtmTuJ9UTqUQgizm5nt
+         GALwQcM1HsR+mh864NlNVshll8rbExrWVxwi21/ijrPeqqz2/sPPp9wgYuS3Hflc2xKo
+         vOd+zcFvdztsxNTr1RKy6YA4GzjsRAyv3K6l3jxD5G8/J97Z+F2hYEtdiML2a+tpKfE3
+         yg6tX5Udpotb2Rxy8vkXlry2agsPafqhuQibWEiyyOZTQSuqHfR28r9nx1Bqn1kswR7s
+         BGvlIxSzvHeNfiYSY1iGJx0THWIsvzJN3oQhjFXcpKfjUCDhD0bxaw/1dIa5SW2auIaY
+         h2ow==
+X-Gm-Message-State: AHQUAuYjSKd+59Vyq7/SGE3xdHFZZwGgbrcH0jn1SX85U7sDwOmxdTGy
+        Q4qEE+lnz4AleW+09jQWXFIiMJNtinGiHrLPO2E=
+X-Google-Smtp-Source: AHgI3IY6emNTamoLiOwa6pdZ0u5LLMBlSN9RZx8mrz70CAMQpxHxS0uzBm81DdK35Kw3x7EGXJpyDAJvrnUO/HSEvdc=
+X-Received: by 2002:a0c:add8:: with SMTP id x24mr21936434qvc.16.1549913448304;
+ Mon, 11 Feb 2019 11:30:48 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:30:06 -0800
 In-Reply-To: <20190211193008.24101-1-ndesaulniers@google.com>
-Message-Id: <20190211193008.24101-3-ndesaulniers@google.com>
+Message-Id: <20190211193008.24101-4-ndesaulniers@google.com>
 Mime-Version: 1.0
 References: <20190211193008.24101-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH v2 3/4] Makefile: lld: tell clang to use lld
+Subject: [PATCH v2 4/4] Makefile: lld: set -O2 linker flag when linking with LLD
 From:   ndesaulniers@google.com
 To:     yamada.masahiro@socionext.com
 Cc:     natechancellor@gmail.com, sedat.dilek@gmail.com,
@@ -69,46 +69,46 @@ Cc:     natechancellor@gmail.com, sedat.dilek@gmail.com,
         mathieu.desnoyers@efficios.com, gor@linux.ibm.com, adrian@lisas.de,
         rgb@redhat.com, linux-kbuild@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Rui Ueyama <ruiu@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is needed because clang doesn't select which linker to use based on
-$LD but rather -fuse-ld=lld. This is problematic especially for
-cc-ldoption, which checks for linker flag support via invoking the
-compiler, rather than the linker.
+For arm64:
+0.34% size improvement with lld -O2 over lld for vmlinux.
+3.3% size improvement with lld -O2 over lld for Image.lz4-dtb.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/342
+Link: https://github.com/ClangBuiltLinux/linux/issues/343
+Suggested-by: Rui Ueyama <ruiu@google.com>
 Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
 Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
 Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
 Changes V1->V2:
-* add reviewed and tested by tags.
-* move this addition up 2 statments so that it's properly added to
-  KBUILD_*FLAGS as per Nathan.
+* add tested and reviewed by tags.
 
- Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index d3b65e96d183..00e8e01d23fc 100644
+index 00e8e01d23fc..8011555745aa 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -500,6 +500,9 @@ ifneq ($(GCC_TOOLCHAIN),)
- CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
+@@ -718,6 +718,10 @@ else
+ KBUILD_CFLAGS += -Wno-unused-but-set-variable
  endif
- CLANG_FLAGS	+= -no-integrated-as
-+ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
-+CLANG_FLAGS	+= -fuse-ld=lld
+ 
++ifdef CONFIG_LD_IS_LLD
++KBUILD_LDFLAGS += -O2
 +endif
- KBUILD_CFLAGS	+= $(CLANG_FLAGS)
- KBUILD_AFLAGS	+= $(CLANG_FLAGS)
- export CLANG_FLAGS
++
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+ ifdef CONFIG_FRAME_POINTER
+ KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
