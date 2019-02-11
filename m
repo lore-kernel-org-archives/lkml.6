@@ -2,155 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A541C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A420C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE2D21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nxt4AgJc"
+	by mail.kernel.org (Postfix) with ESMTP id CE1112075D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899242;
+	bh=e9AUhAtHIPA0qwok/eE6LxDx6/on0/d+1M24CB/LqIg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uI7GSc4hzjJDPrSuqK8pYA0F6ynKZqIUpTb1oRobZ1LK+/KEPnWNiS5C9fTs15Cqs
+	 eAq/HqKFkcTGziW4SwevxFFe1F0xcdCLHe2DPVkf9JIOa2mJWtL/MHHhx31+YHZy7s
+	 NyWgvGeox7fh5+CpsqO/N2+OTQeSAL3Z5vBW49K4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389928AbfBKPdp (ORCPT
+        id S2389065AbfBKPeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:33:45 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:48446 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbfBKPdj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:33:39 -0500
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x1BFXXNi007774;
-        Tue, 12 Feb 2019 00:33:34 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1BFXXNi007774
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549899214;
-        bh=bJBBhfbcbvWKcdPNI7KUzncW0Z59m/08xoYItg1Tzmw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nxt4AgJcg2Gqph0uYtcvOF9BlIY6TJesAiVG2DZtkE2ABxD9XGkt4iJYxfCgWOt9o
-         tDMdEXdHQqw1F1yA4N0qIu0Ex5r8LjbK4YurBJM6t4FyqAp3TrdShFSx1ETmB5SKTh
-         O6oNBDRHIb1vfSPYfNQ3zkOZXx9qrHu1ZaPSW+FYKCYmbjLi3RcC1sYz6cyDDn6lhQ
-         MTDbthB7h5I2QDAnyBLeescf9K4EEKcaOFXAPEKivA6Uhxkry7zAYVcLq5VxnL5JsE
-         TnUJZ8uwq4LTNqq8+imboZXZV4oT1BY0l/nIA8JTR+1c8QgYValjm7UpbOYozW0bgo
-         onevri3HVN/pw==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id t13so6495434vsk.3;
-        Mon, 11 Feb 2019 07:33:33 -0800 (PST)
-X-Gm-Message-State: AHQUAuaN7tYUMNdz3ejJ6o7TSrF7AMurg7JHmRZGJ+iQlOOK7M9seN8P
-        e0vBS3dST0l41kgGbWOEfL+AdWbx4HmmhTHEj6I=
-X-Google-Smtp-Source: AHgI3IaJtzVlWxUxOO31z/EonPhuUiW/pjAbPbTJW3GRCNaYXpnqYVt6rqaEz+jslNcdDPGCz7uO5+jfEP+x+y6Z1VE=
-X-Received: by 2002:a67:485:: with SMTP id 127mr15322649vse.54.1549899212779;
- Mon, 11 Feb 2019 07:33:32 -0800 (PST)
+        Mon, 11 Feb 2019 10:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388611AbfBKOxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:53:21 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 875E420700;
+        Mon, 11 Feb 2019 14:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896801;
+        bh=e9AUhAtHIPA0qwok/eE6LxDx6/on0/d+1M24CB/LqIg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Hn0G4vimyKNu/QS7m48T7P7KLFzXF9KJsNkaqEzXEOcLwUi8AUz3UD+KmKZYbqsrc
+         MnADKD/TUecQtK0x/WmmsWbq57W9dkWLjnH33dnVFsLv9oqtxI9wKg7F3Vx0Hox0jA
+         EG5xSBRtEQtYKGJ6KcPdPiINfY2CLI75YCt7t2q4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 306/313] perf/core: Dont WARN() for impossible ring-buffer sizes
+Date:   Mon, 11 Feb 2019 15:19:46 +0100
+Message-Id: <20190211141913.275353766@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190207220155.81351-1-ndesaulniers@google.com>
- <20190207220155.81351-3-ndesaulniers@google.com> <20190208055059.GD9647@archlinux-ryzen>
- <CAKwvOd=ytsXYDzVZHUEjokHmW5kpqmCq4cnToOFJ4gwz8j7W=Q@mail.gmail.com>
-In-Reply-To: <CAKwvOd=ytsXYDzVZHUEjokHmW5kpqmCq4cnToOFJ4gwz8j7W=Q@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 12 Feb 2019 00:32:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQD=ZVcbn3cz2bcW0KrkL9ZOU44SHrmf2aRZwhYdmQrqQ@mail.gmail.com>
-Message-ID: <CAK7LNAQD=ZVcbn3cz2bcW0KrkL9ZOU44SHrmf2aRZwhYdmQrqQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] Makefile: lld: tell clang to use lld
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 9, 2019 at 2:27 AM Nick Desaulniers <ndesaulniers@google.com> wrote:
->
-> On Thu, Feb 7, 2019 at 9:51 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Thu, Feb 07, 2019 at 02:01:51PM -0800, ndesaulniers@google.com wrote:
-> > > This is needed because clang doesn't select which linker to use based on
-> > > $LD but rather -fuse-ld=$(LD). This is problematic especially for
-> > > cc-ldoption, which checks for linker flag support via invoking the
-> > > compiler, rather than the linker.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-What do you mean by 'problematic' ?
+------------------
 
-I see no build error in
-arch/arm64/kernel/vdso/Makefile, at least.
+From: Mark Rutland <mark.rutland@arm.com>
 
-Clang uses BFD linker by default,
-which may not match to the $(LD) passed in.
+commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
 
-Is this what you mean?
+The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+large its ringbuffer mmap should be. This can be configured to arbitrary
+values, which can be larger than the maximum possible allocation from
+kmalloc.
 
+When this is configured to a suitably large value (e.g. thanks to the
+perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+__alloc_pages_nodemask():
 
+   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
 
+Let's avoid this by checking that the requested allocation is possible
+before calling kzalloc.
 
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/342
-> > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > ---
-> > >  Makefile | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Makefile b/Makefile
-> > > index 0eae4277206e..6307c17259ea 100644
-> > > --- a/Makefile
-> > > +++ b/Makefile
-> > > @@ -502,6 +502,9 @@ endif
-> > >  CLANG_FLAGS  += -no-integrated-as
-> > >  KBUILD_CFLAGS        += $(CLANG_FLAGS)
-> > >  KBUILD_AFLAGS        += $(CLANG_FLAGS)
-> > > +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
-> > > +CLANG_FLAGS  += -fuse-ld=lld
->
-> Sorry, Sedat reports [0] that this is not quite correct; if $(LD)
-> matches LLD, then we need to set -fuse-ld=$(LD), not -fuse-ld=lld,
-> since you may have lld installed as lld-7 or lld-8, for example:
-> https://github.com/ClangBuiltLinux/linux/issues/358
+---
+ kernel/events/ring_buffer.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-
-Hmm, $(LD) might be a full path.
-
-Looks like Clang can take a full-path for -fuse-ld=,
-but does it work for GCC?
-
-
-
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -724,6 +724,9 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
+ 
++	if (order_base_2(size) >= MAX_ORDER)
++		goto fail;
++
+ 	rb = kzalloc(size, GFP_KERNEL);
+ 	if (!rb)
+ 		goto fail;
 
 
-
-> > > +endif
-> >
-> > This section needs to be moved up above KBUILD_CFLAGS otherwise it never
-> > actually gets passed along.
-> >
-> > With that change, please add:
-> >
-> > Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-> >
-> > >  export CLANG_FLAGS
-> > >  endif
-> > >
-> > > --
-> > > 2.20.1.791.gb4d0f1c61a-goog
-> > >
->
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
-
-
-
--- 
-Best Regards
-Masahiro Yamada
