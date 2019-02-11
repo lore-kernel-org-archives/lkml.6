@@ -2,106 +2,183 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52433C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1258C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DCB0222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5BD021B24
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:20:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uPdGaHbU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbfBKSTe (ORCPT
+        id S1732181AbfBKSUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:19:34 -0500
-Received: from mga07.intel.com ([134.134.136.100]:4732 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbfBKSTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:19:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:19:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="145954222"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Feb 2019 10:19:33 -0800
-Date:   Mon, 11 Feb 2019 10:19:22 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
-References: <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard>
- <20190208111028.GD6353@quack2.suse.cz>
- <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
- <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
+        Mon, 11 Feb 2019 13:20:31 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53618 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfBKSUb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:20:31 -0500
+Received: by mail-it1-f194.google.com with SMTP id g85so541487ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:20:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jAU/yKj0QXxla3Viu5M/6EOsL3HpGEo4vnhRjeap1u8=;
+        b=uPdGaHbUYiBCbGY18wf0fx+V7qybX8JeB9WGfZQQ0XCiMwzq+Bq31QhkwDr+2OoWv3
+         hubaV5sIv8KVS37KeEnOPR46TZ21nEFtZFJvZhsnCSgbqUVVvABg54NRA1K8nXYcxIVW
+         VLPjAr8qM9Z0A1J/cU9YcR/ls2tXkRgEUZ1t2kdGs3ogvJSNKVwUHWmvSt5B+C7c938J
+         k2Tm7jrvj2vYsmOSHbMQrYJxZbPvoOmKRg9NMnnmlgt/1AneSgOOyRGMPdn0d1wgpGVN
+         sspUngdTuvkUi3PiuuqNNtLXJ9jUdpgLOwtKkaJ65mzNujVhsXE3bTJ1D9nc0MlQLuem
+         he1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jAU/yKj0QXxla3Viu5M/6EOsL3HpGEo4vnhRjeap1u8=;
+        b=qalXIDNkFiRY/3TfSdMP9AWUxVlv0CjGrcySOw3OsbDtQvPVbmuwSfvNlFvZfMyQ/G
+         fpq4UTacxPnzFGyq/lXh3vgV1EoM79nNrdNtbxijViHsBx+wB9E3f0DkVFo4kWU0lGZ6
+         af+Fl3cXSwCwuY5EE2VmrzQHq2Yhnq4VGvD9nBov+tErenGm1BLPqx+q58nvAyDpmqNG
+         cELHMaPgs0L1eXkKKuBuPs0JUjdFZW1qRbHf4Y+cQnH1/6gmeqjm5noGMEhVhymwq/pR
+         uhkaukdG0khFZ3eMtr37KTvjPoTJP0o0DjrmCqohuUJxtipUn8LOjKSiGq4jVG4/BYF4
+         YMRA==
+X-Gm-Message-State: AHQUAubGcD1Hv8cQu8zGyYgb7OEVKXzY/hqGk3A62XDq872z56DgbXGz
+        mtCNQBhwBGofgzPEp3FZONLQ49uTGV4XqGJY/6OcIw==
+X-Google-Smtp-Source: AHgI3IZr1YTFSYdFu7BCxH8vv/Z2jLxzLDrMIUQreaasD8zeol6LszIfmbpDwuq/HsIRuKwCs+sZA8OElg4D+d+yNyQ=
+X-Received: by 2002:a24:4582:: with SMTP id c2mr544687itd.158.1549909230194;
+ Mon, 11 Feb 2019 10:20:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211180654.GB24692@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com>
+ <CAKv+Gu83rXGH5hVdHXM=65zQkc5FtG86xMccT7WByUFy9BmXkQ@mail.gmail.com>
+ <CANiq72nf2qyNxJ2Z9nypzqUC99-v5+WC_f3o98P-zoMqy+5sLw@mail.gmail.com>
+ <CAKv+Gu9a=W6Fg+ai_W-HB1gL5oUg=FKcGdLk_15CdbHLWt6gMg@mail.gmail.com>
+ <CANiq72kZouVeaJ=NnyYqedCvz9A0K_GHEwuGXkgBbg5R_NRJTw@mail.gmail.com> <47895935-0619-fb4a-e74e-a8b029ba8504@gmail.com>
+In-Reply-To: <47895935-0619-fb4a-e74e-a8b029ba8504@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 11 Feb 2019 19:20:17 +0100
+Message-ID: <CAKv+Gu_xdZYfUbje7GSDE3YuOoo_krcz9hnhBFAVk5X4dEmq3Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Clean the new GCC 9 -Wmissing-attributes warnings
+To:     Martin Sebor <msebor@gmail.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <james.morris@microsoft.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Borislav Petkov <bp@suse.de>, Matt Mullins <mmullins@fb.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        WANG Chao <chao.wang@ucloud.cn>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:06:54AM -0700, Jason Gunthorpe wrote:
-> On Mon, Feb 11, 2019 at 09:22:58AM -0800, Dan Williams wrote:
-> 
-> > I honestly don't like the idea that random subsystems can pin down
-> > file blocks as a side effect of gup on the result of mmap. Recall that
-> > it's not just RDMA that wants this guarantee. It seems safer to have
-> > the file be in an explicit block-allocation-immutable-mode so that the
-> > fallocate man page can describe this error case. Otherwise how would
-> > you describe the scenarios under which FALLOC_FL_PUNCH_HOLE fails?
-> 
-> I rather liked CL's version of this - ftruncate/etc is simply racing
-> with a parallel pwrite - and it doesn't fail.
-> 
-> But it also doesnt' trucate/create a hole. Another thread wrote to it
-> right away and the 'hole' was essentially instantly reallocated. This
-> is an inherent, pre-existing, race in the ftrucate/etc APIs.
+On Mon, 11 Feb 2019 at 17:21, Martin Sebor <msebor@gmail.com> wrote:
+>
+> On 2/9/19 5:31 AM, Miguel Ojeda wrote:
+> > On Sat, Feb 9, 2019 at 12:26 PM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> >>
+> >> On Sat, 9 Feb 2019 at 12:19, Miguel Ojeda
+> >> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >>>
+> >>> It also affects the optimizer in two different ways AFAIK:
+> >>>
+> >>>    * For the function itself, it gets optimized for size instead of speed.
+> >>>    * For callers, the paths that lead to the calls are treated as unlikely.
+> >>>
+> >>
+> >> That seems reasonable, but that still does not mean it is necessarily
+> >> a problem if you apply 'cold' to one but not the other.
+> >
+> > Indeed. As I said, it is likely that you missed the attribute, not a
+> > sure thing (i.e. that you didn't do it explicitly).
+> >
+> >>> So GCC reports it because you would be (likely) missing the
+> >>> optimizations you expected if you are using the alias instead of the
+> >>> target.
+> >>>
+> >>
+> >> I see how that could be reasonable for extern declarations that do not
+> >> match the definition, since in that case, it is assumed that there is
+> >> only one instance of the function. For function pointers, I don't
+> >> think this assumption is valid.
+> >
+> > It sounds reasonable to have another warning for
+> > declarations-definition attribute mismatches too. However, I don't see
+> > why you would warn differently. Even if you have one instance of the
+> > function, you may also be using the declaration to explicitly avoid
+> > the unlikely treatment.
+> >
+> > Now, whether the warning is worth or not or at which "level", it
+> > depends. I guess the rationale behind having it under -Wall is that
+> > they expect people to have missed copying the attributes, rather than
+> > they are using aliases specifically to avoid a cold/... attribute.
+> >
+> >>> In our case in patch 3, we do not want the optimization for callers,
+> >>> which is why we don't mark the extern declaration as __cold (see the
+> >>> commit message).
+> >>>
+> >>
+> >> You did not cc me on the whole set, so I don't have the patch. But in
+> >> any case, GCC 9 has not been released so we should still have time to
+> >> talk sense into the GCC guys.
+> >
+> > I only CC'd people on the relevant patches according to
+> > get_maintainers (but yeah, 2 & 3 are related, I could have merged
+> > those lists). Anyway, using the lore.kernel.org server makes it easy
+> > to see an entire series when you have already one:
+> >
+> >    https://lore.kernel.org/lkml/20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com/
+> >
+> > As for GCC, Martin (the author of the features) is CC'd, so he can
+> > chime in (and I am sure he appreciates the feedback :-)
+>
+> I do very much, thank you.  I think you've fielded all the GCC
+> questions here so I don't have much to add.  Just a comment regarding
+> aliases with different sets of attributes than their targets: it is
+> possible to come up with use cases not just with attribute cold but
+> others as well, including mutually exclusive pairs such as const and
+> pure.  But the uses cases that drove the design of the warning were
+> those where the set of attributes is meant to be the same, and we
+> are yet to to come across the others in practice.  If it turns out
+> that there are others in common use we can tweak the warning logic.
+>
+> Regarding function pointers, attribute cold only applies to function
+> declarations (and labels) and is ignored on pointers, so calls to
+> a cold function through a pointer are not necessarily subject to
+> the same effects as direct calls to the cold function.  (This is
+> inconsistent with other attributes such as const and pure which can
+> be applied to function pointers, so I wouldn't recommend relying on
+> cold not changing to match the others.)
+>
 
-I kind of like it as well, except Christopher did not answer my question:
+Hello Martin,
 
-What if user space then writes to the end of the file with a regular write?
-Does that write end up at the point they truncated to or off the end of the
-mmaped area (old length)?
+Thanks for clearing this up. I seemed to have confused myself into
+thinking that the slew of attribute 'cold' warnings I was seeing when
+building the kernel plus modules with GCC-9 were about function
+pointers, but in fact they were about symbol aliases, for which the
+warning makes perfect sense.
 
-To make this work I think it has to be the later.  And as you say the semantic
-is as if another thread wrote to the file first (but in this case the other
-thread is the RDMA device).
+Next time, I'll try talking some sense into myself first. Apologies
+for the noise.
 
-In addition I'm not sure what the overall work is for this case?
-
-John's patches will indicate to the FS that the page is gup pinned.  But they
-will not indicate longterm vs not "shorterm".  A shortterm pin could be handled
-as a "real truncate".  So, are we back to needing a longterm "bit" in struct
-page to indicate a longterm pin and allow the FS to perform this "virtual
-write" after truncate?
-
-Or is it safe to consider all gup pinned pages this way?
-
-Ira
-
+-- 
+Ard.
