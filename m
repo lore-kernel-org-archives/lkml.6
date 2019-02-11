@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC30C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2157C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC833222BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B285C222BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897878;
-	bh=48JWvw2iy0KzkzZIXDlpZ0T3KKVvb4891ZGtKjFobIw=;
+	s=default; t=1549897882;
+	bh=OEXapRCOKl/VlvJBKW3tv9jPptijdCZ1BXmtIT30GJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LKKW+wsXsMKnOdgqblB8mpYsyXsp3WxPnhP3AFuNv//hXv47ge2ZAHpwI5nUF42pj
-	 duvAbHwngPgfXNEMdP/EiEsACivoRT94bJbc+L7j8mrsoOxGDwEWajDlSJnCi5ShqC
-	 PUG+mv6ZBGpfzNo/UnuBdSEVuxdBNaS2eJHFQ36w=
+	b=py2DK9As6Ei7GvXVmvLvZcUpXeT6jMQV4qqLTZOljyDkMX6v7M3WepEJspymWYRSA
+	 S89OwGoUNyT3a/Jj78mEgbjxrA5TK6vRa1bUUHxjnkKdvOfWIesh7dtECUTnvX+5Zb
+	 sp9lCtL7WOgc/a/tzJ3SRmQ50CVIPi3tEoR2qmQI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbfBKPLR (ORCPT
+        id S2391858AbfBKPLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:11:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33078 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:11:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391079AbfBKPLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:11:14 -0500
+        id S2391845AbfBKPLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:11:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B61B222B9;
-        Mon, 11 Feb 2019 15:11:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7A3222BA;
+        Mon, 11 Feb 2019 15:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897873;
-        bh=48JWvw2iy0KzkzZIXDlpZ0T3KKVvb4891ZGtKjFobIw=;
+        s=default; t=1549897876;
+        bh=OEXapRCOKl/VlvJBKW3tv9jPptijdCZ1BXmtIT30GJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dT8GCXy1VN8WWn4dkLWyr0Ff7WQlxqfpLtnvrikVqzQTgTUxhf5UNXwmzK8+H38Np
-         d/OigH6Rnr7+BB81liTeOmOwe48m6rQyXKBeDdq+zJyqhEz8iQswaDOilY2sDBRN7+
-         0vLr+aPE4QlMIAI7XSoUP0WGS4fTxVZYVwIqLvQA=
+        b=JWRVBK3uM9976amovySHthgolrdIbaCSXzoLTZgAaqh6nCYaCVP1/BPfnvv5nXhtz
+         e9yOddnQOG5T2Y7M523x6ZSRXtsKSkWW2/HBhwJXpVuJKvx1XLG8Ze3QyYVo9wYmkt
+         ofDVcwPlI1u5+lUsnTaAWkS3F6QJ/m6B8bsTRdJE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Leonid Iziumtsev <leonid.iziumtsev@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.9 121/137] dmaengine: imx-dma: fix wrong callback invoke
-Date:   Mon, 11 Feb 2019 15:20:02 +0100
-Message-Id: <20190211141823.402940079@linuxfoundation.org>
+        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 112/137] net: dsa: slave: Dont propagate flag changes on down slave interfaces
+Date:   Mon, 11 Feb 2019 15:19:53 +0100
+Message-Id: <20190211141822.570592750@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -65,64 +65,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
+From: Rundong Ge <rdong.ge@gmail.com>
 
-commit 341198eda723c8c1cddbb006a89ad9e362502ea2 upstream.
+[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
 
-Once the "ld_queue" list is not empty, next descriptor will migrate
-into "ld_active" list. The "desc" variable will be overwritten
-during that transition. And later the dmaengine_desc_get_callback_invoke()
-will use it as an argument. As result we invoke wrong callback.
+The unbalance of master's promiscuity or allmulti will happen after ifdown
+and ifup a slave interface which is in a bridge.
 
-That behaviour was in place since:
-commit fcaaba6c7136 ("dmaengine: imx-dma: fix callback path in tasklet").
-But after commit 4cd13c21b207 ("softirq: Let ksoftirqd do its job")
-things got worse, since possible delay between tasklet_schedule()
-from DMA irq handler and actual tasklet function execution got bigger.
-And that gave more time for new DMA request to be submitted and
-to be put into "ld_queue" list.
+When we ifdown a slave interface , both the 'dsa_slave_close' and
+'dsa_slave_change_rx_flags' will clear the master's flags. The flags
+of master will be decrease twice.
+In the other hand, if we ifup the slave interface again, since the
+slave's flags were cleared the 'dsa_slave_open' won't set the master's
+flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
+will set the master's flags. The flags of master is increase once.
 
-It has been noticed that DMA issue is causing problems for "mxc-mmc"
-driver. While stressing the system with heavy network traffic and
-writing/reading to/from sd card simultaneously the timeout may happen:
+Only propagating flag changes when a slave interface is up makes
+sure this does not happen. The 'vlan_dev_change_rx_flags' had the
+same problem and was fixed, and changes here follows that fix.
 
-10013000.sdhci: mxcmci_watchdog: read time out (status = 0x30004900)
-
-That often lead to file system corruption.
-
-Signed-off-by: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Cc: stable@vger.kernel.org
+Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
+Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/dma/imx-dma.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/dsa/slave.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/dma/imx-dma.c
-+++ b/drivers/dma/imx-dma.c
-@@ -623,7 +623,7 @@ static void imxdma_tasklet(unsigned long
- {
- 	struct imxdma_channel *imxdmac = (void *)data;
- 	struct imxdma_engine *imxdma = imxdmac->imxdma;
--	struct imxdma_desc *desc;
-+	struct imxdma_desc *desc, *next_desc;
- 	unsigned long flags;
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -180,10 +180,14 @@ static void dsa_slave_change_rx_flags(st
+ 	struct dsa_slave_priv *p = netdev_priv(dev);
+ 	struct net_device *master = p->parent->dst->master_netdev;
  
- 	spin_lock_irqsave(&imxdma->lock, flags);
-@@ -653,10 +653,10 @@ static void imxdma_tasklet(unsigned long
- 	list_move_tail(imxdmac->ld_active.next, &imxdmac->ld_free);
+-	if (change & IFF_ALLMULTI)
+-		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
+-	if (change & IFF_PROMISC)
+-		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
++	if (dev->flags & IFF_UP) {
++		if (change & IFF_ALLMULTI)
++			dev_set_allmulti(master,
++					 dev->flags & IFF_ALLMULTI ? 1 : -1);
++		if (change & IFF_PROMISC)
++			dev_set_promiscuity(master,
++					    dev->flags & IFF_PROMISC ? 1 : -1);
++	}
+ }
  
- 	if (!list_empty(&imxdmac->ld_queue)) {
--		desc = list_first_entry(&imxdmac->ld_queue, struct imxdma_desc,
--					node);
-+		next_desc = list_first_entry(&imxdmac->ld_queue,
-+					     struct imxdma_desc, node);
- 		list_move_tail(imxdmac->ld_queue.next, &imxdmac->ld_active);
--		if (imxdma_xfer_desc(desc) < 0)
-+		if (imxdma_xfer_desc(next_desc) < 0)
- 			dev_warn(imxdma->dev, "%s: channel: %d couldn't xfer desc\n",
- 				 __func__, imxdmac->channel);
- 	}
+ static void dsa_slave_set_rx_mode(struct net_device *dev)
 
 
