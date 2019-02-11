@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6494C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF245C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B75222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF09222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899529;
-	bh=2XyTmJuyRXWTrVdY5BH80z4KBiZ23Mv/qNU24VN8O+E=;
+	s=default; t=1549899553;
+	bh=1gU2ZKSDDQcl7vfngc1FeSANQ8MvQG3FepLi3a1TSYQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rClykgJhG88SJyGF2LR3qCuAlTqM606UHQgNcCy1RtD/E0BR7huOM9Gv3gMzNh/rg
-	 fzeyK5gCHl9WoBBBu7QB2ffbOdDkeEKDeuioUf/Iz69F2OChWVVFwiiptFzWh0oqin
-	 VW0uox/RiSXY1aotcUndbMRGQkj4lvIihezWBQ+U=
+	b=nk8wxRip+/JHWaB5SUSKyOFtvj2Yz0JyQacj0oa1fTWoJt/TEOjsGjSjB/yZQLHeV
+	 p1bGkWwiYLzOpOk/VofqzMHcP2I7vBnKNw1XgZZu9K8mLrlmHbUngeVIAc5EmAXLiu
+	 av6K1eAseeNHRm5LTd8vAppbp7cWl9ARHofo++fA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387989AbfBKOuA (ORCPT
+        id S2387403AbfBKPjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:39:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387961AbfBKOtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:49:52 -0500
+        id S1729556AbfBKOtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01D4120700;
-        Mon, 11 Feb 2019 14:49:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5287206BA;
+        Mon, 11 Feb 2019 14:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896591;
-        bh=2XyTmJuyRXWTrVdY5BH80z4KBiZ23Mv/qNU24VN8O+E=;
+        s=default; t=1549896570;
+        bh=1gU2ZKSDDQcl7vfngc1FeSANQ8MvQG3FepLi3a1TSYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ezEJ+PChq+GYLBY0UqIkd1QhqK6ZNfq7M/AkRowTBfbzExd2D3FM3UuB6omi6rZa2
-         fWCe1LPePDwxp+Wxt8OWzb4PCTJmLKRQUN0o32hBwA1/muze1d1czmLyuGal9R/CtX
-         aEASxI8PVZ1501BIND1rZNqnHRk4fMnZdCBOkVcg=
+        b=ZWQLG+GPmktON9Y8VYj+UbpFG//vz3tz7c4DoOFQSoD+ohpx8XesbwFyRs5ygSAi4
+         acWm9XDXI5rY4s9xdAnLy2dzWrUogg+aGLC7YYFiPubXSRdlJcCktp4z8YJpu+71BE
+         eREogO3BavadEPKxYYN7vO2qpGF6wthB25tbRS70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sven Van Asbroeck <TheSven73@googlemail.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 236/313] PCI: imx: Enable MSI from downstream components
-Date:   Mon, 11 Feb 2019 15:18:36 +0100
-Message-Id: <20190211141909.200237439@linuxfoundation.org>
+Subject: [PATCH 4.19 229/313] zram: fix lockdep warning of free block handling
+Date:   Mon, 11 Feb 2019 15:18:29 +0100
+Message-Id: <20190211141908.715528710@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,73 +69,244 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 75cb8d20c112aba70f23d98e3f8d0a38ace16006 ]
+[ Upstream commit 3c9959e025472122a61faebb208525cf26b305d1 ]
 
-The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2) controls
-whether a Function can request service using MSI.
+Patch series "zram idle page writeback", v3.
 
-i.MX6 Root Ports implement the MSI Capability and may use MSI to request
-service for events like PME, hotplug, AER, etc.  In addition, on i.MX6, the
-MSI Enable bit controls delivery of MSI interrupts from components below
-the Root Port.
+Inherently, swap device has many idle pages which are rare touched since
+it was allocated.  It is never problem if we use storage device as swap.
+However, it's just waste for zram-swap.
 
-Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
-CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also enabled
-CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports, it set the MSI
-Enable bit so it could use PME, hotplug, AER, etc.  As a side effect, that
-also enabled delivery of MSI interrupts from downstream components.
+This patchset supports zram idle page writeback feature.
 
-The imx6q-pcie driver itself does not depend on portdrv, so set MSI Enable
-in imx6q-pcie so MSI from downstream components works even if nobody uses
-MSI for the Root Port events.
+* Admin can define what is idle page "no access since X time ago"
+* Admin can define when zram should writeback them
+* Admin can define when zram should stop writeback to prevent wearout
 
-Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
-Tested-by: Trent Piepho <tpiepho@impinj.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Details are in each patch's description.
+
+This patch (of 7):
+
+  ================================
+  WARNING: inconsistent lock state
+  4.19.0+ #390 Not tainted
+  --------------------------------
+  inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+  zram_verify/2095 [HC0[0]:SC1[1]:HE1:SE0] takes:
+  00000000b1828693 (&(&zram->bitmap_lock)->rlock){+.?.}, at: put_entry_bdev+0x1e/0x50
+  {SOFTIRQ-ON-W} state was registered at:
+    _raw_spin_lock+0x2c/0x40
+    zram_make_request+0x755/0xdc9
+    generic_make_request+0x373/0x6a0
+    submit_bio+0x6c/0x140
+    __swap_writepage+0x3a8/0x480
+    shrink_page_list+0x1102/0x1a60
+    shrink_inactive_list+0x21b/0x3f0
+    shrink_node_memcg.constprop.99+0x4f8/0x7e0
+    shrink_node+0x7d/0x2f0
+    do_try_to_free_pages+0xe0/0x300
+    try_to_free_pages+0x116/0x2b0
+    __alloc_pages_slowpath+0x3f4/0xf80
+    __alloc_pages_nodemask+0x2a2/0x2f0
+    __handle_mm_fault+0x42e/0xb50
+    handle_mm_fault+0x55/0xb0
+    __do_page_fault+0x235/0x4b0
+    page_fault+0x1e/0x30
+  irq event stamp: 228412
+  hardirqs last  enabled at (228412): [<ffffffff98245846>] __slab_free+0x3e6/0x600
+  hardirqs last disabled at (228411): [<ffffffff98245625>] __slab_free+0x1c5/0x600
+  softirqs last  enabled at (228396): [<ffffffff98e0031e>] __do_softirq+0x31e/0x427
+  softirqs last disabled at (228403): [<ffffffff98072051>] irq_exit+0xd1/0xe0
+
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
+
+         CPU0
+         ----
+    lock(&(&zram->bitmap_lock)->rlock);
+    <Interrupt>
+      lock(&(&zram->bitmap_lock)->rlock);
+
+   *** DEADLOCK ***
+
+  no locks held by zram_verify/2095.
+
+  stack backtrace:
+  CPU: 5 PID: 2095 Comm: zram_verify Not tainted 4.19.0+ #390
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+  Call Trace:
+   <IRQ>
+   dump_stack+0x67/0x9b
+   print_usage_bug+0x1bd/0x1d3
+   mark_lock+0x4aa/0x540
+   __lock_acquire+0x51d/0x1300
+   lock_acquire+0x90/0x180
+   _raw_spin_lock+0x2c/0x40
+   put_entry_bdev+0x1e/0x50
+   zram_free_page+0xf6/0x110
+   zram_slot_free_notify+0x42/0xa0
+   end_swap_bio_read+0x5b/0x170
+   blk_update_request+0x8f/0x340
+   scsi_end_request+0x2c/0x1e0
+   scsi_io_completion+0x98/0x650
+   blk_done_softirq+0x9e/0xd0
+   __do_softirq+0xcc/0x427
+   irq_exit+0xd1/0xe0
+   do_IRQ+0x93/0x120
+   common_interrupt+0xf/0xf
+   </IRQ>
+
+With writeback feature, zram_slot_free_notify could be called in softirq
+context by end_swap_bio_read.  However, bitmap_lock is not aware of that
+so lockdep yell out:
+
+  get_entry_bdev
+  spin_lock(bitmap->lock);
+  irq
+  softirq
+  end_swap_bio_read
+  zram_slot_free_notify
+  zram_slot_lock <-- deadlock prone
+  zram_free_page
+  put_entry_bdev
+  spin_lock(bitmap->lock); <-- deadlock prone
+
+With akpm's suggestion (i.e.  bitmap operation is already atomic), we
+could remove bitmap lock.  It might fail to find a empty slot if serious
+contention happens.  However, it's not severe problem because huge page
+writeback has already possiblity to fail if there is severe memory
+pressure.  Worst case is just keeping the incompressible in memory, not
+storage.
+
+The other problem is zram_slot_lock in zram_slot_slot_free_notify.  To
+make it safe is this patch introduces zram_slot_trylock where
+zram_slot_free_notify uses it.  Although it's rare to be contented, this
+patch adds new debug stat "miss_free" to keep monitoring how often it
+happens.
+
+Link: http://lkml.kernel.org/r/20181127055429.251614-2-minchan@kernel.org
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/block/zram/zram_drv.c | 38 +++++++++++++++++++----------------
+ drivers/block/zram/zram_drv.h |  2 +-
+ 2 files changed, 22 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 975050a69494..3826b444298c 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -66,6 +66,7 @@ struct imx6_pcie {
- #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index e19bf0a750cf..a65505db09e5 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -53,6 +53,11 @@ static size_t huge_class_size;
  
- /* PCIe Root Complex registers (memory-mapped) */
-+#define PCIE_RC_IMX6_MSI_CAP			0x50
- #define PCIE_RC_LCR				0x7c
- #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
- #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
-@@ -682,6 +683,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 	struct resource *dbi_base;
- 	struct device_node *node = dev->of_node;
- 	int ret;
-+	u16 val;
+ static void zram_free_page(struct zram *zram, size_t index);
  
- 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
- 	if (!imx6_pcie)
-@@ -816,6 +818,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	if (pci_msi_enabled()) {
-+		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
-+					PCI_MSI_FLAGS);
-+		val |= PCI_MSI_FLAGS_ENABLE;
-+		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP + PCI_MSI_FLAGS,
-+				   val);
-+	}
++static int zram_slot_trylock(struct zram *zram, u32 index)
++{
++	return bit_spin_trylock(ZRAM_LOCK, &zram->table[index].value);
++}
 +
- 	return 0;
+ static void zram_slot_lock(struct zram *zram, u32 index)
+ {
+ 	bit_spin_lock(ZRAM_LOCK, &zram->table[index].value);
+@@ -401,7 +406,6 @@ static ssize_t backing_dev_store(struct device *dev,
+ 		goto out;
+ 
+ 	reset_bdev(zram);
+-	spin_lock_init(&zram->bitmap_lock);
+ 
+ 	zram->old_block_size = old_block_size;
+ 	zram->bdev = bdev;
+@@ -445,29 +449,24 @@ out:
+ 
+ static unsigned long get_entry_bdev(struct zram *zram)
+ {
+-	unsigned long entry;
+-
+-	spin_lock(&zram->bitmap_lock);
++	unsigned long blk_idx = 1;
++retry:
+ 	/* skip 0 bit to confuse zram.handle = 0 */
+-	entry = find_next_zero_bit(zram->bitmap, zram->nr_pages, 1);
+-	if (entry == zram->nr_pages) {
+-		spin_unlock(&zram->bitmap_lock);
++	blk_idx = find_next_zero_bit(zram->bitmap, zram->nr_pages, blk_idx);
++	if (blk_idx == zram->nr_pages)
+ 		return 0;
+-	}
+ 
+-	set_bit(entry, zram->bitmap);
+-	spin_unlock(&zram->bitmap_lock);
++	if (test_and_set_bit(blk_idx, zram->bitmap))
++		goto retry;
+ 
+-	return entry;
++	return blk_idx;
  }
  
+ static void put_entry_bdev(struct zram *zram, unsigned long entry)
+ {
+ 	int was_set;
+ 
+-	spin_lock(&zram->bitmap_lock);
+ 	was_set = test_and_clear_bit(entry, zram->bitmap);
+-	spin_unlock(&zram->bitmap_lock);
+ 	WARN_ON_ONCE(!was_set);
+ }
+ 
+@@ -888,9 +887,10 @@ static ssize_t debug_stat_show(struct device *dev,
+ 
+ 	down_read(&zram->init_lock);
+ 	ret = scnprintf(buf, PAGE_SIZE,
+-			"version: %d\n%8llu\n",
++			"version: %d\n%8llu %8llu\n",
+ 			version,
+-			(u64)atomic64_read(&zram->stats.writestall));
++			(u64)atomic64_read(&zram->stats.writestall),
++			(u64)atomic64_read(&zram->stats.miss_free));
+ 	up_read(&zram->init_lock);
+ 
+ 	return ret;
+@@ -1402,10 +1402,14 @@ static void zram_slot_free_notify(struct block_device *bdev,
+ 
+ 	zram = bdev->bd_disk->private_data;
+ 
+-	zram_slot_lock(zram, index);
++	atomic64_inc(&zram->stats.notify_free);
++	if (!zram_slot_trylock(zram, index)) {
++		atomic64_inc(&zram->stats.miss_free);
++		return;
++	}
++
+ 	zram_free_page(zram, index);
+ 	zram_slot_unlock(zram, index);
+-	atomic64_inc(&zram->stats.notify_free);
+ }
+ 
+ static int zram_rw_page(struct block_device *bdev, sector_t sector,
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index 72c8584b6dff..d1095dfdffa8 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -79,6 +79,7 @@ struct zram_stats {
+ 	atomic64_t pages_stored;	/* no. of pages currently stored */
+ 	atomic_long_t max_used_pages;	/* no. of maximum pages stored */
+ 	atomic64_t writestall;		/* no. of write slow paths */
++	atomic64_t miss_free;		/* no. of missed free */
+ };
+ 
+ struct zram {
+@@ -110,7 +111,6 @@ struct zram {
+ 	unsigned int old_block_size;
+ 	unsigned long *bitmap;
+ 	unsigned long nr_pages;
+-	spinlock_t bitmap_lock;
+ #endif
+ #ifdef CONFIG_ZRAM_MEMORY_TRACKING
+ 	struct dentry *debugfs_dir;
 -- 
 2.19.1
 
