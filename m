@@ -2,130 +2,112 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53842C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A92C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5A1222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="Cz7C/op5"
+	by mail.kernel.org (Postfix) with ESMTP id 7B011222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899571;
+	bh=vlT+KCR6LvYXaFflcfDxFQLcLnHSNlewrRCTXw5iinU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=SaSdDwncTIq9lTnaTLT0EnfCLTTGKRUCfiyvjyR6lMIa9yK6MpGNB2qYl2Xr9llMF
+	 sHpr0M9jtSb/6ttNF4xAz9TtCoFmTP4VlndEhz1wB/5wLN7lAAjK7tG3S3XpYG//Ql
+	 MW20BFKm5q/EMMn9q2Pb4SiCj1T2t6AlNNvT5s0c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbfBKPjW (ORCPT
+        id S2387879AbfBKOt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:39:22 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:38040 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388277AbfBKPjT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:39:19 -0500
-Received: by mail-yb1-f194.google.com with SMTP id x9so4330074ybj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:39:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=boQyFNiX0XoZWerTpTg2C8lpdchzW9CQNXvCXi3hMik=;
-        b=Cz7C/op581GUNxTLcUjtjsQTNCi0Y3Bp+qn6dcjHeM04i+snxFdxl2Q5t8K3x6nuMG
-         MLWGeA7SWY3SxAdEypKir9AeURyWSTDOW0hzPET0xaW0nbw59ZZNfyWG74PGMNHbh/Qi
-         XlD9pOhblu5UvvQ1oQ7QNkcpgK5jBb4HzC6FsArd/SoyQKTXh+rxfgitkYrFKaDLelP3
-         eCw9ucw79AY/LwZBpNsRSvCvedq6YIo56HtK9c1LOuOiojgeC8VFCbd71JC70o3GU1bI
-         qjOcMd7JZACS8h0JahatSh38wSHCIMJT29nry+7AakeP/Qm2uiSMtdZMUTdGQseSWZR+
-         RDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=boQyFNiX0XoZWerTpTg2C8lpdchzW9CQNXvCXi3hMik=;
-        b=VYAe17N2bxXseq4eXO7dHvDszF5uYZG+Pejp1PtgYMjXsi/E55v/aYwgCzp1Kc2gb2
-         ohEznGrrE30mDsU4Pawk6lUwDdqMztalVtpZ1EQ1jsujkEaAp7twYqPvO5NsEe0MhKi0
-         Xihf8P6z41yXZlje96IyFD+rIJZc/I7hN/7U6LYWz/EVkVsngwN7UkScQGwi9XqeEzJe
-         DVzwR6+vlMR3O+9hXby8k/difaJbmJ3GKZAaPRidx3Y8b0Yuob7zV1w7lIqcUapFI1Xb
-         LOwkoJGlbQQtBkd1zj28jXde6GUlz/vBqJYeOiDGpKUn8l8E4H893ucW8p09dZx5+1wb
-         5NFQ==
-X-Gm-Message-State: AHQUAuY2UVGm7Ka+9yKtGvWKMeWiQ0JkjMORs4Q2P/dhceL50vKkQ9cN
-        C5QffMZpF9tUZhqnDVHt4fpyXA==
-X-Google-Smtp-Source: AHgI3IapaQTByQPsAP6IpFkNLAC+n/as07YS8DHCyk5phOCcjXPZW/eoi+XLXwlBlRYx1kQf798QLQ==
-X-Received: by 2002:a25:3291:: with SMTP id y139mr26204187yby.79.1549899558746;
-        Mon, 11 Feb 2019 07:39:18 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:9135])
-        by smtp.gmail.com with ESMTPSA id 11sm4318587ywv.109.2019.02.11.07.39.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:39:17 -0800 (PST)
-Date:   Mon, 11 Feb 2019 10:39:34 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] blkcg: prevent priority inversion problem during
- sync()
-Message-ID: <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
-References: <20190209140749.GB1910@xps-13>
+        Mon, 11 Feb 2019 09:49:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732255AbfBKOtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:22 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45CCC206BA;
+        Mon, 11 Feb 2019 14:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896561;
+        bh=vlT+KCR6LvYXaFflcfDxFQLcLnHSNlewrRCTXw5iinU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y1MQ+sgkwz6zToQ1b1S9xbzNSsJGVrA3HSWyJ1y3ZZxLwactSYwz6taTeMwtAH67f
+         REpkrt9F2FgRK0/rq3JmsJgiDY6gBSV09iD05l/EugEx6HQeJFgEsATx8xgOG38UdJ
+         QARrg1U/a+ZfbR+FBlAxn/r4beeRI21SN6+m5wfg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 195/313] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 11 Feb 2019 15:17:55 +0100
+Message-Id: <20190211141906.266521875@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190209140749.GB1910@xps-13>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 03:07:49PM +0100, Andrea Righi wrote:
-> This is an attempt to mitigate the priority inversion problem of a
-> high-priority blkcg issuing a sync() and being forced to wait the
-> completion of all the writeback I/O generated by any other low-priority
-> blkcg, causing massive latencies to processes that shouldn't be
-> I/O-throttled at all.
-> 
-> The idea is to save a list of blkcg's that are waiting for writeback:
-> every time a sync() is executed the current blkcg is added to the list.
-> 
-> Then, when I/O is throttled, if there's a blkcg waiting for writeback
-> different than the current blkcg, no throttling is applied (we can
-> probably refine this logic later, i.e., a better policy could be to
-> adjust the throttling I/O rate using the blkcg with the highest speed
-> from the list of waiters - priority inheritance, kinda).
-> 
-> This topic has been discussed here:
-> https://lwn.net/ml/cgroups/20190118103127.325-1-righi.andrea@gmail.com/
-> 
-> But we didn't come up with any definitive solution.
-> 
-> This patch is not a definitive solution either, but it's an attempt to
-> continue addressing this issue and handling the priority inversion
-> problem with sync() in a better way.
-> 
-> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Talked with Tejun about this some and we agreed the following is probably the
-best way forward
+------------------
 
-1) Track the submitter of the wb work to the writeback code.
-2) Sync() defaults to the root cg, and and it writes all the things as the root
-   cg.
-3) Add a flag to the cgroups that would make sync()'ers in that group only be
-   allowed to write out things that belong to its group.
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-This way we avoid the priority inversion of having things like systemd or random
-logged in user doing sync() and having to wait, and we keep low prio cgroups
-from causing big IO storms by syncing out stuff and getting upgraded to root
-priority just to avoid the inversion.
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-Obviously by default we want this flag to be off since its such a big change,
-but people/setups really worried about this behavior (Facebook for instance
-would likely use this flag) can go ahead and set it and be sure we're getting
-good isolation and still avoiding the priority inversion associated with running
-sync from a high priority context.  Thanks,
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Josef
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index ff561073ee4e..42f909618f04 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
+ 
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
+-- 
+2.19.1
+
+
+
