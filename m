@@ -2,118 +2,109 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D258FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FCBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955202080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:30:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bgb37aKS"
+	by mail.kernel.org (Postfix) with ESMTP id 355642080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfBKWal (ORCPT
+        id S1727582AbfBKWbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:30:41 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:36128 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfBKWak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:30:40 -0500
-Received: by mail-vs1-f65.google.com with SMTP id t13so382245vsk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tixZFh62XyTVWJSfqeuBwFv5ridgMOTpg3/m+r1Nj0c=;
-        b=Bgb37aKSltcuKSGwpBVqzyXnEUBe+9cErktDjz6l4NlTnPdqdW47s1c4dXvVabeTfk
-         uBj5ufRi2nbGcd5+H8A8rnEKnAUYX+gyaWmNd3b1kkuaIoFEaqwsP5kQShjGItCR1E5E
-         CVHeep1BIhwk4ts3qcGlj0DHa+feM3XyCZTM4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tixZFh62XyTVWJSfqeuBwFv5ridgMOTpg3/m+r1Nj0c=;
-        b=A8VjHNRh2hrWDNzebPbzsVpFDwSq6SPzc1T0y88JLoonYOqZUIo5xnnfiWhlILoc2/
-         IxOggXaoHtAV/CGn0H3n+7TeKMxdVwWpgpQrtwNSfDMgBuH86PNIXYGJRLv36bAepBaA
-         uKU3L1x5Fo9gboe6iaGovLWd9VunzT6ktcxgZ6E73eVRwikLOO3hA2qg8RaBBZLZltff
-         qa2Y9vxdzmNpgy5h7n+ivSekftNkrS9h7izAS77SeNwa4Qj3yOfR8It8IjiHfjpLo6QC
-         F1LhnZyGgYDAFCbwSTZ2BuWYGBb1aaRw6JxwtL9jJVfkqzvZe46tU3SS8e8CdbbBEYSs
-         DY2Q==
-X-Gm-Message-State: AHQUAuYmCRPnufoB6JeHpskfEim3bgz0PhtELtqQ6F+YivRNnzMeW3JI
-        d+xN1BL74SzuURizRc39hcotH1TeewM=
-X-Google-Smtp-Source: AHgI3IZAxV9Z3hUxW8L7dm1qHjiic7Su6AqLIGHpmPYbhVjM0VE3ocVQtUxRwFMMWUCu32+l0H20Og==
-X-Received: by 2002:a67:705:: with SMTP id 5mr67760vsh.59.1549924239011;
-        Mon, 11 Feb 2019 14:30:39 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id e67sm9866185vsd.32.2019.02.11.14.30.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 14:30:38 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id u64so345172vsc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:30:37 -0800 (PST)
-X-Received: by 2002:a67:81c1:: with SMTP id c184mr243840vsd.111.1549924237496;
- Mon, 11 Feb 2019 14:30:37 -0800 (PST)
+        Mon, 11 Feb 2019 17:31:06 -0500
+Received: from mout.gmx.net ([212.227.15.15]:37281 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727018AbfBKWbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:31:06 -0500
+Received: from [198.98.50.112] ([198.98.50.112]) by web-mail.gmx.net
+ (3c-app-mailcom-bs02.server.lan [172.19.170.129]) (via HTTP); Mon, 11 Feb
+ 2019 23:31:02 +0100
 MIME-Version: 1.0
-References: <20190206051335.23799-1-bjorn.andersson@linaro.org> <20190206051335.23799-6-bjorn.andersson@linaro.org>
-In-Reply-To: <20190206051335.23799-6-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 11 Feb 2019 14:30:26 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WDnKgiqP7Ta0xJtm5COTApYQ2DPTcUXH95O7S_vUJBCA@mail.gmail.com>
-Message-ID: <CAD=FV=WDnKgiqP7Ta0xJtm5COTApYQ2DPTcUXH95O7S_vUJBCA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/8] soc: qcom: Add AOSS QMP communication driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <trinity-25163893-0f83-4113-9d39-81d77a283e30-1549924262324@3c-app-mailcom-bs02>
+From:   "Mikee USA" <mikeeusa@gmx.com>
+To:     copyright@github.com
+Cc:     legal@microsoft.com, copyright@microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: DMCA takedown request to GitHub regarding: GPC-Slots2
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 11 Feb 2019 23:31:02 +0100
+Importance: normal
+Sensitivity: Normal
+X-Priority: 3
+X-Provags-ID: V03:K1:LitCW5jYbq3xO9NBS5SwZ8zZRAZLANoq5L6R/H4FBnqm/fgJDeqdaMzkq8QoHSBJmfWMf
+ 2CwRGeervbLIzQ0tcMwro4IWq/kzwkTGDt30v/IODph+iOCJfJ7Ia1BbWHI13D3LbycXIjATyHja
+ wA5+ONT3R2FJNlN4scYWkHYhlmI5UWe+0k/Ziuhn3XTLuoYGkjf9SCjupLOrGJ6oy9xsc1ytf1Lx
+ tqB1fpd0Wup+oKKiZWWKm8IsTIpZdjL2qR7r/v1pHALVFBv8910GThIxa8qpT5BrFqNvN+xBlS7n
+ OQ=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dJW3zcCiKmM=:N6W5IMubIkPkJjhN8LNczx
+ r5rMpHQvFVI4nkRgHf0trhQgX1Ye7AAD+L6JZ4i26h1j7mm2LTjeoHFO9Axk+W6ZhEkrSRajO
+ G73bfZnF/sH3reTfvVuFpgqAHmIZm1ls2llAK+NYzuR20cwKxQFYAzbG1bH/EAb+hcrqIx7lB
+ ftfNulfsxdPZKihRcls9PS3oSf00lwjMlWfi/7WEBb/HOrHklNL7s6+D/nLTjC5qNRbgHrWet
+ XQ3xngRF/eR7EPmi/LGtL5Q/SHsH3Gs5rg/7fsP9/A7ZqCFCdkdHVpdlPPJUrz9IUQKqBxiZ6
+ qc5FNm9+/nJBBjbYxpZ6UZXgDq/+y7ZuBLLLmaPPCaiopAcwdzZK9BK76r52Bh+M1iLpX5SSJ
+ +4ED/HCvbks+Wq1IlMuY+lG7S90ZyJHHXNPm6m2eZ6nvUJIrqGJGdlKnBG8k29y7tDCv3QJpg
+ SEayZJW7uUu+FYABHiSeX+j0g3OVT3FA7YlbAYR3kXhIUfQPnO5Q7MHlajHwX8200BRqp1oIc
+ i5lJykEUYH9NOfbxgvo4N3j7R/+wqMC8lejlqsZFCoZoDFDsrh0UedwOv5vZAissssbbhEN2m
+ ENHV//F2rKjdc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+**Please provide a detailed description of the original copyrighted work that has allegedly been infringed. If possible, include a URL to where it is posted online.**
 
-On Tue, Feb 5, 2019 at 9:13 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> +       if (of_property_read_bool(pdev->dev.of_node, "#power-domain-cells")) {
-> +               qmp->pd_pdev = platform_device_register_data(&pdev->dev,
-> +                                                            "aoss_qmp_pd",
-> +                                                            PLATFORM_DEVID_NONE,
-> +                                                            NULL, 0);
-> +               if (IS_ERR(qmp->pd_pdev)) {
-> +                       dev_err(&pdev->dev, "failed to register AOSS PD\n");
+GPC-Slots 2 is a text-mode casino game I created. It includes 5 slot machines, 3 table games (Sic Bo, Craps, and 2 variations of the little wheel), plus Russian Roulette and a stock market.
+You can enjoy it from here: https://sourceforge.net/projects/gpcslots2/
 
-nit: not worth spinning just for this, but if you happen to spin you
-could print the error number in your message.
+*What files should be taken down? Please provide URLs for each file, or if the entire repository, the repository's URL:**
 
+http://github.com/MikeeUSA/GPC-Slots-2
 
-> +                       ret = PTR_ERR(qmp->pd_pdev);
-> +                       goto err_close_qmp;
-> +               }
-> +       }
+**Have you searched for any forks of the allegedly infringing files or repositories? Each fork is a distinct repository and must be identified separately if you believe it is infringing and wish to have it taken down.**
 
-As discussed in v5 I wonder if the complexity of a separate driver is
-really worth it or if everything would be a lot easier to just link
-the two ".c" files together.  Now that it's a full error case if
-"aoss_qmp_pd" doesn't probe I'd vote for linking the two ".c" files
-together, but part of that is because I don't really want to dig into
-all the details of how you're supposed to call
-platform_device_register_data() for sub-devices and double-checking
-that you've got all the corner cases correct.
+Yes, they are also on other platforms, all uploaded by the "John Doe"
 
-...NOTE: presumably if you just change it to a straight-up function
-call then you can also get rid of the above "dev_err" since
-(presumably) you'll know that the init code of aoss_qmp_pd will print
-any relevant errors?
+**Is the work licensed under an open source license? If so, which open source license? Are the allegedly infringing files being used under the open source license, or are they in violation of the license?**
 
+Yes. The GPL. However I had revoked the "John Doe"'s license. The license, in this instance, being a bare license.
+A license without an interest attached is revocable, in the USA.
+The "John Doe" was not in privity of contract with me, and had not paid me anything for the work.
+It was licensed to him under a bare license, which had then been rescinded.
+He thus had not, and does not have, any permission to use, modify, distribute, nor make derivative works of the aforementioned work.
+Remeber: the license comes from me, the Copyright owner. Not from any document or record: that is simply a memorandum of the terms.
+I have chosen to revoke the "John Doe"'s license, and not issue any to him further. He has been informed of this.
+His actions there-after and at current are infringing.
 
--Doug
+**What would be the best solution for the alleged infringement? Are there specific changes the other person can make other than removal?**
+
+The only solution that I will accept is you acquiescing to my demand of removal.
+
+**Do you have the alleged infringer's contact information? If so, please provide it:**
+
+No. You can ask him for it here: 8ch.net/tech/res/1018729.html
+You can also contact the "John Doe" through the email he registered with you. Don't play dumb.
+
+**Please confirm that you have you have read our Guide to Submitting a DMCA Takedown Notice: https://help.github.com/articles/guide-to-submitting-a-dmca-takedown-notice/**
+
+I really do not give half a damn about your guide. It is patronizing and moronic, it sounds as if it were written by a woman, perhaps a paralegal.
+The fact of the matter is that a bare license is revocable by the grantor.
+To achieve an irrevocable license one must generally enter into a copyright license contract with the licensor, supported by good consideration.
+"Obeying the license" is not good consideration as it is a pre-existing legal duty.
+
+**So that we can get back to you, please provide either your telephone number or physical address:**
+
+Contact me at mikeeusa@redchan.it
+
+I have a good faith belief that use of the copyrighted materials described above on the infringing web pages is not authorized by the copyright owner, or its agent, or the law. I have taken fair use into consideration.
+
+I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner, or am authorized to act on behalf of the owner, of an exclusive right that is allegedly infringed. 
+
+**Please type your full legal name below to sign this request:**
+
+I'm signing with my long-held nom de guerre. Think of it as an X
+
+--MikeeUSA--
+
