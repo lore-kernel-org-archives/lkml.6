@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B298C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10171C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E254206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D92FD206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896329;
-	bh=rIlN6tdJDDSW+6HuXH6H2GQAUWB8goX6fEux9nbIRzY=;
+	s=default; t=1549896331;
+	bh=t3Z3UC1H3BvnPEfAjft8EBHjMxVLIFKasujIj++WxTw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N5w62YHRyocxbrBg1kyUVO/0BgDohckT4/BVBhaNYhlTAIY9ArszQHJcZTBxX0ULE
-	 +i6fRSF/U2IqS5Xps3VWLxddtGxfMKYhayol2+o9ri/S/Xzpz9qx0wPq7eyJ7zqtQR
-	 me+YsdsPfQhh2D3KkK4NpSReZG1Re2NEEagBBWr4=
+	b=JwxxW7HxjEtVoM7Nu4j0/Kik58DxjntJJhHyY1wwnBb9xP1ReNsFIH0tTjSozRPRJ
+	 LHgP/4M0eCk3VomyUFvoQ4cz84xpH3ba1FKHq3PMPPjRwYF+p3W9drv+oP3p7CohdP
+	 YOfZ1rrOtBiZxwiCtiPShVRVP/aoWVGMFYNd0rQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733045AbfBKOp1 (ORCPT
+        id S1733057AbfBKOpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:45:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58454 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:45:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733028AbfBKOpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:45:24 -0500
+        id S1732608AbfBKOp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:45:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD50120700;
-        Mon, 11 Feb 2019 14:45:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1281F20700;
+        Mon, 11 Feb 2019 14:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896324;
-        bh=rIlN6tdJDDSW+6HuXH6H2GQAUWB8goX6fEux9nbIRzY=;
+        s=default; t=1549896327;
+        bh=t3Z3UC1H3BvnPEfAjft8EBHjMxVLIFKasujIj++WxTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJjhaPthh93X3yFdqghM9/BfALuxirgcjpDgCN9HICN7Zz9KOwIg2Nn6gQiRqfCYD
-         B9+ZeXDzN5MmcxL+zx+VkFSE55qGSLeUS1PhP5Yt8bYaQCQ14pfm7MWGXuEJRMiKzB
-         OyhicZsGPgMV277yTpBK6VUvwoCurZxayhlbSbig=
+        b=buazbOkU7bI5+nXnbnaeN6VgIbR2+5iqQdDgxJJ8GsGgB5viUKZqDn5UofODp4rmc
+         H++xwuM+ntvkKMcAJl/8+jCNPEvkQCmfIfa6wXe8NAew4wHW71rn8qqD8lOUhMHEof
+         Z+7sLFdF5/Cj7/LkVbzbSbfx1RctP0ETJZx3NTaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 146/313] memstick: Prevent memstick host from getting runtime suspended during card detection
-Date:   Mon, 11 Feb 2019 15:17:06 +0100
-Message-Id: <20190211141903.364569615@linuxfoundation.org>
+Subject: [PATCH 4.19 147/313] mmc: sdhci-of-esdhc: Fix timeout checks
+Date:   Mon, 11 Feb 2019 15:17:07 +0100
+Message-Id: <20190211141903.414917559@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,54 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
+[ Upstream commit ea6d027312111c6d96309ad1a684b33cb37e6764 ]
 
-We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
-helpers to let memstick host support runtime pm.
+Always check the wait condition before returning timeout.
 
-The rpm count may go down to zero before the memstick host powers on, so
-the host can be runtime suspended.
-
-So before doing card detection, increment the rpm count to avoid the
-host gets runtime suspended. Balance the rpm count after card detection
-is done.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Yangbo Lu <yangbo.lu@nxp.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/core/memstick.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-of-esdhc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index 76382c858c35..1246d69ba187 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 9cb7554a463d..a7bf8515116f 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -526,8 +526,12 @@ static void esdhc_clock_enable(struct sdhci_host *host, bool enable)
+ 	/* Wait max 20 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 20);
+ 	val = ESDHC_CLOCK_STABLE;
+-	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & val)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while  (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_readl(host, ESDHC_PRSSTAT) & val)
++			break;
++		if (timedout) {
+ 			pr_err("%s: Internal clock never stabilised.\n",
+ 				mmc_hostname(host->mmc));
+ 			break;
+@@ -591,8 +595,12 @@ static void esdhc_of_set_clock(struct sdhci_host *host, unsigned int clock)
  
- #define DRIVER_NAME "memstick"
- 
-@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
- 	struct memstick_dev *card;
- 
- 	dev_dbg(&host->dev, "memstick_check started\n");
-+	pm_runtime_get_noresume(host->dev.parent);
- 	mutex_lock(&host->lock);
- 	if (!host->card) {
- 		if (memstick_power_on(host))
-@@ -479,6 +481,7 @@ out_power_off:
- 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
- 
- 	mutex_unlock(&host->lock);
-+	pm_runtime_put(host->dev.parent);
- 	dev_dbg(&host->dev, "memstick_check finished\n");
- }
- 
+ 	/* Wait max 20 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 20);
+-	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & ESDHC_CLOCK_STABLE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_readl(host, ESDHC_PRSSTAT) & ESDHC_CLOCK_STABLE)
++			break;
++		if (timedout) {
+ 			pr_err("%s: Internal clock never stabilised.\n",
+ 				mmc_hostname(host->mmc));
+ 			return;
 -- 
 2.19.1
 
