@@ -2,52 +2,53 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61F3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEF4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96681222AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93879222AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897295;
-	bh=KWxsmT2AJG7d0oMP2hceH5pxbx4YTwsBjSoQHUnlZso=;
+	s=default; t=1549897300;
+	bh=6tSijRtGnJiTMLTN0r2Vbu5c4n8F2JaRl10cNpCmzbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1P1cFjfdQIDacC31H34RnLNC6s4+3VWC5tAloxU94VDqQxGorI1UHX6joXntnFjtW
-	 pYh9Kh5NH6/0bx3M9WSZzS4EcBJn76OtxfeyG/JbR/YypgXkTRTy7joBGYdq8H2h7q
-	 rl2SuZyImX3Hqy2qyuylfHsfUmpgBBj5m5xQql1I=
+	b=Y0rgy4bLRaqYzsrevFWYb/BGyHdh5gzd60IRXhMRjvWwSFCez8lSHsLO/1trSzxPE
+	 wzuHXymqXGwfVdDuzXmSY/VPvdirx2mKaOUFdIr+hdOeU/fOYD1leAzTHac2Iw/Ys+
+	 igREymj87CD0dZarixpRsbMMoEabubZLmAN9lhjc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390218AbfBKPBd (ORCPT
+        id S2390229AbfBKPBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:01:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49520 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:01:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390206AbfBKPBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:30 -0500
+        id S2390209AbfBKPBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:01:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A03B3222A6;
-        Mon, 11 Feb 2019 15:01:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BB66222A6;
+        Mon, 11 Feb 2019 15:01:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897289;
-        bh=KWxsmT2AJG7d0oMP2hceH5pxbx4YTwsBjSoQHUnlZso=;
+        s=default; t=1549897291;
+        bh=6tSijRtGnJiTMLTN0r2Vbu5c4n8F2JaRl10cNpCmzbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QIu8pt5JjEBCDfFQA3MJ1hkKVdiyuGJjldRneuBQiTxDm25BRFZjyBaHgIQ8ZZAXq
-         nzSQF+C+bpCAs7hjBl/IYpUzEMhCJR/tLpGpi04fxv3g7oDa9bAnRUm/bNHgwdnKJc
-         NkC3W+UHx812++bHmvcr92j6BN8bejj7NbP06FL4=
+        b=mH59SNLKv26re96ucKoBr4gtRsAWHXhcYX40E8QcI3jVSG424Zp6SHN36DSTv6gW5
+         viBtUzUi6iW937GLPgbv7+iMMkCba66asAwCQ/waeVvutDCFEq9C5znYBLcucFS8lw
+         G72HqKv2TVXkKneVFfOM4MzGehFq9hgv+c6pnv0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 121/205] drbd: Avoid Clang warning about pointless switch statment
-Date:   Mon, 11 Feb 2019 15:18:39 +0100
-Message-Id: <20190211141836.370224286@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 122/205] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 11 Feb 2019 15:18:40 +0100
+Message-Id: <20190211141836.433624849@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,70 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-There are several warnings from Clang about no case statement matching
-the constant 0:
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-In file included from drivers/block/drbd/drbd_receiver.c:48:
-In file included from drivers/block/drbd/drbd_int.h:48:
-In file included from ./include/linux/drbd_genl_api.h:54:
-In file included from ./include/linux/genl_magic_struct.h:236:
-./include/linux/drbd_genl.h:321:1: warning: no case matching constant
-switch condition '0'
-GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
-'GENL_struct'
-        switch (0) {
-                ^
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Silence this warning by adding a 'case 0:' statement. Additionally,
-adjust the alignment of the statements in the ct_assert_unique macro to
-avoid a checkpatch warning.
-
-This solution was originally sent by Arnd Bergmann with a default case
-statement: https://lore.kernel.org/patchwork/patch/756723/
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/43
-Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/genl_magic_struct.h | 5 ++++-
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
-index 5972e4969197..eeae59d3ceb7 100644
---- a/include/linux/genl_magic_struct.h
-+++ b/include/linux/genl_magic_struct.h
-@@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index ff561073ee4e..42f909618f04 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
  	}
- }
-@@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
- 	}
- }
-@@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
- static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
- {									\
- 	switch (0) {							\
--		s_fields						\
-+	s_fields							\
-+	case 0:								\
- 			;						\
- 	}								\
- }
+ 
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
+ 
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
 -- 
 2.19.1
 
