@@ -2,974 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EACC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB4BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8465218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D3CF218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549917865;
-	bh=LNoQcFO6/xJQjIlzcSwTmhjU0q/Ud02WbvSV4Edg2Y0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=RJUoRmHIS29BSZM3mZq4+bPzlhQuUISdqA2w9klL5TkzUXz+RXZ+I4/EeJcvtGKbW
-	 EpUIPT7QVC7Ssl6/5iwF3bAUVLTEPe83XN9K4ZFb9NvLH1x+CIZLY8PuWO/FEHkcR6
-	 XHk+bteAyHU3WAQbzAAj/9rYSuwk441NPmtD9HNo=
+	s=default; t=1549917872;
+	bh=WVMUwg3hSj8n/u7OrGTWZ8xMtpXengl1pgo9JOSsn5A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=U9Ag9lJebR7XVy5l8Iw7Y8In+zE2jX0livsDgh4W/ZsJzVEGEqAVTRvGeN5ygWzec
+	 Ag2uf0hOIarQRclDnUeschrWOHQUo1xDHStTZ2l5+mIehPnitB4rsooSCF1GfQD2sU
+	 V21Q+T1Q6PytRF5vnuu6mku03m69aW9mRPtZRLYE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfBKUoW (ORCPT
+        id S1727773AbfBKUob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:44:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53812 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 15:44:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726881AbfBKUoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:44:21 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727708AbfBKUo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 15:44:28 -0500
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C40A7218A4;
-        Mon, 11 Feb 2019 20:44:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3666C222A8;
+        Mon, 11 Feb 2019 20:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549917860;
-        bh=LNoQcFO6/xJQjIlzcSwTmhjU0q/Ud02WbvSV4Edg2Y0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bl1pMDDH2HQPJTwJ/+yWM0LCqa2hW7mg5U1KblEnKl7m41b7jwXkcc4gysizy2bhG
-         bdflmAvdAJYeEN68xAY/9GtOwPMF3ZDse0vIVyweflRD2VHnEr9kbV1bEiiosiHUYW
-         3P8scKZd0AJevkT3GzPlR9edVSkzujB8DxUxWo9I=
-Date:   Mon, 11 Feb 2019 20:44:14 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH] staging: iio: ad5933: move out of staging
-Message-ID: <20190211204414.236f0660@archlinux>
-In-Reply-To: <20190211154311.mtbfdepmfanm2nsb@smtp.gmail.com>
-References: <20190211154311.mtbfdepmfanm2nsb@smtp.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        s=default; t=1549917866;
+        bh=WVMUwg3hSj8n/u7OrGTWZ8xMtpXengl1pgo9JOSsn5A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LY0H+uSxdj4ZbpQE4WxH4EEPojp1B6v6bpwu82wbFoquu9B+d3VxXDpKReHFGx5pH
+         ilfXaHxuuh6EHtBlrZ0ZhmpeSQIB99Cm7mGFEKq5toRt02cegqpjpn+NiWMAt9882h
+         ZCdg82Q96E0YsRZ21sEsyTJbWJJAKlK+1jzpO+t0=
+Received: by mail-ed1-f41.google.com with SMTP id h58so245064edb.5;
+        Mon, 11 Feb 2019 12:44:26 -0800 (PST)
+X-Gm-Message-State: AHQUAuZlpp/cr2pwxkvztLq1AnvOUtDyyxd5R4z1Bd6O9lXVdPru44Lh
+        gg3Ms0cMIr52xwoaU5y8gKf+OODOYKe9GfpkQOM=
+X-Google-Smtp-Source: AHgI3Ia9P83OXsSDFym2Stnz/ppQJiKozaKElyWO5Xkipqc0SRJDBy/EFsLjoH7ffvBWsSDul8qIX24DxVlRgki1P1A=
+X-Received: by 2002:a50:b964:: with SMTP id m91mr86196ede.184.1549917864610;
+ Mon, 11 Feb 2019 12:44:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <262419e9-5c9f-1193-f119-33f373d81e43@gmail.com>
+ <b113e03d-95f9-96bc-2a50-bc61307e780e@gmail.com> <CANk1AXS=4fT6LbOHqK4DYhSMcO9Q60mDcQsFFnwoJLHj8wRsTA@mail.gmail.com>
+ <20190211191341.GA13134@kroah.com>
+In-Reply-To: <20190211191341.GA13134@kroah.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 11 Feb 2019 14:43:48 -0600
+X-Gmail-Original-Message-ID: <CANk1AXRnX+=v+7g-_rM3TwNmM3aVcOqRknv9BR+hBOeCtT24Fg@mail.gmail.com>
+Message-ID: <CANk1AXRnX+=v+7g-_rM3TwNmM3aVcOqRknv9BR+hBOeCtT24Fg@mail.gmail.com>
+Subject: Re: [GIT PULL] of: overlay: validation checks, subsequent fixes for
+ v20 -- correction: v4.20
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 13:43:11 -0200
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+On Mon, Feb 11, 2019 at 1:13 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Feb 11, 2019 at 12:41:40PM -0600, Alan Tull wrote:
+> > On Fri, Nov 9, 2018 at 12:58 AM Frank Rowand <frowand.list@gmail.com> wrote:
+> >
+> > What LTSI's are these patches likely to end up in?  Just to be clear,
+> > I'm not pushing for any specific answer, I just want to know what to
+> > expect.
+>
+> I have no idea what you are asking here.
+>
+> What patches?
 
-> Move ad5933 impedance-analyzer driver from staging to mainline.
-> 
-> The ad5933 is a high precision impedance converter system
-> solution that combines an on-board frequency generator with an
-> analog-to-digital converter (ADC). This driver was designed to be
-> compatible with both ad5933 and ad5934 chips.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Hi Marcelo,
+I probably should have asked my question *below* the pertinent context
+of the the 17 patches listed in the pull request, which was:
 
-Mostly this is fine.  There are a few tweaks inline.  However
-it has a fairly extensive non standard ABI.  That needs documenting
-and discussing before we move this out of staging.
+>       of: overlay: add tests to validate kfrees from overlay removal
+>       of: overlay: add missing of_node_put() after add new node to changeset
+>       of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+>       powerpc/pseries: add of_node_put() in dlpar_detach_node()
+>       of: overlay: use prop add changeset entry for property in new nodes
+>       of: overlay: do not duplicate properties from overlay for new nodes
+>       of: overlay: reorder fields in struct fragment
+>       of: overlay: validate overlay properties #address-cells and #size-cells
+>       of: overlay: make all pr_debug() and pr_err() messages unique
+>       of: overlay: test case of two fragments adding same node
+>       of: overlay: check prevents multiple fragments add or delete same node
+>       of: overlay: check prevents multiple fragments touching same property
+>       of: unittest: remove unused of_unittest_apply_overlay() argument
+>       of: overlay: set node fields from properties when add new overlay node
+>       of: unittest: allow base devicetree to have symbol metadata
+>       of: unittest: find overlays[] entry by name instead of index
+>       of: unittest: initialize args before calling of_*parse_*()
 
-Please propose a new ABI doc, probably device specific for now...
+> What is "LTSI's"?
 
-Documentation/ABI/testing/sysfs-bus-iio-ad5933
+I have recently seen some of devicetree patches being picked up for
+the 4.20 stable-queue.  That seemed to suggest that some, but not all
+of these will end up in the next LTS release.  Also I was wondering if
+any of this is likely to get backported to LTSI-4.14.
 
-to document what those elements actually do...
-Superficially they look sensible, but we need units etc to be
-clearly described.  It would also be worth adding some description
-in comments for how the interface works.
+>
+> confused,
 
-Thanks,
+Yes, and now I'm confused about the confusion.  Sorry for spreading confusion.
 
-Jonathan
+Alan
 
-> ---
->  drivers/iio/impedance-analyzer/Kconfig        |  18 +
->  drivers/iio/impedance-analyzer/Makefile       |   5 +
->  drivers/iio/impedance-analyzer/ad5933.c       | 810 ++++++++++++++++++
->  .../staging/iio/impedance-analyzer/Kconfig    |  18 -
->  .../staging/iio/impedance-analyzer/Makefile   |   5 -
->  .../staging/iio/impedance-analyzer/ad5933.c   | 809 -----------------
->  6 files changed, 833 insertions(+), 832 deletions(-)
->  create mode 100644 drivers/iio/impedance-analyzer/Kconfig
->  create mode 100644 drivers/iio/impedance-analyzer/Makefile
->  create mode 100644 drivers/iio/impedance-analyzer/ad5933.c
->  delete mode 100644 drivers/staging/iio/impedance-analyzer/Kconfig
->  delete mode 100644 drivers/staging/iio/impedance-analyzer/Makefile
->  delete mode 100644 drivers/staging/iio/impedance-analyzer/ad5933.c
-> 
-> diff --git a/drivers/iio/impedance-analyzer/Kconfig b/drivers/iio/impedance-analyzer/Kconfig
-> new file mode 100644
-> index 000000000000..dd97b6bb3fd0
-> --- /dev/null
-> +++ b/drivers/iio/impedance-analyzer/Kconfig
-> @@ -0,0 +1,18 @@
-> +#
-> +# Impedance Converter, Network Analyzer drivers
-> +#
-> +menu "Network Analyzer, Impedance Converters"
-> +
-> +config AD5933
-> +	tristate "Analog Devices AD5933, AD5934 driver"
-> +	depends on I2C
-> +	select IIO_BUFFER
-> +	select IIO_KFIFO_BUF
-> +	help
-> +	  Say yes here to build support for Analog Devices Impedance Converter,
-> +	  Network Analyzer, AD5933/4, provides direct access via sysfs.
-
-This is rather more limited than the driver actually is.
-Has a chardev based interface for example. I'd just drop
-the last bit about sysfs as it implies false limitations.
-
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ad5933.
-> +
-> +endmenu
-> diff --git a/drivers/iio/impedance-analyzer/Makefile b/drivers/iio/impedance-analyzer/Makefile
-> new file mode 100644
-> index 000000000000..7604d786583e
-> --- /dev/null
-> +++ b/drivers/iio/impedance-analyzer/Makefile
-> @@ -0,0 +1,5 @@
-> +#
-> +# Makefile for Impedance Converter, Network Analyzer drivers
-> +#
-> +
-> +obj-$(CONFIG_AD5933) += ad5933.o
-> diff --git a/drivers/iio/impedance-analyzer/ad5933.c b/drivers/iio/impedance-analyzer/ad5933.c
-> new file mode 100644
-> index 000000000000..839bc30682e4
-> --- /dev/null
-> +++ b/drivers/iio/impedance-analyzer/ad5933.c
-> @@ -0,0 +1,810 @@
-> +/*
-> + * AD5933 AD5934 Impedance Converter, Network Analyzer
-> + *
-> + * Copyright 2011 Analog Devices Inc.
-> + *
-> + * Licensed under the GPL-2.
-SPDX preferred.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/types.h>
-> +#include <linux/sysfs.h>
-> +
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/kfifo_buf.h>
-> +#include <linux/iio/sysfs.h>
-> +
-> +#include <linux/regulator/consumer.h>
-> +
-> +/* AD5933/AD5934 Registers */
-> +#define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
-> +#define AD5933_REG_CONTROL_LB		0x81	/* R/W, 1 byte */
-> +#define AD5933_REG_FREQ_START		0x82	/* R/W, 3 bytes */
-> +#define AD5933_REG_FREQ_INC		0x85	/* R/W, 3 bytes */
-> +#define AD5933_REG_INC_NUM		0x88	/* R/W, 2 bytes, 9 bit */
-> +#define AD5933_REG_SETTLING_CYCLES	0x8A	/* R/W, 2 bytes */
-> +#define AD5933_REG_STATUS		0x8F	/* R, 1 byte */
-> +#define AD5933_REG_TEMP_DATA		0x92	/* R, 2 bytes*/
-> +#define AD5933_REG_REAL_DATA		0x94	/* R, 2 bytes*/
-> +#define AD5933_REG_IMAG_DATA		0x96	/* R, 2 bytes*/
-> +
-> +/* AD5933_REG_CONTROL_HB Bits */
-> +#define AD5933_CTRL_INIT_START_FREQ	(0x1 << 4)
-> +#define AD5933_CTRL_START_SWEEP		(0x2 << 4)
-> +#define AD5933_CTRL_INC_FREQ		(0x3 << 4)
-> +#define AD5933_CTRL_REPEAT_FREQ		(0x4 << 4)
-> +#define AD5933_CTRL_MEASURE_TEMP	(0x9 << 4)
-> +#define AD5933_CTRL_POWER_DOWN		(0xA << 4)
-> +#define AD5933_CTRL_STANDBY		(0xB << 4)
-> +
-> +#define AD5933_CTRL_RANGE_2000mVpp	(0x0 << 1)
-> +#define AD5933_CTRL_RANGE_200mVpp	(0x1 << 1)
-> +#define AD5933_CTRL_RANGE_400mVpp	(0x2 << 1)
-> +#define AD5933_CTRL_RANGE_1000mVpp	(0x3 << 1)
-> +#define AD5933_CTRL_RANGE(x)		((x) << 1)
-> +
-> +#define AD5933_CTRL_PGA_GAIN_1		(0x1 << 0)
-> +#define AD5933_CTRL_PGA_GAIN_5		(0x0 << 0)
-> +
-> +/* AD5933_REG_CONTROL_LB Bits */
-> +#define AD5933_CTRL_RESET		(0x1 << 4)
-> +#define AD5933_CTRL_INT_SYSCLK		(0x0 << 3)
-> +#define AD5933_CTRL_EXT_SYSCLK		(0x1 << 3)
-> +
-> +/* AD5933_REG_STATUS Bits */
-> +#define AD5933_STAT_TEMP_VALID		(0x1 << 0)
-> +#define AD5933_STAT_DATA_VALID		(0x1 << 1)
-> +#define AD5933_STAT_SWEEP_DONE		(0x1 << 2)
-> +
-> +/* I2C Block Commands */
-> +#define AD5933_I2C_BLOCK_WRITE		0xA0
-> +#define AD5933_I2C_BLOCK_READ		0xA1
-> +#define AD5933_I2C_ADDR_POINTER		0xB0
-> +
-> +/* Device Specs */
-> +#define AD5933_INT_OSC_FREQ_Hz		16776000
-> +#define AD5933_MAX_OUTPUT_FREQ_Hz	100000
-> +#define AD5933_MAX_RETRIES		100
-> +
-> +#define AD5933_OUT_RANGE		1
-> +#define AD5933_OUT_RANGE_AVAIL		2
-> +#define AD5933_OUT_SETTLING_CYCLES	3
-> +#define AD5933_IN_PGA_GAIN		4
-> +#define AD5933_IN_PGA_GAIN_AVAIL	5
-> +#define AD5933_FREQ_POINTS		6
-> +
-> +#define AD5933_POLL_TIME_ms		10
-> +#define AD5933_INIT_EXCITATION_TIME_ms	100
-> +
-> +struct ad5933_state {
-> +	struct i2c_client		*client;
-> +	struct regulator		*reg;
-> +	struct clk			*mclk;
-> +	struct delayed_work		work;
-> +	struct mutex			lock; /* Protect sensor state */
-> +	unsigned long			mclk_hz;
-> +	unsigned char			ctrl_hb;
-> +	unsigned char			ctrl_lb;
-> +	unsigned int			range_avail[4];
-> +	unsigned short			vref_mv;
-> +	unsigned short			settling_cycles;
-> +	unsigned short			freq_points;
-> +	unsigned int			freq_start;
-> +	unsigned int			freq_inc;
-> +	unsigned int			state;
-> +	unsigned int			poll_time_jiffies;
-> +};
-> +
-> +#define AD5933_CHANNEL(_type, _extend_name, _info_mask_separate, _address, \
-> +		_scan_index, _realbits) { \
-> +	.type = (_type), \
-> +	.extend_name = (_extend_name), \
-> +	.info_mask_separate = (_info_mask_separate), \
-> +	.address = (_address), \
-> +	.scan_index = (_scan_index), \
-> +	.scan_type = { \
-> +		.sign = 's', \
-> +		.realbits = (_realbits), \
-> +		.storagebits = 16, \
-> +	}, \
-> +}
-> +
-> +static const struct iio_chan_spec ad5933_channels[] = {
-> +	AD5933_CHANNEL(IIO_TEMP, NULL, BIT(IIO_CHAN_INFO_RAW) |
-> +		BIT(IIO_CHAN_INFO_SCALE), AD5933_REG_TEMP_DATA, -1, 14),
-> +	/* Ring Channels */
-> +	AD5933_CHANNEL(IIO_VOLTAGE, "real", 0, AD5933_REG_REAL_DATA, 0, 16),
-> +	AD5933_CHANNEL(IIO_VOLTAGE, "imag", 0, AD5933_REG_IMAG_DATA, 1, 16),
-> +};
-> +
-> +static int ad5933_i2c_write(struct i2c_client *client, u8 reg, u8 len, u8 *data)
-> +{
-> +	int ret;
-> +
-> +	while (len--) {
-> +		ret = i2c_smbus_write_byte_data(client, reg++, *data++);
-> +		if (ret < 0) {
-> +			dev_err(&client->dev, "I2C write error\n");
-> +			return ret;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int ad5933_i2c_read(struct i2c_client *client, u8 reg, u8 len, u8 *data)
-> +{
-> +	int ret;
-> +
-> +	while (len--) {
-> +		ret = i2c_smbus_read_byte_data(client, reg++);
-> +		if (ret < 0) {
-> +			dev_err(&client->dev, "I2C read error\n");
-> +			return ret;
-> +		}
-> +		*data++ = ret;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int ad5933_cmd(struct ad5933_state *st, unsigned char cmd)
-> +{
-> +	unsigned char dat = st->ctrl_hb | cmd;
-> +
-> +	return ad5933_i2c_write(st->client,
-> +			AD5933_REG_CONTROL_HB, 1, &dat);
-> +}
-> +
-> +static int ad5933_reset(struct ad5933_state *st)
-> +{
-> +	unsigned char dat = st->ctrl_lb | AD5933_CTRL_RESET;
-> +
-> +	return ad5933_i2c_write(st->client,
-> +			AD5933_REG_CONTROL_LB, 1, &dat);
-> +}
-> +
-> +static int ad5933_wait_busy(struct ad5933_state *st, unsigned char event)
-> +{
-> +	unsigned char val, timeout = AD5933_MAX_RETRIES;
-> +	int ret;
-> +
-> +	while (timeout--) {
-> +		ret =  ad5933_i2c_read(st->client, AD5933_REG_STATUS, 1, &val);
-> +		if (ret < 0)
-> +			return ret;
-> +		if (val & event)
-> +			return val;
-> +		cpu_relax();
-> +		mdelay(1);
-> +	}
-> +
-> +	return -EAGAIN;
-> +}
-> +
-> +static int ad5933_set_freq(struct ad5933_state *st,
-> +			   unsigned int reg, unsigned long freq)
-> +{
-> +	unsigned long long freqreg;
-> +	union {
-> +		__be32 d32;
-> +		u8 d8[4];
-> +	} dat;
-> +
-> +	freqreg = (u64)freq * (u64)(1 << 27);
-> +	do_div(freqreg, st->mclk_hz / 4);
-> +
-> +	switch (reg) {
-> +	case AD5933_REG_FREQ_START:
-> +		st->freq_start = freq;
-> +		break;
-> +	case AD5933_REG_FREQ_INC:
-> +		st->freq_inc = freq;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	dat.d32 = cpu_to_be32(freqreg);
-> +	return ad5933_i2c_write(st->client, reg, 3, &dat.d8[1]);
-> +}
-> +
-> +static int ad5933_setup(struct ad5933_state *st)
-> +{
-> +	__be16 dat;
-> +	int ret;
-> +
-> +	ret = ad5933_reset(st);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ad5933_set_freq(st, AD5933_REG_FREQ_START, 10000);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ad5933_set_freq(st, AD5933_REG_FREQ_INC, 200);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	st->settling_cycles = 10;
-> +	dat = cpu_to_be16(st->settling_cycles);
-> +
-> +	ret = ad5933_i2c_write(st->client,
-> +			       AD5933_REG_SETTLING_CYCLES,
-> +			       2, (u8 *)&dat);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	st->freq_points = 100;
-> +	dat = cpu_to_be16(st->freq_points);
-> +
-> +	return ad5933_i2c_write(st->client, AD5933_REG_INC_NUM, 2, (u8 *)&dat);
-> +}
-> +
-> +static void ad5933_calc_out_ranges(struct ad5933_state *st)
-> +{
-> +	int i;
-> +	unsigned int normalized_3v3[4] = {1980, 198, 383, 970};
-> +
-> +	for (i = 0; i < 4; i++)
-> +		st->range_avail[i] = normalized_3v3[i] * st->vref_mv / 3300;
-> +}
-> +
-> +/*
-> + * handles: AD5933_REG_FREQ_START and AD5933_REG_FREQ_INC
-> + */
-> +
-> +static ssize_t ad5933_show_frequency(struct device *dev,
-> +				     struct device_attribute *attr,
-> +				     char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> +	int ret;
-> +	unsigned long long freqreg;
-> +	union {
-> +		__be32 d32;
-> +		u8 d8[4];
-> +	} dat;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad5933_i2c_read(st->client, this_attr->address, 3, &dat.d8[1]);
-> +	iio_device_release_direct_mode(indio_dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	freqreg = be32_to_cpu(dat.d32) & 0xFFFFFF;
-> +
-> +	freqreg = (u64)freqreg * (u64)(st->mclk_hz / 4);
-> +	do_div(freqreg, 1 << 27);
-> +
-> +	return sprintf(buf, "%d\n", (int)freqreg);
-> +}
-> +
-> +static ssize_t ad5933_store_frequency(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf,
-> +				      size_t len)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> +	unsigned long val;
-> +	int ret;
-> +
-> +	ret = kstrtoul(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val > AD5933_MAX_OUTPUT_FREQ_Hz)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad5933_set_freq(st, this_attr->address, val);
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return ret ? ret : len;
-> +}
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_freq_start, 0644,
-> +			ad5933_show_frequency,
-> +			ad5933_store_frequency,
-> +			AD5933_REG_FREQ_START);
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_freq_increment, 0644,
-> +			ad5933_show_frequency,
-> +			ad5933_store_frequency,
-> +			AD5933_REG_FREQ_INC);
-> +
-> +static ssize_t ad5933_show(struct device *dev,
-> +			   struct device_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> +	int ret = 0, len = 0;
-> +
-> +	mutex_lock(&st->lock);
-> +	switch ((u32)this_attr->address) {
-> +	case AD5933_OUT_RANGE:
-> +		len = sprintf(buf, "%u\n",
-> +			      st->range_avail[(st->ctrl_hb >> 1) & 0x3]);
-> +		break;
-> +	case AD5933_OUT_RANGE_AVAIL:
-> +		len = sprintf(buf, "%u %u %u %u\n", st->range_avail[0],
-> +			      st->range_avail[3], st->range_avail[2],
-> +			      st->range_avail[1]);
-> +		break;
-> +	case AD5933_OUT_SETTLING_CYCLES:
-> +		len = sprintf(buf, "%d\n", st->settling_cycles);
-> +		break;
-> +	case AD5933_IN_PGA_GAIN:
-> +		len = sprintf(buf, "%s\n",
-> +			      (st->ctrl_hb & AD5933_CTRL_PGA_GAIN_1) ?
-> +			      "1" : "0.2");
-> +		break;
-> +	case AD5933_IN_PGA_GAIN_AVAIL:
-> +		len = sprintf(buf, "1 0.2\n");
-> +		break;
-> +	case AD5933_FREQ_POINTS:
-> +		len = sprintf(buf, "%d\n", st->freq_points);
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	mutex_unlock(&st->lock);
-> +	return ret ? ret : len;
-> +}
-> +
-> +static ssize_t ad5933_store(struct device *dev,
-> +			    struct device_attribute *attr,
-> +			    const char *buf,
-> +			    size_t len)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> +	u16 val;
-> +	int i, ret = 0;
-> +	__be16 dat;
-> +
-> +	if (this_attr->address != AD5933_IN_PGA_GAIN) {
-> +		ret = kstrtou16(buf, 10, &val);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +	mutex_lock(&st->lock);
-> +	switch ((u32)this_attr->address) {
-> +	case AD5933_OUT_RANGE:
-> +		ret = -EINVAL;
-> +		for (i = 0; i < 4; i++)
-> +			if (val == st->range_avail[i]) {
-> +				st->ctrl_hb &= ~AD5933_CTRL_RANGE(0x3);
-> +				st->ctrl_hb |= AD5933_CTRL_RANGE(i);
-> +				ret = ad5933_cmd(st, 0);
-> +				break;
-> +			}
-> +		break;
-> +	case AD5933_IN_PGA_GAIN:
-> +		if (sysfs_streq(buf, "1")) {
-> +			st->ctrl_hb |= AD5933_CTRL_PGA_GAIN_1;
-> +		} else if (sysfs_streq(buf, "0.2")) {
-> +			st->ctrl_hb &= ~AD5933_CTRL_PGA_GAIN_1;
-> +		} else {
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +		ret = ad5933_cmd(st, 0);
-> +		break;
-> +	case AD5933_OUT_SETTLING_CYCLES:
-> +		val = clamp(val, (u16)0, (u16)0x7FF);
-> +		st->settling_cycles = val;
-> +
-> +		/* 2x, 4x handling, see datasheet */
-> +		if (val > 1022)
-> +			val = (val >> 2) | (3 << 9);
-> +		else if (val > 511)
-> +			val = (val >> 1) | (1 << 9);
-> +
-> +		dat = cpu_to_be16(val);
-> +		ret = ad5933_i2c_write(st->client,
-> +				       AD5933_REG_SETTLING_CYCLES,
-> +				       2, (u8 *)&dat);
-> +		break;
-> +	case AD5933_FREQ_POINTS:
-> +		val = clamp(val, (u16)0, (u16)511);
-> +		st->freq_points = val;
-> +
-> +		dat = cpu_to_be16(val);
-> +		ret = ad5933_i2c_write(st->client, AD5933_REG_INC_NUM, 2,
-> +				       (u8 *)&dat);
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	mutex_unlock(&st->lock);
-> +	iio_device_release_direct_mode(indio_dev);
-> +	return ret ? ret : len;
-> +}
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_scale, 0644,
-> +			ad5933_show,
-> +			ad5933_store,
-> +			AD5933_OUT_RANGE);
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_scale_available, 0444,
-> +			ad5933_show,
-> +			NULL,
-> +			AD5933_OUT_RANGE_AVAIL);
-> +
-> +static IIO_DEVICE_ATTR(in_voltage0_scale, 0644,
-> +			ad5933_show,
-> +			ad5933_store,
-> +			AD5933_IN_PGA_GAIN);
-> +
-> +static IIO_DEVICE_ATTR(in_voltage0_scale_available, 0444,
-> +			ad5933_show,
-> +			NULL,
-> +			AD5933_IN_PGA_GAIN_AVAIL);
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_freq_points, 0644,
-> +			ad5933_show,
-> +			ad5933_store,
-> +			AD5933_FREQ_POINTS);
-> +
-> +static IIO_DEVICE_ATTR(out_voltage0_settling_cycles, 0644,
-> +			ad5933_show,
-> +			ad5933_store,
-> +			AD5933_OUT_SETTLING_CYCLES);
-> +
-> +/* note:
-> + * ideally we would handle the scale attributes via the iio_info
-> + * (read|write)_raw methods, however this part is a untypical since we
-> + * don't create dedicated sysfs channel attributes for out0 and in0.
-> + */
-
-This could be a really old comment.  I don't think there is anything
-preventing us having a channel defining these now...  Just don't
-have a the raw or processed bit set.
-
-> +static struct attribute *ad5933_attributes[] = {
-> +	&iio_dev_attr_out_voltage0_scale.dev_attr.attr,
-> +	&iio_dev_attr_out_voltage0_scale_available.dev_attr.attr,
-> +	&iio_dev_attr_out_voltage0_freq_start.dev_attr.attr,
-> +	&iio_dev_attr_out_voltage0_freq_increment.dev_attr.attr,
-> +	&iio_dev_attr_out_voltage0_freq_points.dev_attr.attr,
-
-There is a whole set of ABI in here that is non standard.  It all
-needs documenting.
-
-> +	&iio_dev_attr_out_voltage0_settling_cycles.dev_attr.attr,
-> +	&iio_dev_attr_in_voltage0_scale.dev_attr.attr,
-> +	&iio_dev_attr_in_voltage0_scale_available.dev_attr.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group ad5933_attribute_group = {
-> +	.attrs = ad5933_attributes,
-> +};
-> +
-> +static int ad5933_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val,
-> +			   int *val2,
-> +			   long m)
-> +{
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	__be16 dat;
-> +	int ret;
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = iio_device_claim_direct_mode(indio_dev);
-> +		if (ret)
-> +			return ret;
-> +		ret = ad5933_cmd(st, AD5933_CTRL_MEASURE_TEMP);
-> +		if (ret < 0)
-> +			goto out;
-> +		ret = ad5933_wait_busy(st, AD5933_STAT_TEMP_VALID);
-> +		if (ret < 0)
-> +			goto out;
-> +
-> +		ret = ad5933_i2c_read(st->client,
-> +				      AD5933_REG_TEMP_DATA,
-> +				      2, (u8 *)&dat);
-> +		if (ret < 0)
-> +			goto out;
-> +		iio_device_release_direct_mode(indio_dev);
-> +		*val = sign_extend32(be16_to_cpu(dat), 13);
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = 1000;
-> +		*val2 = 5;
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	}
-> +
-> +	return -EINVAL;
-> +out:
-> +	iio_device_release_direct_mode(indio_dev);
-> +	return ret;
-> +}
-> +
-> +static const struct iio_info ad5933_info = {
-> +	.read_raw = ad5933_read_raw,
-> +	.attrs = &ad5933_attribute_group,
-> +};
-> +
-> +static int ad5933_ring_preenable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (bitmap_empty(indio_dev->active_scan_mask, indio_dev->masklength))
-> +		return -EINVAL;
-> +
-> +	ret = ad5933_reset(st);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ad5933_cmd(st, AD5933_CTRL_STANDBY);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ad5933_cmd(st, AD5933_CTRL_INIT_START_FREQ);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	st->state = AD5933_CTRL_INIT_START_FREQ;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad5933_ring_postenable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +
-> +	/* AD5933_CTRL_INIT_START_FREQ:
-Multiline comment syntax as below.
-> +	 * High Q complex circuits require a long time to reach steady state.
-> +	 * To facilitate the measurement of such impedances, this mode allows
-> +	 * the user full control of the settling time requirement before
-> +	 * entering start frequency sweep mode where the impedance measurement
-> +	 * takes place. In this mode the impedance is excited with the
-> +	 * programmed start frequency (ad5933_ring_preenable),
-> +	 * but no measurement takes place.
-> +	 */
-> +
-> +	schedule_delayed_work(&st->work,
-> +			      msecs_to_jiffies(AD5933_INIT_EXCITATION_TIME_ms));
-> +	return 0;
-> +}
-> +
-> +static int ad5933_ring_postdisable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +
-> +	cancel_delayed_work_sync(&st->work);
-> +	return ad5933_cmd(st, AD5933_CTRL_POWER_DOWN);
-> +}
-> +
-> +static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
-> +	.preenable = ad5933_ring_preenable,
-> +	.postenable = ad5933_ring_postenable,
-> +	.postdisable = ad5933_ring_postdisable,
-> +};
-> +
-> +static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
-> +{
-> +	struct iio_buffer *buffer;
-> +
-> +	buffer = iio_kfifo_allocate();
-> +	if (!buffer)
-> +		return -ENOMEM;
-> +
-> +	iio_device_attach_buffer(indio_dev, buffer);
-> +
-> +	/* Ring buffer functions - here trigger setup related */
-> +	indio_dev->setup_ops = &ad5933_ring_setup_ops;
-> +
-> +	return 0;
-> +}
-> +
-> +static void ad5933_work(struct work_struct *work)
-> +{
-> +	struct ad5933_state *st = container_of(work,
-> +		struct ad5933_state, work.work);
-> +	struct iio_dev *indio_dev = i2c_get_clientdata(st->client);
-> +	__be16 buf[2];
-> +	int val[2];
-> +	unsigned char status;
-> +	int ret;
-> +
-> +	if (st->state == AD5933_CTRL_INIT_START_FREQ) {
-> +		/* start sweep */
-> +		ad5933_cmd(st, AD5933_CTRL_START_SWEEP);
-> +		st->state = AD5933_CTRL_START_SWEEP;
-> +		schedule_delayed_work(&st->work, st->poll_time_jiffies);
-> +		return;
-> +	}
-> +
-> +	ret = ad5933_i2c_read(st->client, AD5933_REG_STATUS, 1, &status);
-> +	if (ret)
-> +		return;
-> +
-> +	if (status & AD5933_STAT_DATA_VALID) {
-> +		int scan_count = bitmap_weight(indio_dev->active_scan_mask,
-> +					       indio_dev->masklength);
-> +		ret = ad5933_i2c_read(st->client,
-> +				test_bit(1, indio_dev->active_scan_mask) ?
-> +				AD5933_REG_REAL_DATA : AD5933_REG_IMAG_DATA,
-> +				scan_count * 2, (u8 *)buf);
-> +		if (ret)
-> +			return;
-> +
-> +		if (scan_count == 2) {
-> +			val[0] = be16_to_cpu(buf[0]);
-> +			val[1] = be16_to_cpu(buf[1]);
-> +		} else {
-> +			val[0] = be16_to_cpu(buf[0]);
-> +		}
-> +		iio_push_to_buffers(indio_dev, val);
-> +	} else {
-> +		/* no data available - try again later */
-> +		schedule_delayed_work(&st->work, st->poll_time_jiffies);
-> +		return;
-> +	}
-> +
-> +	if (status & AD5933_STAT_SWEEP_DONE) {
-> +		/* last sample received - power down do
-/*
- * last sample received...
-> +		 * nothing until the ring enable is toggled
-> +		 */
-> +		ad5933_cmd(st, AD5933_CTRL_POWER_DOWN);
-> +	} else {
-> +		/* we just received a valid datum, move on to the next */
-> +		ad5933_cmd(st, AD5933_CTRL_INC_FREQ);
-> +		schedule_delayed_work(&st->work, st->poll_time_jiffies);
-> +	}
-> +}
-> +
-> +static int ad5933_probe(struct i2c_client *client,
-> +			const struct i2c_device_id *id)
-> +{
-> +	int ret;
-> +	struct ad5933_state *st;
-> +	struct iio_dev *indio_dev;
-> +	unsigned long ext_clk_hz = 0;
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, indio_dev);
-> +	st->client = client;
-> +
-> +	mutex_init(&st->lock);
-> +
-> +	st->reg = devm_regulator_get(&client->dev, "vdd");
-> +	if (IS_ERR(st->reg))
-> +		return PTR_ERR(st->reg);
-> +
-> +	ret = regulator_enable(st->reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "Failed to enable specified VDD supply\n");
-> +		return ret;
-> +	}
-> +	ret = regulator_get_voltage(st->reg);
-> +
-> +	if (ret < 0)
-> +		goto error_disable_reg;
-> +
-> +	st->vref_mv = ret / 1000;
-> +
-> +	st->mclk = devm_clk_get(&client->dev, "mclk");
-> +	if (IS_ERR(st->mclk) && PTR_ERR(st->mclk) != -ENOENT) {
-> +		ret = PTR_ERR(st->mclk);
-> +		goto error_disable_reg;
-> +	}
-> +
-> +	if (!IS_ERR(st->mclk)) {
-> +		ret = clk_prepare_enable(st->mclk);
-> +		if (ret < 0)
-> +			goto error_disable_reg;
-> +		ext_clk_hz = clk_get_rate(st->mclk);
-> +	}
-> +
-> +	if (ext_clk_hz) {
-> +		st->mclk_hz = ext_clk_hz;
-> +		st->ctrl_lb = AD5933_CTRL_EXT_SYSCLK;
-> +	} else {
-> +		st->mclk_hz = AD5933_INT_OSC_FREQ_Hz;
-> +		st->ctrl_lb = AD5933_CTRL_INT_SYSCLK;
-> +	}
-> +
-> +	ad5933_calc_out_ranges(st);
-> +	INIT_DELAYED_WORK(&st->work, ad5933_work);
-> +	st->poll_time_jiffies = msecs_to_jiffies(AD5933_POLL_TIME_ms);
-> +
-> +	indio_dev->dev.parent = &client->dev;
-> +	indio_dev->info = &ad5933_info;
-> +	indio_dev->name = id->name;
-> +	indio_dev->modes = (INDIO_BUFFER_SOFTWARE | INDIO_DIRECT_MODE);
-> +	indio_dev->channels = ad5933_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
-> +
-> +	ret = ad5933_register_ring_funcs_and_init(indio_dev);
-> +	if (ret)
-> +		goto error_disable_mclk;
-> +
-> +	ret = ad5933_setup(st);
-> +	if (ret)
-> +		goto error_unreg_ring;
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret)
-> +		goto error_unreg_ring;
-> +
-> +	return 0;
-> +
-> +error_unreg_ring:
-> +	iio_kfifo_free(indio_dev->buffer);
-> +error_disable_mclk:
-> +	clk_disable_unprepare(st->mclk);
-> +error_disable_reg:
-> +	regulator_disable(st->reg);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad5933_remove(struct i2c_client *client)
-> +{
-> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> +	struct ad5933_state *st = iio_priv(indio_dev);
-> +
-> +	iio_device_unregister(indio_dev);
-> +	iio_kfifo_free(indio_dev->buffer);
-> +	regulator_disable(st->reg);
-> +	clk_disable_unprepare(st->mclk);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id ad5933_id[] = {
-> +	{ "ad5933", 0 },
-> +	{ "ad5934", 0 },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i2c, ad5933_id);
-> +
-> +static const struct of_device_id ad5933_of_match[] = {
-> +	{ .compatible = "adi,ad5933" },
-> +	{ .compatible = "adi,ad5934" },
-> +	{ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, ad5933_of_match);
-> +
-> +static struct i2c_driver ad5933_driver = {
-> +	.driver = {
-> +		.name = "ad5933",
-> +		.of_match_table = ad5933_of_match,
-> +	},
-> +	.probe = ad5933_probe,
-> +	.remove = ad5933_remove,
-> +	.id_table = ad5933_id,
-> +};
-> +module_i2c_driver(ad5933_driver);
-> +
-> +MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices AD5933 Impedance Conv. Network Analyzer");
-> +MODULE_LICENSE("GPL v2");
-
-
+>
+> greg k-h
