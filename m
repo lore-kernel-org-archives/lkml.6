@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3E0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1552CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1A020844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80A12075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895354;
-	bh=HVpm9Lb4K5qp1tA6cHfxiOp92axP7qcC0HNtDVENUFY=;
+	s=default; t=1549895358;
+	bh=fgJXysnpcU3d7ODoHZ+wLjwnEuj7qLwi34vj/ClCLPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bkRXMC9Ab1ACoWFPmpBd0pWb6DkyEvDSmBf8aG45CJbjJz+WUvtJX3b9Yvi/IWauB
-	 iKp+AplswzPt4zsifj1MHIlrF4hm89AEVYsk47rce7YObPAk94YBgvlMGp5t67i9HO
-	 kqWDo8chvbi5uaTZ0ho/mKGOvDOZ4NuDxiHaSEbg=
+	b=072ryMF1/Lex2MG6cUdCmFiDyG60/8e6OT0M+R6Us5zjRHNT1XR5m5jyWy6ljp18d
+	 mLbLCWmmtjmsobv4IfES5GwB+KlqcICnqJjmdXdGtnqwUVu/l1OVh+6GVeWOHh3A+Z
+	 81S3yPpb4+CMybWpcSoJYB5bptxQdcncC5cARAQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfBKO3M (ORCPT
+        id S1729964AbfBKO3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:29:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:29:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729344AbfBKO3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:29:06 -0500
+        id S1727441AbfBKO3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8A4620675;
-        Mon, 11 Feb 2019 14:29:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AF1D20675;
+        Mon, 11 Feb 2019 14:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895345;
-        bh=HVpm9Lb4K5qp1tA6cHfxiOp92axP7qcC0HNtDVENUFY=;
+        s=default; t=1549895354;
+        bh=fgJXysnpcU3d7ODoHZ+wLjwnEuj7qLwi34vj/ClCLPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QMULZZOl/Phg+1fc4PvrqgOSxBZs2yNOi8v5TNHc/wVj3Om3IAlSjGps/UhQ5/AOK
-         5C9pFVz6ToPbzL5QNoyW/OY52m+eiB86rP3VZMdMk1tHBdxkhAsCjkzz6/5d1geqv4
-         asD371+3OJNnbio+FxLZxjpLEsujHXdV7yH5qIvg=
+        b=QPP2NWI+qg+mO37+SJwsMjgA5Qk1coTWhEESkE/aTjUSWFZK/lD4awuPNMG5olDTQ
+         cz/GmXwlD0A9rkz/v0wBvYEI5oBZgLbZN7JNyriTQH8vqCVGIJOH1m1dpv4B91sTZa
+         CsMjQrIvf2zC6wJjszWKjoOt4yB4METJk609tDMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 173/352] mmc: meson-mx-sdio: check devm_kasprintf for failure
-Date:   Mon, 11 Feb 2019 15:16:40 +0100
-Message-Id: <20190211141858.093633165@linuxfoundation.org>
+Subject: [PATCH 4.20 146/352] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 11 Feb 2019 15:16:13 +0100
+Message-Id: <20190211141855.878181497@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,46 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b0d06f1cb0e2079a3c64fb6e27c19d9a55c723a1 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-devm_kasprintf() may return NULL on failure of internal allocation thus
-the assignments to  init.name  are not safe if not checked. On error
-meson_mx_mmc_register_clks() returns negative values so -ENOMEM in the
-(unlikely) failure case of devm_kasprintf() should be fine here.
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: ed80a13bb4c4 ("mmc: meson-mx-sdio: Add a driver for the Amlogic Meson8 and Meson8b SoCs")
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/meson-mx-sdio.c | 6 ++++++
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-index abe253c262a2..ec980bda071c 100644
---- a/drivers/mmc/host/meson-mx-sdio.c
-+++ b/drivers/mmc/host/meson-mx-sdio.c
-@@ -596,6 +596,9 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
- 	init.name = devm_kasprintf(host->controller_dev, GFP_KERNEL,
- 				   "%s#fixed_factor",
- 				   dev_name(host->controller_dev));
-+	if (!init.name)
-+		return -ENOMEM;
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 6fcfbbd907a5..e13d8814cfa4 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
+ 
+ #include "clk.h"
+ 
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -411,6 +413,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
+ 
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
 +
- 	init.ops = &clk_fixed_factor_ops;
- 	init.flags = 0;
- 	init.parent_names = &clk_fixed_factor_parent;
-@@ -612,6 +615,9 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
- 	clk_div_parent = __clk_get_name(host->fixed_factor_clk);
- 	init.name = devm_kasprintf(host->controller_dev, GFP_KERNEL,
- 				   "%s#div", dev_name(host->controller_dev));
-+	if (!init.name)
-+		return -ENOMEM;
-+
- 	init.ops = &clk_divider_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
- 	init.parent_names = &clk_div_parent;
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
