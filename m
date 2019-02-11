@@ -2,197 +2,321 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD99C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2107C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E9120844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="vXI9ElYY"
+	by mail.kernel.org (Postfix) with ESMTP id 6755B20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549895796;
+	bh=yyVaqq8FV0mh2LdBQDOLEjFPMju99FodN0appzUY2lk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dLsHM1g7AXvxbhoGhtTpLwISNams2JkDha8wTkhsqkdm00BYq4sq4HICJtPSvFJgT
+	 DwusEFAeeUv8JVJR+kH/G2inig0D3U41hb4IraN1g9p2EeqzqrKfdW/FFA5yYUJE2y
+	 jJGQQrxHC/nIDvEDHgUI0Q0AhzXhC9YYXb/pN1J0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfBKOgc (ORCPT
+        id S1731276AbfBKOge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Feb 2019 09:36:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731259AbfBKOgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 09:36:32 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43975 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731254AbfBKOg3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:29 -0500
-Received: by mail-qt1-f196.google.com with SMTP id y4so12303766qtc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:36:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vRHtThFL07ujd2GIaElnGUBE4PoM9k17DABoMsWEQ+U=;
-        b=vXI9ElYYEh4ySl/Go32AtAJuEVPTPLKri77UOQWX/E9mrjXwDXjlaxNtSwasmkzKwS
-         VZCdR44kQ+IpH3S4+DvSwRiIulMBo2fz53T3R0kJ/W5ikZLVkaO1qLWcAIZArcLrRC7b
-         Yewc0LgAscAkUJ+RukCeMJTPSRUKZKEetMLMo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vRHtThFL07ujd2GIaElnGUBE4PoM9k17DABoMsWEQ+U=;
-        b=saQmbJRwm0oIeY4GzPXO5iT/iowAmvCvkdWWjGHXoTr67jEoqVCZPcK7BH8eta9Neo
-         ep3TaHkby1+EFkyCPKVsFdUW8h2OnQWO674SnVPl/mzPdFQCoS4CxiCvnA5axaZoAmOy
-         ZBISjo5+7qiKs1IzH4PBZXMNHLI8lKoDdK8PWXSJ6s+btGnph4uGoSiwZSHUcvrcnWwS
-         e+Vv51vSc4JFvTsc2tyfJybD1gCVWbBAkL3wP52OMLylMjknB9cL1f5heiR6okFHeG5K
-         sftVrrkyfopYRJfKebhnOARGz6iebI5ZnXBGICJ27QhTiqkyX/2fQaxaoe//k4BN5dck
-         60vg==
-X-Gm-Message-State: AHQUAuYCdBRrUlseMNFuaK2E423RGWRjifoB3Q+9r40EUPZB1X2hO+VQ
-        ytCdzolLVTL3oHLLNCHp7Z55YbcHnr4=
-X-Google-Smtp-Source: AHgI3IbiDPCtJLmse8/hwBkt3R1lcWARGroM5/jvxARQjRn3YdywUFJTPt7bODGWraQPTs652feHxA==
-X-Received: by 2002:ac8:66cc:: with SMTP id m12mr28004514qtp.374.1549895787747;
-        Mon, 11 Feb 2019 06:36:27 -0800 (PST)
-Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id q30sm16216712qtq.20.2019.02.11.06.36.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 06:36:26 -0800 (PST)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EE2920700;
+        Mon, 11 Feb 2019 14:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895791;
+        bh=yyVaqq8FV0mh2LdBQDOLEjFPMju99FodN0appzUY2lk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=B9BrsdMbZEwCnkOTF5kI3ByOA0aOkWN6f8uTN01l6L4UHvQwdroBwCNFQDzU/JWxj
+         m6FrhhpxWJ3gvxhtCLvEB4LU7d4/c+V5ug2Fc9YrhDQs9/ToILkHf8ZMRmV7M3xSUN
+         hvVO211fnWnSjbTBLEE7z5vALcfG9gzuPUdznMmc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atishp04@gmail.com, dancol@google.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        gregkh@linuxfoundation.org, Jonathan Corbet <corbet@lwn.net>,
-        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        paulmck@linux.vnet.ibm.com,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        rdunlap@infradead.org, rostedt@goodmis.org,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, yhs@fb.com
-Subject: [PATCH v2 2/2] Add selftests for module build using in-kernel headers
-Date:   Mon, 11 Feb 2019 09:36:00 -0500
-Message-Id: <20190211143600.15021-2-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-In-Reply-To: <20190211143600.15021-1-joel@joelfernandes.org>
-References: <20190211143600.15021-1-joel@joelfernandes.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 4.20 324/352] HID: debug: fix the ring buffer implementation
+Date:   Mon, 11 Feb 2019 15:19:11 +0100
+Message-Id: <20190211141907.452498741@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This test tries to build a module successfully using the in-kernel
-headers found in /proc/kheaders.txz.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Verified pass and fail scenarios by running:
-make -C tools/testing/selftests TARGETS=kheaders run_tests
+------------------
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+From: Vladis Dronov <vdronov@redhat.com>
+
+commit 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035 upstream.
+
+Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
+is strange allowing lost or corrupted data. After commit 717adfdaf147
+("HID: debug: check length before copy_to_user()") it is possible to enter
+an infinite loop in hid_debug_events_read() by providing 0 as count, this
+locks up a system. Fix this by rewriting the ring buffer implementation
+with kfifo and simplify the code.
+
+This fixes CVE-2019-3819.
+
+v2: fix an execution logic and add a comment
+v3: use __set_current_state() instead of set_current_state()
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
+Cc: stable@vger.kernel.org # v4.18+
+Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
+Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/testing/selftests/Makefile              |  1 +
- tools/testing/selftests/kheaders/Makefile     |  5 +++++
- tools/testing/selftests/kheaders/config       |  1 +
- .../kheaders/run_kheaders_modbuild.sh         | 18 +++++++++++++++++
- .../selftests/kheaders/testmod/Makefile       |  3 +++
- .../testing/selftests/kheaders/testmod/test.c | 20 +++++++++++++++++++
- 6 files changed, 48 insertions(+)
- create mode 100644 tools/testing/selftests/kheaders/Makefile
- create mode 100644 tools/testing/selftests/kheaders/config
- create mode 100755 tools/testing/selftests/kheaders/run_kheaders_modbuild.sh
- create mode 100644 tools/testing/selftests/kheaders/testmod/Makefile
- create mode 100644 tools/testing/selftests/kheaders/testmod/test.c
+ drivers/hid/hid-debug.c   |  120 ++++++++++++++++++----------------------------
+ include/linux/hid-debug.h |    9 +--
+ 2 files changed, 51 insertions(+), 78 deletions(-)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 400ee81a3043..5a9287fddd0d 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -20,6 +20,7 @@ TARGETS += intel_pstate
- TARGETS += ipc
- TARGETS += ir
- TARGETS += kcmp
-+TARGETS += kheaders
- TARGETS += kvm
- TARGETS += lib
- TARGETS += membarrier
-diff --git a/tools/testing/selftests/kheaders/Makefile b/tools/testing/selftests/kheaders/Makefile
-new file mode 100644
-index 000000000000..51035ab0732b
---- /dev/null
-+++ b/tools/testing/selftests/kheaders/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -30,6 +30,7 @@
+ 
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
++#include <linux/kfifo.h>
+ #include <linux/sched/signal.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
+@@ -661,17 +662,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
+ /* enqueue string to 'events' ring buffer */
+ void hid_debug_event(struct hid_device *hdev, char *buf)
+ {
+-	unsigned i;
+ 	struct hid_debug_list *list;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
+-	list_for_each_entry(list, &hdev->debug_list, node) {
+-		for (i = 0; buf[i]; i++)
+-			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
+-				buf[i];
+-		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
+-        }
++	list_for_each_entry(list, &hdev->debug_list, node)
++		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
+ 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
+ 
+ 	wake_up_interruptible(&hdev->debug_wait);
+@@ -722,8 +718,7 @@ void hid_dump_input(struct hid_device *h
+ 	hid_debug_event(hdev, buf);
+ 
+ 	kfree(buf);
+-        wake_up_interruptible(&hdev->debug_wait);
+-
++	wake_up_interruptible(&hdev->debug_wait);
+ }
+ EXPORT_SYMBOL_GPL(hid_dump_input);
+ 
+@@ -1088,8 +1083,8 @@ static int hid_debug_events_open(struct
+ 		goto out;
+ 	}
+ 
+-	if (!(list->hid_debug_buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
+-		err = -ENOMEM;
++	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
++	if (err) {
+ 		kfree(list);
+ 		goto out;
+ 	}
+@@ -1109,77 +1104,57 @@ static ssize_t hid_debug_events_read(str
+ 		size_t count, loff_t *ppos)
+ {
+ 	struct hid_debug_list *list = file->private_data;
+-	int ret = 0, len;
++	int ret = 0, copied;
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	mutex_lock(&list->read_mutex);
+-	while (ret == 0) {
+-		if (list->head == list->tail) {
+-			add_wait_queue(&list->hdev->debug_wait, &wait);
+-			set_current_state(TASK_INTERRUPTIBLE);
+-
+-			while (list->head == list->tail) {
+-				if (file->f_flags & O_NONBLOCK) {
+-					ret = -EAGAIN;
+-					break;
+-				}
+-				if (signal_pending(current)) {
+-					ret = -ERESTARTSYS;
+-					break;
+-				}
+-
+-				if (!list->hdev || !list->hdev->debug) {
+-					ret = -EIO;
+-					set_current_state(TASK_RUNNING);
+-					goto out;
+-				}
+-
+-				/* allow O_NONBLOCK from other threads */
+-				mutex_unlock(&list->read_mutex);
+-				schedule();
+-				mutex_lock(&list->read_mutex);
+-				set_current_state(TASK_INTERRUPTIBLE);
++	if (kfifo_is_empty(&list->hid_debug_fifo)) {
++		add_wait_queue(&list->hdev->debug_wait, &wait);
++		set_current_state(TASK_INTERRUPTIBLE);
 +
-+TEST_PROGS := run_kheaders_modbuild.sh
++		while (kfifo_is_empty(&list->hid_debug_fifo)) {
++			if (file->f_flags & O_NONBLOCK) {
++				ret = -EAGAIN;
++				break;
+ 			}
+ 
+-			set_current_state(TASK_RUNNING);
+-			remove_wait_queue(&list->hdev->debug_wait, &wait);
+-		}
+-
+-		if (ret)
+-			goto out;
+-
+-		/* pass the ringbuffer contents to userspace */
+-copy_rest:
+-		if (list->tail == list->head)
+-			goto out;
+-		if (list->tail > list->head) {
+-			len = list->tail - list->head;
+-			if (len > count)
+-				len = count;
+-
+-			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
+-				goto out;
++			if (signal_pending(current)) {
++				ret = -ERESTARTSYS;
++				break;
+ 			}
+-			ret += len;
+-			list->head += len;
+-		} else {
+-			len = HID_DEBUG_BUFSIZE - list->head;
+-			if (len > count)
+-				len = count;
+ 
+-			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
++			/* if list->hdev is NULL we cannot remove_wait_queue().
++			 * if list->hdev->debug is 0 then hid_debug_unregister()
++			 * was already called and list->hdev is being destroyed.
++			 * if we add remove_wait_queue() here we can hit a race.
++			 */
++			if (!list->hdev || !list->hdev->debug) {
++				ret = -EIO;
++				set_current_state(TASK_RUNNING);
+ 				goto out;
+ 			}
+-			list->head = 0;
+-			ret += len;
+-			count -= len;
+-			if (count > 0)
+-				goto copy_rest;
 +
-+include ../lib.mk
-diff --git a/tools/testing/selftests/kheaders/config b/tools/testing/selftests/kheaders/config
-new file mode 100644
-index 000000000000..5221f9fb5e79
---- /dev/null
-+++ b/tools/testing/selftests/kheaders/config
-@@ -0,0 +1 @@
-+CONFIG_IKHEADERS_PROC=y
-diff --git a/tools/testing/selftests/kheaders/run_kheaders_modbuild.sh b/tools/testing/selftests/kheaders/run_kheaders_modbuild.sh
-new file mode 100755
-index 000000000000..69d6fa237661
---- /dev/null
-+++ b/tools/testing/selftests/kheaders/run_kheaders_modbuild.sh
-@@ -0,0 +1,18 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
++			/* allow O_NONBLOCK from other threads */
++			mutex_unlock(&list->read_mutex);
++			schedule();
++			mutex_lock(&list->read_mutex);
++			set_current_state(TASK_INTERRUPTIBLE);
+ 		}
+ 
++		__set_current_state(TASK_RUNNING);
++		remove_wait_queue(&list->hdev->debug_wait, &wait);
 +
-+HEADERS_XZ=/proc/kheaders.txz
-+TMP_DIR_HEADERS=$(mktemp -d)
-+TMP_DIR_MODULE=$(mktemp -d)
-+SPATH="$(dirname "$(readlink -f "$0")")"
++		if (ret)
++			goto out;
+ 	}
 +
-+tar -xvf $HEADERS_XZ -C $TMP_DIR_HEADERS > /dev/null
++	/* pass the fifo content to userspace, locking is not needed with only
++	 * one concurrent reader and one concurrent writer
++	 */
++	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
++	if (ret)
++		goto out;
++	ret = copied;
+ out:
+ 	mutex_unlock(&list->read_mutex);
+ 	return ret;
+@@ -1190,7 +1165,7 @@ static __poll_t hid_debug_events_poll(st
+ 	struct hid_debug_list *list = file->private_data;
+ 
+ 	poll_wait(file, &list->hdev->debug_wait, wait);
+-	if (list->head != list->tail)
++	if (!kfifo_is_empty(&list->hid_debug_fifo))
+ 		return EPOLLIN | EPOLLRDNORM;
+ 	if (!list->hdev->debug)
+ 		return EPOLLERR | EPOLLHUP;
+@@ -1205,7 +1180,7 @@ static int hid_debug_events_release(stru
+ 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
+ 	list_del(&list->node);
+ 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
+-	kfree(list->hid_debug_buf);
++	kfifo_free(&list->hid_debug_fifo);
+ 	kfree(list);
+ 
+ 	return 0;
+@@ -1256,4 +1231,3 @@ void hid_debug_exit(void)
+ {
+ 	debugfs_remove_recursive(hid_debug_root);
+ }
+-
+--- a/include/linux/hid-debug.h
++++ b/include/linux/hid-debug.h
+@@ -24,7 +24,10 @@
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 
++#include <linux/kfifo.h>
 +
-+cp -r $SPATH/testmod $TMP_DIR_MODULE/
-+
-+pushd $TMP_DIR_MODULE/testmod > /dev/null
-+make -C $TMP_DIR_HEADERS M=$(pwd) modules
-+popd > /dev/null
-+
-+rm -rf $TMP_DIR_HEADERS
-+rm -rf $TMP_DIR_MODULE
-diff --git a/tools/testing/selftests/kheaders/testmod/Makefile b/tools/testing/selftests/kheaders/testmod/Makefile
-new file mode 100644
-index 000000000000..7083e28706e8
---- /dev/null
-+++ b/tools/testing/selftests/kheaders/testmod/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-m += test.o
-diff --git a/tools/testing/selftests/kheaders/testmod/test.c b/tools/testing/selftests/kheaders/testmod/test.c
-new file mode 100644
-index 000000000000..9178bf6f0cc8
---- /dev/null
-+++ b/tools/testing/selftests/kheaders/testmod/test.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+
-+static int __init hello_init(void)
-+{
-+	printk(KERN_INFO "Hello, world\n");
-+	return 0;
-+}
-+
-+static void __exit hello_exit(void)
-+{
-+	printk(KERN_INFO "Goodbye, world\n");
-+}
-+
-+module_init(hello_init);
-+module_exit(hello_exit);
-+MODULE_LICENSE("GPL");
--- 
-2.20.1.791.gb4d0f1c61a-goog
+ #define HID_DEBUG_BUFSIZE 512
++#define HID_DEBUG_FIFOSIZE 512
+ 
+ void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
+ void hid_dump_report(struct hid_device *, int , u8 *, int);
+@@ -37,11 +40,8 @@ void hid_debug_init(void);
+ void hid_debug_exit(void);
+ void hid_debug_event(struct hid_device *, char *);
+ 
+-
+ struct hid_debug_list {
+-	char *hid_debug_buf;
+-	int head;
+-	int tail;
++	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
+ 	struct fasync_struct *fasync;
+ 	struct hid_device *hdev;
+ 	struct list_head node;
+@@ -64,4 +64,3 @@ struct hid_debug_list {
+ #endif
+ 
+ #endif
+-
+
 
