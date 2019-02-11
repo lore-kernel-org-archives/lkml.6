@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EFEC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6223BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D419222B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31FCD222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897863;
-	bh=hF79k1znq7kOd5uWAGWBCTYDu92ThgjmK6xNJedYFfU=;
+	s=default; t=1549897868;
+	bh=uz7rMEihz5eL8nhlgaSsNKG1F3ME1l6X89x2mvC5omE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SwhPvkukVPwsw0eYJNID2wzknd7MA3MhVIDGQcVe6vrWKYfvWZpWX9FcojIe6OKlk
-	 gQFBqb5+m4k74Ix8/+31PEQqCz4eeVnzWxhHID1T94jBJaZFnaYUxL0gquYj1kivte
-	 8MjAHoUI3AWTteg2c1HluW2i/l+XnUlps3BR19LY=
+	b=vVo1ftFi2jY3LcURL8BQr/pt1cHYCpfZmRdVD/Bu4rR6J8cQ1gmK2MUAobtS67HS+
+	 04o0vaUNlolgYXNbLEvLQsTcVyzDRMTC+WsYLPmczq7+3zHov2LYq6ek33gcGaPZJV
+	 bjTpMnvOkwpSJ3BUMVe+oclyTh0KydthqLPIhPUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391534AbfBKPLC (ORCPT
+        id S2391416AbfBKPLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:11:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:11:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404030AbfBKPK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:59 -0500
+        id S2391535AbfBKPLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:11:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E543222B2;
-        Mon, 11 Feb 2019 15:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C88D222B2;
+        Mon, 11 Feb 2019 15:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897858;
-        bh=hF79k1znq7kOd5uWAGWBCTYDu92ThgjmK6xNJedYFfU=;
+        s=default; t=1549897861;
+        bh=uz7rMEihz5eL8nhlgaSsNKG1F3ME1l6X89x2mvC5omE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HBS0oMD6NXm8wSO4LTEdueBeAfDauqBr+y11VOIr1EnwyjVwtR70n5U6NQrcaDcj8
-         yk2BpvtbB5ZkS2sfZZ3bq6cJH77z9ChhSdTITHpN5y9fRK1icrg5LmNC1nyVmKxpaw
-         2Qr4elnqtswNzaOK7O7irtXYFD+LWgAC6YbNm1fQ=
+        b=RMkbzWL5sdMFVwGKa1P0pV8yJXU2tProz/qUA+/zkZZTaLn9a7eVy3d6RVHuS5kZn
+         WhKp0ZKt+vYgDTYLhm0lNWDYHMeIik0xhJyfKqzziC+WkC+UXpfJnVyUa2Zn6L34WP
+         XkxZ7YPZldmclct0HQW/WAiY8IKDiWK4W6qj15AQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 116/137] fuse: call pipe_buf_release() under pipe lock
-Date:   Mon, 11 Feb 2019 15:19:57 +0100
-Message-Id: <20190211141822.949669526@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 117/137] fuse: decrement NR_WRITEBACK_TEMP on the right page
+Date:   Mon, 11 Feb 2019 15:19:58 +0100
+Message-Id: <20190211141823.028391175@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -65,40 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 9509941e9c534920ccc4771ae70bd6cbbe79df1c upstream.
+commit a2ebba824106dabe79937a9f29a875f837e1b6d4 upstream.
 
-Some of the pipe_buf_release() handlers seem to assume that the pipe is
-locked - in particular, anon_pipe_buf_release() accesses pipe->tmp_page
-without taking any extra locks. From a glance through the callers of
-pipe_buf_release(), it looks like FUSE is the only one that calls
-pipe_buf_release() without having the pipe locked.
+NR_WRITEBACK_TEMP is accounted on the temporary page in the request, not
+the page cache page.
 
-This bug should only lead to a memory leak, nothing terrible.
-
-Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: 8b284dc47291 ("fuse: writepages: handle same page rewrites")
+Cc: <stable@vger.kernel.org> # v3.13
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/fuse/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2018,8 +2018,10 @@ static ssize_t fuse_dev_splice_write(str
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1772,7 +1772,7 @@ static bool fuse_writepage_in_flight(str
+ 		spin_unlock(&fc->lock);
  
- 	ret = fuse_dev_do_write(fud, &cs, len);
- 
-+	pipe_lock(pipe);
- 	for (idx = 0; idx < nbuf; idx++)
- 		pipe_buf_release(pipe, &bufs[idx]);
-+	pipe_unlock(pipe);
- 
- out:
- 	kfree(bufs);
+ 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+-		dec_node_page_state(page, NR_WRITEBACK_TEMP);
++		dec_node_page_state(new_req->pages[0], NR_WRITEBACK_TEMP);
+ 		wb_writeout_inc(&bdi->wb);
+ 		fuse_writepage_free(fc, new_req);
+ 		fuse_request_free(new_req);
 
 
