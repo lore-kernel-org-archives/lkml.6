@@ -2,156 +2,147 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCADC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC78C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F2720863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 493C320863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuPgxwqI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfBKKqY (ORCPT
+        id S1727120AbfBKKqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:46:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53193 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKKqX (ORCPT
+        Mon, 11 Feb 2019 05:46:30 -0500
+Received: from mail-it1-f176.google.com ([209.85.166.176]:56245 "EHLO
+        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbfBKKqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:46:23 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BAk08v3498002
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 11 Feb 2019 02:46:00 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BAjxMk3497999;
-        Mon, 11 Feb 2019 02:45:59 -0800
-Date:   Mon, 11 Feb 2019 02:45:59 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-bef9f2714f8cf036af3af52a15f534d2cc40c230@git.kernel.org>
-Cc:     vincent.weaver@maine.edu, tglx@linutronix.de, eranian@google.com,
-        dsahern@gmail.com, alexander.shishkin@linux.intel.com,
-        hpa@zytor.com, acme@redhat.com, mingo@kernel.org, jolsa@redhat.com,
-        peterz@infradead.org, namhyung@kernel.org,
-        torvalds@linux-foundation.org, kan.liang@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
-          torvalds@linux-foundation.org, namhyung@kernel.org,
-          dsahern@gmail.com, eranian@google.com,
-          alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
-          tglx@linutronix.de, acme@redhat.com, mingo@kernel.org,
-          hpa@zytor.com
-In-Reply-To: <1549319013-4522-4-git-send-email-kan.liang@linux.intel.com>
-References: <1549319013-4522-4-git-send-email-kan.liang@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Clean up counter freezing quirk
-Git-Commit-ID: bef9f2714f8cf036af3af52a15f534d2cc40c230
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Feb 2019 05:46:30 -0500
+Received: by mail-it1-f176.google.com with SMTP id f18so14096302itb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/0SCk7wts1poY0owXc+0Q+x4dSOuXa2jqfsnZFbObJ4=;
+        b=LuPgxwqI2IPxvhjGWRNzCjvam+FLu3Gjkgo6kop8HPd9oyJ3dfqp4UefYJ2vYlR7CF
+         K3Vu1r1e11eZCNcF7a5W4RWEBWnstHB1OogWcm8mfqGUkcSLqaKCyg7AGt/U+Md18JfQ
+         gMdhYTMVcjPruH3Eq/PHmCtuHkD0y+fNa5TUOL9p4pF8GHdB0oykahLY9koWo0S08+Zk
+         GbT81cZcf1dK0rhNs0WYywPftDPIMBEJw2sXWxtVLbvpLs/iJvBpoiS0mPOBXrNxau58
+         p9wHLpYzyQk75P6wSUfAUBM3o1OZBRui1huuuRUcUwkkrY9FqjgXdSP6aVRrrCU62RQB
+         LiZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/0SCk7wts1poY0owXc+0Q+x4dSOuXa2jqfsnZFbObJ4=;
+        b=iQsyYJ60bT/qSHFaogvD4rOVQb5p4rR4oJMsd+eNypTzGtyEL6nJCE/JQRkvUYigzS
+         1BCtEXkdvv4KO+viisvyx7cb1bxlk1Oc3Fn9zDfwzoInTwlTe4OGNla9I/ulc68BjSbd
+         3drcE79jRyZMkSLJiq+kqcpS+vW5zDvrhd31KBK82yx+S0jbvDndU90meYpryRKRrFUk
+         vjcGj/4mrKyX7vo3SKYNOVcSXQF40BqAj3HtJqvhopbezjg3+nm7smTC8GgeNhHsV1ex
+         iCjKWHlyt3eIViDfSychJI+XEM9eXwWAjIq0e+oI3AWhyrIosjYce79DK092rPT9HVbY
+         42rg==
+X-Gm-Message-State: AHQUAuZ1pYr5TKjlZEGPKxBnqHlQF7XoQaM0W9chKwGqgJRnawWMAHKM
+        PCCBUdaHSed7+2/lwBktqXOvSL3gLAOVQvAgkHBmaw==
+X-Google-Smtp-Source: AHgI3IYVqfT0cMYyNysVp//9YVxL9IS6oRo6Bhp/QHrgZo25UDKAR3pwRmw2LR99g9Wkb/FyCyUicuT//deQLHOi7+c=
+X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr3920149itk.71.1549881988975;
+ Mon, 11 Feb 2019 02:46:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190208191024.GL674@zn.tnic> <20190208204451.GA14024@roeck-us.net>
+ <20190208215322.GO674@zn.tnic> <20190211002220.GD14948@zn.tnic>
+ <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
+ <20190211095547.GB1651@localhost.localdomain> <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
+ <20190211101011.GA5333@localhost.localdomain> <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
+ <20190211102426.GA19618@zn.tnic> <20190211104254.GB19618@zn.tnic>
+In-Reply-To: <20190211104254.GB19618@zn.tnic>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 11 Feb 2019 10:46:18 +0000
+Message-ID: <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in boot_params
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bef9f2714f8cf036af3af52a15f534d2cc40c230
-Gitweb:     https://git.kernel.org/tip/bef9f2714f8cf036af3af52a15f534d2cc40c230
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 4 Feb 2019 14:23:32 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Feb 2019 08:00:41 +0100
+On Mon, 11 Feb 2019 at 11:43, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Feb 11, 2019 at 11:24:26AM +0100, Borislav Petkov wrote:
+> > It is only an observation for now though...
+>
+> Ok, now I did this:
+>
+>         for (i = 0; i < systab->nr_tables; i++) {
+>                 acpi_physical_address table;
+>                 void *config_tables;
+>                 efi_guid_t guid;
+>
+>                 if ((unsigned long)systab->tables >> 32)                        <---
+>                         asm volatile("1:\n jmp 1b");
+>
+>                 config_tables = (void *)(systab->tables + size * i);
+>
+> It did stop at the endless loop there which would mean that
+> systab->tables is simply pointing somewhere into the weeds.
+>
 
-perf/x86/intel: Clean up counter freezing quirk
 
-Clean up counter freezing quirk to use the new facility to check for
-min microcode revisions.
+As I pointed out in my previous reply, systab will be the wrong type
+on 32-bit firmware, it needs to be efi_system_table_32_t
 
-Rename the counter freezing quirk related functions. Because other
-platforms, e.g. Goldmont, also needs to call the quirk.
 
-Only check the boot CPU, assuming models and features are consistent
-over all CPUs.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: bp@alien8.de
-Link: https://lkml.kernel.org/r/1549319013-4522-4-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/core.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 87f4ed203c07..c79c0165d838 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3923,23 +3923,18 @@ static __init void intel_nehalem_quirk(void)
- 	}
- }
- 
--static bool intel_glp_counter_freezing_broken(int cpu)
--{
--	u32 rev = UINT_MAX; /* default to broken for unknown stepping */
--
--	switch (cpu_data(cpu).x86_stepping) {
--	case 1:
--		rev = 0x28;
--		break;
--	case 8:
--		rev = 0x6;
--		break;
--	}
-+static const struct x86_cpu_desc counter_freezing_ucodes[] = {
-+	INTEL_CPU_DESC(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	1, 0x00000028),
-+	INTEL_CPU_DESC(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	8, 0x00000006),
-+	{}
-+};
- 
--	return (cpu_data(cpu).microcode < rev);
-+static bool intel_counter_freezing_broken(void)
-+{
-+	return !x86_cpu_has_min_microcode_rev(counter_freezing_ucodes);
- }
- 
--static __init void intel_glp_counter_freezing_quirk(void)
-+static __init void intel_counter_freezing_quirk(void)
- {
- 	/* Check if it's already disabled */
- 	if (disable_counter_freezing)
-@@ -3949,7 +3944,7 @@ static __init void intel_glp_counter_freezing_quirk(void)
- 	 * If the system starts with the wrong ucode, leave the
- 	 * counter-freezing feature permanently disabled.
- 	 */
--	if (intel_glp_counter_freezing_broken(raw_smp_processor_id())) {
-+	if (intel_counter_freezing_broken()) {
- 		pr_info("PMU counter freezing disabled due to CPU errata,"
- 			"please upgrade microcode\n");
- 		x86_pmu.counter_freezing = false;
-@@ -4326,7 +4321,7 @@ __init int intel_pmu_init(void)
- 		break;
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
--		x86_add_quirk(intel_glp_counter_freezing_quirk);
-+		x86_add_quirk(intel_counter_freezing_quirk);
- 		memcpy(hw_cache_event_ids, glp_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glp_hw_cache_extra_regs,
+> Asm is:
+>
+> ---
+> # arch/x86/boot/compressed/acpi.c:96:                   asm volatile("1:\n jmp 1b");
+> #APP
+> # 96 "arch/x86/boot/compressed/acpi.c" 1
+>         1:
+>  jmp 1b
+> # 0 "" 2
+> #NO_APP
+>         movq    112(%rcx), %rdi # systab_147->tables, _31
+> .L29:
+> # arch/x86/boot/compressed/acpi.c:98:           config_tables = (void *)(systab->tables + size * i);
+>         addq    %r9, %rdi       # ivtmp.64, config_tables
+> # arch/x86/boot/compressed/acpi.c:104:                  guid = tmp_table->guid;
+> ---
+>
+> and RDI is
+>
+> rdi            0x630646870
+>
+> in gdb.
+>
+> systab itself gets computed to something low: 0x3fedb010.
+>
+> Hmmm. Could it be that that EDK BIOS image is buggy?
+>
+> [    0.000000] efi: EFI v2.70 by EDK II
+> [    0.000000] efi:  SMBIOS=0x3feb9000  ACPI=0x3fee7000  ACPI 2.0=0x3fee7014  MEMATTR=0x3f524110
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
