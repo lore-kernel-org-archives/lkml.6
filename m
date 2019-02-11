@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F889C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF6EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B7621773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8F1206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897204;
-	bh=yMEyF96nlmL8h4jjM3M4zj/XhLZeLh91c8jTTDmA2po=;
+	s=default; t=1549897208;
+	bh=YIQxzfIiqJJ1fUqwrobmz865riNIHrSgSlvHB0ZKL0c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mfojXaia2LokuEbnAbC+hP/uaSgR1WuI6lvU7GzOSdjtAY0YGaUC1J6IofQKWuZrB
-	 alsMCzBNwCzD/LJJqAhNZ0aK6SCI+aBARZGTvwWNji8gf75oUD+nWdJSjUlUFl/UdR
-	 YjmESh/ju7ZIHDeJy5Y9uR8Jd0sXyjB0CQtGTo9Q=
+	b=Vd/KchVsrcB4vB9OOvLIa5nwWbknRDn+JtjDb2DH8M7IicrM2TpNkq6Ocy+KjEud2
+	 rYJO+vJFvnw8DHDqrOuc4nUtbSL0Q7Txe7b+R6BcsXIJl2Igr+YfRB0kuysInbz3Un
+	 R1V37x/xV7G/jyC/K/re6JaIi12CDYmbPSmPGWmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389921AbfBKPAD (ORCPT
+        id S2389934AbfBKPAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727896AbfBKPAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:00 -0500
+        id S1727896AbfBKPAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F1B2206BA;
-        Mon, 11 Feb 2019 14:59:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B65E7206BA;
+        Mon, 11 Feb 2019 15:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897199;
-        bh=yMEyF96nlmL8h4jjM3M4zj/XhLZeLh91c8jTTDmA2po=;
+        s=default; t=1549897203;
+        bh=YIQxzfIiqJJ1fUqwrobmz865riNIHrSgSlvHB0ZKL0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FX5sReRxvXZ8N/J0mEZCt96XZ4DxYw1gNdBLOG2XiDzvvkN/0W+IDLWaADqrT1T4X
-         QQGTIkjMC9OdJabI6zTt7TLN0U9dQcVHfhekj42tNYpFXAaDK9kQQjFzbhKUL+CS+Z
-         9J9DUdjAE7mdd2TMrASc7Mso6qOgnPQ/rsDNY4yY=
+        b=OpLVBqbJaLKH9hzJNkLc1c6BULijZynuly7MUZWPmsRis7lW0Ndlu9Wz8V9LkVvS7
+         xnCf0S+2UhyW1XAYJ6e2IuN2vxbJdAGwj/lkIdx98SNcapZanNKT+yTcj8Tazi1qTz
+         bHMAy6+a2wiu5QkZhfZpYl/qrkyZcnWzRVLpYjRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 116/205] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
-Date:   Mon, 11 Feb 2019 15:18:34 +0100
-Message-Id: <20190211141836.065387155@linuxfoundation.org>
+Subject: [PATCH 4.14 125/205] i40e: define proper net_device::neigh_priv_len
+Date:   Mon, 11 Feb 2019 15:18:43 +0100
+Message-Id: <20190211141836.657246083@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,79 +68,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
+[ Upstream commit 31389b53b3e0b535867af9090a5d19ec64768d55 ]
 
-The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
-concurrently executed.
-The two functions both access a possible shared variable "frame.skb".
+Out of bound read reported by KASan.
 
-This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
-which is called by cw1200_bss_info_changed(). The free operation is
-protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+i40iw_net_event() reads unconditionally 16 bytes from
+neigh->primary_key while the memory allocated for
+"neighbour" struct is evaluated in neigh_alloc() as
 
-In cw1200_hw_scan(), this shared variable is accessed without the
-protection of the mutex lock "priv->conf_mutex".
-Thus, concurrency use-after-free bugs may occur.
+  tbl->entry_size + dev->neigh_priv_len
 
-To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
-mutex_unlock(&priv->conf_mutex) are moved to the places, which can
-protect the accesses to the shared variable.
+where "dev" is a net_device.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+But the driver does not setup dev->neigh_priv_len and
+we read beyond the neigh entry allocated memory,
+so the patch in the next mail fixes this.
+
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
-index cc2ce60f4f09..f22c8ae15ad8 100644
---- a/drivers/net/wireless/st/cw1200/scan.c
-+++ b/drivers/net/wireless/st/cw1200/scan.c
-@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
- 		return -EINVAL;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 904b42becd45..5d47a51e74eb 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -9772,6 +9772,9 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
+ 	ether_addr_copy(netdev->dev_addr, mac_addr);
+ 	ether_addr_copy(netdev->perm_addr, mac_addr);
  
-+	/* will be unlocked in cw1200_scan_work() */
-+	down(&priv->scan.lock);
-+	mutex_lock(&priv->conf_mutex);
++	/* i40iw_net_event() reads 16 bytes from neigh->primary_key */
++	netdev->neigh_priv_len = sizeof(u32) * 4;
 +
- 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
- 		req->ie_len);
- 	if (!frame.skb)
-@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->ie_len)
- 		skb_put_data(frame.skb, req->ie, req->ie_len);
- 
--	/* will be unlocked in cw1200_scan_work() */
--	down(&priv->scan.lock);
--	mutex_lock(&priv->conf_mutex);
--
- 	ret = wsm_set_template_frame(priv, &frame);
- 	if (!ret) {
- 		/* Host want to be the probe responder. */
- 		ret = wsm_set_probe_responder(priv, true);
- 	}
- 	if (ret) {
-+		dev_kfree_skb(frame.skb);
- 		mutex_unlock(&priv->conf_mutex);
- 		up(&priv->scan.lock);
--		dev_kfree_skb(frame.skb);
- 		return ret;
- 	}
- 
-@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 		++priv->scan.n_ssids;
- 	}
- 
--	mutex_unlock(&priv->conf_mutex);
--
- 	if (frame.skb)
- 		dev_kfree_skb(frame.skb);
-+	mutex_unlock(&priv->conf_mutex);
- 	queue_work(priv->workqueue, &priv->scan.work);
- 	return 0;
- }
+ 	netdev->priv_flags |= IFF_UNICAST_FLT;
+ 	netdev->priv_flags |= IFF_SUPP_NOFCS;
+ 	/* Setup netdev TC information */
 -- 
 2.19.1
 
