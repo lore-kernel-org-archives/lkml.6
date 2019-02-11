@@ -2,115 +2,168 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEEDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED3FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D5620873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44F8E214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:42:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OzmXhmms"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QqZdBu/e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfBKDlF (ORCPT
+        id S1726814AbfBKDmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:41:05 -0500
-Received: from mail-ot1-f73.google.com ([209.85.210.73]:56829 "EHLO
-        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfBKDlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:41:04 -0500
-Received: by mail-ot1-f73.google.com with SMTP id q11so9733966otl.23
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 19:41:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=qWPDfOlXuramtow7KSV1zTmIzyR/XqoO0VQtrh+RpUI=;
-        b=OzmXhmms4G5PmaQpbOY3Wr5Ov+FXdEZCIxbI6mgH1uBU7JB39ElREirrztNifIEgb6
-         E8vj5BduBgp1yk2iOSl7mv1mHYKC1z6JNVLktsUMdoF7WmyBb69uExzwkOBP1LSwS3cv
-         el6+2o4NmLEZ6x1OOOGkB4mTaq3PwuCzh6aDn20xyADlsGYc1FwW9ny+Ub7lIYltvuTK
-         HDbCykvUy58IccJKrjmB7VxHZo8abr3wWAOwWSZT9XHCUMcOqzDOQmfc1+CvURH+XAQb
-         Xv9arLUDpvKzEPKvBgJE2PEKCuDIUf5EttyC2OFKSO+VquqidoPzzn1H2i/aWlVNI8xX
-         H00w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=qWPDfOlXuramtow7KSV1zTmIzyR/XqoO0VQtrh+RpUI=;
-        b=plzF3CtmU4UBtKJpngRbJjK/gUoXo2B7E5D4X1gPppszIX/LQsVJf51VV6Q5g0dpP7
-         aFyF1P/gxVPwlPrWD9TwCCMxzY58ikzNoxsW7YMwk/8q7WxnIjbplpFgIU1I0XpZS804
-         tVdEz6Dc2FIVznQYy0rH3d+wUlGGx2/hTW4GNOanUCI5o9n2zxl7lzp74rvSiblnVoRJ
-         CkTVOaa1ZDrYwrv/kxVxetzqaIyLiSPqcFGXrONUt2Ypxwhe1HA8xBLq0z2aSYNnXMbR
-         RnRLxRvvWClwku4P9YLpKGBsncfQh8Ko5ZW4zY1P79sOT9J3U9B3+TNjXknbzSldRntz
-         dMAg==
-X-Gm-Message-State: AHQUAuYsDHiGTrE6OrqTfuEVkcjifKKeDNSHLjVIj37YbEoYBKPCocoa
-        AZAWjY7SC1syTy1OndM8Q9t225d9TcWFKE4=
-X-Google-Smtp-Source: AHgI3IZBz4Gd+NwrA2B5PfutrpzR9sWPcsJEhFCXzQSJcwUOTibbOmZpuHUSScHyQD07vCIfMK0m3NZKOKhOnH8=
-X-Received: by 2002:aca:5044:: with SMTP id e65mr2653040oib.11.1549856463576;
- Sun, 10 Feb 2019 19:41:03 -0800 (PST)
-Date:   Sun, 10 Feb 2019 19:40:21 -0800
-In-Reply-To: <20190205190849.GA2686@kunai>
-Message-Id: <20190211034021.242932-1-jsperbeck@google.com>
-Mime-Version: 1.0
-References: <20190205190849.GA2686@kunai>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH v2] i2c: core-smbus: don't trace smbus_reply data on errors
-From:   John Sperbeck <jsperbeck@google.com>
-To:     wsa@the-dreams.de
-Cc:     jsperbeck@google.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 10 Feb 2019 22:42:39 -0500
+Received: from ozlabs.org ([203.11.71.1]:36651 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726102AbfBKDmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 22:42:39 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43yWnk0gjLz9s5c;
+        Mon, 11 Feb 2019 14:42:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549856556;
+        bh=mIAzwWQFY/oHAvTc5ET7WklKxIjPBd5gqcZH9BfkMwI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QqZdBu/eCRGczsHVxUjuDuFpAyjxT7e91tDK4t0r6qpUK4j2NOycA7P2sMocb4RQw
+         rsxOLgcWmBIV3fyslZWnKjfYDnBJffslvXICm4Vw5n6nSPsmqnpqun5t0GqoUPxh4v
+         SiK9kCvZkcV/upucTkVH+qGIaz5LKEOgSi/jZDScjjmoTsW3wdy8RczbStIkG962Yn
+         MQuBS77VLIxGoLcahXfaWqkQmZ6PnYIXPwrYs8zFRqQKx5Jvb3Fzt/nREf6cHZg6pr
+         JPn6MBmwEI+XHG1pxfMvVYgmy3AQ3rDQFZOoZLrtbD0xwiEVPKDVbu6ZE3YL6/7HhM
+         uhhOADmUFyJ0g==
+Date:   Mon, 11 Feb 2019 14:42:22 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Igal Liberman <igall@marvell.com>,
+        Evan Wang <xswang@marvell.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>
+Subject: linux-next: manual merge of the phy-next tree with the net-next
+ tree
+Message-ID: <20190211144222.56663b44@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8TI7ikn2bMGd=VjdQLYPBZ0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If an smbus transfer fails, there's no guarantee that the output
-buffer was written.  So, avoid trying to show the output buffer when
-tracing after an error.  This was 'mostly harmless', but would trip
-up kasan checking if left-over cruft in byte 0 is a large length,
-causing us to read from unwritten memory.
+--Sig_/8TI7ikn2bMGd=VjdQLYPBZ0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: John Sperbeck <jsperbeck@google.com>
----
- drivers/i2c/i2c-core-smbus.c | 2 +-
- include/trace/events/smbus.h | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Hi all,
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index 9cd66cabb84f..132119112596 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
- trace:
- 	/* If enabled, the reply tracepoint is conditional on read_write. */
- 	trace_smbus_reply(adapter, addr, flags, read_write,
--			  command, protocol, data);
-+			  command, protocol, data, res);
- 	trace_smbus_result(adapter, addr, flags, read_write,
- 			   command, protocol, res);
- 
-diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
-index d2fb6e1d3e10..a4892a187842 100644
---- a/include/trace/events/smbus.h
-+++ b/include/trace/events/smbus.h
-@@ -138,9 +138,9 @@ TRACE_EVENT_CONDITION(smbus_reply,
- 	TP_PROTO(const struct i2c_adapter *adap,
- 		 u16 addr, unsigned short flags,
- 		 char read_write, u8 command, int protocol,
--		 const union i2c_smbus_data *data),
--	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
--	TP_CONDITION(read_write == I2C_SMBUS_READ),
-+		 const union i2c_smbus_data *data, int res),
-+	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
-+	TP_CONDITION(res >= 0 && read_write == I2C_SMBUS_READ),
- 	TP_STRUCT__entry(
- 		__field(int,	adapter_nr		)
- 		__field(__u16,	addr			)
--- 
-2.20.1.791.gb4d0f1c61a-goog
+Today's linux-next merge of the phy-next tree got conflicts in:
 
+  drivers/phy/marvell/Kconfig
+  drivers/phy/marvell/Makefile
+
+between commit:
+
+  14dc100b4411 ("phy: armada38x: add common phy support")
+
+from the net-next tree and commit:
+
+  9695375a3f4a ("phy: add A3700 COMPHY support")
+  cc8b7a0ae866 ("phy: add A3700 UTMI PHY driver")
+
+from the phy-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/phy/marvell/Kconfig
+index 224ea4e6a46d,b8e9dd38ad0d..000000000000
+--- a/drivers/phy/marvell/Kconfig
++++ b/drivers/phy/marvell/Kconfig
+@@@ -21,16 -21,27 +21,37 @@@ config PHY_BERLIN_US
+  	help
+  	  Enable this to support the USB PHY on Marvell Berlin SoCs.
+ =20
++ config PHY_MVEBU_A3700_COMPHY
++ 	tristate "Marvell A3700 comphy driver"
++ 	depends on ARCH_MVEBU || COMPILE_TEST
++ 	depends on OF
++ 	depends on HAVE_ARM_SMCCC
++ 	default y
++ 	select GENERIC_PHY
++ 	help
++ 	  This driver allows to control the comphy, a hardware block providing
++ 	  shared serdes PHYs on Marvell Armada 3700. Its serdes lanes can be
++ 	  used by various controllers: Ethernet, SATA, USB3, PCIe.
++=20
++ config PHY_MVEBU_A3700_UTMI
++ 	tristate "Marvell A3700 UTMI driver"
++ 	depends on ARCH_MVEBU || COMPILE_TEST
++ 	depends on OF
++ 	default y
++ 	select GENERIC_PHY
++ 	help
++ 	  Enable this to support Marvell A3700 UTMI PHY driver.
++=20
+ +config PHY_MVEBU_A38X_COMPHY
+ +	tristate "Marvell Armada 38x comphy driver"
+ +	depends on ARCH_MVEBU || COMPILE_TEST
+ +	depends on OF
+ +	select GENERIC_PHY
+ +	help
+ +	  This driver allows to control the comphy, an hardware block providing
+ +	  shared serdes PHYs on Marvell Armada 38x. Its serdes lanes can be
+ +	  used by various controllers (Ethernet, sata, usb, PCIe...).
+ +
+  config PHY_MVEBU_CP110_COMPHY
+  	tristate "Marvell CP110 comphy driver"
+  	depends on ARCH_MVEBU || COMPILE_TEST
+diff --cc drivers/phy/marvell/Makefile
+index 59b6c03ef756,82f291cf59ee..000000000000
+--- a/drivers/phy/marvell/Makefile
++++ b/drivers/phy/marvell/Makefile
+@@@ -2,7 -2,8 +2,9 @@@
+  obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+=3D phy-armada375-usb2.o
+  obj-$(CONFIG_PHY_BERLIN_SATA)		+=3D phy-berlin-sata.o
+  obj-$(CONFIG_PHY_BERLIN_USB)		+=3D phy-berlin-usb.o
++ obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+=3D phy-mvebu-a3700-comphy.o
++ obj-$(CONFIG_PHY_MVEBU_A3700_UTMI)	+=3D phy-mvebu-a3700-utmi.o
+ +obj-$(CONFIG_PHY_MVEBU_A38X_COMPHY)	+=3D phy-armada38x-comphy.o
+  obj-$(CONFIG_PHY_MVEBU_CP110_COMPHY)	+=3D phy-mvebu-cp110-comphy.o
+  obj-$(CONFIG_PHY_MVEBU_SATA)		+=3D phy-mvebu-sata.o
+  obj-$(CONFIG_PHY_PXA_28NM_HSIC)		+=3D phy-pxa-28nm-hsic.o
+
+--Sig_/8TI7ikn2bMGd=VjdQLYPBZ0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxg7x4ACgkQAVBC80lX
+0GzBIgf+IfI1WpbCKVbRMA2wC01SNGAG4oOI2wk6oo2EHuvD5o/24dnaDJLnuHVp
+Kx120GT3wW+ybOldhxvsuHOV7FjSAK9JvakggIxijWFxSW1Wn75wLl5E0294h3ar
+hrnYZxXLVdBEBKg1ucTuloiwxn4hzUSxMNBIBkkDXPyHbaAGTllf30NHB4o1jwd9
+M8eQfxIG8ZdDPipeZ59/f7pE+0rDchv+b/L4XO5Cdx29TAqE/zB2FRdmsbeGIfDL
+3c9h+QGDWwoluc+CHO3fR3RyxS5/VSk+5asrmyUJViu4iu8IOqfCsvez3S38oALh
+VeSmi5TJh+/BD0E5Zt770KhZ3KuePg==
+=7Cwj
+-----END PGP SIGNATURE-----
+
+--Sig_/8TI7ikn2bMGd=VjdQLYPBZ0--
