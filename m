@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20C9C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACACC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFBB222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 518C521B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899154;
-	bh=G85qHwDLfArJWdZYSDFofrcHveX3FiSqHJT4A/Weiig=;
+	s=default; t=1549899167;
+	bh=fzEglJfLX+DZkiLUlj/L1NaD9D4Blx3An39VcSpAoFU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c5leipnH9+FfvyT0wdD8wW7uAV4YeP48gHmzWuqvWY9X42CPElywmfOjFDi5BJ40O
-	 Xudrk8CLIFV2solkvL5+469UDFU+CGG7m4gg2cQGQUUclhW9qze+5lp1UZSI3qPZyd
-	 Z8UEa600HOlGD+weoE5TIO8yolSHAIwQLgjtSwHo=
+	b=Eo1K5ZhmP5tijs6uyBhcuPNohoz2fwdBTj62/mcNx+hntweWnL9n+dz1XW87uluz0
+	 mN+bqNs0BAo3rNMXRlZ6oPwYHrvOt3kSI2gVYzt3rtV5o+yi7yIqUvH7ec50bfOmXL
+	 Yh5lRl6HlD7COLFr0aqHz4sbmezCBo25fRHY2HaI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388989AbfBKPc1 (ORCPT
+        id S2389175AbfBKPcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:32:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41742 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:32:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388380AbfBKOyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:53 -0500
+        id S2388401AbfBKOy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24FC920700;
-        Mon, 11 Feb 2019 14:54:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1F432229E;
+        Mon, 11 Feb 2019 14:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896892;
-        bh=G85qHwDLfArJWdZYSDFofrcHveX3FiSqHJT4A/Weiig=;
+        s=default; t=1549896868;
+        bh=fzEglJfLX+DZkiLUlj/L1NaD9D4Blx3An39VcSpAoFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0BJdu8UKp4cS/b1WLGfjuKhunnqmHln6LVGNlPvusDMLfWhMM6li7bxmhuCN+ScJ0
-         fWpPuNiZD8uzF8niZ3ic2H/Y+oEMCndQEky9InJ4m8R5VZxnbXwexHMymJQY2G+G7N
-         kg2BKXSIHqnlMwOZnSb2q795GRAuMr0dBYbW7r8A=
+        b=UvdgMQIJrqfqNVm9JncDdm0gsp5SJR0DMwQPOEkqL9nmkMCUbK4A7qHzu/bwkLmH/
+         7Avw7QOs7gIoT+gJTWq7tutLWTpqShDVjQ4WoPjnc+p2XEj/VZGmP0T4QLAnfTq0A0
+         WW9DyYA5c+5UUUegQVF/17I00x5kmfN4Pli28ZQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frank Rowand <frank.rowand@sony.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 008/205] scsi: lpfc: Correct LCB RJT handling
-Date:   Mon, 11 Feb 2019 15:16:46 +0100
-Message-Id: <20190211141827.724556131@linuxfoundation.org>
+Subject: [PATCH 4.14 015/205] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 11 Feb 2019 15:16:53 +0100
+Message-Id: <20190211141828.149805362@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,35 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b114d9009d386276bfc3352289fc235781ae3353 ]
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-When LCB's are rejected, if beaconing was already in progress, the
-Reason Code Explanation was not being set. Should have been set to
-command in progress.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
+
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
+
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 91783dbdf10c..fffe8a643e25 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -5696,6 +5696,9 @@ error:
- 	stat = (struct ls_rjt *)(pcmd + sizeof(uint32_t));
- 	stat->un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index e9149d05d30b..f4e6565dd7a9 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -284,6 +284,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
  
-+	if (shdr_add_status == ADD_STATUS_OPERATION_ALREADY_ACTIVE)
-+		stat->un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
++	of_node_put(dn);
 +
- 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
- 	phba->fc_stat.elsXmitLSRJT++;
- 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
