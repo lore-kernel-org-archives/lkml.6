@@ -4,56 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DABC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28134222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D469B222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897937;
-	bh=QSpY9a+rdzG/HVNFEYO5DJluTu7OQcjkFLihhEhgLzA=;
+	s=default; t=1549897945;
+	bh=DrEnnnD9ZLAXfmtcIDh46HAQdpdJRYUCdCA6BK/FHx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qcIyg8Pl2x9PEAryXeD+XOnEMr64G8OznbgUSQoAXa1k2c29SGbSKaimL8IsIk5j9
-	 OwmMkvTC5Xl/ATyTL2QKFnde2EFl5aAu7M07/TFkT9qicWWWEUU7hH7h4T+BYTPH4Y
-	 xFy+fdV5juBPNnUAmv6D/Dl2HQqPUZYt66LIKP6k=
+	b=D51XE1yCPARXC8ITMp7GW4tML2W+z0CbP9pgLjl3v+IkhDrd0W3WaHbcj2TihfQjp
+	 OS382MZxSfGN0VcuHHHnMMVsyyFXigCtZ4GZa18wb7x8TuEwGLjJqyhqDCHJutPrHq
+	 KK4xsiFNdyQS9fmemE6PttaYlw40AA3Sg6hq8t98=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391730AbfBKPMP (ORCPT
+        id S2403803AbfBKPKW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:12:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60626 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391810AbfBKPKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:32 -0500
+        id S2391783AbfBKPKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 584FD222B9;
-        Mon, 11 Feb 2019 15:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87EEF222A7;
+        Mon, 11 Feb 2019 15:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897832;
-        bh=QSpY9a+rdzG/HVNFEYO5DJluTu7OQcjkFLihhEhgLzA=;
+        s=default; t=1549897819;
+        bh=DrEnnnD9ZLAXfmtcIDh46HAQdpdJRYUCdCA6BK/FHx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2XOh0vqQ+Q7dEjUcVWeBGIV6VCljCEdR0zvfmdyPqdoMf4nFuxJGequNMnUR0fO7q
-         2yChwOiFW7QzFJZRiAJrCZWir7J4hhkXQlCzaAjJPvfSZlSQaN4ZOt4gKiwnqZ/fWP
-         wWPb7l02pc0WNQepaKDv+UE1psp1Va/kk5CuWdgg=
+        b=kvZAHNB3XQItyCOvLKJJouml2r6gUd6sdnNocXqKhuGDwQ8OQCV5jAVusxAkTS+3S
+         RWlzn4t8/L3ofuh6idmrM/EPlvrBOAxsRLlpKwaNPRJ9rWg6SUb0/gutJ9cBX7ackP
+         idJRwnR+wmCNgSTAoPUV1gzoHRjhFH2igPhmlpcg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 131/137] perf/core: Dont WARN() for impossible ring-buffer sizes
-Date:   Mon, 11 Feb 2019 15:20:12 +0100
-Message-Id: <20190211141824.276887526@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
+        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 126/137] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
+Date:   Mon, 11 Feb 2019 15:20:07 +0100
+Message-Id: <20190211141823.853663861@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -72,55 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
+commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
 
-The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
-large its ringbuffer mmap should be. This can be configured to arbitrary
-values, which can be larger than the maximum possible allocation from
-kmalloc.
+Bugzilla: 1671930
 
-When this is configured to a suitably large value (e.g. thanks to the
-perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
-__alloc_pages_nodemask():
+Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
+memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
+when passed an operand that points to an MMIO address.  The page fault
+will use uninitialized kernel stack memory as the CR2 and error code.
 
-   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
+The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
+exit to userspace; however, it is not an easy fix, so for now just
+ensure that the error code and CR2 are zero.
 
-Let's avoid this by checking that the requested allocation is possible
-before calling kzalloc.
+Embargoed until Feb 7th 2019.
 
-Reported-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
+Cc: stable@kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/ring_buffer.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/x86.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -700,6 +700,9 @@ struct ring_buffer *rb_alloc(int nr_page
- 	size = sizeof(struct ring_buffer);
- 	size += nr_pages * sizeof(void *);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4513,6 +4513,13 @@ int kvm_read_guest_virt(struct kvm_vcpu
+ {
+ 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
  
-+	if (order_base_2(size) >= MAX_ORDER)
-+		goto fail;
-+
- 	rb = kzalloc(size, GFP_KERNEL);
- 	if (!rb)
- 		goto fail;
++	/*
++	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
++	 * is returned, but our callers are not ready for that and they blindly
++	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
++	 * uninitialized kernel stack memory into cr2 and error code.
++	 */
++	memset(exception, 0, sizeof(*exception));
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
+ 					  exception);
+ }
 
 
