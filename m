@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528FDC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137ECC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6982184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF3DC218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfBKNYi (ORCPT
+        id S1728081AbfBKNYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:24:38 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:60085 "EHLO
+        Mon, 11 Feb 2019 08:24:42 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52043 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfBKNYf (ORCPT
+        with ESMTP id S1728008AbfBKNYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:24:35 -0500
+        Mon, 11 Feb 2019 08:24:38 -0500
 X-Originating-IP: 90.88.22.177
 Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
         (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id B22B56000F;
-        Mon, 11 Feb 2019 13:24:31 +0000 (UTC)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id D5EDE6000D;
+        Mon, 11 Feb 2019 13:24:35 +0000 (UTC)
 From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 To:     Adrian Hunter <adrian.hunter@intel.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
@@ -33,10 +33,11 @@ To:     Adrian Hunter <adrian.hunter@intel.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 1/3] mmc: sdhci: use WP GPIO in sdhci_check_ro()
-Date:   Mon, 11 Feb 2019 14:23:40 +0100
-Message-Id: <20190211132342.31009-2-thomas.petazzoni@bootlin.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 3/3] mmc: sdhci-tegra: drop ->get_ro() implementation
+Date:   Mon, 11 Feb 2019 14:23:42 +0100
+Message-Id: <20190211132342.31009-4-thomas.petazzoni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211132342.31009-1-thomas.petazzoni@bootlin.com>
 References: <20190211132342.31009-1-thomas.petazzoni@bootlin.com>
@@ -47,81 +48,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though SDHCI controllers may have a dedicated WP pin that can be
-queried using the SDHCI_PRESENT_STATE register, some platforms may
-chose to use a separate regular GPIO to route the WP signal. Such a
-GPIO is typically represented using the wp-gpios property in the
-Device Tree.
-
-Unfortunately, the current sdhci_check_ro() function does not make use
-of such GPIO when available: it either uses a host controller specific
-->get_ro() operation, or uses the SDHCI_PRESENT_STATE. Several host
-controller specific ->get_ro() functions are implemented just to check
-a WP GPIO state.
-
-Instead of pushing this to more controller-specific implementations,
-let's handle this in the core SDHCI code, just like it is already done
-for the CD GPIO in sdhci_get_cd().
-
-The below patch simply changes sdhci_check_ro() to use the value of
-the WP GPIO if available. We need to adjust the prototype of the
-function to use a mmc_host* as argument instead of sdhci_host*, since
-the mmc_can_gpio_ro() and mmc_gpio_get_ro() helpers take a mmc_host*.
+The SDHCI core is know properly checking for the state of a WP GPIO,
+so there is no longer any need for the sdhci-tegra code to implement
+->get_ro() using mmc_gpio_get_ro().
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes since v1:
+ - Added Tested-by/Acked-by from Thierry Reding
 
- - As suggested by Adrian Hunter, call the ->get_ro() if it exists
-   before falling back to using mmc_gpio_get_ro(). Indeed, if the
-   controller-specific code has implemented a ->get_ro() callback, it
-   should take precedence over what the SDHCI core does.
-
-   Due to this change, I have not added Thierry Redding Reviewed-by.
-
- - Fix typo in the commit log noticed by Thierry Redding.
+Note: this patch has only been compiled tested, as I don't have the
+hardware to test it.
 ---
- drivers/mmc/host/sdhci.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index df05352b6a4a..e6682ea5f7c0 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2022,8 +2022,9 @@ static int sdhci_get_cd(struct mmc_host *mmc)
- 	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index e6ace31e2a41..6ed7323bf030 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -237,11 +237,6 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+ 	}
  }
  
--static int sdhci_check_ro(struct sdhci_host *host)
-+static int sdhci_check_ro(struct mmc_host *mmc)
+-static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+-{
+-	return mmc_gpio_get_ro(host->mmc);
+-}
+-
+ static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
  {
-+	struct sdhci_host *host = mmc_priv(mmc);
- 	unsigned long flags;
- 	int is_readonly;
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -837,7 +832,6 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+ }
  
-@@ -2033,6 +2034,8 @@ static int sdhci_check_ro(struct sdhci_host *host)
- 		is_readonly = 0;
- 	else if (host->ops->get_ro)
- 		is_readonly = host->ops->get_ro(host);
-+	else if (mmc_can_gpio_ro(mmc))
-+		is_readonly = mmc_gpio_get_ro(mmc);
- 	else
- 		is_readonly = !(sdhci_readl(host, SDHCI_PRESENT_STATE)
- 				& SDHCI_WRITE_PROTECT);
-@@ -2052,11 +2055,11 @@ static int sdhci_get_ro(struct mmc_host *mmc)
- 	int i, ro_count;
+ static const struct sdhci_ops tegra_sdhci_ops = {
+-	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
+@@ -893,7 +887,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+ };
  
- 	if (!(host->quirks & SDHCI_QUIRK_UNSTABLE_RO_DETECT))
--		return sdhci_check_ro(host);
-+		return sdhci_check_ro(mmc);
+ static const struct sdhci_ops tegra114_sdhci_ops = {
+-	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_w    = tegra_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+@@ -947,7 +940,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+ };
  
- 	ro_count = 0;
- 	for (i = 0; i < SAMPLE_COUNT; i++) {
--		if (sdhci_check_ro(host)) {
-+		if (sdhci_check_ro(mmc)) {
- 			if (++ro_count > SAMPLE_COUNT / 2)
- 				return 1;
- 		}
+ static const struct sdhci_ops tegra210_sdhci_ops = {
+-	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_w    = tegra210_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+@@ -980,7 +972,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+ };
+ 
+ static const struct sdhci_ops tegra186_sdhci_ops = {
+-	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
 -- 
 2.20.1
 
