@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8408BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0491121B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 552A421B68
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="spoQsBYL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t8yCDwGf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387910AbfBKTK4 (ORCPT
+        id S2387935AbfBKTLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:10:56 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37967 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732003AbfBKTKy (ORCPT
+        Mon, 11 Feb 2019 14:11:03 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34252 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732003AbfBKTK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:10:54 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so3932pfi.5;
-        Mon, 11 Feb 2019 11:10:54 -0800 (PST)
+        Mon, 11 Feb 2019 14:10:59 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j18so15229pfe.1;
+        Mon, 11 Feb 2019 11:10:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PtphDvmR0qKeN+UBu36HCt3kNK/VogT0oyGt8UI1w80=;
-        b=spoQsBYLruAe2gNmZRBItcN0oBivyr230rVfYZef/4xvMbtFpvaXVMAExm23wgPjBb
-         xaDR0Cds6Oir/q543dy+ipROwGpyQVbzhKEb0X0lGkd8anKb4DILSpbj3S/HtHO+1lyU
-         1tuX1SiZdXw/flJUVgymW2hj80PRENHW2afbomAb+h3o2chkqtxkxYGDd2BSa9mguiNg
-         ApMUNKE5oMhNb9RUaCXvbLVZMCaufsMn2EUqgMVtbiFN0Pv6kAg/Yd4T0sNsM7it1rYx
-         O4ARjF6WzumFJdLbv7WJhIeZCmd9pgntejakNtJyZcYU3BW8V6iIJ/OLz5SsvYmOU6ey
-         bvdw==
+        bh=QPgFt5j6UGQb+YmlyjgIvSlCGoFlyBm2NR9++YJ/iss=;
+        b=t8yCDwGfisKuIVMD1tXN+vqj45cMlPM2XmC78pl355j/537+oBFV3mapZqnNmlg+k0
+         NoQUOCWfKGYPJch0bYxXfo+Hz5T3OVDjUs2iddTX7edc76wz/hicWpluIMn6uawBRSak
+         EQuAcpqirdfhYdYb5oNPA/UGHWlEtp0DJbdMuI7v2K7uQTMWoB+Sm68latHf5turkcFg
+         lc8i5Bkaa53IUazdHwY0vsMTqr7bnj8xGVtnwfC9OTtL50ilvBaudJ+Xg8gTKarKtGT1
+         eota6GzH3QYlXbdcpLi1M3zZSKNX0Cy/s6jJG7HWiTgQMnJ2/IcOaV8SjvnTUu0zE2tY
+         WdGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PtphDvmR0qKeN+UBu36HCt3kNK/VogT0oyGt8UI1w80=;
-        b=i+wnPWxv/e3Wu/pw1U4gcdMyuipq2GQdJkBk7/VVtM9O+Mu+iwZyUjXGE+qNtm1Qmo
-         yQ+NlFAeT//eJsTEZNQqSFXYZe3QRU4kNy1xeTkphNr0KIevoGVj7hmMkbVSFeCD71w7
-         J8uWXX99oCgUbSLGXHnPhaU8SHJnYAnBHlU9FqAxAVOObX2YSPJT3IpOPSWvfQNbctkQ
-         rBHfskgB6wB3Dl11tsQp1qWbtfvZXp9jLxWz4VTLamV+eQ07h6raW7HrnbMOTzK+5BFW
-         EdNkJS68fq81fRRcdtN3xqfXB8wsUKsazirrYtkkMf2jHJB3E4RUKaXlX8Y9S9c4Ac5r
-         4wVA==
-X-Gm-Message-State: AHQUAuZSWlWFMX5a9Nn2c7demIz08sHgMlBY74P5S6KiHcIefcGkmYAl
-        ioGFeJRicceaAp06Yi0tnzV9Fu+z
-X-Google-Smtp-Source: AHgI3IZiDFGGoA6/CFFNyBEGs+nk4D0ltjldTClH6j/AfwsjfEVXKPb8Pr+uDdMTLUiMkMeEu0fBgw==
-X-Received: by 2002:a63:4e05:: with SMTP id c5mr3409661pgb.393.1549912253454;
-        Mon, 11 Feb 2019 11:10:53 -0800 (PST)
+        bh=QPgFt5j6UGQb+YmlyjgIvSlCGoFlyBm2NR9++YJ/iss=;
+        b=Hm3hVUasBDawC8Et+HGCyRpDEQN0gE2pgDmOmAffef1Vt5IJapKxZvGlHLikvxQDkD
+         rNeVMhVuaiE+TFCk1U3KTB9E4cnNEmBPJjcm9ECTWYT55YU63JG7RXO0ul+5DdWueKrO
+         8irZJ84Wnt4k8zNBZ5qETNUrGTQ9DQ6jKTG+FtoaRbELb4uqrUGa9AC+ftzcuH1aIvGI
+         2cgmOSKQbx3jEaOxJuEbUuwr+RSx6I1I5g46EH9SzjJ4ryGSWTIBN1xGwma4kqj/UPc2
+         JdhjYtMGzf8sB7arFqtPqefoackst8S5trlX2eUmSgxIHXwY5NYBwgcZ/kKJXLXBPyAP
+         cz5A==
+X-Gm-Message-State: AHQUAualiViVChEvR+bICYj8l1NltrwQG+a6wKZ6qpzvzkLQxgPMz6lP
+        +FPHx4+pUS7FB6nF0QUBqFMpkfGF
+X-Google-Smtp-Source: AHgI3IbzF9ES1nHxpxd9zZbML0Iess69DcezcjTNdVCNN8jZ4EAmJAJMimDCm+WnfBvme3z75hjLHQ==
+X-Received: by 2002:a62:6e07:: with SMTP id j7mr39117095pfc.135.1549912258113;
+        Mon, 11 Feb 2019 11:10:58 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id i24sm2167206pgg.14.2019.02.11.11.10.48
+        by smtp.gmail.com with ESMTPSA id i24sm2167206pgg.14.2019.02.11.11.10.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:10:52 -0800 (PST)
+        Mon, 11 Feb 2019 11:10:57 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v4 6/9] staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_GET/SET
-Date:   Mon, 11 Feb 2019 11:09:58 -0800
-Message-Id: <20190211191001.8623-7-f.fainelli@gmail.com>
+Subject: [PATCH net-next v4 7/9] net: dsa: Handle SWITCHDEV_PORT_ATTR_GET/SET
+Date:   Mon, 11 Feb 2019 11:09:59 -0800
+Message-Id: <20190211191001.8623-8-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190211191001.8623-1-f.fainelli@gmail.com>
 References: <20190211191001.8623-1-f.fainelli@gmail.com>
@@ -79,26 +78,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Following patches will change the way we communicate getting or setting
 a port's attribute and use a blocking notifier to perform those tasks.
 
-Prepare ethsw to support receiving notifier events targeting
+Prepare DSA to support receiving notifier events targeting
 SWITCHDEV_PORT_ATTR_GET/SET and simply translate that into the existing
-swdev_port_attr_{set,get} calls.
+dsa_slave_port_attr_{set,get} calls.
 
 Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 24 ++++++++++++++++++++++++
+ net/dsa/slave.c | 24 ++++++++++++++++++++++++
  1 file changed, 24 insertions(+)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index e559f4c25cf7..7c77fb43233e 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1111,6 +1111,27 @@ ethsw_switchdev_port_obj_event(unsigned long event, struct net_device *netdev,
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 2e5e7c04821b..66c6c353f4f7 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1558,6 +1558,27 @@ dsa_slave_switchdev_port_obj_event(unsigned long event,
  	return notifier_from_errno(err);
  }
  
 +static int
-+ethsw_switchdev_port_attr_event(unsigned long event,
++dsa_slave_switchdev_port_attr_event(unsigned long event,
 +		struct net_device *netdev,
 +		struct switchdev_notifier_port_attr_info *port_attr_info)
 +{
@@ -106,11 +105,11 @@ index e559f4c25cf7..7c77fb43233e 100644
 +
 +	switch (event) {
 +	case SWITCHDEV_PORT_ATTR_SET:
-+		err = swdev_port_attr_set(netdev, port_attr_info->attr,
-+					  port_attr_info->trans);
++		err = dsa_slave_port_attr_set(netdev, port_attr_info->attr,
++					      port_attr_info->trans);
 +		break;
 +	case SWITCHDEV_PORT_ATTR_GET:
-+		err = swdev_port_attr_get(netdev, port_attr_info->attr);
++		err = dsa_slave_port_attr_get(netdev, port_attr_info->attr);
 +		break;
 +	}
 +
@@ -118,16 +117,16 @@ index e559f4c25cf7..7c77fb43233e 100644
 +	return notifier_from_errno(err);
 +}
 +
- static int port_switchdev_blocking_event(struct notifier_block *unused,
- 					 unsigned long event, void *ptr)
+ static int dsa_slave_switchdev_blocking_event(struct notifier_block *unused,
+ 					      unsigned long event, void *ptr)
  {
-@@ -1123,6 +1144,9 @@ static int port_switchdev_blocking_event(struct notifier_block *unused,
+@@ -1570,6 +1591,9 @@ static int dsa_slave_switchdev_blocking_event(struct notifier_block *unused,
  	case SWITCHDEV_PORT_OBJ_ADD: /* fall through */
  	case SWITCHDEV_PORT_OBJ_DEL:
- 		return ethsw_switchdev_port_obj_event(event, dev, ptr);
+ 		return dsa_slave_switchdev_port_obj_event(event, dev, ptr);
 +	case SWITCHDEV_PORT_ATTR_SET: /* fall through */
 +	case SWITCHDEV_PORT_ATTR_GET:
-+		return ethsw_switchdev_port_attr_event(event, dev, ptr);
++		return dsa_slave_switchdev_port_attr_event(event, dev, ptr);
  	}
  
  	return NOTIFY_DONE;
