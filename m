@@ -2,60 +2,60 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E78DC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFCFC282DC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E50A20863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 666EC2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="beupPIha"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="oWmZOODH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbfBKKhR (ORCPT
+        id S1727059AbfBKKhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:37:17 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52401 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfBKKhM (ORCPT
+        Mon, 11 Feb 2019 05:37:19 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54873 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfBKKhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:37:12 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so16798570wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:37:10 -0800 (PST)
+        Mon, 11 Feb 2019 05:37:13 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so16789803wmh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:37:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=D/VsXHRwtVGabkOsfPCt+jyBM76WQDq7lQ5hZjyQkII=;
-        b=beupPIhapQPL6ylvBgwwVgVdOaYx4xjqH/zSbKbnraRrx9ToB0FO8C3cPLRquvThrk
-         Hkgcm7hibv2CsXLLletboHoKCjIdzB5/jQO8afldqt6jk2AG1GDgW8Wk8oSnZjLL2J8O
-         x3AGBoChuKPMFbzPU3V+HiLWBCU9Uy7t4fS6G9jNgTxuZmZ3VLoO/F6y7EiTdfLb20N8
-         0/ukPHZgRw6gtQfR6PHXFw3DBo9couHG7pPggCvluJEFPEBeUeVdBe8butFW0OAb5AWV
-         SrflHxSjn9wrbFDl711nvf8yhDjpDwlwE1ARLzcRsPkx7MxQ49wLojS7O6a0pR3vxdBV
-         6p9A==
+        bh=mDfzI32lULSZi0KPO52EnMBMtQh72KGGsTTNyrojGSQ=;
+        b=oWmZOODHEAixm/1e2wgdfOLsfIc9IDHSjpG1BwW0YuPn2nUl/ttK9oOzgpCPJtzS6N
+         DuKSO+zvN/upV89PdkHuedTqjSJX/AJKkafNhPrmdRpOmO1jF1kEMkGhz7k/bYyb1scx
+         g340TQM7jblbGE5aPe6knXbPMrpCnYwGDzun+BWgwjNA3JuIxo/+6RTTA6jHztqlUFK7
+         yOZs0jo0M6VVIN7EEHP5uELpGpDhFAa895/GyEqymT8PaIXDmd0eIwTOX+ob0Ie2F0/U
+         3ZoZDJJrWQ9OKcRWjUijSWeduUbFFA3mdqWdutGDLfO5hlNdlHuRsyh9ebelNVyDgA3o
+         PcKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=D/VsXHRwtVGabkOsfPCt+jyBM76WQDq7lQ5hZjyQkII=;
-        b=RKLNjLI1ulZX6U9AKPCLXaMNcXDDkdvkraQA3csfHX3LLgBaH3/2fSrPTvbiwSj+3f
-         YwJjm8WdNWNOLNkrg6pp6JI+ldto+g/ZQyQsOUDFU981/edeW+2lEe6G3uN95RgYYlqq
-         BIPJss/J5Ll153pYMmEJrtog8pSCSdeumkTzeEdf/coNyvCL2p2jm8N5ZZXWSpDXU+eR
-         040UhqnQP0FX7KdR7YM8R6VR8sVuEVTQoOu/wIi6E7Viptm/wpMpVGptjfjJmxLtilw/
-         kLu8MchKAyC+tSp5ag+J7mOoyB7Xv6AlanF5O8avlRVZfV5vhhzbUukXLgtlVJFFfxw7
-         FrgQ==
-X-Gm-Message-State: AHQUAuZkBYmyH6ZAsWMKnXse2mlNftE2Q7h9Y6QyRseDB5PEhm28A8Th
-        1wssQG29bfrbXWBXfV71qiPWsQ==
-X-Google-Smtp-Source: AHgI3Ia4YHL7VkxiIK9g155puXWkq2+zX2KsPf97SnFlvhBgVTX8tMBPASRi53oK4Rsy8sIPMYtZaw==
-X-Received: by 2002:a1c:7304:: with SMTP id d4mr6467462wmb.136.1549881429968;
-        Mon, 11 Feb 2019 02:37:09 -0800 (PST)
+        bh=mDfzI32lULSZi0KPO52EnMBMtQh72KGGsTTNyrojGSQ=;
+        b=onUZgid24BvooMbWCjJQXQ+11t56lkBHQX7cSL65HZt8ry4HI9j1r11x7mRXmCoGHX
+         Jj9yOKkWVWEHczPtDi8ko9eDrR6HN7wAMjUUazs1K2enmh+07EcELXbRUXyrdxOOr/r7
+         K/GWqHg5pz/pp3jTB0kqyMpA9QdIZNuRYqv1Y/z5Wl9YQvEYiYQun6F86ky4NVkuhiC/
+         t5RIHkQgdr0WZX7jowuqmKZRO/MCMu//VNoYfHxSj7G5hT/utWBKSFJijl/Qotxkzwop
+         gA/hn+ggbhgHDvCQJ17MOEcE0ACoEKqLcD8AYFQgQ8kRuCtaF0xnlpxy2szcZwJgf//p
+         WVmQ==
+X-Gm-Message-State: AHQUAuZ7hc7YKWvOtz0CDJfImUPI6XJCA0faGl+sS4IKrq29CBrEn+zG
+        O97kTujzH4LNgJOkVB1qKnO6iw==
+X-Google-Smtp-Source: AHgI3IYXhpG/oxXOdIneaSd3s3Pky+0wz1hkzYaJnd5e3gipZIWhNMei/K1g/PlCdRxJnupjWMrGxg==
+X-Received: by 2002:a5d:4e8c:: with SMTP id e12mr17674777wru.21.1549881431259;
+        Mon, 11 Feb 2019 02:37:11 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id i192sm11121275wmg.7.2019.02.11.02.37.08
+        by smtp.gmail.com with ESMTPSA id i192sm11121275wmg.7.2019.02.11.02.37.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 02:37:09 -0800 (PST)
+        Mon, 11 Feb 2019 02:37:10 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Alan Stern <stern@rowland.harvard.edu>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 3/8] ARM: davinci: omapl138-hawk: use gpio lookup entries for usb gpios
-Date:   Mon, 11 Feb 2019 11:36:57 +0100
-Message-Id: <20190211103702.4277-4-brgl@bgdev.pl>
+Subject: [PATCH v2 4/8] ARM: davinci: da830-evm: use gpio lookup entries for usb gpios
+Date:   Mon, 11 Feb 2019 11:36:58 +0100
+Message-Id: <20190211103702.4277-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211103702.4277-1-brgl@bgdev.pl>
 References: <20190211103702.4277-1-brgl@bgdev.pl>
@@ -79,41 +79,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add lookup entries for the vbus and overcurrent gpios for omapl138-hawk.
+Add lookup entries for vbus and overcurrent gpios for da830-evm.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-davinci/board-omapl138-hawk.c | 10 ++++++++++
+ arch/arm/mach-davinci/board-da830-evm.c | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 94c4f126ef86..856c5707bae9 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -302,6 +302,14 @@ static const short da850_hawk_usb11_pins[] = {
- 	-1
- };
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index c4da635ee4ce..0712a37153a8 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -54,6 +54,14 @@ static const short da830_evm_usb11_pins[] = {
  
-+static struct gpiod_lookup_table hawk_usb_gpio_lookup = {
+ static da8xx_ocic_handler_t da830_evm_usb_ocic_handler;
+ 
++static struct gpiod_lookup_table da830_evm_usb_gpio_lookup = {
 +	.dev_id		= "ohci-da8xx",
 +	.table = {
-+		GPIO_LOOKUP("davinci_gpio", DA850_USB1_VBUS_PIN, "vbus", 0),
-+		GPIO_LOOKUP("davinci_gpio", DA850_USB1_OC_PIN, "oc", 0),
++		GPIO_LOOKUP("davinci_gpio", ON_BD_USB_DRV, "vbus", 0),
++		GPIO_LOOKUP("davinci_gpio", ON_BD_USB_OVC, "oc", 0),
 +	},
 +};
 +
- static int hawk_usb_set_power(unsigned port, int on)
+ static int da830_evm_usb_set_power(unsigned port, int on)
  {
- 	gpio_set_value(DA850_USB1_VBUS_PIN, on);
-@@ -390,6 +398,8 @@ static __init void omapl138_hawk_usb_init(void)
- 		goto usb11_setup_oc_fail;
+ 	gpio_set_value(ON_BD_USB_DRV, on);
+@@ -158,6 +166,8 @@ static __init void da830_evm_usb_init(void)
  	}
+ 	gpio_direction_input(ON_BD_USB_OVC);
  
-+	gpiod_add_lookup_table(&hawk_usb_gpio_lookup);
++	gpiod_add_lookup_table(&da830_evm_usb_gpio_lookup);
 +
- 	ret = da8xx_register_usb11(&omapl138_hawk_usb11_pdata);
- 	if (ret) {
+ 	ret = da8xx_register_usb11(&da830_evm_usb11_pdata);
+ 	if (ret)
  		pr_warn("%s: USB 1.1 registration failed: %d\n", __func__, ret);
 -- 
 2.20.1
