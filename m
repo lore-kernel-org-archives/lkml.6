@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B702BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E2BC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B04222AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07667222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897664;
-	bh=ZhEtCFp3ZlY9UL1o/SMRzpF6HPBaJ4i7IpmV6qgesq8=;
+	s=default; t=1549897670;
+	bh=Bb7NumJ9pbFBWmiPim49ZWeIcpwI6roG2BwQMcOhuVY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SEIsSMHd65Luqgv/XK8Yle8eMtG3KGBXNWEfoVX3HvAxVMuWo2aLeHaRKH2vQ3zNF
-	 sPjBSVhjrLH0sAOe5Q+NnjKjBNWmJibnH44e5R+2SkDHsgPJlKFFWqNEQpOa2BajNw
-	 Qh8+pOF6Hirc4BGLLqIGzOD4btG1WTDXIdEqc9pg=
+	b=RaCbyDGO0FcytyBcFN4m3xMfpFZK1E0R4HgPAUqueF564LcdiU2KxN8fbD2lmYdxX
+	 I1QLpD858wX9VE2C2YksyFtjILxMIEBAqO8eRvw88eoFEMbSxdmM0HN041LdnHbARd
+	 9xmskQBaUEyHbV5KiP89K/gW5lt4pfZfonfBuO18=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391409AbfBKPHm (ORCPT
+        id S2403812AbfBKPHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57388 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391382AbfBKPHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:36 -0500
+        id S2391403AbfBKPHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C27F222A7;
-        Mon, 11 Feb 2019 15:07:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89DE5222A7;
+        Mon, 11 Feb 2019 15:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897655;
-        bh=ZhEtCFp3ZlY9UL1o/SMRzpF6HPBaJ4i7IpmV6qgesq8=;
+        s=default; t=1549897661;
+        bh=Bb7NumJ9pbFBWmiPim49ZWeIcpwI6roG2BwQMcOhuVY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jvGpC6z6FK9lr0U3EB31rIRAM0Z4vDP+9qXn5Mg8jhrhQUOnms73aMtwcFFggBuwh
-         E8iyTxB0k6c9Cfl/96xFXo5zWcqzpwX4B0bC9WCtMYJvZJ0PGL2sCDO5M/sHd2NVh2
-         hFjcAAVG6aJ2rVZnOjMJ0+qhLwR6Syk0lH33Xr8o=
+        b=EB+16Ww8q0UApq+cKHHd0/d0zzyvmwgTcRNX17oL4AOigUveHoqBrYkXZl3B0cI0Z
+         tnHPbmU2ehqDqX3QjWdyibG6/c5bjXyhHSYvgdf7v9Xq6a/FiFdLKaaNDVYvlATS2F
+         dBwt4C+NEcHElDHGuAAok5yzxiMS32oV2Ubr2ays=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 070/137] drbd: skip spurious timeout (ping-timeo) when failing promote
-Date:   Mon, 11 Feb 2019 15:19:11 +0100
-Message-Id: <20190211141818.501833123@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 072/137] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 11 Feb 2019 15:19:13 +0100
+Message-Id: <20190211141818.690252950@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -65,58 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-If you try to promote a Secondary while connected to a Primary
-and allow-two-primaries is NOT set, we will wait for "ping-timeout"
-to give this node a chance to detect a dead primary,
-in case the cluster manager noticed faster than we did.
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-But if we then are *still* connected to a Primary,
-we fail (after an additional timeout of ping-timout).
+Found by Linux Driver Verification project (linuxtesting.org).
 
-This change skips the spurious second timeout.
-
-Most people won't notice really,
-since "ping-timeout" by default is half a second.
-
-But in some installations, ping-timeout may be 10 or 20 seconds or more,
-and spuriously delaying the error return becomes annoying.
-
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index f35db29cac76..abee91940a36 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -668,14 +668,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
- 		if (rv == SS_TWO_PRIMARIES) {
- 			/* Maybe the peer is detected as dead very soon...
- 			   retry at most once more in this case. */
--			int timeo;
--			rcu_read_lock();
--			nc = rcu_dereference(connection->net_conf);
--			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
--			rcu_read_unlock();
--			schedule_timeout_interruptible(timeo);
--			if (try < max_tries)
-+			if (try < max_tries) {
-+				int timeo;
- 				try = max_tries - 1;
-+				rcu_read_lock();
-+				nc = rcu_dereference(connection->net_conf);
-+				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
-+				rcu_read_unlock();
-+				schedule_timeout_interruptible(timeo);
-+			}
- 			continue;
- 		}
- 		if (rv < SS_SUCCESS) {
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index ff561073ee4e..42f909618f04 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
+ 
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
 -- 
 2.19.1
 
