@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CCBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE912C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655022081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79CA1206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896345;
-	bh=UImGhSVxlFRMS9oP9xqTZgMbltasI9IuHtlWrxKo+50=;
+	s=default; t=1549896350;
+	bh=e4wYGzGbZhk71+QW3/qZ4xb2ggvbkZgk4KPiQbpgH9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yT8AV0sk6C6Vfg858F2hmoSpoQXlgxf47pWDRVds5y58Md5uhVfQhefqZL6pIcXub
-	 +gBoZdz2DqGWi8N0FEH8AaKdOwBdeyiSlAsGZDUnzkRT3RECpmifkXD3RNsKPcVCJI
-	 bcupR5ooPT9EtulsvttyDn0zzOsDYjgHkKVV4s3Y=
+	b=c8AlFJAKggeC1Oq/ZD+RzwwmkXUSPVs+t0y3rFt5+PAeCn6O28lB6iuk6LF52+5fY
+	 22PXR4X1bk7speU0VwV04ipYCX6akjhCqaMe6I1KN2VlNXMMyP5imS4w+sRNi3yyWL
+	 qK6068KhI716K5UxbM1pBDEpaFsS1FxYRs2inp94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733108AbfBKOpn (ORCPT
+        id S1733118AbfBKOps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:45:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58776 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:45:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733089AbfBKOpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:45:40 -0500
+        id S1733103AbfBKOpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:45:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40C3E20700;
-        Mon, 11 Feb 2019 14:45:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4145206BA;
+        Mon, 11 Feb 2019 14:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896339;
-        bh=UImGhSVxlFRMS9oP9xqTZgMbltasI9IuHtlWrxKo+50=;
+        s=default; t=1549896342;
+        bh=e4wYGzGbZhk71+QW3/qZ4xb2ggvbkZgk4KPiQbpgH9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BJu5MnOWiMSKGKihkqzwNfQni+j54jwta4K8bWLq1q8sqNmzHuVtW+3bEeZFpSX86
-         rvO1rPR599ONgZKmIyDBq9HkfltbcUCJwNp9i86DCs064HRkRdV2QdBBv2+1Bc1qY2
-         gYgbI+tLyK9u0OR/kIa3ypjGZFojSPZaTjd4V7Fo=
+        b=qOWewgIzMV0Xl+tpxYqWD11FACIUM8B+8PJYnr0uJmh+jVqR/IHZ6C+iMqHo34Hql
+         FDy3UUkYjqQmWNUIgq4HjnHK3rnmOzdIEdTbp1XKXOYYuqcmydCeH/ngy9pHyfit+n
+         AgyOQgzbUhE4jXslYjx6W5AzI7yD/CK7jqz/Q75M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        linux-mips@linux-mips.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 150/313] mmc: jz4740: Get CD/WP GPIOs from descriptors
-Date:   Mon, 11 Feb 2019 15:17:10 +0100
-Message-Id: <20190211141903.591586381@linuxfoundation.org>
+Subject: [PATCH 4.19 151/313] usb: renesas_usbhs: add support for RZ/G2E
+Date:   Mon, 11 Feb 2019 15:17:11 +0100
+Message-Id: <20190211141903.645922416@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,117 +68,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0c901c0566fb4edc2631c3786e5085a037be91f8 ]
+[ Upstream commit 1d6e81a288e28d8d0e38e0501a324216f79bba35 ]
 
-Modifty the JZ4740 driver to retrieve card detect and write
-protect GPIO pins from GPIO descriptors instead of hard-coded
-global numbers. Augment the only board file using this in the
-process and cut down on passed in platform data.
+HS-USB found in RZ/G2E (a.k.a. r8a774c0) is very similar to the
+one found in R-Car E3 (a.k.a. r8a77990), as it needs to release
+the PLL reset by the UGCTRL register like R-Car E3, therefore add
+r8a774c0 support in a similar fashion to what was done for the
+r8a77990.
 
-Preserve the code setting the caps2 flags for CD and WP
-as active low or high since the slot GPIO code currently
-ignores the gpiolib polarity inversion semantice and uses
-the raw accessors to read the GPIO lines, but set the right
-polarity flags in the descriptor table for jz4740.
-
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: linux-mips@linux-mips.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../mips/include/asm/mach-jz4740/jz4740_mmc.h |  2 --
- arch/mips/jz4740/board-qi_lb60.c              | 12 ++++++++---
- drivers/mmc/host/jz4740_mmc.c                 | 20 +++++++++----------
- 3 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/usb/renesas_usbhs/common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
-index e9cc62cfac99..ff50aeb1a933 100644
---- a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
-+++ b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
-@@ -4,8 +4,6 @@
- 
- struct jz4740_mmc_platform_data {
- 	int gpio_power;
--	int gpio_card_detect;
--	int gpio_read_only;
- 	unsigned card_detect_active_low:1;
- 	unsigned read_only_active_low:1;
- 	unsigned power_active_low:1;
-diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
-index af0c8ace0141..705593d40d12 100644
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -43,7 +43,6 @@
- #include "clock.h"
- 
- /* GPIOs */
--#define QI_LB60_GPIO_SD_CD		JZ_GPIO_PORTD(0)
- #define QI_LB60_GPIO_SD_VCC_EN_N	JZ_GPIO_PORTD(2)
- 
- #define QI_LB60_GPIO_KEYOUT(x)		(JZ_GPIO_PORTC(10) + (x))
-@@ -386,12 +385,18 @@ static struct platform_device qi_lb60_gpio_keys = {
- };
- 
- static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
--	.gpio_card_detect	= QI_LB60_GPIO_SD_CD,
--	.gpio_read_only		= -1,
- 	.gpio_power		= QI_LB60_GPIO_SD_VCC_EN_N,
- 	.power_active_low	= 1,
- };
- 
-+static struct gpiod_lookup_table qi_lb60_mmc_gpio_table = {
-+	.dev_id = "jz4740-mmc.0",
-+	.table = {
-+		GPIO_LOOKUP("GPIOD", 0, "cd", GPIO_ACTIVE_HIGH),
-+		{ },
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4310df46639d..b0792585d5bc 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -457,6 +457,10 @@ static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
+  *		platform functions
+  */
+ static const struct of_device_id usbhs_of_match[] = {
++	{
++		.compatible = "renesas,usbhs-r8a774c0",
++		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
 +	},
-+};
-+
- /* beeper */
- static struct pwm_lookup qi_lb60_pwm_lookup[] = {
- 	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
-@@ -500,6 +505,7 @@ static int __init qi_lb60_init_platform_devices(void)
- 	gpiod_add_lookup_table(&qi_lb60_audio_gpio_table);
- 	gpiod_add_lookup_table(&qi_lb60_nand_gpio_table);
- 	gpiod_add_lookup_table(&qi_lb60_spigpio_gpio_table);
-+	gpiod_add_lookup_table(&qi_lb60_mmc_gpio_table);
- 
- 	spi_register_board_info(qi_lb60_spi_board_info,
- 				ARRAY_SIZE(qi_lb60_spi_board_info));
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index 993386c9ea50..864338e308e2 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -983,17 +983,17 @@ static int jz4740_mmc_request_gpios(struct mmc_host *mmc,
- 	if (!pdata->read_only_active_low)
- 		mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
- 
--	if (gpio_is_valid(pdata->gpio_card_detect)) {
--		ret = mmc_gpio_request_cd(mmc, pdata->gpio_card_detect, 0);
--		if (ret)
--			return ret;
--	}
-+	/*
-+	 * Get optional card detect and write protect GPIOs,
-+	 * only back out on probe deferral.
-+	 */
-+	ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
-+	if (ret == -EPROBE_DEFER)
-+		return ret;
- 
--	if (gpio_is_valid(pdata->gpio_read_only)) {
--		ret = mmc_gpio_request_ro(mmc, pdata->gpio_read_only);
--		if (ret)
--			return ret;
--	}
-+	ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
-+	if (ret == -EPROBE_DEFER)
-+		return ret;
- 
- 	return jz4740_mmc_request_gpio(&pdev->dev, pdata->gpio_power,
- 			"MMC read only", true, pdata->power_active_low);
+ 	{
+ 		.compatible = "renesas,usbhs-r8a7790",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN2,
 -- 
 2.19.1
 
