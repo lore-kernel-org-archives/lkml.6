@@ -2,51 +2,58 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2157C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6CFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B285C222BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89ABD222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897882;
-	bh=OEXapRCOKl/VlvJBKW3tv9jPptijdCZ1BXmtIT30GJk=;
+	s=default; t=1549897892;
+	bh=KQdOEry61P3Lhe1bnsVFt9SG5mLZpT+lFG5LeA2hpW0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=py2DK9As6Ei7GvXVmvLvZcUpXeT6jMQV4qqLTZOljyDkMX6v7M3WepEJspymWYRSA
-	 S89OwGoUNyT3a/Jj78mEgbjxrA5TK6vRa1bUUHxjnkKdvOfWIesh7dtECUTnvX+5Zb
-	 sp9lCtL7WOgc/a/tzJ3SRmQ50CVIPi3tEoR2qmQI=
+	b=FyTSO6ocXK87OD/Fsh5IfAnz8NXWIY6TePRgLVd7t4IH6fRB0MFHwEA3P9fu3pWTY
+	 HbqoQ7QkoCiwBwpGy9P9W4zhDVaULiCIONAiKFIZyODnFlRWYGiN3ZktkOURl861j8
+	 3dY9aUVjs/3Zyp37QuBaFnFOhcEyCTkae+S78eCA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391858AbfBKPLV (ORCPT
+        id S2391381AbfBKPLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:11:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33134 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391845AbfBKPLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:11:17 -0500
+        id S2391550AbfBKPLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:11:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7A3222BA;
-        Mon, 11 Feb 2019 15:11:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3485222B8;
+        Mon, 11 Feb 2019 15:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897876;
-        bh=OEXapRCOKl/VlvJBKW3tv9jPptijdCZ1BXmtIT30GJk=;
+        s=default; t=1549897870;
+        bh=KQdOEry61P3Lhe1bnsVFt9SG5mLZpT+lFG5LeA2hpW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JWRVBK3uM9976amovySHthgolrdIbaCSXzoLTZgAaqh6nCYaCVP1/BPfnvv5nXhtz
-         e9yOddnQOG5T2Y7M523x6ZSRXtsKSkWW2/HBhwJXpVuJKvx1XLG8Ze3QyYVo9wYmkt
-         ofDVcwPlI1u5+lUsnTaAWkS3F6QJ/m6B8bsTRdJE=
+        b=PumdRBeUAwOwp1PHVd8J3hri51T7a+x+T3niE7cuvtz/MrnDvm6QiHyIAkYiptOuf
+         1GIx7I+3J45M+RTbYLM99+/JKD3t53E1GDoJMe420yptWIsoZL9lu5GkqnQBV4LlsZ
+         dhScD0Tu7gAth29f3rajHIe5wOo6MMlx5bRdHbi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 112/137] net: dsa: slave: Dont propagate flag changes on down slave interfaces
-Date:   Mon, 11 Feb 2019 15:19:53 +0100
-Message-Id: <20190211141822.570592750@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        Florian Meier <florian.meier@koalo.de>,
+        Clive Messer <clive.m.messer@gmail.com>,
+        Matthias Reichl <hias@horus.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Kauer <florian.kauer@koalo.de>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.9 120/137] dmaengine: bcm2835: Fix abort of transactions
+Date:   Mon, 11 Feb 2019 15:20:01 +0100
+Message-Id: <20190211141823.325098167@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -65,53 +72,162 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rundong Ge <rdong.ge@gmail.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
+commit 9e528c799d17a4ac37d788c81440b50377dd592d upstream.
 
-The unbalance of master's promiscuity or allmulti will happen after ifdown
-and ifup a slave interface which is in a bridge.
+There are multiple issues with bcm2835_dma_abort() (which is called on
+termination of a transaction):
 
-When we ifdown a slave interface , both the 'dsa_slave_close' and
-'dsa_slave_change_rx_flags' will clear the master's flags. The flags
-of master will be decrease twice.
-In the other hand, if we ifup the slave interface again, since the
-slave's flags were cleared the 'dsa_slave_open' won't set the master's
-flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
-will set the master's flags. The flags of master is increase once.
+* The algorithm to abort the transaction first pauses the channel by
+  clearing the ACTIVE flag in the CS register, then waits for the PAUSED
+  flag to clear.  Page 49 of the spec documents the latter as follows:
 
-Only propagating flag changes when a slave interface is up makes
-sure this does not happen. The 'vlan_dev_change_rx_flags' had the
-same problem and was fixed, and changes here follows that fix.
+  "Indicates if the DMA is currently paused and not transferring data.
+   This will occur if the active bit has been cleared [...]"
+   https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 
-Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  So the function is entering an infinite loop because it is waiting for
+  PAUSED to clear which is always set due to the function having cleared
+  the ACTIVE flag.  The only thing that's saving it from itself is the
+  upper bound of 10000 loop iterations.
+
+  The code comment says that the intention is to "wait for any current
+  AXI transfer to complete", so the author probably wanted to check the
+  WAITING_FOR_OUTSTANDING_WRITES flag instead.  Amend the function
+  accordingly.
+
+* The CS register is only read at the beginning of the function.  It
+  needs to be read again after pausing the channel and before checking
+  for outstanding writes, otherwise writes which were issued between
+  the register read at the beginning of the function and pausing the
+  channel may not be waited for.
+
+* The function seeks to abort the transfer by writing 0 to the NEXTCONBK
+  register and setting the ABORT and ACTIVE flags.  Thereby, the 0 in
+  NEXTCONBK is sought to be loaded into the CONBLK_AD register.  However
+  experimentation has shown this approach to not work:  The CONBLK_AD
+  register remains the same as before and the CS register contains
+  0x00000030 (PAUSED | DREQ_STOPS_DMA).  In other words, the control
+  block is not aborted but merely paused and it will be resumed once the
+  next DMA transaction is started.  That is absolutely not the desired
+  behavior.
+
+  A simpler approach is to set the channel's RESET flag instead.  This
+  reliably zeroes the NEXTCONBK as well as the CS register.  It requires
+  less code and only a single MMIO write.  This is also what popular
+  user space DMA drivers do, e.g.:
+  https://github.com/metachris/RPIO/blob/master/source/c_pwm/pwm.c
+
+  Note that the spec is contradictory whether the NEXTCONBK register
+  is writeable at all.  On the one hand, page 41 claims:
+
+  "The value loaded into the NEXTCONBK register can be overwritten so
+  that the linked list of Control Block data structures can be
+  dynamically altered. However it is only safe to do this when the DMA
+  is paused."
+
+  On the other hand, page 40 specifies:
+
+  "Only three registers in each channel's register set are directly
+  writeable (CS, CONBLK_AD and DEBUG). The other registers (TI,
+  SOURCE_AD, DEST_AD, TXFR_LEN, STRIDE & NEXTCONBK), are automatically
+  loaded from a Control Block data structure held in external memory."
+
+Fixes: 96286b576690 ("dmaengine: Add support for BCM2835")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v3.14+
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Florian Meier <florian.meier@koalo.de>
+Cc: Clive Messer <clive.m.messer@gmail.com>
+Cc: Matthias Reichl <hias@horus.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Florian Kauer <florian.kauer@koalo.de>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/slave.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -180,10 +180,14 @@ static void dsa_slave_change_rx_flags(st
- 	struct dsa_slave_priv *p = netdev_priv(dev);
- 	struct net_device *master = p->parent->dst->master_netdev;
- 
--	if (change & IFF_ALLMULTI)
--		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
--	if (change & IFF_PROMISC)
--		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
-+	if (dev->flags & IFF_UP) {
-+		if (change & IFF_ALLMULTI)
-+			dev_set_allmulti(master,
-+					 dev->flags & IFF_ALLMULTI ? 1 : -1);
-+		if (change & IFF_PROMISC)
-+			dev_set_promiscuity(master,
-+					    dev->flags & IFF_PROMISC ? 1 : -1);
-+	}
+---
+ drivers/dma/bcm2835-dma.c |   41 +++++++++--------------------------------
+ 1 file changed, 9 insertions(+), 32 deletions(-)
+
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -415,13 +415,11 @@ static void bcm2835_dma_fill_cb_chain_wi
+ 	}
  }
  
- static void dsa_slave_set_rx_mode(struct net_device *dev)
+-static int bcm2835_dma_abort(void __iomem *chan_base)
++static int bcm2835_dma_abort(struct bcm2835_chan *c)
+ {
+-	unsigned long cs;
++	void __iomem *chan_base = c->chan_base;
+ 	long int timeout = 10000;
+ 
+-	cs = readl(chan_base + BCM2835_DMA_CS);
+-
+ 	/*
+ 	 * A zero control block address means the channel is idle.
+ 	 * (The ACTIVE flag in the CS register is not a reliable indicator.)
+@@ -433,25 +431,16 @@ static int bcm2835_dma_abort(void __iome
+ 	writel(0, chan_base + BCM2835_DMA_CS);
+ 
+ 	/* Wait for any current AXI transfer to complete */
+-	while ((cs & BCM2835_DMA_ISPAUSED) && --timeout) {
++	while ((readl(chan_base + BCM2835_DMA_CS) &
++		BCM2835_DMA_WAITING_FOR_WRITES) && --timeout)
+ 		cpu_relax();
+-		cs = readl(chan_base + BCM2835_DMA_CS);
+-	}
+ 
+-	/* We'll un-pause when we set of our next DMA */
++	/* Peripheral might be stuck and fail to signal AXI write responses */
+ 	if (!timeout)
+-		return -ETIMEDOUT;
+-
+-	if (!(cs & BCM2835_DMA_ACTIVE))
+-		return 0;
+-
+-	/* Terminate the control block chain */
+-	writel(0, chan_base + BCM2835_DMA_NEXTCB);
+-
+-	/* Abort the whole DMA */
+-	writel(BCM2835_DMA_ABORT | BCM2835_DMA_ACTIVE,
+-	       chan_base + BCM2835_DMA_CS);
++		dev_err(c->vc.chan.device->dev,
++			"failed to complete outstanding writes\n");
+ 
++	writel(BCM2835_DMA_RESET, chan_base + BCM2835_DMA_CS);
+ 	return 0;
+ }
+ 
+@@ -804,7 +793,6 @@ static int bcm2835_dma_terminate_all(str
+ 	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+ 	struct bcm2835_dmadev *d = to_bcm2835_dma_dev(c->vc.chan.device);
+ 	unsigned long flags;
+-	int timeout = 10000;
+ 	LIST_HEAD(head);
+ 
+ 	spin_lock_irqsave(&c->vc.lock, flags);
+@@ -818,18 +806,7 @@ static int bcm2835_dma_terminate_all(str
+ 	if (c->desc) {
+ 		bcm2835_dma_desc_free(&c->desc->vd);
+ 		c->desc = NULL;
+-		bcm2835_dma_abort(c->chan_base);
+-
+-		/* Wait for stopping */
+-		while (--timeout) {
+-			if (!readl(c->chan_base + BCM2835_DMA_ADDR))
+-				break;
+-
+-			cpu_relax();
+-		}
+-
+-		if (!timeout)
+-			dev_err(d->ddev.dev, "DMA transfer could not be terminated\n");
++		bcm2835_dma_abort(c);
+ 	}
+ 
+ 	vchan_get_all_descriptors(&c->vc, &head);
 
 
