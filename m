@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CAAC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B24C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67BC0214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5FE221B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896621;
-	bh=MvkvOAxkb9kz+j96JW32j7bOJG54hVi/c23BSyxELsQ=;
+	s=default; t=1549896626;
+	bh=GWMwgqbzc4BrsWRYe9EQvtYtLe5CR+Tl6TakHshmz4g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zZc4WBf/ZoPkU/EzB3gxpq4gkLFO0eySjwjPtzJWuEF0xrym5RyO1CdJVVJNz5KYY
-	 /7KFpRCr3IIvxdpec3Yg/Kvr4UZDSBh7w9bnKFEfy6jBiq7HB59SEPCyfdvm/Ojxgf
-	 WWYGLyM/6+OGXJWhqqNF0kPKCijvP7rHDTK5LJSo=
+	b=DdEshiq+onkoIBeshClq8gBG4MuLJeVUtE8bdm3w07zv/DX847n5WBr7h1lto/gJU
+	 5xQWCrkKyOvAslvgU1SI/50CadpnOW03J+1PWqmiiSMIftBUKOmYxVfrSXorny2WMT
+	 qH4i0B/tcK9WvMR/kRy+FhKGjD7svWuVy2LccTXg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388067AbfBKOuU (ORCPT
+        id S2388091AbfBKOuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36062 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388050AbfBKOuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:16 -0500
+        id S2388050AbfBKOuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EBED20855;
-        Mon, 11 Feb 2019 14:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26A7220844;
+        Mon, 11 Feb 2019 14:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896615;
-        bh=MvkvOAxkb9kz+j96JW32j7bOJG54hVi/c23BSyxELsQ=;
+        s=default; t=1549896621;
+        bh=GWMwgqbzc4BrsWRYe9EQvtYtLe5CR+Tl6TakHshmz4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZZI5fPFuyA2hAAAlQRzpbO3X7ffk7AqpO8MWl1PaTfOrLbhtbzq+gKCFp89qbxlz3
-         llB02D6v0kvP6ZKaoylI8Noz6YWuZ/ZjNkprHW1hhxU2PRaOQT044gf7ITPO8JWOk/
-         g2wT5RbebNaSfrMx3/5G8xl6Wc3b3UWdyiXqOs8g=
+        b=saEipXxvSmgH1MyTqXh5DzwJ3C+aI9f5MI64nF2Uh8ezUND7XwD9+b2gO+nng8yQt
+         7thiIvUrrWCf7YJxsdMkPr/TYG9NsjKlLQz6zynYj7WysFjnOnNR4WPBdhhbPWDNyu
+         lgstytM058af2+s5UWMjoVEXRFVhcbZ1GVMOFh+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 243/313] kernel/hung_task.c: force console verbose before panic
-Date:   Mon, 11 Feb 2019 15:18:43 +0100
-Message-Id: <20190211141909.637942206@linuxfoundation.org>
+Subject: [PATCH 4.19 245/313] exec: load_script: dont blindly truncate shebang string
+Date:   Mon, 11 Feb 2019 15:18:45 +0100
+Message-Id: <20190211141909.749786684@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,75 +71,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
+[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
 
-Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
-before panic"), we could get the call stack of hung task.
+load_script() simply truncates bprm->buf and this is very wrong if the
+length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
+truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
+happens to be the valid executable path.
 
-However, if the console loglevel is not high, we still can not see the
-useful panic information in practice, and in most cases users don't set
-console loglevel to high level.
+Change load_script() to return ENOEXEC if it can't find '\n' or zero in
+bprm->buf.  Note that '\0' can come from either
+prepare_binprm()->memset() or from kernel_read(), we do not care.
 
-This patch is to force console verbose before system panic, so that the
-real useful information can be seen in the console, instead of being
-like the following, which doesn't have hung task information.
-
-  INFO: task init:1 blocked for more than 120 seconds.
-        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-  Kernel panic - not syncing: hung_task: blocked tasks
-  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-  Call Trace:
-   dump_stack+0x4f/0x65
-   panic+0xde/0x231
-   watchdog+0x290/0x410
-   kthread+0x12c/0x150
-   ret_from_fork+0x35/0x40
-  reboot: panic mode set: p,w
-  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-
-Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
-Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Ben Woodard <woodard@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ fs/binfmt_script.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index aa3c51f300aa..9eca2371f189 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -111,8 +111,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 7cde3f46ad26..d0078cbb718b 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -42,10 +42,14 @@ static int load_script(struct linux_binprm *bprm)
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
  
- 	trace_sched_process_hang(t);
- 
--	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
--		return;
-+	if (sysctl_hung_task_panic) {
-+		console_verbose();
-+		hung_task_show_lock = true;
-+		hung_task_call_panic = true;
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	for (cp = bprm->buf+2;; cp++) {
++		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
++			return -ENOEXEC;
++		if (!*cp || (*cp == '\n'))
++			break;
 +	}
- 
- 	/*
- 	 * Ok, the task did not get scheduled for more than 2 minutes,
-@@ -134,11 +137,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 	}
- 
- 	touch_nmi_watchdog();
--
--	if (sysctl_hung_task_panic) {
--		hung_task_show_lock = true;
--		hung_task_call_panic = true;
--	}
- }
- 
- /*
+ 	*cp = '\0';
++
+ 	while (cp > bprm->buf) {
+ 		cp--;
+ 		if ((*cp == ' ') || (*cp == '\t'))
 -- 
 2.19.1
 
