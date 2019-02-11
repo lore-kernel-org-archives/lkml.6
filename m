@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5197FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CE1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F812229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF9020700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896893;
-	bh=pviqqzT+PXc1/8/X2S/j2tiBUhF5KMqXM4C3K1Agb2g=;
+	s=default; t=1549896897;
+	bh=aV6mMMVY8yZQWlUQi1qjtTffDxPNTus7q+HHg3BYZIE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c5Q5YXqL93keozuPckpmeFfREGWSeFxc824qd9faFmRTGawzYh152b5Z+dBqoZr5t
-	 fbl1JUC6mK9NZxwzvhd3sGwRbjRda31b96HHApLRHr6j69k7xkh0X9tr7Spbe4DzCN
-	 2KDrlKwvjyNMAQEFSyT97JLxhCQ4MhwXhw4veAFU=
+	b=HtZMljNWNdo3jlyNi25orax/8Hn+dVWgOiOMKONrvHoPbTeMjCpXnSBmtlDVYKREk
+	 ruUfPUPSAcZD5dMmwK1T77KVYaUkXfL8LxTLWyHl3pHYFHFueUxj6NhcCVRIGLOhba
+	 65VtUbphF4yHwOL9roeUbJYiNa95mqu7h7rKImho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388885AbfBKOyv (ORCPT
+        id S2388462AbfBKOy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:54:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:54:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388875AbfBKOyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:43 -0500
+        id S2388488AbfBKOyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABAA222A8;
-        Mon, 11 Feb 2019 14:54:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3994222AE;
+        Mon, 11 Feb 2019 14:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896883;
-        bh=pviqqzT+PXc1/8/X2S/j2tiBUhF5KMqXM4C3K1Agb2g=;
+        s=default; t=1549896889;
+        bh=aV6mMMVY8yZQWlUQi1qjtTffDxPNTus7q+HHg3BYZIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=niaGfrn9xmd6AdV+MZPYjgC4i1PBd64QXMmBx3J5k+Q+mTz5zt1GIoXskRIGZTtNf
-         sZszMAsClGJ88T9KFUJQUSIKOnmdzSaz40HccQWbbtuqwxaJPEzpr46YBY+Muyh4ve
-         aNnZhxBrn5naZdsauZow3+UUJLTuf2P5N1m+kqno=
+        b=IGXXjeeTSeRYxvy1abRN+puexKGDRwYHZ7WZlo6GfbTjndu3twkrCALZBhsd4xE4W
+         GgUG+hxqXMpLl+cCmdD8GHcp4gYGvZSYVNyLQbocdCekYTFA40djqvg1VE92qfOwEP
+         gh6xYetSOSm3VsD6cFlCSGGufiqzfmJ8wuPTtnB0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 005/205] ASoC: Intel: mrfld: fix uninitialized variable access
-Date:   Mon, 11 Feb 2019 15:16:43 +0100
-Message-Id: <20190211141827.513129018@linuxfoundation.org>
+Subject: [PATCH 4.14 007/205] ath9k: dynack: use authentication messages for late ack
+Date:   Mon, 11 Feb 2019 15:16:45 +0100
+Message-Id: <20190211141827.640823098@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,52 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
+[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
 
-Randconfig testing revealed a very old bug, with gcc-8:
+In order to properly support dynack in ad-hoc mode running
+wpa_supplicant, take into account authentication frames for
+'late ack' detection. This patch has been tested on devices
+mounted on offshore high-voltage stations connected through
+~24Km link
 
-sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
-sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (fw == NULL) {
-     ^
-sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
-  const struct firmware *fw;
-
-We must check the return code of request_firmware() before we look at the
-pointer result that may be uninitialized when the function fails.
-
-Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
-index 33917146d9c4..054b1d514e8a 100644
---- a/sound/soc/intel/atom/sst/sst_loader.c
-+++ b/sound/soc/intel/atom/sst/sst_loader.c
-@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
- 	const struct firmware *fw;
- 
- 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
--	if (fw == NULL) {
--		dev_err(sst->dev, "fw is returning as null\n");
--		return -EINVAL;
--	}
- 	if (retval) {
- 		dev_err(sst->dev, "request fw failed %d\n", retval);
- 		return retval;
- 	}
-+	if (fw == NULL) {
-+		dev_err(sst->dev, "fw is returning as null\n");
-+		return -EINVAL;
-+	}
- 	mutex_lock(&sst->sst_lock);
- 	retval = sst_cache_and_parse_fw(sst, fw);
- 	mutex_unlock(&sst->sst_lock);
+diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
+index 7334c9b09e82..cc0dc966c512 100644
+--- a/drivers/net/wireless/ath/ath9k/dynack.c
++++ b/drivers/net/wireless/ath/ath9k/dynack.c
+@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
+ 	/* late ACK */
+ 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
+ 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
+-		    ieee80211_is_assoc_resp(hdr->frame_control)) {
++		    ieee80211_is_assoc_resp(hdr->frame_control) ||
++		    ieee80211_is_auth(hdr->frame_control)) {
+ 			ath_dbg(common, DYNACK, "late ack\n");
+ 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
+ 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
 -- 
 2.19.1
 
