@@ -2,73 +2,92 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B4AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29BB2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549865532;
-	bh=ukjViv8ENbx3dHpm6gKFDW8/tAncoM54okjsh2iOTA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=i73qbtm/iP23EZH74JOIy9H0Lu8sF1TCOGzA95nPul0LtVE0gej90cTSn6DZ8J3UG
-	 xFoeszVFqX5Zl+2z/Zw3uxPHONqThkIn+VDO1M15aSZBuRV4Q8ybJqwRIvCWpOCdZ0
-	 k+LGaLaZPmcWas+C1xwx9UM6i77roKVgortegoms=
+	by mail.kernel.org (Postfix) with ESMTP id 33A802084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:13:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CtHhDo7p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hhN+W4gr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfBKGML (ORCPT
+        id S1726263AbfBKGNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 01:12:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKGMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 01:12:10 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        Mon, 11 Feb 2019 01:13:01 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50640 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKGNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 01:13:00 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7CF03601C4; Mon, 11 Feb 2019 06:12:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549865579;
+        bh=QSCWo3myd9rw235N+ghKCosnt3d1cWY3+YpgMoWMvSI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=CtHhDo7pQaoujkE1+rTY/yzmpKZfIDNPcP+VBkHSZG7jXBLR7YSOydqfDIW0JXajh
+         ZcYAwpvreCXi1cVN887KlSyqrkABWHFRI+byKrI5FiEgOkmb1mDrDqBvfAJS6damKZ
+         vqTkJJKGAhJZUcm5SGDPuvR+bGaGbkIm+hLFjHbo=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 529C82084D;
-        Mon, 11 Feb 2019 06:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549865530;
-        bh=ukjViv8ENbx3dHpm6gKFDW8/tAncoM54okjsh2iOTA0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LNmzAfR1gEz8ff/fayX14bw67bwl0kd7W58XHljSRpmgDC1cig+cjJ515MYYCTCKf
-         G2SV+rRyUX+2qgD9lZRzLSowY/O/RIcCiGvUn+py4FUyVtxxnUUymmSn7U4rsO52xH
-         q0YSoVmROx8jF+MoppM5MB2/eoYXI1kn/l4yUaH8=
-Date:   Mon, 11 Feb 2019 14:11:57 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] ARM: dts: imx: Add support for Logic PD i.MX6QD EVM
-Message-ID: <20190211061155.GO22487@dragon>
-References: <20190210205723.15708-1-aford173@gmail.com>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0681601C4;
+        Mon, 11 Feb 2019 06:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549865577;
+        bh=QSCWo3myd9rw235N+ghKCosnt3d1cWY3+YpgMoWMvSI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=hhN+W4gr+lblluiJphewlLfSUTvTnAo4Jv++tFldWXXXYfgmYMC+9y9F2M0TBq4xR
+         BUxcOY+VIDQcbG6FogzJ3hPrWd07pTyHB9QtxaH4CVFD5D3T2TRETQIUJSEzYWFvt7
+         kTsSYInJch8YUuBcvqe5So/9ZDSxmmpYoiowKdf8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0681601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Wireless <linux-wireless@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Govind Singh <govinds@codeaurora.org>,
+        ath10k@lists.infradead.org
+Subject: Re: linux-next: Signed-off-by missing for commit in the wireless-drivers-next tree
+References: <20190211072814.7428f192@canb.auug.org.au>
+Date:   Mon, 11 Feb 2019 08:12:52 +0200
+In-Reply-To: <20190211072814.7428f192@canb.auug.org.au> (Stephen Rothwell's
+        message of "Mon, 11 Feb 2019 07:28:14 +1100")
+Message-ID: <87lg2m7t0b.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210205723.15708-1-aford173@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 02:57:23PM -0600, Adam Ford wrote:
-> The EVM consists of a system on module (SOM) and baseboard, and LCD.
-> This patch adds a DTSI file for the SOM and baseboard separately,
-> then a wrapper to combine them and specify processor type and a
-> LCD information.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
++ ath10k
 
-Applied, thanks.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Hi all,
+>
+> Commit
+>
+>   768ec4c012ac ("ath10k: update HOST capability qmi message")
+>
+> is missing a Signed-off-by from its author.
+
+Oh, I had missed that. Thanks for reporting.
+
+Unfortunately it would be difficult to rebase wireless-drivers-next so I
+can't (easily) fix this. But v1 had s-o-b so at least we have the sign
+off publically available:
+
+https://patchwork.kernel.org/patch/10688563/
+
+-- 
+Kalle Valo
