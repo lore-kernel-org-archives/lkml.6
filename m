@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2932C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C8FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7431D2229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98FC8222A8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897030;
-	bh=ypmoBlZBlkwuUwWBqu8EhsRh8S1JjS763Y8Nj2GHi74=;
+	s=default; t=1549897036;
+	bh=gxrcmFMq+iKSRNTZwlLiBNJF/2XMBk2dfAQN7VoVJQc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QTXZerBi7wUVrjlZi0fvan/Q+gaWrOW1b2KMkZzIMq3BICxU4nX7c9qSlXC7XBKu2
-	 103GMGQa9YfRfGJtCWi9T2Umyd2RHgsCocmrDiRPLsMlDrnaLFhNIZRSZ+5HMdtn1G
-	 AII+soPu8M0yol3EJpg1d8kjXu8Cf6pjV+iYtCdc=
+	b=pEyXdJVZ9fy9wSS8k69wGtMcpcUtMoewkxVjvN8/Qc/W8w3qIbmoDk6b/yvEAmRJk
+	 08Fr4wn/V+SiSFCTZ0uRLZgCyaJ3gKbeR0o9EBhT1+xkjv58bQnMISkJ0frsb0AN2A
+	 XVpVys0YGoEnQ8qdq4TfPMTw5DZsjjg2nUjyfXpQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389302AbfBKO5J (ORCPT
+        id S2388740AbfBKO5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:57:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44456 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:57:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389286AbfBKO5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:07 -0500
+        id S2388679AbfBKO5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:57:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BAD52229E;
-        Mon, 11 Feb 2019 14:57:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4EB0222A8;
+        Mon, 11 Feb 2019 14:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897026;
-        bh=ypmoBlZBlkwuUwWBqu8EhsRh8S1JjS763Y8Nj2GHi74=;
+        s=default; t=1549897032;
+        bh=gxrcmFMq+iKSRNTZwlLiBNJF/2XMBk2dfAQN7VoVJQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NkztoeRWB1McI6PNtIocJqea5yrjytgz9jDhHA/SvLjXo4PsHR9iEzdiLUHO0p9aI
-         43Hf/eaasn16tGB4KjEotxnnYGDnL9TWY/e/syMlhkv4g4rJdFkEIU5wK7vISRdWEJ
-         ZSyCP9lDy99AQkyjQYnJW5a/7szVktUpBRwcBvt0=
+        b=huW7K/ZFVYJbA5eyaqftwOeZyqNxUJW3eGT/BdPjpPM+OWlOfMFm7kD33SiQ4nu0V
+         bkkXRmn3EcG0Cx7pw4EkhnFRtOw52w94oj8jS2J/uRjtdGtTThvt1DSQNvJfPVTPsv
+         FJOSq+BPkGeN4Dh+0OTVmyIKTf7RTT/+cFJRHvtY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 067/205] driver core: Move async_synchronize_full call
-Date:   Mon, 11 Feb 2019 15:17:45 +0100
-Message-Id: <20190211141833.140397122@linuxfoundation.org>
+Subject: [PATCH 4.14 069/205] IB/hfi1: Unreserve a reserved request when it is completed
+Date:   Mon, 11 Feb 2019 15:17:47 +0100
+Message-Id: <20190211141833.257445558@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,56 +69,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c37d721c68ad88925ba0e72f6e14acb829a8c6bb ]
+[ Upstream commit ca95f802ef5139722acc8d30aeaab6fe5bbe939e ]
 
-Move the async_synchronize_full call out of __device_release_driver and
-into driver_detach.
+Currently, When a reserved operation is completed, its entry in the send
+queue will not be unreserved, which leads to the miscalculation of
+qp->s_avail and thus the triggering of a WARN_ON call trace. This patch
+fixes the problem by unreserving the reserved operation when it is
+completed.
 
-The idea behind this is that the async_synchronize_full call will only
-guarantee that any existing async operations are flushed. This doesn't do
-anything to guarantee that a hotplug event that may occur while we are
-doing the release of the driver will not be asynchronously scheduled.
-
-By moving this into the driver_detach path we can avoid potential deadlocks
-as we aren't holding the device lock at this point and we should not have
-the driver we want to flush loaded so the flush will take care of any
-asynchronous events the driver we are detaching might have scheduled.
-
-Fixes: 765230b5f084 ("driver-core: add asynchronous probing support for drivers")
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 856cc4c237ad ("IB/hfi1: Add the capability for reserved operations")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/dd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/hfi1/rc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 55fc31f6fe7f..d928cc6d0638 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -813,9 +813,6 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
+index 818bac1a4056..d3b8cb92fd6d 100644
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -1162,6 +1162,7 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
+ 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
+ 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
+ 			break;
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
+@@ -1214,6 +1215,7 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
+ 		u32 s_last;
  
- 	drv = dev->driver;
- 	if (drv) {
--		if (driver_allows_async_probing(drv))
--			async_synchronize_full();
--
- 		while (device_links_busy(dev)) {
- 			device_unlock(dev);
- 			if (parent)
-@@ -920,6 +917,9 @@ void driver_detach(struct device_driver *drv)
- 	struct device_private *dev_prv;
- 	struct device *dev;
- 
-+	if (driver_allows_async_probing(drv))
-+		async_synchronize_full();
-+
- 	for (;;) {
- 		spin_lock(&drv->p->klist_devices.k_lock);
- 		if (list_empty(&drv->p->klist_devices.k_list)) {
+ 		rvt_put_swqe(wqe);
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
 -- 
 2.19.1
 
