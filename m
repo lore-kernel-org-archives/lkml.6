@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985BFC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D198C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B2620844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D083020838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894875;
-	bh=GrK334DDMMWOgkdPVbDuNPJ+ifvVXHSJCJF8rmhH1mw=;
+	s=default; t=1549894879;
+	bh=iO00A0bVRP2GrGLOjEY7RBVzvxw4BAW985wfFpwd+ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ver8ejv/OTaQJSoYBGIn73m0cvhOtBmtkDehOQOfwePmC//9B1lIypeve2ejzFi0D
-	 jh9gP5ZuvMsbaKR7VZTSh8kdyZEmFQqskAV8hsNBFLAKeQH4O0lMSUdCblE0X+AI/L
-	 KMsn/dNASKIvw9doGZTTF95hu9j6e/J31a0R9nTQ=
+	b=f+knQtdMEaN4QRbIZpTRhm8/pR4UpGYdEgWfXGSxvSghJBvH/B9jZlduChPgTd0PT
+	 zgccI3OvugaFUcXemZ6+VdJ+sNYJBJ6bnLHzPbVF4VKiONYe3r/LSgV9E8BDhVtyCC
+	 t2So/36m6mHFRel7Tfr9c454NfGkUzRirE90C91A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbfBKOVO (ORCPT
+        id S1728499AbfBKOVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53990 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728473AbfBKOVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:09 -0500
+        id S1728484AbfBKOVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A88720844;
-        Mon, 11 Feb 2019 14:21:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B835222B5;
+        Mon, 11 Feb 2019 14:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894868;
-        bh=GrK334DDMMWOgkdPVbDuNPJ+ifvVXHSJCJF8rmhH1mw=;
+        s=default; t=1549894872;
+        bh=iO00A0bVRP2GrGLOjEY7RBVzvxw4BAW985wfFpwd+ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N8mQ63J+BCiaLpCo7rMOVVk3vmRLtfJ7gN6MVtqbDqvPAeLyBYrJFyW6rIm4SVSCe
-         wez1QbLDOVvMTzNMiQSKPDG2S8uaoNVwRIkHZRBjzR5H1tByRq8ZuyxcfjXm8+z6kM
-         FQ2TNm+s+wHHcwxrDANSOwBzyAAA8PJlD8W60NrA=
+        b=rUL+LMQ4N1w3gHJpV2RAM5nNp4wF8QFCxf4EQh86mdj0MKcjM+JqUgDypW6HGbEdE
+         mkQhjzd/wDvVi9oIel0iSkyHjNzGv0RRojJ70qW5C6qhDt7S/Ul5/ecNF6lIsqX0uJ
+         66USxUO7zOFHPRNRfi9VX2OC7PAbeGVjBeBqTzcw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Muchun Song <smuchun@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 007/352] ASoC: Intel: mrfld: fix uninitialized variable access
-Date:   Mon, 11 Feb 2019 15:13:54 +0100
-Message-Id: <20190211141846.935209382@linuxfoundation.org>
+Subject: [PATCH 4.20 008/352] gpiolib: Fix possible use after free on label
+Date:   Mon, 11 Feb 2019 15:13:55 +0100
+Message-Id: <20190211141846.985775053@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,52 +66,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
+[ Upstream commit 18534df419041e6c1f4b41af56ee7d41f757815c ]
 
-Randconfig testing revealed a very old bug, with gcc-8:
+gpiod_request_commit() copies the pointer to the label passed as
+an argument only to be used later. But there's a chance the caller
+could immediately free the passed string(e.g., local variable).
+This could trigger a use after free when we use gpio label(e.g.,
+gpiochip_unlock_as_irq(), gpiochip_is_requested()).
 
-sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
-sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (fw == NULL) {
-     ^
-sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
-  const struct firmware *fw;
+To be on the safe side: duplicate the string with kstrdup_const()
+so that if an unaware user passes an address to a stack-allocated
+buffer, we won't get the arbitrary label.
 
-We must check the return code of request_firmware() before we look at the
-pointer result that may be uninitialized when the function fails.
+Also fix gpiod_set_consumer_name().
 
-Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib.c        | 25 +++++++++++++++++++++----
+ include/linux/gpio/consumer.h |  6 ++++--
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
-index 27413ebae956..b8c456753f01 100644
---- a/sound/soc/intel/atom/sst/sst_loader.c
-+++ b/sound/soc/intel/atom/sst/sst_loader.c
-@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
- 	const struct firmware *fw;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 76913e23cf3a..bd44be115cdd 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2306,6 +2306,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
  
- 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
--	if (fw == NULL) {
--		dev_err(sst->dev, "fw is returning as null\n");
--		return -EINVAL;
--	}
- 	if (retval) {
- 		dev_err(sst->dev, "request fw failed %d\n", retval);
- 		return retval;
- 	}
-+	if (fw == NULL) {
-+		dev_err(sst->dev, "fw is returning as null\n");
-+		return -EINVAL;
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
 +	}
- 	mutex_lock(&sst->sst_lock);
- 	retval = sst_cache_and_parse_fw(sst, fw);
- 	mutex_unlock(&sst->sst_lock);
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2316,6 +2322,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2332,6 +2339,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
+ 		}
+@@ -2427,6 +2435,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
+@@ -3382,11 +3391,19 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
+  * @desc: gpio to set the consumer name on
+  * @name: the new consumer name
+  */
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
+ {
+-	VALIDATE_DESC_VOID(desc);
+-	/* Just overwrite whatever the previous name was */
+-	desc->label = name;
++	VALIDATE_DESC(desc);
++	if (name) {
++		name = kstrdup_const(name, GFP_KERNEL);
++		if (!name)
++			return -ENOMEM;
++	}
++
++	kfree_const(desc->label);
++	desc_set_label(desc, name);
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index f2f887795d43..ed070512b40e 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -162,7 +162,7 @@ int gpiod_is_active_low(const struct gpio_desc *desc);
+ int gpiod_cansleep(const struct gpio_desc *desc);
+ 
+ int gpiod_to_irq(const struct gpio_desc *desc);
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
+ 
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+@@ -495,10 +495,12 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
+ 	return -EINVAL;
+ }
+ 
+-static inline void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
++					  const char *name)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return -EINVAL;
+ }
+ 
+ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
 -- 
 2.19.1
 
