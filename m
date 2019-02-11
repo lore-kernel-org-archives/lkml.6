@@ -2,213 +2,99 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3227DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B14C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41E32229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFBC42229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:31:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MHT4nG1d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbfBKR36 (ORCPT
+        id S1729609AbfBKRbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:29:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54556 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730791AbfBKR34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:29:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E03D080D;
-        Mon, 11 Feb 2019 09:29:55 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC8F83F675;
-        Mon, 11 Feb 2019 09:29:53 -0800 (PST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-arch@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER EFFECTS" section
-Date:   Mon, 11 Feb 2019 17:29:48 +0000
-Message-Id: <20190211172948.3322-1-will.deacon@arm.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 11 Feb 2019 12:31:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41000 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727393AbfBKRbm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:31:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BvHOGo1g8yWo1gRoRLczgUpiw0DBDlt2BwWSm5YsHr0=; b=MHT4nG1dwudLVuNb9uk/lYi9C
+        Ld+XmRNlSqXb3sl80y8roVhsnsLcDrU7QLhZD/rMYuw/+gYPZHdhyfqeaMqkpbUFFk9rwiK0r4VFm
+        V2qSXAdaisVAOikr3Xso+aUmgYxoZJKF6B/IPfuLpNNLAqTVkOXEJW1lm46BuBIUqBEbFQ2fRNTYB
+        D75MY13KTo1xiNsOfHL1R/B1rruuCNsSzlv4JKsqLhQN3ULxnP9VX1BPD1HK290Aq/o8vTe5ITXLM
+        JBciWTtVahiE9SU1OFS//O0/y+RKqRdWuXdd4z1j4YaR8vhiyhcbEpPiqvzY1crui8ytlOsG/UW+b
+        yNv3z/a9g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtFQg-00022a-Uf; Mon, 11 Feb 2019 17:31:39 +0000
+Subject: Re: [PATCH] Documentation: fix vm/slub.rst warning
+To:     Jonathan Corbet <corbet@lwn.net>, Linux MM <linux-mm@kvack.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "Tobin C. Harding" <tobin@kernel.org>
+References: <1e992162-c4ac-fe4e-f1b0-d8a16a51d5e7@infradead.org>
+ <20190211082705.0ff3d86b@lwn.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2a14eb40-ea42-fcf0-6f1a-458e13f9983d@infradead.org>
+Date:   Mon, 11 Feb 2019 09:31:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190211082705.0ff3d86b@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "KERNEL I/O BARRIER EFFECTS" section of memory-barriers.txt is vague,
-x86-centric, out-of-date, incomplete and demonstrably incorrect in places.
-This is largely because I/O ordering is a horrible can of worms, but also
-because the document has stagnated as our understanding has evolved.
+On 2/11/19 7:27 AM, Jonathan Corbet wrote:
+> On Sun, 10 Feb 2019 22:34:11 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix markup warning by quoting the '*' character with a backslash.
+>>
+>> Documentation/vm/slub.rst:71: WARNING: Inline emphasis start-string without end-string.
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Christoph Lameter <cl@linux.com>
+>> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+>> ---
+>>  Documentation/vm/slub.rst |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> --- lnx-50-rc6.orig/Documentation/vm/slub.rst
+>> +++ lnx-50-rc6/Documentation/vm/slub.rst
+>> @@ -68,7 +68,7 @@ end of the slab name, in order to cover
+>>  example, here's how you can poison the dentry cache as well as all kmalloc
+>>  slabs:
+>>  
+>> -	slub_debug=P,kmalloc-*,dentry
+>> +	slub_debug=P,kmalloc-\*,dentry
+>>  
+>>  Red zoning and tracking may realign the slab.  We can just apply sanity checks
+>>  to the dentry cache with::
+> 
+> The better fix here is to make that a literal block ("slabs::").  Happily
+> for all of us, Tobin already did that in 11ede50059d0.
 
-Attempt to address some of that, by rewriting the section based on
-recent(-ish) discussions with Arnd, BenH and others. Maybe one day we'll
-find a way to formalise this stuff, but for now let's at least try to
-make the English easier to understand.
+Thanks for the info.
 
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- Documentation/memory-barriers.txt | 115 ++++++++++++++++++++------------------
- 1 file changed, 62 insertions(+), 53 deletions(-)
-
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index 1c22b21ae922..d08b49b2c011 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -2599,72 +2599,81 @@ likely, then interrupt-disabling locks should be used to guarantee ordering.
- KERNEL I/O BARRIER EFFECTS
- ==========================
- 
--When accessing I/O memory, drivers should use the appropriate accessor
--functions:
--
-- (*) inX(), outX():
--
--     These are intended to talk to I/O space rather than memory space, but
--     that's primarily a CPU-specific concept.  The i386 and x86_64 processors
--     do indeed have special I/O space access cycles and instructions, but many
--     CPUs don't have such a concept.
--
--     The PCI bus, amongst others, defines an I/O space concept which - on such
--     CPUs as i386 and x86_64 - readily maps to the CPU's concept of I/O
--     space.  However, it may also be mapped as a virtual I/O space in the CPU's
--     memory map, particularly on those CPUs that don't support alternate I/O
--     spaces.
--
--     Accesses to this space may be fully synchronous (as on i386), but
--     intermediary bridges (such as the PCI host bridge) may not fully honour
--     that.
--
--     They are guaranteed to be fully ordered with respect to each other.
--
--     They are not guaranteed to be fully ordered with respect to other types of
--     memory and I/O operation.
-+Interfacing with peripherals via I/O accesses is deeply architecture and device
-+specific. Therefore, drivers which are inherently non-portable may rely on
-+specific behaviours of their target systems in order to achieve synchronization
-+in the most lightweight manner possible. For drivers intending to be portable
-+between multiple architectures and bus implementations, the kernel offers a
-+series of accessor functions that provide various degrees of ordering
-+guarantees:
- 
-  (*) readX(), writeX():
- 
--     Whether these are guaranteed to be fully ordered and uncombined with
--     respect to each other on the issuing CPU depends on the characteristics
--     defined for the memory window through which they're accessing.  On later
--     i386 architecture machines, for example, this is controlled by way of the
--     MTRR registers.
-+     The readX() and writeX() MMIO accessors take a pointer to the peripheral
-+     being accessed as an __iomem * parameter. For pointers mapped with the
-+     default I/O attributes (e.g. those returned by ioremap()), then the
-+     ordering guarantees are as follows:
-+
-+     1. All readX() and writeX() accesses to the same peripheral are ordered
-+        with respect to each other. For example, this ensures that MMIO register
-+	writes by the CPU to a particular device will arrive in program order.
-+
-+     2. A writeX() by the CPU to the peripheral will first wait for the
-+        completion of all prior CPU writes to memory. For example, this ensures
-+        that writes by the CPU to an outbound DMA buffer allocated by
-+        dma_alloc_coherent() will be visible to a DMA engine when the CPU writes
-+        to its MMIO control register to trigger the transfer.
-+
-+     3. A readX() by the CPU from the peripheral will complete before any
-+	subsequent CPU reads from memory can begin. For example, this ensures
-+	that reads by the CPU from an incoming DMA buffer allocated by
-+	dma_alloc_coherent() will not see stale data after reading from the DMA
-+	engine's MMIO status register to establish that the DMA transfer has
-+	completed.
-+
-+     4. A readX() by the CPU from the peripheral will complete before any
-+	subsequent delay() loop can begin execution. For example, this ensures
-+	that two MMIO register writes by the CPU to a peripheral will arrive at
-+	least 1us apart if the first write is immediately read back with readX()
-+	and udelay(1) is called prior to the second writeX().
-+
-+     __iomem pointers obtained with non-default attributes (e.g. those returned
-+     by ioremap_wc()) are unlikely to provide many of these guarantees. If
-+     ordering is required for such mappings, then the mandatory barriers should
-+     be used in conjunction with the _relaxed() accessors defined below.
-+
-+ (*) readX_relaxed(), writeX_relaxed():
- 
--     Ordinarily, these will be guaranteed to be fully ordered and uncombined,
--     provided they're not accessing a prefetchable device.
--
--     However, intermediary hardware (such as a PCI bridge) may indulge in
--     deferral if it so wishes; to flush a store, a load from the same location
--     is preferred[*], but a load from the same device or from configuration
--     space should suffice for PCI.
--
--     [*] NOTE! attempting to load from the same location as was written to may
--	 cause a malfunction - consider the 16550 Rx/Tx serial registers for
--	 example.
--
--     Used with prefetchable I/O memory, an mmiowb() barrier may be required to
--     force stores to be ordered.
-+     These are similar to readX() and writeX(), but provide weaker memory
-+     ordering guarantees. Specifically, they do not guarantee ordering with
-+     respect to normal memory accesses or delay() loops (i.e bullets 2-4 above)
-+     but they are still guaranteed to be ordered with respect to other accesses
-+     to the same peripheral when operating on __iomem pointers mapped with the
-+     default I/O attributes.
- 
--     Please refer to the PCI specification for more information on interactions
--     between PCI transactions.
-+ (*) inX(), outX():
- 
-- (*) readX_relaxed(), writeX_relaxed()
-+     The inX() and outX() accessors are intended to access legacy port-mapped
-+     I/O peripherals, which may require special instructions on some
-+     architectures (notably x86). The port number of the peripheral being
-+     accessed is passed as an argument.
- 
--     These are similar to readX() and writeX(), but provide weaker memory
--     ordering guarantees.  Specifically, they do not guarantee ordering with
--     respect to normal memory accesses (e.g. DMA buffers) nor do they guarantee
--     ordering with respect to LOCK or UNLOCK operations.  If the latter is
--     required, an mmiowb() barrier can be used.  Note that relaxed accesses to
--     the same peripheral are guaranteed to be ordered with respect to each
--     other.
-+     Since many CPU architectures ultimately access these peripherals via an
-+     internal virtual memory mapping, the portable ordering guarantees provided
-+     by inX() and outX() are the same as those provided by readX() and writeX()
-+     respectively when accessing a mapping with the default I/O attributes.
- 
-  (*) ioreadX(), iowriteX()
- 
-      These will perform appropriately for the type of access they're actually
-      doing, be it inX()/outX() or readX()/writeX().
- 
-+All of these accessors assume that the underlying peripheral is little-endian,
-+and will therefore perform byte-swapping operations on big-endian architectures.
-+
-+Composing I/O ordering barriers with SMP ordering barriers and LOCK/UNLOCK
-+operations is a dangerous sport which may require the use of mmiowb(). See the
-+subsection "Acquires vs I/O accesses" for more information.
- 
- ========================================
- ASSUMED MINIMUM EXECUTION ORDERING MODEL
 -- 
-2.11.0
-
+~Randy
