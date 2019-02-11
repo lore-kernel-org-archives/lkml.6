@@ -2,72 +2,107 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087CFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DDB2080D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5EFA2080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfBKKYR (ORCPT
+        id S1726975AbfBKKYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:24:17 -0500
-Received: from 8bytes.org ([81.169.241.247]:39356 "EHLO theia.8bytes.org"
+        Mon, 11 Feb 2019 05:24:31 -0500
+Received: from sauhun.de ([88.99.104.3]:52922 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKKYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:24:17 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 27A4539A; Mon, 11 Feb 2019 11:24:15 +0100 (CET)
-Date:   Mon, 11 Feb 2019 11:24:15 +0100
-From:   "joro@8bytes.org" <joro@8bytes.org>
-To:     wen yang <yellowriver2010@hotmail.com>
-Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: fix device reference leaks
-Message-ID: <20190211102414.GZ32526@8bytes.org>
-References: <HK0PR02MB3634F6AE1FAE6B86EF82B291B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+        id S1725931AbfBKKYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:24:31 -0500
+Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
+        by pokefinder.org (Postfix) with ESMTPSA id 0DA142E3542;
+        Mon, 11 Feb 2019 11:24:28 +0100 (CET)
+Date:   Mon, 11 Feb 2019 11:24:24 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] i2c:ocores: stop transfer on timeout
+Message-ID: <20190211102424.5xnzyxvfd2yhf6ui@ninjato>
+References: <20190211083122.32485-1-federico.vaga@cern.ch>
+ <20190211083122.32485-2-federico.vaga@cern.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k34seb4vqcvdmmff"
 Content-Disposition: inline
-In-Reply-To: <HK0PR02MB3634F6AE1FAE6B86EF82B291B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190211083122.32485-2-federico.vaga@cern.ch>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding a few more people to Cc.
 
-On Sun, Feb 03, 2019 at 10:27:09AM +0000, wen yang wrote:
-> Make sure to drop the reference to the device taken by
-> of_find_device_by_node() on driver unbind.
-> 
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: iommu@lists.linux-foundation.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 7a4529c..cebf56d 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -756,6 +756,9 @@ static int ipmmu_init_platform_device(struct device *dev,
->  
->  	fwspec->iommu_priv = platform_get_drvdata(ipmmu_pdev);
->  
-> +	if (!fwspec->iommu_priv)
-> +		put_device(&ipmmu_pdev->dev);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.7.4
+--k34seb4vqcvdmmff
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 11, 2019 at 09:31:18AM +0100, Federico Vaga wrote:
+> Detecting a timeout is ok, but we also need to assert a STOP command on
+> the bus in order to prevent it from generating interrupts when there are
+> no on going transfers.
+>=20
+> Example: very long transmission.
+>=20
+> 1. ocores_xfer: START a transfer
+> 2. ocores_isr : handle byte by byte the transfer
+> 3. ocores_xfer: goes in timeout [[bugfix here]]
+> 4. ocores_xfer: return to I2C subsystem and to the I2C driver
+> 5. I2C driver : it may clean up the i2c_msg memory
+> 6. ocores_isr : receives another interrupt (pending bytes to be
+>                 transferred) but the i2c_msg memory is invalid now
+>=20
+> So, since the transfer was too long, we have to detect the timeout and
+> STOP the transfer.
+>=20
+> Another point is that we have a critical region here. When handling the
+> timeout condition we may have a running IRQ handler. For this reason I
+> introduce a spinlock.
+>=20
+> In order to make easier to understan locking I have:
+> - added a new function to handle timeout
+> - modified the current ocores_process() function in order to be protected
+>   by the new spinlock
+> Like this it is obvious at first sight that this locking serializes
+> the execution of ocores_process() and ocores_process_timeout()
+>=20
+> Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>=20
+
+Applied to for-next, thanks!
+
+
+--k34seb4vqcvdmmff
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhTVQACgkQFA3kzBSg
+KbbIzBAAk28yIbH11CCG/mU8YLcPZTJRQh7q2VqKZQkxV0pf0CCx+N0pAdlFrzSv
+pzsLLeIpQPUZE37Alfacz+dKZRVimcPGJ4qvR7Gja1onWkSpzOhYPp8LiEBFhgtO
+UTdjqeVLs+/Au35gdZ0vKNKOy62B9azsU11FpY5ygDYrF2KDlE3wIlzEoKrXnG37
+cBhkwFi/xXZL+N9Ew1PIkr4qdPArARHXdvlrsiV48ZHp54byJ0VKTHp80Mvut4IW
+Xs2AFLK+K7u2b6ZGGrbKst6xeRZBQ+lHMxCDzx1jiYMaGoltubOd45uk/Ujdb51r
+de1/6tijFEvvInI1nWucbpLhY79bz7VRYH4rw+NJWwrTlqxGws0uytm3bSD3u6vJ
+2q/5WtPC+vPFl/D42fQcJRwrzg62hls0RRjhO13YscobpCijohVtPLuZerXYAyTq
+FoMcWdFj6H8BCwhB3tobjoDS7VajcN2Yj0H/mhxI8iqUiUSD/03aXYSzeidZzWDd
+z7YYUvv/0fWrhv6MdXpYGZjvzfNoQE8aJVMZ3+ULUWSoeNZ1YfjIogXdYhdxlOBv
+FB9JI0+TeVCgkJBD1AYmuC6GWf1UU7DkpeoLZkpx79ndvXn2XXYdMRs9wHIw242X
+SB5jEQoST38O9F81MOPcGLfpuIFV08kmUcs36jtP1mFQ8ktYZtg=
+=48TV
+-----END PGP SIGNATURE-----
+
+--k34seb4vqcvdmmff--
