@@ -2,85 +2,130 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053E7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53842C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0DCD222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E5A1222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="Cz7C/op5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388265AbfBKPjQ (ORCPT
+        id S1729321AbfBKPjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:39:16 -0500
-Received: from ms.lwn.net ([45.79.88.28]:46208 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbfBKPjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:39:14 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 9A99F130D;
-        Mon, 11 Feb 2019 15:39:13 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 08:39:11 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Waiman Long <longman@redhat.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2] Documentation: Fix grammatical error in
- sysctl/fs.txt & clarify negative dentry
-Message-ID: <20190211083911.22f64578@lwn.net>
-In-Reply-To: <1549570542-2471-1-git-send-email-longman@redhat.com>
-References: <1549570542-2471-1-git-send-email-longman@redhat.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 11 Feb 2019 10:39:22 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38040 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388277AbfBKPjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:39:19 -0500
+Received: by mail-yb1-f194.google.com with SMTP id x9so4330074ybj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:39:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=boQyFNiX0XoZWerTpTg2C8lpdchzW9CQNXvCXi3hMik=;
+        b=Cz7C/op581GUNxTLcUjtjsQTNCi0Y3Bp+qn6dcjHeM04i+snxFdxl2Q5t8K3x6nuMG
+         MLWGeA7SWY3SxAdEypKir9AeURyWSTDOW0hzPET0xaW0nbw59ZZNfyWG74PGMNHbh/Qi
+         XlD9pOhblu5UvvQ1oQ7QNkcpgK5jBb4HzC6FsArd/SoyQKTXh+rxfgitkYrFKaDLelP3
+         eCw9ucw79AY/LwZBpNsRSvCvedq6YIo56HtK9c1LOuOiojgeC8VFCbd71JC70o3GU1bI
+         qjOcMd7JZACS8h0JahatSh38wSHCIMJT29nry+7AakeP/Qm2uiSMtdZMUTdGQseSWZR+
+         RDDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=boQyFNiX0XoZWerTpTg2C8lpdchzW9CQNXvCXi3hMik=;
+        b=VYAe17N2bxXseq4eXO7dHvDszF5uYZG+Pejp1PtgYMjXsi/E55v/aYwgCzp1Kc2gb2
+         ohEznGrrE30mDsU4Pawk6lUwDdqMztalVtpZ1EQ1jsujkEaAp7twYqPvO5NsEe0MhKi0
+         Xihf8P6z41yXZlje96IyFD+rIJZc/I7hN/7U6LYWz/EVkVsngwN7UkScQGwi9XqeEzJe
+         DVzwR6+vlMR3O+9hXby8k/difaJbmJ3GKZAaPRidx3Y8b0Yuob7zV1w7lIqcUapFI1Xb
+         LOwkoJGlbQQtBkd1zj28jXde6GUlz/vBqJYeOiDGpKUn8l8E4H893ucW8p09dZx5+1wb
+         5NFQ==
+X-Gm-Message-State: AHQUAuY2UVGm7Ka+9yKtGvWKMeWiQ0JkjMORs4Q2P/dhceL50vKkQ9cN
+        C5QffMZpF9tUZhqnDVHt4fpyXA==
+X-Google-Smtp-Source: AHgI3IapaQTByQPsAP6IpFkNLAC+n/as07YS8DHCyk5phOCcjXPZW/eoi+XLXwlBlRYx1kQf798QLQ==
+X-Received: by 2002:a25:3291:: with SMTP id y139mr26204187yby.79.1549899558746;
+        Mon, 11 Feb 2019 07:39:18 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:9135])
+        by smtp.gmail.com with ESMTPSA id 11sm4318587ywv.109.2019.02.11.07.39.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 07:39:17 -0800 (PST)
+Date:   Mon, 11 Feb 2019 10:39:34 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] blkcg: prevent priority inversion problem during
+ sync()
+Message-ID: <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
+References: <20190209140749.GB1910@xps-13>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190209140749.GB1910@xps-13>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Feb 2019 15:15:42 -0500
-Waiman Long <longman@redhat.com> wrote:
-
-> Fix a grammatical error in the dentry-state text and clarify the usage
-> of negative dentries.
+On Sat, Feb 09, 2019 at 03:07:49PM +0100, Andrea Righi wrote:
+> This is an attempt to mitigate the priority inversion problem of a
+> high-priority blkcg issuing a sync() and being forced to wait the
+> completion of all the writeback I/O generated by any other low-priority
+> blkcg, causing massive latencies to processes that shouldn't be
+> I/O-throttled at all.
 > 
-> Fixes: af0c9af1b3f66 ("fs/dcache: Track & report number of negative dentries")
-
-Linus, perhaps you'd like to take this one directly?  It seems that the
-above-reference comment went in directly, so I can't apply this fix now
-without back-merging 5.0-rc5 or so...
-
-Thanks,
-
-jon
-
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  Documentation/sysctl/fs.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> The idea is to save a list of blkcg's that are waiting for writeback:
+> every time a sync() is executed the current blkcg is added to the list.
 > 
-> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
-> index 58649bd..ebc679b 100644
-> --- a/Documentation/sysctl/fs.txt
-> +++ b/Documentation/sysctl/fs.txt
-> @@ -80,7 +80,9 @@ nonzero when shrink_dcache_pages() has been called and the
->  dcache isn't pruned yet.
->  
->  nr_negative shows the number of unused dentries that are also
-> -negative dentries which do not mapped to actual files.
-> +negative dentries which do not map to any files. Instead,
-> +they help speeding up rejection of non-existing files provided
-> +by the users.
->  
->  ==============================================================
->  
+> Then, when I/O is throttled, if there's a blkcg waiting for writeback
+> different than the current blkcg, no throttling is applied (we can
+> probably refine this logic later, i.e., a better policy could be to
+> adjust the throttling I/O rate using the blkcg with the highest speed
+> from the list of waiters - priority inheritance, kinda).
+> 
+> This topic has been discussed here:
+> https://lwn.net/ml/cgroups/20190118103127.325-1-righi.andrea@gmail.com/
+> 
+> But we didn't come up with any definitive solution.
+> 
+> This patch is not a definitive solution either, but it's an attempt to
+> continue addressing this issue and handling the priority inversion
+> problem with sync() in a better way.
+> 
+> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+
+Talked with Tejun about this some and we agreed the following is probably the
+best way forward
+
+1) Track the submitter of the wb work to the writeback code.
+2) Sync() defaults to the root cg, and and it writes all the things as the root
+   cg.
+3) Add a flag to the cgroups that would make sync()'ers in that group only be
+   allowed to write out things that belong to its group.
+
+This way we avoid the priority inversion of having things like systemd or random
+logged in user doing sync() and having to wait, and we keep low prio cgroups
+from causing big IO storms by syncing out stuff and getting upgraded to root
+priority just to avoid the inversion.
+
+Obviously by default we want this flag to be off since its such a big change,
+but people/setups really worried about this behavior (Facebook for instance
+would likely use this flag) can go ahead and set it and be sure we're getting
+good isolation and still avoiding the priority inversion associated with running
+sync from a high priority context.  Thanks,
+
+Josef
