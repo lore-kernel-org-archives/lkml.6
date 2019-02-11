@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED4AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58007C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA1B21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 220E8222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896186;
-	bh=vaCLzIljJVBCizjNz2G+43NNIXLk6h5n265a36nipl4=;
+	s=default; t=1549896190;
+	bh=TshDJp4rhht05eVUbSaIMCMxJGIebZdz/BibrXPO5jQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V7buN9iXj1pen/NkLm7/sdaL3E4Aw4tWMkt6S7dRiPK/fKs1UJPcmW+csxyAgFntd
-	 gALIB8wu1Q8xJTDQjKBFkErRqN+wGdOgi6DQXM905CFmZPJd8zVaQ9/VS3+8q2gJ+c
-	 JYxWjK+S7qmVbkIw3WtC+se3nn7LAgvw0SCm3emA=
+	b=L2LRKgwvofQANt167yKGtlHSaTVAbCgb00OwqCO1n2xIjhmbVdy6FK674M2XTvC2O
+	 iXglJdiKyq9Maw7c5xuuXcvabqzHU8oKlnozcuyOkHtuGhoMr02yj5ODCzhOLJsE37
+	 eQ9T3ehFovr4aJ6ygAjR1PkAXpC+6cMEsTD6v/JY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbfBKOnE (ORCPT
+        id S1732571AbfBKOnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55074 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731778AbfBKOm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:59 -0500
+        id S1731778AbfBKOnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8751214DA;
-        Mon, 11 Feb 2019 14:42:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AABAF2081B;
+        Mon, 11 Feb 2019 14:43:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896178;
-        bh=vaCLzIljJVBCizjNz2G+43NNIXLk6h5n265a36nipl4=;
+        s=default; t=1549896185;
+        bh=TshDJp4rhht05eVUbSaIMCMxJGIebZdz/BibrXPO5jQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vuEerXigVULZb1KRnIX1pAm0CmKXsaxk64+nEWvqu18BiN9a1+7ibE7n9fwy7ED1o
-         PlIwnEuz67ucYq5ag8LKz66QfF7UKUychj9mEv5gjmO+Yk9TfUzbKuWRhVkkVMziMy
-         8GMQyg26wKesKkKwW/YVvTH9qZP+TThc60HG8wdI=
+        b=rvYEAE3GcOE/cVsovpuuOsyjTyNic+zcRyo5UxVX78Z2VJjn3EodtDO5CM6RwP+4y
+         /ayinqY6yVOfqXEoxCI0YE8oVIIWoN71Nem7rw00oeWvBFPKNcuUA4t2xjuvbevJmu
+         o82ecEbaFzN/jXIy2Otg07/QcLbj18suIdp41tYU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 099/313] usb: mtu3: fix the issue about SetFeature(U1/U2_Enable)
-Date:   Mon, 11 Feb 2019 15:16:19 +0100
-Message-Id: <20190211141900.478446561@linuxfoundation.org>
+Subject: [PATCH 4.19 101/313] media: imx274: select REGMAP_I2C
+Date:   Mon, 11 Feb 2019 15:16:21 +0100
+Message-Id: <20190211141900.611214578@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,66 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a0678e2eed41e81004308693ac84ea95614b0920 ]
+[ Upstream commit 4f9d7225c70dd9d3f406b79e60f8dbd2cd5ae743 ]
 
-Fix the issue: device doesn't accept LGO_U1/U2:
-1. set SW_U1/U2_ACCEPT_ENABLE to eanble controller to accept LGO_U1/U2
-    by default;
-2. enable/disable controller to initiate requests for transition into
-    U1/U2 by SW_U1/U2_REQUEST_ENABLE instead of SW_U1/U2_ACCEPT_ENABLE;
+The imx274 driver uses regmap and the build will fail without it.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes:
+
+  drivers/media/i2c/imx274.c:142:21: error: variable ‘imx274_regmap_config’ has initializer but incomplete type
+   static const struct regmap_config imx274_regmap_config = {
+                       ^~~~~~~~~~~~~
+  drivers/media/i2c/imx274.c:1869:19: error: implicit declaration of function ‘devm_regmap_init_i2c’ [-Werror=implicit-function-declaration]
+    imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
+                     ^~~~~~~~~~~~~~~~~~~~
+
+and others.
+
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/mtu3/mtu3_core.c       | 4 +++-
- drivers/usb/mtu3/mtu3_gadget_ep0.c | 8 ++++----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index d045d8458f81..48d10a61e271 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -578,8 +578,10 @@ static void mtu3_regs_init(struct mtu3 *mtu)
- 	if (mtu->is_u3_ip) {
- 		/* disable LGO_U1/U2 by default */
- 		mtu3_clrbits(mbase, U3D_LINK_POWER_CONTROL,
--				SW_U1_ACCEPT_ENABLE | SW_U2_ACCEPT_ENABLE |
- 				SW_U1_REQUEST_ENABLE | SW_U2_REQUEST_ENABLE);
-+		/* enable accept LGO_U1/U2 link command from host */
-+		mtu3_setbits(mbase, U3D_LINK_POWER_CONTROL,
-+				SW_U1_ACCEPT_ENABLE | SW_U2_ACCEPT_ENABLE);
- 		/* device responses to u3_exit from host automatically */
- 		mtu3_clrbits(mbase, U3D_LTSSM_CTRL, SOFT_U3_EXIT_EN);
- 		/* automatically build U2 link when U3 detect fail */
-diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-index 25216e79cd6e..3c464d8ae023 100644
---- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
-+++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-@@ -336,9 +336,9 @@ static int ep0_handle_feature_dev(struct mtu3 *mtu,
- 
- 		lpc = mtu3_readl(mbase, U3D_LINK_POWER_CONTROL);
- 		if (set)
--			lpc |= SW_U1_ACCEPT_ENABLE;
-+			lpc |= SW_U1_REQUEST_ENABLE;
- 		else
--			lpc &= ~SW_U1_ACCEPT_ENABLE;
-+			lpc &= ~SW_U1_REQUEST_ENABLE;
- 		mtu3_writel(mbase, U3D_LINK_POWER_CONTROL, lpc);
- 
- 		mtu->u1_enable = !!set;
-@@ -351,9 +351,9 @@ static int ep0_handle_feature_dev(struct mtu3 *mtu,
- 
- 		lpc = mtu3_readl(mbase, U3D_LINK_POWER_CONTROL);
- 		if (set)
--			lpc |= SW_U2_ACCEPT_ENABLE;
-+			lpc |= SW_U2_REQUEST_ENABLE;
- 		else
--			lpc &= ~SW_U2_ACCEPT_ENABLE;
-+			lpc &= ~SW_U2_REQUEST_ENABLE;
- 		mtu3_writel(mbase, U3D_LINK_POWER_CONTROL, lpc);
- 
- 		mtu->u2_enable = !!set;
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 041a777dfdee..63c9ac2c6a5f 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -611,6 +611,7 @@ config VIDEO_IMX274
+ 	tristate "Sony IMX274 sensor support"
+ 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+ 	depends on MEDIA_CAMERA_SUPPORT
++	select REGMAP_I2C
+ 	---help---
+ 	  This is a V4L2 sensor driver for the Sony IMX274
+ 	  CMOS image sensor.
 -- 
 2.19.1
 
