@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DA8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D666FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B3D20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E4E222AA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894936;
-	bh=F3hdFsiNZ5gxs62tsLl7NDbkUz6RZKGc/Gwh2HbVGAY=;
+	s=default; t=1549894939;
+	bh=xSwifuhy/T2YY0NENWcp6n4ouY2PQ83gQpI+43iNxbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EHmWenn9jRYB+VfgwpCc+ejKX/76OVHVfa0fV7KEKzPDEcV2ZlW6+m5V5nrf6mX08
-	 F/bZUEHRvTWN4iRwqWlZesJ7KsqDaU/VVHyCabGjNvrOV61TzHsOHU1eNnlag57ePJ
-	 Zuj1pKqsxtB9MIgVdC28TnORlI/Knm3uY2DeTKRA=
+	b=KFbNYRWBQfuQbgXV3tYsqvsSbff8GnIUqY7ltZGu4nEY9wYEb+95VMm+WC62dWBKa
+	 K4VhMD+lEKfs43CsPRPsx3GGWVntjleV7q7gn4s9oaN/0wkxUKpCqxmmXg528w5zQw
+	 5o5cNrIxNyCYq40Ntweh8vb4vs/ZV6N835k49Ulk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbfBKOWP (ORCPT
+        id S1728723AbfBKOWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:22:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55126 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:22:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbfBKOWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:13 -0500
+        id S1727551AbfBKOWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:22:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FFB9222A1;
-        Mon, 11 Feb 2019 14:22:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D604A20838;
+        Mon, 11 Feb 2019 14:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894932;
-        bh=F3hdFsiNZ5gxs62tsLl7NDbkUz6RZKGc/Gwh2HbVGAY=;
+        s=default; t=1549894935;
+        bh=xSwifuhy/T2YY0NENWcp6n4ouY2PQ83gQpI+43iNxbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iTN40pjOSc+Q7gWEig53pqkbw5T7GjHBHohenzxRNLsJq2VpXz7oV3UeXdiqFTgOd
-         diLBF1CbiDykGaVEEfvqHbuZZPrYBbnCvrH3cXm33DOmH3o2VzPsYStkhnjwQkhosN
-         /o26BuTeJKNqYtAbhODx+pB66jUPWpqZk5OI+MNM=
+        b=v84vCxFc1pRSf/yRy+FewZnFAhWL8H6x0DYQLn7U6tOomwh6LeHoA6r6Tmzfu7y2M
+         8q+tQAGNLoZEgxF/6Gw/Gt5X1bxYI7GU+aEOBnkJjAuFODVNGOYGsgpvp9nUy7ctVP
+         jeMsS2cNRVJ+FlL8TSVTIvOwH/2HB62TqgjQUzBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Naftali Goldstein <naftali.goldstein@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        Matheus Tavares <matheus.bernardino@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 035/352] iwlwifi: fw: do not set sgi bits for HE connection
-Date:   Mon, 11 Feb 2019 15:14:22 +0100
-Message-Id: <20190211141848.573801604@linuxfoundation.org>
+Subject: [PATCH 4.20 036/352] staging:iio:ad2s90: Make probe handle spi_setup failure
+Date:   Mon, 11 Feb 2019 15:14:23 +0100
+Message-Id: <20190211141848.630191973@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,37 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5c2dbebb446539eb9640bf59a02756d6e7f1fc53 ]
+[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
 
-If the association supports HE, HT/VHT rates will never be used for Tx
-and therefore there's no need to set the sgi-per-channel-width-support
-bits, so don't set them in this case.
+Previously, ad2s90_probe ignored the return code from spi_setup, not
+handling its possible failure. This patch makes ad2s90_probe check if
+the code is an error code and, if so, do the following:
 
-Fixes: 110b32f065f3 ("iwlwifi: mvm: rs: add basic implementation of the new RS API handlers")
-Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+- Call dev_err with an appropriate error message.
+- Return the spi_setup's error code.
+
+Note: The 'return ret' statement could be out of the 'if' block, but
+this whole block will be moved up in the function in the patch:
+'staging:iio:ad2s90: Move device registration to the end of probe'.
+
+Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-index 7a98e1a1dc40..dabbc04853ac 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-@@ -98,8 +98,12 @@ static u8 rs_fw_sgi_cw_support(struct ieee80211_sta *sta)
- {
- 	struct ieee80211_sta_ht_cap *ht_cap = &sta->ht_cap;
- 	struct ieee80211_sta_vht_cap *vht_cap = &sta->vht_cap;
-+	struct ieee80211_sta_he_cap *he_cap = &sta->he_cap;
- 	u8 supp = 0;
- 
-+	if (he_cap && he_cap->has_he)
-+		return 0;
+diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+index 59586947a936..51cda9151412 100644
+--- a/drivers/staging/iio/resolver/ad2s90.c
++++ b/drivers/staging/iio/resolver/ad2s90.c
+@@ -85,7 +85,12 @@ static int ad2s90_probe(struct spi_device *spi)
+ 	/* need 600ns between CS and the first falling edge of SCLK */
+ 	spi->max_speed_hz = 830000;
+ 	spi->mode = SPI_MODE_3;
+-	spi_setup(spi);
++	ret = spi_setup(spi);
 +
- 	if (ht_cap->cap & IEEE80211_HT_CAP_SGI_20)
- 		supp |= BIT(IWL_TLC_MNG_CH_WIDTH_20MHZ);
- 	if (ht_cap->cap & IEEE80211_HT_CAP_SGI_40)
++	if (ret < 0) {
++		dev_err(&spi->dev, "spi_setup failed!\n");
++		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.19.1
 
