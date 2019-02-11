@@ -2,165 +2,121 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA2AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EECC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0969221A80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03480218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:11:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="u5Lj0PbG"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kgyLyJLr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfBKMKq (ORCPT
+        id S1727165AbfBKMLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:10:46 -0500
-Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:8512
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726025AbfBKMKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:10:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-ch;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GMZ7vOfiq8M0jmHeJSi3rnYA+rtToe2L3idNXRkZR44=;
- b=u5Lj0PbGWggMMuByTwGF+lXoQ/GXT1htB5UIYgxXbAvh4YZyTFVrxQvipr/BSwupDSBS18220gdAdiy9dvLwORcXHVgphXcNGfuLAkcwHTWWuHW/BzWIMTpo8oi8+XaFBc9XTaR6n+iSdhsAOy7u8fcmZCtASPPeEayGisoVzt4=
-Received: from AM0PR06CA0067.eurprd06.prod.outlook.com (2603:10a6:208:aa::44)
- by DB7PR06MB4725.eurprd06.prod.outlook.com (2603:10a6:10:56::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.17; Mon, 11 Feb
- 2019 12:10:41 +0000
-Received: from AM5EUR02FT026.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e1e::206) by AM0PR06CA0067.outlook.office365.com
- (2603:10a6:208:aa::44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1601.19 via Frontend
- Transport; Mon, 11 Feb 2019 12:10:41 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.48)
- smtp.mailfrom=cern.ch; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=bestguesspass action=none
- header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
- AM5EUR02FT026.mail.protection.outlook.com (10.152.8.123) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Mon, 11 Feb 2019 12:10:40 +0000
-Received: from cernfe02.cern.ch (188.184.36.47) by cernmxgwlb4.cern.ch
- (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
- 2019 13:10:40 +0100
-Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
- (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
- Mon, 11 Feb 2019 13:10:38 +0100
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     Vinod Koul <vkoul@kernel.org>
-Reply-To: <federico.vaga@cern.ch>
-CC:     Jonathan Corbet <corbet@lwn.net>, <dmaengine@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] doc:dmaengine: clarify DMA desc. pointer after submission
-Date:   Mon, 11 Feb 2019 13:10:39 +0100
-Message-ID: <4742302.Qfi8ekQbNf@pcbe13614>
-In-Reply-To: <20190211115411.GR4296@vkoul-mobl>
-References: <20190208153038.23272-1-federico.vaga@cern.ch> <20190211115411.GR4296@vkoul-mobl>
+        Mon, 11 Feb 2019 07:11:23 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36340 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbfBKMLX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:11:23 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k98so17040747otk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:11:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KC8LXiCQQI99XcUi6fwU9wUEtaVFh0/UTHlyNNxO9Mw=;
+        b=kgyLyJLrMuAmA4gRztU+a6frP99l+jEVRu6XZkc+mmGb5hGMj+Fru4SrE+5Zrc2JKB
+         exV3XCzWUyLt0clgZIvwsLo7QTo5ZIPuwdPtsRzJF/HraLVbZNvLpsmeFVuOuU8yUrYx
+         jfvMV0IO5kThmEupWBu3w0TPCKs56HW7Q9mT00iWVQKFfXY0ASIeOy5reDd5nRjJawCo
+         6ICYAlpkfTrF+NEw4CUdgAAn6Md1n2ooljJzDE4l72wMBhDueyX3E285wu6oMfwmrJEl
+         H/o5MwWDe3mLAZm127dzFHKHF/CWH5GAFLOEh0oyY3b1KLJcMdA2nuJS8qFjRyYano8n
+         H+Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KC8LXiCQQI99XcUi6fwU9wUEtaVFh0/UTHlyNNxO9Mw=;
+        b=XfwtjoENh5UVudpeBP2hFtxyjpGYimjLYRmUujMy59tmcMKSmtUDDfpsK5yf+Bbjfc
+         ogw5bilkUprL1xPH2gpdc8+fhMNu5mj5ek408+lfn5VQ6PrswJYCtE9lGsFjQijqYNiD
+         IaIaKQTdLIDfiEWkPDLxMZe2GURZtwUcWHaxgVjvgSr88v/4J5PB95GgVWNxcDQ4pS5o
+         DWsXUn+M6sb8F22NF3vQj6GTY98vhQHzPOWlMUs7HzjJKVLTYLP3djsn1TVcp/UDbgGd
+         6mx9cLws1nNjgwt017KNy1O2vJ39cutrLMwmo5cZU1si7UeFErPnDXzNb/W/MU6P6Xz8
+         OUuw==
+X-Gm-Message-State: AHQUAuafBTihrYqmSJ4NaksXRypm4ezzwWy5X6/LYS+5+SNvDhoPgMJ7
+        +j3xaSa8NgHTT+n3eSBLzhZb1bhtsK59wHp21OhG/g==
+X-Google-Smtp-Source: AHgI3Ia1HjxvXShN20b9umX/+fo76bxp8cVITE8fngptLKa+cLPQSR1zsPoNl8LykasNpStTlif+dI6OY2wWt+99MBI=
+X-Received: by 2002:a9d:76c5:: with SMTP id p5mr26621538otl.108.1549887082094;
+ Mon, 11 Feb 2019 04:11:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [2001:1458:202:121::100:40]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(199004)(189003)(478600001)(14444005)(23726003)(8676002)(8936002)(786003)(16526019)(316002)(186003)(9576002)(46406003)(230700001)(43066004)(33716001)(6116002)(54906003)(6916009)(2906002)(305945005)(106002)(7636002)(7736002)(246002)(50466002)(3450700001)(33896004)(6246003)(44832011)(229853002)(53546011)(446003)(106466001)(426003)(97756001)(356004)(26005)(4326008)(74482002)(47776003)(336012)(86362001)(9686003)(486006)(126002)(476003)(76176011)(11346002)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR06MB4725;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e44b5c01-6110-4079-94d7-08d69019f0e5
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:DB7PR06MB4725;
-X-MS-TrafficTypeDiagnostic: DB7PR06MB4725:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR06MB4725;20:mBiXs9dEzQepA7qzsNMp9WBq6fZqYDlmsjQZirRP2Nuvk9uPN8W2QAPrC42/GA8pTMalsbreKWheogDCnPmvvXp7ElDw0F6jl4VjqWOfAOE5SmT7iud6hhHmCXuMgk3hZwjNlJ5U1Wl8I2AaPn19mN9HGOm76+u3ymuB7kBEi9DaYhjCJUqbYKUS5kvXaIsVOjiJ4BOJQhkShwWh91xOehGhVeSFwwuAcFSOIDT2aTgxY/BI9Med55agpOxMIPWfNw7obAnCNrS9P2gDsSMPS0yh90ki9cTW4op87QYhlQ5eOxnNsq4LXQ9iMdK3CJaeEKIiS+dTwnkY1/7NOzXQvdc2DyHZzLSKD/YceY4JRenKv0ATnXgZSIVECga3py+tcu5MgrXq5POf26OExAZH9SwSrndHL97r/ikxKKr55ck0QInpynxeO8LTMVQo9LjMIbqUwyUgi6DRkhQZACOrruc0T3xIKpvaaScy/+3r1NGlhEvOHIyyGn2WF9PALnip;4:ET6X8zpoIeHtl1v9dib396phQn+M3aexqmXoEkNLY1gtZJtZWZQgRk8JvMJTJRK1oirXzcbspReQn5W51z5drc6tgJAATIcvQ83wXvCxWB+KBdJksoi5AGNZkpJPY+KdxmPz+ZtrF105b7zW5uHhLd2n4ALvvg5gUzpgHwgIkPL52u17WQy46WaPFzPPP7kK+vfNnfGjCzjoDWtXH2qRz5vJd3PgjPZw08n36xkq99zE/TzHIDNpqszwYF1YYRh8kyPhlpBm19CKQygdjW/bvnfieiTjKYoBfZbdrO6cRIXimZJ0b8V4uqAS7Q2mHwDh
-X-Microsoft-Antispam-PRVS: <DB7PR06MB472527EFF54F9C73F404A9F1EF640@DB7PR06MB4725.eurprd06.prod.outlook.com>
-X-Forefront-PRVS: 0945B0CC72
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR06MB4725;23:EETIn0RYPNYDjDozHuQOxklOM+OHfxRDLQlu4Fzm2?=
- =?us-ascii?Q?1aG+EyKjY9XMFaygYDkYW0KoWyS916uD4+8L3Is2C+nnvh4gg69qEwODRX4f?=
- =?us-ascii?Q?ruJh3TSx0l5V+/GiW9LDW8nF0tkR+dmKtHEOTh8xkYA+J2Qpghuv9faAa8+R?=
- =?us-ascii?Q?UBcDDScPqKqZv9SDkXMBVCT42VDtwc5ndsjLo6hXaVo/QkyXTut91/7q5bF/?=
- =?us-ascii?Q?qG5tyxRctL4p8MmMSkQ8ikHnsP/PuIr4Y1sBWLzaXTxpf5yyPXnt8BBV/GHW?=
- =?us-ascii?Q?QehH5iUmliZKrXB+EWb8Qyvh1n71n7vq5V7zuPzpsZgur93FuRM8sLhtmrMT?=
- =?us-ascii?Q?FU9YBN++2t5aKbX8OY0ANs/T6H70N7jwvCK5nFRUHlJsdxoDByeo9rtwtN+L?=
- =?us-ascii?Q?+BGDOFVWPeW1+aomWbUf/g5gUL6Hx5t1cTcSor074Of4DNx2Qrq2Y2+4pF6a?=
- =?us-ascii?Q?ozVocUfqHPqQG3qHet3u3ek1XsKKEE0dN1kxFvh605kLS4/DlIJ8ZQRo489V?=
- =?us-ascii?Q?DhJUy+nvL8Qpx+BkRukEvVEEA6i6nJ19lnz/+kUV552lC+RVXiUF7SCQQ62D?=
- =?us-ascii?Q?Dk/LHyG7g6xXn6kFTXZAMyHLlilCrPlkouh2ApSmkqx7DngVOeZQu8RTisil?=
- =?us-ascii?Q?IllMa0/JQqGkAvOa9Jr7m/ozo4/sq3qBELphEEnsN1ZsKZ8udyT8PJ58E8M4?=
- =?us-ascii?Q?7/wFOf6dVLavkm364mcQ4jQKxAdb3+nI90HHw2NpuBTHm06RFLNYyPLU1WPD?=
- =?us-ascii?Q?AQ1oWlto/FO6O3PuRoEzQq6OCNI9tVb3fFdhPiK0O+hWOazkNDXxvi6kTZHq?=
- =?us-ascii?Q?UNjw23LNOjpWJnP4/xVcLXJxIYddMHmr0ptnRfCnem+riwg7rnEDZmPnRtJw?=
- =?us-ascii?Q?y9ez4cOfA5Qquka/Qhg9KRPVx7e+5Czewev121p2quGBX0+PUZBUR/WeAm0n?=
- =?us-ascii?Q?Y3AMFvNUyzgYluy1AwVxzzwcJ/i66MZVWJ+AWHI4nreeLcKy5T8Ig4GMIna1?=
- =?us-ascii?Q?BKHKVfpNqHGhBTPeRPW8RY3Rfx2kyjWj2JxZo9JpfPEYcRNrETbIkUOgKcIM?=
- =?us-ascii?Q?awuObWBmphSatIFIWXOHF+hAK6Oyz60MFJ1ki88EXtSKF0Qa8sn/E7HZaDs0?=
- =?us-ascii?Q?ROQufm3xb6dtIyUoANaC2TISIBa6Zg184J6aJ6zYQV7MAWba61In1cYB4pcX?=
- =?us-ascii?Q?bejErBadx2GkHWbUFebZZFlq1PFCDpXcZJxDQezYQT1b2EiRFnzKDbpTA=3D?=
- =?us-ascii?Q?=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: yR1/kAH/VltiwKuR6VgYpt/6AumgTeuS5YU41iDVitTao+Mp4E/J3M3xSWIyZ3c5Gl5ZZ3t7XLzGFJhaMAT88qDkcJLw94rn2z+0HWK4/MA8Wxd5l+4JDigaDqzI1dfAJQAWoKRX+Eu54qfJVGB6hlMqDWTAoDuQ4n4SPu5bc3qTB7fXj2OG+6AuVpsLZOkmj+46wJ+GBI8OyzSF5R74cEPSL7HCGRK4kzHPe8hFIK/lc0RDDSxfwr9BDBCZSi0pRYY2D+116ousuwYvz++7E1JP3aF0CGsi5KdLRzz5XlGX9V/ITkumwU77n6cIEaD+WSoretX6pcZPMXcbiObsqJu8zIjfuTnNTJn7akExZOmxrtNI0YVSsbpaQVBqtvQnlMjLKyI1aw4eIlL4/r1CXJF/SU83OG4DzMuPdk8QfF4=
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR06MB4725;6:SBXV8715S/hga81ojnOBFv7dQ0BM8tnXF1umNv3stJ+p1UrMqV8vXnQs1lJhiDcsbKGL3dlXiXLXndNblPrFm+4N1I89DBKOStyI0zLOXnFrOAujwoG211av8NvyoTo0h8ReSsn5VrOo0QH6J6yswn71sP4KouOf6CKwmp21QF0+KOrI03RoHX04cSKaMrQFutBVo1oWKhXnuhlj529FBmHzmyLJDuG9MBmJjLITO5ArI6dBv3rKm9MEort3U34jLWojeEFDFZwtY6XMJ85mrUnpBLF6rO+24Vbx53pZb0ZVRpMdNA8UWRxg+aW5USAe2ohcpkVxM8BJKeW2cL7029Qj3hCIJr/h0EaRliaehk/76IZQZpVbKbK+bgkz75AJrdGh8zbuyKIz5uv7hJA3BN/nD7uVEs6aqSVlHh6YkH3fqTdkOztLVYr/dH7tKBROtKibocIZAGJldVuV88zo3g==;5:pWxUSS1gCSB1OkUNIHzvzvMGOieUCDCWgX7k9Wnh87bbyg6EuIlFiYeNgvgR+n5XeYLu4RbwWGIcUf2EM3jY7O3zaKAtYGwmXvt542ZcTi0LLGh8J8zDdJgAH0VeElU28ehU7ngeWjMEUv2y62jvns7TCSkuz+N/I+7KXwJ8oL9STsleMgRVURqalnxq1h5lZ2lF35nwoXNPWst6fEmlMg==;7:/KhbtBhhtFT+SduANjTi6XAO2Og+/Z/Kgs0xQ9r2PbI9LGPusK0GPTk28FbPqbiwvR2Qu8iBVPPDDatYV3XjH0xQwo7nyzVNqrN7xqe7r6kwWLB+lP/c/VggH3Rxs90oKqZPrX5NCcbk7yyPIHVWmw==
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2019 12:10:40.7071
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e44b5c01-6110-4079-94d7-08d69019f0e5
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR06MB4725
+References: <20190208173458.4801-1-brgl@bgdev.pl> <50671542-c055-1796-c58e-276ba3d414d0@ti.com>
+In-Reply-To: <50671542-c055-1796-c58e-276ba3d414d0@ti.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 11 Feb 2019 13:11:11 +0100
+Message-ID: <CAMpxmJV34X=C4HMGNiAUxoVkPP+1nY3186QHOisqQtwT9pNtyg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/33] ARM: davinci: modernize the irq support
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 11, 2019 12:54:11 PM CET Vinod Koul wrote:
-> On 08-02-19, 16:30, Federico Vaga wrote:
-> > It clarifies that the DMA description pointer returned by
-> > `dmaengine_prep_*` function should not be used after submission.
-> > 
-> > Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-> > ---
-> > 
-> >  Documentation/driver-api/dmaengine/client.rst | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/Documentation/driver-api/dmaengine/client.rst
-> > b/Documentation/driver-api/dmaengine/client.rst index
-> > fbbb2831f29f..d728e50105eb 100644
-> > --- a/Documentation/driver-api/dmaengine/client.rst
-> > +++ b/Documentation/driver-api/dmaengine/client.rst
-> > 
-> > @@ -168,6 +168,13 @@ The details of these operations are:
-> >     dmaengine_submit() will not start the DMA operation, it merely adds
-> >     it to the pending queue. For this, see step 5,
-> >     dma_async_issue_pending.
-> > 
-> > +   .. note::
-> > +
-> > +      After calling ``dmaengine_submit()`` the submitted transfer
-> > descriptor +      (``struct dma_async_tx_descriptor``) belongs to the DMA
-> > engine. +      Consequentially, the client must consider invalid the
-> > pointer to that
-> Consequently
+pon., 11 lut 2019 o 12:54 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> + Jason, Marc
+>
+> Thomas, Jason, Marc,
+>
+> On 08/02/19 11:04 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> > the irqchip drivers and moves them over to drivers/irqchip.
+> >
+> > The series can be logically split into four parts. The first (1-8) aims
+> > at introducing support for SPARSE_IRQ. It contains a couple changes
+> > required for that functionality and the final patch actually selecting
+> > it.
+> >
+> > Second part (9-19) makes the aintc driver suitable for drivers/irqchip
+> > and eventually moves it over there.
+> >
+> > Part 3 (20-32) does the same for the cp-intc driver.
+> >
+> > Last patch removes unnecessary code.
+> >
+> > The series has been tested on da850-lcdk (for cp-intc) and
+> > dm365-evm (for aintc).
+>
+> With your ack, I would like to try get it merged to v5.1 via ARM SoC tree=
+.
+>
+> Bartosz, I noticed that Jason and Marc were not originally CCed. You may
+> have to resend if they don't have the series in their inbox.
+>
+> Thanks,
+> Sekhar
 
-I'm not a native speaker but consequentially and consequently should be 
-synonymous. As fa as I understood. but I do not mind to change it if you think 
-is better.
+Sorry for that, I'm not sure how this happened, since they do pop up
+in get_maintainer.pl output for that series.
 
-> > +      descriptor.
-> > +
-> 
-> Applied after fixing the typo and added tag as Documentation: dmaengine...
+I'll resend it.
 
-I used doc to make the string shorter
-
-> 
-> >  5. Issue pending DMA requests and wait for callback notification
-> >  
-> >     The transactions in the pending queue can be activated by calling the
-
-
-
-
+Bart
