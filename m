@@ -2,54 +2,54 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6318C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DD5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE190218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BCD218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901041;
-	bh=j6whXEggQGT6S3iQzMFHWke+1dNQktF2/ADkD5gXDCc=;
+	s=default; t=1549901055;
+	bh=JiNB4qYG5B9PnF2Izhq51ABOQs3lGHRLd5wDxYwstd4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UFQjvImgdNMlCQBGl34G6XGF3Xtf9visEY/7vYy9qr5LNsAfdAZAbh1mi20NjeKo8
-	 93iO3Kc24iQipj1QfCp9BXLzNbpro70nSwvany7PmkGCWOpYD2wfbTSC+vy8gyrj7O
-	 wjFjZgwV/+rmAjte29FVZ0p4LjTYZ3wIz4wnfcWQ=
+	b=hL2ZgSrgpiatfyqom9oOh8WJCZV/klK7lXsS+1zImi3IW2CkCKSUlXK/EvfiS5WKJ
+	 1X1bN9sD0PIFZD7S4IpE7/dmLsIWm/0jfjBJuVC1H/KHieskJKBh0srTI15nKtsFst
+	 MUYqw10iKJJPdrBoofEKJuT6m8G5zgk9mizQeiFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729920AbfBKO3A (ORCPT
+        id S1730218AbfBKQEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:29:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34938 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:04:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbfBKO24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:56 -0500
+        id S1728638AbfBKO2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D4BC20844;
-        Mon, 11 Feb 2019 14:28:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 954982075C;
+        Mon, 11 Feb 2019 14:28:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895336;
-        bh=j6whXEggQGT6S3iQzMFHWke+1dNQktF2/ADkD5gXDCc=;
+        s=default; t=1549895327;
+        bh=JiNB4qYG5B9PnF2Izhq51ABOQs3lGHRLd5wDxYwstd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kADsh8XYnEo95whRcqsjqC4Y/jxRfiBtqIYWngambOC6Ktjk6G/FFEadxbdYu5ufw
-         nPV5nt+ria3i5uLwKhvsXSiDWp3uFQRM74lmR0EoPi2yE3yrGDngVpePFiBLbIKaOX
-         ePTpR5qk1H3+QGVvo76bQgbnlQRhl04Q68CFKFow=
+        b=S5NnkctPDX+Gf4KWTN9HvqA6pGaPywxThhw7WiKwmfLOgbXOmFqZLNKTrVom6BDY7
+         P4J0VNQkH3D/EVq8S8F2HiL4O6tlcOvjXoEIIPl0FTgzJ1ZOGNYUNJzcHPRSqVXXuW
+         qDFgvbq1wAETgO8QEoDQFOFpIb68RHe2ET8ZCnsk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Donald Sharp <sharpd@cumulusnetworks.com>,
+        Mike Manning <mmanning@vyatta.att-mail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 171/352] mmc: bcm2835: Recover from MMC_SEND_EXT_CSD
-Date:   Mon, 11 Feb 2019 15:16:38 +0100
-Message-Id: <20190211141857.933311139@linuxfoundation.org>
+Subject: [PATCH 4.20 168/352] ipv6: Fix handling of LLA with VRF and sockets bound to VRF
+Date:   Mon, 11 Feb 2019 15:16:35 +0100
+Message-Id: <20190211141857.701933826@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,54 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 07d405769afea5718529fc9e341f0b13b3189b6f ]
+[ Upstream commit c2027d1e17582903e368abf5d4838b22a98f2b7b ]
 
-If the user issues an "mmc extcsd read", the SD controller receives
-what it thinks is a SEND_IF_COND command with an unexpected data block.
-The resulting operations leave the FSM stuck in READWAIT, a state which
-persists until the MMC framework resets the controller, by which point
-the root filesystem is likely to have been unmounted.
+A recent commit allows sockets bound to a VRF to receive ipv6 link local
+packets. However, it only works for UDP and worse TCP connection attempts
+to the LLA with the only listener bound to the VRF just hang where as
+before the client gets a reset and connection refused. Fix by adjusting
+ir_iif for LL addresses and packets received through a device enslaved
+to a VRF.
 
-A less heavyweight solution is to detect the condition and nudge the
-FSM by asserting the (self-clearing) FORCE_DATA_MODE bit.
-
-Link: https://github.com/raspberrypi/linux/issues/2728
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Eric Anholt <eric@anholt.net>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 6f12fa775530 ("vrf: mark skb for multicast or link-local as enslaved to VRF")
+Reported-by: Donald Sharp <sharpd@cumulusnetworks.com>
+Cc: Mike Manning <mmanning@vyatta.att-mail.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/bcm2835.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/ipv6/tcp_ipv6.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index 0d3b7473bc21..abf1f3c8b0c3 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -772,6 +772,8 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 03e6b7a2bc53..f5c213001b05 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -734,6 +734,7 @@ static void tcp_v6_init_req(struct request_sock *req,
+ 			    const struct sock *sk_listener,
+ 			    struct sk_buff *skb)
+ {
++	bool l3_slave = ipv6_l3mdev_skb(TCP_SKB_CB(skb)->header.h6.flags);
+ 	struct inet_request_sock *ireq = inet_rsk(req);
+ 	const struct ipv6_pinfo *np = inet6_sk(sk_listener);
  
- 		if (!(sdhsts & SDHSTS_CRC7_ERROR) ||
- 		    (host->cmd->opcode != MMC_SEND_OP_COND)) {
-+			u32 edm, fsm;
-+
- 			if (sdhsts & SDHSTS_CMD_TIME_OUT) {
- 				host->cmd->error = -ETIMEDOUT;
- 			} else {
-@@ -780,6 +782,13 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
- 				bcm2835_dumpregs(host);
- 				host->cmd->error = -EILSEQ;
- 			}
-+			edm = readl(host->ioaddr + SDEDM);
-+			fsm = edm & SDEDM_FSM_MASK;
-+			if (fsm == SDEDM_FSM_READWAIT ||
-+			    fsm == SDEDM_FSM_WRITESTART1)
-+				/* Kick the FSM out of its wait */
-+				writel(edm | SDEDM_FORCE_DATA_MODE,
-+				       host->ioaddr + SDEDM);
- 			bcm2835_finish_request(host);
- 			return;
- 		}
+@@ -741,7 +742,7 @@ static void tcp_v6_init_req(struct request_sock *req,
+ 	ireq->ir_v6_loc_addr = ipv6_hdr(skb)->daddr;
+ 
+ 	/* So that link locals have meaning */
+-	if (!sk_listener->sk_bound_dev_if &&
++	if ((!sk_listener->sk_bound_dev_if || l3_slave) &&
+ 	    ipv6_addr_type(&ireq->ir_v6_rmt_addr) & IPV6_ADDR_LINKLOCAL)
+ 		ireq->ir_iif = tcp_v6_iif(skb);
+ 
 -- 
 2.19.1
 
