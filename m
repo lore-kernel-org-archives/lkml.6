@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53712C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C314C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E0C222B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48D4D222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895002;
-	bh=qelTkmlH1hikdbUzc9HrblC18LJ8w7DphAuN+cxG2sQ=;
+	s=default; t=1549895005;
+	bh=GmuY4okhsNaTNHG6EROVwf2zIQ+J1UKxH1Jgi7kqG1M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=guXW/GjOHL4celSk0dltC0+CcPpRQNTT9gDwL+9PA1JzYmbG4JinmlA3vFlrf/3SO
-	 obODJdYNoHsisq7Daa+lpcFmSQYUStZFxh+20v2Ry31fXJFTPo+0ZbmHufoP4jIjWK
-	 kPUPXOwV7k+rqpUC3EbZRcchCiXQU10YsquwU2hY=
+	b=yb6buRsCAu3+24TNBsiZ+9kS+arkiFKme7efyJgIjo770Q1gbqMZ11/PZlHGfk1ge
+	 /J6OiWXccIKIwvL0qlVaI4rM+RVlnHu77PbXDTF+Ihw3qMHslrkXLWBFFNfQIAuHjh
+	 um+emKBHgSMPEXi+yDzNHY61CyFNgXzj7ElrjD3s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbfBKOXU (ORCPT
+        id S1728984AbfBKOXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56160 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbfBKOXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:11 -0500
+        id S1728965AbfBKOXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C32E222A1;
-        Mon, 11 Feb 2019 14:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA03620844;
+        Mon, 11 Feb 2019 14:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894989;
-        bh=qelTkmlH1hikdbUzc9HrblC18LJ8w7DphAuN+cxG2sQ=;
+        s=default; t=1549894999;
+        bh=GmuY4okhsNaTNHG6EROVwf2zIQ+J1UKxH1Jgi7kqG1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wK6Hcyob0iC2d32nJqMDzeyrwOeHhiyKtJ8X3rrO6B6LvGgEPl626HVYmGEr88pgU
-         +v9Y1GdJnUt92PhZSMZcjDwYr/rbwT94KLLmrL31bt/JouTYoFoAr/2IwvWICEmlof
-         Z2zKVSIrigQmxH9BDwMFqLA8IiEDvFnhzVIMprk4=
+        b=OkIIfUcFjGlANkTzLR58Vrm14oq7qGIRBt0p99kBidZAufaiDggPB4CoyP8EEtFm/
+         8x1+6yxQF0QnNdwgMcg+B3v5S0p+bsdVzzzt2iX43am3hPxFtEqZD/nYP8hRLO77h8
+         Bi58Mxf0VfGmJ2cJ1JBPwKjVO2+8APbSOCStQJ24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 055/352] scsi: cxgb4i: fix thermal configuration dependencies
-Date:   Mon, 11 Feb 2019 15:14:42 +0100
-Message-Id: <20190211141849.687479113@linuxfoundation.org>
+Subject: [PATCH 4.20 058/352] media: video-i2c: avoid accessing released memory area when removing driver
+Date:   Mon, 11 Feb 2019 15:14:45 +0100
+Message-Id: <20190211141849.844230911@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,52 +69,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8d0bb86e2cf6c96d88c3de56a2a29329872c454d ]
+[ Upstream commit c764da98a600a4b068d25c77164f092f159cecec ]
 
-I fixed a bug by adding a dependency in the network driver, but that fix
-caused a related bug in the SCSI driver:
+The video device release() callback for video-i2c driver frees the whole
+struct video_i2c_data.  If there is no user left for the video device
+when video_unregister_device() is called, the release callback is executed.
 
-WARNING: unmet direct dependencies detected for CHELSIO_T4
-  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_CHELSIO [=y] && PCI [=y] && (IPV6 [=y] || IPV6 [=y]=n) && (THERMAL [=m] || !THERMAL [=m])
-  Selected by [y]:
-  - SCSI_CXGB4_ISCSI [=y] && SCSI_LOWLEVEL [=y] && SCSI [=y] && PCI [=y] && INET [=y] && (IPV6 [=y] || IPV6 [=y]=n)
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_init':
-cxgb4_thermal.c:(.text+0x158): undefined reference to `thermal_zone_device_register'
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_remove':
-cxgb4_thermal.c:(.text+0x1d8): undefined reference to `thermal_zone_device_unregister'
-/git/arm-soc/Makefile:1042: recipe for target 'vmlinux' failed
+However, in video_i2c_remove() some fields (v4l2_dev, lock, and queue_lock)
+in struct video_i2c_data are still accessed after video_unregister_device()
+is called.
 
-The same dependency needs to be propagated here to make it work correctly
-with CONFIG_THERMAL=m and SCSI_CXGB4_ISCSI=y. That change by itself causes
-another problem with a circular dependency, as we use 'select NETDEVICES'.
-This is something we really should not do anyway, as a driver symbol should
-never select another major subsystem, so let's turn that into a 'depends
-on'. I don't see any downsides of that, as NETDEVICES is only disabled in
-rather obscure cases that are not relevant to the users of cxgb4i.
+This fixes the use after free by moving the code from video_i2c_remove()
+to the release() callback.
 
-Fixes: e70a57fa59bb ("cxgb4: fix thermal configuration dependencies")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 5cebaac60974 ("media: video-i2c: add video-i2c driver")
+
+Reviewed-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/cxgbi/cxgb4i/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/i2c/video-i2c.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/cxgbi/cxgb4i/Kconfig b/drivers/scsi/cxgbi/cxgb4i/Kconfig
-index 594f593c8821..f36b76e8e12c 100644
---- a/drivers/scsi/cxgbi/cxgb4i/Kconfig
-+++ b/drivers/scsi/cxgbi/cxgb4i/Kconfig
-@@ -1,8 +1,8 @@
- config SCSI_CXGB4_ISCSI
- 	tristate "Chelsio T4 iSCSI support"
- 	depends on PCI && INET && (IPV6 || IPV6=n)
--	select NETDEVICES
--	select ETHERNET
-+	depends on THERMAL || !THERMAL
-+	depends on ETHERNET
- 	select NET_VENDOR_CHELSIO
- 	select CHELSIO_T4
- 	select CHELSIO_LIB
+diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
+index 4d49af86c15e..ec0758dca2fc 100644
+--- a/drivers/media/i2c/video-i2c.c
++++ b/drivers/media/i2c/video-i2c.c
+@@ -510,7 +510,12 @@ static const struct v4l2_ioctl_ops video_i2c_ioctl_ops = {
+ 
+ static void video_i2c_release(struct video_device *vdev)
+ {
+-	kfree(video_get_drvdata(vdev));
++	struct video_i2c_data *data = video_get_drvdata(vdev);
++
++	v4l2_device_unregister(&data->v4l2_dev);
++	mutex_destroy(&data->lock);
++	mutex_destroy(&data->queue_lock);
++	kfree(data);
+ }
+ 
+ static int video_i2c_probe(struct i2c_client *client,
+@@ -608,10 +613,6 @@ static int video_i2c_remove(struct i2c_client *client)
+ 	struct video_i2c_data *data = i2c_get_clientdata(client);
+ 
+ 	video_unregister_device(&data->vdev);
+-	v4l2_device_unregister(&data->v4l2_dev);
+-
+-	mutex_destroy(&data->lock);
+-	mutex_destroy(&data->queue_lock);
+ 
+ 	return 0;
+ }
 -- 
 2.19.1
 
