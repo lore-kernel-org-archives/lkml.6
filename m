@@ -4,56 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29015C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3B5218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50C6721855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900283;
-	bh=bhLe5oNWGxCw9acYDORQ0JceE+j7Oypl1mW8/PEHgas=;
+	s=default; t=1549900288;
+	bh=isYRB4vcDV+9G1nICICJGjLx4sPd8oGv+q0tWbOF/uY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xmNX4AC2X3v4TTy7/0qGyjtVwgV3PixpRwQ7cIDQ2XxrC9V0+MMF8ovlCfZDaCRPS
-	 dzXTMB1ED9N2/4HG8/aJM3V10gIaMnNOJfW4mNscwXsX125VbieJZpn0t/tLCnf/zP
-	 aMMPMIxI6YNmqmxyGY0OcdEzQ0AuX4eKWnyiQvaM=
+	b=1Kf17nSAJGJw2t3K0NlWlJ2jnxnyvhKH+YSpkN8azcDd94uxWf1uedWL13VCqn1IN
+	 sfREzlQ79DA6br55ZRfVS+Tih5Sx8L3l93BQe8DI6V6JkeTD+BnEzj5TmpTGQuOIU0
+	 q2BUq0riZSQrEki3iqfHFIzDs8tTRp5pi8pfjGoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731619AbfBKOiN (ORCPT
+        id S1731753AbfBKPv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47614 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:51:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731112AbfBKOiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:03 -0500
+        id S1731596AbfBKOiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E5B320844;
-        Mon, 11 Feb 2019 14:38:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93DC02081B;
+        Mon, 11 Feb 2019 14:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895883;
-        bh=bhLe5oNWGxCw9acYDORQ0JceE+j7Oypl1mW8/PEHgas=;
+        s=default; t=1549895889;
+        bh=isYRB4vcDV+9G1nICICJGjLx4sPd8oGv+q0tWbOF/uY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=klU/CiVBBPtU6ybvoc3yoR3ibYgcHlti0ZmVo/JwdZl/d0vwsqzeOVwdADQj1W0oZ
-         DmXbKg8XtD8jDfIFhlFj/qpmQ6lXxF59eUJyc1e+PZQMER3w7zzqlA90nmEeWN4rpK
-         3nISiPQmxTvLWdM03IJ8BNJBXXnRXCsQu+t+VGg4=
+        b=CET8iEKvuUuj3y4m6p6ynn0stXl2kY88md2XNQ2vuQvNtMZl/3YEJNA3omyZIZ3gy
+         fRwH5hVt9ZyFJqOeLpTKcKHbFXk1OAkkM4E2N8mNet/EZhaOI9HSAveEUFwh1yJDkE
+         DGXT4bc8S+Tbz5Fm5mAABaRlH4gBVFap/Pdoucx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.20 343/352] perf/x86/intel/uncore: Add Node ID mask
-Date:   Mon, 11 Feb 2019 15:19:30 +0100
-Message-Id: <20190211141909.010500358@linuxfoundation.org>
+        Vishal Verma <vishal.l.verma@intel.com>,
+        x86-ml <x86@kernel.org>
+Subject: [PATCH 4.20 345/352] x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()
+Date:   Mon, 11 Feb 2019 15:19:32 +0100
+Message-Id: <20190211141909.130188752@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -72,63 +69,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
+commit d28af26faa0b1daf3c692603d46bc4687c16f19e upstream.
 
-Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
-Superdome Flex).
+Internal injection testing crashed with a console log that said:
 
-To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
-the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
-configuration space, and the mapping between Socket ID and Node ID from
-GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
+  mce: [Hardware Error]: CPU 7: Machine Check Exception: f Bank 0: bd80000000100134
 
-The local Node ID is only available at bit 2:0, but current code doesn't
-mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
-will be fetched.
+This caused a lot of head scratching because the MCACOD (bits 15:0) of
+that status is a signature from an L1 data cache error. But Linux says
+that it found it in "Bank 0", which on this model CPU only reports L1
+instruction cache errors.
 
-Filter the Node ID by adding a mask.
+The answer was that Linux doesn't initialize "m->bank" in the case that
+it finds a fatal error in the mce_no_way_out() pre-scan of banks. If
+this was a local machine check, then this partially initialized struct
+mce is being passed to mce_panic().
 
-Reported-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Fix is simple: just initialize m->bank in the case of a fatal error.
+
+Fixes: 40c36e2741d7 ("x86/mce: Fix incorrect "Machine check from unknown source" message")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org> # v3.7+
-Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
-Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Cc: stable@vger.kernel.org # v4.18 Note pre-v5.0 arch/x86/kernel/cpu/mce/core.c was called arch/x86/kernel/cpu/mcheck/mce.c
+Link: https://lkml.kernel.org/r/20190201003341.10638-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -1222,6 +1222,8 @@ static struct pci_driver snbep_uncore_pc
- 	.id_table	= snbep_uncore_pci_ids,
- };
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -786,6 +786,7 @@ static int mce_no_way_out(struct mce *m,
+ 			quirk_no_way_out(i, m, regs);
  
-+#define NODE_ID_MASK	0x7
-+
- /*
-  * build pci bus to socket mapping
-  */
-@@ -1243,7 +1245,7 @@ static int snbep_pci2phy_map_init(int de
- 		err = pci_read_config_dword(ubox_dev, nodeid_loc, &config);
- 		if (err)
- 			break;
--		nodeid = config;
-+		nodeid = config & NODE_ID_MASK;
- 		/* get the Node ID mapping */
- 		err = pci_read_config_dword(ubox_dev, idmap_loc, &config);
- 		if (err)
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
++			m->bank = i;
+ 			mce_read_aux(m, i);
+ 			*msg = tmp;
+ 			return 1;
 
 
