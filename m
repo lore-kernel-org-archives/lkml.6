@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BBCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50849C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D9E2184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DD5A2184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiIwOk4Y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmiIU8pX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbfBKX2f (ORCPT
+        id S1728026AbfBKX2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:28:35 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55210 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbfBKX23 (ORCPT
+        Mon, 11 Feb 2019 18:28:38 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36254 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbfBKX2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:28:29 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a62so1002821wmh.4;
-        Mon, 11 Feb 2019 15:28:28 -0800 (PST)
+        Mon, 11 Feb 2019 18:28:36 -0500
+Received: by mail-wr1-f67.google.com with SMTP id o17so685486wrw.3;
+        Mon, 11 Feb 2019 15:28:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=y4zotDQYnZoXB9lfg1fC2W7czb+qE54ZRjKDYZQbGrM=;
-        b=RiIwOk4Yh3oZElR1xL4cASyYj7D6BXihLz4aCG/v4xszt7i6uSqsxIV7ytYwftyfcc
-         uTuXGibwTiA/aj+YnMYCpkiM2z6kfso+3dbhiW9YSOHBl6nP1RszYI63KB8K2NsBpdrq
-         0O12+xpEmBDUqkUXAPxb8OuavppC4Jr2y/PKJY27TEuHaKKz0cs5qLr1lY41XPnz7Zxl
-         sA5IfuG6fAjiZmtxt25Ed0yZ2F0YDSgON1s7dC59J6yvzTcBnm5YPJLSt9XplPkdVRWQ
-         K3g6xJSwVQiZphYA66q/CfA/tFG9bpv0/xDVALdXoiSGfJj+EbFGKE64OBFZr0dgUItK
-         w5sw==
+        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
+        b=VmiIU8pXfiJ8oLtorDhULSxsmh+YjuTJjvlq8YuRiNowB4/1UqpCrVw5BosEBTfL6V
+         lQbb1zyKnf0f37rNuOWdB/36I0sBvIypEXOaJlidU+6cLxaed7X4JobdhlwNv7l2ZOgr
+         CLcpjJ/DKikqWa2/di7U6WvgXoxM13L73BBHmEh+vVp+7fBOqFY3BuY7Dsv3OewGcQn7
+         wx+umnTSpRY8mM+athafH9jgbBlDHfGt5caNxzNx1BFVa2rsre/0TI78tes3g2BD6/u6
+         dID0vUXju22Zkh/Kep+vSEP2+NHeXyAdLybiLgP8GoWTcJfJRcKIg6pEbmyXmkESLdcX
+         RvPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=y4zotDQYnZoXB9lfg1fC2W7czb+qE54ZRjKDYZQbGrM=;
-        b=kZNR7RfWg8EyhuaAfQYIClVK6h0MJ4qN6U9JHjiVBruZjZ66djNWxLB+d8ITMeMGX8
-         iC9pStpyqHIZY4Gr4L4/XbjpIhNwsD1ZrFqgyhHAv2OEMDT+JtLrqiar4iNxznCYYGTz
-         372yHPbi64J6TqukS+dbjlXJQCwn85BHiaj8YcnX2B+1p2u3Sj51wsyy74Vqluf94+NM
-         MofXmFc0d10P/WDY61J4pDOVffqqBrw8zrAEXbEnoJGaGUkd9EX2tX6ckmM68zgkhe4H
-         GwTgStX8ReNXI1WRyztrn2OOG7yOXJ6tuKNio78m7zjSuDrlOoeV1bLPk50Hl4WU7ywX
-         MoiQ==
-X-Gm-Message-State: AHQUAua7rXOs5wdIbrNDIGboeJGQ/vOxtVJ+tt4qTZF51tsskoFXTL5M
-        qYJYWmsM9ZPuVy0CPAAZ1nZjisb1NJ8=
-X-Google-Smtp-Source: AHgI3IYPC5M3Lyg22y71g2LtAl1fvg/0Ej4pQcQ/hIiBIm9wNMef0twZh8pcHX4//0/AZscOz8ApJw==
-X-Received: by 2002:a1c:2804:: with SMTP id o4mr502017wmo.150.1549927707535;
-        Mon, 11 Feb 2019 15:28:27 -0800 (PST)
+        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
+        b=ITjH4AAoFHvaUirll3xOa1NHJbGZd+Q4B+w1ww8VNMJS5YZAPQiB3eVs7w5H476uoX
+         +uRzSDV192t5afaMQVziLlwjjM6WC88+OvbPBR29dpTouJULGrrDD2j5GsEiSDBr5fpi
+         CUZBvnIOsJRKNXiyKtJhQYJXrVEoUg4FAWOPCaKx+LVcb1oLK+xCRXgWzTB1VW/txIh0
+         dawMtsz9YyLCFxnuXIO6n59480SztoTqCWEtrX7gJ2NVMtNvX2pIcN8jp92ADlYtJVVi
+         PEx53u1SakBZpP7qXki1dfEgJ5sPEmQYNccTdV6I2qo5fxzOUFxktoONMhZdWm5wRHcW
+         IiYA==
+X-Gm-Message-State: AHQUAuYo0p2HoTAGbWekz43Ore2wV65qXsHaqchNxESbhrgRpaJGc0Mf
+        I5nLAv9Htek69EsEb6QjbWY=
+X-Google-Smtp-Source: AHgI3IbQwu8eTmjbJnx/2r01oGyJDgWGHUAAfDPRDsTqvehJCmHsCuN42bxdkY5qB2bklveZMh0xdg==
+X-Received: by 2002:adf:f410:: with SMTP id g16mr517807wro.246.1549927714236;
+        Mon, 11 Feb 2019 15:28:34 -0800 (PST)
 Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
-        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.24
+        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:28:26 -0800 (PST)
+        Mon, 11 Feb 2019 15:28:33 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 07/12] __wr_after_init: Documentation: self-protection
-Date:   Tue, 12 Feb 2019 01:27:44 +0200
-Message-Id: <cb930b9825a374126b62b897569cc722d3032161.1549927666.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v4 09/12] __wr_after_init: rodata_test: refactor tests
+Date:   Tue, 12 Feb 2019 01:27:46 +0200
+Message-Id: <ff02823336ca9959ec53adc469aa113fd00e03cb.1549927666.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
 References: <cover.1549927666.git.igor.stoppa@huawei.com>
@@ -87,8 +87,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the self-protection documentation, to mention also the use of the
-__wr_after_init attribute.
+Refactor the test cases, in preparation for using them also for testing
+__wr_after_init memory, when available.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -106,34 +106,86 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- Documentation/security/self-protection.rst | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ mm/rodata_test.c | 48 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/security/self-protection.rst b/Documentation/security/self-protection.rst
-index f584fb74b4ff..df2614bc25b9 100644
---- a/Documentation/security/self-protection.rst
-+++ b/Documentation/security/self-protection.rst
-@@ -84,12 +84,14 @@ For variables that are initialized once at ``__init`` time, these can
- be marked with the (new and under development) ``__ro_after_init``
- attribute.
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index d908c8769b48..e1349520b436 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -14,44 +14,52 @@
+ #include <linux/uaccess.h>
+ #include <asm/sections.h>
  
--What remains are variables that are updated rarely (e.g. GDT). These
--will need another infrastructure (similar to the temporary exceptions
--made to kernel code mentioned above) that allow them to spend the rest
--of their lifetime read-only. (For example, when being updated, only the
--CPU thread performing the update would be given uninterruptible write
--access to the memory.)
-+Others, which are statically allocated, but still need to be updated
-+rarely, can be marked with the ``__wr_after_init`` attribute.
-+
-+The update mechanism must avoid exposing the data to rogue alterations
-+during the update. For example, only the CPU thread performing the update
-+would be given uninterruptible write access to the memory.
-+
-+Currently there is no protection available for data allocated dynamically.
+-static const int rodata_test_data = 0xC3;
++#define INIT_TEST_VAL 0xC3
  
- Segregation of kernel memory from userspace memory
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-void rodata_test(void)
++static const int rodata_test_data = INIT_TEST_VAL;
++
++static bool test_data(char *data_type, const int *data,
++		      unsigned long start, unsigned long end)
+ {
+-	unsigned long start, end;
+ 	int zero = 0;
+ 
+ 	/* test 1: read the value */
+ 	/* If this test fails, some previous testrun has clobbered the state */
+-	if (!rodata_test_data) {
+-		pr_err("test 1 fails (start data)\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test 1 fails (init data value)\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 2: write to the variable; this should fault */
+-	if (!probe_kernel_write((void *)&rodata_test_data,
+-				(void *)&zero, sizeof(zero))) {
+-		pr_err("test data was not read only\n");
+-		return;
++	if (!probe_kernel_write((void *)data, (void *)&zero, sizeof(zero))) {
++		pr_err("%s: test data was not read only\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 3: check the value hasn't changed */
+-	if (rodata_test_data == zero) {
+-		pr_err("test data was changed\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test data was changed\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 4: check if the rodata section is PAGE_SIZE aligned */
+-	start = (unsigned long)__start_rodata;
+-	end = (unsigned long)__end_rodata;
+ 	if (start & (PAGE_SIZE - 1)) {
+-		pr_err("start of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: start of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
+ 	if (end & (PAGE_SIZE - 1)) {
+-		pr_err("end of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: end of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
++	pr_info("%s tests were successful", data_type);
++	return true;
++}
+ 
+-	pr_info("all tests were successful\n");
++void rodata_test(void)
++{
++	test_data("rodata", &rodata_test_data,
++		  (unsigned long)&__start_rodata,
++		  (unsigned long)&__end_rodata);
+ }
 -- 
 2.19.1
 
