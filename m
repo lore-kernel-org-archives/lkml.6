@@ -2,109 +2,98 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7E6C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48DDC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B4A222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899889;
-	bh=tOZlFF/0WJTg0g3PjwW747psDpVoNb9V+2Am2T7KqIk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MIR/q6m3lt9koPwSTDXhnpuiykVWLh4DcJ7J3PKpHccwZ3OnJtMy+w+enDLubBq8M
-	 /9oGbrWPWiB+56dDUnPUWseLGH5OVGNby8cQln6s+WUebSmPn/RMShbBgK6hkc5AkA
-	 zRl4d975ukkN/VKt5HjSo2kNAji7P4DaapBYYldM=
+	by mail.kernel.org (Postfix) with ESMTP id 7F20B21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732844AbfBKPos (ORCPT
+        id S1733224AbfBKPov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:44:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732766AbfBKOoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8C8520844;
-        Mon, 11 Feb 2019 14:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896248;
-        bh=tOZlFF/0WJTg0g3PjwW747psDpVoNb9V+2Am2T7KqIk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1sx+vzvfNH2bkCTsDKmvWTJNuK5LQz99FDrcuF5UZyVnxF9DAVY49JUDJBh69F+so
-         radqQE4xA17yje1jBjPWhJczdRgTp2MW8s5OX1zSkkxNELtMjBNQrd0ocW7ufvjsNc
-         h21zIVNOHbcmsRZ35zd5G9CWuI63ggjiQr8ZrDm8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/313] media: i2c: TDA1997x: select CONFIG_HDMI
-Date:   Mon, 11 Feb 2019 15:16:11 +0100
-Message-Id: <20190211141859.930875260@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:44:51 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46639 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732766AbfBKPou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:44:50 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so6474684vso.13;
+        Mon, 11 Feb 2019 07:44:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PPZgkIAjB4Z4Na98Ahql3kzmPMGHUQYFtXacLoG4tAI=;
+        b=P+yuFaSRW6U+O2BXBBh/pQn7zJt/jUPpfSLl2U3q4BYVbzd6/PMjfDd4xe7Gxdmwop
+         mToDHC4q/YIy7spEvO/Fzcl7VrpnV8qpeHBx6hDYTAT2CdXrO2Orh/H2tZwz4FuVzc7u
+         qJfT5mQ2hPplhFQfMs2kEa7J/Az9hYGsYbqwbYqB0B9ehNMbO0DwF5MQuNelrtx4RRrF
+         doipbJ497Ab/Vgmm9MpVaihdK2hr7QyDx9lA4qAtAp9VByYfpGHDLCMOxMgdi6kKCVBY
+         hxTAAUuP+mZDLX2HP3BGYom0ERVyviS1w8Qe/4sycExrghhtJ2lFRh6EXlxUjEc6fS5p
+         Cg5g==
+X-Gm-Message-State: AHQUAubU0JnaTgRhLWnajW1clc31qNLB0kzEABwwgi9TqKtxM+vvh1mI
+        kj4f5xXeIl5dRJuyeD3q0Fgj/HnEKRG66O6CEGE=
+X-Google-Smtp-Source: AHgI3IZPLHNfc3VZVtnwi9qj2yAmA80JFYtLpyN3wd3kz9t3ZQT5A0Q7hnz9hr/JVOmr1Qhv8S+s2nyCk0cgaU5KdAY=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr13222764vsi.96.1549899888964;
+ Mon, 11 Feb 2019 07:44:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190211135858.23635-1-horms+renesas@verge.net.au>
+ <20190211135858.23635-4-horms+renesas@verge.net.au> <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
+In-Reply-To: <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Feb 2019 16:44:37 +0100
+Message-ID: <CAMuHMdV_tcsOZCBRWxbRwdfBeeh1-MJSNqw4U6YLnjOznLUQnA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] math64: New DIV64_U64_ROUND_CLOSEST helper
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Feb 11, 2019 at 4:22 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 02/11/2019 04:58 PM, Simon Horman wrote:
+> > Provide DIV64_U64_ROUND_CLOSEST helper which performs division rounded to
+> > the closes integer using an unsigned 64bit dividend and divisor.
+>
+>    Closest?
+>
+> > This will be used in a follow-up patch to allow calculation of clock
+> > divisors with high frequency parents in the R-Car Gen3 CPG MSSR driver
+> > where ovefolow occurs if either the dividend or divisor is 32bit.
 
-------------------
+overflow
 
-[ Upstream commit 79e89e36dc8a47ef965a35b484d737a5227feed1 ]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Without CONFIG_HDMI, we get a link error for this driver:
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
-tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
-drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
-tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
+Note that I can fix the above while applying to my clk-renesas branch.
 
-All other drivers in this directory that use HDMI select CONFIG_HDMI,
-so do the same here:
+Andrew: an Acked-by would be appreciated.
+Thanks!
 
-Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+Gr{oetje,eeting}s,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 82af97430e5b..041a777dfdee 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on SND_SOC
- 	select SND_PCM
-+	select HDMI
- 	---help---
- 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
- 
--- 
-2.19.1
+                        Geert
 
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
