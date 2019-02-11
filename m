@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E2BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934CFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07667222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E688222AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897670;
-	bh=Bb7NumJ9pbFBWmiPim49ZWeIcpwI6roG2BwQMcOhuVY=;
+	s=default; t=1549897675;
+	bh=nL46Y7p4cLvAyFs9AMd/PxiL/6fhjtkehS83t9hp2Qg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RaCbyDGO0FcytyBcFN4m3xMfpFZK1E0R4HgPAUqueF564LcdiU2KxN8fbD2lmYdxX
-	 I1QLpD858wX9VE2C2YksyFtjILxMIEBAqO8eRvw88eoFEMbSxdmM0HN041LdnHbARd
-	 9xmskQBaUEyHbV5KiP89K/gW5lt4pfZfonfBuO18=
+	b=TF5Iw1xqDyakhDB3yxlt8SzlajM8Sauwl78okneiTMj4z/TC0BwSFNCjzZbxHQStP
+	 rDxibrr0jjPrTMzKZTiwcjOAoNv1AgiFxxAau14+uFPApsl4x9n1IML1fSSNaU5KmD
+	 RmEw798aLEe5lzgC295m1eebqZSOlXuwaKcfM9Hs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403812AbfBKPHs (ORCPT
+        id S2403842AbfBKPHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57500 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391403AbfBKPHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:41 -0500
+        id S2403830AbfBKPHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89DE5222A7;
-        Mon, 11 Feb 2019 15:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCE1F222AD;
+        Mon, 11 Feb 2019 15:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897661;
-        bh=Bb7NumJ9pbFBWmiPim49ZWeIcpwI6roG2BwQMcOhuVY=;
+        s=default; t=1549897669;
+        bh=nL46Y7p4cLvAyFs9AMd/PxiL/6fhjtkehS83t9hp2Qg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EB+16Ww8q0UApq+cKHHd0/d0zzyvmwgTcRNX17oL4AOigUveHoqBrYkXZl3B0cI0Z
-         tnHPbmU2ehqDqX3QjWdyibG6/c5bjXyhHSYvgdf7v9Xq6a/FiFdLKaaNDVYvlATS2F
-         dBwt4C+NEcHElDHGuAAok5yzxiMS32oV2Ubr2ays=
+        b=dMMZHrIKkZyZYS6BWtjV1gtyMz35lW94BvH9Z+ae8DIa4Zjrst3osLVGI84bB6/rz
+         1TVMMow7KNDXN9yNBbJwE8liogUw6ze8Ag4ueSTi5hYI3RSX71/PuBlB/VJu2gx+Kt
+         VPQlGRgvAAMwo13mP2rvZ2I8OK+UU4O4wMRC67LY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 072/137] video: clps711x-fb: release disp device node in probe()
-Date:   Mon, 11 Feb 2019 15:19:13 +0100
-Message-Id: <20190211141818.690252950@linuxfoundation.org>
+Subject: [PATCH 4.9 048/137] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 11 Feb 2019 15:18:49 +0100
+Message-Id: <20190211141816.429156767@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,45 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-clps711x_fb_probe() increments refcnt of disp device node by
-of_parse_phandle() and leaves it undecremented on both
-successful and error paths.
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/clps711x-fb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-index ff561073ee4e..42f909618f04 100644
---- a/drivers/video/fbdev/clps711x-fb.c
-+++ b/drivers/video/fbdev/clps711x-fb.c
-@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 5fd4ddac1bf1..f3d9dc2d2405 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
  
- 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
--	if (ret)
-+	if (ret) {
-+		of_node_put(disp);
- 		goto out_fb_release;
-+	}
+ #include "clk.h"
  
- 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
- 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
  
- 	ret = of_property_read_u32(disp, "bits-per-pixel",
- 				   &info->var.bits_per_pixel);
-+	of_node_put(disp);
- 	if (ret)
- 		goto out_fb_release;
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
++
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
  
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
