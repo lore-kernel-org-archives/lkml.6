@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD9DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07FAC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE21C218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 882D9218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901090;
-	bh=vOZblrMHiMPy/N2g4ULaI1y/2bqLsgO3ZEKp9zyj7Vk=;
+	s=default; t=1549901094;
+	bh=huWnGPNCVeJWvkX8MsbMHTObWK0fw4Ut4nx2x9UOWEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ozY8ntR9qJj3QbIWwBwmsCYiTu6Gz+P1qd2gz9DoLJagHNOYN/tIuzG0naIFQPxc9
-	 MI5ZARcZGWU6A1/vTU5EZkvVaN9kquYiQTHJ04BJEvXA5O/uSiUcZAzc3oYBfwa0bY
-	 adp2TUXoXSPBMQFIqmbdoV88I85ZA6vOZsw8N38w=
+	b=u/e66BIQFtBiiULm2WIYROoBROF6RB4p3ggXYB0ozCKhZcFGL2YnhEMAI+d+wB+ZD
+	 0BOA7LiBoslwJckhrc6Z1djtDwFz9LANsEZP3kC/c46zgdGGIIlMZTLUresmrFwbIO
+	 HeW7bhY6e62npcn6/v/yGhc9nhIj5d+p5CwfMEoQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbfBKQEt (ORCPT
+        id S1729838AbfBKO2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:04:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34346 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:28:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728875AbfBKO2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:23 -0500
+        id S1728915AbfBKO2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E07520838;
-        Mon, 11 Feb 2019 14:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52B8120821;
+        Mon, 11 Feb 2019 14:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895302;
-        bh=vOZblrMHiMPy/N2g4ULaI1y/2bqLsgO3ZEKp9zyj7Vk=;
+        s=default; t=1549895291;
+        bh=huWnGPNCVeJWvkX8MsbMHTObWK0fw4Ut4nx2x9UOWEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yjPQwIxv5rNDOY/AODBVuzZqee2UYIUIXjwkmWWdollwcdUD6DE/BpBrOhBxbULpN
-         r9oj0MAPQJU8cYEWqk+hGmE1BCpq2afKLvJp00ZfW7P3vf1GVeJcdBmQ2nvH/CZ7QV
-         4YcDBfDjjZ/pPtazi7TmYdEfsJLVlt640t/TwfNA=
+        b=lP/GJoqHGMPZLuV023ZGY95IHd3L0e+t3aiqMiFkVix5A8zUKG8RlGU27BrHPW1t0
+         Qgfs6GOu3koO9wBYKbqyBdUl2tOR91Zid8xzoKD14tU3tSbY4AdKCy/Wf/Ao8ewcyD
+         mHarqWCJozgmBlqBvHexu1h5sSFYS7mB9dJjrVj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 161/352] selftests/bpf: use __bpf_constant_htons in test_prog.c
-Date:   Mon, 11 Feb 2019 15:16:28 +0100
-Message-Id: <20190211141857.142945451@linuxfoundation.org>
+Subject: [PATCH 4.20 157/352] phy: sun4i-usb: add support for missing USB PHY index
+Date:   Mon, 11 Feb 2019 15:16:24 +0100
+Message-Id: <20190211141856.772346406@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,56 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a0517a0f7ef23550b4484c37e2b9c2d32abebf64 ]
+[ Upstream commit 2659392e5c08dff626e6db1d739adff58a94604d ]
 
-For some reason, my older GCC (< 4.8) isn't smart enough to optimize the
-!__builtin_constant_p() branch in bpf_htons, I see:
-  error: implicit declaration of function '__builtin_bswap16'
+The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
+3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
 
-Let's use __bpf_constant_htons as suggested by Daniel Borkmann.
+Add support for this kind of missing USB PHY index.
 
-I tried to use simple htons, but it produces the following:
-  test_progs.c:54:17: error: braced-group within expression allowed only
-  inside a function
-    .eth.h_proto = htons(ETH_P_IP),
-
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_progs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-index 2d3c04f45530..6ac7232b0fde 100644
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@ -51,10 +51,10 @@ static struct {
- 	struct iphdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v4 = {
--	.eth.h_proto = bpf_htons(ETH_P_IP),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IP),
- 	.iph.ihl = 5,
- 	.iph.protocol = 6,
--	.iph.tot_len = bpf_htons(MAGIC_BYTES),
-+	.iph.tot_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index d4dcd39b8d76..881078ff73f6 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -126,6 +126,7 @@ struct sun4i_usb_phy_cfg {
+ 	bool dedicated_clocks;
+ 	bool enable_pmu_unk1;
+ 	bool phy0_dual_route;
++	int missing_phys;
  };
  
-@@ -64,9 +64,9 @@ static struct {
- 	struct ipv6hdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v6 = {
--	.eth.h_proto = bpf_htons(ETH_P_IPV6),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IPV6),
- 	.iph.nexthdr = 6,
--	.iph.payload_len = bpf_htons(MAGIC_BYTES),
-+	.iph.payload_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
- };
+ struct sun4i_usb_phy_data {
+@@ -646,6 +647,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
+ 	if (args->args[0] >= data->cfg->num_phys)
+ 		return ERR_PTR(-ENODEV);
  
++	if (data->cfg->missing_phys & BIT(args->args[0]))
++		return ERR_PTR(-ENODEV);
++
+ 	return data->phys[args->args[0]].phy;
+ }
+ 
+@@ -741,6 +745,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+ 		struct sun4i_usb_phy *phy = data->phys + i;
+ 		char name[16];
+ 
++		if (data->cfg->missing_phys & BIT(i))
++			continue;
++
+ 		snprintf(name, sizeof(name), "usb%d_vbus", i);
+ 		phy->vbus = devm_regulator_get_optional(dev, name);
+ 		if (IS_ERR(phy->vbus)) {
 -- 
 2.19.1
 
