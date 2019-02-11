@@ -2,214 +2,133 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB069C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA63AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FA420700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88C8E20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549901462;
+	bh=Hq+PdFLa8NtDfCwU8xNrbiBC+DprwABcOKDoZPniabw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=BzxNkM4CWfCrPAwDzP8YurZiXSh08xkSGw0LVFdwdcce8jUedlDfsQK7DwIZMocn8
+	 LUhTzibUR1Qody3TYotDysbSkEb7+lR8rDbTqC24GTxv9jbpWO2NRZYDZfGfkCTyDJ
+	 xFXFivT4cFROe+vyjrzSFzmQ/mg5YO3yMHEbhrww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbfBKQKv (ORCPT
+        id S1730252AbfBKQKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:10:51 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42261 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729438AbfBKOZt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:49 -0500
-X-Originating-IP: 90.88.22.177
-Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 86C1124000F;
-        Mon, 11 Feb 2019 14:25:41 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH net-next 1/4] net: phy: Mask-out non-compatible modes when setting the max-speed
-Date:   Mon, 11 Feb 2019 15:25:26 +0100
-Message-Id: <20190211142529.22885-2-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
-References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
+        Mon, 11 Feb 2019 11:10:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729444AbfBKOZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:51 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4871320821;
+        Mon, 11 Feb 2019 14:25:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895150;
+        bh=Hq+PdFLa8NtDfCwU8xNrbiBC+DprwABcOKDoZPniabw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fZ0rEAjE70JkAUoxwdQ9OwJKxk2kLiWcdBWC0JduPI0SUinCzeCdR5guw9OMlNejk
+         vfz+DuLxqs+t1cTfn63by3TRMgZKDgTx1Iat0S9yljt6jRz4gjFFluDo5NFp9LB50b
+         I5zXIlA471IT1kTGYNSS9lylbUY3ndd/HTGDlt8Y=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Zoran Markovic <zmarkovic@sierrawireless.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 108/352] smack: fix access permissions for keyring
+Date:   Mon, 11 Feb 2019 15:15:35 +0100
+Message-Id: <20190211141852.668113500@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When setting a PHY's max speed using either the max-speed DT property
-or ethtool, we should mask-out all non-compatible modes according to the
-settings table, instead of just the 10/100BASET modes.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+------------------
+
+[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
+
+Function smack_key_permission() only issues smack requests for the
+following operations:
+ - KEY_NEED_READ (issues MAY_READ)
+ - KEY_NEED_WRITE (issues MAY_WRITE)
+ - KEY_NEED_LINK (issues MAY_WRITE)
+ - KEY_NEED_SETATTR (issues MAY_WRITE)
+A blank smack request is issued in all other cases, resulting in
+smack access being granted if there is any rule defined between
+subject and object, or denied with -EACCES otherwise.
+
+Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+Fix the logic in the unlikely case when both MAY_READ and
+MAY_WRITE are needed. Validate access permission field for valid
+contents.
+
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy-core.c   | 45 ++++++++++++++++++++++++++++++
- drivers/net/phy/phy_device.c | 53 ------------------------------------
- include/linux/phy.h          |  1 +
- 3 files changed, 46 insertions(+), 53 deletions(-)
+ security/smack/smack_lsm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
-index cdea028d1328..855abf487279 100644
---- a/drivers/net/phy/phy-core.c
-+++ b/drivers/net/phy/phy-core.c
-@@ -4,6 +4,7 @@
-  */
- #include <linux/export.h>
- #include <linux/phy.h>
-+#include <linux/of.h>
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 81fb4c1631e9..cd720c06b78c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4333,6 +4333,12 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	int request = 0;
+ 	int rc;
  
- const char *phy_speed_to_str(int speed)
- {
-@@ -338,6 +339,50 @@ size_t phy_speeds(unsigned int *speeds, size_t size,
- 	return count;
- }
- 
-+static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
-+{
-+	const struct phy_setting *p;
-+	int i;
++	/*
++	 * Validate requested permissions
++	 */
++	if (perm & ~KEY_NEED_ALL)
++		return -EINVAL;
 +
-+	for (i = 0, p = settings; i < ARRAY_SIZE(settings); i++, p++) {
-+		if (p->speed > max_speed)
-+			linkmode_clear_bit(p->bit, phydev->supported);
-+		else
-+			break;
-+	}
-+
-+	return 0;
-+}
-+
-+int phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
-+{
-+	int err;
-+
-+	err = __set_phy_supported(phydev, max_speed);
-+	if (err)
-+		return err;
-+
-+	linkmode_copy(phydev->advertising, phydev->supported);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(phy_set_max_speed);
-+
-+void of_set_phy_supported(struct phy_device *phydev)
-+{
-+	struct device_node *node = phydev->mdio.dev.of_node;
-+	u32 max_speed;
-+
-+	if (!IS_ENABLED(CONFIG_OF_MDIO))
-+		return;
-+
-+	if (!node)
-+		return;
-+
-+	if (!of_property_read_u32(node, "max-speed", &max_speed))
-+		__set_phy_supported(phydev, max_speed);
-+}
-+
- /**
-  * phy_resolve_aneg_linkmode - resolve the advertisements into phy settings
-  * @phydev: The phy_device struct
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 3d14e48aebc5..65e18293d8e5 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -1964,44 +1964,6 @@ int genphy_loopback(struct phy_device *phydev, bool enable)
- }
- EXPORT_SYMBOL(genphy_loopback);
- 
--static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
--{
--	switch (max_speed) {
--	case SPEED_10:
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
--				   phydev->supported);
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
--				   phydev->supported);
--		/* fall through */
--	case SPEED_100:
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
--				   phydev->supported);
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
--				   phydev->supported);
--		break;
--	case SPEED_1000:
--		break;
--	default:
--		return -ENOTSUPP;
--	}
--
--	return 0;
--}
--
--int phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
--{
--	int err;
--
--	err = __set_phy_supported(phydev, max_speed);
--	if (err)
--		return err;
--
--	linkmode_copy(phydev->advertising, phydev->supported);
--
--	return 0;
--}
--EXPORT_SYMBOL(phy_set_max_speed);
--
- /**
-  * phy_remove_link_mode - Remove a supported link mode
-  * @phydev: phy_device structure to remove link mode from
-@@ -2132,21 +2094,6 @@ bool phy_validate_pause(struct phy_device *phydev,
- }
- EXPORT_SYMBOL(phy_validate_pause);
- 
--static void of_set_phy_supported(struct phy_device *phydev)
--{
--	struct device_node *node = phydev->mdio.dev.of_node;
--	u32 max_speed;
--
--	if (!IS_ENABLED(CONFIG_OF_MDIO))
--		return;
--
--	if (!node)
--		return;
--
--	if (!of_property_read_u32(node, "max-speed", &max_speed))
--		__set_phy_supported(phydev, max_speed);
--}
--
- static void of_set_phy_eee_broken(struct phy_device *phydev)
- {
- 	struct device_node *node = phydev->mdio.dev.of_node;
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 378da9a6165e..20344c7744d8 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -673,6 +673,7 @@ phy_lookup_setting(int speed, int duplex, const unsigned long *mask,
- 		   bool exact);
- size_t phy_speeds(unsigned int *speeds, size_t size,
- 		  unsigned long *mask);
-+void of_set_phy_supported(struct phy_device *phydev);
- 
- static inline bool __phy_is_started(struct phy_device *phydev)
- {
+ 	keyp = key_ref_to_ptr(key_ref);
+ 	if (keyp == NULL)
+ 		return -EINVAL;
+@@ -4356,10 +4362,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	ad.a.u.key_struct.key = keyp->serial;
+ 	ad.a.u.key_struct.key_desc = keyp->description;
+ #endif
+-	if (perm & KEY_NEED_READ)
+-		request = MAY_READ;
++	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
++		request |= MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+-		request = MAY_WRITE;
++		request |= MAY_WRITE;
+ 	rc = smk_access(tkp, keyp->security, request, &ad);
+ 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+ 	return rc;
 -- 
-2.19.2
+2.19.1
+
+
 
