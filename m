@@ -2,168 +2,129 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F9DC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F59EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25DE2218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A608218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EZQrmNGE"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jCZ0jWsY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfBKWBN (ORCPT
+        id S1727357AbfBKWBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:01:13 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11285 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbfBKWBN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:01:13 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c61f0850002>; Mon, 11 Feb 2019 14:00:38 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 14:01:12 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 14:01:12 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 22:01:11 +0000
-Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Davidlohr Bueso <dave@stgolabs.net>, <netdev@vger.kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
- <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
- <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
- <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
- <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
- <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <f392756e-f885-e32e-77a9-d3a51689bee0@nvidia.com>
-Date:   Mon, 11 Feb 2019 14:01:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 11 Feb 2019 17:01:39 -0500
+Received: from ozlabs.org ([203.11.71.1]:49427 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbfBKWBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:01:39 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43z09r4Pwhz9sCh;
+        Tue, 12 Feb 2019 09:01:36 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549922496;
+        bh=AsyEXtC8weYLVwj4ZBkNBOBIk3Bxolv4klBIKHoeOs8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jCZ0jWsYWpbaOFjeulm9MXl4E8nBFYTJpOgSocKC7GYqp57ESi36A9MMrzLOOflOy
+         RFcYDNXJAVmhIAmUwSy/DsYsyLBElr6mNbuStLcDwgY6WT6+UkrX0QQ4EMWMzI6Nj9
+         Y+IQn9tWAM776075h3KqsP4cSNR06iMfnMFMk2UKKyue+crc6ZvOpV/37tNApmwuvF
+         9g5h8JXZQcHKsgkWRylvdes8v7zlkYbLkjevuB8Tngmw3mzKz31oi8BZN+Eu0WsNnF
+         1X4hYTYpoYT7ebiXpIuiClFgCiLtdJ2bTFOg43XRY7/QtYJz6nxReujEYflzKlDjCc
+         I/Nfrvy1eZafw==
+Date:   Tue, 12 Feb 2019 09:01:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
+        Thierry Reding <treding@nvidia.com>,
+        Shawn Guo <shawn.guo@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carlo Caione <ccaione@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>
+Subject: linux-next: manual merge of the tegra tree with the imx-mxs tree
+Message-ID: <20190212090115.69bc5891@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549922438; bh=vWs2aKXh4VkvG7WO8haiJ5PzQmL2tFLJDsIxpuuhupo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=EZQrmNGEqpt0sljknlDD5qDlmVF+KBcIX1F9PjPhl1qC3uyH76fvnqkaxSFw8QeFl
-         tNUm1VP4uk1PJDLX9jOZ49OA00wchP3s8+oAfLb+KGzX20/vXDU7FEpbLmMdwF0umt
-         uXq1LTcC5dbPzJBXMHz7UN1qZrTsDZQhV6n6hq+Xtozit/Y+gfpqTlgGuqWmJxoape
-         2RbUjashm8TFMTMfSmdQZ/D5QzO3aaX9CB1SzVlUWoWsWOcysXLS/+8mwvJsrnKBLM
-         sP9qgYuiorn9eS3zZkbff50xGSijAGyoiPxkSROf9nIPMLSb5T1O/uL854sjh/f9p+
-         oD9g8x5lI235Q==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4m3zFkKOm50f0EXg2j9mM.B"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 1:52 PM, Ira Weiny wrote:
-> On Mon, Feb 11, 2019 at 01:39:12PM -0800, John Hubbard wrote:
->> On 2/11/19 1:26 PM, Ira Weiny wrote:
->>> On Mon, Feb 11, 2019 at 01:13:56PM -0800, John Hubbard wrote:
->>>> On 2/11/19 12:39 PM, Jason Gunthorpe wrote:
->>>>> On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
->>>>>> From: Ira Weiny <ira.weiny@intel.com>
->>>> [...]
-> Fair enough.   But to do that correctly I think we will need to convert
-> get_user_pages_fast() to use flags as well.  I have a version of this series
-> which includes a patch does this, but the patch touched a lot of subsystems and
-> a couple of different architectures...[1]
-> 
-> I can't test them all.  If we want to go that way I'm up for submitting the
+--Sig_/4m3zFkKOm50f0EXg2j9mM.B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have a similar problem, and a similar list of call sites, for the
-put_user_pages() conversion, so that file list looks familiar. And the
-arch-specific gup implementations are about to complicate my life too. :)
+Hi all,
 
-> patch...  But if we remove longterm in the future we may be left with a
-> get_user_pages_fast() which really only needs 1 flag.  But perhaps overall we
-> would be better off?
-> 
-> Ira
+Today's linux-next merge of the tegra tree got a conflict in:
 
-I certainly think so, yes.
+  arch/arm64/configs/defconfig
 
+between commit:
 
-thanks,
--- 
-John Hubbard
-NVIDIA
-> 
-> 
-> [1] mm/gup.c: Change GUP fast to use flags rather than write bool
-> 
-> To facilitate additional options to get_user_pages_fast change the
-> singular write parameter to be the more generic gup_flags.
-> 
-> This patch currently does not change any functionality.  New
-> functionality will follow in subsequent patches.
-> 
-> Many of the get_user_pages_fast call sites were unchanged because they
-> already used FOLL_WRITE or 0 as appropriate.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  arch/mips/mm/gup.c                         | 11 ++++++-----
->  arch/powerpc/kvm/book3s_64_mmu_hv.c        |  4 ++--
->  arch/powerpc/kvm/e500_mmu.c                |  2 +-
->  arch/powerpc/mm/mmu_context_iommu.c        |  4 ++--
->  arch/s390/kvm/interrupt.c                  |  2 +-
->  arch/s390/mm/gup.c                         | 12 ++++++------
->  arch/sh/mm/gup.c                           | 11 ++++++-----
->  arch/sparc/mm/gup.c                        |  9 +++++----
->  arch/x86/kvm/paging_tmpl.h                 |  2 +-
->  arch/x86/kvm/svm.c                         |  2 +-
->  drivers/fpga/dfl-afu-dma-region.c          |  2 +-
->  drivers/gpu/drm/via/via_dmablit.c          |  3 ++-
->  drivers/infiniband/hw/hfi1/user_pages.c    |  3 ++-
->  drivers/misc/genwqe/card_utils.c           |  2 +-
->  drivers/misc/vmw_vmci/vmci_host.c          |  2 +-
->  drivers/misc/vmw_vmci/vmci_queue_pair.c    |  6 ++++--
->  drivers/platform/goldfish/goldfish_pipe.c  |  3 ++-
->  drivers/rapidio/devices/rio_mport_cdev.c   |  4 +++-
->  drivers/sbus/char/oradax.c                 |  2 +-
->  drivers/scsi/st.c                          |  3 ++-
->  drivers/staging/gasket/gasket_page_table.c |  4 ++--
->  drivers/tee/tee_shm.c                      |  2 +-
->  drivers/vfio/vfio_iommu_spapr_tce.c        |  3 ++-
->  drivers/vhost/vhost.c                      |  2 +-
->  drivers/video/fbdev/pvr2fb.c               |  2 +-
->  drivers/virt/fsl_hypervisor.c              |  2 +-
->  drivers/xen/gntdev.c                       |  2 +-
->  fs/orangefs/orangefs-bufmap.c              |  2 +-
->  include/linux/mm.h                         |  4 ++--
->  kernel/futex.c                             |  2 +-
->  lib/iov_iter.c                             |  7 +++++--
->  mm/gup.c                                   | 10 +++++-----
->  mm/util.c                                  |  8 ++++----
->  net/ceph/pagevec.c                         |  2 +-
->  net/rds/info.c                             |  2 +-
->  net/rds/rdma.c                             |  3 ++-
->  36 files changed, 81 insertions(+), 65 deletions(-)
-> 
-> 
+  28cfe2434529 ("arm64: defconfig: Enable PFUZE100 regulator")
+
+from the imx-mxs tree and commit:
+
+  2b5d2c92c29d ("arm64: defconfig: Enable MAX8973 regulator")
+
+from the tegra tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/configs/defconfig
+index 3317d85fa8a3,ad8f3dea0a74..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -323,8 -319,7 +323,9 @@@ CONFIG_SERIAL_MESON_CONSOLE=3D
+  CONFIG_SERIAL_SAMSUNG=3Dy
+  CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
+  CONFIG_SERIAL_TEGRA=3Dy
++ CONFIG_SERIAL_TEGRA_TCU=3Dy
+ +CONFIG_SERIAL_IMX=3Dy
+ +CONFIG_SERIAL_IMX_CONSOLE=3Dy
+  CONFIG_SERIAL_SH_SCI=3Dy
+  CONFIG_SERIAL_MSM=3Dy
+  CONFIG_SERIAL_MSM_CONSOLE=3Dy
+@@@ -451,7 -438,7 +452,8 @@@ CONFIG_REGULATOR_GPIO=3D
+  CONFIG_REGULATOR_HI6421V530=3Dy
+  CONFIG_REGULATOR_HI655X=3Dy
+  CONFIG_REGULATOR_MAX77620=3Dy
++ CONFIG_REGULATOR_MAX8973=3Dy
+ +CONFIG_REGULATOR_PFUZE100=3Dy
+  CONFIG_REGULATOR_PWM=3Dy
+  CONFIG_REGULATOR_QCOM_RPMH=3Dy
+  CONFIG_REGULATOR_QCOM_SMD_RPM=3Dy
+
+--Sig_/4m3zFkKOm50f0EXg2j9mM.B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxh8LkACgkQAVBC80lX
+0Gzupgf/X8ZQhsCIII364APt7lOTefhR8gN/8NvjrJYMbcI6W8OkFCIFar7+6zqE
++gcdLkO8yTDUzf3I8VKifTJXhlJ+gYV011bSZx2WwdOEYhb0kiVzVLj3DcbmFZKm
+bbbK88hgh92LOIax23Xa4TqfhXUD6GNUuHbQpXsosqCw0V2ChIXHn1rPjXmL+zh/
+thZkHPSEF/UsmY3/IruU1bb7DAW6OzlsWkJmsc5q+TT6G4sP1W/S5EXM5ASbu+s/
+cEgbuymnHeK0xTWATH/AfPGzsm5b4f74W78oAebqCAkPH2PinvLqLTCov2iONkTI
+Kb9yrkAATN3SxYrnCczXQ47klza7Wg==
+=MTyt
+-----END PGP SIGNATURE-----
+
+--Sig_/4m3zFkKOm50f0EXg2j9mM.B--
