@@ -2,55 +2,56 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B803AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D808EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84519222B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD91222B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897473;
-	bh=IQ/zWVScjqhYrr+OJSup8jh86bkLNU2Fpca9/2P2ghg=;
+	s=default; t=1549897478;
+	bh=RrXdfRzk9FwPpE34oy7saeDgUanNnrg94oHGsmM9NcY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SCe4Acswp45hrUBf/EJe1Pq8P3OMR7b+wmkZs4ZjO6c4xGiSMOQSO824bhF5a6IqX
-	 UyGI3m5bQ48cGvV0Y+yqRKKuxTyWdlKpOSKdKoDp1tFBWfLK8o7UgDJchFiGrcsgxe
-	 hdu/t94Tw9uDI9wG7OhAmlnKhsURLx7BYGWye8hk=
+	b=h+9BAs2D3FPGuDmJ2OpiUgN1H9ERKdO3d0QIYGsPIVnHbY1gxZcrBe/P/gYVRgCT3
+	 Jbc3moFWLIWBZQULHQz7Oz5nU6PES5pSFHUuBlvgaLGGyqvmKvcQv+VSIw35CQpB4Q
+	 fEmYsjnIKq9BXvr5Y/xvCsF6/2MbSpr8VEb0TkM4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390804AbfBKPEb (ORCPT
+        id S2390831AbfBKPEh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53496 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:04:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729551AbfBKPE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:29 -0500
+        id S2389808AbfBKPEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6516222B0;
-        Mon, 11 Feb 2019 15:04:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5109222AD;
+        Mon, 11 Feb 2019 15:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897468;
-        bh=IQ/zWVScjqhYrr+OJSup8jh86bkLNU2Fpca9/2P2ghg=;
+        s=default; t=1549897474;
+        bh=RrXdfRzk9FwPpE34oy7saeDgUanNnrg94oHGsmM9NcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BK6Wb7gUCMBIR51LQrAAYBcNigaAeXtS7vzaG6iY04N2480SyCHGRyNqw+TZPHukl
-         S4/rQ7Tuho/Y0Ne97wUJp7m3JzMciP1sVQ/mkWOo7XWhx6xLZCEvMFLZIBmj8ErQsB
-         y0pWMQGXV6ijD/ajTp6409ct30E20fovx2L7MXuA=
+        b=eqArCtLYcK3HrPf5s2oVBgfGr9r7QGNHuNRiCTUpdcy/3NBTqDY0rIcUtvev3+jvl
+         aGArYPYRn0VBY4UXd0aAFA7XvG2g4UdIeMJX8JMjoemOIFdYk8azNR1sAqhINaiR0p
+         5mP3aKlJMBK3yTTe3vrvCOig3shGpKySFMon8Nbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Leonid Iziumtsev <leonid.iziumtsev@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.14 182/205] dmaengine: imx-dma: fix wrong callback invoke
-Date:   Mon, 11 Feb 2019 15:19:40 +0100
-Message-Id: <20190211141840.289756490@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 010/137] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 11 Feb 2019 15:18:11 +0100
+Message-Id: <20190211141812.946148969@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
-References: <20190211141827.214852402@linuxfoundation.org>
+In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
+References: <20190211141811.964925535@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,68 +63,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-commit 341198eda723c8c1cddbb006a89ad9e362502ea2 upstream.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-Once the "ld_queue" list is not empty, next descriptor will migrate
-into "ld_active" list. The "desc" variable will be overwritten
-during that transition. And later the dmaengine_desc_get_callback_invoke()
-will use it as an argument. As result we invoke wrong callback.
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
 
-That behaviour was in place since:
-commit fcaaba6c7136 ("dmaengine: imx-dma: fix callback path in tasklet").
-But after commit 4cd13c21b207 ("softirq: Let ksoftirqd do its job")
-things got worse, since possible delay between tasklet_schedule()
-from DMA irq handler and actual tasklet function execution got bigger.
-And that gave more time for new DMA request to be submitted and
-to be put into "ld_queue" list.
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
 
-It has been noticed that DMA issue is causing problems for "mxc-mmc"
-driver. While stressing the system with heavy network traffic and
-writing/reading to/from sd card simultaneously the timeout may happen:
-
-10013000.sdhci: mxcmci_watchdog: read time out (status = 0x30004900)
-
-That often lead to file system corruption.
-
-Signed-off-by: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-dma.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/dma/imx-dma.c
-+++ b/drivers/dma/imx-dma.c
-@@ -623,7 +623,7 @@ static void imxdma_tasklet(unsigned long
- {
- 	struct imxdma_channel *imxdmac = (void *)data;
- 	struct imxdma_engine *imxdma = imxdmac->imxdma;
--	struct imxdma_desc *desc;
-+	struct imxdma_desc *desc, *next_desc;
- 	unsigned long flags;
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 72ae2cdbcd6a..999b04819d69 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -288,6 +288,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
  
- 	spin_lock_irqsave(&imxdma->lock, flags);
-@@ -653,10 +653,10 @@ static void imxdma_tasklet(unsigned long
- 	list_move_tail(imxdmac->ld_active.next, &imxdmac->ld_free);
++	of_node_put(dn);
++
+ 	return 0;
+ }
  
- 	if (!list_empty(&imxdmac->ld_queue)) {
--		desc = list_first_entry(&imxdmac->ld_queue, struct imxdma_desc,
--					node);
-+		next_desc = list_first_entry(&imxdmac->ld_queue,
-+					     struct imxdma_desc, node);
- 		list_move_tail(imxdmac->ld_queue.next, &imxdmac->ld_active);
--		if (imxdma_xfer_desc(desc) < 0)
-+		if (imxdma_xfer_desc(next_desc) < 0)
- 			dev_warn(imxdma->dev, "%s: channel: %d couldn't xfer desc\n",
- 				 __func__, imxdmac->channel);
- 	}
+-- 
+2.19.1
+
 
 
