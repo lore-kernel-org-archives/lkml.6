@@ -2,90 +2,80 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7B6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA96EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71414218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2965218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbfBKMkr (ORCPT
+        id S1727482AbfBKMlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:40:47 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45682 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727357AbfBKMkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:40:46 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 04:40:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="145869340"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 11 Feb 2019 04:40:42 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 11 Feb 2019 14:40:42 +0200
-Date:   Mon, 11 Feb 2019 14:40:42 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Jun Li <jun.li@nxp.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
- against the device node
-Message-ID: <20190211124042.GF16987@kuha.fi.intel.com>
-References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
- <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
- <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
- <20190211104629.GE16987@kuha.fi.intel.com>
+        Mon, 11 Feb 2019 07:41:49 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:36017 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfBKMls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:41:48 -0500
+Received: from [192.168.1.110] ([95.117.94.93]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mcp7M-1hT3t42V8c-00Zztm; Mon, 11 Feb 2019 13:41:44 +0100
+Subject: Re: [PATCH] checkpatch: Add test for SPDX-License-Identifier on wrong
+ line #
+To:     Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net>
+ <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
+ <dfd0101f4a596600e2f0f8cf36886cf01c7dcb67.camel@perches.com>
+ <9b74ee87f8c1b8fd310e213fcb4994d58610fcb6.camel@perches.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <e64adaf7-d7e2-76b7-cfe3-0cbb5c32c79d@metux.net>
+Date:   Mon, 11 Feb 2019 13:41:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211104629.GE16987@kuha.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9b74ee87f8c1b8fd310e213fcb4994d58610fcb6.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:FyO00gSKspRrn3msREYhe8CxkpJom+GkVulF5Z/mGSDbvSMcyDM
+ 5DroIq8wleRIfhFB2/F6A1omg2QNl4lYjLoy5dSrL5TkHsLu4+Aw1axljkjm/+02YxUmuHo
+ q26AM6ekr4ZAXx8AzwGBVDAEfc0tz8QpQdh7ehGPypWsRw18u31EqmI1JdKK+EdtBrqmr++
+ h5LZsPOGImdWNXkhNv8Qw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:02lYvicO80U=:P0k/3VOwItiYH1cj+X5dm/
+ mNDMjcBMSBRzjNWFUZPY4orwezb/30pgASer/IDe5AOsCVn4GNZnLhsAAdqW0XuZzXksDH1Vn
+ VClJ1ZJJlg9lTnmsgulWjm6rguQH8gpPpCsvAp1JAVG6wCq9/dYQ5imYHJfYuh971y5HbyEc+
+ 1zIeYfDQ3/Lf7qe0tjtuCeRfTHpAm6RVSm/cv/V/asDxfF+/MjKssuJnblqt7ciVnC2SvgyXt
+ zOodXPuVFNFabkU5JLUXzaG+mYLWOR7A3LO70GkKmrmQx0GozMSKefrX3Ib9TbdO/E8+cBYZf
+ 2nUhPPdJ3BUypCXFahIhdkgv4Xwm0XK/Ka+7bkjUY5OofitKKzqoNkGXS6W9DN3wvHG51k3z5
+ hwAm0TlnLbMAF4zgFMKzWDlQQHL82MXcGtqrt0zx5qtUar2mXSxUWIWetJKG1yh6bUwH+ysH+
+ GLygOztYa8LEkzbXVGRBzEnrR4viSElWPRWTLhsd+muKeoR8wls2atDTDou+kF4T0q/k016x+
+ pUJZCX6AtHSUqnp39xMwnjufLo70AEMbasjGM+eWTFiLHuv5vPxu6UG8MlUpHXn0rYT5PX9QW
+ Xd2mZVFksSpo7dtIe1WvBljRkQq08YTW3z8EIUmH9hEgFgvnaehQ2KWXfQ0+SYH8WKtYpl1TG
+ BWJMpWf4FMq+XV1yllM11EjKUujm79oer6qPGyNJvMw+CNZMYm3dhnLekFk5sSR8Heum7ZtCN
+ xioMkGqCPzQiwWntGIRVHNKQIcxu8AuDdX73XlyyD/iK46GqxpYmjGYDP/g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:46:29PM +0200, Heikki Krogerus wrote:
-> On Mon, Feb 11, 2019 at 09:58:04AM +0000, Jun Li wrote:
-> > Hi Heikki,
-> > 
-> > > @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct
-> > > usb_role_switch *sw)  }  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
-> > > 
-> > > -static int __switch_match(struct device *dev, const void *name)
-> > > +static int switch_fwnode_match(struct device *dev, const void *fwnode)
-> > > +{
-> > > +	return dev_fwnode(dev) == fwnode;
-> > 
-> > You missed the comment
-> > https://lkml.org/lkml/2019/1/22/437
-> > 
-> > return dev_fwnode(dev->parent) == fwnode;
-> 
-> That's actually not the case. struct usb_role_switch_desc has a member
-> for fwnode, and that's what we use with the actual mux device. Check
-> usb_role_switch_register():
-> 
->         ...
->         sw->dev.fwnode = desc->fwnode;
->         ...
-> 
-> Sorry for not realizing it before.
+On 08.02.19 21:44, Joe Perches wrote:
+> Warn when any SPDX-License-Identifier: tag is not created
+> on the proper line number.
 
-Just to clarify. The current patch is OK. No changes needed.
+By the way: there are corner cases, which can't have it at the first
+line, eg. scripts.
 
 
-thanks,
+--mtx
 
 -- 
-heikki
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
