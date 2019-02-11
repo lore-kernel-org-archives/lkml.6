@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB56C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8C0C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFD521B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C914321B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898420;
-	bh=MXBCZJUlaLgLnuEiJIM0Ke3cA2GhbR9MaTK17IlgMYk=;
+	s=default; t=1549898428;
+	bh=I7oYyZsSmhGbUZU0jdoSbrCNKyL5h4t09x9rquEpGiw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sWRKzfofL5arGreV2ku+3EeNFSEJDqGJEDemMtLKl2oJW4h8zQN0wCMV4aaS/9M3K
-	 /khS2n8rdoo17Xks79kktOpwAFgLrJyzdOxIbHaJJopoLabOByaSr9edde/tGJDGlP
-	 ZIVsz+yqEOjnVoWtKSwonU+j4oeuOvg4ndypPB8I=
+	b=tVEhAKwrA3RXb259m19hUK1fWkdwPHWL4r+yIovkYkQ+R4NNL9JJaEcXKqJJdoHG3
+	 OpijxfQ3QSAWxU9A2QPNicogOxiYHcF1UEjnu8locFWOZUm81gK1j1dXXjI4eRQIvR
+	 iPLVZexk5+HVtY9f0BDADoU91KLbUOx4TpJnD5dE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390995AbfBKPF2 (ORCPT
+        id S2390959AbfBKPFS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:05:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:05:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390009AbfBKPFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:05:23 -0500
+        id S2390943AbfBKPFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:05:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79572222A7;
-        Mon, 11 Feb 2019 15:05:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD46C222AD;
+        Mon, 11 Feb 2019 15:05:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897522;
-        bh=MXBCZJUlaLgLnuEiJIM0Ke3cA2GhbR9MaTK17IlgMYk=;
+        s=default; t=1549897514;
+        bh=I7oYyZsSmhGbUZU0jdoSbrCNKyL5h4t09x9rquEpGiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2tg41F4Q6tyyLP1XO6GMrhJwgYcwGh/8c/cg+jmOqA2CcqDdau79MPNzMjEI/AXEF
-         iht2Du9bzCbuy29A2R9incMBSH5RxuzuvViWurkyjlf8EgHDodwSvlvp6DdAB8+4rf
-         44DotQOm5KrABh9GTKFgEY+Xz4yLcEMFkjcM346Y=
+        b=NALzJNhnvmr7MbtgO+TrNSlFJA2ISigBi5f4CPaEuQVTXG8HxdWr715sqNVh8q2VW
+         FQVAUFWxQC3JFNEWgK3YqKULI31ypXIhgs2gF39AL3MzRgi9GIaNGAoXzt++Aymron
+         nt+LI9pA5c+J6ZDLyS3p8JLBFgr6DsHyguzVX45s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <kernelpatch@126.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 026/137] f2fs: fix wrong return value of f2fs_acl_create
-Date:   Mon, 11 Feb 2019 15:18:27 +0100
-Message-Id: <20190211141814.375411788@linuxfoundation.org>
+Subject: [PATCH 4.9 023/137] media: adv*/tc358743/ths8200: fill in min width/height/pixelclock
+Date:   Mon, 11 Feb 2019 15:18:24 +0100
+Message-Id: <20190211141814.135450913@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,59 +66,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
+[ Upstream commit 2912289a518077ddb8214e05336700148e97e235 ]
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+The v4l2_dv_timings_cap struct is used to do sanity checks when setting and
+enumerating DV timings, ensuring that only valid timings as per the HW
+capabilities are allowed.
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+However, many drivers just filled in 0 for the minimum width, height or
+pixelclock frequency. This can cause timings with e.g. 0 as width and height
+to be accepted, which will in turn lead to a potential division by zero.
+
+Fill in proper values are minimum boundaries. 640x350 was chosen since it is
+the smallest resolution in v4l2-dv-timings.h. Same for 13 MHz as the lowest
+pixelclock frequency (it's slightly below the minimum of 13.5 MHz in the
+v4l2-dv-timings.h header).
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/i2c/ad9389b.c  | 2 +-
+ drivers/media/i2c/adv7511.c  | 2 +-
+ drivers/media/i2c/adv7604.c  | 4 ++--
+ drivers/media/i2c/adv7842.c  | 4 ++--
+ drivers/media/i2c/tc358743.c | 2 +-
+ drivers/media/i2c/ths8200.c  | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 55aa29c0c78d..a9894089d9dc 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -348,12 +348,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
+diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
+index 50f354144ee7..2abbbc6392c0 100644
+--- a/drivers/media/i2c/ad9389b.c
++++ b/drivers/media/i2c/ad9389b.c
+@@ -590,7 +590,7 @@ static const struct v4l2_dv_timings_cap ad9389b_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
+index 5ba0f21bcfe4..5f1c8ee8a50e 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511.c
+@@ -142,7 +142,7 @@ static const struct v4l2_dv_timings_cap adv7511_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, ADV7511_MAX_WIDTH, 0, ADV7511_MAX_HEIGHT,
++	V4L2_INIT_BT_TIMINGS(640, ADV7511_MAX_WIDTH, 350, ADV7511_MAX_HEIGHT,
+ 		ADV7511_MIN_PIXELCLOCK, ADV7511_MAX_PIXELCLOCK,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 7b1935ab03c8..ce6f93074ae0 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -777,7 +777,7 @@ static const struct v4l2_dv_timings_cap adv7604_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -788,7 +788,7 @@ static const struct v4l2_dv_timings_cap adv76xx_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 8c2a52e280af..cf3b42c9417e 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -676,7 +676,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -687,7 +687,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index 0f572bff64f5..7ebcb9473956 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -66,7 +66,7 @@ static const struct v4l2_dv_timings_cap tc358743_timings_cap = {
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+ 	/* Pixel clock from REF_01 p. 20. Min/max height/width are unknown */
+-	V4L2_INIT_BT_TIMINGS(1, 10000, 1, 10000, 0, 165000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 13000000, 165000000,
+ 			V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 			V4L2_DV_BT_CAP_PROGRESSIVE |
+diff --git a/drivers/media/i2c/ths8200.c b/drivers/media/i2c/ths8200.c
+index 42340e364cea..e06e2de87f90 100644
+--- a/drivers/media/i2c/ths8200.c
++++ b/drivers/media/i2c/ths8200.c
+@@ -49,7 +49,7 @@ static const struct v4l2_dv_timings_cap ths8200_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1080, 25000000, 148500000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1080, 25000000, 148500000,
+ 		V4L2_DV_BT_STD_CEA861, V4L2_DV_BT_CAP_PROGRESSIVE)
+ };
  
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
- 
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -367,11 +369,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
 
