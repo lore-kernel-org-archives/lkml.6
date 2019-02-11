@@ -2,126 +2,142 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E42C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A420C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A54C218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43E9D20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dndHrDQS"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="eKfCkoHJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfBKMiL (ORCPT
+        id S1727491AbfBKMiy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:38:11 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:55780 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbfBKMiL (ORCPT
+        Mon, 11 Feb 2019 07:38:54 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36577 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfBKMiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:38:11 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1BCbxZY071925;
-        Mon, 11 Feb 2019 06:37:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549888679;
-        bh=dv1w3WK91cUXPAdWZvGkj+HejO42UrAup40etPBxbrI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=dndHrDQSk/Q9hPcLF/dIszPOLnFLCbbwJT5lgJTm1SbUfdCgzI0f3Z0gGINxNPi1x
-         GKoUEIPCNhB0nqm67W+RIPn6auGZ5nvWXeOzYhfQbazOmtS/CtanCpptiB6l/aUFsR
-         fpTzPHgnWYP9lzYMcgYnCgTQhSS0CWXId8dt21ow=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1BCbxch025432
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 06:37:59 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 11
- Feb 2019 06:37:58 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 11 Feb 2019 06:37:58 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1BCbsm7005477;
-        Mon, 11 Feb 2019 06:37:56 -0600
-Subject: Re: [PATCH v2] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wen Yang <wen.yang99@zte.com.cn>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhong.weidong@zte.com.cn" <zhong.weidong@zte.com.cn>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-References: <20181206125225.9497-1-wen.yang99@zte.com.cn>
- <20190208122027.GE13009@e107981-ln.cambridge.arm.com>
- <aa4280f5-9750-05e9-7737-044d8f127521@ti.com>
- <ba5489d4-671b-5b52-3917-ea478f7233e0@synopsys.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <64f74be5-1d49-012c-46de-e49c6006997f@ti.com>
-Date:   Mon, 11 Feb 2019 18:07:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 07:38:51 -0500
+Received: by mail-wr1-f68.google.com with SMTP id o17so173629wrw.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:38:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/VS21sFG84GLc3QRG/1Shmpp1t22LuWOgpCsdW2q5MI=;
+        b=eKfCkoHJwa5rJdq3xftrKkvXc8fvfxnYDun5gP2peH2RKr58HgnLOdo/QSlwziCgQp
+         y/JJ9FlCSP+4U7+p53mJt5tyJ9uUgnNIgn2rFmMXURCW62/NBHOLaCq8KLhZtIfuss0U
+         L5t0KmsEOQEs9Gf0GKzSg4TCoM5vBhzOzufNGxfya490z5f2Ub9uzomzuDEGiTAjLv7/
+         snBPJVk1+xaQNOuV9LgMuu81wc5047ACCbLlizZGLwtcB+2QpsNoaMM23/LkJuIdJ2rB
+         yfLVmK4glcdPGTST/HafryR54Ta9NzjxBimB3noRB+zOgN4NBJjMTMx8E0gHILZV1fCX
+         bzRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/VS21sFG84GLc3QRG/1Shmpp1t22LuWOgpCsdW2q5MI=;
+        b=Hlyl5c/dnZTaJ2CFOwF9v9AE2Yt+sCssqzo2p8VKAGQTix0dSLz2EdDf0mYFZ3lPlw
+         xelCBvUUzk/gdTh1jW5vO/jZNYYQX/D2t+9qB9oZBwBJxFok1QvgAg6dF17YIkvBm6ol
+         89pQvtI5EwYmArTNQelLPlr29w58XpAzjyguSyviylswMbn7j/+iUPR10qNRrtIdFChw
+         aEEAN73Rluxd3aFykidVo+XFiiiWTlQOr9QiRSC8ypZH6Z8/JKOkKv4Oj9oQzV1Yj7oB
+         VcHwhZVPpRsdPuUDyjJm8zXcMO0MQYZrezqdTBSTQooQJIzoYrAGsThh7PNi/MZv0OfE
+         iJBg==
+X-Gm-Message-State: AHQUAuYkKTD7ZR1j7Y9vWiv+50q0RSB+GYslD1ylJ4ijclT5mt7wf1ju
+        b7dxMnsdnfSkfp7tK8zKbaWUKA==
+X-Google-Smtp-Source: AHgI3IauEcJE8ohfUn8CL1IyuVTPHVe5Iw6rHAKO5AeZlfwAp9O0uE9+zGFX/W4msyWYlZ7TVotR+w==
+X-Received: by 2002:adf:ffca:: with SMTP id x10mr28771190wrs.289.1549888729807;
+        Mon, 11 Feb 2019 04:38:49 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id y24sm20762871wma.0.2019.02.11.04.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 04:38:49 -0800 (PST)
+Date:   Mon, 11 Feb 2019 13:29:26 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, idosch@mellanox.com,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        bridge@lists.linux-foundation.org, jiri@mellanox.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: Re: [PATCH net-next v3 5/9] net: mscc: ocelot: Handle
+ SWITCHDEV_PORT_ATTR_GET/SET
+Message-ID: <20190211122926.GH2251@nanopsycho>
+References: <20190210234007.16173-1-f.fainelli@gmail.com>
+ <20190210234007.16173-6-f.fainelli@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ba5489d4-671b-5b52-3917-ea478f7233e0@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190210234007.16173-6-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-
-On 11/02/19 2:45 PM, Gustavo Pimentel wrote:
-> On 11/02/2019 05:48, Kishon Vijay Abraham I wrote:
->> Hi Lorenzo,
->>
->> On 08/02/19 5:50 PM, Lorenzo Pieralisi wrote:
->>> On Thu, Dec 06, 2018 at 08:52:25PM +0800, Wen Yang wrote:
->>>> kmemdup has implemented the function that kmalloc() + memcpy().
->>>> We prefer to kmemdup rather than code opened implementation.
->>>>
->>>> This issue was detected with the help of coccinelle.
->>>>
->>>> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
->>>> CC: Kishon Vijay Abraham I <kishon@ti.com>
->>>> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->>>> CC: Bjorn Helgaas <bhelgaas@google.com>
->>>> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>>> CC: Niklas Cassel <niklas.cassel@axis.com>
->>>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
->>>> CC: linux-pci@vger.kernel.org (open list:PCI ENDPOINT SUBSYSTEM)
->>>> CC: linux-kernel@vger.kernel.org (open list)
->>>> ---
->>>>  drivers/pci/endpoint/functions/pci-epf-test.c | 4 +---
->>>>  1 file changed, 1 insertion(+), 3 deletions(-)
->>>
->>> Kishon,
->>>
->>> this looks OK to me, anything I am missing ?
->>
->> For the existing code this might seem the right thing to do but ideally the
->> memcpy here should be changed to memcpy_fromio/memcpy_toio.
->>
->> Also later when we plan to use DMA (on the endpoint) for data transfer, we have
->> to use kzalloc and dma_map_single APIs.
+Mon, Feb 11, 2019 at 12:40:03AM CET, f.fainelli@gmail.com wrote:
+>Following patches will change the way we communicate getting or setting
+>a port's attribute and use a blocking notifier to perform those tasks.
+>
+>Prepare ocelot to support receiving notifier events targeting
+>SWITCHDEV_PORT_ATTR_GET/SET and simply translate that into the existing
+>ocelot_port_attr_{set,get} calls.
+>
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>---
+> drivers/net/ethernet/mscc/ocelot.c | 21 +++++++++++++++++++++
+> 1 file changed, 21 insertions(+)
+>
+>diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+>index 195306d05bcd..850a49033a30 100644
+>--- a/drivers/net/ethernet/mscc/ocelot.c
+>+++ b/drivers/net/ethernet/mscc/ocelot.c
+>@@ -1582,6 +1582,24 @@ struct notifier_block ocelot_netdevice_nb __read_mostly = {
+> };
+> EXPORT_SYMBOL(ocelot_netdevice_nb);
 > 
-> Are you considering to use the eDMA driver that I'm developing?
+>+static int
+>+ocelot_switchdev_port_attr_event(unsigned long event,
+>+		struct net_device *netdev,
+>+		struct switchdev_notifier_port_attr_info *port_attr_info)
+>+{
+>+	int err = -EOPNOTSUPP;
+>+
+>+	switch (event) {
+>+	case SWITCHDEV_PORT_ATTR_SET:
+>+		err = ocelot_port_attr_set(netdev, port_attr_info->attr,
+>+					   port_attr_info->trans);
+>+		break;
+>+	}
+>+
+>+	port_attr_info->handled = true;
+>+	return notifier_from_errno(err);
+>+}
+>+
+> static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+> 					   unsigned long event, void *ptr)
+> {
+>@@ -1600,6 +1618,9 @@ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+> 						    ocelot_netdevice_dev_check,
+> 						    ocelot_port_obj_del);
+> 		return notifier_from_errno(err);
+>+	case SWITCHDEV_PORT_ATTR_SET:
+>+	case SWITCHDEV_PORT_ATTR_GET: /* fallthrough */
 
-I used system DMA for my testing. But in the DesignWare driver, we should be
-able to choose between system DMA or any other DMA based on the platforms
-capabilities.
+I think that the "fallthrough" comment should be for "ATTR_SET" case.
 
-Thanks
-Kishon
+Anyway:
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+
+
+
+>+		return ocelot_switchdev_port_attr_event(event, dev, ptr);
+> 	}
+> 
+> 	return NOTIFY_DONE;
+>-- 
+>2.19.1
+>
