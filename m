@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69BEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B4BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799FA222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC154222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897455;
-	bh=XS1UvPpMyic+D+vvOkncGgjSTFnTIeUoQJaJUKzkQ48=;
+	s=default; t=1549897458;
+	bh=PgJ0NIXdBHDgY2kD0hLp5gMNWzTDwWEaS18RGNwr45E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QpB6bvOP4DOhXb6cANpY8m9Lv7gquf3tlfXq26TMYg1Ovbegj4AafZm5gZbjRGEj0
-	 95BFBvQ64s9WAN6BISAznSrFZ04WaIVUWY71sU9dzLH1OTOEaBbC/8xWgLhMTBq7Qs
-	 5nVHPKbhEQhYzbk/rdRKKGp3ntZqha/sn4MQuxns=
+	b=g5lrPnmF3tVNuDjG3DguPIeF63IFU8c/D4iIo8HqZw76vTeJ32tIxpkAaMase1wja
+	 chO/uUZIGpzs/SVMVDnJ2Z7qygwuFb2qH8DyKNpYJWISrbNWMH3wf+zeK7m+XEsp00
+	 FLNtCuYa0WtAVjrz6UjE1uP3terAGwhBfjc3/Cyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390734AbfBKPEN (ORCPT
+        id S2390745AbfBKPER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:04:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53086 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:04:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390668AbfBKPEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:10 -0500
+        id S2389995AbfBKPEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83D42222A7;
-        Mon, 11 Feb 2019 15:04:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0615222A7;
+        Mon, 11 Feb 2019 15:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897450;
-        bh=XS1UvPpMyic+D+vvOkncGgjSTFnTIeUoQJaJUKzkQ48=;
+        s=default; t=1549897453;
+        bh=PgJ0NIXdBHDgY2kD0hLp5gMNWzTDwWEaS18RGNwr45E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FB9yTf4zXrlsmiLYl0+fGh1H/KpWPUPkYJ7OttqieF9VtMj5lj5XBrhspdmk2azot
-         7TG0E2j4qyqktUpqhtZssf2GeHRJbtlaBgPzGEEoJBbIdixUnULRSvaZufkTwyA39v
-         dJ52hkQzYe0Cw0L7nal4gU+q1cc6/hfSm7N8Q40c=
+        b=zNVwNvjikWN6frV1UFWYi9ZR4q0WWqR+70vXWQpp51zaww6Zy42iMuYKCqTsUMXVP
+         XT2tu6FODJI1H3/hnjA7Ge01UxZULbenpOKxtRB/4jttNLAyTrL8JDVcpO6gUE75pB
+         WlbOJXH/sguTIw2EjL7DmZ/GCjKx03BAinZWNlaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejas Joglekar <joglekar@synopsys.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 186/205] usb: dwc3: gadget: Handle 0 xfer length for OUT EP
-Date:   Mon, 11 Feb 2019 15:19:44 +0100
-Message-Id: <20190211141840.564258507@linuxfoundation.org>
+Subject: [PATCH 4.14 187/205] usb: gadget: udc: net2272: Fix bitwise and boolean operations
+Date:   Mon, 11 Feb 2019 15:19:45 +0100
+Message-Id: <20190211141840.636244713@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,37 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejas Joglekar <tejas.joglekar@synopsys.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 1e19cdc8060227b0802bda6bc0bd22b23679ba32 upstream.
+commit 07c69f1148da7de3978686d3af9263325d9d60bd upstream.
 
-For OUT endpoints, zero-length transfers require MaxPacketSize buffer as
-per the DWC_usb3 programming guide 3.30a section 4.2.3.3.
+(!x & y) strikes again.
 
-This patch fixes this by explicitly checking zero length
-transfer to correctly pad up to MaxPacketSize.
+Fix bitwise and boolean operations by enclosing the expression:
 
-Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
+	intcsr & (1 << NET2272_PCI_IRQ)
+
+in parentheses, before applying the boolean operator '!'.
+
+Notice that this code has been there since 2011. So, it would
+be helpful if someone can double-check this.
+
+This issue was detected with the help of Coccinelle.
+
+Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device controller")
 Cc: stable@vger.kernel.org
-
-Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    2 +-
+ drivers/usb/gadget/udc/net2272.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1114,7 +1114,7 @@ static void dwc3_prepare_one_trb_linear(
- 	unsigned int maxp = usb_endpoint_maxp(dep->endpoint.desc);
- 	unsigned int rem = length % maxp;
- 
--	if (rem && usb_endpoint_dir_out(dep->endpoint.desc)) {
-+	if ((!length || rem) && usb_endpoint_dir_out(dep->endpoint.desc)) {
- 		struct dwc3	*dwc = dep->dwc;
- 		struct dwc3_trb	*trb;
- 
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2096,7 +2096,7 @@ static irqreturn_t net2272_irq(int irq,
+ #if defined(PLX_PCI_RDK2)
+ 	/* see if PCI int for us by checking irqstat */
+ 	intcsr = readl(dev->rdk2.fpga_base_addr + RDK2_IRQSTAT);
+-	if (!intcsr & (1 << NET2272_PCI_IRQ)) {
++	if (!(intcsr & (1 << NET2272_PCI_IRQ))) {
+ 		spin_unlock(&dev->lock);
+ 		return IRQ_NONE;
+ 	}
 
 
