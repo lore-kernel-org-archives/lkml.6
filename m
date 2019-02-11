@@ -2,108 +2,166 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE95C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B10C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE9E21773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549884915;
-	bh=tZHM7+rLTmXHl6qUUR3voaPwyqlFBHoe0W+qn/KqtoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=XBGOAiudZj7UL4bq07lp1HGe6ZRBEdejJ2tlkHJJ0RdkV66yyGtfLYT0L+VKJuR75
-	 tLiP3S6dQKQPnt3lmUaKMAB+cgZKwZLl7O11+7nGYXia+pcU1O6cxdOqpUhx+CwrEW
-	 AInO5kJHYlNxtQrm1W4nvmtF57tHWoWDHes7/xNA=
+	by mail.kernel.org (Postfix) with ESMTP id 4EEF321773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbfBKLfN (ORCPT
+        id S1726997AbfBKLfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 06:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726041AbfBKLfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 06:35:13 -0500
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C6C3217D9;
-        Mon, 11 Feb 2019 11:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549884912;
-        bh=tZHM7+rLTmXHl6qUUR3voaPwyqlFBHoe0W+qn/KqtoQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KP77AmPTUs/uWr/de90sN79Pmt6EnSgp//FnSD9WotPrsN9u9UY3TUBDdZmsDgrRH
-         Fq0bBsAJNzw+WzFXnptjWKXJJF2d1+sLcY+FHwzp7gfnpti+vHV/wxRJ/uO4BKYjFo
-         kLz8SqYNvx7TMqpZ02eKb2fdq0IRCk50gRQIQlUQ=
-Received: by mail-lj1-f181.google.com with SMTP id x25-v6so4808207ljj.13;
-        Mon, 11 Feb 2019 03:35:12 -0800 (PST)
-X-Gm-Message-State: AHQUAuaB7EIFbgXMH7lg4ymXTxfWZ+uYNFNekk8P5B+vOb/JktuwwJVj
-        PFkeH+Tw1hmKK1JM+VCYljanO5SOf6AhAiZDoFc=
-X-Google-Smtp-Source: AHgI3IZPQjrXU7wN2m+yvfTQj0zh5T+3sH5Qvr8njEtSv/vNlRFUCD06dmsoLc2+2h9CBc+piE3KTCvx9JYmQP9jjJk=
-X-Received: by 2002:a2e:890b:: with SMTP id d11-v6mr23037595lji.113.1549884910274;
- Mon, 11 Feb 2019 03:35:10 -0800 (PST)
+        Mon, 11 Feb 2019 06:35:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46070 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726041AbfBKLfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 06:35:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DE0B80D;
+        Mon, 11 Feb 2019 03:35:19 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 018CF3F557;
+        Mon, 11 Feb 2019 03:35:14 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:35:12 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        linux-kselftest@vger.kernel.org,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v9 0/8] arm64: untag user pointers passed to the kernel
+Message-ID: <20190211113511.GA165128@arrakis.emea.arm.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
+ <20181212170108.GZ3505@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-References: <CGME20190210225147epcas3p4cedebfc5692274bc6135ceabbcf2642d@epcas3p4.samsung.com>
- <20190210225114.20110-1-stuart.menefy@mathembedded.com> <e22c175a-d88a-81a7-9faa-42bb4fe09a22@samsung.com>
- <e3637f0f-1e72-db3a-f744-ade0e878cfc5@linaro.org>
-In-Reply-To: <e3637f0f-1e72-db3a-f744-ade0e878cfc5@linaro.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 12:34:58 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfguCS5jFNhdfJ8poA1yC3JVb0jnra4af-EBXfwy2P8Gw@mail.gmail.com>
-Message-ID: <CAJKOXPfguCS5jFNhdfJ8poA1yC3JVb0jnra4af-EBXfwy2P8Gw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear
- timer interrupt when shutting down
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Stuart Menefy <stuart.menefy@mathembedded.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212170108.GZ3505@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 at 12:23, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> On 11/02/2019 08:14, Marek Szyprowski wrote:
-> > Hi Stuart
-> >
-> > On 2019-02-10 23:51, Stuart Menefy wrote:
-> >> When debugging suspend problems on Exynos 5260, I had a large number
-> >> of debugging prints going to the serial port after interrupts
-> >> had been disabled but before the timer interrupt was shutdown. This
-> >> was long enough for a timer tick to occur, but as interrupts were
-> >> disabled the ISR didn't run, and so the interrupt wasn't cleared.
-> >> Later when the timer was shutdown the interrupt was left asserted and
-> >> so the wfi at the heart of the suspend code didn't wait, causing
-> >> the suspend to fail.
-> >>
-> >> Currently the code which stops the timer when it is on one-shot mode
-> >> and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
-> >> called this from the shutdown code exynos4_mct_tick_stop() could be
-> >> called twice. So first restructure the existing code, so the check for
-> >> one-shot mode and stopping the timer is moved to the ISR, leaving
-> >> exynos4_mct_tick_clear() just clearing the interrupt flag.
-> >>
-> >> Once this has been done simply call exynos4_mct_tick_clear() from
-> >> set_state_shutdown().
-> >
-> > This also fixes mysterious suspend failures on Odroid XU3/XU4/HC1 :)
-> >
-> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Applied. Shall I add the stable@ tag?
+Hi Dave,
 
-Makes sense - for the second patch, although first is a prerequisite.
-It should be backported up to v4.3 (the code differ a lot on older
-versions).
+On Wed, Dec 12, 2018 at 05:01:12PM +0000, Dave P Martin wrote:
+> On Mon, Dec 10, 2018 at 01:50:57PM +0100, Andrey Konovalov wrote:
+> > arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+> > tags into the top byte of each pointer. Userspace programs (such as
+> > HWASan, a memory debugging tool [1]) might use this feature and pass
+> > tagged user pointers to the kernel through syscalls or other interfaces.
+[...]
+> It looks like there's been a lot of progress made here towards smoking
+> out most of the sites in the kernel where pointers need to be untagged.
 
-Best regards,
-Krzysztof
+In summary, based on last summer's analysis, there are two main (and
+rather broad) scenarios of __user pointers use in the kernel: (a)
+uaccess macros, together with access_ok() checks and (b) identifying
+of user address ranges (find_vma() and related, some ioctls). The
+patches here handle the former by allowing sign-extension in access_ok()
+and subsequent uaccess routines work fine with tagged pointers.
+Identifying the latter is a bit more problematic and the approach we
+took was tracking down pointer to long conversion which seems to cover
+the majority of cases. However, this approach doesn't scale as, for
+example, we'd rather change get_user_pages() to sign-extend the address
+rather than all the callers. In lots of other cases we don't even need
+untagging as we don't expect user space to tag such pointers (i.e.
+mmap() of device memory).
+
+We might be able to improve the static analysis by introducing a
+virt_addr_t but that's significant effort and we still won't cover all
+cases (e.g. it doesn't necessarily catch tcp_zerocopy_receive() which
+wouldn't use a pointer, just a u64 for address).
+
+> However, I do think that we need a clear policy for how existing kernel
+> interfaces are to be interpreted in the presence of tagged pointers.
+> Unless we have that nailed down, we are likely to be able to make only
+> vague guarantees to userspace about what works, and the ongoing risk
+> of ABI regressions and inconsistencies seems high.
+
+I agree.
+
+> Can we define an opt-in for tagged-pointer userspace, that rejects all
+> syscalls that we haven't checked and whitelisted (or that are
+> uncheckable like ioctl)? 
+
+Defining an opt-in is not a problem, however, rejecting all syscalls
+that we haven't whitelisted is not feasible. We can have an opt-in per
+process (that's what we were going to do with MTE) but the only thing
+we can reasonably do is change the behaviour of access_ok(). That's too
+big a knob and a new syscall that we haven't got around to whitelist may
+just work. This eventually leads to de-facto ABI and our whitelist would
+simply be ignored.
+
+I'm not really keen on a big syscall shim in the arm64 kernel which
+checks syscall arguments, including in-struct values. If we are to do
+this, I'd rather keep it in user space as part of the C library.
+
+> In the meantime, I think we really need to nail down the kernel's
+> policies on
+> 
+>  * in the default configuration (without opt-in), is the presence of
+> non-address bits in pointers exchanged with the kernel simply
+> considered broken?  (Even with this series, the de factor answer
+> generally seems to be "yes", although many specific things will now
+> work fine)
+
+Without these patches, passing non-address bits in pointers is
+considered broken. I couldn't find a case where it would still work with
+non-zero tag but maybe I haven't looked hard enough.
+
+>  * if not, how do we tighten syscall / interface specifications to
+> describe what happens with pointers containing non-address bits, while
+> keeping the existing behaviour for untagged pointers?
+> 
+> We would want a general recipe that gives clear guidance on what
+> userspace should expect an arbitrarily chosen syscall to do with its
+> pointers, without having to enumerate each and every case.
+
+That's what we are aiming with the pointer origins, to move away from a
+syscall whitelist to a generic definition. That said, the two approaches
+are orthogonal, we can use the pointer origins as the base rule for
+which syscalls can be whitelisted.
+
+If we step back a bit to look at the use-case for TBI (and MTE), the
+normal application programmer shouldn't really care about this ABI
+(well, most of the time). The app gets a tagged pointer from the C
+library as a result of a malloc()/realloc() (possibly alloca()) call and
+it expects to be able to pass it back into the kernel (usually via the C
+library) without any awareness of the non-address bits. Now, we can't
+define a user/kernel ABI based on the provenance of the pointer in user
+space (i.e. we only support tags for heap and stack), so we are trying
+to generalise this based where the pointer originated from in the kernel
+(e.g. anonymous mmap()).
+
+> There may already be some background on these topics -- can you throw me
+> a link if so?
+
+That's an interesting sub-thread to read:
+
+https://lore.kernel.org/lkml/5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com/
+
+-- 
+Catalin
