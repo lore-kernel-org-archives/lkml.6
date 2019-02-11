@@ -2,150 +2,89 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2453C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE211C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A738320818
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDC3214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:30:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="yPKhQIva"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfBKMaD (ORCPT
+        id S1727811AbfBKMaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:30:03 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49213 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfBKMaC (ORCPT
+        Mon, 11 Feb 2019 07:30:08 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55227 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbfBKMaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:30:02 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gtAih-0008Se-My; Mon, 11 Feb 2019 13:29:55 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gtAig-0003K3-Py; Mon, 11 Feb 2019 13:29:54 +0100
-Date:   Mon, 11 Feb 2019 13:29:54 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH v5 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
-Message-ID: <20190211122954.33thpip3yhtdw5x6@pengutronix.de>
-References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
- <1548762199-7065-3-git-send-email-yash.shah@sifive.com>
- <20190207101657.rfzcq6xdv6ocvubg@pengutronix.de>
- <CAJ2_jOGYkwb2QSUH1UU_QoGXE5LFoR0XGJmuYfNtYcZXHXyfaA@mail.gmail.com>
+        Mon, 11 Feb 2019 07:30:07 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so17489904wmh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:30:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2vy/txD1OCIhjROwrdgRGMQFbSUcIxpXB03F3im1d8g=;
+        b=yPKhQIvaje/L2j0CrlyRwhQXLZmwPPRwHwQKVNuWxYZ5tN8mMS3h1u/0VqNlTC1RxS
+         JPLJnV8oqPrdbGjq/zheDoFQ7IQeEjINO8tPW0de3q4G4QtlKKCsuYH1aWOf2qmjAG0i
+         uzSJQopcJFEf00Hn51H2uagVCR9GYiM85ftORR+4UXiwGL6bLHjMDUge/5Z5KTUdPFCY
+         7CH1OfR0b1Fm3A1NqeXLw074Plhk8tc8UP0GUOdFp/F1mtUA9cKHEcxmXGemIeGrUFT0
+         r8rlJZOddXW4iCTrWR/iVhU41r3YuGuWp0N+njFPG3/p2gjQkvSOoaPuC1eEIZXni9un
+         Pspg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2vy/txD1OCIhjROwrdgRGMQFbSUcIxpXB03F3im1d8g=;
+        b=raXd+AYTE2NG0BIhIc2omCwkkgIJf4DHNYWf0+oLOBfIKnym+uozb7WtHtNVIJ829Z
+         esU7Znk4uR8US3eqOuWtUxVgOE6ETXm5Yd25/xi0L3OWG5qAc3XuusIr+6SE17rMRVxM
+         x/qPLuftyRZwIjsK1i3jtOiHb+bsZCoTlusta1pwMGkbqGXmgrZ15Nz7pPRqGmM819pM
+         SKqPuIVALi4UjQz59cYxJQ2VphZEOi/Z5JY8MlhtEZUXGnrY0M+3KIECgUYeC2cikufb
+         KuRKZ/7NhlOB/ztJj3jZisaSeAisohOlDb1uaAXcIssQCAcqKapNwzo0qX/MdUyUSFJ4
+         FIsA==
+X-Gm-Message-State: AHQUAuaISVne4KBkBYBmrvvW+2C+LPG3d2bcqyoqD15wd+IzoptrZs9P
+        4fmxe2wAQhx59kX6vC0DOQh17w==
+X-Google-Smtp-Source: AHgI3IbSZaPSyNJG4glfK7Y1zhTfm36XeOWnyI4F4LVWMZ5yH/enutwQBp1XxpwgHr/ofT/zs7T4Tw==
+X-Received: by 2002:a1c:9cce:: with SMTP id f197mr9048271wme.135.1549888205797;
+        Mon, 11 Feb 2019 04:30:05 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id l12sm6634282wrt.87.2019.02.11.04.30.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 04:30:05 -0800 (PST)
+Date:   Mon, 11 Feb 2019 13:20:42 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, idosch@mellanox.com,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        bridge@lists.linux-foundation.org, jiri@mellanox.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: Re: [PATCH net-next v3 3/9] rocker: Handle
+ SWITCHDEV_PORT_ATTR_GET/SET
+Message-ID: <20190211122042.GF2251@nanopsycho>
+References: <20190210234007.16173-1-f.fainelli@gmail.com>
+ <20190210234007.16173-4-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ2_jOGYkwb2QSUH1UU_QoGXE5LFoR0XGJmuYfNtYcZXHXyfaA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190210234007.16173-4-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Mon, Feb 11, 2019 at 12:40:01AM CET, f.fainelli@gmail.com wrote:
+>Following patches will change the way we communicate getting or setting
+>a port's attribute and use a blocking notifier to perform those tasks.
+>
+>Prepare rocker to support receiving notifier events targeting
+>SWITCHDEV_PORT_ATTR_GET/SET and simply translate that into the existing
+>rocker_port_attr_{set,get} calls.
+>
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-On Mon, Feb 11, 2019 at 04:56:27PM +0530, Yash Shah wrote:
-> On Thu, Feb 7, 2019 at 3:47 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Tue, Jan 29, 2019 at 05:13:19PM +0530, Yash Shah wrote:
-> > > +struct pwm_sifive_ddata {
-> > > +     struct pwm_chip chip;
-> > > +     struct notifier_block notifier;
-> > > +     struct clk *clk;
-> > > +     void __iomem *regs;
-> > > +     unsigned int approx_period;
-> > > +     unsigned int real_period;
-> > > +};
-> > > +
-> > > +static inline struct pwm_sifive_ddata *to_pwm_sifive_chip(struct pwm_chip *c)
-> >
-> > even though this is inlined I would like this to have use the
-> > pwm_sifive_ prefix, too.
-> 
-> Not sure what exactly you want me to do here.
-
-I want this function to be named something like pwm_sifive_chip_to_ddata.
-This way it has the common prefix (and is less confusing because
-to..chip suggests that is converts something to a chip, but the outcome
-is ...ddata).
- 
-> > In a previous review round I had doubts about the calculation of frac
-> > and I think they were addressed wrongly.
-> > Looking at the figure at the start of chapter 14.9 in the reference
-> > manual: They use (different than the driver here) pwmcmp0=6 and
-> > pwmzerocmp=1. Then a period is 7 clock cycles long and pwmcmpX must be 7
-> > (for X > 0) to yield a 100% signal. So pwmcmpX must be greater than or
-> > equal to the period (in clock cycles).
-> >
-> > Here we're using pwmzerocmp=0, still the constraint
-> >
-> >         pwmcmpX >= period
-> >
-> > must be true for a 100% cycle. (Right?) With pwmzerocmp=0 the period is
-> > 0x10000 clock cycles, so pwmcmpX must be >= 0x10000 to yield a 100%
-> > signal. As this is not possible (pwmcmpX is a 16 bit value that can only
-> > hold up to 0xffff) the output cannot yield 100%.
-> >
-> > So I think the most correct implementation here is:
-> >
-> >         frac = (duty_cycle * (1 << PWM_SIFIVE_CMPWIDTH) + (1 << PWM_SIFIVE_CMPWIDTH) / 2) / period;
-> >         /* Sorry, we cannot do 100% :-( */
-> >         frac = min(frac, (1 << PWM_SIFIVE_CMPWIDTH) - 1);
-> >
-> 
-> I will once again go through the specs, if it seems correct I will
-> implement the above.
-
-I would just test this at runtime. Configure for 100% and check the wave
-form if it is constant.
-
-> > > +static int pwm_sifive_probe(struct platform_device *pdev)
-> > > +{
-> > > [...]
-> > > +     /* Watch for changes to underlying clock frequency */
-> > > +     pwm->notifier.notifier_call = pwm_sifive_clock_notifier;
-> > > +     ret = clk_notifier_register(pwm->clk, &pwm->notifier);
-> > > +     if (ret) {
-> > > +             dev_err(dev, "failed to register clock notifier: %d\n", ret);
-> > > +             goto disable_clk;
-> > > +     }
-> >
-> > Would it make sense to only enable the clock when the pwm is enabled?
-> > (If yes, how does the output behave if the clock is disabled while the
-> > hardware is enabled? I assume the output just freezes at the state where
-> > it happens to be?)
-> 
-> Yes. Not sure about the behaviour of hardware when the clock is disabled.
-> The behaviour should be like you said. If there is no strong reason
-> then we can keep it as it is right now
-> or else if you want I can make the necessary change.
-
-I would prefer to only have the clock enabled when it is actually used.
-Note the common pitfall that you cannot disable the clk immediately
-after configureing the duty cycle to 100% or 0% though because you must
-only stop the clock when the newly configured parameters are active.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Acked-by: Jiri Pirko <jiri@mellanox.com>
