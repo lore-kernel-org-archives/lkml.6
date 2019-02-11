@@ -2,116 +2,175 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29BCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46C6C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710AB222B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897531;
-	bh=Sj0TAyOGlO1O4uqF9UadrD4eCJf5eDvdsYl+iyq/Ru4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QYn7uODC1fFuE+IxjG0/f7V6OwpKDNoG5lNbxf9Y2TzbMFKEaBApGbOFEeB7XUdv7
-	 XsA+RFGup9qGjNzE3LfneHszRw6OfiCmMBEHHdCGPh7tW1j57SacJA4BGGvXMA8YnK
-	 BGFBt+uUqoYSKbK6PAJNz5ridy9W3PlhGtW3naW8=
+	by mail.kernel.org (Postfix) with ESMTP id 76204222B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391012AbfBKPFa (ORCPT
+        id S2391022AbfBKPFc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:05:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390983AbfBKPF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:05:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 535F1222AD;
-        Mon, 11 Feb 2019 15:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897525;
-        bh=Sj0TAyOGlO1O4uqF9UadrD4eCJf5eDvdsYl+iyq/Ru4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bBypQDdk6ftL41iaxJ7e7vO4TinC3cquTYqOh3qw5TOR/u8zl5ClZgLs6upOIe82h
-         LS1UnLtTjgYtmdN/j0opNT46r/2ywT2l+H0mGKX6UUlVaFCJ2ccmjUl+PrT2h/Ljo/
-         Jpo00skwSQ/obpDSPCgFuG2bo9J7a17Qj+hNaQng=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 027/137] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
-Date:   Mon, 11 Feb 2019 15:18:28 +0100
-Message-Id: <20190211141814.455986708@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
-References: <20190211141811.964925535@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:05:32 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:57537 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390996AbfBKPF3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:05:29 -0500
+Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gtD8u-0006Ah-Nu; Mon, 11 Feb 2019 10:05:21 -0500
+Date:   Mon, 11 Feb 2019 10:04:32 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     David Miller <davem@davemloft.net>, julien@arista.com,
+        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vyasevich@gmail.com,
+        lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190211150432.GA13525@hmswarspite.think-freely.org>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <20190209.151217.175627323493244750.davem@davemloft.net>
+ <20190210124616.GG13621@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190210124616.GG13621@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Feb 10, 2019 at 10:46:16AM -0200, Marcelo Ricardo Leitner wrote:
+> On Sat, Feb 09, 2019 at 03:12:17PM -0800, David Miller wrote:
+> > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+> > Date: Wed, 6 Feb 2019 18:37:54 -0200
+> > 
+> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > >> structures longer than the current definitions.
+> > >> 
+> > >> This should prevent unjustified setsockopt() failures due to struct
+> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > >> binaries that should be compatible, but were built with later kernel
+> > >> uapi headers.
+> > > 
+> > > Not sure if we support backwards compatibility like this?
+> > 
+> > What a complete mess we have here.
+> > 
+> > Use new socket option numbers next time, do not change the size and/or
+> > layout of existing socket options.
+> 
+> What about reusing the same socket option, but defining a new struct?
+> Say, MYSOCKOPT supports struct mysockopt, struct mysockopt2, struct
+> mysockopt3...
+> 
+> That way we have a clear definition of the user's intent.
+> 
+Thats possible, but I think thats pretty equivalaent to what daves saying, in
+that he wants us to identify all the sizes of this struct and the git history
+and act on them accordingly.  Having internal versions of the struct seems like
+a fine way to get there, but I think we need to consider how we got to this
+situations before we go down the implementation path.
 
-------------------
+> > 
+> > This whole thread, if you read it, is basically "if we compatability
+> > this way, that breaks, and if we do compatability this other way oh
+> > shit this other thing doesn't work."
+> > 
+> > I think we really need to specifically check for the difference sizes
+> > that existed one by one, clear out the part not given by the user, and
+> > backport this as far back as possible in a way that in the older kernels
+> > we see if the user is actually trying to use the new features and if so
+> > error out.
+> 
+> I'm afraid clearing out may not be enough, though seems it's the best
+> we can do so far. If the struct is allocated but not fully initialized
+> via a memset, but by setting its fields one by one, the remaining new
+> fields will be left uninitinialized.
+> 
 
-[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
+I'm not sure this even makes sense.  Currently (as I understood it), the issue
+we are facing is the one in which an application is built against a newer kernel
+and run on an older one, the implication there being that the application will
+pass in a buffer that is larger than what the kernel expects.  In that
+situation, clearing isn't needed, all thats needed (I think), is a memcmp of the
+space between the sizeof(kernel struct version), and sizeof(userspace struct
+version) to see if any bits are non-zero.  If they are, we error out, otherwise,
+we ignore the space and move forward as though that overage doesn't exist.
 
-__vdc_tx_trigger should only loop on EAGAIN a finite
-number of times.
+Mind you, I'm not (yet) advocating for that approach, just trying to clarify
+whats needed.
+> > 
+> > Which, btw, is terrible behavior.  Newly compiled apps should work on
+> > older kernels if they don't try to use the new features, and if they
+> 
+> One use case here is: a given distro is using kernel X and app Foo is
+> built against it. Then upgrades to X+1, Foo is patched to fix an issue
+> and is rebuilt against X+1. The user upgrades Foo package but for
+> whatever reason, doesn't upgrade kernel or reboot the system. Here,
+> Foo doesn't work anymore until the new kernel is also running.
+> 
+Yes, thats the use case that we're trying to address.
 
-See commit adddc32d6fde ("sunvnet: Do not spin in an
-infinite loop when vio_ldc_send() returns EAGAIN") for detail.
+> > can the ones that want to try to use the new features should be able
+> > to fall back when that feature isn't available in a non-ambiguous
+> > and precisely defined way.
+> > 
+> > The fact that the use of the new feature is hidden in the new
+> > structure elements is really rotten.
+> > 
+> > This patch, at best, needs some work and definitely a longer and more
+> > detailed commit message.
+> 
+FWIW, before we decide on a course of action, I think I need to point out that,
+over the last 10 years, we've extended this structure 6 times, in the following
+commits:
+0f3fffd8ab1db
+7e8616d8e7731
+e1cdd553d482c
+35ea82d611da5
+c95129d127c6d
+b444153fb5a64
 
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/sunvdc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+The first two I believe were modifications during a period when sctp was
+actually getting integrated to the kernel, but the last 4 were definately done
+during more recent development periods and wen't in without any commentary about
+the impact to UAPI compatibility.  The check for optlen > sizeof(struct
+sctp_event_subscribe) was made back in 2008, and while not spelled out, seems
+pretty clearly directed at enforcing compatibility with older appliations, not
+compatibility with newer applications running on older kernels.
 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index cab157331c4e..c6d43a2a807d 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -40,6 +40,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
- #define WAITING_FOR_GEN_CMD	0x04
- #define WAITING_FOR_ANY		-1
- 
-+#define	VDC_MAX_RETRIES	10
-+
- static struct workqueue_struct *sunvdc_wq;
- 
- struct vdc_req_entry {
-@@ -419,6 +421,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		.end_idx		= dr->prod,
- 	};
- 	int err, delay;
-+	int retries = 0;
- 
- 	hdr.seq = dr->snd_nxt;
- 	delay = 1;
-@@ -431,6 +434,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		udelay(delay);
- 		if ((delay <<= 1) > 128)
- 			delay = 128;
-+		if (retries++ > VDC_MAX_RETRIES)
-+			break;
- 	} while (err == -EAGAIN);
- 
- 	if (err == -ENOTCONN)
--- 
-2.19.1
+I really worry about situations in which we need to support applications
+expecting features that the running kernel doesn't have.  In this particular
+situation it seems like a fixable thing, but I could envision situations in
+which we just can't do it, and I don't want to set that expectation when we
+can't consistently meet it.
 
+So, if the consensus is that we need to support applications built on newer
+kernels, but run on older kernels (and I'd like to get verbal consensus on
+that), then we need to identify a method to fix this.  I'm still hesitant to
+do anything that involves us accepting any size buffer over the kernel expected
+size, as that puts us in a position to have to read large amounts of user data
+(i.e. possible DOS), and just picking an arbitrary large number to limit the
+buffer size seems wrong.  What if, on receipt of a structure from a newer kernel
+(implying a size larger than what the kernel expects), we clamp optlen to the
+kernel size, and put_user it back to the application?  i.e. we don't check any
+data above and beyond what the the kernel knows about, but we use the optlen as
+an indicator to user space that not all the data was processed?  That allows the
+kernel to ignore the overage safely, and while its not in the socket api
+extension RFC, its not violating anything, and is something we can document in
+the sctp(7) man page as a linux only behavior.
 
+Thoughts?
+Neil
 
