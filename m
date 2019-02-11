@@ -2,145 +2,184 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B808C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7347C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0F6218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:45:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4c91SeZ"
+	by mail.kernel.org (Postfix) with ESMTP id BD656218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfBKMpb (ORCPT
+        id S1727585AbfBKMqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:45:31 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42416 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfBKMp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:45:29 -0500
-Received: by mail-vs1-f67.google.com with SMTP id b20so4817940vsl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D/TVVxPc7j54M2bncIOVY+JCAh4+k47D+oaqD6xUPeQ=;
-        b=P4c91SeZcmOuq+JqhcdbR795j+nqtaqbEIrJKRBSLTbFnpzwA3AGmx6cZzUuT3Kcp7
-         djQVzvTQ1CNxW4GIXW7WSnAtvEZXLTq325W5cPh3p9XqkIB9H+4uAVGoINkBdSM7vAyz
-         gLuZqkZlPGSaDjps+cL8DbMtx/uWt3BSjAuBTFXbhqANI8qbrAhOsKM61o16JjZy2+2N
-         80lvzlW+qhQP1wdMGVDk9a6A4oYXaJLyu/GnVy08WfYjCeeXNJkgZ/9pSGSdneHZYgVY
-         R0dbIh9Pz/PSPXlEHH5B0DnOXZGZ1OfpNCfD/KWteFM/cIaVliF9fQ+JWIAPknuSXDdx
-         kpYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D/TVVxPc7j54M2bncIOVY+JCAh4+k47D+oaqD6xUPeQ=;
-        b=Zw8RXb63ZiqYuSIh7OcCVZAxiPoFGs0WLT2DEpQGo7G3ne7yTbKI/Oy91Ty2bJzumK
-         KKPRaYkudNNKyuv4VPYaMjj2ObbB3kZ0CqU5GDSRBjdgMWClex49uL5HnuEnVKZ4MFKU
-         UdqZwmxf7EIYHXD/8zgxgA0mt2oIPlZXdI2N5dQfo4RVfN9sEWY7EkTrKOsmmTQwli+s
-         wmtcp0mg/Et6kth2GrNFXX4qTp3GYkOtAWoP7XynRKb7ZhgpMgPjI7tUaCcGwlIm7AUE
-         DSpfSsMOKaQtJgJ0e8mRdcN1dnL6gGnywQfu6ikflRFHP7tRYINGtOYNFLbM7QIablCZ
-         VQJg==
-X-Gm-Message-State: AHQUAuZEcpnPZWdd4+1WZTPvKfYA6z0fEoFC87UzKYfacIZWpkMAKf9i
-        sQDPfhn/Di5FJumEfu5s9LgfurtAtKHVQzSmPma10A==
-X-Google-Smtp-Source: AHgI3IZ31547P5aPi4CvjQXKvaT8ZmfMJ5D4OPmrs9ZUoXv77q4z2k2m8+dgBzTQMcq/n6xv5Rk6HTGBFH3+Ga7Ea3Y=
-X-Received: by 2002:a67:ea50:: with SMTP id r16mr14305848vso.61.1549889128471;
- Mon, 11 Feb 2019 04:45:28 -0800 (PST)
+        Mon, 11 Feb 2019 07:46:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:44460 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfBKMqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:46:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 04:46:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="143268694"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Feb 2019 04:46:08 -0800
+Received: from [10.125.252.196] (abudanko-mobl.ccr.corp.intel.com [10.125.252.196])
+        by linux.intel.com (Postfix) with ESMTP id 538D75800C6;
+        Mon, 11 Feb 2019 04:46:04 -0800 (PST)
+Subject: Re: [PATCH v2 1/4] perf-security: document perf_events/Perf resource
+ control
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
+ <a108c800-d6c1-fac1-b73b-e390e579e6ef@linux.intel.com>
+ <alpine.DEB.2.21.1902102300210.8784@nanos.tec.linutronix.de>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <969b6ea5-a5bf-70b7-7031-38b07538f744@linux.intel.com>
+Date:   Mon, 11 Feb 2019 15:46:02 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190130220617.4862-1-oded.gabbay@gmail.com> <20190203114957.GD8620@rapoport-lnx>
- <CAFCwf12pB9e++ReBaPYNwW-Am1_Op4p_rQzdS5C6ndFTdbXX3w@mail.gmail.com> <CAFCwf13Jcrr6qHaDRXHPy67NsG-7WuxocZp_uMG-7vZ=AW1Pqw@mail.gmail.com>
-In-Reply-To: <CAFCwf13Jcrr6qHaDRXHPy67NsG-7WuxocZp_uMG-7vZ=AW1Pqw@mail.gmail.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Mon, 11 Feb 2019 14:45:01 +0200
-Message-ID: <CAFCwf12vPXs8JEfuGZENPOLnP4Da6OiGeybmsK_steNCbKDw3w@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] Habana Labs kernel driver
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1902102300210.8784@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 9, 2019 at 12:05 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
->
-> On Sun, Feb 3, 2019 at 10:35 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> >
-> > On Sun, Feb 3, 2019 at 1:50 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > >
-> > > Hi Oded,
-> > >
-> > > On Thu, Jan 31, 2019 at 12:06:02AM +0200, Oded Gabbay wrote:
-> > > > Hello,
-> > > > This is v2 of the Habana Labs kernel driver patch-set. It contains fixes
-> > > > for almost everything that was brought up in the review of v1.
-> > > >
-> > > > In addition to local changes in each patch that are detailed in each
-> > > > patch's commit message, the global/major changes are:
-> > > >
-> > > > - Rebased on v5.0-rc4
-> > > > - Removed all bitfields from interface files to H/W and F/W
-> > > > - Use __le16/32/64 instead of __u16/32/64 in F/W or H/W structures
-> > >
-> > > For v2 I had comments only for "[PATCH v2 07/15] habanalabs: add h/w queues
-> > > module".
-> > >
-> > > There are still several over-exited printk calls with three exclamation
-> > > marks. ;-)
-> > >
-> > > I've also spotted several places where checkpatch.pl may complain, but I
-> > > was to lazy to actually check it.
-> > >
-> > > > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> > > >
-> > > > I would appricate any feedback, question and/or review.
-> > > >
-> > > > Thanks,
-> > > > Oded
-> > > >
-> > > > p.s. for those who prefer to clone the tree instead of looking at the
-> > > > emails, you can grab a copy from our company's page in GitHub:
-> > > >
-> > > > https://github.com/HabanaAI/linux/releases/tag/hl_patchset_v2_20190130
-> > > >
-> > > > Oded Gabbay (14):
-> > > >   habanalabs: add skeleton driver
-> > > >   habanalabs: add Goya registers header files
-> > >
-> > > This one is 4.3M which is 6 times the entire habanalabs driver without
-> > > those headers.
-> > > Any chance some of it can be dropped?
-> > Hi Mike,
-> > Managed to remove about 30 files (~1.5MB) from this patch. The patch
-> > now is around 2.9MB
-> > Unfortunately, I don't see how I can reduce it much more without
-> > seriously reducing the readability and maintainability of the driver.
-> >
-> > Oded
-> Thought about another idea how to reduce the size of this patch.
-> I will separate the registers from the MASK and SHIFT defines into two
-> files per H/W block.
-> For most of the blocks, I only need the registers file, without all
-> the MASK and SHIFT defines of the fields, so I think this will reduce
-> most of the patch size.
-> I'm talking to our devOps to create for me the new set of files from
-> the H/W database and will update on the results, probably by end of
-> next week.
->
-> Oded
->
-I'm happy to say I managed to reduce the total size of the registers
-patch to ~1.4MB (from 2.9MB).
-I will soon send v4 of the patch-set with this reduction + fixes for
-MMU and Greg's comments.
 
-Oded
+On 11.02.2019 1:34, Thomas Gleixner wrote:
+> On Thu, 7 Feb 2019, Alexey Budankov wrote:
+> 
+> General note: Please stay in the 80 char limit for all of the text.
+
+Yes, sure. [PATCH v2 4/4] implements wrapping at 72 columns.
+
+> 
+>> +The perf_events system call API [2]_ allocates file descriptors for every configured
+>> +PMU event. Open file descriptors are a per-process accountable resource governed
+>> +by the RLIMIT_NOFILE [11]_ limit (ulimit -n), which is usually derived from the login
+>> +shell process. When configuring Perf collection for a long list of events on a
+>> +large server system, this limit can be easily hit preventing required monitoring
+>> +configuration.
+> 
+> I'd move this sentence into a different paragraph and keep those related to
+> RLIMIT_NOFILE together.
+
+Makes sense. Let's have these two paragraphs:
+
+Open file descriptors
++++++++++++++++++++++
+
+Memory allocation
++++++++++++++++++
+
+> 
+>> ... RLIMIT_NOFILE limit can be increased on per-user basis modifying
+>> +content of the limits.conf file [12]_ on some systems.
+> 
+> On some systems?
+
+Well, let's avoid this subtlety and have it like:
+
+'RLIMIT_NOFILE limit can be increased on per-user basis 
+ modifying content of the limits.conf file [12]_ .'
+
+> 
+>> Ordinarily, a Perf sampling session
+>> +(perf record) requires an amount of open perf_event file descriptors that is not
+>> +less than a number of monitored events multiplied by a number of monitored CPUs.
+> 
+>   s/a number of/the number of/
+
+Accepted.
+
+> 
+> The ordinary use case is:
+> 
+>     perf CMD pile-of-events PROCESS
+> 
+> which does not specify the monitored CPUs at all. Then the number of file
+> descriptors is NR_EVENTS * NR_ONLINE_CPUS.
+> 
+>> +An amount of memory available to user processes for capturing performance monitoring
+> 
+> The amount ...
+
+Accepted.
+
+> 
+>> +data is governed by the perf_event_mlock_kb [2]_ setting. This perf_event specific
+>> +resource setting defines overall per-cpu limits of memory allowed for mapping
+>> +by the user processes to execute performance monitoring. The setting essentially
+>> +extends the RLIMIT_MEMLOCK [11]_ limit, but only for memory regions mapped specially
+> 
+> s/specially/specifically/
+
+Accepted.
+
+> 
+>> +for capturing monitored performance events and related data.
+>> +
+>> +For example, if a machine has eight cores and perf_event_mlock_kb limit is set
+>> +to 516 KiB, then a user process is provided with 516 KiB * 8 = 4128 KiB of memory
+>> +above the RLIMIT_MEMLOCK limit (ulimit -l) for perf_event mmap buffers. In particular,
+>> +this means that, if the user wants to start two or more performance monitoring
+>> +processes, the user is required to manually distribute available 4128 KiB between the
+> 
+> distribute the available
+
+Accepted.
+
+> 
+>> +monitoring processes, for example, using the --mmap-pages Perf record mode option.
+>> +Otherwise, the first started performance monitoring process allocates all available
+>> +4128 KiB and the other processes will fail to proceed due to the lack of memory.
+>> +
+>> +RLIMIT_MEMLOCK and perf_event_mlock_kb resource costraints are ignored for
+> 
+> constraints.
+
+Accepted.
+
+> 
+>> +processes with the CAP_IPC_LOCK capability. Thus, perf_events/Perf privileged users
+> 
+> what means perf_events/Perf ?
+
+'perf_events/Perf privileged users' refers to the paragraph about privileged users.
+'perf_events/Perf' means exact combination of the kernel subsystem (perf_events) and 
+the privileged Perf tool (Perf) executable that enables certain group of users with
+performance monitoring capabilities without scope limit.
+
+> 
+>> +can be provided with memory above the constraints for perf_events/Perf performance
+>> +monitoring purpose by providing the Perf executable with CAP_IPC_LOCK capability.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+
+Thanks,
+Alexey
