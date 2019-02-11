@@ -2,85 +2,155 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92271C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D50C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387B720863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB80620863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="fJ5LLt4+"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n+bhs7+L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733233AbfBKTAO (ORCPT
+        id S1733248AbfBKTAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:00:14 -0500
-Received: from nbd.name ([46.4.11.11]:47394 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbfBKTAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:00:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=S/x5orM8THSKd8YpQgCraZ4XSIySNtlNFSm/QhQmltI=; b=fJ5LLt4+jnLuNY5SlAix50RoAi
-        VZ+Z0O8fPU2dldNSoNnC71CJ8Zn/1z/i9f6ozYHb3x0Yl4Z2jRbBs6/8e64JBju2pMmtncCJkJavH
-        /4A4mEhDKSKF7Klm9HojOTAdC57uQ232RY+KOL3q4xmJOuQe2QYUILQ7YSCjbCCqJJsg=;
-Subject: Re: [PATCH] mt76: change the retun type of mt76_dma_attach()
-To:     Ryder Lee <ryder.lee@mediatek.com>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     Roy Luo <roychl666@gmail.com>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <228fdddb9ca96e8ce861e324eb9039722cf18f49.1549850911.git.ryder.lee@mediatek.com>
-From:   Felix Fietkau <nbd@nbd.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nbd@nbd.name; prefer-encrypt=mutual; keydata=
- mQGiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwbQcRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPohgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQuQINBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabiEkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCfTKx80VvCR/PvsUlrvdOLsIgeRGAAn1ee
- RjMaxwtSdaCKMw3j33ZbsWS4
-Message-ID: <39241b1d-3743-a837-8600-5ed824dc4fe9@nbd.name>
-Date:   Mon, 11 Feb 2019 20:00:10 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Mon, 11 Feb 2019 14:00:38 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39285 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733095AbfBKTAh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:00:37 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r11so5362756pgp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:00:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pYNOvelWwFkHPENbU/kBpVx6z3IS8Bg9qXDKamgEBak=;
+        b=n+bhs7+L7PeamvCEjeVskCgaQ1weNe0ACqLd7MVVEmrsclfjFww/vOMgSq+EkaWwoC
+         uf/YLZxEcxDo46u09VEN0SDv+NA4Tn+iFYAtc8vatzQVURVcVTKEsCczZuOAHKBNevT/
+         gYtq3EBLc4WukDbziQEOzlYLIk0oI3rbjuujI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pYNOvelWwFkHPENbU/kBpVx6z3IS8Bg9qXDKamgEBak=;
+        b=XntFTqwWi8IN25jMGQq2ktFKzrAC8lsn5frwLMN2CutkJWtSxk5Du5usOllNt33TyC
+         iyMaF23MxGd1xlxwo4t5PZrLgXXreMr9NNssawa8nnQkbcsBa5wQ6WL6ezyV3U/vhy7W
+         rB9EKznuqPhcrKKkM9g6R3vNpAEObQO7GB/pTfbpUrvRYJOP/7/i+0Cmhkw5nhse2OdU
+         MiqlC9bRNDRsMXpHvmdYMm/KgMIrx7MOtRTezajiWPskIdAU0+9G55twk/SFEAjC8cz3
+         R5pxvuNW8VexWoJj31ZMilx+Laa0DdojTP38ah4RaAYt2XMyHBGpL7x03sxEVIOsIdTt
+         cPSA==
+X-Gm-Message-State: AHQUAua1ZtYSZmSzDaw+6S5ddpCNrNLvDW6XlHbpzB2bRKspeQgA9+DJ
+        lKtFnJL1E8m0C9+MDM8ATgaVhHeIv7Y=
+X-Google-Smtp-Source: AHgI3IaKT36hWmiALLqBKq6dxaqgvu2LvCz59eDuLyPzipvfQA2Rj3pwyKkuGsZIPxQ4NLkO4ttIsA==
+X-Received: by 2002:a62:53c5:: with SMTP id h188mr37507131pfb.190.1549911636040;
+        Mon, 11 Feb 2019 11:00:36 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id e63sm27015287pfc.47.2019.02.11.11.00.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 11:00:35 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] arm64: dts: sdm845: Add dynamic CPU power coefficients
+Date:   Mon, 11 Feb 2019 11:00:19 -0800
+Message-Id: <20190211190019.171583-1-mka@chromium.org>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 MIME-Version: 1.0
-In-Reply-To: <228fdddb9ca96e8ce861e324eb9039722cf18f49.1549850911.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-11 03:13, Ryder Lee wrote:
-> There is no need to retun 0 in mt76_dma_attach(), so switch it to void.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Applied, thanks.
+Add dynamic power coefficients for the Silver and Gold CPU cores of
+the Qualcomm SDM845.
 
-- Felix
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index e4b69c74fe077..6e8a2331176ec 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -120,6 +120,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <100>;
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -137,6 +138,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <100>;
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_100>;
+@@ -151,6 +153,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x200>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <100>;
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_200>;
+@@ -165,6 +168,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x300>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <100>;
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_300>;
+@@ -179,6 +183,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x400>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <396>;
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_400>;
+@@ -193,6 +198,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x500>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <396>;
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_500>;
+@@ -207,6 +213,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x600>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <396>;
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_600>;
+@@ -221,6 +228,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x700>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <396>;
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_700>;
+-- 
+2.20.1.791.gb4d0f1c61a-goog
+
