@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8647C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E273C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DCB9222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D808222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897895;
-	bh=ayK0QQ0sMrg+Fn/1NvQ8EqIvIyC9oWCn4N/cD/XdJCc=;
+	s=default; t=1549897902;
+	bh=BUiWBY5R3eR2fiksyOdhbTQRo4rCLNZl/F/4pP49Tms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0sDnd4ZpWTrxLz6ackjKyKQgH7uELBYX4A7End9qY24HJvgF/QIgFxKX9wy4OFGoJ
-	 uqQCqeHREmNTt7lQFLB8oVXqMR5P8E0UKHJtKm1Wbg0JLX+tdMsCx2mrAqev569YHf
-	 jgrsuloDdY5ZTCoGBRid0pB6J9PcqNKMv0ommUwM=
+	b=PLDsNo+L+bhmwev+/P5NGNdGLSqDLfJGMqXu2Su/Q16IcazHZlNmPsvOX/ufPDe7r
+	 r/HTloQ64UFt9QJKnR+3hO7C46FIUp565ricMtA7WF8ZfWdDcKDeIoczeJObsjaHq/
+	 Xlwtu+FmM+hMRmurglCbaeOnNQ0kYiPolICXqC4U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391834AbfBKPLL (ORCPT
+        id S2404031AbfBKPK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:11:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404039AbfBKPLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:11:05 -0500
+        id S2404017AbfBKPK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 189F6222B5;
-        Mon, 11 Feb 2019 15:11:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D35222B5;
+        Mon, 11 Feb 2019 15:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897864;
-        bh=ayK0QQ0sMrg+Fn/1NvQ8EqIvIyC9oWCn4N/cD/XdJCc=;
+        s=default; t=1549897855;
+        bh=BUiWBY5R3eR2fiksyOdhbTQRo4rCLNZl/F/4pP49Tms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwFnVdtWxdhrxzNe0UmVAzdkIb1nDnJ1abX4Yts0faKcSssgTnnZoFOBb1RXfZg6q
-         9wE8CVMAWSdUkrXbRUXcuTLAmV6Z00ddJ6fvTv9SueCgwf/m10bi5n2rZVYl/EROfT
-         Mim2d/aGsc9LFyUYrBKZKdC2JMYXLP3lXobNWXok=
+        b=Vr64562yH1/TvP7YmBqKudcZ+/G9REWekgzPZJBBRaZYl3guIHxHw9B3F9q/hLSwJ
+         k7w6pGmpWaO7dL5XysW09a0kYK2XFx796ziufvCV6Czq3qoxni0dj0R4B7OYy0Kcov
+         ycHjBFOnztzVXmPX6IfoxFzUvVyTkB0bKGjxlHUA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 118/137] fuse: handle zero sized retrieve correctly
-Date:   Mon, 11 Feb 2019 15:19:59 +0100
-Message-Id: <20190211141823.109865278@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 115/137] ALSA: hda - Serialize codec registrations
+Date:   Mon, 11 Feb 2019 15:19:56 +0100
+Message-Id: <20190211141822.846853561@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,40 +64,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 97e1532ef81acb31c30f9e75bf00306c33a77812 upstream.
+commit 305a0ade180981686eec1f92aa6252a7c6ebb1cf upstream.
 
-Dereferencing req->page_descs[0] will Oops if req->max_pages is zero.
+In the current code, the codec registration may happen both at the
+codec bind time and the end of the controller probe time.  In a rare
+occasion, they race with each other, leading to Oops due to the still
+uninitialized card device.
 
-Reported-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Tested-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Fixes: b2430d7567a3 ("fuse: add per-page descriptor <offset, length> to fuse_req")
-Cc: <stable@vger.kernel.org> # v3.9
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+This patch introduces a simple flag to prevent the codec registration
+at the codec bind time as long as the controller probe is going on.
+The controller probe invokes snd_card_register() that does the whole
+registration task, and we don't need to register each piece
+beforehand.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/hda_bind.c  |    3 ++-
+ sound/pci/hda/hda_codec.h |    1 +
+ sound/pci/hda/hda_intel.c |    2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1685,7 +1685,6 @@ static int fuse_retrieve(struct fuse_con
- 	req->in.h.nodeid = outarg->nodeid;
- 	req->in.numargs = 2;
- 	req->in.argpages = 1;
--	req->page_descs[0].offset = offset;
- 	req->end = fuse_retrieve_end;
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -109,7 +109,8 @@ static int hda_codec_driver_probe(struct
+ 	err = snd_hda_codec_build_controls(codec);
+ 	if (err < 0)
+ 		goto error_module;
+-	if (codec->card->registered) {
++	/* only register after the bus probe finished; otherwise it's racy */
++	if (!codec->bus->bus_probing && codec->card->registered) {
+ 		err = snd_card_register(codec->card);
+ 		if (err < 0)
+ 			goto error_module;
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -68,6 +68,7 @@ struct hda_bus {
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
+ 	unsigned int no_response_fallback:1; /* don't fallback at RIRB error */
++	unsigned int bus_probing :1;	/* during probing process */
  
- 	index = outarg->offset >> PAGE_SHIFT;
-@@ -1700,6 +1699,7 @@ static int fuse_retrieve(struct fuse_con
+ 	int primary_dig_out_type;	/* primary digital out PCM type */
+ 	unsigned int mixer_assigned;	/* codec addr for mixer name */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2089,6 +2089,7 @@ static int azx_probe_continue(struct azx
+ 	int val;
+ 	int err;
  
- 		this_num = min_t(unsigned, num, PAGE_SIZE - offset);
- 		req->pages[req->num_pages] = page;
-+		req->page_descs[req->num_pages].offset = offset;
- 		req->page_descs[req->num_pages].length = this_num;
- 		req->num_pages++;
++	to_hda_bus(bus)->bus_probing = 1;
+ 	hda->probe_continued = 1;
+ 
+ 	/* Request display power well for the HDA controller or codec. For
+@@ -2189,6 +2190,7 @@ i915_power_fail:
+ 	if (err < 0)
+ 		hda->init_failed = 1;
+ 	complete_all(&hda->probe_wait);
++	to_hda_bus(bus)->bus_probing = 0;
+ 	return err;
+ }
  
 
 
