@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DEAC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DABC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1495C222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28134222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897932;
-	bh=ZlCDNNqYbIMSdf/sfTcshF2Foo443yLdNWqK74YhuHM=;
+	s=default; t=1549897937;
+	bh=QSpY9a+rdzG/HVNFEYO5DJluTu7OQcjkFLihhEhgLzA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pcgY+mz60cCOgn+fVSE7UBj8eLfESG7kUvg82knbinCrdTOTvTp3ja+SYtguyABv3
-	 xYEi17S+DVhkRFVA2isOvoazFHtYS64YmBWXNDUChFBWukI8hbhr85nkuYkQ3RXWjC
-	 ODmq1bJ6fSiPoKrXSKKr3Y10HeGRGHW+dLD7/BQs=
+	b=qcIyg8Pl2x9PEAryXeD+XOnEMr64G8OznbgUSQoAXa1k2c29SGbSKaimL8IsIk5j9
+	 OwmMkvTC5Xl/ATyTL2QKFnde2EFl5aAu7M07/TFkT9qicWWWEUU7hH7h4T+BYTPH4Y
+	 xFy+fdV5juBPNnUAmv6D/Dl2HQqPUZYt66LIKP6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391228AbfBKPKd (ORCPT
+        id S2391730AbfBKPMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:12:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391054AbfBKPK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:27 -0500
+        id S2391810AbfBKPKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34FA6222A7;
-        Mon, 11 Feb 2019 15:10:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584FD222B9;
+        Mon, 11 Feb 2019 15:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897826;
-        bh=ZlCDNNqYbIMSdf/sfTcshF2Foo443yLdNWqK74YhuHM=;
+        s=default; t=1549897832;
+        bh=QSpY9a+rdzG/HVNFEYO5DJluTu7OQcjkFLihhEhgLzA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u6i2AbYMJtIJT6yac7iVh075TUGvSzfrcMdVgZpkpsmN6wtzhW94XF8LDqkiIF4NU
-         du2k1Y//ConUn80aqugW4qa50xopij9Qs2xrjEAHOiigu3VwTKwWT6jGWzZEwy1z+u
-         zLbXOoj7XxeJi+8QCXMvcGhTOp6seHV1vHVd+mrE=
+        b=2XOh0vqQ+Q7dEjUcVWeBGIV6VCljCEdR0zvfmdyPqdoMf4nFuxJGequNMnUR0fO7q
+         2yChwOiFW7QzFJZRiAJrCZWir7J4hhkXQlCzaAjJPvfSZlSQaN4ZOt4gKiwnqZ/fWP
+         wWPb7l02pc0WNQepaKDv+UE1psp1Va/kk5CuWdgg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 129/137] perf/x86/intel/uncore: Add Node ID mask
-Date:   Mon, 11 Feb 2019 15:20:10 +0100
-Message-Id: <20190211141824.089499692@linuxfoundation.org>
+Subject: [PATCH 4.9 131/137] perf/core: Dont WARN() for impossible ring-buffer sizes
+Date:   Mon, 11 Feb 2019 15:20:12 +0100
+Message-Id: <20190211141824.276887526@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -71,63 +72,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
+commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
 
-Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
-Superdome Flex).
+The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+large its ringbuffer mmap should be. This can be configured to arbitrary
+values, which can be larger than the maximum possible allocation from
+kmalloc.
 
-To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
-the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
-configuration space, and the mapping between Socket ID and Node ID from
-GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
+When this is configured to a suitably large value (e.g. thanks to the
+perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+__alloc_pages_nodemask():
 
-The local Node ID is only available at bit 2:0, but current code doesn't
-mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
-will be fetched.
+   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
 
-Filter the Node ID by adding a mask.
+Let's avoid this by checking that the requested allocation is possible
+before calling kzalloc.
 
-Reported-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org> # v3.7+
-Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
-Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/events/ring_buffer.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -1221,6 +1221,8 @@ static struct pci_driver snbep_uncore_pc
- 	.id_table	= snbep_uncore_pci_ids,
- };
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -700,6 +700,9 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
  
-+#define NODE_ID_MASK	0x7
++	if (order_base_2(size) >= MAX_ORDER)
++		goto fail;
 +
- /*
-  * build pci bus to socket mapping
-  */
-@@ -1242,7 +1244,7 @@ static int snbep_pci2phy_map_init(int de
- 		err = pci_read_config_dword(ubox_dev, nodeid_loc, &config);
- 		if (err)
- 			break;
--		nodeid = config;
-+		nodeid = config & NODE_ID_MASK;
- 		/* get the Node ID mapping */
- 		err = pci_read_config_dword(ubox_dev, idmap_loc, &config);
- 		if (err)
+ 	rb = kzalloc(size, GFP_KERNEL);
+ 	if (!rb)
+ 		goto fail;
 
 
