@@ -2,147 +2,98 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7C9C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F14C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92CE218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D30218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKIcwgUE"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h9dPXdTD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfBKWQR (ORCPT
+        id S1727315AbfBKWRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:16:17 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38874 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbfBKWQQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:16:16 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so224840plb.5;
-        Mon, 11 Feb 2019 14:16:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w1CPVe+6tPCyxJC4cBu9P5R8GU8vmg6dMVXkexyJFrE=;
-        b=eKIcwgUExGA9MGygLeVtqgH2bdrKDbSJW2/ouEAEAg6B2Mf8k03WgRJBqgMROukoy5
-         mMRd0QDamRWV0cuRqLkvDVwYuNF6aWcjx6qXuWWxPbwVndRMuHC+8rxwO/xsRk7Gp0NJ
-         vp5oVfyrOjsruEwHy++cC6ZoJagzTRV4VswePxu80bu8HDjpuYBkdktuxQM99tmehjei
-         PEbRjlSicBnBW2cTtoizXdyh2P9m5VrlYRtIYMJq0S98r3a4YfBBIzEvnJTDBeaJzQiY
-         ZZvtpOOcRklCxZ7tGVBa/7ROaAOfmeZ0XwHeYxCd/FdjpwkAAT6k6wc8RruMFPXr8cv1
-         CdXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w1CPVe+6tPCyxJC4cBu9P5R8GU8vmg6dMVXkexyJFrE=;
-        b=qVrTGG/iF5gxscaMbilYU+ShIhDgjWEJKrVegdNhuPsEFdoPExRR09RYxFFMqTbXg6
-         REHQSYhGG2wKy8WGPtG8k3OEnJ8usfoKv1NNwhliEagHTKl9szk7TcsxQIdZS1ZhE1tJ
-         SvR7sTeIWkXry6gmMCkSna+LXJCcf6Dq1pudBzsEw3v/2cDQFY8g4szTpJHTZ4WDYR8a
-         i5EigiF62JsJUYm0vMYY145WCw2CpAWPque6GMikZDwDBNhPE4JV2xnaRwv6eJwbTVl/
-         rCKG0cMJD7CSH68dlv7lw3cDik01Ii3vQxtq1xwyl2Pm1MlYI5ltN/SzXSRZG4+j5VGw
-         YydQ==
-X-Gm-Message-State: AHQUAuaAsTZj6mimfa3EkM/2CikLQRXLFdGioMi2UrK9VPkZL0uxBTsU
-        vXNchsc53govoUDFJqcTeCA=
-X-Google-Smtp-Source: AHgI3IbCAqoJrg5ah7UFE0F7MTJ+QAh3g6/9m/Rvu2hqkhBldC+Ul4fMJngKHHNw1mbZ92rwoRLh4Q==
-X-Received: by 2002:a17:902:402:: with SMTP id 2mr406682ple.318.1549923375293;
-        Mon, 11 Feb 2019 14:16:15 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id n10sm18129597pfj.14.2019.02.11.14.16.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 14:16:14 -0800 (PST)
-Date:   Mon, 11 Feb 2019 14:16:12 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     thesven73@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] Input: qt2160 - remove redundant spinlock
-Message-ID: <20190211221612.GB149505@dtor-ws>
-References: <20190211023222.29168-1-TheSven73@gmail.com>
+        Mon, 11 Feb 2019 17:17:31 -0500
+Received: from ozlabs.org ([203.11.71.1]:50243 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfBKWRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:17:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43z0X809BJz9sCh;
+        Tue, 12 Feb 2019 09:17:27 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549923448;
+        bh=4SZlHDpjfyelc/K+K+cweed7HHm/CtdtAlwcEFRpWXE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=h9dPXdTD+OwymIsPEhJxLqbXEVJegYIngjEzwDXTFCrHJQFA1jbLCJlqZYSMa70o9
+         w5jff4c4nr3rmI1VHO73uUNGviBgJpVAowgBVsBdj50OH1FHV5pMLUQwcqHyCBXxAb
+         WX1rYE5XygmwxKHjwfx7+87e+1LJaiKwC/ry+qGSHo39JiQLJ6QV8bgPCzWh0PvMrK
+         rz6ggWEb7UFa2vt/zFtGAk83Qd/7VDEhq4n4byE02Cyv2AjKn6uzRvaIyZ/t8Nr+J7
+         KcOkfM1nvmoU0key74zSjaI4anputk5F57cGLzzg+uZC7f865iyZrHvC1yl9XXms7t
+         OsXB0RDoNRIxg==
+Date:   Tue, 12 Feb 2019 09:17:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tristram Ha <Tristram.Ha@microchip.com>
+Subject: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20190212091727.7d93c434@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211023222.29168-1-TheSven73@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZhQK5b7Id5CuJZbQFQzBtZc"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 09:32:22PM -0500, thesven73@gmail.com wrote:
-> From: Sven Van Asbroeck <TheSven73@gmail.com>
-> 
-> Remove a spinlock which prevents schedule_delayed_work() and
-> mod_delayed_work() from executing concurrently.
-> 
-> This was required back when mod_delayed_work() did not exist,
-> and had to be implemented with a cancel + schedule. See
-> commit e7c2f967445d ("workqueue: use mod_delayed_work() instead of
-> __cancel + queue")
-> 
-> schedule_delayed_work() and mod_delayed_work() can now be used
-> concurrently. So the spinlock is no longer needed.
-> 
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+--Sig_/ZhQK5b7Id5CuJZbQFQzBtZc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thank you.
+Hi all,
 
-> ---
->  drivers/input/keyboard/qt2160.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/qt2160.c b/drivers/input/keyboard/qt2160.c
-> index 43b86482dda0..23dc7c0c7d78 100644
-> --- a/drivers/input/keyboard/qt2160.c
-> +++ b/drivers/input/keyboard/qt2160.c
-> @@ -69,7 +69,6 @@ struct qt2160_data {
->  	struct i2c_client *client;
->  	struct input_dev *input;
->  	struct delayed_work dwork;
-> -	spinlock_t lock;        /* Protects canceling/rescheduling of dwork */
->  	unsigned short keycodes[ARRAY_SIZE(qt2160_key2code)];
->  	u16 key_matrix;
->  #ifdef CONFIG_LEDS_CLASS
-> @@ -221,22 +220,15 @@ static int qt2160_get_key_matrix(struct qt2160_data *qt2160)
->  static irqreturn_t qt2160_irq(int irq, void *_qt2160)
->  {
->  	struct qt2160_data *qt2160 = _qt2160;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&qt2160->lock, flags);
->  
->  	mod_delayed_work(system_wq, &qt2160->dwork, 0);
->  
-> -	spin_unlock_irqrestore(&qt2160->lock, flags);
-> -
->  	return IRQ_HANDLED;
->  }
->  
->  static void qt2160_schedule_read(struct qt2160_data *qt2160)
->  {
-> -	spin_lock_irq(&qt2160->lock);
->  	schedule_delayed_work(&qt2160->dwork, QT2160_CYCLE_INTERVAL);
-> -	spin_unlock_irq(&qt2160->lock);
->  }
->  
->  static void qt2160_worker(struct work_struct *work)
-> @@ -406,7 +398,6 @@ static int qt2160_probe(struct i2c_client *client,
->  	qt2160->client = client;
->  	qt2160->input = input;
->  	INIT_DELAYED_WORK(&qt2160->dwork, qt2160_worker);
-> -	spin_lock_init(&qt2160->lock);
->  
->  	input->name = "AT42QT2160 Touch Sense Keyboard";
->  	input->id.bustype = BUS_I2C;
-> -- 
-> 2.17.1
-> 
+In commit
 
--- 
-Dmitry
+  cbd72b485214 ("net: dsa: microchip: add switch offload forwarding support=
+")
+
+Fixes tag
+
+  Fixes: c2e866911e254067 ("microchip: break KSZ9477 DSA driver into two fi=
+les")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZhQK5b7Id5CuJZbQFQzBtZc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxh9HcACgkQAVBC80lX
+0Gy7xAgAmmxE5wiWpWzlTueRN60hAi/njjm9WqT+Di1IAh854T6c0Q5GD75CyUZF
+Kz4zWkaCFFBudI5jPQCOTP5xlw5IFrDYwJKQiPejt8rzJTYV0K31gQK2TA8aYZJA
+ZYfDrp/ZykK9z5twrzCQNAVk6XBevV9No5kaV5qMB8XkOrOLzu5D0TyXv98w4qzJ
+nyeeCRVW9eIsffaDuB8vLOjTqf2pbucKZssOvTfJFaFhDEYLLTs2qzbFbsTqQPWQ
+LXDNfHTQ877SIZwwyGyA/qq7WxJDBLuK5NP62kB/isalYo3Zer/XleCaXJniyATd
+/VqGvIV+NEoKNKrTbGdJYS2zuR7CBA==
+=caVa
+-----END PGP SIGNATURE-----
+
+--Sig_/ZhQK5b7Id5CuJZbQFQzBtZc--
