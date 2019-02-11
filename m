@@ -2,117 +2,195 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565D0C282C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5C9C282C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA3B213F2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:43:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MEqOkfhQ"
+	by mail.kernel.org (Postfix) with ESMTP id 5D28520811
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:46:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfBKBnp (ORCPT
+        id S1726847AbfBKBqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 20:43:45 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:63744 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfBKBnp (ORCPT
+        Sun, 10 Feb 2019 20:46:16 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:52826 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726101AbfBKBqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 20:43:45 -0500
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x1B1hfY6010608;
-        Mon, 11 Feb 2019 10:43:42 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1B1hfY6010608
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549849422;
-        bh=Vx3BEED24LNtlEnMfZYvOUWbLE0Q2Fmq6gH3TAuvniY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MEqOkfhQq7BUZ8ezcQG4oJ8EoBfuBuQwYBs7PsMIuBSgd0w0TzbKlXxRrXznhvsLb
-         7594MKI0trpJENJB/gEeU4oJx5IKuiaQhBh1XbXsTd7y9TB1OKXSpDqZsy+gaIYwRp
-         eB916uLX0gS4aJFFAhC9DIQEsAQaDXeNNDonnw2XDyWgDmISbCIHXccl6fKab1zrk7
-         pIHJQKBB/6NQ9LATMoXV4iR5TC6W1EdKuNMlqF63mk64h2BwsTDeOKkmDhoFFMbXr7
-         h0bslrKCUDZ5s2o5gRJSA1hOT2RdyH0p9VM88J03TdXxtQavYNPhaekLJEEkHAJCtK
-         cdQ9tYkHCE63w==
-X-Nifty-SrcIP: [209.85.221.177]
-Received: by mail-vk1-f177.google.com with SMTP id v70so2093586vkv.7;
-        Sun, 10 Feb 2019 17:43:42 -0800 (PST)
-X-Gm-Message-State: AHQUAub5tRLmAqkwu15uyKgj9n/6aBcUO72JlkhUjAebe/dAVPapQ0+7
-        S6jPFWKcBAy2Mpnf1zsJ5eK9i1tWlpKQ9mwr62Y=
-X-Google-Smtp-Source: AHgI3IYznTNwgf8zS8CXs8EaWLNBWbCbPlieXEGgiYU5TOklpu27sQa+5S7/B6/U7XUZnXUaV1qdZDQ/lFXQ6sD8UNE=
-X-Received: by 2002:a1f:1ac3:: with SMTP id a186mr5800723vka.34.1549849421400;
- Sun, 10 Feb 2019 17:43:41 -0800 (PST)
+        Sun, 10 Feb 2019 20:46:16 -0500
+X-IronPort-AV: E=Sophos;i="5.58,357,1544457600"; 
+   d="scan'208";a="54007648"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Feb 2019 09:46:14 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 9939F4B6ED88;
+        Mon, 11 Feb 2019 09:46:13 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 11 Feb 2019 09:46:16 +0800
+Date:   Mon, 11 Feb 2019 09:46:05 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Baoquan He" <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-efi@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <mingo@redhat.com>,
+        <keescook@chromium.org>, <rjw@rjwysocki.net>, <lenb@kernel.org>,
+        <ard.biesheuvel@linaro.org>, <indou.takao@jp.fujitsu.com>,
+        <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20190211014605.GC1544@localhost.localdomain>
+References: <20181025103345.GF14020@nazgul.tnic>
+ <20181025134050.ggiir77ehntikbwg@gabell>
+ <20181106184519.GA16391@zn.tnic>
+ <20181106193636.svyjwuwrlgnpuyyf@gabell>
+ <20181106204511.GO13712@zn.tnic>
+ <20181106222133.lb7674yzszivzihd@gabell>
+ <20181108105129.GA7543@zn.tnic>
+ <20181110105422.GA20023@zn.tnic>
+ <20181111134556.qxv2v4g7dl5irzo7@gabell>
+ <20190205150514.fvztftk75swgfayd@gabell>
 MIME-Version: 1.0
-References: <1548387699-9222-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1548387699-9222-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 11 Feb 2019 10:43:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ6bRxhXuSgVS0DqZ_izMyKuujmQe9TVV8pDXve-gs90g@mail.gmail.com>
-Message-ID: <CAK7LNAQ6bRxhXuSgVS0DqZ_izMyKuujmQe9TVV8pDXve-gs90g@mail.gmail.com>
-Subject: Re: [PATCH] libfdt: prefix header search paths with $(srctree)/
-To:     DTML <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190205150514.fvztftk75swgfayd@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 9939F4B6ED88.AFEDA
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Tue, Feb 05, 2019 at 10:05:16AM -0500, Masayoshi Mizuma wrote:
+[...]
 
+Hi Masa,
 
-On Fri, Jan 25, 2019 at 12:42 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+Sorry for delay, since last days were Chinese holiday.
+
+>diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+>index c5a949335..7dd61b943 100644
+>--- a/arch/x86/boot/compressed/acpi.c
+>+++ b/arch/x86/boot/compressed/acpi.c
+>@@ -288,6 +288,7 @@ int count_immovable_mem_regions(void)
+> 	struct acpi_subtable_header *sub_table;
+> 	struct acpi_table_header *table_header;
+> 	char arg[MAX_ACPI_ARG_LENGTH];
+>+	unsigned long long possible_addr, max_possible_addr = 0;
+
+This line is so long that it should be added in first line.
+
+> 	int num = 0;
+> 
+> 	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+>@@ -308,10 +309,19 @@ int count_immovable_mem_regions(void)
+> 			struct acpi_srat_mem_affinity *ma;
+> 
+> 			ma = (struct acpi_srat_mem_affinity *)sub_table;
+>-			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
+>-				immovable_mem[num].start = ma->base_address;
+>-				immovable_mem[num].size = ma->length;
+>-				num++;
+>+			if (ma->length) {
+>+				if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
+>+					possible_addr =
+>+						ma->base_address + ma->length;
+>+					if (possible_addr > max_possible_addr)
+>+						max_possible_addr =
+>+							possible_addr;
+>+				} else {
+>+					immovable_mem[num].start =
+>+						ma->base_address;
+>+					immovable_mem[num].size = ma->length;
+>+					num++;
+>+				}
+> 			}
+
+It looks better in another mail where you add a new function.
+
+Thanks,
+Chao Fan
+
+> 
+> 			if (num >= MAX_NUMNODES*2) {
+>@@ -320,6 +330,7 @@ int count_immovable_mem_regions(void)
+> 			}
+> 		}
+> 		table += sub_table->length;
+>+		boot_params->possible_mem_addr = max_possible_addr;
+> 	}
+> 	return num;
+> }
+>diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+>index 60733f137..5b64b606e 100644
+>--- a/arch/x86/include/uapi/asm/bootparam.h
+>+++ b/arch/x86/include/uapi/asm/bootparam.h
+>@@ -156,7 +156,7 @@ struct boot_params {
+> 	__u64  tboot_addr;				/* 0x058 */
+> 	struct ist_info ist_info;			/* 0x060 */
+> 	__u64 acpi_rsdp_addr;				/* 0x070 */
+>-	__u8  _pad3[8];					/* 0x078 */
+>+	__u64  possible_mem_addr;			/* 0x078 */
+> 	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
+> 	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
+> 	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
+>diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+>index 3f452ffed..71fc28570 100644
+>--- a/arch/x86/mm/kaslr.c
+>+++ b/arch/x86/mm/kaslr.c
+>@@ -70,6 +70,30 @@ static inline bool kaslr_memory_enabled(void)
+> 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+> }
+> 
+>+static unsigned int __init kaslr_padding(void)
+>+{
+>+	unsigned int rand_mem_physical_padding =
+>+				CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+>+#ifdef CONFIG_MEMORY_HOTPLUG
+>+	unsigned long long max_possible_phys, max_actual_phys, threshold;
+>+
+>+	if (!boot_params.possible_mem_addr)
+>+		goto out;
+>+
+>+	max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << TB_SHIFT);
+>+	max_possible_phys = roundup(boot_params.possible_mem_addr,
+>+					1ULL << TB_SHIFT);
+>+	threshold = max_actual_phys +
+>+		((unsigned long long)rand_mem_physical_padding << TB_SHIFT);
+>+
+>+	if (max_possible_phys > threshold)
+>+		rand_mem_physical_padding =
+>+			(max_possible_phys - max_actual_phys) >> TB_SHIFT;
+>+out:
+>+#endif
+>+	return rand_mem_physical_padding;
+>+}
+>+
+> /* Initialize base and padding for each memory region randomized with KASLR */
+> void __init kernel_randomize_memory(void)
+> {
+>@@ -103,7 +127,7 @@ void __init kernel_randomize_memory(void)
+> 	 */
+> 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+> 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+>-		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+>+			kaslr_padding();
+> 
+> 	/* Adapt phyiscal memory region size based on available memory */
+> 	if (memory_tb < kaslr_regions[0].size_tb)
+>-- 
+>2.20.1
 >
-> Currently, the Kbuild core manipulates header search paths in a crazy
-> way [1].
+>Thanks,
+>Masa
 >
-> To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-> the search paths in the srctree. Some Makefiles are already written in
-> that way, but not all. The goal of this work is to make the notation
-> consistent, and finally get rid of the gross hacks.
->
-> Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-> ("kbuild: do not drop -I without parameter").
->
-> [1]: https://patchwork.kernel.org/patch/9632347/
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-Could you apply this to your tree?
-
-Thanks.
-
-Masahiro
-
-
-> ---
->
->  lib/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/Makefile b/lib/Makefile
-> index e1b59da..05973c1 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -208,7 +208,7 @@ KCOV_INSTRUMENT_stackdepot.o := n
->  libfdt_files = fdt.o fdt_ro.o fdt_wip.o fdt_rw.o fdt_sw.o fdt_strerror.o \
->                fdt_empty_tree.o
->  $(foreach file, $(libfdt_files), \
-> -       $(eval CFLAGS_$(file) = -I$(src)/../scripts/dtc/libfdt))
-> +       $(eval CFLAGS_$(file) = -I $(srctree)/scripts/dtc/libfdt))
->  lib-$(CONFIG_LIBFDT) += $(libfdt_files)
->
->  obj-$(CONFIG_RBTREE_TEST) += rbtree_test.o
-> --
-> 2.7.4
 >
 
 
--- 
-Best Regards
-Masahiro Yamada
