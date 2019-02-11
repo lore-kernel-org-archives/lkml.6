@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A63C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65351C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81C420844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3542F20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895808;
-	bh=4Z7xXJSBAiIX//hgcTI11DeoW7T3aDaTyf9TcJpSiZk=;
+	s=default; t=1549895814;
+	bh=aeS0HaRu88W588LAV7Pqmmwb43YV6Uw7p9Mbe1DbYDE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DJ6EpTTxGt2k22d3hPJ6z4OCBEtAezbKLpyygRa3YC5O9s5LxC98XmbbfViJ4Aby9
-	 X+xNwPaNQL5tMDseuFxxJ6lBj1n7mOuma+M5+hx82IFSJjGHJ+a9jJT7dX2ix875K7
-	 e3+jTxW5Y28fqU0K9jfeQ3ON2O0RsZoWD+8HkKvY=
+	b=g1bKAC8NAiWK3Ipl54RjaBF9TjIb8GGIdGZ/WFYE9ivwS+5TH13hpPCJGUULWY9vv
+	 y62Dvh9dyRcU6xHaQSZl7h2Hb8sk8Wlo4C5DJ8fj2cdTIaRLCCXvyxxVrEv2P61mL5
+	 U1XpCiTGZiUSHX6tkorDTp0QLvuzu+31MV9ZB/YA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731327AbfBKOgr (ORCPT
+        id S1731341AbfBKOgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:36:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45978 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:36:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731312AbfBKOgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:46 -0500
+        id S1731312AbfBKOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:36:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F64520700;
-        Mon, 11 Feb 2019 14:36:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 440642081B;
+        Mon, 11 Feb 2019 14:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895805;
-        bh=4Z7xXJSBAiIX//hgcTI11DeoW7T3aDaTyf9TcJpSiZk=;
+        s=default; t=1549895807;
+        bh=aeS0HaRu88W588LAV7Pqmmwb43YV6Uw7p9Mbe1DbYDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NJJu5i1FUg9lOm8Kl4kmNFoQz+JZFXyvBH5ZrOmAmtjc2svGM1DQCxPLABGcCL0qW
-         r6rzS1IT/Rc9vOhLv6iEdBAu2CYSIo6yWdle3xDHluM/oz1hzhEmZ1Ivct6NXdGehW
-         RozTqL/eIULeEXJAwDAJ0y2N1SZINDIL2P31DmSU=
+        b=dJTwRxJ8uS2fNa80obyzCnis+MV0J3bJNF1WWiG71rNqpz2uVFCoGBfNxMIq3qo0L
+         3d4BeVYrih9ApSlCw8Lxc6aDy7IINoIfZIPbjOj8PpDGQMr7EywhMwNdDyaFDU/F68
+         2JFIkaNb9pCoKd2OwKNRL667NbZgCxR2CkS3eTlM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Sebastian Sewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.20 328/352] futex: Handle early deadlock return correctly
-Date:   Mon, 11 Feb 2019 15:19:15 +0100
-Message-Id: <20190211141907.746487189@linuxfoundation.org>
+        stable@vger.kernel.org, Zheng Xiang <zhengxiang9@huawei.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.20 329/352] irqchip/gic-v3-its: Plug allocation race for devices sharing a DevID
+Date:   Mon, 11 Feb 2019 15:19:16 +0100
+Message-Id: <20190211141907.813555844@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,226 +65,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 1a1fb985f2e2b85ec0d3dc2e519ee48389ec2434 upstream.
+commit 9791ec7df0e7b4d80706ccea8f24b6542f6059e9 upstream.
 
-commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
-rtmutex") changed the locking rules in the futex code so that the hash
-bucket lock is not longer held while the waiter is enqueued into the
-rtmutex wait list. This made the lock and the unlock path symmetric, but
-unfortunately the possible early exit from __rt_mutex_proxy_start() due to
-a detected deadlock was not updated accordingly. That allows a concurrent
-unlocker to observe inconsitent state which triggers the warning in the
-unlock path.
+On systems or VMs where multiple devices share a single DevID
+(because they sit behind a PCI bridge, or because the HW is
+broken in funky ways), we reuse the save its_device structure
+in order to reflect this.
 
-futex_lock_pi()                         futex_unlock_pi()
-  lock(hb->lock)
-  queue(hb_waiter)				lock(hb->lock)
-  lock(rtmutex->wait_lock)
-  unlock(hb->lock)
-                                        // acquired hb->lock
-                                        hb_waiter = futex_top_waiter()
-                                        lock(rtmutex->wait_lock)
-  __rt_mutex_proxy_start()
-     ---> fail
-          remove(rtmutex_waiter);
-     ---> returns -EDEADLOCK
-  unlock(rtmutex->wait_lock)
-                                        // acquired wait_lock
-                                        wake_futex_pi()
-                                        rt_mutex_next_owner()
-					  --> returns NULL
-                                          --> WARN
+It turns out that there is a distinct lack of locking when looking
+up the its_device, and two device being probed concurrently can result
+in double allocations. That's obviously not nice.
 
-  lock(hb->lock)
-  unqueue(hb_waiter)
+A solution for this is to have a per-ITS mutex that serializes device
+allocation.
 
-The problem is caused by the remove(rtmutex_waiter) in the failure case of
-__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
-hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
+A similar issue exists on the freeing side, which can run concurrently
+with the allocation. On top of now taking the appropriate lock, we
+also make sure that a shared device is never freed, as we have no way
+to currently track the life cycle of such object.
 
-The original commit handles this correctly for the other early return cases
-(timeout, signal) by delaying the removal of the rtmutex waiter until the
-returning task reacquired the hash bucket lock.
-
-Treat the failure case of __rt_mutex_proxy_start() in the same way and let
-the existing cleanup code handle the eventual handover of the rtmutex
-gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
-removal for the failure case, so that the other callsites are still
-operating correctly.
-
-Add proper comments to the code so all these details are fully documented.
-
-Thanks to Peter for helping with the analysis and writing the really
-valuable code comments.
-
-Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
-Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Co-developed-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Cc: Stefan Liebler <stli@linux.ibm.com>
-Cc: Sebastian Sewior <bigeasy@linutronix.de>
+Reported-by: Zheng Xiang <zhengxiang9@huawei.com>
+Tested-by: Zheng Xiang <zhengxiang9@huawei.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/futex.c           |   28 ++++++++++++++++++----------
- kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 50 insertions(+), 15 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c |   32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2850,35 +2850,39 @@ retry_private:
- 	 * and BUG when futex_unlock_pi() interleaves with this.
- 	 *
- 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
--	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
--	 * serializes against futex_unlock_pi() as that does the exact same
--	 * lock handoff sequence.
-+	 * latter before calling __rt_mutex_start_proxy_lock(). This
-+	 * interleaves with futex_unlock_pi() -- which does a similar lock
-+	 * handoff -- such that the latter can observe the futex_q::pi_state
-+	 * before __rt_mutex_start_proxy_lock() is done.
- 	 */
- 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
- 	spin_unlock(q.lock_ptr);
-+	/*
-+	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
-+	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
-+	 * it sees the futex_q::pi_state.
-+	 */
- 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
- 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -97,9 +97,14 @@ struct its_device;
+  * The ITS structure - contains most of the infrastructure, with the
+  * top-level MSI domain, the command queue, the collections, and the
+  * list of devices writing to it.
++ *
++ * dev_alloc_lock has to be taken for device allocations, while the
++ * spinlock must be taken to parse data structures such as the device
++ * list.
+  */
+ struct its_node {
+ 	raw_spinlock_t		lock;
++	struct mutex		dev_alloc_lock;
+ 	struct list_head	entry;
+ 	void __iomem		*base;
+ 	phys_addr_t		phys_base;
+@@ -156,6 +161,7 @@ struct its_device {
+ 	void			*itt;
+ 	u32			nr_ites;
+ 	u32			device_id;
++	bool			shared;
+ };
  
- 	if (ret) {
- 		if (ret == 1)
- 			ret = 0;
--
--		spin_lock(q.lock_ptr);
--		goto no_block;
-+		goto cleanup;
+ static struct {
+@@ -2422,6 +2428,7 @@ static int its_msi_prepare(struct irq_do
+ 	struct its_device *its_dev;
+ 	struct msi_domain_info *msi_info;
+ 	u32 dev_id;
++	int err = 0;
+ 
+ 	/*
+ 	 * We ignore "dev" entierely, and rely on the dev_id that has
+@@ -2444,6 +2451,7 @@ static int its_msi_prepare(struct irq_do
+ 		return -EINVAL;
  	}
  
--
- 	if (unlikely(to))
- 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
- 
- 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
- 
-+cleanup:
- 	spin_lock(q.lock_ptr);
- 	/*
--	 * If we failed to acquire the lock (signal/timeout), we must
-+	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
- 	 * first acquire the hb->lock before removing the lock from the
--	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
--	 * wait lists consistent.
-+	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
-+	 * lists consistent.
- 	 *
- 	 * In particular; it is important that futex_unlock_pi() can not
- 	 * observe this inconsistency.
-@@ -3002,6 +3006,10 @@ retry:
- 		 * there is no point where we hold neither; and therefore
- 		 * wake_futex_pi() must observe a state consistent with what we
- 		 * observed.
-+		 *
-+		 * In particular; this forces __rt_mutex_start_proxy() to
-+		 * complete such that we're guaranteed to observe the
-+		 * rt_waiter. Also see the WARN in wake_futex_pi().
++	mutex_lock(&its->dev_alloc_lock);
+ 	its_dev = its_find_device(its, dev_id);
+ 	if (its_dev) {
+ 		/*
+@@ -2451,18 +2459,22 @@ static int its_msi_prepare(struct irq_do
+ 		 * another alias (PCI bridge of some sort). No need to
+ 		 * create the device.
  		 */
- 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
- 		spin_unlock(&hb->lock);
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
- 	rt_mutex_set_owner(lock, NULL);
++		its_dev->shared = true;
+ 		pr_debug("Reusing ITT for devID %x\n", dev_id);
+ 		goto out;
+ 	}
+ 
+ 	its_dev = its_create_device(its, dev_id, nvec, true);
+-	if (!its_dev)
+-		return -ENOMEM;
++	if (!its_dev) {
++		err = -ENOMEM;
++		goto out;
++	}
+ 
+ 	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
+ out:
++	mutex_unlock(&its->dev_alloc_lock);
+ 	info->scratchpad[0].ptr = its_dev;
+-	return 0;
++	return err;
  }
  
-+/**
-+ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
-+ * @lock:		the rt_mutex to take
-+ * @waiter:		the pre-initialized rt_mutex_waiter
-+ * @task:		the task to prepare
-+ *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: does _NOT_ remove the @waiter on failure; must either call
-+ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
-+ *
-+ * Returns:
-+ *  0 - task blocked on lock
-+ *  1 - acquired the lock for task, caller should wake it up
-+ * <0 - error
-+ *
-+ * Special API call for PI-futex support.
-+ */
- int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
- 			      struct task_struct *task)
+ static struct msi_domain_ops its_msi_domain_ops = {
+@@ -2566,6 +2578,7 @@ static void its_irq_domain_free(struct i
  {
- 	int ret;
+ 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
++	struct its_node *its = its_dev->its;
+ 	int i;
  
-+	lockdep_assert_held(&lock->wait_lock);
-+
- 	if (try_to_take_rt_mutex(lock, task, NULL))
- 		return 1;
- 
-@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
- 		ret = 0;
+ 	for (i = 0; i < nr_irqs; i++) {
+@@ -2580,8 +2593,14 @@ static void its_irq_domain_free(struct i
+ 		irq_domain_reset_irq_data(data);
  	}
  
--	if (unlikely(ret))
--		remove_waiter(lock, waiter);
--
- 	debug_rt_mutex_print_deadlock(waiter);
+-	/* If all interrupts have been freed, start mopping the floor */
+-	if (bitmap_empty(its_dev->event_map.lpi_map,
++	mutex_lock(&its->dev_alloc_lock);
++
++	/*
++	 * If all interrupts have been freed, start mopping the
++	 * floor. This is conditionned on the device not being shared.
++	 */
++	if (!its_dev->shared &&
++	    bitmap_empty(its_dev->event_map.lpi_map,
+ 			 its_dev->event_map.nr_lpis)) {
+ 		its_lpi_free(its_dev->event_map.lpi_map,
+ 			     its_dev->event_map.lpi_base,
+@@ -2593,6 +2612,8 @@ static void its_irq_domain_free(struct i
+ 		its_free_device(its_dev);
+ 	}
  
- 	return ret;
-@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  * @task:		the task to prepare
-  *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
-+ * on failure.
-+ *
-  * Returns:
-  *  0 - task blocked on lock
-  *  1 - acquired the lock for task, caller should wake it up
-  * <0 - error
-  *
-- * Special API call for FUTEX_REQUEUE_PI support.
-+ * Special API call for PI-futex support.
-  */
- int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
-@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
++	mutex_unlock(&its->dev_alloc_lock);
++
+ 	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
+ }
  
- 	raw_spin_lock_irq(&lock->wait_lock);
- 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
-+	if (unlikely(ret))
-+		remove_waiter(lock, waiter);
- 	raw_spin_unlock_irq(&lock->wait_lock);
+@@ -3517,6 +3538,7 @@ static int __init its_probe_one(struct r
+ 	}
  
- 	return ret;
-@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
-  * @lock:		the rt_mutex we were woken on
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  *
-- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
-+ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
-+ * rt_mutex_wait_proxy_lock().
-  *
-  * Unless we acquired the lock; we're still enqueued on the wait-list and can
-  * in fact still be granted ownership until we're removed. Therefore we can
+ 	raw_spin_lock_init(&its->lock);
++	mutex_init(&its->dev_alloc_lock);
+ 	INIT_LIST_HEAD(&its->entry);
+ 	INIT_LIST_HEAD(&its->its_device_list);
+ 	typer = gic_read_typer(its_base + GITS_TYPER);
 
 
