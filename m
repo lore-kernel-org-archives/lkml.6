@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E7AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B83EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A317621855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AD47222AC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900312;
-	bh=XYXwHbHQdlFxc/nuF8m+XXFMhoV7LspRczpEizgzp+E=;
+	s=default; t=1549900316;
+	bh=XPq9tnauJO2O7snXEN3LE2xe4cpVSixs0PPoyTpdR1c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CpGTxxvwq7odXDXD65Em5hkh74YuhzSleobbdj20bXOEGYYjtBdodoVV9AgB/kQHs
-	 b+m6U7t2wktmc0PRkkdU4gpSEjU3qDzKi4XrFl/mM3FPMGEOE45BOwH0x+Jw9ACLOY
-	 9HYZlWg+lQo55IcB7jZhPFw2gP+6nFSi7y4a0wiY=
+	b=JK5WmUd6yQ03PZnG5SDSfniT6IVER8zim+FFBgZiO7xWb8YFr7+52hAjmvnwo9TR8
+	 3XV25kQUBMlDzlPl02+Ved86ae0iuVVE0pGunKwfo6E0WwvlrWpba8b2b+mgfWg8eo
+	 w1ABOk9PF+z7Chvz45YwmMGwpqTDUlreGmpNshmQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731536AbfBKOhu (ORCPT
+        id S1730894AbfBKOhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbfBKOhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:41 -0500
+        id S1731495AbfBKOhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70BE220844;
-        Mon, 11 Feb 2019 14:37:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33C462081B;
+        Mon, 11 Feb 2019 14:37:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895860;
-        bh=XYXwHbHQdlFxc/nuF8m+XXFMhoV7LspRczpEizgzp+E=;
+        s=default; t=1549895864;
+        bh=XPq9tnauJO2O7snXEN3LE2xe4cpVSixs0PPoyTpdR1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hpfQHS/g/LtuBbb432YB/7GPwxnoxlZsYmEUO/Yr33sAXfQLTmzcjGJEe11rcEVCS
-         GfTnj94GXimb8qs45YZ5I8MD1nUt8rTLaOTYxKW/eq7Y5EP32RAsZDQedkJyNVRpEP
-         gLRCVH5KySBHKwqa7UwXBXIB97r2Kw6levHqzZZ8=
+        b=Ne6GTqChegBtm4NZ13QVG3oD/bdzYS/dEURk8PNuAjgmZXpYY31t/JGIHKwZcCO0P
+         GUWP6nzp7a/MNzE9QfxdVuL0QNVYSHr3klUtXExcM5GvidjnCdH2dHGmGnrtt0pM90
+         yiTbQidfhVScP6KeQwzrmPOnSkm/5T0K0rOyTyOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Jann Horn <jannh@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.20 340/352] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
-Date:   Mon, 11 Feb 2019 15:19:27 +0100
-Message-Id: <20190211141908.813141047@linuxfoundation.org>
+        stable@vger.kernel.org, Guan Yung Tseng <guan.yung.tseng@ni.com>,
+        "KHUENY.Gerhard" <Gerhard.KHUENY@bachmann.info>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.20 349/352] serial: 8250_pci: Make PCI class test non fatal
+Date:   Mon, 11 Feb 2019 15:19:36 +0100
+Message-Id: <20190211141909.382962797@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,57 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
+commit 824d17c57b0abbcb9128fb3f7327fae14761914b upstream.
 
-kvm_ioctl_create_device() does the following:
+As has been reported the National Instruments serial cards have broken
+PCI class.
 
-1. creates a device that holds a reference to the VM object (with a borrowed
-   reference, the VM's refcount has not been bumped yet)
-2. initializes the device
-3. transfers the reference to the device to the caller's file descriptor table
-4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
-   reference
+The commit 7d8905d06405
 
-The ownership transfer in step 3 must not happen before the reference to the VM
-becomes a proper, non-borrowed reference, which only happens in step 4.
-After step 3, an attacker can close the file descriptor and drop the borrowed
-reference, which can cause the refcount of the kvm object to drop to zero.
+  ("serial: 8250_pci: Enable device after we check black list")
 
-This means that we need to grab a reference for the device before
-anon_inode_getfd(), otherwise the VM can disappear from under us.
+made the PCI class check mandatory for the case when device is listed in
+a quirk list.
 
-Fixes: 852b6d57dc7f ("kvm: add device control API")
-Cc: stable@kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Make PCI class test non fatal to allow broken card be enumerated.
+
+Fixes: 7d8905d06405 ("serial: 8250_pci: Enable device after we check black list")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: Guan Yung Tseng <guan.yung.tseng@ni.com>
+Tested-by: Guan Yung Tseng <guan.yung.tseng@ni.com>
+Tested-by: KHUENY.Gerhard <Gerhard.KHUENY@bachmann.info>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/kvm_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_pci.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2919,8 +2919,10 @@ static int kvm_ioctl_create_device(struc
- 	if (ops->init)
- 		ops->init(dev);
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -3420,6 +3420,11 @@ static int
+ serial_pci_guess_board(struct pci_dev *dev, struct pciserial_board *board)
+ {
+ 	int num_iomem, num_port, first_port = -1, i;
++	int rc;
++
++	rc = serial_pci_is_class_communication(dev);
++	if (rc)
++		return rc;
  
-+	kvm_get_kvm(kvm);
- 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
- 	if (ret < 0) {
-+		kvm_put_kvm(kvm);
- 		mutex_lock(&kvm->lock);
- 		list_del(&dev->vm_node);
- 		mutex_unlock(&kvm->lock);
-@@ -2928,7 +2930,6 @@ static int kvm_ioctl_create_device(struc
- 		return ret;
- 	}
+ 	/*
+ 	 * Should we try to make guesses for multiport serial devices later?
+@@ -3647,10 +3652,6 @@ pciserial_init_one(struct pci_dev *dev,
  
--	kvm_get_kvm(kvm);
- 	cd->fd = ret;
- 	return 0;
- }
+ 	board = &pci_boards[ent->driver_data];
+ 
+-	rc = serial_pci_is_class_communication(dev);
+-	if (rc)
+-		return rc;
+-
+ 	rc = serial_pci_is_blacklisted(dev);
+ 	if (rc)
+ 		return rc;
 
 
