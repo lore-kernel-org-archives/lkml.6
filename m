@@ -2,109 +2,102 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A29C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19C8C4151A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212EE2054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0129218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JFKeaZqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbfBKVxe (ORCPT
+        id S1727057AbfBKWAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:53:34 -0500
-Received: from gateway36.websitewelcome.com ([50.116.126.2]:22783 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727141AbfBKVxe (ORCPT
+        Mon, 11 Feb 2019 17:00:01 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39329 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfBKWAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:53:34 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 9C589400C8FB6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:07:38 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tJW9gAPfPiQertJW9gQ3Om; Mon, 11 Feb 2019 15:53:33 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=59336 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtJW8-003w2J-Hj; Mon, 11 Feb 2019 15:53:32 -0600
-Date:   Mon, 11 Feb 2019 15:53:34 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Stefan Achatz <erazor_de@users.sourceforge.net>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] HID: roccat: Mark expected switch fall-through
-Message-ID: <20190211215334.GA6216@embeddedor>
+        Mon, 11 Feb 2019 17:00:00 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so475157wra.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 13:59:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9j6arYV5oPSo1evTW/g+5CNWYkpQXSJzF8KLWrEz4EM=;
+        b=JFKeaZqsMP57hGgCzSjlriqO35PCARns0ukYHF1y5+qHvNLziRjGrLCrCwec01pHNW
+         Dzdqsf0x4PEEUKcVnlTMCn7cV3pkYgummcAFb5GfsPOAN1Heowb+dH4ORiY4e+JJs3w7
+         lvLJtgGHHfYTSumoIvdcrXeT4sjVB3y9ORC2mVOJTEu5L0C7NzMUUJu5K/BZ6pRbOvmb
+         SP7AcUJnm0bDvRyulxNZdYwDcOUu+CeX0rI9rvf+0dRCBOf9e8rbQHD30nTmdjOWqhNu
+         Nhs8zlXsbvi7bMSq4wzk/hg5HJcDqKTdlguoHFLPbCXdN8mjrCUVxzpbx6wopB3Aguzl
+         8jaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9j6arYV5oPSo1evTW/g+5CNWYkpQXSJzF8KLWrEz4EM=;
+        b=JvlmdPGCVk796BIG23FoeO4c1PL+Xn7+G0VDmd6TxmFnJU5FXOMfsA5BrYjcIWI7wo
+         91rDVPwZWO0SX6CwII+Di2dDR+1ucG6cvePVMdtsgsB0AOI5GYgAcOgDvI3iLmaEmMUj
+         FiWL/p/B7ZIGMmwnySDVQuuzFbsXzpwG1I46PLOqS4FvCHbBfjxX5yHeEDsZRQIvt56I
+         fz6JupWHlnBA0LsRgN7HhTM4qHnimMA5pW3TIn/ovnruItJlcx+Uu5IR6kQV9yO8PHNm
+         gFO6RJyWp5UBNwiyh9wgtsgwF3Y7lSbz4SAaJmfNZGZWs5fPQpX5N6XB9le+DhJgg6Cb
+         a3dg==
+X-Gm-Message-State: AHQUAuYeEYjdGcx9v5zAqjYWlx1cnRhqcmjEmxH+4MGSbfkd65VFxV3e
+        4yyKLYDVQ3dVDXZylUJs8e6CTw==
+X-Google-Smtp-Source: AHgI3Ib0EaVpTVNKKkwVXXzcVygK8gOvWKEzBVqt3UqLkErRFV5ycOKGB6j6GwVyXsxz1AhNvWfs7Q==
+X-Received: by 2002:adf:e548:: with SMTP id z8mr315108wrm.52.1549922398596;
+        Mon, 11 Feb 2019 13:59:58 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
+        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.13.59.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 13:59:57 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Qian Cai <cai@lca.pw>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 0/5] kasan: more tag based mode fixes
+Date:   Mon, 11 Feb 2019 22:59:49 +0100
+Message-Id: <cover.1549921721.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtJW8-003w2J-Hj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:59336
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Andrey Konovalov (5):
+  kasan: fix assigning tags twice
+  kasan, kmemleak: pass tagged pointers to kmemleak
+  kmemleak: account for tagged pointers when calculating pointer range
+  kasan, slub: move kasan_poison_slab hook before page_address
+  kasan, slub: fix conflicts with CONFIG_SLAB_FREELIST_HARDENED
 
-This patch fixes the following warning:
+ mm/kasan/common.c | 29 +++++++++++++++++------------
+ mm/kmemleak.c     | 10 +++++++---
+ mm/slab.h         |  6 ++----
+ mm/slab_common.c  |  2 +-
+ mm/slub.c         | 32 +++++++++++++++-----------------
+ 5 files changed, 42 insertions(+), 37 deletions(-)
 
-drivers/hid/hid-roccat-kone.c: In function ‘kone_keep_values_up_to_date’:
-drivers/hid/hid-roccat-kone.c:784:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   kone->actual_dpi = kone->profiles[event->value - 1].
-   ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     startup_dpi;
-     ~~~~~~~~~~~
-drivers/hid/hid-roccat-kone.c:786:2: note: here
-  case kone_mouse_event_osd_profile:
-  ^~~~
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/hid/hid-roccat-kone.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/hid/hid-roccat-kone.c b/drivers/hid/hid-roccat-kone.c
-index bf4675a27396..c4dd6162c1d6 100644
---- a/drivers/hid/hid-roccat-kone.c
-+++ b/drivers/hid/hid-roccat-kone.c
-@@ -783,6 +783,7 @@ static void kone_keep_values_up_to_date(struct kone_device *kone,
- 	case kone_mouse_event_switch_profile:
- 		kone->actual_dpi = kone->profiles[event->value - 1].
- 				startup_dpi;
-+		/* fall through */
- 	case kone_mouse_event_osd_profile:
- 		kone->actual_profile = event->value;
- 		break;
 -- 
-2.20.1
+2.20.1.791.gb4d0f1c61a-goog
 
