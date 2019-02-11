@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3995FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73061C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077032081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4532D206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896473;
-	bh=A0EQBWxc2hsjEA6TLwLgY/FwBayOJ2qlqbRlUQM1sjI=;
+	s=default; t=1549896477;
+	bh=RYk0ttMhEbomowZwQq25TOJMnMKz+7f5eTIkVHuTCg0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uh7nwtOUCrLWVpLFfnb4m4c6cXqHC5Dxpm5ydUjfh5W63RjYAJgH0Yhl/NzOvtdcp
-	 R+xmFcyD9Jwki5xhsLdeaULXgsU9OWSls8toHPN3EaTKCv36MXjHSPa7Ok3f+44YRb
-	 wG249x6PI9wZPjXAoIJ+6cTJ0pkmDpOo5V3NEJW4=
+	b=yk5hz026hdYnwBWaelA7hS/DMK8UmRlh3XNUXOcHKEkWW8wajbCqOlTdJOUMCOTn+
+	 8lOtzAkdzBXeobRHxO3qNMiTjQWU2eRuNOTUnNDksGn6f0o06+Cf5djYsauEXv0+zx
+	 qiXVCQj7PD8GyKyhiI8cq2PvAUil3c6NoPq6Wm5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387593AbfBKOrv (ORCPT
+        id S2387602AbfBKOr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:47:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32936 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387581AbfBKOrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:48 -0500
+        id S2387585AbfBKOru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 583E0206BA;
-        Mon, 11 Feb 2019 14:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1238F2081B;
+        Mon, 11 Feb 2019 14:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896466;
-        bh=A0EQBWxc2hsjEA6TLwLgY/FwBayOJ2qlqbRlUQM1sjI=;
+        s=default; t=1549896469;
+        bh=RYk0ttMhEbomowZwQq25TOJMnMKz+7f5eTIkVHuTCg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPyeIvwMceK9J5YD5qtdHRzb3+U1h4GT05GAaG920L+1upOMl2LP3wpXK0u60e7dk
-         3bFzgd++iefb2qb9syyLaxmei4tHNF3Jo8ZMvPe5qvnRMrey2nIrHe2GI2/fredPrL
-         cHzhLKDOBa9ojUbXwlLWQQvqcXs8I2t3cTgU/SxY=
+        b=jTd9BxKO2J5TiXFcS9/7RWeOxE5jkxI/hJcUFYu7WcuR3OHM3ToCzjwhIUct+l8SI
+         vpCGHiR4aYKGVZwc3yPWggQAomgIPNqmfwrolMj0dZTj7nTt2PkcJ9ucSYV24AfrfS
+         eJ+bw4DbSJTahc6k/J8otVGLleDRO+KrQ8I32J3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Naftali Goldstein <naftali.goldstein@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 152/313] btrfs: harden agaist duplicate fsid on scanned devices
-Date:   Mon, 11 Feb 2019 15:17:12 +0100
-Message-Id: <20190211141903.700518620@linuxfoundation.org>
+Subject: [PATCH 4.19 187/313] iwlwifi: mvm: fix setting HE ppe FW config
+Date:   Mon, 11 Feb 2019 15:17:47 +0100
+Message-Id: <20190211141905.767129734@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,114 +68,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a9261d4125c97ce8624e9941b75dee1b43ad5df9 ]
+[ Upstream commit 189b8d441b0f7825f0b4278851c52afaa0515ed2 ]
 
-It's not that impossible to imagine that a device OR a btrfs image is
-copied just by using the dd or the cp command. Which in case both the
-copies of the btrfs will have the same fsid. If on the system with
-automount enabled, the copied FS gets scanned.
+The FW expects to get the ppe value for each NSS-BW pair in the same
+format as in the he phy capabilities IE, which means that a value of 0
+implies ppe should be used for BPSK (mcs 0). If there are no PPE
+thresholds in the IE, or if for some NSS-RU pair there's no threshold
+set for it (this could happen because it's a variable-sized field), it
+means no PPE should not be used for that pair, so the value sent to FW
+should be 7 which corresponds to "none".
 
-We have a known bug in btrfs, that we let the device path be changed
-after the device has been mounted. So using this loop hole the new
-copied device would appears as if its mounted immediately after it's
-been copied.
-
-For example:
-
-Initially.. /dev/mmcblk0p4 is mounted as /
-
-  $ lsblk
-  NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-  mmcblk0     179:0    0 29.2G  0 disk
-  |-mmcblk0p4 179:4    0    4G  0 part /
-  |-mmcblk0p2 179:2    0  500M  0 part /boot
-  |-mmcblk0p3 179:3    0  256M  0 part [SWAP]
-  `-mmcblk0p1 179:1    0  256M  0 part /boot/efi
-
-  $ btrfs fi show
-     Label: none  uuid: 07892354-ddaa-4443-90ea-f76a06accaba
-     Total devices 1 FS bytes used 1.40GiB
-     devid    1 size 4.00GiB used 3.00GiB path /dev/mmcblk0p4
-
-Copy mmcblk0 to sda
-
-  $ dd if=/dev/mmcblk0 of=/dev/sda
-
-And immediately after the copy completes the change in the device
-superblock is notified which the automount scans using btrfs device scan
-and the new device sda becomes the mounted root device.
-
-  $ lsblk
-  NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-  sda           8:0    1 14.9G  0 disk
-  |-sda4        8:4    1    4G  0 part /
-  |-sda2        8:2    1  500M  0 part
-  |-sda3        8:3    1  256M  0 part
-  `-sda1        8:1    1  256M  0 part
-  mmcblk0     179:0    0 29.2G  0 disk
-  |-mmcblk0p4 179:4    0    4G  0 part
-  |-mmcblk0p2 179:2    0  500M  0 part /boot
-  |-mmcblk0p3 179:3    0  256M  0 part [SWAP]
-  `-mmcblk0p1 179:1    0  256M  0 part /boot/efi
-
-  $ btrfs fi show /
-    Label: none  uuid: 07892354-ddaa-4443-90ea-f76a06accaba
-    Total devices 1 FS bytes used 1.40GiB
-    devid    1 size 4.00GiB used 3.00GiB path /dev/sda4
-
-The bug is quite nasty that you can't either unmount /dev/sda4 or
-/dev/mmcblk0p4. And the problem does not get solved until you take sda
-out of the system on to another system to change its fsid using the
-'btrfstune -u' command.
-
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 514c30696fbc ("iwlwifi: add support for IEEE802.11ax")
+Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/fw/api/mac.h   | 2 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 8 +++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 0ee1cd4b56fb..285f64f2de5f 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -850,6 +850,35 @@ static noinline struct btrfs_device *device_list_add(const char *path,
- 			return ERR_PTR(-EEXIST);
- 		}
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/mac.h b/drivers/net/wireless/intel/iwlwifi/fw/api/mac.h
+index 55594c93b014..47dbd2d3e3b4 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/mac.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/mac.h
+@@ -442,7 +442,7 @@ struct iwl_he_backoff_conf {
+  * Support for Nss x BW (or RU) matrix:
+  *	(0=SISO, 1=MIMO2) x (0-20MHz, 1-40MHz, 2-80MHz, 3-160MHz)
+  * Each entry contains 2 QAM thresholds for 8us and 16us:
+- *	0=BPSK, 1=QPSK, 2=16QAM, 3=64QAM, 4=256QAM, 5=1024QAM, 6/7=RES
++ *	0=BPSK, 1=QPSK, 2=16QAM, 3=64QAM, 4=256QAM, 5=1024QAM, 6=RES, 7=NONE
+  * i.e. QAM_th1 < QAM_th2 such if TX uses QAM_tx:
+  *	QAM_tx < QAM_th1            --> PPE=0us
+  *	QAM_th1 <= QAM_tx < QAM_th2 --> PPE=8us
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+index 9a764af30f36..0f357e8c4f94 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -1997,7 +1997,13 @@ static void iwl_mvm_cfg_he_sta(struct iwl_mvm *mvm,
+ 	if (sta->he_cap.he_cap_elem.mac_cap_info[4] & IEEE80211_HE_MAC_CAP4_BQR)
+ 		sta_ctxt_cmd.htc_flags |= cpu_to_le32(IWL_HE_HTC_BQR_SUPP);
  
-+		/*
-+		 * We are going to replace the device path for a given devid,
-+		 * make sure it's the same device if the device is mounted
-+		 */
-+		if (device->bdev) {
-+			struct block_device *path_bdev;
+-	/* If PPE Thresholds exist, parse them into a FW-familiar format */
++	/*
++	 * Initialize the PPE thresholds to "None" (7), as described in Table
++	 * 9-262ac of 80211.ax/D3.0.
++	 */
++	memset(&sta_ctxt_cmd.pkt_ext, 7, sizeof(sta_ctxt_cmd.pkt_ext));
 +
-+			path_bdev = lookup_bdev(path);
-+			if (IS_ERR(path_bdev)) {
-+				mutex_unlock(&fs_devices->device_list_mutex);
-+				return ERR_CAST(path_bdev);
-+			}
-+
-+			if (device->bdev != path_bdev) {
-+				bdput(path_bdev);
-+				mutex_unlock(&fs_devices->device_list_mutex);
-+				btrfs_warn_in_rcu(device->fs_info,
-+			"duplicate device fsid:devid for %pU:%llu old:%s new:%s",
-+					disk_super->fsid, devid,
-+					rcu_str_deref(device->name), path);
-+				return ERR_PTR(-EEXIST);
-+			}
-+			bdput(path_bdev);
-+			btrfs_info_in_rcu(device->fs_info,
-+				"device fsid %pU devid %llu moved old:%s new:%s",
-+				disk_super->fsid, devid,
-+				rcu_str_deref(device->name), path);
-+		}
-+
- 		name = rcu_string_strdup(path, GFP_NOFS);
- 		if (!name) {
- 			mutex_unlock(&fs_devices->device_list_mutex);
++	/* If PPE Thresholds exist, parse them into a FW-familiar format. */
+ 	if (sta->he_cap.he_cap_elem.phy_cap_info[6] &
+ 	    IEEE80211_HE_PHY_CAP6_PPE_THRESHOLD_PRESENT) {
+ 		u8 nss = (sta->he_cap.ppe_thres[0] &
 -- 
 2.19.1
 
