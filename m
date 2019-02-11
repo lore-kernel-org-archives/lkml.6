@@ -4,52 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EC0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27240C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72AAC222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE2D222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899754;
-	bh=fvAB24qsUs5FtDLiTihRqb0UUJCyd5X/kqXrTIZp1Ys=;
+	s=default; t=1549899763;
+	bh=hYqBgU++51OcE1LAiYfFksXjERG8JiiyYSBoHCnBCbc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hp9W392JxXXkHkRV51sYhl8SY3+kbUws8TtrFa8itBORQARZz6RnRymJdRf2bWpPn
-	 pXvNBsfcYsC3MdN0QJ93Hv89hVJ5zWpGDHBZPdIFclSfXXo8bBP2T66QLlVvxORiW7
-	 ViXZxhiD9PzQhorhnZKF9Mr+iI2TQZBLkcTnczVM=
+	b=tVQTGTYxtUPPg0c1hUQJmh0rfab4QnWateM2QE4mKihH9qh6YYsfBMFfVQ9cNGqkZ
+	 hcVPQaiSi9+lfioyTXqzpmz2hBiDL8FDVfeY1cz5QKifMyBFsCEFGniC3cCxpSAKzO
+	 8u/AR5mE5wx0loFTg/U+oWVMkWCwNoN/jztxnshk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731907AbfBKOq0 (ORCPT
+        id S1733206AbfBKOqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:46:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:46:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733205AbfBKOqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:46:22 -0500
+        id S1732431AbfBKOqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70BC0206BA;
-        Mon, 11 Feb 2019 14:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E025206BA;
+        Mon, 11 Feb 2019 14:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896382;
-        bh=fvAB24qsUs5FtDLiTihRqb0UUJCyd5X/kqXrTIZp1Ys=;
+        s=default; t=1549896376;
+        bh=hYqBgU++51OcE1LAiYfFksXjERG8JiiyYSBoHCnBCbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uh207h9Ug8Y0ZqFrPcnEZA5JwGKpUHiO5dzPDCpCkiugA4S8zmAdjf1aksmvqG7/y
-         BF01zJBqdMoC9IrRCjrBmnGadP8I8qxNOSCGTI1yJGm+IdK6CdDizLpkppxiUF2yai
-         x44ZeUNYnCcoJiwaa8Cg3bJaNmo5E0WxRFQ9bw4A=
+        b=rj0b6Y0xRPOy94v/ICbZRtVsgRrC8IAqejaQE7iP5LfAzPlr74fAOAtA2utr+TQBP
+         8BZvcdlQZvwe0u7/n1igTRlWjoLbcuZ9DZ95Pv4zE230jQqZuEomowq2/M5hA55MfS
+         Q03qKNfcttrsgJhQDzYIg18hiIftUv9cMAZaSoR0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Michael Mueller <mimu@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 166/313] livepatch: check kzalloc return values
-Date:   Mon, 11 Feb 2019 15:17:26 +0100
-Message-Id: <20190211141904.531007916@linuxfoundation.org>
+Subject: [PATCH 4.19 164/313] KVM: s390: unregister debug feature on failing arch init
+Date:   Mon, 11 Feb 2019 15:17:24 +0100
+Message-Id: <20190211141904.412461815@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,57 +69,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
+[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
 
-kzalloc() return should always be checked - notably in example code
-where this may be seen as reference. On failure of allocation in
-livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
-allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
-catching this) and NULL returned.
+Make sure the debug feature and its allocated resources get
+released upon unsuccessful architecture initialization.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+A related indication of the issue will be reported as kernel
+message.
+
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
- samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
- 2 files changed, 9 insertions(+)
+ arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 49b13553eaae..e8f1bd6b29b1 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -89,6 +89,11 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
- 	 * pointer to handle resource release.
- 	 */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
-+	}
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index ac5da6b0b862..6aacb8d3dd9e 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -416,19 +416,30 @@ static void kvm_s390_cpu_feat_init(void)
+ 
+ int kvm_arch_init(void *opaque)
+ {
++	int rc;
 +
- 	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
- 			 shadow_leak_ctor, leak);
+ 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
+ 	if (!kvm_s390_dbf)
+ 		return -ENOMEM;
  
-diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
-index 4c54b250332d..4aa8a88d3cd6 100644
---- a/samples/livepatch/livepatch-shadow-mod.c
-+++ b/samples/livepatch/livepatch-shadow-mod.c
-@@ -118,6 +118,10 @@ noinline struct dummy *dummy_alloc(void)
+ 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
+-		debug_unregister(kvm_s390_dbf);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto out_debug_unreg;
+ 	}
  
- 	/* Oops, forgot to save leak! */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
+ 	kvm_s390_cpu_feat_init();
+ 
+ 	/* Register floating interrupt controller interface. */
+-	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	if (rc) {
++		pr_err("Failed to register FLIC rc=%d\n", rc);
++		goto out_debug_unreg;
 +	}
++	return 0;
++
++out_debug_unreg:
++	debug_unregister(kvm_s390_dbf);
++	return rc;
+ }
  
- 	pr_info("%s: dummy @ %p, expires @ %lx\n",
- 		__func__, d, d->jiffies_expire);
+ void kvm_arch_exit(void)
 -- 
 2.19.1
 
