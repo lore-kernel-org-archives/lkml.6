@@ -2,257 +2,366 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933ABC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30003C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 578F620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="xyuciNjk"
+	by mail.kernel.org (Postfix) with ESMTP id E7EF620855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549862339;
+	bh=sLtQvk20ns1oSP8Q9sQvqJkAwlCLaGet1Y13+6s646A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pOkYP2pnY9n+/SX5yJJLlGbtIezordFYRT/U3xVlQ0hiSKnn5Moi6IGEa5F8MzcHl
+	 yu5EEs9DPzK9RVPSGfdKxux2ndtZ12rdBaAR6f3kgOiRL58rNQOPekj7hhToNU6lQM
+	 4NSEnuO7ANSNLeu9WPNVyhzKuvkjjvW5K4URi1lU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBKFSj (ORCPT
+        id S1726974AbfBKFS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:18:39 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38250 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfBKFSi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:18:38 -0500
-Received: by mail-pg1-f193.google.com with SMTP id g189so4454144pgc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 21:18:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=P/nz3ACoxpLDqb0eHS2Lbfh7g08M62jcwE0fE5p6slQ=;
-        b=xyuciNjkFWciBsSx/is2lBM2iiUNDec2HmbyGj9VTUJYEYAUDuSAr19G2O+5RQXZja
-         kDN98a6hx1onWzTw7CzmW+8qMZmYMnWAibmq/6o1dY+qqCj/M3v6KtlTjBFVdVkmnHU7
-         0aadpz2eqQLSu6Ist19NGgHJ/rqUS0wyDRkHsl/XcQorAL9QaroZvLPCNGCdzSNG0/sD
-         jkdB1uk7FF3ixo/nUGKC57zIIWHDq+mUzpn29lf3AgAXtDae1qKETi1id1Y4c6r3ZFRG
-         fr2FI8bBDK7khVD+ie9FEuGxSE6QU26XGV9pCOiVMG3MKav8TqVqSrNRJ0uvlV/Q4j8B
-         o21Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=P/nz3ACoxpLDqb0eHS2Lbfh7g08M62jcwE0fE5p6slQ=;
-        b=fwazTZ20cy9MPtItikRRZ7Zkr7sJ4zl5fJUr/qE+p7Pgar1BFtbV6eyhRoxfGxgZHE
-         gfiN5HD3KiG0t7Q6YwccwUEN5U0Qd2k/uqB2f1EOvktdNkdB41inGoCfrTuk3DzxBR5a
-         mxghDU77pdlU+CsL4RW5tkSTIm5XENur3MslGY6zIpyW0zPMaXHvK9C1mPynHBhUVlqL
-         Bo1A+qFV9O9TzanHw9qlHbbcpezMGqsRG47WXwrWUEVV3aTdGsNtgwz48wRDJE3PNtMf
-         0asubPirDwRcngc0gEQNoRRzF/TMhn6SbBbS0F1C7J3USESYioS7xf4gW0m8lhFYlQQE
-         zjnA==
-X-Gm-Message-State: AHQUAuYI8m09lzvfrKj1R/s4IfjiRLf5rU2uwv1DXcPhPAzaGeSm4DN+
-        eokQOvXYiOcTryoj8QL7UJoSjw==
-X-Google-Smtp-Source: AHgI3IZOahjUxu+t0qhpsn/mwzusbGjfiQw5XyvsSy/I2w+d8AyD7+Aa4/VTebWQOBBX1/tTqaH/jA==
-X-Received: by 2002:a63:61d8:: with SMTP id v207mr7347489pgb.308.1549862317394;
-        Sun, 10 Feb 2019 21:18:37 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:5d4d:83bf:b51b:8718? ([2601:646:c200:7429:5d4d:83bf:b51b:8718])
-        by smtp.gmail.com with ESMTPSA id l11sm11539621pff.65.2019.02.10.21.18.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 21:18:35 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-Date:   Sun, 10 Feb 2019 21:18:34 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com> <20190129003422.9328-6-rick.p.edgecombe@intel.com> <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-To:     Nadav Amit <nadav.amit@gmail.com>
+        Mon, 11 Feb 2019 00:18:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfBKFS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 00:18:57 -0500
+Received: from localhost (unknown [117.99.91.83])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 948E020855;
+        Mon, 11 Feb 2019 05:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549862335;
+        bh=sLtQvk20ns1oSP8Q9sQvqJkAwlCLaGet1Y13+6s646A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0BJ1nxQQyM+oxVACLgSlma9krPyMgyIm+mHwCzWQLkT/2Y+84mVGhYIRTPH2CT9ZA
+         duTuyaQ28ALh4leZrrjtDA5vh06J1E9AtuHfSb2APdbKLV6czJcfK1EVth4ueqkK6u
+         jZhlygj4MqbspRq1/LhFxUEm613/GBRQ8MYZ6XBs=
+Date:   Mon, 11 Feb 2019 10:48:46 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: Make common clk_hw registrations
+Message-ID: <20190211051846.GO4296@vkoul-mobl>
+References: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10-02-19, 13:14, Jeffrey Hugo wrote:
+> Several clock controller drivers define a list of clk_hw devices, and then
+> register those devices in probe() before using common code to process the
+> rest of initialization.  Extend the common code to accept a list of clk_hw
+> devices to process, thus eliminating many duplicate implementations.
+
+Thanks, this looks nice to me. I verfified this on couple of devices.
 
 
-On Feb 10, 2019, at 4:39 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Tested-by: Vinod Koul <vkoul@kernel.org>
 
->> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe <rick.p.edgecombe@intel.com> w=
-rote:
->>=20
->> From: Nadav Amit <namit@vmware.com>
->>=20
->> To prevent improper use of the PTEs that are used for text patching, we
->> want to use a temporary mm struct. We initailize it by copying the init
->> mm.
->>=20
->> The address that will be used for patching is taken from the lower area
->> that is usually used for the task memory. Doing so prevents the need to
->> frequently synchronize the temporary-mm (e.g., when BPF programs are
->> installed), since different PGDs are used for the task memory.
->>=20
->> Finally, we randomize the address of the PTEs to harden against exploits
->> that use these PTEs.
->>=20
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Dave Hansen <dave.hansen@intel.com>
->> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
->> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
->> Suggested-by: Andy Lutomirski <luto@kernel.org>
->> Signed-off-by: Nadav Amit <namit@vmware.com>
->> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->> ---
->> arch/x86/include/asm/pgtable.h       |  3 +++
->> arch/x86/include/asm/text-patching.h |  2 ++
->> arch/x86/kernel/alternative.c        |  3 +++
->> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
->> init/main.c                          |  3 +++
->> 5 files changed, 47 insertions(+)
->>=20
->> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtabl=
-e.h
->> index 40616e805292..e8f630d9a2ed 100644
->> --- a/arch/x86/include/asm/pgtable.h
->> +++ b/arch/x86/include/asm/pgtable.h
->> @@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_defaul=
-t(void)
->>    /* Default trampoline pgd value */
->>    trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
->> }
->> +
->> +void __init poking_init(void);
->> +
->> # ifdef CONFIG_RANDOMIZE_MEMORY
->> void __meminit init_trampoline(void);
->> # else
->> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/=
-text-patching.h
->> index f8fc8e86cf01..a75eed841eed 100644
->> --- a/arch/x86/include/asm/text-patching.h
->> +++ b/arch/x86/include/asm/text-patching.h
->> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opc=
-ode, size_t len);
->> extern int poke_int3_handler(struct pt_regs *regs);
->> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, voi=
-d *handler);
->> extern int after_bootmem;
->> +extern __ro_after_init struct mm_struct *poking_mm;
->> +extern __ro_after_init unsigned long poking_addr;
->>=20
->> #endif /* _ASM_X86_TEXT_PATCHING_H */
->> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.=
-c
->> index 12fddbc8c55b..ae05fbb50171 100644
->> --- a/arch/x86/kernel/alternative.c
->> +++ b/arch/x86/kernel/alternative.c
->> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, co=
-nst void *opcode,
->>    return addr;
->> }
->>=20
->> +__ro_after_init struct mm_struct *poking_mm;
->> +__ro_after_init unsigned long poking_addr;
->> +
->> static void *__text_poke(void *addr, const void *opcode, size_t len)
->> {
->>    unsigned long flags;
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index bccff68e3267..125c8c48aa24 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -53,6 +53,7 @@
->> #include <asm/init.h>
->> #include <asm/uv/uv.h>
->> #include <asm/setup.h>
->> +#include <asm/text-patching.h>
->>=20
->> #include "mm_internal.h"
->>=20
->> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
->>    return memory_block_size_probed;
->> }
->>=20
->> +/*
->> + * Initialize an mm_struct to be used during poking and a pointer to be u=
-sed
->> + * during patching.
->> + */
->> +void __init poking_init(void)
->> +{
->> +    spinlock_t *ptl;
->> +    pte_t *ptep;
->> +
->> +    poking_mm =3D copy_init_mm();
->> +    BUG_ON(!poking_mm);
->> +
->> +    /*
->> +     * Randomize the poking address, but make sure that the following pa=
-ge
->> +     * will be mapped at the same PMD. We need 2 pages, so find space fo=
-r 3,
->> +     * and adjust the address if the PMD ends after the first one.
->> +     */
->> +    poking_addr =3D TASK_UNMAPPED_BASE;
->> +    if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
->> +        poking_addr +=3D (kaslr_get_random_long("Poking") & PAGE_MASK) %=
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  drivers/clk/qcom/common.c       |  8 ++++++++
+>  drivers/clk/qcom/common.h       |  2 ++
+>  drivers/clk/qcom/gcc-ipq8074.c  | 10 ++--------
+>  drivers/clk/qcom/gcc-mdm9615.c  | 11 ++---------
+>  drivers/clk/qcom/gcc-msm8996.c  | 10 ++--------
+>  drivers/clk/qcom/gcc-msm8998.c  | 10 ++++++----
+>  drivers/clk/qcom/gcc-qcs404.c   |  9 ++-------
+>  drivers/clk/qcom/gcc-sdm660.c   | 11 +++--------
+>  drivers/clk/qcom/mmcc-msm8996.c | 10 ++--------
+>  9 files changed, 29 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 0a48ed5..a6b2f861 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -231,6 +231,8 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  	struct gdsc_desc *scd;
+>  	size_t num_clks = desc->num_clks;
+>  	struct clk_regmap **rclks = desc->clks;
+> +	size_t num_clk_hws = desc->num_clk_hws;
+> +	struct clk_hw **clk_hws = desc->clk_hws;
+>  
+>  	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+>  	if (!cc)
+> @@ -269,6 +271,12 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  
+>  	qcom_cc_drop_protected(dev, cc);
+>  
+> +	for (i = 0; i < num_clk_hws; i++) {
+> +		ret = devm_clk_hw_register(dev, clk_hws[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	for (i = 0; i < num_clks; i++) {
+>  		if (!rclks[i])
+>  			continue;
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 4aa33ee..1e2a8bd 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -27,6 +27,8 @@ struct qcom_cc_desc {
+>  	size_t num_resets;
+>  	struct gdsc **gdscs;
+>  	size_t num_gdscs;
+> +	struct clk_hw **clk_hws;
+> +	size_t num_clk_hws;
+>  };
+>  
+>  /**
+> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> index 505c626..0e32892 100644
+> --- a/drivers/clk/qcom/gcc-ipq8074.c
+> +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> @@ -4715,18 +4715,12 @@ enum {
+>  	.num_clks = ARRAY_SIZE(gcc_ipq8074_clks),
+>  	.resets = gcc_ipq8074_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
+> +	.clk_hws = gcc_ipq8074_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_ipq8074_hws),
+>  };
+>  
+>  static int gcc_ipq8074_probe(struct platform_device *pdev)
+>  {
+> -	int ret, i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
+> -		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_probe(pdev, &gcc_ipq8074_desc);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+> index 849046f..8c6d931 100644
+> --- a/drivers/clk/qcom/gcc-mdm9615.c
+> +++ b/drivers/clk/qcom/gcc-mdm9615.c
+> @@ -1702,6 +1702,8 @@ enum {
+>  	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
+>  	.resets = gcc_mdm9615_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
+> +	.clk_hws = gcc_mdm9615_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_mdm9615_hws),
+>  };
+>  
+>  static const struct of_device_id gcc_mdm9615_match_table[] = {
+> @@ -1712,21 +1714,12 @@ enum {
+>  
+>  static int gcc_mdm9615_probe(struct platform_device *pdev)
+>  {
+> -	struct device *dev = &pdev->dev;
+>  	struct regmap *regmap;
+> -	int ret;
+> -	int i;
+>  
+>  	regmap = qcom_cc_map(pdev, &gcc_mdm9615_desc);
+>  	if (IS_ERR(regmap))
+>  		return PTR_ERR(regmap);
+>  
+> -	for (i = 0; i < ARRAY_SIZE(gcc_mdm9615_hws); i++) {
+> -		ret = devm_clk_hw_register(dev, gcc_mdm9615_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_really_probe(pdev, &gcc_mdm9615_desc, regmap);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+> index 9d13617..4632b92 100644
+> --- a/drivers/clk/qcom/gcc-msm8996.c
+> +++ b/drivers/clk/qcom/gcc-msm8996.c
+> @@ -3656,6 +3656,8 @@ enum {
+>  	.num_resets = ARRAY_SIZE(gcc_msm8996_resets),
+>  	.gdscs = gcc_msm8996_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(gcc_msm8996_gdscs),
+> +	.clk_hws = gcc_msm8996_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_msm8996_hws),
+>  };
+>  
+>  static const struct of_device_id gcc_msm8996_match_table[] = {
+> @@ -3666,8 +3668,6 @@ enum {
+>  
+>  static int gcc_msm8996_probe(struct platform_device *pdev)
+>  {
+> -	struct device *dev = &pdev->dev;
+> -	int i, ret;
+>  	struct regmap *regmap;
+>  
+>  	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
+> @@ -3680,12 +3680,6 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+>  	 */
+>  	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+>  
+> -	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
+> -		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+> index 3cbabbb..c240fba 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2959,6 +2959,10 @@ enum {
+>  	.fast_io	= true,
+>  };
+>  
+> +static struct clk_hw *gcc_msm8998_hws[] = {
+> +	&xo.hw,
+> +};
+> +
+>  static const struct qcom_cc_desc gcc_msm8998_desc = {
+>  	.config = &gcc_msm8998_regmap_config,
+>  	.clks = gcc_msm8998_clocks,
+> @@ -2967,6 +2971,8 @@ enum {
+>  	.num_resets = ARRAY_SIZE(gcc_msm8998_resets),
+>  	.gdscs = gcc_msm8998_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(gcc_msm8998_gdscs),
+> +	.clk_hws = gcc_msm8998_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_msm8998_hws),
+>  };
+>  
+>  static int gcc_msm8998_probe(struct platform_device *pdev)
+> @@ -2986,10 +2992,6 @@ static int gcc_msm8998_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = devm_clk_hw_register(&pdev->dev, &xo.hw);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return qcom_cc_really_probe(pdev, &gcc_msm8998_desc, regmap);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+> index 64da032..a7b2fe0 100644
+> --- a/drivers/clk/qcom/gcc-qcs404.c
+> +++ b/drivers/clk/qcom/gcc-qcs404.c
+> @@ -2692,6 +2692,8 @@ enum {
+>  	.num_clks = ARRAY_SIZE(gcc_qcs404_clocks),
+>  	.resets = gcc_qcs404_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_qcs404_resets),
+> +	.clk_hws = gcc_qcs404_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_qcs404_hws),
+>  };
+>  
+>  static const struct of_device_id gcc_qcs404_match_table[] = {
+> @@ -2703,7 +2705,6 @@ enum {
+>  static int gcc_qcs404_probe(struct platform_device *pdev)
+>  {
+>  	struct regmap *regmap;
+> -	int ret, i;
+>  
+>  	regmap = qcom_cc_map(pdev, &gcc_qcs404_desc);
+>  	if (IS_ERR(regmap))
+> @@ -2711,12 +2712,6 @@ static int gcc_qcs404_probe(struct platform_device *pdev)
+>  
+>  	clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_config);
+>  
+> -	for (i = 0; i < ARRAY_SIZE(gcc_qcs404_hws); i++) {
+> -		ret = devm_clk_hw_register(&pdev->dev, gcc_qcs404_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_really_probe(pdev, &gcc_qcs404_desc, regmap);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+> index ba239ea..8827db2 100644
+> --- a/drivers/clk/qcom/gcc-sdm660.c
+> +++ b/drivers/clk/qcom/gcc-sdm660.c
+> @@ -2420,6 +2420,8 @@ enum {
+>  	.num_resets = ARRAY_SIZE(gcc_sdm660_resets),
+>  	.gdscs = gcc_sdm660_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(gcc_sdm660_gdscs),
+> +	.clk_hws = gcc_sdm660_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_sdm660_hws),
+>  };
+>  
+>  static const struct of_device_id gcc_sdm660_match_table[] = {
+> @@ -2431,7 +2433,7 @@ enum {
+>  
+>  static int gcc_sdm660_probe(struct platform_device *pdev)
+>  {
+> -	int i, ret;
+> +	int ret;
+>  	struct regmap *regmap;
+>  
+>  	regmap = qcom_cc_map(pdev, &gcc_sdm660_desc);
+> @@ -2446,13 +2448,6 @@ static int gcc_sdm660_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Register the hws */
+> -	for (i = 0; i < ARRAY_SIZE(gcc_sdm660_hws); i++) {
+> -		ret = devm_clk_hw_register(&pdev->dev, gcc_sdm660_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_really_probe(pdev, &gcc_sdm660_desc, regmap);
+>  }
+>  
+> diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+> index 7d4ee10..7235510 100644
+> --- a/drivers/clk/qcom/mmcc-msm8996.c
+> +++ b/drivers/clk/qcom/mmcc-msm8996.c
+> @@ -3347,6 +3347,8 @@ enum {
+>  	.num_resets = ARRAY_SIZE(mmcc_msm8996_resets),
+>  	.gdscs = mmcc_msm8996_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(mmcc_msm8996_gdscs),
+> +	.clk_hws = mmcc_msm8996_hws,
+> +	.num_clk_hws = ARRAY_SIZE(mmcc_msm8996_hws),
+>  };
+>  
+>  static const struct of_device_id mmcc_msm8996_match_table[] = {
+> @@ -3357,8 +3359,6 @@ enum {
+>  
+>  static int mmcc_msm8996_probe(struct platform_device *pdev)
+>  {
+> -	struct device *dev = &pdev->dev;
+> -	int i, ret;
+>  	struct regmap *regmap;
+>  
+>  	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
+> @@ -3370,12 +3370,6 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+>  	/* Disable the NoC FSM for mmss_mmagic_cfg_ahb_clk */
+>  	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+>  
+> -	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
+> -		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
+>  }
+>  
+> -- 
+> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+> Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
 
->> +            (TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
->> +
->> +    if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
->> +        poking_addr +=3D PAGE_SIZE;
->=20
-> Further thinking about it, I think that allocating the virtual address for=
-
-> poking from user address-range is problematic. The user can set watchpoint=
-s
-> on different addresses, cause some static-keys to be enabled/disabled, and=
-
-> monitor the signals to derandomize the poking address.
->=20
-
-Hmm, I hadn=E2=80=99t thought about watchpoints. I=E2=80=99m not sure how mu=
-ch we care about possible derandomization like this, but we certainly don=E2=
-=80=99t want to send signals or otherwise malfunction.
-
-> Andy, I think you were pushing this change. Can I go back to use a vmalloc=
-=E2=80=99d
-> address instead, or do you have a better solution?
-
-Hmm. If we use a vmalloc address, we have to make sure it=E2=80=99s not actu=
-ally allocated. I suppose we could allocate one once at boot and use that.  W=
-e also have the problem that the usual APIs for handling =E2=80=9Cuser=E2=80=
-=9D addresses might assume they=E2=80=99re actually in the user range, altho=
-ugh this seems unlikely to be a problem in practice.  More seriously, though=
-, the code that manipulates per-mm paging structures assumes that *all* of t=
-he structures up to the top level are per-mm, and, if we use anything less t=
-han a private pgd, this isn=E2=80=99t the case.
-
-> I prefer not to
-> save/restore DR7, of course.
->=20
-
-I suspect we may want to use the temporary mm concept for EFI, too, so we ma=
-y want to just suck it up and save/restore DR7.  But only if a watchpoint is=
- in use, of course. I have an old patch I could dust off that tracks DR7 to m=
-ake things like this efficient.=
+-- 
+~Vinod
