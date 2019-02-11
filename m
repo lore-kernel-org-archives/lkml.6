@@ -2,58 +2,55 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DB3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A63C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED8992081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B81C420844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895804;
-	bh=9pYWwqcIkPJeWlyN8X03G8p494O0Vv3JS61uG3ViRiM=;
+	s=default; t=1549895808;
+	bh=4Z7xXJSBAiIX//hgcTI11DeoW7T3aDaTyf9TcJpSiZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t0r2c5x8DotzAIyQlRl5CRrJs1TbAVr3qYnpJTydHb0oC6GqqRamriUmU0OxEbmR7
-	 V+6sJHA36Z0X6whlydvVQF/NhWHxFt9SDMToZDdwswhtYfC/jSrloFMTH1HqpTDahs
-	 tZzqWJR8iz0LlOMUb9lsWrCpUX+c66Fznzo+LWek=
+	b=DJ6EpTTxGt2k22d3hPJ6z4OCBEtAezbKLpyygRa3YC5O9s5LxC98XmbbfViJ4Aby9
+	 X+xNwPaNQL5tMDseuFxxJ6lBj1n7mOuma+M5+hx82IFSJjGHJ+a9jJT7dX2ix875K7
+	 e3+jTxW5Y28fqU0K9jfeQ3ON2O0RsZoWD+8HkKvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbfBKOgm (ORCPT
+        id S1731327AbfBKOgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:36:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:36:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731290AbfBKOgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:36:40 -0500
+        id S1731312AbfBKOgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:36:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDA8720818;
-        Mon, 11 Feb 2019 14:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F64520700;
+        Mon, 11 Feb 2019 14:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895799;
-        bh=9pYWwqcIkPJeWlyN8X03G8p494O0Vv3JS61uG3ViRiM=;
+        s=default; t=1549895805;
+        bh=4Z7xXJSBAiIX//hgcTI11DeoW7T3aDaTyf9TcJpSiZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XQUmGA0xXRDXKH6GKi+A/iHtCpkWC9kZeFQ76UQymWaaBKLhK+K4v36Gj33/Uy1RN
-         lE3iNzUw5zIY29jBJ/dlZDEwQK6OFwHY9c4LREMdJJG/lIRLBPnxkqJukE+MLMzg3+
-         u5lwvl++n/rzWx1oxre0/U8E9AYM9t88Y24ultWw=
+        b=NJJu5i1FUg9lOm8Kl4kmNFoQz+JZFXyvBH5ZrOmAmtjc2svGM1DQCxPLABGcCL0qW
+         r6rzS1IT/Rc9vOhLv6iEdBAu2CYSIo6yWdle3xDHluM/oz1hzhEmZ1Ivct6NXdGehW
+         RozTqL/eIULeEXJAwDAJ0y2N1SZINDIL2P31DmSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Florian Meier <florian.meier@koalo.de>,
-        Clive Messer <clive.m.messer@gmail.com>,
-        Matthias Reichl <hias@horus.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Kauer <florian.kauer@koalo.de>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.20 326/352] dmaengine: bcm2835: Fix abort of transactions
-Date:   Mon, 11 Feb 2019 15:19:13 +0100
-Message-Id: <20190211141907.585026374@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Sebastian Sewior <bigeasy@linutronix.de>
+Subject: [PATCH 4.20 328/352] futex: Handle early deadlock return correctly
+Date:   Mon, 11 Feb 2019 15:19:15 +0100
+Message-Id: <20190211141907.746487189@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -72,162 +69,226 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 9e528c799d17a4ac37d788c81440b50377dd592d upstream.
+commit 1a1fb985f2e2b85ec0d3dc2e519ee48389ec2434 upstream.
 
-There are multiple issues with bcm2835_dma_abort() (which is called on
-termination of a transaction):
+commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
+rtmutex") changed the locking rules in the futex code so that the hash
+bucket lock is not longer held while the waiter is enqueued into the
+rtmutex wait list. This made the lock and the unlock path symmetric, but
+unfortunately the possible early exit from __rt_mutex_proxy_start() due to
+a detected deadlock was not updated accordingly. That allows a concurrent
+unlocker to observe inconsitent state which triggers the warning in the
+unlock path.
 
-* The algorithm to abort the transaction first pauses the channel by
-  clearing the ACTIVE flag in the CS register, then waits for the PAUSED
-  flag to clear.  Page 49 of the spec documents the latter as follows:
+futex_lock_pi()                         futex_unlock_pi()
+  lock(hb->lock)
+  queue(hb_waiter)				lock(hb->lock)
+  lock(rtmutex->wait_lock)
+  unlock(hb->lock)
+                                        // acquired hb->lock
+                                        hb_waiter = futex_top_waiter()
+                                        lock(rtmutex->wait_lock)
+  __rt_mutex_proxy_start()
+     ---> fail
+          remove(rtmutex_waiter);
+     ---> returns -EDEADLOCK
+  unlock(rtmutex->wait_lock)
+                                        // acquired wait_lock
+                                        wake_futex_pi()
+                                        rt_mutex_next_owner()
+					  --> returns NULL
+                                          --> WARN
 
-  "Indicates if the DMA is currently paused and not transferring data.
-   This will occur if the active bit has been cleared [...]"
-   https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
+  lock(hb->lock)
+  unqueue(hb_waiter)
 
-  So the function is entering an infinite loop because it is waiting for
-  PAUSED to clear which is always set due to the function having cleared
-  the ACTIVE flag.  The only thing that's saving it from itself is the
-  upper bound of 10000 loop iterations.
+The problem is caused by the remove(rtmutex_waiter) in the failure case of
+__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
+hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
 
-  The code comment says that the intention is to "wait for any current
-  AXI transfer to complete", so the author probably wanted to check the
-  WAITING_FOR_OUTSTANDING_WRITES flag instead.  Amend the function
-  accordingly.
+The original commit handles this correctly for the other early return cases
+(timeout, signal) by delaying the removal of the rtmutex waiter until the
+returning task reacquired the hash bucket lock.
 
-* The CS register is only read at the beginning of the function.  It
-  needs to be read again after pausing the channel and before checking
-  for outstanding writes, otherwise writes which were issued between
-  the register read at the beginning of the function and pausing the
-  channel may not be waited for.
+Treat the failure case of __rt_mutex_proxy_start() in the same way and let
+the existing cleanup code handle the eventual handover of the rtmutex
+gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
+removal for the failure case, so that the other callsites are still
+operating correctly.
 
-* The function seeks to abort the transfer by writing 0 to the NEXTCONBK
-  register and setting the ABORT and ACTIVE flags.  Thereby, the 0 in
-  NEXTCONBK is sought to be loaded into the CONBLK_AD register.  However
-  experimentation has shown this approach to not work:  The CONBLK_AD
-  register remains the same as before and the CS register contains
-  0x00000030 (PAUSED | DREQ_STOPS_DMA).  In other words, the control
-  block is not aborted but merely paused and it will be resumed once the
-  next DMA transaction is started.  That is absolutely not the desired
-  behavior.
+Add proper comments to the code so all these details are fully documented.
 
-  A simpler approach is to set the channel's RESET flag instead.  This
-  reliably zeroes the NEXTCONBK as well as the CS register.  It requires
-  less code and only a single MMIO write.  This is also what popular
-  user space DMA drivers do, e.g.:
-  https://github.com/metachris/RPIO/blob/master/source/c_pwm/pwm.c
+Thanks to Peter for helping with the analysis and writing the really
+valuable code comments.
 
-  Note that the spec is contradictory whether the NEXTCONBK register
-  is writeable at all.  On the one hand, page 41 claims:
-
-  "The value loaded into the NEXTCONBK register can be overwritten so
-  that the linked list of Control Block data structures can be
-  dynamically altered. However it is only safe to do this when the DMA
-  is paused."
-
-  On the other hand, page 40 specifies:
-
-  "Only three registers in each channel's register set are directly
-  writeable (CS, CONBLK_AD and DEBUG). The other registers (TI,
-  SOURCE_AD, DEST_AD, TXFR_LEN, STRIDE & NEXTCONBK), are automatically
-  loaded from a Control Block data structure held in external memory."
-
-Fixes: 96286b576690 ("dmaengine: Add support for BCM2835")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v3.14+
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Florian Meier <florian.meier@koalo.de>
-Cc: Clive Messer <clive.m.messer@gmail.com>
-Cc: Matthias Reichl <hias@horus.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Florian Kauer <florian.kauer@koalo.de>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
+Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Co-developed-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-s390@vger.kernel.org
+Cc: Stefan Liebler <stli@linux.ibm.com>
+Cc: Sebastian Sewior <bigeasy@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/bcm2835-dma.c |   41 +++++++++--------------------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
+ kernel/futex.c           |   28 ++++++++++++++++++----------
+ kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 50 insertions(+), 15 deletions(-)
 
---- a/drivers/dma/bcm2835-dma.c
-+++ b/drivers/dma/bcm2835-dma.c
-@@ -415,13 +415,11 @@ static void bcm2835_dma_fill_cb_chain_wi
- 	}
- }
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2850,35 +2850,39 @@ retry_private:
+ 	 * and BUG when futex_unlock_pi() interleaves with this.
+ 	 *
+ 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
+-	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
+-	 * serializes against futex_unlock_pi() as that does the exact same
+-	 * lock handoff sequence.
++	 * latter before calling __rt_mutex_start_proxy_lock(). This
++	 * interleaves with futex_unlock_pi() -- which does a similar lock
++	 * handoff -- such that the latter can observe the futex_q::pi_state
++	 * before __rt_mutex_start_proxy_lock() is done.
+ 	 */
+ 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
+ 	spin_unlock(q.lock_ptr);
++	/*
++	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
++	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
++	 * it sees the futex_q::pi_state.
++	 */
+ 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
+ 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
  
--static int bcm2835_dma_abort(void __iomem *chan_base)
-+static int bcm2835_dma_abort(struct bcm2835_chan *c)
- {
--	unsigned long cs;
-+	void __iomem *chan_base = c->chan_base;
- 	long int timeout = 10000;
- 
--	cs = readl(chan_base + BCM2835_DMA_CS);
+ 	if (ret) {
+ 		if (ret == 1)
+ 			ret = 0;
 -
+-		spin_lock(q.lock_ptr);
+-		goto no_block;
++		goto cleanup;
+ 	}
+ 
+-
+ 	if (unlikely(to))
+ 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
+ 
+ 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
+ 
++cleanup:
+ 	spin_lock(q.lock_ptr);
  	/*
- 	 * A zero control block address means the channel is idle.
- 	 * (The ACTIVE flag in the CS register is not a reliable indicator.)
-@@ -433,25 +431,16 @@ static int bcm2835_dma_abort(void __iome
- 	writel(0, chan_base + BCM2835_DMA_CS);
- 
- 	/* Wait for any current AXI transfer to complete */
--	while ((cs & BCM2835_DMA_ISPAUSED) && --timeout) {
-+	while ((readl(chan_base + BCM2835_DMA_CS) &
-+		BCM2835_DMA_WAITING_FOR_WRITES) && --timeout)
- 		cpu_relax();
--		cs = readl(chan_base + BCM2835_DMA_CS);
--	}
- 
--	/* We'll un-pause when we set of our next DMA */
-+	/* Peripheral might be stuck and fail to signal AXI write responses */
- 	if (!timeout)
--		return -ETIMEDOUT;
--
--	if (!(cs & BCM2835_DMA_ACTIVE))
--		return 0;
--
--	/* Terminate the control block chain */
--	writel(0, chan_base + BCM2835_DMA_NEXTCB);
--
--	/* Abort the whole DMA */
--	writel(BCM2835_DMA_ABORT | BCM2835_DMA_ACTIVE,
--	       chan_base + BCM2835_DMA_CS);
-+		dev_err(c->vc.chan.device->dev,
-+			"failed to complete outstanding writes\n");
- 
-+	writel(BCM2835_DMA_RESET, chan_base + BCM2835_DMA_CS);
- 	return 0;
+-	 * If we failed to acquire the lock (signal/timeout), we must
++	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
+ 	 * first acquire the hb->lock before removing the lock from the
+-	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
+-	 * wait lists consistent.
++	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
++	 * lists consistent.
+ 	 *
+ 	 * In particular; it is important that futex_unlock_pi() can not
+ 	 * observe this inconsistency.
+@@ -3002,6 +3006,10 @@ retry:
+ 		 * there is no point where we hold neither; and therefore
+ 		 * wake_futex_pi() must observe a state consistent with what we
+ 		 * observed.
++		 *
++		 * In particular; this forces __rt_mutex_start_proxy() to
++		 * complete such that we're guaranteed to observe the
++		 * rt_waiter. Also see the WARN in wake_futex_pi().
+ 		 */
+ 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
+ 		spin_unlock(&hb->lock);
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
+ 	rt_mutex_set_owner(lock, NULL);
  }
  
-@@ -796,7 +785,6 @@ static int bcm2835_dma_terminate_all(str
- 	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
- 	struct bcm2835_dmadev *d = to_bcm2835_dma_dev(c->vc.chan.device);
- 	unsigned long flags;
--	int timeout = 10000;
- 	LIST_HEAD(head);
++/**
++ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
++ * @lock:		the rt_mutex to take
++ * @waiter:		the pre-initialized rt_mutex_waiter
++ * @task:		the task to prepare
++ *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: does _NOT_ remove the @waiter on failure; must either call
++ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
++ *
++ * Returns:
++ *  0 - task blocked on lock
++ *  1 - acquired the lock for task, caller should wake it up
++ * <0 - error
++ *
++ * Special API call for PI-futex support.
++ */
+ int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+ 			      struct task_struct *task)
+ {
+ 	int ret;
  
- 	spin_lock_irqsave(&c->vc.lock, flags);
-@@ -810,18 +798,7 @@ static int bcm2835_dma_terminate_all(str
- 	if (c->desc) {
- 		vchan_terminate_vdesc(&c->desc->vd);
- 		c->desc = NULL;
--		bcm2835_dma_abort(c->chan_base);
--
--		/* Wait for stopping */
--		while (--timeout) {
--			if (!readl(c->chan_base + BCM2835_DMA_ADDR))
--				break;
--
--			cpu_relax();
--		}
--
--		if (!timeout)
--			dev_err(d->ddev.dev, "DMA transfer could not be terminated\n");
-+		bcm2835_dma_abort(c);
++	lockdep_assert_held(&lock->wait_lock);
++
+ 	if (try_to_take_rt_mutex(lock, task, NULL))
+ 		return 1;
+ 
+@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
+ 		ret = 0;
  	}
  
- 	vchan_get_all_descriptors(&c->vc, &head);
+-	if (unlikely(ret))
+-		remove_waiter(lock, waiter);
+-
+ 	debug_rt_mutex_print_deadlock(waiter);
+ 
+ 	return ret;
+@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  * @task:		the task to prepare
+  *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
++ * on failure.
++ *
+  * Returns:
+  *  0 - task blocked on lock
+  *  1 - acquired the lock for task, caller should wake it up
+  * <0 - error
+  *
+- * Special API call for FUTEX_REQUEUE_PI support.
++ * Special API call for PI-futex support.
+  */
+ int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
+ 
+ 	raw_spin_lock_irq(&lock->wait_lock);
+ 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
++	if (unlikely(ret))
++		remove_waiter(lock, waiter);
+ 	raw_spin_unlock_irq(&lock->wait_lock);
+ 
+ 	return ret;
+@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
+  * @lock:		the rt_mutex we were woken on
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  *
+- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
++ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
++ * rt_mutex_wait_proxy_lock().
+  *
+  * Unless we acquired the lock; we're still enqueued on the wait-list and can
+  * in fact still be granted ownership until we're removed. Therefore we can
 
 
