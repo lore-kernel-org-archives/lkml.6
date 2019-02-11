@@ -2,209 +2,106 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9B1C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F4AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2F220821
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7652820838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549895170;
+	bh=OgQyGVRLcZEHFz2fMoMb2g9C1tmNZfdtd8kzI0hR85U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=e2RhdPzwTKEbjKFlwYR3t1+qi+y76YrtY/JY7LqpVoel+b3HkZDbTRly0v5LbNpeN
+	 98cfdT4YHqtbuUbE7+//RbU5ve/HLWu67SpSytVx1XXS5x6UvsXra5htTrAkZKtwi2
+	 rMmHhQdMOQJin5+xsDaUvIa+rc2LLenC7JNY+kVA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbfBKO0C (ORCPT
+        id S1729519AbfBKO0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:26:02 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:43243 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729469AbfBKOZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:59 -0500
-X-Originating-IP: 90.88.22.177
-Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 974D6240003;
-        Mon, 11 Feb 2019 14:25:53 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH net-next 4/4] net: phy: Add generic support for 2.5GBaseT and 5GBaseT
-Date:   Mon, 11 Feb 2019 15:25:29 +0100
-Message-Id: <20190211142529.22885-5-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
-References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
+        Mon, 11 Feb 2019 09:26:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726914AbfBKO0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:26:05 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A2D22075C;
+        Mon, 11 Feb 2019 14:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895164;
+        bh=OgQyGVRLcZEHFz2fMoMb2g9C1tmNZfdtd8kzI0hR85U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VjgijbyRNDCNEsWt3xkAwU2QUw6syw8ICL7JhzrB9CDnyWghM6qbkOWRRWt0WVwHi
+         ww5BUeBSM4fWCbmIvj8/nkEz7+7Ci+9+fmRIzjZhMfmrl/M+6AcAfQDyA+gNaZor/f
+         XY1lN3klfHEJjaCxA2lziImgx2U27so7UJsblSOQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 084/352] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
+Date:   Mon, 11 Feb 2019 15:15:11 +0100
+Message-Id: <20190211141851.336128432@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 802.3bz specification, based on previous by the NBASET alliance,
-defines the 2.5GBaseT and 5GBaseT link modes for ethernet traffic on
-cat5e, cat6 and cat7 cables.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-These mode integrate with the already defined C45 MDIO PMA/PMD registers
-set that added 10G support, by defining some previously reserved bits,
-and adding a new register (2.5G/5G Extended abilities).
+------------------
 
-This commit adds the required definitions in include/uapi/linux/mdio.h
-to support these modes, and detect when a link-partner advertises them.
+[ Upstream commit 5eb316e636eb298c204f5b368526d4480b63c0ba ]
 
-It also adds support for these mode in the generic C45 PHY
-infrastructure.
+Add support for the IIC code for the r8a77990 (R-Car E3).
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+It is not considered compatible with existing fallback bindings
+due to the documented absence of automatic transmission registers.
+
+These registers are currently not used by the driver and
+thus the provides the same behaviour for "renesas,iic-r8a77990" and
+"renesas,rcar-gen3-iic". The point of declaring incompatibility is
+to allow for automatic transmission register support to be added to
+"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy-c45.c | 37 +++++++++++++++++++++++++++++++++++++
- include/uapi/linux/mdio.h | 16 ++++++++++++++++
- 2 files changed, 53 insertions(+)
+ drivers/i2c/busses/i2c-sh_mobile.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
-index 6f028de4dae1..7af5fa81daf6 100644
---- a/drivers/net/phy/phy-c45.c
-+++ b/drivers/net/phy/phy-c45.c
-@@ -47,6 +47,16 @@ int genphy_c45_pma_setup_forced(struct phy_device *phydev)
- 		/* Assume 1000base-T */
- 		ctrl2 |= MDIO_PMA_CTRL2_1000BT;
- 		break;
-+	case SPEED_2500:
-+		ctrl1 |= MDIO_CTRL1_SPEED2_5G;
-+		/* Assume 2.5Gbase-T */
-+		ctrl2 |= MDIO_PMA_CTRL2_2_5GBT;
-+		break;
-+	case SPEED_5000:
-+		ctrl1 |= MDIO_CTRL1_SPEED5G;
-+		/* Assume 5Gbase-T */
-+		ctrl2 |= MDIO_PMA_CTRL2_5GBT;
-+		break;
- 	case SPEED_10000:
- 		ctrl1 |= MDIO_CTRL1_SPEED10G;
- 		/* Assume 10Gbase-T */
-@@ -194,6 +204,12 @@ int genphy_c45_read_lpa(struct phy_device *phydev)
- 	if (val < 0)
- 		return val;
- 
-+	if (val & MDIO_AN_10GBT_STAT_LP2_5G)
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+				 phydev->lp_advertising);
-+	if (val & MDIO_AN_10GBT_STAT_LP5G)
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-+				 phydev->lp_advertising);
- 	if (val & MDIO_AN_10GBT_STAT_LP10G)
- 		linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
- 				 phydev->lp_advertising);
-@@ -224,6 +240,12 @@ int genphy_c45_read_pma(struct phy_device *phydev)
- 	case MDIO_PMA_CTRL1_SPEED1000:
- 		phydev->speed = SPEED_1000;
- 		break;
-+	case MDIO_CTRL1_SPEED2_5G:
-+		phydev->speed = SPEED_2500;
-+		break;
-+	case MDIO_CTRL1_SPEED5G:
-+		phydev->speed = SPEED_5000;
-+		break;
- 	case MDIO_CTRL1_SPEED10G:
- 		phydev->speed = SPEED_10000;
- 		break;
-@@ -339,6 +361,21 @@ int genphy_c45_pma_read_abilities(struct phy_device *phydev)
- 		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
- 				 phydev->supported,
- 				 val & MDIO_PMA_EXTABLE_10BT);
-+
-+		if (val & MDIO_PMA_EXTABLE_NBT) {
-+			val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
-+					   MDIO_PMA_NG_EXTABLE);
-+			if (val < 0)
-+				return val;
-+
-+			linkmode_mod_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+					 phydev->supported,
-+					 val & MDIO_PMA_NG_EXTABLE_2_5GBT);
-+
-+			linkmode_mod_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-+					 phydev->supported,
-+					 val & MDIO_PMA_NG_EXTABLE_5GBT);
-+		}
- 	}
- 
- 	return 0;
-diff --git a/include/uapi/linux/mdio.h b/include/uapi/linux/mdio.h
-index 0e012b168e4d..0a552061ff1c 100644
---- a/include/uapi/linux/mdio.h
-+++ b/include/uapi/linux/mdio.h
-@@ -45,6 +45,7 @@
- #define MDIO_AN_ADVERTISE	16	/* AN advertising (base page) */
- #define MDIO_AN_LPA		19	/* AN LP abilities (base page) */
- #define MDIO_PCS_EEE_ABLE	20	/* EEE Capability register */
-+#define MDIO_PMA_NG_EXTABLE	21	/* 2.5G/5G PMA/PMD extended ability */
- #define MDIO_PCS_EEE_WK_ERR	22	/* EEE wake error counter */
- #define MDIO_PHYXS_LNSTAT	24	/* PHY XGXS lane state */
- #define MDIO_AN_EEE_ADV		60	/* EEE advertisement */
-@@ -92,6 +93,10 @@
- #define MDIO_CTRL1_SPEED10G		(MDIO_CTRL1_SPEEDSELEXT | 0x00)
- /* 10PASS-TS/2BASE-TL */
- #define MDIO_CTRL1_SPEED10P2B		(MDIO_CTRL1_SPEEDSELEXT | 0x04)
-+/* 2.5 Gb/s */
-+#define MDIO_CTRL1_SPEED2_5G		(MDIO_CTRL1_SPEEDSELEXT | 0x18)
-+/* 5 Gb/s */
-+#define MDIO_CTRL1_SPEED5G		(MDIO_CTRL1_SPEEDSELEXT | 0x1c)
- 
- /* Status register 1. */
- #define MDIO_STAT1_LPOWERABLE		0x0002	/* Low-power ability */
-@@ -145,6 +150,8 @@
- #define MDIO_PMA_CTRL2_1000BKX		0x000d	/* 1000BASE-KX type */
- #define MDIO_PMA_CTRL2_100BTX		0x000e	/* 100BASE-TX type */
- #define MDIO_PMA_CTRL2_10BT		0x000f	/* 10BASE-T type */
-+#define MDIO_PMA_CTRL2_2_5GBT		0x0030  /* 2.5GBaseT type */
-+#define MDIO_PMA_CTRL2_5GBT		0x0031  /* 5GBaseT type */
- #define MDIO_PCS_CTRL2_TYPE		0x0003	/* PCS type selection */
- #define MDIO_PCS_CTRL2_10GBR		0x0000	/* 10GBASE-R type */
- #define MDIO_PCS_CTRL2_10GBX		0x0001	/* 10GBASE-X type */
-@@ -198,6 +205,7 @@
- #define MDIO_PMA_EXTABLE_1000BKX	0x0040	/* 1000BASE-KX ability */
- #define MDIO_PMA_EXTABLE_100BTX		0x0080	/* 100BASE-TX ability */
- #define MDIO_PMA_EXTABLE_10BT		0x0100	/* 10BASE-T ability */
-+#define MDIO_PMA_EXTABLE_NBT		0x4000  /* 2.5/5GBASE-T ability */
- 
- /* PHY XGXS lane state register. */
- #define MDIO_PHYXS_LNSTAT_SYNC0		0x0001
-@@ -234,9 +242,13 @@
- #define MDIO_PCS_10GBRT_STAT2_BER	0x3f00
- 
- /* AN 10GBASE-T control register. */
-+#define MDIO_AN_10GBT_CTRL_ADV2_5G	0x0080	/* Advertise 2.5GBASE-T */
-+#define MDIO_AN_10GBT_CTRL_ADV5G	0x0100	/* Advertise 5GBASE-T */
- #define MDIO_AN_10GBT_CTRL_ADV10G	0x1000	/* Advertise 10GBASE-T */
- 
- /* AN 10GBASE-T status register. */
-+#define MDIO_AN_10GBT_STAT_LP2_5G	0x0020  /* LP is 2.5GBT capable */
-+#define MDIO_AN_10GBT_STAT_LP5G		0x0040  /* LP is 5GBT capable */
- #define MDIO_AN_10GBT_STAT_LPTRR	0x0200	/* LP training reset req. */
- #define MDIO_AN_10GBT_STAT_LPLTABLE	0x0400	/* LP loop timing ability */
- #define MDIO_AN_10GBT_STAT_LP10G	0x0800	/* LP is 10GBT capable */
-@@ -265,6 +277,10 @@
- #define MDIO_EEE_10GKX4		0x0020	/* 10G KX4 EEE cap */
- #define MDIO_EEE_10GKR		0x0040	/* 10G KR EEE cap */
- 
-+/* 2.5G/5G Extended abilities register. */
-+#define MDIO_PMA_NG_EXTABLE_2_5GBT	0x0001	/* 2.5GBASET ability */
-+#define MDIO_PMA_NG_EXTABLE_5GBT	0x0002	/* 5GBASET ability */
-+
- /* LASI RX_ALARM control/status registers. */
- #define MDIO_PMA_LASI_RX_PHYXSLFLT	0x0001	/* PHY XS RX local fault */
- #define MDIO_PMA_LASI_RX_PCSLFLT	0x0008	/* PCS RX local fault */
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index a7a7a9c3bc7c..28db6b59c4ca 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -808,6 +808,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
+ 	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
++	{ .compatible = "renesas,iic-r8a77990", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
+ 	{},
 -- 
-2.19.2
+2.19.1
+
+
 
