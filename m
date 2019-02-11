@@ -2,168 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED3FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18797C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44F8E214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:42:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QqZdBu/e"
+	by mail.kernel.org (Postfix) with ESMTP id DE7C32084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbfBKDmj (ORCPT
+        id S1726869AbfBKDng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:42:39 -0500
-Received: from ozlabs.org ([203.11.71.1]:36651 "EHLO ozlabs.org"
+        Sun, 10 Feb 2019 22:43:36 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30254 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfBKDmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:42:39 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43yWnk0gjLz9s5c;
-        Mon, 11 Feb 2019 14:42:33 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549856556;
-        bh=mIAzwWQFY/oHAvTc5ET7WklKxIjPBd5gqcZH9BfkMwI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QqZdBu/eCRGczsHVxUjuDuFpAyjxT7e91tDK4t0r6qpUK4j2NOycA7P2sMocb4RQw
-         rsxOLgcWmBIV3fyslZWnKjfYDnBJffslvXICm4Vw5n6nSPsmqnpqun5t0GqoUPxh4v
-         SiK9kCvZkcV/upucTkVH+qGIaz5LKEOgSi/jZDScjjmoTsW3wdy8RczbStIkG962Yn
-         MQuBS77VLIxGoLcahXfaWqkQmZ6PnYIXPwrYs8zFRqQKx5Jvb3Fzt/nREf6cHZg6pr
-         JPn6MBmwEI+XHG1pxfMvVYgmy3AQ3rDQFZOoZLrtbD0xwiEVPKDVbu6ZE3YL6/7HhM
-         uhhOADmUFyJ0g==
-Date:   Mon, 11 Feb 2019 14:42:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Igal Liberman <igall@marvell.com>,
-        Evan Wang <xswang@marvell.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-Subject: linux-next: manual merge of the phy-next tree with the net-next
- tree
-Message-ID: <20190211144222.56663b44@canb.auug.org.au>
+        id S1726102AbfBKDng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 22:43:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2019 19:43:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,357,1544515200"; 
+   d="scan'208";a="113906495"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga007.jf.intel.com with ESMTP; 10 Feb 2019 19:43:32 -0800
+Cc:     baolu.lu@linux.intel.com, Bjorn Helgaas <helgaas@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/7] iommu/vt-d: Remove unnecessary local variable
+ initializations
+To:     bjorn@helgaas.com
+References: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <154966356809.132359.5318207850182898116.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <63ae370c-2239-62c5-2378-98916608acc4@linux.intel.com>
+ <CABhMZUUKe0b9RkscDX6WR0tpQmhW_nFoYKHTvthpKwZ4vMirOA@mail.gmail.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <886e860a-f620-7b12-2611-228adcfa82c8@linux.intel.com>
+Date:   Mon, 11 Feb 2019 11:38:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8TI7ikn2bMGd=VjdQLYPBZ0"; protocol="application/pgp-signature"
+In-Reply-To: <CABhMZUUKe0b9RkscDX6WR0tpQmhW_nFoYKHTvthpKwZ4vMirOA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8TI7ikn2bMGd=VjdQLYPBZ0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On 2/11/19 11:33 AM, Bjorn Helgaas wrote:
+> On Sun, Feb 10, 2019 at 8:00 PM Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>>
+>> Hi,
+>>
+>> On 2/9/19 6:06 AM, Bjorn Helgaas wrote:
+>>> From: Bjorn Helgaas <bhelgaas@google.com>
+>>>
+>>> A local variable initialization is a hint that the variable will be used in
+>>> an unusual way.  If the initialization is unnecessary, that hint becomes a
+>>> distraction.
+>>>
+>>> Remove unnecessary initializations.  No functional change intended.
+>>>
+>>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>>> ---
+>>>    drivers/iommu/intel-iommu.c |   27 +++++++++++++--------------
+>>>    1 file changed, 13 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>>> index 81077803880f..2acd08c82cdc 100644
+>>> --- a/drivers/iommu/intel-iommu.c
+>>> +++ b/drivers/iommu/intel-iommu.c
+>>> @@ -865,7 +865,7 @@ static void free_context_table(struct intel_iommu *iommu)
+>>>    static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+>>>                                      unsigned long pfn, int *target_level)
+>>>    {
+>>> -     struct dma_pte *parent, *pte = NULL;
+>>> +     struct dma_pte *parent, *pte;
+>>>        int level = agaw_to_level(domain->agaw);
+>>>        int offset;
+>>>
+>>> @@ -922,7 +922,7 @@ static struct dma_pte *dma_pfn_level_pte(struct dmar_domain *domain,
+>>>                                         unsigned long pfn,
+>>>                                         int level, int *large_page)
+>>>    {
+>>> -     struct dma_pte *parent, *pte = NULL;
+>>> +     struct dma_pte *parent, *pte;
+>>>        int total = agaw_to_level(domain->agaw);
+>>>        int offset;
+>>>
+>>> @@ -954,7 +954,7 @@ static void dma_pte_clear_range(struct dmar_domain *domain,
+>>>                                unsigned long start_pfn,
+>>>                                unsigned long last_pfn)
+>>>    {
+>>> -     unsigned int large_page = 1;
+>>> +     unsigned int large_page;
+>>>        struct dma_pte *first_pte, *pte;
+>>>
+>>>        BUG_ON(!domain_pfn_supported(domain, start_pfn));
+>>> @@ -1132,7 +1132,7 @@ static struct page *domain_unmap(struct dmar_domain *domain,
+>>>                                 unsigned long start_pfn,
+>>>                                 unsigned long last_pfn)
+>>>    {
+>>> -     struct page *freelist = NULL;
+>>> +     struct page *freelist;
+>>
+>> I am afraid this change might cause problem. "freelist" might go through
+>> dma_pte_clear_level() without any touches.
+> 
+> Thanks for your review!  Can you clarify your concern?  "freelist"
+> isn't passed into dma_pte_clear_level().  Here's the existing code
 
-Today's linux-next merge of the phy-next tree got conflicts in:
+Oh!
 
-  drivers/phy/marvell/Kconfig
-  drivers/phy/marvell/Makefile
+Yes, you are right. I confused it with another function. Sorry about it.
 
-between commit:
-
-  14dc100b4411 ("phy: armada38x: add common phy support")
-
-from the net-next tree and commit:
-
-  9695375a3f4a ("phy: add A3700 COMPHY support")
-  cc8b7a0ae866 ("phy: add A3700 UTMI PHY driver")
-
-from the phy-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/phy/marvell/Kconfig
-index 224ea4e6a46d,b8e9dd38ad0d..000000000000
---- a/drivers/phy/marvell/Kconfig
-+++ b/drivers/phy/marvell/Kconfig
-@@@ -21,16 -21,27 +21,37 @@@ config PHY_BERLIN_US
-  	help
-  	  Enable this to support the USB PHY on Marvell Berlin SoCs.
- =20
-+ config PHY_MVEBU_A3700_COMPHY
-+ 	tristate "Marvell A3700 comphy driver"
-+ 	depends on ARCH_MVEBU || COMPILE_TEST
-+ 	depends on OF
-+ 	depends on HAVE_ARM_SMCCC
-+ 	default y
-+ 	select GENERIC_PHY
-+ 	help
-+ 	  This driver allows to control the comphy, a hardware block providing
-+ 	  shared serdes PHYs on Marvell Armada 3700. Its serdes lanes can be
-+ 	  used by various controllers: Ethernet, SATA, USB3, PCIe.
-+=20
-+ config PHY_MVEBU_A3700_UTMI
-+ 	tristate "Marvell A3700 UTMI driver"
-+ 	depends on ARCH_MVEBU || COMPILE_TEST
-+ 	depends on OF
-+ 	default y
-+ 	select GENERIC_PHY
-+ 	help
-+ 	  Enable this to support Marvell A3700 UTMI PHY driver.
-+=20
- +config PHY_MVEBU_A38X_COMPHY
- +	tristate "Marvell Armada 38x comphy driver"
- +	depends on ARCH_MVEBU || COMPILE_TEST
- +	depends on OF
- +	select GENERIC_PHY
- +	help
- +	  This driver allows to control the comphy, an hardware block providing
- +	  shared serdes PHYs on Marvell Armada 38x. Its serdes lanes can be
- +	  used by various controllers (Ethernet, sata, usb, PCIe...).
- +
-  config PHY_MVEBU_CP110_COMPHY
-  	tristate "Marvell CP110 comphy driver"
-  	depends on ARCH_MVEBU || COMPILE_TEST
-diff --cc drivers/phy/marvell/Makefile
-index 59b6c03ef756,82f291cf59ee..000000000000
---- a/drivers/phy/marvell/Makefile
-+++ b/drivers/phy/marvell/Makefile
-@@@ -2,7 -2,8 +2,9 @@@
-  obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+=3D phy-armada375-usb2.o
-  obj-$(CONFIG_PHY_BERLIN_SATA)		+=3D phy-berlin-sata.o
-  obj-$(CONFIG_PHY_BERLIN_USB)		+=3D phy-berlin-usb.o
-+ obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+=3D phy-mvebu-a3700-comphy.o
-+ obj-$(CONFIG_PHY_MVEBU_A3700_UTMI)	+=3D phy-mvebu-a3700-utmi.o
- +obj-$(CONFIG_PHY_MVEBU_A38X_COMPHY)	+=3D phy-armada38x-comphy.o
-  obj-$(CONFIG_PHY_MVEBU_CP110_COMPHY)	+=3D phy-mvebu-cp110-comphy.o
-  obj-$(CONFIG_PHY_MVEBU_SATA)		+=3D phy-mvebu-sata.o
-  obj-$(CONFIG_PHY_PXA_28NM_HSIC)		+=3D phy-pxa-28nm-hsic.o
-
---Sig_/8TI7ikn2bMGd=VjdQLYPBZ0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxg7x4ACgkQAVBC80lX
-0GzBIgf+IfI1WpbCKVbRMA2wC01SNGAG4oOI2wk6oo2EHuvD5o/24dnaDJLnuHVp
-Kx120GT3wW+ybOldhxvsuHOV7FjSAK9JvakggIxijWFxSW1Wn75wLl5E0294h3ar
-hrnYZxXLVdBEBKg1ucTuloiwxn4hzUSxMNBIBkkDXPyHbaAGTllf30NHB4o1jwd9
-M8eQfxIG8ZdDPipeZ59/f7pE+0rDchv+b/L4XO5Cdx29TAqE/zB2FRdmsbeGIfDL
-3c9h+QGDWwoluc+CHO3fR3RyxS5/VSk+5asrmyUJViu4iu8IOqfCsvez3S38oALh
-VeSmi5TJh+/BD0E5Zt770KhZ3KuePg==
-=7Cwj
------END PGP SIGNATURE-----
-
---Sig_/8TI7ikn2bMGd=VjdQLYPBZ0--
+Best regards,
+Lu Baolu
