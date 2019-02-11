@@ -2,105 +2,190 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A861BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EDEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74CCC2070D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549904333;
-	bh=5gE+sldJ+cJUl+bxpbxtliDsZaPs9BxUcltFjN0KCdc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wtuOdjdfF5PZt7eIwpvezwmlvtKJB+ghJIsdBvmM7PQwTfJ0vnyzAi/SGP/LgXPOb
-	 PD1lXn5AkE35uc2Wj0ihx9YOF+AsvuariXqcplwPAqVAQ2/30b5MmrIu6PJrMFngQC
-	 SqC90Uvu+EtW/LLEBxA4OlHjHdyzNBodIyKdvuNg=
+	by mail.kernel.org (Postfix) with ESMTP id E89DE2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dycem5Iy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbfBKQ6w (ORCPT
+        id S1728524AbfBKRCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:58:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47606 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728542AbfBKQ6v (ORCPT
+        Mon, 11 Feb 2019 12:02:09 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44091 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbfBKRCI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:58:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rv54XH4oqkQQn5ow0gBegq6P16nCT1DvfLnU46oU21w=; b=e+xbBr0hpxPzJIBwYq2b13hCa
-        QcT9wjjFD8xld3E2vGM7lNmCpSAfFqCCgoJrQwR9JlB3fVJ56bnMj0J4kj4cWjV/qAxI6Rz3k9Pz4
-        TQ/AsiuYbf0nrShe5mxe7O7fQMQqMwBehmD74Hqwfsu3cg5rrqUnxwyKUWAV84piNF4Es=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gtEur-0005IR-FA; Mon, 11 Feb 2019 16:58:45 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BCAE211280BD; Mon, 11 Feb 2019 16:58:39 +0000 (GMT)
-Date:   Mon, 11 Feb 2019 16:58:39 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.20 066/352] ASoC: sunxi: sun50i-codec-analog: Add
- support for cpvdd regulator supply
-Message-ID: <20190211165839.GF22391@sirena.org.uk>
-References: <20190211141846.543045703@linuxfoundation.org>
- <20190211141850.315232314@linuxfoundation.org>
- <20190211143924.GD22391@sirena.org.uk>
- <20190211165008.GB21634@kroah.com>
+        Mon, 11 Feb 2019 12:02:08 -0500
+Received: by mail-lf1-f66.google.com with SMTP id g2so3041110lfh.11;
+        Mon, 11 Feb 2019 09:02:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UhMN5gACQr1+W4A8Ag5wPDh62RaNjK/ZgHm434PrC78=;
+        b=Dycem5Iy15XhBFQsCdrlyR70cVYi8iEHdjbiM68ElBqd2AuRvAsNQVBPszRVGhzOes
+         4ghWIEDaZJqjwIvPAoy9X2DP7JqHWi80tnUpOlPWlpZ1uM1s61kbY33b7oQI39GLLDGn
+         E61Ey9sXAEhgkUTxWs3YjJn/cr2UtlFvIsMQptsivCA4qcu2lBVw1mBwHXi14ZhLqfZT
+         llfzt7bn5yuGTsb/KDKH+rY6A+TOjuCAl9E0Djzyw3HMlvO3y65at592q5FsX1KdRYDL
+         KORq40gRwIB8Akjia616vJ//3AM1qSrbGnqfQtj9Zf7Jn60umhLieOoHQwDpAo7mMfoP
+         LsLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UhMN5gACQr1+W4A8Ag5wPDh62RaNjK/ZgHm434PrC78=;
+        b=otaoBI5wxF8HAarKjPoudnYKco5KDIpo5O2aUlXzN+iZLrU4sdA+csJAauoTSM9o49
+         HcdTZtn828YhwMPETdJv1xaTPZ5Q9Dov8JXelru6CbZHSB1JFocwXBpUgPiAZRfLwp8g
+         2gMtoA376bANKqV4FqD5SKpYIVkwzejAbeWVicRkGZfMdMoxCbl6LN7ucLKUVlYKbvC9
+         GraBu1fnJ+bCXPm9drh5649hn8yHepe6QqlpEq9gu+r5FnGgCLNGzHvwRnQThRL5xV8H
+         D9s8MEcFj1Ezjo8QW7F4deRZGA6xHBwdO30r68k+lnQ+xgsW2Iq6Z0T5HRxb9YLJDeMz
+         55xg==
+X-Gm-Message-State: AHQUAuaGlpia1gFDZ0NEgopHekh93ghGJjp0dySHtm9bZ17PcqXFHCls
+        rPDrkbsDz0YH3Bzb8G3LBE77eqwNrSWLUOTxrRw=
+X-Google-Smtp-Source: AHgI3IalfbXEC0ubkiPvBEKZp244GmIb+2indUy8ujEZOIJyFGOHcxcPXDTtIiBWV4qDRv6rjSWWM0OTaxXYOKcGqoU=
+X-Received: by 2002:ac2:4318:: with SMTP id l24mr631387lfh.75.1549904525499;
+ Mon, 11 Feb 2019 09:02:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="iBwuxWUsK/REspAd"
-Content-Disposition: inline
-In-Reply-To: <20190211165008.GB21634@kroah.com>
-X-Cookie: Tell me what to think!!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
+ <20190131083842.GE28876@rapoport-lnx> <CAFqt6za9xA_8OKiaaHXcO9go+RtPdjLY5Bz_fgQL+DZbermNhA@mail.gmail.com>
+ <20190207164739.GX21860@bombadil.infradead.org> <CAFqt6zawBP5Yyy7nfoKz_6ugw8e4MVopvBaeKvaKoXcS-_oSNg@mail.gmail.com>
+In-Reply-To: <CAFqt6zawBP5Yyy7nfoKz_6ugw8e4MVopvBaeKvaKoXcS-_oSNg@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 11 Feb 2019 22:36:15 +0530
+Message-ID: <CAFqt6zYGSn1dA8tdiH16Mq0bzkx5DmpUo+2RUZ0nTPm+nvZS7Q@mail.gmail.com>
+Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and
+ vm_insert_range_buggy API
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 8, 2019 at 10:52 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Thu, Feb 7, 2019 at 10:17 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Feb 07, 2019 at 09:19:47PM +0530, Souptick Joarder wrote:
+> > > Just thought to take opinion for documentation before placing it in v3.
+> > > Does it looks fine ?
+> > >
+> > > +/**
+> > > + * __vm_insert_range - insert range of kernel pages into user vma
+> > > + * @vma: user vma to map to
+> > > + * @pages: pointer to array of source kernel pages
+> > > + * @num: number of pages in page array
+> > > + * @offset: user's requested vm_pgoff
+> > > + *
+> > > + * This allow drivers to insert range of kernel pages into a user vma.
+> > > + *
+> > > + * Return: 0 on success and error code otherwise.
+> > > + */
+> > > +static int __vm_insert_range(struct vm_area_struct *vma, struct page **pages,
+> > > +                               unsigned long num, unsigned long offset)
+> >
+> > For static functions, I prefer to leave off the second '*', ie make it
+> > formatted like a docbook comment, but not be processed like a docbook
+> > comment.  That avoids cluttering the html with descriptions of internal
+> > functions that people can't actually call.
+> >
+> > > +/**
+> > > + * vm_insert_range - insert range of kernel pages starts with non zero offset
+> > > + * @vma: user vma to map to
+> > > + * @pages: pointer to array of source kernel pages
+> > > + * @num: number of pages in page array
+> > > + *
+> > > + * Maps an object consisting of `num' `pages', catering for the user's
+> >
+> > Rather than using `num', you should use @num.
+> >
+> > > + * requested vm_pgoff
+> > > + *
+> > > + * If we fail to insert any page into the vma, the function will return
+> > > + * immediately leaving any previously inserted pages present.  Callers
+> > > + * from the mmap handler may immediately return the error as their caller
+> > > + * will destroy the vma, removing any successfully inserted pages. Other
+> > > + * callers should make their own arrangements for calling unmap_region().
+> > > + *
+> > > + * Context: Process context. Called by mmap handlers.
+> > > + * Return: 0 on success and error code otherwise.
+> > > + */
+> > > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
+> > > +                               unsigned long num)
+> > >
+> > >
+> > > +/**
+> > > + * vm_insert_range_buggy - insert range of kernel pages starts with zero offset
+> > > + * @vma: user vma to map to
+> > > + * @pages: pointer to array of source kernel pages
+> > > + * @num: number of pages in page array
+> > > + *
+> > > + * Similar to vm_insert_range(), except that it explicitly sets @vm_pgoff to
+> >
+> > But vm_pgoff isn't a parameter, so it's misleading to format it as such.
+> >
+> > > + * 0. This function is intended for the drivers that did not consider
+> > > + * @vm_pgoff.
+> > > + *
+> > > + * Context: Process context. Called by mmap handlers.
+> > > + * Return: 0 on success and error code otherwise.
+> > > + */
+> > > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
+> > > +                               unsigned long num)
+> >
+> > I don't think we should call it 'buggy'.  'zero' would make more sense
+> > as a suffix.
+>
+> suffix can be *zero or zero_offset* whichever suits better.
+>
+> >
+> > Given how this interface has evolved, I'm no longer sure than
+> > 'vm_insert_range' makes sense as the name for it.  Is it perhaps
+> > 'vm_map_object' or 'vm_map_pages'?
+> >
+>
+> I prefer vm_map_pages. Considering it, both the interface name can be changed
+> to *vm_insert_range -> vm_map_pages* and *vm_insert_range_buggy ->
+> vm_map_pages_{zero/zero_offset}.
+>
+> As this is only change in interface name and rest of code remain same
+> shall I post it in v3 ( with additional change log mentioned about interface
+> name changed) ?
+>
+> or,
+>
+> It will be a new patch series ( with carry forward all the Reviewed-by
+> / Tested-by on
+> vm_insert_range/ vm_insert_range_buggy ) ?
 
---iBwuxWUsK/REspAd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Feb 11, 2019 at 05:50:08PM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Feb 11, 2019 at 02:39:24PM +0000, Mark Brown wrote:
-
-> > This is more a new feature than a bug fix, it doesn't look like obvious
-> > stable material.
-
-> Normally we take "new quirks and device ids", and given that this is a
-> tiny 2 line patch, that seems to fit that requirement.
-
-It's definitely not a quirk, it's changing from completely ignoring a
-supply to actively managing it at runtime which if it has any effect on
-existing systems is more likely to break something than fix it.  It's
-not like the fixes for build problems which can't be triggered in old
-kernels, it'll start us things we never used to do.
-
---iBwuxWUsK/REspAd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhqb4ACgkQJNaLcl1U
-h9CnCAf/bT5TUqOGA736QqtbTP63wZmfa0D6nfq93+xIfR7p2/W42Jg0RmwTYjdY
-6CWqH+atFnlJy+lMkRSXlqtiDU1VLI5XCeQquGX/cpPrAUNs3BYBEBqvTFolRAvz
-KBeEEJOJHEp0yV0hi3+73j2TVbWxlzGMbiyOKfM24PyRS2fURhnSrVtsuCJWpKJY
-yAgp4SboWkwB4cCW7D6aZqvnBKyXjJi1Z+vNQ0Qg1SjzcLrZC/MGz1mVbsPXr3HD
-QgE2h0fEYm04+8Fc2J+E94bNPTfSN7F6L+v3Q7Yo8BikAKykKmTJ+xyFPL1f9My6
-t6ZnNR4Xn5ePw9FQQ+yPZHC9DCkS2Q==
-=7DMV
------END PGP SIGNATURE-----
-
---iBwuxWUsK/REspAd--
+Any suggestion on this minor query ?
