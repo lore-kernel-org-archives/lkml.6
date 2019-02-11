@@ -2,100 +2,125 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E536FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF9EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B147821B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="e8UTKMtB"
+	by mail.kernel.org (Postfix) with ESMTP id 476C421B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549898567;
+	bh=btuaW8UpzRjJlmbELzsiIRTC3u6uNxgDNK277ikfV5U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Fxm5+LCzkwuE20LPmZ4Q0bsNhrxPwJ2K9Pn+QuTH2RyMNao4/ycyXBPhyKe67ojrj
+	 IkQYoUUfbx70g1f+z/9ic2O5ys1KazSMV0q3d7L1e0Ww1zR2T0BJzpcbq26K9gHHM8
+	 nwzWtO6VX3C0LBvFDL2lyGNHGJ4EU1W51ygPKuaM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391900AbfBKPWh (ORCPT
+        id S2391904AbfBKPWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:22:37 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:47092 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391107AbfBKPWf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:22:35 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f5so8008839lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JYZe8UsjdbicNo7lIS7eLTWv5HGzBtMgiGRg4tZbbyM=;
-        b=e8UTKMtBPnauymi/hDOuSJeMUpP9kpDnHS7YGHjupTOcNMqh6moRYXYvadUJh7bsq2
-         EJXTU3kIhDQT2OP7rBNxeHC0YTh1yJdvT6GqW9yVayR7p/+wkE1K8CHkpTxVh/Z+tm6H
-         5kLranZ6ksRrgFYo/tRrXCnbONNIjEQdOJVqic7iIAd5nJVRWxmExmpDrMU7m/UhTrbR
-         IY1dn4CMXTY/DdGVrfyMFlThV8GvF9DTrMnR+R7V0OK8EVl/Cfe8INNRhq9LKfmwDeia
-         uMH+gb7kVw6qlLZMb39qTgd29cAbRqSU1UmxM+SzsmtUy9JjuATMUbESQN6MR+aslPn0
-         8tSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=JYZe8UsjdbicNo7lIS7eLTWv5HGzBtMgiGRg4tZbbyM=;
-        b=BsVKZ7q1EzPULvMSD0gc4vO1vQCDF0fr5bRfDrs2jVOzkCEcZ4eYECDGEsuGnO2LHn
-         IJ/rGMSRZxn7BvAKM6b2PYZgNS2z3ya6biwAx+M9cCvKRS3AmUja//S0SStqf3xMVm6Z
-         HR5xOgk3jWxWqlcj/T+wkr5pnnRNrlj0BQqMxan7E4Hh/+QBiijeiHoHJMg/OyoKbhSi
-         4kBXXxMBzOVT68cWyZIwvJ1wfiXiwfYtFhyL5O+UIv3y9iNztJAj8rM07XBNFaja/JSC
-         b1AYTP+d15pWNQGZ+lZfvuTv56nrsbDkLIAH06GgZeUo5rXK7mKBjEO76N9uY8/eS2z+
-         Bt/Q==
-X-Gm-Message-State: AHQUAubL2b+grN4p2cNf72Ita7TeAEaRzuE6hB0uf0gadgw4lFQmvTuM
-        +S58LFBDRc4Sc3F5DEJ48Qx8PZBiCUM=
-X-Google-Smtp-Source: AHgI3IZJlQsiv9HI5I1ICQT9NXRVXsToZmFXoKf+G2oKdnEzYuknwQufx6jycYQDhrtcucC3ohrGcw==
-X-Received: by 2002:ac2:54b4:: with SMTP id w20mr9023292lfk.24.1549898553203;
-        Mon, 11 Feb 2019 07:22:33 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.174])
-        by smtp.gmail.com with ESMTPSA id q2sm2540552lfa.63.2019.02.11.07.22.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:22:32 -0800 (PST)
-Subject: Re: [PATCH v5 3/6] math64: New DIV64_U64_ROUND_CLOSEST helper
-To:     Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20190211135858.23635-1-horms+renesas@verge.net.au>
- <20190211135858.23635-4-horms+renesas@verge.net.au>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
-Date:   Mon, 11 Feb 2019 18:22:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 11 Feb 2019 10:22:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390136AbfBKPDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1099F222B8;
+        Mon, 11 Feb 2019 15:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549897420;
+        bh=btuaW8UpzRjJlmbELzsiIRTC3u6uNxgDNK277ikfV5U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mOBovhpTf9QaY33SCRKJg7JOsYC0EhzE1ruvc2WsHPSZycGdMmg01HzExQKqAlOfC
+         OBMlf0WHwO5a2n/9ksay+mI0n/DAX0Eg8dnZbjGz+noC+1VLuPGcmPmIoNpzQE3UuL
+         zb1LqPC/hNE4TgDlStJr9E7/281adV+GZz4wahbA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 198/205] perf/core: Dont WARN() for impossible ring-buffer sizes
+Date:   Mon, 11 Feb 2019 15:19:56 +0100
+Message-Id: <20190211141841.367111122@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
+References: <20190211141827.214852402@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190211135858.23635-4-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/11/2019 04:58 PM, Simon Horman wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> Provide DIV64_U64_ROUND_CLOSEST helper which performs division rounded to
-> the closes integer using an unsigned 64bit dividend and divisor.
+------------------
 
-   Closest?
+From: Mark Rutland <mark.rutland@arm.com>
 
-> This will be used in a follow-up patch to allow calculation of clock
-> divisors with high frequency parents in the R-Car Gen3 CPG MSSR driver
-> where ovefolow occurs if either the dividend or divisor is 32bit.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
+commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
 
-MBR, Sergei
+The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+large its ringbuffer mmap should be. This can be configured to arbitrary
+values, which can be larger than the maximum possible allocation from
+kmalloc.
+
+When this is configured to a suitably large value (e.g. thanks to the
+perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+__alloc_pages_nodemask():
+
+   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
+
+Let's avoid this by checking that the requested allocation is possible
+before calling kzalloc.
+
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/events/ring_buffer.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -719,6 +719,9 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
+ 
++	if (order_base_2(size) >= MAX_ORDER)
++		goto fail;
++
+ 	rb = kzalloc(size, GFP_KERNEL);
+ 	if (!rb)
+ 		goto fail;
+
+
