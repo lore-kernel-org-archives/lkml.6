@@ -4,55 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91497C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD98C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 571A8222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6B521B69
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896229;
-	bh=kdNTHLSkr8DmUwB4YzBvuE1K0wG1YZPwDQNBEwKqfIM=;
+	s=default; t=1549896237;
+	bh=Qy7WiXNkhrRFJNMcNKA2cVA+HoDwlk7HF4ZsS+KmdfA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IvPWkDxIFyxLVQbagNsox/FwJu2zzbWR9MLPgy/KqXycGZiHGdLq7Ctf8sEQ0gLlN
-	 PhqaNoM3B/3ejVCgnNnyF2Xx8lmkbiwSRgtOb9cuwUPc177nxksACGEgSOFrWrS9qH
-	 kP5OtvuDAYWjEMy8fJy3bNx4meB4KggVeLVIxTYo=
+	b=vfXs4jmi4Al5MRRtuMVhdJqJPo9h7Juzg1z2qAkHKAZN6w+LR9HKMEpANJOm3S8uW
+	 6LLBJfGYzSCZgiWC8Hh8+Hv+PpeHD94oDPaj2BHy+zaQGYmCdExHZRpXxw3/w6qUwG
+	 2VM+MnSycv83joTmzWnwYav5mtUWcxmSmJx16M2Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732705AbfBKOnr (ORCPT
+        id S1732749AbfBKOnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56104 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731624AbfBKOno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:44 -0500
+        id S1728736AbfBKOnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 908BB20700;
-        Mon, 11 Feb 2019 14:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ABCB222A6;
+        Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896224;
-        bh=kdNTHLSkr8DmUwB4YzBvuE1K0wG1YZPwDQNBEwKqfIM=;
+        s=default; t=1549896230;
+        bh=Qy7WiXNkhrRFJNMcNKA2cVA+HoDwlk7HF4ZsS+KmdfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTtw7VJu81to9VW/KZo0UqoZqLmlCIW3zliX0fNSXAARMXaykOWX5voqUhiYhtvuh
-         FZCdUH3RMGPttKh08jWX3w2jc3lPIHsKIFK10aN7/dhrH+BvJNzNNl3rIYgGxLJzSk
-         ceIoBWoZRpd1McU7m2KgAXIrKId7cXpBZaRmlYSU=
+        b=j88UrKwRC/7DebzQHFoyd5k9rAQk/OnNXcH1ViNpz7Na+YukwNpMKxAaj3YrBswuN
+         cTRdKmGjm/yvmUm7xr5QGSAlgr2XHj7+SoDe5OjQ6kGU6dVK1Kjp1draZK5icoeXUi
+         bMBSN0UU2hKI6aqUbxpwWyEgsgy9MXDkabRw95ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Markos Chandras <markos.chandras@imgtec.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Song Liu <songliubraving@fb.com>,
-        Jiong Wang <jiong.wang@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 113/313] mips: bpf: fix encoding bug for mm_srlv32_op
-Date:   Mon, 11 Feb 2019 15:16:33 +0100
-Message-Id: <20190211141901.415699443@linuxfoundation.org>
+Subject: [PATCH 4.19 115/313] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
+Date:   Mon, 11 Feb 2019 15:16:35 +0100
+Message-Id: <20190211141901.538732097@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -71,45 +65,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
+[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
 
-For micro-mips, srlv inside POOL32A encoding space should use 0x50
-sub-opcode, NOT 0x90.
+The vendor firmware was analyzed to get the right idea about
+this flash layout. /proc/mtd contains:
 
-Some early version ISA doc describes the encoding as 0x90 for both srlv and
-srav, this looks to me was a typo. I checked Binutils libopcode
-implementation which is using 0x50 for srlv and 0x90 for srav.
+dev:    size   erasesize  name
+mtd0: 01e7ff40 00020000 "rootfs"
+mtd1: 01f40000 00020000 "upgrade"
+mtd2: 00040000 00020000 "rgdb"
+mtd3: 00020000 00020000 "nvram"
+mtd4: 00040000 00020000 "RedBoot"
+mtd5: 00020000 00020000 "LangPack"
+mtd6: 02000000 00020000 "flash"
 
-v1->v2:
-  - Keep mm_srlv32_op sorted by value.
+Here "flash" is obviously the whole device and we know "rootfs"
+is a bogus hack to point to a squashfs rootfs inside of the main
+"upgrade partition". We know "RedBoot" is the first 0x40000 of
+the flash and the "upgrade" partition follows from 0x40000 to
+0x1f8000. So we have mtd0, 1, 4 and 6 covered.
 
-Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
-Cc: Markos Chandras <markos.chandras@imgtec.com>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Remains:
+mtd2: 00040000 00020000 "rgdb"
+mtd3: 00020000 00020000 "nvram"
+mtd5: 00020000 00020000 "LangPack"
+
+Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
+these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
+"rgdb" of 0x40000.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/inst.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
-index c05dcf5ab414..273ef58f4d43 100644
---- a/arch/mips/include/uapi/asm/inst.h
-+++ b/arch/mips/include/uapi/asm/inst.h
-@@ -369,8 +369,8 @@ enum mm_32a_minor_op {
- 	mm_ext_op = 0x02c,
- 	mm_pool32axf_op = 0x03c,
- 	mm_srl32_op = 0x040,
-+	mm_srlv32_op = 0x050,
- 	mm_sra_op = 0x080,
--	mm_srlv32_op = 0x090,
- 	mm_rotr_op = 0x0c0,
- 	mm_lwxs_op = 0x118,
- 	mm_addu32_op = 0x150,
+diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
+index 6f258b50eb44..502a361d1fe9 100644
+--- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
++++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
+@@ -274,20 +274,16 @@
+ 				read-only;
+ 			};
+ 			/*
+-			 * Between the boot loader and the rootfs is the kernel
+-			 * in a custom Storlink format flashed from the boot
+-			 * menu. The rootfs is in squashfs format.
++			 * This firmware image contains the kernel catenated
++			 * with the squashfs root filesystem. For some reason
++			 * this is called "upgrade" on the vendor system.
+ 			 */
+-			partition@1800c0 {
+-				label = "rootfs";
+-				reg = <0x001800c0 0x01dbff40>;
+-				read-only;
+-			};
+-			partition@1f40000 {
++			partition@40000 {
+ 				label = "upgrade";
+-				reg = <0x01f40000 0x00040000>;
++				reg = <0x00040000 0x01f40000>;
+ 				read-only;
+ 			};
++			/* RGDB, Residental Gateway Database? */
+ 			partition@1f80000 {
+ 				label = "rgdb";
+ 				reg = <0x01f80000 0x00040000>;
 -- 
 2.19.1
 
