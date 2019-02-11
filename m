@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4661C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D41FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A981222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F145B222A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896914;
-	bh=zDluAz4aEsNqfVgruqD/s75skl2dB2iazHG75an7Slo=;
+	s=default; t=1549896918;
+	bh=UFKjV4ai0ILYYqeJXiUrKwtAo1MGnP+JmjOpPn+UVRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jgV03qWhGkumO+7/9oCSo/bvHBB0/B4j3cBi4HMTjUb1xkcgtdG785VNxIm0g/n+t
-	 8EsynQbgwkRV6Fd8KtifftpC9w9tr4zgKrxajTIBWBV44IBimKFKC2y4MNteURmYeU
-	 7O08kDCxWE8Q0Zng39mqkbQwVgae+Npis4miuPhQ=
+	b=xCdxSmfABfBKl8Hwregh8xVfuN49Qu0lCJJMULgu1EayM8r7PHki8D7+mrhiyw1xL
+	 EI+MzBclTl/1Vhpe+ThFFcObd+dPqsm9UaJOk20COdjpdAtnzNqlEDVKQL0yXm1BYk
+	 +AuLD51zGeiKVBfEhGoNuqeK8d8E/Upo/xiRlHHY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388931AbfBKOzN (ORCPT
+        id S2388939AbfBKOzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42102 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388916AbfBKOzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:09 -0500
+        id S2388536AbfBKOzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7523F2229E;
-        Mon, 11 Feb 2019 14:55:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B62B222A1;
+        Mon, 11 Feb 2019 14:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896908;
-        bh=zDluAz4aEsNqfVgruqD/s75skl2dB2iazHG75an7Slo=;
+        s=default; t=1549896911;
+        bh=UFKjV4ai0ILYYqeJXiUrKwtAo1MGnP+JmjOpPn+UVRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=la3MYQFwK04N9Zin2bIeJ4dLl1Vv3ix+GapjUk91PiEFACaVqh2dkMTmcSNlPXuV+
-         dqLnW48M15HnP51fhXj83KF3MPGnz9VHrL7Gq4Dla+11X6tSzSE5Wh5WJDtWLqdzXl
-         +nCteZhKg+ixUpxNucq5k8H0KSnMmwwokHyB5qUk=
+        b=BjK1gBiYTqr9ElEzTUXdpm+WiV9S6XtQYOXp8mJJoaVnKgMCRjsU2lM9+y0t1bMwe
+         4+UbYLFnseJb5UacMdGAojAgPIEzyqosF4ZRIDWkf0P8Kd2zrHBOkMO7VFZvHEKB7R
+         LrM2Q0b93hJsoFsoT/OHGltzPS57XnaZo8Ue/Y7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 028/205] ARM: OMAP2+: hwmod: Fix some section annotations
-Date:   Mon, 11 Feb 2019 15:17:06 +0100
-Message-Id: <20190211141829.613966000@linuxfoundation.org>
+Subject: [PATCH 4.14 029/205] net/mlx5: EQ, Use the right place to store/read IRQ affinity hint
+Date:   Mon, 11 Feb 2019 15:17:07 +0100
+Message-Id: <20190211141829.685918147@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,74 +67,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
+[ Upstream commit 1e86ace4c140fd5a693e266c9b23409358f25381 ]
 
-When building the kernel with Clang, the following section mismatch
-warnings appears:
+Currently the cpu affinity hint mask for completion EQs is stored and
+read from the wrong place, since reading and storing is done from the
+same index, there is no actual issue with that, but internal irq_info
+for completion EQs stars at MLX5_EQ_VEC_COMP_BASE offset in irq_info
+array, this patch changes the code to use the correct offset to store
+and read the IRQ affinity hint.
 
-WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_iclk_autoidle()
-The function _setup() references
-the function __init _setup_iclk_autoidle().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_iclk_autoidle is wrong.
-
-WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_reset()
-The function _setup() references
-the function __init _setup_reset().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_reset is wrong.
-
-WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_postsetup()
-The function _setup() references
-the function __init _setup_postsetup().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_postsetup is wrong.
-
-_setup is used in omap_hwmod_allocate_module, which isn't marked __init
-and looks like it shouldn't be, meaning to fix these warnings, those
-functions must be moved out of the init section, which this patch does.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |  2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c    | 14 ++++++++------
+ include/linux/mlx5/driver.h                       |  2 +-
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 2dbd63239c54..45c8f2ef4e23 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2497,7 +2497,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
-  * a stub; implementing this properly requires iclk autoidle usecounting in
-  * the clock code.   No return value.
-  */
--static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-+static void _setup_iclk_autoidle(struct omap_hwmod *oh)
- {
- 	struct omap_hwmod_ocp_if *os;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index bf34264c734b..14bab8a5550d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -1605,7 +1605,7 @@ static void mlx5e_close_cq(struct mlx5e_cq *cq)
  
-@@ -2528,7 +2528,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-  * reset.  Returns 0 upon success or a negative error code upon
-  * failure.
-  */
--static int __init _setup_reset(struct omap_hwmod *oh)
-+static int _setup_reset(struct omap_hwmod *oh)
+ static int mlx5e_get_cpu(struct mlx5e_priv *priv, int ix)
  {
- 	int r;
+-	return cpumask_first(priv->mdev->priv.irq_info[ix].mask);
++	return cpumask_first(priv->mdev->priv.irq_info[ix + MLX5_EQ_VEC_COMP_BASE].mask);
+ }
  
-@@ -2589,7 +2589,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
-  *
-  * No return value.
-  */
--static void __init _setup_postsetup(struct omap_hwmod *oh)
-+static void _setup_postsetup(struct omap_hwmod *oh)
+ static int mlx5e_open_tx_cqs(struct mlx5e_channel *c,
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index e99f1382a4f0..558fc6a05e2a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -619,18 +619,19 @@ u64 mlx5_read_internal_timer(struct mlx5_core_dev *dev)
+ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
  {
- 	u8 postsetup_state;
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
  
+-	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
++	if (!zalloc_cpumask_var(&priv->irq_info[vecidx].mask, GFP_KERNEL)) {
+ 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
+-			priv->irq_info[i].mask);
++			priv->irq_info[vecidx].mask);
+ 
+ 	if (IS_ENABLED(CONFIG_SMP) &&
+-	    irq_set_affinity_hint(irq, priv->irq_info[i].mask))
++	    irq_set_affinity_hint(irq, priv->irq_info[vecidx].mask))
+ 		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
+ 
+ 	return 0;
+@@ -638,11 +639,12 @@ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ 
+ static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ {
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
+ 
+ 	irq_set_affinity_hint(irq, NULL);
+-	free_cpumask_var(priv->irq_info[i].mask);
++	free_cpumask_var(priv->irq_info[vecidx].mask);
+ }
+ 
+ static int mlx5_irq_set_affinity_hints(struct mlx5_core_dev *mdev)
+diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
+index fb677e4f902d..88f0c530fe9c 100644
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -1195,7 +1195,7 @@ enum {
+ static inline const struct cpumask *
+ mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
+ {
+-	return dev->priv.irq_info[vector].mask;
++	return dev->priv.irq_info[vector + MLX5_EQ_VEC_COMP_BASE].mask;
+ }
+ 
+ #endif /* MLX5_DRIVER_H */
 -- 
 2.19.1
 
