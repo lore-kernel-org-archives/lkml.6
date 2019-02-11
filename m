@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB44C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DEAC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FFE222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1495C222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897926;
-	bh=61ZXdI1n+QU49+YohA0JJ4xTn2KtIjv3fik/coeKwB8=;
+	s=default; t=1549897932;
+	bh=ZlCDNNqYbIMSdf/sfTcshF2Foo443yLdNWqK74YhuHM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1xEjd234wqNeMUc+vdUChqV5Ajv/Br6upcV5KcoObSiTu8ErheU6oyEV9skA7pZ+s
-	 oz5Udbjp0gjeNLZwH7WYrpILzr1Oq/uOCyXK721BjCc4sYUW6/HEm2eMm/4zMSa4Cj
-	 MmbxPGs6RQ1kgEsivT6umsOPcfEusBbma537j7WE=
+	b=pcgY+mz60cCOgn+fVSE7UBj8eLfESG7kUvg82knbinCrdTOTvTp3ja+SYtguyABv3
+	 xYEi17S+DVhkRFVA2isOvoazFHtYS64YmBWXNDUChFBWukI8hbhr85nkuYkQ3RXWjC
+	 ODmq1bJ6fSiPoKrXSKKr3Y10HeGRGHW+dLD7/BQs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403974AbfBKPKo (ORCPT
+        id S2391228AbfBKPKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60724 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391827AbfBKPKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:38 -0500
+        id S2391054AbfBKPK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4247E222B2;
-        Mon, 11 Feb 2019 15:10:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34FA6222A7;
+        Mon, 11 Feb 2019 15:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897837;
-        bh=61ZXdI1n+QU49+YohA0JJ4xTn2KtIjv3fik/coeKwB8=;
+        s=default; t=1549897826;
+        bh=ZlCDNNqYbIMSdf/sfTcshF2Foo443yLdNWqK74YhuHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tX7HYBkQoMJE8Nkw6eFJJcVvAH8x1fsMWGgxczwMfwUGao5FXtPp6ZQbRutGwUt0m
-         dRfs3jxWbxzUn/+iblxQRNzMaXlhtJHtvw3JzCiAAuutoGtYxTzQf7SeFrpTczRuSC
-         oKdYx5gfyjhfO4FC3+IiddCY82W/k1udHB4UXyB8=
+        b=u6i2AbYMJtIJT6yac7iVh075TUGvSzfrcMdVgZpkpsmN6wtzhW94XF8LDqkiIF4NU
+         du2k1Y//ConUn80aqugW4qa50xopij9Qs2xrjEAHOiigu3VwTKwWT6jGWzZEwy1z+u
+         zLbXOoj7XxeJi+8QCXMvcGhTOp6seHV1vHVd+mrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 132/137] perf tests evsel-tp-sched: Fix bitwise operator
-Date:   Mon, 11 Feb 2019 15:20:13 +0100
-Message-Id: <20190211141824.369006067@linuxfoundation.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 129/137] perf/x86/intel/uncore: Add Node ID mask
+Date:   Mon, 11 Feb 2019 15:20:10 +0100
+Message-Id: <20190211141824.089499692@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -70,43 +71,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
+commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
 
-Notice that the use of the bitwise OR operator '|' always leads to true
-in this particular case, which seems a bit suspicious due to the context
-in which this expression is being used.
+Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
+Superdome Flex).
 
-Fix this by using bitwise AND operator '&' instead.
+To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
+the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
+configuration space, and the mapping between Socket ID and Node ID from
+GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
 
-This bug was detected with the help of Coccinelle.
+The local Node ID is only available at bit 2:0, but current code doesn't
+mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
+will be fetched.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Filter the Node ID by adding a mask.
+
+Reported-by: Song Liu <songliubraving@fb.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
-Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org> # v3.7+
+Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
+Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/tests/evsel-tp-sched.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/intel/uncore_snbep.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/perf/tests/evsel-tp-sched.c
-+++ b/tools/perf/tests/evsel-tp-sched.c
-@@ -16,7 +16,7 @@ static int perf_evsel__test_field(struct
- 		return -1;
- 	}
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -1221,6 +1221,8 @@ static struct pci_driver snbep_uncore_pc
+ 	.id_table	= snbep_uncore_pci_ids,
+ };
  
--	is_signed = !!(field->flags | FIELD_IS_SIGNED);
-+	is_signed = !!(field->flags & FIELD_IS_SIGNED);
- 	if (should_be_signed && !is_signed) {
- 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
- 			 evsel->name, name, is_signed, should_be_signed);
++#define NODE_ID_MASK	0x7
++
+ /*
+  * build pci bus to socket mapping
+  */
+@@ -1242,7 +1244,7 @@ static int snbep_pci2phy_map_init(int de
+ 		err = pci_read_config_dword(ubox_dev, nodeid_loc, &config);
+ 		if (err)
+ 			break;
+-		nodeid = config;
++		nodeid = config & NODE_ID_MASK;
+ 		/* get the Node ID mapping */
+ 		err = pci_read_config_dword(ubox_dev, idmap_loc, &config);
+ 		if (err)
 
 
