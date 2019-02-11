@@ -2,100 +2,127 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3471C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7E5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BF12084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 002C1218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="B1ITolKJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jtYFEZ3N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfBKUkv (ORCPT
+        id S1727664AbfBKUnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:40:51 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39038 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbfBKUkv (ORCPT
+        Mon, 11 Feb 2019 15:43:40 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37657 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfBKUne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:40:51 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so108013pgp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:40:51 -0800 (PST)
+        Mon, 11 Feb 2019 15:43:34 -0500
+Received: by mail-vk1-f193.google.com with SMTP id 197so73124vkf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:43:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nmT5nD2I7+KtQoUhHdkWUj1QqpObX7iHadIUM12uKwc=;
-        b=B1ITolKJ1NS4xWfX0ir0qavniH14XixPsbTXipQBHAPuub4IrbOyhFf0bD4uP6LHdP
-         yS1+dqUDzMVRvcvJyextDm7A370NcmuJxo2Gaef7ePt0XpBqOhxFxX2iUaAV1qVgKD0x
-         8m6rTHR7HFmADoOKyZvx1yyE1yoP+SI6StmEGtj2HeWi9jPom6Dy0b1cc6gXri860E8S
-         kQHnEctpa1aRKDiRprtEqWIL+49NLbsmfIpDYRnY35OR5Uu8inRWQLauyDfY8jHwPyGK
-         jQ5I0OxQrq32U5sCooP0X45Cvj7bJfLsaMeLrt/1ey7bbz7qywYulUwwn2Yi6R+AfX6q
-         36Uw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3cMNEJp8FIVlNz588OWfBZxhVehQjYTqZ3vLLL4zPk8=;
+        b=jtYFEZ3NBXuWT5F2o1RL8G8oPhHMkT7Zi2FFAcUcAe2GfP4Zko/3kbba9wC8Ixg1Ud
+         mG4wN+YrrNjAvT38Yba2d2aq54AIww1heqecXCOh8sZvZ5TSG5DxLMqTYV4lWnFW8iSK
+         vy3V2CgTC+r3k74HXBh3cm4M3JG0WNPpfGMWVcFo0fbw8sflInhttctu6aCNE89tmQqa
+         +R9IJxyw9Htsu78cDsO0dNLTwMcOzBambuayd0xm72Xu8NWwybgGJSmgVRQkthzoDsAx
+         bYSPFcmegFgIz24epPzIV7bLKym5H0s9lCqgmpDeLpJEAW42uXN+Vy3CuPDSu3nIrTEB
+         LikA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nmT5nD2I7+KtQoUhHdkWUj1QqpObX7iHadIUM12uKwc=;
-        b=NOtlIRJKlXgDLBmrCqqrgiMsl+j8Lo+07Vpb1BmtlhJ6hJlIaN6eClH1YIexxgiKnR
-         D4v03uSeYnnZBl5zHz5rN/nbzhevpx4UtrVR8tMQEp58FP5MxPcPbCjny93B/82ICPNr
-         WotQvaDv7dm9aUh7h9Llc4J3WDGmSF/y0EZqSTyNLfmhpjuQqMnt9ynSYAaPsD9fetX2
-         x+TEzZzW3KyrTvOE/bbakHc8mdf/jSN0oi6alVMmAZ3MAyJm9CTgvRjvcmYO85A5iDbP
-         SD0qCETjzg3Qtc+ZMlyWR+skNUca7Zj2nm2sBfzIU0kxpWSG+8Ut+Xw+xTKGTaqJ7GaP
-         FPBw==
-X-Gm-Message-State: AHQUAuYXQhl+KZYo1Sbd3ICN/kakb+QiU16yBO5d0A1Crk2rvJh2hzfS
-        rJpPBp9fwUy4oLtDV6jpYP8RsQ==
-X-Google-Smtp-Source: AHgI3IarME8mMwsDqp9azcXs3o7IJfhcXGKpA1KdQX8w0bLUJH9217uYklkSnkg2apnHfTrwcJGclg==
-X-Received: by 2002:a65:5243:: with SMTP id q3mr66002pgp.385.1549917650694;
-        Mon, 11 Feb 2019 12:40:50 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m67sm19694020pfm.73.2019.02.11.12.40.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 12:40:50 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gtINl-0000l1-L6; Mon, 11 Feb 2019 13:40:49 -0700
-Date:   Mon, 11 Feb 2019 13:40:49 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Davidlohr Bueso <dave@stgolabs.net>, netdev@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 0/3] Add gup fast + longterm and use it in HFI1
-Message-ID: <20190211204049.GB2771@ziepe.ca>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3cMNEJp8FIVlNz588OWfBZxhVehQjYTqZ3vLLL4zPk8=;
+        b=hiSEUoh/+W0oAbRLVeoNLc8Pcl4JOyoM0/7Axd5yy8oaHkhJPSJiWsrshOF486F65z
+         QV0LtdqBrvWpPkgrFDBJTZsJJMyIBZdnTqFMSh3OxDKoZmckdcELBrA8m27+4YJoZUNF
+         UxQX5qjTVhXmrtSBqRlPFzjVvbzFz0mL+EC7Uqw8MmFA7ZaRL+zWJOmt5HjM8YfuF1o9
+         3MpJ1ENhkAHkwVPn6tSBO4cWV+jrkw0wZVCMJBBJfq+VBjymzZ26Ac2dLc4zmfPoQkg4
+         fhRut3WR8fZQ1ywuNVMPf9cHbZXPZmYKPad92keUdDzacGKpU+A5gyy+E+RrENkn6uVH
+         sjuA==
+X-Gm-Message-State: AHQUAuag1PeJritLTiGeAOawRLtqDgcYmHn/ROXipruE0EAU7t8bug+J
+        uEKzlgoFKnmzRAoVJf5BlLBB1TcowB2oAoDWmJsIYQ==
+X-Google-Smtp-Source: AHgI3IY993flKSqaPva5JvGe863oAPvYT2EORnynoZVToilne9DN2XrTDo6n1rus2PuSRydnUgh1uRty1faxWMcqn3Y=
+X-Received: by 2002:a1f:a147:: with SMTP id k68mr54329vke.1.1549917813273;
+ Mon, 11 Feb 2019 12:43:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211201643.7599-1-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org> <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava> <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava> <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+ <20190211185306.GD5046@krava> <20190211193202.GG3269@kernel.org> <20190211201831.GE5046@krava>
+In-Reply-To: <20190211201831.GE5046@krava>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Mon, 11 Feb 2019 12:43:22 -0800
+Message-ID: <CABPqkBRdmfOde793id4GEuwD=eYL8TLKe1p8k07xWAh1MPD3AQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:16:40PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> NOTE: This series depends on my clean up patch to remove the write parameter
-> from gup_fast_permitted()[1]
-> 
-> HFI1 uses get_user_pages_fast() due to it performance advantages.  Like RDMA,
-> HFI1 pages can be held for a significant time.  But get_user_pages_fast() does
-> not protect against mapping of FS DAX pages.
+On Mon, Feb 11, 2019 at 12:18 PM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Mon, Feb 11, 2019 at 04:32:02PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Mon, Feb 11, 2019 at 07:53:06PM +0100, Jiri Olsa escreveu:
+> > > On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
+> > > > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > > > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
+> > > > > I think all could be added and worked around with exception
+> > > > > of BUILD_ID, which we store at the end (after processing
+> > > > > all data) and we need it early in the report phase
+> >
+> > > > Buildids are injected after the fact via perf inject when in pipe mode.
+> >
+> > > > > maybe it's time to re-think that buildid -> mmap event
+> > > > > association again, because it's pain in current implementation
+> > > > > as well
+> >
+> > > > Sure, but what do you propose?
+> >
+> > > this:
+> > >
+> > > > > looks like bpf code is actualy getting build ids and storing
+> > > > > it for the callchains in kernel.. we can check if we can do
+> > > > > something similar for mmap events
+> >
+> > kernel/bpf/stackmap.c
+> >
+> > /* Parse build ID from 64-bit ELF */
+> > static int stack_map_get_build_id_64(void *page_addr,
+> >                                      unsigned char *build_id)
+> >
+> > yeah, wasn't aware of that, good thing doing backports, huh? :-)
+> >
+> > So do you thing about having a PERF_SAMPLE_BUILDID in sample_type and go
+> > and stash that thing in PERF_RECORD_MMAP2?
+>
+That would be special processing. Normally the sample_type go into
+each RECORD_SAMPLE.
+So I would not recommend this approach.
 
-If HFI1 can use the _fast varient, can't all the general RDMA stuff
-use it too? 
+> I thought having new MMAP3 event version with buildid field in it
+> if available and/or enabled by bit in perf_event_attr
+>
+I think MMAP3 is a cleaner approach, though it adds yet another MMAP event.
 
-What is the guidance on when fast vs not fast should be use?
-
-Jason
+> jirka
