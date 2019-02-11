@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7460C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A81C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A65621773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1780421773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897228;
-	bh=dGafsh2wilVnDuQ+G3ffU27oUPJGLRA38xBb4596vPQ=;
+	s=default; t=1549897233;
+	bh=6b+ctTYqYz3tBK/TjgU5ZEhPDXa6QtnLJhpwPg/EwCg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eJZlVCF5k0jhJUpIFmTFcc9+cVbXvHMZdHV3Y8Oo6++M9DpMnjCCtwTGrf1GSZDD8
-	 JYyRF3T8N3N80Bk9K7BnXE+zGl+aydTNfl61xtsyCbjp+FShuf7Gvp2h3JEDUqP6ND
-	 81S/YScznUDd2ZHPH8QAh6/c0wUJMKrt+PNVb2w4=
+	b=V3ufBhygXtKPMOyE7FQbP4h/rSuG9H5GqlcV/hlusOOHN1dIEV+9+j1f6Wx9rY22w
+	 KEMwcRF+XdEYzkYJcmb8gEelIZ2K7oPKMzgIT7/0ZvloUh0qgq1g1qekSBLYd2xJ7q
+	 I2Zf/IIhyqnFz7mjYtxi+gU+2q8ReiK0yMbxZ3R0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390012AbfBKPA1 (ORCPT
+        id S2390025AbfBKPAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48322 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389988AbfBKPAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:24 -0500
+        id S2389247AbfBKPA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C91AF206BA;
-        Mon, 11 Feb 2019 15:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31BC0206BA;
+        Mon, 11 Feb 2019 15:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897224;
-        bh=dGafsh2wilVnDuQ+G3ffU27oUPJGLRA38xBb4596vPQ=;
+        s=default; t=1549897227;
+        bh=6b+ctTYqYz3tBK/TjgU5ZEhPDXa6QtnLJhpwPg/EwCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/iHRlnSrLRUhqi4uqGlEexfBKtJ59zWxmjhYSM8yu3kvEGvaP0svxMKlSYGb/QqR
-         OSK89tbY3MlVWdVsnMN/7eSkrjxdRpOOO2OpzStczQhJGPs9ik4+z3r9+QcxF9YYHk
-         rT+EdFWLajlrZOUm1h5dubnZ+oVUkfTQ6Us3if6c=
+        b=Q0Tz1WDXDJ7vRpC3NB1xduhk1kGfsJn1rCmBVLHF9zgxMKRTQNzE+YT5LvIxsXgZj
+         1fhWpyLY9AGtBDA4++2Sr3Pzv/CD0uCXuIMx1ia5ftoNEED6+qmauuLxCI3WSpnPH2
+         ltRMY5L1MZcqmL1kDG0PPnjo0CsH2oqP8HUj8Ij4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        stable@vger.kernel.org,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 132/205] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
-Date:   Mon, 11 Feb 2019 15:18:50 +0100
-Message-Id: <20190211141837.051415447@linuxfoundation.org>
+Subject: [PATCH 4.14 133/205] powerpc/fadump: Do not allow hot-remove memory from fadump reserved area.
+Date:   Mon, 11 Feb 2019 15:18:51 +0100
+Message-Id: <20190211141837.115830985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,39 +67,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e87555e550cef4941579cd879759a7c0dee24e68 ]
+[ Upstream commit 0db6896ff6332ba694f1e61b93ae3b2640317633 ]
 
-AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
-knows nothing about it, however, this MSR is among emulated_msrs and
-thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
-of course, fails.
+For fadump to work successfully there should not be any holes in reserved
+memory ranges where kernel has asked firmware to move the content of old
+kernel memory in event of crash. Now that fadump uses CMA for reserved
+area, this memory area is now not protected from hot-remove operations
+unless it is cma allocated. Hence, fadump service can fail to re-register
+after the hot-remove operation, if hot-removed memory belongs to fadump
+reserved region. To avoid this make sure that memory from fadump reserved
+area is not hot-removable if fadump is registered.
 
-Report the MSR as unsupported to not confuse userspace.
+However, if user still wants to remove that memory, he can do so by
+manually stopping fadump service before hot-remove operation.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/svm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/powerpc/include/asm/fadump.h               |  2 +-
+ arch/powerpc/kernel/fadump.c                    | 10 ++++++++--
+ arch/powerpc/platforms/pseries/hotplug-memory.c |  7 +++++--
+ 3 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 4dc79d139810..656ac12f5439 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5319,6 +5319,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
+diff --git a/arch/powerpc/include/asm/fadump.h b/arch/powerpc/include/asm/fadump.h
+index 1e7a33592e29..15bc07a31c46 100644
+--- a/arch/powerpc/include/asm/fadump.h
++++ b/arch/powerpc/include/asm/fadump.h
+@@ -200,7 +200,7 @@ struct fad_crash_memory_ranges {
+ 	unsigned long long	size;
+ };
  
- static bool svm_has_emulated_msr(int index)
+-extern int is_fadump_boot_memory_area(u64 addr, ulong size);
++extern int is_fadump_memory_area(u64 addr, ulong size);
+ extern int early_init_dt_scan_fw_dump(unsigned long node,
+ 		const char *uname, int depth, void *data);
+ extern int fadump_reserve_mem(void);
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index 5a6470383ca3..62d7ef6508de 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -117,13 +117,19 @@ int __init early_init_dt_scan_fw_dump(unsigned long node,
+ 
+ /*
+  * If fadump is registered, check if the memory provided
+- * falls within boot memory area.
++ * falls within boot memory area and reserved memory area.
+  */
+-int is_fadump_boot_memory_area(u64 addr, ulong size)
++int is_fadump_memory_area(u64 addr, ulong size)
  {
-+	switch (index) {
-+	case MSR_IA32_MCG_EXT_CTL:
-+		return false;
-+	default:
-+		break;
-+	}
++	u64 d_start = fw_dump.reserve_dump_area_start;
++	u64 d_end = d_start + fw_dump.reserve_dump_area_size;
 +
- 	return true;
+ 	if (!fw_dump.dump_registered)
+ 		return 0;
+ 
++	if (((addr + size) > d_start) && (addr <= d_end))
++		return 1;
++
+ 	return (addr + size) > RMA_START && addr <= fw_dump.boot_memory_size;
  }
+ 
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index 1d48ab424bd9..93e09f108ca1 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -441,8 +441,11 @@ static bool lmb_is_removable(struct of_drconf_cell *lmb)
+ 	phys_addr = lmb->base_addr;
+ 
+ #ifdef CONFIG_FA_DUMP
+-	/* Don't hot-remove memory that falls in fadump boot memory area */
+-	if (is_fadump_boot_memory_area(phys_addr, block_sz))
++	/*
++	 * Don't hot-remove memory that falls in fadump boot memory area
++	 * and memory that is reserved for capturing old kernel memory.
++	 */
++	if (is_fadump_memory_area(phys_addr, block_sz))
+ 		return false;
+ #endif
  
 -- 
 2.19.1
