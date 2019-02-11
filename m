@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6571C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CB3C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8760A2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517AF214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:27:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="lt697TZf"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N48L8FUF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbfBKM1T (ORCPT
+        id S1727807AbfBKM10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:27:19 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40902 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbfBKM0u (ORCPT
+        Mon, 11 Feb 2019 07:27:26 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46936 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727706AbfBKM0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:26:50 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q21so17010221wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:49 -0800 (PST)
+        Mon, 11 Feb 2019 07:26:48 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so4429768wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H6mmX1T1Rw0VrOeRhK3Cni5+zNNC71FKpECFu89Vdzs=;
-        b=lt697TZfEgnHkZco7R52pJxInRwx3u59akt81q+jrdp6EBmdAu7AZQzbq+b0/jUHNp
-         j5xVuf/8lFcTxvgJGNFNx5e+hux7201Xya4xawCjvt7sZWxZQkLhloX8jxEzBgiR6xVo
-         mK8mVEA8MxNNXxzXE7olDOXM3DV/FAmzAyjyet9slncWfcFhyyzEndUUwlO6vp2DA8QD
-         TD213OjgmdVBincVwp+PO0Ph9N4fhQ2Z+86wesb9Ze389kxYI7FJvJlWdVoPAXFTufLt
-         y5bjMBmZSJONrnDE3B591cs5QtcyHfxEMh2leWM/EfKGh3MA3jjGBD+v0S1MOsecJ79k
-         RpVg==
+        bh=7gYlfZ8dUsAGabZoJfnAkrezi2SLK3ltNashAmxc40Y=;
+        b=N48L8FUFoPpFOnAS0YTAWg2l0y48HLmUcYMfphxyLIFbMi+J20j/cmxn1D+Jr6TMkx
+         C3nE+0fqWFgs9JxgI9hYR0VlnDKaCpcyam7BbB5+TP1PA1x3tSmiv9rbbOWxLFmKQXeb
+         xt63EBA044XSKdXUkIFOOnHfpq6Z6cBCddV1LhDTUc5coR3GMuM9dm3aPHHHDGZuL5w0
+         dOsihb4Pch/ZKCm4c/KBadPHLUd3ek6Jm4jJe6//XIbYEt5vJs6PPFChh1ad1cnJm6/4
+         5omFC1Yty6qkq2YbNmK6wqnGhLim0Al572o+6tXE/7LhpbaK3gs+929Ms+Na53+WoWuW
+         hvHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H6mmX1T1Rw0VrOeRhK3Cni5+zNNC71FKpECFu89Vdzs=;
-        b=dO4Fy1gaqLpum+PUYT68SR60sX9dxn+GOaksCQEJqQxNEFVaTpBf2WvvPxlhzlKPO2
-         cIjau1E4MqSd2w5403lkvTXAPCgz+xB/lLFvUQg/7F1Jtn36VaB2EkWNMYep6fWS4DTe
-         qrNszY7rrs3sqT9akAI5X4C2+PSFQ8IoQ0bnJRBDmscT0Z4+xAnxnBovw4cs1BAQVh82
-         QwLPO8BMqe0Uyzfu/OoHGpmiEpzgGh14AfhblUsx4yq0MqOoCE9C81ouq0QEVLJiEDNn
-         EyKDjtmnrZXFR4cG4evEzhh32xGO2cBM2hLNymOB/Ww+hO/NV6ySF/arGGXl2SAi2yHs
-         SpBw==
-X-Gm-Message-State: AHQUAuZtrF2t9bLAAVazIWNQSgs1lxOQmuj9AANvh/4NL3YdfrJD7foz
-        kQ+hjcdzDQaVQN7+vt8t7VBgrQ==
-X-Google-Smtp-Source: AHgI3IZEQ0yJJz3s8V0klutMpLsQAm74CR5tSGGtHWyl4TAhVWbtq+u5mv0pmng0lskLGaYz4z/sqg==
-X-Received: by 2002:a7b:c103:: with SMTP id w3mr9614921wmi.41.1549888008827;
-        Mon, 11 Feb 2019 04:26:48 -0800 (PST)
+        bh=7gYlfZ8dUsAGabZoJfnAkrezi2SLK3ltNashAmxc40Y=;
+        b=Bib8Bvt44B0aRkQF9oKqz2myWye3CxYaR2phx5fhU92GD7vHSMtONeChCKBO4S6lv5
+         hgl8LD6mWhBdpm1Lc9mr2qA6pM0JS0dZkYUSXZRUFp80XBegqMvFJ+VBP0QNJR3S0Sgz
+         qOh3t+v7jwK9Xe5++vWFeFB4gGw4W16aojvVIbh6RoZs3mhy50Oi75ZVPmjV1miXOJsZ
+         8bUd/VKHLnAD9WSsWNwpkDp+TAPkqJomH7FGEK28VxV60MFLOM+jB1Ysi6gDUJQcRrf2
+         fBH4FJxjRJwJSlWwzpamnTZKQ/Zr8/qAJKJawq+8CfqIbkufZLKTUPRsvRRycxe3oeWi
+         tNTw==
+X-Gm-Message-State: AHQUAuY2Mw5Xvw4ZeypCUQ60YKdJTa07puNbGBFsLfRlIVk24p2L4TDT
+        19jzsO2KyPgDl79g1bm540mqVg==
+X-Google-Smtp-Source: AHgI3IYPnmpwc1HtFSRqkmujesCeydya0rEXFXaA6U+cZ064qrci+lst4vOY8YYs4YfUeyzNsVyvCA==
+X-Received: by 2002:adf:f848:: with SMTP id d8mr29156469wrq.178.1549888006437;
+        Mon, 11 Feb 2019 04:26:46 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.47
+        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:26:48 -0800 (PST)
+        Mon, 11 Feb 2019 04:26:45 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v2 29/33] ARM: davinci: cp-intc: use readl/writel_relaxed()
-Date:   Mon, 11 Feb 2019 13:26:02 +0100
-Message-Id: <20190211122606.8662-30-brgl@bgdev.pl>
+Subject: [RESEND PATCH v2 27/33] ARM: davinci: cp-intc: improve coding style
+Date:   Mon, 11 Feb 2019 13:26:00 +0100
+Message-Id: <20190211122606.8662-28-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
 References: <20190211122606.8662-1-brgl@bgdev.pl>
@@ -79,35 +79,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed()
-and writel_relaxed() respectively. It's safe to do as there's no
-endianness conversion being done in the code.
+Drop tabs from variable initialization. Arrange variables in reverse
+christmas-tree order. Add a newline before a return.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/cp_intc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/cp_intc.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index c1efb9390655..4bbf0eba1920 100644
+index faf3d74d3719..f3787ae4cdbd 100644
 --- a/arch/arm/mach-davinci/cp_intc.c
 +++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -45,13 +45,13 @@ static struct irq_domain *davinci_cp_intc_irq_domain;
- 
- static inline unsigned int davinci_cp_intc_read(unsigned int offset)
+@@ -77,12 +77,12 @@ static void davinci_cp_intc_unmask_irq(struct irq_data *d)
+ static int davinci_cp_intc_set_irq_type(struct irq_data *d,
+ 					unsigned int flow_type)
  {
--	return __raw_readl(davinci_cp_intc_base + offset);
-+	return readl_relaxed(davinci_cp_intc_base + offset);
+-	unsigned reg		= BIT_WORD(d->hwirq);
+-	unsigned mask		= BIT_MASK(d->hwirq);
+-	unsigned polarity	= davinci_cp_intc_read(
+-					DAVINCI_CP_INTC_SYS_POLARITY(reg));
+-	unsigned type		= davinci_cp_intc_read(
+-					DAVINCI_CP_INTC_SYS_TYPE(reg));
++	unsigned int reg, mask, polarity, type;
++
++	reg = BIT_WORD(d->hwirq);
++	mask = BIT_MASK(d->hwirq);
++	polarity = davinci_cp_intc_read(DAVINCI_CP_INTC_SYS_POLARITY(reg));
++	type = davinci_cp_intc_read(DAVINCI_CP_INTC_SYS_TYPE(reg));
+ 
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -150,6 +150,7 @@ static int davinci_cp_intc_host_map(struct irq_domain *h, unsigned int virq,
+ 	irq_set_chip(virq, &davinci_cp_intc_irq_chip);
+ 	irq_set_probe(virq);
+ 	irq_set_handler(virq, handle_edge_irq);
++
+ 	return 0;
  }
  
- static inline void davinci_cp_intc_write(unsigned long value,
- 					 unsigned int offset)
- {
--	__raw_writel(value, davinci_cp_intc_base + offset);
-+	writel_relaxed(value, davinci_cp_intc_base + offset);
- }
- 
- static void davinci_cp_intc_ack_irq(struct irq_data *d)
 -- 
 2.20.1
 
