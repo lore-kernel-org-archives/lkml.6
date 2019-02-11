@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61287C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ABBC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF6B20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 564A320838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896159;
-	bh=8TjnDRhWHY663AFdMrplk6q0Tl8y++AWmDqGGR3S+Zs=;
+	s=default; t=1549896162;
+	bh=0zieTorbgI700kFAP9g7ahNkIplbQyRc16dvfbeORag=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YIAcMgmjNdSY9MnQzNcXodQZWOofj2zzzn20yxd3zTL8rpRwai2f63AlQz86el9LT
-	 q0imLrPtDA8zZXkF2Y/0yLgcgd5h+6X0CkkW+zo5pU1KE2nHfHcCyoUmpIDMxYqNzE
-	 l+6cC0c3wVgMLQQHTqBRbt6PPNVwwykoPbr8ZzhU=
+	b=Dz1mZLnaTg1GA28YUkw+5vtNmQRG7fFr8pFPR8GMJcEYDKc6xvRVb0XKs44BWJHPk
+	 haMBvsSmefHUygvh9dN9p3ZjRtW5GmCzpHMnPTM/F/vMMndJ2Pqen1Iwtxy5ks8TUb
+	 2t9raZrlZedEzOt0EHFBFEHN3Sr8YDV1PMFsbtQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732473AbfBKOmi (ORCPT
+        id S1732485AbfBKOml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:42:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:42:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732429AbfBKOme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:34 -0500
+        id S1731373AbfBKOmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:42:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76E1F20700;
-        Mon, 11 Feb 2019 14:42:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D78CF2081B;
+        Mon, 11 Feb 2019 14:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896154;
-        bh=8TjnDRhWHY663AFdMrplk6q0Tl8y++AWmDqGGR3S+Zs=;
+        s=default; t=1549896157;
+        bh=0zieTorbgI700kFAP9g7ahNkIplbQyRc16dvfbeORag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wCe+E5iziO+Y/h/eeD/+Y1ufdqVqlMX3AuUCzsIa3ES8ztEiWn8Is2muR89wcDHXu
-         FoTg3JZiMVjsmWQgkzrpbHF6qce+g75NjyUV+lUMCJk3p2niyxbxCZKMucNblcy7yC
-         dMnQeamqjUBnPA2hqRfswbiADC65sTeo2hcrPA7Y=
+        b=2dFClezKuuSQvQepZNv1XXJjrTV1l624dKM6KHFKq6uKdK8/r0eOtdStQExYFiaDH
+         TT/tmERXYpj6YpTL1G14XeJNm7FxVsNJHYRMb+WTYykIm31TIv1jczhrWGdOqQbdu3
+         ro08wAslGqu9bWl9oZtjMsjg9m9bt5PjoTrFpXAY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 060/313] powerpc/32: Add .data..Lubsan_data*/.data..Lubsan_type* sections explicitly
-Date:   Mon, 11 Feb 2019 15:15:40 +0100
-Message-Id: <20190211141857.840969026@linuxfoundation.org>
+Subject: [PATCH 4.19 061/313] iio: adc: meson-saradc: check for devm_kasprintf failure
+Date:   Mon, 11 Feb 2019 15:15:41 +0100
+Message-Id: <20190211141857.933940657@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,47 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit beba24ac59133cb36ecd03f9af9ccb11971ee20e ]
+[ Upstream commit aad172b017617994343e36d8659c69e14cd694fd ]
 
-When both `CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y` and `CONFIG_UBSAN=y`
-are set, link step typically produce numberous warnings about orphan
-section:
+devm_kasprintf() may return NULL on failure of internal allocation thus
+the assignments to  init.name  are not safe if not checked. On error
+meson_sar_adc_clk_init() returns negative values so -ENOMEM in the
+(unlikely) failure case of devm_kasprintf() should be fine here.
 
-  + powerpc-linux-gnu-ld -EB -m elf32ppc -Bstatic --orphan-handling=warn --build-id --gc-sections -X -o .tmp_vmlinux1 -T ./arch/powerpc/kernel/vmlinux.lds --who
-  le-archive built-in.a --no-whole-archive --start-group lib/lib.a --end-group
-  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_data393' from `init/main.o' being placed in section `.data..Lubsan_data393'.
-  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_data394' from `init/main.o' being placed in section `.data..Lubsan_data394'.
-  ...
-  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_type11' from `init/main.o' being placed in section `.data..Lubsan_type11'.
-  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_type12' from `init/main.o' being placed in section `.data..Lubsan_type12'.
-  ...
-
-This commit remove those warnings produced at W=1.
-
-Link: https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg135407.html
-Suggested-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/vmlinux.lds.S | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iio/adc/meson_saradc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index 07ae018e550e..53016c753f3c 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -296,6 +296,10 @@ SECTIONS
- #ifdef CONFIG_PPC32
- 	.data : AT(ADDR(.data) - LOAD_OFFSET) {
- 		DATA_DATA
-+#ifdef CONFIG_UBSAN
-+		*(.data..Lubsan_data*)
-+		*(.data..Lubsan_type*)
-+#endif
- 		*(.data.rel*)
- 		*(SDATA_MAIN)
- 		*(.sdata2)
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index da2d16dfa63e..da4c391b8977 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -589,6 +589,9 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
+ 
+ 	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_div",
+ 				   indio_dev->dev.of_node);
++	if (!init.name)
++		return -ENOMEM;
++
+ 	init.flags = 0;
+ 	init.ops = &clk_divider_ops;
+ 	clk_parents[0] = __clk_get_name(priv->clkin);
+@@ -608,6 +611,9 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
+ 
+ 	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_en",
+ 				   indio_dev->dev.of_node);
++	if (!init.name)
++		return -ENOMEM;
++
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.ops = &clk_gate_ops;
+ 	clk_parents[0] = __clk_get_name(priv->adc_div_clk);
 -- 
 2.19.1
 
