@@ -2,134 +2,248 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2E4C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C937C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7ED218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D089C21B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:05:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y1t9jigP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVVWrgmM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbfBKRFZ (ORCPT
+        id S1729962AbfBKRFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:05:25 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46926 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727715AbfBKRFY (ORCPT
+        Mon, 11 Feb 2019 12:05:49 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46587 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727442AbfBKRFs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:05:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NtW9vSG4B9Be8vJJa6zgqc1RANLcAk+oi8MXCzEZ4VU=; b=Y1t9jigPcJQuy+6ZytUPMdcDk
-        kcvDhn9nybF03iEbknI0N3tbXAJlxaMQ2f6hJJfcJ6nYjsb0mO6pFvJgvVcvg+WeF8wDpZM3f1X+z
-        iWxU6HJcRAJk1vF4EYdkZ7xocFwYoxXdu6WhXvyAJjKjlJkCtRNnv/Ijacgdg8srcrA2e5seoeB5Y
-        Es7vmJ4Sxt/Ju+G9LYnA/ldItYVsc0snS1g9tmYGKizi4qgSHMPPXL7DWLlVsDBUmO3t4dxN62tet
-        s7fJVp83EP8E3d+AoPoyc5/lfn2kbFNJDfFojVXdj5DgdHACuzvIQDzx4K4qy9TGHKQf6sJrEbT9S
-        auJ3b59SA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtF0k-0005pj-Bv; Mon, 11 Feb 2019 17:04:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5DC0D20D0E3C8; Mon, 11 Feb 2019 18:04:47 +0100 (CET)
-Date:   Mon, 11 Feb 2019 18:04:47 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH] locking/rwsem: Remove arch specific rwsem files
-Message-ID: <20190211170447.GO32477@hirez.programming.kicks-ass.net>
-References: <1549850450-10171-1-git-send-email-longman@redhat.com>
- <20190211115833.GY32511@hirez.programming.kicks-ass.net>
- <e470384d-fb7b-132d-253b-23c495e7c285@redhat.com>
+        Mon, 11 Feb 2019 12:05:48 -0500
+Received: by mail-qt1-f196.google.com with SMTP id y20so12924418qtm.13;
+        Mon, 11 Feb 2019 09:05:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vFwn7GEWMpP/i4XyftTnajRK6DEXakDFFBDSz4b5xng=;
+        b=EVVWrgmMIaEc3Ky39Iw2hoU6rQtr4imhypZWSkM6MPFSaACWcuqOiChyId97OjUTzY
+         LGLg0GNOKPu0JeqpvU138kyKa3TsdVsgbI7ErIELYaU5xBJGzyZEyS2yOCMD9F+FVdq1
+         MbT+72GSDam1h6aLddHfeW1Ulkt6yDwQV3f6b93Cnav+tNvgFh7A3oC/Pjn3ItLs4+sz
+         PlH6kuXC5xZVFqFC/0hFrtb59qtwtFV1+mltE/Ya+vslBSXWt5nW3UopZve+FNHww3DA
+         rEtH6rWAsuh8jaIPXMaoNV1J2xy/w8zaZQRJVUhJJIXAGYahncb15z6nNmAgevDYk1MQ
+         X0MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vFwn7GEWMpP/i4XyftTnajRK6DEXakDFFBDSz4b5xng=;
+        b=aW+L7C/EJXN1M1xi60vl5Fgz2bTyrQdmC4IHahow/4IQatrVK2ftrHU64xgPOSQDDk
+         IRWnurahf8ow6TEcWqxt7EhfhVolVd2rq/p8t9/l059irnzjclOMdCJG21AUkpIEKUtw
+         Mb7Nplymm16vSUSwge7T+XaK8+IaogPqIoZSP7MJV55xKkXJj6+ecFkzoo+KONL8ni1s
+         UBh9Ta0otQGg3YgbkmE7p86QxKhJH2igAQBaDHWIZrAUE8zNm66xgQVAktRK8vyPBDE5
+         lZjY9J13CbvALNXkKeAm5RMzgCzL39aAUfKV+BavCz+I6cdTyLtR+2RPCmpDP6xJLPMA
+         8lIg==
+X-Gm-Message-State: AHQUAuYTAeQ1oUbFGDpjv6bjfSG98pA64tyblzanCiBw+qktFiNRosuE
+        crzlq5faMgmTVs7XqUddUdc=
+X-Google-Smtp-Source: AHgI3IZVqMQEQjWeqlRcLO8dX2I/3QGABEuUgDaC2Ra7SsfdeFgC0YBjT/hwhpf0Eb3R//SEYj/A4Q==
+X-Received: by 2002:ac8:7153:: with SMTP id h19mr26614136qtp.92.1549904747076;
+        Mon, 11 Feb 2019 09:05:47 -0800 (PST)
+Received: from localhost.localdomain ([168.194.160.109])
+        by smtp.gmail.com with ESMTPSA id d21sm8849626qtr.34.2019.02.11.09.05.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 09:05:45 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id F04B1180B77; Mon, 11 Feb 2019 15:05:42 -0200 (-02)
+Date:   Mon, 11 Feb 2019 15:05:42 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     David Miller <davem@davemloft.net>, julien@arista.com,
+        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vyasevich@gmail.com,
+        lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190211170542.GF10665@localhost.localdomain>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <20190209.151217.175627323493244750.davem@davemloft.net>
+ <20190210124616.GG13621@localhost.localdomain>
+ <20190211150432.GA13525@hmswarspite.think-freely.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e470384d-fb7b-132d-253b-23c495e7c285@redhat.com>
+In-Reply-To: <20190211150432.GA13525@hmswarspite.think-freely.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:35:24AM -0500, Waiman Long wrote:
-> On 02/11/2019 06:58 AM, Peter Zijlstra wrote:
-> > Which is clearly worse. Now we can write that as:
-> >
-> >   int __down_read_trylock2(unsigned long *l)
-> >   {
-> > 	  long tmp = READ_ONCE(*l);
-> >
-> > 	  while (tmp >= 0) {
-> > 		  if (try_cmpxchg(l, &tmp, tmp + 1))
-> > 			  return 1;
-> > 	  }
-> >
-> > 	  return 0;
-> >   }
-> >
-> > which generates:
-> >
-> >   0000000000000030 <__down_read_trylock2>:
-> >   30:   48 8b 07                mov    (%rdi),%rax
-> >   33:   48 85 c0                test   %rax,%rax
-> >   36:   78 18                   js     50 <__down_read_trylock2+0x20>
-> >   38:   48 8d 50 01             lea    0x1(%rax),%rdx
-> >   3c:   f0 48 0f b1 17          lock cmpxchg %rdx,(%rdi)
-> >   41:   75 f0                   jne    33 <__down_read_trylock2+0x3>
-> >   43:   b8 01 00 00 00          mov    $0x1,%eax
-> >   48:   c3                      retq
-> >   49:   0f 1f 80 00 00 00 00    nopl   0x0(%rax)
-> >   50:   31 c0                   xor    %eax,%eax
-> >   52:   c3                      retq
-> >
-> > Which is a lot better; but not quite there yet.
-> >
-> >
-> > I've tried quite a bit, but I can't seem to get GCC to generate the:
-> >
-> > 	add $1,%rdx
-> > 	jle
-> >
-> > required; stuff like:
-> >
-> > 	new = old + 1;
-> > 	if (new <= 0)
-> >
-> > generates:
-> >
-> > 	lea 0x1(%rax),%rdx
-> > 	test %rdx, %rdx
-> > 	jle
-> 
-> Thanks for the suggested code snippet. So you want to replace "lea
-> 0x1(%rax), %rdx" by "add $1,%rdx"?
-> 
-> I think the compiler is doing that so as to use the address generation
-> unit for addition instead of using the ALU. That will leave the ALU
-> available for doing other arithmetic operation in parallel. I don't
-> think it is a good idea to override the compiler and force it to use
-> ALU. So I am not going to try doing that. It is only 1 or 2 more of
-> codes anyway.
+On Mon, Feb 11, 2019 at 10:04:32AM -0500, Neil Horman wrote:
+> On Sun, Feb 10, 2019 at 10:46:16AM -0200, Marcelo Ricardo Leitner wrote:
+> > On Sat, Feb 09, 2019 at 03:12:17PM -0800, David Miller wrote:
+> > > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+> > > Date: Wed, 6 Feb 2019 18:37:54 -0200
+> > > 
+> > > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > > >> structures longer than the current definitions.
+> > > >> 
+> > > >> This should prevent unjustified setsockopt() failures due to struct
+> > > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > > >> binaries that should be compatible, but were built with later kernel
+> > > >> uapi headers.
+> > > > 
+> > > > Not sure if we support backwards compatibility like this?
+> > > 
+> > > What a complete mess we have here.
+> > > 
+> > > Use new socket option numbers next time, do not change the size and/or
+> > > layout of existing socket options.
+> > 
+> > What about reusing the same socket option, but defining a new struct?
+> > Say, MYSOCKOPT supports struct mysockopt, struct mysockopt2, struct
+> > mysockopt3...
+> > 
+> > That way we have a clear definition of the user's intent.
+> > 
+> Thats possible, but I think thats pretty equivalaent to what daves saying, in
+> that he wants us to identify all the sizes of this struct and the git history
+> and act on them accordingly.  Having internal versions of the struct seems like
+> a fine way to get there, but I think we need to consider how we got to this
+> situations before we go down the implementation path.
 
-Yeah, I was trying to see what I could make it do.. #2 really should be
-good enough, but you know how it is once you're poking at it :-)
+I was more referring to future stuff, but yes. I find it a bit easier
+to handle than having to switch the sockopt too and so far I couldn't
+find drawbacks to it.
+
+That is, when using a new sockopt, we could accept a buffer larger
+than the needed, but I'm not considering that as a valid point
+anymore. Putting this compatibility aside for a moment, that pretty
+much means the user doesn't know what it wants and so we also don't.
+
+> 
+> > > 
+> > > This whole thread, if you read it, is basically "if we compatability
+> > > this way, that breaks, and if we do compatability this other way oh
+> > > shit this other thing doesn't work."
+> > > 
+> > > I think we really need to specifically check for the difference sizes
+> > > that existed one by one, clear out the part not given by the user, and
+> > > backport this as far back as possible in a way that in the older kernels
+> > > we see if the user is actually trying to use the new features and if so
+> > > error out.
+> > 
+> > I'm afraid clearing out may not be enough, though seems it's the best
+> > we can do so far. If the struct is allocated but not fully initialized
+> > via a memset, but by setting its fields one by one, the remaining new
+> > fields will be left uninitinialized.
+> > 
+> 
+> I'm not sure this even makes sense.  Currently (as I understood it), the issue
+> we are facing is the one in which an application is built against a newer kernel
+> and run on an older one, the implication there being that the application will
+> pass in a buffer that is larger than what the kernel expects.  In that
+> situation, clearing isn't needed, all thats needed (I think), is a memcmp of the
+> space between the sizeof(kernel struct version), and sizeof(userspace struct
+> version) to see if any bits are non-zero.  If they are, we error out, otherwise,
+> we ignore the space and move forward as though that overage doesn't exist.
+
+That's exactly what I tried to mean. :-)
+
+> 
+> Mind you, I'm not (yet) advocating for that approach, just trying to clarify
+> whats needed.
+
+Ok.
+
+> > > 
+> > > Which, btw, is terrible behavior.  Newly compiled apps should work on
+> > > older kernels if they don't try to use the new features, and if they
+> > 
+> > One use case here is: a given distro is using kernel X and app Foo is
+> > built against it. Then upgrades to X+1, Foo is patched to fix an issue
+> > and is rebuilt against X+1. The user upgrades Foo package but for
+> > whatever reason, doesn't upgrade kernel or reboot the system. Here,
+> > Foo doesn't work anymore until the new kernel is also running.
+> > 
+> Yes, thats the use case that we're trying to address.
+> 
+> > > can the ones that want to try to use the new features should be able
+> > > to fall back when that feature isn't available in a non-ambiguous
+> > > and precisely defined way.
+> > > 
+> > > The fact that the use of the new feature is hidden in the new
+> > > structure elements is really rotten.
+> > > 
+> > > This patch, at best, needs some work and definitely a longer and more
+> > > detailed commit message.
+> > 
+> FWIW, before we decide on a course of action, I think I need to point out that,
+> over the last 10 years, we've extended this structure 6 times, in the following
+> commits:
+> 0f3fffd8ab1db
+> 7e8616d8e7731
+> e1cdd553d482c
+> 35ea82d611da5
+> c95129d127c6d
+> b444153fb5a64
+> 
+> The first two I believe were modifications during a period when sctp was
+> actually getting integrated to the kernel, but the last 4 were definately done
+> during more recent development periods and wen't in without any commentary about
+> the impact to UAPI compatibility.  The check for optlen > sizeof(struct
+> sctp_event_subscribe) was made back in 2008, and while not spelled out, seems
+> pretty clearly directed at enforcing compatibility with older appliations, not
+> compatibility with newer applications running on older kernels.
+> 
+> I really worry about situations in which we need to support applications
+> expecting features that the running kernel doesn't have.  In this particular
+> situation it seems like a fixable thing, but I could envision situations in
+> which we just can't do it, and I don't want to set that expectation when we
+> can't consistently meet it.
+> 
+> So, if the consensus is that we need to support applications built on newer
+> kernels, but run on older kernels (and I'd like to get verbal consensus on
+
+Yes from my side.
+
+> that), then we need to identify a method to fix this.  I'm still hesitant to
+> do anything that involves us accepting any size buffer over the kernel expected
+> size, as that puts us in a position to have to read large amounts of user data
+> (i.e. possible DOS), and just picking an arbitrary large number to limit the
+> buffer size seems wrong.  What if, on receipt of a structure from a newer kernel
+> (implying a size larger than what the kernel expects), we clamp optlen to the
+> kernel size, and put_user it back to the application?  i.e. we don't check any
+
+We can't do that on setsockopt calls, as optlen is R/O there.
+Returning > 0 is not specified on setsockopt(2).
+
+> data above and beyond what the the kernel knows about, but we use the optlen as
+> an indicator to user space that not all the data was processed?  That allows the
+> kernel to ignore the overage safely, and while its not in the socket api
+> extension RFC, its not violating anything, and is something we can document in
+> the sctp(7) man page as a linux only behavior.
+> 
+> Thoughts?
+> Neil
+
+I also need to dig deeper on this, but in general what if we draw
+a line based on the current implementation:
+- Current struct is X bytes long
+- Patch current and older kernels to accept up to X bytes, as long as
+  the trailing bytes are zeroed. Otherwise, EINVAL.
+  X may be a magic number for old kernel, but this way we avoid
+  unbounded buffers and the limit is not random.
+- On further changes, create a new, explicitly versioned struct.
+  Older kernels will EINVAL if this new struct is used, which is
+  expected.
+  Newer kernels will then have to cope with the different
+  sizes/structs accordingly.
+
+
+  Marcelo
