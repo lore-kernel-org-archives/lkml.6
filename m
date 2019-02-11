@@ -2,217 +2,64 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DD4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2E1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA72218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38236218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbfBKRlT (ORCPT
+        id S1730037AbfBKRpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:41:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57790 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730186AbfBKRlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:41:18 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 08DE5C01DE19;
-        Mon, 11 Feb 2019 17:41:18 +0000 (UTC)
-Received: from redhat.com (ovpn-120-40.rdu2.redhat.com [10.10.120.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A7962D321;
-        Mon, 11 Feb 2019 17:41:08 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 12:41:08 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
-        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
-Message-ID: <20190211123815-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
- <20190204181558.12095.83484.stgit@localhost.localdomain>
- <20190209195325-mutt-send-email-mst@kernel.org>
- <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
- <20190211091623-mutt-send-email-mst@kernel.org>
- <ac61d035-7c7b-bfec-c78b-b9387c40d3ea@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac61d035-7c7b-bfec-c78b-b9387c40d3ea@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 11 Feb 2019 17:41:18 +0000 (UTC)
+        Mon, 11 Feb 2019 12:45:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54870 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728022AbfBKRpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:45:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AE43EBD;
+        Mon, 11 Feb 2019 09:45:50 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E22B03F675;
+        Mon, 11 Feb 2019 09:45:48 -0800 (PST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-arch@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, andrew.murray@arm.com, arnd@arndb.de,
+        catalin.marinas@arm.com, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 0/2] Ensure inX() is ordered wrt delay() routines
+Date:   Mon, 11 Feb 2019 17:45:42 +0000
+Message-Id: <20190211174544.4302-1-will.deacon@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:24:02AM -0500, Nitesh Narayan Lal wrote:
-> 
-> On 2/11/19 9:17 AM, Michael S. Tsirkin wrote:
-> > On Mon, Feb 11, 2019 at 08:30:03AM -0500, Nitesh Narayan Lal wrote:
-> >> On 2/9/19 7:57 PM, Michael S. Tsirkin wrote:
-> >>> On Mon, Feb 04, 2019 at 10:15:58AM -0800, Alexander Duyck wrote:
-> >>>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> >>>>
-> >>>> Because the implementation was limiting itself to only providing hints on
-> >>>> pages huge TLB order sized or larger we introduced the possibility for free
-> >>>> pages to slip past us because they are freed as something less then
-> >>>> huge TLB in size and aggregated with buddies later.
-> >>>>
-> >>>> To address that I am adding a new call arch_merge_page which is called
-> >>>> after __free_one_page has merged a pair of pages to create a higher order
-> >>>> page. By doing this I am able to fill the gap and provide full coverage for
-> >>>> all of the pages huge TLB order or larger.
-> >>>>
-> >>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> >>> Looks like this will be helpful whenever active free page
-> >>> hints are added. So I think it's a good idea to
-> >>> add a hook.
-> >>>
-> >>> However, could you split adding the hook to a separate
-> >>> patch from the KVM hypercall based implementation?
-> >>>
-> >>> Then e.g. Nilal's patches could reuse it too.
-> >> With the current design of my patch-set, if I use this hook to report
-> >> free pages. I will end up making redundant hints for the same pfns.
-> >>
-> >> This is because the pages once freed by the host, are returned back to
-> >> the buddy.
-> > Suggestions on how you'd like to fix this? You do need this if
-> > you introduce a size cut-off right?
-> 
-> I do, there are two ways to go about it.
-> 
-> One is to  use this and have a flag in the page structure indicating
-> whether that page has been freed/used or not.
+Hi all,
 
-Not sure what do you mean. The refcount does this right?
+Ordering port read accesses against non-memory-mapped clocksource reads can
+require funky dependency code in conjunction with memory barriers. This isn't
+possible to implement with the asm-generic definition of io.h, since the value
+read from the device is not passed through to the underlying barrier macro and
+therefore the dependency information is lost.
 
-> Though I am not sure if
-> this will be acceptable upstream.
-> Second is to find another place to invoke guest_free_page() post buddy
-> merging.
+This series passes the value through and hooks up the fence on arm64.
 
-Might be easier.
+Will
 
-> >
-> >>>
-> >>>> ---
-> >>>>  arch/x86/include/asm/page.h |   12 ++++++++++++
-> >>>>  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
-> >>>>  include/linux/gfp.h         |    4 ++++
-> >>>>  mm/page_alloc.c             |    2 ++
-> >>>>  4 files changed, 46 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> >>>> index 4487ad7a3385..9540a97c9997 100644
-> >>>> --- a/arch/x86/include/asm/page.h
-> >>>> +++ b/arch/x86/include/asm/page.h
-> >>>> @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
-> >>>>  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> >>>>  		__arch_free_page(page, order);
-> >>>>  }
-> >>>> +
-> >>>> +struct zone;
-> >>>> +
-> >>>> +#define HAVE_ARCH_MERGE_PAGE
-> >>>> +void __arch_merge_page(struct zone *zone, struct page *page,
-> >>>> +		       unsigned int order);
-> >>>> +static inline void arch_merge_page(struct zone *zone, struct page *page,
-> >>>> +				   unsigned int order)
-> >>>> +{
-> >>>> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> >>>> +		__arch_merge_page(zone, page, order);
-> >>>> +}
-> >>>>  #endif
-> >>>>  
-> >>>>  #include <linux/range.h>
-> >>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> >>>> index 09c91641c36c..957bb4f427bb 100644
-> >>>> --- a/arch/x86/kernel/kvm.c
-> >>>> +++ b/arch/x86/kernel/kvm.c
-> >>>> @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
-> >>>>  		       PAGE_SIZE << order);
-> >>>>  }
-> >>>>  
-> >>>> +void __arch_merge_page(struct zone *zone, struct page *page,
-> >>>> +		       unsigned int order)
-> >>>> +{
-> >>>> +	/*
-> >>>> +	 * The merging logic has merged a set of buddies up to the
-> >>>> +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
-> >>>> +	 * advantage of this moment to notify the hypervisor of the free
-> >>>> +	 * memory.
-> >>>> +	 */
-> >>>> +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
-> >>>> +		return;
-> >>>> +
-> >>>> +	/*
-> >>>> +	 * Drop zone lock while processing the hypercall. This
-> >>>> +	 * should be safe as the page has not yet been added
-> >>>> +	 * to the buddy list as of yet and all the pages that
-> >>>> +	 * were merged have had their buddy/guard flags cleared
-> >>>> +	 * and their order reset to 0.
-> >>>> +	 */
-> >>>> +	spin_unlock(&zone->lock);
-> >>>> +
-> >>>> +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
-> >>>> +		       PAGE_SIZE << order);
-> >>>> +
-> >>>> +	/* reacquire lock and resume freeing memory */
-> >>>> +	spin_lock(&zone->lock);
-> >>>> +}
-> >>>> +
-> >>>>  #ifdef CONFIG_PARAVIRT_SPINLOCKS
-> >>>>  
-> >>>>  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
-> >>>> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> >>>> index fdab7de7490d..4746d5560193 100644
-> >>>> --- a/include/linux/gfp.h
-> >>>> +++ b/include/linux/gfp.h
-> >>>> @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
-> >>>>  #ifndef HAVE_ARCH_FREE_PAGE
-> >>>>  static inline void arch_free_page(struct page *page, int order) { }
-> >>>>  #endif
-> >>>> +#ifndef HAVE_ARCH_MERGE_PAGE
-> >>>> +static inline void
-> >>>> +arch_merge_page(struct zone *zone, struct page *page, int order) { }
-> >>>> +#endif
-> >>>>  #ifndef HAVE_ARCH_ALLOC_PAGE
-> >>>>  static inline void arch_alloc_page(struct page *page, int order) { }
-> >>>>  #endif
-> >>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >>>> index c954f8c1fbc4..7a1309b0b7c5 100644
-> >>>> --- a/mm/page_alloc.c
-> >>>> +++ b/mm/page_alloc.c
-> >>>> @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
-> >>>>  		page = page + (combined_pfn - pfn);
-> >>>>  		pfn = combined_pfn;
-> >>>>  		order++;
-> >>>> +
-> >>>> +		arch_merge_page(zone, page, order);
-> >>>>  	}
-> >>>>  	if (max_order < MAX_ORDER) {
-> >>>>  		/* If we are here, it means order is >= pageblock_order.
-> >> -- 
-> >> Regards
-> >> Nitesh
-> >>
-> >
-> >
-> -- 
-> Regards
-> Nitesh
-> 
+--->8
 
+Will Deacon (2):
+  asm-generic/io: Pass result on inX() accessor to __io_par()
+  arm64: io: Hook up __io_par() for inX() ordering
 
+ arch/arm64/include/asm/io.h | 1 +
+ include/asm-generic/io.h    | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+-- 
+2.11.0
 
