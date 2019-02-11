@@ -2,167 +2,165 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93244C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242DAC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BA2222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897782;
-	bh=D0Xh9eZg/M55dQaJpD3YIlTRRysQfWK/Kz8xTa2psS4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bg0dR2kznXvzyHcmk8YFZrAtrVNBL1vqHX0BGsxfPd0TrXz3fTQjQz6FX62bodz3T
-	 sm504IWLhVXVv3XJUyn+UpoujHJoajYnKwLoRyVDIbJbJkO+TFSLrs4vJmmVId+jKv
-	 6uIWlcCOrk/j8QiH4mb0jaHL/9ewZRxpn34De9Ck=
+	by mail.kernel.org (Postfix) with ESMTP id E6225222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="pSC9/9XJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391690AbfBKPJk (ORCPT
+        id S2391702AbfBKPJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:09:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391675AbfBKPJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:37 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBBC2222B0;
-        Mon, 11 Feb 2019 15:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897776;
-        bh=D0Xh9eZg/M55dQaJpD3YIlTRRysQfWK/Kz8xTa2psS4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u3A1lMigznbmsr+T8VJmVvR9Ia8/c62YVe2FDCs+xh/CoNOudlMFpKwI+Mn0vmT9R
-         LErMwdbOOc/p0Q4/F+FgRZFT0yVjJpPZ/q8g9yk0hpUQoLdcivKTX0nic69fnxzcaV
-         rHERtGePqq9xWeUNUaZOUC+NA9ctxvBNWZZ7yb+E=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 110/137] net: systemport: Fix WoL with password after deep sleep
-Date:   Mon, 11 Feb 2019 15:19:51 +0100
-Message-Id: <20190211141822.406352520@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
-References: <20190211141811.964925535@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:09:44 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:22599 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391683AbfBKPJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:09:41 -0500
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x1BF9KG4001234
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:09:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1BF9KG4001234
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549897761;
+        bh=/XhCE3VogiuHNt2DqEx5z/cfH95er5zV7kmbxkIGdTQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pSC9/9XJllHV+s3VJ+wPSzes5DBdB4i5hONJsqGfWPHEhW22A19cDl59F7EtXM5DN
+         lBTbbTgZ8oe2LxUCZdOjkMUCK25r/ZtsRObqKt9m+8lN1DeSfdUTI1IbrP08VI43Jz
+         Uw0dqmMlU78WPX6ODEcg+uG/vgo2EjZjbub/uZ29VoBgU55tb48hdPX0nhz0ri2+3q
+         AGWOe/oyuzjrjFzS1fKAYq8oYDtbmL0Hcg9DoKlq4pWqVAUU7KdxWRCtiMA30vdo6S
+         oCXvPJULKJ1S+cbvNKZuGHcOD9TV+aeESwTjicWyaK2/w+pnjQJajqSpn7cJ91SSEq
+         jdfO382whHgCA==
+X-Nifty-SrcIP: [209.85.221.173]
+Received: by mail-vk1-f173.google.com with SMTP id y14so2533622vkd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:09:21 -0800 (PST)
+X-Gm-Message-State: AHQUAuYwvUEi4QzWwlpgV9g+Ktmnr8v1VhNoobqDOAFO9oza+0+OABPz
+        D1AhuZpsONnnn//e0I/VPII7rd4rrWJ9OyoAKpg=
+X-Google-Smtp-Source: AHgI3IbE4vX/k+zx30uaQewm08v/gh+XyEI4JRBzwJD8CudqXOWPwAGiCntkEX/ztf66IgQYrUkARx+n9AJm4gR3ick=
+X-Received: by 2002:a1f:27d7:: with SMTP id n206mr15189618vkn.0.1549897759853;
+ Mon, 11 Feb 2019 07:09:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190207220155.81351-1-ndesaulniers@google.com>
+ <563751355.221.1549587440037.JavaMail.zimbra@efficios.com> <20190208054147.GB9647@archlinux-ryzen>
+In-Reply-To: <20190208054147.GB9647@archlinux-ryzen>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 12 Feb 2019 00:08:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=hcVtG952t4bNyJMx1_byAeaFHj06P6KmFvTjh4ZQxA@mail.gmail.com>
+Message-ID: <CAK7LNAS=hcVtG952t4bNyJMx1_byAeaFHj06P6KmFvTjh4ZQxA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] init/Kconfig: add config support for detecting linker
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Florian Fainelli <f.fainelli@gmail.com>
-
-[ Upstream commit 8dfb8d2cceb76b74ad5b58cc65c75994329b4d5e ]
-
-Broadcom STB chips support a deep sleep mode where all register
-contents are lost. Because we were stashing the MagicPacket password
-into some of these registers a suspend into that deep sleep then a
-resumption would not lead to being able to wake-up from MagicPacket with
-password again.
-
-Fix this by keeping a software copy of the password and program it
-during suspend.
-
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bcmsysport.c |   25 ++++++++++---------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 ++
- 2 files changed, 12 insertions(+), 15 deletions(-)
-
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -378,7 +378,6 @@ static void bcm_sysport_get_wol(struct n
- 				struct ethtool_wolinfo *wol)
- {
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
--	u32 reg;
- 
- 	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE;
- 	wol->wolopts = priv->wolopts;
-@@ -386,11 +385,7 @@ static void bcm_sysport_get_wol(struct n
- 	if (!(priv->wolopts & WAKE_MAGICSECURE))
- 		return;
- 
--	/* Return the programmed SecureOn password */
--	reg = umac_readl(priv, UMAC_PSW_MS);
--	put_unaligned_be16(reg, &wol->sopass[0]);
--	reg = umac_readl(priv, UMAC_PSW_LS);
--	put_unaligned_be32(reg, &wol->sopass[2]);
-+	memcpy(wol->sopass, priv->sopass, sizeof(priv->sopass));
- }
- 
- static int bcm_sysport_set_wol(struct net_device *dev,
-@@ -406,13 +401,8 @@ static int bcm_sysport_set_wol(struct ne
- 	if (wol->wolopts & ~supported)
- 		return -EINVAL;
- 
--	/* Program the SecureOn password */
--	if (wol->wolopts & WAKE_MAGICSECURE) {
--		umac_writel(priv, get_unaligned_be16(&wol->sopass[0]),
--			    UMAC_PSW_MS);
--		umac_writel(priv, get_unaligned_be32(&wol->sopass[2]),
--			    UMAC_PSW_LS);
--	}
-+	if (wol->wolopts & WAKE_MAGICSECURE)
-+		memcpy(priv->sopass, wol->sopass, sizeof(priv->sopass));
- 
- 	/* Flag the device and relevant IRQ as wakeup capable */
- 	if (wol->wolopts) {
-@@ -1875,12 +1865,17 @@ static int bcm_sysport_suspend_to_wol(st
- 	unsigned int timeout = 1000;
- 	u32 reg;
- 
--	/* Password has already been programmed */
- 	reg = umac_readl(priv, UMAC_MPD_CTRL);
- 	reg |= MPD_EN;
- 	reg &= ~PSW_EN;
--	if (priv->wolopts & WAKE_MAGICSECURE)
-+	if (priv->wolopts & WAKE_MAGICSECURE) {
-+		/* Program the SecureOn password */
-+		umac_writel(priv, get_unaligned_be16(&priv->sopass[0]),
-+			    UMAC_PSW_MS);
-+		umac_writel(priv, get_unaligned_be32(&priv->sopass[2]),
-+			    UMAC_PSW_LS);
- 		reg |= PSW_EN;
-+	}
- 	umac_writel(priv, reg, UMAC_MPD_CTRL);
- 
- 	/* Make sure RBUF entered WoL mode as result */
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -11,6 +11,7 @@
- #ifndef __BCM_SYSPORT_H
- #define __BCM_SYSPORT_H
- 
-+#include <linux/ethtool.h>
- #include <linux/if_vlan.h>
- 
- /* Receive/transmit descriptor format */
-@@ -681,6 +682,7 @@ struct bcm_sysport_priv {
- 	unsigned int		crc_fwd:1;
- 	u16			rev;
- 	u32			wolopts;
-+	u8			sopass[SOPASS_MAX];
- 	unsigned int		wol_irq_disabled:1;
- 
- 	/* MIB related fields */
+On Fri, Feb 8, 2019 at 2:42 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Thu, Feb 07, 2019 at 07:57:20PM -0500, Mathieu Desnoyers wrote:
+> >
+> > ----- ndesaulniers@google.com wrote:
+> > > Similar to how we differentiate between CONFIG_CC_IS_GCC and
+> > > CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+> > > CONFIG_LD_IS_LLD.
+> > >
+> > > This simiplifies patches to Makefiles that need to do different things
+> > > for different linkers.
+> >
+>
+> Hi Mathieu,
+>
+> > What guarantees that the linker used for e.g. make defconfig is the same linker used for make ?
+> >
+> > Is it required with this patch ?
+> >
+>
+> The build system ensures that the compiler (and after this patch, the
+> linker) config values are correct before compiling (and prompting the
+> user for the new choices that are available to them in that case).
+>
+> For example:
+>
+> $ make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- defconfig
+> ...
+>
+> $ rg "CONFIG_CC_IS|CONFIG_LD_IS" .config
+> 10:CONFIG_CC_IS_CLANG=y
+> 12:CONFIG_LD_IS_BFD=y
+>
+> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LD=ld.lld
+> scripts/kconfig/conf  --syncconfig Kconfig
+> *
+> * Restart config...
+> *
+> *
+> * General architecture-dependent options
+> *
+> Kprobes (KPROBES) [N/y/?] n
+> Optimize very unlikely/likely branches (JUMP_LABEL) [N/y/?] (NEW)
+> Stack Protector buffer overflow detection (STACKPROTECTOR) [Y/n/?] y
+>   Strong Stack Protector (STACKPROTECTOR_STRONG) [Y/n/?] y
+> Use a virtually-mapped stack (VMAP_STACK) [Y/n/?] y
+> Perform full reference count validation at the expense of speed (REFCOUNT_FULL) [Y/?] y
+> *
+> * GCC plugins
+> *
+> GCC plugins (GCC_PLUGINS) [N/y/?] (NEW)
+> ...
+>
+> $ rg "CONFIG_CC_IS|CONFIG_LD_IS" .config
+> 9:CONFIG_CC_IS_GCC=y
+> 13:CONFIG_LD_IS_LLD=y
+>
+> > How does it work in a cross compile environment ?
+> >
+>
+> Since $(LD) is defined based on $(CROSS_COMPILE), it should work fine.
+> I tested it with both arm64 and x86_64 and CONFIG_LD_IS_BFD gets
+> set by default and I can see CONFIG_LD_IS_GOLD get set with both
+> LD=aarch64-linux-gnu-ld.gold and LD=ld.gold.
+>
+> If I misunderstood the questions or my explanation wasn't correct,
+> please let me know!
 
 
+
+
+With this patch,
+
+include/config/auto.conf.cmd will include the following:
+
+ifneq "$(LD)" "ld"
+include/config/auto.conf: FORCE
+endif
+
+
+When $(LD) is changed, Kconfig will be re-run.
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
