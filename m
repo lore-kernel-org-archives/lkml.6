@@ -2,175 +2,107 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E8AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1109AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E8820823
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549874963;
-	bh=um5uqUz21APFJO6cV2nUXOWCtcN0yssB+uHF23h8jHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QFgY/My7ydPWheSrNLkg6h/eKpyXQmXJS8APpIlKPiQLPEkaKYgaKk37UuIFFKm46
-	 FK3jWuKayuFV9Rp/CNWjiAANM7DQd6KhTC0XbrtgyXSi3vf7YzeM+L8eMM9YX3aVAb
-	 A2OrYzQbI6yHnqIlFVbOjpwX2fkDqo0K+lC5rA80=
+	by mail.kernel.org (Postfix) with ESMTP id DFA8920823
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfBKItW (ORCPT
+        id S1727177AbfBKItz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:49:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36641 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbfBKItW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:49:22 -0500
-Received: by mail-wm1-f67.google.com with SMTP id j125so482696wmj.1;
-        Mon, 11 Feb 2019 00:49:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G7zRHbQ9cFMYdjS7FpNUHVk1m7aUjV5Ubu/1eFZxeRs=;
-        b=a/ePGA1i6/jZYUxxLbFi4jFZKStaoIHUbmf/pzytoxJpVd3tC0fkwXuj1LF0n7tE+J
-         a6qGnx1xjAn5dbMr/Zen27ma+2N9zlslRGPQTOehD6gRYqvI/iBXHzEQMDiYXP5ddSLd
-         ZXWlIb7o2m3obeNSO9mp4JnJIAIJeVD3jdYX+w1sS9OZUfodxTeIxNkrAHg6IDTQAoSm
-         2uFRlW3oqmg/GpISxfqxxS9le79ZmoNmvNAVoWgWVEgHHkDPjMXkErAWeiNZ3UdEDhh5
-         ny6Pa3GmmIOocX3//LBOPEKVSC1Rs85WXeXPFPYS5B6oBAQBSwzMr2iQE996XV885MmS
-         h/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G7zRHbQ9cFMYdjS7FpNUHVk1m7aUjV5Ubu/1eFZxeRs=;
-        b=K591zYfZpZ9nJV4K3y60ty4l89A1+RhdShskNbKpMnbmw9fRhek0XU0/CExB8Kj4X8
-         Lv2W2PPQDEOqVcz5VyaOqEUYiIPJe+pmk4IAGwi7d+trgJrsupTQ8P2O12Db+AweTlo8
-         1lIH0kHhd+RqfUA44b7eJCFp5GFcTSe1aspULgY/NQstmRtcsRzy8KQqxZAa7VZ+qwMI
-         Fagh3kcYJYzdNPCG0ib+QzdimATGccmyTzMgl1EF/4g4IMJVmYaTS4fnRVPvEr4kFGfv
-         fdGBH9l1HlT9ZYhv6+lp+ebA+Rt7RYP3qpF4GSVfIooQ6pCWh88FGODwMJnCNlL6eSzd
-         yYvw==
-X-Gm-Message-State: AHQUAuYxxjGyte/giB1hcx0aan3oXDPhAJW2DtKXLhcuZu4SzTXKPYzX
-        jZRLbouxWWoLmGdTrbipcjg=
-X-Google-Smtp-Source: AHgI3Ial7Of73f8V9tftwVRblmCVFF48kZfmGGI89d2BrTXdQe9LQQdXPFWSnHKvlFigOfkhljnHTA==
-X-Received: by 2002:a5d:434f:: with SMTP id u15mr4049441wrr.174.1549874959730;
-        Mon, 11 Feb 2019 00:49:19 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id h13sm292841wrs.42.2019.02.11.00.49.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 00:49:18 -0800 (PST)
-Date:   Mon, 11 Feb 2019 09:49:16 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org, Dan Rue <dan.rue@linaro.org>
-Subject: Re: [PATCH 2/2] selftests/x86/fsgsbase: Default to trying to run the
- test repeatedly
-Message-ID: <20190211084916.GB62722@gmail.com>
-References: <20190203134017.9375-1-broonie@kernel.org>
- <20190203134017.9375-3-broonie@kernel.org>
+        Mon, 11 Feb 2019 03:49:55 -0500
+Received: from mail.sysgo.com ([176.9.12.79]:58696 "EHLO mail.sysgo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbfBKItz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:49:55 -0500
+Subject: Re: [PATCH RESEND] initramfs: cleanup incomplete rootfs
+From:   David Engraf <david.engraf@sysgo.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181022134048.19693-1-david.engraf@sysgo.com>
+ <20181030151805.5519-1-david.engraf@sysgo.com>
+ <CAHp75VdOSC8j_1G3z-UO01_JYN20M-YMGOC2JkFDhi8njNZAvA@mail.gmail.com>
+ <20190208140810.76ef6c25825a5644d9625f0a@linux-foundation.org>
+ <CAHp75VdWyGv2QyuwE+4-oFJt8St2UmeuaHhveeLAFPPPuN5=tg@mail.gmail.com>
+ <744e7bcb-9315-0283-67c5-c2cb2d094251@sysgo.com>
+Message-ID: <28139206-7fed-e00e-8f52-47e68655963d@sysgo.com>
+Date:   Mon, 11 Feb 2019 09:49:51 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190203134017.9375-3-broonie@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <744e7bcb-9315-0283-67c5-c2cb2d094251@sysgo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Mark Brown <broonie@kernel.org> wrote:
-
-> In automated testing it has been found that on many systems the fsgsbase
-> test fails intermittently.  This was reported and discussed a while
-> back:
+On 11.02.19 at 08:56, David Engraf wrote:
+> On 09.02.19 at 11:35, Andy Shevchenko wrote:
+>> On Sat, Feb 9, 2019 at 12:08 AM Andrew Morton 
+>> <akpm@linux-foundation.org> wrote:
+>>> On Fri, 8 Feb 2019 21:45:21 +0200 Andy Shevchenko 
+>>> <andy.shevchenko@gmail.com> wrote:
+>>>> On Tue, Oct 30, 2018 at 5:22 PM David Engraf 
+>>>> <david.engraf@sysgo.com> wrote:
+>>>>>
+>>>>> Unpacking an external initrd may fail e.g. not enough memory. This 
+>>>>> leads
+>>>>> to an incomplete rootfs because some files might be extracted already.
+>>>>> Fixed by cleaning the rootfs so the kernel is not using an incomplete
+>>>>> rootfs.
+>>>>
+>>>> This breaks my setup where I have U-boot provided more size of
+>>>> initramfs than needed. This allows a bit of flexibility to increase or
+>>>> decrease initramfs compressed image without taking care of bootloader.
+>>>> The proper solution is to do this if we sure that we didn't get enough
+>>>> memory, otherwise I can't consider the error fatal to clean up rootfs.
+>>>
+>>> OK, thanks.  Maybe David can suggest a fix - I'll queue up a revert
+>>> meanwhile.
+>>>
+>>> I don't really understand the failure.  Why does an oversized initramfs
+>>> cause unpack_to_rootfs() to fail?
+>>
+>> In my case I have got "Junk in compressed archive". I don't know (I
+>> would check if needed) which exact condition I got  since there are
+>> three places with this message. The file itself smaller than the size
+>> passed through bootparam. So, when decomression is finished
+>> (successfully!) we still have a garbarge in the memory which is not
+>> related to archive. Message per se is okay to have, though I consider
+>> this non-fatal.
 > 
->     https://lore.kernel.org/lkml/20180126153631.ha7yc33fj5uhitjo@xps/
-> 
-> with the analysis concluding that this is a hardware issue affecting a
-> subset of systems but no fix has been merged as yet.  As well as the
-> actual problem found by testing the intermittent test failure is causing
-> issues for the people doing the automated testing due to the noise.
-> 
-> In order to make the testing stable modify the test program to iterate
-> through the test repeatedly, choosing 5000 iterations based on prior
-> reports and local testing.  This unfortunately greatly increases the
-> execution time for the selftests when things succeed which isn't great,
-> in my local tests on a range of systems it pushes the execution time up
-> to approximately a minute when no failures are encountered.
-> 
-> Reported-by: Dan Rue <dan.rue@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/x86/fsgsbase.c | 27 +++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
-> index 6cda6daa1f8c..83410749ff1f 100644
-> --- a/tools/testing/selftests/x86/fsgsbase.c
-> +++ b/tools/testing/selftests/x86/fsgsbase.c
-> @@ -379,7 +379,7 @@ static void test_unexpected_base(void)
->  	}
->  }
->  
-> -int main()
-> +int test()
->  {
->  	pthread_t thread;
->  
-> @@ -437,3 +437,28 @@ int main()
->  
->  	return nerrs == 0 ? 0 : 1;
->  }
-> +
-> +int main()
-> +{
-> +	int tries = 5000;
-> +	int i;
-> +
-> +	if (tries > 1)
-> +		quiet = true;
-> +
-> +	for (i = 0; i < tries; i++) {
-> +		if (test() != 0)
-> +			break;
-> +	}
-> +
-> +	if (quiet) {
-> +		if (nerrs) {
-> +			printf("[FAIL] %d errors detected in %d tries\n",
-> +				nerrs, i + 1);
-> +		} else {
-> +			printf("[PASS] %d runs succeeded\n", i);
-> +		}
-> +	}
-> +
-> +	return nerrs == 0 ? 0 : 1;
-> +}
+> I can reproduce this special case. The unpacking decompresses the whole 
+> size instead of checking the archive size. I will have a look how to get 
+> the real archive size.
 
-So this isn't very user-friendly either, previously it would run a 
-testcase and immediately provide output.
+I did some checks and manually increased the initramfs size but I always 
+get the following kernel panic:
 
-Now it's just starting and 'hanging':
+Kernel panic - not syncing: junk in compressed archive
+---[ end Kernel panic - not syncing: junk in compressed archive
 
-  galatea:~/linux/linux/tools/testing/selftests/x86> ./fsgsbase_64 
+The panic was not introduced by my patch. Could you please check if you 
+get a panic as well or is your rootfs just empty?
 
-I got bored and Ctrl-C-ed it after ~30 seconds.
+I also had a look at the decompression in unpack_to_rootfs(). This 
+function already ensures unpacking only the real size of the archive. 
+But it is called in a loop, thus it unpacks the first archive and then 
+tries to unpack the reset of the data which are garbage in my case.
+Is it intended to allow extracting multiple archives as rootfs? If not 
+we could remove the loop and unpack only the first archive. Otherwise we 
+could ignore errors when the first archive was extracted without errors.
 
-How long is this supposed to run, and why isn't the user informed?
+Best regards
+- David
 
-Also, testcases should really be short, so I think a better approach 
-would be to thread the test-case and start an instance on every CPU. That 
-should also excercise SMP bugs, if any.
-
-Thanks,
-
-	Ingo
