@@ -2,114 +2,80 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4F6C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A398C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A01020873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:22:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jdAsyQ90"
+	by mail.kernel.org (Postfix) with ESMTP id 73AC920818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfBKIWv (ORCPT
+        id S1726977AbfBKI0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:22:51 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36487 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfBKIWv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:22:51 -0500
-Received: by mail-it1-f196.google.com with SMTP id c9so24106475itj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:22:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fvY2/yBGMwbngNDLa66cM3Z3OvAxuwsm6ud86Xu01mE=;
-        b=jdAsyQ90mli/1X4feqFov2FjxbYBaMp8oZXHDFKZAWdO1k84n+XBqCwxjtSJ8VoJM9
-         lFJCACs/k+wKAao0f9jIyuZozeIDbrBMETX3xuOOUCzseOUdxq3r8S3hsyqwQpGUgtNl
-         ern03whpopTdNC/7JyKsxVGGZJZy2bZm6hI00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fvY2/yBGMwbngNDLa66cM3Z3OvAxuwsm6ud86Xu01mE=;
-        b=S0C4RMbQeU4wtPtceVnw5YU72ZEEixaWoEn8cjwKG0UsDSqqRur8AS2EbcSiwBZbfR
-         mFn3g75CTNc15uGB/UoHz0D/o/pNIAqjucyBP3h74t6U0iVUX3jKqvMIutvQF61xTkrI
-         Rq6ZEBywdqGOqrKO8OtPD/TvADKirHN/8/maQSWsNs+aLLbFvycdcsihWInmZNXjofml
-         TpuIkYp7AutNZkp1tQlLODRQeeb3PGQisNz9k33cidUgqugTX/yZBu8tECleJSb1nCnU
-         RpGtUj1gal3BCV+vRXq0GT3oHo1k5WK3/0udka+912xBjkZalgfS30v5qyEmSv4xet1U
-         lkJw==
-X-Gm-Message-State: AHQUAuZjxPsGhPkVkjG+qIM2f/5xVPTsjDKXAq7zoHwcqsWRkqEyDfi5
-        PEOiJuya/kBPALIsJfeoudCIGOzUeidyobFB5Rfm9w==
-X-Google-Smtp-Source: AHgI3IaFcZZL/2rH9QTpGunyScGyRTXN776wXOAZSs3378quUqLuNmzuocgC1Zo1SMOQDR5v96EwagPe0Xwc0kqbyPg=
-X-Received: by 2002:a6b:b790:: with SMTP id h138mr14110911iof.114.1549873370645;
- Mon, 11 Feb 2019 00:22:50 -0800 (PST)
+        Mon, 11 Feb 2019 03:26:07 -0500
+Received: from mga01.intel.com ([192.55.52.88]:11716 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbfBKI0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:26:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 00:26:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="115240623"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by orsmga006.jf.intel.com with ESMTP; 11 Feb 2019 00:26:00 -0800
+Subject: Re: [RFC PATCH] perf, bpf: Retain kernel executable code in memory to
+ aid Intel PT tracing
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20190207111901.2399-1-adrian.hunter@intel.com>
+ <20190208232924.bpdjuaqufndigtd4@ast-mbp>
+ <85ebb8e5-97a0-801a-8d5f-bc09a72047bb@intel.com>
+ <20190211081840.j3vhyp3cffftb6m2@ast-mbp>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <5ecbd520-b73a-5dca-457d-e00f09bf5a06@intel.com>
+Date:   Mon, 11 Feb 2019 10:24:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190128085847.7217-1-jagan@amarulasolutions.com>
-In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 11 Feb 2019 13:52:39 +0530
-Message-ID: <CAMty3ZCdm_RoVxoHy9u2-Xhg4_tf7Mr0Gedcrz-jVhc5ceL0CQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] media/sun6i: Allwinner A64 CSI support
-To:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190211081840.j3vhyp3cffftb6m2@ast-mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mauro and Maxime,
+On 11/02/19 10:18 AM, Alexei Starovoitov wrote:
+> On Mon, Feb 11, 2019 at 09:54:01AM +0200, Adrian Hunter wrote:
+>>
+>> Which is not really a real use-case.
+> ..
+>>> perf analysis with PT becomes inaccurate and main goal
+>>> of retaining accurate instruction info is not achieved.
+>>
+>> For the majority of real use-cases, yes it is.
+> 
+> In our fleet not a single server is using Intel PT, yet you're
+> proposing to penalize all of them with shrinker-based JIT freeing?
 
-On Mon, Jan 28, 2019 at 2:29 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Add CSI support for Allwinner A64. Here is previous series[1]
->
-> Changes for v8:
-> - update proper enable and disable sequnce for clk_mod
-> - fix warning for patch "media: sun6i: Add A64 CSI block support"
-> - collect Maxime Acked-by
-> Changes for v7:
-> - Drop quirk change, and add as suggusted by Maxime
-> - Use csi instead csi0 in pinctrl function
-> Changes for v6:
-> - set the mod rate in seett_power instead of probe
-> Changes for v5:
-> - Add mod_rate quirk for better handling clk_set code
-> Changes for v4:
-> - update the compatible string order
-> - add proper commit message
-> - included BPI-M64 patch
-> - skipped amarula-a64 patch
-> Changes for v3:
-> - update dt-bindings for A64
-> - set mod clock via csi driver
-> - remove assign clocks from dtsi
-> - remove i2c-gpio opendrian
-> - fix avdd and dovdd supplies
-> - remove vcc-csi pin group supply
->
-> [1] https://patchwork.kernel.org/cover/10779831/
->
-> Jagan Teki (5):
->   dt-bindings: media: sun6i: Add A64 CSI compatible
->   media: sun6i: Add A64 CSI block support
->   arm64: dts: allwinner: a64: Add A64 CSI controller
->   arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+I already responded to that.
 
-Any chance to apply this patches? dtsi patch is already been merged
-and all been Acked as well.
+> There is no negotiation here.
+
+Apart from Peter and Ingo already having indicated a different approach is
+preferred, why not? Shouldn't maintainers provide technical reasons.
