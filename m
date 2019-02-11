@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E78C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F13C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6EA222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2172521B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899186;
-	bh=aEQ1mlkzccEU1M2A3jqwVNVZzQJXJg24c1dcA58Lp9Y=;
+	s=default; t=1549899189;
+	bh=XnDwgtogK5FyD2lkzMWK+WLy7f603dt/6uuDjoJz2rQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pNnbmvILsZ7xIAH6KaY66NylQ7f0PfHaoO1CPPcdbgMFJsM8xOfQdE9Wv7YUVkCI9
-	 gewkCLCkxvrPLtViBRBZeJo4bBw9ZvusyJazaS8CVx7ZLszdgNOeduUL9oCHQ7Xl0n
-	 QI/Pw5HTfVQAKSu6XQH7+8H8VFH4FLo/9LVw5Chg=
+	b=H8+h6Rr5zQmS3lqMEnUoK+hWlvYXUWrol0FaPgs14lbtMIp2H02V8VPofGxK3pgkh
+	 pHntMhN6HGMUGpNDequMK6hP/Kegs5o0LyT5J9nO8LIqjZ3q053J9iByYaoKjvrPv0
+	 fgx1PIlw7XROoPMN9YmHcCUVy23Qm7PW+YjMjXN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388765AbfBKOyI (ORCPT
+        id S2389185AbfBKPdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:54:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40640 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:33:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387454AbfBKOyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:02 -0500
+        id S2388762AbfBKOyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 064522229E;
-        Mon, 11 Feb 2019 14:53:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3355D20855;
+        Mon, 11 Feb 2019 14:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896840;
-        bh=aEQ1mlkzccEU1M2A3jqwVNVZzQJXJg24c1dcA58Lp9Y=;
+        s=default; t=1549896846;
+        bh=XnDwgtogK5FyD2lkzMWK+WLy7f603dt/6uuDjoJz2rQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZTlOomylwsBH96GvWEt+trQHuwtdxtB6Oljx2A3v/Enf28NnTzd6DK/sKhydQBhw4
-         u8pkZS7tW0hMqUqLQlTx13VlVLh0+5dySzsPB1J1yJT37pddjs6mSnIe0PUjiNyRMF
-         HsRkDkW40fH8LdAZmOvVTQ1xazVuuoqzv2QOxRm4=
+        b=BakYRvJWQzkdD+MxZcAhf3NI2kgkyR2LuZlESBDm71Rbovul4sEzae3kn8dBZAfsG
+         74iFH9deZkUz3swWcW+tpEbG84fxbW8Ng9Dkn/Q3Z+2muXzBjgBFZtF3GLNrvki6Nr
+         1dLFcXNc3tG/Brm8oiMDkvPdPyRof/ztUnP3ImBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Sebastian Sewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.19 291/313] futex: Handle early deadlock return correctly
-Date:   Mon, 11 Feb 2019 15:19:31 +0100
-Message-Id: <20190211141912.517008376@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Soller <jeremy@system76.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 283/313] ALSA: hda/realtek - Headset microphone support for System76 darp5
+Date:   Mon, 11 Feb 2019 15:19:23 +0100
+Message-Id: <20190211141912.120357613@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,226 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Jeremy Soller <jeremy@system76.com>
 
-commit 1a1fb985f2e2b85ec0d3dc2e519ee48389ec2434 upstream.
+commit 89e3a5682edaa4e5bb334719afb180256ac7bf78 upstream.
 
-commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
-rtmutex") changed the locking rules in the futex code so that the hash
-bucket lock is not longer held while the waiter is enqueued into the
-rtmutex wait list. This made the lock and the unlock path symmetric, but
-unfortunately the possible early exit from __rt_mutex_proxy_start() due to
-a detected deadlock was not updated accordingly. That allows a concurrent
-unlocker to observe inconsitent state which triggers the warning in the
-unlock path.
+On the System76 Darter Pro (darp5), there is a headset microphone
+input attached to 0x1a that does not have a jack detect.  In order to
+get it working, the pin configuration needs to be set correctly, and
+the ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC fixup needs to be applied.
+This is similar to the MIC_NO_PRESENCE fixups for some Dell laptops,
+except we have a separate microphone jack that is already configured
+correctly.
 
-futex_lock_pi()                         futex_unlock_pi()
-  lock(hb->lock)
-  queue(hb_waiter)				lock(hb->lock)
-  lock(rtmutex->wait_lock)
-  unlock(hb->lock)
-                                        // acquired hb->lock
-                                        hb_waiter = futex_top_waiter()
-                                        lock(rtmutex->wait_lock)
-  __rt_mutex_proxy_start()
-     ---> fail
-          remove(rtmutex_waiter);
-     ---> returns -EDEADLOCK
-  unlock(rtmutex->wait_lock)
-                                        // acquired wait_lock
-                                        wake_futex_pi()
-                                        rt_mutex_next_owner()
-					  --> returns NULL
-                                          --> WARN
-
-  lock(hb->lock)
-  unqueue(hb_waiter)
-
-The problem is caused by the remove(rtmutex_waiter) in the failure case of
-__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
-hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
-
-The original commit handles this correctly for the other early return cases
-(timeout, signal) by delaying the removal of the rtmutex waiter until the
-returning task reacquired the hash bucket lock.
-
-Treat the failure case of __rt_mutex_proxy_start() in the same way and let
-the existing cleanup code handle the eventual handover of the rtmutex
-gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
-removal for the failure case, so that the other callsites are still
-operating correctly.
-
-Add proper comments to the code so all these details are fully documented.
-
-Thanks to Peter for helping with the analysis and writing the really
-valuable code comments.
-
-Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
-Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Co-developed-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Cc: Stefan Liebler <stli@linux.ibm.com>
-Cc: Sebastian Sewior <bigeasy@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de
+Signed-off-by: Jeremy Soller <jeremy@system76.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/futex.c           |   28 ++++++++++++++++++----------
- kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 50 insertions(+), 15 deletions(-)
+ sound/pci/hda/patch_realtek.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2850,35 +2850,39 @@ retry_private:
- 	 * and BUG when futex_unlock_pi() interleaves with this.
- 	 *
- 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
--	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
--	 * serializes against futex_unlock_pi() as that does the exact same
--	 * lock handoff sequence.
-+	 * latter before calling __rt_mutex_start_proxy_lock(). This
-+	 * interleaves with futex_unlock_pi() -- which does a similar lock
-+	 * handoff -- such that the latter can observe the futex_q::pi_state
-+	 * before __rt_mutex_start_proxy_lock() is done.
- 	 */
- 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
- 	spin_unlock(q.lock_ptr);
-+	/*
-+	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
-+	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
-+	 * it sees the futex_q::pi_state.
-+	 */
- 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
- 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5572,6 +5572,7 @@ enum {
+ 	ALC294_FIXUP_ASUS_MIC,
+ 	ALC294_FIXUP_ASUS_HEADSET_MIC,
+ 	ALC294_FIXUP_ASUS_SPK,
++	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
+ };
  
- 	if (ret) {
- 		if (ret == 1)
- 			ret = 0;
--
--		spin_lock(q.lock_ptr);
--		goto no_block;
-+		goto cleanup;
- 	}
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6496,6 +6497,15 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
+ 	},
++	[ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x1a, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
+ };
  
--
- 	if (unlikely(to))
- 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
- 
- 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
- 
-+cleanup:
- 	spin_lock(q.lock_ptr);
- 	/*
--	 * If we failed to acquire the lock (signal/timeout), we must
-+	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
- 	 * first acquire the hb->lock before removing the lock from the
--	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
--	 * wait lists consistent.
-+	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
-+	 * lists consistent.
- 	 *
- 	 * In particular; it is important that futex_unlock_pi() can not
- 	 * observe this inconsistency.
-@@ -3002,6 +3006,10 @@ retry:
- 		 * there is no point where we hold neither; and therefore
- 		 * wake_futex_pi() must observe a state consistent with what we
- 		 * observed.
-+		 *
-+		 * In particular; this forces __rt_mutex_start_proxy() to
-+		 * complete such that we're guaranteed to observe the
-+		 * rt_waiter. Also see the WARN in wake_futex_pi().
- 		 */
- 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
- 		spin_unlock(&hb->lock);
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
- 	rt_mutex_set_owner(lock, NULL);
- }
- 
-+/**
-+ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
-+ * @lock:		the rt_mutex to take
-+ * @waiter:		the pre-initialized rt_mutex_waiter
-+ * @task:		the task to prepare
-+ *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: does _NOT_ remove the @waiter on failure; must either call
-+ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
-+ *
-+ * Returns:
-+ *  0 - task blocked on lock
-+ *  1 - acquired the lock for task, caller should wake it up
-+ * <0 - error
-+ *
-+ * Special API call for PI-futex support.
-+ */
- int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
- 			      struct task_struct *task)
- {
- 	int ret;
- 
-+	lockdep_assert_held(&lock->wait_lock);
-+
- 	if (try_to_take_rt_mutex(lock, task, NULL))
- 		return 1;
- 
-@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
- 		ret = 0;
- 	}
- 
--	if (unlikely(ret))
--		remove_waiter(lock, waiter);
--
- 	debug_rt_mutex_print_deadlock(waiter);
- 
- 	return ret;
-@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  * @task:		the task to prepare
-  *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
-+ * on failure.
-+ *
-  * Returns:
-  *  0 - task blocked on lock
-  *  1 - acquired the lock for task, caller should wake it up
-  * <0 - error
-  *
-- * Special API call for FUTEX_REQUEUE_PI support.
-+ * Special API call for PI-futex support.
-  */
- int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
-@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
- 
- 	raw_spin_lock_irq(&lock->wait_lock);
- 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
-+	if (unlikely(ret))
-+		remove_waiter(lock, waiter);
- 	raw_spin_unlock_irq(&lock->wait_lock);
- 
- 	return ret;
-@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
-  * @lock:		the rt_mutex we were woken on
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  *
-- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
-+ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
-+ * rt_mutex_wait_proxy_lock().
-  *
-  * Unless we acquired the lock; we're still enqueued on the wait-list and can
-  * in fact still be granted ownership until we're removed. Therefore we can
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6674,6 +6684,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1462, 0xb120, "MSI Cubi MS-B120", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1462, 0xb171, "Cubi N 8GL (MS-B171)", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1558, 0x1325, "System76 Darter Pro (darp5)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x17aa, 0x1036, "Lenovo P520", ALC233_FIXUP_LENOVO_MULTI_CODECS),
+ 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Thinkpad SL410/510", ALC269_FIXUP_SKU_IGNORE),
+ 	SND_PCI_QUIRK(0x17aa, 0x215e, "Thinkpad L512", ALC269_FIXUP_SKU_IGNORE),
 
 
