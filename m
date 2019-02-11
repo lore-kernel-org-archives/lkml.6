@@ -2,198 +2,177 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D63C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DC3C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E4620873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35F6020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:48:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="eK2gA8oe"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="UeDrTOSV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfBKXrM (ORCPT
+        id S1727577AbfBKXsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:47:12 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17569 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfBKXrM (ORCPT
+        Mon, 11 Feb 2019 18:48:41 -0500
+Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:35529 "EHLO
+        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727122AbfBKXsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:47:12 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c62095d0000>; Mon, 11 Feb 2019 15:46:37 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 15:47:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 15:47:11 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 23:47:11 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 23:47:10 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Mon, 11 Feb 2019 23:47:10 +0000
-Received: from byan-linux.NVIDIA.COM (Not Verified[172.17.136.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c62097e0001>; Mon, 11 Feb 2019 15:47:10 -0800
-From:   Bo Yan <byan@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bo Yan <byan@nvidia.com>
-Subject: [PATCH V2] arm64: tegra: add topology data for Tegra194 cpu
-Date:   Mon, 11 Feb 2019 15:47:07 -0800
-Message-ID: <1549928827-14006-1-git-send-email-byan@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20190131222517.GB13156@mithrandir>
-References: <20190131222517.GB13156@mithrandir>
-X-NVConfidentiality: public
+        Mon, 11 Feb 2019 18:48:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1549928921; x=1581464921;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=dWU3uJKB7UZGqpg+aQtWyCYQtudkdyay/sbdi0nlJy0=;
+  b=UeDrTOSVUjgLB/auxR25prEfL2bY/MHI0BhqXFDH/UZ0stW1SE5RsEe+
+   Y8GZTRXT6b8Bfw3wUtTLshEbgK+OE4xSIXdBCuiwh4610AULgS45Po/MB
+   xVxWGY1oD4mwmHZvwTXXlDYPwcnbuvSJP++CnULdDmxWFeABVVFTITZqG
+   c=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EaAADKCGJchyeV50NZChwBAQEEAQE?=
+ =?us-ascii?q?HBAEBgVIGAQELAYJZgRQxjHONH4F9lhYUgWcLAQEshECDZDUIDQEDAQECAQE?=
+ =?us-ascii?q?CAQECEAEBAQoLCQgpL4I6IoJvAQEBAQIBEhUTPwULAgEIGB4QVwIEARoTB4M?=
+ =?us-ascii?q?CgXoInzI9Am2BAYkHAQEBgWszii+OWYERgmQuhE4BBwsBBxiFYAKJezWBUZc?=
+ =?us-ascii?q?eCQWOUoNxIYITkE2KM5FiAgQCBAUCFIFHAYEccXCDPYI1jidBgVmKUIEfAYE?=
+ =?us-ascii?q?eAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EaAADKCGJchyeV50NZChwBAQEEAQEHBAEBgVIGAQELA?=
+ =?us-ascii?q?YJZgRQxjHONH4F9lhYUgWcLAQEshECDZDUIDQEDAQECAQECAQECEAEBAQoLC?=
+ =?us-ascii?q?QgpL4I6IoJvAQEBAQIBEhUTPwULAgEIGB4QVwIEARoTB4MCgXoInzI9Am2BA?=
+ =?us-ascii?q?YkHAQEBgWszii+OWYERgmQuhE4BBwsBBxiFYAKJezWBUZceCQWOUoNxIYITk?=
+ =?us-ascii?q?E2KM5FiAgQCBAUCFIFHAYEccXCDPYI1jidBgVmKUIEfAYEeAQE?=
+Received: from mx0a-00154901.pphosted.com (HELO mx0b-00154901.pphosted.com) ([67.231.149.39])
+  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Feb 2019 17:48:40 -0600
+Received: from pps.filterd (m0090350.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BNbx62064495;
+        Mon, 11 Feb 2019 18:48:40 -0500
+Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
+        by mx0b-00154901.pphosted.com with ESMTP id 2qke78shfv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 18:48:37 -0500
+Cc:     <bhelgaas@google.com>, <Austin.Bolen@dell.com>,
+        <keith.busch@intel.com>, <Shyam.Iyer@dell.com>,
+        <gustavo@embeddedor.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Received: from ausxipps310.us.dell.com ([143.166.148.211])
+  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Feb 2019 05:48:36 +0600
+X-LoopCount0: from 10.166.134.84
+X-IronPort-AV: E=Sophos;i="5.58,360,1544508000"; 
+   d="scan'208";a="317548304"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <lukas@wunner.de>, <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
+ after link
+Thread-Topic: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
+ after link
+Thread-Index: AQHUvZbN4kEiyNA8xUGy+Uw4G87SXw==
+Date:   Mon, 11 Feb 2019 23:48:12 +0000
+Message-ID: <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
+References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
+ <20190209115849.244u67h7wmn3eb7o@wunner.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [143.166.11.235]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549928797; bh=rE8UhgxhLPvaoVnBJszXbodl0b5Ikea1ro1IYgb4oc4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=eK2gA8oekZjzoNtijmz6G5f/3ik32ciR0Vf31GA3vMSYVmgJI/Zrj7pfeIRipiU46
-         cbgd4miN3XT+4JXxH1VpoeoTQ2bNVsxFfZwz7E8gDCqrH2awrRFT9ffKLj4Upk8hh8
-         0Bvr7LQ9AOa3SNSu0XEgYhni5jhrTRaG9Y/IaLkSgCuM62//Q0l/1mP7kPGw7bMiKS
-         XrIaGKBCghP+3JM5sa3jhb7PLBGiSSEXThi4LMx9BB6WrlW5Wu4ye7ra7d49QsoBHo
-         HOS9TPg1f3FKS0WAyq3AxtnY8DE1Ly+wvLk9qlYTLHeRsvTPWOC4bHb83K4MB0eZLG
-         KmO89QIh1h12w==
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902110166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xavier CPU architecture includes 8 CPU cores organized in
-4 clusters. Add cpu-map data for topology initialization, this
-fixes the topology information in
-/sys/devices/system/cpu/cpu[n]/topology
-
-Signed-off-by: Bo Yan <byan@nvidia.com>
----
-V2: remove cache nodes, add topology data only
-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 58 +++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 6dfa1ca..35e6e76 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -870,56 +870,98 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cl0_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl0_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&cl1_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl1_1>;
-+				};
-+			};
-+
-+			cluster2 {
-+				core0 {
-+					cpu = <&cl2_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl2_1>;
-+				};
-+			};
-+
-+			cluster3 {
-+				core0 {
-+					cpu = <&cl3_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl3_1>;
-+				};
-+			};
-+		};
-+
-+		cl0_0: cpu@0 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10000>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@1 {
-+		cl0_1: cpu@1 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10001>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@2 {
-+		cl1_0: cpu@2 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x100>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@3 {
-+		cl1_1: cpu@3 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x101>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@4 {
-+		cl2_0: cpu@4 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x200>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@5 {
-+		cl2_1: cpu@5 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x201>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@6 {
-+		cl3_0: cpu@6 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10300>;
- 			enable-method = "psci";
- 		};
- 
--		cpu@7 {
-+		cl3_1: cpu@7 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10301>;
--- 
-2.7.4
-
+On 2/9/19 5:58 AM, Lukas Wunner wrote:=0A=
+> =0A=
+> [EXTERNAL EMAIL]=0A=
+> =0A=
+> On Tue, Feb 05, 2019 at 03:06:56PM -0600, Alexandru Gagniuc wrote:=0A=
+>> According to PCIe 3.0, the presence detect state is a logical OR of=0A=
+>> in-band and out-of-band presence.=0A=
+> =0A=
+> Since Bjorn asked for a spec reference:=0A=
+> =0A=
+> PCIe r4.0 sec 7.8.11: "Presence Detect State - This bit indicates the=0A=
+> presence of an adapter in the slot, reflected by the logical OR of the=0A=
+> Physical Layer in-band presence detect mechanism and, if present, any=0A=
+> out-of-band presence detect mechanism defined for the slot's=0A=
+> corresponding form factor."=0A=
+=0A=
+ECN [1] was approved last November, so it's normative spec text. Sorry =0A=
+if the Ukranians didn't get ahold of it yet. I'll try to explain the delta.=
+=0A=
+There's an in-band PD supported/disable set of bits. If 'supported' is =0A=
+set, then you can set 'disable', which removes the 'logical OR" and now =0A=
+PD is only out-of-band presence.=0A=
+=0A=
+> Table 4-14 in sec 4.2.6 is also important because it shows the difference=
+=0A=
+> between Link Up and in-band presence.=0A=
+=0A=
+So, we'd expect PD to come up at the same time or before DLL?=0A=
+=0A=
+>> With this, we'd expect the presence=0A=
+>> state to always be asserted when the link comes up.=0A=
+>>=0A=
+>> Not all hardware follows this, and it is possible for the presence to=0A=
+>> come up after the link. In this case, the PCIe device would be=0A=
+>> erroneously disabled and re-probed. It is possible to distinguish=0A=
+>> between a delayed presence and a card swap by looking at the DLL state=
+=0A=
+>> changed bit -- The link has to come down if the card is removed.=0A=
+> =0A=
+> So in reality, PDC and DLLSC events rarely come in simultaneously and=0A=
+> we do allow some leeway in pcie_wait_for_link(), it's just not enough=0A=
+> in your particular case due to the way presence is detected by the=0A=
+> platform.=0A=
+> =0A=
+> I think in this case instead of changing the behavior for everyone,=0A=
+> it's more appropriate to add a quirk for your hardware.  Two ideas:=0A=
+> =0A=
+> * Amend pcie_init() to set slot_cap |=3D PCI_EXP_SLTCAP_ABP.  Insert=0A=
+>    this as a quirk right below the existing Thunderbolt quirk and=0A=
+>    use PCI vendor/device IDs and/or DMI checks to identify your=0A=
+>    particular hardware.  If the ABP bit is set, PDC events are not=0A=
+>    enabled by pcie_enable_notification(), so you will solely rely on=0A=
+>    DLLSC events.  Problem solved.  (Hopefully.)=0A=
+> =0A=
+> * Alternatively, add a DECLARE_PCI_FIXUP_FINAL() quirk which sets=0A=
+>    pdev->link_active_reporting =3D false.  This causes pcie_wait_for_link=
+()=0A=
+>    to wait 1100 msec before the hot-added device's config space is=0A=
+>    accessed for the first time.=0A=
+=0A=
+These are both hacks right? We're declaring something untrue about the =0A=
+hardware because we want to obtain a specific side-effect. BUt the =0A=
+side-effects are not guaranteed not to change.=0A=
+=0A=
+> Would this work for you?=0A=
+=0A=
+I'm certain it's doable. In theory one could use the PCI ID of the DP, =0A=
+and the vendor and machine names to filter the quirk. But what happens =0A=
+in situations where the same PCI ID switch is used in different parts of =
+=0A=
+the system? You want the quirk here or not there. It quickly becomes a =0A=
+shartstorm.=0A=
+=0A=
+I'd like a generic solution. I suspect supporting 'in-band PD disabled' =0A=
+and quirking for that would be a saner way to do things. If we support =0A=
+it, then we need to handle PDSC after DLLSC scenarios anyway.=0A=
+=0A=
+Alex=0A=
+=0A=
+[1] PCI-SIG ENGINEERING CHANGE NOTICE=0A=
+	Async Hot-Plug Updates=0A=
+	Nov 29, 2018=0A=
