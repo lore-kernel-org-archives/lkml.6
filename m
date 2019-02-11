@@ -2,139 +2,72 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2415EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4BBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A7F2080D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DDB2080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfBKKYH (ORCPT
+        id S1726943AbfBKKYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:24:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725931AbfBKKYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:24:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77BAEAEE1;
-        Mon, 11 Feb 2019 10:24:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 684271E09A8; Mon, 11 Feb 2019 11:24:02 +0100 (CET)
-Date:   Mon, 11 Feb 2019 11:24:02 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190211102402.GF19029@quack2.suse.cz>
-References: <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard>
- <20190208111028.GD6353@quack2.suse.cz>
- <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+        Mon, 11 Feb 2019 05:24:17 -0500
+Received: from 8bytes.org ([81.169.241.247]:39356 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfBKKYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:24:17 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 27A4539A; Mon, 11 Feb 2019 11:24:15 +0100 (CET)
+Date:   Mon, 11 Feb 2019 11:24:15 +0100
+From:   "joro@8bytes.org" <joro@8bytes.org>
+To:     wen yang <yellowriver2010@hotmail.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: fix device reference leaks
+Message-ID: <20190211102414.GZ32526@8bytes.org>
+References: <HK0PR02MB3634F6AE1FAE6B86EF82B291B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <HK0PR02MB3634F6AE1FAE6B86EF82B291B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 08-02-19 12:50:37, Dan Williams wrote:
-> On Fri, Feb 8, 2019 at 3:11 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 08-02-19 15:43:02, Dave Chinner wrote:
-> > > On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
-> > > > One approach that may be a clean way to solve this:
-> > > > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
-> > > >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
-> > > >    on the longterm pinned range until the long term pin is removed.
-> > >
-> > > So, ummm, how do we do block allocation then, which is done on
-> > > demand during writes?
-> > >
-> > > IOWs, this requires the application to set up the file in the
-> > > correct state for the filesystem to lock it down so somebody else
-> > > can write to it.  That means the file can't be sparse, it can't be
-> > > preallocated (i.e. can't contain unwritten extents), it must have zeroes
-> > > written to it's full size before being shared because otherwise it
-> > > exposes stale data to the remote client (secure sites are going to
-> > > love that!), they can't be extended, etc.
-> > >
-> > > IOWs, once the file is prepped and leased out for RDMA, it becomes
-> > > an immutable for the purposes of local access.
-> > >
-> > > Which, essentially we can already do. Prep the file, map it
-> > > read/write, mark it immutable, then pin it via the longterm gup
-> > > interface which can do the necessary checks.
-> >
-> > Hum, and what will you do if the immutable file that is target for RDMA
-> > will be a source of reflink? That seems to be currently allowed for
-> > immutable files but RDMA store would be effectively corrupting the data of
-> > the target inode. But we could treat it similarly as swapfiles - those also
-> > have to deal with writes to blocks beyond filesystem control. In fact the
-> > similarity seems to be quite large there. What do you think?
+Adding a few more people to Cc.
+
+On Sun, Feb 03, 2019 at 10:27:09AM +0000, wen yang wrote:
+> Make sure to drop the reference to the device taken by
+> of_find_device_by_node() on driver unbind.
 > 
-> This sounds so familiar...
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: iommu@lists.linux-foundation.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->     https://lwn.net/Articles/726481/
-> 
-> I'm not opposed to trying again, but leases was what crawled out
-> smoking crater when this last proposal was nuked.
-
-Umm, don't think this is that similar to daxctl() discussion. We are not
-speaking about providing any new userspace API for this. Also I think the
-situation about leases has somewhat cleared up with this discussion - ODP
-hardware does not need leases since it can use MMU notifiers, for non-ODP
-hardware it is difficult to handle leases as such hardware has only one big
-kill-everything call and using that would effectively mean lot of work on
-the userspace side to resetup everything to make things useful if workable
-at all.
-
-So my proposal would be:
-
-1) ODP hardward uses gup_fast() like direct IO and uses MMU notifiers to do
-its teardown when fs needs it.
-
-2) Hardware not capable of tearing down pins from MMU notifiers will have
-to use gup_longterm() (we may actually rename it to a more suitable name).
-FS may just refuse such calls (for normal page cache backed file, it will
-just return success but for DAX file it will do sanity checks whether the
-file is fully allocated etc. like we currently do for swapfiles) but if
-gup_longterm() returns success, it will provide the same guarantees as for
-swapfiles. So the only thing that we need is some call from gup_longterm()
-to a filesystem callback to tell it - this file is going to be used by a
-third party as an IO buffer, don't touch it. And we can (and should)
-probably refactor the handling to be shared between swapfiles and
-gup_longterm().
-
-								Honza
-
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 7a4529c..cebf56d 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -756,6 +756,9 @@ static int ipmmu_init_platform_device(struct device *dev,
+>  
+>  	fwspec->iommu_priv = platform_get_drvdata(ipmmu_pdev);
+>  
+> +	if (!fwspec->iommu_priv)
+> +		put_device(&ipmmu_pdev->dev);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.7.4
