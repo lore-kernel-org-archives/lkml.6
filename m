@@ -2,52 +2,54 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA16C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1C0C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFDC217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB360222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897617;
-	bh=EZvFOeAEynZ2Ax/VN2l+6cdkVeFy4ywpESq1sY7/dBw=;
+	s=default; t=1549897619;
+	bh=6DF8NSeC+hQdGFYAeNQKrtc9fOMxR9+GSs6DQhWmavI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j2+ATT1kUcLvO9Ig7x7qC3SsX082tbRMF5U39u6dTv3Sp/MbHcy5ucZPCWLXraigV
-	 fAHm7fByDndpSBegcKePP0WQm/iStmmKcJ+Et9cJMySnpGmXw60bH/ZKALh6RfbrSF
-	 WW0bUEeUSKFq9n4AgPSZfPun/9Li57e0uYEDpNSE=
+	b=KJf0351ieg0YOhQMnglEw0mXXBsCBUGE1I1Sw3zsWN6BYPvx9YIEOvI74GkkUC7oy
+	 syp6B5GtM6K+34byIzD+iwDwhvJeMGYWudoYpf7cg0pqa6W/Zb0CUSYecx8adwAupM
+	 glnZF5RWBZBFQ3Mbg2ZmNimf+pQrPp2Xrm4FoLRw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391287AbfBKPGz (ORCPT
+        id S2391298AbfBKPG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:06:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56486 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:06:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391277AbfBKPGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:06:53 -0500
+        id S2391288AbfBKPGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:06:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBD7A222A7;
-        Mon, 11 Feb 2019 15:06:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7F6E222AD;
+        Mon, 11 Feb 2019 15:06:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897612;
-        bh=EZvFOeAEynZ2Ax/VN2l+6cdkVeFy4ywpESq1sY7/dBw=;
+        s=default; t=1549897615;
+        bh=6DF8NSeC+hQdGFYAeNQKrtc9fOMxR9+GSs6DQhWmavI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YfhVfu5IvAXrtWt8WxRr19iwS2vkSTl/8oMai2wK+SScW/6FAvsmBXs3uI7XJU2Yp
-         HxXrQHuKOFB8aCPaOUL5cdiZTKbhUKRkvh+tH3fZGS2zzYfE22V4nys2/o4h9fZMaq
-         d5zYwnTvG46hVKnncpbolZ5ntG+90rzcsq0l3I+c=
+        b=xxd83ViJ/B5saa8ItN7RxWe+3/d84Nwb1vnnBgtPuEdeqF85v2tqToHVphDLezCbQ
+         Vd/GJmECyzVCnRdHjfGAfK0gu2gub7Lb096S5qBrK8D2fG1l/oX6OWVjMZ6or54Z4a
+         s1aDN/SdpNmQQWfQRSdkoLHLHsTCLe+7511YlFUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/137] tty: serial: samsung: Properly set flags in autoCTS mode
-Date:   Mon, 11 Feb 2019 15:18:57 +0100
-Message-Id: <20190211141817.147033622@linuxfoundation.org>
+Subject: [PATCH 4.9 057/137] perf header: Fix unchecked usage of strncpy()
+Date:   Mon, 11 Feb 2019 15:18:58 +0100
+Message-Id: <20190211141817.255427931@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,43 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
+[ Upstream commit 7572588085a13d5db02bf159542189f52fdb507e ]
 
-Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
-has changed the way the autoCTS mode is handled.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-According to that change, serial drivers which enable H/W autoCTS mode must
-set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
-TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-[mszyprow: rephrased commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  util/header.c: In function 'perf_event__synthesize_event_update_unit':
+  util/header.c:3586:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->unit, size);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3579:16: note: length computed here
+    size_t size = strlen(evsel->unit);
+                  ^~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-fiikh5nay70bv4zskw2aa858@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 5609305b3676..01ff8ec78023 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1335,11 +1335,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	wr_regl(port, S3C2410_ULCON, ulcon);
- 	wr_regl(port, S3C2410_UBRDIV, quot);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index ab36aa5585b4..a11f6760cce8 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2988,7 +2988,7 @@ perf_event__synthesize_event_update_unit(struct perf_tool *tool,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
  
-+	port->status &= ~UPSTAT_AUTOCTS;
-+
- 	umcon = rd_regl(port, S3C2410_UMCON);
- 	if (termios->c_cflag & CRTSCTS) {
- 		umcon |= S3C2410_UMCOM_AFC;
- 		/* Disable RTS when RX FIFO contains 63 bytes */
- 		umcon &= ~S3C2412_UMCON_AFC_8;
-+		port->status = UPSTAT_AUTOCTS;
- 	} else {
- 		umcon &= ~S3C2410_UMCOM_AFC;
- 	}
+-	strncpy(ev->data, evsel->unit, size);
++	strlcpy(ev->data, evsel->unit, size + 1);
+ 	err = process(tool, (union perf_event *)ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
 -- 
 2.19.1
 
