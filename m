@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8F1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A244C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF7521773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC28821773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897148;
-	bh=hsFEGzcJS1SFrsJt9O8/bw3i0ZuHEEdLeGmnkcS6R10=;
+	s=default; t=1549897156;
+	bh=hAHYgthFgwlKnjZ47dHjGAhNAtWoXcnO9ByIoZhV+bc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nngvJqwYYOz3WKYIowY9jxwmoyhPfmC0sbcABf8EfuHYbLOQo9ONTeTlhg2lWLiIb
-	 nSzYATjlS4ethv9/Pv+lun+lLpD2l5PiA9Ybuuy+Tcp+vTGR9xnGd7JheN1HcCqtjf
-	 ooHwvWUJlTqswhWAFg3M1WaDQ3ku1eNzzWNiiFv8=
+	b=JO3QB8go7R0SUd6xh4P/g3MnBbFQ/o+hxhYaKXjqUkFwcRhiVfEYb3dzKTTxnSqPh
+	 phaIALE+LG+bhYu4Do7+1/NMO5g5GT0iwLmGdABTGmwXRzownYOQr6hMoMD5ApUsv+
+	 pxOcbkag6EKpmNV+Fk7ApO3obbMs3z8mMyPLzZe0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389721AbfBKO7G (ORCPT
+        id S2389753AbfBKO7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46790 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:59:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389707AbfBKO7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:02 -0500
+        id S2389742AbfBKO7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:59:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78910206BA;
-        Mon, 11 Feb 2019 14:59:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DD5B206BA;
+        Mon, 11 Feb 2019 14:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897141;
-        bh=hsFEGzcJS1SFrsJt9O8/bw3i0ZuHEEdLeGmnkcS6R10=;
+        s=default; t=1549897150;
+        bh=hAHYgthFgwlKnjZ47dHjGAhNAtWoXcnO9ByIoZhV+bc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ywZs5ZX90yOlO2px2unj8cQAU1h+zfReAF2jUBdoZrGJrI0rnOyT06/AM8TrsTYXv
-         jHiDrP1x0pkW0E1ypuODCwLTzfnU4MAN5WkVh3WexIu6pivxI1dDD18qNoKOdSMFVw
-         Qr7x041b6JNGfLn+tyOXLxUoIbycs5YKX3Tnu2OQ=
+        b=c2M2+CoVDGH5z0A/SpkWKWFM/L+25HOzzTATFnZJUCK2hmvW+BzFAV5kJqdFv2ZjA
+         Ewm9Bg0F/4bCen9N2nhpOfrf1hZ+u6r3ZiLPhKdlw1+QpZ8dcKvGPSX0apHCSQw/JB
+         AvAuIIP0QbkZ4ZDM+EVe/yExjn2mGQWGnSdDXBbw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Mueller <mimu@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 104/205] KVM: s390: unregister debug feature on failing arch init
-Date:   Mon, 11 Feb 2019 15:18:22 +0100
-Message-Id: <20190211141835.369942513@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Cree <mcree@orcon.net.nz>
+Subject: [PATCH 4.14 107/205] percpu: convert spin_lock_irq to spin_lock_irqsave.
+Date:   Mon, 11 Feb 2019 15:18:25 +0100
+Message-Id: <20190211141835.549390951@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -69,63 +67,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
+[ Upstream commit 6ab7d47bcbf0144a8cb81536c2cead4cde18acfe ]
 
-Make sure the debug feature and its allocated resources get
-released upon unsuccessful architecture initialization.
+>From Michael Cree:
+  "Bisection lead to commit b38d08f3181c ("percpu: restructure
+   locking") as being the cause of lockups at initial boot on
+   the kernel built for generic Alpha.
 
-A related indication of the issue will be reported as kernel
-message.
+   On a suggestion by Tejun Heo that:
 
-Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+   So, the only thing I can think of is that it's calling
+   spin_unlock_irq() while irq handling isn't set up yet.
+   Can you please try the followings?
+
+   1. Convert all spin_[un]lock_irq() to
+      spin_lock_irqsave/unlock_irqrestore()."
+
+Fixes: b38d08f3181c ("percpu: restructure locking")
+Reported-and-tested-by: Michael Cree <mcree@orcon.net.nz>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ mm/percpu-km.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 4f6adbea592b..f674a81c8868 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -361,19 +361,30 @@ static void kvm_s390_cpu_feat_init(void)
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index 0d88d7bd5706..c22d959105b6 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -50,6 +50,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
+ 	struct pcpu_chunk *chunk;
+ 	struct page *pages;
++	unsigned long flags;
+ 	int i;
  
- int kvm_arch_init(void *opaque)
- {
-+	int rc;
-+
- 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
- 	if (!kvm_s390_dbf)
- 		return -ENOMEM;
+ 	chunk = pcpu_alloc_chunk(gfp);
+@@ -68,9 +69,9 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	chunk->data = pages;
+ 	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
  
- 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
--		debug_unregister(kvm_s390_dbf);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto out_debug_unreg;
- 	}
+-	spin_lock_irq(&pcpu_lock);
++	spin_lock_irqsave(&pcpu_lock, flags);
+ 	pcpu_chunk_populated(chunk, 0, nr_pages, false);
+-	spin_unlock_irq(&pcpu_lock);
++	spin_unlock_irqrestore(&pcpu_lock, flags);
  
- 	kvm_s390_cpu_feat_init();
- 
- 	/* Register floating interrupt controller interface. */
--	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	if (rc) {
-+		pr_err("Failed to register FLIC rc=%d\n", rc);
-+		goto out_debug_unreg;
-+	}
-+	return 0;
-+
-+out_debug_unreg:
-+	debug_unregister(kvm_s390_dbf);
-+	return rc;
- }
- 
- void kvm_arch_exit(void)
+ 	pcpu_stats_chunk_alloc();
+ 	trace_percpu_create_chunk(chunk->base_addr);
 -- 
 2.19.1
 
