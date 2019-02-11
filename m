@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A077CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9BAC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F4B214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A56752184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gqq17HZa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uYEaYUBO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfBKX21 (ORCPT
+        id S1727987AbfBKX2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:28:27 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50952 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbfBKX2X (ORCPT
+        Mon, 11 Feb 2019 18:28:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38965 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727550AbfBKX20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:28:23 -0500
-Received: by mail-wm1-f67.google.com with SMTP id x7so1023571wmj.0;
-        Mon, 11 Feb 2019 15:28:21 -0800 (PST)
+        Mon, 11 Feb 2019 18:28:26 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so665771wra.6;
+        Mon, 11 Feb 2019 15:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=ZdMEqkaTdkU9cQtnyBwyKsKlsrmvMKKieThBtq30bZY=;
-        b=Gqq17HZaZ6nYNJ2Waw8C45/pT84leeq75yxS8fGSjHCrkQFeSHGV6+O/G32DVn0ZPW
-         LRntTc/gWGiCzbHknpYD0WIGdPBsxF48Pi2Eqezr+FYqE5EmvTh3gCPWTYFSLfM9T3S4
-         BuGCmH14QZYFnQPwRp0pjsUno0lKnQ68bBnb4VDLucg0jV9j8RZusWMJ6QcjhNcdNBeC
-         Ud9mamr/FU72AoO/EsCppelcnPqu7/6ZEELqCQRUybUL7VLnarMjsDuTrtKoX/Uuclke
-         S1yE7MCcTW62lyFf8XSPh0C8fTcP7AG+sX97NdgWIG8QKtRNmwZABW2W7CFA8P6s6CRg
-         aDhA==
+        bh=hnmNnr9YQbwfaI93UrUGE24zBu/XKqtY3CcuY5KmkdU=;
+        b=uYEaYUBOjZ1m5B6He86ZkAdxBgB6xG90lpl13Gk1Hrdiy2liTU2fpge+1cP7+Qcn6P
+         emp1I3cfdW/eFM5ehGcXia7aD5KRIrcUO5KLp3y0d03SJnHlYa9M1Nrk/j9WlOBZd5vM
+         NPhVHQ5yjo3jg+IdDZgstra/VE5OEv5TkKDW60i2fCnhn1M3rHve7RRlJI3pwQX0i2oO
+         nzXQ3Y1hVyuu7hiWSI6AAJ/iJgoifRyEzUCYAW/WTwTbuJ/c3kKLtIYUUXTTl2s4MABn
+         myO9A78iPisLHHaZdLR9c6eEk1EQBlg6qs5wdKYl6B1b1EbFoU++Ygll3gD7Mvu2THwr
+         kJMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=ZdMEqkaTdkU9cQtnyBwyKsKlsrmvMKKieThBtq30bZY=;
-        b=Bm8z8wK8NHeXzKXthmwhj2JPswmDNqa/WMsj6XC9oBTOA41a+l3I3XbjtjFxVJwpHI
-         8CFI+903cOkxbrCiFP1NMD9TSx3Td1/tAr3RFPVs9Q1SRBjo3Z8j57I8AsMQrinRIszt
-         go7fHIPtvY8Hv+dj004GXnlxfzZtSW2bEADvj+NBIFVQ38g2g8zOJjL3PPwhBmD2Zt1X
-         x9uVvHrYSjU1tVTDeLM/3TCTewkeRxt4f422ea5c1vyEmmG9qlhNuycotZO+gy/bTpUQ
-         XSsjQCHsZ0jViynox1YgepQC7OlJGMKC7AOA15sZbhOF1CFJj3usRriuM5lBiL9Cp0Vu
-         zlVA==
-X-Gm-Message-State: AHQUAubBkvmPefLlhJ/Xkc6HFPm8iPQIaosdhODW+eP1cW+B4HVOu0T1
-        QbUhVSaa4bS8QrJe/Wfij+0=
-X-Google-Smtp-Source: AHgI3IaRbYzOvYY9aR2Sas9wiYW3Vep8Wn7Wc3iPNf+FO4IJVM9hmiyDf+hkZLdGHUnUWgdhWnBgeQ==
-X-Received: by 2002:a1c:f916:: with SMTP id x22mr488708wmh.87.1549927701124;
-        Mon, 11 Feb 2019 15:28:21 -0800 (PST)
+        bh=hnmNnr9YQbwfaI93UrUGE24zBu/XKqtY3CcuY5KmkdU=;
+        b=M7iLd4toG6iL3Bl54kQbvpDvJse06WaZVgo5Cr7a6RyylljZugvFv6HF3HUwONDBX5
+         iUsqVD4Dzn88htOdOa8Gq0G7Mx/l2ZYKStSsZ2hvwblsSwCodQraP9etvKI1PSjFiUAG
+         tN8Q5QLostvvFFIlr+syKRxFpTnZa07vJhIpq92GWQOXPWZLZZAXM5b4V5uXWxVeDGVz
+         WDapwMIqUd42gbDgJcHZ6AyDMVdMKanbKu0dz32+C89TkNfPMKlDlu4RE/K0CP783oPN
+         3tzZCaner+574kQ6eHiI4FgAcKORhNtYklWScoHblQT1sHk0GnnsKRTykrJnyDGNNnrJ
+         Fwew==
+X-Gm-Message-State: AHQUAuail8AFCcEbqREG8UPoFpNlg2cAkAVJkvdz+luj38HIE/G54Ucz
+        URXwqELpFgiCoTR6X7nGZno=
+X-Google-Smtp-Source: AHgI3IZ5giTTjGoZ5V4UEH/aAowb6QbzDCVtz5Ak4aVSloW6V3hsGpwN/xytbf9yxR8h2JyjNIwF9Q==
+X-Received: by 2002:adf:9f48:: with SMTP id f8mr488678wrg.151.1549927704399;
+        Mon, 11 Feb 2019 15:28:24 -0800 (PST)
 Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
-        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.17
+        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:28:20 -0800 (PST)
+        Mon, 11 Feb 2019 15:28:23 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 05/12] __wr_after_init: arm64: memset_user()
-Date:   Tue, 12 Feb 2019 01:27:42 +0200
-Message-Id: <165661e29f9a2a6aa36e51ae79a06f03b7c8718e.1549927666.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v4 06/12] __wr_after_init: arm64: enable
+Date:   Tue, 12 Feb 2019 01:27:43 +0200
+Message-Id: <3aa3892bcef3aa8613df74c911c56a3d07599630.1549927666.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
 References: <cover.1549927666.git.igor.stoppa@huawei.com>
@@ -87,16 +87,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm64 specific version of memset() for user space, memset_user()
-
-In the __wr_after_init scenario, write-rare variables have:
-- a primary read-only mapping in kernel memory space
-- an alternate, writable mapping, implemented as user-space mapping
-
-The write rare implementation expects the arch code to privide a
-memset_user() function, which is currently missing.
-
-clear_user() is the base for memset_user()
+Set ARCH_HAS_PRMEM to Y for arm64
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -114,111 +105,21 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/arm64/include/asm/uaccess.h   |  9 +++++
- arch/arm64/lib/Makefile            |  2 +-
- arch/arm64/lib/memset_user.S (new) | 63 ++++++++++++++++++++++++++++++++
- 3 files changed, 73 insertions(+), 1 deletion(-)
+ arch/arm64/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 547d7a0c9d05..0094f92a8f1b 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -415,6 +415,15 @@ extern unsigned long __must_check __arch_copy_in_user(void __user *to, const voi
- #define INLINE_COPY_TO_USER
- #define INLINE_COPY_FROM_USER
- 
-+extern unsigned long __must_check __arch_memset_user(void __user *to, int c, unsigned long n);
-+static inline unsigned long __must_check __memset_user(void __user *to, int c, unsigned long n)
-+{
-+	if (access_ok(to, n))
-+		n = __arch_memset_user(__uaccess_mask_ptr(to), c, n);
-+	return n;
-+}
-+#define memset_user	__memset_user
-+
- extern unsigned long __must_check __arch_clear_user(void __user *to, unsigned long n);
- static inline unsigned long __must_check __clear_user(void __user *to, unsigned long n)
- {
-diff --git a/arch/arm64/lib/Makefile b/arch/arm64/lib/Makefile
-index 5540a1638baf..614b090888de 100644
---- a/arch/arm64/lib/Makefile
-+++ b/arch/arm64/lib/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--lib-y		:= clear_user.o delay.o copy_from_user.o		\
-+lib-y		:= clear_user.o memset_user.o delay.o copy_from_user.o	\
- 		   copy_to_user.o copy_in_user.o copy_page.o		\
- 		   clear_page.o memchr.o memcpy.o memmove.o memset.o	\
- 		   memcmp.o strcmp.o strncmp.o strlen.o strnlen.o	\
-diff --git a/arch/arm64/lib/memset_user.S b/arch/arm64/lib/memset_user.S
-new file mode 100644
-index 000000000000..1bfbda3d112b
---- /dev/null
-+++ b/arch/arm64/lib/memset_user.S
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * memset_user.S - memset for userspace on arm64
-+ *
-+ * (C) Copyright 2018 Huawey Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * Based on arch/arm64/lib/clear_user.S
-+ */
-+
-+#include <linux/linkage.h>
-+
-+#include <asm/asm-uaccess.h>
-+
-+	.text
-+
-+/* Prototype: int __arch_memset_user(void *addr, int c, size_t n)
-+ * Purpose  : set n bytes of user memory at "addr" to the value "c"
-+ * Params   : x0 - addr, user memory address to set
-+ *          : x1 - c, byte value
-+ *          : x2 - n, number of bytes to set
-+ * Returns  : number of bytes NOT set
-+ *
-+ * Alignment fixed up by hardware.
-+ */
-+ENTRY(__arch_memset_user)
-+	uaccess_enable_not_uao x3, x4, x5
-+	// replicate the byte to the whole register
-+	and	x1, x1, 0xff
-+	lsl	x3, x1, 8
-+	orr	x1, x3, x1
-+	lsl	x3, x1, 16
-+	orr 	x1, x3, x1
-+	lsl	x3, x1, 32
-+	orr	x1, x3, x1
-+	mov	x3, x2			// save the size for fixup return
-+	subs	x2, x2, #8
-+	b.mi	2f
-+1:
-+uao_user_alternative 9f, str, sttr, x1, x0, 8
-+	subs	x2, x2, #8
-+	b.pl	1b
-+2:	adds	x2, x2, #4
-+	b.mi	3f
-+uao_user_alternative 9f, str, sttr, x1, x0, 4
-+	sub	x2, x2, #4
-+3:	adds	x2, x2, #2
-+	b.mi	4f
-+uao_user_alternative 9f, strh, sttrh, w1, x0, 2
-+	sub	x2, x2, #2
-+4:	adds	x2, x2, #1
-+	b.mi	5f
-+uao_user_alternative 9f, strb, sttrb, w1, x0, 0
-+5:	mov	x0, #0
-+	uaccess_disable_not_uao x3, x4
-+	ret
-+ENDPROC(__arch_memset_user)
-+
-+	.section .fixup,"ax"
-+	.align	2
-+9:	mov	x0, x3			// return the original size
-+	ret
-+	.previous
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a4168d366127..7cbb2c133ed7 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -66,6 +66,7 @@ config ARM64
+ 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select ARCH_WANT_FRAME_POINTERS
+ 	select ARCH_HAS_UBSAN_SANITIZE_ALL
++	select ARCH_HAS_PRMEM
+ 	select ARM_AMBA
+ 	select ARM_ARCH_TIMER
+ 	select ARM_GIC
 -- 
 2.19.1
 
