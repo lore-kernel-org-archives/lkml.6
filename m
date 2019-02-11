@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EBDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5DCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A0E21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF96721B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900680;
-	bh=8yr7WR8NzKEIdllMguyXHcHPMz1sZ3NoBvuVLzcBJYI=;
+	s=default; t=1549900686;
+	bh=FmIvRkVC8uF4mZIxLheNR5Bn5FATuCRgJCv71nnaKAs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=McS8bfqi4wsFqNmEYr0Q3MELT0syxebVMm6nSeLwVZkM7QpmlGZMfANt0oLtRyP49
-	 GufgApdwi7nSffhReJGE6FPLT0sfmAubLfsLp3srm7YIZuvjnXzpsvt1i6VjPDoxVA
-	 umNwPfVz+d1FovJbXMOZropoBkJPk/lIj6YyOZOk=
+	b=KSDJPLxaEtU3cJy3/I8cCkc23vJpVFK9bIg29TzKriF1SDjNBJ3nm4MaRZzyKSU6q
+	 bBWnV4vOBQZud85uErZNls3DEYp2lDVSTR7geAyk6MHgiHuGuxsdsOWajiK/MgYIVm
+	 AO1/bRnS74P34vJamg816Tg8Viiv3ExZMDOmRvxs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731159AbfBKP56 (ORCPT
+        id S1730603AbfBKOdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:33:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730628AbfBKOdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:21 -0500
+        id S1730017AbfBKOdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76790214DA;
-        Mon, 11 Feb 2019 14:33:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA6F21855;
+        Mon, 11 Feb 2019 14:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895600;
-        bh=8yr7WR8NzKEIdllMguyXHcHPMz1sZ3NoBvuVLzcBJYI=;
+        s=default; t=1549895585;
+        bh=FmIvRkVC8uF4mZIxLheNR5Bn5FATuCRgJCv71nnaKAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2dVJb+h3uU+ds4dG1kdASp5mJQnB1Cwfj4FdlCdACnRMqW2uimzG3aOyVS4hRjrXH
-         aT1/P/HA9OzmTsN1UDDRUbhqE+48pUZ3Jrea2hDjLMkNNtv401Ev1rC8UXRs+1HnxV
-         RmZak/czRnQn+Qeme741F2j5lxYyS6YqHLKqvV1Y=
+        b=xqm0HmH/0sdd78AVKJ5Ucb8X+mHLgX47cOYjxFqimOLFhp5FdmRodxBeCS8TO5xwI
+         qQqJZq9Ljhf32Le4v/017jEo4YxvhadmxHLSVdn0D5T+ieJr5Ir8JCniV4kxWyi9JF
+         ctLzLapVswZOejq+bt09d5EDHJV8bzn3pVpCH4Z4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Shannon Nelson <shannon.lee.nelson@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 260/352] niu: fix missing checks of niu_pci_eeprom_read
-Date:   Mon, 11 Feb 2019 15:18:07 +0100
-Message-Id: <20190211141903.603792175@linuxfoundation.org>
+Subject: [PATCH 4.20 255/352] crypto: ux500 - Use proper enum in hash_set_dma_transfer
+Date:   Mon, 11 Feb 2019 15:18:02 +0100
+Message-Id: <20190211141903.315110757@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,47 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 26fd962bde0b15e54234fe762d86bc0349df1de4 ]
+[ Upstream commit 5ac93f808338f4dd465402e91869702eb87db241 ]
 
-niu_pci_eeprom_read() may fail, so we should check its return value
-before using the read data.
+Clang warns when one enumerated type is implicitly converted to another:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+drivers/crypto/ux500/hash/hash_core.c:169:4: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                        direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
+                        ^~~~~~~~~
+1 warning generated.
+
+dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
+We know that the only direction supported by this function is
+DMA_TO_DEVICE because of the check at the top of this function so we can
+just use the equivalent value from dma_transfer_direction.
+
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sun/niu.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/crypto/ux500/hash/hash_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
-index 9319d84bf49f..d84501441edd 100644
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -8100,6 +8100,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
- 		start += 3;
- 
- 		prop_len = niu_pci_eeprom_read(np, start + 4);
-+		if (prop_len < 0)
-+			return prop_len;
- 		err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
- 		if (err < 0)
- 			return err;
-@@ -8144,8 +8146,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
- 			netif_printk(np, probe, KERN_DEBUG, np->dev,
- 				     "VPD_SCAN: Reading in property [%s] len[%d]\n",
- 				     namebuf, prop_len);
--			for (i = 0; i < prop_len; i++)
--				*prop_buf++ = niu_pci_eeprom_read(np, off + i);
-+			for (i = 0; i < prop_len; i++) {
-+				err = niu_pci_eeprom_read(np, off + i);
-+				if (err >= 0)
-+					*prop_buf = err;
-+				++prop_buf;
-+			}
- 		}
- 
- 		start += len;
+diff --git a/drivers/crypto/ux500/hash/hash_core.c b/drivers/crypto/ux500/hash/hash_core.c
+index 633321a8dd03..a0bb8a6eec3f 100644
+--- a/drivers/crypto/ux500/hash/hash_core.c
++++ b/drivers/crypto/ux500/hash/hash_core.c
+@@ -166,7 +166,7 @@ static int hash_set_dma_transfer(struct hash_ctx *ctx, struct scatterlist *sg,
+ 		__func__);
+ 	desc = dmaengine_prep_slave_sg(channel,
+ 			ctx->device->dma.sg, ctx->device->dma.sg_len,
+-			direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
++			DMA_MEM_TO_DEV, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
+ 	if (!desc) {
+ 		dev_err(ctx->device->dev,
+ 			"%s: dmaengine_prep_slave_sg() failed!\n", __func__);
 -- 
 2.19.1
 
