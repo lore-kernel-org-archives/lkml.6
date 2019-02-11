@@ -2,86 +2,125 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAD1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B48C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E7B217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D39A4217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PbO6yIqz"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h69/8aLc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbfBKXK7 (ORCPT
+        id S1727738AbfBKXMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:10:59 -0500
-Received: from ozlabs.org ([203.11.71.1]:48645 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBKXK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:10:59 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43z1jr4c6hz9s3l;
-        Tue, 12 Feb 2019 10:10:56 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549926656;
-        bh=sSgYpe6D/3wJMXzgEPROyBDCFKTV5XaPYl1oU9d8/hc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PbO6yIqzjDp/r5g8z3RBYrC/sGakjIQLPzRzK5xbCraZqnf7K2bpkO1wuQVcVgc+v
-         Pfhqi1ksNqGvsoOE4eWshaYL+XchmL9RgOhIaabZ9BAbPfcoKVYkRlHfh8aZpqTqyS
-         fBEgwRPZZNnVxD6HmxbaRIwddYnmr8ngqB5Z3sXkn7j90yfGMYY/pTWKKuyybS2i3X
-         lyVeGkTwSlUyXPK2gyKpu0szy56S7gYdlCmpwViOV7qsX+t6Z9aPtTKAkmHNvZEFG+
-         LeWZDP0m5XlDd2UcLzchMe5VTFSMnHxxwLxgJo4ewK4Vygs26NCgkJpiJn2eCQ9ztc
-         8axnF/onTUObA==
-Date:   Tue, 12 Feb 2019 10:10:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the pci tree
-Message-ID: <20190212101055.36a8b74b@canb.auug.org.au>
+        Mon, 11 Feb 2019 18:12:12 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:47468 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfBKXMM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:12:12 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BN8lYP097599;
+        Mon, 11 Feb 2019 23:11:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=ga+yuNAdN5EDRIg9ZPoAnKRUBklhIkTaF8GwpER6yuw=;
+ b=h69/8aLchyz1bOEzsVbEL12ex24x41iHgKUkVrwI2tdVl2pvNgzF2CVbB+9+XUW4pN4d
+ bl9vR+y4J9EMrCCQ5llzSpmryKAwte5EQnwEnawq2ien/vrHLSsd6JOMlls3kU+lvsJW
+ PT08I9Q2N5KweZXEp+4rSAVoD77ka9orD/Q+b1yO1ccO1PNqK8ykHoP+Wdo1s4kHAPHB
+ IsrtNH7jey307PkgCXznIEFiBmEZ6WVutPqCFE6Q7xfImKruBX2+e/+J5Zf73XeaHABu
+ aE1PZmOGQ6oN+gnBJUtGRlrqCl3mGAj+YbEuaazQ/okXBVk3PhEEnlqDhkKd1fuI8M66 9w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2qhredrtp7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 23:11:42 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1BNBZgL029359
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Feb 2019 23:11:36 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BNBX8o019495;
+        Mon, 11 Feb 2019 23:11:33 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 11 Feb 2019 15:11:32 -0800
+Date:   Mon, 11 Feb 2019 18:11:53 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
+        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
+        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
+Subject: Re: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to
+ account pinned pages
+Message-ID: <20190211231152.qflff6g2asmkb6hr@ca-dmjordan1.us.oracle.com>
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211224437.25267-2-daniel.m.jordan@oracle.com>
+ <20190211225620.GO24692@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PaH8zGiG.p1hbhoE8jha7qn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211225620.GO24692@ziepe.ca>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9164 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902110164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/PaH8zGiG.p1hbhoE8jha7qn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 11, 2019 at 03:56:20PM -0700, Jason Gunthorpe wrote:
+> On Mon, Feb 11, 2019 at 05:44:33PM -0500, Daniel Jordan wrote:
+> > @@ -266,24 +267,15 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+> >  	if (!mm)
+> >  		return -ESRCH; /* process exited */
+> >  
+> > -	ret = down_write_killable(&mm->mmap_sem);
+> > -	if (!ret) {
+> > -		if (npage > 0) {
+> > -			if (!dma->lock_cap) {
+> > -				unsigned long limit;
+> > -
+> > -				limit = task_rlimit(dma->task,
+> > -						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+> > +	pinned_vm = atomic64_add_return(npage, &mm->pinned_vm);
+> >  
+> > -				if (mm->locked_vm + npage > limit)
+> > -					ret = -ENOMEM;
+> > -			}
+> > +	if (npage > 0 && !dma->lock_cap) {
+> > +		unsigned long limit = task_rlimit(dma->task, RLIMIT_MEMLOCK) >>
+> > +
+> > -					PAGE_SHIFT;
+> 
+> I haven't looked at this super closely, but how does this stuff work?
+> 
+> do_mlock doesn't touch pinned_vm, and this doesn't touch locked_vm...
+> 
+> Shouldn't all this be 'if (locked_vm + pinned_vm < RLIMIT_MEMLOCK)' ?
+>
+> Otherwise MEMLOCK is really doubled..
 
-Hi Bjorn,
+So this has been a problem for some time, but it's not as easy as adding them
+together, see [1][2] for a start.
 
-Commit
+The locked_vm/pinned_vm issue definitely needs fixing, but all this series is
+trying to do is account to the right counter.
 
-  51c80555dea3 ("PCI/ASPM: Use LTR if already enabled by platform")
+Daniel
 
-is missing a Signed-off-by from its author and commiter.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/PaH8zGiG.p1hbhoE8jha7qn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxiAP8ACgkQAVBC80lX
-0Gy9Kwf/SwJTnpiW+KlsVjEuHE/Qt2nR/vAu4mgFArMfsM2hLTNLADcHK1ex+7lm
-gwx8kJh74FSwEkvLovCfg44loq7+jSLzZUPtrivi3+cylbUEeAY9jUYhW9MssQM/
-pRuBOOOuvSlB9JfbcLZ9kKlpjKLYLd4+w6J5bnUcqp9jbAIw2MA3CoEa8vQwZ6Gs
-yYCT92Mfl5tjsjtKUikUJZ9qMtbwgfRy0rEDgqwor3KlpCzqLOlRFJ1Id3+utMCb
-sfJRqg7mYDJ+bLQxBs4yu333YC1MxD4PGO1B1VtL2d/xVSerzL0NzJq2s9qGzrS5
-Lr5QX/hT9KwG62nCbHrdOXHJzddhxg==
-=O0kv
------END PGP SIGNATURE-----
-
---Sig_/PaH8zGiG.p1hbhoE8jha7qn--
+[1] http://lkml.kernel.org/r/20130523104154.GA23650@twins.programming.kicks-ass.net
+[2] http://lkml.kernel.org/r/20130524140114.GK23650@twins.programming.kicks-ass.net
