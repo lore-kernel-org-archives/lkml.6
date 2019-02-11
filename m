@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4ECC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1503CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F14020700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D668A20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896780;
-	bh=6OMHWJARGIz5ndA6wiiDGYEU0FmRjK0nN3O116FWQBk=;
+	s=default; t=1549896784;
+	bh=3JyJ/02gH+mdQnBAYgk5RJsxzs47F7llET3agu5w414=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aShQZPQHwqROMp/gZbP3ouPvhSaS0E5+hNdsj6SOoveEdhMz3DGZNsrqqD1DUZkHY
-	 fqeLTeT56hUZ/ntKtuzlKZNdQoFrIq1h5C6G5B1ODfTHllmtYZZZLq12EkNONcs6De
-	 gNt9N6AWmcESratF70tqL7wh/SMCJNvS19BnXxEY=
+	b=psct2VrRy9CtUkt+cAdG+d+Aq8ZVcrQXPHqH9qI6P6l0HMxkFNPs9Z01go+o1Ur7C
+	 LqMdkS16GGim78Sw+HqFa/bykpuI3znMxrk4uFws2ywmeToC/JASJ/HuldQpRxFo6B
+	 8dNUOmOrN53aDsVn9kxmTnxXC8bXsAHKMBuzrjVM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388541AbfBKOw6 (ORCPT
+        id S2388554AbfBKOxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:52:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:53:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388525AbfBKOwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:52:53 -0500
+        id S2388525AbfBKOw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:52:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE0BF20855;
-        Mon, 11 Feb 2019 14:52:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B635220844;
+        Mon, 11 Feb 2019 14:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896773;
-        bh=6OMHWJARGIz5ndA6wiiDGYEU0FmRjK0nN3O116FWQBk=;
+        s=default; t=1549896779;
+        bh=3JyJ/02gH+mdQnBAYgk5RJsxzs47F7llET3agu5w414=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qlUhGl0qnu4HHRdpHrFFzLwuXgwhB/PuL11VSOP/lCdzb1aY0bevwdNpiDs5Vr485
-         v56rGYH9ky25L7UAl3bhNDXtvuDlAq5VqS1paLCxQofcpUOgWX5CvYfe/3Ct0P7qfA
-         oVfas5SSBP9Mkvj9jtzUgdeVDIMggxCLu9V8oYmg=
+        b=bCwhB1qxusRxq99WthAsiPGhAuTIZi2ehzFL+FNhj0UmembdQU60olz0ez43ewKBV
+         n535tbOoCui0qcTodHcSfazRK25jPMCHD/LbRfVBKZrJ89UtdNjxE2lcaLFQJSRRmu
+         AYrKRD6dbiz22MQKSmSbv1I5ZFRIrzudzp498Myk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Okash Khawaja <okash.khawaja@gmail.com>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 297/313] staging: speakup: fix tty-operation NULL derefs
-Date:   Mon, 11 Feb 2019 15:19:37 +0100
-Message-Id: <20190211141912.807453080@linuxfoundation.org>
+        stable@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 299/313] scsi: aic94xx: fix module loading
+Date:   Mon, 11 Feb 2019 15:19:39 +0100
+Message-Id: <20190211141912.900848730@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,47 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-commit a1960e0f1639cb1f7a3d94521760fc73091f6640 upstream.
+commit 42caa0edabd6a0a392ec36a5f0943924e4954311 upstream.
 
-The send_xchar() and tiocmset() tty operations are optional. Add the
-missing sanity checks to prevent user-space triggerable NULL-pointer
-dereferences.
+The aic94xx driver is currently failing to load with errors like
 
-Fixes: 6b9ad1c742bf ("staging: speakup: add send_xchar, tiocmset and input functionality for tty")
-Cc: stable <stable@vger.kernel.org>     # 4.13
-Cc: Okash Khawaja <okash.khawaja@gmail.com>
-Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:02:00.3/0000:07:02.0/revision'
+
+Because the PCI code had recently added a file named 'revision' to every
+PCI device.  Fix this by renaming the aic94xx revision file to
+aic_revision.  This is safe to do for us because as far as I can tell,
+there's nothing in userspace relying on the current aic94xx revision file
+so it can be renamed without breaking anything.
+
+Fixes: 702ed3be1b1b (PCI: Create revision file in sysfs)
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/speakup/spk_ttyio.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/scsi/aic94xx/aic94xx_init.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/speakup/spk_ttyio.c
-+++ b/drivers/staging/speakup/spk_ttyio.c
-@@ -265,7 +265,8 @@ static void spk_ttyio_send_xchar(char ch
- 		return;
- 	}
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -281,7 +281,7 @@ static ssize_t asd_show_dev_rev(struct d
+ 	return snprintf(buf, PAGE_SIZE, "%s\n",
+ 			asd_dev_rev[asd_ha->revision_id]);
+ }
+-static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
++static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
  
--	speakup_tty->ops->send_xchar(speakup_tty, ch);
-+	if (speakup_tty->ops->send_xchar)
-+		speakup_tty->ops->send_xchar(speakup_tty, ch);
- 	mutex_unlock(&speakup_tty_mutex);
+ static ssize_t asd_show_dev_bios_build(struct device *dev,
+ 				       struct device_attribute *attr,char *buf)
+@@ -478,7 +478,7 @@ static int asd_create_dev_attrs(struct a
+ {
+ 	int err;
+ 
+-	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	if (err)
+ 		return err;
+ 
+@@ -500,13 +500,13 @@ err_update_bios:
+ err_biosb:
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ err_rev:
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	return err;
  }
  
-@@ -277,7 +278,8 @@ static void spk_ttyio_tiocmset(unsigned
- 		return;
- 	}
- 
--	speakup_tty->ops->tiocmset(speakup_tty, set, clear);
-+	if (speakup_tty->ops->tiocmset)
-+		speakup_tty->ops->tiocmset(speakup_tty, set, clear);
- 	mutex_unlock(&speakup_tty_mutex);
- }
- 
+ static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
+ {
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
 
 
