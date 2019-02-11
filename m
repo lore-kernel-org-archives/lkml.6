@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A86EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DC7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD7E21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F99214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895237;
-	bh=cTtMXJXNrnhPjGw89PpXkrSod06WF4AgN8ME0tltaZw=;
+	s=default; t=1549895240;
+	bh=b/Qpnc0gIvV/cTfCFf7FN74x4ySbEsUadgh6ZDIt7r4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Lvb9u2/rMs3l8bI0fmVrB8jxnIGWUvG01J1SE/sPtfNquBpOdNxY+PBmuTZICQ14R
-	 gPGLUznw6fpKY+Ro7BU1Ecoj93VvI4cymQaTAaVeO1xsU4rX8VE3V4wR+ofTkB278z
-	 z09lyzSWkJg6w0sHoWC+DHTJxuzZLkTbyUtpcIUQ=
+	b=VsZnw8UywmwRsyjADJ9vKl9ad/68MsZEA0XGVGM6GOjAKLQHv6Z3nBYYluI+3TUDx
+	 kKV0jV21480yRaMoGoLJnUjUvYM2fOK5BgYna/k0F9tZqsO9jbo+bz7LaHA+tLHH7a
+	 Qo188RUkHIQEUikzXM74exYMh2JXavTV7Q9UDiNg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbfBKO1Q (ORCPT
+        id S1729702AbfBKO1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32958 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729679AbfBKO1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:13 -0500
+        id S1729689AbfBKO1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:27:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E4482075C;
-        Mon, 11 Feb 2019 14:27:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C0362075C;
+        Mon, 11 Feb 2019 14:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895232;
-        bh=cTtMXJXNrnhPjGw89PpXkrSod06WF4AgN8ME0tltaZw=;
+        s=default; t=1549895235;
+        bh=b/Qpnc0gIvV/cTfCFf7FN74x4ySbEsUadgh6ZDIt7r4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MizXMKvJLTlBgd2QE8tn9EknBI2+SBL0E9nvcUJVYQlHdal39pseHo5PLXHq/VnOU
-         sVHcxLKCRysLgO+JwRIOqZRqnP8WB1I0WvhA517JKngwWjJlE+3+hpNw5nW90fPgD7
-         lcJrq5OOBUXCC+Fz0i04ov1sognJdQYA4mUBjz28=
+        b=oETDPQRdaVvtUP6HiaCK7EgIqyM1g/t/GIpNCQVznD3w5+fb5J6E93Wo00SaNINIs
+         YMHafm1nDwmx//qSNtORDLFXUNBOP6mbf2xrhTsvi6GavoYixswho1TsRGHVDUfNx1
+         CR8LDD3K5fkNBoKICWWIiLJjzEexIJjd0xDfSClY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 137/352] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
-Date:   Mon, 11 Feb 2019 15:16:04 +0100
-Message-Id: <20190211141855.233524233@linuxfoundation.org>
+Subject: [PATCH 4.20 138/352] tracing: Have trace_stack nr_entries compare not be so subtle
+Date:   Mon, 11 Feb 2019 15:16:05 +0100
+Message-Id: <20190211141855.296924278@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,72 +66,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
+[ Upstream commit ca16b0fbb05242f18da9d810c07d3882ffed831c ]
 
-The vendor firmware was analyzed to get the right idea about
-this flash layout. /proc/mtd contains:
+Dan Carpenter reviewed the trace_stack.c code and figured he found an off by
+one bug.
 
-dev:    size   erasesize  name
-mtd0: 01e7ff40 00020000 "rootfs"
-mtd1: 01f40000 00020000 "upgrade"
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd4: 00040000 00020000 "RedBoot"
-mtd5: 00020000 00020000 "LangPack"
-mtd6: 02000000 00020000 "flash"
+ "From reviewing the code, it seems possible for
+  stack_trace_max.nr_entries to be set to .max_entries and in that case we
+  would be reading one element beyond the end of the stack_dump_trace[]
+  array.  If it's not set to .max_entries then the bug doesn't affect
+  runtime."
 
-Here "flash" is obviously the whole device and we know "rootfs"
-is a bogus hack to point to a squashfs rootfs inside of the main
-"upgrade partition". We know "RedBoot" is the first 0x40000 of
-the flash and the "upgrade" partition follows from 0x40000 to
-0x1f8000. So we have mtd0, 1, 4 and 6 covered.
+Although it looks to be the case, it is not. Because we have:
 
-Remains:
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd5: 00020000 00020000 "LangPack"
+ static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] =
+	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
 
-Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
-these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
-"rgdb" of 0x40000.
+ struct stack_trace stack_trace_max = {
+	.max_entries		= STACK_TRACE_ENTRIES - 1,
+	.entries		= &stack_dump_trace[0],
+ };
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+And:
+
+	stack_trace_max.nr_entries = x;
+	for (; x < i; x++)
+		stack_dump_trace[x] = ULONG_MAX;
+
+Even if nr_entries equals max_entries, indexing with it into the
+stack_dump_trace[] array will not overflow the array. But if it is the case,
+the second part of the conditional that tests stack_dump_trace[nr_entries]
+to ULONG_MAX will always be true.
+
+By applying Dan's patch, it removes the subtle aspect of it and makes the if
+conditional slightly more efficient.
+
+Link: http://lkml.kernel.org/r/20180620110758.crunhd5bfep7zuiz@kili.mountain
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ kernel/trace/trace_stack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-index 6f258b50eb44..502a361d1fe9 100644
---- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-+++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-@@ -274,20 +274,16 @@
- 				read-only;
- 			};
- 			/*
--			 * Between the boot loader and the rootfs is the kernel
--			 * in a custom Storlink format flashed from the boot
--			 * menu. The rootfs is in squashfs format.
-+			 * This firmware image contains the kernel catenated
-+			 * with the squashfs root filesystem. For some reason
-+			 * this is called "upgrade" on the vendor system.
- 			 */
--			partition@1800c0 {
--				label = "rootfs";
--				reg = <0x001800c0 0x01dbff40>;
--				read-only;
--			};
--			partition@1f40000 {
-+			partition@40000 {
- 				label = "upgrade";
--				reg = <0x01f40000 0x00040000>;
-+				reg = <0x00040000 0x01f40000>;
- 				read-only;
- 			};
-+			/* RGDB, Residental Gateway Database? */
- 			partition@1f80000 {
- 				label = "rgdb";
- 				reg = <0x01f80000 0x00040000>;
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 2b0d1ee3241c..e2a153fc1afc 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
+ {
+ 	long n = *pos - 1;
+ 
+-	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
++	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
+ 		return NULL;
+ 
+ 	m->private = (void *)n;
 -- 
 2.19.1
 
