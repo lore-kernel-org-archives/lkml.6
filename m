@@ -2,173 +2,116 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9102FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CD2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7E02084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549870275;
-	bh=YuIxbco53CaiC+Yr/JoFQGobjBIUetmTvmtV1ZRrO7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Z925GyfnzIu4D05YV5ClMZYB/oOtucdKpd36uCYWt6/244YbIytO/qy/DYXmjblti
-	 7+rsVKKRdR6lP5B3syaMPU6Dy3D5BT6LJkdZjjgwxPu44QuR460+kfjyxKZfJRiy3b
-	 /bq68UX5oNBj/yI5Jwy+hwNX+z5gXD6PpJrgw7Bc=
+	by mail.kernel.org (Postfix) with ESMTP id B818121479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfBKHbO (ORCPT
+        id S1726228AbfBKHft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:31:14 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40811 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKHbN (ORCPT
+        Mon, 11 Feb 2019 02:35:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39772 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725931AbfBKHfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:31:13 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q21so14904652wmc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 23:31:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=51Qe1V6B4SIABTH74MigaU4YMAk/o3qreP0X0ddRoic=;
-        b=YEb/a/JhO/ag3sgCPK+bOyLNOU7PX3Plfa/2LsRHDsJTDMPSYdGqhuYb/F4/phKdhQ
-         +RGD6eSxwIDNJGB3iu3JtgmG0vywUZcBU5Xdk7tgXYh6M0ALmidHWDTAk4OcppnCYvwA
-         +beFb+v/H4dLs5lGmwdPlhArhyGmeU2g+BFyLqYEEQNKsqmj/ma3STWBauxoDZDq8qRt
-         feUSycHxUro01Cor5IuSlVQyrbWniRght6IdFEuXhDr7PodXDv0cvLQ/GL/gwU72l7Oa
-         n6fsGywXi6BAwVDxoQUIy6VoiLDgHfzikps5F6uas520gmfiyPsdl3zs16H69zWRFuA6
-         9c8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=51Qe1V6B4SIABTH74MigaU4YMAk/o3qreP0X0ddRoic=;
-        b=ODSB7U+Qi+fhe5hwL0pTlLV6aYkso16b6yUirvZXl2LEVyAwqJ4hCe7LZTSwIu/kp5
-         sYFz5x8XZlJz/3wlZvgZ4KOmIpR5m1Qa7TYCOzTDRbKSrB+T1YohXJ2hNqgoW9gdWrOI
-         te8cavoY32JE+YtucWJNTAl2ivDtqOJ5FLd78KwCZ31q8eHLvt+uwtePJw1VR2+q6piU
-         ws+pRGG04TRrVuHjsXWVpgzNnHVDT2YOGGcxQ6qwdlt726MS2/kfhi+9EymVT7LGbIH6
-         +ObowXBpD+CwzZ2M7Adrv/9DXSqu+RZbAT+DkSwChuU3xD2S+PduxeCq2tViMhQGddPL
-         xuBA==
-X-Gm-Message-State: AHQUAubY3nDv20a6IVQ4QOI68JkUnCaAP5vko0PGa/T7mEnA1o/4CIIe
-        AhoByJL4hN+Uhj+z6BL5Ik8=
-X-Google-Smtp-Source: AHgI3IaPCnmEzoh2Y8Ytr2KQU3v0osYlj+P1olZ3Ml6xXWUTPAopN80dUIpvOV2xReQcm3Z0vrSBdQ==
-X-Received: by 2002:a1c:9e94:: with SMTP id h142mr7743370wme.4.1549870271698;
-        Sun, 10 Feb 2019 23:31:11 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id f8sm7556874wrv.41.2019.02.10.23.31.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Feb 2019 23:31:10 -0800 (PST)
-Date:   Mon, 11 Feb 2019 08:31:08 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v2 1/2] sched/wait: introduce
- wait_event_freezable_hrtimeout
-Message-ID: <20190211073108.GA106308@gmail.com>
-References: <cover.1549564792.git.hle@owl.eu.com>
- <83f5fae47b56e79aebaddcaecff1c1a6d9c292cf.1549564792.git.hle@owl.eu.com>
+        Mon, 11 Feb 2019 02:35:48 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1B7Yj7H119053
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:35:47 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qk4ftrs2x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:35:47 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 11 Feb 2019 07:35:45 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Feb 2019 07:35:41 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1B7Zegn15270082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 07:35:40 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6337911C050;
+        Mon, 11 Feb 2019 07:35:40 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C03811C05C;
+        Mon, 11 Feb 2019 07:35:39 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.104])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 11 Feb 2019 07:35:39 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 09:35:37 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH] Documentation: fix vm/slub.rst warning
+References: <1e992162-c4ac-fe4e-f1b0-d8a16a51d5e7@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83f5fae47b56e79aebaddcaecff1c1a6d9c292cf.1549564792.git.hle@owl.eu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1e992162-c4ac-fe4e-f1b0-d8a16a51d5e7@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19021107-0008-0000-0000-000002BEE963
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021107-0009-0000-0000-0000222AFCCA
+Message-Id: <20190211073537.GA25868@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=915 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902110058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Hugo Lefeuvre <hle@owl.eu.com> wrote:
-
-> introduce wait_event_freezable_hrtimeout, an interruptible and freezable
-> version of wait_event_hrtimeout.
+On Sun, Feb 10, 2019 at 10:34:11PM -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> This helper will allow for simplifications in staging/android/vsoc.c, among
-> others.
+> Fix markup warning by quoting the '*' character with a backslash.
 > 
-> Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
+> Documentation/vm/slub.rst:71: WARNING: Inline emphasis start-string without end-string.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 > ---
-> Changes in v2:
->   - No change.
+>  Documentation/vm/slub.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  include/linux/wait.h | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
+> --- lnx-50-rc6.orig/Documentation/vm/slub.rst
+> +++ lnx-50-rc6/Documentation/vm/slub.rst
+> @@ -68,7 +68,7 @@ end of the slab name, in order to cover
+>  example, here's how you can poison the dentry cache as well as all kmalloc
+>  slabs:
 > 
-> diff --git a/include/linux/wait.h b/include/linux/wait.h
-> index 5f3efabc36f4..c4cf5113f58a 100644
-> --- a/include/linux/wait.h
-> +++ b/include/linux/wait.h
-> @@ -483,7 +483,7 @@ do {										\
->  	__ret;									\
->  })
->  
-> -#define __wait_event_hrtimeout(wq_head, condition, timeout, state)		\
-> +#define __wait_event_hrtimeout(wq_head, condition, timeout, state, cmd)		\
->  ({										\
->  	int __ret = 0;								\
->  	struct hrtimer_sleeper __t;						\
-> @@ -500,7 +500,7 @@ do {										\
->  			__ret = -ETIME;						\
->  			break;							\
->  		}								\
-> -		schedule());							\
-> +		cmd);							        \
->  										\
->  	hrtimer_cancel(&__t.timer);						\
->  	destroy_hrtimer_on_stack(&__t.timer);					\
-> @@ -529,7 +529,23 @@ do {										\
->  	might_sleep();								\
->  	if (!(condition))							\
->  		__ret = __wait_event_hrtimeout(wq_head, condition, timeout,	\
-> -					       TASK_UNINTERRUPTIBLE);		\
-> +					       TASK_UNINTERRUPTIBLE,		\
-> +					       schedule());			\
-> +	__ret;									\
-> +})
-> +
-> +/*
-> + * like wait_event_hrtimeout() -- except it uses TASK_INTERRUPTIBLE to avoid
-> + * increasing load and is freezable.
-> + */
-> +#define wait_event_freezable_hrtimeout(wq_head, condition, timeout)		\
-> +({										\
-> +	int __ret = 0;								\
-> +	might_sleep();								\
-> +	if (!(condition))							\
-> +		__ret = __wait_event_hrtimeout(wq_head, condition, timeout,	\
-> +					       TASK_INTERRUPTIBLE,		\
-> +					       freezable_schedule());		\
->  	__ret;									\
->  })
->  
-> @@ -555,7 +571,8 @@ do {										\
->  	might_sleep();								\
->  	if (!(condition))							\
->  		__ret = __wait_event_hrtimeout(wq, condition, timeout,		\
-> -					       TASK_INTERRUPTIBLE);		\
-> +					       TASK_INTERRUPTIBLE,		\
-> +					       schedule());			\
->  	__ret;									\
->  })
+> -	slub_debug=P,kmalloc-*,dentry
+> +	slub_debug=P,kmalloc-\*,dentry
+> 
+>  Red zoning and tracking may realign the slab.  We can just apply sanity checks
+>  to the dentry cache with::
+> 
+> 
 
-Looks good to me - unless PeterZ objects I suspect this wants to go 
-upstream via the driver tree, not the scheduler tree:
+-- 
+Sincerely yours,
+Mike.
 
-  Acked-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
