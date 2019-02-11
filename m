@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD1FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 693E5C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB0120700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B49B222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896095;
-	bh=Bb1NEyrgA5loNil8p1yXdNyS5pz97RQTEmH9kLDHW/k=;
+	s=default; t=1549896099;
+	bh=98r8Q1nvq3BLYGzhi5v+vEipbgQpTigxPcRg4C2HoI8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I5QbU/KYHxuWd1q2k6YeRETrekSSAVL09wdVlWyzFo4OR2CNKfLPdhljRl8ytbOpm
-	 WoLmYqazLT1v30rF7qhl5tADLfI2wFLnUix5WoHpIWFEk/Kkvpsfqx1v1qLKi5p0y0
-	 cRxURYfLN1tbHoNHKAPBmeXUT5m5hL2mPWavPz/g=
+	b=UGf1uUGY1tHAoQe+yKgLs68JxODQsfja/XqGfEH8MVckSM5X565Uxu92D3VBaQpe5
+	 wTRD77QS4UM+RrErKn1t4j6XOJV6y0ET7/IZckwJNRBf2r+6WLXLZym5XpZPeU321a
+	 T1ue18YKvGl0muuNwmb4YBiHd6IdP7Fx2hhH18Q0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732262AbfBKOld (ORCPT
+        id S1732268AbfBKOlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52786 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732222AbfBKOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:31 -0500
+        id S1732258AbfBKOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF07320700;
-        Mon, 11 Feb 2019 14:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71E26222A2;
+        Mon, 11 Feb 2019 14:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896090;
-        bh=Bb1NEyrgA5loNil8p1yXdNyS5pz97RQTEmH9kLDHW/k=;
+        s=default; t=1549896093;
+        bh=98r8Q1nvq3BLYGzhi5v+vEipbgQpTigxPcRg4C2HoI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ex1xANE0OtpL0OXc7MUpbnHrgmoiUVNCSTQ5XrHjCzgyMhR06dR0RHecaSJGqwdbC
-         1Tcz2jRFZxAMeOtferQAADjfbO0PKJISFg8BrmJaVh5IyRWF0fa2saZYRpJv30sTdq
-         cC4s7ZpcVg1py85riMUjWkvatsNp6de5OEa9hyrk=
+        b=qkwTAwTOyX3vZ82+8h5XDC11YIkUpgpomJeCAdZtP65My3j2zjGor1C4J2LvSuybl
+         A4By2w9SHu+Lu/gn8yCPKE51WqbpBFZhvCApLyx+CT6JJu2k45VGm0kCuaYj9b7lTH
+         W9iaezbMNpsmu8FE3iufb8FE+nFFfEQUdHxrJTYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <kernelpatch@126.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/313] f2fs: fix wrong return value of f2fs_acl_create
-Date:   Mon, 11 Feb 2019 15:15:50 +0100
-Message-Id: <20190211141858.538745575@linuxfoundation.org>
+Subject: [PATCH 4.19 071/313] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
+Date:   Mon, 11 Feb 2019 15:15:51 +0100
+Message-Id: <20190211141858.602150911@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,59 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
+[ Upstream commit 5eb316e636eb298c204f5b368526d4480b63c0ba ]
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+Add support for the IIC code for the r8a77990 (R-Car E3).
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+It is not considered compatible with existing fallback bindings
+due to the documented absence of automatic transmission registers.
+
+These registers are currently not used by the driver and
+thus the provides the same behaviour for "renesas,iic-r8a77990" and
+"renesas,rcar-gen3-iic". The point of declaring incompatibility is
+to allow for automatic transmission register support to be added to
+"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-sh_mobile.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 111824199a88..b9fe937a3c70 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
- 
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
- 
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 818cab14e87c..b3ed14f4eae9 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -808,6 +808,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
+ 	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
++	{ .compatible = "renesas,iic-r8a77990", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
+ 	{},
 -- 
 2.19.1
 
