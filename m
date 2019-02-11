@@ -2,121 +2,145 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A183C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD74C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A17A2184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930F321855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:20:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="TUEDAyfg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="eHXvgq8G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfBKXUn (ORCPT
+        id S1727828AbfBKXU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:20:43 -0500
-Received: from mx.aristanetworks.com ([162.210.129.12]:46962 "EHLO
-        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727014AbfBKXUn (ORCPT
+        Mon, 11 Feb 2019 18:20:57 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43950 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbfBKXU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:20:43 -0500
-Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 98773EA4;
-        Mon, 11 Feb 2019 15:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1549927242;
-        bh=Kloo2aFhfszLvQHvB8Afgs6t/ERY+7Y84crY8DTfkFI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=TUEDAyfgtDThNDO3jDl2wX0Ve0LWBLNbwThG+ZDH0VY7LtZuWHeIUl27b32Pi2Mrt
-         zK2IKbbwpdVaOEObzvt/fkbomxt+lpbtAWmkx9PuucPqYZQ+p7Rym1qwPjPZdL3WUo
-         mitfRHTLKfsbNDS5gcPhJkD0wnFgZu14W+Lc2V5mHO7kgwf14E4BRdO/aNrSG0knXi
-         mM0//mt8sBE73Dc/Tq8tg+mX1W/Az8XDK0MQDBvknr6uBAKbQaXktwkRrsb+scsYWu
-         CzQ1JfL4ThKFyAOVInC9TmkC7c6HYNpLopw2ddj9Q7cwU0MyihQs9eRMCVXWVoOyCH
-         ZJhPEM6Nfet4g==
-Received: from visor (unknown [172.20.208.17])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 8A60FEA2;
-        Mon, 11 Feb 2019 15:20:42 -0800 (PST)
-Date:   Mon, 11 Feb 2019 15:20:42 -0800
-From:   Ivan Delalande <colona@arista.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2] exec: don't force_sigsegv processes with a pending
- fatal signal
-Message-ID: <20190211232042.GA18232@visor>
-References: <20190205025308.GA24455@visor>
- <20190211171252.GE21430@redhat.com>
+        Mon, 11 Feb 2019 18:20:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so274266pgk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:20:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IU35FZblKisC1x8c74hdM2cTiZFCC/VL4KGQrcjNgfk=;
+        b=eHXvgq8GiDCxiCji9K/5o9V2iYTpiDKehG21UbSQvYfs2+CpOUfUMd0OhfdtxAhxLd
+         CsVmWvTpQR4OjzoAJWQtnBPipawH1+6oPjLk4dzC7yDxpAvijaxfMbVE3yywu96kQqhj
+         qQ+YkWcDMRXQH10hPsH3iWWKRMGfJPzODj4R0KYe287VolxW4Sc0zmiVZQZZEtxRzOLh
+         z1ZK8Ja3gmwWGEx4Z/Z+mVNyH3KC8HuMQKV+/ZTKrzLtEdBC5PH6LQ8Y54EeZhZZZUFK
+         tleiGyMf47JXI6evaSDZs185tt1RtFsAxuqurDQu3D5eSv5eyKvBaZPxdm7zTJcw+o5t
+         qaBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IU35FZblKisC1x8c74hdM2cTiZFCC/VL4KGQrcjNgfk=;
+        b=k1b8JzbQt9q7k8FpSa/qFc6cVSSJiO9Agzl+K9/EF/KPvvNPr1l+AeY3hx/GDQ8zml
+         ClTcx0CtxCtPU/XkG3mxsdRmJ+kPynqA5xG0Uxj5xeM96rWPvTq74/QNYeXtFnkJySiN
+         /tfO33GqwUIzQ3ZpdlroJzK1X7F9L+hot5sx6eN/P1qmmkiKDf5D4b0Op/uE4LKkgdxf
+         NdpVp3imcQIRpIxYfOZUtMjrCJcuVKGKWriZNhafoxWRy+mTdh8VxW3kPzAbDyPbcrLf
+         LGpRk6FupeZrAsKpI4PVPArLggYyoWL/J5DskVlRebyc2LFFVdGApEPVr9fq1oVwSJNR
+         W+tw==
+X-Gm-Message-State: AHQUAuYID7E0POFGeIBh1SfhBJeovPGQMBFyw6EJ7cI+tgWSo5QLkXCc
+        wDv1cDpFOHDLD7vnsMIkY4V73HwGeq3sTQ==
+X-Google-Smtp-Source: AHgI3IYPx+DoVpGpGxz6yHuPjp0Me+rbAaJWVdLhYj+nsf9LIEQ/Az0JtUW3aqlb979vGSeM38lMqA==
+X-Received: by 2002:aa7:8249:: with SMTP id e9mr766988pfn.93.1549927255241;
+        Mon, 11 Feb 2019 15:20:55 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id o4sm41243784pgs.12.2019.02.11.15.20.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 15:20:54 -0800 (PST)
+Subject: Re: [PATCH] blk-mq: insert rq with DONTPREP to hctx dispatch list
+ when requeue
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1549863665-1691-1-git-send-email-jianchao.w.wang@oracle.com>
+ <937e9207-dcf7-dab5-1917-8a10303edc67@kernel.dk>
+ <82deee13-a4ff-9bf5-5e01-0e4df01b7ff7@kernel.dk>
+Message-ID: <e68f8017-2f56-6305-1c08-2368435b274b@kernel.dk>
+Date:   Mon, 11 Feb 2019 16:20:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211171252.GE21430@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <82deee13-a4ff-9bf5-5e01-0e4df01b7ff7@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 06:12:53PM +0100, Oleg Nesterov wrote:
-> sorry, I couldn't look at this patch before.
+On 2/11/19 4:15 PM, Jens Axboe wrote:
+> On 2/11/19 8:59 AM, Jens Axboe wrote:
+>> On 2/10/19 10:41 PM, Jianchao Wang wrote:
+>>> When requeue, if RQF_DONTPREP, rq has contained some driver
+>>> specific data, so insert it to hctx dispatch list to avoid any
+>>> merge. Take scsi as example, here is the trace event log (no
+>>> io scheduler, because RQF_STARTED would prevent merging),
+>>>
+>>>    kworker/0:1H-339   [000] ...1  2037.209289: block_rq_insert: 8,0 R 4096 () 32768 + 8 [kworker/0:1H]
+>>> scsi_inert_test-1987  [000] ....  2037.220465: block_bio_queue: 8,0 R 32776 + 8 [scsi_inert_test]
+>>> scsi_inert_test-1987  [000] ...2  2037.220466: block_bio_backmerge: 8,0 R 32776 + 8 [scsi_inert_test]
+>>>    kworker/0:1H-339   [000] ....  2047.220913: block_rq_issue: 8,0 R 8192 () 32768 + 16 [kworker/0:1H]
+>>> scsi_inert_test-1996  [000] ..s1  2047.221007: block_rq_complete: 8,0 R () 32768 + 8 [0]
+>>> scsi_inert_test-1996  [000] .Ns1  2047.221045: block_rq_requeue: 8,0 R () 32776 + 8 [0]
+>>>    kworker/0:1H-339   [000] ...1  2047.221054: block_rq_insert: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+>>>    kworker/0:1H-339   [000] ...1  2047.221056: block_rq_issue: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
+>>> scsi_inert_test-1986  [000] ..s1  2047.221119: block_rq_complete: 8,0 R () 32776 + 8 [0]
+>>>
+>>> (32768 + 8) was requeued by scsi_queue_insert and had RQF_DONTPREP.
+>>> Then it was merged with (32776 + 8) and issued. Due to RQF_DONTPREP,
+>>> the sdb only contained the part of (32768 + 8), then only that part
+>>> was completed. The lucky thing was that scsi_io_completion detected
+>>> it and requeued the remaining part. So we didn't get corrupted data.
+>>> However, the requeue of (32776 + 8) is not expected.
+>>
+>> Good catch, but how about something like this? Makes it more integrated,
+>> I think that's cleaner.
 > 
-> On 02/04, Ivan Delalande wrote:
-> >
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1660,7 +1660,12 @@ int search_binary_handler(struct linux_binprm *bprm)
-> >  		if (retval < 0 && !bprm->mm) {
-> >  			/* we got to flush_old_exec() and failed after it */
-> >  			read_unlock(&binfmt_lock);
-> > -			force_sigsegv(SIGSEGV, current);
-> > +			if (!fatal_signal_pending(current)) {
-> > +				if (print_fatal_signals)
-> > +					pr_info("load_binary() failed: %d\n",
-> > +						retval);
-> 
-> I won't argue, but do we really want this spam?
-> 
-> > +				force_sigsegv(SIGSEGV, current);
-> > +			}
-> >  			return retval;
-> >  		}
-> >  		if (retval != -ENOEXEC || !bprm->file) {
-> > diff --git a/kernel/signal.c b/kernel/signal.c
-> > index e1d7ad8e6ab1..674076e63624 100644
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -2552,10 +2552,10 @@ static void signal_delivered(struct ksignal *ksig, int stepping)
-> >
-> >  void signal_setup_done(int failed, struct ksignal *ksig, int stepping)
-> >  {
-> > -	if (failed)
-> > -		force_sigsegv(ksig->sig, current);
-> > -	else
-> > +	if (!failed)
-> >  		signal_delivered(ksig, stepping);
-> > +	else if (!fatal_signal_pending(current))
-> > +		force_sigsegv(ksig->sig, current);
-> 
-> The changelog doesn't explain this change.
-> 
-> OK, I guess it comes from the previous discussion, setup_rt_frame() can equally fail
-> if fatal_signal_pending(). But this should be documented at least in the changelog,
-> and I still think we could simply change force_sigsegv() instead.
-> 
-> In any case, Eric has already mentioned that we going to give SIGKILL more priority,
-> so I think we can drop this patch?
+> This is probably better (and safer):
 
-Yes, I've been running our tests on top of Eric's tree over the week-end
-and haven't seen any new hit. I also see that Andrew has dropped the
-patch from -mm, so no futher action should be required here.
+Here's the one I wanted to send, not a half done one. Maybe I'll be
+luckier this time around?
 
-Thank you for taking a look at the patch anyway.
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 8f5b533764ca..35e6aba52808 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -737,12 +737,21 @@ static void blk_mq_requeue_work(struct work_struct *work)
+ 	spin_unlock_irq(&q->requeue_lock);
+ 
+ 	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
+-		if (!(rq->rq_flags & RQF_SOFTBARRIER))
++		if (!(rq->rq_flags & (RQF_SOFTBARRIER | RQF_DONTPREP)))
+ 			continue;
+ 
+ 		rq->rq_flags &= ~RQF_SOFTBARRIER;
+ 		list_del_init(&rq->queuelist);
+-		blk_mq_sched_insert_request(rq, true, false, false);
++
++		/*
++		 * If RQF_DONTPREP is set, rq may contain some driver
++		 * specific data. Insert it to hctx dispatch list to avoid
++		 * any merge.
++		 */
++		if (rq->rq_flags & RQF_DONTPREP)
++			blk_mq_request_bypass_insert(rq, false);
++		else
++			blk_mq_sched_insert_request(rq, true, false, false);
+ 	}
+ 
+ 	while (!list_empty(&rq_list)) {
 
 -- 
-Ivan Delalande
-Arista Networks
+Jens Axboe
+
