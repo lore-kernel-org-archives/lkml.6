@@ -2,91 +2,68 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65604C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DE2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9FE218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9800218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfBKMAB (ORCPT
+        id S1727190AbfBKMDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:00:01 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46492 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfBKMAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:00:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 578D480D;
-        Mon, 11 Feb 2019 03:59:59 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDC373F557;
-        Mon, 11 Feb 2019 03:59:56 -0800 (PST)
-Date:   Mon, 11 Feb 2019 11:59:54 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v8 2/5] arm64: replace -pg with CC_FLAGS_FTRACE in efi
- Makefiles
-Message-ID: <20190211115953.GD10501@lakrids.cambridge.arm.com>
-References: <20190208150826.44EBC68DD2@newverein.lst.de>
- <20190208151011.0807668DD3@newverein.lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208151011.0807668DD3@newverein.lst.de>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+        Mon, 11 Feb 2019 07:03:48 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:34119 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726243AbfBKMDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 07:03:47 -0500
+Received: from orion.localdomain ([95.117.94.93]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Myb4H-1hIHOl2v4H-00yw7L; Mon, 11 Feb 2019 13:03:42 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     michal.lkml@markovi.net, yamada.masahiro@socionext.com,
+        linux-kbuild@vger.kernel.org
+Subject: debian packaging refinements
+Date:   Mon, 11 Feb 2019 13:03:33 +0100
+Message-Id: <1549886616-12609-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:dx/crsG3d441XteA2EadFH2j8eGTmdlNJRW1bd2s1sTnAmzXj5X
+ aCeoxxc+asgcmrrrOc7u1Zt/QE66FtzAo8+ehaF/4uIQ7mk5S9pUdfkVZvatxqNhjVR7TNF
+ 5P5v2ZUIRwkTBqHipxXFgj0/GwxIthEV9cgaQTupw3MePp+QmfbMJhGTMX0GqxcP2X1nDE0
+ 36MW64xrILsiloZVvENNQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:e7O5PdRLNoM=:4tdL4yGiv3DfMQDhaEaJRU
+ HKRyU5yjEg2staWK4quE+/3ZwwK2ES9ppUBIlobFd46zXGI/DfH8/ggrPFEuGbeR88MnmBG/s
+ QQTkQs+t/qXUrHsPK/Jq/64rEsmMMr0AwNWWDIxlalnCV8TaJhL0qeH1E1hxepIy3C7/CrS+C
+ kGmGpOQoHNPPFjTYxZrEd/mXrvVDBNTnPseiJINcoxrnUhBalt1rYudTu6VXwWnMc0pq3BPLA
+ kMygrbUg+x8g++SQQ89mlLjlx1at1NUGP03f5121m9xevl/b0BIWIJtw/IysLtu2WBxcfIM1l
+ NWDMGMK5l3PPrtOo6vUwDyyW4TEuXhSyRLKNQQSuSfyiSipez3qhoFrP6pbMckNPb+8j1DHqY
+ GZZ70ZcoK1h8Acsaq5VRyyg3UzoA/qyoyP62dXksIxpEnJOjmbAJYtD2zGR2z+LfwO0lZqAp8
+ 20gmddRyeebCnSVEvIYUr19FaV81RjELqYLxWdSMjEKB4kYe7kXnongodrzztkhEpZtEyY7bm
+ aZV0F7KILgQJNmzHHzheF6MKG0K7NDJybS+5D4kv2xkyOqO6wejRIjvu8ZkbHOnrCRdBXANQz
+ YcZcqxNfFFsb3vEIrlwkbt26V0fBERxxf8ov7kB71XgNxHzevfElHX7Fsqn8NoIjZLru5zAAY
+ dLUtKuWlxyKZB7wZf3Qu/Vikt604++7X1p56K7WW0QjqaHNY9UZ3mVBaQ2bMx1GFUgShgcfi9
+ ybLoQjqouJBlW700CoGV18QGgLqEF++wKKp/HQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 04:10:11PM +0100, Torsten Duwe wrote:
->   In preparation for arm64 supporting ftrace built on other compiler
->   options, let's have makefiles remove the $(CC_FLAGS_FTRACE)
->   flags, whatever these may be, rather than assuming '-pg'.
->   While at it, fix arm32 as well.
-> 
->   There should be no functional change as a result of this patch.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
+Hi folks,
 
-With the indentation removed from the commit text:
+here're some small patches for making mkdebian a bit more flexible, so it
+can be used eg. with an given debian/rules file.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+I'm using this along w/ local (adding debian/rules and .config) in order
+to build the kernel via usual debian toolchains (git-buildpackage,
+git-buildpackage, ...) in a canonical way.
 
-Mark.
+Didn't post the patch for debian/rules yet, as it's likely not suited for
+mainline yet. (I can post it, if you wish).
 
-> 
-> ---
->  drivers/firmware/efi/libstub/Makefile |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -16,9 +16,9 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__K
->  
->  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
->  # disable the stackleak plugin
-> -cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie \
-> -				   $(DISABLE_STACKLEAK_PLUGIN)
-> -cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
-> +cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
-> +				   -fpie $(DISABLE_STACKLEAK_PLUGIN)
-> +cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
->  				   -fno-builtin -fpic \
->  				   $(call cc-option,-mno-single-pic-base)
->  
+
+--mtx
+
