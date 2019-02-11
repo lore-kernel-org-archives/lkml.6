@@ -2,125 +2,90 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF9EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAECCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476C421B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DC6921B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898567;
-	bh=btuaW8UpzRjJlmbELzsiIRTC3u6uNxgDNK277ikfV5U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fxm5+LCzkwuE20LPmZ4Q0bsNhrxPwJ2K9Pn+QuTH2RyMNao4/ycyXBPhyKe67ojrj
-	 IkQYoUUfbx70g1f+z/9ic2O5ys1KazSMV0q3d7L1e0Ww1zR2T0BJzpcbq26K9gHHM8
-	 nwzWtO6VX3C0LBvFDL2lyGNHGJ4EU1W51ygPKuaM=
+	s=default; t=1549898576;
+	bh=/xP+Ntx5P4d7nqleI3PqSgm1nmYTUUX1l6gOgdG5LRU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Ssh1EzgnRtDdYCWXLWX435uYPhR0ZWqfLZXlt0etAxmzZRfJylQiitr0aB3Qe2BhB
+	 Gf7OglMSBoGOJYK0Dr2pXjc9ZkLaMd31bZyBvCgTt1JvdqXTfl0SuCv/y5+n7FSRp8
+	 vv+80DNgtFLIj+KrCkNcTApy7pS8ZbhYBjFgK+xc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391904AbfBKPWq (ORCPT
+        id S2390998AbfBKPWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:22:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52410 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:22:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390136AbfBKPDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2390651AbfBKPDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:35 -0500
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1099F222B8;
-        Mon, 11 Feb 2019 15:03:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD2ED222A7;
+        Mon, 11 Feb 2019 15:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897420;
-        bh=btuaW8UpzRjJlmbELzsiIRTC3u6uNxgDNK277ikfV5U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mOBovhpTf9QaY33SCRKJg7JOsYC0EhzE1ruvc2WsHPSZycGdMmg01HzExQKqAlOfC
-         OBMlf0WHwO5a2n/9ksay+mI0n/DAX0Eg8dnZbjGz+noC+1VLuPGcmPmIoNpzQE3UuL
-         zb1LqPC/hNE4TgDlStJr9E7/281adV+GZz4wahbA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 198/205] perf/core: Dont WARN() for impossible ring-buffer sizes
-Date:   Mon, 11 Feb 2019 15:19:56 +0100
-Message-Id: <20190211141841.367111122@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
-References: <20190211141827.214852402@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1549897415;
+        bh=/xP+Ntx5P4d7nqleI3PqSgm1nmYTUUX1l6gOgdG5LRU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JjY2SKYKjDxVGDhoYJaQu1ZCanZrhnKXGAwpyNwBYN5V9/Un1incj8Elda5rHpMZl
+         yZi8rBI7HahFe+RDwh7XUB4xZRC1VEyIXetQFFU1JanbOnlzvrncrP5mN6WpZmg2qy
+         xI5Avo60jFia5bUPyKgoNuXe+KV/giLpzgxkCrPs=
+Received: by mail-lj1-f175.google.com with SMTP id j13-v6so9048237ljc.2;
+        Mon, 11 Feb 2019 07:03:34 -0800 (PST)
+X-Gm-Message-State: AHQUAubpgjFLNzseLFq3GzrAHMYdbCdiJz8OSC4ed3ozDB+Gba6xTlIE
+        RGox4nhrzUBEUhYTD5gFRVKIPs9ku40qI1bhLLw=
+X-Google-Smtp-Source: AHgI3IZEgvhz62lw9sZjhRRhNnwEkZo9DOqUJpf2nBGYjnGQlLZFVRfflzEkrOpl8MV28bUTa2tRXccpBB0VoO/2ACI=
+X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr22322354lji.112.1549897413026;
+ Mon, 11 Feb 2019 07:03:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20190207170058epcas1p4e2fadf4aae2ece3c47c0750a094a4fbb@epcas1p4.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-5-s.nawrocki@samsung.com>
+ <CAJKOXPdar1q8oz4KHEVoQ6_NbD+hUYfFE3u97VLGUV7azEnZwA@mail.gmail.com> <62ea88ed-6916-f7a5-6806-6b9c5ba08f13@samsung.com>
+In-Reply-To: <62ea88ed-6916-f7a5-6806-6b9c5ba08f13@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 11 Feb 2019 16:03:21 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPfYxbAKCBOXTmsGnprksSGrZGyHGrtn75rO46QMLZDzrw@mail.gmail.com>
+Message-ID: <CAJKOXPfYxbAKCBOXTmsGnprksSGrZGyHGrtn75rO46QMLZDzrw@mail.gmail.com>
+Subject: Re: [PATCH 04/22] ASoC: samsung: i2s: Fix prescaler setting for the
+ secondary DAI
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 11 Feb 2019 at 15:32, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> On 2/11/19 14:37, Krzysztof Kozlowski wrote:
+> >> @@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+> >>         i2s->frmclk = params_rate(params);
+> >>
+> >>         rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
+> >> +       if (!rclksrc || IS_ERR(rclksrc))
+>
+> > IS_ERR_OR_NULL
+>
+> Thanks for your review! That line will be removed by subsequent patch
+> (7/22) so I'd say such a change wouldn't make a difference anyway.
 
-------------------
+Then let's skip it:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-From: Mark Rutland <mark.rutland@arm.com>
-
-commit 9dff0aa95a324e262ffb03f425d00e4751f3294e upstream.
-
-The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
-large its ringbuffer mmap should be. This can be configured to arbitrary
-values, which can be larger than the maximum possible allocation from
-kmalloc.
-
-When this is configured to a suitably large value (e.g. thanks to the
-perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
-__alloc_pages_nodemask():
-
-   WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511 __alloc_pages_nodemask+0x3f8/0xbc8
-
-Let's avoid this by checking that the requested allocation is possible
-before calling kzalloc.
-
-Reported-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190110142745.25495-1-mark.rutland@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/events/ring_buffer.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -719,6 +719,9 @@ struct ring_buffer *rb_alloc(int nr_page
- 	size = sizeof(struct ring_buffer);
- 	size += nr_pages * sizeof(void *);
- 
-+	if (order_base_2(size) >= MAX_ORDER)
-+		goto fail;
-+
- 	rb = kzalloc(size, GFP_KERNEL);
- 	if (!rb)
- 		goto fail;
-
-
+Best regards,
+Krzysztof
