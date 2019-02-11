@@ -2,102 +2,179 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A488C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D9DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CCFB218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9613D218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfBKNVs (ORCPT
+        id S1728047AbfBKNVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:21:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24773 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727182AbfBKNVr (ORCPT
+        Mon, 11 Feb 2019 08:21:54 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:44866 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727854AbfBKNVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:21:47 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BDKqv5004947;
-        Mon, 11 Feb 2019 14:21:28 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qhurut5qx-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Feb 2019 14:21:28 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7751C31;
-        Mon, 11 Feb 2019 13:21:27 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 34B122D79;
-        Mon, 11 Feb 2019 13:21:27 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.51) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 11 Feb
- 2019 14:21:26 +0100
-Subject: Re: [PATCH 4/4] iio: counter: stm32-lptimer: Add power management
- support
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>
-CC:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <alexandre.torgue@st.com>,
-        <mcoquelin.stm32@gmail.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <vilhelm.gray@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
- <1549370429-19116-5-git-send-email-fabrice.gasnier@st.com>
- <20190209162133.65e6fd93@archlinux>
- <20190210213320.fs5kzezyzwd6akpx@pengutronix.de>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <7abbd3e2-4a33-975a-39ee-dcf608633b36@st.com>
-Date:   Mon, 11 Feb 2019 14:21:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 08:21:54 -0500
+X-IronPort-AV: E=Sophos;i="5.58,358,1544457600"; 
+   d="scan'208";a="54062073"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Feb 2019 21:21:49 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id DC76D4BAD9DB;
+        Mon, 11 Feb 2019 21:21:46 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 11 Feb 2019 21:21:53 +0800
+Date:   Mon, 11 Feb 2019 21:21:37 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <caoj.fnst@cn.fujitsu.com>, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <linux-tip-commits@vger.kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190211132137.GC5333@localhost.localdomain>
+References: <20190211002220.GD14948@zn.tnic>
+ <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
+ <20190211095547.GB1651@localhost.localdomain>
+ <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
+ <20190211101011.GA5333@localhost.localdomain>
+ <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
+ <20190211102426.GA19618@zn.tnic>
+ <20190211104254.GB19618@zn.tnic>
+ <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
+ <20190211112009.GE19618@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20190210213320.fs5kzezyzwd6akpx@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_09:,,
- signatures=0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190211112009.GE19618@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: DC76D4BAD9DB.AF384
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/10/19 10:33 PM, Uwe Kleine-König wrote:
-> On Sat, Feb 09, 2019 at 04:21:33PM +0000, Jonathan Cameron wrote:
->> On Tue, 5 Feb 2019 13:40:29 +0100
->> Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
->>
->>> Add suspend/resume PM sleep ops. When going to low power, disable
->>> active counter. Only active counter should be resumed: don't touch
->>> disabled counter, as it may be used by other LPTimer MFD child driver.
->>>
->>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> I think this looks fine.  I'm not totally sure if patches 3,4 are
->> separable from 1,2 though so please let me know whether I should take
->> these now, or let all 4 go in together via some path?
+On Mon, Feb 11, 2019 at 12:20:09PM +0100, Borislav Petkov wrote:
+>On Mon, Feb 11, 2019 at 10:46:18AM +0000, Ard Biesheuvel wrote:
+>> As I pointed out in my previous reply, systab will be the wrong type
+>> on 32-bit firmware, it needs to be efi_system_table_32_t
+>
+>This seems to work. Chao, please run it too.
+
+Ah, I will try and test more then reply to mail list.
+
+Thanks,
+Chao Fan
+
+>
+>Thx.
+>
+>---
+>diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+>index c5a949335d8b..0d97aa8bd01f 100644
+>--- a/arch/x86/boot/compressed/acpi.c
+>+++ b/arch/x86/boot/compressed/acpi.c
+>@@ -50,7 +50,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+> 	acpi_physical_address rsdp_addr = 0;
 > 
-> I'd say these are orthogonal, so if you are happy with patches 3 and 4
-> you can take them without bothering for patches 1 and 2.
-
-Hi Uwe, Jonathan,
-
-Thanks for reviewing. I confirm you can take patches 3 and 4. I'll send
-a v2 for patches 1 and 2 separately.
-
-Best regards,
-Fabrice
-
+> #ifdef CONFIG_EFI
+>-	efi_system_table_t *systab;
+>+	unsigned long systab, systab_tables, config_tables;
+>+	unsigned int nr_tables;
+> 	struct efi_info *ei;
+> 	bool efi_64;
+> 	int size, i;
+>@@ -70,13 +71,13 @@ static acpi_physical_address efi_get_rsdp_addr(void)
 > 
-> Best regards
-> Uwe
+> 	/* Get systab from boot params. */
+> #ifdef CONFIG_X86_64
+>-	systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
+>+	systab = ei->efi_systab | ((__u64)ei->efi_systab_hi << 32);
+> #else
+> 	if (ei->efi_systab_hi || ei->efi_memmap_hi) {
+> 		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
+> 		return 0;
+> 	}
+>-	systab = (efi_system_table_t *)ei->efi_systab;
+>+	systab = ei->efi_systab;
+> #endif
+> 	if (!systab)
+> 		error("EFI system table not found.");
+>@@ -87,16 +88,30 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+> 	size = efi_64 ? sizeof(efi_config_table_64_t) :
+> 			sizeof(efi_config_table_32_t);
 > 
+>-	for (i = 0; i < systab->nr_tables; i++) {
+>+	if (efi_64) {
+>+		efi_system_table_64_t *st_tbl = (efi_system_table_64_t *)systab;
+>+
+>+		config_tables	= st_tbl->tables;
+>+		nr_tables	= st_tbl->nr_tables;
+>+	} else {
+>+		efi_system_table_32_t *st_tbl = (efi_system_table_32_t *)systab;
+>+
+>+		config_tables	= st_tbl->tables;
+>+		nr_tables	= st_tbl->nr_tables;
+>+	}
+>+
+>+	if (!config_tables)
+>+		error("EFI config tables not found.");
+>+
+>+	for (i = 0; i < nr_tables; i++) {
+> 		acpi_physical_address table;
+>-		void *config_tables;
+> 		efi_guid_t guid;
+> 
+>-		config_tables = (void *)(systab->tables + size * i);
+>+		config_tables += size * i;
+>+
+> 		if (efi_64) {
+>-			efi_config_table_64_t *tmp_table;
+>+			efi_config_table_64_t *tmp_table = (efi_config_table_64_t *)config_tables;
+> 
+>-			tmp_table = config_tables;
+> 			guid = tmp_table->guid;
+> 			table = tmp_table->table;
+> 
+>@@ -105,9 +120,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+> 				return 0;
+> 			}
+> 		} else {
+>-			efi_config_table_32_t *tmp_table;
+>+			efi_config_table_32_t *tmp_table = (efi_config_table_32_t *)config_tables;
+> 
+>-			tmp_table = config_tables;
+> 			guid = tmp_table->guid;
+> 			table = tmp_table->table;
+> 		}
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
+
