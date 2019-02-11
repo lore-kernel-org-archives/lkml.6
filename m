@@ -2,148 +2,130 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA01C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B528C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14052084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF6752084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:43:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="J5ngiVZf"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bTSU/E38"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBKKm2 (ORCPT
+        id S1727012AbfBKKnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:42:28 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:45465 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726173AbfBKKm2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:42:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lucaceresoli.net; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:References:To:Subject:From:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PefZbUwJMzQ4ZwMXSOIIqFQDeGpOHkO2Vj/7JrEeLUU=; b=J5ngiVZfK4jGBlXcrYy0/yw3a8
-        6rze3AtW+z6vDUKlP4uPMOuOf1efbcNdu1pwPgdMvLUi5ZlL08BmJiWLxOeOzEfYNSCJ1ohHXYNF+
-        UeXC5EzBg8VKvqFmAUTUYW0bqN4r0q95eNgnFi2et6M0lfLRWL8Buz8U03k6n1/tRsV4=;
-Received: from [109.168.11.45] (port=59808 helo=[192.168.101.224])
-        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gt92f-00GzIe-Hj; Mon, 11 Feb 2019 11:42:25 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH v3 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
- Subsystem
-To:     Vishal Sagar <vishal.sagar@xilinx.com>, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, michals@xilinx.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dineshk@xilinx.com, sandipk@xilinx.com
-References: <1549025766-135037-1-git-send-email-vishal.sagar@xilinx.com>
- <1549025766-135037-3-git-send-email-vishal.sagar@xilinx.com>
-Message-ID: <3923069f-7c69-c601-0ded-f7629696ef9b@lucaceresoli.net>
-Date:   Mon, 11 Feb 2019 11:42:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 05:43:01 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:54586 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfBKKnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:43:01 -0500
+Received: from zn.tnic (p200300EC2BC7A100B5A7B0033B3D5267.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:b5a7:b003:3b3d:5267])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC6E21EC0375;
+        Mon, 11 Feb 2019 11:42:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549881779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Nr/Fd2YfVswTbKv5rabrY3ZCWtBZZLHkV3QVFJRS6tY=;
+        b=bTSU/E38U29kvxvqqrsHIZJOwQb5gjSkl13IdQjGmrezAA7w8iQNAh9bfasTu9knHgrqOS
+        3aXJkAKRlIr/ikDqpmkBaUvD6msgBg6I4sqQJghVz6RjbcwU6bDarYuwbK0rgpvw2/s5L0
+        ifTgQ1ZbpKhNXeLJrn8Dux5kvkhnIqY=
+Date:   Mon, 11 Feb 2019 11:42:54 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190211104254.GB19618@zn.tnic>
+References: <20190208191024.GL674@zn.tnic>
+ <20190208204451.GA14024@roeck-us.net>
+ <20190208215322.GO674@zn.tnic>
+ <20190211002220.GD14948@zn.tnic>
+ <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
+ <20190211095547.GB1651@localhost.localdomain>
+ <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
+ <20190211101011.GA5333@localhost.localdomain>
+ <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
+ <20190211102426.GA19618@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <1549025766-135037-3-git-send-email-vishal.sagar@xilinx.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Disposition: inline
+In-Reply-To: <20190211102426.GA19618@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vishal,
+On Mon, Feb 11, 2019 at 11:24:26AM +0100, Borislav Petkov wrote:
+> It is only an observation for now though...
 
-On 01/02/19 13:56, Vishal Sagar wrote:
-> The Xilinx MIPI CSI-2 Rx Subsystem soft IP is used to capture images
-> from MIPI CSI-2 camera sensors and output AXI4-Stream video data ready
-> for image processing. Please refer to PG232 for details.
+Ok, now I did this:
 
-For those unused to Xilinx documentation I'd use the full document name
-("MIPI CSI-2 Receiver Subsystem v4.0") or, even better, a stable URL if
-available.
+        for (i = 0; i < systab->nr_tables; i++) {
+                acpi_physical_address table;
+                void *config_tables;
+                efi_guid_t guid;
 
-> The driver is used to set the number of active lanes, if enabled
-> in hardware. The CSI2 Rx controller filters out all packets except for
-> the packets with data type fixed in hardware. RAW8 packets are always
-> allowed to pass through.
-> 
-> It is also used to setup and handle interrupts and enable the core. It
-> logs all the events in respective counters between streaming on and off.
-> The generic short packets received are notified to application via
-> v4l2_events.
-> 
-> The driver supports only the video format bridge enabled configuration.
-> Some data types like YUV 422 10bpc, RAW16, RAW20 are supported when the
-> CSI v2.0 feature is enabled in design. When the VCX feature is enabled,
-> the maximum number of virtual channels becomes 16 from 4.
-> 
-> Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
+                if ((unsigned long)systab->tables >> 32)			<---
+                        asm volatile("1:\n jmp 1b");
 
-...
+                config_tables = (void *)(systab->tables + size * i);
 
-> +/**
-> + * xcsi2rxss_reset - Does a soft reset of the MIPI CSI2 Rx Subsystem
-> + * @core: Core Xilinx CSI2 Rx Subsystem structure pointer
-> + *
-> + * Core takes less than 100 video clock cycles to reset.
-> + * So a larger timeout value is chosen for margin.
-> + *
-> + * Return: 0 - on success OR -ETIME if reset times out
-> + */
-> +static int xcsi2rxss_reset(struct xcsi2rxss_core *core)
-> +{
-> +	u32 timeout = XCSI_TIMEOUT_VAL;
+It did stop at the endless loop there which would mean that
+systab->tables is simply pointing somewhere into the weeds.
 
-The comment about the timeout is duplicated here and at the #define
-line. Why not removing the define above and just putting
+Asm is:
 
-  u32 timeout = 1000; /* us */
+---
+# arch/x86/boot/compressed/acpi.c:96: 			asm volatile("1:\n jmp 1b");
+#APP
+# 96 "arch/x86/boot/compressed/acpi.c" 1
+	1:
+ jmp 1b
+# 0 "" 2
+#NO_APP
+	movq	112(%rcx), %rdi	# systab_147->tables, _31
+.L29:
+# arch/x86/boot/compressed/acpi.c:98: 		config_tables = (void *)(systab->tables + size * i);
+	addq	%r9, %rdi	# ivtmp.64, config_tables
+# arch/x86/boot/compressed/acpi.c:104: 			guid = tmp_table->guid;
+---
 
-here? It would make the entire timeout logic appear in a unique place.
+and RDI is
 
-> +static int xcsi2rxss_start_stream(struct xcsi2rxss_state *state)
-> +{
-> +	struct xcsi2rxss_core *core = &state->core;
-> +	int ret = 0;
-> +
-> +	xcsi2rxss_enable(core);
-> +
-> +	ret = xcsi2rxss_reset(core);
-> +	if (ret < 0) {
-> +		state->streaming = false;
-> +		return ret;
-> +	}
-> +
-> +	xcsi2rxss_intr_enable(core);
-> +	state->streaming = true;
+rdi            0x630646870
 
-Shouldn't you propagate s_stream to the upstream subdev here calling
-v4l2_subdev_call(..., ..., s_stream, 1)?
+in gdb.
 
-> +	return ret;
-> +}
+systab itself gets computed to something low: 0x3fedb010.
 
+Hmmm. Could it be that that EDK BIOS image is buggy?
+
+[    0.000000] efi: EFI v2.70 by EDK II
+[    0.000000] efi:  SMBIOS=0x3feb9000  ACPI=0x3fee7000  ACPI 2.0=0x3fee7014  MEMATTR=0x3f524110
 
 -- 
-Luca
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
