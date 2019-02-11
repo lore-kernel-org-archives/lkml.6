@@ -2,143 +2,128 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E3FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C39C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EF420838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895459;
-	bh=1N667BoU1/HsfPDWcZ1IiGUGYXm6kohOxYFl0c+0n54=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jX6C+FW44+3JHxrGOSQ7nkiqRHBvxtKb17xEuS2YRLLZunfPm2ChuQ7B5B59ws18D
-	 VRkFUtJAocxsI0HRKGlM11CfZlvaGhDoNpZh/3MI74Vg9bDxXzKDZOpfoewGqZNPlW
-	 RoKqVXRkmXDrD4A/Qc6PVK5kTXCtQZ12nVmEkNig=
+	by mail.kernel.org (Postfix) with ESMTP id F3A7820838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="FNbZIcye"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfBKOa6 (ORCPT
+        id S1730223AbfBKOa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:30:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730187AbfBKOa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:30:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CF5C20675;
-        Mon, 11 Feb 2019 14:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895455;
-        bh=1N667BoU1/HsfPDWcZ1IiGUGYXm6kohOxYFl0c+0n54=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v1easLxnW4Qua6bLEz5i5tnYBOk8ZRt2ReVqc9zpPQ8uPK3bkeDUVrjFi+MgpSiJD
-         Gbgb/03mwtQnAEoT3gwqa6wfLXlNgp8iac2Tw1AeoiO3LcQt+ulvVYb8pRrQLPXrHV
-         +3gRUA3NJW7TSfO5b0Dky9mrlmpEZVduZLLbABhg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Yang <Eric.Yang2@amd.com>,
-        Hugo Hu <Hugo.Hu@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 209/352] drm/amd/display: fix YCbCr420 blank color
-Date:   Mon, 11 Feb 2019 15:17:16 +0100
-Message-Id: <20190211141900.485555710@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 09:30:59 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:58975 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727932AbfBKOax (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:30:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lucaceresoli.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FFBmXTFfBaLH3E7i5uEuHI1tsd9hSjt1JGYFR5EmZAQ=; b=FNbZIcyeIW/IpXcw57jEEOvIQR
+        jqtVa/s3cL/Fw5zTtq5IEDT3STamGaJrm5VmnJ14e9rWQV2vClwUsRLPmei9S5yam02FEw5NTW6Xq
+        FS2+9D+9N/hG0pMyPd+L481GZMUGzX8o8Q8Y/iBcLoJHDoC6V4vyJSOn8DlBPHSCzY8M=;
+Received: from [109.168.11.45] (port=32896 helo=[192.168.101.224])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1gtCbg-000mJq-3j; Mon, 11 Feb 2019 15:30:48 +0100
+Subject: Re: [PATCH v3 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
+ Subsystem
+To:     Vishal Sagar <vsagar@xilinx.com>,
+        Vishal Sagar <vishal.sagar@xilinx.com>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dinesh Kumar <dineshk@xilinx.com>,
+        Sandip Kothari <sandipk@xilinx.com>
+References: <1549025766-135037-1-git-send-email-vishal.sagar@xilinx.com>
+ <1549025766-135037-3-git-send-email-vishal.sagar@xilinx.com>
+ <3923069f-7c69-c601-0ded-f7629696ef9b@lucaceresoli.net>
+ <CY4PR02MB2709000898D5E290B5EE99F4A7640@CY4PR02MB2709.namprd02.prod.outlook.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <7fc3bd7b-4537-3df5-12ee-55ebec17a8bd@lucaceresoli.net>
+Date:   Mon, 11 Feb 2019 15:30:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CY4PR02MB2709000898D5E290B5EE99F4A7640@CY4PR02MB2709.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+thanks for the quick reply.
 
-[ Upstream commit 12750d1647f118496f1da727146f255f5e44d500 ]
+On 11/02/19 13:43, Vishal Sagar wrote:
+>>> +static int xcsi2rxss_start_stream(struct xcsi2rxss_state *state)
+>>> +{
+>>> +     struct xcsi2rxss_core *core = &state->core;
+>>> +     int ret = 0;
+>>> +
+>>> +     xcsi2rxss_enable(core);
+>>> +
+>>> +     ret = xcsi2rxss_reset(core);
+>>> +     if (ret < 0) {
+>>> +             state->streaming = false;
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     xcsi2rxss_intr_enable(core);
+>>> +     state->streaming = true;
+>>
+>> Shouldn't you propagate s_stream to the upstream subdev here calling
+>> v4l2_subdev_call(..., ..., s_stream, 1)?
+>>
+> 
+> This is done by the xvip_pipeline_start_stop() in xilinx-dma.c for Xilinx Video pipeline.
 
-[Why]
-YCbCr420 packing format uses two chanels for luma, and 1
-channel for both chroma component. Our previous implementation
-did not account for this and results in every other pixel having
-very high luma value, showing greyish color instead of black.
+Indeed it does, however other CSI2 RX drivers do propagate s_stream in
+their own s_stream. Not strictly related to this driver, but what's the
+logic for having these two different behaviors?
 
-YCbCr444 = <Y1, Cb1, Cr1>; <Y2, Cb2, Cr2> .....
-YCbCr420 = <Y1, Y2,  Cb1>; <Y3, Y4,  Cr1> .....
+Also xvip_pipeline_start_stop() only follows the graph through
+entity->pads[0], so it looks like it cannot handle entities with
+multiple sink pads. How would it be able to handle e.g. the AXI4-Stream
+Switch [0], which has 2+ sink pads?
 
-[How]
-Program the second channel with the black color value for luma
-as well.
+[0]
+https://www.xilinx.com/support/documentation/ip_documentation/axis_infrastructure_ip_suite/v1_1/pg085-axi4stream-infrastructure.pdf
+(page 16).
 
-Signed-off-by: Eric Yang <Eric.Yang2@amd.com>
-Reviewed-by: Hugo Hu <Hugo.Hu@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../drm/amd/display/dc/dce110/dce110_hw_sequencer.c   | 11 ++++++++++-
- .../gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c |  9 +++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index a6bcb90e8419..4443a916a0fb 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -1268,10 +1268,19 @@ static void program_scaler(const struct dc *dc,
- 		pipe_ctx->plane_res.scl_data.lb_params.depth,
- 		&pipe_ctx->stream->bit_depth_params);
- 
--	if (pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color)
-+	if (pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color) {
-+		/*
-+		 * The way 420 is packed, 2 channels carry Y component, 1 channel
-+		 * alternate between Cb and Cr, so both channels need the pixel
-+		 * value for Y
-+		 */
-+		if (pipe_ctx->stream->timing.pixel_encoding == PIXEL_ENCODING_YCBCR420)
-+			color.color_r_cr = color.color_g_y;
-+
- 		pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color(
- 				pipe_ctx->stream_res.tg,
- 				&color);
-+	}
- 
- 	pipe_ctx->plane_res.xfm->funcs->transform_set_scaler(pipe_ctx->plane_res.xfm,
- 		&pipe_ctx->plane_res.scl_data);
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 32e4c653b1b4..220ba828748d 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -2165,6 +2165,15 @@ static void dcn10_blank_pixel_data(
- 	color_space = stream->output_color_space;
- 	color_space_to_black_color(dc, color_space, &black_color);
- 
-+	/*
-+	 * The way 420 is packed, 2 channels carry Y component, 1 channel
-+	 * alternate between Cb and Cr, so both channels need the pixel
-+	 * value for Y
-+	 */
-+	if (stream->timing.pixel_encoding == PIXEL_ENCODING_YCBCR420)
-+		black_color.color_r_cr = black_color.color_g_y;
-+
-+
- 	if (stream_res->tg->funcs->set_blank_color)
- 		stream_res->tg->funcs->set_blank_color(
- 				stream_res->tg,
 -- 
-2.19.1
-
-
-
+Luca
