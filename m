@@ -2,99 +2,108 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9427C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B35C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBE520700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC6620700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549901446;
+	bh=Pi7zxNGNXnrFqsGW7Qk8jqi+88OOg4kGv2mQ881/gf0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=e0kl7f6yTumXqkSGg1Hxr6txqmbTUxHmQeB76EwCmNcxqSd4BCcuao+ymSahdUoJ/
+	 ZuE4sfci7Oj1gb+3mofyKSy1gsUI+2IvRfwYQjr5exfav8xa+BaG+ZdAf+5JI8pmpz
+	 lA6FqZy90ypb/xsadIHq797hP+ZKUP/QqektgGNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfBKOYZ (ORCPT
+        id S1729677AbfBKQKp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:24:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57540 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:10:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728097AbfBKOYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:24:20 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1728239AbfBKOYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:24:25 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4737120844;
-        Mon, 11 Feb 2019 14:24:19 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 09:24:17 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     John Sperbeck <jsperbeck@google.com>
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com
-Subject: Re: [PATCH v2] i2c: core-smbus: don't trace smbus_reply data on
- errors
-Message-ID: <20190211092417.7f211ee0@gandalf.local.home>
-In-Reply-To: <20190211034021.242932-1-jsperbeck@google.com>
-References: <20190205190849.GA2686@kunai>
-        <20190211034021.242932-1-jsperbeck@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC2C20821;
+        Mon, 11 Feb 2019 14:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895064;
+        bh=Pi7zxNGNXnrFqsGW7Qk8jqi+88OOg4kGv2mQ881/gf0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lbXt9G2l0WeFRIN5JxHkV449qBh5i9kx013901WsXU0kd11Tv3K0rYK/RIJCD9sl5
+         kn62B1DOB5RXITvwMnfvbQvhYP5oQSiOzEeSYo+YG0Nwp5SJE0ulvolck3qsp6FALm
+         6Jhzyyc9LdBOurcG73zvYGcmcoYDAagWiruLOWGg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Murton Liu <murton.liu@amd.com>,
+        Krunoslav Kovac <Krunoslav.Kovac@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 049/352] drm/amd/display: fix gamma not being applied correctly
+Date:   Mon, 11 Feb 2019 15:14:36 +0100
+Message-Id: <20190211141849.375284545@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Feb 2019 19:40:21 -0800
-John Sperbeck <jsperbeck@google.com> wrote:
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-> If an smbus transfer fails, there's no guarantee that the output
-> buffer was written.  So, avoid trying to show the output buffer when
-> tracing after an error.  This was 'mostly harmless', but would trip
-> up kasan checking if left-over cruft in byte 0 is a large length,
-> causing us to read from unwritten memory.
+------------------
 
-This looks fine to me, but I'm not sure how the i2c maintainers feel,
-but I always require that a new patch version starts a new thread, and
-not be part of a older thread release (causes these patches to be
-hidden from those that read patches in threading mode).
+[ Upstream commit 8ce504b9389be846bcdf512ed5be8f661b3bf097 ]
 
--- Steve
+[why]
+Gamma was always being set as identity on SDR monitor,
+leading to no changes in gamma. This caused nightlight to
+not apply correctly.
 
-> 
-> Signed-off-by: John Sperbeck <jsperbeck@google.com>
-> ---
->  drivers/i2c/i2c-core-smbus.c | 2 +-
->  include/trace/events/smbus.h | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-> index 9cd66cabb84f..132119112596 100644
-> --- a/drivers/i2c/i2c-core-smbus.c
-> +++ b/drivers/i2c/i2c-core-smbus.c
-> @@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
->  trace:
->  	/* If enabled, the reply tracepoint is conditional on read_write. */
->  	trace_smbus_reply(adapter, addr, flags, read_write,
-> -			  command, protocol, data);
-> +			  command, protocol, data, res);
->  	trace_smbus_result(adapter, addr, flags, read_write,
->  			   command, protocol, res);
->  
-> diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
-> index d2fb6e1d3e10..a4892a187842 100644
-> --- a/include/trace/events/smbus.h
-> +++ b/include/trace/events/smbus.h
-> @@ -138,9 +138,9 @@ TRACE_EVENT_CONDITION(smbus_reply,
->  	TP_PROTO(const struct i2c_adapter *adap,
->  		 u16 addr, unsigned short flags,
->  		 char read_write, u8 command, int protocol,
-> -		 const union i2c_smbus_data *data),
-> -	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
-> -	TP_CONDITION(read_write == I2C_SMBUS_READ),
-> +		 const union i2c_smbus_data *data, int res),
-> +	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
-> +	TP_CONDITION(res >= 0 && read_write == I2C_SMBUS_READ),
->  	TP_STRUCT__entry(
->  		__field(int,	adapter_nr		)
->  		__field(__u16,	addr			)
+[how]
+Added a default gamma structure to compare against
+in the sdr case.
+
+Signed-off-by: Murton Liu <murton.liu@amd.com>
+Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+index 193184affefb..32e4c653b1b4 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+@@ -1226,7 +1226,8 @@ static bool dcn10_set_input_transfer_func(struct pipe_ctx *pipe_ctx,
+ 		tf = plane_state->in_transfer_func;
+ 
+ 	if (plane_state->gamma_correction &&
+-		!plane_state->gamma_correction->is_identity
++		!dpp_base->ctx->dc->debug.always_use_regamma
++		&& !plane_state->gamma_correction->is_identity
+ 			&& dce_use_lut(plane_state->format))
+ 		dpp_base->funcs->dpp_program_input_lut(dpp_base, plane_state->gamma_correction);
+ 
+-- 
+2.19.1
+
+
 
