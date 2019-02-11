@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8BAC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA48C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7EB6222A8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DBBE222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899674;
-	bh=PWokfIq+ie3sQWDvortYBqD9sb0SCK4lB/h9q/qTQyc=;
+	s=default; t=1549899682;
+	bh=vw0ZQh+JiywZJ/En+mGCliwSfDgNxziM9MS6qsW8rWo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o5FImLr0G9suvtb+YefMgH201ysjt8UJASlrxi3Il3fW+spmwM1xoc6jvzF73O8z9
-	 glJy1WD/eUFSwvyaGVeTOJ6fjo02j4oEpqLTFYyMlhvQ+7Afdn43+oWFTn/euJ2XCs
-	 a8RyWa6/Iv+zH7Kh7CXhU90DAyv6DSR4mbM4AoOM=
+	b=JLzSrxFS+EbulXHTtpybyY20Lnxd3BS7mQVeaFjH72LOejIbDrmFVuuXGvIUQssdz
+	 8eJweNLo1YHXpntkB0+fsckL84Y5DFEk44BavXBYQr3M3Lm//w2loBOGDnpPl+fV96
+	 VmuiLyhA3KRdCYfuSxDtk8KLbCF3ypdPUY22KTJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387625AbfBKOsD (ORCPT
+        id S2388174AbfBKPlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:48:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33182 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:41:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732353AbfBKOr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:59 -0500
+        id S2387599AbfBKOr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A168206BA;
-        Mon, 11 Feb 2019 14:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FA1C20700;
+        Mon, 11 Feb 2019 14:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896479;
-        bh=PWokfIq+ie3sQWDvortYBqD9sb0SCK4lB/h9q/qTQyc=;
+        s=default; t=1549896475;
+        bh=vw0ZQh+JiywZJ/En+mGCliwSfDgNxziM9MS6qsW8rWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OMGs4cAdkUTAPhKTWUKCP1tZwvDHbrSmjQ0XpDbUfVwfVuYDuNUrpFq8ZVWKL9+sb
-         vMOlouyyZ38w8gwmz3S6az8m3OHSIfOwa15P/ENfd3u6+0P1ln97S0Nl+QMzxiDAOU
-         QRUvz7zwK0wcjMGPCLfKcJZal4OomtCtaGUqgPYE=
+        b=x/DqgstYV7KRb3ZBaFYnJm9ecd9uAQHy7I/oSpZoNGpo8TBwYm/IYUgisDnzFs8+a
+         YnU9grzSREuMIXuNfflF6nnRtW1FzS/+ZIwcw0cNowHExSLlMstoqu3mJcaHq3/Wa9
+         gtvOVtOUyYRQzWmi+LVoJf8QZjjHCIoCFAu4p1/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 198/313] i40e: define proper net_device::neigh_priv_len
-Date:   Mon, 11 Feb 2019 15:17:58 +0100
-Message-Id: <20190211141906.437166867@linuxfoundation.org>
+Subject: [PATCH 4.19 197/313] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 11 Feb 2019 15:17:57 +0100
+Message-Id: <20190211141906.380388388@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,44 +71,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31389b53b3e0b535867af9090a5d19ec64768d55 ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-Out of bound read reported by KASan.
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-i40iw_net_event() reads unconditionally 16 bytes from
-neigh->primary_key while the memory allocated for
-"neighbour" struct is evaluated in neigh_alloc() as
+Add back this protection.
 
-  tbl->entry_size + dev->neigh_priv_len
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
 
-where "dev" is a net_device.
-
-But the driver does not setup dev->neigh_priv_len and
-we read beyond the neigh entry allocated memory,
-so the patch in the next mail fixes this.
-
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index bfa5c525cf31..41fa22c562c1 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -12016,6 +12016,9 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
- 	ether_addr_copy(netdev->dev_addr, mac_addr);
- 	ether_addr_copy(netdev->perm_addr, mac_addr);
- 
-+	/* i40iw_net_event() reads 16 bytes from neigh->primary_key */
-+	netdev->neigh_priv_len = sizeof(u32) * 4;
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 20405421a5ed..77cee99fc36c 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -435,7 +435,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
 +
- 	netdev->priv_flags |= IFF_UNICAST_FLT;
- 	netdev->priv_flags |= IFF_SUPP_NOFCS;
- 	/* Setup netdev TC information */
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -447,7 +449,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
