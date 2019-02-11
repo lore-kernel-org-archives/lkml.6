@@ -2,134 +2,272 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0F4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E906C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC42E21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900222;
-	bh=etrS1Kz6BK30fnjPjvyFaEMr12ZI1VREWGPXVe8X5fY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lkqHWiD6xkR8xwlOMNiW+z9zRvFonpNlUDLTOPND4q1EAkgKl9HlIU7WWLZ1jT4/T
-	 r9vv9c0h7ZCQQ4G6SBbBGDniG5D0V1RJE0egE/WleXVTwQmPtebz4I3zvEUFxlvdhj
-	 4pOv+tpgNNX5lFNH43lWOVIoO8FC81/mj5ChzbHQ=
+	by mail.kernel.org (Postfix) with ESMTP id 48585218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731950AbfBKPuU (ORCPT
+        id S1732692AbfBKPu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727780AbfBKOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:07 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0764C204FD;
-        Mon, 11 Feb 2019 14:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895946;
-        bh=etrS1Kz6BK30fnjPjvyFaEMr12ZI1VREWGPXVe8X5fY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JZ4CpGi8+jnfW2DdOgh6oksx45ByVxrxVyYr6gOpk4nOS1mNdD68ZMvppPWVWbsII
-         W2pPHgY38uOxCuav6vWRQd1cBZidbAnN9D82eZsEsJD/tDAlEBVrH6B5iqT6Q8ryx1
-         3OVtfSvYIVFFy/Ot8beDUTKreDC+D3jMehx4QEnc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 003/313] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
-Date:   Mon, 11 Feb 2019 15:14:43 +0100
-Message-Id: <20190211141852.990426000@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:50:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57622 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731800AbfBKOjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AA1BEAC63;
+        Mon, 11 Feb 2019 14:38:59 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 15:38:59 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
+        akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com
+Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
+ description
+Message-ID: <20190211143859.dd2lkccxod3f2fwn@pathway.suse.cz>
+References: <20190207124635.3885-1-mpe@ellerman.id.au>
+ <20190211125035.GA1562@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211125035.GA1562@andrea>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon 2019-02-11 13:50:35, Andrea Parri wrote:
+> Hi Michael,
+> 
+> 
+> On Thu, Feb 07, 2019 at 11:46:29PM +1100, Michael Ellerman wrote:
+> > Arch code can set a "dump stack arch description string" which is
+> > displayed with oops output to describe the hardware platform.
+> > 
+> > It is useful to initialise this as early as possible, so that an early
+> > oops will have the hardware description.
+> > 
+> > However in practice we discover the hardware platform in stages, so it
+> > would be useful to be able to incrementally fill in the hardware
+> > description as we discover it.
+> > 
+> > This patch adds that ability, by creating dump_stack_add_arch_desc().
+> > 
+> > If there is no existing string it behaves exactly like
+> > dump_stack_set_arch_desc(). However if there is an existing string it
+> > appends to it, with a leading space.
+> > 
+> > This makes it easy to call it multiple times from different parts of the
+> > code and get a reasonable looking result.
+> > 
+> > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> > ---
+> >  include/linux/printk.h |  5 ++++
+> >  lib/dump_stack.c       | 58 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 63 insertions(+)
+> > 
+> > v3: No change, just widened Cc list.
+> > 
+> > v2: Add a smp_wmb() and comment.
+> > 
+> > v1 is here for reference https://lore.kernel.org/lkml/1430824337-15339-1-git-send-email-mpe@ellerman.id.au/
+> > 
+> > I'll take this series via the powerpc tree if no one minds?
+> > 
+> > 
+> > diff --git a/include/linux/printk.h b/include/linux/printk.h
+> > index 77740a506ebb..d5fb4f960271 100644
+> > --- a/include/linux/printk.h
+> > +++ b/include/linux/printk.h
+> > @@ -198,6 +198,7 @@ u32 log_buf_len_get(void);
+> >  void log_buf_vmcoreinfo_setup(void);
+> >  void __init setup_log_buf(int early);
+> >  __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...);
+> > +__printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...);
+> >  void dump_stack_print_info(const char *log_lvl);
+> >  void show_regs_print_info(const char *log_lvl);
+> >  extern asmlinkage void dump_stack(void) __cold;
+> > @@ -256,6 +257,10 @@ static inline __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...)
+> >  {
+> >  }
+> >  
+> > +static inline __printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...)
+> > +{
+> > +}
+> > +
+> >  static inline void dump_stack_print_info(const char *log_lvl)
+> >  {
+> >  }
+> > diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+> > index 5cff72f18c4a..69b710ff92b5 100644
+> > --- a/lib/dump_stack.c
+> > +++ b/lib/dump_stack.c
+> > @@ -35,6 +35,64 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+> >  	va_end(args);
+> >  }
+> >  
+> > +/**
+> > + * dump_stack_add_arch_desc - add arch-specific info to show with task dumps
+> > + * @fmt: printf-style format string
+> > + * @...: arguments for the format string
+> > + *
+> > + * See dump_stack_set_arch_desc() for why you'd want to use this.
+> > + *
+> > + * This version adds to any existing string already created with either
+> > + * dump_stack_set_arch_desc() or dump_stack_add_arch_desc(). If there is an
+> > + * existing string a space will be prepended to the passed string.
+> > + */
+> > +void __init dump_stack_add_arch_desc(const char *fmt, ...)
+> > +{
+> > +	va_list args;
+> > +	int pos, len;
+> > +	char *p;
+> > +
+> > +	/*
+> > +	 * If there's an existing string we snprintf() past the end of it, and
+> > +	 * then turn the terminating NULL of the existing string into a space
+> > +	 * to create one string separated by a space.
+> > +	 *
+> > +	 * If there's no existing string we just snprintf() to the buffer, like
+> > +	 * dump_stack_set_arch_desc(), but without calling it because we'd need
+> > +	 * a varargs version.
+> > +	 */
+> > +	len = strnlen(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str));
+> > +	pos = len;
+> > +
+> > +	if (len)
+> > +		pos++;
+> > +
+> > +	if (pos >= sizeof(dump_stack_arch_desc_str))
+> > +		return; /* Ran out of space */
+> > +
+> > +	p = &dump_stack_arch_desc_str[pos];
+> > +
+> > +	va_start(args, fmt);
+> > +	vsnprintf(p, sizeof(dump_stack_arch_desc_str) - pos, fmt, args);
+> > +	va_end(args);
+> > +
+> > +	if (len) {
+> > +		/*
+> > +		 * Order the stores above in vsnprintf() vs the store of the
+> > +		 * space below which joins the two strings. Note this doesn't
+> > +		 * make the code truly race free because there is no barrier on
+> > +		 * the read side. ie. Another CPU might load the uninitialised
+> > +		 * tail of the buffer first and then the space below (rather
+> > +		 * than the NULL that was there previously), and so print the
+> > +		 * uninitialised tail. But the whole string lives in BSS so in
+> > +		 * practice it should just see NULLs.
+> 
+> The comment doesn't say _why_ we need to order these stores: IOW, what
+> will or can go wrong without this order?  This isn't clear to me.
+>
+> Another good practice when adding smp_*-constructs (as discussed, e.g.,
+> at KS'18) is to indicate the matching construct/synch. mechanism.
 
-------------------
+Yes, one barrier without a counter-part is suspicious.
 
-[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
+If the parallel access is really needed then we could define the
+current length as atomic_t and use:
 
-Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
-error code. This change will ensure that this error is being passed up
-in the call stack, so it can be handled.
+	+ atomic_cmpxchg() to reserve the space for the string
+	+ %*s to limit the printed length
 
-Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+In the worst case, we would print an incomplete string.
+See below for a sample code.
 
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index b736275c10f5..6a48ad067a8b 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
- 	if (ret)
- 		return ret;
+
+BTW: There are very few users of dump_stack_set_arch_desc().
+I would use dump_stack_add_arch_desc() everywhere to keep
+it simple and have a reasonable semantic.
+
+
+This is what I mean (only compile tested):
+
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 5cff72f18c4a..311dd20cc6a7 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -14,9 +14,10 @@
+ #include <linux/utsname.h>
  
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
+ static char dump_stack_arch_desc_str[128];
++static atomic_t arch_desc_str_len;
  
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
+ /**
+- * dump_stack_set_arch_desc - set arch-specific str to show with task dumps
++ * dump_stack_set_arch_desc - add arch-specific str to show with task dumps
+  * @fmt: printf-style format string
+  * @...: arguments for the format string
+  *
+@@ -25,13 +26,32 @@ static char dump_stack_arch_desc_str[128];
+  * arch wants to make use of such an ID string, it should initialize this
+  * as soon as possible during boot.
+  */
+-void __init dump_stack_set_arch_desc(const char *fmt, ...)
++void __init dump_stack_add_arch_desc(const char *fmt, ...)
+ {
+-	va_list args;
++	va_list args, args2;
++	int len, cur_len, old_len;
  
- 	ad7280_delay(st);
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
- 	ad7280_delay(st);
- 
- 	for (i = 0; i < cnt; i++) {
--		__ad7280_read32(st, &tmp);
-+		ret = __ad7280_read32(st, &tmp);
-+		if (ret)
-+			return ret;
- 
- 		if (ad7280_check_crc(st, tmp))
- 			return -EIO;
-@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
- 		return ret;
- 
- 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
--		__ad7280_read32(st, &val);
-+		ret = __ad7280_read32(st, &val);
-+		if (ret)
-+			return ret;
+ 	va_start(args, fmt);
+-	vsnprintf(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str),
 +
- 		if (val == 0)
- 			return n - 1;
++	va_copy(args2, args);
++	len = vsnprintf(NULL, sizeof(dump_stack_arch_desc_str),
++			fmt, args2);
++	va_end(args2);
++
++try_again:
++	cur_len = atomic_read(&arch_desc_str_len);
++	if (cur_len + len > sizeof(dump_stack_arch_desc_str))
++		goto out;
++
++	old_len = atomic_cmpxchg(&arch_desc_str_len,
++				 cur_len, cur_len + len);
++	if (old_len != cur_len)
++		goto try_again;
++
++	vsnprintf(dump_stack_arch_desc_str + old_len,
++		  sizeof(dump_stack_arch_desc_str) - old_len,
+ 		  fmt, args);
++out:
+ 	va_end(args);
+ }
  
--- 
-2.19.1
+@@ -44,6 +64,8 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+  */
+ void dump_stack_print_info(const char *log_lvl)
+ {
++	int len;
++
+ 	printk("%sCPU: %d PID: %d Comm: %.20s %s%s %s %.*s\n",
+ 	       log_lvl, raw_smp_processor_id(), current->pid, current->comm,
+ 	       kexec_crash_loaded() ? "Kdump: loaded " : "",
+@@ -52,9 +74,11 @@ void dump_stack_print_info(const char *log_lvl)
+ 	       (int)strcspn(init_utsname()->version, " "),
+ 	       init_utsname()->version);
+ 
+-	if (dump_stack_arch_desc_str[0] != '\0')
+-		printk("%sHardware name: %s\n",
+-		       log_lvl, dump_stack_arch_desc_str);
++	len = atomic_read(&arch_desc_str_len);
++	if (len) {
++		printk("%sHardware name: %*s\n",
++		       log_lvl, len, dump_stack_arch_desc_str);
++	}
+ 
+ 	print_worker_info(log_lvl, current);
+ }
 
-
-
+Best Regards,
+Petr
