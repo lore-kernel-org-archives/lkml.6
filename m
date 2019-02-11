@@ -2,101 +2,153 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFA2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DD7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A41222B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hVozEyWS"
+	by mail.kernel.org (Postfix) with ESMTP id 7D98021B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbfBKNwH (ORCPT
+        id S1728296AbfBKNwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:52:07 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:42362 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbfBKNwH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:52:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eWj3rusOmVs9VU5WrUyV3EmRPWyzvShi15z9JJNii/c=; b=hVozEyWSFnyoOUQcnRc2RCaV3
-        0J398ZZndorxm7wOPboATWk4jdD5UWzPHAioDvqYGGE0Wjv9fM0yM2c5HYQNuYcN9JCUMghQbSGAG
-        27EkDEEZ5evdFr/qh4DMiB+hDqXvw0NKCvIJ8mOuy8AI0Z3kasJTwW4aiwpNZ0Vu0C5Q4xSQC+u1t
-        g18qOJswBz/38yhkgoC6NOYTycWKjYT9+11vOq15BHHlISuq970oi7W4X3xuAfZldikevC1tOs0Bh
-        B4lMnEBsQnx3IMx0UzhVcMlMnacF0JUWtGfVPaqYH40L4SpkXsXR2MY6hg5PidRJqkizqPXON2DyG
-        mCppZU+lw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtC09-0001XH-J4; Mon, 11 Feb 2019 13:52:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3C2032370CE11; Mon, 11 Feb 2019 14:51:59 +0100 (CET)
-Date:   Mon, 11 Feb 2019 14:51:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@redhat.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        james.morse@arm.com, hpa@zytor.com, valentin.schneider@arm.com
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-Message-ID: <20190211135159.GC32511@hirez.programming.kicks-ass.net>
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
- <20190211134527.GA121589@gmail.com>
+        Mon, 11 Feb 2019 08:52:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727223AbfBKNwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:52:49 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 12ED03D47A;
+        Mon, 11 Feb 2019 13:52:49 +0000 (UTC)
+Received: from krava (ovpn-204-173.brq.redhat.com [10.40.204.173])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DDFA85C23A;
+        Mon, 11 Feb 2019 13:52:46 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 14:52:45 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/4] perf: enable compression of record mode trace to
+ save storage space
+Message-ID: <20190211135245.GB16528@krava>
+References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211134527.GA121589@gmail.com>
+In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 13:52:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:45:27PM +0100, Ingo Molnar wrote:
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index a674c7db..b1bb7e9 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3289,6 +3289,14 @@ static inline void schedule_debug(struct task_struct *prev)
-> >  		__schedule_bug(prev);
-> >  		preempt_count_set(PREEMPT_DISABLED);
-> >  	}
-> > +
-> > +	if (IS_ENABLED(CONFIG_DEBUG_UACCESS_SLEEP) &&
-> > +	    unlikely(unsafe_user_region_active())) {
-> > +		printk(KERN_ERR "BUG: scheduling while user_access enabled: %s/%d/0x%08x\n",
-> > +		       prev->comm, prev->pid, preempt_count());
-> > +		dump_stack();
-> > +	}
-> > +
-> >  	rcu_sleep_check();
-> > 
-> >  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
-> > @@ -6151,6 +6159,20 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
-> >  EXPORT_SYMBOL(___might_sleep);
-> >  #endif
-> > 
-> > +#ifdef CONFIG_DEBUG_UACCESS_SLEEP
-> > +void __might_resched(const char *file, int line)
-> > +{
-> > +	if (!unsafe_user_region_active())
-> > +		return;
+On Mon, Jan 28, 2019 at 10:02:49AM +0300, Alexey Budankov wrote:
 > 
-> Could you please more clearly explain why you want/need an exception from 
-> the __might_resched() debug warning?
+> The patch set implements runtime trace compression for record mode and 
+> trace file decompression for report mode. Zstandard API [1] is used for 
+> compression/decompression of data that come from perf_events kernel 
+> data buffers.
+> 
+> Realized -z,--compression_level=n option provides ~3-5x avg. trace file 
+> size reduction on variety of tested workloads what saves user storage 
+> space on larger server systems where trace file size can easily reach 
+> several tens or even hundreds of GiBs, especially when profiling with 
+> stacks for later dwarf unwinding and context-switches tracing and etc.
+> 
+>   $ tools/perf/perf record -z 1 -e cycles -- matrix.gcc
+> 
+> --mmap-flush option can be used to avoid compressing every single byte 
+> of data and increase compression ratio at the same time lowering tool 
+> runtime overhead.
+> 
+> The compression functionality can be disabled from the command line 
+> using NO_LIBZSTD define and Zstandard sources can be overridden using 
+> value of LIBZSTD_DIR define:
+> 
+>   $ make -C tools/perf NO_LIBZSTD=1 clean all
+>   $ make -C tools/perf LIBZSTD_DIR=/path/to/zstd-1.3.7 clean all
+> 
+> The patch set is for Arnaldo's perf/core repository.
 
-In specific; how is the addition in schedule_debug() not triggering on
-PREEMPT=y kernels?
+hi,
+got here late and can't apply this anymore.. which revision
+(commit id) is this based on? perf/core is moving real fast
+these days ;-)
 
-If code is preemptible, you can (get) schedule(d). If it is not
-preemptible; you do not need these additional tests.
+based on errors below I suspect u need to rebase anyway :-\
+
+sry for late response
+
+jirka
+
+
+> 
+> ---
+> Alexey Budankov (4):
+>   feature: realize libzstd check, LIBZSTD_DIR and NO_LIBZSTD defines
+>   perf record: implement -z=<level> and --mmap-flush=<thres> options
+
+got this one failing when applied:
+
+patching file tools/perf/Documentation/perf-record.txt
+Hunk #1 succeeded at 459 with fuzz 2 (offset 19 lines).
+patching file tools/perf/builtin-record.c
+Hunk #1 succeeded at 292 (offset 5 lines).
+Hunk #2 succeeded at 336 (offset 5 lines).
+Hunk #3 FAILED at 565.
+Hunk #4 succeeded at 765 with fuzz 1 (offset 10 lines).
+Hunk #5 FAILED at 778.
+Hunk #6 succeeded at 806 (offset 11 lines).
+Hunk #7 succeeded at 839 (offset 11 lines).
+Hunk #8 succeeded at 873 (offset 11 lines).
+Hunk #9 succeeded at 1185 (offset 11 lines).
+Hunk #10 succeeded at 1218 (offset 11 lines).
+Hunk #11 succeeded at 1354 (offset 11 lines).
+Hunk #12 succeeded at 1455 (offset 11 lines).
+Hunk #13 succeeded at 1866 (offset 26 lines).
+Hunk #14 FAILED at 2006.
+Hunk #15 succeeded at 2230 with fuzz 2 (offset 32 lines).
+3 out of 15 hunks FAILED -- saving rejects to file tools/perf/builtin-record.c.rej
+patching file tools/perf/perf.h
+Hunk #1 FAILED at 84.
+1 out of 1 hunk FAILED -- saving rejects to file tools/perf/perf.h.rej
+patching file tools/perf/util/env.h
+patching file tools/perf/util/event.c
+Hunk #1 succeeded at 68 (offset 2 lines).
+patching file tools/perf/util/event.h
+Hunk #2 succeeded at 627 (offset 1 line).
+Hunk #3 succeeded at 665 (offset 1 line).
+patching file tools/perf/util/evlist.c
+Hunk #1 FAILED at 1022.
+Hunk #2 FAILED at 1032.
+Hunk #3 FAILED at 1064.
+3 out of 3 hunks FAILED -- saving rejects to file tools/perf/util/evlist.c.rej
+patching file tools/perf/util/evlist.h
+Hunk #1 FAILED at 165.
+1 out of 1 hunk FAILED -- saving rejects to file tools/perf/util/evlist.h.rej
+patching file tools/perf/util/header.c
+patching file tools/perf/util/header.h
+patching file tools/perf/util/mmap.c
+Hunk #1 FAILED at 154.
+Hunk #2 succeeded at 282 with fuzz 1 (offset 69 lines).
+Hunk #3 succeeded at 359 (offset 69 lines).
+Hunk #4 succeeded at 434 (offset 97 lines).
+Hunk #5 succeeded at 484 (offset 97 lines).
+1 out of 5 hunks FAILED -- saving rejects to file tools/perf/util/mmap.c.rej
+patching file tools/perf/util/mmap.h
+Hunk #1 FAILED at 30.
+Hunk #2 FAILED at 69.
+2 out of 2 hunks FAILED -- saving rejects to file tools/perf/util/mmap.h.rej
+patching file tools/perf/util/session.h
