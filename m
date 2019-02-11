@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD79C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB1AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F5A2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E0742081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896206;
-	bh=ZTMgYY7tYir6iFTl6JGcnUTQeDK3XEGMwgJfM8MSKHk=;
+	s=default; t=1549896210;
+	bh=SAeLAm5PeH+1GWPaYXR9abfCDUr9SJaSc6jDaRoPQ6c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r7b8qwxdzki5UpNVmn/zWbmSk0Dzb8ZTlFVyHdJCw5dQT+Wc9DbjiSajRaxXqjD4v
-	 Lmkw31TdW+B7i1YGcxMNmGHiwcRtvmgPiYr/2T6CPjWKxcUZN/vkSkk+HIoLRiMHNh
-	 +rJQhLJ1Qn+tbmqs+f3Wzc3XtqMIz4MNewhSsKwc=
+	b=vO63LUpo+n6QMl/6QAPK7pc0zhg8c6LfBf2Kr61Kyij1RVleulM18P47pk2tnoR6F
+	 LvTSWTgAAl7/n9WDjxhEMsX8L0s+T7gBlnchnUaxxSXMG7R//dQ32nrr2qrS0K9vnt
+	 wBA+TqSjgWr90yYunccN4+8+lH1HojnBAqAarh2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbfBKOnY (ORCPT
+        id S1732641AbfBKOn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55560 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732613AbfBKOnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:23 -0500
+        id S1731692AbfBKOn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEF6A21B18;
-        Mon, 11 Feb 2019 14:43:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D47320700;
+        Mon, 11 Feb 2019 14:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896202;
-        bh=ZTMgYY7tYir6iFTl6JGcnUTQeDK3XEGMwgJfM8MSKHk=;
+        s=default; t=1549896206;
+        bh=SAeLAm5PeH+1GWPaYXR9abfCDUr9SJaSc6jDaRoPQ6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=khXaVXvbYyZtW0p8TZre9wAhGS775l1WvGz/Fqlre/HzvJjBIN0y8JsGtcLqkXgS0
-         u3ti2myR0KZSKRoV3tffFZOpoBfsgqyFvz0uqYzVVEMXhrUZdqIwX2xTX51NdO1FdI
-         +rU/m0lhCax4P1giq20IcnEqgdhn4dg6usxKYM2Y=
+        b=bZPyPNGcQmUknp8+hGp9ZhcpfS1s/y9p7qZX18D1wfgHVeRDa2Q3T+E06s2c3/aqa
+         M2tKESOnETAZ2yxpbiV0uTLk218a2JjeY3a+QskAiJ83oNpctkRv8PZxR6RAeknEz6
+         NpvykxVpUPDHCtKPEBYqz64qxwEmHxMRfP6H1IIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 089/313] ARM: dts: aspeed: add missing memory unit-address
-Date:   Mon, 11 Feb 2019 15:16:09 +0100
-Message-Id: <20190211141859.802233380@linuxfoundation.org>
+Subject: [PATCH 4.19 107/313] usb: dwc3: trace: add missing break statement to make compiler happy
+Date:   Mon, 11 Feb 2019 15:16:27 +0100
+Message-Id: <20190211141901.009094132@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,88 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8ef86955fe59f7912a40d57ae4c6d511f0187b4d ]
+[ Upstream commit 54d48183d21e03f780053d7129312049cb5dd591 ]
 
-The base aspeed-g5.dtsi already defines a '/memory@80000000' node, so
-'/memory' in the board files create a duplicate node. We're probably
-getting lucky that the bootloader fixes up the memory node that the
-kernel ends up using. Add the unit-address so it's merged with the base
-node.
+The missed break statement in the outer switch makes the code fall through
+always and thus always same value will be printed.
 
-Found with DT json-schema checks.
+Besides that, compiler warns about missed fall through marker:
 
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-aspeed@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+drivers/usb/dwc3/./trace.h: In function ‘trace_raw_output_dwc3_log_trb’:
+drivers/usb/dwc3/./trace.h:246:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    switch (pcm) {
+    ^~~~~~
+
+Add the missing break statement to work correctly without compilation
+warnings.
+
+Fixes: fa8d965d736b ("usb: dwc3: trace: pretty print high-bandwidth transfers too")
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts | 2 +-
- arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts       | 2 +-
- arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts         | 3 +--
- arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts    | 2 +-
- 4 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/usb/dwc3/trace.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-index df1227613d48..c2ece0b91885 100644
---- a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-@@ -13,7 +13,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x40000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-index 7a291de02543..22dade6393d0 100644
---- a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-@@ -13,7 +13,7 @@
- 		bootargs = "earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-index d598b6391362..024e52a6cd0f 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-@@ -14,7 +14,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x40000000>;
- 	};
- 
-@@ -322,4 +322,3 @@
- &adc {
- 	status = "okay";
- };
--
-diff --git a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-index 43ed13963d35..33d704541de6 100644
---- a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-@@ -17,7 +17,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
+diff --git a/drivers/usb/dwc3/trace.h b/drivers/usb/dwc3/trace.h
+index f22714cce070..f27c5cbe285c 100644
+--- a/drivers/usb/dwc3/trace.h
++++ b/drivers/usb/dwc3/trace.h
+@@ -251,9 +251,11 @@ DECLARE_EVENT_CLASS(dwc3_log_trb,
+ 				s = "2x ";
+ 				break;
+ 			case 3:
++			default:
+ 				s = "3x ";
+ 				break;
+ 			}
++			break;
+ 		default:
+ 			s = "";
+ 		} s; }),
 -- 
 2.19.1
 
