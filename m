@@ -7,48 +7,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEF4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE6BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93879222AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9DC2222AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897300;
-	bh=6tSijRtGnJiTMLTN0r2Vbu5c4n8F2JaRl10cNpCmzbg=;
+	s=default; t=1549897301;
+	bh=fQusaHDyd9MI+0/xPYA1XmlAlDbtrorkRVNUkOfo39E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y0rgy4bLRaqYzsrevFWYb/BGyHdh5gzd60IRXhMRjvWwSFCez8lSHsLO/1trSzxPE
-	 wzuHXymqXGwfVdDuzXmSY/VPvdirx2mKaOUFdIr+hdOeU/fOYD1leAzTHac2Iw/Ys+
-	 igREymj87CD0dZarixpRsbMMoEabubZLmAN9lhjc=
+	b=OCtguzyLZH2/XAOrytwsZ8qBOlW1DkUA6fhTTK1fmWqatSZVUDTJggkVrmIRkvL+9
+	 tndArwwgCgCpSwa9sFeP8tSNqLkjNMX/zstQ1CW6x0xiT3lTFwp1RMBEIEd2Mk6g1C
+	 shIV6mDtrVwf2sbyggXj4xs/mtKRR6t2qVsKyO6A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390229AbfBKPBj (ORCPT
+        id S2390240AbfBKPBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49582 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390209AbfBKPBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:32 -0500
+        id S2389696AbfBKPBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:01:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BB66222A6;
-        Mon, 11 Feb 2019 15:01:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BD67222A6;
+        Mon, 11 Feb 2019 15:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897291;
-        bh=6tSijRtGnJiTMLTN0r2Vbu5c4n8F2JaRl10cNpCmzbg=;
+        s=default; t=1549897298;
+        bh=fQusaHDyd9MI+0/xPYA1XmlAlDbtrorkRVNUkOfo39E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mH59SNLKv26re96ucKoBr4gtRsAWHXhcYX40E8QcI3jVSG424Zp6SHN36DSTv6gW5
-         viBtUzUi6iW937GLPgbv7+iMMkCba66asAwCQ/waeVvutDCFEq9C5znYBLcucFS8lw
-         G72HqKv2TVXkKneVFfOM4MzGehFq9hgv+c6pnv0w=
+        b=R9OpQwz8shzWhXzZhtUYt0i976tpBAHiizgA2FFQMW0KTf1pNsEuab26y7ySJoCIJ
+         k1OXBnXtxTE0ArshgRNVBN5i5TtI5ntLHcV2XnSekRMtpoqZEBA2XTPT8I/Pq2MTzl
+         tv0AeDyNwYZPw9X6YC9Cnf2ZEGqsoCwM8tlyTgzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Alexander Shiyan <shc_work@mail.ru>,
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 122/205] video: clps711x-fb: release disp device node in probe()
-Date:   Mon, 11 Feb 2019 15:18:40 +0100
-Message-Id: <20190211141836.433624849@linuxfoundation.org>
+Subject: [PATCH 4.14 124/205] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 11 Feb 2019 15:18:42 +0100
+Message-Id: <20190211141836.590898960@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,45 +71,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-clps711x_fb_probe() increments refcnt of disp device node by
-of_parse_phandle() and leaves it undecremented on both
-successful and error paths.
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Add back this protection.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Alexander Shiyan <shc_work@mail.ru>
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
+
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/clps711x-fb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-index ff561073ee4e..42f909618f04 100644
---- a/drivers/video/fbdev/clps711x-fb.c
-+++ b/drivers/video/fbdev/clps711x-fb.c
-@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
--	if (ret)
-+	if (ret) {
-+		of_node_put(disp);
- 		goto out_fb_release;
-+	}
- 
- 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
- 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
- 
- 	ret = of_property_read_u32(disp, "bits-per-pixel",
- 				   &info->var.bits_per_pixel);
-+	of_node_put(disp);
- 	if (ret)
- 		goto out_fb_release;
- 
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 11d73b5fc885..302cce7185e3 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -435,7 +435,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
++
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -447,7 +449,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
