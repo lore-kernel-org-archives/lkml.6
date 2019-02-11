@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EB2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E64AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98F82184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8112184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tt9djI+4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERfk6YwV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfBKX2U (ORCPT
+        id S1727956AbfBKX2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:28:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55624 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfBKX2Q (ORCPT
+        Mon, 11 Feb 2019 18:28:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40175 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727550AbfBKX2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:28:16 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r17so990536wmh.5;
-        Mon, 11 Feb 2019 15:28:15 -0800 (PST)
+        Mon, 11 Feb 2019 18:28:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q21so1011905wmc.5;
+        Mon, 11 Feb 2019 15:28:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=ziJEcxmH0HELRYpJ/Cx0XBIGaICt7y2RQVCxbSTmAUA=;
-        b=Tt9djI+4tIxxQ5z9XBIXZPNsKwfr142LlXK+hQ65M9C24x2lFzeG66B1tVAsCYEHD5
-         lxkyRPZQ0d7NehS988SjU2aK0I7kZPVft7Vc+W/HY8bQPsWnifAgKghB7n90aodLDrnl
-         lVPXX7q9YjeS2ulbNmlLXl6NtFYB5XvJEEgxMNocbquz7/szDVHN5yBdzXWilnSUIWV6
-         5lZKYRyJD3C9KP0rHanJWixPBBH9nGwy+o8iMGvBhmhP+XMzEYm2EF0bhpt1taB4s4z5
-         8y1TXoBB0V0MwKaVVuakzCSGEEpvjN4D1GunNHN9QYNv1W875CyqAi3osNxWduqQBsDv
-         RurA==
+        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
+        b=ERfk6YwVVFsD4gpa86J3tNvUf/jRxA7negb6JBcQ5PSR0xZZvMMbnqTZ+wRrS2Husj
+         Ggd8+h/Q6iGpIBl92FmkpdpssV2xt9w6MiuQS2cXjMtk96NDjzsy/uEnc/s7yXVpuL6c
+         mpoDNWR+cp0zbAXtobA5UoCkq+orGEc1HmBwrLmgLHRuHzaFQ/+tRBnFd/U7BP3qfbPV
+         ln/K1BHTqeaHXoV9cT0aGU+M7Xa55XRzuBeoCYotqmiST1osgENBFvz37ywgrYEko+pv
+         OnWJ8Rdek3QLL7gzQPr7kKm7jyZ28jH2jgCwj74BAERzhEIIn+YrVvRGcUeyx16kqW+P
+         hxEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=ziJEcxmH0HELRYpJ/Cx0XBIGaICt7y2RQVCxbSTmAUA=;
-        b=Qo6D65L0heKrgIIR6QcXBs2aVxSkj0lfj0HmukNXvh2C4XNmZk0sB9nRR2FU9cPsJ8
-         0oHl0kzPYIGv+DOCZvO4mYoQLQt2lUmhIhZfTnvZnWSPErjtjS4h8oaI+RF/M7aGdC1G
-         NeytCU8BD553i8spvyhSJOACN9s1OFcnfwqqghcyT3jf/N3Mf/1S3EAmc9eWOrtHZlHN
-         I3XT1Vxw5HOxS4lXlmD5Y/o5sOzEJCNzLfIs/QmR4N7Om65nwoUUtN3IEmpaNp5HPYbO
-         li1345t9RnAO0kBJwtCuobxIolLh9xjfi5YvSaXU/16bLHK//EvWj0tpdTEYVT2FQxOy
-         NhIg==
-X-Gm-Message-State: AHQUAuZNear/hkBImOBbs2kz0Cc9iv6r4XHBeyLTOTPZqAhLR+SqHXlA
-        hlHvoBnGX6nC7QLIkTU+JJg=
-X-Google-Smtp-Source: AHgI3IYd7Ah0YVUADfwQ9vu0EMe24Nxeh6S4B8+ipAqvagFO0quTn9x8ysqtHCmL+w/wBQ5gyDPMFA==
-X-Received: by 2002:a1c:f50a:: with SMTP id t10mr493561wmh.126.1549927694511;
-        Mon, 11 Feb 2019 15:28:14 -0800 (PST)
+        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
+        b=lHJWLCeHp0lGdGBygwPydCBfhtHc1dc0YGDyDvXbjbE92y3GMEYLvPp9UChlAqNpK2
+         7tGdQQHBeKFkrAjep/uR/aMvB8OsxxncSIZlgkabTQauao0sUIZ5z96UB/JCaYJ2ikA+
+         8Ajwzs7LkB16+O0MuMTK+aW/x6p+eHJATlct1o/DwBoUo8e4SQAeaG0iJHaKDDEahpoI
+         HtAJsZ8tlDDKWtOnpbZFut7m9qAtpFY7wLwBRf8gF+j1dr3oOF4Rpj6gb1v8eRNrE2Cz
+         bsuCBh8qtmfG4lc6iRBTNKjXI6mi0SMjuN5Wk6yyl1IVSkzMhCOdL9fgoUdHgo4N4GSW
+         3eDg==
+X-Gm-Message-State: AHQUAuZBwEwTP65o5Ut/LLtwzuFMMW7sj4YdCTjZxXNwTSH4Jw7fF1Ko
+        Q/lBd1FRdJt0WRSZfaqwAws=
+X-Google-Smtp-Source: AHgI3IaPnxVvWxLjhqm0PsH5iF2NiueH7C1Z1h4hq25QVvV24PnbiOHB8xirGOEnJlaL7jk97tS8SA==
+X-Received: by 2002:a1c:7719:: with SMTP id t25mr513964wmi.7.1549927697736;
+        Mon, 11 Feb 2019 15:28:17 -0800 (PST)
 Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
-        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.11
+        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:28:13 -0800 (PST)
+        Mon, 11 Feb 2019 15:28:17 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 03/12] __wr_after_init: x86_64: randomize mapping offset
-Date:   Tue, 12 Feb 2019 01:27:40 +0200
-Message-Id: <378ee1e7e4c17e3bf6e49e1fb6c7cd9abd18ccfe.1549927666.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v4 04/12] __wr_after_init: x86_64: enable
+Date:   Tue, 12 Feb 2019 01:27:41 +0200
+Message-Id: <38307f2c7ae982478d33f55f7a7b827de489cdf3.1549927666.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
 References: <cover.1549927666.git.igor.stoppa@huawei.com>
@@ -87,15 +87,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-x86_64 specialized way of defining the base address for the alternate
-mapping used by write-rare.
-
-Since the kernel address space spans across 64TB and it is mapped into a
-used address space of 128TB, the kernel address space can be shifted by a
-random offset that is up to 64TB and page aligned.
-
-This is accomplished by providing arch-specific version of the function
-__init_wr_base()
+Set ARCH_HAS_PRMEM to Y for x86_64
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -113,46 +105,21 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/mm/Makefile      |  2 ++
- arch/x86/mm/prmem.c (new) | 20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ arch/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..66652de1e2c7 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_PRMEM)		+= prmem.o
-diff --git a/arch/x86/mm/prmem.c b/arch/x86/mm/prmem.c
-new file mode 100644
-index 000000000000..b04fc03f92fb
---- /dev/null
-+++ b/arch/x86/mm/prmem.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * prmem.c: Memory Protection Library - x86_64 backend
-+ *
-+ * (C) Copyright 2018-2019 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/mm.h>
-+#include <linux/mmu_context.h>
-+
-+unsigned long __init __init_wr_base(void)
-+{
-+	/*
-+	 * Place 64TB of kernel address space within 128TB of user address
-+	 * space, at a random page aligned offset.
-+	 */
-+	return (((unsigned long)kaslr_get_random_long("WR Poke")) &
-+		PAGE_MASK) % (64 * _BITUL(40));
-+}
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 68261430fe6e..7392b53b12c2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -32,6 +32,7 @@ config X86_64
+ 	select SWIOTLB
+ 	select X86_DEV_DMA_OPS
+ 	select ARCH_HAS_SYSCALL_WRAPPER
++	select ARCH_HAS_PRMEM
+ 
+ #
+ # Arch settings
 -- 
 2.19.1
 
