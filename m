@@ -2,130 +2,166 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856DDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF2DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53EC2218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900972;
-	bh=qKQsPld7+Gq6rUxJyQb1tECT4aTIdeFg0YFSTf/ufjQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GcQe/ucZPsrCSsi+vKaOLmamL003PyEwDunEJpSH8ZW999Nb+jbruN7QcvuI/d+4b
-	 WbnboMZkdW8Of6QgpYFHCzW5SOzUjRvTEjDnZAVPxwe0nVa7ASDgMDvi64yHs7WJE9
-	 IKgGdVhcESG7X4szLUjl0K4+AcdQfNhRAYzDjevQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6F6A6218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:02:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvaxXP1h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbfBKQCu (ORCPT
+        id S1730074AbfBKQC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:02:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730038AbfBKO35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:29:57 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3370B2082F;
-        Mon, 11 Feb 2019 14:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895396;
-        bh=qKQsPld7+Gq6rUxJyQb1tECT4aTIdeFg0YFSTf/ufjQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sMh4qr0BktRW7zkv4lmbVVFxW9aG2AOCMQRusE6FSgqCGJhkBoI1fv872H3dvp2++
-         D4xKXYvzHBHDtNFhIcF2FkL63Isxs54ewXMc+caC9s7nVpajJQ8g4DzMJjATFX2l4o
-         KJBZjc8KNFBNEwfWWg1yxVrOOKdKX0HAf4sFrXMs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 192/352] bnxt_en: Disable MSIX before re-reserving NQs/CMPL rings.
-Date:   Mon, 11 Feb 2019 15:16:59 +0100
-Message-Id: <20190211141859.335051590@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Feb 2019 11:02:57 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43213 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbfBKO34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r2so4896048wrv.10;
+        Mon, 11 Feb 2019 06:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=WNiKGJjUidWR3l0CVZ7Opnq01zwCNqD0tZu9JXLyfwY=;
+        b=jvaxXP1hhM2kEJsZelFy7NY/9CT78XpF68Wh7b9eo7yo/SzJaTFLxguEjLMo9/eIaA
+         88dTzyrbjEiM44Hqbv+sBkLqdL8VqTgq2vd6MR5orfZ/nWMSZ2h6hP7SC/TMRG0OGzfp
+         BJVBnS87OSwn7Y1IaczK1cmOEDPzm1ZrC6QAt6XfZLtsdOqXhkt8r9TJA/GwBNPLpba+
+         o22ujVAg7cES2GPLZF54TKkTdejnOnDhP2g9OuWy0JpwlanWdynTOPUESLixU5M019HN
+         6+h6whAGSTzLsCgWLhWI/0cA5MsiqQ7vRV/fYndc0q6rHFdnjAgGp/vivsShP3ovKFUq
+         xW9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=WNiKGJjUidWR3l0CVZ7Opnq01zwCNqD0tZu9JXLyfwY=;
+        b=afgKlRRdAaeW4CZUpVtmcn87LOSJaL2rwTNLG96JdLMoP20BMNSPBPWi6/85yrUHiS
+         Oaxiw2PU6owsy3pVfVH0lDz0xFkwc42yT6TrBkJZ5rXnxsB1GdIGOGNDwjfriUYM1raC
+         geuCY3gGBYmFWMTEXSjBF1DXpRuUZl0LrMuvJ0j6emUX5eSlrupOa2qX8B++IaQi/ci4
+         kOZEpon4AKjZD8x8YR537fORM8dpxfojLzvlhCxRk5O/lz0genDP9Omxs1MhxGVAe5n5
+         yaerkOtLf1mVmaDnrmqZjGEFqz/nlEbhYUmDEDzFdRMtaTHccEMVF7PLJ5LzZOaX35OH
+         NErw==
+X-Gm-Message-State: AHQUAuYRO9ZSRwyu+7TGKTxjYv0SHe1DzZMgMP+BlD+5WU+R65acJKbW
+        AeyUGU391DOXlBu2PQ9uPY8=
+X-Google-Smtp-Source: AHgI3IZW1d6ZRxPm47GDke+9ycRLhMM+qJ49ksXvar0oyncr/SOhgMwpul5KfnPHi/tzF3Pn713AfQ==
+X-Received: by 2002:a5d:5101:: with SMTP id s1mr27617369wrt.89.1549895393315;
+        Mon, 11 Feb 2019 06:29:53 -0800 (PST)
+Received: from [192.168.1.100] ([93.51.16.173])
+        by smtp.gmail.com with ESMTPSA id a144sm18332930wmd.30.2019.02.11.06.29.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 06:29:52 -0800 (PST)
+Message-ID: <874c702b8af760aa8fae38d478c79e3ecba00515.camel@gmail.com>
+Subject: Re: [PATCH] arm64/io: Don't use WZR in writel
+From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+Date:   Mon, 11 Feb 2019 15:29:51 +0100
+In-Reply-To: <38d8965a-cd41-17cf-1b95-8dd58c079be4@arm.com>
+References: <68b71c15f32341468a868f6418e4fcb375bc49ba.camel@gmail.com>
+         <20190211105755.GB30880@fuggles.cambridge.arm.com>
+         <38d8965a-cd41-17cf-1b95-8dd58c079be4@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Il giorno lun, 11/02/2019 alle 11.52 +0000, Marc Zyngier ha scritto:
+> On 11/02/2019 10:57, Will Deacon wrote:
+> > On Sat, Feb 09, 2019 at 07:34:53PM +0100, AngeloGioacchino Del
+> > Regno wrote:
+> > > From 33fb6d036de273bb71ac1c67d7a91b7a5148e659 Mon Sep 17 00:00:00
+> > > 2001
+> > > From: "Angelo G. Del Regno" <kholk11@gmail.com>
+> > > Date: Sat, 9 Feb 2019 18:56:46 +0100
+> > > Subject: [PATCH] arm64/io: Don't use WZR in writel
+> > > 
+> > > This is a partial revert of commit ee5e41b5f21a
+> > > ("arm64/io: Allow I/O writes to use {W,X}ZR")
+> > > 
+> > > When we try to use the zero register directly on some SoCs,
+> > > their security will make them freeze due to a firmware bug.>>
+> > > This behavior is seen with the arm-smmu driver freezing on
+> > > TLBI and TLBSYNC on MSM8996, MSM8998, SDM630, SDM660.
+> 
+> This looks similar to the issue these SoCs have with GICv3, worked
+> around in 9c8114c20d18.
+> 
 
-------------------
+Well, yes that's a firmware quirk, of course, due to the "security"
+stuff that they have inside...
 
-[ Upstream commit 36d65be9a88052cdfc8524eb591baf0e6c878408 ]
+> > Hmm, this sounds very fragile. I hope they're not trapping and
+> > emulating
+> > MMIO accesses and treating the zero register as the stack
+> > pointer...
+> 
+> I bet this is the case. The same bug was there in both KVM and Xen.
+> The
+> only difference is that we fixed it back in December 2015 (at least
+> for
+> KVM), while some of these SoCs were announced in 2017, and are still
+> shipping. Great stuff.
 
-When bringing up a device, the code checks to see if the number of
-MSIX has changed.  pci_disable_msix() should be called first before
-changing the number of reserved NQs/CMPL rings.  This ensures that
-the MSIX vectors associated with the NQs/CMPL rings are still
-properly mapped when pci_disable_msix() masks the vectors.
+Totally agree, they must be using it as stack pointer.
+Poor decision.
 
-This patch will prevent errors when RDMA support is added for the new
-57500 chips.  When the RDMA driver shuts down, the number of NQs is
-decreased and we must use the new sequence to prevent MSIX errors.
+> 
+> > Wouldn't this also be triggerable from userspace by mmap()ing
+> > either
+> > /dev/mem or e.g. a PCI bar via sysfs?
+> > 
+> > > Allocating a temporary register to store the zero for the
+> > > write actually solves the issue on these SoCs.
+> > 
+> > I don't think this catches all MMIO accesses, so I think we need to
+> > understand more about the actual issue here. For example, is it
+> > only the
+> > SMMU that causes this problem? Also, any workaround should be
+> > specific to
+> > the broken SoCs.
+> 
+> Also, nothing would prevent a compiler from generating these
+> accesses.
+> 
+> 	M.
+> 
+> Jazz is not dead. It just smells funny...
 
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+While I agree that nothing would prevent a compiler from generating
+these accesses, please take in mind that everything worked on
+downstream kernels before this change was introduced (which is first
+seen downstream on msm-4.9).
+So I've discovered it on msm-4.9 while porting the 8996-98, 630-660
+to that and I've had a whole lot of head scratching: the arm-smmu
+code was apparently right, then I've seen that surprise......
+By the way, I can tell you for sure that this bug is not present on
+at least SDM845, since that one worked fine even before this fix,
+and I imagine that also SDM670 and newest may not be affected.
+Also Family-B SoCs are not affected by this bug (MSM8916-36-37-56-76).
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 5d21c14853ac..50a4c3ddf977 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7203,23 +7203,26 @@ static void bnxt_clear_int_mode(struct bnxt *bp)
- int bnxt_reserve_rings(struct bnxt *bp)
- {
- 	int tcs = netdev_get_num_tc(bp->dev);
-+	bool reinit_irq = false;
- 	int rc;
- 
- 	if (!bnxt_need_reserve_rings(bp))
- 		return 0;
- 
--	rc = __bnxt_reserve_rings(bp);
--	if (rc) {
--		netdev_err(bp->dev, "ring reservation failure rc: %d\n", rc);
--		return rc;
--	}
- 	if (BNXT_NEW_RM(bp) && (bnxt_get_num_msix(bp) != bp->total_irqs)) {
- 		bnxt_ulp_irq_stop(bp);
- 		bnxt_clear_int_mode(bp);
--		rc = bnxt_init_int_mode(bp);
-+		reinit_irq = true;
-+	}
-+	rc = __bnxt_reserve_rings(bp);
-+	if (reinit_irq) {
-+		if (!rc)
-+			rc = bnxt_init_int_mode(bp);
- 		bnxt_ulp_irq_restart(bp, rc);
--		if (rc)
--			return rc;
-+	}
-+	if (rc) {
-+		netdev_err(bp->dev, "ring reservation/IRQ init failure rc: %d\n", rc);
-+		return rc;
- 	}
- 	if (tcs && (bp->tx_nr_rings_per_tc * tcs != bp->tx_nr_rings)) {
- 		netdev_err(bp->dev, "tx ring reservation failure\n");
--- 
-2.19.1
+Unfortunately, I couldn't think of any other solution on these
+Family-A SoCs, also because I'm not totally sure that the only
+driver that produces this issue is arm-smmu. When I've fixed it
+on the downstream kernel, I've also had some other random freezes
+that weren't related to the SMMU: usually qseecom stuff was also
+acting funny sometimes.
 
-
+Also, just one more thing: yes this thing is going ARM64-wide and
+- from my findings - it's targeting certain Qualcomm SoCs, but...
+I'm not sure that only QC is affected by that, others may as well
+have the same stupid bug.
 
