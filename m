@@ -2,101 +2,102 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E1EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7948AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91089222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXsy3fRt"
+	by mail.kernel.org (Postfix) with ESMTP id 40E38222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549897489;
+	bh=edelpF7QkheoWOzCJRCMFj9K9/UAIRAS4f0PVlisMG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VFV4yX5ciELLPknvZav9sZLOirlwxv1ygkQV/YLBffJHcsB42o4XnrdeCV0vPig2K
+	 g9w4UlxA2gJBr73iSgwK3dxvApQnigpBXvh/8CzvgwyWkPnVEV8zfZHgwc4MpuCxUx
+	 Dar0Nau4N8y5vsuleN0v7trbU9ASa/XljUCVQxbY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390857AbfBKPEp (ORCPT
+        id S2390868AbfBKPEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:04:45 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34575 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390833AbfBKPEj (ORCPT
+        Mon, 11 Feb 2019 10:04:48 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53470 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390835AbfBKPEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:39 -0500
-Received: by mail-it1-f196.google.com with SMTP id x124so63539itd.1;
-        Mon, 11 Feb 2019 07:04:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pZPEl0/sDC17Z4YQY1IfnEJUL8r1ewMTipBnKIO1ts4=;
-        b=hXsy3fRt38+fV0z0Jv21ApMKl44qYVJOYZZ3Wz7/j1ISYScKHa7efs6CNIf1p6hBKU
-         wcKCFSVu8I0ZlEeUH4Qwn2cwabOWr4F5zVtiMysq+ZUlXmifY94JxqFqcvJab/oq/FOA
-         yWDuDm3w4J6aPWr8+1H2Q7QilV12drbOc+9rHReK+kncJ2D2sj6H5shMN1wRvwzLJPVq
-         YY+qJzv1qMHgAENxFLWhS5AlNnal3ZAWh3LjGtZ71cw2p/SPgfkeaBT1zay3gcMCZMLI
-         /JCvUk7ED/B90o7EP2QyV0T9wcGsGLz8v76WxzZNcLlHZq5tXCZhx8v9NZwD79gg3rvK
-         zPMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pZPEl0/sDC17Z4YQY1IfnEJUL8r1ewMTipBnKIO1ts4=;
-        b=GlO1PtxCvuCvMMrlHyIQJHC8oEH78DbC5p5BjInibgxih/xsoVXGj4+/rgIeGyz0hi
-         dGs/HnJRq4vTjFoO715RXgR0dpz8t3GDSrMNFu0RVVve2nTBqzOlGgNTQ2jlawvCfL95
-         NxEzvGwiDcxQZZltRXvhBT8zdqJP/uwf4ADnXc0uVijhVs+ptaBqrPMLGADzCs1ncdvt
-         fngxYIAy9gO7Kyi1+nZuz30W3MZIiYiJVmCtv9wXKCKFPU2CLArVShHnvS7b/eaLpNSY
-         nxOzXzR2pISUEuMQX8kw9F+FF8Ab5xLTOxMKaxBvQ7hDhxNFW0vdazLBeEWk6/0LWs4F
-         dAhA==
-X-Gm-Message-State: AHQUAub/KcaGqKcspo6jUgFEjSHCnrantEAZWEk50jroUw+FZec5t2P7
-        wM+UiCsiXk3rkvr9Z60HZNY=
-X-Google-Smtp-Source: AHgI3IYKmQ7UeVo4uDucUR/bUjczukRPDODAV005DWceMDIyPD5wk6bIriq68D/lW28cuM52GgMU4w==
-X-Received: by 2002:a24:25c3:: with SMTP id g186mr280677itg.150.1549897478277;
-        Mon, 11 Feb 2019 07:04:38 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id t129sm5114299ita.4.2019.02.11.07.04.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:04:37 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>
-Subject: [PATCH] usb: phy: twl6030-usb: fix possible use-after-free on remove
-Date:   Mon, 11 Feb 2019 10:04:26 -0500
-Message-Id: <20190211150426.15285-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 11 Feb 2019 10:04:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hJnXkk1dyaeerODSzrQpR2HhMUEBUJ1FrYn4kp9Gg88=; b=iv1Gy5EDG+JUTMA9YUg56thEm
+        S8DS0+YFL4KR36iUnSJiJkgsy8Q4rE09d0ebFaLGcAfDE4qgxp2YZ4CRbTROFUMghRaOth6P0cNHB
+        VlLR5AmIA7BoXrLZfeXm+ZlfEiNczvZ6VzSsHdCO9K9wGgxpecH/bgdFs2iBdHa6tx4sk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtD8E-0003oY-BH; Mon, 11 Feb 2019 15:04:26 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B82CF11280BD; Mon, 11 Feb 2019 15:04:25 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 15:04:25 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Peter Seiderer <ps.report@gmx.net>
+Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, b-ak <anur.bhargav@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: Re: [RFC v1] tlv320aic32x4: delay i2c access by 1 ms after hardware
+ reset
+Message-ID: <20190211150425.GE22391@sirena.org.uk>
+References: <20190210154519.2506-1-ps.report@gmx.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+JUInw4efm7IfTNU"
+Content-Disposition: inline
+In-Reply-To: <20190210154519.2506-1-ps.report@gmx.net>
+X-Cookie: Tell me what to think!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In remove(), use cancel_delayed_work_sync() to cancel the
-delayed work. Otherwise there's a chance that this work
-will continue to run until after the device has been removed.
 
-This issue was detected with the help of Coccinelle.
+--+JUInw4efm7IfTNU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Bin Liu <b-liu@ti.com>
-Fixes: b6a619a883c3 ("usb: phy: Check initial state for twl6030")
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- drivers/usb/phy/phy-twl6030-usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, Feb 10, 2019 at 04:45:19PM +0100, Peter Seiderer wrote:
 
-diff --git a/drivers/usb/phy/phy-twl6030-usb.c b/drivers/usb/phy/phy-twl6030-usb.c
-index 183550b63faa..dade34d70419 100644
---- a/drivers/usb/phy/phy-twl6030-usb.c
-+++ b/drivers/usb/phy/phy-twl6030-usb.c
-@@ -400,7 +400,7 @@ static int twl6030_usb_remove(struct platform_device *pdev)
- {
- 	struct twl6030_usb *twl = platform_get_drvdata(pdev);
- 
--	cancel_delayed_work(&twl->get_status_work);
-+	cancel_delayed_work_sync(&twl->get_status_work);
- 	twl6030_interrupt_mask(TWL6030_USBOTG_INT_MASK,
- 		REG_INT_MSK_LINE_C);
- 	twl6030_interrupt_mask(TWL6030_USBOTG_INT_MASK,
--- 
-2.17.1
+> @@ -972,6 +972,8 @@ static int aic32x4_component_probe(struct snd_soc_com=
+ponent *component)
+>  		gpio_set_value(aic32x4->rstn_gpio, 1);
+>  	}
+> =20
+> +	mdelay(1);
+> +
 
+Perhaps only do this if we toggled the GPIO?  If the device wasn't in
+reset then there's no need to wait.
+
+--+JUInw4efm7IfTNU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhjvgACgkQJNaLcl1U
+h9BpKAf9G+y8nQsDTzqkvK6vjYpwPnr3Staxy0uTlswZLshRAlNWzqorA+k9ySK0
+9rnjMVjD0bG+qQcUUWXKIciQVdx2yaqHYCNROB+EloqA/8ADyivO3DuaTh3OPI8S
+95q5gnMJyKnWiJq9kxSqhAtfbDt6/F3ITZYy2XD7N4IXKktVbrPtKU3NZhentogy
+w2NS5PwuVERZ2NvvmVZY5gZNShpvfFmX/U1BY8/RCGxscmsK6jYRzlKnkQBUymQr
+vbs+MuYM0xnu++cz1mEqXhLLbW4wdTujq93BhQm6/zSgndiJySIyKaWBw1KmF1U0
+ICvazgSYUkopGbQVe9Dbwkp9j+g/Zw==
+=fgqh
+-----END PGP SIGNATURE-----
+
+--+JUInw4efm7IfTNU--
