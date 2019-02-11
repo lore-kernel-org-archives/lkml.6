@@ -2,88 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCCDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92009C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A8F20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60FE620838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896001;
-	bh=wpXnhNuLSjedjv9fFo7VGMn842b7zsXpNQAWI/HTkdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tyS7aVuFJ8JeDWQrUDAJnhDf7Cy30nVdMTwh9O684Q0SWwTjWGf+Gszw1y7FzQ2mr
-	 52Ok/7g/2nuL/Iuew+FY42/vHKL1C1kQdUhQOLgdgv4ytdMVQFVj2LtEfkTeNB2Vk4
-	 Arv4YcjznNq24MCqR6aqxcPlge0ixUCG/TytWApg=
+	s=default; t=1549896002;
+	bh=2UZwwozcDCPAOAsqtLXPFMHPmKcAF0BcPWi4VuqhEZw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=s7rTKSZWNv2ITFZPFAAZoXsJOyKEpQX/1EGLwFRiWV3zrAnJlx57ae8gcWLMhZL7M
+	 Ty/Bog9Ray6OT8v242g2tSP9QtDt/Io0QEKapYBq78cSzqxYQ83UAyEj08tKqgmbvf
+	 n7KyI9LCHskCZeBn3bEpEBc+0x/Zo1N3RCY6Cnfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731983AbfBKOkA (ORCPT
+        id S1731996AbfBKOkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:40:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:40:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731224AbfBKOjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:53 -0500
-Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
+        id S1731978AbfBKOj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:59 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A55A42082F;
-        Mon, 11 Feb 2019 14:39:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA6620700;
+        Mon, 11 Feb 2019 14:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895992;
-        bh=wpXnhNuLSjedjv9fFo7VGMn842b7zsXpNQAWI/HTkdo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PLaQrSIpftMG9hN334OOm1DOY5I+Mx/tcgq1A8vFdb93FVfy2Vdbs/dU98h4NVe+t
-         sEpt9l7IEEAMhUrX8AVizPonBiIwxdpb3Fqlt2GW/uJYPSzxewOMGwxpCsE+j1fLkb
-         oKR7hfry4UrfK3ZXFEAMwtRi+UF07JvUdCBVkdDo=
-Date:   Mon, 11 Feb 2019 08:39:50 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
- affinity
-Message-ID: <20190211143950.GA151039@google.com>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-3-ming.lei@redhat.com>
- <alpine.DEB.2.21.1902101723400.8784@nanos.tec.linutronix.de>
- <20190211035358.GA8638@ming.t460p>
+        s=default; t=1549895998;
+        bh=2UZwwozcDCPAOAsqtLXPFMHPmKcAF0BcPWi4VuqhEZw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xhRR7gtjpE3EujVoAMtSxbhJNBdXOO4OLxlgnmKiAFJDt0LjqRinfWPFU4DoScp+n
+         CIvabatup2XhGHgjJJ6awZF90NtDCMA6i6i4fA+rBw8bomB6ruLtwAMAxax+HbNBKw
+         xWIILkrvtBaQ2t7tsNmFmdw2pl6QbKO+wAqWz60s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 040/313] usbnet: smsc95xx: fix rx packet alignment
+Date:   Mon, 11 Feb 2019 15:15:20 +0100
+Message-Id: <20190211141856.224764966@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
+References: <20190211141852.749630980@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211035358.GA8638@ming.t460p>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:54:00AM +0800, Ming Lei wrote:
-> On Sun, Feb 10, 2019 at 05:30:41PM +0100, Thomas Gleixner wrote:
-> > On Fri, 25 Jan 2019, Ming Lei wrote:
-> > 
-> > > This patch introduces callback of .setup_affinity into 'struct
-> > > irq_affinity', so that:
-> > 
-> > Please see Documentation/process/submitting-patches.rst. Search for 'This
-> > patch' ....
-> 
-> Sorry for that, because I am not a native English speaker and it looks a bit
-> difficult for me to understand the subtle difference.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-I think Thomas is saying that instead of "This patch introduces
-callback ...", you could say "Introduce callback of ...".
+------------------
 
-The changelog is *part* of the patch, so the context is obvious and
-there's no need to include the words "This patch".
+[ Upstream commit 810eeb1f41a9a272eedc94ca18c072e75678ede4 ]
 
-I make the same changes to patches I receive.  In fact, I would go
-even further and say "Add callback .setup_affinity() ..." because "add"
-means the same as "introduce" but is shorter and simpler.
+The smsc95xx driver already takes into account the NET_IP_ALIGN
+parameter when setting up the receive packet data, which means
+we do not need to worry about aligning the packets in the usbnet
+driver.
 
-Bjorn
+Adding the EVENT_NO_IP_ALIGN means that the IPv4 header is now
+passed to the ip_rcv() routine with the start on an aligned address.
+
+Tested on Raspberry Pi B3.
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/usb/smsc95xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index f2d01cb6f958..6e971628bb50 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -1295,6 +1295,7 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 		dev->net->features |= NETIF_F_RXCSUM;
+ 
+ 	dev->net->hw_features = NETIF_F_IP_CSUM | NETIF_F_RXCSUM;
++	set_bit(EVENT_NO_IP_ALIGN, &dev->flags);
+ 
+ 	smsc95xx_init_mac_address(dev);
+ 
+-- 
+2.19.1
+
+
+
