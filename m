@@ -3,57 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0AEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1ECC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A43521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6609B2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549874862;
-	bh=zivmjRJeqY7jYqs9u4inzJ0Gz6WHby5gz1++O+RQWrc=;
+	s=default; t=1549874890;
+	bh=USbBreDmij9gGsyvuqdUdGistLyFa43WnOmvhiQ9Q8Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=wU54kH+3lb6FMqst902bo9EOQiZg2lio/UxIVcNGUPg1grwOVl3OqepPzeNq2PT4n
-	 hITafPSMOPPgnAcjSlYyl9IHovm5THTS+YZtKUlvUgzoS3un/UBrS+ib9xdW4hohs0
-	 FG/N3scjwmyOt/bukENdfcHPQq7M8nBiEkT2ZPs0=
+	b=JtbHHSJr9aPckyRlfYI5KkVEDBjLI+s24/NE42T6P+DxOL5INp0QNfCVSb9/bMY17
+	 KsVpYYzStq2TZIFkVKxRiBYDXU+4o/oss1T2whKyg2WIBrHWeYImNCeP16q2hG7uUb
+	 LwgqEp7FC4iouK87uVUnko6Jv00zhONYLr9Jrfas=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbfBKIrl (ORCPT
+        id S1727203AbfBKIsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36860 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 03:48:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKIrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:47:41 -0500
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+        id S1725931AbfBKIsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:48:08 -0500
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB4902176F;
-        Mon, 11 Feb 2019 08:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C578F217FA;
+        Mon, 11 Feb 2019 08:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549874860;
-        bh=zivmjRJeqY7jYqs9u4inzJ0Gz6WHby5gz1++O+RQWrc=;
+        s=default; t=1549874887;
+        bh=USbBreDmij9gGsyvuqdUdGistLyFa43WnOmvhiQ9Q8Q=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=owks95T2YWjgSufmMAOQbpJ9QKYe0RV0d+FUmOSBNz+KrwCo4LRWDUd2m87D7oMVs
-         EjQLL3NKYe/308PGAu/NnQK7ZKjwyX1sbNPgC389AYYNCz0hJC1eqc0XCxB5Zu+xOM
-         Nwt4SEeuPCbT3GxWUw4V/u7u6ZAJ3wJTa76rmfJE=
-Received: by mail-lf1-f49.google.com with SMTP id e27so7053941lfj.8;
-        Mon, 11 Feb 2019 00:47:39 -0800 (PST)
-X-Gm-Message-State: AHQUAubgL37g/4zCCiZMMDlbNs6HUbz1nWu7mKCoGPaM6z+b0wCWlZba
-        w5m+A2aLagFQlCU1V7J6USlc8GdXwgAt9b2fgq0=
-X-Google-Smtp-Source: AHgI3IbTz8HP3Eg7bv12FIUNhMJ0rqouVwIoGeFgtCcEBNN5rnfW7lFYNkeSvMATpHhxBiE1qsp2MsnwKI5ePzpSkps=
-X-Received: by 2002:a19:f013:: with SMTP id p19mr2761837lfc.154.1549874857895;
- Mon, 11 Feb 2019 00:47:37 -0800 (PST)
+        b=kk3/s48CG7NbiZrJzGE/MNLX8My1+8x8qVaEAV9kYdutCYQjUdarbxekRPv9/pKEc
+         Osqf03nsRKWYC1gwn4NTHMN5n5PWrlJdabFG0GUx1AwcXEg4mUEhSO7Ofoco5fPdZB
+         l6Bw2SbziuQJaoKfVA92yY4jWnjjwdQa4XIXRJvo=
+Received: by mail-lj1-f171.google.com with SMTP id a16so3916423ljb.11;
+        Mon, 11 Feb 2019 00:48:06 -0800 (PST)
+X-Gm-Message-State: AHQUAuZOI9hu95OuQbOvHV4Ukx5856+AN0+4FJJeS3nsu3H3EIIiIRaC
+        U8fhL7qfyiYdH9J6S0CWYjyNfT+0YzcGVaLJnQ0=
+X-Google-Smtp-Source: AHgI3Ia1N07rYTM2frCVmNxEX7R2AR2aB9qS4yZTNFU64lu3FRLGxDbSBZLSShiqffpQDWeKCoSXBYP2U2t+PmfyZHc=
+X-Received: by 2002:a2e:3a10:: with SMTP id h16-v6mr21125806lja.184.1549874884990;
+ Mon, 11 Feb 2019 00:48:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20190210225114.20110-1-stuart.menefy@mathembedded.com> <20190210225114.20110-2-stuart.menefy@mathembedded.com>
-In-Reply-To: <20190210225114.20110-2-stuart.menefy@mathembedded.com>
+References: <20190210225114.20110-1-stuart.menefy@mathembedded.com> <20190210225114.20110-3-stuart.menefy@mathembedded.com>
+In-Reply-To: <20190210225114.20110-3-stuart.menefy@mathembedded.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 09:47:26 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPdNLd5MeFXa9bht4hzN8u+dMq=0GiWhhOShpUArS6RLtA@mail.gmail.com>
-Message-ID: <CAJKOXPdNLd5MeFXa9bht4hzN8u+dMq=0GiWhhOShpUArS6RLtA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clocksource: exynos_mct: Move one-shot check from
- tick clear to ISR
+Date:   Mon, 11 Feb 2019 09:47:53 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeHMTZn0h8aVU4btg736XyHxpYHBFy1Up7jZgmQa17gtg@mail.gmail.com>
+Message-ID: <CAJKOXPeHMTZn0h8aVU4btg736XyHxpYHBFy1Up7jZgmQa17gtg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clocksource: exynos_mct: Clear timer interrupt when shutdown
 To:     Stuart Menefy <stuart.menefy@mathembedded.com>
 Cc:     "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
@@ -70,17 +69,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Sun, 10 Feb 2019 at 23:51, Stuart Menefy
 <stuart.menefy@mathembedded.com> wrote:
 >
-> When a timer tick occurs and the clock is in one-shot mode, the timer
-> needs to be stopped to prevent it triggering subsequent interrupts.
-> Currently this code is in exynos4_mct_tick_clear(), but as it is
-> only needed when an ISR occurs move it into exynos4_mct_tick_isr(),
-> leaving exynos4_mct_tick_clear() just doing what its name suggests it
-> should.
+> When shutting down the timer, ensure that after we have stopped the
+> timer any pending interrupts are cleared. This fixes a problem when
+> suspending, as interrupts are disabled before the timer is stopped,
+> so the timer interrupt may still be asserted, preventing the system
+> entering a low power state when the wfi is executed.
 >
 > Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 > ---
->  drivers/clocksource/exynos_mct.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+>  drivers/clocksource/exynos_mct.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
