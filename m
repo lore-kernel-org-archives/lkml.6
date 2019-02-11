@@ -2,140 +2,136 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3B0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBE2C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A61218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:34:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CE1tTZvh"
+	by mail.kernel.org (Postfix) with ESMTP id C5E93218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732616AbfBKSef (ORCPT
+        id S1732642AbfBKSey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:34:35 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42089 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732388AbfBKSe3 (ORCPT
+        Mon, 11 Feb 2019 13:34:54 -0500
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:43426 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731953AbfBKSex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:34:29 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d21so3750086uap.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8v5rXm2mbK57fE9mGZjp881pWNsrUC5UsBR5Fm6c7Ks=;
-        b=CE1tTZvhs5KOt+Wwzp3OUQeK1wDhENGndtldlTcgSt6BWVou+3afyDDvqlPv9cWlvC
-         i3TpqYRyxxrPv9k/SaLPXDs4lq2+7JuJR4VRBxKh74VUgInn6dCHNOLmswU5+mLf8Fy3
-         g6M9nMJWaec4+qhGzCdQ2NpvpQRPtDBWDTCNFlG8pLjDCNprId9mWT8Z70vVOQO4wBKj
-         hvImSDjQM6DY2Jd6Y76Q1OTCcFGLaccVCfdqMqmovQuVkq1YeG0Anhiqy6zZDKY/AcE0
-         iEh7vJUwfeGAlIWbXy3xP20QNg4aFJbWT6HkIV5eXUoY6W7VlnlcYd4/MutXpeMpIHdR
-         csQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8v5rXm2mbK57fE9mGZjp881pWNsrUC5UsBR5Fm6c7Ks=;
-        b=dY93nIJdBdEHb/TPhrmILkAFWr9EP68yuhHdKOUvIHtJRUqoQ5BxMHy7dL6M5vTax+
-         FYze9oGdI4VmIXKWisXoWTD+TTduyG46eceaXuWfFHwgoOO4cWRCMBaAbeMsfSYdA4W6
-         hafLVrceZXvmMmpdM7JhVIC7d0vfWIR0mQwrMlzteJgHI1RCZfBpeuzcdkwWgyaXCt2C
-         QNgieHuGDmdX3erBUlUkhRRkC1OayfY9KofPSHWflsUafOGe8tEqlOHnCRfftk53pEUF
-         rrDpG0e0WwEUGWFVVQpPmbLPmM20rvZ92jdVXFcPZw3Dcbv7FSDdvUjYR0lMXSgJbgGd
-         IJzw==
-X-Gm-Message-State: AHQUAuYFTGwu/g35gk0Jf69C3MMY7dCPtTdXlz1qqwfdnQSZg4I8NqZq
-        e/2TYHDuhzZfRfDlKqAQK/lgFNPLWf5MzxbQf4pGSQ==
-X-Google-Smtp-Source: AHgI3IamETjtIJq8zejbhs0qEZRHqpouYVxA/qWDVtomaSMN4i9+SxmSp/+69bLutAZHT8c2+DUuWYJmPYD7TRVQMRQ=
-X-Received: by 2002:ab0:73c4:: with SMTP id m4mr15318574uaq.101.1549910068070;
- Mon, 11 Feb 2019 10:34:28 -0800 (PST)
+        Mon, 11 Feb 2019 13:34:53 -0500
+X-Greylist: delayed 1390 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 13:34:53 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id CA24F38383
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:11:42 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tG3Rgvt7190ontG3RgJU1N; Mon, 11 Feb 2019 12:11:42 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=41322 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtG3Q-001wjP-RA; Mon, 11 Feb 2019 12:11:41 -0600
+Date:   Mon, 11 Feb 2019 12:11:40 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] drbd: Mark expected switch fall-throughs
+Message-ID: <20190211181140.GA19355@embeddedor>
 MIME-Version: 1.0
-References: <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
- <20190204103643.GA18141@krava> <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
- <20190204114144.GC18141@krava> <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
- <20190204192721.GI5593@kernel.org> <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
- <20190204202818.GC4794@krava> <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
- <20190205133727.GF4794@krava> <20190211101957.GB14253@krava>
-In-Reply-To: <20190211101957.GB14253@krava>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Mon, 11 Feb 2019 10:34:16 -0800
-Message-ID: <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gtG3Q-001wjP-RA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:41322
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jiri,
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
-> > On Mon, Feb 04, 2019 at 02:44:37PM -0800, Stephane Eranian wrote:
-> > > Jiri,
-> > >
-> > > While you're looking at the output format, I think it would be good
-> > > time to simplify the code handling perf.data file.
-> > > Today, perf record can emit in two formats: file mode or pipe mode.
-> > > This adds complexity in the code and
-> > > is error prone as the file mode path is tested more than the pipe mode
-> > > path. We have run into multiple issues with
-> > > the pipe mode in recent years. There is no real reason why we need to
-> > > maintain two formats. If I recall, the pipe format
-> > > was introduced because on pipes you cannot lseek to update the headers
-> > > and therefore some of the information present as tables
-> > > updated on the fly needed to be generated as pseudo records by the
-> > > tool. I believe that the pipe format covers all the needs and could
-> > > supersede the file mode format. That would simplify code in perf
-> > > record and eliminate the risk of errors when new headers
-> > > are introduced.
-> >
-> > yep, I think we have almost all the features covered for pipe mode,
-> > and we have all necessary events to describe events features
-> >
-> > so with some effort we could switch off the superfluos file header
-> > and use only events to describe events ;-) make sense, I'll check
-> > on it
->
-> so following features are not synthesized:
->
->         FEAT_OPN(TRACING_DATA,  tracing_data,   false),
->         FEAT_OPN(BUILD_ID,      build_id,       false),
->         FEAT_OPN(BRANCH_STACK,  branch_stack,   false),
->         FEAT_OPN(AUXTRACE,      auxtrace,       false),
->         FEAT_OPN(STAT,          stat,           false),
->         FEAT_OPN(CACHE,         cache,          true),
->
-What do you need for BRANCH_STACK?
+This patch fixes the following warnings:
 
-> I think all could be added and worked around with exception
-> of BUILD_ID, which we store at the end (after processing
-> all data) and we need it early in the report phase
->
-Buildids are injected after the fact via perf inject when in pipe mode.
+In file included from drivers/block/drbd/drbd_actlog.c:30:
+drivers/block/drbd/drbd_int.h: In function ‘__drbd_chk_io_error_’:
+drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (df == DRBD_READ_ERROR || df == DRBD_WRITE_ERROR) {
+      ^
+drivers/block/drbd/drbd_int.h:1782:2: note: here
+  case EP_DETACH:
+  ^~~~
+drivers/block/drbd/drbd_req.c: In function ‘__req_mod’:
+drivers/block/drbd/drbd_req.c:856:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (!(req->rq_state & RQ_NET_OK)) {
+      ^
+  CC [M]  fs/btrfs/inode-map.o
+drivers/block/drbd/drbd_req.c:871:2: note: here
+  case BARRIER_ACKED:
+  ^~~~
 
-> maybe it's time to re-think that buildid -> mmap event
-> association again, because it's pain in current implementation
-> as well
->
-Sure, but what do you propose?
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-> looks like bpf code is actualy getting build ids and storing
-> it for the callchains in kernel.. we can check if we can do
-> something similar for mmap events
->
-> jirka
+Notice that in some cases, the code comment is modified in
+accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/block/drbd/drbd_int.h | 2 +-
+ drivers/block/drbd/drbd_req.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index 000a2f4c0e92..f070f7200fc0 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -1778,7 +1778,7 @@ static inline void __drbd_chk_io_error_(struct drbd_device *device,
+ 				_drbd_set_state(_NS(device, disk, D_INCONSISTENT), CS_HARD, NULL);
+ 			break;
+ 		}
+-		/* NOTE fall through for DRBD_META_IO_ERROR or DRBD_FORCE_DETACH */
++		/* fall through - for DRBD_META_IO_ERROR or DRBD_FORCE_DETACH */
+ 	case EP_DETACH:
+ 	case EP_CALL_HELPER:
+ 		/* Remember whether we saw a READ or WRITE error.
+diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
+index 643a04af213b..3809c7e6be8c 100644
+--- a/drivers/block/drbd/drbd_req.c
++++ b/drivers/block/drbd/drbd_req.c
+@@ -866,7 +866,7 @@ int __req_mod(struct drbd_request *req, enum drbd_req_event what,
+ 			} /* else: FIXME can this happen? */
+ 			break;
+ 		}
+-		/* else, fall through to BARRIER_ACKED */
++		/* else, fall through - to BARRIER_ACKED */
+ 
+ 	case BARRIER_ACKED:
+ 		/* barrier ack for READ requests does not make sense */
+-- 
+2.20.1
+
