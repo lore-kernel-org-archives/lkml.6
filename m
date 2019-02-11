@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC54FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EFEC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C16E222B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D419222B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897854;
-	bh=2SnJgGD3zp+iJezSVZZs5/0VYf7QBAfEDvhA9BAuXSA=;
+	s=default; t=1549897863;
+	bh=hF79k1znq7kOd5uWAGWBCTYDu92ThgjmK6xNJedYFfU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=moOJmZKLhLfGdsyN9JQ2R6YaX9suqQlNe6wnbKSRb07zCq76KVijMiONEUBpRfPFe
-	 FNyiwNPIKyIZ0RqZVQryGncguWj+KawUKM5G08BdgrIuin0kp8uUZKadAWxHVdp1X7
-	 OfFL6gIKxGx2TBpxqQwtipkUqxAhLMFy7Mo5eDLY=
+	b=SwhPvkukVPwsw0eYJNID2wzknd7MA3MhVIDGQcVe6vrWKYfvWZpWX9FcojIe6OKlk
+	 gQFBqb5+m4k74Ix8/+31PEQqCz4eeVnzWxhHID1T94jBJaZFnaYUxL0gquYj1kivte
+	 8MjAHoUI3AWTteg2c1HluW2i/l+XnUlps3BR19LY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404008AbfBKPKx (ORCPT
+        id S2391534AbfBKPLC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:11:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403995AbfBKPKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:50 -0500
+        id S2404030AbfBKPK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7329E222B9;
-        Mon, 11 Feb 2019 15:10:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E543222B2;
+        Mon, 11 Feb 2019 15:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897849;
-        bh=2SnJgGD3zp+iJezSVZZs5/0VYf7QBAfEDvhA9BAuXSA=;
+        s=default; t=1549897858;
+        bh=hF79k1znq7kOd5uWAGWBCTYDu92ThgjmK6xNJedYFfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1uMiExeByxGsWiCxJZeQ7pai3p7OwOwBTdEoyusPK11q7h1slNFPcfEOPcua4QE2T
-         lCeq1ndq3S4tAEE8w2e/sUycxMYxcciTx/50fvvL1DbQxwZ7so7cjjjPV50kv7RUPV
-         YG29A0uQj20ffItcSSNRgXStvNJKhUYXhiu6G16g=
+        b=HBS0oMD6NXm8wSO4LTEdueBeAfDauqBr+y11VOIr1EnwyjVwtR70n5U6NQrcaDcj8
+         yk2BpvtbB5ZkS2sfZZ3bq6cJH77z9ChhSdTITHpN5y9fRK1icrg5LmNC1nyVmKxpaw
+         2Qr4elnqtswNzaOK7O7irtXYFD+LWgAC6YbNm1fQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 136/137] IB/hfi1: Add limit test for RC/UC send via loopback
-Date:   Mon, 11 Feb 2019 15:20:17 +0100
-Message-Id: <20190211141824.746591640@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 116/137] fuse: call pipe_buf_release() under pipe lock
+Date:   Mon, 11 Feb 2019 15:19:57 +0100
+Message-Id: <20190211141822.949669526@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,79 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Jann Horn <jannh@google.com>
 
-commit 09ce351dff8e7636af0beb72cd4a86c3904a0500 upstream.
+commit 9509941e9c534920ccc4771ae70bd6cbbe79df1c upstream.
 
-Fix potential memory corruption and panic in loopback for IB_WR_SEND
-variants.
+Some of the pipe_buf_release() handlers seem to assume that the pipe is
+locked - in particular, anon_pipe_buf_release() accesses pipe->tmp_page
+without taking any extra locks. From a glance through the callers of
+pipe_buf_release(), it looks like FUSE is the only one that calls
+pipe_buf_release() without having the pipe locked.
 
-The code blindly assumes the posted length will fit in the fetched rwqe,
-which is not a valid assumption.
+This bug should only lead to a memory leak, nothing terrible.
 
-Fix by adding a limit test, and triggering the appropriate send completion
-and putting the QP in an error state.  This mimics the handling for
-non-loopback QPs.
-
-Fixes: 15703461533a ("IB/{hfi1, qib, rdmavt}: Move ruc_loopback to rdmavt")
-Cc: <stable@vger.kernel.org> #v4.20+
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
 ---
- drivers/infiniband/hw/hfi1/ruc.c    |    7 ++++++-
- drivers/infiniband/hw/qib/qib_ruc.c |    7 ++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ fs/fuse/dev.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/infiniband/hw/hfi1/ruc.c
-+++ b/drivers/infiniband/hw/hfi1/ruc.c
-@@ -471,6 +471,8 @@ send:
- 			goto op_err;
- 		if (!ret)
- 			goto rnr_nak;
-+		if (wqe->length > qp->r_len)
-+			goto inv_err;
- 		break;
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2018,8 +2018,10 @@ static ssize_t fuse_dev_splice_write(str
  
- 	case IB_WR_RDMA_WRITE_WITH_IMM:
-@@ -638,7 +640,10 @@ op_err:
- 	goto err;
+ 	ret = fuse_dev_do_write(fud, &cs, len);
  
- inv_err:
--	send_status = IB_WC_REM_INV_REQ_ERR;
-+	send_status =
-+		sqp->ibqp.qp_type == IB_QPT_RC ?
-+			IB_WC_REM_INV_REQ_ERR :
-+			IB_WC_SUCCESS;
- 	wc.status = IB_WC_LOC_QP_OP_ERR;
- 	goto err;
++	pipe_lock(pipe);
+ 	for (idx = 0; idx < nbuf; idx++)
+ 		pipe_buf_release(pipe, &bufs[idx]);
++	pipe_unlock(pipe);
  
---- a/drivers/infiniband/hw/qib/qib_ruc.c
-+++ b/drivers/infiniband/hw/qib/qib_ruc.c
-@@ -449,6 +449,8 @@ again:
- 			goto op_err;
- 		if (!ret)
- 			goto rnr_nak;
-+		if (wqe->length > qp->r_len)
-+			goto inv_err;
- 		break;
- 
- 	case IB_WR_RDMA_WRITE_WITH_IMM:
-@@ -612,7 +614,10 @@ op_err:
- 	goto err;
- 
- inv_err:
--	send_status = IB_WC_REM_INV_REQ_ERR;
-+	send_status =
-+		sqp->ibqp.qp_type == IB_QPT_RC ?
-+			IB_WC_REM_INV_REQ_ERR :
-+			IB_WC_SUCCESS;
- 	wc.status = IB_WC_LOC_QP_OP_ERR;
- 	goto err;
- 
+ out:
+ 	kfree(bufs);
 
 
