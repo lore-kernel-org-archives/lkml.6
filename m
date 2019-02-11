@@ -2,108 +2,165 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B35C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC2EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC6620700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901446;
-	bh=Pi7zxNGNXnrFqsGW7Qk8jqi+88OOg4kGv2mQ881/gf0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e0kl7f6yTumXqkSGg1Hxr6txqmbTUxHmQeB76EwCmNcxqSd4BCcuao+ymSahdUoJ/
-	 ZuE4sfci7Oj1gb+3mofyKSy1gsUI+2IvRfwYQjr5exfav8xa+BaG+ZdAf+5JI8pmpz
-	 lA6FqZy90ypb/xsadIHq797hP+ZKUP/QqektgGNU=
+	by mail.kernel.org (Postfix) with ESMTP id A3E1C21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbfBKQKp (ORCPT
+        id S1730818AbfBKQKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbfBKOYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:24:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECC2C20821;
-        Mon, 11 Feb 2019 14:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895064;
-        bh=Pi7zxNGNXnrFqsGW7Qk8jqi+88OOg4kGv2mQ881/gf0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lbXt9G2l0WeFRIN5JxHkV449qBh5i9kx013901WsXU0kd11Tv3K0rYK/RIJCD9sl5
-         kn62B1DOB5RXITvwMnfvbQvhYP5oQSiOzEeSYo+YG0Nwp5SJE0ulvolck3qsp6FALm
-         6Jhzyyc9LdBOurcG73zvYGcmcoYDAagWiruLOWGg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murton Liu <murton.liu@amd.com>,
-        Krunoslav Kovac <Krunoslav.Kovac@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 049/352] drm/amd/display: fix gamma not being applied correctly
-Date:   Mon, 11 Feb 2019 15:14:36 +0100
-Message-Id: <20190211141849.375284545@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 11:10:49 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:32839 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbfBKOZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:51 -0500
+X-Originating-IP: 90.88.22.177
+Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 48994240011;
+        Mon, 11 Feb 2019 14:25:47 +0000 (UTC)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: [PATCH net-next 2/4] net: phy: Move of_set_phy_eee_broken to phy-core.c
+Date:   Mon, 11 Feb 2019 15:25:27 +0100
+Message-Id: <20190211142529.22885-3-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
+References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Since of_set_phy_supported was moved to phy-core.c, we can also move
+of_set_phy_eee_broken to the same location, so that we have all OF
+functions in the same place.
 
-------------------
+This patch doesn't intend to introduce any change in behaviour.
 
-[ Upstream commit 8ce504b9389be846bcdf512ed5be8f661b3bf097 ]
-
-[why]
-Gamma was always being set as identity on SDR monitor,
-leading to no changes in gamma. This caused nightlight to
-not apply correctly.
-
-[how]
-Added a default gamma structure to compare against
-in the sdr case.
-
-Signed-off-by: Murton Liu <murton.liu@amd.com>
-Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy-core.c   | 27 +++++++++++++++++++++++++++
+ drivers/net/phy/phy_device.c | 28 ----------------------------
+ include/linux/phy.h          |  1 +
+ 3 files changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 193184affefb..32e4c653b1b4 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1226,7 +1226,8 @@ static bool dcn10_set_input_transfer_func(struct pipe_ctx *pipe_ctx,
- 		tf = plane_state->in_transfer_func;
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 855abf487279..de58a59815d5 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -383,6 +383,33 @@ void of_set_phy_supported(struct phy_device *phydev)
+ 		__set_phy_supported(phydev, max_speed);
+ }
  
- 	if (plane_state->gamma_correction &&
--		!plane_state->gamma_correction->is_identity
-+		!dpp_base->ctx->dc->debug.always_use_regamma
-+		&& !plane_state->gamma_correction->is_identity
- 			&& dce_use_lut(plane_state->format))
- 		dpp_base->funcs->dpp_program_input_lut(dpp_base, plane_state->gamma_correction);
++void of_set_phy_eee_broken(struct phy_device *phydev)
++{
++	struct device_node *node = phydev->mdio.dev.of_node;
++	u32 broken = 0;
++
++	if (!IS_ENABLED(CONFIG_OF_MDIO))
++		return;
++
++	if (!node)
++		return;
++
++	if (of_property_read_bool(node, "eee-broken-100tx"))
++		broken |= MDIO_EEE_100TX;
++	if (of_property_read_bool(node, "eee-broken-1000t"))
++		broken |= MDIO_EEE_1000T;
++	if (of_property_read_bool(node, "eee-broken-10gt"))
++		broken |= MDIO_EEE_10GT;
++	if (of_property_read_bool(node, "eee-broken-1000kx"))
++		broken |= MDIO_EEE_1000KX;
++	if (of_property_read_bool(node, "eee-broken-10gkx4"))
++		broken |= MDIO_EEE_10GKX4;
++	if (of_property_read_bool(node, "eee-broken-10gkr"))
++		broken |= MDIO_EEE_10GKR;
++
++	phydev->eee_broken_modes = broken;
++}
++
+ /**
+  * phy_resolve_aneg_linkmode - resolve the advertisements into phy settings
+  * @phydev: The phy_device struct
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 65e18293d8e5..626f0527f36a 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -30,7 +30,6 @@
+ #include <linux/mdio.h>
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+-#include <linux/of.h>
  
+ MODULE_DESCRIPTION("PHY library");
+ MODULE_AUTHOR("Andy Fleming");
+@@ -2094,33 +2093,6 @@ bool phy_validate_pause(struct phy_device *phydev,
+ }
+ EXPORT_SYMBOL(phy_validate_pause);
+ 
+-static void of_set_phy_eee_broken(struct phy_device *phydev)
+-{
+-	struct device_node *node = phydev->mdio.dev.of_node;
+-	u32 broken = 0;
+-
+-	if (!IS_ENABLED(CONFIG_OF_MDIO))
+-		return;
+-
+-	if (!node)
+-		return;
+-
+-	if (of_property_read_bool(node, "eee-broken-100tx"))
+-		broken |= MDIO_EEE_100TX;
+-	if (of_property_read_bool(node, "eee-broken-1000t"))
+-		broken |= MDIO_EEE_1000T;
+-	if (of_property_read_bool(node, "eee-broken-10gt"))
+-		broken |= MDIO_EEE_10GT;
+-	if (of_property_read_bool(node, "eee-broken-1000kx"))
+-		broken |= MDIO_EEE_1000KX;
+-	if (of_property_read_bool(node, "eee-broken-10gkx4"))
+-		broken |= MDIO_EEE_10GKX4;
+-	if (of_property_read_bool(node, "eee-broken-10gkr"))
+-		broken |= MDIO_EEE_10GKR;
+-
+-	phydev->eee_broken_modes = broken;
+-}
+-
+ static bool phy_drv_supports_irq(struct phy_driver *phydrv)
+ {
+ 	return phydrv->config_intr && phydrv->ack_interrupt;
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 20344c7744d8..1a1d93a2a906 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -674,6 +674,7 @@ phy_lookup_setting(int speed, int duplex, const unsigned long *mask,
+ size_t phy_speeds(unsigned int *speeds, size_t size,
+ 		  unsigned long *mask);
+ void of_set_phy_supported(struct phy_device *phydev);
++void of_set_phy_eee_broken(struct phy_device *phydev);
+ 
+ static inline bool __phy_is_started(struct phy_device *phydev)
+ {
 -- 
-2.19.1
-
-
+2.19.2
 
