@@ -2,165 +2,100 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9B4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8C8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98207218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73154218A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfBKNWe (ORCPT
+        id S1727804AbfBKNXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:22:34 -0500
-Received: from foss.arm.com ([217.140.101.70]:48392 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727913AbfBKNWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:22:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C96F80D;
-        Mon, 11 Feb 2019 05:22:30 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8390B3F557;
-        Mon, 11 Feb 2019 05:22:28 -0800 (PST)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org, mingo@kernel.org
-Cc:     akpm@linux-foundation.org, anders.roxell@linaro.org,
-        boqun.feng@gmail.com, mark.rutland@arm.com,
-        naresh.kamboju@linaro.org, peterz@infradead.org,
-        will.deacon@arm.com
-Subject: [PATCHv2 2/2] locking/atomics: Check atomic headers with sha1sum
-Date:   Mon, 11 Feb 2019 13:22:13 +0000
-Message-Id: <20190211132213.15249-3-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190211132213.15249-1-mark.rutland@arm.com>
-References: <20190211132213.15249-1-mark.rutland@arm.com>
+        Mon, 11 Feb 2019 08:23:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43170 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727490AbfBKNXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:23:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD3C2AED6;
+        Mon, 11 Feb 2019 13:23:17 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-riscv@lists.infradead.org, Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Patrick =?utf-8?Q?St=C3=A4hlin?= <me@packi.ch>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zong Li <zongbox@gmail.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [v3 PATCH 8/8] RISC-V: Assign hwcap only according to boot cpu.
+References: <1549590681-24125-1-git-send-email-atish.patra@wdc.com>
+        <1549590681-24125-9-git-send-email-atish.patra@wdc.com>
+X-Yow:  I just heard the SEVENTIES were over!!  And I was just getting in touch
+ with my LEISURE SUIT!!
+Date:   Mon, 11 Feb 2019 14:23:15 +0100
+In-Reply-To: <1549590681-24125-9-git-send-email-atish.patra@wdc.com> (Atish
+        Patra's message of "Thu, 7 Feb 2019 17:51:21 -0800")
+Message-ID: <mvmo97iv4qk.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.91 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently check the atomic headers at build-time to ensure they
-haven't been modified directly, and these checks require regenerating
-the headers in full. As this takes a few seconds, even when
-parallelized, this is too slow to run for every kernel build.
+On Feb 07 2019, Atish Patra <atish.patra@wdc.com> wrote:
 
-Instead, we can generate a hash of each header as we generate them,
-which we can cheaply check at build time (~0.16s for all headers).
+> +	while ((node = of_find_node_by_type(node, "cpu"))) {
+> +		if (!node) {
 
-This patch does so, updating headers with their hashes using the new
-gen-atomics.sh script. As some users apparently build the kernel wihout
-coreutils, lacking sha1sum, the checks are skipped in this case.
-Presumably, most developers have a working coreutils installation.
+That can never be true.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- include/asm-generic/atomic-instrumented.h |  1 +
- include/asm-generic/atomic-long.h         |  1 +
- include/linux/atomic-fallback.h           |  1 +
- scripts/atomic/check-atomics.sh           | 26 ++++++++++++++++++++------
- scripts/atomic/gen-atomics.sh             | 20 ++++++++++++++++++++
- 5 files changed, 43 insertions(+), 6 deletions(-)
- create mode 100755 scripts/atomic/gen-atomics.sh
+> +			pr_warn("Unable to find \"cpu\" devicetree entry");
+> +			return;
+> +		}
+> +
+> +		hartid = riscv_of_processor_hartid(node);
+> +		if (hartid < 0)
+> +			continue;
+>  
+> -	if (of_property_read_string(node, "riscv,isa", &isa)) {
+> -		pr_warning("Unable to find \"riscv,isa\" devicetree entry");
+> +		if (of_property_read_string(node, "riscv,isa", &isa)) {
+> +			pr_warn("Unable to find \"riscv,isa\" devicetree entry");
+> +			of_node_put(node);
+> +			return;
+> +		}
+>  		of_node_put(node);
 
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index b8f5b35216e1..e8730c6b9fe2 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -1785,3 +1785,4 @@ atomic64_dec_if_positive(atomic64_t *v)
- })
- 
- #endif /* _ASM_GENERIC_ATOMIC_INSTRUMENTED_H */
-+// b29b625d5de9280f680e42c7be859b55b15e5f6a
-diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
-index a833d385a70b..881c7e27af28 100644
---- a/include/asm-generic/atomic-long.h
-+++ b/include/asm-generic/atomic-long.h
-@@ -1010,3 +1010,4 @@ atomic_long_dec_if_positive(atomic_long_t *v)
- 
- #endif /* CONFIG_64BIT */
- #endif /* _ASM_GENERIC_ATOMIC_LONG_H */
-+// 77558968132ce4f911ad53f6f52ce423006f6268
-diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
-index 1c02c0112fbb..a7d240e465c0 100644
---- a/include/linux/atomic-fallback.h
-+++ b/include/linux/atomic-fallback.h
-@@ -2292,3 +2292,4 @@ atomic64_dec_if_positive(atomic64_t *v)
- #define atomic64_cond_read_relaxed(v, c) smp_cond_load_relaxed(&(v)->counter, (c))
- 
- #endif /* _LINUX_ATOMIC_FALLBACK_H */
-+// 25de4a2804d70f57e994fe3b419148658bb5378a
-diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
-index c30101cddf2d..cfa0c2f71c84 100755
---- a/scripts/atomic/check-atomics.sh
-+++ b/scripts/atomic/check-atomics.sh
-@@ -7,13 +7,27 @@ ATOMICDIR=$(dirname $0)
- ATOMICTBL=${ATOMICDIR}/atomics.tbl
- LINUXDIR=${ATOMICDIR}/../..
- 
-+echo '' | sha1sum - > /dev/null 2>&1
-+if [ $? -ne 0 ]; then
-+	printf "sha1sum not available, skipping atomic header checks.\n"
-+	exit 0
-+fi
-+
- cat <<EOF |
--gen-atomic-instrumented.sh      asm-generic/atomic-instrumented.h
--gen-atomic-long.sh              asm-generic/atomic-long.h
--gen-atomic-fallback.sh          linux/atomic-fallback.h
-+asm-generic/atomic-instrumented.h
-+asm-generic/atomic-long.h
-+linux/atomic-fallback.h
- EOF
--while read script header; do
--	if ! (${ATOMICDIR}/${script} ${ATOMICTBL} | diff - ${LINUXDIR}/include/${header} > /dev/null); then
--		printf "warning: include/${header} is out-of-date.\n"
-+while read header; do
-+	OLDSUM="$(tail -n 1 ${LINUXDIR}/include/${header})"
-+	OLDSUM="${OLDSUM#// }"
-+
-+	NEWSUM="$(head -n -1 ${LINUXDIR}/include/${header} | sha1sum)"
-+	NEWSUM="${NEWSUM%% *}"
-+
-+	if [ "${OLDSUM}" != "${NEWSUM}" ]; then
-+		printf "warning: generated include/${header} has been modified.\n"
- 	fi
- done
-+
-+exit 0
-diff --git a/scripts/atomic/gen-atomics.sh b/scripts/atomic/gen-atomics.sh
-new file mode 100755
-index 000000000000..27400b0cd732
---- /dev/null
-+++ b/scripts/atomic/gen-atomics.sh
-@@ -0,0 +1,20 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate atomic headers
-+
-+ATOMICDIR=$(dirname $0)
-+ATOMICTBL=${ATOMICDIR}/atomics.tbl
-+LINUXDIR=${ATOMICDIR}/../..
-+
-+cat <<EOF |
-+gen-atomic-instrumented.sh      asm-generic/atomic-instrumented.h
-+gen-atomic-long.sh              asm-generic/atomic-long.h
-+gen-atomic-fallback.sh          linux/atomic-fallback.h
-+EOF
-+while read script header; do
-+	${ATOMICDIR}/${script} ${ATOMICTBL} > ${LINUXDIR}/include/${header}
-+	HASH="$(sha1sum ${LINUXDIR}/include/${header})"
-+	HASH="${HASH%% *}"
-+	printf "// %s\n" "${HASH}" >> ${LINUXDIR}/include/${header}
-+done
+[    0.000000] OF: ERROR: Bad of_node_put() on /cpus/cpu@1
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc6-00020-g5903f30f1310 #12
+[    0.000000] Call Trace:
+[    0.000000] [<ffffffe001076812>] walk_stackframe+0x0/0xa4
+[    0.000000] [<ffffffe001076a12>] show_stack+0x2a/0x34
+[    0.000000] [<ffffffe0015cf9ea>] dump_stack+0x62/0x7c
+[    0.000000] [<ffffffe00149fed4>] of_node_release+0xbe/0xc0
+[    0.000000] [<ffffffe0015d465a>] kobject_put+0xa6/0x1e8
+[    0.000000] [<ffffffe00149f44e>] of_node_put+0x16/0x20
+[    0.000000] [<ffffffe00149b45e>] of_find_node_by_type+0x66/0xa4
+[    0.000000] [<ffffffe0010755ca>] riscv_fill_hwcap+0x14c/0x1ce
+[    0.000000] [<ffffffe0000026d4>] 0xffffffe0000026d4
+[    0.000000] [<ffffffe0000006ec>] 0xffffffe0000006ec
+[    0.000000] [<ffffffe000000076>] 0xffffffe000000076
+
+Andreas.
+
 -- 
-2.11.0
-
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
