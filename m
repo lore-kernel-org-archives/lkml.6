@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1B6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F889C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9549221773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B7621773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897200;
-	bh=Sm/6yHg/ZlqRz49T243GbfD3QH3rt3KBgV2Aa1AtQHQ=;
+	s=default; t=1549897204;
+	bh=yMEyF96nlmL8h4jjM3M4zj/XhLZeLh91c8jTTDmA2po=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bYHy6RFBKmFHl+Ku9KodQvXI9VDMHta6wRVO8/v7VKcrmjAnOVI6k3jETUGwANcnI
-	 vOllljiyJ2yLjoJc+yJIuS09hJUxwIMce/9iEylXJy5g/we3ku/yCsPNXQHS3hjvlk
-	 e8xbFxc2rsH14xZYZnfgr8ZWacFtiXxvGdzC5cIc=
+	b=mfojXaia2LokuEbnAbC+hP/uaSgR1WuI6lvU7GzOSdjtAY0YGaUC1J6IofQKWuZrB
+	 alsMCzBNwCzD/LJJqAhNZ0aK6SCI+aBARZGTvwWNji8gf75oUD+nWdJSjUlUFl/UdR
+	 YjmESh/ju7ZIHDeJy5Y9uR8Jd0sXyjB0CQtGTo9Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389913AbfBKO77 (ORCPT
+        id S2389921AbfBKPAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47792 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727896AbfBKO75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:57 -0500
+        id S1727896AbfBKPAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:00:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92B7C21773;
-        Mon, 11 Feb 2019 14:59:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F1B2206BA;
+        Mon, 11 Feb 2019 14:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897197;
-        bh=Sm/6yHg/ZlqRz49T243GbfD3QH3rt3KBgV2Aa1AtQHQ=;
+        s=default; t=1549897199;
+        bh=yMEyF96nlmL8h4jjM3M4zj/XhLZeLh91c8jTTDmA2po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w28gGySOmbSVmRe0TGY4Or5nuMJMZ4PQDrFziLsTuQWyBqBtAZWhRwqp+899T3OcW
-         sSnEd2mi8ovqWwQh9J58PI0Kwi/SqOR+GqmyryRAhhp/8Y3Ht4iASU9K3v0PPSKlS7
-         dV8fqPQWZZ0DZIb76QQNkRKBdJ8EpEnXxCRWS7vA=
+        b=FX5sReRxvXZ8N/J0mEZCt96XZ4DxYw1gNdBLOG2XiDzvvkN/0W+IDLWaADqrT1T4X
+         QQGTIkjMC9OdJabI6zTt7TLN0U9dQcVHfhekj42tNYpFXAaDK9kQQjFzbhKUL+CS+Z
+         9J9DUdjAE7mdd2TMrASc7Mso6qOgnPQ/rsDNY4yY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 083/205] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Mon, 11 Feb 2019 15:18:01 +0100
-Message-Id: <20190211141834.118409000@linuxfoundation.org>
+Subject: [PATCH 4.14 116/205] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 11 Feb 2019 15:18:34 +0100
+Message-Id: <20190211141836.065387155@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,44 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-Same as other i.MX6 SoCs, ensure unused MMDC channel's
-handshake is bypassed, this is to make sure no request
-signal will be generated when periphe_clk_sel is changed
-or SRC warm reset is triggered.
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
+
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 9642cdf0fb88..c264a744fae8 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,6 +17,8 @@
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index cc2ce60f4f09..f22c8ae15ad8 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
  
- #include "clk.h"
- 
-+#define CCDR				0x4
-+#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
- 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
- 
-+	/* Ensure the MMDC CH0 handshake is bypassed */
-+	writel_relaxed(readl_relaxed(base + CCDR) |
-+		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
 +
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
  
- 	clk_data.clks = clks;
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
 -- 
 2.19.1
 
