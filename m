@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B89C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81D7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34053222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9C9222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899576;
-	bh=dTJu1T2rabD1jdkKv6pLU86dxyx9oiQtSSIxrpOgTqw=;
+	s=default; t=1549899586;
+	bh=U9OOULiVYMifsBkIQgWzX857dD4hduMX3VskumbYgdM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X/+J5RjAfVb2aXnT1OkIpkOiQNNpAtZtGR27I1XSI+alKv7zqAtH9TerEa5zfU3d1
-	 L/6ZfMK6pcELhe6esd8BmqBzYoRtzwkiBqcHgBAZV2BtC1PfkbqVae1gIPoGfKABDv
-	 NBhh7FqIT82L4gk+zR6zhwqOw2if/Og78MOqLKZQ=
+	b=ZXeeRXOULD28YYdvNxOCcG2oSLWN/LQv6JHF2S8OqAEPBqiHdsq4i0nuReFFV+geQ
+	 1ea2GRIjgqbgU0EC9UffHX1X2Dzsoy1N8c0mdebzWEdXagurbpizUDozmQRRjWgxCw
+	 9KV268aUE4tXeKOQbosz4PU/KKZPqkDJEdFeNrhU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387867AbfBKOtY (ORCPT
+        id S2388194AbfBKPjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:49:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34868 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:39:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387846AbfBKOtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:49:19 -0500
+        id S2387820AbfBKOtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81BAA206BA;
-        Mon, 11 Feb 2019 14:49:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE9A320855;
+        Mon, 11 Feb 2019 14:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896559;
-        bh=dTJu1T2rabD1jdkKv6pLU86dxyx9oiQtSSIxrpOgTqw=;
+        s=default; t=1549896550;
+        bh=U9OOULiVYMifsBkIQgWzX857dD4hduMX3VskumbYgdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JaAzPIDIz2fcvf7pNAnFePCOY8nL7sSHRtEJWW0ACYwkjalhTfAAXfkRcRuamib7D
-         r5H+vTuPmn3FEgWS4xdVq850cSt+bsoAeWFIfwOK66hFaWw5PMur0tqSYERXeDVmBr
-         EoegeDpKRgFovPY8FFC7O+E1XsLrfmGRdzHqIw6Y=
+        b=1DYCvC6Du1jWrLeMI2CpeOV/40ZyIb37mwiPBth0wPos6E69kwKkzz2w+fuCOCfe+
+         LC6FL6dXEoM3hF3EEZb6gclfUHBNFyJtLI+e3JS/NjqNzdL7rMzlnVVJujvmaL374e
+         0IXo1EYiJadTM/fvF5UzedbjXPkC0MiuidWZ6ovk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenjing Liu <Wenjing.Liu@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Jun Lei <Jun.Lei@amd.com>,
-        Abdoulaye Berthe <Abdoulaye.Berthe@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 194/313] drm/amd/display: validate extended dongle caps
-Date:   Mon, 11 Feb 2019 15:17:54 +0100
-Message-Id: <20190211141906.208732148@linuxfoundation.org>
+        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 191/313] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
+Date:   Mon, 11 Feb 2019 15:17:51 +0100
+Message-Id: <20190211141906.022545214@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,42 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 99b922f9ed6a6313c0d2247cde8aa1e4a0bd67e4 ]
+[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
 
-[why]
-Some dongle doesn't have a valid extended dongle caps,
-but we still set the extended dongle caps to be valid.
-This causes validation fails for all timing.
+With "on-no-data-accessible suspend-io", DRBD requires the next attach
+or connect to be to the very same data generation uuid tag it lost last.
 
-[how]
-If no dp_hdmi_max_pixel_clk is provided,
-don't use extended dongle caps.
+If we first lost connection to the peer,
+then later lost connection to our own disk,
+we would usually refuse to re-connect to the peer,
+because it presents the wrong data set.
 
-Signed-off-by: Wenjing Liu <Wenjing.Liu@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Reviewed-by: Jun Lei <Jun.Lei@amd.com>
-Acked-by: Abdoulaye Berthe <Abdoulaye.Berthe@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+However, if the peer first connects without a disk,
+and then attached its disk, we accepted that same wrong data set,
+which would be "unexpected" by any user of that DRBD
+and cause "undefined results" (read: very likely data corruption).
+
+The fix is to forcefully disconnect as soon as we notice that the peer
+attached to the "wrong" dataset.
+
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/block/drbd/drbd_receiver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index a7553b6d59c2..05840f5bddd5 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -2240,7 +2240,8 @@ static void get_active_converter_info(
- 					translate_dpcd_max_bpc(
- 						hdmi_color_caps.bits.MAX_BITS_PER_COLOR_COMPONENT);
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 45ac5fe288e4..cb919b964066 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4142,7 +4142,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	kfree(device->p_uuid);
+ 	device->p_uuid = p_uuid;
  
--				link->dpcd_caps.dongle_caps.extendedCapValid = true;
-+				if (link->dpcd_caps.dongle_caps.dp_hdmi_max_pixel_clk != 0)
-+					link->dpcd_caps.dongle_caps.extendedCapValid = true;
- 			}
- 
- 			break;
+-	if (device->state.conn < C_CONNECTED &&
++	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
+ 	    device->state.disk < D_INCONSISTENT &&
+ 	    device->state.role == R_PRIMARY &&
+ 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
 -- 
 2.19.1
 
