@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13929C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD61DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF9521B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC6820869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898712;
-	bh=vF6Ija9CafkHWozTnBAD4APHeZENXMdXbplwgIlWYq4=;
+	s=default; t=1549898718;
+	bh=64LskGI5elZW7rrrJKV14uZZxUScz8ySNl6vTLM4Eto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xkg4FC/xjIvp9bJp2lyqAcJNoceu2N4l6q1i2LRqXAHjQ2+qqd1iXBrZ/ntBGqwbp
-	 iVkRZwjwZgF0wbSStzpwMc7O2h0rQ7vMwg1aS1zrMOYVeI5cnxy0seSoR3/kUxwdY4
-	 HUqP/WAZB4EvJr0BX6ZAC+lnRs9+Btv5eWkO+99M=
+	b=R9waudPYQjaUHY0D9j8HwJUPYj80KgoDHIqiLJvBk2/Jpi/nTBTd9wUlsr9xGsZrz
+	 8/mVBCGMEhu7dz/+e64mFuCeNiUT5QVc5Wd+Eg0ckLV9DIpXyIga4ckSAnAERIalrS
+	 Vp7N9Fc6dfUFcCFG9Nh5paRVscPKp/FwfY/QunoM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389864AbfBKPZL (ORCPT
+        id S2388937AbfBKPB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:25:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49622 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:01:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390206AbfBKPBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:35 -0500
+        id S2390165AbfBKPBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:01:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACA0E222A7;
-        Mon, 11 Feb 2019 15:01:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4685222A6;
+        Mon, 11 Feb 2019 15:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897295;
-        bh=vF6Ija9CafkHWozTnBAD4APHeZENXMdXbplwgIlWYq4=;
+        s=default; t=1549897283;
+        bh=64LskGI5elZW7rrrJKV14uZZxUScz8ySNl6vTLM4Eto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y7CAffONXh6sOGGrR+LRaIvz5/tUtyxUTvicbnfD2M9eokwau8KPEKT48/k4u7JUz
-         1zbgnGnqzn/gErYr6r0QnvHBFFlyHrhNYEDgaoB4UJj450uCbEYSfHB/bj+8+ym1bg
-         5QKc6YUuoJufjfqfyoa9o866VHMiI8PZ/NPTZiZE=
+        b=mU7BrmfH4UU1mwNrsGBEBbS/dLZ/JCszuIDA95nlZvHTwpzLQVts0PamsYz0L467m
+         bFiGn3OytZoU+dVSNcFgLYIHWkBfwP0r03uSxMtg7YtED57OOdW3U/q8sSIquLuamZ
+         WlWrYHGIz4R7HKljIhq7wbY4gDsZgxVN0vLW9InE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>,
-        =?UTF-8?q?Sini=C5=A1a=20Bandin?= <sinisa@4net.rs>
-Subject: [PATCH 4.14 123/205] md: fix raid10 hang issue caused by barrier
-Date:   Mon, 11 Feb 2019 15:18:41 +0100
-Message-Id: <20190211141836.497307516@linuxfoundation.org>
+        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 119/205] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
+Date:   Mon, 11 Feb 2019 15:18:37 +0100
+Message-Id: <20190211141836.245486770@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,122 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e820d55cb99dd93ac2dc949cf486bb187e5cd70d ]
+[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
 
-When both regular IO and resync IO happen at the same time,
-and if we also need to split regular. Then we can see tasks
-hang due to barrier.
+With "on-no-data-accessible suspend-io", DRBD requires the next attach
+or connect to be to the very same data generation uuid tag it lost last.
 
-1. resync thread
-[ 1463.757205] INFO: task md1_resync:5215 blocked for more than 480 seconds.
-[ 1463.757207]       Not tainted 4.19.5-1-default #1
-[ 1463.757209] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 1463.757212] md1_resync      D    0  5215      2 0x80000000
-[ 1463.757216] Call Trace:
-[ 1463.757223]  ? __schedule+0x29a/0x880
-[ 1463.757231]  ? raise_barrier+0x8d/0x140 [raid10]
-[ 1463.757236]  schedule+0x78/0x110
-[ 1463.757243]  raise_barrier+0x8d/0x140 [raid10]
-[ 1463.757248]  ? wait_woken+0x80/0x80
-[ 1463.757257]  raid10_sync_request+0x1f6/0x1e30 [raid10]
-[ 1463.757265]  ? _raw_spin_unlock_irq+0x22/0x40
-[ 1463.757284]  ? is_mddev_idle+0x125/0x137 [md_mod]
-[ 1463.757302]  md_do_sync.cold.78+0x404/0x969 [md_mod]
-[ 1463.757311]  ? wait_woken+0x80/0x80
-[ 1463.757336]  ? md_rdev_init+0xb0/0xb0 [md_mod]
-[ 1463.757351]  md_thread+0xe9/0x140 [md_mod]
-[ 1463.757358]  ? _raw_spin_unlock_irqrestore+0x2e/0x60
-[ 1463.757364]  ? __kthread_parkme+0x4c/0x70
-[ 1463.757369]  kthread+0x112/0x130
-[ 1463.757374]  ? kthread_create_worker_on_cpu+0x40/0x40
-[ 1463.757380]  ret_from_fork+0x3a/0x50
+If we first lost connection to the peer,
+then later lost connection to our own disk,
+we would usually refuse to re-connect to the peer,
+because it presents the wrong data set.
 
-2. regular IO
-[ 1463.760679] INFO: task kworker/0:8:5367 blocked for more than 480 seconds.
-[ 1463.760683]       Not tainted 4.19.5-1-default #1
-[ 1463.760684] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 1463.760687] kworker/0:8     D    0  5367      2 0x80000000
-[ 1463.760718] Workqueue: md submit_flushes [md_mod]
-[ 1463.760721] Call Trace:
-[ 1463.760731]  ? __schedule+0x29a/0x880
-[ 1463.760741]  ? wait_barrier+0xdd/0x170 [raid10]
-[ 1463.760746]  schedule+0x78/0x110
-[ 1463.760753]  wait_barrier+0xdd/0x170 [raid10]
-[ 1463.760761]  ? wait_woken+0x80/0x80
-[ 1463.760768]  raid10_write_request+0xf2/0x900 [raid10]
-[ 1463.760774]  ? wait_woken+0x80/0x80
-[ 1463.760778]  ? mempool_alloc+0x55/0x160
-[ 1463.760795]  ? md_write_start+0xa9/0x270 [md_mod]
-[ 1463.760801]  ? try_to_wake_up+0x44/0x470
-[ 1463.760810]  raid10_make_request+0xc1/0x120 [raid10]
-[ 1463.760816]  ? wait_woken+0x80/0x80
-[ 1463.760831]  md_handle_request+0x121/0x190 [md_mod]
-[ 1463.760851]  md_make_request+0x78/0x190 [md_mod]
-[ 1463.760860]  generic_make_request+0x1c6/0x470
-[ 1463.760870]  raid10_write_request+0x77a/0x900 [raid10]
-[ 1463.760875]  ? wait_woken+0x80/0x80
-[ 1463.760879]  ? mempool_alloc+0x55/0x160
-[ 1463.760895]  ? md_write_start+0xa9/0x270 [md_mod]
-[ 1463.760904]  raid10_make_request+0xc1/0x120 [raid10]
-[ 1463.760910]  ? wait_woken+0x80/0x80
-[ 1463.760926]  md_handle_request+0x121/0x190 [md_mod]
-[ 1463.760931]  ? _raw_spin_unlock_irq+0x22/0x40
-[ 1463.760936]  ? finish_task_switch+0x74/0x260
-[ 1463.760954]  submit_flushes+0x21/0x40 [md_mod]
+However, if the peer first connects without a disk,
+and then attached its disk, we accepted that same wrong data set,
+which would be "unexpected" by any user of that DRBD
+and cause "undefined results" (read: very likely data corruption).
 
-So resync io is waiting for regular write io to complete to
-decrease nr_pending (conf->barrier++ is called before waiting).
-The regular write io splits another bio after call wait_barrier
-which call nr_pending++, then the splitted bio would continue
-with raid10_write_request -> wait_barrier, so the splitted bio
-has to wait for barrier to be zero, then deadlock happens as
-follows.
+The fix is to forcefully disconnect as soon as we notice that the peer
+attached to the "wrong" dataset.
 
-	resync io		regular io
-
-	raise_barrier
-				wait_barrier
-				generic_make_request
-				wait_barrier
-
-To resolve the issue, we need to call allow_barrier to decrease
-nr_pending before generic_make_request since regular IO is not
-issued to underlying devices, and wait_barrier is called again
-to ensure no internal IO happening.
-
-Fixes: fc9977dd069e ("md/raid10: simplify the splitting of requests.")
-Reported-and-tested-by: Siniša Bandin <sinisa@4net.rs>
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid10.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/block/drbd/drbd_receiver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 52ddfa0fca94..2ce079a0b0bd 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1190,7 +1190,9 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
- 		struct bio *split = bio_split(bio, max_sectors,
- 					      gfp, conf->bio_split);
- 		bio_chain(split, bio);
-+		allow_barrier(conf);
- 		generic_make_request(bio);
-+		wait_barrier(conf);
- 		bio = split;
- 		r10_bio->master_bio = bio;
- 		r10_bio->sectors = max_sectors;
-@@ -1479,7 +1481,9 @@ retry_write:
- 		struct bio *split = bio_split(bio, r10_bio->sectors,
- 					      GFP_NOIO, conf->bio_split);
- 		bio_chain(split, bio);
-+		allow_barrier(conf);
- 		generic_make_request(bio);
-+		wait_barrier(conf);
- 		bio = split;
- 		r10_bio->master_bio = bio;
- 	}
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 143c5a666e25..1aad373da50e 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4139,7 +4139,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	kfree(device->p_uuid);
+ 	device->p_uuid = p_uuid;
+ 
+-	if (device->state.conn < C_CONNECTED &&
++	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
+ 	    device->state.disk < D_INCONSISTENT &&
+ 	    device->state.role == R_PRIMARY &&
+ 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
 -- 
 2.19.1
 
