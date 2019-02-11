@@ -2,149 +2,145 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0F1C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0153C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0034121855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC79321855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="UZpU06VI"
+	dkim=pass (2048-bit key) header.d=ncentric-com.20150623.gappssmtp.com header.i=@ncentric-com.20150623.gappssmtp.com header.b="wWbj/JvR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733163AbfBKPsi (ORCPT
+        id S1733042AbfBKPsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:48:38 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:45724 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731392AbfBKOkh (ORCPT
+        Mon, 11 Feb 2019 10:48:36 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44450 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732112AbfBKPse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:40:37 -0500
-Received: by mail-yb1-f194.google.com with SMTP id e131so4218853ybh.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:40:37 -0800 (PST)
+        Mon, 11 Feb 2019 10:48:34 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y56so9243668edd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:48:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Tstql8YTOu4MoEgSzgXoCCPJCMqyNx9aLo/AydYYf7A=;
-        b=UZpU06VI5nyGPUji3iN6mgbZFYoiHE0jSh8jNTVpReUQH8ij4FLz/7rANY//d7VJYt
-         Cw5NUL9rveNsjVoqjRhv9vJDWQp2ML0XHgmyqIB/4V+YuOz9n+iRhWFX5SuDoqED/FXK
-         yKkLVwXhSwLUMn5jCn7+YAqgQLBCHK3CIfqnlPCSWb53VudDqqdLzB3nGCg5cfkEd0PI
-         lfo3M3nQRd/pLLJFiwbPfEobzPjeN0kJLnvaOHyAOjmXGImLS56hi7sn+iUN7DTEUyau
-         56+Tf/fxiiOH4METmU/GMlg3XbymmUWIGh5EQeefwiXMj34OUKS69jZp5s0ou8AjH0zQ
-         iQNw==
+        d=ncentric-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=aU5MNBGnX152eDQmWMpQK2TdiKRA+CVWKKM69YyusYs=;
+        b=wWbj/JvRDG0CdZ5ySV9rk2EBoLGCSBEcHg9W4y9vwPfTrV+rg6pTh1VGpoH7mONebD
+         uwleVhIPuPHU48kmclLNjSbfzfJrd8Nub6B8tPXy4+lC2ciryffn2FSH8WEkaoBWIV2N
+         6VwVl2XNETLVj6GoybSrm8AjJg29qxLINpdIEYYoliY9i92Ib42cVHeGWjZQyJCD1ZMW
+         gqmjVIjNUcVri89HG0r/DNuxkoAovUVz5qFRdghBZy7Aw7M/XW788K1IWt+uwYBOQ21F
+         qpqXDyr7rDujCNiqLx60ZrUqOZUs6tDhvh70i904sUjb05rYwXUOfqB8GbH7xOn9w6Ov
+         r+kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Tstql8YTOu4MoEgSzgXoCCPJCMqyNx9aLo/AydYYf7A=;
-        b=HmJ+KIOcjNn6wo8ceHRkWBhuv0dSORZgUXer8NpJxxy2azGgmnocvKrm9WOmFRFR8k
-         YNV/widdXGh/6sHRRcpSx5g0aOFv3/30teWf3M9x7P+OahnCZYTleDVw3qJf6djsnJet
-         jqODeh/tR+8SLQtWiQJ00qODItMDkczrhAlutGA/KM72oKVgEeN49OUt6IrP0r2BQ5KV
-         EQ9gFMugqiaxHimZeZyCG1tXoDQHdVWvwvxXAJVQNvBwrWBTv4das7WeMLHCCX7uemDI
-         ICO8+8CTO+7HRXFwzmCLWheNQLAadtgvtT2wE2b3pkrxFWyEVIqhY9tuN1xsTTJdJjTc
-         56LA==
-X-Gm-Message-State: AHQUAuZu39Eid3iOqVmMYOUaPThkerz2TinEOmM6d7M0zrkU2G+KbnRy
-        6G2JZpjlEQiXXDDcQMKj1YKgoA==
-X-Google-Smtp-Source: AHgI3Iazcb8GH3xhoApIW5S40qL+0JSCgyUpi1LK+2HKqshwQZEQWPMGJwuz0ujGwohUG0ihDLuLNQ==
-X-Received: by 2002:a25:2fd4:: with SMTP id v203mr24348553ybv.184.1549896036623;
-        Mon, 11 Feb 2019 06:40:36 -0800 (PST)
-Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
-        by smtp.gmail.com with ESMTPSA id 139sm4195958ywt.78.2019.02.11.06.40.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 06:40:36 -0800 (PST)
-Date:   Mon, 11 Feb 2019 09:40:34 -0500
-From:   Jon Mason <jdmason@kudzu.us>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH v3 0/8]  Fix breakage caused by the NTB multi-port
- patchset
-Message-ID: <20190211144034.GC13951@kudzu.us>
-References: <20190109192233.5752-1-logang@deltatee.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=aU5MNBGnX152eDQmWMpQK2TdiKRA+CVWKKM69YyusYs=;
+        b=A+7osk79JsG4OSDkCpYFCAzX7UqXlOAybzPn9pdkOfYZAG5AH55nqELTzPxYhFsAtU
+         1RRwV3Gl+XiozrmcZh1kFgLqftaaq2iYJaCZQV9ds87gPgVmy2xQco5pAM4Jj95Pwxf3
+         PMbUT2uZBb63qnkkMI+4lLxkhfLB/F8ojffo6Zq8J8t4naOGpbjugimMldJOe5FCbi1k
+         b38W2HhMT4iuDEbRniX7gG3E8GZvSHxJBXO7jes29Cwx248xhgWeuTm8ryDJWjSDqCpv
+         WhvFSGQ7HviLxy/Wtxxd71ovVM3FHpMsfXp13l3s3hQf5Q1DkwClRDTwWpr8hFCFcvKv
+         br3w==
+X-Gm-Message-State: AHQUAubzGBJ09jr/UI46EpjUArgBIqTTdtebZ7IENyJ+7NpLyir6CL9K
+        VCpDZU2Ifj+wA0XVjB1VoaI6HA==
+X-Google-Smtp-Source: AHgI3IY2v/FdQRrm/fFJ43BG6BY3Ir6lGoVxQktij5wkPJX7erZ64HvWvWjb+KRArI7exxFBNBQ7OQ==
+X-Received: by 2002:a50:bc12:: with SMTP id j18mr29715269edh.50.1549900111725;
+        Mon, 11 Feb 2019 07:48:31 -0800 (PST)
+Received: from [192.168.3.176] (d515300d8.static.telenet.be. [81.83.0.216])
+        by smtp.gmail.com with ESMTPSA id ge15sm2427938ejb.35.2019.02.11.07.48.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 07:48:31 -0800 (PST)
+Subject: Re: [PATCH 4.20 018/352] ath9k: dynack: use authentication messages
+ for late ack
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+ <20190211141847.541071852@linuxfoundation.org>
+From:   Koen Vandeputte <koen.vandeputte@ncentric.com>
+Message-ID: <e3740a06-8735-eed3-b427-e924f3e185ae@ncentric.com>
+Date:   Mon, 11 Feb 2019 16:48:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109192233.5752-1-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190211141847.541071852@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:22:25PM -0700, Logan Gunthorpe wrote:
-> Hey,
-> 
-> I'm resending this because I've recently found out that the change we
-> made to use the NTB struct device in DMA allocations is wrong and
-> needs to be reverted. Turns out that, when running with an IOMMU,
-> dma_alloc_coherent() will always fail if you pass it the NTB struct
-> device. This is because the device has not been assigned an IOMMU
-> group and the Intel IOMMU at least expect the devices to be on the PCI
-> bus and be able to find a proper bus-dev-fn number through a struct
-> pci device. Therefore, we must revert the change and I've changed
-> patch 2 to do this and remove the no longer necessary DMA mask
-> adjustments.
-> 
-> I'm not sure if we can get past the impass in getting this series merged:
-> I still maintain every patch in this series is necessary to fix a
-> regression and there's no way to add port numbers to switchtec in the
-> crosslink configuration so it can't be fixed in the other way that was
-> suggested.
 
-Given the need for this to get in (as it does fix actual problems) and
-the absence of comments on v3, I'm adding this to the ntb-next branch.
-If there is anyone that has anything more to say on this, please do so
-immediately.  Otherwise, I think this probably needs to be moved to the
-ntb branch and go into 5.1-rc1.
+On 11.02.19 15:14, Greg Kroah-Hartman wrote:
+> 4.20-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> [ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
+>
+> In order to properly support dynack in ad-hoc mode running
+> wpa_supplicant, take into account authentication frames for
+> 'late ack' detection. This patch has been tested on devices
+> mounted on offshore high-voltage stations connected through
+> ~24Km link
+>
+> Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+> Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>   drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
+> index 7334c9b09e82..cc0dc966c512 100644
+> --- a/drivers/net/wireless/ath/ath9k/dynack.c
+> +++ b/drivers/net/wireless/ath/ath9k/dynack.c
+> @@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
+>   	/* late ACK */
+>   	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
+>   		if (ieee80211_is_assoc_req(hdr->frame_control) ||
+> -		    ieee80211_is_assoc_resp(hdr->frame_control)) {
+> +		    ieee80211_is_assoc_resp(hdr->frame_control) ||
+> +		    ieee80211_is_auth(hdr->frame_control)) {
+>   			ath_dbg(common, DYNACK, "late ack\n");
+>   			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
+>   			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
 
-Thoughts?
+Dear Greg,
+
+No idea if this is the proper location to report this or if I should 
+inform stable@vger.. , but:
+
+This backport alone is useless without backporting following 2 commits 
+below also, unless the 2 wifi devices using dynack start off at very 
+close distance.
+
+Their commits messages indicate them as improvements, but they should be 
+considered as fixes.
+
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=0c60c490830a1a756c80f8de8d33d9c6359d4a36
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=9d3d65a91f027b8a9af5e63752d9b78cb10eb92d
+
+
+It's safe to add them to all stables involved (4.20, 4.19, 4.14, 4.9)
 
 Thanks,
-Jon
 
-> 
-> Logan
-> 
-> --
-> 
-> Changes since v2:
-> - Rebased on v5.0-rc1
-> - Modify Patch 2 to revert back to using the PCI struct device
->   instead of the NTB struct device in DMA calls
-> - Collected Allen's Acks
-> - Collected Alexander's Tested-By
-> 
-> Changes since v1:
-> - Rebased onto ntb-next (there was a minor conflict in a recent change
->   to the intel driver)
-> - Collected Dave's Ack
-> 
-> --
-> 
-> Logan Gunthorpe (8):
->   NTB: ntb_tool: reading the link file should not end in a NULL byte
->   NTB: Revert the change to use the NTB device dev for DMA allocations
->   NTB: Fix the default port and peer numbers for legacy drivers
->   NTB: ntb_pingpong: Choose doorbells based on port number
->   NTB: perf: Don't require one more memory window than number of peers
->   NTB: perf: Fix support for hardware that doesn't have port numbers
->   NTB: perf: Fix race condition when run with ntb_test
->   NTB: ntb_test: Fix bug when counting remote files
-> 
->  drivers/ntb/hw/amd/ntb_hw_amd.c         |  4 ----
->  drivers/ntb/hw/idt/ntb_hw_idt.c         |  6 -----
->  drivers/ntb/hw/intel/ntb_hw_gen1.c      |  4 ----
->  drivers/ntb/ntb.c                       |  9 ++------
->  drivers/ntb/test/ntb_perf.c             | 29 +++++++++++++++++++------
->  drivers/ntb/test/ntb_pingpong.c         | 14 +++++-------
->  drivers/ntb/test/ntb_tool.c             |  9 ++++----
->  tools/testing/selftests/ntb/ntb_test.sh |  2 +-
->  8 files changed, 35 insertions(+), 42 deletions(-)
-> 
-> --
-> 2.19.0
+Koen
+
