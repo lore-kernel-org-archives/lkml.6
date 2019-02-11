@@ -7,46 +7,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AA1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91497C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 539B5222A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 571A8222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896224;
-	bh=hoMUS8kZf5JkUNDg/gt7cFKkdZHHCc9RtMINp3quCl8=;
+	s=default; t=1549896229;
+	bh=kdNTHLSkr8DmUwB4YzBvuE1K0wG1YZPwDQNBEwKqfIM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yh5lnpjGqvL6HFbQ/ujgTPtI6brkfiaOhWH1lCrMMcYv3k3lWYTIIduefoJRUz8Nu
-	 Yn+2qkW5t8wletiSNem8YZXnmH8YSJHUFF3vICItUykv/3FOBOX/PP6Y1e+g0t/6qk
-	 HPHzjiSG3mFFmgT6njVRxw8XCKwPSpnRvS0dnlSk=
+	b=IvPWkDxIFyxLVQbagNsox/FwJu2zzbWR9MLPgy/KqXycGZiHGdLq7Ctf8sEQ0gLlN
+	 PhqaNoM3B/3ejVCgnNnyF2Xx8lmkbiwSRgtOb9cuwUPc177nxksACGEgSOFrWrS9qH
+	 kP5OtvuDAYWjEMy8fJy3bNx4meB4KggVeLVIxTYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732688AbfBKOnm (ORCPT
+        id S1732705AbfBKOnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55900 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732673AbfBKOni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:38 -0500
+        id S1731624AbfBKOno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D064222A2;
-        Mon, 11 Feb 2019 14:43:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 908BB20700;
+        Mon, 11 Feb 2019 14:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896218;
-        bh=hoMUS8kZf5JkUNDg/gt7cFKkdZHHCc9RtMINp3quCl8=;
+        s=default; t=1549896224;
+        bh=kdNTHLSkr8DmUwB4YzBvuE1K0wG1YZPwDQNBEwKqfIM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GrukTKI/33PUYHwSMPVfVFqNKfPJoiEdYeT0WAXpC+KnjRKq5YwoUeBe8oKFATGA6
-         +82Fj6pFCSAZnVYQnPI/gmZO6OrcQ87zu5tzuhsY5xBf2mv4v3LR0D/FzpjYpUuKdf
-         U5HSmPbbgWK17j/FQe7nMXHUVvU2r0CC3twEz5xw=
+        b=WTtw7VJu81to9VW/KZo0UqoZqLmlCIW3zliX0fNSXAARMXaykOWX5voqUhiYhtvuh
+         FZCdUH3RMGPttKh08jWX3w2jc3lPIHsKIFK10aN7/dhrH+BvJNzNNl3rIYgGxLJzSk
+         ceIoBWoZRpd1McU7m2KgAXIrKId7cXpBZaRmlYSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 111/313] iommu/amd: Fix amd_iommu=force_isolation
-Date:   Mon, 11 Feb 2019 15:16:31 +0100
-Message-Id: <20190211141901.285423872@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Markos Chandras <markos.chandras@imgtec.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Song Liu <songliubraving@fb.com>,
+        Jiong Wang <jiong.wang@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 113/313] mips: bpf: fix encoding bug for mm_srlv32_op
+Date:   Mon, 11 Feb 2019 15:16:33 +0100
+Message-Id: <20190211141901.415699443@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -65,53 +71,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
+[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU v2
-capable device.
+For micro-mips, srlv inside POOL32A encoding space should use 0x50
+sub-opcode, NOT 0x90.
 
-We occasionally use this parameter to force v2 capable device into
-translation mode to debug memory corruption that we suspect is
-caused by DMA writes.
+Some early version ISA doc describes the encoding as 0x90 for both srlv and
+srav, this looks to me was a typo. I checked Binutils libopcode
+implementation which is using 0x50 for srlv and 0x90 for srav.
 
-To address the following comment from Joerg Roedel on the first
-version, v2 capability of device is completely ignored.
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
+v1->v2:
+  - Keep mm_srlv32_op sorted by value.
 
-And from Documentation/admin-guide/kernel-parameters.txt:
-  This option does not override iommu=pt
-
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
+Cc: Markos Chandras <markos.chandras@imgtec.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index bee0dfb7b93b..34c9aa76a7bd 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -438,7 +438,14 @@ static int iommu_init_device(struct device *dev)
- 
- 	dev_data->alias = get_alias(dev);
- 
--	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
-+	/*
-+	 * By default we use passthrough mode for IOMMUv2 capable device.
-+	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
-+	 * invalid address), we ignore the capability for the device so
-+	 * it'll be forced to go into translation mode.
-+	 */
-+	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
-+	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
- 		struct amd_iommu *iommu;
- 
- 		iommu = amd_iommu_rlookup_table[dev_data->devid];
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index c05dcf5ab414..273ef58f4d43 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -369,8 +369,8 @@ enum mm_32a_minor_op {
+ 	mm_ext_op = 0x02c,
+ 	mm_pool32axf_op = 0x03c,
+ 	mm_srl32_op = 0x040,
++	mm_srlv32_op = 0x050,
+ 	mm_sra_op = 0x080,
+-	mm_srlv32_op = 0x090,
+ 	mm_rotr_op = 0x0c0,
+ 	mm_lwxs_op = 0x118,
+ 	mm_addu32_op = 0x150,
 -- 
 2.19.1
 
