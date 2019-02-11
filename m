@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5123EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26E3C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D501222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B572222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899477;
-	bh=uO1QIxzPb1MOP6fmvJgQVvB2VNbUQrjzid8/NdAvC0w=;
+	s=default; t=1549899488;
+	bh=ZSbhBf8iDsfFGRLNa/kLtO56mlm5xWBFIHQohH9A1UE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZTGDcWsRDbfmuZD4KyEz4Rg+iqcWAY4JpRU/VeAynuMj/pfWSfrpt1SsT7ptuDWsI
-	 NnOrO6AVOEweuxok0uqIKnGZYuS8CcZY58rtvE37CTUj6I3nFKJS6TM6ZYi2lsu71O
-	 BOpNPhQSeITMscCO5mHZgR9rqEvCaU+CmEUNmQ88=
+	b=vz1+pSKOwaJ2OpeMShjXU72xoSEVNAmenaxfbtzjFCBFK4yjmqc6JhTrsI83vskLw
+	 FKpS2SQ+tZUmt+w7AHhzUS8MAnAVcyL86ApFWNe5jTJBpYJeRRHpJZZFoKR0OJvFhF
+	 kG9VGFUTutjWgSEOlrJgLhKU/Prs8sokUH1Rvcho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389163AbfBKPhz (ORCPT
+        id S2388129AbfBKOuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36734 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388156AbfBKOur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:47 -0500
+        id S1732475AbfBKOuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 217072081B;
-        Mon, 11 Feb 2019 14:50:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6BBE20700;
+        Mon, 11 Feb 2019 14:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896645;
-        bh=uO1QIxzPb1MOP6fmvJgQVvB2VNbUQrjzid8/NdAvC0w=;
+        s=default; t=1549896637;
+        bh=ZSbhBf8iDsfFGRLNa/kLtO56mlm5xWBFIHQohH9A1UE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yzx/BYYyrGQB5q2QchB8FgbgbmyDKuiYAyOuuKb8GMn/RUfQb504stXv/pSA7r8LS
-         7+MPdsXpuXTRX7YDb5TQ/MSeToQhwE2TO/nW3X3VTy9kl/EvzFLl89V+pwsHQV1itU
-         tWg9xiRG+oHqyBy+qR9UBbvUMKYTBqJeFJXvxmMA=
+        b=u7r5pmfIbVacI+RIRhz1ORYWRLDyIHy5SCjKL+2c91A2YG7iglwFw8Wj9SnJSGlfU
+         XSnApoMskA68HKU/J3SPxbjPKxTitmdnzlzRlRoAbjhBrCefl1eE1TvHc7LqotyaYP
+         I/w9UfyOvERkZcBYNVErD/So6hRLq7os21KXRXCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 226/313] ocfs2: dont clear bh uptodate for block read
-Date:   Mon, 11 Feb 2019 15:18:26 +0100
-Message-Id: <20190211141908.458897168@linuxfoundation.org>
+Subject: [PATCH 4.19 223/313] perf python: Do not force closing original perf descriptor in evlist.get_pollfd()
+Date:   Mon, 11 Feb 2019 15:18:23 +0100
+Message-Id: <20190211141908.165056045@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -73,66 +72,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
+[ Upstream commit a389aece97938966616ce0336466b98b0351ef10 ]
 
-For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
-and submit the io, second wait io done, last check whether bh uptodate, if
-not return io error.
+Ondřej reported that when compiled with python3, the python extension
+regresses in evlist.get_pollfd function behaviour.
 
-If two sync io for the same bh were issued, it could be the first io done
-and set uptodate flag, but just before check that flag, the second io came
-in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
-will return IO error.
+The evlist.get_pollfd function creates file objects from evlist's fds
+and returns them in a list. The python3 version also sets them to 'close
+the original descriptor' when the object dies (is closed), by passing
+True via the 'closefd' arg in the PyFile_FromFd call.
 
-Indeed it's not necessary to clear uptodate flag, as the io end handler
-end_buffer_read_sync() will set or clear it based on io succeed or failed.
+The python's closefd doc says:
 
-The following message was found from a nfs server but the underlying
-storage returned no error.
+  If closefd is False, the underlying file descriptor will be kept open
+  when the file is closed.
 
-[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
-[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
-[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
-[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
-[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
+That's why the following line in python3 closes all evlist fds:
 
-Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
+  evlist.get_pollfd()
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+the returned list is immediately destroyed and that takes down the
+original events fds.
+
+Passing closefd as False to PyFile_FromFd to fix this.
+
+Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jaroslav Škarvada <jskarvad@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 66dfdff03d19 ("perf tools: Add Python 3 support")
+Link: http://lkml.kernel.org/r/20181226112121.5285-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/buffer_head_io.c | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/util/python.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index 1d098c3c00e0..9f8250df99f1 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -152,7 +152,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index ce501ba14b08..69f5f6142dcf 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
+ 
+ 		file = PyFile_FromFile(fp, "perf", "r", NULL);
+ #else
+-		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
++		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
++				     NULL, NULL, NULL, 0);
  #endif
- 		}
- 
--		clear_buffer_uptodate(bh);
- 		get_bh(bh); /* for end_buffer_read_sync() */
- 		bh->b_end_io = end_buffer_read_sync;
- 		submit_bh(REQ_OP_READ, 0, bh);
-@@ -306,7 +305,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 				continue;
- 			}
- 
--			clear_buffer_uptodate(bh);
- 			get_bh(bh); /* for end_buffer_read_sync() */
- 			if (validate)
- 				set_buffer_needs_validate(bh);
+ 		if (file == NULL)
+ 			goto free_list;
 -- 
 2.19.1
 
