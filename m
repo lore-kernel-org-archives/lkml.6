@@ -2,105 +2,150 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1DFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AC7C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4435F20863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jaov2wJO"
+	by mail.kernel.org (Postfix) with ESMTP id 4D0A920863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBKJ6O (ORCPT
+        id S1726949AbfBKJ6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 04:58:14 -0500
-Received: from mail-eopbgr150082.outbound.protection.outlook.com ([40.107.15.82]:55296
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726045AbfBKJ6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 04:58:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r3a4oNEomQhGkgXthQKDplQWCz5F0jiy5JARVjuXcUI=;
- b=jaov2wJO7nC6B05AKJ2mESYa8WDF47DyyQdpPnwKHLQQ0scNz3/i1suMNp8YpJvZagp3ab8RxrrktCw/uuUYY5kHNKGZTLLvE/tZX9+a58cGIKtffeBeFdnuK1GkZ0RXr1CAfQVg+u4D7+iOwagef5BybiDsTU0Ip8OYHphZVAM=
-Received: from VI1PR04MB4558.eurprd04.prod.outlook.com (20.177.55.216) by
- VI1SPR01MB0363.eurprd04.prod.outlook.com (20.178.120.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Mon, 11 Feb 2019 09:58:04 +0000
-Received: from VI1PR04MB4558.eurprd04.prod.outlook.com
- ([fe80::b0fe:dee7:b2d3:9355]) by VI1PR04MB4558.eurprd04.prod.outlook.com
- ([fe80::b0fe:dee7:b2d3:9355%5]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
- 09:58:04 +0000
-From:   Jun Li <jun.li@nxp.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
- against the device node
-Thread-Topic: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
- against the device node
-Thread-Index: AQHUuLVSCFz0E1ZQKUWUh+dd3nT5iqXablHw
-Date:   Mon, 11 Feb 2019 09:58:04 +0000
-Message-ID: <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
-References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
- <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1SPR01MB0363;6:nBAC+ZghSAYqjSoPAu/1FaqygnVc7CFvSOFVsN66ObYh1aHNL9lApAWHRCuC4gRfSnGzDbWCIGWotO53f6mhAfkvBoJ+TFTID3E2qlg6NmfYC7CCTlOO5BkAHoru2Eqkb6MKBWwjOdoZ67g6ouBmnfrOdLbVx9aYADjSmYLUqMS/HWpG7QLSS9+Ph39iqfJSziV3YpSbIxvfP5VYNaV9BTFb7kWjAXsLN3ngj5MQYOnzx4wdoZxdHU/S1lqAa6wL8cSSotnJFFgIZm727sgpN7bDW2N/rY2mQIFlgudppvUUmD37khM4bTFceXMNKzs73UwQMz8SEzlVwLi3crmrBc6Tc8edRbZSVEerwDSFnsAJUzNxcIEdpMwvd3/ijwYIUgQb/91T8uOAYSLqo8vIWS8p+ECDAiZ8pX2zUs2M484sIsb9yEjKniE0c3EkoDL+5B0rwCUE6IHhquem3BHiLw==;5:cbjCRi75EvgmNfCLsblWoHzPS4P1c6VYh+WPeAH6RmLMsDvm94UKo78V1DBeCZqbutsJo5oXgDhUuo3ooeRoIzqDvLaV/VOMGy7VbiTMTI9vnFcga8bAwpIZGVsZMpLXtyzhtnm67uBRRPJP73yPuQAbneQYjcPZUm2CFfewp3llfaf6rYWr7IIutlnFVnDpgllZbtKqcBKNMJha86/i8Q==;7:v8zwsOGY1MxM1Azgfpy25GM94hjA3wpKYk+bUGVj0ep3mP2E0vSUq3rbt5hZovqoe/vkuJWirp4TcdUpeK1VhFA4YObnkg2YE9oKoqAU76n+Pa0ZvszE9zTOF6gNqrxRquJ8hYemozl9t86b9K+rlQ==
-x-ms-office365-filtering-correlation-id: 0e5b0f7b-51e1-45a4-1b5f-08d690076ab7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1SPR01MB0363;
-x-ms-traffictypediagnostic: VI1SPR01MB0363:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <VI1SPR01MB036331C4E575691DF522A99689640@VI1SPR01MB0363.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(8676002)(478600001)(81166006)(4326008)(316002)(8936002)(486006)(229853002)(4744005)(186003)(7696005)(74316002)(71190400001)(81156014)(966005)(68736007)(446003)(66066001)(71200400001)(476003)(44832011)(11346002)(54906003)(110136005)(14454004)(55016002)(6306002)(9686003)(6436002)(2906002)(102836004)(305945005)(25786009)(105586002)(106356001)(76176011)(7736002)(6246003)(97736004)(26005)(6116002)(3846002)(33656002)(6506007)(99286004)(86362001)(53936002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1SPR01MB0363;H:VI1PR04MB4558.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qkugnWVz2rJdTdLRib9efTNS4TzjbEQKsERIAyVwhC/Ato21DtP3dUjularo6/6x6VSQ3/Y4zxLKqz5QojzyPTrAciCXeF2GJwJhhYwEZevkk+/t7wve8iwFP8Gxt9Z3soDaled58hRR0m2FNi/hobGTB0DyoGD/kWQDCZltYeH7P4clSh2Mxon/JpSx8z1YvpvvdjJqa+hCL5oohXbxd7pmfQfSyrcb8E2j/cpvsPotNe6jDC/2Mr8UzoZavDM99DeEPiKc/j+QSxtu7krzYmPeM3PdVKQm5nZXTI30tib84uvVTQIVLU3ZbXK1kejPvZUbsh+lFo+TKliup/w8fJEnztY6pA6ESFgqivyVVXS6ULSCA5JC8RklbfZmZboYhGvrReghpS4fhPz1kUvBjWdghofdBTAjHTTBKsP22IU=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e5b0f7b-51e1-45a4-1b5f-08d690076ab7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 09:58:04.7688
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1SPR01MB0363
+        Mon, 11 Feb 2019 04:58:41 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51173 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBKJ6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 04:58:40 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gt8MH-0007WF-JF; Mon, 11 Feb 2019 10:58:37 +0100
+Message-ID: <1549879117.7687.2.camel@pengutronix.de>
+Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
+ matrices
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Mon, 11 Feb 2019 10:58:37 +0100
+In-Reply-To: <20190209014748.10427-2-slongerbeam@gmail.com>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+         <20190209014748.10427-2-slongerbeam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
+On Fri, 2019-02-08 at 17:47 -0800, Steve Longerbeam wrote:
+> The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+> coefficients, so rename them to indicate that. And add some comments
+> to make clear these are BT.601 coefficients encoding between YUV limited
+> range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
+> matrix, so rename to ic_csc_identity. No functional changes.
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> ---
+> Changes in v2:
+> - rename ic_csc_rgb2rgb matrix to ic_csc_identity.
+> ---
+>  drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+> index 594c3cbc8291..3ef61f0b509b 100644
+> --- a/drivers/gpu/ipu-v3/ipu-ic.c
+> +++ b/drivers/gpu/ipu-v3/ipu-ic.c
+> @@ -183,11 +183,13 @@ struct ic_csc_params {
+>  };
+>  
+>  /*
+> + * BT.601 encoding from RGB full range to YUV limited range:
+> + *
+>   * Y = R *  .299 + G *  .587 + B *  .114;
+>   * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+>   * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
 
-> @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct
-> usb_role_switch *sw)  }  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
->=20
-> -static int __switch_match(struct device *dev, const void *name)
-> +static int switch_fwnode_match(struct device *dev, const void *fwnode)
-> +{
-> +	return dev_fwnode(dev) =3D=3D fwnode;
+Hm, this is a conversion to full range BT.601. For limited range, the
+matrix coefficients
 
-You missed the comment
-https://lkml.org/lkml/2019/1/22/437
+   0.2990  0.5870  0.1140
+  -0.1687 -0.3313  0.5000
+   0.5000 -0.4187 -0.0813
 
-return dev_fwnode(dev->parent) =3D=3D fwnode;
+should be multiplied with 219/255 (Y) and 224/255 (U,V), respectively:
 
-Jun
+  Y = R *  .2568 + G *  .5041 + B *  .0979 + 16;
+  U = R * -.1482 + G * -.2910 + B *  .4392 + 128;
+  V = R *  .4392 + G * -.3678 + B * -.0714 + 128;
+
+>   */
+> -static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+> +static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+>  	.coeff = {
+>  		{ 77, 150, 29 },
+>  		{ 469, 427, 128 },
+> @@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+>  	.scale = 1,
+>  };
+>  
+> -/* transparent RGB->RGB matrix for graphics combining */
+> -static const struct ic_csc_params ic_csc_rgb2rgb = {
+> +/*
+> + * identity matrix, used for transparent RGB->RGB graphics
+> + * combining.
+> + */
+> +static const struct ic_csc_params ic_csc_identity = {
+>  	.coeff = {
+>  		{ 128, 0, 0 },
+>  		{ 0, 128, 0 },
+> @@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+>  };
+>  
+>  /*
+> + * Inverse BT.601 encoding from YUV limited range to RGB full range:
+> + *
+>   * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+>   * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+>   * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+>   */
+
+This looks correct.
+
+> -static const struct ic_csc_params ic_csc_ycbcr2rgb = {
+> +static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+>  	.coeff = {
+>  		{ 149, 0, 204 },
+>  		{ 149, 462, 408 },
+> @@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+>  		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
+>  
+>  	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+> -		params = &ic_csc_ycbcr2rgb;
+> +		params = &ic_csc_ycbcr2rgb_bt601;
+>  	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+> -		params = &ic_csc_rgb2ycbcr;
+> +		params = &ic_csc_rgb2ycbcr_bt601;
+>  	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+> -		params = &ic_csc_rgb2rgb;
+> +		params = &ic_csc_identity;
+>  	else {
+>  		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+>  		return -EINVAL;
+
+regards
+Philipp
