@@ -2,214 +2,87 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B3CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87596C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E53821B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E06821B24
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbfBKQoZ (ORCPT
+        id S1729200AbfBKQr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:44:25 -0500
-Received: from mga01.intel.com ([192.55.52.88]:45291 "EHLO mga01.intel.com"
+        Mon, 11 Feb 2019 11:47:59 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:20936 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfBKQoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:44:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:44:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="143324624"
-Received: from genxfsim-desktop.iind.intel.com (HELO genxfsim-desktop) ([10.223.26.105])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Feb 2019 08:44:21 -0800
-Date:   Mon, 11 Feb 2019 22:11:18 +0530
-From:   Anshuman Gupta <anshuman.gupta@intel.com>
-To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
-        andy@infradead.org, linux-kernel@vger.kernel.org,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 09/10] platform/x86: intel_pmc_core: Add Package cstates
- residency info
-Message-ID: <20190211164118.GA23796@genxfsim-desktop>
-References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
- <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
+        id S1726045AbfBKQr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:47:58 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 43C7813F8D4;
+        Mon, 11 Feb 2019 17:47:34 +0100 (CET)
+Subject: Re: [RESEND PATCH v2] of: fix kmemleak crash caused by imbalance in
+ early memory reservation
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        DT <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+ <20190121174234.GC26461@rapoport-lnx>
+ <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+ <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+ <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
+ <20190123055414.GA4747@rapoport-lnx>
+ <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
+ <20190123123143.GE4747@rapoport-lnx>
+ <4b8f82c4-7f8f-b814-c1ec-9902e43963f6@free.fr>
+Message-ID: <617e0d57-342d-4162-bd21-ece18e481d87@free.fr>
+Date:   Mon, 11 Feb 2019 17:47:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <4b8f82c4-7f8f-b814-c1ec-9902e43963f6@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 01:02:33PM +0530, Rajneesh Bhardwaj wrote:
-> This patch introduces a new debugfs entry to read current Package
-> cstate residency counters. A similar variant of this patch was discussed
-> earlier "https://patchwork.kernel.org/patch/9908563/" but didn't make it
-> into mainline for various reasons. Current version only adds debugfs
-> entry which is quite useful for S0ix debug but excludes the exported API
-> that was there in initial version. Though there are tools like turbostat
-> and socwatch which can also show this info but sometimes its more
-> practical to have it here as it's hard to switch between various tools for
-> S0ix debug when pmc_core driver is the primary debug tool. Internal and
-> external customers have requested for this patch to be included in the
-> PMC driver on many occasions and Google Chrome OS team has already included
-> it in their builds. This becomes handy when requesting logs from external
-> customers who may not always have above mentioned tools in their integrated
-> kernel builds.
-> 
-> Package cstate residency MSRs provide useful debug information about
-> system idle states. In idle states system must enter deeper Package
-> cstates. Package cstates depend not only on Core cstates but also on
-> various IP block's power gating status and LTR values.
-> 
-> For Intel Core SoCs Package C10 entry is a must for deeper sleep states
-> such as S0ix. "Suspend-to-idle"  should ideally take this path:
-> PC0 -> PC10 -> S0ix. For S0ix debug, its logical to check for
-> Package C10 residency first if for some reason system fails to enter S0ix.
-> 
-> Please refer to this link for MSR details:
-> https://software.intel.com/sites/default/files/managed/22/0d/335592-sdm-vol-4.pdf
-> 
-> Usage:
-> cat /sys/kernel/debug/pmc_core/package_cstate_show
-> Package C2       : 0xec2e21735f
-> Package C3       : 0xc30113ba4
-> Package C6       : 0x9ef4be15c5
-> Package C7       : 0x1e011904
-> Package C8       : 0x3c5653cfe5a
-> Package C9       : 0x0
-> Package C10      : 0x16fff4289
-> 
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> Cc: "David E. Box" <david.e.box@intel.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: Anshuman Gupta <anshuman.gupta@intel.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-  Tested-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
-  Acked-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
-> ---
->  drivers/platform/x86/intel_pmc_core.c | 38 +++++++++++++++++++++++++++
->  drivers/platform/x86/intel_pmc_core.h |  1 +
->  2 files changed, 39 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-> index 400946b7a3b5..4e7aa1711148 100644
-> --- a/drivers/platform/x86/intel_pmc_core.c
-> +++ b/drivers/platform/x86/intel_pmc_core.c
-> @@ -22,11 +22,24 @@
->  
->  #include <asm/cpu_device_id.h>
->  #include <asm/intel-family.h>
-> +#include <asm/msr.h>
->  
->  #include "intel_pmc_core.h"
->  
->  static struct pmc_dev pmc;
->  
-> +/* PKGC MSRs are common across Intel Core SoCs */
-> +static const struct pmc_bit_map msr_map[] = {
-> +	{"Package C2",                  MSR_PKG_C2_RESIDENCY},
-> +	{"Package C3",                  MSR_PKG_C3_RESIDENCY},
-> +	{"Package C6",                  MSR_PKG_C6_RESIDENCY},
-> +	{"Package C7",                  MSR_PKG_C7_RESIDENCY},
-> +	{"Package C8",                  MSR_PKG_C8_RESIDENCY},
-> +	{"Package C9",                  MSR_PKG_C9_RESIDENCY},
-> +	{"Package C10",                 MSR_PKG_C10_RESIDENCY},
-> +	{}
-> +};
-> +
->  static const struct pmc_bit_map spt_pll_map[] = {
->  	{"MIPI PLL",			SPT_PMC_BIT_MPHY_CMN_LANE0},
->  	{"GEN2 USB2PCIE2 PLL",		SPT_PMC_BIT_MPHY_CMN_LANE1},
-> @@ -129,6 +142,7 @@ static const struct pmc_reg_map spt_reg_map = {
->  	.mphy_sts = spt_mphy_map,
->  	.pll_sts = spt_pll_map,
->  	.ltr_show_sts = spt_ltr_show_map,
-> +	.msr_sts = msr_map,
->  	.slp_s0_offset = SPT_PMC_SLP_S0_RES_COUNTER_OFFSET,
->  	.ltr_ignore_offset = SPT_PMC_LTR_IGNORE_OFFSET,
->  	.regmap_length = SPT_PMC_MMIO_REG_LEN,
-> @@ -318,6 +332,7 @@ static const struct pmc_reg_map cnp_reg_map = {
->  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
->  	.slps0_dbg_maps = cnp_slps0_dbg_maps,
->  	.ltr_show_sts = cnp_ltr_show_map,
-> +	.msr_sts = msr_map,
->  	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
->  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
->  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
-> @@ -333,6 +348,7 @@ static const struct pmc_reg_map icl_reg_map = {
->  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
->  	.slps0_dbg_maps = cnp_slps0_dbg_maps,
->  	.ltr_show_sts = cnp_ltr_show_map,
-> +	.msr_sts = msr_map,
->  	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
->  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
->  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
-> @@ -709,6 +725,25 @@ static int pmc_core_ltr_show(struct seq_file *s, void *unused)
->  }
->  DEFINE_SHOW_ATTRIBUTE(pmc_core_ltr);
->  
-> +static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
-> +{
-> +	struct pmc_dev *pmcdev = s->private;
-> +	const struct pmc_bit_map *map = pmcdev->map->msr_sts;
-> +	u64 pcstate_count;
-> +	int index;
-> +
-> +	for (index = 0; map[index].name ; index++) {
-> +		if (rdmsrl_safe(map[index].bit_mask, &pcstate_count))
-> +			continue;
-> +
-> +		seq_printf(s, "%-8s : 0x%llx\n", map[index].name,
-> +			   pcstate_count);
-> +	}
-> +
-> +	return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(pmc_core_pkgc);
-> +
->  static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
->  {
->  	debugfs_remove_recursive(pmcdev->dbgfs_dir);
-> @@ -735,6 +770,9 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
->  
->  	debugfs_create_file("ltr_show", 0444, dir, pmcdev, &pmc_core_ltr_fops);
->  
-> +	debugfs_create_file("package_cstate_show", 0444, dir, pmcdev,
-> +			    &pmc_core_pkgc_fops);
-> +
->  	if (pmcdev->map->pll_sts)
->  		debugfs_create_file("pll_status", 0444, dir, pmcdev,
->  				    &pmc_core_pll_fops);
-> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-> index 78dd4229489d..6f1b64808075 100644
-> --- a/drivers/platform/x86/intel_pmc_core.h
-> +++ b/drivers/platform/x86/intel_pmc_core.h
-> @@ -214,6 +214,7 @@ struct pmc_reg_map {
->  	const struct pmc_bit_map *pll_sts;
->  	const struct pmc_bit_map **slps0_dbg_maps;
->  	const struct pmc_bit_map *ltr_show_sts;
-> +	const struct pmc_bit_map *msr_sts;
->  	const u32 slp_s0_offset;
->  	const u32 ltr_ignore_offset;
->  	const int regmap_length;
-> -- 
-> 2.17.1
-> 
+On 04/02/2019 15:37, Marc Gonzalez wrote:
 
--- 
+> Cc: stable@vger.kernel.org # 3.15+
+> Fixes: 3f0c820664483 ("drivers: of: add initialization code for dynamic reserved memory")
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Prateek Patel <prpatel@nvidia.com>
+> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+> Resend with DT CCed to reach robh's patch queue
+> I added CC: stable, Fixes, and Prateek's ack
+> Trim recipients list to minimize inconvenience
+
+Mike, Stephen,
+
+I'm confused over commit 3532b3b554a216f30edb841d29eef48521bdc592 in linux-next
+"memblock: drop __memblock_alloc_base()"
+
+It's definitely going to conflict with the proposed patch
+over drivers/of/of_reserved_mem.c
+
+Rob, what's the next step then?
+
+Regards.
