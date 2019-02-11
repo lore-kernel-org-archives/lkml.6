@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98CBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51802C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD9621855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FA0321855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899957;
-	bh=WdbCEUxextxxBLPa9G6HUq3bpNswR3AZFQxgFy62Cvw=;
+	s=default; t=1549899965;
+	bh=OthvfyHaWcTCUewby3uMHJ7LwAMYxDpSSEVZxGVmEH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KPS48F6o5Ns2zdPJzEFWM5pVv3oBSB+QaWAd5iYkEgg4DBzoBvV1l/H+bLpD9Fc9E
-	 50xt46K2ZOEMVrdLKmKB0c3AeGd11rcoNAi3v+ojxt6Eqcma1Xdh17XUrqdKBQzuAn
-	 ipGN3EIyPP3qltYFKRHRkU/Xhrmb271Zyz13RGEI=
+	b=kZmDKbmLuM5jnjBtYpmqoP1/E0+1hrQgqnrdECbstxxRFphB5fFVaRUXk5+I/c7eO
+	 GRky93oDdB15dvTGqEaEmLwqZOe8rcVmQQwYkcsJExghx0Q9xXonb0F7P/bgY4/bG2
+	 G9xEOuWPwg63OqweWWNjZN7/rzoSYzdpLVaoyMzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733112AbfBKPpz (ORCPT
+        id S1732527AbfBKOmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:45:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55150 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:42:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732549AbfBKOnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:02 -0500
+        id S1731765AbfBKOmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:42:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40AA821B18;
-        Mon, 11 Feb 2019 14:43:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 982892081B;
+        Mon, 11 Feb 2019 14:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896181;
-        bh=WdbCEUxextxxBLPa9G6HUq3bpNswR3AZFQxgFy62Cvw=;
+        s=default; t=1549896170;
+        bh=OthvfyHaWcTCUewby3uMHJ7LwAMYxDpSSEVZxGVmEH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PtaML65ZbKtQWeysY5QsTMZpdTApIr2I6dXjPn1Ymkm9Gslq5TIimPAaf2G0xfh2T
-         qwgXzvKt+e8JJR2U8hk28F7QJCmQ/wCXCSvWuUPEoTBerLetYDAAibTwTi3WUkFgIb
-         8zaNiZZ+4VOO2r6jDJl1OFmp91cMD4NKlt5qa6R0=
+        b=iOj+PbQiUcoptiLppscDv+2w45m5vYTn4VxggPPtLabARXGw0m5/lMeXHueQzLXwL
+         F4M3VhsMoPWbXGc8FIlxjFyi5zOfP5lG1foYzw2ngx/x/N7p4OEUNEiG2e+7OCXGUB
+         3I+36POL0XimZST4l7HKV0KTmVuX6dh0reH2dKfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/313] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Mon, 11 Feb 2019 15:16:20 +0100
-Message-Id: <20190211141900.544199136@linuxfoundation.org>
+Subject: [PATCH 4.19 088/313] ARM: mmp/mmp2: dt: enable the clock
+Date:   Mon, 11 Feb 2019 15:16:08 +0100
+Message-Id: <20190211141859.735025961@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,51 +66,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
+[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+The device-tree booted MMP2 needs to enable the timer clock, otherwise
+it would stop ticking when the boot finishes.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+It can also use the clock rate from the clk, the non-DT boards need to
+keep using the hardcoded rates.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mach-mmp/common.h |  2 +-
+ arch/arm/mach-mmp/mmp2.c   |  2 +-
+ arch/arm/mach-mmp/pxa168.c |  2 +-
+ arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
+ 4 files changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..c40d572a7602 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index 7e284d9c429f..5ac2851ef5d3 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -2,7 +2,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+-extern void timer_init(int irq);
++extern void timer_init(int irq, unsigned long rate);
  
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index afba5460cdaf..fb3e7e32c882 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
  
+-	timer_init(IRQ_MMP2_TIMER1);
++	timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 0f5f16fb8c66..77a358165a56 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1);
++	timer_init(IRQ_PXA168_TIMER1, 6500000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 96ad1db0b04b..eab0fd8a7343 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
++#include <linux/clk.h>
+ 
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -38,12 +39,6 @@
+ #include "cputype.h"
+ #include "clock.h"
+ 
+-#ifdef CONFIG_CPU_MMP2
+-#define MMP_CLOCK_FREQ		6500000
+-#else
+-#define MMP_CLOCK_FREQ		3250000
+-#endif
+-
+ #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
+ 
+ #define MAX_DELTA		(0xfffffffe)
+@@ -189,19 +184,18 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq)
++void __init timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+-	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
++	sched_clock_register(mmp_read_sched_clock, 32, rate);
+ 
+ 	ckevt.cpumask = cpumask_of(0);
+ 
+ 	setup_irq(irq, &timer_irq);
+ 
+-	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
+-	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
+-					MIN_DELTA, MAX_DELTA);
++	clocksource_register_hz(&cksrc, rate);
++	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -213,7 +207,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
+ void __init mmp_dt_init_timer(void)
+ {
+ 	struct device_node *np;
++	struct clk *clk;
+ 	int irq, ret;
++	unsigned long rate;
+ 
+ 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
+ 	if (!np) {
+@@ -221,6 +217,18 @@ void __init mmp_dt_init_timer(void)
+ 		goto out;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (!IS_ERR(clk)) {
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto out;
++		rate = clk_get_rate(clk) / 2;
++	} else if (cpu_is_pj4()) {
++		rate = 6500000;
++	} else {
++		rate = 3250000;
++	}
++
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -EINVAL;
+@@ -231,7 +239,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq);
++	timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
