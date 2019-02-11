@@ -2,50 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8924C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D12C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7672B222A8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60B72222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897956;
-	bh=KBeQDRH5chC4xkNE6MhFJ4Xm17Nf60mPz1MIldOc3Uw=;
+	s=default; t=1549897976;
+	bh=qBMg/ow5Qnmm3YDqhiLuw1VzhfdG8pYUQVzlZyLt9zQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZGx1zkzfCdfTQ/gC1Nk+6tpcuiMbL3Ve3OT+xlJSqKBqiDiB4fsU7/KEA5uRGWwRN
-	 nMfl1ToKXq3IeFQAhq5Yb55E657eahUByYXJdNEC4Kc9yPgHCcGZPSPxYQvlupsIik
-	 c9gABFzqtQi48uFEstoynoX3FDdqUQhLDCdZowQ0=
+	b=AiWT5YQHQCg+4k5sUiBbL/8HyG+7rb2k7dpVjfxxBHeCfUzVu4OC4U43nU/Bt/zP7
+	 4kpGWsAz1NiD+2CrtWqGZs70cwU9nTXn6zDirr/qdpQyVV+z7Qta4pQyYhdv3a0WVA
+	 cgZGZOG8KWPNs6G4kHBfm+W6Y2o6uC7zUiPZE+W4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391746AbfBKPKK (ORCPT
+        id S2391687AbfBKPMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:12:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391733AbfBKPKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:07 -0500
+        id S2391718AbfBKPJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:09:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9810F222B5;
-        Mon, 11 Feb 2019 15:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BF2B222B5;
+        Mon, 11 Feb 2019 15:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897807;
-        bh=KBeQDRH5chC4xkNE6MhFJ4Xm17Nf60mPz1MIldOc3Uw=;
+        s=default; t=1549897794;
+        bh=qBMg/ow5Qnmm3YDqhiLuw1VzhfdG8pYUQVzlZyLt9zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tzFZiTV1HrDoog9FEcFktZnEUg+IFxduSezsstVcrxo6tg+Xw9wGUP9RxrFFUnzNe
-         gAEgX1rrAaUP4oeU3QPQuUoAZYG4YSMlUgcLUsAdverSScyVbHPpzXZNf8obz2zIBN
-         NEIufluL899dQPh6eigfmxlZI+Sojw+e+FjQeqTY=
+        b=yAWR/qOFoKGy6G93i/O82cMAuQKwZeYy5xYW9gUrCzyD6hpPY3zSWKVl2vLl/aFXA
+         BwtvtOnYDtD7avICnJYt5sIVichzpmwvS/+DZfbFX2/9Q70pjt/V1nYHPcv94YxujX
+         2K7yMoFunywUUuQqvyQi3Ze8Ssej1o8FkjtxBLfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 122/137] usb: phy: am335x: fix race condition in _probe
-Date:   Mon, 11 Feb 2019 15:20:03 +0100
-Message-Id: <20190211141823.501665896@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 087/137] cifs: check ntwrk_buf_start for NULL before dereferencing it
+Date:   Mon, 11 Feb 2019 15:19:28 +0100
+Message-Id: <20190211141820.103282230@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -64,45 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
 
-commit a53469a68eb886e84dd8b69a1458a623d3591793 upstream.
+RHBZ: 1021460
 
-power off the phy should be done before populate the phy. Otherwise,
-am335x_init() could be called by the phy owner to power on the phy first,
-then am335x_phy_probe() turns off the phy again without the caller knowing
-it.
+There is an issue where when multiple threads open/close the same directory
+ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
+later to oops with a NULL deref.
 
-Fixes: 2fc711d76352 ("usb: phy: am335x: Enable USB remote wakeup using PHY wakeup")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The real bug is why this happens and why this can become NULL for an
+open cfile, which should not be allowed.
+This patch tries to avoid a oops until the time when we fix the underlying
+issue.
 
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/phy/phy-am335x.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/cifs/readdir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/phy/phy-am335x.c
-+++ b/drivers/usb/phy/phy-am335x.c
-@@ -60,9 +60,6 @@ static int am335x_phy_probe(struct platf
- 	if (ret)
- 		return ret;
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index ef24b4527459..68183872bf8b 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -655,7 +655,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
+ 		/* scan and find it */
+ 		int i;
+ 		char *cur_ent;
+-		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
++		char *end_of_smb;
++
++		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
++			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
++			return -EIO;
++		}
++
++		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
+ 			server->ops->calc_smb_size(
+ 					cfile->srch_inf.ntwrk_buf_start);
  
--	ret = usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
--	if (ret)
--		return ret;
- 	am_phy->usb_phy_gen.phy.init = am335x_init;
- 	am_phy->usb_phy_gen.phy.shutdown = am335x_shutdown;
- 
-@@ -81,7 +78,7 @@ static int am335x_phy_probe(struct platf
- 	device_set_wakeup_enable(dev, false);
- 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, am_phy->dr_mode, false);
- 
--	return 0;
-+	return usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
- }
- 
- static int am335x_phy_remove(struct platform_device *pdev)
+-- 
+2.19.1
+
 
 
