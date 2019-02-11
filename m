@@ -2,148 +2,149 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B938AC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73568C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824CE2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C95A2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549926322;
+	bh=xuKzeid/pan86Wn15wLRKBOL5DgNNXmOo3cjlMl6TR4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lTT9v0LD70yd//83xhupK4h+M6PkLkQqL4VHnik6NZXR5PEse2MYakxYo1fpA6nDb
+	 ivFwUlPuN6OJkxVLiusaaBjYCJHVZyqXITJRzqKOPj4197QYqHu5vfgcSGKzBSskpg
+	 jnVkD50D7nWlbuOVYEj1g3ndjfz62qKi7qUf1YiA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfBKXEx (ORCPT
+        id S1727730AbfBKXFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:04:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:40157 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBKXEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:04:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 15:04:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="132811013"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Feb 2019 15:04:51 -0800
-Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 15:04:51 -0800
-Received: from crsmsx102.amr.corp.intel.com (172.18.63.137) by
- fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 15:04:51 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
- CRSMSX102.amr.corp.intel.com ([169.254.2.54]) with mapi id 14.03.0415.000;
- Mon, 11 Feb 2019 17:04:48 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     "Williams, Dan J" <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     John Hubbard <jhubbard@nvidia.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "Daniel Borkmann" <daniel@iogearbox.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Netdev <netdev@vger.kernel.org>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: RE: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
-Thread-Topic: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
-Thread-Index: AQHUwkbKPZQIC0o+Ik+rfr1Js7w1daXbc70AgAAJrwD//32BAIAAiY8A//99pACAAIoeAIAADXcA//+bucA=
-Date:   Mon, 11 Feb 2019 23:04:48 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BCF467@CRSMSX101.amr.corp.intel.com>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
- <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
- <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
- <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
- <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
- <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
- <20190211220658.GH24692@ziepe.ca>
- <CAPcyv4htDHmH7PVm_=HOWwRKtpcKTPSjrHPLqhwp2vhBUWL4-w@mail.gmail.com>
-In-Reply-To: <CAPcyv4htDHmH7PVm_=HOWwRKtpcKTPSjrHPLqhwp2vhBUWL4-w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTY0ZWIwYzgtYjAyMy00Mzk5LWI1YTItNjA5MzNjMWExZjQ2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMGtueitJaVdKa0RGRUlHVUpneWIrTDdEajUxbmFwUnRjR2ViK205WVMxQ3pYT05XRTMrUXI3c21KbnhlNWxaVyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 11 Feb 2019 18:05:20 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41537 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfBKXFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:05:20 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so1139953otk.8;
+        Mon, 11 Feb 2019 15:05:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xuKzeid/pan86Wn15wLRKBOL5DgNNXmOo3cjlMl6TR4=;
+        b=cJbmwVMhKHZi5sgq2F531Y1GbIdvqjwE7DUJ0JBde2nUbUtblBEV9lBxVAyORrmxGQ
+         Ocv4efOPrPT2CXRI4ARKac/pVNotgJqParKlzUjQ94LOnQlZ41mXbn05u5/mk/1HxSIF
+         REuZKYcsZO4+uexw0X9wOJ8f+WgQ4ptjcucoENGRUU55HgdLTko2s8HEpPlT9ELK/KyU
+         mMpG9r7FAfUESD+vrBUyUAE02kk1OkgkoUwlpmC0x1cqAZP02oMMD4mBHwYryeGYE3Af
+         FSFViLGCHhBEeL7uQkYu02TBPfz9Zcv9Il4uGNFaAUPnw6zPaB5oMvMjse6969xnS9dm
+         RbcQ==
+X-Gm-Message-State: AHQUAubLjcrg0GVJOEajCHdO3K/xWPZugWwz4l8dKtH41ndJrn7eDODB
+        Q5LOcEhh7UcaX503gVCBtQZw/WEVltCz1+n3C0Gn7jen
+X-Google-Smtp-Source: AHgI3IanTjHL+Tdm4AH/xK1l8oOX8fEMcPKj1XbIIRAU3QoFJP2aOjj2mesrTQqQCgaI7p3cssbM+XPxwhmijktKwh8=
+X-Received: by 2002:a05:6830:2005:: with SMTP id e5mr695111otp.258.1549926319217;
+ Mon, 11 Feb 2019 15:05:19 -0800 (PST)
 MIME-Version: 1.0
+References: <3917694.ab5GGAjohB@aspire.rjw.lan> <1634058.cXDNg15SOd@aspire.rjw.lan>
+ <CAPDyKFpWCT9CcmxqqWk+S8tSPz_at56UCnk3EVBab-TnScHw8Q@mail.gmail.com> <CAPDyKFqnWgjZ1icajdzbaQ_HW-2ec0-npEU_nAWvSVEpZMzSRA@mail.gmail.com>
+In-Reply-To: <CAPDyKFqnWgjZ1icajdzbaQ_HW-2ec0-npEU_nAWvSVEpZMzSRA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Feb 2019 00:05:07 +0100
+Message-ID: <CAJZ5v0hV-G_U=XV1N=rpEv1LMgB+jjB3kVEoHKUasd2p3QP5Bg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: Take suppliers into account in __pm_runtime_set_status()
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gTW9uLCBGZWIgMTEsIDIwMTkgYXQgMjowNyBQTSBKYXNvbiBHdW50aG9ycGUgPGpn
-Z0B6aWVwZS5jYT4gd3JvdGU6DQo+ID4NCj4gPiBPbiBNb24sIEZlYiAxMSwgMjAxOSBhdCAwMTo1
-MjozOFBNIC0wODAwLCBJcmEgV2Vpbnkgd3JvdGU6DQo+ID4gPiBPbiBNb24sIEZlYiAxMSwgMjAx
-OSBhdCAwMTozOToxMlBNIC0wODAwLCBKb2huIEh1YmJhcmQgd3JvdGU6DQo+ID4gPiA+IE9uIDIv
-MTEvMTkgMToyNiBQTSwgSXJhIFdlaW55IHdyb3RlOg0KPiA+ID4gPiA+IE9uIE1vbiwgRmViIDEx
-LCAyMDE5IGF0IDAxOjEzOjU2UE0gLTA4MDAsIEpvaG4gSHViYmFyZCB3cm90ZToNCj4gPiA+ID4g
-Pj4gT24gMi8xMS8xOSAxMjozOSBQTSwgSmFzb24gR3VudGhvcnBlIHdyb3RlOg0KPiA+ID4gPiA+
-Pj4gT24gTW9uLCBGZWIgMTEsIDIwMTkgYXQgMTI6MTY6NDJQTSAtMDgwMCwgaXJhLndlaW55QGlu
-dGVsLmNvbQ0KPiB3cm90ZToNCj4gPiA+ID4gPj4+PiBGcm9tOiBJcmEgV2VpbnkgPGlyYS53ZWlu
-eUBpbnRlbC5jb20+DQo+ID4gPiA+ID4+IFsuLi5dDQo+ID4gPiA+ID4+IEl0IHNlZW1zIHRvIG1l
-IHRoYXQgdGhlIGxvbmd0ZXJtIHZzLiBzaG9ydC10ZXJtIGlzIG9mIHF1ZXN0aW9uYWJsZQ0KPiB2
-YWx1ZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoaXMgaXMgZXhhY3RseSB3aHkgSSBkaWQgbm90
-IHBvc3QgdGhpcyBiZWZvcmUuICBJJ3ZlIGJlZW4NCj4gPiA+ID4gPiB3YWl0aW5nIG91ciBvdGhl
-ciBkaXNjdXNzaW9ucyBvbiBob3cgR1VQIHBpbnMgYXJlIGdvaW5nIHRvIGJlDQo+ID4gPiA+ID4g
-aGFuZGxlZCB0byBwbGF5IG91dC4gIEJ1dCB3aXRoIHRoZSBuZXRkZXYgdGhyZWFkIHRvZGF5WzFd
-IGl0DQo+ID4gPiA+ID4gc2VlbXMgbGlrZSB3ZSBuZWVkIHRvIG1ha2Ugc3VyZSB3ZSBoYXZlIGEg
-InNhZmUiIGZhc3QgdmFyaWFudA0KPiA+ID4gPiA+IGZvciBhIHdoaWxlLiAgSW50cm9kdWNpbmcg
-Rk9MTF9MT05HVEVSTSBzZWVtZWQgbGlrZSB0aGUgY2xlYW5lc3QNCj4gPiA+ID4gPiB3YXkgdG8g
-ZG8gdGhhdCBldmVuIGlmIHdlIHdpbGwgbm90IG5lZWQgdGhlIGRpc3RpbmN0aW9uIGluIHRoZQ0K
-PiA+ID4gPiA+IGZ1dHVyZS4uLiAgOi0oDQo+ID4gPiA+DQo+ID4gPiA+IFllcywgSSBhZ3JlZS4g
-QmVsb3cuLi4NCj4gPiA+ID4NCj4gPiA+ID4gPiBbLi4uXQ0KPiA+ID4gPiA+IFRoaXMgaXMgYWxz
-byB3aHkgSSBkaWQgbm90IGNoYW5nZSB0aGUgZ2V0X3VzZXJfcGFnZXNfbG9uZ3Rlcm0NCj4gPiA+
-ID4gPiBiZWNhdXNlIHdlIGNvdWxkIGJlIHJpcHBpbmcgdGhpcyBhbGwgb3V0IGJ5IHRoZSBlbmQg
-b2YgdGhlDQo+ID4gPiA+ID4geWVhci4uLiAgKEkgaG9wZS4gOi0pDQo+ID4gPiA+ID4NCj4gPiA+
-ID4gPiBTbyB3aGlsZSB0aGlzIGRvZXMgInBvbGx1dGUiIHRoZSBHVVAgZmFtaWx5IG9mIGNhbGxz
-IEknbSBob3BpbmcNCj4gPiA+ID4gPiBpdCBpcyBub3QgZm9yZXZlci4NCj4gPiA+ID4gPg0KPiA+
-ID4gPiA+IElyYQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gWzFdIGh0dHBzOi8vbGttbC5vcmcvbGtt
-bC8yMDE5LzIvMTEvMTc4OQ0KPiA+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFllcywgYW5kIHRv
-IGJlIGNsZWFyLCBJIHRoaW5rIHlvdXIgcGF0Y2hzZXQgaGVyZSBpcyBmaW5lLiBJdCBpcw0KPiA+
-ID4gPiBlYXN5IHRvIGZpbmQgdGhlIEZPTExfTE9OR1RFUk0gY2FsbGVycyBpZiBhbmQgd2hlbiB3
-ZSB3YW50IHRvDQo+ID4gPiA+IGNoYW5nZSBhbnl0aGluZy4gSSBqdXN0IHRoaW5rIGFsc28gaXQn
-cyBhcHBvcHJpYXRlIHRvIGdvIGEgYml0IGZ1cnRoZXIsIGFuZA0KPiB1c2UgRk9MTF9MT05HVEVS
-TSBhbGwgYnkgaXRzZWxmLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGF0J3MgYmVjYXVzZSBpbiBlaXRo
-ZXIgZGVzaWduIG91dGNvbWUsIGl0J3MgYmV0dGVyIHRoYXQgd2F5Og0KPiA+ID4gPg0KPiA+ID4g
-PiBpcyBqdXN0IHJpZ2h0LiBUaGUgZ3VwIEFQSSBhbHJlYWR5IGhhcyBfZmFzdCBhbmQgbm9uLWZh
-c3QNCj4gPiA+ID4gdmFyaWFudHMsIGFuZCBvbmNlIHlvdSBnZXQgcGFzdCBhIGNvdXBsZSwgeW91
-IGVuZCB1cCB3aXRoIGENCj4gPiA+ID4gbXVsdGlwbGljYXRpb24gb2YgbmFtZXMgdGhhdCByZWFs
-bHkgd29yayBiZXR0ZXIgYXMgZmxhZ3MuIFdlJ3JlIHRoZXJlLg0KPiA+ID4gPg0KPiA+ID4gPiB0
-aGUgX2xvbmd0ZXJtIEFQSSB2YXJpYW50cy4NCj4gPiA+DQo+ID4gPiBGYWlyIGVub3VnaC4gICBC
-dXQgdG8gZG8gdGhhdCBjb3JyZWN0bHkgSSB0aGluayB3ZSB3aWxsIG5lZWQgdG8gY29udmVydA0K
-PiA+ID4gZ2V0X3VzZXJfcGFnZXNfZmFzdCgpIHRvIHVzZSBmbGFncyBhcyB3ZWxsLiAgSSBoYXZl
-IGEgdmVyc2lvbiBvZg0KPiA+ID4gdGhpcyBzZXJpZXMgd2hpY2ggaW5jbHVkZXMgYSBwYXRjaCBk
-b2VzIHRoaXMsIGJ1dCB0aGUgcGF0Y2ggdG91Y2hlZA0KPiA+ID4gYSBsb3Qgb2Ygc3Vic3lzdGVt
-cyBhbmQgYSBjb3VwbGUgb2YgZGlmZmVyZW50IGFyY2hpdGVjdHVyZXMuLi5bMV0NCj4gPg0KPiA+
-IEkgdGhpbmsgdGhpcyBzaG91bGQgYmUgZG9uZSBhbnlob3csIGl0IGlzIHRyb3VibGUgdGhlIHR3
-byBiYXNpY2FsbHkNCj4gPiBpZGVudGljYWwgaW50ZXJmYWNlcyBoYXZlIGRpZmZlcmVudCBzaWdu
-YXR1cmVzLiBUaGlzIGFscmVhZHkgY2F1c2VkIGENCj4gPiBidWcgaW4gdmZpby4uDQo+ID4NCj4g
-PiBJIGFsc28gd29uZGVyIGlmIHNvbWVvbmUgc2hvdWxkIHRoaW5rIGFib3V0IG1ha2luZyBmYXN0
-IGludG8gYSBmbGFnDQo+ID4gdG9vLi4NCj4gPg0KPiA+IEJ1dCBJJ20gbm90IHN1cmUgd2hlbiBm
-YXN0IHNob3VsZCBiZSB1c2VkIHZzIHdoZW4gaXQgc2hvdWxkbid0IDooDQo+IA0KPiBFZmZlY3Rp
-dmVseSBmYXN0IHNob3VsZCBhbHdheXMgYmUgdXNlZCBqdXN0IGluIGNhc2UgdGhlIHVzZXIgY2Fy
-ZXMgYWJvdXQNCj4gcGVyZm9ybWFuY2UuIEl0J3MganVzdCB0aGF0IGl0IG1heSBmYWlsIGFuZCBu
-ZWVkIHRvIGZhbGwgYmFjayB0byByZXF1aXJpbmcgdGhlDQo+IHZtYS4NCj4gDQo+IFBlcnNvbmFs
-bHkgSSB0aG91Z2h0IFJETUEgbWVtb3J5IHJlZ2lzdHJhdGlvbiBpcyBhIG9uZS10aW1lIC8gdXBm
-cm9udCBzbG93DQo+IHBhdGggc28gdGhhdCBub24tZmFzdC1HVVAgaXMgdG9sZXJhYmxlLg0KPiAN
-Cj4gVGhlIHdvcmtsb2FkcyB0aGF0ICpuZWVkKiBpdCBhcmUgT19ESVJFQ1QgdXNlcnMgdGhhdCBj
-YW4ndCB0b2xlcmF0ZSBhIHZtYQ0KPiBsb29rdXAgb24gZXZlcnkgSS9PLg0KDQpUaGVyZSBhcmUg
-c29tZSB1c2VycyB3aG8gbmVlZCB0byBbdW5dcmVnaXN0ZXIgbWVtb3J5IG1vcmUgb2Z0ZW4uICBX
-aGlsZSBub3QgaW4gdGhlIHN0cmljdCBmYXN0IHBhdGggdGhlc2UgdXNlcnMgd291bGQgbGlrZSB0
-aGUgcmVnaXN0cmF0aW9ucyB0byBvY2N1ciBhcyBmYXN0IGFzIHBvc3NpYmxlLiAgSSBkb24ndCBw
-ZXJzb25hbGx5IGhhdmUgdGhlIHJlc3VsdHMgYnV0IG91ciBPUEEgdGVhbSBkaWQgZG8gcGVyZm9y
-bWFuY2UgdGVzdHMgb24gdGhlIEdVUCB2cyBHVVAgZmFzdCBhbmQgZm9yIHRoZSBoZmkxIGNhc2Ug
-ZmFzdCB3YXMgYmV0dGVyLiAgSSBkb24ndCBoYXZlIGFueSByZWFzb24gdG8gYmVsaWV2ZSB0aGF0
-IHJlZ3VsYXIgUkRNQSB1c2VycyB3b3VsZCBub3QgYWxzbyBiZW5lZml0Lg0KDQpJcmENCg0K
+On Mon, Feb 11, 2019 at 4:51 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Mon, 11 Feb 2019 at 14:27, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Thu, 7 Feb 2019 at 19:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > If the target device has any suppliers, as reflected by device links
+> > > to them, __pm_runtime_set_status() does not take them into account,
+> > > which is not consistent with the other parts of the PM-runtime
+> > > framework and may lead to programming mistakes.
+> > >
+> > > Modify __pm_runtime_set_status() to take suppliers into account by
+> > > activating them upfront if the new status is RPM_ACTIVE and
+> > > deactivating them on exit if the new status is RPM_SUSPENDED.
+> > >
+> > > If the activation of one of the suppliers fails, the new status
+> > > will be RPM_SUSPENDED and the (remaining) suppliers will be
+> > > deactivated on exit (the child count of the device's parent
+> > > will be dropped too then).
+> > >
+> > > Of course, adding device links locking to __pm_runtime_set_status()
+> > > means that it cannot be run fron interrupt context, so make it use
+> > > spin_lock_irq() and spin_unlock_irq() instead of spin_lock_irqsave()
+> > > and spin_unlock_irqrestore(), respectively.
+> > >
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Rafael, thanks for working on this!
+> >
+> > I am running some tests at my side, but still not achieving the
+> > behavior I expect to. Will let you know when I have more details, but
+> > first some comments below.
+>
+> Alright, this is what I found.
+>
+> When I call pm_runtime_set_suspended(), in the ->probe() error path of
+> my RPM test driver (I am removing the device link afterwards), then my
+> expectation was that this should allow the supplier to become runtime
+> suspended (sooner or later). This isn't the case, as it turns out the
+> runtime PM usage count of the supplier, still remains 1 after the
+> probe failure.
+>
+> My observation is that with $subject patch, the link->rpm_active count
+> is now reaching 1, before it stayed at 2 - so one step forward. :-)
+>
+> However, the reason to why the runtime PM usage count never reaches 0,
+> is because of the call to pm_runtime_get_noresume(supplier) in
+> device_link_rpm_prepare(), which is called from device_link_add().
+
+That was there previously, I've just moved it to device_link_rpm_prepare().
+
+But good catch!
+
+> To solve the problem, it seems like we need to call
+> pm_runtime_put(supplier), in case the device link is deleted while the
+> consumer is still probing.
+
+I'd rather change the way pm_runtime_get/put_suppliers() work, so that
+they use the rpm_active refcount, but pm_runtime_put_suppliers() only
+drops it by one - unless it is one already.
+
+Then, when adding a new link with DL_FLAG_RPM_ACTIVE,
+device_link_add() only needs to increment its rpm_active *twice*
+(instead of doing that once as to does now), so it will stay above one
+after the subsequent pm_runtime_put_suppliers() - and if it goes away
+in the meantime, then it will be cleaned up by the removal.
+
+In turn, if a link is created without DL_FLAG_RPM_ACTIVE, its
+rpm_active is one and then pm_runtime_put_suppliers() will just skip
+it.
+
+A patch will follow. :-)
