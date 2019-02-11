@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0B3C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89048222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78232206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897165;
-	bh=GBhFM5vbTQl7D/ihm1dfBJ0b63r0qcX35NCBbGf1zwc=;
+	s=default; t=1549897171;
+	bh=rJeAMNGzgPkoG+71rXsetXbE0pOTUPdXZrd4hUuP93o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T/aavtYjkqaO/jIR0hk/YIPnI2lU10bqaJCm6aF++X3MzNikUz8wkUEK86dj5pYQv
-	 pYpjMPQVJXYEe0HGUBubmdwDMQh+X8fVQnLhFGIHDRzM8awRzdwKDLTdGMlFOqujwF
-	 of+ALB2Vl6w3ug54iZBq/rqRA1w0Kssbq7fGeDbg=
+	b=DIFXVubTbrUQqlMegQZlFvuYM6TV6rFSbcA3mavYIjvoBceskfUJLDaDGbZgVqucR
+	 q4WZwF6Q2ZUqT4445wMqo/3Jr1K3RJQDoXeeIH2ljwHjCai+Tt4y4A6RsEt8I0a61T
+	 67bN9H75ypIpYl7WLYmQEA7HgGuN9Vs15RTgQFgo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388030AbfBKO7Y (ORCPT
+        id S2389805AbfBKO72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:59:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389742AbfBKO7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:18 -0500
+        id S2389791AbfBKO7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:59:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84150206BA;
-        Mon, 11 Feb 2019 14:59:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E351C21773;
+        Mon, 11 Feb 2019 14:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897158;
-        bh=GBhFM5vbTQl7D/ihm1dfBJ0b63r0qcX35NCBbGf1zwc=;
+        s=default; t=1549897163;
+        bh=rJeAMNGzgPkoG+71rXsetXbE0pOTUPdXZrd4hUuP93o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=brHvOpyfA88dNT1kOHDTIT3cda9RE2vAAhQ8Z3Z3Il8tlb2HfwEiZyVx+n02+JwTe
-         t827sVwBOZu1Vc+bT/lPwhZhsd05XovwOwSb3fogcFGuYDdgcJnbVNZXeSJ2NBeOmk
-         MWHHrRTqwuJjuvXylLamCXOKLyNAXa2sapYrY6Po=
+        b=NV1JbxPmTXBxBR2ODLjZnRwi28MpZkOeBz9SJaUHmnCvI5pmynLI5neWflGHDsKyE
+         oPShkNPE3vx62SBar4+bADnwc6CHlbPwhPDih8GD/+LyLiOfpCTia4WCAw7znmvYy4
+         O3vXXCqpYm3w7e4UMKAIh7sPso21b2WCGfskjSaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 109/205] mac80211: fix radiotap vendor presence bitmap handling
-Date:   Mon, 11 Feb 2019 15:18:27 +0100
-Message-Id: <20190211141835.663894608@linuxfoundation.org>
+Subject: [PATCH 4.14 111/205] Bluetooth: Fix unnecessary error message for HCI request completion
+Date:   Mon, 11 Feb 2019 15:18:29 +0100
+Message-Id: <20190211141835.769833971@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,48 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
+[ Upstream commit 1629db9c75342325868243d6bca5853017d91cf8 ]
 
-Due to the alignment handling, it actually matters where in the code
-we add the 4 bytes for the presence bitmap to the length; the first
-field is the timestamp with 8 byte alignment so we need to add the
-space for the extra vendor namespace presence bitmap *before* we do
-any alignment for the fields.
+In case a command which completes in Command Status was sent using the
+hci_cmd_send-family of APIs there would be a misleading error in the
+hci_get_cmd_complete function, since the code would be trying to fetch
+the Command Complete parameters when there are none.
 
-Move the presence bitmap length accounting to the right place to fix
-the alignment for the data properly.
+Avoid the misleading error and silently bail out from the function in
+case the received event is a command status.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Acked-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/bluetooth/hci_event.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 9e19ddbcb06e..c7ac1a480b1d 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -141,6 +141,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	/* allocate extra bitmaps */
- 	if (status->chains)
- 		len += 4 * hweight8(status->chains);
-+	/* vendor presence bitmap */
-+	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
-+		len += 4;
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 01f211e31f47..363dc85bbc5c 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -5212,6 +5212,12 @@ static bool hci_get_cmd_complete(struct hci_dev *hdev, u16 opcode,
+ 		return true;
+ 	}
  
- 	if (ieee80211_have_rx_timestamp(status)) {
- 		len = ALIGN(len, 8);
-@@ -182,8 +185,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
- 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
- 
--		/* vendor presence bitmap */
--		len += 4;
- 		/* alignment for fixed 6-byte vendor data header */
- 		len = ALIGN(len, 2);
- 		/* vendor data header */
++	/* Check if request ended in Command Status - no way to retreive
++	 * any extra parameters in this case.
++	 */
++	if (hdr->evt == HCI_EV_CMD_STATUS)
++		return false;
++
+ 	if (hdr->evt != HCI_EV_CMD_COMPLETE) {
+ 		BT_DBG("Last event is not cmd complete (0x%2.2x)", hdr->evt);
+ 		return false;
 -- 
 2.19.1
 
