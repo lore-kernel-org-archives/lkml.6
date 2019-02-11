@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A522FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D0BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739A720838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D1F520675
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895335;
-	bh=KxZBruaCTPht3eTMZokd/cVcdHo8+00emub1/hgQQ1w=;
+	s=default; t=1549895338;
+	bh=1HpzyshGXFjumtVxFzluG04FSUIjtLRCxJSKgAPboYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L4Ex9cOWHg+CHKXGJPW5jIk8MjGZgDaw2YSVnkIs2lLB5zSiw9c3SJs5yzeO6wSJb
-	 uRlkN9j5vCNQY041se2AyhCraK5jlShdV84vDu5GJZ9xszrSjG/01QI0Csq5zwGaXr
-	 m/aS5pld8hssbKa1l1H8jWiEPozlutv3Muz5IPjI=
+	b=AHmq/fFT33XDKz6ZsuZhXAyn60usBbMAIhy0FyHhwqbQNOiReIIzzlcCM72kEWKYw
+	 +3GCpXwZjEeWFFXWguKTN1vAO8W2/T+ihWlGVLwMrYAqpfD8Q3CPGwXFJHgKvcbbuj
+	 eRqtAq05rQOfQhU4XcmMPHELUsKZ9P6oFd/SUndA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfBKO2x (ORCPT
+        id S1729287AbfBKO24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:28:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34802 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:28:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728661AbfBKO2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:51 -0500
+        id S1728690AbfBKO2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46D332075C;
-        Mon, 11 Feb 2019 14:28:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04CA720675;
+        Mon, 11 Feb 2019 14:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895329;
-        bh=KxZBruaCTPht3eTMZokd/cVcdHo8+00emub1/hgQQ1w=;
+        s=default; t=1549895333;
+        bh=1HpzyshGXFjumtVxFzluG04FSUIjtLRCxJSKgAPboYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hi9ouqFW5Ip5PfN4+CHRQIy1l/HPW9n2yeyTx7tyDHFgOfFEpvN+EKOBCB7S2zST6
-         +YFbXJoyBp3eO11m3nDD7blGfeoiN2B1d3Gc45nhhsGxl82TtcC9K9BrCgz1dA8w1W
-         VPIhN3NonEwibMda4wkFA6E8gHJfBEuEdw7KeA+0=
+        b=RpDP98lbz/MMQm3LOUsSqw5BlAlzEGHlg8DIZaIPajWq7Jgw8stHXs9k/nizdsnrg
+         pQNHbOzPpWgMlB2fD7p9C391URq8wVUzf1sOjneUy4Q7Z1biAzTXlzw5SeCm+eaMeO
+         FFM9E6NBq20OoTI1JAeETRdGnYujiz99QQuojGoA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 169/352] tools: bpftool: fix -Wmissing declaration warnings
-Date:   Mon, 11 Feb 2019 15:16:36 +0100
-Message-Id: <20190211141857.795132461@linuxfoundation.org>
+Subject: [PATCH 4.20 170/352] KVM: PPC: Book3S: Only report KVM_CAP_SPAPR_TCE_VFIO on powernv machines
+Date:   Mon, 11 Feb 2019 15:16:37 +0100
+Message-Id: <20190211141857.868461181@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,135 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c101189bc9680675a2686bafe908015a07a0da51 ]
+[ Upstream commit 693ac10a88a2219bde553b2e8460dbec97e594e6 ]
 
-Help compiler check arguments for several utility functions used to
-print items to the console by adding the "printf" attribute when
-declaring those functions.
+The kvm capability KVM_CAP_SPAPR_TCE_VFIO is used to indicate the
+availability of in kernel tce acceleration for vfio. However it is
+currently the case that this is only available on a powernv machine,
+not for a pseries machine.
 
-Also, declare as "static" two functions that are only used in prog.c.
+Thus make this capability dependent on having the cpu feature
+CPU_FTR_HVMODE.
 
-All of them discovered by compiling bpftool with
--Wmissing-format-attribute -Wmissing-declarations.
+[paulus@ozlabs.org - fixed compilation for Book E.]
 
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/common.c        | 4 ++--
- tools/bpf/bpftool/json_writer.c   | 6 ++++--
- tools/bpf/bpftool/prog.c          | 4 ++--
- tools/bpf/bpftool/xlated_dumper.c | 7 ++++---
- 4 files changed, 12 insertions(+), 9 deletions(-)
+ arch/powerpc/kvm/powerpc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/bpf/bpftool/common.c b/tools/bpf/bpftool/common.c
-index 70fd48d79f61..05d715e6b128 100644
---- a/tools/bpf/bpftool/common.c
-+++ b/tools/bpf/bpftool/common.c
-@@ -58,7 +58,7 @@
- #define BPF_FS_MAGIC		0xcafe4a11
- #endif
- 
--void p_err(const char *fmt, ...)
-+void __printf(1, 2) p_err(const char *fmt, ...)
- {
- 	va_list ap;
- 
-@@ -76,7 +76,7 @@ void p_err(const char *fmt, ...)
- 	va_end(ap);
- }
- 
--void p_info(const char *fmt, ...)
-+void __printf(1, 2) p_info(const char *fmt, ...)
- {
- 	va_list ap;
- 
-diff --git a/tools/bpf/bpftool/json_writer.c b/tools/bpf/bpftool/json_writer.c
-index c6eef76322ae..4e4149421d07 100644
---- a/tools/bpf/bpftool/json_writer.c
-+++ b/tools/bpf/bpftool/json_writer.c
-@@ -19,6 +19,7 @@
- #include <malloc.h>
- #include <inttypes.h>
- #include <stdint.h>
-+#include <linux/compiler.h>
- 
- #include "json_writer.h"
- 
-@@ -156,7 +157,8 @@ void jsonw_name(json_writer_t *self, const char *name)
- 		putc(' ', self->out);
- }
- 
--void jsonw_vprintf_enquote(json_writer_t *self, const char *fmt, va_list ap)
-+void __printf(2, 0)
-+jsonw_vprintf_enquote(json_writer_t *self, const char *fmt, va_list ap)
- {
- 	jsonw_eor(self);
- 	putc('"', self->out);
-@@ -164,7 +166,7 @@ void jsonw_vprintf_enquote(json_writer_t *self, const char *fmt, va_list ap)
- 	putc('"', self->out);
- }
- 
--void jsonw_printf(json_writer_t *self, const char *fmt, ...)
-+void __printf(2, 3) jsonw_printf(json_writer_t *self, const char *fmt, ...)
- {
- 	va_list ap;
- 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index ccee180dfb76..69b01a6158bd 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -84,7 +84,7 @@ static const char * const attach_type_strings[] = {
- 	[__MAX_BPF_ATTACH_TYPE] = NULL,
- };
- 
--enum bpf_attach_type parse_attach_type(const char *str)
-+static enum bpf_attach_type parse_attach_type(const char *str)
- {
- 	enum bpf_attach_type type;
- 
-@@ -713,7 +713,7 @@ struct map_replace {
- 	char *name;
- };
- 
--int map_replace_compar(const void *p1, const void *p2)
-+static int map_replace_compar(const void *p1, const void *p2)
- {
- 	const struct map_replace *a = p1, *b = p2;
- 
-diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
-index 3284759df98a..98083e4dc0f9 100644
---- a/tools/bpf/bpftool/xlated_dumper.c
-+++ b/tools/bpf/bpftool/xlated_dumper.c
-@@ -114,7 +114,7 @@ struct kernel_sym *kernel_syms_search(struct dump_data *dd,
- 		       sizeof(*dd->sym_mapping), kernel_syms_cmp) : NULL;
- }
- 
--static void print_insn(void *private_data, const char *fmt, ...)
-+static void __printf(2, 3) print_insn(void *private_data, const char *fmt, ...)
- {
- 	va_list args;
- 
-@@ -123,7 +123,7 @@ static void print_insn(void *private_data, const char *fmt, ...)
- 	va_end(args);
- }
- 
--static void
-+static void __printf(2, 3)
- print_insn_for_graph(void *private_data, const char *fmt, ...)
- {
- 	char buf[64], *p;
-@@ -154,7 +154,8 @@ print_insn_for_graph(void *private_data, const char *fmt, ...)
- 	printf("%s", buf);
- }
- 
--static void print_insn_json(void *private_data, const char *fmt, ...)
-+static void __printf(2, 3)
-+print_insn_json(void *private_data, const char *fmt, ...)
- {
- 	unsigned int l = strlen(fmt);
- 	char chomped_fmt[l];
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index 2869a299c4ed..75e2e471442f 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -543,8 +543,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	case KVM_CAP_SPAPR_TCE:
+ 	case KVM_CAP_SPAPR_TCE_64:
+-		/* fallthrough */
++		r = 1;
++		break;
+ 	case KVM_CAP_SPAPR_TCE_VFIO:
++		r = !!cpu_has_feature(CPU_FTR_HVMODE);
++		break;
+ 	case KVM_CAP_PPC_RTAS:
+ 	case KVM_CAP_PPC_FIXUP_HCALL:
+ 	case KVM_CAP_PPC_ENABLE_HCALL:
 -- 
 2.19.1
 
