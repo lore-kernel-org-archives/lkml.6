@@ -2,138 +2,94 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD767C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD94AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACAAC20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901606;
-	bh=npl2pjBTnGauGmA4xkWal9FZ77i1HMF6MHGXrRLH+1E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pNaR/DUXbjY08zshJH5wPglCnkFdQ5orPI1VB6eHxbSrfDRc1eVxfVYnSKZleQ4Mo
-	 Ax8PWFjt3J0CZTyL2R2ChBxj2E4bhZeSewQ8wvuweq8svDRhlATd6aMjqABfjKB7iw
-	 0QRxXBA8SjzAfaJ58jlmKhGNFa3hwKsIH4pBmTY0=
+	by mail.kernel.org (Postfix) with ESMTP id A827D20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbfBKOWh (ORCPT
+        id S1728790AbfBKOWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 11 Feb 2019 09:22:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
+Received: from mga12.intel.com ([192.55.52.136]:39168 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728769AbfBKOWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727389AbfBKOWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 09:22:34 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B086D20844;
-        Mon, 11 Feb 2019 14:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894953;
-        bh=npl2pjBTnGauGmA4xkWal9FZ77i1HMF6MHGXrRLH+1E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BHBS8XHZ7yDJ+Z7oXE+ba3FfUhEGAeDTiwmm81y2934pd/96bPvGO2ERQU/Pnbjhh
-         qZUK4/wUunF1mPVzKsWtcGS7+cI2x9+VEyzqqDCHf0pspkIcWUW1LEmhTmFVr8YVQ9
-         XX/E+HEb+nZLsHXWoubHY1yxMPYAiLHYtNGXnZnI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 041/352] platform/chrome: dont report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
-Date:   Mon, 11 Feb 2019 15:14:28 +0100
-Message-Id: <20190211141848.922190292@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 06:22:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="125560745"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2019 06:22:34 -0800
+Received: from [10.125.252.196] (abudanko-mobl.ccr.corp.intel.com [10.125.252.196])
+        by linux.intel.com (Postfix) with ESMTP id D81BA5804B4;
+        Mon, 11 Feb 2019 06:22:29 -0800 (PST)
+Subject: Re: [PATCH v2 1/4] perf-security: document perf_events/Perf resource
+ control
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
+ <a108c800-d6c1-fac1-b73b-e390e579e6ef@linux.intel.com>
+ <alpine.DEB.2.21.1902102300210.8784@nanos.tec.linutronix.de>
+ <969b6ea5-a5bf-70b7-7031-38b07538f744@linux.intel.com>
+ <alpine.DEB.2.21.1902111514550.3197@nanos.tec.linutronix.de>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b202708c-1967-f673-16a2-005a67dffebe@linux.intel.com>
+Date:   Mon, 11 Feb 2019 17:22:28 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1902111514550.3197@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+On 11.02.2019 17:15, Thomas Gleixner wrote:
+> On Mon, 11 Feb 2019, Alexey Budankov wrote:
+>> On 11.02.2019 1:34, Thomas Gleixner wrote:
+>>> On Thu, 7 Feb 2019, Alexey Budankov wrote:
+>>>
+>>> General note: Please stay in the 80 char limit for all of the text.
+>>
+>> Yes, sure. [PATCH v2 4/4] implements wrapping at 72 columns.
+> 
+> So you provide crappy formatted stuff first, just to reformat it at the
+> end. I'm missing the logic behind that.
 
-[ Upstream commit 6ad16b78a039b45294b1ad5d69c14ac57b2fe706 ]
+The logic is not to mix new content review with the whole doc 
+formatting in the end.
 
-EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
-reasons, and there are very few cases in which they should be treated as
-wakeup interrupts (particularly, when a certain
-MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
-mainline cros_ec_sensor driver yet). Most of the time, they are benign
-sensor readings. In any case, the top-level cros_ec device doesn't know
-enough to determine that they should wake the system, and so it should
-not report the event. This would be the job of the cros_ec_sensors
-driver to parse.
+Thanks,
+Alexey
 
-This patch adds checks to cros_ec_get_next_event() such that it doesn't
-signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
-
-This patch is particularly relevant on devices like Scarlet (Rockchip
-RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
-reports sensor events much more frequently. This was causing
-/sys/power/wakeup_count to increase very frequently, often needlessly
-interrupting our ability to suspend the system.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index b6fd4838f60f..e5d5b1adb5a9 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -575,6 +575,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
- 
- int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- {
-+	u8 event_type;
- 	u32 host_event;
- 	int ret;
- 
-@@ -594,11 +595,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- 		return ret;
- 
- 	if (wake_event) {
-+		event_type = ec_dev->event_data.event_type;
- 		host_event = cros_ec_get_host_event(ec_dev);
- 
--		/* Consider non-host_event as wake event */
--		*wake_event = !host_event ||
--			      !!(host_event & ec_dev->host_event_wake_mask);
-+		/*
-+		 * Sensor events need to be parsed by the sensor sub-device.
-+		 * Defer them, and don't report the wakeup here.
-+		 */
-+		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
-+			*wake_event = false;
-+		/* Masked host-events should not count as wake events. */
-+		else if (host_event &&
-+			 !(host_event & ec_dev->host_event_wake_mask))
-+			*wake_event = false;
-+		/* Consider all other events as wake events. */
-+		else
-+			*wake_event = true;
- 	}
- 
- 	return ret;
--- 
-2.19.1
-
-
-
+> 
+> Thanks,
+> 
+> 	tglx
+> 
