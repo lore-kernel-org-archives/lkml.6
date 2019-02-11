@@ -2,129 +2,198 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47369C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0DBC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1452320863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:48:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="WNhfxihI"
+	by mail.kernel.org (Postfix) with ESMTP id 2C7AA20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfBKKs2 (ORCPT
+        id S1726941AbfBKKtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:48:28 -0500
-Received: from rcdn-iport-4.cisco.com ([173.37.86.75]:20863 "EHLO
-        rcdn-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbfBKKs2 (ORCPT
+        Mon, 11 Feb 2019 05:49:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57813 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBKKtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:48:28 -0500
-X-Greylist: delayed 572 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 05:48:27 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1566; q=dns/txt; s=iport;
-  t=1549882107; x=1551091707;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=Yjaet96agtBDFV0rdr3iPLaMDx/7V0zcF1VNSs0/h8k=;
-  b=WNhfxihIIIuui08Bs1HFreFMGbJdTGgtRenFsph/RnkGNXSDoER+YMPS
-   kETdv+JLYJlMmIHt2pQT3572HCP/3Ei5CfnQ15AMTyPMKz/fXVLypUCGe
-   8JoPttKSgp3JS403AzFWps3GK1h4uCncdMHFblBciVcxESWgnR3AMQTRm
-   U=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAABnUGFc/5BdJa1jGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA4FqJwqMFIttgg2CYYZJjmmBewsBAYRsgz0?=
- =?us-ascii?q?iNAkNAQMBAQIBAQJtKIVLAQUnEzQLEAIBCA4KHhAyJQIEAQ0FCIUGAxWqJTO?=
- =?us-ascii?q?KJ4xDF4FAP4QjgleCKoVgAoltmH8zCQKPFIMyIYFthUuLKIozhmmKeQIRFIE?=
- =?us-ascii?q?nHziBVnAVgyeCKBeOHkExi0OBHwEB?=
-X-IronPort-AV: E=Sophos;i="5.58,358,1544486400"; 
-   d="scan'208";a="515938707"
-Received: from rcdn-core-8.cisco.com ([173.37.93.144])
-  by rcdn-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:38:54 +0000
-Received: from XCH-ALN-015.cisco.com (xch-aln-015.cisco.com [173.36.7.25])
-        by rcdn-core-8.cisco.com (8.15.2/8.15.2) with ESMTPS id x1BAcsjq016723
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 10:38:54 GMT
-Received: from xch-aln-012.cisco.com (173.36.7.22) by XCH-ALN-015.cisco.com
- (173.36.7.25) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 04:38:54 -0600
-Received: from xch-aln-012.cisco.com ([173.36.7.22]) by XCH-ALN-012.cisco.com
- ([173.36.7.22]) with mapi id 15.00.1395.000; Mon, 11 Feb 2019 04:38:53 -0600
-From:   "Hans Verkuil (hansverk)" <hansverk@cisco.com>
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] media: cec-notifier: fix possible object reference
- leak
-Thread-Topic: [PATCH 1/4] media: cec-notifier: fix possible object reference
- leak
-Thread-Index: AQHUwCH951ryS7AxYU2IkMLJINPqbQ==
-Date:   Mon, 11 Feb 2019 10:38:53 +0000
-Message-ID: <3ed515b78a404ec4a22b5f69ed9d6e28@XCH-ALN-012.cisco.com>
-References: <HK0PR02MB363461179B3A702DB9CAEC55B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.61.175.13]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Feb 2019 05:49:10 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1BAmt803498530
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 11 Feb 2019 02:48:55 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1BAmtPl3498527;
+        Mon, 11 Feb 2019 02:48:55 -0800
+Date:   Mon, 11 Feb 2019 02:48:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
+Message-ID: <tip-d0fe0b9c45c144e4ac60cf7f07f7e8ae86d3536d@git.kernel.org>
+Cc:     vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de, quentin.perret@arm.com,
+        morten.rasmussen@arm.com, valentin.schneider@arm.com,
+        torvalds@linux-foundation.org, patrick.bellasi@arm.com
+Reply-To: vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, dietmar.eggemann@arm.com, mingo@kernel.org,
+          hpa@zytor.com, morten.rasmussen@arm.com, quentin.perret@arm.com,
+          tglx@linutronix.de, valentin.schneider@arm.com,
+          patrick.bellasi@arm.com, torvalds@linux-foundation.org
+In-Reply-To: <20190122162501.12000-1-dietmar.eggemann@arm.com>
+References: <20190122162501.12000-1-dietmar.eggemann@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Simplify post_init_entity_util_avg()
+ by calling it with a task_struct pointer argument
+Git-Commit-ID: d0fe0b9c45c144e4ac60cf7f07f7e8ae86d3536d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 173.36.7.25, xch-aln-015.cisco.com
-X-Outbound-Node: rcdn-core-8.cisco.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/2019 03:48, Wen Yang wrote:=0A=
-> put_device() should be called in cec_notifier_release(),=0A=
-> since the dev is being passed down to cec_notifier_get_conn(),=0A=
-> which holds reference. On cec_notifier destruction, it=0A=
-> should drop the reference to the device.=0A=
-> =0A=
-> Fixes: 6917a7b77413 ("[media] media: add CEC notifier support")=0A=
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>=0A=
-> ---=0A=
->  drivers/media/cec/cec-notifier.c | 1 +=0A=
->  1 file changed, 1 insertion(+)=0A=
-> =0A=
-> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-not=
-ifier.c=0A=
-> index dd2078b..621d4ae 100644=0A=
-> --- a/drivers/media/cec/cec-notifier.c=0A=
-> +++ b/drivers/media/cec/cec-notifier.c=0A=
-> @@ -66,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)=0A=
->  		container_of(kref, struct cec_notifier, kref);=0A=
->  =0A=
->  	list_del(&n->head);=0A=
-> +	put_device(n->dev);=0A=
->  	kfree(n->conn);=0A=
->  	kfree(n);=0A=
->  }=0A=
-> =0A=
-=0A=
-Sorry, no. The dev pointer is just a search key that the notifier code look=
-s=0A=
-for. It is not the notifier's responsibility to take a reference, that woul=
-d=0A=
-be the responsibility of the hdmi and cec drivers.=0A=
-=0A=
-If you can demonstrate that there is an object reference leak, then please=
-=0A=
-provide the details: it is likely a bug elsewhere and not in the notifier=
-=0A=
-code.=0A=
-=0A=
-BTW, your patch series didn't arrive on the linux-media mailinglist for=0A=
-some reason.=0A=
-=0A=
-Regards,=0A=
-=0A=
-	Hans=0A=
+Commit-ID:  d0fe0b9c45c144e4ac60cf7f07f7e8ae86d3536d
+Gitweb:     https://git.kernel.org/tip/d0fe0b9c45c144e4ac60cf7f07f7e8ae86d3536d
+Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+AuthorDate: Tue, 22 Jan 2019 16:25:01 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 11 Feb 2019 08:02:14 +0100
+
+sched/fair: Simplify post_init_entity_util_avg() by calling it with a task_struct pointer argument
+
+Since commit:
+
+  d03266910a53 ("sched/fair: Fix task group initialization")
+
+the utilization of a sched entity representing a task group is no longer
+initialized to any other value than 0. So post_init_entity_util_avg() is
+only used for tasks, not for sched_entities.
+
+Make this clear by calling it with a task_struct pointer argument which
+also eliminates the entity_is_task(se) if condition in the fork path and
+get rid of the stale comment in remove_entity_load_avg() accordingly.
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lkml.kernel.org/r/20190122162501.12000-1-dietmar.eggemann@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/core.c  |  2 +-
+ kernel/sched/fair.c  | 38 ++++++++++++++++----------------------
+ kernel/sched/sched.h |  2 +-
+ 3 files changed, 18 insertions(+), 24 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e86e2b8f6922..6b2c055564b5 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2433,7 +2433,7 @@ void wake_up_new_task(struct task_struct *p)
+ #endif
+ 	rq = __task_rq_lock(p, &rf);
+ 	update_rq_clock(rq);
+-	post_init_entity_util_avg(&p->se);
++	post_init_entity_util_avg(p);
+ 
+ 	activate_task(rq, p, ENQUEUE_NOCLOCK);
+ 	p->on_rq = TASK_ON_RQ_QUEUED;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 17a961522d1e..58edbbdeb661 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -759,8 +759,9 @@ static void attach_entity_cfs_rq(struct sched_entity *se);
+  * Finally, that extrapolated util_avg is clamped to the cap (util_avg_cap)
+  * if util_avg > util_avg_cap.
+  */
+-void post_init_entity_util_avg(struct sched_entity *se)
++void post_init_entity_util_avg(struct task_struct *p)
+ {
++	struct sched_entity *se = &p->se;
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 	struct sched_avg *sa = &se->avg;
+ 	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
+@@ -778,22 +779,19 @@ void post_init_entity_util_avg(struct sched_entity *se)
+ 		}
+ 	}
+ 
+-	if (entity_is_task(se)) {
+-		struct task_struct *p = task_of(se);
+-		if (p->sched_class != &fair_sched_class) {
+-			/*
+-			 * For !fair tasks do:
+-			 *
+-			update_cfs_rq_load_avg(now, cfs_rq);
+-			attach_entity_load_avg(cfs_rq, se, 0);
+-			switched_from_fair(rq, p);
+-			 *
+-			 * such that the next switched_to_fair() has the
+-			 * expected state.
+-			 */
+-			se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
+-			return;
+-		}
++	if (p->sched_class != &fair_sched_class) {
++		/*
++		 * For !fair tasks do:
++		 *
++		update_cfs_rq_load_avg(now, cfs_rq);
++		attach_entity_load_avg(cfs_rq, se, 0);
++		switched_from_fair(rq, p);
++		 *
++		 * such that the next switched_to_fair() has the
++		 * expected state.
++		 */
++		se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
++		return;
+ 	}
+ 
+ 	attach_entity_cfs_rq(se);
+@@ -803,7 +801,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
+ void init_entity_runnable_average(struct sched_entity *se)
+ {
+ }
+-void post_init_entity_util_avg(struct sched_entity *se)
++void post_init_entity_util_avg(struct task_struct *p)
+ {
+ }
+ static void update_tg_load_avg(struct cfs_rq *cfs_rq, int force)
+@@ -3590,10 +3588,6 @@ void remove_entity_load_avg(struct sched_entity *se)
+ 	 * tasks cannot exit without having gone through wake_up_new_task() ->
+ 	 * post_init_entity_util_avg() which will have added things to the
+ 	 * cfs_rq, so we can remove unconditionally.
+-	 *
+-	 * Similarly for groups, they will have passed through
+-	 * post_init_entity_util_avg() before unregister_sched_fair_group()
+-	 * calls this.
+ 	 */
+ 
+ 	sync_entity_load_avg(se);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c688ef5012e5..71208b67e58a 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1800,7 +1800,7 @@ extern void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
+ unsigned long to_ratio(u64 period, u64 runtime);
+ 
+ extern void init_entity_runnable_average(struct sched_entity *se);
+-extern void post_init_entity_util_avg(struct sched_entity *se);
++extern void post_init_entity_util_avg(struct task_struct *p);
+ 
+ #ifdef CONFIG_NO_HZ_FULL
+ extern bool sched_can_stop_tick(struct rq *rq);
