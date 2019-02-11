@@ -2,944 +2,217 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20A1C282DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906F8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0DC21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="L8fGJUlZ"
+	by mail.kernel.org (Postfix) with ESMTP id 5CEC021B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549898934;
+	bh=l5vx3LgoG1dFp+HxbHEI7mj4ZNN6wXqk30fN8mDcxcY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=fsG83qqUfZJNTxxVJDg8bTla3uiOR4AN21AxCegGSWGH8IbyvEAq+4OxZQ7OcAaRn
+	 Dpum+L4URaWp1cDJRL9mAZei8xZCcdr4xQv+W0f9mMMCCvzYJ0WaEzQyJoa+tKqPBi
+	 02IDZoreMtQmHcYt3gUy0jSzzG2L/WYpUcOcrUTg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389581AbfBKO6d (ORCPT
+        id S2390422AbfBKP2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:58:33 -0500
-Received: from ns.pmeerw.net ([84.19.176.117]:45862 "EHLO ns.pmeerw.net"
+        Mon, 11 Feb 2019 10:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389554AbfBKO6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:58:30 -0500
-Received: by ns.pmeerw.net (Postfix, from userid 1000)
-        id 751C0E0C75; Mon, 11 Feb 2019 15:58:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pmeerw.net; s=mail;
-        t=1549897107; bh=8Tj/WWDETtevJwD2ySYKE44lJ7DkLpXCiAwiRtgO6uU=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=L8fGJUlZwvZjU2HknXj1PQ9/9i2hxw9AyuRYq8tUTHrK4Fnaxj44EtIRZ1mZeM4A9
-         WLpA4mcj7xEHm21JwyiDqHiiIQrrZgTKVa4YBurFPexbM6pMYOAE89lXqjMAsO8XVa
-         Ed2ayvn2lBgOCr6yw+23H406mK6m/0L1kHOI9Jsk=
-Received: from localhost (localhost [127.0.0.1])
-        by ns.pmeerw.net (Postfix) with ESMTP id 5814BE0727;
-        Mon, 11 Feb 2019 15:58:27 +0100 (CET)
-Date:   Mon, 11 Feb 2019 15:58:27 +0100 (CET)
-From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-To:     Robert Eshleman <bobbyeshleman@gmail.com>
-cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
-In-Reply-To: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
-Message-ID: <alpine.DEB.2.21.1902111546280.18782@vps.pmeerw.net>
-References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2389090AbfBKO6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:58:13 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC990222A6;
+        Mon, 11 Feb 2019 14:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549897093;
+        bh=l5vx3LgoG1dFp+HxbHEI7mj4ZNN6wXqk30fN8mDcxcY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WsMXW6rzjgllpwSGumYT/F0l+eOEXq+oT06tAi99GtVaXKibeQMDVFh5+VENuhQwy
+         B3BTlj7gAajRNxVvTVczU5fEtr9Iz7JNU+2/7yC+he+vVu/LpYa8YUJKiek4sNC2Bv
+         Y4v6J4vfd4Nk585HQtnZdcwXC18EMcd0lxCZ/ADc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 058/205] ARM: mmp/mmp2: dt: enable the clock
+Date:   Mon, 11 Feb 2019 15:17:36 +0100
+Message-Id: <20190211141832.594303634@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
+References: <20190211141827.214852402@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Feb 2019, Robert Eshleman wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> This patch adds support for the ap3216c ambient light and proximity
-> sensor.
+------------------
 
-comments below
+[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
+
+The device-tree booted MMP2 needs to enable the timer clock, otherwise
+it would stop ticking when the boot finishes.
+
+It can also use the clock rate from the clk, the non-DT boards need to
+keep using the hardcoded rates.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/mach-mmp/common.h |  2 +-
+ arch/arm/mach-mmp/mmp2.c   |  2 +-
+ arch/arm/mach-mmp/pxa168.c |  2 +-
+ arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
+ 4 files changed, 23 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index 7e284d9c429f..5ac2851ef5d3 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -2,7 +2,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
-> Supported features include:
-> 
-> * Illuminance (lux)
-> * Proximity (raw)
-> * IR (raw)
-> * Rising/falling threshold events for illuminance and proximity
-> * Calibration scale for illuminance
-> * Calibration bias for proximity
-> 
-> Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
-> ---
->  drivers/iio/light/Kconfig   |  11 +
->  drivers/iio/light/Makefile  |   1 +
->  drivers/iio/light/ap3216c.c | 793 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 805 insertions(+)
->  create mode 100644 drivers/iio/light/ap3216c.c
-> 
-> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> index 36f458433480..74688d19beb1 100644
-> --- a/drivers/iio/light/Kconfig
-> +++ b/drivers/iio/light/Kconfig
-> @@ -41,6 +41,17 @@ config AL3320A
->  	 To compile this driver as a module, choose M here: the
->  	 module will be called al3320a.
->  
-> +config AP3216C
-> +	tristate "AP3216C Ambient Light and Proximity sensor"
-> +	select REGMAP_I2C
-> +	depends on I2C
-> +	help
-> +	  Say Y here to build a driver for the AP3216C Ambient Light and
-> +	  Proximity sensor.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ap3216c.
-> +
->  config APDS9300
->  	tristate "APDS9300 ambient light sensor"
->  	depends on I2C
-> diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
-> index 286bf3975372..7d2f8fa0f30d 100644
-> --- a/drivers/iio/light/Makefile
-> +++ b/drivers/iio/light/Makefile
-> @@ -7,6 +7,7 @@
->  obj-$(CONFIG_ACPI_ALS)		+= acpi-als.o
->  obj-$(CONFIG_ADJD_S311)		+= adjd_s311.o
->  obj-$(CONFIG_AL3320A)		+= al3320a.o
-> +obj-$(CONFIG_AP3216C)		+= ap3216c.o
->  obj-$(CONFIG_APDS9300)		+= apds9300.o
->  obj-$(CONFIG_APDS9960)		+= apds9960.o
->  obj-$(CONFIG_BH1750)		+= bh1750.o
-> diff --git a/drivers/iio/light/ap3216c.c b/drivers/iio/light/ap3216c.c
-> new file mode 100644
-> index 000000000000..12802b45c01c
-> --- /dev/null
-> +++ b/drivers/iio/light/ap3216c.c
-> @@ -0,0 +1,793 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * AP3216C Ambient Light and Infrared Proximity Sensor
-> + *
-> + * Copyright (c) 2019, Robert Eshleman.
-> + *
-> + * Datasheet: https://pdf-datasheet-datasheet.netdna-ssl.com/pdf-down/A/P/3/AP3216C-LITE-ON.pdf
-> + *
-> + * 7-bit I2C slave address 0x1E
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/bits.h>
-> +#include <linux/regmap.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/iio/events.h>
-> +
-> +#define AP3216C_DRV_NAME "ap3216c"
-> +
-> +/* register addresses */
-> +#define AP3216C_SYS 0x0
-> +#define AP3216C_INT_STATUS 0x01
-> +#define AP3216C_INT_CLR 0x02
-> +#define AP3216C_IR_DATA_LO 0x0A
-> +#define AP3216C_IR_DATA_HI 0x0B
-> +#define AP3216C_ALS_DATA_LO 0x0C
-> +#define AP3216C_ALS_DATA_HI 0x0D
-> +#define AP3216C_PS_DATA_LO 0x0E
-> +#define AP3216C_PS_DATA_HI 0x0F
-> +#define AP3216C_ALS_CFG 0x10
-> +#define AP3216C_ALS_CALIB 0x19
-> +#define AP3216C_ALS_LO_THR_LO 0x1A
-> +#define AP3216C_ALS_LO_THR_HI 0x1B
-> +#define AP3216C_ALS_HI_THR_LO 0x1C
-> +#define AP3216C_ALS_HI_THR_HI 0x1D
-> +#define AP3216C_PS_CFG 0x20
-> +#define AP3216C_PS_CALIB_LO 0x28
-> +#define AP3216C_PS_CALIB_HI 0x29
-> +#define AP3216C_PS_LO_THR_LO 0x2A
-> +#define AP3216C_PS_LO_THR_HI 0x2B
-> +#define AP3216C_PS_HI_THR_LO 0x2C
-> +#define AP3216C_PS_HI_THR_HI 0x2D
-> +
-> +/* SYS_MODE mask and config value */
-> +#define AP3216C_SYS_MODE_ALS_PS GENMASK(1, 0)
-> +#define AP3216C_SYS_MODE_ALS_ONLY 0x01
-> +
-> +/* INT_STATUS masks and config value */
-> +#define AP3216C_INT_STATUS_ALS_MASK 1
-> +#define AP3216C_INT_STATUS_PS_MASK (1 << 1)
-
-use BIT()?
-
-> +#define AP3216C_INT_STATUS_CLR GENMASK(1, 0)
-> +#define AP3216C_INT_CLR_MANUAL 1
-> +
-> +/* IR_DATA mask/shift */
-> +#define AP3216C_IR_DATA_LO_MASK GENMASK(1, 0)
-> +#define AP3216C_IR_DATA_HI_SHIFT 2
-> +
-> +/* ALS_DATA shift and fractional helper */
-> +#define AP3216C_ALS_DATA_HI_SHIFT 8
-> +#define AP3216C_ALS_DATA_DENOM 100000
-> +
-> +/* ALS_CALIB masks/shifts */
-> +#define AP3216C_ALS_CALIB_INT_MASK GENMASK(7, 6)
-> +#define AP3216C_ALS_CALIB_INT_SHIFT 6
-> +#define AP3216C_ALS_CALIB_DEC_MASK GENMASK(5, 0)
-> +
-> +/* PS_DATA shifts/masks/bits */
-> +#define AP3216C_PS_DATA_LO_MASK GENMASK(3, 0)
-> +#define AP3216C_PS_DATA_LO_IR_OF BIT(6)
-> +#define AP3216C_PS_DATA_HI_MASK GENMASK(5, 0)
-> +#define AP3216C_PS_DATA_HI_SHIFT 4
-> +#define AP3216C_PS_DATA_HI_IR_OF BIT(6)
-> +
-> +/* ALS_CFG masks */
-> +#define AP3216C_ALS_CFG_GAIN_MASK GENMASK(5, 4)
-> +
-> +/* ALS_CALIB shifts */
-> +#define AP3216C_ALS_CALIB_INT_SHIFT 6
-> +
-> +/* ALS_HI_THR masks and shifts */
-> +#define AP3216C_ALS_HI_THR_LO_MASK GENMASK(7, 0)
-> +#define AP3216C_ALS_HI_THR_HI_SHIFT 8
-> +#define AP3216C_ALS_HI_THR_HI_MASK GENMASK(7, 4)
-> +#define AP3216C_ALS_HI_THR_HI_SHIFT 8
-> +
-> +/* ALS_LO_THR masks and shifts */
-> +#define AP3216C_ALS_LO_THR_LO_MASK GENMASK(3, 0)
-> +#define AP3216C_ALS_LO_THR_HI_MASK GENMASK(7, 4)
-> +#define AP3216C_ALS_LO_THR_HI_SHIFT 8
-> +
-> +/* PS_CFG reg mask/shift/bit values */
-> +#define AP3216C_PS_CFG_GAIN_MASK GENMASK(3, 2)
-> +#define AP3216C_PS_CFG_GAIN_SHIFT 2
-> +#define AP3216C_PS_CFG_GAIN(val) \
-> +	(1 << ((val & AP3216C_PS_CFG_GAIN_MASK) >> AP3216C_PS_CFG_GAIN_SHIFT))
-> +
-> +/* PS_LO and PS_HI shift/mask and multiplier values */
-> +#define AP3216C_PS_LO_THR_HI_MULT 4
-> +#define AP3216C_PS_HI_THR_HI_SHIFT 2
-> +#define AP3216C_PS_HI_THR_HI_MULT 4
-> +
-> +/* PS_THR_LO and PS_THR_HI masks */
-> +#define AP3216C_PS_THR_LO_MASK GENMASK(1, 0)
-> +#define AP3216C_PS_THR_HI_MASK GENMASK(10, 2)
-> +
-> +/* PS_CALIB_HI and PS_CALIB_LO shift/mask/bit values */
-> +#define AP3216C_PS_CALIB_HI_SHIFT 1
-> +#define AP3216C_PS_CALIB_HI_MASK GENMASK(8, 1)
-> +#define AP3216C_PS_CALIB_LO_MASK BIT(0)
-> +
-> +/* ALS fractional helper values */
-> +#define AP3216C_ALS_INTEG_MULT 10000
-> +#define AP3216C_ALS_FRACT_DIV 100
-> +
-> +/* ALS_CALIB min/max values (0.0 <= ALS_CALIB <= 3.984375) */
-> +#define AP3216C_ALS_CALIB_INT_MIN 0
-> +#define AP3216C_ALS_CALIB_DEC_MIN 0
-> +#define AP3216C_ALS_CALIB_INT_MAX 3
-> +#define AP3216C_ALS_CALIB_DEC_MAX 984375
-> +
-> +/* ALS_CALIB conversion denominator */
-> +#define AP3216C_ALS_CALIB_DENOM 64
-> +
-> +#define AP3216C_IIO_MULT 1000000
-> +
-> +static u16 ap3216c_gain_array[] = {
-
-const
-
-> +	3500,  /* 0.3500 lux resolution */
-> +	 788,  /* 0.0788 lux resolution */
-> +	 197,  /* 0.0197 lux resolution */
-> +	  49,  /* 0.0049 lux resolution */
-> +};
-> +
-> +struct ap3216c_data {
-> +	struct regmap *regmap;
-> +	struct i2c_client *client;
-> +	bool als_thresh_en;
-> +	bool prox_thresh_en;
-> +};
-> +
-> +static const struct iio_event_spec ap3216c_event_spec[] = {
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_RISING,
-> +		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_FALLING,
-> +		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_EITHER,
-> +		.mask_shared_by_type = BIT(IIO_EV_INFO_ENABLE),
-> +	},
-> +};
-> +
-> +static const struct iio_chan_spec ap3216c_channels[] = {
-> +	{
-> +		.type = IIO_LIGHT,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |
-> +				      BIT(IIO_CHAN_INFO_CALIBSCALE),
-
-should probably be INFO_SCALE, as is used to select sensitivity and is not 
-meant to calibrate the chip
-
-> +		.event_spec = ap3216c_event_spec,
-> +		.num_event_specs = ARRAY_SIZE(ap3216c_event_spec),
-> +	},
-> +	{
-> +		.type = IIO_PROXIMITY,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-> +				      BIT(IIO_CHAN_INFO_CALIBBIAS),
-
-should probably be INFO_SCALE
-
-> +		.event_spec = ap3216c_event_spec,
-> +		.num_event_specs = ARRAY_SIZE(ap3216c_event_spec),
-> +	},
-> +	{
-> +		.type = IIO_LIGHT,
-> +		.modified = 1,
-> +		.channel2 = IIO_MOD_LIGHT_IR,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> +	}
-> +};
-> +
-> +static int ap3216c_write_event_value(struct iio_dev *indio_dev,
-> +				       const struct iio_chan_spec *chan,
-> +				       enum iio_event_type type,
-> +				       enum iio_event_direction dir,
-> +				       enum iio_event_info info,
-> +				       int val, int val2)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +	int cfg, gain;
-> +	int integral, fractional;
-> +	int lo, hi;
-> +	u16 thr;
-> +	int ret;
-> +
-> +	switch (chan->type) {
-> +	case IIO_LIGHT:
-> +		ret = regmap_read(data->regmap, AP3216C_ALS_CFG, &cfg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		gain = ap3216c_gain_array[cfg & AP3216C_ALS_CFG_GAIN_MASK];
-> +		integral = val * AP3216C_ALS_INTEG_MULT / gain;
-> +		fractional = val2 / AP3216C_ALS_FRACT_DIV / gain;
-> +
-> +		thr = integral + fractional;
-> +
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-
-mutex around the two writes to have atomic update of regs?
-
-> +			ret = regmap_write(data->regmap, AP3216C_ALS_HI_THR_LO,
-> +					   thr & AP3216C_ALS_HI_THR_LO_MASK);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_write(data->regmap,
-> +					   AP3216C_ALS_HI_THR_HI,
-> +					   (thr & AP3216C_ALS_HI_THR_HI_MASK) >>
-> +					   AP3216C_ALS_HI_THR_HI_SHIFT);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			return ret;
-> +
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_write(data->regmap,
-> +					   AP3216C_ALS_LO_THR_LO,
-> +					   thr & AP3216C_ALS_LO_THR_LO_MASK);
-> +
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_write(data->regmap,
-> +					   AP3216C_ALS_LO_THR_HI,
-> +					   (thr & AP3216C_ALS_LO_THR_HI_MASK) >>
-> +					   AP3216C_ALS_LO_THR_HI_SHIFT);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			return ret;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +		return -EINVAL;
-> +
-> +	case IIO_PROXIMITY:
-> +		lo = val & AP3216C_PS_THR_LO_MASK;
-> +		hi = (val & AP3216C_PS_THR_HI_MASK) >>
-> +			AP3216C_PS_HI_THR_HI_SHIFT;
-> +
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			ret = regmap_write(data->regmap,
-> +					   AP3216C_PS_HI_THR_LO, lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			return regmap_write(data->regmap,
-> +					    AP3216C_PS_HI_THR_HI, hi);
-> +
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_write(data->regmap,
-> +					   AP3216C_PS_LO_THR_LO, lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			return regmap_write(data->regmap,
-> +					    AP3216C_PS_LO_THR_HI, hi);
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return -EINVAL;
-
-should not be needed
-
-> +}
-> +
-> +static int ap3216c_read_event_value(struct iio_dev *indio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir,
-> +				     enum iio_event_info info,
-> +				     int *val, int *val2)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +	unsigned int lo, hi;
-> +	int ret;
-> +
-> +	switch (chan->type) {
-> +	case IIO_LIGHT:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_HI_THR_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_HI_THR_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			*val = (hi << AP3216C_ALS_HI_THR_HI_SHIFT) | lo;
-> +			return IIO_VAL_INT;
-> +
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_LO_THR_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_LO_THR_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			*val = (hi << AP3216C_ALS_LO_THR_HI_SHIFT) | lo;
-> +			return IIO_VAL_INT;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	case IIO_PROXIMITY:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_HI_THR_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_HI_THR_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			*val = (hi * AP3216C_PS_HI_THR_HI_MULT) +
-> +				(lo & AP3216C_PS_THR_LO_MASK);
-> +
-> +			return IIO_VAL_INT;
-> +
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_LO_THR_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_LO_THR_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			*val = (hi * AP3216C_PS_LO_THR_HI_MULT) +
-> +				(lo & AP3216C_PS_THR_LO_MASK);
-> +
-> +			return IIO_VAL_INT;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return -EINVAL;
-
-should not be needed; compilers are smart enough to see that this is 
-unreachable (here and elsewhere)
-
-> +}
-> +
-> +static int ap3216c_read_event_config(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +
-> +	switch (chan->type) {
-> +	case IIO_LIGHT:
-> +		return data->als_thresh_en;
-> +
-> +	case IIO_PROXIMITY:
-> +		return data->prox_thresh_en;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ap3216c_write_event_config(struct iio_dev *indio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir, int state)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +
-> +	switch (chan->type) {
-> +	case IIO_LIGHT:
-> +		data->als_thresh_en = state;
-> +		return 0;
-> +
-> +	case IIO_PROXIMITY:
-> +		data->prox_thresh_en = state;
-> +		return 0;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct regmap_config ap3216c_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = AP3216C_PS_HI_THR_HI,
-> +};
-> +
-> +/**
-> + * Returns integral part of decimal between 0.0 and 3.984275
-> + */
-> +static int ap3216c_als_calibscale_int(int val)
-> +{
-> +	if (val > AP3216C_ALS_CALIB_INT_MAX)
-> +		return AP3216C_ALS_CALIB_INT_MAX;
-> +
-> +	if (val <= AP3216C_ALS_CALIB_INT_MIN)
-> +		return AP3216C_ALS_CALIB_INT_MIN;
-> +
-> +	return val;
-> +}
-> +
-> +/**
-> + * Returns decimal part of decimal number between 0.0 and 3.984275
-> + */
-> +static int ap3216c_als_calibscale_dec(int val, int val2)
-> +{
-> +	/* Return max decimal if number exceeds calibscale max */
-> +	if (val > AP3216C_ALS_CALIB_INT_MAX ||
-> +	    (val == AP3216C_ALS_CALIB_INT_MAX &&
-> +	     val2 > AP3216C_ALS_CALIB_DEC_MAX))
-> +		return AP3216C_ALS_CALIB_DEC_MAX;
-> +
-> +	/* Floor the decimal if integral below minimum */
-> +	if (val <= AP3216C_ALS_CALIB_INT_MIN)
-> +		return AP3216C_ALS_CALIB_DEC_MIN;
-> +
-> +	/* Floor the decimal if decimal below minimum */
-> +	if (val2 < AP3216C_ALS_CALIB_DEC_MIN)
-> +		return AP3216C_ALS_CALIB_DEC_MIN;
-> +
-> +	/* Return max decimal if decimal above maximum */
-> +	if (val2 > AP3216C_ALS_CALIB_DEC_MAX)
-> +		return AP3216C_ALS_CALIB_DEC_MAX;
-> +
-> +	return val2;
-> +}
-> +
-> +static int ap3216c_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +	int integral, decimal;
-> +	int tmp;
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		switch (chan->type) {
-> +		case IIO_LIGHT:
-> +			integral = ap3216c_als_calibscale_int(val);
-> +			decimal = ap3216c_als_calibscale_dec(val, val2);
-> +
-> +			tmp = integral << AP3216C_ALS_CALIB_INT_SHIFT;
-> +
-> +			/*
-> +			 * Reverse scaling by multiplying by the scaling
-> +			 * denominator and dividing by IIO multiplier.
-> +			 */
-> +			tmp |= (decimal * AP3216C_ALS_CALIB_DENOM) /
-> +				AP3216C_IIO_MULT;
-> +
-> +			return regmap_write(data->regmap,
-> +					    AP3216C_ALS_CALIB, tmp);
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		switch (chan->type) {
-> +		case IIO_PROXIMITY:
-> +			ret = regmap_write(data->regmap, AP3216C_PS_CALIB_LO,
-> +					   val & AP3216C_PS_CALIB_LO_MASK);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			tmp = (val & AP3216C_PS_CALIB_HI_MASK) >>
-> +				AP3216C_PS_CALIB_HI_SHIFT;
-> +
-> +			return regmap_write(data->regmap,
-> +					    AP3216C_PS_CALIB_HI, tmp);
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return -EINVAL;
-> +}
-> +
-> +static int ap3216c_read_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int *val, int *val2, long mask)
-> +{
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +	int lo, hi;
-> +	int cfg, tmp;
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		switch (chan->type) {
-> +		case IIO_LIGHT:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_CALIB, &tmp);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			/* Scale is multiplied by 1/64 */
-> +			*val = tmp;
-> +			*val2 = AP3216C_ALS_CALIB_DENOM;
-> +			return IIO_VAL_FRACTIONAL;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		switch (chan->type) {
-> +		case IIO_PROXIMITY:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_CALIB_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_CALIB_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +
-> +			*val = lo | (hi << AP3216C_PS_CALIB_HI_SHIFT);
-> +			return IIO_VAL_INT;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		switch (chan->type) {
-> +		case IIO_LIGHT:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_DATA_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_DATA_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_ALS_CFG, &cfg);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			tmp = (hi << AP3216C_ALS_DATA_HI_SHIFT) | lo;
-> +			tmp *= ap3216c_gain_array[cfg & AP3216C_ALS_CFG_GAIN_MASK];
-> +
-> +			*val = tmp;
-> +			*val2 = AP3216C_ALS_DATA_DENOM;
-> +
-> +			return IIO_VAL_FRACTIONAL;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (chan->type) {
-> +		case IIO_LIGHT:
-> +			if (chan->channel2 != IIO_MOD_LIGHT_IR)
-> +				return -EINVAL;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_IR_DATA_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_IR_DATA_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			tmp = lo & AP3216C_IR_DATA_LO_MASK;
-> +			tmp |= hi << AP3216C_IR_DATA_HI_SHIFT;
-> +			*val = tmp;
-> +
-> +			return IIO_VAL_INT;
-> +
-> +		case IIO_PROXIMITY:
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_DATA_LO, &lo);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_DATA_HI, &hi);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = regmap_read(data->regmap,
-> +					  AP3216C_PS_CFG, &cfg);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			tmp = lo & AP3216C_PS_DATA_LO_MASK;
-> +			tmp |= (hi & AP3216C_PS_DATA_HI_MASK) <<
-> +				AP3216C_PS_DATA_HI_SHIFT;
-> +			*val = tmp * AP3216C_PS_CFG_GAIN(cfg);
-> +
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct iio_info ap3216c_info = {
-> +	.read_raw = ap3216c_read_raw,
-> +	.write_raw = ap3216c_write_raw,
-> +	.read_event_value = ap3216c_read_event_value,
-> +	.write_event_value = ap3216c_write_event_value,
-> +	.read_event_config = ap3216c_read_event_config,
-> +	.write_event_config = ap3216c_write_event_config,
-> +};
-> +
-> +static int ap3216c_clear_int(struct ap3216c_data *data)
-
-function needed?
-
-> +{
-> +	return regmap_write(data->regmap,
-> +			    AP3216C_INT_STATUS, AP3216C_INT_STATUS_CLR);
-> +}
-> +
-> +static irqreturn_t ap3216c_event_handler(int irq, void *p)
-> +{
-> +	struct iio_dev *indio_dev = p;
-> +	struct ap3216c_data *data = iio_priv(indio_dev);
-> +	int status;
-> +	s64 timestamp;
-> +	int ret;
-> +
-> +	ret = regmap_read(data->regmap, AP3216C_INT_STATUS, &status);
-> +	if (ret) {
-> +		/*
-> +		 * Without being able to guarantee the interrupt came from
-> +		 * this device, we must return IRQ_HANDLED instead of
-> +		 * IRQ_NONE.
-> +		 */
-> +		dev_err(&data->client->dev, "error reading IRQ status\n");
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	/* The IRQ was not from this device */
-> +	if (!status)
-> +		return IRQ_NONE;
-> +
-> +	timestamp = iio_get_time_ns(indio_dev);
-> +	if ((status & AP3216C_INT_STATUS_PS_MASK) && data->prox_thresh_en)
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_EITHER),
-> +			       timestamp);
-> +
-> +	if ((status & AP3216C_INT_STATUS_ALS_MASK) && data->als_thresh_en)
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_LIGHT, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_EITHER),
-> +			       timestamp);
-> +
-> +	ret = ap3216c_clear_int(data);
-> +	if (ret < 0)
-> +		dev_err(&data->client->dev, "error clearing IRQ\n");
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int ap3216c_probe(struct i2c_client *client,
-> +			  const struct i2c_device_id *id)
-> +{
-> +	struct ap3216c_data *data;
-> +	struct iio_dev *indio_dev;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->client = client;
-> +	indio_dev->dev.parent = &client->dev;
-> +	indio_dev->info = &ap3216c_info;
-> +	indio_dev->name = AP3216C_DRV_NAME;
-> +	indio_dev->channels = ap3216c_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ap3216c_channels);
-> +
-> +	data->regmap = devm_regmap_init_i2c(client, &ap3216c_regmap_config);
-> +	if (IS_ERR(data->regmap)) {
-> +		dev_err(&client->dev, "Failed to allocate register map\n");
-> +		return PTR_ERR(data->regmap);
-> +	}
-> +
-> +	/* Default to thresh events disabled */
-> +	data->als_thresh_en = false;
-> +	data->prox_thresh_en = false;
-> +
-> +	/*
-> +	 * Require that that the interrupt is cleared only when the INT
-
-that that
-
-> +	 * register is written to, instead of when data is read.  This
-> +	 * prevents the interrupt from falsely reporting IRQ_NONE.
-> +	 */
-> +	ret = regmap_write(data->regmap,
-> +			   AP3216C_INT_CLR, AP3216C_INT_CLR_MANUAL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Before setting up IRQ, clear any stale interrupt */
-> +	ret = ap3216c_clear_int(data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (client->irq) {
-> +		ret = devm_request_threaded_irq(&client->dev, client->irq,
-> +						NULL, ap3216c_event_handler,
-> +						IRQF_TRIGGER_FALLING |
-> +						IRQF_SHARED | IRQF_ONESHOT,
-> +						client->name, indio_dev);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Enable ALS and PS+IR */
-> +	ret = regmap_write(data->regmap, AP3216C_SYS, AP3216C_SYS_MODE_ALS_PS);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +static const struct of_device_id ap3216c_of_match[] = {
-> +	{ .compatible = "liteon,ap3216c", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, ap3216c_of_match);
-> +
-> +static const struct i2c_device_id ap3216c_id[] = {
-> +	{"ap3216c", 0},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ap3216c_id);
-> +
-> +static struct i2c_driver ap3216c_driver = {
-> +	.driver = {
-> +		.name	= AP3216C_DRV_NAME,
-> +	},
-> +	.probe		= ap3216c_probe,
-> +	.id_table	= ap3216c_id,
-> +};
-> +module_i2c_driver(ap3216c_driver);
-> +
-> +MODULE_AUTHOR("Robert Eshleman <bobbyeshleman@gmail.com>");
-> +MODULE_DESCRIPTION("APC3216C Ambient Light and Proximity Sensor");
-> +MODULE_LICENSE("GPL v2");
-> 
-
+-extern void timer_init(int irq);
++extern void timer_init(int irq, unsigned long rate);
+ 
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index afba5460cdaf..fb3e7e32c882 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
+ 
+-	timer_init(IRQ_MMP2_TIMER1);
++	timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 0f5f16fb8c66..77a358165a56 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1);
++	timer_init(IRQ_PXA168_TIMER1, 6500000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 96ad1db0b04b..eab0fd8a7343 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
++#include <linux/clk.h>
+ 
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -38,12 +39,6 @@
+ #include "cputype.h"
+ #include "clock.h"
+ 
+-#ifdef CONFIG_CPU_MMP2
+-#define MMP_CLOCK_FREQ		6500000
+-#else
+-#define MMP_CLOCK_FREQ		3250000
+-#endif
+-
+ #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
+ 
+ #define MAX_DELTA		(0xfffffffe)
+@@ -189,19 +184,18 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq)
++void __init timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+-	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
++	sched_clock_register(mmp_read_sched_clock, 32, rate);
+ 
+ 	ckevt.cpumask = cpumask_of(0);
+ 
+ 	setup_irq(irq, &timer_irq);
+ 
+-	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
+-	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
+-					MIN_DELTA, MAX_DELTA);
++	clocksource_register_hz(&cksrc, rate);
++	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -213,7 +207,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
+ void __init mmp_dt_init_timer(void)
+ {
+ 	struct device_node *np;
++	struct clk *clk;
+ 	int irq, ret;
++	unsigned long rate;
+ 
+ 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
+ 	if (!np) {
+@@ -221,6 +217,18 @@ void __init mmp_dt_init_timer(void)
+ 		goto out;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (!IS_ERR(clk)) {
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto out;
++		rate = clk_get_rate(clk) / 2;
++	} else if (cpu_is_pj4()) {
++		rate = 6500000;
++	} else {
++		rate = 3250000;
++	}
++
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -EINVAL;
+@@ -231,7 +239,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq);
++	timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
+2.19.1
 
-Peter Meerwald-Stadler
-Mobile: +43 664 24 44 418
+
+
