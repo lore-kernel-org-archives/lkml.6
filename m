@@ -2,71 +2,47 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4355C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7294CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A80020821
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C6120844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBKKda (ORCPT
+        id S1726955AbfBKKed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:33:30 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50991 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfBKKd3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:33:29 -0500
-Received: from localhost (alyon-652-1-53-40.w109-213.abo.wanadoo.fr [109.213.164.40])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 18E99240018;
-        Mon, 11 Feb 2019 10:33:26 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: meson: remove useless rtc_nvmem_unregister call
-Date:   Mon, 11 Feb 2019 11:33:24 +0100
-Message-Id: <20190211103324.643-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 11 Feb 2019 05:34:33 -0500
+Received: from 8bytes.org ([81.169.241.247]:39384 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfBKKed (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:34:33 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 0F0AC39A; Mon, 11 Feb 2019 11:34:31 +0100 (CET)
+Date:   Mon, 11 Feb 2019 11:34:31 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Tom Murphy <murphyt7@tcd.ie>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fix flush_tlb_all typo
+Message-ID: <20190211103431.GB32526@8bytes.org>
+References: <20190208142044.27732-1-murphyt7@tcd.ie>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208142044.27732-1-murphyt7@tcd.ie>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rtc_nvmem_unregister() is called on rtc_device release so it is not
-necessary to call it from the driver.
+On Fri, Feb 08, 2019 at 02:20:44PM +0000, Tom Murphy wrote:
+> ---
+>  include/linux/iommu.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-meson.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/rtc/rtc-meson.c b/drivers/rtc/rtc-meson.c
-index 6fc4b09e7ebd..e08b981dfc21 100644
---- a/drivers/rtc/rtc-meson.c
-+++ b/drivers/rtc/rtc-meson.c
-@@ -373,13 +373,10 @@ static int meson_rtc_probe(struct platform_device *pdev)
- 
- 	ret = rtc_register_device(rtc->rtc);
- 	if (ret)
--		goto out_unregister_nvmem;
-+		goto out_disable_vdd;
- 
- 	return 0;
- 
--out_unregister_nvmem:
--	rtc_nvmem_unregister(rtc->rtc);
--
- out_disable_vdd:
- 	regulator_disable(rtc->vdd);
- 	return ret;
--- 
-2.20.1
+The patch has no Signed-off-by, please add it and a proper
+commit-message and re-send.
 
