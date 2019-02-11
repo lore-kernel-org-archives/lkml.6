@@ -2,118 +2,141 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6668AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80178C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30433218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4639121A80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJu1cE0x"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="oU4x4xhx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730777AbfBKQFh (ORCPT
+        id S1731136AbfBKQFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:05:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32848 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728015AbfBKQFg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:05:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id h22so182256wmb.0;
-        Mon, 11 Feb 2019 08:05:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=isK88eLBkgZCz+mq9eV6d8holQbqw/zSRKL8Krc/Qas=;
-        b=dJu1cE0x8glkxeosBDR2lYkqys9OqHe1qx/br1JL+iFNMhFfxWv4/4bduM1w7k8cBS
-         I1NEnAV0P4CRpfm/l3yEHYGMwOs/l4d7alSQ2hVkNmhUCP3a08WbVkE+VhAfDqW41hpX
-         xAJug3MdEOf9BbWSsnLg/ns+r80Ob6zyu7ymHkswzWGOJ2mG6meaoD7oC8nXaZia9plG
-         1a+WSI1eoT0GPcvblk2CBKFqm+CHOhIKmYm47LY4F8JpcF4hHWoNX9VPyRI4KPj1D6CV
-         CRJ938Y16i9tR9b9LVzXJbGEheppAiOHlob91r24zPOcdYh2H6WD+BvBzc0Kax7B4eyf
-         j3lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=isK88eLBkgZCz+mq9eV6d8holQbqw/zSRKL8Krc/Qas=;
-        b=HhH5fXR+SUNivIXxciJ/uLhwfHjf4gynXMOE1JJOf+oaOsGKhYmyqlFyVgYp5kCigf
-         muqJo3cWvO0V7ZSik1Xir4qhRdyAA0towUzjmK0srnH5w/nikkLWq/UGiaXyRmdwuiGG
-         J9gxVgHMb1gXVpUM3awaFbxt/ZfV6ks5PdlKy9jveR9WCZT3zzP+hBLfV7L885Pd7K4X
-         cTxLaJmwj8wEx7xje2QOlENFLCAC50Mc4kLSUq1hVETbWqbsYLZ9x8fiwI72aPiTywQU
-         kV803PyojB8kTUVSq2RBhuzq9URAmNnfts97+LKuE0iRu/mJJqqDrdC0C4Zof+y+NJZn
-         d1Mg==
-X-Gm-Message-State: AHQUAuZUTzOtT87YhsUxaD4S1vbVY4IXlcysJagAAUGGGtzqw0PgNKis
-        /RX/UMc697BRUfeETnwd0zdDKg1Fja1HR6YfVJ3wxNq4N0g=
-X-Google-Smtp-Source: AHgI3IZ9OMkOykoJ9FF+Gd0MPAoqAQk4eazCR1y7hkRGBeghZ4gVae7qNx4c4WvMIqPXFfClmgHTyh5mrRV+nl5z1j4=
-X-Received: by 2002:a1c:9c0a:: with SMTP id f10mr143872wme.73.1549901133820;
- Mon, 11 Feb 2019 08:05:33 -0800 (PST)
+        Mon, 11 Feb 2019 11:05:51 -0500
+Received: from mail-eopbgr20043.outbound.protection.outlook.com ([40.107.2.43]:42002
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728015AbfBKQFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:05:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8tAcT/apF6DPLLmFySVdcDsEcqNwhs0WLE6X7Q3J0c=;
+ b=oU4x4xhx5G2So46+5fwXj6XjKr1aDV3EFF0AwoPHmwB9IJSSh045bGnoWtOSAuX753TkYhDNVstUz7DmM7/rRY9ibgY/n7LZjoKaP+YGQ5eAHDaJRynecbCWUjf0/DJpmw2ly2zBCIVxMLK+1+/pqWec0LOccLaKql+6ms0agUc=
+Received: from DB6PR06CA0013.eurprd06.prod.outlook.com (2603:10a6:6:1::26) by
+ AM6PR0602MB3526.eurprd06.prod.outlook.com (2603:10a6:209:e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.19; Mon, 11 Feb
+ 2019 16:05:46 +0000
+Received: from AM5EUR02FT063.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::204) by DB6PR06CA0013.outlook.office365.com
+ (2603:10a6:6:1::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.17 via Frontend
+ Transport; Mon, 11 Feb 2019 16:05:45 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
+ smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
+ header.d=none;korsgaard.com; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT063.mail.protection.outlook.com (10.152.9.234) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Mon, 11 Feb 2019 16:05:45 +0000
+Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
+ 2019 17:05:41 +0100
+Received: from cwe-513-vol689.cern.ch (188.185.69.206) by smtp.cern.ch
+ (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
+ 2019 17:05:40 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>
+CC:     <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Federico Vaga <federico.vaga@cern.ch>
+Subject: [PATCH v5 2/5] i2c:ocores: do not handle IRQ if IF is not set
+Date:   Mon, 11 Feb 2019 17:05:26 +0100
+Message-ID: <20190211160529.23858-3-federico.vaga@cern.ch>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20190211160529.23858-1-federico.vaga@cern.ch>
+References: <20190211160529.23858-1-federico.vaga@cern.ch>
 MIME-Version: 1.0
-References: <20190207220155.81351-1-ndesaulniers@google.com>
- <20190207220155.81351-3-ndesaulniers@google.com> <20190208055059.GD9647@archlinux-ryzen>
- <CAKwvOd=ytsXYDzVZHUEjokHmW5kpqmCq4cnToOFJ4gwz8j7W=Q@mail.gmail.com> <CAK7LNAQD=ZVcbn3cz2bcW0KrkL9ZOU44SHrmf2aRZwhYdmQrqQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQD=ZVcbn3cz2bcW0KrkL9ZOU44SHrmf2aRZwhYdmQrqQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Mon, 11 Feb 2019 17:05:22 +0100
-Message-ID: <CA+icZUV2NnXQxu57PeQgOjiQm_LMjfDKY+AJKn-K9i7gG6PAfQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] Makefile: lld: tell clang to use lld
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [188.185.69.206]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0602MB3526;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c825e68a-b80c-45d2-348d-08d6903ac7df
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:AM6PR0602MB3526;
+X-MS-TrafficTypeDiagnostic: AM6PR0602MB3526:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR0602MB3526;20:p0/0Eie7baV98kHh3H5oVUBudIaXUINPKqYa+9VaU+9Gw9wMDCuNQ2wKOSrEDZy4vtORHUnNeC8rr3Vd47a7cHNDFRH+sJQmHuygiqqFiy289/Fx4yewMqI34yxP/PnhoyLSTxoEb8zYzT/K9N9y07GGg9p9I+ZS17bFnw674sPOH0MhHQvKWjXFc8az7Xsxz4DgDl4UiAOV9BvDK0VX6IGCFHG2dwUWi2qXc2OhRQ+oUMfQsmMPzl99iv/aEtq4CsozCG5vqsFdMDF963Wyw/QSQoB6bqMjIFXe78yDQnI8ufyMkGfcceWw+4rYQJXzJcyj7QoQxix54nOXP7X9L3MjS2IT5kELLRmZbNfegUq9be9mzv2+2dgY1QZNGY/P2zZPMS+lVuWK51cTT5gKlj3ppGAByzPAjdCGrav9izhNdWUaPos7HIqdmOAA3bmJYH6Zmqvis4KzKi6PUt6IdMuT4+jiGK/W3DkmaXIGeyz+Z91vZF/8LzLHt3+MbnSW;4:eRncCLdePETIRIUtjdXxMjNwyY/X/Ax3sewHBq2chwEkiAKrgjSNVTZodgqjuIumxkdxJbKErnDyAXNwtPrTPTlV8oxcyiPiWqoeCTsD/iAL2katC0a0kyCGcIVguOR0+tKrKBVPQDMJRPKdoDOVZeeCWDdyJ2xHAR/43mqx3hXvTybi9NlzryQ++7mWZXuCLgBk0OzJBl663+AG5BQOaMe24oSmLbivgQ8hqBMeXhGk4W/UNqdh6OQv6MkHSUEymJnAF3LBKTxSj2bjaDDSbbNslWEbSAlb+hb6POvzlbEmVBKRJ5sYdXAoEaQXWTHp
+X-Microsoft-Antispam-PRVS: <AM6PR0602MB3526C14EB0353087E7193C46EF640@AM6PR0602MB3526.eurprd06.prod.outlook.com>
+X-Forefront-PRVS: 0945B0CC72
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR0602MB3526;23:0f4mfUb4b8cvnknITcOB4OmLAg+EYlFhUF2kocRS5fuw3vqP9gndLjWsWCBxGp/b2UJ1zN0kwaJLExz0wBiFmEcxgTj+8UfUeTaRIfZQD5iqkLnVagPG2d1uYo85H0aE3D4PsEdrv1YRzBYJ3xCdKufiGeYRrawBRpRuXd3cD75wdXrb9u3yhwiOKyg3W+Ra;6:Tq3diMl3Vy/QwGOqwNMojzu8PRIEG/jlRlqBvVoXwDLFbcfB/TbbedjSPbmiqFPEkDRoSJwmBY2gqzR9BkG/XIgUTEjcaT2bF0ABOW4Nd4a7Em9jJy+zm6CJhFaZH9QA6pwKkkKn+uq+7nDG/yrLNwX9xT8v6UgFewgDeitZBbkClQFtokcCGvyQWUTZ+t4ybhaan82OZNNsF1bnZB9KveBoKxD8mwtQIVfxXJd4HO949jlzHddEQwecgf7NCZCQXWiYH8j9NfVY+rMV42hrOuWwpaX2zFjUzv3ex0i7sEnudOX0C35SvKo65rgksd0K1zRYkazmAL5cMcMYw5Jfd+I1TXNwB03fdan+Fnt5FmBBBk0F9E1kgBCgqZTYVBOymyxWTr5vtsJKsOhrlFdSDBRe4zKyRKORFlubnkLBxGXJlklVmqT62KVlvmVhOOTQQu1CTUJ2419c1yJSD00lIA==;5:aUVEF5CeQIeH3bMAIUo7hQKiovDq9z4lYfMxT0hQHPGKZ9gNS0gJ8VamTL/smpVGtkE9I8Fipxuw79uTXChZfRLK/yB9LEka1RGX+vpG9CUd95grHzIgQlmYCusdzOo+dSld4A+rqMbSUrvEWD51wykO0E59Ckn3D5hqPTQAc6XM2U4tRfly5o/E0V0mqc/BZVsXZwHDtJE/NsVvZ+t//w==
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 9P5aK0mAGgywwkVTOvzT1F+ZGuMVUtmfKIDJWz8mC4uehvoh4h2YXnJSk8trDwC8QRTnJJ66vF5tXD4kUsZHIqNQHnle3rdewJt2sEuSr66SOMPo0HukwJwNoTEgSNk5pfLibOWYvD+k1As9Pepzhc8bAwHMIaEBr2j9GR0h8+Pov2RilHSGrODiN45lRQNX7oiub5I0xCh1hFDc4s5E+uZ9ZK+WFi0k+kpUFYI+6oft6r0TXk6CFojqPO69MND0/RbzRx4rksjn+9UhtlFn43y0tKIYJ6lRrLcq4rJyZcFmd7AxKaACV62l/wfQEJ+NW1mCrJHY/D5e3pSoGCdDVyuCZehEVnZRAF9vNPbfiXeo96mb9G+5UsqG9JngdIb6S0Dt1iBbhLicliUY4OO7q+CaqlrsYbAB0WbsARHvYBR3b7xEvpoUWziFk+vBUgkp5WBUB6w3Ks5QKZ0DBxMlYFnXzqiW39dz5ANNGDLN1DZlD0XLMn9miQgdPaAqP6FLy+wdpTdfXW/6fvPVaS4FH7Cz1ggZ4LlVBT28nqq0+Bk=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR0602MB3526;7:BacPdaQjvKmjIpwbkpMEjRxwsJy2m6kXSm4mn1gsscaq2YU+cfl8XhHzJakJqoukdsd/iDOQTAJ/zgS6KWZV63sw0k0ULTBvEZ4/lYcMUzSw0jvu2Jbq8lUxHh2+x2I77/VID4yT3rWN1vtD0+801A==
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2019 16:05:45.2818
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c825e68a-b80c-45d2-348d-08d6903ac7df
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0602MB3526
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 4:33 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-[ ... ]
-> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/342
-> > > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > > ---
-> > > >  Makefile | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > >
-> > > > diff --git a/Makefile b/Makefile
-> > > > index 0eae4277206e..6307c17259ea 100644
-> > > > --- a/Makefile
-> > > > +++ b/Makefile
-> > > > @@ -502,6 +502,9 @@ endif
-> > > >  CLANG_FLAGS  += -no-integrated-as
-> > > >  KBUILD_CFLAGS        += $(CLANG_FLAGS)
-> > > >  KBUILD_AFLAGS        += $(CLANG_FLAGS)
-> > > > +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
-> > > > +CLANG_FLAGS  += -fuse-ld=lld
-> >
-> > Sorry, Sedat reports [0] that this is not quite correct; if $(LD)
-> > matches LLD, then we need to set -fuse-ld=$(LD), not -fuse-ld=lld,
-> > since you may have lld installed as lld-7 or lld-8, for example:
-> > https://github.com/ClangBuiltLinux/linux/issues/358
->
->
-> Hmm, $(LD) might be a full path.
->
-> Looks like Clang can take a full-path for -fuse-ld=,
-> but does it work for GCC?
->
+If the Interrupt Flag (IF) is not set, we should not handle the IRQ:
+- the line can be shared with other devices
+- it can be a spurious interrupt
 
-Nope. GCC expects "-fuse-ld={bfd,gold,lld} ".
-Adding suffix "$-VER" was not recognized while building a
-llvm-toolchain, so I guess this will be the same for the Linux kernel
-side.
+To avoid reading twice the status register, the ocores_process() function
+expects it to be read by the caller.
 
-- Sedat -
+Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+Acked-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ drivers/i2c/busses/i2c-ocores.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-[2] https://github.com/ClangBuiltLinux/linux/issues/358
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index aa85202..fcc2558 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -143,10 +143,9 @@ static inline u8 oc_getreg(struct ocores_i2c *i2c, int reg)
+ 	return i2c->getreg(i2c, reg);
+ }
+ 
+-static void ocores_process(struct ocores_i2c *i2c)
++static void ocores_process(struct ocores_i2c *i2c, u8 stat)
+ {
+ 	struct i2c_msg *msg = i2c->msg;
+-	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
+ 	unsigned long flags;
+ 
+ 	/*
+@@ -223,8 +222,12 @@ out:
+ static irqreturn_t ocores_isr(int irq, void *dev_id)
+ {
+ 	struct ocores_i2c *i2c = dev_id;
++	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
++
++	if (!(stat & OCI2C_STAT_IF))
++		return IRQ_NONE;
+ 
+-	ocores_process(i2c);
++	ocores_process(i2c, stat);
+ 
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.15.0
+
