@@ -2,144 +2,108 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12561C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B879C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9E6218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:15:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KfrvKrTr"
+	by mail.kernel.org (Postfix) with ESMTP id 24BCC218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfBKRPd (ORCPT
+        id S1728193AbfBKRQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:15:33 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36026 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbfBKRPc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:15:32 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so28092itj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 09:15:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=6VLQrtxsrRyUJQoYK/7PyNUwOou0q93pgP+Jf+5Bam0=;
-        b=KfrvKrTrTjjkjv4ROKtE8LnNrdUU1o3PKZp8X6AqbrA4uh/SJ31M6TLZeRO0iYAK00
-         uTdQSQCaLhoh8SLuO8stbpF80ej8p0Sjrq6WksA4ye9jQnymIKTaCZWmIIolyBQ/9Xoo
-         VGjsgrCnYplKQi6j2RCbCAvxWqh6/bEWpQtHQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=6VLQrtxsrRyUJQoYK/7PyNUwOou0q93pgP+Jf+5Bam0=;
-        b=Qpp7BsTn2E3Ig4FnNdpnPUavBEbS91LNdiFc2NBd+V+u4duFWhFtgnmreNh1+JUR1X
-         EHTU98Vnl4hHyNIN1UpLGiSNMEh7PpDmmoDqCNLlAaxwXFuqg8E5gb+T0nPqaZoTw/6v
-         RzPvuYhPH+xCzecfbZB9EcseJ8czOgGiOJLde7mR7i6ID5yjRaVXI5iHuiiryw3FvaZ3
-         IrPVRtgkCax+LUFvPMcEU9lLd2p/1wmHw32zw3pY23HXbtk6MbWgJ96+7Pa8St3ezcZ7
-         /F73hNzvsKQ/b6QjugezBiajSHnHhoH/b7DMSXF4jqDUvlv5g0spNs6SjOA4c8YkcO+L
-         IYyw==
-X-Gm-Message-State: AHQUAuYN3WegNkeL69P50JEqfwKVdfZ/SF0YdJ0DnPEWymqBgwx9UWca
-        HldKQvPigov6xW6EYOm0oAn00brhXq1mNg+JVaoxMzoqVOE=
-X-Google-Smtp-Source: AHgI3IblMrv7LS4eQ/LFKfa/GhJSPVY5nMN7+MuSKCQKIr/VbJx1JRa/yaPp6ochHariHaqFy/H77ol7UeHkxp8A8eQ=
-X-Received: by 2002:a24:6115:: with SMTP id s21mr357618itc.62.1549905331207;
- Mon, 11 Feb 2019 09:15:31 -0800 (PST)
+        Mon, 11 Feb 2019 12:16:17 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64544 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726755AbfBKRQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:16:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 09:16:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="123625697"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Feb 2019 09:16:09 -0800
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 11 Feb 2019 09:16:09 -0800
+Received: from crsmsx151.amr.corp.intel.com (172.18.7.86) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 11 Feb 2019 09:16:08 -0800
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
+ CRSMSX151.amr.corp.intel.com ([169.254.3.79]) with mapi id 14.03.0415.000;
+ Mon, 11 Feb 2019 11:16:07 -0600
+From:   "Weiny, Ira" <ira.weiny@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+CC:     =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Topel, Bjorn" <bjorn.topel@intel.com>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        Netdev <netdev@vger.kernel.org>, Davidlohr Bueso <dbueso@suse.de>
+Subject: RE: [PATCH 1/2] xsk: do not use mmap_sem
+Thread-Topic: [PATCH 1/2] xsk: do not use mmap_sem
+Thread-Index: AQHUwh8y/Z/k25QyB0Oc2wm5pV76vqXbMI2A//+lm9A=
+Date:   Mon, 11 Feb 2019 17:16:06 +0000
+Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BCB3B9@CRSMSX101.amr.corp.intel.com>
+References: <20190207053740.26915-1-dave@stgolabs.net>
+ <20190207053740.26915-2-dave@stgolabs.net>
+ <CAJ+HfNg=Wikc_uY9W1QiVCONq3c1GyS44-xbrq-J4gqfth2kwQ@mail.gmail.com>
+ <d92b7b49-81e6-1ac5-4ae4-4909f87bbea8@iogearbox.net>
+ <CAPcyv4gjUmRdV1jZegLecocj155m7dpQLxQSnF_HQQErD8Gtag@mail.gmail.com>
+In-Reply-To: <CAPcyv4gjUmRdV1jZegLecocj155m7dpQLxQSnF_HQQErD8Gtag@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWY2Y2EwYjQtYTAxYi00Zjg0LWE5NmEtOTFkNDdlMjg4YjM4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiak5rNERqakdyUE1oXC81Sm91RUFha0ZSRjBFXC85dE0ybEM1TFVaRUljUVRYdXp2dzRVTndJSW9UcUkzTXNBNkZOIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 11 Feb 2019 18:15:20 +0100
-Message-ID: <CAKMK7uHU37VLbe4RBZ3GOow+=pupYAHotkVrpqJeiUcpSfjX8Q@mail.gmail.com>
-Subject: [PULL] topic/component-typed
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@gmail.com>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        "DRM maintainer tools announcements, discussion, and development" 
-        <dim-tools@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-Here's the typed component topic branch.
-
-drm-intel maintainers: Please pull, I need this for the mei hdcp work from Ram.
-
-drm-misc maintainers: Please pull, there's a drm doc patch follow-up
-that I want to stuff into drm-misc-next.
-
-Greg: The drm side missed our feature cutoff, so will only land in 5.2.
-Probably good if you pull this into drivers-core so it lands a bit
-quicker. You&Arnd will also get a topic pull later on with the MEI bits
-for char-misc tree, which needs to be based on top of this tree here.
-
-Takashi: Since the drm side only lands in 5.2 might be good if you
-pull this in too to avoid conflicts.
-
-Cheers, Daniel
-
-topic/component-typed-2019-02-11:
-typed componented support + i915/snd-hda changes
-
-This is needed by the new MEI-HDCP support in i915, so will need to go
-in through drm and drivers-misc trees at least.
-
-Cheers, Daniel
-
-The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
-
-  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm-intel
-tags/topic/component-typed-2019-02-11
-
-for you to fetch changes up to 8857c7d065e900a0b3829c97634c99501b606541:
-
-  i915/snd_hdac: I915 subcomponent for the snd_hdac (2019-02-08 16:58:59 +0100)
-
-----------------------------------------------------------------
-typed componented support + i915/snd-hda changes
-
-This is needed by the new MEI-HDCP support in i915, so will need to go
-in through drm and drivers-misc trees at least.
-
-----------------------------------------------------------------
-Daniel Vetter (3):
-      component: Add documentation
-      components: multiple components for a device
-      i915/snd_hdac: I915 subcomponent for the snd_hdac
-
- Documentation/driver-api/component.rst   |  17 +++
- Documentation/driver-api/device_link.rst |   3 +
- Documentation/driver-api/index.rst       |   1 +
- drivers/base/component.c                 | 206 +++++++++++++++++++++++++++++--
- drivers/gpu/drm/i915/intel_audio.c       |   4 +-
- include/drm/i915_component.h             |   4 +
- include/linux/component.h                |  76 ++++++++++++
- include/sound/hda_component.h            |   5 +-
- sound/hda/hdac_component.c               |   4 +-
- sound/hda/hdac_i915.c                    |   6 +-
- 10 files changed, 308 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/driver-api/component.rst
-
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+PiA+ID4+IC0tLQ0KPiA+ID4+ICBuZXQveGRwL3hkcF91bWVtLmMgfCA2ICsrLS0tLQ0KPiA+ID4+
+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiA+ID4+
+DQo+ID4gPj4gZGlmZiAtLWdpdCBhL25ldC94ZHAveGRwX3VtZW0uYyBiL25ldC94ZHAveGRwX3Vt
+ZW0uYyBpbmRleA0KPiA+ID4+IDVhYjIzNmM1YzlhNS4uMjVlMWU3NjY1NGE4IDEwMDY0NA0KPiA+
+ID4+IC0tLSBhL25ldC94ZHAveGRwX3VtZW0uYw0KPiA+ID4+ICsrKyBiL25ldC94ZHAveGRwX3Vt
+ZW0uYw0KPiA+ID4+IEBAIC0yNjUsMTAgKzI2NSw4IEBAIHN0YXRpYyBpbnQgeGRwX3VtZW1fcGlu
+X3BhZ2VzKHN0cnVjdA0KPiB4ZHBfdW1lbSAqdW1lbSkNCj4gPiA+PiAgICAgICAgIGlmICghdW1l
+bS0+cGdzKQ0KPiA+ID4+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsNCj4gPiA+Pg0K
+PiA+ID4+IC0gICAgICAgZG93bl93cml0ZSgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsNCj4gPiA+
+PiAtICAgICAgIG5wZ3MgPSBnZXRfdXNlcl9wYWdlcyh1bWVtLT5hZGRyZXNzLCB1bWVtLT5ucGdz
+LA0KPiA+ID4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIGd1cF9mbGFncywgJnVtZW0t
+PnBnc1swXSwgTlVMTCk7DQo+ID4gPj4gLSAgICAgICB1cF93cml0ZSgmY3VycmVudC0+bW0tPm1t
+YXBfc2VtKTsNCj4gPiA+PiArICAgICAgIG5wZ3MgPSBnZXRfdXNlcl9wYWdlc19mYXN0KHVtZW0t
+PmFkZHJlc3MsIHVtZW0tPm5wZ3MsDQo+ID4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBndXBfZmxhZ3MsICZ1bWVtLT5wZ3NbMF0pOw0KPiA+ID4+DQo+ID4gPg0KPiA+ID4g
+VGhhbmtzIGZvciB0aGUgcGF0Y2ghDQo+ID4gPg0KPiA+ID4gVGhlIGxpZmV0aW1lIG9mIHRoZSBw
+aW5uaW5nIGlzIHNpbWlsYXIgdG8gUkRNQSB1bWVtIG1hcHBpbmcsIHNvDQo+ID4gPiBpc24ndCBn
+dXBfbG9uZ3Rlcm0gcHJlZmVycmVkPw0KPiA+DQo+ID4gU2VlbXMgcmVhc29uYWJsZSBmcm9tIHJl
+YWRpbmcgd2hhdCBndXBfbG9uZ3Rlcm0gc2VlbXMgdG8gZG8uIERhdmlkbG9ocg0KPiA+IG9yIERh
+biwgYW55IHRob3VnaHRzIG9uIHRoZSBhYm92ZT8NCj4gDQo+IFllcywgYW55IGd1cCB3aGVyZSB0
+aGUgbGlmZXRpbWUgb2YgdGhlIGNvcnJlc3BvbmRpbmcgcHV0X3BhZ2UoKSBpcyB1bmRlcg0KPiBk
+aXJlY3QgY29udHJvbCBvZiB1c2Vyc3BhY2Ugc2hvdWxkIGJlIHVzaW5nIHRoZSBfbG9uZ3Rlcm0g
+Zmxhdm9yIHRvDQo+IGNvb3JkaW5hdGUgYmUgY2FyZWZ1bCBpbiB0aGUgcHJlc2VuY2Ugb2YgZGF4
+LiBJbiB0aGUgZGF4IGNhc2UgdGhlcmUgaXMgbm8gcGFnZQ0KPiBjYWNoZSBpbmRpcmVjdGlvbiB0
+byBjb29yZGluYXRlIHRydW5jYXRlIHZzIHBhZ2UgcGlucy4gSXJhIGlzIGxvb2tpbmcgdG8gYWRk
+IGENCj4gImZhc3QgKyBsb25ndGVybSIgZmxhdm9yIGZvciBjYXNlcyBsaWtlIHRoaXMuDQoNClll
+cyBJJ20ganVzdCBhYm91dCByZWFkeSB3aXRoIGEgc21hbGwgcGF0Y2ggc2V0IHRvIGFkZCBhIEdV
+UCBmYXN0IGxvbmd0ZXJtLg0KDQpJIHRoaW5rIHRoaXMgc2hvdWxkIHdhaXQgZm9yIHRoYXQgc2Vy
+aWVzLg0KDQpJcmENCiANCg==
