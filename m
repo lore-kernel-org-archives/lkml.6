@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02A0C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86168C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2FF222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CDDD21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895915;
-	bh=2l9BBsmRms9mgsFsiNrPTOobi9ccC+9erzvE/OdvxrU=;
+	s=default; t=1549895918;
+	bh=usp17gc9uVjGi37sSRUw/7G1meYtMbyrASBohuiJ/yk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ul3LvP+aOBmC3tBwA4ueF4dy7cTixoXjqbBMjAFxTkosFhWSTlTVmM4b8Dl/cLhRk
-	 hmYkglSvis6oqLxc5V29HkRWB2i4QzNtFZhnDesHEc0D3VKj+aY45lcR5AqpJv162t
-	 Gd5kdtYG7nQvx9uUBJkzSx03tW4NoRrDH1VwtY1I=
+	b=AoD6N8QJrPQfX6V4CuZprevWyvmLS2RXkGkzmS7MfhQDZ0kP+q3r1jJraOyXHVF8k
+	 431bjdHYgSCEzoR3+zR5kdX0/4pP41B2S7dR4+cIkbLyi4h8rpdrR+8yrfMeFpa3+h
+	 tZWOlbL8lidBsy8MJJRxX8f3epFO6U1Jogw5uJWs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731004AbfBKOid (ORCPT
+        id S1728185AbfBKOig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbfBKOia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:30 -0500
+        id S1731695AbfBKOie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C2E0222A2;
-        Mon, 11 Feb 2019 14:38:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E520D2081B;
+        Mon, 11 Feb 2019 14:38:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895909;
-        bh=2l9BBsmRms9mgsFsiNrPTOobi9ccC+9erzvE/OdvxrU=;
+        s=default; t=1549895913;
+        bh=usp17gc9uVjGi37sSRUw/7G1meYtMbyrASBohuiJ/yk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j1Lo/2iTSJMBulKG7Rd40GgSBdl0QR/B6EpZlVV77Azp4NwgPgX0GLJeJN4I7UKFD
-         geCiVx7msn03NW3A11k/YHSrETCI4yInWxms605HcXYi1Hcdb1JdTc/lFsQ+FFDdmp
-         fGLRLlx6476XklndMdlWtokmtyW7+2Sc75ii/uGw=
+        b=uXMYkVOzvsitE6EeSzsIX1jY+FgbbYr98TV0DnbuV3+XrFmY3gapnI/InKl6cHsFZ
+         4MBFxHnVea5spb288VWWJDSBs6KEvYpUb9NlkAuuF8VksbDgc7OKtUQWw9LNCNP7XM
+         Ux5x97IOKmEiojFMSyj5YOZm0EuaWtNWqlOdUKRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nickhu <nickhu@andestech.com>,
-        Zong Li <zong@andestech.com>,
-        Greentime Hu <greentime@andestech.com>,
+        stable@vger.kernel.org,
+        Alexei Avshalom Lazar <ailizaro@codeaurora.org>,
+        Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 011/313] nds32: Fix gcc 8.0 compiler option incompatible.
-Date:   Mon, 11 Feb 2019 15:14:51 +0100
-Message-Id: <20190211141853.806050847@linuxfoundation.org>
+Subject: [PATCH 4.19 012/313] wil6210: fix reset flow for Talyn-mb
+Date:   Mon, 11 Feb 2019 15:14:52 +0100
+Message-Id: <20190211141853.924280389@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,36 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4c3d6174e0e17599549f636ec48ddf78627a17fe ]
+[ Upstream commit d083b2e2b7db5cca1791643d036e6597af27f49b ]
 
-When the kernel configs of ftrace and frame pointer options are
-choosed, the compiler option of kernel will incompatible.
-	Error message:
-		nds32le-linux-gcc: error: -pg and -fomit-frame-pointer are incompatible
+With current reset flow, Talyn sometimes get stuck causing PCIe
+enumeration to fail. Fix this by removing some reset flow operations
+that are not relevant for Talyn.
+Setting bit 15 in RGF_HP_CTRL is WBE specific and is not in use for
+all wil6210 devices.
+For Sparrow, BIT_HPAL_PERST_FROM_PAD and BIT_CAR_PERST_RST were set
+as a WA an HW issue.
 
-Signed-off-by: Nickhu <nickhu@andestech.com>
-Signed-off-by: Zong Li <zong@andestech.com>
-Acked-by: Greentime Hu <greentime@andestech.com>
-Signed-off-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Alexei Avshalom Lazar <ailizaro@codeaurora.org>
+Signed-off-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/nds32/mm/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/main.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/nds32/mm/Makefile b/arch/nds32/mm/Makefile
-index 6b6855852223..7c5c15ad854a 100644
---- a/arch/nds32/mm/Makefile
-+++ b/arch/nds32/mm/Makefile
-@@ -4,4 +4,8 @@ obj-y				:= extable.o tlb.o \
+diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
+index 7debed6bec06..a0fe8cbad104 100644
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -995,10 +995,13 @@ static int wil_target_reset(struct wil6210_priv *wil, int no_flash)
  
- obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
- obj-$(CONFIG_HIGHMEM)           += highmem.o
--CFLAGS_proc-n13.o		+= -fomit-frame-pointer
-+
-+ifdef CONFIG_FUNCTION_TRACER
-+CFLAGS_REMOVE_proc.o     = $(CC_FLAGS_FTRACE)
-+endif
-+CFLAGS_proc.o              += -fomit-frame-pointer
+ 	wil_dbg_misc(wil, "Resetting \"%s\"...\n", wil->hw_name);
+ 
+-	/* Clear MAC link up */
+-	wil_s(wil, RGF_HP_CTRL, BIT(15));
+-	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_HPAL_PERST_FROM_PAD);
+-	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
++	if (wil->hw_version < HW_VER_TALYN) {
++		/* Clear MAC link up */
++		wil_s(wil, RGF_HP_CTRL, BIT(15));
++		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0,
++		      BIT_HPAL_PERST_FROM_PAD);
++		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
++	}
+ 
+ 	wil_halt_cpu(wil);
+ 
 -- 
 2.19.1
 
