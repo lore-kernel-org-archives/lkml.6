@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB44C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC54FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C220222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C16E222B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897851;
-	bh=z6kU14J5OZBw9v07wVZj1U4EFp+ZC6k8AP9GcYtvqBk=;
+	s=default; t=1549897854;
+	bh=2SnJgGD3zp+iJezSVZZs5/0VYf7QBAfEDvhA9BAuXSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rnGVczBmV3NVIXqt0i+WQlwopM1rq+T3AYzHi+qjCTdD1wgsSD48jPbZwE5VKm62Q
-	 +hwUETTtOGtxgLX/E0aPLXljivrcyHx6qf44UXlg3MeuxnOXl759PceIG3vw+zRfD7
-	 WunS/EL0H03YtRs6aVyER6hBu75Q7iMIaG5JaBqk=
+	b=moOJmZKLhLfGdsyN9JQ2R6YaX9suqQlNe6wnbKSRb07zCq76KVijMiONEUBpRfPFe
+	 FNyiwNPIKyIZ0RqZVQryGncguWj+KawUKM5G08BdgrIuin0kp8uUZKadAWxHVdp1X7
+	 OfFL6gIKxGx2TBpxqQwtipkUqxAhLMFy7Mo5eDLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403870AbfBKPKu (ORCPT
+        id S2404008AbfBKPKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403982AbfBKPKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:47 -0500
+        id S2403995AbfBKPKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A859222B0;
-        Mon, 11 Feb 2019 15:10:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7329E222B9;
+        Mon, 11 Feb 2019 15:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897846;
-        bh=z6kU14J5OZBw9v07wVZj1U4EFp+ZC6k8AP9GcYtvqBk=;
+        s=default; t=1549897849;
+        bh=2SnJgGD3zp+iJezSVZZs5/0VYf7QBAfEDvhA9BAuXSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L/aG+TB7ZBtIwdIvhImJgzfTqZIN6t92jkk6zHqKUnQpKy9fu7VxRTJGxrEFpb9eU
-         cjDbFbmY8jkYuLKeyiROUT9bf+AKI2tSrdWNIYjcfmEGHBlKkSbbPOEhwyFSdi/Y8+
-         0W9Iy0vUE6l5k2vrS+wYiZ3e2OfDyRyYVoWpSy3c=
+        b=1uMiExeByxGsWiCxJZeQ7pai3p7OwOwBTdEoyusPK11q7h1slNFPcfEOPcua4QE2T
+         lCeq1ndq3S4tAEE8w2e/sUycxMYxcciTx/50fvvL1DbQxwZ7so7cjjjPV50kv7RUPV
+         YG29A0uQj20ffItcSSNRgXStvNJKhUYXhiu6G16g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Bauer <scott.bauer@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        Sushma Kalakota <sushmax.kalakota@intel.com>
-Subject: [PATCH 4.9 135/137] PCI: vmd: Free up IRQs on suspend path
-Date:   Mon, 11 Feb 2019 15:20:16 +0100
-Message-Id: <20190211141824.652182230@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 136/137] IB/hfi1: Add limit test for RC/UC send via loopback
+Date:   Mon, 11 Feb 2019 15:20:17 +0100
+Message-Id: <20190211141824.746591640@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,61 +68,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Bauer <scott.bauer@intel.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit e2b1820bd5d0962d6f271b0d47c3a0e38647df2f upstream.
+commit 09ce351dff8e7636af0beb72cd4a86c3904a0500 upstream.
 
-Free up the IRQs we request on the suspend path and reallocate them on the
-resume path.
+Fix potential memory corruption and panic in loopback for IB_WR_SEND
+variants.
 
-Fixes this error:
+The code blindly assumes the posted length will fit in the fetched rwqe,
+which is not a valid assumption.
 
-  CPU 111 disable failed: CPU has 9 vectors assigned and there are only 0 available.
-  Error taking CPU111 down: -34
-  Non-boot CPUs are not disabled
-  Enabling non-boot CPUs ...
+Fix by adding a limit test, and triggering the appropriate send completion
+and putting the QP in an error state.  This mimics the handling for
+non-loopback QPs.
 
-Signed-off-by: Scott Bauer <scott.bauer@intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
+Fixes: 15703461533a ("IB/{hfi1, qib, rdmavt}: Move ruc_loopback to rdmavt")
+Cc: <stable@vger.kernel.org> #v4.20+
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Sushma Kalakota <sushmax.kalakota@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
 ---
- drivers/pci/host/vmd.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/infiniband/hw/hfi1/ruc.c    |    7 ++++++-
+ drivers/infiniband/hw/qib/qib_ruc.c |    7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/host/vmd.c
-+++ b/drivers/pci/host/vmd.c
-@@ -731,6 +731,11 @@ static void vmd_remove(struct pci_dev *d
- static int vmd_suspend(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct vmd_dev *vmd = pci_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < vmd->msix_count; i++)
-+                devm_free_irq(dev, pci_irq_vector(pdev, i), &vmd->irqs[i]);
+--- a/drivers/infiniband/hw/hfi1/ruc.c
++++ b/drivers/infiniband/hw/hfi1/ruc.c
+@@ -471,6 +471,8 @@ send:
+ 			goto op_err;
+ 		if (!ret)
+ 			goto rnr_nak;
++		if (wqe->length > qp->r_len)
++			goto inv_err;
+ 		break;
  
- 	pci_save_state(pdev);
- 	return 0;
-@@ -739,6 +744,16 @@ static int vmd_suspend(struct device *de
- static int vmd_resume(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct vmd_dev *vmd = pci_get_drvdata(pdev);
-+	int err, i;
-+
-+	for (i = 0; i < vmd->msix_count; i++) {
-+		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
-+				       vmd_irq, IRQF_NO_THREAD,
-+				       "vmd", &vmd->irqs[i]);
-+		if (err)
-+			return err;
-+	}
+ 	case IB_WR_RDMA_WRITE_WITH_IMM:
+@@ -638,7 +640,10 @@ op_err:
+ 	goto err;
  
- 	pci_restore_state(pdev);
- 	return 0;
+ inv_err:
+-	send_status = IB_WC_REM_INV_REQ_ERR;
++	send_status =
++		sqp->ibqp.qp_type == IB_QPT_RC ?
++			IB_WC_REM_INV_REQ_ERR :
++			IB_WC_SUCCESS;
+ 	wc.status = IB_WC_LOC_QP_OP_ERR;
+ 	goto err;
+ 
+--- a/drivers/infiniband/hw/qib/qib_ruc.c
++++ b/drivers/infiniband/hw/qib/qib_ruc.c
+@@ -449,6 +449,8 @@ again:
+ 			goto op_err;
+ 		if (!ret)
+ 			goto rnr_nak;
++		if (wqe->length > qp->r_len)
++			goto inv_err;
+ 		break;
+ 
+ 	case IB_WR_RDMA_WRITE_WITH_IMM:
+@@ -612,7 +614,10 @@ op_err:
+ 	goto err;
+ 
+ inv_err:
+-	send_status = IB_WC_REM_INV_REQ_ERR;
++	send_status =
++		sqp->ibqp.qp_type == IB_QPT_RC ?
++			IB_WC_REM_INV_REQ_ERR :
++			IB_WC_SUCCESS;
+ 	wc.status = IB_WC_LOC_QP_OP_ERR;
+ 	goto err;
+ 
 
 
