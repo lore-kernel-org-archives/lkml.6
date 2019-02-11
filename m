@@ -2,116 +2,136 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC15C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C081DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE39E218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901124;
-	bh=jWVCY/HkrYkWYM862XmIDbQlPcDCyGvJHHmaNHnfBWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MySdkgwgShEVpfecZzalGf5JrD/Ke9RO4xfo/jV3fJL/1lTzooU13UiiuvyoeZ0dE
-	 RWTprD7YIc7s1KkZmDy4vWbE38eTGJVA5u1TZN8duajZFXg+OLkD9U9PdJCZHB9/Zb
-	 nb7CB3z1u6DGjCteCQLq4xV6pQmdEF3/Kb525Cps=
+	by mail.kernel.org (Postfix) with ESMTP id 9B6BE218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfBKQFX (ORCPT
+        id S1730423AbfBKQFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:05:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbfBKO1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:49 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8825520821;
-        Mon, 11 Feb 2019 14:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895269;
-        bh=jWVCY/HkrYkWYM862XmIDbQlPcDCyGvJHHmaNHnfBWo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TDYq4vW1UQCAaVeGo0cMu4XhNgzpyfYI2dSozZt/GPv+VBM2J+X3f9w5D3XuqnZyQ
-         SORHvMZIyjjHe3FLJgUE2L8fFAwTI6hVPi5vvJmLI6sANv7xrmwNTB2cTUe5ufmTXf
-         nFyjTc+OUfI9A5WfyPLSsp40budrrT3SsYf2nWtc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 109/352] xtensa: xtfpga.dtsi: fix dtc warnings about SPI
-Date:   Mon, 11 Feb 2019 15:15:36 +0100
-Message-Id: <20190211141852.741774275@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 11:05:22 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53126 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729286AbfBKQFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:05:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC39780D;
+        Mon, 11 Feb 2019 08:05:20 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27D6E3F589;
+        Mon, 11 Feb 2019 08:05:19 -0800 (PST)
+Subject: Re: [PATCH v2 4/4] arm64: kprobes: Use
+ arch_populate_kprobe_blacklist()
+To:     Will Deacon <will.deacon@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pratyush Anand <panand@redhat.com>,
+        "David A . Long" <dave.long@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <154753341900.31541.8135985235882849464.stgit@devbox>
+ <154753353370.31541.14485875717131836689.stgit@devbox>
+ <7f840cc8-4e62-e1d7-9035-4361204fc134@arm.com>
+ <20190121222558.1ef0abc89a704597d6c3de7f@kernel.org>
+ <20190208091519.GB6972@fuggles.cambridge.arm.com>
+ <20190211221023.0bb43554647f99afce8dd060@kernel.org>
+ <20190211155836.GA2692@fuggles.cambridge.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <659f8c4f-c5ef-ade7-4fb3-aacff5779d73@arm.com>
+Date:   Mon, 11 Feb 2019 16:05:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211155836.GA2692@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On 11/02/2019 15:58, Will Deacon wrote:
+> [+Marc]
+> 
+> On Mon, Feb 11, 2019 at 10:10:23PM +0900, Masami Hiramatsu wrote:
+>> On Fri, 8 Feb 2019 09:15:19 +0000
+>> Will Deacon <will.deacon@arm.com> wrote:
+>>> Did you send a new version of this series? I can't seem to spot it in my
+>>> inbox.
+>>
+>> Ah, OK. I just waited for James' patch series,
+>>
+>> https://patchwork.kernel.org/cover/10779489/
+>>
+>> Are those merged? I'd like to move this series on that.
+> 
+> Patches 2-4 are in mainline:
+> 
+> f7daa9c8fd19 arm64: hibernate: Clean the __hyp_text to PoC after resume
+> 8fac5cbdfe0f arm64: hyp-stub: Forbid kprobing of the hyp-stub
+> f2b3d8566d81 arm64: kprobe: Always blacklist the KVM world-switch code
+> 
+> Patch 1 is queued via kvm-arm (also for 5.0) but it doesn't seem to have
+> landed yet.
 
-------------------
+It was part of the pull request sent on Thursday[1], but Paolo hasn't
+pulled it yet.
 
-[ Upstream commit f37598be4e3896359e87c824be57ddddc280cc3f ]
+Hopefully soon...
 
-Rename SPI controller node in the XTFPGA DTS to spi@...
-This fixes the following build warnings:
+	M.
 
-arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_bridge):
- /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
-arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_reg):
- Failed prerequisite 'spi_bus_bridge'
-arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_bridge):
- /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
-arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_reg):
- Failed prerequisite 'spi_bus_bridge'
-arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_bridge):
- /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
-arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_reg):
- Failed prerequisite 'spi_bus_bridge'
-arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_bridge):
- /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
-arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_reg):
- Failed prerequisite 'spi_bus_bridge'
-arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_bridge):
- /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
-arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_reg):
- Failed prerequisite 'spi_bus_bridge'
-
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/xtensa/boot/dts/xtfpga.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/xtensa/boot/dts/xtfpga.dtsi b/arch/xtensa/boot/dts/xtfpga.dtsi
-index 1090528825ec..e46ae07bab05 100644
---- a/arch/xtensa/boot/dts/xtfpga.dtsi
-+++ b/arch/xtensa/boot/dts/xtfpga.dtsi
-@@ -103,7 +103,7 @@
- 			};
- 		};
- 
--		spi0: spi-master@0d0a0000 {
-+		spi0: spi@0d0a0000 {
- 			compatible = "cdns,xtfpga-spi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+[1] https://patchwork.kernel.org/patch/10801151/
 -- 
-2.19.1
-
-
-
+Jazz is not dead. It just smells funny...
