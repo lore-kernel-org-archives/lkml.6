@@ -2,93 +2,218 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85568C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390A7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4398A21874
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dk6CwMop"
+	by mail.kernel.org (Postfix) with ESMTP id 06EE221874
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387963AbfBKUVF (ORCPT
+        id S2388533AbfBKUV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:21:05 -0500
-Received: from ozlabs.org ([203.11.71.1]:55171 "EHLO ozlabs.org"
+        Mon, 11 Feb 2019 15:21:26 -0500
+Received: from mga14.intel.com ([192.55.52.115]:17265 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbfBKUVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:21:04 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43yxxn1L9bz9s7h;
-        Tue, 12 Feb 2019 07:21:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549916461;
-        bh=n0OD7Qcbs1GkU+FxJnfM+vIU5gwV0iYtiiFw1lnauy8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dk6CwMopPcPT254+1cPbR2hnKiusxHY3MT07Ndmg8qudocNRBUH/BymHel1FfbRGH
-         AXLpr9l7eNGBfMTj03OlkiUjx7YFdum6cOR6pmFsd3N/OjRwiZuc4aAbr89axx27+2
-         ijRIt2URDY6rn7CGO8K3qNGKRpcX9NlOkoLomUJFOy544eqSrO4PGQFOJIW4p3l0LP
-         9uowkpRSxtAqnh8R9GWO9A8FDm86+Ry/waKqtAtCyPgmvkDIuRvFVeRHRpEn0jUCwT
-         nqDkt5IDvGYUxbdNhQeb7DgZIzC0t21MlKCl7lh+baccNi4xwyinNrU1FfN1SqTSFv
-         HGEakVoT7H0sw==
-Date:   Tue, 12 Feb 2019 07:21:00 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.20 081/352] f2fs: avoid build warn of fall_through
-Message-ID: <20190212072100.395ec633@canb.auug.org.au>
-In-Reply-To: <20190212071858.1a6a43c4@canb.auug.org.au>
-References: <20190211141846.543045703@linuxfoundation.org>
-        <20190211141851.175526205@linuxfoundation.org>
-        <20190212071858.1a6a43c4@canb.auug.org.au>
+        id S1727082AbfBKUVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 15:21:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 12:21:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
+   d="scan'208";a="115389713"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 11 Feb 2019 12:21:25 -0800
+Received: from [10.252.27.66] (abudanko-mobl.ccr.corp.intel.com [10.252.27.66])
+        by linux.intel.com (Postfix) with ESMTP id C488C5802BB;
+        Mon, 11 Feb 2019 12:21:22 -0800 (PST)
+Subject: [PATCH v2 1/4] feature: realize libzstd check, LIBZSTD_DIR and
+ NO_LIBZSTD defines
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <0aa49e03-c0df-d0a4-3dd7-a566fce0fc16@linux.intel.com>
+Date:   Mon, 11 Feb 2019 23:21:21 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4U.1_CSgwbzfQoB3_U9qLqy"; protocol="application/pgp-signature"
+In-Reply-To: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4U.1_CSgwbzfQoB3_U9qLqy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Implement libzstd feature check, NO_LIBZSTD and LIBZSTD_DIR defines
+to override Zstd library sources or disable the feature from the
+command line:
 
-On Tue, 12 Feb 2019 07:18:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Does the 4.20 stable tree use -Wimplicit-fallthrough?  I assume not
-> (since v4.20 doesn't), so this warning does not happen in that tree.
+  $ make -C tools/perf LIBZSTD_DIR=/root/abudanko/zstd-1.3.7 clean all
+  $ make -C tools/perf NO_LIBZSTD=1 clean all
 
-Ditto for 4.19, 4.14 and 4.9.
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/build/Makefile.feature       |  6 ++++--
+ tools/build/feature/Makefile       |  6 +++++-
+ tools/build/feature/test-all.c     |  5 +++++
+ tools/build/feature/test-libzstd.c | 12 ++++++++++++
+ tools/perf/Makefile.config         | 20 ++++++++++++++++++++
+ tools/perf/Makefile.perf           |  3 +++
+ 6 files changed, 49 insertions(+), 3 deletions(-)
+ create mode 100644 tools/build/feature/test-libzstd.c
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4U.1_CSgwbzfQoB3_U9qLqy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxh2SwACgkQAVBC80lX
-0GyHwwf+L/IoPipOPy0h5qlICKSUfd6JAcJiD/OX1KbDNNIUftH+N9JUFKI/tCkw
-DO10OH60MpfJxAzdGOZSMs8e1vvjxSLQOar7Xuwj/RVXKh0EtSMqII5Ss6ttLkPe
-DgpKR5JfJZVrBXzANwEPxDs54XdB2mNQcR0MtweTdvTnKxq4I3ZBAfoDQbaHyWBb
-jz4G/YsPu02NV0SGf1UCazafD5bH1ANfCbuC3ZXBZaPaeLum3TfdGP1pMz3vxisZ
-SvHug2aHwRzN+pkd9p+8AJWCPeSIJhRPEWctEetpLrUliItnIgDdnzeCdCCfMItA
-YcxNPYezb2h8mBmPo9J/5G4aVqNjKw==
-=HANS
------END PGP SIGNATURE-----
-
---Sig_/4U.1_CSgwbzfQoB3_U9qLqy--
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 5467c6bf9ceb..25088c8f05b2 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -71,7 +71,8 @@ FEATURE_TESTS_BASIC :=                  \
+         sdt				\
+         setns				\
+         libopencsd			\
+-        libaio
++        libaio				\
++        libzstd
+ 
+ # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
+ # of all feature tests
+@@ -118,7 +119,8 @@ FEATURE_DISPLAY ?=              \
+          lzma                   \
+          get_cpuid              \
+          bpf			\
+-         libaio
++         libaio			\
++         libzstd
+ 
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 7ceb4441b627..4b8244ee65ce 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -62,7 +62,8 @@ FILES=                                          \
+          test-clang.bin				\
+          test-llvm.bin				\
+          test-llvm-version.bin			\
+-         test-libaio.bin
++         test-libaio.bin			\
++         test-libzstd.bin
+ 
+ FILES := $(addprefix $(OUTPUT),$(FILES))
+ 
+@@ -301,6 +302,9 @@ $(OUTPUT)test-clang.bin:
+ $(OUTPUT)test-libaio.bin:
+ 	$(BUILD) -lrt
+ 
++$(OUTPUT)test-libzstd.bin:
++	$(BUILD) -lzstd
++
+ ###############################
+ 
+ clean:
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 20cdaa4fc112..5af329b6ffef 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -178,6 +178,10 @@
+ # include "test-libaio.c"
+ #undef main
+ 
++#define main main_test_zstd
++# include "test-libzstd.c"
++#undef main
++
+ int main(int argc, char *argv[])
+ {
+ 	main_test_libpython();
+@@ -219,6 +223,7 @@ int main(int argc, char *argv[])
+ 	main_test_setns();
+ 	main_test_libopencsd();
+ 	main_test_libaio();
++	main_test_libzstd();
+ 
+ 	return 0;
+ }
+diff --git a/tools/build/feature/test-libzstd.c b/tools/build/feature/test-libzstd.c
+new file mode 100644
+index 000000000000..55268c01b84d
+--- /dev/null
++++ b/tools/build/feature/test-libzstd.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <zstd.h>
++
++int main(void)
++{
++	ZSTD_CStream	*cstream;
++
++	cstream = ZSTD_createCStream();
++	ZSTD_freeCStream(cstream);
++
++	return 0;
++}
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index b441c88cafa1..1dccd776a4aa 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -145,6 +145,13 @@ endif
+ FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
+ FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
+ 
++ifdef LIBZSTD_DIR
++  LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
++  LIBZSTD_LDFLAGS := -L$(LIBZSTD_DIR)/lib
++endif
++FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
++FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
++
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+ -include $(src-perf)/arch/$(SRCARCH)/Makefile
+@@ -770,6 +777,19 @@ ifndef NO_LZMA
+   endif
+ endif
+ 
++ifndef NO_LIBZSTD
++  ifeq ($(feature-libzstd), 1)
++    CFLAGS += -DHAVE_ZSTD_SUPPORT
++    CFLAGS += $(LIBZSTD_CFLAGS)
++    LDFLAGS += $(LIBZSTD_LDFLAGS)
++    EXTLIBS += -lzstd
++    $(call detected,CONFIG_ZSTD)
++  else
++    msg := $(warning No libzstd found, disables trace compression, please install libzstd-dev[el] and/or set LIBZSTD_DIR);
++    NO_LIBZSTD := 1
++  endif
++endif
++
+ ifndef NO_BACKTRACE
+   ifeq ($(feature-backtrace), 1)
+     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 09df1c8a4ec9..6e95e90a7b7b 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -108,6 +108,9 @@ include ../scripts/utilities.mak
+ # streaming for record mode. Currently Posix AIO trace streaming is
+ # supported only when linking with glibc.
+ #
++# Define NO_LIBZSTD if you do not want support of Zstandard based runtime
++# trace compression in record mode.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
