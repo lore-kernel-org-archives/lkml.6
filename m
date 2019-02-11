@@ -2,158 +2,120 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69727C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2466C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4572221B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF7521B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:02:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="nIVjxsPC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732572AbfBKSAZ (ORCPT
+        id S1730996AbfBKSC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:00:25 -0500
-Received: from foss.arm.com ([217.140.101.70]:55154 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbfBKSAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:00:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08D58EBD;
-        Mon, 11 Feb 2019 10:00:22 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A74733F675;
-        Mon, 11 Feb 2019 10:00:20 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
-        morten.rasmussen@arm.com, Dietmar.Eggemann@arm.com
-Subject: [PATCH v2 3/3] sched/fair: Skip LLC nohz logic for asymmetric systems
-Date:   Mon, 11 Feb 2019 17:59:46 +0000
-Message-Id: <20190211175946.4961-4-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211175946.4961-1-valentin.schneider@arm.com>
-References: <20190211175946.4961-1-valentin.schneider@arm.com>
+        Mon, 11 Feb 2019 13:02:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46019 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbfBKSC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:02:56 -0500
+Received: by mail-pl1-f193.google.com with SMTP id r14so641039pls.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=f++MmBXaPJCob+y5zj7VHYIu0GW7VfXf1nfSBVldpsU=;
+        b=nIVjxsPCJ1HC7kBOnBRBDPxWikLhLvBWsONghvQ7jrXNnwbCxZB0VLpPrd27kymCK/
+         xf8VRubhis7Zv3rEfy1gWIbKoj5D+qHq+DqYgKaymfJHeY13SUnepLUzeIaTvFsh9cnL
+         S0KQRzWfrE7qenQ7YQYZfOfJDki/Ndt1yCWSmntO1rHEsbl8yGai4xaA8+SPnmdsB+tO
+         rWhUzVMJDUIZuieM5HCWpZ8mdgOHQQhUSMjeHxL4lyZV91SaEF/jEnLLvafhrEx19Ea6
+         LSZkEttEipX3Yr+87brw9TInnKxFEswEUKxiZzbh9QAZfHk0QGJdFEhJGb8Mhs/Tk2Yc
+         EMxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=f++MmBXaPJCob+y5zj7VHYIu0GW7VfXf1nfSBVldpsU=;
+        b=Mk9qd/jxprGdzBJqDv+ou20v8Bhf3Omqvipejo4uw47HX/7e0B3rSDeE0GKbUWbH9X
+         1mtZh0krwzgjjhSNQfBEu4laCO4cZVkXRSYM73iV43SWY0bSgjP0bXV6nM95tbdYCkmY
+         d+Wz+h/7i+Qe2fOCqsF7MsIsWlrTIEFFRCfpcY52kZm4gFadRCV9ZeNgabRiyelCMZuQ
+         /UbPan4odppQcuhxqhmrwwO2HQ87kwYlNbdJ7Qx8O8WzgrDwZE2iGhpQoG6uWs/sS4/y
+         atLcsICAjQMXj6LzcR6gIPYRGFBK7Ph9rjx5Dp6xHVokyXmyefDjCXnQaFZmlCPPlMU4
+         zUIg==
+X-Gm-Message-State: AHQUAubPkGeuMrkbHMEKY3yhEw4OTpdhuxMATpXXEcp66n/0U2lkQf5Z
+        HgDVW0Pqm3Wek8bNq6Z5ryTgDA==
+X-Google-Smtp-Source: AHgI3IaRpGhuzMtVkKtd8oHuGWL1qiJwGCg5YX6tVpWrKINr7WVY8cR+dCbBSh7C/tv8ttb/NIkj0w==
+X-Received: by 2002:a17:902:8641:: with SMTP id y1mr38594173plt.159.1549908175051;
+        Mon, 11 Feb 2019 10:02:55 -0800 (PST)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id l8sm24138991pgf.60.2019.02.11.10.02.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 10:02:54 -0800 (PST)
+Date:   Mon, 11 Feb 2019 10:02:47 -0800
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Kimberly Brown <kimbrownkd@gmail.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>, devel@linuxdriverproject.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Display nothing in sysfs if
+ monitor_allocated not set
+Message-ID: <20190211100247.12221570@hermes.lan>
+In-Reply-To: <20190211070118.GA2977@ubu-Virtual-Machine>
+References: <cover.1549619051.git.kimbrownkd@gmail.com>
+        <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
+        <20190208143148.052c8d9c@hermes.lan>
+        <20190211070118.GA2977@ubu-Virtual-Machine>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LLC nohz condition will become true as soon as >=2 CPUs in a
-single LLC domain are busy. On big.LITTLE systems, this translates to
-two or more CPUs of a "cluster" (big or LITTLE) being busy.
+On Mon, 11 Feb 2019 02:01:18 -0500
+Kimberly Brown <kimbrownkd@gmail.com> wrote:
 
-Issuing a nohz kick in these conditions isn't desired for asymmetric
-systems, as if the busy CPUs can provide enough compute capacity to
-the running tasks, then we can leave the nohz CPUs in peace.
+> On Fri, Feb 08, 2019 at 02:32:09PM -0800, Stephen Hemminger wrote:
+> > On Fri, 8 Feb 2019 05:01:12 -0500
+> > Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> > 
+> > You are right, the current behavior is broken.
+> > It would be good to add a description of under what conditions
+> > monitor is not used. Is this some part of a project emulating
+> > Hyper-V?
+> >   
+> 
+> I'm not sure which conditions determine whether the monitor mechanism is
+> used. I've searched the Hypervisor TLFS, and I couldn't find any
+> information. If you have any suggestions for where I can find this
+> information, please let me know.
 
-Skip the LLC nohz condition for asymmetric systems, and rely on
-nr_running & capacity checks to trigger nohz kicks when the system
-actually needs them.
+The monitor page stuff pre-dates my involvement with Hyper-V. KY might know.
+But based on comments it looks like it was added to avoid hypercalls
+for each message. It probably showed up in Windows Server 2012 timeframe.
 
-Suggested-by: Morten Rasmussen <morten.rasmussen@arm.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c | 65 ++++++++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 28 deletions(-)
+To test you might want to dig up Windows Server 2008.
+ 
+> No, I'm not working on a project emulating Hyper-V.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f9f11e140ba3..a34e1610e21a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9603,24 +9603,6 @@ static noinline void nohz_balancer_kick(struct rq *rq)
- 	}
- 
- 	rcu_read_lock();
--	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
--	if (sds) {
--		/*
--		 * If there is an imbalance between LLC domains (IOW we could
--		 * increase the overall cache use), we need some less-loaded LLC
--		 * domain to pull some load. Likewise, we may need to spread
--		 * load within the current LLC domain (e.g. packed SMT cores but
--		 * other CPUs are idle). We can't really know from here how busy
--		 * the others are - so just get a nohz balance going if it looks
--		 * like this LLC domain has tasks we could move.
--		 */
--		nr_busy = atomic_read(&sds->nr_busy_cpus);
--		if (nr_busy > 1) {
--			flags = NOHZ_KICK_MASK;
--			goto unlock;
--		}
--
--	}
- 
- 	sd = rcu_dereference(rq->sd);
- 	if (sd) {
-@@ -9635,6 +9617,21 @@ static noinline void nohz_balancer_kick(struct rq *rq)
- 		}
- 	}
- 
-+	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
-+	if (sd) {
-+		/*
-+		 * When ASYM_PACKING; see if there's a more preferred CPU
-+		 * currently idle; in which case, kick the ILB to move tasks
-+		 * around.
-+		 */
-+		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
-+			if (sched_asym_prefer(i, cpu)) {
-+				flags = NOHZ_KICK_MASK;
-+				goto unlock;
-+			}
-+		}
-+	}
-+
- 	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
- 	if (sd) {
- 		/*
-@@ -9645,20 +9642,32 @@ static noinline void nohz_balancer_kick(struct rq *rq)
- 			flags = NOHZ_KICK_MASK;
- 			goto unlock;
- 		}
-+
-+		/*
-+		 * For asymmetric systems, we do not want to nicely balance
-+		 * cache use, instead we want to embrace asymmetry and only
-+		 * ensure tasks have enough CPU capacity.
-+		 *
-+		 * Skip the LLC logic because it's not relevant in that case.
-+		 */
-+		goto unlock;
- 	}
- 
--	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
--	if (sd) {
-+	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
-+	if (sds) {
- 		/*
--		 * When ASYM_PACKING; see if there's a more preferred CPU
--		 * currently idle; in which case, kick the ILB to move tasks
--		 * around.
-+		 * If there is an imbalance between LLC domains (IOW we could
-+		 * increase the overall cache use), we need some less-loaded LLC
-+		 * domain to pull some load. Likewise, we may need to spread
-+		 * load within the current LLC domain (e.g. packed SMT cores but
-+		 * other CPUs are idle). We can't really know from here how busy
-+		 * the others are - so just get a nohz balance going if it looks
-+		 * like this LLC domain has tasks we could move.
- 		 */
--		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
--			if (sched_asym_prefer(i, cpu)) {
--				flags = NOHZ_KICK_MASK;
--				goto unlock;
--			}
-+		nr_busy = atomic_read(&sds->nr_busy_cpus);
-+		if (nr_busy > 1) {
-+			flags = NOHZ_KICK_MASK;
-+			goto unlock;
- 		}
- 	}
- unlock:
--- 
-2.20.1
+OK, I had heard that KVM project was doing something with QEMU.
+
+> >   
+> > > +
+> > > +	if (!hv_dev->channel->offermsg.monitor_allocated)
+> > > +		return sprintf(buf, "\n");  
+> > 
+> > If monitor is not used, why not return an error instead of empty
+> > data. Any program (or user) would have to handle that already.  
+> 
+> I think that returning an error instead is fine. I'll make this change
+> in the next version of the patch.
 
