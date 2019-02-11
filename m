@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24B6C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51ABCC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B9920844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EE33222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894889;
-	bh=n0DcqnhkeKyFYSnHdcn8wDqrKv3LLrJ8QtrUGyV73ns=;
+	s=default; t=1549894893;
+	bh=Z8KCZZZgIz0jbVHoQKS4FkjQCfy6jg6H/66lPTKxOvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OSVsVY9dGmexYFV9YzTCQHXh03wvZxtJI23iJyB/o/S+HLmIH54sbZN3/JIwbI6F5
-	 BhFi1PXaKd+XxrN6LewwsyEiQSffA+u7RhGGukP2nq0659zm2kIm5hgeTeO+Z093pJ
-	 vHzllbRBIIaKPwpHc4yEYQtGMODMQIDEFISEnLiU=
+	b=jlIuJ0/7fvtTPg2ucpE+LRTDI7MHyYRRfadxHFoaO9RXwImogWOfveqNfQL4t+/RQ
+	 4zFpq4ZOXIrIDlVP9/8kgrK07FsZpI2+43nyIB16x6la2XtgorWXoni6hXbenGNX0H
+	 xK15IpAKCBtiacPOuTJKA6BaCELfgKF47LPpXYQA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbfBKOV1 (ORCPT
+        id S1728535AbfBKOVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54218 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbfBKOVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:22 -0500
+        id S1728518AbfBKOV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D76F220838;
-        Mon, 11 Feb 2019 14:21:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75B9C20838;
+        Mon, 11 Feb 2019 14:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894881;
-        bh=n0DcqnhkeKyFYSnHdcn8wDqrKv3LLrJ8QtrUGyV73ns=;
+        s=default; t=1549894887;
+        bh=Z8KCZZZgIz0jbVHoQKS4FkjQCfy6jg6H/66lPTKxOvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pgDgxIv3rcxLgVQm5Ar4oQYJ1Wh7RQSeDfPd6fTRa6Hn9AN6zwBZFNKu/zo6YuGJS
-         69Q7gsFh2GrXgYmUVEWoMB+Ws/jkw+i2/wBTr+1S/G29Ta4xB30QL/qQoQ8chIicLw
-         EHclEDAKGIciqb45Wi1uKwly4kzurECUqF0cMyRs=
+        b=ZeFyWGJPWXjYXwUr+54LCGs0elsCOGY25i5qwR3B+tMLqdYmlJqs70Ozd0yY4cFjO
+         1E0oM7DpbHKIWH9/5/dVPCHuXkTzTa5v+iFT1CNJFtjhkxLWl3MzEY9BEiGzJYM8Jx
+         xkZsH7SF2L+INQm72rF8wgbTlX1RHvYH2rPlrYlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Yufen Wang <wangyufen@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 012/352] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
-Date:   Mon, 11 Feb 2019 15:13:59 +0100
-Message-Id: <20190211141847.195066018@linuxfoundation.org>
+Subject: [PATCH 4.20 022/352] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
+Date:   Mon, 11 Feb 2019 15:14:09 +0100
+Message-Id: <20190211141847.769777968@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,70 +66,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
+[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
 
-Prevent possible race by parallel threads between ipu_image_convert_run()
-and ipu_image_convert_unprepare(). This involves setting ctx->aborting
-to true unconditionally so that no new job runs can be queued during
-unprepare, and holding the ctx->aborting flag until the context is freed.
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
 
-Note that the "normal" ipu_image_convert_abort() case (e.g. not during
-context unprepare) should clear the ctx->aborting flag after aborting
-any active run and clearing the context's pending queue. This is because
-it should be possible to continue to use the conversion context and queue
-more runs after an abort.
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
+
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm/kernel/smp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index f4081962784c..91653adc41cc 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -1524,7 +1524,7 @@ unlock:
- EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
- 
- /* Abort any active or pending conversions for this context */
--void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- {
- 	struct ipu_image_convert_chan *chan = ctx->chan;
- 	struct ipu_image_convert_priv *priv = chan->priv;
-@@ -1551,7 +1551,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 
- 	need_abort = (run_count || active_run);
- 
--	ctx->aborting = need_abort;
-+	ctx->aborting = true;
- 
- 	spin_unlock_irqrestore(&chan->irqlock, flags);
- 
-@@ -1572,7 +1572,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
- 		force_abort(ctx);
- 	}
-+}
- 
-+void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+{
-+	__ipu_image_convert_abort(ctx);
- 	ctx->aborting = false;
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 12a6172263c0..3bf82232b1be 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -724,6 +724,21 @@ void smp_send_stop(void)
+ 		pr_warn("SMP: failed to stop secondary CPUs\n");
  }
- EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
-@@ -1586,7 +1590,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
- 	bool put_res;
  
- 	/* make sure no runs are hanging around */
--	ipu_image_convert_abort(ctx);
-+	__ipu_image_convert_abort(ctx);
- 
- 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
- 		chan->ic_task, ctx);
++/* In case panic() and panic() called at the same time on CPU1 and CPU2,
++ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
++ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
++ * kdump fails. So split out the panic_smp_self_stop() and add
++ * set_cpu_online(smp_processor_id(), false).
++ */
++void panic_smp_self_stop(void)
++{
++	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
++	         smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++}
++
+ /*
+  * not supported here
+  */
 -- 
 2.19.1
 
