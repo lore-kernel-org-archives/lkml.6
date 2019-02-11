@@ -2,184 +2,195 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DA7C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50153C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A9D21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:30:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wkcz3TOw"
+	by mail.kernel.org (Postfix) with ESMTP id 2089D222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549899090;
+	bh=w+rDNXo40HqoHtoJrfGJUhEkwc7xhuWSWvpet2cidEc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=znLm4ZIwpq8vY4iBdGIT87cCqaAC/avgpyn3o+kGA0UJkvhAIIJgCfE2phQJKM27C
+	 SRiGOUgwVYbuOsBEOpdF/rbr6z9w5Po0iQFML7J5MgnFEtWWZWs54fD6S09ScAcGmF
+	 L2TdWNSub6yPbFzGO2C0jrib79Qu8/kPByWPpQQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390124AbfBKPaw (ORCPT
+        id S2389050AbfBKOzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:30:52 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50966 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390111AbfBKP2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:28:49 -0500
-Received: by mail-it1-f195.google.com with SMTP id z7so27290226iti.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 07:28:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KjMR8soKTss3sa7GeNZH82KYT/+U70YI2CqoGZ+zpFo=;
-        b=wkcz3TOwWFgXj1RwA8vh7YtdFZCXr/uROsJsOXMfhMIQbYjNgl1lzmNZOEqNzNrdqC
-         2zIlrthA8tQvkpcza1lbC0e+oN63YsSJ+0ZqnzeVaLWLfvcxyHpSBvRneH9txXnt5gn4
-         KK+FKdO+5gxUEjvnkrsQB7aglmSECbe/g2VM3oherXZFTUtZXpLn2YWv9KhXT4X8/J7A
-         sB/sCXg4khjM8qSft7lIxJTtnaHh55A+OyqS6wbxxwz7IDv8qqQFbZKyeJBhmreRUSMC
-         QK2B0WFDbDTjo2WPC4hBKpcxobkV9l3OHFw/EneTnWSWXLi50mVUgfu7VlrQeLUSNhmC
-         2Bgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KjMR8soKTss3sa7GeNZH82KYT/+U70YI2CqoGZ+zpFo=;
-        b=HzeO/CUaRyGPFjEB5KwWO8p/Bq1ExGics00Z88gsw7NHmDBUJhOoJ0dSpfN5Q4ctl7
-         msiHscdbwhj9zNR16+nkT1ntCXqnr7hnauxv0B80p4hT0xDbsqgj763dUxw69oXd3J7Y
-         VDUCZETINn+A/2KpXwJMZnZNFcMNoOIF5wimlcS2yOI4P36JXKo6ZePt1uDfRuTyw6/u
-         hV0NkztFHucr/6icA+7VgmdkP+2M9xshJnl6175kR3nQ9Npfp6RD/M6mXrKGykjczIvt
-         RRqs3QgFlKVv7R2nDt2An5IHfDN1QzCotOpScLnl42Z9BtxBoFQH7Pd95aY04IoSE+DU
-         KB5A==
-X-Gm-Message-State: AHQUAuZj1AbGHEZdofuJeA70MAyo2xp9QJlnOmTBDSwJjAuX2RaXCZ/C
-        yKCvrG7pCCgVrAC4cGdp2tgf0PCnEcG1WQ==
-X-Google-Smtp-Source: AHgI3IZA+CLO+vQQPlmwPRdPeN4IsLQdh9EGvXSB+j55qm7K90P2wzQRsi1pJeFUCVK/mVZK9mYc6A==
-X-Received: by 2002:a24:2f08:: with SMTP id j8mr48657itj.42.1549898928526;
-        Mon, 11 Feb 2019 07:28:48 -0800 (PST)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id f204sm1244830itf.3.2019.02.11.07.28.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 07:28:47 -0800 (PST)
-Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes 5
- minute delay during boot on Sun Blade 2500
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mikael Pettersson <mikpelinux@gmail.com>
-Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
- <1549736341.2971.7.camel@HansenPartnership.com>
- <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
- <1549813472.4142.3.camel@HansenPartnership.com>
- <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
- <1549815924.4142.8.camel@HansenPartnership.com>
- <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
- <1549898730.2831.6.camel@HansenPartnership.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
-Date:   Mon, 11 Feb 2019 08:28:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 09:55:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388255AbfBKOzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:45 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DFEF2229E;
+        Mon, 11 Feb 2019 14:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549896944;
+        bh=w+rDNXo40HqoHtoJrfGJUhEkwc7xhuWSWvpet2cidEc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uREJ+TcCNxGyPQyWKLp3f6nOUuBrSbGXvPb8+DWnnpU5TMfuLPV7dKLL3lcfF4Iap
+         GLaEGaVz7hzrXi9ySKMhC0LBpxYJlwt3OF2bGXNpMU3kcp/jqFNk3SUYVeJ6SwGaPD
+         qIyWLWpt/RooJjBGofHGXMGCQ1oSdgtFKvTxW7Xs=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 039/205] media: adv*/tc358743/ths8200: fill in min width/height/pixelclock
+Date:   Mon, 11 Feb 2019 15:17:17 +0100
+Message-Id: <20190211141830.588134597@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
+References: <20190211141827.214852402@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <1549898730.2831.6.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 8:25 AM, James Bottomley wrote:
-> On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
->> On 2/10/19 9:25 AM, James Bottomley wrote:
->>> On Sun, 2019-02-10 at 09:05 -0700, Jens Axboe wrote:
->>>> On 2/10/19 8:44 AM, James Bottomley wrote:
->>>>> On Sun, 2019-02-10 at 10:17 +0100, Mikael Pettersson wrote:
->>>>>> On Sat, Feb 9, 2019 at 7:19 PM James Bottomley
->>>>>> <James.Bottomley@hansenpartnership.com> wrote:
->>>>>
->>>>> [...]
->>>>>>> I think the reason for this is that the block mq path
->>>>>>> doesn't feed the kernel entropy pool correctly, hence the
->>>>>>> need to install an entropy gatherer for systems that don't
->>>>>>> have other good random number sources.
->>>>>>
->>>>>> That does sound plausible, I admit I didn't even consider the
->>>>>> possibility that the old block I/O path also was an entropy
->>>>>> source.
->>>>>
->>>>> In theory, the new one should be as well since the rotational
->>>>> entropy collector is on the SCSI completion path.   I'd seen
->>>>> the same problem but had assumed it was something someone had
->>>>> done to our internal entropy pool and thus hadn't bisected it.
->>>>
->>>> The difference is that the old stack included ADD_RANDOM by
->>>> default, so this check:
->>>>
->>>> 	if (blk_queue_add_random(q))
->>>> 		add_disk_randomness(req->rq_disk);
->>>>
->>>> in scsi_end_request() would be true, and we'd add the randomness.
->>>> For sd, it seems to set it just fine for non-rotational drives.
->>>> Could this be because other devices don't? Maybe the below makes
->>>> a difference.
->>>
->>> No, in both we set it per the rotational parameters of the disk in 
->>>
->>> sd.c:sd_read_block_characteristics()
->>>
->>> 	rot = get_unaligned_be16(&buffer[4]);
->>>
->>> 	if (rot == 1) {
->>> 	
->>> 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
->>> 	
->>> 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
->>> 	} else {
->>> 	
->>> 	blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
->>> 	
->>> 	blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
->>> 	}
->>>
->>>
->>> That check wasn't changed by the code removal.
->>
->> As I said above, for sd. This isn't true for non-disks.
-> 
-> Yes, but the behaviour above doesn't change across a switch to MQ, so I
-> don't quite understand how it bisects back to that change.  If we're
-> not gathering entropy for the device now, we wouldn't have been before
-> the switch, so the entropy characteristics shouldn't have changed.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-But it does, as I also wrote in that first email. The legacy queue
-flags had QUEUE_FLAG_ADD_RANDOM set by default, the MQ ones do not.
-Hence any non-sd device would previously ALWAYS have ADD_RANDOM
-set, now none of them do. Also see the patch I sent.
+------------------
 
->>> Although I suspect it should be unconditional: even SSDs have what
->>> would appear as seek latencies at least during writes depending on
->>> the time taken to find an erased block or even trigger garbage
->>> collection.  The entropy collector is good at taking something
->>> completely regular and spotting the inconsistencies, so it won't
->>> matter that loads of "seeks" are deterministic.
->>
->> The reason it isn't is that it's of limited use for SSDs where it's a
->> lot more predictable. And they are also a lot faster, which means the
->> adding randomness is more problematic from an efficiency pov.
-> 
-> But that's my point: our entropy extractor is good at weeding out
-> predictable signals.  Fine, it won't extract any entropy if the disk
-> seek time is entirely regular, but it won't contaminate the entropy
-> pool.  The computational delay, I grant ... it takes a while to
-> determine if any entropy is present in the signal.
+[ Upstream commit 2912289a518077ddb8214e05336700148e97e235 ]
 
-But you are missing my point - if we're mostly weeding out predictable
-signals, then it's pointless to take the overhead of the randomness.
-This is why the MQ flag don't include it by default.
+The v4l2_dv_timings_cap struct is used to do sanity checks when setting and
+enumerating DV timings, ensuring that only valid timings as per the HW
+capabilities are allowed.
 
-> What about feeding it with something like discard timings, which should
-> be much less predictable.
+However, many drivers just filled in 0 for the minimum width, height or
+pixelclock frequency. This can cause timings with e.g. 0 as width and height
+to be accepted, which will in turn lead to a potential division by zero.
 
-That's not true, lots of devices have VERY predictable discard timings.
-Most of them will have a fixed discards-per-second rate, even.
+Fill in proper values are minimum boundaries. 640x350 was chosen since it is
+the smallest resolution in v4l2-dv-timings.h. Same for 13 MHz as the lowest
+pixelclock frequency (it's slightly below the minimum of 13.5 MHz in the
+v4l2-dv-timings.h header).
 
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/i2c/ad9389b.c  | 2 +-
+ drivers/media/i2c/adv7511.c  | 2 +-
+ drivers/media/i2c/adv7604.c  | 4 ++--
+ drivers/media/i2c/adv7842.c  | 4 ++--
+ drivers/media/i2c/tc358743.c | 2 +-
+ drivers/media/i2c/ths8200.c  | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
+index a056d6cdaaaa..f0b200ae2127 100644
+--- a/drivers/media/i2c/ad9389b.c
++++ b/drivers/media/i2c/ad9389b.c
+@@ -590,7 +590,7 @@ static const struct v4l2_dv_timings_cap ad9389b_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
+index 2817bafc67bf..80c20404334a 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511.c
+@@ -142,7 +142,7 @@ static const struct v4l2_dv_timings_cap adv7511_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, ADV7511_MAX_WIDTH, 0, ADV7511_MAX_HEIGHT,
++	V4L2_INIT_BT_TIMINGS(640, ADV7511_MAX_WIDTH, 350, ADV7511_MAX_HEIGHT,
+ 		ADV7511_MIN_PIXELCLOCK, ADV7511_MAX_PIXELCLOCK,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index f289b8aca1da..d2108aad3c65 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -778,7 +778,7 @@ static const struct v4l2_dv_timings_cap adv7604_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -789,7 +789,7 @@ static const struct v4l2_dv_timings_cap adv76xx_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 65f34e7e146f..f9c23173c9fa 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -676,7 +676,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -687,7 +687,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index e6f5c363ccab..c9647e24a4a3 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -70,7 +70,7 @@ static const struct v4l2_dv_timings_cap tc358743_timings_cap = {
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+ 	/* Pixel clock from REF_01 p. 20. Min/max height/width are unknown */
+-	V4L2_INIT_BT_TIMINGS(1, 10000, 1, 10000, 0, 165000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 13000000, 165000000,
+ 			V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 			V4L2_DV_BT_CAP_PROGRESSIVE |
+diff --git a/drivers/media/i2c/ths8200.c b/drivers/media/i2c/ths8200.c
+index 498ad2368cbc..f5ee28058ea2 100644
+--- a/drivers/media/i2c/ths8200.c
++++ b/drivers/media/i2c/ths8200.c
+@@ -49,7 +49,7 @@ static const struct v4l2_dv_timings_cap ths8200_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1080, 25000000, 148500000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1080, 25000000, 148500000,
+ 		V4L2_DV_BT_STD_CEA861, V4L2_DV_BT_CAP_PROGRESSIVE)
+ };
+ 
 -- 
-Jens Axboe
+2.19.1
+
+
 
