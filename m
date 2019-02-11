@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE4CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFCE21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0315B20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895831;
-	bh=mjAm/QKxfyT1jRVyldkpIRz0R5NSQs79h6mRIfQS5YQ=;
+	s=default; t=1549895835;
+	bh=q1OdszwJa/2UkE+YbLygIPqEgEoN4H82mQWtPP0SXMM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xqxLe1ZoQIefphSFZFG7iBs41+AR8h2AmK7ZaIHLsyhyhS3OwqJ9AFHVkVWKmahmC
-	 lQAkIkGTxYNxONe9WvtUA9+S9dnX0YWK4Y/zhEZyevovwHdLNVU8FlTIvcjVbgqJ3j
-	 IDJ6yE/PyGD0jgt0o+f0o4K6PIjM1h5JJGT4kSTo=
+	b=nG6EPF2AZB4x+rMm4/MqHdktWQj8a6aqWkDIoDmKQ8DBb356BItIteGVOfb71sw9y
+	 5JMU4R9/ThtYJu+m+wpor5YnnTY+5pB+UoZ8u9Tmhh9U1dDQzqf+B/UY7RyYfqN+hA
+	 +ZH/7EbxRSubkMCO+Uoc1Pvi6IB0QvQjoB0n2BrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfBKOhJ (ORCPT
+        id S1731409AbfBKOhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730726AbfBKOhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:06 -0500
+        id S1731393AbfBKOhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4103420844;
-        Mon, 11 Feb 2019 14:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E41D720844;
+        Mon, 11 Feb 2019 14:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895825;
-        bh=mjAm/QKxfyT1jRVyldkpIRz0R5NSQs79h6mRIfQS5YQ=;
+        s=default; t=1549895828;
+        bh=q1OdszwJa/2UkE+YbLygIPqEgEoN4H82mQWtPP0SXMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3jBE0NXsYtezWjW6yxfVhEzaWK7SfcyM6BNb5jYEsTwVj5wQ+LY1YM7Camu0W6sH
-         7E+LbjYPv5M1xcP0fqrJRFi2cUThJ7SknNC/8yGuC5crGh8yf43sAPKHPBKoV4GSor
-         I9CjOHRPNuQfbOEUuyn2KHsc20XcnmhnuYpv4mmI=
+        b=wdQwIVZU8tWCb7tGXMP+Co8Z8nhVZNVuIn3iY1UhGTx5Vq+6fVOhKGBrthhGcqZwf
+         HE5GjXFg3H/mEzlyWfhHTVMnXMQL5W4VP00cAF6P4jxaLwtdMZfXZM7AhrP7m5kcH5
+         3fCn8M3j4YKiLhSdL4//u2RvvHtrTgNznRJw+nQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 308/352] bnxt_en: Disable interrupts when allocating CP rings or NQs.
-Date:   Mon, 11 Feb 2019 15:18:55 +0100
-Message-Id: <20190211141906.448359989@linuxfoundation.org>
+        stable@vger.kernel.org, Okash Khawaja <okash.khawaja@gmail.com>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.20 335/352] staging: speakup: fix tty-operation NULL derefs
+Date:   Mon, 11 Feb 2019 15:19:22 +0100
+Message-Id: <20190211141908.392171881@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -64,47 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 5e66e35aab335b83d9ffb220d8a3a13986a7a60e ]
+commit a1960e0f1639cb1f7a3d94521760fc73091f6640 upstream.
 
-When calling firmware to allocate a CP ring or NQ, an interrupt associated
-with that ring may be generated immediately before the doorbell is even
-setup after the firmware call returns.  When servicing the interrupt, the
-driver may crash when trying to access the doorbell.
+The send_xchar() and tiocmset() tty operations are optional. Add the
+missing sanity checks to prevent user-space triggerable NULL-pointer
+dereferences.
 
-Fix it by disabling interrupt on that vector until the doorbell is
-set up.
-
-Fixes: 697197e5a173 ("bnxt_en: Re-structure doorbells.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6b9ad1c742bf ("staging: speakup: add send_xchar, tiocmset and input functionality for tty")
+Cc: stable <stable@vger.kernel.org>     # 4.13
+Cc: Okash Khawaja <okash.khawaja@gmail.com>
+Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -4903,12 +4903,18 @@ static int bnxt_hwrm_ring_alloc(struct b
- 		struct bnxt_cp_ring_info *cpr = &bnapi->cp_ring;
- 		struct bnxt_ring_struct *ring = &cpr->cp_ring_struct;
- 		u32 map_idx = ring->map_idx;
-+		unsigned int vector;
+---
+ drivers/staging/speakup/spk_ttyio.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/drivers/staging/speakup/spk_ttyio.c
++++ b/drivers/staging/speakup/spk_ttyio.c
+@@ -265,7 +265,8 @@ static void spk_ttyio_send_xchar(char ch
+ 		return;
+ 	}
  
-+		vector = bp->irq_tbl[map_idx].vector;
-+		disable_irq_nosync(vector);
- 		rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
--		if (rc)
-+		if (rc) {
-+			enable_irq(vector);
- 			goto err_out;
-+		}
- 		bnxt_set_db(bp, &cpr->cp_db, type, map_idx, ring->fw_ring_id);
- 		bnxt_db_nq(bp, &cpr->cp_db, cpr->cp_raw_cons);
-+		enable_irq(vector);
- 		bp->grp_info[i].cp_fw_ring_id = ring->fw_ring_id;
+-	speakup_tty->ops->send_xchar(speakup_tty, ch);
++	if (speakup_tty->ops->send_xchar)
++		speakup_tty->ops->send_xchar(speakup_tty, ch);
+ 	mutex_unlock(&speakup_tty_mutex);
+ }
  
- 		if (!i) {
+@@ -277,7 +278,8 @@ static void spk_ttyio_tiocmset(unsigned
+ 		return;
+ 	}
+ 
+-	speakup_tty->ops->tiocmset(speakup_tty, set, clear);
++	if (speakup_tty->ops->tiocmset)
++		speakup_tty->ops->tiocmset(speakup_tty, set, clear);
+ 	mutex_unlock(&speakup_tty_mutex);
+ }
+ 
 
 
