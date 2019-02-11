@@ -2,43 +2,43 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF74C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8972C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B18222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F7AA222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896837;
-	bh=vKLYDhT7pDzrsN1D7RRa80L7uBFXsWEFyeDDQMoBSaY=;
+	s=default; t=1549896840;
+	bh=pgi+ejGuFOyibfLmmNW8T2w859KbPVkjhQ6j+yMp7pc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HvzmTykmU+bJCgT5sgNMRc8kvoqZpg0wESugBqAeZv5jrkds9Q3PXLwWsKo+kRfZ5
-	 ywI0hZRkkhKXK+5VvMi8T4Qw6AQVVrPHmta896awPr+RpwbmGKo1IGLEXr/13AhNom
-	 KIL9ISHh8tbfhqY1q/tsyBBjNT/n4ryNhfNWAeKI=
+	b=mWEu6pFlXkMafbjJ4N9j8PuEKkqOCxmNAqNMVzK5R5GC8zhR/wiCIZvRM/6MbITHw
+	 CwR82+vISO8CRETsntyHHQm02LvF8muQGwsSY17LSsGiaDqnKv36HNu0YCrpiWToQ+
+	 4nfvuwzo2tWz87+MViTyFDL9ghl/8I92zZxh06nw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388709AbfBKOx4 (ORCPT
+        id S2388747AbfBKOx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40432 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387780AbfBKOxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:53 -0500
+        id S2388301AbfBKOxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:53:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA4422081B;
-        Mon, 11 Feb 2019 14:53:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7026E20823;
+        Mon, 11 Feb 2019 14:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896831;
-        bh=vKLYDhT7pDzrsN1D7RRa80L7uBFXsWEFyeDDQMoBSaY=;
+        s=default; t=1549896833;
+        bh=pgi+ejGuFOyibfLmmNW8T2w859KbPVkjhQ6j+yMp7pc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zqsnPbgVrIjFOQRkniT2JvSU4wE88v9qYZZhM5H/Eo2HmtOgKwHjN5cWSPSmdqnov
-         6Ug7A3eOSMaNWzt8yaMs71aeQAZhm3GsoGDZvHjsAZqM8eNM3tNEPMvf9DQ3yH6VP8
-         4h7u09YDIVKQobwZ2AtM6VXT0zD89fJAOIdMTCVU=
+        b=uWW6Pu2ro6u5LNupns7xBDv/paHwT7i45QrYX7IO09u9I6rU0NiiIVfhlwiekY2fI
+         yPAOsmQx1yX5GBq5vXa5XSDIpRi+2sscQqpgj4Dkxmbq1/wnG4qnw9bsZORSjRiXjc
+         RmLBiDUMe13Rv/HZ2sF9HNYdvvyp/QLMi3OcfF70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,9 +51,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         Florian Kauer <florian.kauer@koalo.de>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.19 288/313] dmaengine: bcm2835: Fix interrupt race on RT
-Date:   Mon, 11 Feb 2019 15:19:28 +0100
-Message-Id: <20190211141912.369894007@linuxfoundation.org>
+Subject: [PATCH 4.19 289/313] dmaengine: bcm2835: Fix abort of transactions
+Date:   Mon, 11 Feb 2019 15:19:29 +0100
+Message-Id: <20190211141912.416753298@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -74,66 +74,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit f7da7782aba92593f7b82f03d2409a1c5f4db91b upstream.
+commit 9e528c799d17a4ac37d788c81440b50377dd592d upstream.
 
-If IRQ handlers are threaded (either because CONFIG_PREEMPT_RT_BASE is
-enabled or "threadirqs" was passed on the command line) and if system
-load is sufficiently high that wakeup latency of IRQ threads degrades,
-SPI DMA transactions on the BCM2835 occasionally break like this:
+There are multiple issues with bcm2835_dma_abort() (which is called on
+termination of a transaction):
 
-ks8851 spi0.0: SPI transfer timed out
-bcm2835-dma 3f007000.dma: DMA transfer could not be terminated
-ks8851 spi0.0 eth2: ks8851_rdfifo: spi_sync() failed
+* The algorithm to abort the transaction first pauses the channel by
+  clearing the ACTIVE flag in the CS register, then waits for the PAUSED
+  flag to clear.  Page 49 of the spec documents the latter as follows:
 
-The root cause is an assumption made by the DMA driver which is
-documented in a code comment in bcm2835_dma_terminate_all():
+  "Indicates if the DMA is currently paused and not transferring data.
+   This will occur if the active bit has been cleared [...]"
+   https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 
-/*
- * Stop DMA activity: we assume the callback will not be called
- * after bcm_dma_abort() returns (even if it does, it will see
- * c->desc is NULL and exit.)
- */
+  So the function is entering an infinite loop because it is waiting for
+  PAUSED to clear which is always set due to the function having cleared
+  the ACTIVE flag.  The only thing that's saving it from itself is the
+  upper bound of 10000 loop iterations.
 
-That assumption falls apart if the IRQ handler bcm2835_dma_callback() is
-threaded: A client may terminate a descriptor and issue a new one
-before the IRQ handler had a chance to run. In fact the IRQ handler may
-miss an *arbitrary* number of descriptors. The result is the following
-race condition:
+  The code comment says that the intention is to "wait for any current
+  AXI transfer to complete", so the author probably wanted to check the
+  WAITING_FOR_OUTSTANDING_WRITES flag instead.  Amend the function
+  accordingly.
 
-1. A descriptor finishes, its interrupt is deferred to the IRQ thread.
-2. A client calls dma_terminate_async() which sets channel->desc = NULL.
-3. The client issues a new descriptor. Because channel->desc is NULL,
-   bcm2835_dma_issue_pending() immediately starts the descriptor.
-4. Finally the IRQ thread runs and writes BCM2835_DMA_INT to the CS
-   register to acknowledge the interrupt. This clears the ACTIVE flag,
-   so the newly issued descriptor is paused in the middle of the
-   transaction. Because channel->desc is not NULL, the IRQ thread
-   finalizes the descriptor and tries to start the next one.
+* The CS register is only read at the beginning of the function.  It
+  needs to be read again after pausing the channel and before checking
+  for outstanding writes, otherwise writes which were issued between
+  the register read at the beginning of the function and pausing the
+  channel may not be waited for.
 
-I see two possible solutions: The first is to call synchronize_irq()
-in bcm2835_dma_issue_pending() to wait until the IRQ thread has
-finished before issuing a new descriptor. The downside of this approach
-is unnecessary latency if clients desire rapidly terminating and
-re-issuing descriptors and don't have any use for an IRQ callback.
-(The SPI TX DMA channel is a case in point.)
+* The function seeks to abort the transfer by writing 0 to the NEXTCONBK
+  register and setting the ABORT and ACTIVE flags.  Thereby, the 0 in
+  NEXTCONBK is sought to be loaded into the CONBLK_AD register.  However
+  experimentation has shown this approach to not work:  The CONBLK_AD
+  register remains the same as before and the CS register contains
+  0x00000030 (PAUSED | DREQ_STOPS_DMA).  In other words, the control
+  block is not aborted but merely paused and it will be resumed once the
+  next DMA transaction is started.  That is absolutely not the desired
+  behavior.
 
-A better alternative is to make the IRQ thread recognize that it has
-missed descriptors and avoid finalizing the newly issued descriptor.
-So first of all, set the ACTIVE flag when acknowledging the interrupt.
-This keeps a newly issued descriptor running.
+  A simpler approach is to set the channel's RESET flag instead.  This
+  reliably zeroes the NEXTCONBK as well as the CS register.  It requires
+  less code and only a single MMIO write.  This is also what popular
+  user space DMA drivers do, e.g.:
+  https://github.com/metachris/RPIO/blob/master/source/c_pwm/pwm.c
 
-If the descriptor was finished, the channel remains idle despite the
-ACTIVE flag being set. However the ACTIVE flag can then no longer be
-used to check whether the channel is idle, so instead check whether
-the register containing the current control block address is zero
-and finalize the current descriptor only if so.
+  Note that the spec is contradictory whether the NEXTCONBK register
+  is writeable at all.  On the one hand, page 41 claims:
 
-That way, there is no impact on latency and throughput if the client
-doesn't care for the interrupt: Only minimal additional overhead is
-introduced for non-cyclic descriptors as one further MMIO read is
-necessary per interrupt to check for idleness of the channel. Cyclic
-descriptors are sped up slightly by removing one MMIO write per
-interrupt.
+  "The value loaded into the NEXTCONBK register can be overwritten so
+  that the linked list of Control Block data structures can be
+  dynamically altered. However it is only safe to do this when the DMA
+  is paused."
+
+  On the other hand, page 40 specifies:
+
+  "Only three registers in each channel's register set are directly
+  writeable (CS, CONBLK_AD and DEBUG). The other registers (TI,
+  SOURCE_AD, DEST_AD, TXFR_LEN, STRIDE & NEXTCONBK), are automatically
+  loaded from a Control Block data structure held in external memory."
 
 Fixes: 96286b576690 ("dmaengine: Add support for BCM2835")
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
@@ -149,78 +148,86 @@ Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/bcm2835-dma.c |   33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ drivers/dma/bcm2835-dma.c |   41 +++++++++--------------------------------
+ 1 file changed, 9 insertions(+), 32 deletions(-)
 
 --- a/drivers/dma/bcm2835-dma.c
 +++ b/drivers/dma/bcm2835-dma.c
-@@ -421,7 +421,12 @@ static int bcm2835_dma_abort(void __iome
+@@ -415,13 +415,11 @@ static void bcm2835_dma_fill_cb_chain_wi
+ 	}
+ }
+ 
+-static int bcm2835_dma_abort(void __iomem *chan_base)
++static int bcm2835_dma_abort(struct bcm2835_chan *c)
+ {
+-	unsigned long cs;
++	void __iomem *chan_base = c->chan_base;
  	long int timeout = 10000;
  
- 	cs = readl(chan_base + BCM2835_DMA_CS);
--	if (!(cs & BCM2835_DMA_ACTIVE))
-+
-+	/*
-+	 * A zero control block address means the channel is idle.
-+	 * (The ACTIVE flag in the CS register is not a reliable indicator.)
-+	 */
-+	if (!readl(chan_base + BCM2835_DMA_ADDR))
- 		return 0;
+-	cs = readl(chan_base + BCM2835_DMA_CS);
+-
+ 	/*
+ 	 * A zero control block address means the channel is idle.
+ 	 * (The ACTIVE flag in the CS register is not a reliable indicator.)
+@@ -433,25 +431,16 @@ static int bcm2835_dma_abort(void __iome
+ 	writel(0, chan_base + BCM2835_DMA_CS);
  
- 	/* Write 0 to the active bit - Pause the DMA */
-@@ -485,8 +490,15 @@ static irqreturn_t bcm2835_dma_callback(
+ 	/* Wait for any current AXI transfer to complete */
+-	while ((cs & BCM2835_DMA_ISPAUSED) && --timeout) {
++	while ((readl(chan_base + BCM2835_DMA_CS) &
++		BCM2835_DMA_WAITING_FOR_WRITES) && --timeout)
+ 		cpu_relax();
+-		cs = readl(chan_base + BCM2835_DMA_CS);
+-	}
+ 
+-	/* We'll un-pause when we set of our next DMA */
++	/* Peripheral might be stuck and fail to signal AXI write responses */
+ 	if (!timeout)
+-		return -ETIMEDOUT;
+-
+-	if (!(cs & BCM2835_DMA_ACTIVE))
+-		return 0;
+-
+-	/* Terminate the control block chain */
+-	writel(0, chan_base + BCM2835_DMA_NEXTCB);
+-
+-	/* Abort the whole DMA */
+-	writel(BCM2835_DMA_ABORT | BCM2835_DMA_ACTIVE,
+-	       chan_base + BCM2835_DMA_CS);
++		dev_err(c->vc.chan.device->dev,
++			"failed to complete outstanding writes\n");
+ 
++	writel(BCM2835_DMA_RESET, chan_base + BCM2835_DMA_CS);
+ 	return 0;
+ }
+ 
+@@ -804,7 +793,6 @@ static int bcm2835_dma_terminate_all(str
+ 	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+ 	struct bcm2835_dmadev *d = to_bcm2835_dma_dev(c->vc.chan.device);
+ 	unsigned long flags;
+-	int timeout = 10000;
+ 	LIST_HEAD(head);
  
  	spin_lock_irqsave(&c->vc.lock, flags);
- 
--	/* Acknowledge interrupt */
--	writel(BCM2835_DMA_INT, c->chan_base + BCM2835_DMA_CS);
-+	/*
-+	 * Clear the INT flag to receive further interrupts. Keep the channel
-+	 * active in case the descriptor is cyclic or in case the client has
-+	 * already terminated the descriptor and issued a new one. (May happen
-+	 * if this IRQ handler is threaded.) If the channel is finished, it
-+	 * will remain idle despite the ACTIVE flag being set.
-+	 */
-+	writel(BCM2835_DMA_INT | BCM2835_DMA_ACTIVE,
-+	       c->chan_base + BCM2835_DMA_CS);
- 
- 	d = c->desc;
- 
-@@ -494,11 +506,7 @@ static irqreturn_t bcm2835_dma_callback(
- 		if (d->cyclic) {
- 			/* call the cyclic callback */
- 			vchan_cyclic_callback(&d->vd);
--
--			/* Keep the DMA engine running */
--			writel(BCM2835_DMA_ACTIVE,
--			       c->chan_base + BCM2835_DMA_CS);
--		} else {
-+		} else if (!readl(c->chan_base + BCM2835_DMA_ADDR)) {
- 			vchan_cookie_complete(&c->desc->vd);
- 			bcm2835_dma_start_desc(c);
- 		}
-@@ -806,11 +814,7 @@ static int bcm2835_dma_terminate_all(str
- 	list_del_init(&c->node);
- 	spin_unlock(&d->lock);
- 
--	/*
--	 * Stop DMA activity: we assume the callback will not be called
--	 * after bcm_dma_abort() returns (even if it does, it will see
--	 * c->desc is NULL and exit.)
--	 */
-+	/* stop DMA activity */
+@@ -818,18 +806,7 @@ static int bcm2835_dma_terminate_all(str
  	if (c->desc) {
  		vchan_terminate_vdesc(&c->desc->vd);
  		c->desc = NULL;
-@@ -818,8 +822,7 @@ static int bcm2835_dma_terminate_all(str
+-		bcm2835_dma_abort(c->chan_base);
+-
+-		/* Wait for stopping */
+-		while (--timeout) {
+-			if (!readl(c->chan_base + BCM2835_DMA_ADDR))
+-				break;
+-
+-			cpu_relax();
+-		}
+-
+-		if (!timeout)
+-			dev_err(d->ddev.dev, "DMA transfer could not be terminated\n");
++		bcm2835_dma_abort(c);
+ 	}
  
- 		/* Wait for stopping */
- 		while (--timeout) {
--			if (!(readl(c->chan_base + BCM2835_DMA_CS) &
--						BCM2835_DMA_ACTIVE))
-+			if (!readl(c->chan_base + BCM2835_DMA_ADDR))
- 				break;
- 
- 			cpu_relax();
+ 	vchan_get_all_descriptors(&c->vc, &head);
 
 
