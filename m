@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB37C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBCCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B24920838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4DD2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896151;
-	bh=FBmtrXisTjyn/dN3T1lleB0l2mjPcdFFAFSewHyu81M=;
+	s=default; t=1549896155;
+	bh=QlG9ATRdErIoaDjSeYnLxVWw0mtTt4eFV2YoDeh+1zI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eRFyDKSN++WsZDaaH2GMMdQSxPTU5obOrIGs3JU8BmvIVrgoDZNftLlrod3DkJ1F4
-	 q/4gg1kSmavM/jr2cXhz7qttemeTifAT52Y4ZbYUspT+LlUHB2dvW/1N5p6QN5T7Fh
-	 qQC46cuuEaRUqdLIsaGH9fhKycH+pFCTAKXBW1q8=
+	b=KU7gHvpdrO9mS6miY/tFk5tMr5OLDEundJlci2eeBlOn3A40r3xELPlPHuXimTND6
+	 PpFQbtQWIfWogv4g7YSEhILQPAoM9WUJTiV/xM3LBkq/rAK32Du8qFmCDFju7lOsQ2
+	 taBXgkGaLNYRNM8+95W26X9IKZDXFr1oLlJuVjRI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732440AbfBKOm3 (ORCPT
+        id S1732463AbfBKOmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:42:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54250 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:42:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732046AbfBKOm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:26 -0500
+        id S1732429AbfBKOm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:42:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E659B20700;
-        Mon, 11 Feb 2019 14:42:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 899A620700;
+        Mon, 11 Feb 2019 14:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896145;
-        bh=FBmtrXisTjyn/dN3T1lleB0l2mjPcdFFAFSewHyu81M=;
+        s=default; t=1549896148;
+        bh=QlG9ATRdErIoaDjSeYnLxVWw0mtTt4eFV2YoDeh+1zI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gv2q/R44TsFWCZvTeH1SZQE/Be4IKg6pOIicbGfXRvyWvb7ZwwLrA9AtZb0n3dtQx
-         nlDmcvqT+uqN3dHqtdn/06RNw4M6BxtjA0IiW2Nh/cPoBu31UxZfRsx4swF6U/3BL5
-         ViF79Am/DNJD/SkVvwJAA5GM+BT0eRjV6arpDjxA=
+        b=arUxCiN4Xh+j9ATvjUiDGTHQtOEInmF/8SisA1vHYnFvL/+97igJcHSHYOlgR6g9W
+         rWVz68miP17dW/Grg4sJ00NSxOBgWx8/CJELsAhACmbe8pT9/eqSRLMimNxauZOZl7
+         Dnxh9EJti4JqVZ6nv1+mvO9aML5sfp2103NJnRoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dave Emett <david.emett@broadcom.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/313] drm/v3d: Fix prime imports of buffers from other drivers.
-Date:   Mon, 11 Feb 2019 15:16:06 +0100
-Message-Id: <20190211141859.598714302@linuxfoundation.org>
+Subject: [PATCH 4.19 058/313] ptp: Fix pass zero to ERR_PTR() in ptp_clock_register
+Date:   Mon, 11 Feb 2019 15:15:38 +0100
+Message-Id: <20190211141857.701051606@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,36 +67,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 62d1a752874962f072de8a779e960fcd2ab4847b ]
+[ Upstream commit aea0a897af9e44c258e8ab9296fad417f1bc063a ]
 
-v3d_bo_get_pages() checks this to decide to map the imported buffer
-instead of the backing shmem file.  The caller was about to set this
-value anyway, and there's no error path in between.  Ideally we
-wouldn't even allocate the shmem file for our imports, but that's a
-more invasive fix.
+Fix smatch warning:
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-Link: https://patchwork.freedesktop.org/patch/msgid/20181128230927.10951-3-eric@anholt.net
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
+drivers/ptp/ptp_clock.c:298 ptp_clock_register() warn:
+ passing zero to 'ERR_PTR'
+
+'err' should be set while device_create_with_groups and
+pps_register_source fails
+
+Fixes: 85a66e550195 ("ptp: create "pins" together with the rest of attributes")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/v3d/v3d_bo.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ptp/ptp_clock.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-index 54d96518a131..a08766d39eab 100644
---- a/drivers/gpu/drm/v3d/v3d_bo.c
-+++ b/drivers/gpu/drm/v3d/v3d_bo.c
-@@ -293,6 +293,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
- 	bo->resv = attach->dmabuf->resv;
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 7eacc1c4b3b1..c64903a5978f 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -253,8 +253,10 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 	ptp->dev = device_create_with_groups(ptp_class, parent, ptp->devid,
+ 					     ptp, ptp->pin_attr_groups,
+ 					     "ptp%d", ptp->index);
+-	if (IS_ERR(ptp->dev))
++	if (IS_ERR(ptp->dev)) {
++		err = PTR_ERR(ptp->dev);
+ 		goto no_device;
++	}
  
- 	bo->sgt = sgt;
-+	obj->import_attach = attach;
- 	v3d_bo_get_pages(bo);
- 
- 	v3d_mmu_insert_ptes(bo);
+ 	/* Register a new PPS source. */
+ 	if (info->pps) {
+@@ -265,6 +267,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 		pps.owner = info->owner;
+ 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+ 		if (!ptp->pps_source) {
++			err = -EINVAL;
+ 			pr_err("failed to register pps source\n");
+ 			goto no_pps;
+ 		}
 -- 
 2.19.1
 
