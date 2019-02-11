@@ -2,259 +2,150 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFE1C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4383DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F1C20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C4E721479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:00:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPu4YPw8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfBKGz7 (ORCPT
+        id S1726792AbfBKHAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 01:55:59 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:53617 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKGz7 (ORCPT
+        Mon, 11 Feb 2019 02:00:47 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42557 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfBKHAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 01:55:59 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 8EC1620030;
-        Mon, 11 Feb 2019 07:55:53 +0100 (CET)
-Date:   Mon, 11 Feb 2019 07:55:52 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     "Hean-Loong, Ong" <hean.loong.ong@intel.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        Rienk de Jong <rienk.dejong@quest-innovations.com>,
-        devicetree@vger.kernel.org, yves.vandervennet@intel.com,
-        chin.liang.see@intel.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Ong@freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv12 3/3] ARM:drm ivip Intel FPGA Video and Image
- Processing Suite
-Message-ID: <20190211065552.GA7010@ravnborg.org>
-References: <20190211060926.3433-1-hean.loong.ong@intel.com>
- <20190211060926.3433-4-hean.loong.ong@intel.com>
+        Mon, 11 Feb 2019 02:00:47 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so4547976pga.9
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 23:00:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iztFEfon4yD4EZwdqzN6BH/r2Qo+X5UZrt09IFZTxqs=;
+        b=EPu4YPw8h9LOI9JT2kM02JWLtasDF7C92Wl/dPbv2ztNLKrSTiOnB31TP4t318u5Fh
+         Q+N9sodkMl0kqTeiKFnLmWCZiLKJxTMFggMQLo67/F1gDmzuDuFs/lefG/BI5pQrLWQP
+         ymrMeQX16ppGA+bN7S5X4/wlIRjgXZCZATv0vNQ0yPUSbll1d6CTfztA+1ydj+DcT2A6
+         e+4hZBomktdj0uJo/tApCF6LT8lGH6j+GdzyP6XLgfZ+gJh+JmcifDI1vQXGQ8yhcXcu
+         ++HS4ipFvjNMg2iUt6+fz8cFUqLfi2+Hik4LHlv2KxpZAxdk/PS9jHtqHudubFb1rU4J
+         d1nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iztFEfon4yD4EZwdqzN6BH/r2Qo+X5UZrt09IFZTxqs=;
+        b=WkJYiDoglijBzNb/xvU8fpEod+ZW3ZpJolI9Pr7i6gvUHytkdEBPk6vzsTXfnZzPgs
+         iAkqg4WbF6TZ0dAlNL/JQ9HVsWI4pd/PVizNPxZpkgYUpvk4356eerXW5cgMousvTx3l
+         R0SWiu8UUkEIaIi++rRBb2Cma8ombLxo1SfEXXKdO9rcYuqcQ6TR6lMdojrDl8PJCvlG
+         +PpD45w0Z0LQhjsXyymmhlAynbMDzg4hHdkqDIlmEsjTcx5TkzINauf7Kom5t/UvwpNf
+         0OuaUZbMLm3i3qB30hBLPew7DH1aq25sLxMopr/DdxbNrUDfFa6uX3dQsOblrIRoJR3o
+         D1OA==
+X-Gm-Message-State: AHQUAuZf/5n5RN2qR8dqb1viOq8OVif+Ctg2zClSDc1tLISrSSv3IEsF
+        aGVILY73123t3P+afmuc0B1HSJ5I
+X-Google-Smtp-Source: AHgI3IbQDEwKIkXbBQu4/GMNDVWGkt9GBpcAuThoNDxxaSffSPHUe9yj6UDXub3Rsx7r17Qqj0V37w==
+X-Received: by 2002:a62:1706:: with SMTP id 6mr4766266pfx.28.1549868445790;
+        Sun, 10 Feb 2019 23:00:45 -0800 (PST)
+Received: from localhost.localdomain (c-73-169-153-56.hsd1.wa.comcast.net. [73.169.153.56])
+        by smtp.gmail.com with ESMTPSA id i74sm16370555pfi.33.2019.02.10.23.00.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 23:00:45 -0800 (PST)
+From:   Jim Broadus <jbroadus@gmail.com>
+To:     kai.heng.feng@canonical.com, benjamin.tissoires@gmail.com,
+        jkosina@suse.cz, linux-kernel@vger.kernel.org
+Cc:     Jim Broadus <jbroadus@gmail.com>
+Subject: [PATCH] Fix resume for ELAN2097 touchscreen.
+Date:   Sun, 10 Feb 2019 23:00:40 -0800
+Message-Id: <20190211070040.4569-1-jbroadus@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211060926.3433-4-hean.loong.ong@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=yBYpec10AAAA:8 a=fjobobjgAAAA:8 a=QyXUC8HyAAAA:8
-        a=jbnKnBcKNtAAbXgpOMQA:9 a=aegFic2g-LuQCSZJ:21 a=er5hxFpQ-oadSlK4:21
-        a=CjuIK1q_8ugA:10 a=zbxmTX4fiVD2UiCe4Dha:22 a=PlEKnuvBpV2Z9KzPMKMm:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hean-Loong, Ong
+Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
+fixes the resume behavior of several devices. However, this breaks the
+resume on the ELAN2097, used on Dell Inspiron laptops, with the same flood
+of messages:
 
-Patch looks good to me, but there is a few trivial
-things I spotted while browsing the code.
-See below.
+[27009.817110] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
+[27009.818867] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
+[27009.820623] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
 
-	Sam
+This change adds a new I2C_HID_QUIRK_RESET_AFTER_RESUME and replaces the
+original reset behavior for this device.
 
-> +++ b/drivers/gpu/drm/ivip/Makefile
-> @@ -0,0 +1,7 @@
-> +#
-> +# Makefile for the drm device driver.  This driver provides support for the
-> +# Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
-> +
-> +obj-$(CONFIG_DRM_IVIP) += ivip.o
-> +ivip-objs := intel_vip_of.o intel_vip_core.o \
-> +	intel_vip_conn.o
+Signed-off-by: Jim Broadus <jbroadus@gmail.com>
+---
+ drivers/hid/hid-ids.h              |  1 +
+ drivers/hid/i2c-hid/i2c-hid-core.c | 20 ++++++++++++++------
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-You could use:
-ivip-y := intel_vip_of.o intel_vip_core.o
-ivip-y += intel_vip_conn.o
-
-
-Using "ivip-y" is the recommend syntax today.
-And using "+=" you get rid of the ugly "\" to continue a line.
-(Some people prefer "\" in makefiles, but there are not needed)
-
-> +++ b/drivers/gpu/drm/ivip/intel_vip_core.c
-> @@ -0,0 +1,189 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2019 Intel Corporation.
-> + *
-> + * intel_vip_core.c -- Intel Video and Image Processing(VIP)
-> + * Frame Buffer II driver
-> + *
-> + * This driver supports the Intel VIP Frame Reader component.
-> + * More info on the hardware can be found in the Intel Video
-> + * and Image Processing Suite User Guide at this address
-> + * http://www.altera.com/literature/ug/ug_vip.pdf.
-> + *
-> + * Authors:
-> + * Walter Goossens <waltergoossens@home.nl>
-> + * Thomas Chou <thomas@wytron.com.tw>
-> + * Chris Rauer <crauer@altera.com>
-> + * Ong, Hean-Loong <hean.loong.ong@intel.com>
-> + *
-> + */
-> +
-> +#include <drm/drmP.h>
-Please do not use drmP.h in new drivers, we try to get rid of this file.
-
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_fb_helper.h>
-> +#include <drm/drm_fb_cma_helper.h>
-> +#include <drm/drm_gem_cma_helper.h>
-> +#include <drm/drm_plane_helper.h>
-> +#include <drm/drm_simple_kms_helper.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
-Sort the list of include files.
-(Looks like this was properly done before, and only one file is out of palce)
-
-
-> +static void intelvipfb_enable(struct drm_simple_display_pipe *pipe,
-> +	       struct drm_crtc_state *crtc_state, struct drm_plane_state *
-> +	       plane_state)
-Fix indent. The parameters on second line and following should be aligned
-below the opening paranthesis.
-Use tab(s) + spaces to align properly.
-
-> +void intelvipfb_display_pipe_update(struct drm_simple_display_pipe *pipe,
-> +				 struct drm_plane_state *old_state)
-Align parameter
-
-> +}
-> +EXPORT_SYMBOL(intelvipfb_display_pipe_update);
-> +
-> +static struct drm_simple_display_pipe_funcs fbpriv_funcs = {
-> +	.prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
-> +	.update = intelvipfb_display_pipe_update,
-> +	.enable = intelvipfb_enable,
-> +	.disable = intelvipfb_disable,
-> +};
-> +
-> +
-> +int intelvipfb_probe(struct device *dev)
-> +{
-> +	int retval;
-> +	struct drm_device *drm;
-> +	struct intelvipfb_priv *fbpriv = dev_get_drvdata(dev);
-> +
-> +	struct drm_connector *connector;
-> +	u32 formats[] = {DRM_FORMAT_XRGB8888};
-> +
-> +	drm = fbpriv->drm;
-> +
-> +	drm->dev_private = fbpriv;
-
-It would be simpler to just pass fbpriv as a parameter.
-There is only one user of intelvipfb_probe() so no need
-to avoid it.
-
-Also it would be more logical to set drm = fbpriv->drm; where memory are allocated.
-
-> +
-> +	intelvipfb_setup_mode_config(drm);
-> +
-> +	connector = intelvipfb_conn_setup(drm);
-> +	if (!connector) {
-> +		dev_err(drm->dev, "Connector setup failed\n");
-> +		goto err_mode_config;
-> +	}
-> +
-> +	retval = drm_simple_display_pipe_init(drm,
-> +			&fbpriv->pipe,
-> +			&fbpriv_funcs,
-> +			formats,
-> +			ARRAY_SIZE(formats),
-> +			NULL, connector);
-Consider indent, where subsequent parameters are aligned right after the
-opening '('.
-
-> +
-> +	if (retval < 0) {
-> +		dev_err(drm->dev, "Cannot setup simple display pipe\n");
-> +		goto err_mode_config;
-> +	}
-> +
-> +	drm_mode_config_reset(drm);
-> +
-> +	drm_dev_register(drm, 0);
-> +
-> +	drm_fbdev_generic_setup(drm, 32);
-> +
-> +	dev_info(drm->dev, "ivip: Successfully created fb\n");
-> +
-> +	return retval;
-> +
-> +err_mode_config:
-> +
-> +	drm_mode_config_cleanup(drm);
-> +	return -ENODEV;
-> +}
-> +
-
-> diff --git a/drivers/gpu/drm/ivip/intel_vip_of.c b/drivers/gpu/drm/ivip/intel_vip_of.c
-> new file mode 100644
-> index 0000000..c899e30
-> --- /dev/null
-> +++ b/drivers/gpu/drm/ivip/intel_vip_of.c
-> @@ -0,0 +1,181 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2019 Intel Corporation.
-> + *
-> + * intel_vip_of.c -- Intel Video and Image Processing(VIP)
-> + * Frame Buffer II driver
-
-The need for this file confuses me.
-It does not include only "of" related stuff, but also generic device driver stuff.
-
-Maybe merge with intel_vip_core.c?
-And rename that file to intel_vip_drv.c?
-
-> + *
-> + * This driver supports the Intel VIP Frame Reader component.
-> + * More info on the hardware can be found in the Intel Video
-> + * and Image Processing Suite User Guide at this address
-> + * http://www.altera.com/literature/ug/ug_vip.pdf.
-> + *
-> + * Authors:
-> + * Ong, Hean-Loong <hean.loong.ong@intel.com>
-> + *
-> + */
-> +#include <drm/drmP.h>
-Drop use of drmP.h
-
-> +static int intelvipfb_of_probe(struct platform_device *pdev)
-> +{
-> +	int retval;
-> +	struct resource *reg_res;
-> +	struct intelvipfb_priv *fbpriv;
-> +	struct device *dev = &pdev->dev;
-> +	struct drm_device *drm;
-> +
-> +	fbpriv = devm_kzalloc(dev, sizeof(*fbpriv), GFP_KERNEL);
-> +	if (!fbpriv)
-> +		return -ENOMEM;
-> +
-> +	/*setup DRM */
-Space before "setup"
-
-> +
-> +static const struct of_device_id intelvipfb_of_match[] = {
-> +	{ .compatible = "altr,vip-frame-buffer-2.0" },
-> +	{},
-Maybe add "/* sentinel */" comment?
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 24f846d67478..38cc7033712a 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -387,6 +387,7 @@
+ #define USB_DEVICE_ID_TOSHIBA_CLICK_L9W	0x0401
+ #define USB_DEVICE_ID_HP_X2		0x074d
+ #define USB_DEVICE_ID_HP_X2_10_COVER	0x0755
++#define USB_DEVICE_ID_ELAN2097		0x2504
+ 
+ #define USB_VENDOR_ID_ELECOM		0x056e
+ #define USB_DEVICE_ID_ELECOM_BM084	0x0061
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index c5edfa966343..fdbad29b4406 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -50,6 +50,7 @@
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+ #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
+ #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
++#define I2C_HID_QUIRK_RESET_AFTER_RESUME	BIT(4)
+ 
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -181,6 +182,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_NO_RUNTIME_PM },
+ 	{ I2C_VENDOR_ID_GOODIX, I2C_DEVICE_ID_GOODIX_01F0,
+ 		I2C_HID_QUIRK_NO_RUNTIME_PM },
++	{ USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ELAN2097,
++		 I2C_HID_QUIRK_RESET_AFTER_RESUME },
+ 	{ 0, 0 }
+ };
+ 
+@@ -1279,12 +1282,17 @@ static int i2c_hid_resume(struct device *dev)
+ 
+ 	enable_irq(client->irq);
+ 
+-	/* Instead of resetting device, simply powers the device on. This
+-	 * solves "incomplete reports" on Raydium devices 2386:3118 and
+-	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
+-	 * data after a suspend/resume.
+-	 */
+-	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++	if (ihid->quirks & I2C_HID_QUIRK_RESET_AFTER_RESUME) {
++		ret = i2c_hid_hwreset(client);
++	} else {
++		/* Instead of resetting device, simply powers the device on.
++		 * This solves "incomplete reports" on Raydium devices 2386:3118
++		 * and 2386:4B33 and fixes various SIS touchscreens no longer
++		 * sending data after a suspend/resume.
++		 */
++		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++	}
++
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.20.1
 
