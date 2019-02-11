@@ -2,55 +2,56 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF91CC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5197FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8195C222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21F812229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896887;
-	bh=/HOMIb2nU0UzXKSzJ0AmkixYcrZCF2pc+cRzDocAj+c=;
+	s=default; t=1549896893;
+	bh=pviqqzT+PXc1/8/X2S/j2tiBUhF5KMqXM4C3K1Agb2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wbfo6dnNMlCw9s9kUmOFxTrBWinKBkiqU/Rt1sAaUUALeOsYSAigMnX6j/I9huPjJ
-	 hpAiBV+R8nr2bAElbwH4yGHExPFia2o1/9EMyNuTsx4J4heQFwObS0ZV87GKWZ9ahJ
-	 nK5H8E1y1M5CiUFIDOtzp7YqTFKF618lvaz59ys0=
+	b=c5Q5YXqL93keozuPckpmeFfREGWSeFxc824qd9faFmRTGawzYh152b5Z+dBqoZr5t
+	 fbl1JUC6mK9NZxwzvhd3sGwRbjRda31b96HHApLRHr6j69k7xkh0X9tr7Spbe4DzCN
+	 2KDrlKwvjyNMAQEFSyT97JLxhCQ4MhwXhw4veAFU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388698AbfBKOxr (ORCPT
+        id S2388885AbfBKOyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:54:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388674AbfBKOxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:42 -0500
+        id S2388875AbfBKOyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC8120700;
-        Mon, 11 Feb 2019 14:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BABAA222A8;
+        Mon, 11 Feb 2019 14:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896822;
-        bh=/HOMIb2nU0UzXKSzJ0AmkixYcrZCF2pc+cRzDocAj+c=;
+        s=default; t=1549896883;
+        bh=pviqqzT+PXc1/8/X2S/j2tiBUhF5KMqXM4C3K1Agb2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SE43mGxGkt1rdVO+Gy/cN/bYrKXoxckm9+dwOZzHuVMnQpt/QkfoY3Kb4t6lJv2Nj
-         PVUTua/nli938XuNCV1D1ubwuc60fkwrka5Kjm6fgz+4HixOpBfL6hLENhpUCYNESP
-         qMiq10cLnGht468lFilEzGBUMk0N3qdHhI8ssF4M=
+        b=niaGfrn9xmd6AdV+MZPYjgC4i1PBd64QXMmBx3J5k+Q+mTz5zt1GIoXskRIGZTtNf
+         sZszMAsClGJ88T9KFUJQUSIKOnmdzSaz40HccQWbbtuqwxaJPEzpr46YBY+Muyh4ve
+         aNnZhxBrn5naZdsauZow3+UUJLTuf2P5N1m+kqno=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 286/313] fuse: handle zero sized retrieve correctly
-Date:   Mon, 11 Feb 2019 15:19:26 +0100
-Message-Id: <20190211141912.270347341@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 005/205] ASoC: Intel: mrfld: fix uninitialized variable access
+Date:   Mon, 11 Feb 2019 15:16:43 +0100
+Message-Id: <20190211141827.513129018@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
+In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
+References: <20190211141827.214852402@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,44 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
 
-commit 97e1532ef81acb31c30f9e75bf00306c33a77812 upstream.
+Randconfig testing revealed a very old bug, with gcc-8:
 
-Dereferencing req->page_descs[0] will Oops if req->max_pages is zero.
+sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (fw == NULL) {
+     ^
+sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+  const struct firmware *fw;
 
-Reported-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Tested-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Fixes: b2430d7567a3 ("fuse: add per-page descriptor <offset, length> to fuse_req")
-Cc: <stable@vger.kernel.org> # v3.9
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+We must check the return code of request_firmware() before we look at the
+pointer result that may be uninitialized when the function fails.
 
+Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1698,7 +1698,6 @@ static int fuse_retrieve(struct fuse_con
- 	req->in.h.nodeid = outarg->nodeid;
- 	req->in.numargs = 2;
- 	req->in.argpages = 1;
--	req->page_descs[0].offset = offset;
- 	req->end = fuse_retrieve_end;
+diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+index 33917146d9c4..054b1d514e8a 100644
+--- a/sound/soc/intel/atom/sst/sst_loader.c
++++ b/sound/soc/intel/atom/sst/sst_loader.c
+@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+ 	const struct firmware *fw;
  
- 	index = outarg->offset >> PAGE_SHIFT;
-@@ -1713,6 +1712,7 @@ static int fuse_retrieve(struct fuse_con
- 
- 		this_num = min_t(unsigned, num, PAGE_SIZE - offset);
- 		req->pages[req->num_pages] = page;
-+		req->page_descs[req->num_pages].offset = offset;
- 		req->page_descs[req->num_pages].length = this_num;
- 		req->num_pages++;
- 
+ 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+-	if (fw == NULL) {
+-		dev_err(sst->dev, "fw is returning as null\n");
+-		return -EINVAL;
+-	}
+ 	if (retval) {
+ 		dev_err(sst->dev, "request fw failed %d\n", retval);
+ 		return retval;
+ 	}
++	if (fw == NULL) {
++		dev_err(sst->dev, "fw is returning as null\n");
++		return -EINVAL;
++	}
+ 	mutex_lock(&sst->sst_lock);
+ 	retval = sst_cache_and_parse_fw(sst, fw);
+ 	mutex_unlock(&sst->sst_lock);
+-- 
+2.19.1
+
 
 
