@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D565C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D54DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D54320700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E40E20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896406;
-	bh=l2bcikkl9dyb7GlfDw84Thd/6pb//WqNUXDUmxMUuBg=;
+	s=default; t=1549896409;
+	bh=Uywgwq80tjyPmTk3yrBKOkY7tr2yUDbx9UeRqMGl0/8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fempAjUF7G02tR0ToArxFFUsE8RNQTtEqoBHZFF2W9F7+xbY3Y2naHBtQdr6etMq3
-	 PtSRVevvb9FyIb77Huje8Izb6KC+CccEDt5+6+HSyZBVIpWWhLQL3BiBUO2HjUKj5p
-	 LCWFinMfyJnjyXNr06pJ1F8RgBEg2Y9mubBbNQ/Y=
+	b=dhQJFNBVViq8eYSL1IqhoMPAuR2t44W3SLmHaUo9HwppXikSNkbn17VAvs2AdXX2g
+	 6P9HpdJwhUseuMtPXSBD4Rp+eqOR/XZcckd9keElfTZatqnHlr+mw6A9GbJJccGOPl
+	 wMdSYmzLrBsgcnesShqHffbbYrDU0uSbyTqFPigM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733305AbfBKOqp (ORCPT
+        id S2387400AbfBKOqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:46:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59888 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:46:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733293AbfBKOqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:46:43 -0500
+        id S1732628AbfBKOqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FC1620844;
-        Mon, 11 Feb 2019 14:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0451B206BA;
+        Mon, 11 Feb 2019 14:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896403;
-        bh=l2bcikkl9dyb7GlfDw84Thd/6pb//WqNUXDUmxMUuBg=;
+        s=default; t=1549896406;
+        bh=Uywgwq80tjyPmTk3yrBKOkY7tr2yUDbx9UeRqMGl0/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HnmTM2zVmdacjEo6QrHftRCGB6DYbZ2LPYL+ctVA4s6EywsocgEkqR/jgKSHE7tyM
-         XaTNijiKrforEdVZMAVfEgqP8hAHjDZjqVGk9f0HRQo0PYhXy/f820lSzBacGFeuhT
-         OWB0bRg5c5oOX+z4OJQHz7urkpW91OuSpKrFqjmk=
+        b=N2s5EAnW9eeR5VlN9jl9MDWsJa3WlokpP1jtzhVaKDoeoZqdFM7dUSfXtrxFAPDpD
+         IQ2J64xHjqcYqC1ctN2O7oQvXucQZJRh4Ac0CyVIJgRUpv4HokQjvQr3P/FR+YORCJ
+         SO8cgWMjk+X/RuTiquYsy1FuNWjDNa38nSl2IZbw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dennis Zhou <dennis@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Michael Cree <mcree@orcon.net.nz>
-Subject: [PATCH 4.19 172/313] percpu: convert spin_lock_irq to spin_lock_irqsave.
-Date:   Mon, 11 Feb 2019 15:17:32 +0100
-Message-Id: <20190211141904.873488693@linuxfoundation.org>
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 173/313] net: hns3: fix incomplete uninitialization of IRQ in the hns3_nic_uninit_vector_data()
+Date:   Mon, 11 Feb 2019 15:17:33 +0100
+Message-Id: <20190211141904.938310560@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,55 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6ab7d47bcbf0144a8cb81536c2cead4cde18acfe ]
+[ Upstream commit ae6017a71115ebc4e5c1a3f0f451319ab3f5c447 ]
 
->From Michael Cree:
-  "Bisection lead to commit b38d08f3181c ("percpu: restructure
-   locking") as being the cause of lockups at initial boot on
-   the kernel built for generic Alpha.
+In the hns3_nic_uninit_vector_data(), the procedure of uninitializing
+the tqp_vector's IRQ has not set affinity_notify to NULL and changes
+its init flag. This patch fixes it. And for simplificaton, local
+variable tqp_vector is used instead of priv->tqp_vector[i].
 
-   On a suggestion by Tejun Heo that:
-
-   So, the only thing I can think of is that it's calling
-   spin_unlock_irq() while irq handling isn't set up yet.
-   Can you please try the followings?
-
-   1. Convert all spin_[un]lock_irq() to
-      spin_lock_irqsave/unlock_irqrestore()."
-
-Fixes: b38d08f3181c ("percpu: restructure locking")
-Reported-and-tested-by: Michael Cree <mcree@orcon.net.nz>
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/percpu-km.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/mm/percpu-km.c b/mm/percpu-km.c
-index 38de70ab1a0d..0f643dc2dc65 100644
---- a/mm/percpu-km.c
-+++ b/mm/percpu-km.c
-@@ -50,6 +50,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
- 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
- 	struct pcpu_chunk *chunk;
- 	struct page *pages;
-+	unsigned long flags;
- 	int i;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index b7b2f8254ce1..d5f15d8d18a9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2760,12 +2760,12 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
  
- 	chunk = pcpu_alloc_chunk(gfp);
-@@ -68,9 +69,9 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
- 	chunk->data = pages;
- 	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
  
--	spin_lock_irq(&pcpu_lock);
-+	spin_lock_irqsave(&pcpu_lock, flags);
- 	pcpu_chunk_populated(chunk, 0, nr_pages, false);
--	spin_unlock_irq(&pcpu_lock);
-+	spin_unlock_irqrestore(&pcpu_lock, flags);
+-		if (priv->tqp_vector[i].irq_init_flag == HNS3_VECTOR_INITED) {
+-			(void)irq_set_affinity_hint(
+-				priv->tqp_vector[i].vector_irq,
+-						    NULL);
+-			free_irq(priv->tqp_vector[i].vector_irq,
+-				 &priv->tqp_vector[i]);
++		if (tqp_vector->irq_init_flag == HNS3_VECTOR_INITED) {
++			irq_set_affinity_notifier(tqp_vector->vector_irq,
++						  NULL);
++			irq_set_affinity_hint(tqp_vector->vector_irq, NULL);
++			free_irq(tqp_vector->vector_irq, tqp_vector);
++			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+ 		}
  
- 	pcpu_stats_chunk_alloc();
- 	trace_percpu_create_chunk(chunk->base_addr);
+ 		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
 -- 
 2.19.1
 
