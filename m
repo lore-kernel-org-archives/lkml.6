@@ -2,80 +2,118 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1CDC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADCCC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A507B20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:07:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D42E218DE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfBLAH1 (ORCPT
+        id S1727918AbfBLAIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:07:27 -0500
-Received: from namei.org ([65.99.196.166]:51674 "EHLO namei.org"
+        Mon, 11 Feb 2019 19:08:22 -0500
+Received: from mga01.intel.com ([192.55.52.88]:17011 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbfBLAH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:07:26 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x1C07I2V020437;
-        Tue, 12 Feb 2019 00:07:18 GMT
-Date:   Tue, 12 Feb 2019 11:07:18 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] LSM: Ignore "security=" when "lsm=" is specified
-In-Reply-To: <CAGXu5jLvwLxWWiyM4ThJ=eKzDniy_w2Eaizc-h5tK4x7oCEG2w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1902121106060.20164@namei.org>
-References: <20190211225403.GA7769@beast> <74310e83-a258-e9c0-7d98-8b2cc5ced3a4@schaufler-ca.com> <CAGXu5jLvwLxWWiyM4ThJ=eKzDniy_w2Eaizc-h5tK4x7oCEG2w@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1727707AbfBLAIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:08:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 16:08:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
+   d="scan'208";a="123724719"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Feb 2019 16:08:21 -0800
+Date:   Mon, 11 Feb 2019 16:08:10 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Netdev <netdev@vger.kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+Message-ID: <20190212000810.GA24207@iweiny-DESK2.sc.intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190211201643.7599-3-ira.weiny@intel.com>
+ <20190211203916.GA2771@ziepe.ca>
+ <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
+ <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
+ <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
+ <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
+ <20190211220658.GH24692@ziepe.ca>
+ <CAPcyv4htDHmH7PVm_=HOWwRKtpcKTPSjrHPLqhwp2vhBUWL4-w@mail.gmail.com>
+ <20190211232510.GP24692@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211232510.GP24692@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019, Kees Cook wrote:
-
-> On Mon, Feb 11, 2019 at 3:10 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On 2/11/2019 2:54 PM, Kees Cook wrote:
-> > > To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
-> > > used on the command line, and report that it is happening.
-> > >
-> > > Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > >  security/security.c | 8 ++++++--
-> > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 3147785e20d7..e6153ed54361 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
-> > >       ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
-> > >                               GFP_KERNEL);
-> > >
-> > > -     if (chosen_lsm_order)
-> > > +     if (chosen_lsm_order) {
-> > > +             if (chosen_major_lsm) {
-> > > +                     pr_info("security= is ignored because of lsm=\n");
-> >
-> > This is a little awkward. How about "lsm= supersedes security=".
+On Mon, Feb 11, 2019 at 04:25:10PM -0700, Jason Gunthorpe wrote:
+> On Mon, Feb 11, 2019 at 02:55:10PM -0800, Dan Williams wrote:
 > 
-> Fine by me. James? What would you like here?
+> > > I also wonder if someone should think about making fast into a flag
+> > > too..
+> > >
+> > > But I'm not sure when fast should be used vs when it shouldn't :(
+> > 
+> > Effectively fast should always be used just in case the user cares
+> > about performance. It's just that it may fail and need to fall back to
+> > requiring the vma.
+> 
+> But the fall back / slow path is hidden inside the API, so when should
+> the caller care? 
+> 
+> ie when should the caller care to use gup_fast vs gup_unlocked? (the
+> comments say they are the same, but this seems to be a mistake)
+> 
+> Based on some of the comments in the code it looks like this API is
+> trying to convert itself into:
+> 
+> long get_user_pages_locked(struct task_struct *tsk, struct mm_struct *mm,
+>                            unsigned long start, unsigned long nr_pages,
+> 			   unsigned int gup_flags, struct page **pages,
+> 			   struct vm_area_struct **vmas, bool *locked)
+> 
+> long get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
+>                              unsigned long start, unsigned long nr_pages,
+> 			     unsigned int gup_flags, struct page **pages)
+> 
+> (and maybe a FOLL_FAST if there is some reason we have _fast and
+> _unlocked)
+> 
+> The reason I ask, is that if there is no reason for fast vs unlocked
+> then maybe Ira should convert HFI to use gup_unlocked and move the
+> 'fast' code into unlocked?
+> 
+> ie move incrementally closer to the desired end-state here.
 
-How about security= is ignored because it is superseded by lsm= ?
+If the pages are not in the page tables then fast is probably going to be
+slightly slower because it will have to fall back after walking the tables and
+finding something missing.
 
+For PSM2 (MPI) applications are performance improvement was probably because
+the memory in question was in the page tables and very much in use.
 
--- 
-James Morris
-<jmorris@namei.org>
+Ira
 
+> 
+> Jason
