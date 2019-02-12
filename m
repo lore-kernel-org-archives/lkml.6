@@ -2,150 +2,264 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDC6C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA96C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51B821773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DEBD217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549983809;
+	bh=P4XZ14q6L1bdPur/Xbf3gsdnDVtlpMMKMLTAO/e2DaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GkrP8jQ1JgpngDeIZAXz6iNnrK5kBgYz4b3fZivxoWlq3QWrqOLD6Dt2GKiy1gBwY
+	 TGOp9UQst9Og0/Yah08d2Lw8uomZ/2q+Y/wRJ8gU0aRrJ2SBQiEBm0fbKujWpPmzDX
+	 X5oJFXxTnrTMz9OZRmzPxDe8VZ8BWwkBnrbxCNCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbfBLO7H (ORCPT
+        id S1729272AbfBLPD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:59:07 -0500
-Received: from gateway36.websitewelcome.com ([192.185.184.18]:31158 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726238AbfBLO7G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:59:06 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6299740156FA3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:12:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tZVkgvQNX4FKptZVkgGB15; Tue, 12 Feb 2019 08:58:12 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=39212 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtZVk-000EZ6-1G; Tue, 12 Feb 2019 08:58:12 -0600
-Subject: Re: [PATCH] ser_gigaset: mark expected switch fall-through
-To:     Paul Bolle <pebolle@tiscali.nl>
-Cc:     gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Karsten Keil <isdn@linux-pingi.de>
-References: <20190211223444.GA29517@embeddedor>
- <3dbf6ecb46ad65b3b4bddd4154e31fde2c79d13d.camel@tiscali.nl>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <7dd87e69-a9c8-bd10-1af1-062f37f0df50@embeddedor.com>
-Date:   Tue, 12 Feb 2019 08:58:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 10:03:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728603AbfBLPD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:03:27 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22C9021773;
+        Tue, 12 Feb 2019 15:03:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549983805;
+        bh=P4XZ14q6L1bdPur/Xbf3gsdnDVtlpMMKMLTAO/e2DaE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0KoxfTtGADxR9yfmdtqcZzldvCOOU7HfPkkHkaxXHPccKKX29OTxM+Pkm106EYJ2v
+         8igxb5V5m8ta5QShIJxMsoS+5ZgSaNwmUvQCSx3CiM9IQPzOKyaKguN4Yz0gqr7Lko
+         Zpe5rhzGxcZNBMaBsGq1pqPEy0xAyOu6q42f+lCM=
+Date:   Tue, 12 Feb 2019 16:03:23 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mhiramat@kernel.org, bigeasy@linutronix.de
+Subject: Re: Oops in rpc_clnt_debugfs_register() from debugfs change
+Message-ID: <20190212150323.GA19074@kroah.com>
+References: <19914.1549970944@warthog.procyon.org.uk>
+ <14223.1549981874@warthog.procyon.org.uk>
+ <20190212143720.GA16380@kroah.com>
+ <20190212144214.GA17111@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <3dbf6ecb46ad65b3b4bddd4154e31fde2c79d13d.camel@tiscali.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtZVk-000EZ6-1G
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:39212
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212144214.GA17111@kroah.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/12/19 2:45 AM, Paul Bolle wrote:
-> Gustavo A. R. Silva schreef op ma 11-02-2019 om 16:34 [-0600]:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warning:
->>
->> drivers/isdn/gigaset/ser-gigaset.c: In function ‘gigaset_tty_ioctl’:
->> drivers/isdn/gigaset/ser-gigaset.c:627:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>    switch (arg) {
->>    ^~~~~~
->> drivers/isdn/gigaset/ser-gigaset.c:638:2: note: here
->>   default:
->>   ^~~~~~~
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> Notice that, in this particular case, the code comment is modified
->> in accordance with what GCC is expecting to find.
->>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Tue, Feb 12, 2019 at 03:42:14PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Feb 12, 2019 at 03:37:20PM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Feb 12, 2019 at 02:31:14PM +0000, David Howells wrote:
+> > > I've bisected an oops that occurs in rpc_clnt_debugfs_register() trying to
+> > > dereference a pointer with -EACCES in it.  This is the causing commit, though
+> > > I suspect the bug is in sunrpc expecting to see NULL rather than an error.
+> > > 
+> > > ff9fb72bc07705c00795ca48631f7fffe24d2c6b is the first bad commit
+> > > commit ff9fb72bc07705c00795ca48631f7fffe24d2c6b
+> > > Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Date:   Wed Jan 23 11:28:14 2019 +0100
+> > > 
+> > >     debugfs: return error values, not NULL
+> > >     
+> > >     When an error happens, debugfs should return an error pointer value, not
+> > >     NULL.  This will prevent the totally theoretical error where a debugfs
+> > >     call fails due to lack of memory, returning NULL, and that dentry value
+> > >     is then passed to another debugfs call, which would end up succeeding,
+> > >     creating a file at the root of the debugfs tree, but would then be
+> > >     impossible to remove (because you can not remove the directory NULL).
+> > >     
+> > >     So, to make everyone happy, always return errors, this makes the users
+> > >     of debugfs much simpler (they do not have to ever check the return
+> > >     value), and everyone can rest easy.
+> > >     ...
+> > > 
+> > > The attached oops occurs during boot from the gssproxy process in
+> > > rpc_clnt_debugfs_register().  The code at this point is:
+> > > 
+> > >    0xffffffff8195cbdd <+450>:   mov    0x50(%rax),%rcx   <--- oopsing
+> > >    0xffffffff8195cbe1 <+454>:   mov    $0xffffffff821cc8ba,%rdx
+> > >    0xffffffff8195cbe8 <+461>:   mov    $0x18,%esi
+> > >    0xffffffff8195cbed <+466>:   lea    -0x30(%rbp),%rdi
+> > >    0xffffffff8195cbf1 <+470>:   callq  0xffffffff819db773 <snprintf>
+> > > 
+> > > RAX is -EACCES.
+> > > 
+> > > Looking in the source:
+> > > 
+> > > 	len = snprintf(name, sizeof(name), "../../rpc_xprt/%s",
+> > > 			xprt->debugfs->d_name.name);
+> > > 
+> > > I think xprt->debugfs is the value in RAX.
+> > > 
+> > > 	(gdb) p &((struct dentry *)0)->d_name.name
+> > > 	$5 = (const unsigned char **) 0x50 <irq_stack_union+80>
+> > > 
+> > > which matches the offset on the oopsing MOV instruction.
+> > > 
+> > > This is with linus/master (aa0c38cf39de73bf7360a3da8f1707601261e518).
+> > 
+> > Ugh, yeah, I see the problem, sorry about that.
+> > 
+> > I wonder why the debugfs call is always failing, that's not good...
+> > 
+> > let me dig and see if I already have a patch for this...
 > 
-> Acked-by: Paul Bolle <pebolle@tiscali.nl>
+> I have a much larger cleanup patch for this code, but this single line
+> change should solve the issue for now.  Can you test it to verify?
 > 
+> thanks,
+> 
+> greg k-h
+> 
+> ------------------
+> 
+> diff --git a/net/sunrpc/debugfs.c b/net/sunrpc/debugfs.c
+> index 45a033329cd4..19bb356230ed 100644
+> --- a/net/sunrpc/debugfs.c
+> +++ b/net/sunrpc/debugfs.c
+> @@ -146,7 +146,7 @@ rpc_clnt_debugfs_register(struct rpc_clnt *clnt)
+>  	rcu_read_lock();
+>  	xprt = rcu_dereference(clnt->cl_xprt);
+>  	/* no "debugfs" dentry? Don't bother with the symlink. */
+> -	if (!xprt->debugfs) {
+> +	if (IS_ERR_OR_NULL(xprt->debugfs)) {
+>  		rcu_read_unlock();
+>  		return;
+>  	}
 
-Thanks, Paul.
 
---
-Gustavo
+And, if you want my larger fix that I will be sending to netdev one of
+these days, here's that one.  It includes the above patch as part of it.
+
+thanks,
+
+greg k-h
+
+---------------
+
+commit 8d885c486153d1731c14a6a435774a4e9ccd1ebc
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Fri Jan 4 13:40:56 2019 +0100
+
+    sunrpc: fix changelog
+
+diff --git a/net/sunrpc/debugfs.c b/net/sunrpc/debugfs.c
+index 45a033329cd4..ca63f6ed873f 100644
+--- a/net/sunrpc/debugfs.c
++++ b/net/sunrpc/debugfs.c
+@@ -135,18 +135,15 @@ rpc_clnt_debugfs_register(struct rpc_clnt *clnt)
+ 
+ 	/* make the per-client dir */
+ 	clnt->cl_debugfs = debugfs_create_dir(name, rpc_clnt_dir);
+-	if (!clnt->cl_debugfs)
+-		return;
+ 
+ 	/* make tasks file */
+-	if (!debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs,
+-				 clnt, &tasks_fops))
+-		goto out_err;
++	debugfs_create_file("tasks", S_IFREG | 0400, clnt->cl_debugfs, clnt,
++			    &tasks_fops);
+ 
+ 	rcu_read_lock();
+ 	xprt = rcu_dereference(clnt->cl_xprt);
+ 	/* no "debugfs" dentry? Don't bother with the symlink. */
+-	if (!xprt->debugfs) {
++	if (IS_ERR_OR_NULL(xprt->debugfs)) {
+ 		rcu_read_unlock();
+ 		return;
+ 	}
+@@ -157,8 +154,7 @@ rpc_clnt_debugfs_register(struct rpc_clnt *clnt)
+ 	if (len >= sizeof(name))
+ 		goto out_err;
+ 
+-	if (!debugfs_create_symlink("xprt", clnt->cl_debugfs, name))
+-		goto out_err;
++	debugfs_create_symlink("xprt", clnt->cl_debugfs, name);
+ 
+ 	return;
+ out_err:
+@@ -237,15 +233,10 @@ rpc_xprt_debugfs_register(struct rpc_xprt *xprt)
+ 
+ 	/* make the per-client dir */
+ 	xprt->debugfs = debugfs_create_dir(name, rpc_xprt_dir);
+-	if (!xprt->debugfs)
+-		return;
+ 
+ 	/* make tasks file */
+-	if (!debugfs_create_file("info", S_IFREG | 0400, xprt->debugfs,
+-				 xprt, &xprt_info_fops)) {
+-		debugfs_remove_recursive(xprt->debugfs);
+-		xprt->debugfs = NULL;
+-	}
++	debugfs_create_file("info", S_IFREG | 0400, xprt->debugfs, xprt,
++			    &xprt_info_fops);
+ 
+ 	atomic_set(&xprt->inject_disconnect, rpc_inject_disconnect);
+ }
+@@ -308,22 +299,6 @@ static const struct file_operations fault_disconnect_fops = {
+ 	.release	= fault_release,
+ };
+ 
+-static struct dentry *
+-inject_fault_dir(struct dentry *topdir)
+-{
+-	struct dentry *faultdir;
+-
+-	faultdir = debugfs_create_dir("inject_fault", topdir);
+-	if (!faultdir)
+-		return NULL;
+-
+-	if (!debugfs_create_file("disconnect", S_IFREG | 0400, faultdir,
+-				 NULL, &fault_disconnect_fops))
+-		return NULL;
+-
+-	return faultdir;
+-}
+-
+ void __exit
+ sunrpc_debugfs_exit(void)
+ {
+@@ -338,25 +313,13 @@ void __init
+ sunrpc_debugfs_init(void)
+ {
+ 	topdir = debugfs_create_dir("sunrpc", NULL);
+-	if (!topdir)
+-		return;
+-
+-	rpc_fault_dir = inject_fault_dir(topdir);
+-	if (!rpc_fault_dir)
+-		goto out_remove;
+ 
+ 	rpc_clnt_dir = debugfs_create_dir("rpc_clnt", topdir);
+-	if (!rpc_clnt_dir)
+-		goto out_remove;
+ 
+ 	rpc_xprt_dir = debugfs_create_dir("rpc_xprt", topdir);
+-	if (!rpc_xprt_dir)
+-		goto out_remove;
+ 
+-	return;
+-out_remove:
+-	debugfs_remove_recursive(topdir);
+-	topdir = NULL;
+-	rpc_fault_dir = NULL;
+-	rpc_clnt_dir = NULL;
++	rpc_fault_dir = debugfs_create_dir("inject_fault", topdir);
++
++	debugfs_create_file("disconnect", S_IFREG | 0400, rpc_fault_dir, NULL,
++			    &fault_disconnect_fops);
+ }
