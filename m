@@ -5,94 +5,136 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C86C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2235C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4742120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2CF220844
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfBLAkn (ORCPT
+        id S1728013AbfBLAm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:40:43 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32657 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727374AbfBLAkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:40:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 16:40:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="114160018"
-Received: from kmsmsx156.gar.corp.intel.com ([172.21.138.133])
-  by orsmga007.jf.intel.com with ESMTP; 11 Feb 2019 16:40:40 -0800
-Received: from pgsmsx102.gar.corp.intel.com ([169.254.6.107]) by
- KMSMSX156.gar.corp.intel.com ([169.254.1.240]) with mapi id 14.03.0415.000;
- Tue, 12 Feb 2019 08:40:39 +0800
-From:   "Pan, Harry" <harry.pan@intel.com>
-To:     "pavel@ucw.cz" <pavel@ucw.cz>
-CC:     "Brown, Len" <len.brown@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gs0622@gmail.com" <gs0622@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / suspend: measure the time of filesystem syncing
-Thread-Topic: [PATCH] PM / suspend: measure the time of filesystem syncing
-Thread-Index: AQHUu4AgquesjEnW50+dl61NWIyu6qXRNN0AgAEpl4CAABL+gIAIaJGA
-Date:   Tue, 12 Feb 2019 00:40:38 +0000
-Message-ID: <e09b1e8f534686fe199a887e311136281fa1ce30.camel@intel.com>
-References: <20190203052007.27392-1-harry.pan@intel.com>
-         <20190205212308.GA2816@amd>
-         <fb17e68f94236b1dd02419ebe01c9f76f6fe2259.camel@intel.com>
-         <20190206161612.GA7868@amd>
-In-Reply-To: <20190206161612.GA7868@amd>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.255.146.166]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <92B31DB717DF8548AF6144A4A3E01E2B@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 11 Feb 2019 19:42:57 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:60667 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727863AbfBLAm4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:42:56 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gtMA2-0006fH-KI; Mon, 11 Feb 2019 17:42:54 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gtM9s-0001Qz-0E; Mon, 11 Feb 2019 17:42:54 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
+        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
+        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
+        <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
+        <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com>
+        <875ztwt7yy.fsf_-_@xmission.com> <87zhr8rtd6.fsf_-_@xmission.com>
+        <20190211141340.GA21430@redhat.com>
+Date:   Mon, 11 Feb 2019 18:42:39 -0600
+In-Reply-To: <20190211141340.GA21430@redhat.com> (Oleg Nesterov's message of
+        "Mon, 11 Feb 2019 15:13:40 +0100")
+Message-ID: <87zhr1g7ls.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1gtM9s-0001Qz-0E;;;mid=<87zhr1g7ls.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19hBHkbM8iRU+eB6uN27rihvsQkezNpLQ8=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 1/2] signal: Always notice exiting tasks
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gSSdkIHJhdGhlciBlZHVjYXRlIG90aGVyIGRldmVsb3BlcnMgdGhhdCB0aGlzIG1heSBo
-YXBwZW4uIGRtZXNnDQo+IHRpbWVzdGFtcHMgc2hvdWxkIGFscmVhZHkgbWFrZSBpdCBlYXN5IHRv
-IHNlZS4NCj4gDQo+IEFuZCBhY3R1YWxseS4uLiBpZiB5b3UgZG8gInRpbWUgc3luYyIgaW4gdXNl
-cnNwYWNlIGp1c3QgYmVmb3JlDQo+IHByb2dyYW1pbmcgdGhlIFJUQyBhbmQgc3VzcGVuZGluZywg
-dGhpcyB3aG9sZSBpc3N1ZSBzaG91bGQgZ28gYXdheS4NCj4gDQo+IA0KSSBhZ3JlZSB3LyB5b3Ug
-b24gYm90aCBjb21tZW50cyBiYXNpY2FsbHkuDQoNClRoYWQgc2FpZCwgd2hlbiBpdCBjb21lcyB0
-byBkbWVzZywgcmVhZGVycyB3b3VsZCBndWVzcyBieSBjdXJyZW50DQppbXBsZW1lbnRhdGlvbiBv
-ZiB0aGUgcHJvZ3JhbSwgdGhlIHR3byBsaW5lcyBvZiBwcl9pbmZvIGFuZCBwbV9wcl9kYmcNCmFy
-ZSBjb250cm9sbGVkIGJ5IGNvbXBpbGF0aW9uIGZsYWdzIGFzIHdlbGwgYXMgcHJpbnRrIHJ1bi1s
-ZXZlbCwgSQ0KdGhpbmsgdGhlIGluZm9ybWF0aW9uIGlzIGVub3VnaCB3aGlsZSBpdCBpcyBub3Qg
-Z3VhcmFudGVlZCBmb3IgdGhpcw0Kc3ViamVjdC4NCg0KQW5vdGhlciByZWFzb24gaXMsIG1vbnRo
-cyBhZ28gSSB3b3JrZWQgb24gbXkgY29tbXVuaXR5IHRvIGlsbHVzdHJhdGUNCnRoaXMgb2RkLCBh
-ZGRpbmcgJ3N5bmMnIHBvbGljeSBpbiB0aGUgdXNlcnNwYWNlIHNjcmlwdCBbMV0gbWl0aWdhdGVk
-DQp0aGUgbG9uZ2VyIHN5bmMgKGlzc3VlZCBieSBrZXJuZWwpIGluIHN1c3BlbmRpbmcsIGhvd2V2
-ZXIgSSByZWFsaXplZA0KdGhlcmUgaXMgc3RpbGwgcmFyZSBjYXNlIGJlY2F1c2UgdGhlIHVzZXJz
-cGFjZSBzeW5jIGlzIGJlZm9yZSB0aGUNCnByb2Nlc3NlcyBmcmVlemUsIHRoZSBzY3JpcHQgaXMg
-cG90ZW50aWFsbHkgY29tcGV0aW5nIHcvIG90aGVyIGhpZ2gNCmxvYWRpbmcgdGFza3Mgd2hpY2gg
-bWVhbnMgdGhlcmUgaXMgc3RpbGwgYSBzbWFsbCB3aW5kb3cgKHN5bmMgLT4NCnByb2dyYW0gYWxh
-cm0gLT4gc3VzcGVuZCB1bnRpbCBmcmVlemUpIHRoYXQgY291bGQgZ2VuZXJhdGUgc3VjaCBvZGQu
-DQoNClNob3J0IHJlY2FwIHRoaXMgdG9waWMgaXMgdHJ5aW5nIHRvIGdpdmUgYSBjbGVhciBpbmRp
-Y2F0aW9uIGFzIHNpbXBsZQ0KbWVjaGFuaXNtIGZvciB0aGUgcGxhdGZvcm0gYW5kIE9TIGRldmVs
-b3BlcnMgd2hvIG1heSBjb25jZXJuIHRoZQ0Kc3VzcGVuZGluZyB0aW1lIHcvIHNvbWUgc29ydCBv
-ZiB0aW1lIGNvbnN0cmFpbjsgZ2l2ZW4gYSBjbGVhciBtZXRyaWMgaXQNCmFsbG93cyBkZXZlbG9w
-ZXJzIHRvIGhhdmUgYW4gZWFzaWVyIHRyaWFnZSBzdWNoIGhhcmQtdG8tcmVwcm9kdWNlIGlzc3Vl
-DQpzaGFsbCBnbyB0byB2aXJ0dWFsIG1lbW9yeS9maWxlc3lzdGVtIHJhdGhlciB0aGFuIGV4YW1p
-bmUgd2hldGhlciB0aGVyZQ0KaXMgbG9uZ2VyIGNvc3Qgb24gZWFjaCBQTSBzdWItc3RhdGUgYWxv
-bmcgdy8gdGhlIGRldmljZSBjYWxsYmFja3MNCnRocm91Z2ggYSBsb25nIHN1c3BlbmRpbmcgbG9n
-Lg0KDQpMYXN0bHksIEkgdW5kZXJzdGFuZCB0aGlzIGRhdGEgbWlnaHQgbm90IHNvIGludGVyZXN0
-aW5nIHRvIGtlcm5lbA0KZGV2ZWxvcGVyczsgc29tZWhvdyBteSByb2xlIGlzIHNpdHRpbmcgaW4g
-YmV0d2VlbiB0cnlpbmcgdG8gYnJpZGdlDQprZXJuZWwgYW5kIE9TIGRldmVsb3BlcnMsIEkgZnVs
-bHkgcmVzcGVjdCByZXZpZXdlcnMnIGNvbW1lbnRzIGFuZA0KanVzdGlmaWNhdGlvbi4NCg0KDQpT
-aW5jZXJlbHksDQpIYXJyeSANCg0KWzFdIA0KaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xl
-c291cmNlLmNvbS9jL2Nocm9taXVtb3MvcGxhdGZvcm0yLysvNDU4NTYwLzE0L3Bvd2VyX21hbmFn
-ZXIvdG9vbHMvc3VzcGVuZF9zdHJlc3NfdGVzdCMyMDINCihBcG9sb2dpemUgbG9uZyBVUkwgYW5k
-IGNvbnRleHQgYXMgcmVmZXJlbmNlKQ0K
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> sorry again for delay...
+>
+> On 02/07, Eric W. Biederman wrote:
+>>
+>> --- a/kernel/signal.c
+>> +++ b/kernel/signal.c
+>> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
+>>  		goto relock;
+>>  	}
+>>  
+>> +	/* Has this task already been marked for death? */
+>> +	ksig->info.si_signo = signr = SIGKILL;
+>> +	if (signal_group_exit(signal))
+>> +		goto fatal;
+>> +
+>>  	for (;;) {
+>>  		struct k_sigaction *ka;
+>>  
+>> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
+>>  			continue;
+>>  		}
+>>  
+>> +	fatal:
+>>  		spin_unlock_irq(&sighand->siglock);
+>
+> Eric, but this is wrong. At least this is the serious user-visible
+> change.
+>
+> Afaics, with this patch the tracee will never stop in PTRACE_EVENT_EXIT in case
+> of group_exit/exec, because schedule() in TASK_TRACED state won't block due to
+> __fatal_signal_pending().
+>
+> Yes, yes, as I said many times the semantics of PTRACE_EVENT_EXIT was never really
+> defined, it depends on /dev/random, but still I don't think we should break it even
+> more.
+
+Well it changes PTRACE_EVENT_EXIT I grant that.  It looks like that
+changes makes PTRACE_EVENT_EXIT is less than useful.
+
+The only way to perfectly preserve the previous semantics is probably to
+do something like my JOBCTL_TASK_EXIT proposal.
+
+That said I don't think even adding a JOBCTL_TASK_EXIT is enough to have
+a reliable stop of ptrace_event_exit after a process has exited.  As any
+other pending signal can cause problems there as well.
+
+I have received a report that strace -f in some cases is not noticing
+children before they die and it looks like a stop in PTRACE_EVENT_EXIT
+would fix that strace behavior.
+
+Sigh.
+
+Here I was trying for the simple minimal change and I hit this landmine.
+Which leaves me with the question of what should be semantics of signal
+handling after exit.
+
+I think from dim memory of previous conversations the desired semantics
+look like:
+a) Ignore all signal state except for SIGKILL.
+b) Letting SIGKILL wake up the process should be sufficient.
+
+I will see if I can reproduce the strace failure and see if I can cook
+up something minimal that addresses just that.  If you have suggestions
+I would love to hear them.
+
+As this was a minimal fix for SIGKILL being broken I have already sent
+the fix to Linus.  So we are looking at an incremental fix at this point.
+
+Eric
