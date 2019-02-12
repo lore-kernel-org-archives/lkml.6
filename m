@@ -2,88 +2,151 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 655E8C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD02C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3145C222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A52222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:43:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Li0mLark"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbfBLTmv (ORCPT
+        id S1732028AbfBLTnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:42:51 -0500
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:51711 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbfBLTmv (ORCPT
+        Tue, 12 Feb 2019 14:43:12 -0500
+Received: from mail.efficios.com ([167.114.142.138]:57380 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfBLTnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:42:51 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5F81C2800B3E2;
-        Tue, 12 Feb 2019 20:42:49 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 16F1117E4A; Tue, 12 Feb 2019 20:42:49 +0100 (CET)
-Date:   Tue, 12 Feb 2019 20:42:49 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 16/28] thunderbolt: Discover preboot PCIe paths the
- boot firmware established
-Message-ID: <20190212194249.2ftl2ckureow44lo@wunner.de>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-17-mika.westerberg@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206131738.43696-17-mika.westerberg@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 12 Feb 2019 14:43:11 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 88ED91A1B1B;
+        Tue, 12 Feb 2019 14:43:10 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id h1VCgYn5zwSv; Tue, 12 Feb 2019 14:43:10 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E04E21A1AFF;
+        Tue, 12 Feb 2019 14:43:09 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E04E21A1AFF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1550000589;
+        bh=AWYbTmbbUu9whfET+jatobpOKB+ZZRz448Bik1cpDV0=;
+        h=From:To:Date:Message-Id;
+        b=Li0mLarkExrbEuurvDqnwcBnczDCJsAjyQMUiJ2vOiXPVanOiQ51nhdi4I6gxyzoj
+         VtiTKYDxMRN/uGT2fLR8xt/7BLgbaVBZuXtdnLocaqcC0RLxWPy03E26fC0E8ljNeE
+         pjlC9oDWEx54El2mDh5PB9Vxr1angPTVgyabDd0NQkte6hemd9fkQXDUOvr7tMuVNH
+         i9pPFFAbJwxjNMmDBFRsKHYCZivGXSChQgbfpkug+tKuGmmvXhnwGwM7QScYCnwfHR
+         SQ+x3MPlWXVXj0WcUMXiIk5XDRM4vm4OQTRL3yDs4fvjYAJOxg6zby5X1NOsjHRrxy
+         rgpXpNiHSo1Gg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id IBjfZR3O_V4t; Tue, 12 Feb 2019 14:43:09 -0500 (EST)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 93EB91A1AEB;
+        Tue, 12 Feb 2019 14:43:09 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Carlos O'Donell <carlos@redhat.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [PATCH 2/4] glibc: sched_getcpu(): use rseq cpu_id TLS on Linux
+Date:   Tue, 12 Feb 2019 14:42:51 -0500
+Message-Id: <20190212194253.1951-3-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190212194253.1951-1-mathieu.desnoyers@efficios.com>
+References: <20190212194253.1951-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:17:26PM +0300, Mika Westerberg wrote:
-> +static struct tb_port *tb_port_remote(struct tb_port *port)
-> +{
-> +	struct tb_port *remote = port->remote;
-> +
-> +	/*
-> +	 * If we have a dual link, the remote is available through the
-> +	 * primary link.
-> +	 */
-> +	if (!remote && port->dual_link_port && port->dual_link_port->remote)
-> +		return port->dual_link_port->remote->dual_link_port;
-> +	return remote;
-> +}
+When available, use the cpu_id field from __rseq_abi on Linux to
+implement sched_getcpu(). Fall-back on the vgetcpu vDSO if unavailable.
 
-Yet more special-casing for dual-link ports. :-(
+Benchmarks:
 
+x86-64: Intel E5-2630 v3@2.40GHz, 16-core, hyperthreading
 
-> +	if (tunnel->dst_port->config.type != TB_TYPE_PCIE_UP) {
-> +		tb_port_warn(tunnel->dst_port,
-> +			     "path does not end to a PCIe adapter\n");
+glibc sched_getcpu():                     13.7 ns (baseline)
+glibc sched_getcpu() using rseq:           2.5 ns (speedup:  5.5x)
+inline load cpuid from __rseq_abi TLS:     0.8 ns (speedup: 17.1x)
 
-Nit: I think the proper proposition is "on" or "at", not "to".
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Carlos O'Donell <carlos@redhat.com>
+CC: Florian Weimer <fweimer@redhat.com>
+CC: Joseph Myers <joseph@codesourcery.com>
+CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Paul Turner <pjt@google.com>
+CC: libc-alpha@sourceware.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-api@vger.kernel.org
+---
+ sysdeps/unix/sysv/linux/sched_getcpu.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-The tunnel discovery algorithm looks solid to me, so:
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+diff --git a/sysdeps/unix/sysv/linux/sched_getcpu.c b/sysdeps/unix/sysv/linux/sched_getcpu.c
+index fb0d317f83..8bfb03778b 100644
+--- a/sysdeps/unix/sysv/linux/sched_getcpu.c
++++ b/sysdeps/unix/sysv/linux/sched_getcpu.c
+@@ -24,8 +24,8 @@
+ #endif
+ #include <sysdep-vdso.h>
+ 
+-int
+-sched_getcpu (void)
++static int
++vsyscall_sched_getcpu (void)
+ {
+ #ifdef __NR_getcpu
+   unsigned int cpu;
+@@ -37,3 +37,24 @@ sched_getcpu (void)
+   return -1;
+ #endif
+ }
++
++#ifdef __NR_rseq
++#include <linux/rseq.h>
++
++extern __attribute__ ((tls_model ("initial-exec")))
++__thread volatile struct rseq __rseq_abi;
++
++int
++sched_getcpu (void)
++{
++  int cpu_id = __rseq_abi.cpu_id;
++
++  return cpu_id >= 0 ? cpu_id : vsyscall_sched_getcpu ();
++}
++#else
++int
++sched_getcpu (void)
++{
++  return vsyscall_sched_getcpu ();
++}
++#endif
+-- 
+2.17.1
 
-When the module is unloaded, tb_stop() currently deactivates all PCI
-tunnels.  Is this still a good idea now that tunnels are discovered
-on probe?  We could just leave the tunnels in place and rediscover
-them when the module is reloaded.  If something was unplugged in the
-meantime, pciehp will have disconnected the devices and we should
-notice on reprobe that certain tunnels cannot be rediscovered, so no
-harm no foul.  Thoughts?
-
-Thanks,
-
-Lukas
