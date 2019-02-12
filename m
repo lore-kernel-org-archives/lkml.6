@@ -2,151 +2,124 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4015C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69E0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8649218E2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8265921773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:33:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="waRsQ09L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfBLJcq (ORCPT
+        id S1728840AbfBLJdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:32:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41648 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbfBLJcq (ORCPT
+        Tue, 12 Feb 2019 04:33:09 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53491 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfBLJdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:32:46 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1C9NvWX056316
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:32:45 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qksxum8rj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:32:44 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 12 Feb 2019 09:32:42 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Feb 2019 09:32:40 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1C9We1P852386
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 09:32:40 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0848842047;
-        Tue, 12 Feb 2019 09:32:40 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94E484203F;
-        Tue, 12 Feb 2019 09:32:38 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.59.139])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 12 Feb 2019 09:32:38 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 12 Feb 2019 11:32:37 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     "'David S . Miller'" <davem@davemloft.net>
-Cc:     linux-mm@kvack.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] sparc64: simplify reduce_memory() function
-Date:   Tue, 12 Feb 2019 11:32:36 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19021209-0028-0000-0000-0000034791C3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021209-0029-0000-0000-00002405B092
-Message-Id: <1549963956-28269-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120069
+        Tue, 12 Feb 2019 04:33:08 -0500
+Received: by mail-it1-f195.google.com with SMTP id g85so5598138ita.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:33:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FgkpX838fo9oz8NedVb0MpKtzZYxkXRP2Z32tbBQYjA=;
+        b=waRsQ09LqsI2iWinAIYUZINqbTBFjxarlOd9+DC0LVysmqOPGKyQZXQevhoZD7ZEhQ
+         XD6QWGVPF9jAVb560JxHn83NKaENr7/kAFe5UF/at8t97HGm2qfLl4hwl+vkY7t6aVEa
+         p5skMV07v/rZfNIddNi1zp6IEh5hCzL4S/raw5qZV0fXiDeF3EZsRA705lMf+8cUP/xy
+         VzfQ3yGG91stvmYNjoj9jqCWXV8xt8kipg929/iDJs4T/Ih4BTw8mDCjIg/k1p0IZGWb
+         Le44pBV/dpOCtn1qBYBzvdVh9cLAB0pL9cSV4SWBW1AramVHrqYdZWcKTlG96mxlrbII
+         mUMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FgkpX838fo9oz8NedVb0MpKtzZYxkXRP2Z32tbBQYjA=;
+        b=C0zslS57XX8R5MhhbblXYRvVod/rY55OJlHaoKrALbilvDKmUR6pKMn21ygcv/LGSW
+         MpuwD0I9nF0W/v74r5Fy7/M07wYTW5UEKA9I7/cJvKGoaOAuwhdDrBqqif8stNW+HpSO
+         Ndf56NxXW2zgh5AG1GP7PUKVGuO8lNVx7UvNjrvOnI2uywXtPhtNgfI+a/uBlWt8S2DQ
+         L8c+12lOon0iZYCenOZ5L0r7EQZXU4K2n5OXHL/yNlapQQzhMc9+6T9llTxFb3MEB4l1
+         Y8eX94kiHzuWvdSTRQQaMZLy88hp9RDJz7mfqm8/rGNFIW79q+1K3rkZkzMiFvgsyPUL
+         h09Q==
+X-Gm-Message-State: AHQUAuZEMhn5ix+2+4pvj+ZA6Z09jZV06eZr8PmHsb/RfUOuZDS86sWQ
+        t3lSIL6wesBtHbLBM0uz9afHROqkInMsrfo09orPsQ==
+X-Google-Smtp-Source: AHgI3IaZhlIJttqHaE8stFCUqH6pEM8VirZlSAAtboWLHMCHPeC4nmwDh+OVJj7VeGRCDUjAZULyaH7JZ6Axl3ToCoo=
+X-Received: by 2002:a24:7284:: with SMTP id x126mr1557363itc.96.1549963987312;
+ Tue, 12 Feb 2019 01:33:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20190211122606.8662-1-brgl@bgdev.pl> <20190211122606.8662-30-brgl@bgdev.pl>
+ <2bf9393a-d747-2d86-f298-5f4cf899b85e@arm.com>
+In-Reply-To: <2bf9393a-d747-2d86-f298-5f4cf899b85e@arm.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 12 Feb 2019 10:32:56 +0100
+Message-ID: <CAMRc=MfmKTJcoLzRb5Auz2mYD8pka-=p46MSxjrnXwDYKDR3=Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 29/33] ARM: davinci: cp-intc: use readl/writel_relaxed()
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        David Lechner <david@lechnology.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reduce_memory() function clampls the available memory to a limit
-defined by the "mem=" command line parameter. It takes into account the
-amount of already reserved memory and excludes it from the limit
-calculations.
+pon., 11 lut 2019 o 14:08 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(=
+a):
+>
+> On 11/02/2019 12:26, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed(=
+)
+> > and writel_relaxed() respectively. It's safe to do as there's no
+> > endianness conversion being done in the code.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  arch/arm/mach-davinci/cp_intc.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp=
+_intc.c
+> > index c1efb9390655..4bbf0eba1920 100644
+> > --- a/arch/arm/mach-davinci/cp_intc.c
+> > +++ b/arch/arm/mach-davinci/cp_intc.c
+> > @@ -45,13 +45,13 @@ static struct irq_domain *davinci_cp_intc_irq_domai=
+n;
+> >
+> >  static inline unsigned int davinci_cp_intc_read(unsigned int offset)
+> >  {
+> > -     return __raw_readl(davinci_cp_intc_base + offset);
+> > +     return readl_relaxed(davinci_cp_intc_base + offset);
+> >  }
+> >
+> >  static inline void davinci_cp_intc_write(unsigned long value,
+> >                                        unsigned int offset)
+> >  {
+> > -     __raw_writel(value, davinci_cp_intc_base + offset);
+> > +     writel_relaxed(value, davinci_cp_intc_base + offset);
+> >  }
+> >
+> >  static void davinci_cp_intc_ack_irq(struct irq_data *d)
+> >
+>
+> Same thing. Please merge this patch with the one that introduced the
+> __raw_writel() stuff.
+>
 
-Rather than traverse memblocks and remove them by hand, use
-memblock_reserved_size() to account the reserved memory and
-memblock_enforce_memory_limit() to clamp the available memory.
+In this case, none of my patches introduced it - it used to be like
+that from the beginning, so a separate patch is justified.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/sparc/mm/init_64.c | 42 ++----------------------------------------
- 1 file changed, 2 insertions(+), 40 deletions(-)
-
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index b4221d3..478b818 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -2261,19 +2261,6 @@ static unsigned long last_valid_pfn;
- static void sun4u_pgprot_init(void);
- static void sun4v_pgprot_init(void);
- 
--static phys_addr_t __init available_memory(void)
--{
--	phys_addr_t available = 0ULL;
--	phys_addr_t pa_start, pa_end;
--	u64 i;
--
--	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE, &pa_start,
--				&pa_end, NULL)
--		available = available + (pa_end  - pa_start);
--
--	return available;
--}
--
- #define _PAGE_CACHE_4U	(_PAGE_CP_4U | _PAGE_CV_4U)
- #define _PAGE_CACHE_4V	(_PAGE_CP_4V | _PAGE_CV_4V)
- #define __DIRTY_BITS_4U	 (_PAGE_MODIFIED_4U | _PAGE_WRITE_4U | _PAGE_W_4U)
-@@ -2287,33 +2274,8 @@ static phys_addr_t __init available_memory(void)
-  */
- static void __init reduce_memory(phys_addr_t limit_ram)
- {
--	phys_addr_t avail_ram = available_memory();
--	phys_addr_t pa_start, pa_end;
--	u64 i;
--
--	if (limit_ram >= avail_ram)
--		return;
--
--	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE, &pa_start,
--				&pa_end, NULL) {
--		phys_addr_t region_size = pa_end - pa_start;
--		phys_addr_t clip_start = pa_start;
--
--		avail_ram = avail_ram - region_size;
--		/* Are we consuming too much? */
--		if (avail_ram < limit_ram) {
--			phys_addr_t give_back = limit_ram - avail_ram;
--
--			region_size = region_size - give_back;
--			clip_start = clip_start + give_back;
--		}
--
--		memblock_remove(clip_start, region_size);
--
--		if (avail_ram <= limit_ram)
--			break;
--		i = 0UL;
--	}
-+	limit_ram += memblock_reserved_size();
-+	memblock_enforce_memory_limit(limit_ram);
- }
- 
- void __init paging_init(void)
--- 
-2.7.4
-
+Bart
