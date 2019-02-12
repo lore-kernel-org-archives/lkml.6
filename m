@@ -2,94 +2,123 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4960AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268C0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E809214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A60214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:03:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfBLNCZ (ORCPT
+        id S1729508AbfBLNDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:02:25 -0500
-Received: from mga09.intel.com ([134.134.136.24]:42246 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbfBLNCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:02:25 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 05:02:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="319699797"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga005.fm.intel.com with SMTP; 12 Feb 2019 05:02:22 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 12 Feb 2019 15:02:21 +0200
-Date:   Tue, 12 Feb 2019 15:02:21 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 12/28] thunderbolt: Add functions for allocating and
- releasing hop IDs
-Message-ID: <20190212130221.GH7875@lahna.fi.intel.com>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-13-mika.westerberg@linux.intel.com>
- <20190210121353.fw7gj4pm7ce3flvf@wunner.de>
- <20190211083043.GT7875@lahna.fi.intel.com>
- <20190212124333.hgrnm6owtuqzp4iu@wunner.de>
- <20190212125125.GG7875@lahna.fi.intel.com>
- <20190212125927.yvotrkyzqtdxm6n7@wunner.de>
+        Tue, 12 Feb 2019 08:03:24 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46474 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbfBLNDY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:03:24 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y20so2711738qtm.13;
+        Tue, 12 Feb 2019 05:03:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ux3rfab6xB0htyN4go6KoVC5wYUNHtBdesVWyPhjIbU=;
+        b=QI55gHL0MLykQbbhQ6J3wViG9BRRp6x/9ts1SdyMASjojYXcWcDeA/HoiXP2LBSfeg
+         +rd96wnS7Q05Rdq/d1BtKNFQBRkMAL4RCSAy/+uHhUC98OiH+lNjNgg3uZNVfrZ5Qp3w
+         BzrULhsJdmsv1maHRt06sY5C2+wjr3qlUpQKpAhX+qUfL/UQXqJMLA/+uvcB/YAgBFOI
+         MULzYL5KoDLapuz7u5+AP+6mHJby4sSjEND3zsb1s/3bTSHOJ+p95P6BlUW6rQuzYACP
+         RwQMPOqinAQPJGSK59DWXni13pljN2xXJNjCJNBaXhSEXFn+uhljEpR/AOHB9w1cq8jP
+         eu2w==
+X-Gm-Message-State: AHQUAuaJsCBicOHx+hmLnaHOaKClCPHfz2OzcEaeEe/bR9EjoX6MTfP0
+        wJUEMBGvCQ7hJ0BrOoJnhhb92wxrevTLEGcx74Y=
+X-Google-Smtp-Source: AHgI3IYaTey/XnIHMlEBfyq/oDJhej8FvtndBFMkqTk5Je+H3F/d8nQL7GHRKAkWVyu6wQWsxcWQsOTTLHG8O0jCr7I=
+X-Received: by 2002:a0c:d791:: with SMTP id z17mr2482788qvi.149.1549976602405;
+ Tue, 12 Feb 2019 05:03:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212125927.yvotrkyzqtdxm6n7@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190211172948.3322-1-will.deacon@arm.com>
+In-Reply-To: <20190211172948.3322-1-will.deacon@arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 12 Feb 2019 14:03:04 +0100
+Message-ID: <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
+ EFFECTS" section
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 01:59:27PM +0100, Lukas Wunner wrote:
-> On Tue, Feb 12, 2019 at 02:51:25PM +0200, Mika Westerberg wrote:
-> > On Tue, Feb 12, 2019 at 01:43:33PM +0100, Lukas Wunner wrote:
-> > > On Mon, Feb 11, 2019 at 10:30:43AM +0200, Mika Westerberg wrote:
-> > > > On Sun, Feb 10, 2019 at 01:13:53PM +0100, Lukas Wunner wrote:
-> > > > > If there are two Macs at the ends of the daisy-chain with Thunderbolt
-> > > > > devices in-between, the other Mac may already have established tunnels
-> > > > > to some of the devices and therefore has occupied hop entries in the
-> > > > > devices' path config space.  How do you ensure that you don't allocate
-> > > > > the same entries and overwrite the other Mac's hop entries, thereby
-> > > > > breaking its tunnels?
-> > > > 
-> > > > If the other Mac has enumerated the device (set the upstream port,
-> > > > route, depth) then the other Mac cannot access the device. You get an
-> > > > error (we deal with that in the later patch in the series when we
-> > > > identify XDomain connections). The Hop ID allocation is only relevant in
-> > > > a single domain.  Crossing one needs to have protocol such as we have in
-> > > > case of ThunderboltIP to negotiate Hop IDs used in the link between two
-> > > > domains.
-> > > 
-> > > Understood now, thanks.  (Well, in part at least.)
-> > > 
-> > > It looks like there's a race condition currently in tb_switch_configure()
-> > > wherein two machines on the daisy chain may write the config simultaneously
-> > > and overwrite each other's changes.  Isn't there some kind of synchonization
-> > > mechanism available to prevent such an outcome?
-> > 
-> > AFAICT that's expected. The host that first enumerated the device wins.
-> 
-> Yes but tb_switch_configure() goes on to blindly call
-> tb_plug_events_active().  Does that or any other subsequently called
-> function fail if another machine managed to overwrite the switch config?
+On Mon, Feb 11, 2019 at 6:29 PM Will Deacon <will.deacon@arm.com> wrote:
 
-Yes, once the switch is enumerated the other domain cannot access it
-anymore but instead gets back errors.
+> +     __iomem pointers obtained with non-default attributes (e.g. those returned
+> +     by ioremap_wc()) are unlikely to provide many of these guarantees. If
+> +     ordering is required for such mappings, then the mandatory barriers should
+> +     be used in conjunction with the _relaxed() accessors defined below.
+
+I wonder if we are even able to guarantee consistent behavior across
+architectures
+in the last case here (wc mapping with relaxed accessors and barriers).
+
+Fortunately, there are only five implementations that actually differ from
+ioremap_nocache(): arm32, arm64, ppc32, ppc64 and x86 (both 32/64), so
+that is something we can probably figure out between the people on Cc.
+
+The problem with recommending *_relaxed() + barrier() is that it ends
+up being more expensive than the non-relaxed accessors whenever
+_relaxed() implies the barrier already (true on most architectures other
+than arm).
+
+ioremap_wc() in turn is used almost exclusively to map RAM behind
+a bus, (typically for frame buffers) and we may be better off not
+assuming any particular MMIO barrier semantics for it at all, but possibly
+audit the few uses that are not frame buffers.
+
+> +     Since many CPU architectures ultimately access these peripherals via an
+> +     internal virtual memory mapping, the portable ordering guarantees provided
+> +     by inX() and outX() are the same as those provided by readX() and writeX()
+> +     respectively when accessing a mapping with the default I/O attributes.
+
+This is notably weaker than the PCI mandated non-posted write semantics.
+As I said earlier, not all architectures or PCI host implementations can provide
+non-posted writes though, but maybe we can document that fact here, e.g.
+
+| Device drivers may expect outX() to be a non-posted write, i.e. waiting for
+| a completion response from the I/O device, which may not be possible
+| on a particular hardware.
+
+>   (*) ioreadX(), iowriteX()
+>
+>       These will perform appropriately for the type of access they're actually
+>       doing, be it inX()/outX() or readX()/writeX().
+
+This probably needs clarification as well then: On architectures that
+have a stronger barrier after outX() than writeX() but that use memory
+mapped access for both, the statement is currently not true. We could
+either strengthen the requirement by requiring CONFIG_GENERIC_IOMAP
+on such architectures, or we could document the current behavior
+as intentional and explicitly not allow iowriteX() on I/O ports to be posted.
+
+> +All of these accessors assume that the underlying peripheral is little-endian,
+> +and will therefore perform byte-swapping operations on big-endian architectures.
+
+This sounds like a useful addition and the only sane way to do it IMHO, but
+I think at least traditionally we've had architectures that do not work like
+this but that make readX()/writeX() do native big-endian loads and stores, with
+a hardware byteswap on the PCI bus.
+
+      Arnd
