@@ -2,84 +2,156 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DFEC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E8BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C1D2186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 374572084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:14:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728564AbfBLLNC (ORCPT
+        id S1728831AbfBLLOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:13:02 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:35480 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbfBLLNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:13:02 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gtVzl-0001Au-HM; Tue, 12 Feb 2019 12:12:57 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: add HDMI sound node for rk3328-rock64
-Date:   Tue, 12 Feb 2019 12:12:57 +0100
-Message-ID: <2275914.n7pQDzs7mT@diego>
-In-Reply-To: <c4ce7f7a-c791-ae0a-ad3d-02b2efa41709@katsuster.net>
-References: <20190202043444.9308-1-katsuhiro@katsuster.net> <1970132.3b67tCGWFf@phil> <c4ce7f7a-c791-ae0a-ad3d-02b2efa41709@katsuster.net>
+        Tue, 12 Feb 2019 06:14:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51660 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727428AbfBLLOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 06:14:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B13E8AF9A;
+        Tue, 12 Feb 2019 11:14:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E8A791E09A8; Tue, 12 Feb 2019 12:14:02 +0100 (CET)
+Date:   Tue, 12 Feb 2019 12:14:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+31d8b84465a7cbfd8515@syzkaller.appspotmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: possible deadlock in pipe_lock (2)
+Message-ID: <20190212111402.GU19029@quack2.suse.cz>
+References: <000000000000701c3305818e4814@google.com>
+ <CAOQ4uxhhRs6kBH2rgbPyjd=tXoxxuJG76Y2vpCYmD0c0HzLwhA@mail.gmail.com>
+ <CAJfpegvjLgXa1HOCZkz6RKup7UdioMGyY7W4miyqcRtn9PL4QA@mail.gmail.com>
+ <CAJfpegsJo8X+efgWSa4QwSGpAGADpoossZZg=m7x5ApPXhxCoA@mail.gmail.com>
+ <CAOQ4uxj0nKK1csWGxxLT-EvC3hv8Zz5-HpvMF_a2r2iVcLXt1A@mail.gmail.com>
+ <CAJfpegsadeK=3EON9HgZ8rLCDWCJXR9QrXxA3ZZjdjzq6FDRjw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsadeK=3EON9HgZ8rLCDWCJXR9QrXxA3ZZjdjzq6FDRjw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Am Montag, 4. Februar 2019, 13:59:37 CET schrieb Katsuhiro Suzuki:
-> On 2019/02/03 18:06, Heiko Stuebner wrote:
-> > Am Samstag, 2. Februar 2019, 05:34:44 CET schrieb Katsuhiro Suzuki:
-> >> This patch adds HDMI sound (I2S0) node and remove dma properties
-> >> from UART2 node for rock64.
-> >> 
-> >> The DMAC of rk3328 can use 8 channels at same time. Currently, total
-> >> 
-> >> 7 channels are used as follows:
-> >>    - I2S1  2ch
-> >>    - UART2 2ch
-> >>    - SPDIF 1ch
-> >>    - SPI0  2ch
-> >> 
-> >> HDMI audio using I2S0 that requires 2ch but DMAC has only 1 channel.
-> >> 
-> >> UART2 can work without DMA resources, so this patch removes dma
-> >> allocation for UART2 and reuses it to I2S0.
-> > 
-> > I don't follow that description. How can i2s0 re-use the uart2 dma
-> > channels? Looking at the dma table in the TRM, uart2 has channels 6+7
-> > while i2s0 uses channels 11+12. They should just run concurrently?
+On Mon 11-02-19 15:33:38, Miklos Szeredi wrote:
+> On Mon, Feb 11, 2019 at 2:08 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 2:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Mon, Feb 11, 2019 at 1:06 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > >
+> > > > On Mon, Feb 11, 2019 at 8:38 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > >
+> > > > > On Sun, Feb 10, 2019 at 8:23 PM syzbot
+> > > > > <syzbot+31d8b84465a7cbfd8515@syzkaller.appspotmail.com> wrote:
+> > > >
+> > > > > > -> #1 (&ovl_i_mutex_key[depth]){+.+.}:
+> > > > > >         down_write+0x38/0x90 kernel/locking/rwsem.c:70
+> > > > > >         inode_lock include/linux/fs.h:757 [inline]
+> > > > > >         ovl_write_iter+0x148/0xc20 fs/overlayfs/file.c:231
+> > > > > >         call_write_iter include/linux/fs.h:1863 [inline]
+> > > > > >         new_sync_write fs/read_write.c:474 [inline]
+> > > > > >         __vfs_write+0x613/0x8e0 fs/read_write.c:487
+> > > > > > kobject: 'loop4' (000000009e2b886d): kobject_uevent_env
+> > > > > >         __kernel_write+0x110/0x3b0 fs/read_write.c:506
+> > > > > >         write_pipe_buf+0x15d/0x1f0 fs/splice.c:797
+> > > > > >         splice_from_pipe_feed fs/splice.c:503 [inline]
+> > > > > >         __splice_from_pipe+0x39a/0x7e0 fs/splice.c:627
+> > > > > >         splice_from_pipe+0x108/0x170 fs/splice.c:662
+> > > > > >         default_file_splice_write+0x3c/0x90 fs/splice.c:809
+> > > >
+> > > > Irrelevant to the lockdep splat, but why isn't there an
+> > > > ovl_splice_write() that just recurses into realfile->splice_write()?
+> > > > Sounds like a much more efficient way to handle splice read and
+> > > > write...
+> > > >
+> > > > [...]
+> > > >
+> > > > > Miklos,
+> > > > >
+> > > > > Its good that this report popped up again, because I went to
+> > > > > look back at my notes from previous report [1].
+> > > > > If I was right in my previous analysis then we must have a real
+> > > > > deadlock in current "lazy copy up" WIP patches. Right?
+> > > >
+> > > > Hmm, AFAICS this circular dependency translated into layman's terms:
+> > > >
+> > > > pipe lock -> ovl inode lock  (splice to ovl file)
+> > > >
+> > > > ovl inode lock -> upper freeze lock (truncate of ovl file)
+> > > >
+> > > > upper freeze lock -> pipe lock (splice to upper file)
+> > >
+> > > So what can we do with this?
+> > >
+> > > The "freeze lock -> inode lock" dependency is fixed.   This is
+> > > reversed in overlay to "ovl inode lock -> upper freeze lock", which is
+> > > okay, because this is a nesting that cannot be reversed.   But in
+> > > splice the pipe locks comes in between: "freeze lock -> pipe lock ->
+> > > inode lock" which breaks this nesting direction and creates a true
+> > > reverse dependency between ovl inode lock and upper freeze lock.
+> > >
+> > > The only way I see this could be fixed is to move the freeze lock
+> > > inside the pipe lock.  But that would mean splice/sendfile/etc could
+> > > be frozen with the pipe lock held.  It doesn't look nice.
+> > >
+> > > Any other ideas?
+> > >
+> >
+> > [CC Jan]
+> >
+> > I think we are allowed to file_start_write_trylock(upper)
+> > before ovl_inode_lock(). This in ONLY needed to cover the corner
+> > case of upper being frozen in between "upper freeze lock -> pipe lock"
+> > and thread B being in between "ovl inode lock -> upper freeze lock".
+> > Is it OK to return a transient error in this corner copy up case?
 > 
-> Sorry for confusing... 6 or 7 is as ID number of slave DMA channel.
-> TRM calls it 'Req number'. Req number 6+7 and 11+12 can work
-> concurrently but TRM says DMAC can transfer 8 DMA channels at same
-> time. So all 16 Req numbers cannot activate at same time. It should
-> be keep less or equal than 8 numbers.
+> This case shouldn't happen assuming adherence to the "upper shall not
+> be modified while part of the overlay" rule.
+> 
+> Side note: I don't see that it has anything to do with copy-up, but I
+> may be missing something.
+> 
+> My other thought is that perhaps sb_start_write() should invoke
+> s_ops->start_write() so that overlay can do the freeze protection on
+> the upper early.
 
-But that "shortcoming" of having more requests than channels is not
-something specific to the pl330, instead most dma controllers have that
-"problem", which seems to get solved by the virt-dma mechanism of
-dmaengine - which pl330 doesn't use so far. (but see pl080 for example)
+So my understanding of overlayfs is pretty basic so I'm sorry if I miss
+something. If I'm right, we have three superblocks here: ovl, upper, lower.
+Now 'lower' is read-only so for freezing purposes we can just forget about
+it. 'upper' is where the real changes are going into and 'ovl' is a wrapper
+virtual superblock that handles merging of 'lower' and 'upper'. Correct so
+far?
 
-The devicetree only describes the hardware and is never meant as a
-configuration space for kernel-code shortcomings.
+And the problem seems to be that when you acquire freeze protection for the
+'ovl' superblock, you in fact want to acquire freeze protection for the
+'upper' (as 'ovl' is just virtual and has no disk state to protect). So I
+agree that a callback to allow overlayfs to acquire freeze protection on
+'upper' right away would be one solution. Or we could make s_writers a
+pointer and redirect ovl->s_writers to upper->s_writers. Then VFS should do
+the right thing from the start unless overlayfs calls back into operations
+on 'upper' that will try to acquire the freeze protection again. Thoughts?
 
-
-Heiko
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
