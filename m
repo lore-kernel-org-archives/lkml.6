@@ -2,82 +2,128 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17271C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A841CC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68B1214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8043620823
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:46:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfBLMob (ORCPT
+        id S1728645AbfBLMqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:44:31 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43241 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729516AbfBLMo2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:44:28 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gtXQF-0006Xj-87; Tue, 12 Feb 2019 13:44:23 +0100
-Message-ID: <1549975462.2546.30.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] soc: imx8: Add cpufreq registering and speed
- grading check for i.MX8MQ
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 12 Feb 2019 13:44:22 +0100
-In-Reply-To: <1549974071-8284-2-git-send-email-abel.vesa@nxp.com>
-References: <1549974071-8284-1-git-send-email-abel.vesa@nxp.com>
-         <1549974071-8284-2-git-send-email-abel.vesa@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 12 Feb 2019 07:46:13 -0500
+Received: from mga11.intel.com ([192.55.52.93]:49733 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbfBLMqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:46:12 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 04:46:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="274417410"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga004.jf.intel.com with ESMTP; 12 Feb 2019 04:46:09 -0800
+Received: from andy by smile with local (Exim 4.92-RC5)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gtXRv-0001kG-Kx; Tue, 12 Feb 2019 14:46:07 +0200
+Date:   Tue, 12 Feb 2019 14:46:07 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     egranata@chromium.org
+Cc:     hdegoede@redhat.com, mika.westerberg@linux.intel.com,
+        dtor@chromium.org, rafael@kernel.org, gregkh@linuxfoundation.org,
+        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org,
+        gwendal@chromium.org, linux-acpi@vger.kernel.org,
+        briannorris@chromium.org, egranata@google.com
+Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in
+ platform_get_irq()
+Message-ID: <20190212124607.GI9224@smile.fi.intel.com>
+References: <20190207185917.167829-1-egranata@google.com>
+ <20190211190112.209286-1-egranata@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211190112.209286-1-egranata@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abel,
-
-Am Dienstag, den 12.02.2019, 12:21 +0000 schrieb Abel Vesa:
-> From: Anson Huang <Anson.Huang@nxp.com>
+On Mon, Feb 11, 2019 at 11:01:12AM -0800, egranata@chromium.org wrote:
+> From: Enrico Granata <egranata@chromium.org>
 > 
-> Register cpu-freq platform driver for i.MX8.
-> i.MX8MQ has different parts like consumer, industrial and auto etc.,
-> different parts have different cpufreq set-points, this patch adds
-> fuse check to select correct cpufreq set-points for each part. The
-> default dtb has all set-points available, then kernel will check fuse
-> to disable those unused set-points, definition as below:
+> ACPI 5 added support for GpioInt resources as a way to provide
+> information about interrupts mediated via a GPIO controller.
 > 
-> OCOTP offset 0x440, bit [7:6]
+> Several device buses (e.g. SPI, I2C) have support for retrieving
+> an IRQ specified via this type of resource, and providing it
+> directly to the driver as an IRQ number.
 > 
-> '00' - Consumer 0C to 95C
-> '01' - Ext. Consumer -20C to 105C
-> '10' - Industrial -40C to 105C
-> '11' - Automotive -40C to 125C
+> This is not currently done for the platform drivers, as platform_get_irq()
+> does not try to parse GpioInt() resources. This requires drivers to
+> either have to support only one possible IRQ resource, or to have code
+> in place to try both as a failsafe.
+> 
+> While there is a possibility of ambiguity for devices that exposes
+> multiple IRQs, it is easy and feasible to support the common case
+> of devices that only expose one IRQ which would be of either type
+> depending on the underlying system's architecture.
+> 
+> This commit adds support for parsing a GpioInt resource in order
+> to fulfill a request for the index 0 IRQ for a platform device.
+> 
 
-Shouldn't this read 0x440 [9:8] (SPEED_GRADING) instead? According to
-the RM those 2 bits directly encode the maximum ARM core frequency, so
-we don't need to guess from the target market.
+Yes, let's go this way as a compromise to get major of the cases working.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Regards,
-Lucas
+> Signed-off-by: Enrico Granata <egranata@chromium.org>
+> ---
+> Changes in v2:
+>  - only support IRQ index 0
+> 
+>  drivers/base/platform.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 1c958eb33ef4d..0d3611cd1b3bc 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -127,7 +127,20 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+>  		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+>  	}
+>  
+> -	return r ? r->start : -ENXIO;
+> +	if (r)
+> +		return r->start;
+> +
+> +	/*
+> +	 * For the index 0 interrupt, allow falling back to GpioInt
+> +	 * resources. While a device could have both Interrupt and GpioInt
+> +	 * resources, making this fallback ambiguous, in many common cases
+> +	 * the device will only expose one IRQ, and this fallback
+> +	 * allows a common code path across either kind of resource.
+> +	 */
+> +	if (num == 0 && has_acpi_companion(&dev->dev))
+> +		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+> +
+> +	return -ENXIO;
+>  #endif
+>  }
+>  EXPORT_SYMBOL_GPL(platform_get_irq);
+> -- 
+> 2.20.1.791.gb4d0f1c61a-goog
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
