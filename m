@@ -2,90 +2,105 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA01FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B97C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830182081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B582081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:18:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="FXcRGjAA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732413AbfBLVSH (ORCPT
+        id S1732423AbfBLVSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:18:07 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43658 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbfBLVSG (ORCPT
+        Tue, 12 Feb 2019 16:18:51 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44050 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbfBLVSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:18:06 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 20B0327FB65
-Message-ID: <fb7e6bf4474583535961712bac5248b43dd47af0.camel@collabora.com>
-Subject: Re: [PATCH v3 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Date:   Tue, 12 Feb 2019 18:17:52 -0300
-In-Reply-To: <20190212130548.tytlxmbu4q6qgzzq@flea>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
-         <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
-         <716ae1ff-8e62-c723-5b5a-0b018cf6af6a@xs4all.nl>
-         <db7a762a-8bc3-0391-036b-1fda2e445023@xs4all.nl>
-         <20190212130548.tytlxmbu4q6qgzzq@flea>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Feb 2019 16:18:50 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y1so48755pgk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 13:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:cc:from:to:message-id;
+        bh=7jn3J1N45mjFhAjEYdQDoen/Jj3zXV3ffwF+Car7qjM=;
+        b=FXcRGjAAnulMtToNJJXzQMHEGVoLr32XFsEK6RHS6woHCvivq4333WrY4mTUCIUrs8
+         ms/20OPAgHQYPl6OMTY3EXbB3RxcKwrA6ZZEnSMgAc1NzDML1grF72Zfd6mD9PJpZXmg
+         cnZYza9H8rh8rKCG9s/oHRg3TgWaYhsC5H8MnA7kQE0EshnhD+jdhz6svgCxdLDc4fEF
+         yJoYhbhOPsxKDmNMFky0VzrU31mXPhBbcb6pAaW/B25yHV+2NA9V7zHhaKIS9yXYBRFa
+         HxGyUJD24wY1YTl3iQjOS+GlHQ78hgj2Nf1GgSwlnZo2ZpBAZL5OtXR44OVTtbcu2FTu
+         hc1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:cc:from:to:message-id;
+        bh=7jn3J1N45mjFhAjEYdQDoen/Jj3zXV3ffwF+Car7qjM=;
+        b=SNfbz1MgWleaDXTEm11JtuZsx65ihmw/x2HeaFlvhVvjMV2hVuq90ZSdkUWFim/BrZ
+         RCO7O/j7gP0zZnM0ojwOuTg2/Z/Dzd9dXj2wV175jRxNq7GJQFyTZ5JF9BkkZIBbin2y
+         wSxd0JoG1G/deRyFe0TdIRsA4BnyqDfhFDxeyldmm8R1jZAMub6JBBADVLjOUv4fvtne
+         FFk1aIzgcMf77kEf9KsYTJIHI+v4HCjr1j04X5XtSEkbHf/VsHREhI1zmLzGr7Oux+CX
+         VOLeTGEVXHfmcY2M6w1la0Wu3DW5vFktRvWlSpQhv491ky1WCNHwBxrDbBFcxcuetjO2
+         H68g==
+X-Gm-Message-State: AHQUAuYL8z4K6HZA5UsAIed0hZWRLBhC84iag/M2obpJ2kscDAO0RC74
+        AXrtZ4GuTm1zxoMIUM/CUASXjYzVarE=
+X-Google-Smtp-Source: AHgI3IbFgOyBnuZx9ir/kVuBH1aXHVAW4D1pKnhKZDynCCh0H+XAPi0uXlDUwfsYLN40+xIdXvTtQQ==
+X-Received: by 2002:a63:6244:: with SMTP id w65mr5401230pgb.300.1550006330084;
+        Tue, 12 Feb 2019 13:18:50 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id c4sm36770281pfm.151.2019.02.12.13.18.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 13:18:49 -0800 (PST)
+Date:   Tue, 12 Feb 2019 13:18:49 -0800 (PST)
+X-Google-Original-Date: Tue, 12 Feb 2019 13:17:26 PST (-0800)
+Subject: [GIT PULL] RISC-V Fixes for 5.0-rc7
+CC:      linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-57c6009c-7e1d-4742-af0a-807c08dab07a@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-12 at 14:05 +0100, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, Feb 11, 2019 at 04:21:47PM +0100, Hans Verkuil wrote:
-> > > I think the API should be designed with 4k video in mind. So if some of
-> > > these constants would be too small when dealing with 4k (even if the
-> > > current HW doesn't support this yet), then these constants would have to
-> > > be increased.
-> > > 
-> > > And yes, I know 8k video is starting to appear, but I think it is OK
-> > > that additional control(s) would be needed to support 8k.
-> > 
-> > Hmm, 4k (and up) is much more likely to use HEVC. So perhaps designing this
-> > for 4k is overkill.
-> > 
-> > Does anyone know if H.264 is used for 4k video at all? If not (or if very
-> > rare), then just ignore this.
-> 
-> I don't know the state of it right now, but until quite recently
-> youtube at least was encoding their 4k videos in both VP9 and
-> H264. They might have moved to h265 since, but considering 4k doesn't
-> seem unreasonable.
-> 
+The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
 
-Just asked the multimedia team here, and they say that 4k videos are in
-fact widely used for both H264 and VP9 because of the HEVC licensing issues,
-and because gains in compressions are not so impressive.
+  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
 
-Regards,
-Ezequiel
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-5.0-rc7
+
+for you to fetch changes up to 41fb9d54f12b87fb1f670653e95d34668a08e8ee:
+
+  Revert "RISC-V: Make BSS section as the last section in vmlinux.lds.S" (2019-02-11 15:24:45 -0800)
+
+----------------------------------------------------------------
+RISC-V Fixes for 5.0-rc7
+
+This tag contains a pair of bug fixes that I'd like to include in 5.0:
+
+* A fix to disambiguate swap from invalid PTEs, which fixes an error
+  when trying to unmap PROT_NONE pages.
+* A revert to an optimization of the size of flat binaries.  This is
+  really a workaround to prevent breaking existing boot flows, but since
+  the change was introduced as part of the 5.0 merge window I'd like to
+  have the fix in before 5.0 so we can avoid a regression for any proper
+  releases.
+
+With these I hope we're out of patches for 5.0 in RISC-V land.
+
+----------------------------------------------------------------
+Palmer Dabbelt (1):
+      Revert "RISC-V: Make BSS section as the last section in vmlinux.lds.S"
+
+Stefan O'Rear (1):
+      riscv: Add pte bit to distinguish swap from invalid
+
+ arch/riscv/include/asm/pgtable-bits.h | 6 ++++++
+ arch/riscv/include/asm/pgtable.h      | 8 ++++----
+ arch/riscv/kernel/vmlinux.lds.S       | 8 ++------
+ 3 files changed, 12 insertions(+), 10 deletions(-)
