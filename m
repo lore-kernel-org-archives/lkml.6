@@ -2,99 +2,110 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC5C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E0DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD30620675
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHsY48d0"
+	by mail.kernel.org (Postfix) with ESMTP id F28B420675
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:50:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbfBLItz (ORCPT
+        id S1728643AbfBLIuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:49:55 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55245 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbfBLItz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:49:55 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so1984582wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:49:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZaqGFsP2Fj4gI246V5TlxB5rbyGGcaN1FumYNNQbU+0=;
-        b=KHsY48d0wBerQ0dgDf21YVvqe6bp493PFwz6KbxXmLQGNGgTohDhWM/2XImDEbMOnL
-         W5juOrt8VqX4N6btQ3cGvVADa86nmq5KyyxYdh+YQgdR4/Yl9+VA5+Te7XP9BtfpnpBT
-         vWlEjuShCdZYP6bWca7TDG6wiywk2K3/SniYFYc998qULF51vyy36U74WwZPl168or79
-         Z36+ldmlllTp7MOu7VvRAgY5Nn2LUnJb0DROZ6/5ng+ujxOnXsLIr2rc7kkk3pG+FJkF
-         y3SpTgTB+lOXlWzOgvgOyrQ4tYfI+0GU+iXVhFZED0itBDnWRW87M3t1mgI9QvDtr3XX
-         pm1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZaqGFsP2Fj4gI246V5TlxB5rbyGGcaN1FumYNNQbU+0=;
-        b=cSkVN5sQXbwxIm8Oey+ae2ek9CXrfK7lmzJcdFbermqEZHmDOf2278ja4M5dnEeh3n
-         UnFPKEjTzFvub4ZK3lyTDqPyG5ASZnCIMizHBUNxrVhFLnVx2hqkMffKQgvlnyo3q9pu
-         plFOhwBDNApKxlbv3ByZKKxZqtGGx4M1nbYWI+vokHuMIKM2zp7cYZmS0K7ChMyvQHU9
-         XpjuCkCgZlYu1RsfQa1oamb0UAaDuQy10P2bYRyxb90Smuas+11Ux/sAc5F46D3LmlO7
-         HNe3UNcjJsFtCZ2cSn7T9oXmM0awrRS5V7kDcskSRRXLiBM0IWrl5fd2CS33+tgaTjyt
-         TeGg==
-X-Gm-Message-State: AHQUAuax8Ly3yG28+Ffc4+Gkya0KW35+WTgvIrbkFUu70WxEPilrSJNX
-        cYn5fC+oet12GXQV8BG4KGO0+5Q3Lxc=
-X-Google-Smtp-Source: AHgI3IYid/MUJe90jLpMKwc+Spv1+LAWZrznQr/PUGWU27cqH4cZoV5DVt9MzN6w/0n9dKiC7OZ+3A==
-X-Received: by 2002:a1c:47:: with SMTP id 68mr1832188wma.89.1549961393780;
-        Tue, 12 Feb 2019 00:49:53 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id t63sm1582309wmt.8.2019.02.12.00.49.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 00:49:53 -0800 (PST)
-Date:   Tue, 12 Feb 2019 08:49:51 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: intel-lpss: Move linux/pm.h to the local header
-Message-ID: <20190212084951.GY20638@dell>
-References: <20190124180328.76533-1-andriy.shevchenko@linux.intel.com>
+        Tue, 12 Feb 2019 03:50:37 -0500
+Received: from mga14.intel.com ([192.55.52.115]:2256 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727234AbfBLIuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:50:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 00:50:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="146128803"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 12 Feb 2019 00:50:33 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 12 Feb 2019 10:50:33 +0200
+Date:   Tue, 12 Feb 2019 10:50:33 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Jun Li <jun.li@nxp.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
+ against the device node
+Message-ID: <20190212085033.GB32070@kuha.fi.intel.com>
+References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+ <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
+ <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
+ <20190211104629.GE16987@kuha.fi.intel.com>
+ <VI1PR04MB4558F4F7BC10D82FC1BE71B489650@VI1PR04MB4558.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190124180328.76533-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <VI1PR04MB4558F4F7BC10D82FC1BE71B489650@VI1PR04MB4558.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019, Andy Shevchenko wrote:
+Hi,
 
-> We now using a common macro for PM operations in Intel LPSS driver,
-> and, since that macro relies on the definition and macro from linux/pm.h
-> header file, it's logical to include it directly in intel-lpss.h.
-> Otherwise it's a bit fragile and requires a proper ordering
-> of header inclusion in C files.
+On Tue, Feb 12, 2019 at 06:03:42AM +0000, Jun Li wrote:
+> > > return dev_fwnode(dev->parent) == fwnode;
+> > 
+> > That's actually not the case. struct usb_role_switch_desc has a member for fwnode,
+> > and that's what we use with the actual mux device. Check
+> > usb_role_switch_register():
+> > 
+> >         ...
+> >         sw->dev.fwnode = desc->fwnode;
+> >         ...
+> > 
+> > Sorry for not realizing it before.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/mfd/intel-lpss-acpi.c | 1 -
->  drivers/mfd/intel-lpss-pci.c  | 1 -
->  drivers/mfd/intel-lpss.h      | 2 ++
->  3 files changed, 2 insertions(+), 2 deletions(-)
+> So desc->fwnode should be initialized before do usb_role_switch_register()?
+> But seems usb_role_switch_desc is a read-only object so can't be set at runtime.
 
-Applied, thanks.
+It can. Even though usb_role_switch_register() takes read-only
+parameter, nothing's preventing you from passing data even from the
+stack (the content of the descriptor is copied in any case).
+
+Expecting the descriptor to be read-only just means it can be
+read-only, but it does not have to be.
+
+> usb_controller_node {
+> 	...
+> 	usb-role-switch;
+> 
+> 	port {
+> 		sw_provider_node: endpoint {
+> 			remote-endpoint = <&sw_consumer_node>;
+> 		};
+> 	};
+> };
+> 
+> typec_node {
+> 	...
+> 	port {
+> 		sw_consumer_node: endpoint {
+> 			remote-endpoint = <&sw_provider_node>;
+> 		};
+> 	};
+> };
+
+That looks roughly correct to me.
+
+
+thanks,
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+heikki
