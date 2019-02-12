@@ -2,126 +2,112 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31CAC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B0BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD199222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550004038;
-	bh=vjjmB3q5kxynqTfBl4fMXnJzLtFOe/CWMrbnP/HvubI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xL7g61wBoLBrIarDseX7z35Pg0T6XPJvKUAeoI4jIvRA8ggjx49gg+MMMOuiUEs9q
-	 HvheICiDVulNkN3RW014F2ZFGqhFJWFZTUY5N40rRFLdAu6R5JrF8sLH2BOWTn825H
-	 fnfg1nO32+o5mOKkgp8pvW8oLElGHvmC3ddFlFVw=
+	by mail.kernel.org (Postfix) with ESMTP id C9DCE222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:40:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbfBLUkh (ORCPT
+        id S1731629AbfBLUkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:40:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728097AbfBLUkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:40:37 -0500
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEB6C222C1;
-        Tue, 12 Feb 2019 20:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550004036;
-        bh=vjjmB3q5kxynqTfBl4fMXnJzLtFOe/CWMrbnP/HvubI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QfKA6/6/PzAH/1DTX5KyhQZjfr82FQxTeLuAkVGfvNPh0B5ZeDW8YW0zkx2oYKF8x
-         js6uiZtrNajIS0RO2RaoERpXiSG8LLpOW2CofF7tRM0Ar6Gkfs/XYQaSDu8gGWSYkl
-         fig/6HVAkxpsdIZs+cf77ZjUfMX0mfPMDlK+pctE=
-Received: by mail-qk1-f181.google.com with SMTP id p15so32107qkl.5;
-        Tue, 12 Feb 2019 12:40:35 -0800 (PST)
-X-Gm-Message-State: AHQUAuYHGGs1wXuSsUGBXp8ozX/dUZkynyOS6a7M1g2AJOohE9vhUGBF
-        wuA7bnET3pKio38fkFnhuKARby9t+wTW2G6UIQ==
-X-Google-Smtp-Source: AHgI3IYz2gzbmamNNYONyTiDfE0zREh3E/QtpTpAvvx3glvEe3X+ZYzmIZ6HhCz+z+2Heg/0CZQUYhYHO3QCjAjIpjc=
-X-Received: by 2002:a37:5686:: with SMTP id k128mr3834629qkb.29.1550004035085;
- Tue, 12 Feb 2019 12:40:35 -0800 (PST)
+        Tue, 12 Feb 2019 15:40:42 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.172]:24518 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728097AbfBLUkk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 15:40:40 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id A192D24AC8
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:40:38 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ter8g3IiJ4FKpter8gO0am; Tue, 12 Feb 2019 14:40:38 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=54738 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gter6-003InJ-VZ; Tue, 12 Feb 2019 14:40:37 -0600
+Date:   Tue, 12 Feb 2019 14:40:35 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] xen-scsiback: mark expected switch fall-through
+Message-ID: <20190212204035.GA8037@embeddedor>
 MIME-Version: 1.0
-References: <20190211133554.30055-1-hch@lst.de> <20190211133554.30055-7-hch@lst.de>
-In-Reply-To: <20190211133554.30055-7-hch@lst.de>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 12 Feb 2019 14:40:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL+LiJTF5kZz2hXGbQcH+D4U0jAQE376VSUVMQmdg=XFA@mail.gmail.com>
-Message-ID: <CAL_JsqL+LiJTF5kZz2hXGbQcH+D4U0jAQE376VSUVMQmdg=XFA@mail.gmail.com>
-Subject: Re: [PATCH 06/12] dma-mapping: improve selection of
- dma_declare_coherent availability
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>, x86@kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, linux-mips@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org,
-        SH-Linux <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gter6-003InJ-VZ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:54738
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 7:37 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> This API is primarily used through DT entries, but two architectures
-> and two drivers call it directly.  So instead of selecting the config
-> symbol for random architectures pull it in implicitly for the actual
-> users.  Also rename the Kconfig option to describe the feature better.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/arc/Kconfig            | 1 -
->  arch/arm/Kconfig            | 2 +-
->  arch/arm64/Kconfig          | 1 -
->  arch/csky/Kconfig           | 1 -
->  arch/mips/Kconfig           | 1 -
->  arch/riscv/Kconfig          | 1 -
->  arch/sh/Kconfig             | 2 +-
->  arch/unicore32/Kconfig      | 1 -
->  arch/x86/Kconfig            | 1 -
->  drivers/mfd/Kconfig         | 2 ++
->  drivers/of/Kconfig          | 3 ++-
->  include/linux/device.h      | 2 +-
->  include/linux/dma-mapping.h | 8 ++++----
->  kernel/dma/Kconfig          | 2 +-
->  kernel/dma/Makefile         | 2 +-
->  15 files changed, 13 insertions(+), 17 deletions(-)
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> index 3607fd2810e4..f8c66a9472a4 100644
-> --- a/drivers/of/Kconfig
-> +++ b/drivers/of/Kconfig
-> @@ -43,6 +43,7 @@ config OF_FLATTREE
->
->  config OF_EARLY_FLATTREE
->         bool
-> +       select DMA_DECLARE_COHERENT
+This patch fixes the following warning:
 
-Is selecting DMA_DECLARE_COHERENT okay on UML? We run the unittests with UML.
+drivers/xen/xen-scsiback.c: In function ‘scsiback_frontend_changed’:
+drivers/xen/xen-scsiback.c:1185:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (xenbus_dev_is_online(dev))
+      ^
+drivers/xen/xen-scsiback.c:1188:2: note: here
+  case XenbusStateUnknown:
+  ^~~~
 
-Maybe we should just get rid of OF_RESERVED_MEM. If we support booting
-from DT, then it should always be enabled anyways.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
->         select OF_FLATTREE
->
->  config OF_PROMTREE
-> @@ -83,7 +84,7 @@ config OF_MDIO
->  config OF_RESERVED_MEM
->         bool
->         depends on OF_EARLY_FLATTREE
-> -       default y if HAVE_GENERIC_DMA_COHERENT || DMA_CMA
-> +       default y if DMA_DECLARE_COHERENT || DMA_CMA
->
->  config OF_RESOLVE
->         bool
+Notice that, in this particular case, the code comment is modified
+in accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/xen/xen-scsiback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index e59937293a32..ba0942e481bc 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1184,7 +1184,7 @@ static void scsiback_frontend_changed(struct xenbus_device *dev,
+ 		xenbus_switch_state(dev, XenbusStateClosed);
+ 		if (xenbus_dev_is_online(dev))
+ 			break;
+-		/* fall through if not online */
++		/* fall through - if not online */
+ 	case XenbusStateUnknown:
+ 		device_unregister(&dev->dev);
+ 		break;
+-- 
+2.20.1
+
