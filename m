@@ -2,87 +2,88 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FDBC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F562C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D292084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0CD214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:50:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Cl0ix3sG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="rbubk3Kd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfBLCnj (ORCPT
+        id S1727119AbfBLCue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:43:39 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42187 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfBLCnj (ORCPT
+        Mon, 11 Feb 2019 21:50:34 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:45072 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfBLCud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:43:39 -0500
-Received: by mail-qt1-f194.google.com with SMTP id b8so1276278qtr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 18:43:37 -0800 (PST)
+        Mon, 11 Feb 2019 21:50:33 -0500
+Received: by mail-pf1-f177.google.com with SMTP id j3so524987pfi.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 18:50:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fMMnULhmx6tn2dppUHwiG4kSEpOaNmlUUmhgOn7rBY8=;
-        b=Cl0ix3sG5kTob+8hhLtiOGpQ+CyVyDng42OCiDG9I4vYVxFqu8OMLKfalBiWCSZCVd
-         GQRkn4Fl8KTkhaJ6LbRveheE8sGvmvz78RgzHwPfnp89AHqGv1acqET514HzC5MFgmXU
-         42WvDu0uBnlYG6dtRT7Yq9pIR+mq+vcaAuQIfxplB+/7Ye+9rU0fSa+2476J6wyrg88z
-         f3/Dy8XjHLld7fbG45UVghRP+KYU0jbkSYMwTyYZO2LwxSud8RrEzOj3nqSSCawAAkk9
-         nZpZlrUkhcZpZoWdDs3qJXklgqufcDF+aZTMcc0eCvlGL5aaxCHxtttMB/kOcdj1rV61
-         xlVA==
+        bh=4hktLvRrYNBAIK5RvKt0ooP5Z2boEovdPPoa2tGx3BY=;
+        b=rbubk3KdIMO91/3BKlq9NkDgoIMTno7c+Chy0O1pwH6lNKMhbw1YId7jl7YDYAUtXE
+         eCdf+umqUFQsboiMY4S0CZY1rKvtYFPeL/NpfBuCyXr87/8rqTOZjFQTBsMFT7fDoeav
+         lbBbSJrKG/vLeGHIdG+8LVPz4J9BESBo5CG7A3E9oirZGQ3ACD1ookWK0h+mvEHlMEs1
+         r+mGBkPxUP8xDY95Of5VO1KMRlHRYbQ+qSwEv28PtSqdSBy70WFwbJGE89DotS7REFkO
+         muhsNKYZFUBO1G379KO5DAS4WgXHAGjob8y7lth4FF+yg4zg1QorawRiEgQZkfuPOnTf
+         0fhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=fMMnULhmx6tn2dppUHwiG4kSEpOaNmlUUmhgOn7rBY8=;
-        b=abY0mbuxIeI1Uv31D3HeQHHQPHMOoLKpFCclK46j3SR3ltltS/7G7lv4SmwG44zdpM
-         tPO4lL6DxI3bESv0BJfcPH/XS3mVI3E8mXGDRx2UMc8T3xVYghlPaKG4kJbJjdSBf9l9
-         fT0XGK1CVSuP+IXeNVS/efV9hfKUap+hB8h504Lrna5e15DhtR+Trkcn3KtF+3GguiIz
-         BDWRp8/B53JoejHPRQU90MBvu7JqKA2LTRzV58BLlVvzIbpaAIXD/oudjHKtyrQdH3HG
-         pmoymcUq4QFmOmwRlU0P45vj0mqYSyYWN6eaoVaUoY3o24GJovHrX0Y3PTcZILi1A1Kn
-         Te7g==
-X-Gm-Message-State: AHQUAuZBWg0inCwFGDILw1RO6QSC5keSoa8uGfX4A2HdmlCju4vxkrPj
-        vKdR5489WOUdHAtrjguGxQAlTw==
-X-Google-Smtp-Source: AHgI3IbOYkfnYlf/Y8+u8gfDWmXOXoADkCMMKrvqQdPv6PpshzLARGd5kPuntT/oyaOMLLWVrtFM2w==
-X-Received: by 2002:ac8:2d85:: with SMTP id p5mr1132224qta.136.1549939417280;
-        Mon, 11 Feb 2019 18:43:37 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id q53sm13887015qte.22.2019.02.11.18.43.35
+        bh=4hktLvRrYNBAIK5RvKt0ooP5Z2boEovdPPoa2tGx3BY=;
+        b=IeqBteMDkQnUsk/k7P0sHsXj6SUW8qe5frNADVI7WvlAKD+lPgDucR6B0P71yslI8M
+         cBE3K75s+Z94CD1izecCxMMDj7iqaMx4jtSEL5Idl7Oo3NiulFN/3tc9FjshEK+g+Nah
+         TfGSGMajQgiexdD8d2Zb5S4Q2dZNlY8z+auZmPXEzZF+kxJDJGkC1TAYDXC4ORunKfz0
+         LiLFnmCe9DiNMTZM8SYFpaCy/+MoKZp7zaIy8ptT4RQATcNzVxn8jUO9esdLS1ZGqFiu
+         s7NdLtlGyHScJIy85ugz3uyJ1wSsQBIdYySH8lpJ+H8WkJAr0JLrTULr+D6OUHHK9Akt
+         44Vw==
+X-Gm-Message-State: AHQUAuaXtv6G4+3nUztPQJefcvs4nGNm884ig/+n/o3m8uJDXRxI4PY4
+        50gk0TD2eMYmWDKwZyitMl3+GQ==
+X-Google-Smtp-Source: AHgI3IYkf/JlCJ3EKvo6KziICHXbVFoyt0+4gJq+eCit6N8r9yvm99STMDKCo8hnlfMn2k+g5NBi5g==
+X-Received: by 2002:a63:535c:: with SMTP id t28mr1546084pgl.128.1549939832350;
+        Mon, 11 Feb 2019 18:50:32 -0800 (PST)
+Received: from ?IPv6:2600:380:4a5b:8858:a8b3:edff:f3de:ccc1? ([2600:380:4a5b:8858:a8b3:edff:f3de:ccc1])
+        by smtp.gmail.com with ESMTPSA id r12sm12995051pgv.83.2019.02.11.18.50.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 18:43:36 -0800 (PST)
-Subject: Re: [PATCH 5/5] kasan, slub: fix conflicts with
- CONFIG_SLAB_FREELIST_HARDENED
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-References: <cover.1549921721.git.andreyknvl@google.com>
- <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <4bc08cee-cb49-885d-ef8a-84b188d3b5b3@lca.pw>
-Date:   Mon, 11 Feb 2019 21:43:35 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Mon, 11 Feb 2019 18:50:31 -0800 (PST)
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes 5
+ minute delay during boot on Sun Blade 2500
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mikael Pettersson <mikpelinux@gmail.com>
+Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+ <1549736341.2971.7.camel@HansenPartnership.com>
+ <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+ <1549813472.4142.3.camel@HansenPartnership.com>
+ <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+ <1549815924.4142.8.camel@HansenPartnership.com>
+ <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+ <1549898730.2831.6.camel@HansenPartnership.com>
+ <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
+ <1549899773.2831.12.camel@HansenPartnership.com>
+ <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
+ <1549902521.2831.23.camel@HansenPartnership.com>
+ <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
+ <1549937598.2857.8.camel@HansenPartnership.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fc547d40-9a42-a823-b62f-460c3244fe7d@kernel.dk>
+Date:   Mon, 11 Feb 2019 19:50:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
+In-Reply-To: <1549937598.2857.8.camel@HansenPartnership.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,129 +92,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/11/19 4:59 PM, Andrey Konovalov wrote:
-> CONFIG_SLAB_FREELIST_HARDENED hashes freelist pointer with the address
-> of the object where the pointer gets stored. With tag based KASAN we don't
-> account for that when building freelist, as we call set_freepointer() with
-> the first argument untagged. This patch changes the code to properly
-> propagate tags throughout the loop.
+On 2/11/19 7:13 PM, James Bottomley wrote:
+> On Mon, 2019-02-11 at 09:31 -0700, Jens Axboe wrote:
+>> On 2/11/19 9:28 AM, James Bottomley wrote:
+>>> On Mon, 2019-02-11 at 08:46 -0700, Jens Axboe wrote:
+>>>> On 2/11/19 8:42 AM, James Bottomley wrote:
+>>>>> On Mon, 2019-02-11 at 08:28 -0700, Jens Axboe wrote:
+>>>>>> On 2/11/19 8:25 AM, James Bottomley wrote:
+>>>>>>> On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
+>>>>>>>> On 2/10/19 9:25 AM, James Bottomley wrote:
+>>>
+>>> [...]
+>>>>>>>>> That check wasn't changed by the code removal.
+>>>>>>>>
+>>>>>>>> As I said above, for sd. This isn't true for non-disks.
+>>>>>>>
+>>>>>>> Yes, but the behaviour above doesn't change across a switch
+>>>>>>> to MQ, so I don't quite understand how it bisects back to
+>>>>>>> that change.  If we're not gathering entropy for the device
+>>>>>>> now, we wouldn't have been before the switch, so the
+>>>>>>> entropy characteristics shouldn't have changed.
+>>>>>>
+>>>>>> But it does, as I also wrote in that first email. The legacy
+>>>>>> queue flags had QUEUE_FLAG_ADD_RANDOM set by default, the MQ
+>>>>>> ones do not. Hence any non-sd device would previously ALWAYS
+>>>>>> have ADD_RANDOM set, now none of them do. Also see the patch
+>>>>>> I sent.
+>>>>>
+>>>>> So your theory is that the disk in question never gets to the
+>>>>> rotational check?  because the check will clear the flag if
+>>>>> it's non-rotational and set it if it's not, so the default
+>>>>> state of the flag shouldn't matter.
+>>>>
+>>>> No, my point is about non-disks, devices that aren't driven by
+>>>> sd. The behavior for sd hasn't changed, as it sets/clears it
+>>>> unconditionally. 
+>>>
+>>> I agree, but I don't think any of them were significant entropy
+>>> contributors before: things like nvme have always been outside of
+>>> this and sr and st don't really contribute much to the seek load
+>>> during boot because they're probed but not used by the boot
+>>> sequence, so I can't see how they would cause this behaviour.  I
+>>> suppose it could be target probing, but even that seems unlikely
+>>> because it should be dwarfed by the number of root disk reads
+>>> during boot.
+>>>
+>>> For the rng to take an additional 5 minutes to initialize, we must
+>>> have lost a significant entropy source somewhere.
+>>
+>> I agree it's not a significant amount of entropy, but even just one
+>> bit could mean a long stall if that put us over the edge of just not
+>> having enough for whatever is blocking on /dev/random. Mikael's boot
+>> did have a CDROM, it's not impossible that the handful of commands we
+>> end up doing to that device would have contributed enough entropy to
+>> get the boot done without stalling for minutes.
+>>
+>> One way to know for sure, and that's if Mikael tests the patch.
 > 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  mm/slub.c | 20 +++++++-------------
->  1 file changed, 7 insertions(+), 13 deletions(-)
+> I think I've got the root cause.  I have one system in my test bed
+> exhibiting this behaviour.  It turns out the disk in it has no
+> characteristics VPD page.  The 0xB1 VPD was a SBC-3 addition, so that's
+> not surprising.  However, the characteristics check bails before
+> setting the flags, so it takes the default flag which has flipped.
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index ce874a5c9ee7..0d32f8d30752 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -303,11 +303,6 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
->  		__p < (__addr) + (__objects) * (__s)->size; \
->  		__p += (__s)->size)
->  
-> -#define for_each_object_idx(__p, __idx, __s, __addr, __objects) \
-> -	for (__p = fixup_red_left(__s, __addr), __idx = 1; \
-> -		__idx <= __objects; \
-> -		__p += (__s)->size, __idx++)
-> -
->  /* Determine object index from a given position */
->  static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
->  {
-> @@ -1655,17 +1650,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
->  	shuffle = shuffle_freelist(s, page);
->  
->  	if (!shuffle) {
-> -		for_each_object_idx(p, idx, s, start, page->objects) {
-> -			if (likely(idx < page->objects)) {
-> -				next = p + s->size;
-> -				next = setup_object(s, page, next);
-> -				set_freepointer(s, p, next);
-> -			} else
-> -				set_freepointer(s, p, NULL);
-> -		}
->  		start = fixup_red_left(s, start);
->  		start = setup_object(s, page, start);
->  		page->freelist = start;
-> +		for (idx = 0, p = start; idx < page->objects - 1; idx++) {
-> +			next = p + s->size;
-> +			next = setup_object(s, page, next);
-> +			set_freepointer(s, p, next);
-> +			p = next;
-> +		}
-> +		set_freepointer(s, p, NULL);
->  	}
->  
->  	page->inuse = page->objects;
-> 
+> We can either fix this by setting the QUEUE_FLAG_ADD_RANDOM if there's
+> no 0xB1 page or by setting the default as Jens proposed.
 
-Well, this one patch does not work here, as it throws endless errors below
-during boot. Still need this patch to fix it.
+I'd recommend just doing my patch, since that'll be the same behavior
+that SCSI had before.
 
-https://marc.info/?l=linux-mm&m=154955366113951&w=2
+-- 
+Jens Axboe
 
-[   85.744772] BUG kmemleak_object (Tainted: G    B        L   ): Freepointer
-corrupt
-[   85.744776]
------------------------------------------------------------------------------
-[   85.744776]
-[   85.744788] INFO: Allocated in create_object+0x88/0x9c8 age=2564 cpu=153 pid=1
-[   85.744797] 	kmem_cache_alloc+0x39c/0x4ec
-[   85.744803] 	create_object+0x88/0x9c8
-[   85.744811] 	kmemleak_alloc+0xbc/0x180
-[   85.744818] 	kmem_cache_alloc+0x3ec/0x4ec
-[   85.744825] 	acpi_ut_create_generic_state+0x64/0xc4
-[   85.744832] 	acpi_ut_create_pkg_state+0x24/0x1c8
-[   85.744840] 	acpi_ut_walk_package_tree+0x268/0x564
-[   85.744848] 	acpi_ns_init_one_package+0x80/0x114
-[   85.744856] 	acpi_ns_init_one_object+0x214/0x3d8
-[   85.744862] 	acpi_ns_walk_namespace+0x288/0x384
-[   85.744869] 	acpi_walk_namespace+0xac/0xe8
-[   85.744877] 	acpi_ns_initialize_objects+0x50/0x98
-[   85.744883] 	acpi_load_tables+0xac/0x120
-[   85.744891] 	acpi_init+0x128/0x850
-[   85.744898] 	do_one_initcall+0x3ac/0x8c0
-[   85.744906] 	kernel_init_freeable+0xcdc/0x1104
-[   85.744916] INFO: Freed in free_object_rcu+0x200/0x228 age=3 cpu=153 pid=0
-[   85.744923] 	free_object_rcu+0x200/0x228
-[   85.744931] 	rcu_process_callbacks+0xb00/0x12c0
-[   85.744937] 	__do_softirq+0x644/0xfd0
-[   85.744944] 	irq_exit+0x29c/0x370
-[   85.744952] 	__handle_domain_irq+0xe0/0x1c4
-[   85.744958] 	gic_handle_irq+0x1c4/0x3b0
-[   85.744964] 	el1_irq+0xb0/0x140
-[   85.744971] 	arch_cpu_idle+0x26c/0x594
-[   85.744978] 	default_idle_call+0x44/0x5c
-[   85.744985] 	do_idle+0x180/0x260
-[   85.744993] 	cpu_startup_entry+0x24/0x28
-[   85.745001] 	secondary_start_kernel+0x36c/0x440
-[   85.745009] INFO: Slab 0x(____ptrval____) objects=91 used=0
-fp=0x(____ptrval____) flags=0x17ffffffc000200
-[   85.745015] INFO: Object 0x(____ptrval____) @offset=35296 fp=0x(____ptrval____)
-
-kkkkk4.226750] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb
-bb bb bb  ................
-[   84.22[   84.226765] ORedzone (____ptrptrval____): 5a worker/223:0 Tainted: G
-   B        L    5.0.0-rc6+ #36
-[   84.226790] Hardware name: HPE Apollo 70             /C01_APACHE_MB         ,
-BIOS L50_5.13_1.0.6 07/10/2018
-[   84.226798] Workqueue: events free_obj_work
-[   84.226802] Call trace:
-[   84.226809]  dump_backtrace+0x0/0x450
-[   84.226815]  show_stack+0x20/0x2c
-[   84.226822]  __dump_stack+0x20/0x28
-[   84.226828]  dump_stack+0xa0/0xfc
-[   84.226835]  print_trailer+0x1a8/0x1bc
-[   84.226842]  object_err+0x40/0x50
-[   84.226848]  check_object+0x214/0x2b8
-[   84.226854]  __free_slab+0x9c/0x31c
-[   84.226860]  discard_slab+0x78/0xa8
-[   84.226866]  kmem_cache_free+0x99c/0x9f0
-[   84.226873]  free_obj_work+0x92c/0xa44
-[   84.226879]  process_one_work+0x894/0x1280
-[   84.226885]  worker_thread+0x684/0xa1c
-[   84.226892]  kthread+0x2cc/0x2e8
-[   84.226898]  ret_from_fork+0x10/0x18
-[   84.229197]
