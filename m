@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31B1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC36C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6955D214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A85E214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N28W6ROK"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="x27Blpuz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfBLNQk (ORCPT
+        id S1729753AbfBLNQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:16:40 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55285 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729794AbfBLNQg (ORCPT
+        Tue, 12 Feb 2019 08:16:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39631 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729448AbfBLNQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:16:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a62so2909097wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 05:16:34 -0800 (PST)
+        Tue, 12 Feb 2019 08:16:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f16so2975283wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 05:16:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TR8fN5gyVX89LMryH+pTW41FkSfSn7wKIjkzZ06DSdM=;
-        b=N28W6ROKxyftPph12R1t88YbjhjOBrlMgcPrG0FvMKCtBPC6Atv663h47CWzBQZSGb
-         eRZlcduFp1rfLLGTQu1xyMazq4fhrvwjHZ96LwMTWqKab/CcrkLWfnKmI+L+jQpmcCnw
-         o8p12MaRfdy0Q/Ew1a+q7FLC+Fm5soeFU0jxJBlhZqouvHZMYFBP414etfnBPWrcGKe6
-         KvOd7cBy5nWNn/zDWTwQ8GOt9X0YeeXMSPcOzvxgF7fLsrfDMn8teSRkYh7ezgghPfiS
-         mLY+Rxnea9WEcYSMfv5VI5LLBUpGthvQRzTkYg0ToLFw8zM34ZBg02c+Zs7kEnlEKyjj
-         ZWHQ==
+        bh=pIpW7RFEY2GMQsR5y2sFKJ0v7v9X66ceV9i2CkIDbaw=;
+        b=x27BlpuzZLErXtZWnI2PfiNqVl4JZXqBfY4f5NQULwcZ/4F3B9KC9tMl2FJSo1caAY
+         ZCikvpgGhsBo/1uU5d5TxkSDThNNGOaRkvSMgogLpYe5cSManNhZFt1Tx19OLx2afCBv
+         6z2SA1+8LFmvQhJV9rhwDRJ/gDQoVI3RRYMdpd9dMicT7/WQlStHQ0xqTO0FBojj//Pv
+         41RxL4viQjA2sXjEuUqyPrbuwrG4p3O6dm3hYhWuvWM6nOu99Ka4gOCFKUboq1iKIGLD
+         nFe9m6egnQaRzSFoJXzfvdStnH7gVSo5vfrrRlcR14aQDdMDahCs1elGlsxiAFDfRSfN
+         1Zsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TR8fN5gyVX89LMryH+pTW41FkSfSn7wKIjkzZ06DSdM=;
-        b=SDKsyLB5r2WQhWCoHY4SL95vb5VmNmDlSgSBKMKtust0shY1rQ35F/vgmzHLJQ46+3
-         O94dt3oMBeDU7rgAcO1lgpeiE0CObN9M7cfdNLyHNxWVHFoBXpBxl8sUJEpdPJYXb/7r
-         mKjO/rDhuOLVmdiqpOvZYcGmL8RP6xlWFl7Y/HVaD0GJEC5QSoCK6tb1zahuKqNjQEFu
-         izVXjhsSkHfXbV6f+mDycpMHwZ2xWVYPGxU7gl2t56hb0Ah61ytKhIJQkp4sfXriwaZc
-         40J3nMGkhDHRaFnFYJ0UnNjOXV+yByN4cOujOuUj/HhCFNmgBAkmqLx63VO6qfcWLxQI
-         M+Vw==
-X-Gm-Message-State: AHQUAuYzjaDtHYQPELIpCoj65WCQrN7pnHraWS9Kr0Wf2YtVzv+e/4y/
-        QOFhBqDyDk50PLc40BACsWhm7Q==
-X-Google-Smtp-Source: AHgI3Ia5vFk+UnINmcrjOvhY3bm2GltlwWF7EI/KakoEYxQqWQlz2OKY2B9KGT8v49/Go9GiDm01UA==
-X-Received: by 2002:a1c:23c4:: with SMTP id j187mr2879130wmj.13.1549977393240;
-        Tue, 12 Feb 2019 05:16:33 -0800 (PST)
+        bh=pIpW7RFEY2GMQsR5y2sFKJ0v7v9X66ceV9i2CkIDbaw=;
+        b=gkd9dEo4j8wC21YBzKD5uyPMVCVy6E8jykRKW8+l9joeprIOqZ5IrXNwJ0TjPxvVkX
+         61MLRHNC7dJ3uWeFOXSIXs7houQUoi16FZusdMrrmh0B8tpbgcednbMjArYboGTza2Nm
+         ON6XP5FVp6mZ8qP7vz1H7IzFgf8dZ1031XufAqxsTQVaBadfxcE93H+DuEGZ9HY4G7Gl
+         GQM5qCj+8PjHUrA558nK0Nka5L9LNAN9WW9x2Id3Y3ujMMf0kOQwDHxmCWtaDfIqjrla
+         ORi0FIxqlZu8vZUHqtv68VI0C+z1hqCuW3vKaOrOdA+QC+LCB2AGeKhmB/nH14521GCm
+         3F2g==
+X-Gm-Message-State: AHQUAub1/Vs/MsgNSZKi4siOM73Zd4NoSqGTHeQ8r0hB7brsEoh1wR25
+        LLKCeJd3DspjB4wjeA/swTCN4Q==
+X-Google-Smtp-Source: AHgI3IY3YQTnS0SNXpkItW4onZRWckiuwkyiQqg6Wa5GLVRTyW7BudZ4qq5wM1HvqYf9PNHR7NXP0g==
+X-Received: by 2002:a1c:f207:: with SMTP id s7mr2884154wmc.87.1549977386303;
+        Tue, 12 Feb 2019 05:16:26 -0800 (PST)
 Received: from localhost.localdomain (aputeaux-684-1-38-32.w90-86.abo.wanadoo.fr. [90.86.93.32])
-        by smtp.gmail.com with ESMTPSA id p6sm5478517wre.63.2019.02.12.05.16.32
+        by smtp.gmail.com with ESMTPSA id p6sm5478517wre.63.2019.02.12.05.16.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 05:16:32 -0800 (PST)
+        Tue, 12 Feb 2019 05:16:25 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 7/7] gpio: mockup: rework debugfs interface
-Date:   Tue, 12 Feb 2019 14:16:00 +0100
-Message-Id: <20190212131600.18960-8-brgl@bgdev.pl>
+Subject: [PATCH v3 1/7] irq/irq_sim: provide irq_sim_get_type()
+Date:   Tue, 12 Feb 2019 14:15:54 +0100
+Message-Id: <20190212131600.18960-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212131600.18960-1-brgl@bgdev.pl>
 References: <20190212131600.18960-1-brgl@bgdev.pl>
@@ -79,203 +79,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Modify the way the debugfs interface works in gpio-mockup. Introduce
-the concept of dummy pull config which will keep the mockup lines in
-known state. The pull values can be modified by writing to the debugfs
-files corresponding to lines. Lines in input mode always report the
-current pull value, lines in output mode change the line value but
-it will revert back to the one specified by current pull when released.
+Provide a helper that allows users to retrieve the current irq type
+of dummy interrupts.
+
+Internally: store the type in the line context when the irq_set_type()
+callback is called.
+
+This is required by the gpio-mockup module which wants to track the
+state of GPIO lines and simulate rising and falling edge interrupts.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 116 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 102 insertions(+), 14 deletions(-)
+ include/linux/irq_sim.h |  2 ++
+ kernel/irq/irq_sim.c    | 23 +++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index c498b0fbbec8..6424bd710de5 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -47,6 +47,7 @@ enum {
- struct gpio_mockup_line_status {
- 	int dir;
- 	int value;
-+	int pull;
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index 4500d453a63e..c73be0a2c15c 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -22,6 +22,7 @@ struct irq_sim_work_ctx {
+ struct irq_sim_irq_ctx {
+ 	int			irqnum;
+ 	bool			enabled;
++	int			type;
  };
  
- struct gpio_mockup_chip {
-@@ -188,15 +189,57 @@ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
- 	return irq_sim_irqnum(&chip->irqsim, offset);
+ struct irq_sim {
+@@ -37,5 +38,6 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+ void irq_sim_fini(struct irq_sim *sim);
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
++unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset);
+ 
+ #endif /* _LINUX_IRQ_SIM_H */
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index 98a20e1594ce..74561a0dca65 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -25,10 +25,20 @@ static void irq_sim_irqunmask(struct irq_data *data)
+ 	irq_ctx->enabled = true;
  }
  
--static ssize_t gpio_mockup_event_write(struct file *file,
--				       const char __user *usr_buf,
--				       size_t size, loff_t *ppos)
-+static void gpio_mockup_free(struct gpio_chip *gc, unsigned int offset)
++static int irq_sim_set_type(struct irq_data *data, unsigned int type)
 +{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
 +
-+	__gpio_mockup_set(chip, offset, chip->lines[offset].pull);
++	irq_ctx->type = type;
++
++	return 0;
 +}
 +
-+static ssize_t gpio_mockup_debugfs_read(struct file *file,
-+					char __user *usr_buf,
-+					size_t size, loff_t *ppos)
-+{
-+	struct gpio_mockup_dbgfs_private *priv;
-+	struct gpio_mockup_chip *chip;
-+	struct seq_file *sfile;
-+	struct gpio_chip *gc;
-+	char buf[3];
-+	int val, rv;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	sfile = file->private_data;
-+	priv = sfile->private;
-+	chip = priv->chip;
-+	gc = &chip->gc;
-+
-+	val = gpio_mockup_get(gc, priv->offset);
-+	snprintf(buf, sizeof(buf), "%d\n", val);
-+
-+	rv = copy_to_user(usr_buf, buf, sizeof(buf));
-+	if (rv)
-+		return rv;
-+
-+	return sizeof(buf) - 1;
-+}
-+
-+static ssize_t gpio_mockup_debugfs_write(struct file *file,
-+					 const char __user *usr_buf,
-+					 size_t size, loff_t *ppos)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
- 	struct gpio_mockup_chip *chip;
- 	struct seq_file *sfile;
- 	struct gpio_desc *desc;
--	int rv, val;
-+	unsigned int irq_type;
-+	struct gpio_chip *gc;
-+	struct irq_sim *sim;
-+	int rv, val, curr;
-+
-+	if (*ppos != 0)
-+		return -EINVAL;
+ static struct irq_chip irq_sim_irqchip = {
+ 	.name		= "irq_sim",
+ 	.irq_mask	= irq_sim_irqmask,
+ 	.irq_unmask	= irq_sim_irqunmask,
++	.irq_set_type	= irq_sim_set_type,
+ };
  
- 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
- 	if (rv)
-@@ -206,24 +249,68 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 
- 	sfile = file->private_data;
- 	priv = sfile->private;
--	desc = priv->desc;
- 	chip = priv->chip;
-+	gc = &chip->gc;
-+	desc = &gc->gpiodev->descs[priv->offset];
-+	sim = &chip->irqsim;
-+
-+	mutex_lock(&chip->lock);
- 
--	gpiod_set_value_cansleep(desc, val);
--	irq_sim_fire(&chip->irqsim, priv->offset);
-+	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
-+	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
-+		curr = __gpio_mockup_get(chip, priv->offset);
-+		if (curr == val)
-+			goto out;
-+
-+		irq_type = irq_sim_get_type(sim, priv->offset);
-+		if ((val == 1 && (irq_type & IRQ_TYPE_EDGE_RISING)) ||
-+		    (val == 0 && (irq_type & IRQ_TYPE_EDGE_FALLING)))
-+			irq_sim_fire(&chip->irqsim, priv->offset);
-+	}
-+
-+	/* Change the value unless we're actively driving the line. */
-+	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
-+	    !test_bit(FLAG_IS_OUT, &desc->flags))
-+		__gpio_mockup_set(chip, priv->offset, val);
-+
-+out:
-+	chip->lines[priv->offset].pull = val;
-+	mutex_unlock(&chip->lock);
- 
- 	return size;
+ static void irq_sim_handle_irq(struct irq_work *work)
+@@ -180,3 +190,16 @@ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+ 	return sim->irqs[offset].irqnum;
  }
- 
--static int gpio_mockup_event_open(struct inode *inode, struct file *file)
-+static int gpio_mockup_debugfs_open(struct inode *inode, struct file *file)
- {
- 	return single_open(file, NULL, inode->i_private);
- }
- 
--static const struct file_operations gpio_mockup_event_ops = {
-+/*
-+ * Each mockup chip is represented by a directory named after the chip's device
-+ * name under /sys/kernel/debug/gpio-mockup/. Each line is represented by
-+ * a file using the line's offset as the name under the chip's directory.
+ EXPORT_SYMBOL_GPL(irq_sim_irqnum);
++
++/**
++ * irq_sim_get_type - Get the type configuration for a dummy interrupt.
 + *
-+ * Reading from the line's file yields the current *value*, writing to the
-+ * line's file changes the current *pull*. Default pull for mockup lines is
-+ * down.
-+ *
-+ * Examples:
-+ * - when a line pulled down is requested in output mode and driven high, its
-+ *   value will return to 0 once it's released
-+ * - when the line is requested in output mode and driven high, writing 0 to
-+ *   the corresponding debugfs file will change the pull to down but the
-+ *   reported value will still be 1 until the line is released
-+ * - line requested in input mode always reports the same value as its pull
-+ *   configuration
-+ * - when the line is requested in input mode and monitored for events, writing
-+ *   the same value to the debugfs file will be a noop, while writing the
-+ *   opposite value will generate a dummy interrupt with an appropriate edge
++ * @sim:        The interrupt simulator object.
++ * @offset:     Offset of the simulated interrupt for which to retrieve
++ *              the type.
 + */
-+static const struct file_operations gpio_mockup_debugfs_ops = {
- 	.owner = THIS_MODULE,
--	.open = gpio_mockup_event_open,
--	.write = gpio_mockup_event_write,
-+	.open = gpio_mockup_debugfs_open,
-+	.read = gpio_mockup_debugfs_read,
-+	.write = gpio_mockup_debugfs_write,
- 	.llseek = no_llseek,
- };
- 
-@@ -258,7 +345,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 		priv->desc = &gc->gpiodev->descs[i];
- 
- 		evfile = debugfs_create_file(name, 0200, chip->dbg_dir, priv,
--					     &gpio_mockup_event_ops);
-+					     &gpio_mockup_debugfs_ops);
- 		if (IS_ERR_OR_NULL(evfile))
- 			goto err;
- 	}
-@@ -266,7 +353,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	return;
- 
- err:
--	dev_err(dev, "error creating debugfs event files\n");
-+	dev_err(dev, "error creating debugfs files\n");
- }
- 
- static int gpio_mockup_name_lines(struct device *dev,
-@@ -342,6 +429,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 	gc->direction_input = gpio_mockup_dirin;
- 	gc->get_direction = gpio_mockup_get_direction;
- 	gc->to_irq = gpio_mockup_to_irq;
-+	gc->free = gpio_mockup_free;
- 
- 	chip->lines = devm_kcalloc(dev, gc->ngpio,
- 				   sizeof(*chip->lines), GFP_KERNEL);
-@@ -415,7 +503,7 @@ static int __init gpio_mockup_init(void)
- 			return -EINVAL;
- 	}
- 
--	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup-event", NULL);
-+	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup", NULL);
- 	if (IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
- 		gpio_mockup_err("error creating debugfs directory\n");
- 
++unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset)
++{
++	return sim->irqs[offset].type;
++}
++EXPORT_SYMBOL_GPL(irq_sim_get_type);
 -- 
 2.20.1
 
