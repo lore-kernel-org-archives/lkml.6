@@ -7,74 +7,79 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA59C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C16C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12582073D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BAC021773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:08:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYBKsO7B"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGEQslgv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbfBLJGU (ORCPT
+        id S1728606AbfBLJIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:06:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40883 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728664AbfBLJGT (ORCPT
+        Tue, 12 Feb 2019 04:08:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35488 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbfBLJIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:06:19 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q21so2081362wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:06:17 -0800 (PST)
+        Tue, 12 Feb 2019 04:08:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t18so1795711wrx.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:08:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OOsj5rP0qK8yaK+fW00SckoKIFsWt0RwbpvgFzFULGU=;
-        b=SYBKsO7BU34O3kZ7oAJLjzl5oMZzPPuxg1U5aSrWvqxl/pHNcIBHdGS9wKMsEmNmWD
-         8tCswthB8oAkMtB8qVBeVaI+Oxy0nGguEONZW3Kchvhu5ZGEIbUoI8Hqil/mL2HgHBpn
-         gEHI2U2Wi/bf0qPVwYzp70AWDuFBnqQ31AmLMUkw23YK+YgNBH7HMGCqsiJ8KEYYGbsu
-         T3SbHTcdm4CFLBWIpcKyCZkndmkSd2QyJMolKYTyOKUMGFg+/MRlU6tS6kZ+jvhvHad8
-         8ii4uaQiQBd0ob7UlSr6iBnWINDyPxDk3xZidiWm2lWP5H+guH4CQnLSfan5UqzVxt3R
-         cnXg==
+        bh=+BEHkIPnxNuYl01r30SPtz0G+P4sqTbcQQD+CaNVvT0=;
+        b=fGEQslgvp5BuSUYCAlrp/WIkjDro0BmuGUycmttu3qbr32RQC77zY6M2V8+Sy/1DP8
+         o37yH47oltnsZWNqbrSIlxh1VUCB/WQnYT1RemwwMHRTa4ryksN5jqBfwNdAcX+lSIZJ
+         ZQjQgFYRDfAMkgi+3DRLibAljYaAxWnJq2XmTsxv6mW0pYllR0gCUPtjWiftrJomTifF
+         W0lvxP/qizR+yl92mL3yK/HiLvath+AR/2PiaKh71PRS14JqqkxS7zNKggJeVoYQKZKp
+         zUHUF18T3BN7a+cc1u0EZi6+6oAlrZUlvKPvbv9/s+QlzAfJ5DHSRnZG9TwWJE5Suyhl
+         6UgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=OOsj5rP0qK8yaK+fW00SckoKIFsWt0RwbpvgFzFULGU=;
-        b=CCac1W+yTZuN2K8SQSpRfuvC17smlhUse5FQZvdAuGqozHdJoozt1scOjOrMs65hU0
-         busedv1zp0EG6AMJ+V7UtvQDIOHKkvFaAKUU/P/e1bSITIxN3nqVZaahkQLl5ubQtxmQ
-         DjGpo+nSEjUcv+6Soi8GM93CrUUrr8YfQbMD6vdr/903+9wRUtE84/+g9cvc4jyCBHLE
-         rmnRplpo6i7pGUsywqaQHlaRANy74koZrWQaCCqFjHM1rpUvQoCdOd701pOs0RCzoSHr
-         +OrjSZEKpB2d4VFTpagr07mGSRLNykG/46uKtmiqPco7LgdHEzMZjA0e0eaH8BIeUXIH
-         VGug==
-X-Gm-Message-State: AHQUAuYyuux3nFfpZL1s5I15qQoRzX4b3FTANYp2oSG93OmujyZtwTlD
-        63mpbkx7ULio8/5dPImI032SAg==
-X-Google-Smtp-Source: AHgI3IYmD5CiC3t02W9DKCrH2RMMDy0EnshKKhY1JZEgIzi1s77ABZAVaHgtWlDapGQufpAqTnV5zw==
-X-Received: by 2002:a1c:4683:: with SMTP id t125mr2099331wma.9.1549962376753;
-        Tue, 12 Feb 2019 01:06:16 -0800 (PST)
+        bh=+BEHkIPnxNuYl01r30SPtz0G+P4sqTbcQQD+CaNVvT0=;
+        b=o5Vbgc18CJx67tselEf3gXSY3mHsDmCrKMcf97CIR4BBneJFmlnE2aqroXfTaH/OZt
+         Zmam2K6vAm6kfRl52RoqKA59G2i40x2DjMNDi6HDo5B4J4SNom7VHvd/IU21kUXVUeQe
+         j1Wpa3098A0NIOsz43EOQ/QVj9rDsaVTDqu20u0pG8s5SnB3dSwnLW0Pnr/iK3Or9Ieu
+         NupPAValPdl95feF0zJ/zhUuyZa+a6xLdkrAAok05m/eeKhWvFA6Mamr6Eh+ofqBsz3b
+         OUnA6awtyQoSLChM7Z3Mx42JZg2VX4AnKP7LFYRjEZZ6YbGxlT5pHSlxrxkR3UpMn+xx
+         lBPA==
+X-Gm-Message-State: AHQUAub3erZ7EK1zOLau4zxZSzvR+NLNIJRQlD7Z9fWDN8rY+aW2zzIt
+        dzzfh0+jKFQrmJpYoj0ZDUIfog==
+X-Google-Smtp-Source: AHgI3Ia9S+X22vR7/yzpqJkACZGunUCgZnKuZ26IMIVPZhvf+gDHAdSfHEY4KiVOJZn4KkjiRMdX2g==
+X-Received: by 2002:a5d:4149:: with SMTP id c9mr2118936wrq.58.1549962512843;
+        Tue, 12 Feb 2019 01:08:32 -0800 (PST)
 Received: from [192.168.27.65] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id u17sm9195303wrg.71.2019.02.12.01.06.14
+        by smtp.googlemail.com with ESMTPSA id r22sm2566097wmh.2.2019.02.12.01.08.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 01:06:15 -0800 (PST)
-Subject: Re: [PATCH v2 06/15] clocksource/drivers/timer-milbeaut: Introduce
- timer for Milbeaut SoCs
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>
-References: <1549628812-31235-1-git-send-email-sugaya.taichi@socionext.com>
+        Tue, 12 Feb 2019 01:08:31 -0800 (PST)
+Subject: Re: [PATCH 1/3] clocksource: timer-ti-dm: Fix pwm dmtimer usage of
+ fck reparenting
+To:     Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org
+Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20190122175717.13428-1-tony@atomide.com>
+ <20190122175717.13428-2-tony@atomide.com>
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <80f521e5-6207-a32f-2f79-c2cb81dd1908@linaro.org>
-Date:   Tue, 12 Feb 2019 10:06:13 +0100
+Message-ID: <00e47cf9-b444-4fcf-0d1a-11ff61edf008@linaro.org>
+Date:   Tue, 12 Feb 2019 10:08:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1549628812-31235-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <20190122175717.13428-2-tony@atomide.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,220 +88,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 13:26, Sugaya Taichi wrote:
-> Add timer driver for Milbeaut SoCs series.
+On 22/01/2019 18:57, Tony Lindgren wrote:
+> Commit 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
+> them with ti-sysc") moved some omap4 timers to probe with ti-sysc
+> interconnect target module. Turns out this broke pwm-omap-dmtimer
+> where we now try to reparent the clock to itself with the following:
 > 
-> The timer has two 32-bit width down counters, one of which is configured
-> as a clockevent device and the other is configured as a clock source.
+> omap_dm_timer_of_set_source: failed to set parent
 > 
-> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
-
-Do want me to take it through my tree?
-
+> With ti-sysc, we can now configure the clock sources in the dts
+> with assigned-clocks and assigned-clock-parents. So we should be able
+> to remove omap_dm_timer_of_set_source with clean-up patches later on.
+> But for now, let's just fix it first by checking if parent and fck
+> are the same and bail out of so.
+> 
+> Fixes: 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
+> them with ti-sysc")
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: H. Nikolaus Schaller <hns@goldelico.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Ladislav Michl <ladis@linux-mips.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  drivers/clocksource/Kconfig          |   9 ++
->  drivers/clocksource/Makefile         |   1 +
->  drivers/clocksource/timer-milbeaut.c | 161 +++++++++++++++++++++++++++++++++++
->  3 files changed, 171 insertions(+)
->  create mode 100644 drivers/clocksource/timer-milbeaut.c
+
+Do you want me to take it through my tree (1 et 3)?
+
+>  drivers/clocksource/timer-ti-dm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index a9e26f6..9101b8f 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -634,4 +634,13 @@ config GX6605S_TIMER
->  	help
->  	  This option enables support for gx6605s SOC's timer.
+> diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
+> --- a/drivers/clocksource/timer-ti-dm.c
+> +++ b/drivers/clocksource/timer-ti-dm.c
+> @@ -154,6 +154,10 @@ static int omap_dm_timer_of_set_source(struct omap_dm_timer *timer)
+>  	if (IS_ERR(parent))
+>  		return -ENODEV;
 >  
-> +config MILBEAUT_TIMER
-> +	bool "Milbeaut timer driver" if COMPILE_TEST
-> +	depends on OF
-> +	depends on ARM
-> +	select TIMER_OF
-> +	select CLKSRC_MMIO
-> +	help
-> +	  Enables the support for Milbeaut timer driver.
+> +	/* Bail out if both clocks point to fck */
+> +	if (clk_is_match(parent, timer->fclk))
+> +		return 0;
 > +
->  endmenu
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-> index cdd210f..6f2543b 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
->  obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
->  obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
->  obj-$(CONFIG_OWL_TIMER)		+= timer-owl.o
-> +obj-$(CONFIG_MILBEAUT_TIMER)	+= timer-milbeaut.o
->  obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
->  obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
->  obj-$(CONFIG_RDA_TIMER)		+= timer-rda.o
-> diff --git a/drivers/clocksource/timer-milbeaut.c b/drivers/clocksource/timer-milbeaut.c
-> new file mode 100644
-> index 0000000..f2019a8
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-milbeaut.c
-> @@ -0,0 +1,161 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Socionext Inc.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqreturn.h>
-> +#include <linux/sched_clock.h>
-> +#include "timer-of.h"
-> +
-> +#define MLB_TMR_TMCSR_OFS	0x0
-> +#define MLB_TMR_TMR_OFS		0x4
-> +#define MLB_TMR_TMRLR1_OFS	0x8
-> +#define MLB_TMR_TMRLR2_OFS	0xc
-> +#define MLB_TMR_REGSZPCH	0x10
-> +
-> +#define MLB_TMR_TMCSR_OUTL	BIT(5)
-> +#define MLB_TMR_TMCSR_RELD	BIT(4)
-> +#define MLB_TMR_TMCSR_INTE	BIT(3)
-> +#define MLB_TMR_TMCSR_UF	BIT(2)
-> +#define MLB_TMR_TMCSR_CNTE	BIT(1)
-> +#define MLB_TMR_TMCSR_TRG	BIT(0)
-> +
-> +#define MLB_TMR_TMCSR_CSL_DIV2	0
-> +#define MLB_TMR_DIV_CNT		2
-> +
-> +#define MLB_TMR_SRC_CH  (1)
-> +#define MLB_TMR_EVT_CH  (0)
-> +
-> +#define MLB_TMR_SRC_CH_OFS	(MLB_TMR_REGSZPCH * MLB_TMR_SRC_CH)
-> +#define MLB_TMR_EVT_CH_OFS	(MLB_TMR_REGSZPCH * MLB_TMR_EVT_CH)
-> +
-> +#define MLB_TMR_SRC_TMCSR_OFS	(MLB_TMR_SRC_CH_OFS + MLB_TMR_TMCSR_OFS)
-> +#define MLB_TMR_SRC_TMR_OFS	(MLB_TMR_SRC_CH_OFS + MLB_TMR_TMR_OFS)
-> +#define MLB_TMR_SRC_TMRLR1_OFS	(MLB_TMR_SRC_CH_OFS + MLB_TMR_TMRLR1_OFS)
-> +#define MLB_TMR_SRC_TMRLR2_OFS	(MLB_TMR_SRC_CH_OFS + MLB_TMR_TMRLR2_OFS)
-> +
-> +#define MLB_TMR_EVT_TMCSR_OFS	(MLB_TMR_EVT_CH_OFS + MLB_TMR_TMCSR_OFS)
-> +#define MLB_TMR_EVT_TMR_OFS	(MLB_TMR_EVT_CH_OFS + MLB_TMR_TMR_OFS)
-> +#define MLB_TMR_EVT_TMRLR1_OFS	(MLB_TMR_EVT_CH_OFS + MLB_TMR_TMRLR1_OFS)
-> +#define MLB_TMR_EVT_TMRLR2_OFS	(MLB_TMR_EVT_CH_OFS + MLB_TMR_TMRLR2_OFS)
-> +
-> +#define MLB_TIMER_RATING	500
-> +
-> +static irqreturn_t mlb_timer_interrupt(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *clk = dev_id;
-> +	struct timer_of *to = to_timer_of(clk);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +	val &= ~MLB_TMR_TMCSR_UF;
-> +	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +
-> +	clk->event_handler(clk);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int mlb_set_state_periodic(struct clock_event_device *clk)
-> +{
-> +	struct timer_of *to = to_timer_of(clk);
-> +	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
-> +
-> +	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +
-> +	writel_relaxed(to->of_clk.period, timer_of_base(to) +
-> +				MLB_TMR_EVT_TMRLR1_OFS);
-> +	val |= MLB_TMR_TMCSR_RELD | MLB_TMR_TMCSR_CNTE |
-> +		MLB_TMR_TMCSR_TRG | MLB_TMR_TMCSR_INTE;
-> +	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +	return 0;
-> +}
-> +
-> +static int mlb_set_state_oneshot(struct clock_event_device *clk)
-> +{
-> +	struct timer_of *to = to_timer_of(clk);
-> +	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
-> +
-> +	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +	return 0;
-> +}
-> +
-> +static int mlb_clkevt_next_event(unsigned long event,
-> +				   struct clock_event_device *clk)
-> +{
-> +	struct timer_of *to = to_timer_of(clk);
-> +
-> +	writel_relaxed(event, timer_of_base(to) + MLB_TMR_EVT_TMRLR1_OFS);
-> +	writel_relaxed(MLB_TMR_TMCSR_CSL_DIV2 |
-> +			MLB_TMR_TMCSR_CNTE | MLB_TMR_TMCSR_INTE |
-> +			MLB_TMR_TMCSR_TRG, timer_of_base(to) +
-> +			MLB_TMR_EVT_TMCSR_OFS);
-> +	return 0;
-> +}
-> +
-> +static int mlb_config_clock_source(struct timer_of *to)
-> +{
-> +	writel_relaxed(0, timer_of_base(to) + MLB_TMR_SRC_TMCSR_OFS);
-> +	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMR_OFS);
-> +	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMRLR1_OFS);
-> +	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMRLR2_OFS);
-> +	writel_relaxed(BIT(4) | BIT(1) | BIT(0), timer_of_base(to) +
-> +		MLB_TMR_SRC_TMCSR_OFS);
-> +	return 0;
-> +}
-> +
-> +static int mlb_config_clock_event(struct timer_of *to)
-> +{
-> +	writel_relaxed(0, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-> +	return 0;
-> +}
-> +
-> +static struct timer_of to = {
-> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-> +
-> +	.clkevt = {
-> +		.name = "mlb-clkevt",
-> +		.rating = MLB_TIMER_RATING,
-> +		.cpumask = cpu_possible_mask,
-> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT,
-> +		.set_state_oneshot = mlb_set_state_oneshot,
-> +		.set_state_periodic = mlb_set_state_periodic,
-> +		.set_next_event = mlb_clkevt_next_event,
-> +	},
-> +
-> +	.of_irq = {
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.handler = mlb_timer_interrupt,
-> +	},
-> +};
-> +
-> +static u64 notrace mlb_timer_sched_read(void)
-> +{
-> +	return ~readl_relaxed(timer_of_base(&to) + MLB_TMR_SRC_TMR_OFS);
-> +}
-> +
-> +static int __init mlb_timer_init(struct device_node *node)
-> +{
-> +	int ret;
-> +	unsigned long rate;
-> +
-> +	ret = timer_of_init(node, &to);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rate = timer_of_rate(&to) / MLB_TMR_DIV_CNT;
-> +	mlb_config_clock_source(&to);
-> +	clocksource_mmio_init(timer_of_base(&to) + MLB_TMR_SRC_TMR_OFS,
-> +		node->name, rate, MLB_TIMER_RATING, 32,
-> +		clocksource_mmio_readl_down);
-> +	sched_clock_register(mlb_timer_sched_read, 32, rate);
-> +	mlb_config_clock_event(&to);
-> +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 15,
-> +		0xffffffff);
-> +	return 0;
-> +}
-> +TIMER_OF_DECLARE(mlb_peritimer, "socionext,milbeaut-timer",
-> +		mlb_timer_init);
+>  	ret = clk_set_parent(timer->fclk, parent);
+>  	if (ret < 0)
+>  		pr_err("%s: failed to set parent\n", __func__);
 > 
 
 
