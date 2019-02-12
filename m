@@ -2,88 +2,81 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48932C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B908C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17F1C217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549976952;
-	bh=fNGrO4Z9cUqKFFi3SgEvqFc8Qs3lIpeumSpYFWUZoIY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=bkCrc6pO58IXFgjUdShXnHfKpTXEgmrr/G4ZTdzcolkoKjAXm/OoXmG0my/iTTfCP
-	 ciUGn+ifpv5EWoLP1Gn28adanH+mXuVRIIA1NxrY+n2Ya5C6+cO5vI//82+3WpAPnQ
-	 VuOwAq7GJQ/iIyeCo1rLRzxyldq2ooKG8pk6uOgo=
+	by mail.kernel.org (Postfix) with ESMTP id D1C35214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbfBLNJK (ORCPT
+        id S1729716AbfBLNJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:09:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49490 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 08:09:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54724 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728827AbfBLNJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:09:09 -0500
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728827AbfBLNJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:09:11 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DFB6214DA;
-        Tue, 12 Feb 2019 13:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549976948;
-        bh=fNGrO4Z9cUqKFFi3SgEvqFc8Qs3lIpeumSpYFWUZoIY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=hUf05cJMYzkJpBgq5qfmfo09arTbQIEkVyuFLVQ8M0QgIbGCHBr6TokNUO4hoXelk
-         +p5q/ABQDWYsymzOLraWRV19VheHRzEYxIXfcO3RbAKyYIqol3EzEbT/Ja7jtb6zKU
-         FdBPL/RflncvjMXlCLW9EvaMtiGzhayA7RIVCcnQ=
-Date:   Tue, 12 Feb 2019 14:09:03 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, Josh Snyder <joshs@netflix.com>
-Subject: Re: [PATCH 3/3] mm/mincore: provide mapped status when cached status
- is not allowed
-In-Reply-To: <20190212063643.GL15609@dhcp22.suse.cz>
-Message-ID: <nycvar.YFH.7.76.1902121405440.11598@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <20190130124420.1834-1-vbabka@suse.cz> <20190130124420.1834-4-vbabka@suse.cz> <20190131100907.GS18811@dhcp22.suse.cz> <99ee4d3e-aeb2-0104-22be-b028938e7f88@suse.cz> <nycvar.YFH.7.76.1902120440430.11598@cbobk.fhfr.pm>
- <20190212063643.GL15609@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        by mx1.redhat.com (Postfix) with ESMTPS id 90E4981DF3;
+        Tue, 12 Feb 2019 13:09:11 +0000 (UTC)
+Received: from krava (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D85AD5C236;
+        Tue, 12 Feb 2019 13:09:09 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 14:09:08 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
+Message-ID: <20190212130908.GJ775@krava>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 13:09:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019, Michal Hocko wrote:
+On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
 
-> I would go with patch 1 for 5.1. Patches 2 still sounds controversial or
-> incomplete to me. 
+SNIP
 
-Is it because of the disagreement what 'non-blocking' really means, or do 
-you see something else missing?
+> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+> index 239e9a13c2b7..980784b77fe2 100644
+> --- a/tools/perf/util/mmap.c
+> +++ b/tools/perf/util/mmap.c
+> @@ -156,6 +156,86 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+>  {
+>  }
+>  
+> +static ssize_t perf_mmap__capture(struct perf_mmap *md, int idx,
+> +			perf_mmap__compress_fn_t compress, void *where)
+> +{
+> +	u64 head = perf_mmap__read_head(md);
+> +	unsigned char *data = md->base + page_size;
+> +	unsigned long size, size0 = 0;
+> +	void *buf;
+> +	int rc = 0;
+> +	size_t mmap_len = perf_mmap__mmap_len(md);
 
-Merging patch just patch 1 withouth patch 2 is probably sort of useless 
-excercise, unfortunately.
+again, this function seems like duplicate of perf_mmap__push,
+can't you just overload the push callback?
 
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+thanks,
+jirka
