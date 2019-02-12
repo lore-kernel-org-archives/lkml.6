@@ -2,128 +2,174 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FFBC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B50C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60AE217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DA73218FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:58:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6Q/FRTw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbfBLP5F (ORCPT
+        id S1728993AbfBLP6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:57:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:39534 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730753AbfBLP5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:57:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 155C280D;
-        Tue, 12 Feb 2019 07:57:03 -0800 (PST)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7401F3F557;
-        Tue, 12 Feb 2019 07:57:00 -0800 (PST)
-Subject: Re: [PATCH 2/5] kasan, kmemleak: pass tagged pointers to kmemleak
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-References: <cover.1549921721.git.andreyknvl@google.com>
- <cd825aa4897b0fc37d3316838993881daccbe9f5.1549921721.git.andreyknvl@google.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <f57831be-c57a-4a9e-992e-1f193866467b@arm.com>
-Date:   Tue, 12 Feb 2019 15:56:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <cd825aa4897b0fc37d3316838993881daccbe9f5.1549921721.git.andreyknvl@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Feb 2019 10:58:22 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35143 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730006AbfBLP6W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:58:22 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s198so1456455pgs.2;
+        Tue, 12 Feb 2019 07:58:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=oyv/ZkAJe4nSxbOi2lYYeF6GzshBE2yMeOf1hqT3IEY=;
+        b=U6Q/FRTw4l6P/djMILqkCTEjZ4vMCbZxhNN8c7pDvn3FsSgEBg4bTvJFYEfJ47U1m3
+         2J1uuQm338esTZfKr/3r+VcpQivrd+mqzqfJhVbpXEETomhSdmbwz5YfcnCack9FGI8n
+         tZ7Vr5KJ+cHyIe9aDOeSTBMO+ffHIg5Rya4gz3fS2AOemKwU9yaXN6RGFf5fB29Z2eUg
+         IspBOz9khWFLShAE7TpVdvYc4jQOAOpp3yo4qFpNaOsQp0BUe1QzTeWprlzDVScgJb+w
+         d4THb5+WyehUcocjza7N+h3I0HULydw6uhIXubcK8iKumT41SlYcbfKrIlEtKrM7E48u
+         x9Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=oyv/ZkAJe4nSxbOi2lYYeF6GzshBE2yMeOf1hqT3IEY=;
+        b=p5ESQFG4Zha5TpO0bIVzPOTTqXnLupy5tpsy7DkSTOZDe6TRORAtFtcUg+m7JdFvv8
+         BaqCFfrGEiFUNRf+6BMoiCBktyWozTaUBO9byGI3aWtlDmUKeoUw3qvJp3SGdAX+6mIP
+         4BfB8geqoCHqyPoiSlMRSCHBwvzU+CajPnYZjjNQdN/EaBVrZj/8rDPBnF6GqBvLiFMP
+         3JqC8qK3TciYzZjORbdw9bYCwwcCAL3mWZnEA2VFSQvk7yGgsSBv5Ls3rq65/v6Gof4W
+         2o06nynEJnndfWzHidPSYgDD86zHnKclZkNrey+hV1TX5Sn5UwGL+RZJWO8qQrOycpRw
+         Hz8Q==
+X-Gm-Message-State: AHQUAuY7HkjPhmaNFzwOazV0vBNpPEaTzeG+TC6vyhY5vgI7wDA3a0Lj
+        nbVy3NrbQTBu8G8nkpVqSo840ayY
+X-Google-Smtp-Source: AHgI3IbdzVhGWLhI78ip2YHT9LuGPlw2x8fNQKmxu0ZwYAeyBqMNuKwD8jWHj+//mCdb4yTeUvwDfA==
+X-Received: by 2002:a62:2044:: with SMTP id g65mr4567549pfg.127.1549987101476;
+        Tue, 12 Feb 2019 07:58:21 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c13sm27123395pfe.93.2019.02.12.07.58.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 07:58:20 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kyle Tso <kyletso@google.com>
+Subject: [PATCH] usb: typec: tcpm: Remove unused functions
+Date:   Tue, 12 Feb 2019 07:58:17 -0800
+Message-Id: <1549987097-27937-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2019 21:59, Andrey Konovalov wrote:
-> Right now we call kmemleak hooks before assigning tags to pointers in
-> KASAN hooks. As a result, when an objects gets allocated, kmemleak sees
-> a differently tagged pointer, compared to the one it sees when the object
-> gets freed. Fix it by calling KASAN hooks before kmemleak's ones.
->
+tcpm_update_source_capabilities() and tcpm_update_sink_capabilities()
+are not used anywhere, and I don't recall why I introduced those functions
+in the first place. Effectively that means that we don't know if they even
+work, or ever did. Lets remove them.
 
-Nit: Could you please add comments to the the code? It should prevent that the
-code gets refactored in future, reintroducing the same issue.
+Reported-by: Kyle Tso <kyletso@google.com>
+Cc: Kyle Tso <kyletso@google.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/usb/typec/tcpm/tcpm.c | 60 -------------------------------------------
+ include/linux/usb/tcpm.h      |  6 -----
+ 2 files changed, 66 deletions(-)
 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  mm/slab.h        | 6 ++----
->  mm/slab_common.c | 2 +-
->  mm/slub.c        | 3 ++-
->  3 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/slab.h b/mm/slab.h
-> index 4190c24ef0e9..638ea1b25d39 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -437,11 +437,9 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
->  
->  	flags &= gfp_allowed_mask;
->  	for (i = 0; i < size; i++) {
-> -		void *object = p[i];
-> -
-> -		kmemleak_alloc_recursive(object, s->object_size, 1,
-> +		p[i] = kasan_slab_alloc(s, p[i], flags);
-> +		kmemleak_alloc_recursive(p[i], s->object_size, 1,
->  					 s->flags, flags);
-> -		p[i] = kasan_slab_alloc(s, object, flags);
->  	}
->  
->  	if (memcg_kmem_enabled())
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 81732d05e74a..fe524c8d0246 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1228,8 +1228,8 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned int order)
->  	flags |= __GFP_COMP;
->  	page = alloc_pages(flags, order);
->  	ret = page ? page_address(page) : NULL;
-> -	kmemleak_alloc(ret, size, 1, flags);
->  	ret = kasan_kmalloc_large(ret, size, flags);
-> +	kmemleak_alloc(ret, size, 1, flags);
->  	return ret;
->  }
->  EXPORT_SYMBOL(kmalloc_order);
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 1e3d0ec4e200..4a3d7686902f 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1374,8 +1374,9 @@ static inline void dec_slabs_node(struct kmem_cache *s, int node,
->   */
->  static inline void *kmalloc_large_node_hook(void *ptr, size_t size, gfp_t flags)
->  {
-> +	ptr = kasan_kmalloc_large(ptr, size, flags);
->  	kmemleak_alloc(ptr, size, 1, flags);
-> -	return kasan_kmalloc_large(ptr, size, flags);
-> +	return ptr;
->  }
->  
->  static __always_inline void kfree_hook(void *x)
-> 
-
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index f1c39a3c7534..a6b2413c59a6 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -4435,66 +4435,6 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+ 	return 0;
+ }
+ 
+-int tcpm_update_source_capabilities(struct tcpm_port *port, const u32 *pdo,
+-				    unsigned int nr_pdo)
+-{
+-	if (tcpm_validate_caps(port, pdo, nr_pdo))
+-		return -EINVAL;
+-
+-	mutex_lock(&port->lock);
+-	port->nr_src_pdo = tcpm_copy_pdos(port->src_pdo, pdo, nr_pdo);
+-	switch (port->state) {
+-	case SRC_UNATTACHED:
+-	case SRC_ATTACH_WAIT:
+-	case SRC_TRYWAIT:
+-		tcpm_set_cc(port, tcpm_rp_cc(port));
+-		break;
+-	case SRC_SEND_CAPABILITIES:
+-	case SRC_NEGOTIATE_CAPABILITIES:
+-	case SRC_READY:
+-	case SRC_WAIT_NEW_CAPABILITIES:
+-		tcpm_set_cc(port, tcpm_rp_cc(port));
+-		tcpm_set_state(port, SRC_SEND_CAPABILITIES, 0);
+-		break;
+-	default:
+-		break;
+-	}
+-	mutex_unlock(&port->lock);
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(tcpm_update_source_capabilities);
+-
+-int tcpm_update_sink_capabilities(struct tcpm_port *port, const u32 *pdo,
+-				  unsigned int nr_pdo,
+-				  unsigned int operating_snk_mw)
+-{
+-	if (tcpm_validate_caps(port, pdo, nr_pdo))
+-		return -EINVAL;
+-
+-	mutex_lock(&port->lock);
+-	port->nr_snk_pdo = tcpm_copy_pdos(port->snk_pdo, pdo, nr_pdo);
+-	port->operating_snk_mw = operating_snk_mw;
+-	port->update_sink_caps = true;
+-
+-	switch (port->state) {
+-	case SNK_NEGOTIATE_CAPABILITIES:
+-	case SNK_NEGOTIATE_PPS_CAPABILITIES:
+-	case SNK_READY:
+-	case SNK_TRANSITION_SINK:
+-	case SNK_TRANSITION_SINK_VBUS:
+-		if (port->pps_data.active)
+-			tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
+-		else
+-			tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
+-		break;
+-	default:
+-		break;
+-	}
+-	mutex_unlock(&port->lock);
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(tcpm_update_sink_capabilities);
+-
+ /* Power Supply access to expose source power information */
+ enum tcpm_psy_online_states {
+ 	TCPM_PSY_OFFLINE = 0,
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index 50c74a77db55..0c532ca3f079 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -159,12 +159,6 @@ struct tcpm_port;
+ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc);
+ void tcpm_unregister_port(struct tcpm_port *port);
+ 
+-int tcpm_update_source_capabilities(struct tcpm_port *port, const u32 *pdo,
+-				    unsigned int nr_pdo);
+-int tcpm_update_sink_capabilities(struct tcpm_port *port, const u32 *pdo,
+-				  unsigned int nr_pdo,
+-				  unsigned int operating_snk_mw);
+-
+ void tcpm_vbus_change(struct tcpm_port *port);
+ void tcpm_cc_change(struct tcpm_port *port);
+ void tcpm_pd_receive(struct tcpm_port *port,
 -- 
-Regards,
-Vincenzo
+2.7.4
+
