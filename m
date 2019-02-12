@@ -2,109 +2,119 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33880C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E812C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C035F20821
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549964881;
-	bh=KGfDA30Md9i3+ZdnD2Il9rUsfH9AKkkqsZ9GNPgqEBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lNpAvJ1U3anYnx+c8QtXC6oUPkDZLT0xWLR1MWrOcKJCpJ79y6ZRTV6v+OwbB2LXA
-	 ul/dsNZpwRE+C0Wf2IiOJgJC2703TjrObX/lRLUCeUzI/pD36Z8RjygQyPhUrVLfka
-	 0le6UyKDyMJZitSyUGQyXQxZvJVsj2B+U0mssLdQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3AFF320821
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FA5bIk4f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfBLJr7 (ORCPT
+        id S1728272AbfBLJsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:47:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727509AbfBLJr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:47:58 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 328402082F;
-        Tue, 12 Feb 2019 09:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549964877;
-        bh=KGfDA30Md9i3+ZdnD2Il9rUsfH9AKkkqsZ9GNPgqEBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qEQl9PeScNsXjEhSQssX0iVLzcMCp7LUALPS8tLb+3DL3apHat88slYdhU75+ENpe
-         5Uwd8AO00tb3sTXuNsUxPbTbFFJLn8MXgmaqAZ5ntN0SRcosX8YlTJnJtFTft9GWcm
-         aXJSN841iYsZG39mYqn5swTLRkLeE43WHs7oE4Nc=
-Date:   Tue, 12 Feb 2019 10:47:54 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Koen Vandeputte <koen.vandeputte@ncentric.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.20 018/352] ath9k: dynack: use authentication messages
- for late ack
-Message-ID: <20190212094754.GA19627@kroah.com>
-References: <20190211141846.543045703@linuxfoundation.org>
- <20190211141847.541071852@linuxfoundation.org>
- <e3740a06-8735-eed3-b427-e924f3e185ae@ncentric.com>
- <20190211170252.GE21634@kroah.com>
- <b76468d1-13db-b4e6-beb1-097251f5627c@ncentric.com>
+        Tue, 12 Feb 2019 04:48:45 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43146 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbfBLJso (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:48:44 -0500
+Received: by mail-lj1-f194.google.com with SMTP id o1-v6so1620234ljc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B5KwDzsMcCN5bKZ9gR266BQz8en1Dx9EG+wXdzylMa4=;
+        b=FA5bIk4fzFWuchkxIOg4AeLhpmVs7OBfaWMW2sPfi7DpCClDGF4ofrz7loRZ3j/VzS
+         Tk2pvtGZn/YZ24/gEOSv82HwpW3gVttqa4fWfyiUXThhgJeSEnhdeImfksKpNk+azSv8
+         a6Hxp2udYjXG4wWKrRiGD+Gw4xn5maRsN4/iKJ84T5DFgKb3RFmjWQ3VL+vmktGqGSdy
+         UHZfdztxZ8/AMeqRAMoU8k2PQ7v3IlHC4bpCMlzLhSGJ4iybKO1FQZrCrLdE45JXlsDw
+         TZ17rO2CawWEB/nAni0zWIEfYAgVS5c1f01QTIwo+fzv7V7XQEKP/HwGRu9C8U78YyHb
+         km8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B5KwDzsMcCN5bKZ9gR266BQz8en1Dx9EG+wXdzylMa4=;
+        b=K0jjjMx8BJ9G/bDxVgr4Rv8yfWuEMtmsAqqNnyVAwSc312MlkJQrzQP7M8XU29BWo+
+         QadlC+Z+zRAqaoQGdvpMMYSbj/MvXOyPwFm5X118Uw2uVoEEap5XGsKxelQcIQFpce43
+         4jMV/nCHAytx8ZqaAQwPmhnh8lAgTAZl0unbPz0wNm6RMpQ/lhjgGyrVoEe61jKTdwUA
+         CMTLLeAz72s3H5fWGqMQSZlfoPfwfbkkBCUYuqqmH9VPxa9WpXHuCHg5DnnWq4Ut3fbd
+         9UPzvWL8aZRJbqrGO2aKKPTsq2p65XjWm1MGkRsTp6Gv7r0DPtH7lhvlB4APSMkKU4vq
+         iqfg==
+X-Gm-Message-State: AHQUAuZxbm+nbo3bPjGUkpBg+Ka+A8o0b/2RStVE/nZaXLTENM+28Le+
+        9BT0l5MVpXqlLBk+MTZXetKvVw==
+X-Google-Smtp-Source: AHgI3IZlMjfrl7jC2HgNxF9NxbADu+hygxoXPr5sUgRayaHgbR2b6ulEhjT50xjm3CQtCzPea4mO3Q==
+X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr1733377ljd.137.1549964922602;
+        Tue, 12 Feb 2019 01:48:42 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id n19sm2840660lfe.64.2019.02.12.01.48.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 01:48:42 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] apparmor: fix build error undefined reference to zlib_*
+Date:   Tue, 12 Feb 2019 10:48:28 +0100
+Message-Id: <20190212094828.8429-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b76468d1-13db-b4e6-beb1-097251f5627c@ncentric.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:40:14AM +0100, Koen Vandeputte wrote:
-> 
-> On 11.02.19 18:02, Greg Kroah-Hartman wrote:
-> > > 
-> > > Dear Greg,
-> > > 
-> > > No idea if this is the proper location to report this or if I should inform
-> > > stable@vger.. , but:
-> > > 
-> > > This backport alone is useless without backporting following 2 commits below
-> > > also, unless the 2 wifi devices using dynack start off at very close
-> > > distance.
-> > > 
-> > > Their commits messages indicate them as improvements, but they should be
-> > > considered as fixes.
-> > > 
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=0c60c490830a1a756c80f8de8d33d9c6359d4a36
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=9d3d65a91f027b8a9af5e63752d9b78cb10eb92d
-> > > 
-> > > 
-> > > It's safe to add them to all stables involved (4.20, 4.19, 4.14, 4.9)
-> > Thanks, that looks reasonable, now queued up.
-> > 
-> > greg k-h
-> 
-> 
-> Hi Greg,
-> 
-> Just noticed the primary dynack patch also got merged into 4.4 stable rc
-> 
-> Could you also apply the 2 fixes above to 4.4?
-> 
-> 
-> Checked older versions (< 4.4) .. and they are not required there.
+With commit 876dd866c084 ("apparmor: Initial implementation of raw
+policy blob compression") and SECURITY_APPARMOR is set to '=y'
+ZLIB_DEFLATE must be enabled as well for the linker to see the symbols.
 
-The build breaks when the series in on 4.4, so I dropped the patches
-from there, and 3.18.  If you want to send a backported series that
-builds properly, I will be glad to queue that up.
+aarch64-linux-gnu-ld: security/apparmor/policy_unpack.o: in function `deflate_compress':
+../security/apparmor/policy_unpack.c:1030: undefined reference to `zlib_deflate_workspacesize'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1030:(.text+0xe20): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate_workspacesize'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036: undefined reference to `zlib_deflateInit2'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036:(.text+0xe60): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateInit2'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053: undefined reference to `zlib_deflate'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053:(.text+0xec0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xf90): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfb4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfd8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+make[1]: *** [Makefile:1023: vmlinux] Error 1
+make[1]: Target 'Image' not remade because of errors.
+make: *** [Makefile:152: sub-make] Error 2
+make: Target 'Image' not remade because of errors.
 
-thanks,
+Rework so when SECURITY_APPARMOR is set to '=y' ZLIB_INFLATE and ZLIB_DEFLATE gets
+selected, since both are used by the SECURITY_APPARMOR.
 
-greg k-h
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ security/apparmor/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 3de21f46c82a..99c35e22c119 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -5,6 +5,8 @@ config SECURITY_APPARMOR
+ 	select SECURITY_PATH
+ 	select SECURITYFS
+ 	select SECURITY_NETWORK
++	select ZLIB_INFLATE
++	select ZLIB_DEFLATE
+ 	default n
+ 	help
+ 	  This enables the AppArmor security module.
+-- 
+2.20.1
+
