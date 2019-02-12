@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44039C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE83C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1603E222B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0317222B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549991743;
-	bh=KPeq7UuWkE/ne89bctxrqM24b0aF+83U0RKoHRY4wdc=;
+	s=default; t=1549991746;
+	bh=7PxGbo3ThfFvVxxmdhESNQFl20XJ1rVOL8kAmHr7fyI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AzlBsCQ7BhXxTmKldrEU0bTdhE6u+MBP58g9Wf2TWzHRU21xDntB7w7g0VErUalvJ
-	 wWXWnCgkcJB2cIYnob5nzBLqmxCygvLbG3V8pwmibkfbQfQ8q7aWHow3aweL5qZP2V
-	 CBNGZZ9/9Llzh0VuxgN+1HOwiRYTCZjO2Dq0AwgE=
+	b=jgUYEWNnUU7hFM2tyKjc2vW+oGzi4k2VOIBlgyPXGfdeC5CcqZTnpjbrW3Iti3wdW
+	 /EWm8u+US1mdrEsjD8DstjNA/s4urZMx1ZOV2mNoJqNuavtpAC1cHJNEKGjU6IZA6D
+	 sYV5xmsYpmwXN9eQ98fgmpD75xsvjwmiB8BliJ3k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731615AbfBLRPl (ORCPT
+        id S1731622AbfBLRPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58350 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 12:15:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731595AbfBLRPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:15:39 -0500
+        id S1731614AbfBLRPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:15:43 -0500
 Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9CF8222AB;
-        Tue, 12 Feb 2019 17:15:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6A50222AD;
+        Tue, 12 Feb 2019 17:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549991738;
-        bh=KPeq7UuWkE/ne89bctxrqM24b0aF+83U0RKoHRY4wdc=;
+        s=default; t=1549991741;
+        bh=7PxGbo3ThfFvVxxmdhESNQFl20XJ1rVOL8kAmHr7fyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WVA8fHYI2pZcpRHVqZ3oylIIYxfHkkQAv7GKPW1DOZV0eRIQIKOJoMB6DqWQhalGI
-         jJqS+kWwRQHoVNwrY6BxISGiNyrE0InYxoeQ3xEMz3+e6mv90CcRPYBPwBi40JmTSH
-         WqwL3plYl9yPv3O86gX8MEsTKoVDaZXVMtTFE8mI=
+        b=Nr7TdTLsx7nnKguo/712NX5WVCjyr8OVPtOsidi9uHW5LXFM9s0gqhwGSaTahGopi
+         A/FAnXJ9qKdxxxOyD7cdebpq3RXWztNpkjdV3afLomWCVaoDSgJklLsNab4SXt0MUP
+         7XRw6kqF5S5i96EKU3FFYcMZe53/0ASRoZmRtu9E=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
@@ -49,13 +49,13 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
         Pavan Kondeti <pkondeti@codeaurora.org>,
         Ingo Molnar <mingo@kernel.org>,
         Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH 21/32] x86: Init softirq enabled field
-Date:   Tue, 12 Feb 2019 18:14:12 +0100
-Message-Id: <20190212171423.8308-22-frederic@kernel.org>
+Subject: [PATCH 22/32] softirq: Check enabled vectors before processing
+Date:   Tue, 12 Feb 2019 18:14:13 +0100
+Message-Id: <20190212171423.8308-23-frederic@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
 References: <20190212171423.8308-1-frederic@kernel.org>
@@ -64,11 +64,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frederic Weisbecker <fweisbec@gmail.com>
+There is no need to process softirqs if none of those pending are
+enabled. Check about that early to avoid unnecessary overhead.
 
-All softirqs must be set enabled on boot.
-
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Cc: Joel Fernandes <joel@joelfernandes.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -80,46 +79,119 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/x86/kernel/irq.c       | 5 ++++-
- include/linux/bottom_half.h | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ include/linux/interrupt.h |  5 +++++
+ kernel/softirq.c          | 21 +++++++++++----------
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 59b5f2ea7c2f..b859861733a4 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -11,6 +11,7 @@
- #include <linux/delay.h>
- #include <linux/export.h>
- #include <linux/irq.h>
-+#include <linux/bottom_half.h>
- 
- #include <asm/apic.h>
- #include <asm/io_apic.h>
-@@ -22,7 +23,9 @@
- #define CREATE_TRACE_POINTS
- #include <asm/trace/irq_vectors.h>
- 
--DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
-+DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat) = {
-+	.__softirq_data = SOFTIRQ_DATA_INIT,
-+};
- EXPORT_PER_CPU_SYMBOL(irq_stat);
- 
- DEFINE_PER_CPU(struct pt_regs *, irq_regs);
-diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
-index 39aaf9189226..240419382978 100644
---- a/include/linux/bottom_half.h
-+++ b/include/linux/bottom_half.h
-@@ -26,6 +26,8 @@ enum
- #define SOFTIRQ_ENABLED_SHIFT 16
- #define SOFTIRQ_PENDING_MASK (BIT(SOFTIRQ_ENABLED_SHIFT) - 1)
- 
-+#define SOFTIRQ_DATA_INIT (SOFTIRQ_ALL_MASK << SOFTIRQ_ENABLED_SHIFT)
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 346fb1e8e55b..161babfc1a0d 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -508,6 +508,11 @@ static inline void softirq_pending_set_mask(unsigned int pending)
+ {
+ 	__this_cpu_or(local_softirq_data_ref, pending);
+ }
 +
++static inline int softirq_pending_enabled(void)
++{
++	return local_softirq_pending() & local_softirq_enabled();
++}
+ #endif /* local_softirq_pending */
  
+ /* map softirq index to softirq name. update 'softirq_to_name' in
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index d305b4c8d1a7..a2257a5aaa0b 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -181,7 +181,7 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+ 	 */
+ 	preempt_count_sub(cnt - 1);
  
- #ifdef CONFIG_TRACE_IRQFLAGS
+-	if (unlikely(!in_interrupt() && local_softirq_pending())) {
++	if (unlikely(!in_interrupt() && softirq_pending_enabled())) {
+ 		/*
+ 		 * Run softirq if any pending. And do it in its own stack
+ 		 * as we may be calling this deep in a task call stack already.
+@@ -250,7 +250,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 	int max_restart = MAX_SOFTIRQ_RESTART;
+ 	struct softirq_action *h;
+ 	bool in_hardirq;
+-	__u32 pending;
++	__u32 pending, enabled;
+ 	int softirq_bit;
+ 
+ 	/*
+@@ -260,7 +260,8 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 	 */
+ 	current->flags &= ~PF_MEMALLOC;
+ 
+-	pending = local_softirq_pending();
++	enabled = local_softirq_enabled();
++	pending = local_softirq_pending() & enabled;
+ 	account_irq_enter_time(current);
+ 
+ 	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_OFFSET);
+@@ -268,7 +269,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 
+ restart:
+ 	/* Reset the pending bitmask before enabling irqs */
+-	softirq_pending_clear_mask(SOFTIRQ_ALL_MASK);
++	softirq_pending_clear_mask(pending);
+ 
+ 	local_irq_enable();
+ 
+@@ -305,7 +306,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 		rcu_softirq_qs();
+ 	local_irq_disable();
+ 
+-	pending = local_softirq_pending();
++	pending = local_softirq_pending() & enabled;
+ 	if (pending) {
+ 		if (time_before(jiffies, end) && !need_resched() &&
+ 		    --max_restart)
+@@ -331,7 +332,7 @@ asmlinkage __visible void do_softirq(void)
+ 
+ 	local_irq_save(flags);
+ 
+-	pending = local_softirq_pending();
++	pending = softirq_pending_enabled();
+ 
+ 	if (pending && !ksoftirqd_running(pending))
+ 		do_softirq_own_stack();
+@@ -360,7 +361,7 @@ void irq_enter(void)
+ 
+ static inline void invoke_softirq(void)
+ {
+-	if (ksoftirqd_running(local_softirq_pending()))
++	if (ksoftirqd_running(softirq_pending_enabled()))
+ 		return;
+ 
+ 	if (!force_irqthreads) {
+@@ -409,7 +410,7 @@ void irq_exit(void)
+ #endif
+ 	account_irq_exit_time(current);
+ 	preempt_count_sub(HARDIRQ_OFFSET);
+-	if (!in_interrupt() && local_softirq_pending())
++	if (!in_interrupt() && softirq_pending_enabled())
+ 		invoke_softirq();
+ 
+ 	tick_irq_exit();
+@@ -640,13 +641,13 @@ void __init softirq_init(void)
+ 
+ static int ksoftirqd_should_run(unsigned int cpu)
+ {
+-	return local_softirq_pending();
++	return softirq_pending_enabled();
+ }
+ 
+ static void run_ksoftirqd(unsigned int cpu)
+ {
+ 	local_irq_disable();
+-	if (local_softirq_pending()) {
++	if (softirq_pending_enabled()) {
+ 		/*
+ 		 * We can safely run softirq on inline stack, as we are not deep
+ 		 * in the task stack here.
 -- 
 2.17.1
 
