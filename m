@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08CAC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D1B206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 717422075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:24:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bWuUTyTk"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JUhTPCBi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbfBLOXz (ORCPT
+        id S1730272AbfBLOYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:23:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38760 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbfBLOXu (ORCPT
+        Tue, 12 Feb 2019 09:24:33 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54847 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729952AbfBLOYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:23:50 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so2890559wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:23:49 -0800 (PST)
+        Tue, 12 Feb 2019 09:24:33 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so3161279wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:24:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Yod8/2mWK4Qd4G4cKjNo2LDaZQqOzQK+ax711W0cspI=;
-        b=bWuUTyTk+K7IOE1U0JkgR78suNjCu4uZMTdc4aHjtqrSjR1Ohnv8ODAP/grJKpMKJL
-         5VEFSJxRm7lL0A+b4GP7fVNY/kMnlz4tUYa3IMojDRemFMgV45VHHkFcq8yDQos25jDj
-         Z/bpINroM+UX2Gz19ehPSV2sEMb/AqVu+b+G9cLn6g43mzSOYBJcpcWzqBgpzmlK5u7z
-         QK9d8y2UjqJ9BcpxdthXDCGZtV1LKpM7BHuVLy+De0J7uoC8OOByKi/uKDFIDMWiHKlh
-         MvFls1QBrZx91hu7Cc9AufpyzpIW4mnkpQKGs9oCUFkWL9qX0bl/fLkxd9OGXtce4UG8
-         GRQA==
+        bh=KAMq1x9B0WCQpzH3RwEBRqWOiCfu+v2gKiAUxijQ3dM=;
+        b=JUhTPCBi+rn+Qm4N/lS+K7QJnRqYZdeODJmLzFN4+rfG9u0Qinh0z3PB59we7oqcB7
+         bWWu5vZYGiSdfGs4CjdxE+kSj8vb8IApnE1QMMw7ox5gI/fTQSgnbo3E4X0NJQyo1rjf
+         B/IYJVeAnD9PVTjToqNJtyaZCMQVVs3RQrCrVai+TzU0ncJLMMkgndfL42juOMm0sVd/
+         1f4lgIVeBQRgzMtRD22ikCXOIM+bAjT5yxLIVUqge6EsQY3S/576mg4rmlEeuaOF07Kc
+         0WLwZkG8BMu3zELoPKKRCXvzrvbLAcJsW1yDtRLVF1tWKWllo+QPdxPKPUtD8Pt1T6f7
+         AZAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Yod8/2mWK4Qd4G4cKjNo2LDaZQqOzQK+ax711W0cspI=;
-        b=plBcTXxX3gHye+rQAho/tc3bep/o2G05rzAFaFLx+pWdMC9zbLdgFwoyCzPKzHthkC
-         tlq2WZASrKzR1KH3t8z6K/LfB7YFjnZ/gy5EwSILe1wXkidMQLnmB4sArmVKcWB5vG55
-         tBNm+ORti7TvmN9PXok62cG2MkvKXgWJsZ9oXBkLuBqjD+aojDL+APsDTbxxwCx5/kOI
-         AjX1HwYX9tkHpL6Ezq73NKmpSCeg1W/54BP2smY0J09YRHkKO6tAAK5XZqmzBOY3b9H6
-         j88YTdrkC7MWpt7e4IeWa3f/msI/UGiPtIYpGfIhgaIjfLS4UpNGfKLTROnM2NXAcsGt
-         JvoQ==
-X-Gm-Message-State: AHQUAubF/m40Vk8q18U6b9OPuOkw1yrvyQNNb3VqH2srrUzE+O0p4ARe
-        2vWb6GzgKDOo2A0emi0S0OTRig6nNxov2A==
-X-Google-Smtp-Source: AHgI3IYLGpRQ1uFj2rXREsPDErxHuMzviiqaPR2IY3RnkyVn5W5JuVEQmaiQ+qlymVpSwLdvFK5RAg==
-X-Received: by 2002:adf:9061:: with SMTP id h88mr3094553wrh.65.1549981428568;
-        Tue, 12 Feb 2019 06:23:48 -0800 (PST)
+        bh=KAMq1x9B0WCQpzH3RwEBRqWOiCfu+v2gKiAUxijQ3dM=;
+        b=O5NyUNS9dnbNsoziyc1KWJ219n2HE/StxlBApKBlnMoGPGXhwS2hUTJw3nN2X8s+6w
+         V072cLmWZvw373r4HKaykyUeGQj83tu//bIyI/8sTUl+Y0/BezqxAvTYrhnt4BFUknq6
+         Bi7BuTxrw8FRForr+CCoBza+/fLZLAUXSs1oNvehNhJD2kAEgicPEgFDnSWlHW8Gjo03
+         x/YIsin9gl/r81uhwOWuMt59ZmrJcTuVBxJd8NQI4OIg/Hp0dlDelcmrgzov8+XDaj1p
+         3t1cCYL9fi269XehJLHGhjMaF30b4SY0PcWh2DJvlZsbtj101ligs+eDu1eOBLXydx22
+         uncw==
+X-Gm-Message-State: AHQUAuZNf7NrRQ6SCu25zO0wvFhYSobCch12g1jbuoqCRR7YcR+y77Fx
+        BwBGzXAgR72hNccZamifhE75pg==
+X-Google-Smtp-Source: AHgI3IYpgl47wD6nqFYP7LCl82rQFpzOK10BE4EKQELBLfj0rBM/iBzR4WWSXNhm0jvdtzcJ6sPavg==
+X-Received: by 2002:a1c:2804:: with SMTP id o4mr3273810wmo.150.1549981471553;
+        Tue, 12 Feb 2019 06:24:31 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y22sm39043216wrd.45.2019.02.12.06.23.47
+        by smtp.gmail.com with ESMTPSA id c139sm4926838wmd.13.2019.02.12.06.24.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Feb 2019 06:23:47 -0800 (PST)
+        Tue, 12 Feb 2019 06:24:31 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] soc: amlogic: gx-socinfo: Add new SoC IDs and Packages IDs
-Date:   Tue, 12 Feb 2019 15:23:43 +0100
-Message-Id: <20190212142344.13634-3-narmstrong@baylibre.com>
+Subject: [PATCH 3/3] arm64: dts: meson-g12a: Add AO Secure node
+Date:   Tue, 12 Feb 2019 15:24:27 +0100
+Message-Id: <20190212142427.14478-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212142344.13634-1-narmstrong@baylibre.com>
 References: <20190212142344.13634-1-narmstrong@baylibre.com>
@@ -74,41 +74,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the G12A and G12B SoC ids and the S90X2 package ID.
+This adds the Always-On ao-secure system control registers node,
+which is used by the meson-gx-socinfo driver to detect the SoC IDs.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/soc/amlogic/meson-gx-socinfo.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
-index 1ae339f5eadb..c1a9c34d861b 100644
---- a/drivers/soc/amlogic/meson-gx-socinfo.c
-+++ b/drivers/soc/amlogic/meson-gx-socinfo.c
-@@ -37,6 +37,8 @@ static const struct meson_gx_soc_id {
- 	{ "AXG", 0x25 },
- 	{ "GXLX", 0x26 },
- 	{ "TXHD", 0x27 },
-+	{ "G12A", 0x28 },
-+	{ "G12B", 0x29 },
- };
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index 3b82a975c663..e247194da126 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -101,6 +101,12 @@
+ 			#size-cells = <2>;
+ 			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
  
- static const struct meson_gx_package_id {
-@@ -53,11 +55,14 @@ static const struct meson_gx_package_id {
- 	{ "S905W", 0x21, 0xa0, 0xf0 },
- 	{ "S905L", 0x21, 0xc0, 0xf0 },
- 	{ "S905M2", 0x21, 0xe0, 0xf0 },
-+	{ "S805X", 0x21, 0x30, 0xf0 },
-+	{ "S805Y", 0x21, 0xb0, 0xf0 },
- 	{ "S912", 0x22, 0, 0x0 }, /* Only S912 is known for GXM */
- 	{ "962X", 0x24, 0x10, 0xf0 },
- 	{ "962E", 0x24, 0x20, 0xf0 },
- 	{ "A113X", 0x25, 0x37, 0xff },
- 	{ "A113D", 0x25, 0x22, 0xff },
-+	{ "S905X2", 0x28, 0x40, 0xf0 },
- };
- 
- static inline unsigned int socinfo_to_major(u32 socinfo)
++			sec_AO: ao-secure@140 {
++				compatible = "amlogic,meson-gx-ao-secure", "syscon";
++				reg = <0x0 0x140 0x0 0x140>;
++				amlogic,has-chip-id;
++			};
++
+ 			uart_AO: serial@3000 {
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+ 				reg = <0x0 0x3000 0x0 0x18>;
 -- 
 2.20.1
 
