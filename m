@@ -2,100 +2,87 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCD5C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68425C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB4DB20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372A820836
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:13:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="mj4j3LJr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfBLDM4 (ORCPT
+        id S1727831AbfBLDNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:12:56 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:28853 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726756AbfBLDMz (ORCPT
+        Mon, 11 Feb 2019 22:13:09 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:40505 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfBLDNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:12:55 -0500
-X-UUID: aada839746f04a37a5fa680b2d52b2c8-20190212
-X-UUID: aada839746f04a37a5fa680b2d52b2c8-20190212
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1132903972; Tue, 12 Feb 2019 11:12:46 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 11:12:44 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Feb 2019 11:12:44 +0800
-Message-ID: <1549941164.4980.64.camel@mhfsdcap03>
-Subject: Re: [RFC PATCH] PCI/portdrv: Support for subtractive decode bridge
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <youlin.pei@mediatek.com>, <lorenzo.pieralisi@arm.com>,
-        <poza@codeaurora.org>, <fred@fredlawl.com>,
-        <linux-pci@vger.kernel.org>, <rafael.j.wysocki@intel.com>,
-        <linux-kernel@vger.kernel.org>, <jianjun.wang@mediatek.com>,
-        <ryder.lee@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 12 Feb 2019 11:12:44 +0800
-In-Reply-To: <20190207195230.GJ7268@google.com>
-References: <1544758829-10327-1-git-send-email-honghui.zhang@mediatek.com>
-         <20190207151816.GI7268@google.com> <20190207195230.GJ7268@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Feb 2019 22:13:09 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 4A232806A8;
+        Tue, 12 Feb 2019 16:13:05 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1549941185;
+        bh=nlIUaIN7SSb56zKhDUggf/vi13Ji6xlM/Rl46p5GXUQ=;
+        h=From:To:Cc:Subject:Date;
+        b=mj4j3LJrvHRYur01tNhYuCbTMOVGgN2xjAhW25Ke5o4XS3IKg3Cm+Zui/ygt+Wpkg
+         Ld96sqiUL4BLzqfcyvkxVRuDgdqZeuTlzVgZxtW4B4laWTraB6q1mMSPJnD5zcgUk3
+         DtbYT5coVKm8K6hpZ0eBGRrsv+k9H1RgudtQWYS7YcYTpZHkaxuq98i98ZhR1W1eh6
+         ux1e1dxjPqDyi1shlxeGUoMAlTjzHg9k2AccT2EgnKjzyZ8o/2fmaDzXmAyCMkGaSo
+         +mPYVnPyGHlVWaz7fLW+szMR4bKSdPT5FhP2Kn2jHg/M2PP4iar9tVPcfBcND7K6a+
+         /EZIv42SflO4w==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c6239b90000>; Tue, 12 Feb 2019 16:12:57 +1300
+Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
+        by smtp (Postfix) with ESMTP id B5CB613EF01;
+        Tue, 12 Feb 2019 16:12:56 +1300 (NZDT)
+Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
+        id AB8723AA212; Tue, 12 Feb 2019 16:12:56 +1300 (NZDT)
+From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     nicolas.dichtel@6wind.com,
+        Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+Subject: [PATCH net-next v4] ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
+Date:   Tue, 12 Feb 2019 16:12:54 +1300
+Message-Id: <20190212031255.16121-1-callum.sinclair@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MTK:  N
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 13:52 -0600, Bjorn Helgaas wrote:
-> On Thu, Feb 07, 2019 at 09:18:16AM -0600, Bjorn Helgaas wrote:
-> > On Fri, Dec 14, 2018 at 11:40:29AM +0800, honghui.zhang@mediatek.com wrote:
-> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > > 
-> > > The Class Code for subtractive decode PCI-to-PCI bridge is 060401h,
-> > > change the class_mask values to make portdrv support this type bridge.
-> > 
-> > I assume you have a Root Port or Switch Port that supports subtractive
-> > decode?  I'm trying to understand how such a device would work.
-> > 
-> > Out of curiosity, can you show the "lspci -vv" output for the device
-> > and the downstream devices of interest?
-> 
-> Actually, since subtractive decode has to do with how the bridge
-> interacts with its *peers*, what would be interesting is the host
-> bridge window information from ACPI _CRS or DT and the lspci info for
-> everything under that host bridge.
-> 
-> Assuming we're talking about a Root Port, I guess that would mean
-> anything inside the host bridge windows but outside the positive
-> decode windows (the normal PCI-PCI bridge apertures in the Root Ports)
-> would be claimed by the subtractive decode Root Port?
+Created a way to clear the multicast forwarding cache on a socket
+without having to either remove the entries manually using the delete
+entry socket option or destroy and recreate the multicast socket.
 
-Per my understanding, mediatek's Root Port does not claim anything, or
-it's fine to assign no resource which is dedicated to this bridge. Those
-information could be got through lspci output which is attached in the
-last mail. All the resource it claimed is from the subordinate device,
-bridge itself does not need any special resource.
-> 
-> I guess you would want this because this path ultimately leads to an
-> ISA or similar bus where you don't know what resources the device
-> actually consumes?
-> 
-I was not get to that far, I just want to start a discussion about this,
-since spec does not forbidden subtractive bridge to support port
-service.
+Calling the socket option MRT_FLUSH will allow any combination of the
+four flag options to be cleared.
 
-Thanks.
+MRT_FLUSH_MFC will clear all non static mfc entries
+MRT_FLUSH_MFC_STATIC will clear all static mfc entries
+MRT_FLUSH_VIFS will clear all non static interfaces
+MRT_FLUSH_VIFS_STATIC will clear all static interfaces.
 
-> Bjorn
+Callum Sinclair (1):
+  ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
 
+ include/uapi/linux/mroute.h  |  9 ++++-
+ include/uapi/linux/mroute6.h |  9 ++++-
+ net/ipv4/ipmr.c              | 73 ++++++++++++++++++++-------------
+ net/ipv6/ip6mr.c             | 78 +++++++++++++++++++++++-------------
+ 4 files changed, 112 insertions(+), 57 deletions(-)
+
+--=20
+2.20.1
 
