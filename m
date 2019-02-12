@@ -2,100 +2,85 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AA3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB54FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18C42190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BA4A222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:45:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B/AammYD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbfBLSow (ORCPT
+        id S1732038AbfBLSpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:44:52 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.119]:21485 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727303AbfBLSow (ORCPT
+        Tue, 12 Feb 2019 13:45:08 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51354 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbfBLSpH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:44:52 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 7D9F7BD3B4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:44:51 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id td35gKPaG2qH7td35gsYlz; Tue, 12 Feb 2019 12:44:51 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=50824 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtd34-002Hx4-Oc; Tue, 12 Feb 2019 12:44:50 -0600
-Date:   Tue, 12 Feb 2019 12:44:50 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2] staging: comedi: ni_660x: fix missing break in switch
- statement
-Message-ID: <20190212184450.GA6927@embeddedor>
+        Tue, 12 Feb 2019 13:45:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wU07qB9XQlS0d1djNaIi1on+8sJFmtyguN+9hQA20ao=; b=B/AammYDfpPF5UfB+jK408ufC
+        KwEHJjkA1tuXXXCP6+xREUOQpdFBMNqA2clb2mk76d+XPRpn9WJLA9+2a3e4w168cagmFyJ7SiRCc
+        KBRclTiT5yENHBp3fP9+wJpMgK5vBIYpFpEq3WaHHZKCIDzaWewIMcziPqbDCv3TRHsSgamkikB0h
+        DB2tV2fLETqDv5EVkKILMACntcQvSYsySvGXaAxt5I7WNVPKHkmKSL5dzLjIKHOdSOK/Xlu++tAcR
+        LUFYN1C5FktDUFwMXI9OdzuznThEq2+U3H/QBS5ycLICEt0fms2pOcMXahNtaFhNOA3q4PBA/t4fs
+        kIxpOjhqw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtd3J-0004X1-8H; Tue, 12 Feb 2019 18:45:05 +0000
+Date:   Tue, 12 Feb 2019 10:45:05 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+Message-ID: <20190212184505.GA10984@infradead.org>
+References: <20190119132650.9978-1-anup.patel@wdc.com>
+ <20190119132650.9978-7-anup.patel@wdc.com>
+ <20190212070807.GD26747@infradead.org>
+ <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtd34-002Hx4-Oc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:50824
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing break statement in order to prevent the code from falling
-through to the default case and return -EINVAL every time.
+On Tue, Feb 12, 2019 at 03:53:21PM +0530, Anup Patel wrote:
+> If it is initramfs (i.e. CPIO image) then contents of CPIO archive
+> are extracted to create a ramfs instance.
+> 
+> If it is initrd (i.e. some filesystem image) then RAM block device
+> is created in-place at initrd location. (Please correct me if I am
+> wrong about initrd here).
 
-This bug was found thanks to the ongoing efforts to enable
--Wimplicit-fallthrough.
+No.  If it is an initrd image we still copy it into the rootfs first,
+and then load it into a ram disk.  Take a look at
+init/initramfs.c:populate_rootfs() and
+init/do_mounts_initrd.c:initrd_load().
 
-Fixes: aa94f2888825 ("staging: comedi: ni_660x: tidy up ni_660x_set_pfi_routing()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Fix Fixes tag.
+> So in case of initrd we might not want to free-up the RAM but
+> we can certainly free-up in case of initramfs.
 
- drivers/staging/comedi/drivers/ni_660x.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/comedi/drivers/ni_660x.c b/drivers/staging/comedi/drivers/ni_660x.c
-index e70a461e723f..405573e927cf 100644
---- a/drivers/staging/comedi/drivers/ni_660x.c
-+++ b/drivers/staging/comedi/drivers/ni_660x.c
-@@ -656,6 +656,7 @@ static int ni_660x_set_pfi_routing(struct comedi_device *dev,
- 	case NI_660X_PFI_OUTPUT_DIO:
- 		if (chan > 31)
- 			return -EINVAL;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
--- 
-2.20.1
-
+No, in either case we do not need the original initramfs/initrd
+memory.  I suspect arm has this as a workaround for some weird
+legacy boot issue, but I can't see any reason why we would not want
+to free the memory on riscv.
