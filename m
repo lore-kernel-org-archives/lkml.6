@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B777C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52AEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E9120836
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8907320836
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:44:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VGQ5eT7d"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aaedP3xf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfBLGob (ORCPT
+        id S1727462AbfBLGoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 01:44:31 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14062 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727684AbfBLGo2 (ORCPT
+        Tue, 12 Feb 2019 01:44:23 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17428 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfBLGoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 01:44:28 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c626b4c0000>; Mon, 11 Feb 2019 22:44:28 -0800
+        Tue, 12 Feb 2019 01:44:22 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c626b210000>; Mon, 11 Feb 2019 22:43:45 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 22:44:27 -0800
+  Mon, 11 Feb 2019 22:44:20 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 22:44:27 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 06:44:26 +0000
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 06:44:27 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Feb 2019 06:44:26 +0000
+        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 22:44:20 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
+ 2019 06:44:19 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
+ 2019 06:44:19 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 12 Feb 2019 06:44:19 +0000
 Received: from localhost.localdomain (Not Verified[10.19.225.143]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c626b490000>; Mon, 11 Feb 2019 22:44:26 -0800
+        id <B5c626b410003>; Mon, 11 Feb 2019 22:44:19 -0800
 From:   Mark Zhang <markz@nvidia.com>
 To:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v3 4/4] mfd: max77620: add documentation for low battery monitoring
-Date:   Tue, 12 Feb 2019 14:43:53 +0800
-Message-ID: <20190212064353.7451-5-markz@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>,
+        "Laxman Dewangan" <ldewangan@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>
+Subject: [PATCH v3 1/4] mfd: max77620: Add backup battery charger support
+Date:   Tue, 12 Feb 2019 14:43:50 +0800
+Message-ID: <20190212064353.7451-2-markz@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190212064353.7451-1-markz@nvidia.com>
 References: <20190212064353.7451-1-markz@nvidia.com>
@@ -57,57 +59,136 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549953868; bh=RXsCU8E8kLZ/hlyc7W/fHifCcnj1LoXOg9fJTiV+R6c=;
+        t=1549953825; bh=Y75Hk7gtmB6mlFkb/geeiqwegk6RpQ7aY6RFBx9wdxA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=VGQ5eT7dyxsgmWQnS8N4NVxL0pL2UvnVvhAxc0qtqEmITOItMzi2RlnhFo4O9eGmJ
-         thpcm3GSPUY/Nh+XNMgxbJ3dY7EXOOFdwrFhxIScMKUk33q8W549FMg/I9Z1IMUDLy
-         9hISZu14KxzHJbRd636qyzzz13NqQW1OxGkS0Hc4mfoq1Va3ij4yLhNHFBPGmt+OWS
-         r5D/FqSs/ARub+LWFLtlDge48Fj0n/58kkj+s46NEpLud/IGfnyBP0C0lxub/qkaWh
-         Fiani0nz4/OJ+n4hC4z8de1De/egk7cYrPaRVq2HH6xJ/SBXq1+nE3Z5+4oEsWhSBj
-         9Pjh6gPF+DLZA==
+        b=aaedP3xfvan5vRXQL4hDL9er7/3tR3UZv8Y00t0RVZR/RFC89V5Xx8jd9wzsxN9OM
+         zqC2cICQyDzeVs4howLLjtuJ9khuXVKDH+6360vAHWmLmaeHvX4Ws9Ei6rGiPOHJKW
+         YvP2r7nCmyr4Qxs/NJWUQUFsP3cDWOw/suPCaOkaLO1LZaETNZ1FolZL1V9NLrfwyt
+         EepC5fnNFxy67donT9tEVpVFVfibJvfN8OfkL1gDx9lAr4P4G97PyAUaZA+M4wA9Pi
+         7KoVfbFmCJodR1VS82MnLn41RP8yge5tksUoRq5YQR3hTUOXBS9T18dtWL5or/6yfD
+         l8Li7CXqjxDzA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding documentation for low battery monitor properties:
-- maxim,low-battery-dac-enable
-- maxim,low-battery-mode
+Add PMIC configurations for backup battery charger, which
+is a constant voltage and constant current style charger
+with a series output resistance.
 
+The max77620 register CNFGBBC(addr: 0x04) defines the
+parameters of backup battery charger. This patch adds
+support for it.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
 Signed-off-by: Mark Zhang <markz@nvidia.com>
 ---
- Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/mfd/max77620.c | 80 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documenta=
-tion/devicetree/bindings/mfd/max77620.txt
-index 88825eaf2567..f5b298ccc929 100644
---- a/Documentation/devicetree/bindings/mfd/max77620.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -142,6 +142,20 @@ Optional properties:
- 			Device supports 100/1000/3000/6000 Ohms.
- 			Default will be set to 1000 Ohm.
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index d8ddd1a6f304..494d98357f65 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -398,6 +398,82 @@ static int max77620_initialise_fps(struct max77620_chi=
+p *chip)
+ 	return 0;
+ }
 =20
-+Low-Battery Monitor:
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+max77620 is able to monitor the main battery voltage and shutdown/reset th=
-e
-+chip connected accordingly.
++static int max77620_init_backup_battery_charging(struct max77620_chip *chi=
+p)
++{
++	struct device *dev =3D chip->dev;
++	struct device_node *np;
++	u32 pval;
++	u8 config;
++	int charging_current;
++	int charging_voltage;
++	int resistor;
++	int ret;
 +
-+Optional properties:
-+	- maxim,low-battery-dac-enable: Enable low battery monitoring.
-+			Low battery monitoring will be disabled if missing
-+			this property.
-+	- maxim,low-battery-mode: Shutdown or reset the chip.
-+			The value of this property is "shutdown" which means
-+			a global shutdown will be triggered. Any other values
-+			or missing this property causes a chip reset.
++	np =3D of_get_child_by_name(dev->of_node, "backup-battery");
++	if (!np) {
++		dev_info(dev, "Backup battery charging support disabled\n");
++		ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGBBC,
++					 MAX77620_CNFGBBC_ENABLE, 0);
++		if (ret < 0)
++			dev_err(dev, "Failed to update CNFGBBC: %d\n", ret);
++		return ret;
++	}
 +
- Example:
- --------
- #include <dt-bindings/mfd/max77620.h>
++	ret =3D of_property_read_u32(np,
++			"maxim,charging-current-microamp", &pval);
++	charging_current =3D (!ret) ? pval : 50;
++
++	ret =3D of_property_read_u32(np,
++			"maxim,charging-voltage-microvolt", &pval);
++	charging_voltage =3D (!ret) ? pval : 2500000;
++	charging_voltage /=3D 1000;
++
++	ret =3D of_property_read_u32(np,
++			"maxim,output-resister-ohms", &pval);
++	resistor =3D (!ret) ? pval : 1000;
++
++	config =3D MAX77620_CNFGBBC_ENABLE;
++	if (charging_current <=3D 50)
++		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 100)
++		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 200)
++		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 400)
++		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 600)
++		config |=3D 1 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else
++		config |=3D 2 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++
++	if (charging_current > 100)
++		config |=3D MAX77620_CNFGBBC_LOW_CURRENT_DISABLE;
++
++	if (charging_voltage <=3D 2500)
++		config |=3D 0 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else if (charging_voltage <=3D 3000)
++		config |=3D 1 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else if (charging_voltage <=3D 3300)
++		config |=3D 2 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else
++		config |=3D 3 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++
++	if (resistor <=3D 100)
++		config |=3D 0 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 1000)
++		config |=3D 1 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 3000)
++		config |=3D 2 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 6000)
++		config |=3D 3 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++
++	ret =3D regmap_write(chip->rmap, MAX77620_REG_CNFGBBC, config);
++	if (ret < 0)
++		dev_err(dev, "Reg 0x%02x write failed, %d\n",
++				MAX77620_REG_CNFGBBC, ret);
++	return ret;
++}
++
+ static int max77620_read_es_version(struct max77620_chip *chip)
+ {
+ 	unsigned int val;
+@@ -483,6 +559,10 @@ static int max77620_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+=20
++	ret =3D max77620_init_backup_battery_charging(chip);
++	if (ret < 0)
++		return ret;
++
+ 	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ 				    mfd_cells, n_mfd_cells, NULL, 0,
+ 				    regmap_irq_get_domain(chip->top_irq_data));
 --=20
 2.19.2
 
