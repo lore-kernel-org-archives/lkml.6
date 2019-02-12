@@ -2,269 +2,130 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30CEC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA8DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F709214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96A02214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:14:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z6+RXS3D"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Ewb5+6qj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbfBLNN7 (ORCPT
+        id S1729689AbfBLNOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:13:59 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33732 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbfBLNN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:13:58 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1CDDuta092891;
-        Tue, 12 Feb 2019 07:13:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549977236;
-        bh=a383+4DeoLECRO6DM+On9Xrg6eWPSuCsg2cXxrthxjE=;
-        h=From:To:CC:Subject:Date;
-        b=Z6+RXS3DYVDmqZrcK6hYfM2C9buz6At1yypjGs9fDTHrswCzVKLVq39y5HBLunPb3
-         oNTd/juSnBFon9KdZuVLmEjlLljRTmyvJxwJDrXFzPeLBhyf2UX47HbxhcmVTco0nW
-         UyqiO0dyqmoD/O4Z7lCw9yMtky/N5l71Pb+Jp9ms=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1CDDulp058348
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 07:13:56 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 07:13:56 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 07:13:56 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1CDDshi020624;
-        Tue, 12 Feb 2019 07:13:55 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <kishon@ti.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] PHY: For 5.1 merge window
-Date:   Tue, 12 Feb 2019 18:43:19 +0530
-Message-ID: <20190212131319.30398-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 12 Feb 2019 08:14:52 -0500
+Received: from mail-eopbgr130048.outbound.protection.outlook.com ([40.107.13.48]:4416
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727428AbfBLNOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:14:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ROmE+gPd7kZTop7sn7HvSN8xkg4m3mB+3z4099cZZQ=;
+ b=Ewb5+6qjE6OA5DC9aneYLBjdzbF4kwfll5xC5EIX4zfd7/+tNBIKpJmAkr9WswriLYb7VQw4kE1VxRjCz+wglbGt/NAcISU3ZtAsTkD26m5dkudOY3nOLP+ZdQJbGEb6pHIbCF1SCrLO+J2EcGiCK8LR+T+K98bti+CUTEO2sUw=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB5368.eurprd05.prod.outlook.com (20.177.197.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Tue, 12 Feb 2019 13:14:47 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
+ 13:14:47 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
+Subject: Re: [PATCH net-next v4 0/9] net: Remove switchdev_ops
+Thread-Topic: [PATCH net-next v4 0/9] net: Remove switchdev_ops
+Thread-Index: AQHUwj1zxqFH0ZbG6U+8BvdVKYhXX6XcJVqA
+Date:   Tue, 12 Feb 2019 13:14:47 +0000
+Message-ID: <20190212131443.GA13819@splinter>
+References: <20190211191001.8623-1-f.fainelli@gmail.com>
+In-Reply-To: <20190211191001.8623-1-f.fainelli@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0069.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::33) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR05MB5368;6:Q0sgKTiSGo7WdqUj068gqqorBndBlwiMHsDVAyt6dl2EPj3t2IyS7osA/Vokc5f12MdDWy2n2NhDXM1eXzd8mwQFWAKHIjv7eDj+hBDYXR0INWmUl7it3bverEDfBGPARYUzeE1hI5t0SQGk9ImVO7kjThnGlDi7wjH/3r/lUq0IOQieIs1EdXVqnD0CJl4CnS3YzW8Hba7LLWXJd3e0Vt/sj5YhLJ92NqXEk6DXsbRXhz5Dt7sLQ8D9/JfUtsAzzZQrNFH618gxsgrtCnh7rFXViUoglAkWil5PG8DoXxDuGYI7r7XuMWlbOhA1xmnyTUjjvWoEBW3eViK9DsQtqHzEtXsTubwsWCAiE5FS9H1zvnbNV9D1fR4cmoePi6M4BGeRwEy1LfXUvFO+zVA6yQprUSMvmLPvj2l6iP5qCLHsjoy9TyaPo0H8F4JesRD4f9PVb87OxzKlv1wvMQVk4Q==;5:4TVfmpxAVNdf0sovy5MTKFabL+kGDp+ceyuDGRrkrS2uauYpo5dboXcNrQOVd7Jqc3rOxxR5J2zN+U168NKRC766iK4MvidNpzDQZCXR8k0AshrXzwNWOnvaEjm4NW6W1QjgWkSDIKH6kA69cgNVkx8SrfNOJL9uLOe5Q3gwFsty86FnnFjeZwkEaLHS2ciT4UV3NvHR8tkhJqAX/SkMFA==;7:t+hFK7VeuW7LXdSvTg3ycArhwMYA2paufVKDPhWJ0IQKTz0TQ24PwxLqf11HVo5+cLitfcKPsPsQ3zA7N+6qH2OP3qtOpE3a/fIKMw/bTfdqNuM57qgrJGXjrmnHdGpX5nNDzIq8ehIkSDo3AWNJig==
+x-ms-office365-filtering-correlation-id: 150599c3-c4e9-43ce-b730-08d690ec0fae
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB5368;
+x-ms-traffictypediagnostic: AM6PR05MB5368:
+x-microsoft-antispam-prvs: <AM6PR05MB5368AA976F3B5D2C6D08A636BF650@AM6PR05MB5368.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(366004)(396003)(39860400002)(346002)(376002)(199004)(189003)(53754006)(6246003)(478600001)(106356001)(11346002)(66066001)(446003)(99286004)(33716001)(33656002)(2906002)(8936002)(105586002)(476003)(25786009)(86362001)(14454004)(486006)(6116002)(3846002)(6512007)(81156014)(68736007)(229853002)(6436002)(7736002)(81166006)(102836004)(8676002)(386003)(316002)(14444005)(256004)(33896004)(9686003)(53936002)(6506007)(76176011)(54906003)(6486002)(1076003)(186003)(26005)(52116002)(4326008)(71200400001)(97736004)(6916009)(71190400001)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5368;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: NfFAAnXxzwhpnDVFmKdEDg2OEnTM5xyXIWT7/1RgzZzVFsR8VcIUOZ1SX5y7GTZiSK4g9VAiCv2sBXpZlfLiFlQyBzWzbQpjsaH6wyLNCRhXMJv+yDWrm+vZTn2ZRL6fr0rI4HXuLDbDiH4O3puHpBKZVZJTTm+p3ewc6r8bKsOjgCT7n6ct0j5vVB/N/tr//copV4kDSs02JgFmegJKEfKBRmQreXd4bfkglGszLd7pjv2Lk/G+X7iarQ/emd+2gRe0is3QUhtyDhhJ0ebxxXi3w9YBNgWeKZjVT+hBBdLqpRYyEzToPI8jQnSv/t0EOnB1JREGeV36vNOJLeNRLlWVQeRnoxdxncJflUO15c+TOym7kisbCogrEggMir+BFid89mUnHEPtlv615ij8+KanR8zBsKj85/HGDDoEidQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3987C19D0F710243BE2B3F07927F03AB@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 150599c3-c4e9-43ce-b730-08d690ec0fae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 13:14:46.7182
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5368
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Mon, Feb 11, 2019 at 11:09:52AM -0800, Florian Fainelli wrote:
+> Hi all,
+>=20
+> This patch series finishes by the removal of switchdev_ops. To get there
+> we convert the existing switchdev_port_attr_{set,get} switchdev_ops to
+> use a blocking notifier, thus making it consistent with how the objects
+> are pushed to the switchdev enabled devices.
+>=20
+> Please review and let me know what you think!
+>=20
+> David, I would like to get Ido's feedback on this to make sure I did not
+> miss something, thank you!
 
-Please find the pull request for 5.1 merge window below.
+Hi Florian,
 
-It adds two new Armada PHY drivers to support COMPHY and UTMI PHY and a
-PHY driver to support Cadence D-PHY. It also extends existing omap-usb2 PHY
-driver, qcom-qmp PHY driver and qcom-qusb2 PHY driver to support PHYs in
-newer platforms. It also includes minor fixes and cleanups.
+Why do you still keep switchdev_port_attr_get()? I believe we can remove
+it and simplify things.
 
-For the complete list of changes, please see the tag message below.
+After your recent patchset to remove 'PORT_BRIDGE_FLAGS', the only
+remaining user of get() is 'PORT_BRIDGE_FLAGS_SUPPORT'. It can be
+converted to a blocking set() with 'PORT_PRE_BRIDGE_FLAGS' (or a similar
+name).
 
-Let me know If I have to make any modifications to this pull request.
+I would like to make sure we're in sync with regards to future changes.
+After this patchset to get rid of switchdev_ops we can continue to
+completely removing switchdev (I believe Jiri approves). The
+prepare-commit model is not really needed and the two switchdev
+notification chains can be split into bridge and vxlan specific chains.
 
-This pull request will conflict with -net pull request since one of the
-Armada PHY drivers is merged via -net tree. The final resolution should
-be like below
-
-diff --cc drivers/phy/marvell/Kconfig
-index 224ea4e6a46d,b8e9dd38ad0d..000000000000
---- a/drivers/phy/marvell/Kconfig
-+++ b/drivers/phy/marvell/Kconfig
-@@@ -21,16 -21,27 +21,37 @@@ config PHY_BERLIN_US
-  	help
-  	  Enable this to support the USB PHY on Marvell Berlin SoCs.
-  
-+ config PHY_MVEBU_A3700_COMPHY
-+ 	tristate "Marvell A3700 comphy driver"
-+ 	depends on ARCH_MVEBU || COMPILE_TEST
-+ 	depends on OF
-+ 	depends on HAVE_ARM_SMCCC
-+ 	default y
-+ 	select GENERIC_PHY
-+ 	help
-+ 	  This driver allows to control the comphy, a hardware block providing
-+ 	  shared serdes PHYs on Marvell Armada 3700. Its serdes lanes can be
-+ 	  used by various controllers: Ethernet, SATA, USB3, PCIe.
-+ 
-+ config PHY_MVEBU_A3700_UTMI
-+ 	tristate "Marvell A3700 UTMI driver"
-+ 	depends on ARCH_MVEBU || COMPILE_TEST
-+ 	depends on OF
-+ 	default y
-+ 	select GENERIC_PHY
-+ 	help
-+ 	  Enable this to support Marvell A3700 UTMI PHY driver.
-+ 
- +config PHY_MVEBU_A38X_COMPHY
- +	tristate "Marvell Armada 38x comphy driver"
- +	depends on ARCH_MVEBU || COMPILE_TEST
- +	depends on OF
- +	select GENERIC_PHY
- +	help
- +	  This driver allows to control the comphy, an hardware block providing
- +	  shared serdes PHYs on Marvell Armada 38x. Its serdes lanes can be
- +	  used by various controllers (Ethernet, sata, usb, PCIe...).
- +
-  config PHY_MVEBU_CP110_COMPHY
-  	tristate "Marvell CP110 comphy driver"
-  	depends on ARCH_MVEBU || COMPILE_TEST
-diff --cc drivers/phy/marvell/Makefile
-index 59b6c03ef756,82f291cf59ee..000000000000
---- a/drivers/phy/marvell/Makefile
-+++ b/drivers/phy/marvell/Makefile
-@@@ -2,7 -2,8 +2,9 @@@
-  obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+= phy-armada375-usb2.o
-  obj-$(CONFIG_PHY_BERLIN_SATA)		+= phy-berlin-sata.o
-  obj-$(CONFIG_PHY_BERLIN_USB)		+= phy-berlin-usb.o
-+ obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+= phy-mvebu-a3700-comphy.o
-+ obj-$(CONFIG_PHY_MVEBU_A3700_UTMI)	+= phy-mvebu-a3700-utmi.o
- +obj-$(CONFIG_PHY_MVEBU_A38X_COMPHY)	+= phy-armada38x-comphy.o
-  obj-$(CONFIG_PHY_MVEBU_CP110_COMPHY)	+= phy-mvebu-cp110-comphy.o
-  obj-$(CONFIG_PHY_MVEBU_SATA)		+= phy-mvebu-sata.o
-  obj-$(CONFIG_PHY_PXA_28NM_HSIC)		+= phy-pxa-28nm-hsic.o
-
-Thanks
-Kishon
-
-The following changes since commit 827cb0323928952c0db9515aba9d534fb1285b3f:
-
-  phy: ath79-usb: Fix the main reset name to match the DT binding (2019-01-16 18:00:57 +0530)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.1
-
-for you to fetch changes up to 203d9b11928cf68907344c24bd78726fa69de6cb:
-
-  phy: qcom-qmp: Add QMP UFS PHY support for msm8998 (2019-02-12 13:02:38 +0530)
-
-----------------------------------------------------------------
-phy: for 5.1
-
-  *) Add a new driver to support Armada 3700 COMPHY IP (supports SATA, USB3,
-     PCIe)
-  *) Add a new driver to support Armada UTMI PHY
-  *) Add a new driver to support Cadence D-PHY
-  *) Extend omap-usb2 PHY driver to be used for AM654 USB2 PHY
-  *) Extend qcom-qmp PHY driver to be used for UFS PHY and USB3 PHY in Qualcomm
-     MSM8998
-  *) Extend qcom-qusb2 PHY driver to support QUSB2 PHY in Qualcomm MSM8998
-  *) Remove module specific code that is present for drivers that can be only
-     built-in
-  *) Allow Freescale IMX8MQ USB to be used for multiple SoCs and not just
-     i.MX8MQ
-  *) Cleanups such as switch to SPDX identifier, use readl_poll_timeout macro,
-     remove unused headers etc.,
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      phy: freescale: Break dependency on SOC_IMX8MQ for USB PHY
-
-Enric Balletbo i Serra (3):
-      phy: rockchip-inno-usb2: fix misspelling and kernel-doc documentation
-      dt-bindings: phy-rockchip-inno-usb2: add documentation for extcon property
-      phy: phy-rockchip-inno-usb2: drop reading the utmi-avalid property
-
-Fabrizio Castro (1):
-      dt-bindings: rcar-gen3-phy-usb2: Add r8a774c0 support
-
-Gregory CLEMENT (1):
-      phy: armada375-usb2: switch to SPDX license identifier
-
-Jeffrey Hugo (3):
-      dt-bindings: phy-qcom: Add support for msm8998 usb
-      phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
-      phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
-
-Marc Gonzalez (3):
-      phy: qcom-ufs: Use iopoll.h readl_poll_timeout macro
-      dt-bindings: phy-qcom-qmp: Add qcom,msm8998-qmp-ufs-phy
-      phy: qcom-qmp: Add QMP UFS PHY support for msm8998
-
-Maxime Ripard (5):
-      phy: dphy: Remove unused header
-      phy: dphy: Change units of wakeup and init parameters
-      phy: dphy: Clarify lanes parameter documentation
-      dt-bindings: phy: Move the Cadence D-PHY bindings
-      phy: Add Cadence D-PHY support
-
-Miquel Raynal (7):
-      phy: mvebu-cp110-comphy: fix port check in ->xlate()
-      phy: add A3700 COMPHY support
-      dt-bindings: phy: mvebu-comphy: extend the file to describe a3700 bindings
-      MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
-      phy: add A3700 UTMI PHY driver
-      dt-bindings: phy: mvebu-utmi: add UTMI PHY bindings
-      MAINTAINERS: phy: fill Armada 3700 PHY drivers entry
-
-Paul Gortmaker (3):
-      phy: make phy-core explicitly non-modular
-      phy: make phy-mvebu-sata explicitly non-modular
-      phy: make phy-armada375-usb2 explicitly non-modular
-
-Qingmin Liu (1):
-      phy: bcm-sr-pcie: Change operation when PIPEMUX=1
-
-Roger Quadros (4):
-      phy: ti: usb2: Fix logic on -EPROBE_DEFER
-      phy: ti: Don't depend on OMAP_OCP2SCP
-      dt-bindings: phy: ti: Add support for AM654x USB2 PHY
-      phy: ti: usb2: Add support for AM654 USB2 PHY
-
- Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt    |  21 -------
- Documentation/devicetree/bindings/phy/cdns,dphy.txt              |  20 +++++++
- Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt       |  65 ++++++++++++++++++----
- Documentation/devicetree/bindings/phy/phy-mvebu-utmi.txt         |  38 +++++++++++++
- Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt |   2 +
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt           |   9 +++
- Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt         |   1 +
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt     |   2 +
- Documentation/devicetree/bindings/phy/ti-phy.txt                 |   1 +
- MAINTAINERS                                                      |   8 +++
- drivers/phy/broadcom/phy-bcm-sr-pcie.c                           |   4 +-
- drivers/phy/cadence/Kconfig                                      |  13 ++++-
- drivers/phy/cadence/Makefile                                     |   1 +
- drivers/phy/cadence/cdns-dphy.c                                  | 391 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/freescale/Kconfig                                    |   2 +-
- drivers/phy/marvell/Kconfig                                      |  21 +++++++
- drivers/phy/marvell/Makefile                                     |   2 +
- drivers/phy/marvell/phy-armada375-usb2.c                         |  13 +----
- drivers/phy/marvell/phy-mvebu-a3700-comphy.c                     | 318 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/marvell/phy-mvebu-a3700-utmi.c                       | 278 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c                     |   2 -
- drivers/phy/marvell/phy-mvebu-sata.c                             |   9 +--
- drivers/phy/phy-core-mipi-dphy.c                                 |   8 +--
- drivers/phy/phy-core.c                                           |  12 +---
- drivers/phy/qualcomm/phy-qcom-qmp.c                              | 143 ++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.h                              |   4 ++
- drivers/phy/qualcomm/phy-qcom-qusb2.c                            |  40 ++++++++++++++
- drivers/phy/qualcomm/phy-qcom-ufs-i.h                            |  19 +------
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c                    |  48 +++++++---------
- drivers/phy/ti/Kconfig                                           |   6 +-
- drivers/phy/ti/phy-omap-usb2.c                                   | 105 +++++++++++++++++++++--------------
- include/linux/phy/phy-mipi-dphy.h                                |  13 ++---
- 32 files changed, 1449 insertions(+), 170 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/phy-mvebu-utmi.txt
- create mode 100644 drivers/phy/cadence/cdns-dphy.c
- create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-comphy.c
- create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-utmi.c
--- 
-2.17.1
-
+Notifications sent in an atomic context can be handled by drivers
+directly in this context. Similar to how FDB/route/neighbour are
+handled. It will really simplify things. No need for the defer flag
+anymore and tricks like 'PORT_BRIDGE_FLAGS_SUPPORT' and
+'PORT_PRE_BRIDGE_FLAGS'. In the atomic context the driver can veto the
+requested bridge flags, but program the device from a blocking context
+(using a workqueue).
