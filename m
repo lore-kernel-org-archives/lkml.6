@@ -2,169 +2,116 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F23C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB30C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A89217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:31:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c0H33+R4"
+	by mail.kernel.org (Postfix) with ESMTP id 8A953217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549953412;
+	bh=7lELHqEozBe706CdEhvF9P6fdK70nzkszgw7c7Xiom8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KuKMZWQeetq9VcATxzko6Eq80DFGuYl2xSiM+zpMxLrUnxFIOrQv+ggK4BXjrVHY1
+	 wG3pGVCCWTgX5DARGyDKE0nbLX35YxcpgBxTayYB+JzsyFduMYvrdW9ZnP6EvSrzMi
+	 c9VBlr9zBQemCv8Mq9JmJcMPwVMwKtiNgOOyfw48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfBLGbb (ORCPT
+        id S1727208AbfBLGgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 01:31:31 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35344 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfBLGbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 01:31:31 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j13-v6so1224402ljc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 22:31:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=aVP5XYAS7tHykRSOBhbLFEQxPSUg4oRdQaj9g1wwC/I=;
-        b=c0H33+R4OQphPg+Q0eLrVdyJW1XGiZ6+WAP+jl0xY/qhCakt7pwV3a9f5t5tK9buD4
-         L5Vb9QpYWK0SzfQ1GfEY4XpFDWbilAVeBCIf0E+ZcmiqbWyOHUhBUoWwwlgfZ79d7fLi
-         ZVh6qp+tSVWjiLyCvFtoP8gYrMYR45/d+pVA3RA0ATjE+x5RoTGbKMQ6y2X/qNRJvNLq
-         OwR0+TXZyseTrPwyUH5TtLjlxjrlz1uki5HAX848T4saPu9oEhEEA96VXp3Ud8Gqmn2O
-         pJ5Ji3q/DtaTYkWCGTuBRFH2YsCX+AXcS7PsUKhqimA3NSlyyGLGvJOXI3eZIXUcigNo
-         dI9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=aVP5XYAS7tHykRSOBhbLFEQxPSUg4oRdQaj9g1wwC/I=;
-        b=QQ3sasnZLjDkZPUNYush30JMfPjYMBIrsujCxGPd/n2s0UkclsgcqpwVOj+rLsZcVs
-         ADADpzPjr79bfxRnnRkoZe8xwRM+VkcSeuIy0hLbRoIgjxsdu7+oKTTCzdwY/hB7tcBe
-         O3XNei1BcHAviR2grsQwoPyYQD+iF+gCdn7aog9i1NHtZvQ1/qXQMW4mm20e6P5VDqVm
-         QsxIJDK8L9tN6PUBsRnWoItHp35x4TLdhtRgxfOP0slGHRYqVSGR/xKaqhFN2zYPqHgj
-         9Pepyx9ti5GpdeyE3VY/jlinzVAHTIrUtMqdyn86iqLglClzIyQ8dZIXku0fI9dqyZyn
-         6khw==
-X-Gm-Message-State: AHQUAuYQlMPS+OaFMDcJMehEPk0l5slJejP49AkZFed5UeNnTPtUEwOV
-        2+VwWSEHgqtY+UcjXBZ1n+XFImvcAmluUBt5yI5gqA==
-X-Google-Smtp-Source: AHgI3IYv5/vbWTIwxhhnOX+kApsDr4XXCuBM2h2tvLBSLHAL03hG9H5/xgKIuWi+gwERnp04zHbtYRWyebJH5KnmM8k=
-X-Received: by 2002:a2e:9a58:: with SMTP id k24mr1333273ljj.136.1549953088894;
- Mon, 11 Feb 2019 22:31:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211141811.964925535@linuxfoundation.org>
-In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 12 Feb 2019 12:01:17 +0530
-Message-ID: <CA+G9fYsO4TinFg5u1SR9BDpSmCADvXvmKacJT-9_i8GCNr=L8Q@mail.gmail.com>
-Subject: Re: [PATCH 4.9 000/137] 4.9.156-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 12 Feb 2019 01:36:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57950 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725930AbfBLGgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 01:36:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5F9C3AC4C;
+        Tue, 12 Feb 2019 06:36:47 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 07:36:43 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jann Horn <jannh@google.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Chinner <david@fromorbit.com>,
+        Kevin Easton <kevin@guarana.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Daniel Gruss <daniel@gruss.cc>, Josh Snyder <joshs@netflix.com>
+Subject: Re: [PATCH 3/3] mm/mincore: provide mapped status when cached status
+ is not allowed
+Message-ID: <20190212063643.GL15609@dhcp22.suse.cz>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
+ <20190130124420.1834-1-vbabka@suse.cz>
+ <20190130124420.1834-4-vbabka@suse.cz>
+ <20190131100907.GS18811@dhcp22.suse.cz>
+ <99ee4d3e-aeb2-0104-22be-b028938e7f88@suse.cz>
+ <nycvar.YFH.7.76.1902120440430.11598@cbobk.fhfr.pm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1902120440430.11598@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 at 20:35, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.9.156 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Feb 13 14:17:22 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.156-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue 12-02-19 04:44:30, Jiri Kosina wrote:
+> On Fri, 1 Feb 2019, Vlastimil Babka wrote:
+> 
+> > >> After "mm/mincore: make mincore() more conservative" we sometimes restrict the
+> > >> information about page cache residency, which we have to do without breaking
+> > >> existing userspace, if possible. We thus fake the resulting values as 1, which
+> > >> should be safer than faking them as 0, as there might theoretically exist code
+> > >> that would try to fault in the page(s) until mincore() returns 1.
+> > >>
+> > >> Faking 1 however means that such code would not fault in a page even if it was
+> > >> not in page cache, with unwanted performance implications. We can improve the
+> > >> situation by revisting the approach of 574823bfab82 ("Change mincore() to count
+> > >> "mapped" pages rather than "cached" pages") but only applying it to cases where
+> > >> page cache residency check is restricted. Thus mincore() will return 0 for an
+> > >> unmapped page (which may or may not be resident in a pagecache), and 1 after
+> > >> the process faults it in.
+> > >>
+> > >> One potential downside is that mincore() will be again able to recognize when a
+> > >> previously mapped page was reclaimed. While that might be useful for some
+> > >> attack scenarios, it's not as crucial as recognizing that somebody else faulted
+> > >> the page in, and there are also other ways to recognize reclaimed pages anyway.
+> > > 
+> > > Is this really worth it? Do we know about any specific usecase that
+> > > would benefit from this change? TBH I would rather wait for the report
+> > > than add a hard to evaluate side channel.
+> > 
+> > Well it's not that complicated IMHO. Linus said it's worth trying, so
+> > let's see how he likes the result. The side channel exists anyway as
+> > long as process can e.g. check if its rss shrinked, and I doubt we are
+> > going to remove that possibility.
+> 
+> So, where do we go from here?
+> 
+> Either Linus and Andrew like the mincore() return value tweak, or this 
+> could be further discussed (*). But in either of the cases, I think 
+> patches 1 and 2 should be at least queued for 5.1.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I would go with patch 1 for 5.1. Patches 2 still sounds controversial or
+incomplete to me. And patch 3, well I will leave the decision to
+Andrew/Linus.
 
-Summary
-------------------------------------------------------------------------
+> (*) I'd personally include it as well, as I don't see how it would break 
+>     anything, it's pretty straightforward, and brings back some sanity to
+>     mincore() return value.
 
-kernel: 4.9.156-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: 850a7fe2357647de8e0edd435525ac5a19e99cbf
-git describe: v4.9.155-138-g850a7fe23576
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.155-138-g850a7fe23576
-
-
-No regressions (compared to build v4.9.155)
-
-No fixes (compared to build v4.9.155)
-
-Ran 22129 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Michal Hocko
+SUSE Labs
