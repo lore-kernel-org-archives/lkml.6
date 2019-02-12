@@ -2,123 +2,95 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8E1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFDCC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D723218CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E614620855
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbfBLQeg (ORCPT
+        id S1731082AbfBLQfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:34:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727372AbfBLQeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:34:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4F26AD17;
-        Tue, 12 Feb 2019 16:34:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2ED141E09C5; Tue, 12 Feb 2019 17:34:33 +0100 (CET)
-Date:   Tue, 12 Feb 2019 17:34:33 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190212163433.GD19076@quack2.suse.cz>
-References: <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
- <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
- <20190211182649.GD24692@ziepe.ca>
- <20190211184040.GF12668@bombadil.infradead.org>
- <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com>
- <20190211204945.GF24692@ziepe.ca>
- <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
- <20190211210956.GG24692@ziepe.ca>
+        Tue, 12 Feb 2019 11:35:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40042 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727372AbfBLQfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:35:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3678BA78;
+        Tue, 12 Feb 2019 08:35:36 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB3533F675;
+        Tue, 12 Feb 2019 08:35:33 -0800 (PST)
+Date:   Tue, 12 Feb 2019 16:35:29 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Maya Nakamura <m.maya.nakamura@gmail.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Subject: Re: [PATCH v2 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
+Message-ID: <20190212163529.GB28306@e107981-ln.cambridge.arm.com>
+References: <cover.1548489092.git.m.maya.nakamura@gmail.com>
+ <2fa660dc51189316590021c4ee8aeaac79b8270f.1548489092.git.m.maya.nakamura@gmail.com>
+ <BL0PR2101MB09148DD8AB57D5CD2C41A797D7950@BL0PR2101MB0914.namprd21.prod.outlook.com>
+ <20190129054930.GA1269@m-hyperV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211210956.GG24692@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129054930.GA1269@m-hyperV>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 11-02-19 14:09:56, Jason Gunthorpe wrote:
-> On Mon, Feb 11, 2019 at 01:02:37PM -0800, Dan Williams wrote:
-> > On Mon, Feb 11, 2019 at 12:49 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > >
-> > > On Mon, Feb 11, 2019 at 11:58:47AM -0800, Dan Williams wrote:
-> > > > On Mon, Feb 11, 2019 at 10:40 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > On Mon, Feb 11, 2019 at 11:26:49AM -0700, Jason Gunthorpe wrote:
-> > > > > > On Mon, Feb 11, 2019 at 10:19:22AM -0800, Ira Weiny wrote:
-> > > > > > > What if user space then writes to the end of the file with a regular write?
-> > > > > > > Does that write end up at the point they truncated to or off the end of the
-> > > > > > > mmaped area (old length)?
-> > > > > >
-> > > > > > IIRC it depends how the user does the write..
-> > > > > >
-> > > > > > pwrite() with a given offset will write to that offset, re-extending
-> > > > > > the file if needed
-> > > > > >
-> > > > > > A file opened with O_APPEND and a write done with write() should
-> > > > > > append to the new end
-> > > > > >
-> > > > > > A normal file with a normal write should write to the FD's current
-> > > > > > seek pointer.
-> > > > > >
-> > > > > > I'm not sure what happens if you write via mmap/msync.
-> > > > > >
-> > > > > > RDMA is similar to pwrite() and mmap.
-> > > > >
-> > > > > A pertinent point that you didn't mention is that ftruncate() does not change
-> > > > > the file offset.  So there's no user-visible change in behaviour.
-> > > >
-> > > > ...but there is. The blocks you thought you freed, especially if the
-> > > > system was under -ENOSPC pressure, won't actually be free after the
-> > > > successful ftruncate().
-> > >
-> > > They won't be free after something dirties the existing mmap either.
-> > >
-> > > Blocks also won't be free if you unlink a file that is currently still
-> > > open.
-> > >
-> > > This isn't really new behavior for a FS.
+On Mon, Jan 28, 2019 at 09:49:32PM -0800, Maya Nakamura wrote:
+> On Sun, Jan 27, 2019 at 05:11:48AM +0000, Michael Kelley wrote:
+> > From: Maya Nakamura <m.maya.nakamura@gmail.com>  Sent: Saturday, January 26, 2019 12:52 AM
+> > > 
+> > > Remove a duplicate definition of VP set (hv_vp_set) and use the common
+> > > definition (hv_vpset) that is used in other places.
+> > > 
+> > > Change the order of the members in struct hv_pcibus_device so that the
+> > > declaration of retarget_msi_interrupt_params is the last member. Struct
+> > > hv_vpset, which contains a flexible array, is nested two levels deep in
+> > > struct hv_pcibus_device via retarget_msi_interrupt_params.
+> > > 
+> > > Add a comment that retarget_msi_interrupt_params should be the last member
+> > > of struct hv_pcibus_device.
+> > > 
+> > > Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+> > > ---
+> > > Change in v2:
+> > > - None
+> > > 
 > > 
-> > An mmap write after a fault due to a hole punch is free to trigger
-> > SIGBUS if the subsequent page allocation fails.
+> > Right -- there was no code change.  But it's customary to note that
+> > you updated the commit message.
+> > 
+> Thank you for your feedback. I will edit the change log in v3.
 > 
-> Isn't that already racy? If the mmap user is fast enough can't it
-> prevent the page from becoming freed in the first place today?
+> > Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
 
-No, it cannot. We block page faulting for the file (via a lock), tear down
-page tables, free pages and blocks. Then we resume faults and return
-SIGBUS (if the page ends up being after the new end of file in case of
-truncate) or do new page fault and fresh block allocation (which can end
-with SIGBUS if the filesystem cannot allocate new block to back the page).
+Are you really sure there is no behavioural change ? What piece of
+code allocates hv_vpset.bank_contents[] memory with this patch applied ?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I suspect the current code does not use hv_vpset for this specific
+reason, ie allocate struct hv_vp_set.masks array memory statically.
+
+Lorenzo
