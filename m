@@ -2,219 +2,201 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3EDC4151A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD682C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C615D217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBD9214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:20:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="jtkrfv5h"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uzc9e6OS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfBLBIp (ORCPT
+        id S1726363AbfBLBUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 20:08:45 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43865 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfBLBIo (ORCPT
+        Mon, 11 Feb 2019 20:20:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40474 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfBLBUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 20:08:44 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v28so393352pgk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 17:08:43 -0800 (PST)
+        Mon, 11 Feb 2019 20:20:38 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q1so836435wrp.7;
+        Mon, 11 Feb 2019 17:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=WfZyIsccqWR3lZErvejq0nP1VhlSzDJCMVE8xMZxBo4=;
-        b=jtkrfv5h0Z5ESOjhOeJ+kwO2Ti2RhZaG9kOTT32sBA33x6st698ZR104Kzny8NB9Gg
-         8BBn24As3ax0MfwHfqh03vMdOsNkun4gA5eQAn+8U0jrslgVwBGMd/XTec5AbF37LhYW
-         YoRYcglS/a37IsHlilhe4vSt8Gq0twliHzroY=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=EgLaCrrg+rEM+zWvavr49CeHkq97YjP+4BZM2b2bB48=;
+        b=Uzc9e6OS3wYobpzCPAuolRPLOSkEGUPrOmSF5fteNzsviQrHn+Qe1ajWiY25kyMWsL
+         o6OlylIVMuq8VAgpsmPmfHoH173Si37MNRImlm3lB6fIu4uCaFGnm+frOC3VvR97CjSa
+         7RPz+fk7iWYaZWZfbjXyjCAQaFrsno3WJH7tu5qkYO8ahSGv+rd2THcsEz80vSn5/Ogv
+         QSYPyuMMS5mi4V0Lft9mucmfTyyS2mY0SbxbEoqsSEMq7iIzR0EZIyoQw8pShe8/ydSR
+         MQgbUe+LP8SNtC5CY1RelKE4mu0YX2dAMGgr0APleNVYifBIn0XDioqXix1lUPyqEqfq
+         WcXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=WfZyIsccqWR3lZErvejq0nP1VhlSzDJCMVE8xMZxBo4=;
-        b=Yh8hLMnoy9B092jR9WmurZNdUys7nNlRkNQditzbzG8k1YgDqDEuKAV1w47zwbTd0c
-         Hwcc65iZvXarcCajjpmITQQ7E7mInuCp0VekLFK5NpqV+L4V8c0tWN6GFwemkxzLTZeN
-         HFO56WSDRsUJupMSXMG9O0fxwFjBJjw242IQFPOeXcAoDlJeOvSx6HL2Zi0x/zrNxi5q
-         XYFIKAyHl+ih5yQTqYHQgYrAOeWRec3iI/8EE/JlUKm1t7Bigp/cMuEyTl3tTJrwTrjM
-         qG0A4yQmAoykmH1AmuHelucyJUJoO1PuIOv6AaUzCsOUJE997GKjPSxQ+jh8V/P+153l
-         wyNA==
-X-Gm-Message-State: AHQUAuabQ/cJLevV6vVmx5VXiS358s0u81aN8uYZpSRWhqMqvXfC0ns0
-        0rWb0cx8hhQ2hNbGyFiGpY7Haw==
-X-Google-Smtp-Source: AHgI3IYwyw2dUTqU1GUA+O3qTH7XPl2tZBiWgJCD013uPJgIBjqRK0tLqD7dhhCkrMJ3SKiUfeDYFw==
-X-Received: by 2002:a62:ca03:: with SMTP id n3mr1216531pfg.241.1549933723290;
-        Mon, 11 Feb 2019 17:08:43 -0800 (PST)
-Received: from localhost (124-171-97-196.dyn.iinet.net.au. [124.171.97.196])
-        by smtp.gmail.com with ESMTPSA id o126sm7732968pfb.126.2019.02.11.17.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 17:08:42 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        christophe leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
-In-Reply-To: <805fbf9d-a10f-03e0-aa52-6f6bd16059b9@virtuozzo.com>
-References: <cover.1548166824.git.christophe.leroy@c-s.fr> <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr> <87ef8i45km.fsf@dja-thinkpad.axtens.net> <69720148-fd19-0810-5a1d-96c45e2ec00c@c-s.fr> <CAAeHK+wcUwLiSQffUkcyiH2fuox=VihJadEqQqRG1YfU3Y2gDA@mail.gmail.com> <f8b9e9ec-991b-6824-46c2-f7fc0aaa7fb8@c-s.fr> <CAAeHK+zop5ajOJQ4KEYbuxMRegk2GM1LvuGcSbCU1O5EZxB0MA@mail.gmail.com> <805fbf9d-a10f-03e0-aa52-6f6bd16059b9@virtuozzo.com>
-Date:   Tue, 12 Feb 2019 12:08:36 +1100
-Message-ID: <87imxpak4r.fsf@linkitivity.dja.id.au>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=EgLaCrrg+rEM+zWvavr49CeHkq97YjP+4BZM2b2bB48=;
+        b=cNqZ+P+n1bQnYzTZG42GS8wYXRUJjC2ro+xDFJdNrdAcqWjhOtDl89Lk6JwolFmJb+
+         AXjuUYE9UQdcejkpLXbGInW+6lQ3VmUaV3yIi9eQ+TdA57EMq9hnk6aqmnwcmUbBpI6X
+         oh6E2V6Q8ugfBYqOlJG2EtSacOqNTYPJkZn1dys31UncCC+eoTXvyldFvnU03mD1+gmp
+         c2T73nqfDYU/oGW47J1rQVitlQRcIwC1nZ40X1eH28xyCMrd36ioVQugEkQzmh1oFABk
+         6tKK+DQ6KEUevuZQR+cpJlj2ScmlyeD3bX2YrJsEHFpVgiFPCRtPLO1Mu+WJg8q1cyTd
+         KETA==
+X-Gm-Message-State: AHQUAubt9fZyMjM82heVGb1OR5oswIQJwF2tcyuMkYK1YASqcWOFhdV7
+        QaYWsfNgeTcRr8WYttE9v+T1TC9s
+X-Google-Smtp-Source: AHgI3IYiknGAMwPn6cnNLiudpgYUU5vFgGwEN9pAPT3oHUgUG0qlBFHg1btYDHVw7oqvtN8ZO4FIJw==
+X-Received: by 2002:adf:e342:: with SMTP id n2mr738900wrj.60.1549934435138;
+        Mon, 11 Feb 2019 17:20:35 -0800 (PST)
+Received: from [172.30.89.184] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id x186sm1538900wmg.41.2019.02.11.17.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 17:20:34 -0800 (PST)
+Subject: Re: [PATCH v4 3/4] gpu: ipu-v3: ipu-ic: Add support for BT.709
+ encoding
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+ <20190209014748.10427-4-slongerbeam@gmail.com>
+ <1549879951.7687.6.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <440e12af-33ea-5eac-e570-8afa74e3133c@gmail.com>
+Date:   Mon, 11 Feb 2019 17:20:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1549879951.7687.6.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrey Ryabinin <aryabinin@virtuozzo.com> writes:
 
-> On 2/11/19 3:25 PM, Andrey Konovalov wrote:
->> On Sat, Feb 9, 2019 at 12:55 PM christophe leroy
->> <christophe.leroy@c-s.fr> wrote:
->>>
->>> Hi Andrey,
->>>
->>> Le 08/02/2019 =C3=A0 18:40, Andrey Konovalov a =C3=A9crit :
->>>> On Fri, Feb 8, 2019 at 6:17 PM Christophe Leroy <christophe.leroy@c-s.=
-fr> wrote:
->>>>>
->>>>> Hi Daniel,
->>>>>
->>>>> Le 08/02/2019 =C3=A0 17:18, Daniel Axtens a =C3=A9crit :
->>>>>> Hi Christophe,
->>>>>>
->>>>>> I've been attempting to port this to 64-bit Book3e nohash (e6500),
->>>>>> although I think I've ended up with an approach more similar to Anee=
-sh's
->>>>>> much earlier (2015) series for book3s.
->>>>>>
->>>>>> Part of this is just due to the changes between 32 and 64 bits - we =
-need
->>>>>> to hack around the discontiguous mappings - but one thing that I'm
->>>>>> particularly puzzled by is what the kasan_early_init is supposed to =
-do.
->>>>>
->>>>> It should be a problem as my patch uses a 'for_each_memblock(memory,
->>>>> reg)' loop.
->>>>>
->>>>>>
->>>>>>> +void __init kasan_early_init(void)
->>>>>>> +{
->>>>>>> +    unsigned long addr =3D KASAN_SHADOW_START;
->>>>>>> +    unsigned long end =3D KASAN_SHADOW_END;
->>>>>>> +    unsigned long next;
->>>>>>> +    pmd_t *pmd =3D pmd_offset(pud_offset(pgd_offset_k(addr), addr)=
-, addr);
->>>>>>> +    int i;
->>>>>>> +    phys_addr_t pa =3D __pa(kasan_early_shadow_page);
->>>>>>> +
->>>>>>> +    BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
->>>>>>> +
->>>>>>> +    if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
->>>>>>> +            panic("KASAN not supported with Hash MMU\n");
->>>>>>> +
->>>>>>> +    for (i =3D 0; i < PTRS_PER_PTE; i++)
->>>>>>> +            __set_pte_at(&init_mm, (unsigned long)kasan_early_shad=
-ow_page,
->>>>>>> +                         kasan_early_shadow_pte + i,
->>>>>>> +                         pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
->>>>>>> +
->>>>>>> +    do {
->>>>>>> +            next =3D pgd_addr_end(addr, end);
->>>>>>> +            pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_=
-pte);
->>>>>>> +    } while (pmd++, addr =3D next, addr !=3D end);
->>>>>>> +}
->>>>>>
->>>>>> As far as I can tell it's mapping the early shadow page, read-only, =
-over
->>>>>> the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the e=
-arly
->>>>>> shadow PTE array from the generic code.
->>>>>>
->>>>>> I haven't been able to find an answer to why this is in the docs, so=
- I
->>>>>> was wondering if you or anyone else could explain the early part of
->>>>>> kasan init a bit better.
->>>>>
->>>>> See https://www.kernel.org/doc/html/latest/dev-tools/kasan.html for an
->>>>> explanation of the shadow.
->>>>>
->>>>> When shadow is 0, it means the memory area is entirely accessible.
->>>>>
->>>>> It is necessary to setup a shadow area as soon as possible because all
->>>>> data accesses check the shadow area, from the begining (except for a =
-few
->>>>> files where sanitizing has been disabled in Makefiles).
->>>>>
->>>>> Until the real shadow area is set, all access are granted thanks to t=
-he
->>>>> zero shadow area beeing for of zeros.
->>>>
->>>> Not entirely correct. kasan_early_init() indeed maps the whole shadow
->>>> memory range to the same kasan_early_shadow_page. However as kernel
->>>> loads and memory gets allocated this shadow page gets rewritten with
->>>> non-zero values by different KASAN allocator hooks. Since these values
->>>> come from completely different parts of the kernel, but all land on
->>>> the same page, kasan_early_shadow_page's content can be considered
->>>> garbage. When KASAN checks memory accesses for validity it detects
->>>> these garbage shadow values, but doesn't print any reports, as the
->>>> reporting routine bails out on the current->kasan_depth check (which
->>>> has the value of 1 initially). Only after kasan_init() completes, when
->>>> the proper shadow memory is mapped, current->kasan_depth gets set to 0
->>>> and we start reporting bad accesses.
->>>
->>> That's surprising, because in the early phase I map the shadow area
->>> read-only, so I do not expect it to get modified unless RO protection is
->>> failing for some reason.
->>=20
->> Actually it might be that the allocator hooks don't modify shadow at
->> this point, as the allocator is not yet initialized. However stack
->> should be getting poisoned and unpoisoned from the very start. But the
->> generic statement that early shadow gets dirtied should be correct.
->> Might it be that you don't use stack instrumentation?
->>=20
+
+On 2/11/19 2:12 AM, Philipp Zabel wrote:
+> On Fri, 2019-02-08 at 17:47 -0800, Steve Longerbeam wrote:
+>> Pass v4l2 encoding enum to the ipu_ic task init functions, and add
+>> support for the BT.709 encoding and inverse encoding matrices.
+>>
+>> Reported-by: Tim Harvey <tharvey@gateworks.com>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> ---
+>> Changes in v4:
+>> - fix compile error.
+>> Chnges in v3:
+>> - none.
+>> Changes in v2:
+>> - only return "Unsupported YCbCr encoding" error if inf != outf,
+>>    since if inf == outf, the identity matrix can be used. Reported
+>>    by Tim Harvey.
+>> ---
+>>   drivers/gpu/ipu-v3/ipu-ic.c                 | 71 +++++++++++++++++++--
+>>   drivers/gpu/ipu-v3/ipu-image-convert.c      |  1 +
+>>   drivers/staging/media/imx/imx-ic-prpencvf.c |  4 +-
+>>   include/video/imx-ipu-v3.h                  |  5 +-
+>>   4 files changed, 71 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+>> index e459615a49a1..c5f83d7e357f 100644
+>> --- a/drivers/gpu/ipu-v3/ipu-ic.c
+>> +++ b/drivers/gpu/ipu-v3/ipu-ic.c
+>> @@ -212,6 +212,23 @@ static const struct ic_csc_params ic_csc_identity = {
+>>   	.scale = 2,
+>>   };
+>>   
+>> +/*
+>> + * BT.709 encoding from RGB full range to YUV limited range:
+>> + *
+>> + * Y = R *  .2126 + G *  .7152 + B *  .0722;
+>> + * U = R * -.1146 + G * -.3854 + B *  .5000 + 128.;
+>> + * V = R *  .5000 + G * -.4542 + B * -.0458 + 128.;
+> This is a conversion to YUV full range. Limited range should be:
 >
-> Yes, stack instrumentation is not used here, because shadow offset which =
-we pass to
-> the -fasan-shadow-offset=3D cflag is not specified here. So the logic in =
-scrpits/Makefile.kasan
-> just fallbacks to CFLAGS_KASAN_MINIMAL, which is outline and without stac=
-k instrumentation.
+> Y   R *  .1826 + G *  .6142 + B *  .0620 + 16;
+> U = R * -.1007 + G * -.3385 + B *  .4392 + 128;
+> V   R *  .4392 + G * -.3990 + B * -.0402 + 128;
+
+Yep, I fixed these to encode to limited range YUV, and ...
+
+>> + */
+>> +static const struct ic_csc_params ic_csc_rgb2ycbcr_bt709 = {
+>> +	.coeff = {
+>> +		{ 54, 183, 18 },
+>> +		{ 483, 413, 128 },
+>> +		{ 128, 396, 500 },
+>> +	},
+>> +	.offset = { 0, 512, 512 },
+>> +	.scale = 1,
+>> +};
+>> +
+>>   /*
+>>    * Inverse BT.601 encoding from YUV limited range to RGB full range:
+>>    *
+>> @@ -229,12 +246,31 @@ static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+>>   	.scale = 2,
+>>   };
+>>   
+>> +/*
+>> + * Inverse BT.709 encoding from YUV limited range to RGB full range:
+>> + *
+>> + * R = (1. * (Y - 16)) + (1.5748 * (Cr - 128));
+>> + * G = (1. * (Y - 16)) - (0.1873 * (Cb - 128)) - (0.4681 * (Cr - 128));
+>> + * B = (1. * (Y - 16)) + (1.8556 * (Cb - 128);
+> The coefficients look like full range again, conversion from limited
+> range YUV should look like:
 >
-> Christophe, you can specify KASAN_SHADOW_OFFSET either in Kconfig (e.g. x=
-86_64) or
-> in Makefile (e.g. arm64). And make early mapping writable, because compil=
-er generated code will write
-> to shadow memory in function prologue/epilogue.
+>    R = (1.1644 * (Y - 16)) + (1.7927 * (Cr - 128));
+>    G = (1.1644 * (Y - 16)) - (0.2132 * (Cb - 128)) - (0.5329 * (Cr - 128));
+>    B = (1.1644 * (Y - 16)) + (2.1124 * (Cb - 128);
 
-Hmm. Is this limitation just that compilers have not implemented
-out-of-line support for stack instrumentation, or is there a deeper
-reason that stack/global instrumentation relies upon inline
-instrumentation?
+fixed these to inverse encode from limited range YUV.
 
-I ask because it's very common on ppc64 to have the virtual address
-space split up into discontiguous blocks. I know this means we lose
-inline instrumentation, but I didn't realise we'd also lose stack and
-global instrumentation...
+>> + */
+>> +static const struct ic_csc_params ic_csc_ycbcr2rgb_bt709 = {
+>> +	.coeff = {
+>> +		{ 128, 0, 202 },
+>> +		{ 128, 488, 452 },
+>> +		{ 128, 238, 0 },
+>> +	},
+>> +	.offset = { -435, 136, -507 },
+>> +	.scale = 2,
+>> +};
+>> +
+>>   static int init_csc(struct ipu_ic *ic,
+>>   		    enum ipu_color_space inf,
+>>   		    enum ipu_color_space outf,
+>> +		    enum v4l2_ycbcr_encoding encoding,
+> Should we support YUV BT.601 <-> YUV REC.709 conversions? That would
+> require separate encodings for input and output.
 
-I wonder if it would be worth, in the distant future, trying to
-implement a smarter scheme in compilers where we could insert more
-complex inline mapping schemes.
+How about if we pass the input and output encodings to the init ic task 
+functions, but for now require they be the same? We can support 
+transcoding in a later series.
 
-Regards,
-Daniel
+>   Also, this might be a
+> good time to think about adding quantization range parameters as well.
+
+Again, I think for now, just include input/output quantization but 
+require full range for RGB and limited range for YUV.
+
+But that really balloons the arguments to ipu_ic_task_init_*(). Should 
+we create an ipu_ic_task_init structure?
+
+Steve
+
