@@ -2,130 +2,90 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368C3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BCFC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 053FC21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BBD21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549968867;
-	bh=qD4e8Rp8bvTo44CkBSBrU9RyUDIPI291RWxlCgMEDrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xd19Ahha7FRQMhneQJQT8553/l9ZmQ0yVQ1jaOthwXe6UxOVMK00zqH3KlDSBy9Zc
-	 fq7L/lPLkz7S56731MzlNmgkwKP6ee/EUpY6IvsxPbFSi9Du3pP6SqQ9ZpolK9b9oC
-	 Mze1K4HLdOhr+HixgWZ+JH1pgrYCwFUxUlW2ZZjI=
+	s=default; t=1549968885;
+	bh=thLhzasbrRN/e5PKKH8ea4a8jctA9b37oXWyV0CkXL8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2MmyiEMtWO1RxRF//q4Yy3BicrRt5Ohf0q8oCgG0Rg3WtPD4yoxU8bwcfUHFpGOkL
+	 qixaxcnidjmB+dOm2QQYysRN8qx1I/FvDw7+M3D8IO+yZGnTFsLJNQohNFIn04459C
+	 6B4ikQZTcpA/3IVvfwqyu2S8aXiEl1aOQ3BNxxF8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbfBLKyZ (ORCPT
+        id S1729134AbfBLKym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:54:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727343AbfBLKyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:54:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0AF82083B;
-        Tue, 12 Feb 2019 10:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549968864;
-        bh=qD4e8Rp8bvTo44CkBSBrU9RyUDIPI291RWxlCgMEDrs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xk3bWJ9V4nWEwroOmd5uj7f4z4Q5aoggsuObYp5F4Udm5Wqn+wEqCHF8AeDyzlbCS
-         81+0P8jbtyRpARaMGGV9BaZwVO8+YKCapSlm7yioAiG6h9IivY92Igp/P81Bi42JWa
-         rqlDvGe3VdmZiGG5amfyzE7lhEj+Hy8xI9EV/ryM=
-Date:   Tue, 12 Feb 2019 11:54:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kyle Tso <kyletso@google.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm: Export partner Source Capabilities
-Message-ID: <20190212105421.GA23271@kroah.com>
-References: <20190131035411.53576-1-kyletso@google.com>
- <20190131070238.GA4500@kroah.com>
- <CAGZ6i=07EOHqd3r9y1MpYn_e1nFeYGt_wp9arhMZWWeTBm-udA@mail.gmail.com>
+        Tue, 12 Feb 2019 05:54:42 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34667 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfBLKym (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 05:54:42 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 98so3711176oty.1;
+        Tue, 12 Feb 2019 02:54:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p9EYS1KK28bFPgtAuWV5Fqgkw/0xKBaRX+VvmQziMpI=;
+        b=oJD6SCz0GWbPCy6xRMDksio1zsv1uOZsv0IFwNzev2he/hj+FzOJQ4VcfwVQpl1/oI
+         6D5uklI+Dw638zjpi0dxwe9w3aZJjYN4nVYc6BegKEPRvFUGvm3f09oTU56UQUndaUX3
+         8sTimLrJoi+Ie9+8U6JdCIy8gju5glHt0a+MaFvKBquZIwCjr+MaoRcOaiZ0rg28/+ap
+         mcLZR8AAbuN/h/1h0dbhfNRQI56As0PnVBYFC4cPdNKo8pJSn5IeERWeteX3xYqmLVba
+         sB4p6uGcfWoHaFPbEy0+5pKmoHVAqkBSs9WPiIBRKEHHDWVyLePsn+z0sDiZ0Pn+Ykbq
+         zC4w==
+X-Gm-Message-State: AHQUAua2cOiKtzzYTwZGQMBc4eJ0tWOXsB4KJkq3WZmfSTd1ziTnSYVn
+        e4BhaKUXBUZJklgIeClWGV2YN2K0iLbGmfVucGA=
+X-Google-Smtp-Source: AHgI3Ib2rWWXZU6b+9bmMmITJA9Wkxv73r3W+brFmHXZfk2vzB31aL85FNOqMsbX9AKYuvqfFGV5Dq5iYBzGLirvB2s=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr3197406otl.343.1549968881389;
+ Tue, 12 Feb 2019 02:54:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGZ6i=07EOHqd3r9y1MpYn_e1nFeYGt_wp9arhMZWWeTBm-udA@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <f48f04ddfe3bd072f40154cdd971079199db0e4b.1549955027.git.viresh.kumar@linaro.org>
+ <15c641e4139d0b9a7d7540eefced1c012b608e91.1549968315.git.viresh.kumar@linaro.org>
+In-Reply-To: <15c641e4139d0b9a7d7540eefced1c012b608e91.1549968315.git.viresh.kumar@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Feb 2019 11:54:29 +0100
+Message-ID: <CAJZ5v0hez63un9g4h0U+YOZV1o7S+FT8NritiX6dxEcD1-fTSQ@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] cpufreq: Allow light-weight tear down and bring up
+ of CPUs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 06:29:39PM +0800, Kyle Tso wrote:
-> On Thu, Jan 31, 2019 at 3:02 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Thu, Jan 31, 2019 at 11:54:11AM +0800, Kyle Tso wrote:
-> > > Provide a function to get the partner Source Capabilities.
-> > >
-> > > Signed-off-by: Kyle Tso <kyletso@google.com>
-> > > ---
-> > >  drivers/usb/typec/tcpm/tcpm.c | 23 +++++++++++++++++++++++
-> > >  include/linux/usb/tcpm.h      |  1 +
-> > >  2 files changed, 24 insertions(+)
-> > >
-> > > diff --git a/drivers/usb/typec/tcpm/tcpm.c
-> > b/drivers/usb/typec/tcpm/tcpm.c
-> > > index f1d3e54210df..29cd84ba9960 100644
-> > > --- a/drivers/usb/typec/tcpm/tcpm.c
-> > > +++ b/drivers/usb/typec/tcpm/tcpm.c
-> > > @@ -4494,6 +4494,29 @@ int tcpm_update_sink_capabilities(struct
-> > tcpm_port *port, const u32 *pdo,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(tcpm_update_sink_capabilities);
-> > >
-> > > +/*
-> > > + * Don't call this function in interrupt context. Caller needs to free
-> > the
-> > > + * memory itself.
-> > > + */
-> > > +int tcpm_get_partner_src_caps(struct tcpm_port *port, u32 **src_pdo)
-> > > +{
-> > > +     unsigned int nr_pdo;
-> > > +
-> > > +     if (port->nr_source_caps == 0)
-> > > +             return -ENODATA;
-> > > +
-> > > +     *src_pdo = kcalloc(port->nr_source_caps, sizeof(u32), GFP_KERNEL);
-> > > +     if (!src_pdo)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     mutex_lock(&port->lock);
-> > > +     nr_pdo = tcpm_copy_pdos(*src_pdo, port->source_caps,
-> > > +                             port->nr_source_caps);
-> > > +     mutex_unlock(&port->lock);
-> > > +     return nr_pdo;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tcpm_get_partner_src_caps);
-> >
-> > We don't add new functions that no one uses :(
-> >
-> >
-> This function is useful if the PD Device Policy Manager is implemented
-> outside of TCPM.
-> In this situation, Device Policy Manager needs to know the partner
-> capabilities to optimize
-> the charging process.
+On Tue, Feb 12, 2019 at 11:47 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
 
-And where is that code?
+[cut]
 
-> Take existing functions in TCPM for example:
-> Function "tcpm_update_sink_capabilities" and
-> "tcpm_update_source_capabilities" are exposed
-> as well. And no one uses them now.
+> @@ -2488,7 +2505,8 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
+>                     driver_data->target) ||
+>              (driver_data->setpolicy && (driver_data->target_index ||
+>                     driver_data->target)) ||
+> -            (!!driver_data->get_intermediate != !!driver_data->target_intermediate))
+> +            (!!driver_data->get_intermediate != !!driver_data->target_intermediate) ||
+> +            (!driver_data->online ^ !driver_data->offline))
 
-Great, let's go delete them now, we should not have apis that no one
-uses.  This isn't a new thing...
+Why do you need the ^ here?  != should be sufficient:
 
-thanks,
+!driver_data->online != !driver_data->offline
 
-greg k-h
+?
+
+>                 return -EINVAL;
+>
+>         pr_debug("trying to register driver %s\n", driver_data->name);
