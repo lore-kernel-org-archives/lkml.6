@@ -2,136 +2,135 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E959BC282D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 117D2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C242720863
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEDBB20863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:23:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EjwWJqM0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfBLAVr (ORCPT
+        id S1727907AbfBLAX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:21:47 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61446 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbfBLAVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:21:47 -0500
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0LeYu051397;
-        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Tue, 12 Feb 2019 09:21:40 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0Lexx051393;
-        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1C0LeYB051392;
-        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201902120021.x1C0LeYB051392@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH] LSM: Ignore =?ISO-2022-JP?B?InNlY3VyaXR5PSIgd2hlbiAibHNtPSIg?=
- =?ISO-2022-JP?B?aXMgc3BlY2lmaWVk?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Mon, 11 Feb 2019 19:23:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:34397 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727463AbfBLAX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:23:27 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43z3KR0Rz9z9s5c;
+        Tue, 12 Feb 2019 11:23:22 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549931003;
+        bh=qlM93sVZk3wnUMW9imvkqyzILREiioS1W3X/UHQfoWI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=EjwWJqM0YXEmspcwDoHiOG1RX0mInAe6mIHc7gjDs93AZB2E4mVK4ZQ0yQUT5CriA
+         a9iZ0tR95eQwelaDWEjABVztSfy+sSmY8k3ckLZ11eG45cvLOIRlzrnBkFfhG3E5DN
+         RHUiMnc3gXlaYdox0ZYA3aC2YEA3UlRS/YwesJQ5y1vkq0cnrWoa90EGPklKV815Xo
+         /g3V7TX/p/g5BTCXu4PqstSOY7s2W/ys654r8Wc3JswaC8oTejELfxJeXp+etX1GqF
+         KWeM61pogKXUDBuSZw7jLi2QLJkm+XExBjMPc65Fi3EzgeOSN1CWk0HbUCqXGV3mDr
+         vz/rZc1RqDSrw==
+Date:   Tue, 12 Feb 2019 11:23:20 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20190212112320.0996efa7@canb.auug.org.au>
 MIME-Version: 1.0
-Date:   Tue, 12 Feb 2019 09:21:40 +0900
-References: <20190211225403.GA7769@beast>
-In-Reply-To: <20190211225403.GA7769@beast>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YbkeD63/IR2nkraSiaXS+k/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook wrote:
-> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
-> used on the command line, and report that it is happening.
+--Sig_/YbkeD63/IR2nkraSiaXS+k/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-To maintain the existing behavior of CONFIG_DEFAULT_SECURITY, I also suggest this change.
-This saves e.g. Ubuntu users who are using only AppArmor from explicitly specifying
-security=apparmor when they don't want to enable other LSM_FLAG_LEGACY_MAJOR modules.
+Hi all,
 
----
- security/Kconfig    | 37 +++++++++++++++++++++++++++++++++++++
- security/security.c |  5 ++++-
- 2 files changed, 41 insertions(+), 1 deletion(-)
+Today's linux-next merge of the net-next tree got conflicts in:
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 9555f49..6a40995 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -250,5 +250,42 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+choice
-+	prompt "Default exclusive security module"
-+	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
-+	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
-+	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
-+	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
-+	default DEFAULT_SECURITY_DAC
-+
-+	help
-+	  The security module where only one of these modules should be enabled if
-+	  neither the "security=" parameter nor the "lsm=" parameter is specified.
-+
-+	config DEFAULT_SECURITY_SELINUX
-+		bool "SELinux" if SECURITY_SELINUX=y
-+
-+	config DEFAULT_SECURITY_SMACK
-+		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
-+
-+	config DEFAULT_SECURITY_TOMOYO
-+		bool "TOMOYO" if SECURITY_TOMOYO=y
-+
-+	config DEFAULT_SECURITY_APPARMOR
-+		bool "AppArmor" if SECURITY_APPARMOR=y
-+
-+	config DEFAULT_SECURITY_DAC
-+		bool "Unix Discretionary Access Controls"
-+
-+endchoice
-+
-+config DEFAULT_SECURITY
-+	string
-+	default "selinux" if DEFAULT_SECURITY_SELINUX
-+	default "smack" if DEFAULT_SECURITY_SMACK
-+	default "tomoyo" if DEFAULT_SECURITY_TOMOYO
-+	default "apparmor" if DEFAULT_SECURITY_APPARMOR
-+	default "" if DEFAULT_SECURITY_DAC
-+
- endmenu
- 
-diff --git a/security/security.c b/security/security.c
-index e6153ed..c44e3cd 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -294,8 +294,11 @@ static void __init ordered_lsm_init(void)
- 			chosen_major_lsm = NULL;
- 		}
- 		ordered_lsm_parse(chosen_lsm_order, "cmdline");
--	} else
-+	} else {
-+		if (!chosen_major_lsm)
-+			chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
- 		ordered_lsm_parse(builtin_lsm_order, "builtin");
-+	}
- 
- 	for (lsm = ordered_lsms; *lsm; lsm++)
- 		prepare_lsm(*lsm);
--- 
-1.8.3.1
+  net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
+  net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
 
+between commit:
+
+  8303b7e8f018 ("netfilter: nat: fix spurious connection timeouts")
+
+from the net tree and commit:
+
+  303e0c558959 ("netfilter: conntrack: avoid unneeded nf_conntrack_l4proto =
+lookups")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
+index fa2ba7c500e4,e26165af45cb..000000000000
+--- a/net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
++++ b/net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
+@@@ -214,8 -214,7 +214,8 @@@ int nf_nat_icmp_reply_translation(struc
+  	}
+ =20
+  	/* Change outer to look like the reply to an incoming packet */
+- 	nf_ct_invert_tuplepr(&target, &ct->tuplehash[!dir].tuple);
++ 	nf_ct_invert_tuple(&target, &ct->tuplehash[!dir].tuple);
+ +	target.dst.protonum =3D IPPROTO_ICMP;
+  	if (!nf_nat_ipv4_manip_pkt(skb, 0, &target, manip))
+  		return 0;
+ =20
+diff --cc net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+index 7a41ee3c11b4,9c914db44bec..000000000000
+--- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+@@@ -225,8 -225,7 +225,8 @@@ int nf_nat_icmpv6_reply_translation(str
+  						     skb->len - hdrlen, 0));
+  	}
+ =20
+- 	nf_ct_invert_tuplepr(&target, &ct->tuplehash[!dir].tuple);
++ 	nf_ct_invert_tuple(&target, &ct->tuplehash[!dir].tuple);
+ +	target.dst.protonum =3D IPPROTO_ICMPV6;
+  	if (!nf_nat_ipv6_manip_pkt(skb, 0, &target, manip))
+  		return 0;
+ =20
+
+--Sig_/YbkeD63/IR2nkraSiaXS+k/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxiEfgACgkQAVBC80lX
+0GxzNgf+PirhJ6pPEHvtapZE94AYU1Fj7a/ennZKjC239GpoG9nxN+6Zwr0ee/qD
+hf9ie8vkYtroxApeWNzoXMpefPTxNfWykXRrVIompckrjajmBBtCQWqEtIXrouTi
+2riHBXdL2r3HCdF4RCapqEuxX305Ra4jq47qqpVxxlPCpx+2LcXozSo5WLRx8l5j
+eYXcA8mQWedH9UiV7iROCjDqujaxAcirPICGo2YgFCzxg10XtpPp7PP/fWOfQPuE
+FUqsLb1+56iyj/aFvBFvyXPUR2bGLEyetbOCf098vINWPsheQ+dbTmLK3XMKBmKp
+RFzYAtWvd3LcXAvafQCTGYQnmZ55Zw==
+=ullt
+-----END PGP SIGNATURE-----
+
+--Sig_/YbkeD63/IR2nkraSiaXS+k/--
