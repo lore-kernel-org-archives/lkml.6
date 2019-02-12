@@ -2,253 +2,143 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F47C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F0BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687382084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F423B2073D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549994656;
+	bh=KQ1tAru26ad8K4/nTNyNOSY7OlDarcIC5Lvc6mgtAX4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=p/hKGOHS14VKLtKOTQmirlS4Dx08xDOO8UEwRjEDgtlXW2Rj3AszvHQYCc3Yp52Y2
+	 CFRPuEpg54s9aj4JQFU6mo5x2dDz3LsJy4myP3hkJ60JFD6ulJOiDORs1Fun0b21hY
+	 XttcM8aApAWsVfnfg84KAyOi4hcY35+bnSDAvZHg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbfBLSCc (ORCPT
+        id S1730281AbfBLSEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:02:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41474 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbfBLSCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:02:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70F181596;
-        Tue, 12 Feb 2019 10:02:31 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDEF33F675;
-        Tue, 12 Feb 2019 10:02:26 -0800 (PST)
-Date:   Tue, 12 Feb 2019 18:02:24 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Evgenii Stepanov <eugenis@google.com>
-Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Message-ID: <20190212180223.GD199333@arrakis.emea.arm.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
- <20181219125249.GB22067@e103592.cambridge.arm.com>
- <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
- <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
+        Tue, 12 Feb 2019 13:04:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726975AbfBLSEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 13:04:14 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B6142084E;
+        Tue, 12 Feb 2019 18:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549994652;
+        bh=KQ1tAru26ad8K4/nTNyNOSY7OlDarcIC5Lvc6mgtAX4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rJEcvzc2V1tAOeJb1ANqA7c5ymte/3Tgd9JRGPOgOTl6k9iieOEBMf4FLH3tGTVhs
+         Kmhd5MAEY+LRYSpvqYqBwnjuQ+NJ6/w9sl4Z36zw6wKfFTw/vprYE3LIlkW0eXY3ef
+         n6Jzn6nsHjb8e/Uke+kuZaTnVkygnveJpmTxgZik=
+Subject: Re: [PATCH v5] bluetooth: Fix WARNING in tty_set_termios()
+To:     Johan Hovold <johan@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        viro@zeniv.linux.org.uk, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190208230609.23926-1-shuah@kernel.org>
+ <20190209094239.GQ4686@localhost>
+From:   shuah <shuah@kernel.org>
+Message-ID: <ba280f2b-9340-0f6b-cd16-e9ff7cc6304f@kernel.org>
+Date:   Tue, 12 Feb 2019 11:04:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190209094239.GQ4686@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:32:55PM -0800, Evgenii Stepanov wrote:
-> On Mon, Feb 11, 2019 at 9:28 AM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
-> > On 19/12/2018 12:52, Dave Martin wrote:
-> > > Really, the kernel should do the expected thing with all "non-weird"
-> > > memory.
-> > >
-> > > In lieu of a proper definition of "non-weird", I think we should have
-> > > some lists of things that are explicitly included, and also excluded:
-> > >
-> > > OK:
-> > >       kernel-allocated process stack
-> > >       brk area
-> > >       MAP_ANONYMOUS | MAP_PRIVATE
-> > >       MAP_PRIVATE mappings of /dev/zero
-> > >
-> > > Not OK:
-> > >       MAP_SHARED
-> > >       mmaps of non-memory-like devices
-> > >       mmaps of anything that is not a regular file
-> > >       the VDSO
-> > >       ...
-> > >
-> > > In general, userspace can tag memory that it "owns", and we do not assume
-> > > a transfer of ownership except in the "OK" list above.  Otherwise, it's
-> > > the kernel's memory, or the owner is simply not well defined.
-> >
-> > Agreed on the general idea: a process should be able to pass tagged pointers at the
-> > syscall interface, as long as they point to memory privately owned by the process. I
-> > think it would be possible to simplify the definition of "non-weird" memory by using
-> > only this "OK" list:
-> > - mmap() done by the process itself, where either:
-> >    * flags = MAP_PRIVATE | MAP_ANONYMOUS
-> >    * flags = MAP_PRIVATE and fd refers to a regular file or a well-defined list of
-> > device files (like /dev/zero)
-> > - brk() done by the process itself
-> > - Any memory mapped by the kernel in the new process's address space during execve(),
-> > with the same restrictions as above ([vdso]/[vvar] are therefore excluded)
-
-Sounds reasonable.
-
-> > >   * Userspace should set tags at the point of allocation only.
-> >
-> > Yes, tags are only supposed to be set at the point of either allocation or
-> > deallocation/reallocation. However, allocators can in principle be nested, so an
-> > allocator could  take a region allocated by malloc() as input and subdivide it
-> > (changing tags in the process). That said, this suballocator must not free() that
-> > region until all the suballocations themselves have been freed (thereby restoring the
-> > tags initially set by malloc()).
-> >
-> > >   * If you don't know how an object was allocated, you cannot modify the
-> > >     tag, period.
-> >
-> > Agreed, allocators that tag memory can only operate on memory with a well-defined
-> > provenance (for instance anonymous mmap() or malloc()).
-> >
-> > >   * A single C object should be accessed using a single, fixed pointer tag
-> > >     throughout its entire lifetime.
-> >
-> > Agreed. Allocators themselves may need to be excluded though, depending on how they
-> > represent their managed memory.
-> >
-> > >   * Tags can be changed only when there are no outstanding pointers to
-> > >     the affected object or region that may be used to access the object
-> > >     or region (i.e., if the object were allocated from the C heap and
-> > >     is it safe to realloc() it, then it is safe to change the tag; for
-> > >     other types of allocation, analogous arguments can be applied).
-> >
-> > Tags can only be changed at the point of deallocation/reallocation. Pointers to the
-> > object become invalid and cannot be used after it has been deallocated; memory
-> > tagging allows to catch such invalid usage.
-
-All the above sound well but that's mostly a guideline on what a C
-library can do. It doesn't help much with defining the kernel ABI.
-Anyway, it's good to clarify the use-cases.
-
-> > >   * When the kernel dereferences a pointer on userspace's behalf, it
-> > >     shall behave equivalently to userspace dereferencing the same pointer,
-> > >     including use of the same tag (where passed by userspace).
-> > >
-> > >   * Where the pointer tag affects pointer dereference behaviour (i.e.,
-> > >     with hardware memory colouring) the kernel makes no guarantee to
-> > >     honour pointer tags correctly for every location a buffer based on a
-> > >     pointer passed by userspace to the kernel.
-> > >
-> > >     (This means for example that for a read(fd, buf, size), we can check
-> > >     the tag for a single arbitrary location in *(char (*)[size])buf
-> > >     before passing the buffer to get_user_pages().  Hopefully this could
-> > >     be done in get_user_pages() itself rather than hunting call sites.
-> > >     For userspace, it means that you're on your own if you ask the
-> > >     kernel to operate on a buffer than spans multiple, independently-
-> > >     allocated objects, or a deliberately striped single object.)
-> >
-> > I think both points are reasonable. It is very valuable for the kernel to access
-> > userspace memory using the user-provided tag, because it enables kernel accesses to
-> > be checked in the same way as user accesses, allowing to detect bugs that are
-> > potentially hard to find. For instance, if a pointer to an object is passed to the
-> > kernel after it has been deallocated, this is invalid and should be detected.
-> > However, you are absolutely right that the kernel cannot *guarantee* that such a
-> > check is carried out for the entire memory range (or in fact at all); it should be a
-> > best-effort approach.
+On 2/9/19 2:42 AM, Johan Hovold wrote:
+> On Fri, Feb 08, 2019 at 04:06:09PM -0700, Shuah Khan wrote:
+>> tty_set_termios() has the following WARN_ON which can be triggered with a
+>> syscall to invoke TIOCSETD __NR_ioctl.
+>>
+>> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+>>                  tty->driver->subtype == PTY_TYPE_MASTER);
+>> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+>>
+>> "The problem started with commit 7721383f4199 ("Bluetooth: hci_uart: Support
+>> operational speed during setup") which introduced a new way for how
+>> tty_set_termios() could end up being called for a master pty."
+>>
+>> Fix hci_uart_tty_open() to check if tty supports set_termios in addition
+>> to write and error out, if it doesn't.
+>>
+>> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+>> Cc: Johan Hovold <johan@kernel.org>
+>> Cc: Marcel Holtmann <marcel@holtmann.org>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Signed-off-by: Shuah Khan <shuah@kernel.org>
+>> ---
+>>   drivers/bluetooth/hci_ldisc.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+>> index fbf7b4df23ab..087ec2268744 100644
+>> --- a/drivers/bluetooth/hci_ldisc.c
+>> +++ b/drivers/bluetooth/hci_ldisc.c
+>> @@ -474,10 +474,10 @@ static int hci_uart_tty_open(struct tty_struct *tty)
+>>   
+>>   	BT_DBG("tty %p", tty);
+>>   
+>> -	/* Error if the tty has no write op instead of leaving an exploitable
+>> -	 * hole
+>> +	/* Error if the tty has no write/set_termios ops instead of leaving
+>> +	 * an exploitable hole.
 > 
-> It would also be valuable to narrow down the set of "relaxed" (i.e.
-> not tag-checking) syscalls as reasonably possible. We would want to
-> provide tag-checking userspace wrappers for any important calls that
-> are not checked in the kernel. Is it correct to assume that anything
-> that goes through copy_from_user  / copy_to_user is checked?
-
-I lost track of the context of this thread but if it's just about
-relaxing the ABI for hwasan, the kernel has no idea of the compiler
-generated structures in user space, so nothing is checked.
-
-If we talk about tags in the context of MTE, than yes, with the current
-proposal the tag would be checked by copy_*_user() functions.
-
-> > >   * The kernel shall not extend the lifetime of user pointers in ways
-> > >     that are not clear from the specification of the syscall or
-> > >     interface to which the pointer is passed (and in any case shall not
-> > >     extend pointer lifetimes without good reason).
-> > >
-> > >     So no clever transparent caching between syscalls, unless it _really_
-> > >     is transparent in the presence of tags.
-> >
-> > Do you have any particular case in mind? If such caching is really valuable, it is
-> > always possible to access the object while ignoring the tag. For sure, the
-> > user-provided tag can only be used during the syscall handling itself, not
-> > asynchronously later on, unless otherwise specified.
+> Why do you think that a tty driver not implementing set_termios() is
+> exploitable?
 > 
-> For aio* operations it would be nice if the tag was checked at the
-> time of the actual userspace read/write, either instead of or in
-> addition to at the time of the system call.
-
-With aio* (and synchronous iovec-based syscalls), the kernel may access
-the memory while the corresponding user process is scheduled out. Given
-that such access is not done in the context of the user process (and
-using the user VA like copy_*_user), the kernel cannot handle potential
-tag faults. Moreover, the transfer may be done by DMA and the device
-does not understand tags.
-
-I'd like to keep tags as a property of the pointer in a specific virtual
-address space. The moment you convert it to a different address space
-(e.g. kernel linear map, physical address), the tag property is stripped
-and I don't think we should re-build it (and have it checked).
-
-> > >   * For purposes other than dereference, the kernel shall accept any
-> > >     legitimately tagged pointer (according to the above rules) as
-> > >     identifying the associated memory location.
-> > >
-> > >     So, mprotect(some_page_aligned_object, ...); is valid irrespective
-> > >     of where page_aligned_object() came from.  There is no implicit
-> > >     derefence by the kernel here, hence no tag check.
-> > >
-> > >     The kernel does not guarantee to work correctly if the wrong tag
-> > >     is used, but there is not always a well-defined "right" tag, so
-> > >     we can't really guarantee to check it.  So a pointer derived by
-> > >     any reasonable means by userspace has to be treated as equally
-> > >     valid.
-> >
-> > This is a disputed point :) In my opinion, this is the the most reasonable approach.
+> Note that tty_set_termios() handles a missing set_termios() callback
+> just fine without dereferencing a NULL-pointer. >
+>>   	 */
+>> -	if (tty->ops->write == NULL)
+>> +	if (!tty->ops->write || !tty->ops->set_termios)
+>>   		return -EOPNOTSUPP;
 > 
-> Yes, it would be nice if the kernel explicitly promised, ex.
-> mprotect() over a range of differently tagged pages to be allowed
-> (i.e. address tag should be unchecked).
+> I know Marcel asked you do implement things like this, but what you're
+> really doing is to try to uphold the invariant that tty_set_termios()
+> should never be called for a pty master. The WARN_ON in that function
+> was put in place to make sure line-disciplines use the correct ioctl
+> helpers (and the commit I pointed you to earlier in the paragraph you
+> quote in the commit message broke that invariant).
+> 
+> I'm afraid this is totally obscured by the above change and misleading
+> comment update.
+> 
 
-I don't think mprotect() over differently tagged pages was ever a
-problem. I originally asked that mprotect() and friends do not accept
-tagged pointers since these functions deal with memory ranges rather
-than dereferencing such pointer (the reason being minimal kernel
-changes). However, given how complicated it is to specify an ABI, I came
-to the conclusion that a pointer passed to such function should be
-allowed to have non-zero top byte. It would be the kernel's
-responsibility to strip it out as appropriate.
+We are discussing the right fix for a while now. :)
 
--- 
-Catalin
+I did two versions of the patch
+
+1. Check set_termios in hci_uart_tty_open() based on
+Marcel's suggestion
+2. Checks tty type in hci_uart_tty_open()
+
+Both fix the problem I can reproduce on my system, however,
+I think checking tty type is the right way to fix this problem.
+
+The reason is that tty type is the direct and definitive way to
+check if ldisc sets are supported ir unsupported.
+
+Checking set_termios is an indirect way and I am not sure that it
+would work in all cases.
+
+That being said, I will wait for some consensus on how to fix the
+problem, before I send another version of this patch.
+
+thanks,
+-- Shuah
+
