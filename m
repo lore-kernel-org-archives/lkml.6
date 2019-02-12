@@ -2,357 +2,354 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A960C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8F4C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3035D20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A7NEBR1Q"
+	by mail.kernel.org (Postfix) with ESMTP id 7DE8F20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfBLJzE (ORCPT
+        id S1728410AbfBLJz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:55:04 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37692 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbfBLJzD (ORCPT
+        Tue, 12 Feb 2019 04:55:58 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:30914 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726480AbfBLJz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:55:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id x10so2266858wmg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:55:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=9/JJ9ae0d5/YczKxgYKSREDE8DEXAJJcn7ck/lIO3Rk=;
-        b=A7NEBR1QQCi+mYN7u99VCeqUAe47AluO4mslEDVIkjtP4/T7JJu5nkKOf8MU1TWqD1
-         62Kah/edNsYtw3SourR2wYFlJZm+FTybS7hDgq4IdkZPugVeyVrFgJwj+gIhLvCD8+E9
-         TtQhWcqrJ6N/5NqGpBWxhGFKOLz8Ujf14e3H4/a3rBqzvnNKVn0Xq8hE7cjbdSYvj9jO
-         GgR0Q7sQYxswS1unAsNZRuft2MbGPzAHLm5K0mkwg9ZpY6W0J1qUeHpcEIu09PgMie00
-         XmUUiOsz2ixyxVfkzxEsLKy4GlG+JdqrtK0JPR0mAFA+/sj83MGMjM0XhbGS6OwSSRSY
-         tlAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=9/JJ9ae0d5/YczKxgYKSREDE8DEXAJJcn7ck/lIO3Rk=;
-        b=tj0H/PN6Rj2yxLFoWyDt++2f6ldS/USQOmHmdW7lC4H9k4U07teaHhvgGwJS/ofnZ3
-         7vO/oTNvh32e1FGsKzjfRMlUUsyNasx9LvLFbrw5AMDBIaNe03AgI5JKRxN3XzN3A3Pr
-         Jv+jTII+KoRwYxvMJR8P4orlHlb5Mkr2l3/CBS2Ob6HoEEM5MqGphGFg0Xec7YFrBxHL
-         ddxoGqV35E/XTTRCPJtTm/g362Y8fqUDUDzRx+u8GpY01c66rsOYD592JyX/a8uoocjM
-         XS2Zifi3JievUOdkGL15pyyrWPQkYH68qPmYegiSMBFSdxh/btfxVMEk4x5XXfC2sfga
-         mspw==
-X-Gm-Message-State: AHQUAuZE55z4hyl9TwSM5qOspuQ+p47IemxcEmY+33/H1wv2zF5O5SVb
-        YkPHIcpNV56WNgVaT4j0NPEdcw==
-X-Google-Smtp-Source: AHgI3IbLZ0ZcSY7ng7VlY/HYeLh/qRzevQurjgOFI8n9C/PckixJdGvmv9m4aQO2X1K7x9iqImF6Iw==
-X-Received: by 2002:a1c:f70e:: with SMTP id v14mr2114072wmh.30.1549965299902;
-        Tue, 12 Feb 2019 01:54:59 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id n26sm401028wmk.29.2019.02.12.01.54.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 01:54:59 -0800 (PST)
-Date:   Tue, 12 Feb 2019 09:54:57 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-Message-ID: <20190212095457.GA20638@dell>
-References: <20190205091237.6448-1-brgl@bgdev.pl>
- <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell>
- <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+        Tue, 12 Feb 2019 04:55:57 -0500
+X-UUID: 5bdad7c0b016417d9c56d07c3761917a-20190212
+X-UUID: 5bdad7c0b016417d9c56d07c3761917a-20190212
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <michael.kao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1814503087; Tue, 12 Feb 2019 17:55:43 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 12 Feb 2019 17:55:42 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 12 Feb 2019 17:55:42 +0800
+Message-ID: <1549965342.22716.9.camel@mtksdccf07>
+Subject: Re: [PATCH 4/7] thermal: mediatek: add thermal controller offset
+From:   Michael Kao <michael.kao@mediatek.com>
+To:     Eduardo Valentin <edubezval@gmail.com>
+CC:     =Zhang Rui <rui.zhang@intel.com>,
+        =Daniel Lezcano <daniel.lezcano@linaro.org>,
+        =Rob Herring <robh+dt@kernel.org>,
+        "=Mark Rutland" <mark.rutland@arm.com>,
+        =Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Tue, 12 Feb 2019 17:55:42 +0800
+In-Reply-To: <20190206005300.GD19687@localhost.localdomain>
+References: <1549006693-11659-1-git-send-email-michael.kao@mediatek.com>
+         <1549006693-11659-5-git-send-email-michael.kao@mediatek.com>
+         <20190206005300.GD19687@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-SNTS-SMTP: 321B214D3E6AE8C43F9485D49CB6BD849B4262412767725CA3B76C321BF81CB72000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-
-> wt., 12 lut 2019 o 09:36 Lee Jones <lee.jones@linaro.org> napisał(a):
-> >
-> > On Tue, 05 Feb 2019, Bartosz Golaszewski wrote:
-> >
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Add the core mfd driver for max77650 PMIC. We define five sub-devices
-> > > for which the drivers will be added in subsequent patches.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  drivers/mfd/Kconfig          |  11 ++
-> > >  drivers/mfd/Makefile         |   1 +
-> > >  drivers/mfd/max77650.c       | 342 +++++++++++++++++++++++++++++++++++
-> > >  include/linux/mfd/max77650.h |  59 ++++++
-> > >  4 files changed, 413 insertions(+)
-> > >  create mode 100644 drivers/mfd/max77650.c
-> > >  create mode 100644 include/linux/mfd/max77650.h
-
-[...]
-
-> > > +static const struct max77650_irq_mapping max77650_irq_mapping_table[] = {
-> > > +     {
-> > > +             .cell_num       = MAX77650_CELL_CHARGER,
-> > > +             .irqs           = max77650_charger_irqs,
-> > > +             .irq_names      = max77650_charger_irq_names,
-> > > +             .num_irqs       = ARRAY_SIZE(max77650_charger_irqs),
-> > > +     },
-> > > +     {
-> > > +             .cell_num       = MAX77650_CELL_GPIO,
-> > > +             .irqs           = max77650_gpio_irqs,
-> > > +             .irq_names      = max77650_gpio_irq_names,
-> > > +             .num_irqs       = ARRAY_SIZE(max77650_gpio_irqs),
-> > > +     },
-> > > +     {
-> > > +             .cell_num       = MAX77650_CELL_ONKEY,
-> > > +             .irqs           = max77650_onkey_irqs,
-> > > +             .irq_names      = max77650_onkey_irq_names,
-> > > +             .num_irqs       = ARRAY_SIZE(max77650_onkey_irqs),
-> > > +     },
-> > > +};
-> >
-> > This is all a bit convoluted and nasty TBH.
-> >
-> > > +static const struct mfd_cell max77650_cells[] = {
-> > > +     [MAX77650_CELL_REGULATOR] = {
-> > > +             .name           = "max77650-regulator",
-> > > +             .of_compatible  = "maxim,max77650-regulator",
-> > > +     },
-> > > +     [MAX77650_CELL_CHARGER] = {
-> > > +             .name           = "max77650-charger",
-> > > +             .of_compatible  = "maxim,max77650-charger",
-> > > +     },
-> > > +     [MAX77650_CELL_GPIO] = {
-> > > +             .name           = "max77650-gpio",
-> > > +             .of_compatible  = "maxim,max77650-gpio",
-> > > +     },
-> > > +     [MAX77650_CELL_LED] = {
-> > > +             .name           = "max77650-led",
-> > > +             .of_compatible  = "maxim,max77650-led",
-> > > +     },
-> > > +     [MAX77650_CELL_ONKEY] = {
-> > > +             .name           = "max77650-onkey",
-> > > +             .of_compatible  = "maxim,max77650-onkey",
-> > > +     },
-> > > +};
-> >
-> > Why are you numbering the cells?  There is no need to do this.
-> >
+On Tue, 2019-02-05 at 16:53 -0800, Eduardo Valentin wrote:
+> On Fri, Feb 01, 2019 at 03:38:10PM +0800, michael.kao@mediatek.com wrote:
+> > From: Michael Kao <michael.kao@mediatek.com>
+> > 
+> > One thermal controller can read four sensors at most,
+> > so we need to add controller_offset for the project with
+> > more than four sensors to reuse the same register settings.
+> > 
+> > Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> > ---
+> >  drivers/thermal/mtk_thermal.c | 79 +++++++++++++++++++++++++++++--------------
+> >  1 file changed, 54 insertions(+), 25 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
+> > index 45c6587..e5cf3f4 100644
+> > --- a/drivers/thermal/mtk_thermal.c
+> > +++ b/drivers/thermal/mtk_thermal.c
+> > @@ -105,6 +105,9 @@
+> >  /* The number of sensing points per bank */
+> >  #define MT8173_NUM_SENSORS_PER_ZONE	4
+> >  
+> > +/* The number of controller in the MT8173 */
+> > +#define MT8173_NUM_CONTROLLER		1
+> > +
+> >  /* The calibration coefficient of sensor  */
+> >  #define MT8173_CALIBRATION	165
+> >  
+> > @@ -150,6 +153,9 @@ enum {
+> >  /* The number of sensing points per bank */
+> >  #define MT2701_NUM_SENSORS_PER_ZONE	3
+> >  
+> > +/* The number of controller in the MT2701 */
+> > +#define MT2701_NUM_CONTROLLER		1
+> > +
+> >  /* The calibration coefficient of sensor  */
+> >  #define MT2701_CALIBRATION	165
+> >  
+> > @@ -168,6 +174,9 @@ enum {
+> >  /* The number of sensing points per bank */
+> >  #define MT2712_NUM_SENSORS_PER_ZONE	4
+> >  
+> > +/* The number of controller in the MT2712 */
+> > +#define MT2712_NUM_CONTROLLER		1
+> > +
+> >  /* The calibration coefficient of sensor  */
+> >  #define MT2712_CALIBRATION	165
+> >  
+> > @@ -176,6 +185,7 @@ enum {
+> >  #define MT7622_NUM_ZONES		1
+> >  #define MT7622_NUM_SENSORS_PER_ZONE	1
+> >  #define MT7622_TS1	0
+> > +#define MT7622_NUM_CONTROLLER		1
+> >  
+> >  /* The calibration coefficient of sensor  */
+> >  #define MT7622_CALIBRATION	165
+> > @@ -201,6 +211,8 @@ struct mtk_thermal_data {
+> >  	const int *msr;
+> >  	const int *adcpnp;
+> >  	const int cali_val;
+> > +	const int num_controller;
+> > +	const int *controller_offset;
+> >  	struct thermal_bank_cfg bank_data[];
+> >  };
+> >  
+> > @@ -240,6 +252,7 @@ struct mtk_thermal {
+> >  };
+> >  
+> >  static const int mt8173_mux_values[MT8173_NUM_SENSORS] = { 0, 1, 2, 3, 16 };
+> > +static const int mt8173_tc_offset[MT8173_NUM_CONTROLLER] = { 0x0, };
+> >  
+> >  static const int mt8173_vts_index[MT8173_NUM_SENSORS] = {
+> >  	VTS1, VTS2, VTS3, VTS4, VTSABB
+> > @@ -259,6 +272,7 @@ struct mtk_thermal {
+> >  };
+> >  
+> >  static const int mt2701_mux_values[MT2701_NUM_SENSORS] = { 0, 1, 16 };
+> > +static const int mt2701_tc_offset[MT2701_NUM_CONTROLLER] = { 0x0, };
+> >  
+> >  static const int mt2701_vts_index[MT2701_NUM_SENSORS] = {
+> >  	VTS1, VTS2, VTS3
+> > @@ -278,6 +292,7 @@ struct mtk_thermal {
+> >  };
+> >  
+> >  static const int mt2712_mux_values[MT2712_NUM_SENSORS] = { 0, 1, 2, 3 };
+> > +static const int mt2712_tc_offset[MT2712_NUM_CONTROLLER] = { 0x0, };
+> >  
+> >  static const int mt2712_vts_index[MT2712_NUM_SENSORS] = {
+> >  	VTS1, VTS2, VTS3, VTS4
+> > @@ -289,6 +304,7 @@ struct mtk_thermal {
+> >  static const int mt7622_adcpnp[MT7622_NUM_SENSORS_PER_ZONE] = { TEMP_ADCPNP0, };
+> >  static const int mt7622_mux_values[MT7622_NUM_SENSORS] = { 0, };
+> >  static const int mt7622_vts_index[MT7622_NUM_SENSORS] = { VTS1 };
+> > +static const int mt7622_tc_offset[MT7622_NUM_CONTROLLER] = { 0x0, };
+> >  
+> >  /**
+> >   * The MT8173 thermal controller has four banks. Each bank can read up to
+> > @@ -309,6 +325,8 @@ struct mtk_thermal {
+> >  	.num_sensors = MT8173_NUM_SENSORS,
+> >  	.vts_index = mt8173_vts_index,
+> >  	.cali_val = MT8173_CALIBRATION,
+> > +	.num_controller = MT8173_NUM_CONTROLLER,
+> > +	.controller_offset = mt8173_tc_offset,
+> >  	.bank_data = {
+> >  		{
+> >  			.num_sensors = 2,
+> > @@ -345,6 +363,8 @@ struct mtk_thermal {
+> >  	.num_sensors = MT2701_NUM_SENSORS,
+> >  	.vts_index = mt2701_vts_index,
+> >  	.cali_val = MT2701_CALIBRATION,
+> > +	.num_controller = MT2701_NUM_CONTROLLER,
+> > +	.controller_offset = mt2701_tc_offset,
+> >  	.bank_data = {
+> >  		{
+> >  			.num_sensors = 3,
+> > @@ -372,6 +392,8 @@ struct mtk_thermal {
+> >  	.num_sensors = MT2712_NUM_SENSORS,
+> >  	.vts_index = mt2712_vts_index,
+> >  	.cali_val = MT2712_CALIBRATION,
+> > +	.num_controller = MT2712_NUM_CONTROLLER,
+> > +	.controller_offset = mt2712_tc_offset,
+> >  	.bank_data = {
+> >  		{
+> >  			.num_sensors = 4,
+> > @@ -393,6 +415,8 @@ struct mtk_thermal {
+> >  	.num_sensors = MT7622_NUM_SENSORS,
+> >  	.vts_index = mt7622_vts_index,
+> >  	.cali_val = MT7622_CALIBRATION,
+> > +	.num_controller = MT7622_NUM_CONTROLLER,
+> > +	.controller_offset = mt7622_tc_offset,
+> >  	.bank_data = {
+> >  		{
+> >  			.num_sensors = 1,
+> > @@ -523,19 +547,23 @@ static int mtk_read_temp(void *data, int *temperature)
+> >  };
+> >  
+> >  static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+> > -				  u32 apmixed_phys_base, u32 auxadc_phys_base)
+> > +				  u32 apmixed_phys_base, u32 auxadc_phys_base,
+> > +				  int ctrl_id)
+> >  {
+> >  	struct mtk_thermal_bank *bank = &mt->banks[num];
+> >  	const struct mtk_thermal_data *conf = mt->conf;
+> >  	int i;
+> >  
+> > +	int offset = mt->conf->controller_offset[ctrl_id];
+> > +	void *controller_base = mt->thermal_base + offset;
 > 
-> Just for better readability. It makes sense to me coupled with
-> MAX77650_NUM_CELLS.
-
-You have it the wrong way around.  You define the cell data, then
-provide the number of them using ARRAY_SIZE().  The enum containing
-MAX77650_NUM_CELLS should not exist.
-
-> > > +static const struct regmap_irq max77650_irqs[] = {
-> > > +     [MAX77650_INT_GPI] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_GPI_MSK,
-> > > +             .type = {
-> > > +                     .type_falling_val       = MAX77650_INT_GPI_F_MSK,
-> > > +                     .type_rising_val        = MAX77650_INT_GPI_R_MSK,
-> > > +                     .types_supported        = IRQ_TYPE_EDGE_BOTH,
-> > > +             },
-> > > +     },
-> > > +     [MAX77650_INT_nEN_F] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_nEN_F_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_nEN_R] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_nEN_R_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_TJAL1_R] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_TJAL1_R_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_TJAL2_R] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_TJAL2_R_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_DOD_R] = {
-> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
-> > > +             .mask                   = MAX77650_INT_DOD_R_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_THM] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_THM_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_CHG] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_CHG_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_CHGIN] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_CHGIN_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_TJ_REG] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_TJ_REG_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_CHGIN_CTRL] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_CHGIN_CTRL_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_SYS_CTRL] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_SYS_CTRL_MSK,
-> > > +     },
-> > > +     [MAX77650_INT_SYS_CNFG] = {
-> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
-> > > +             .mask                   = MAX77650_INT_SYS_CNFG_MSK,
-> > > +     },
-> > > +};
-> >
-> > If you get rid of all of the horrible hoop jumping in *_setup_irqs(),
-> > you can use REGMAP_IRQ_REG() like everyone else does.
-> >
+> This void * has to be at least __iomem, right?
 > 
-> I could even use it now - except for the first interrupt. I decided to
-> not use it everywhere as it looks much better that way than having
-> REGMAP_IRQ_REG() for all definitions and then the first one sticking
-> out like that. It just looks better.
-
-The way it's done at the moment looks terrible.
-
-Please use the MACROs to simplify as much of the code as possible.
-
-> > > +static const struct regmap_irq_chip max77650_irq_chip = {
-> > > +     .name                   = "max77650-irq",
-> > > +     .irqs                   = max77650_irqs,
-> > > +     .num_irqs               = ARRAY_SIZE(max77650_irqs),
-> > > +     .num_regs               = 2,
-> > > +     .status_base            = MAX77650_REG_INT_GLBL,
-> > > +     .mask_base              = MAX77650_REG_INTM_GLBL,
-> > > +     .type_in_mask           = true,
-> > > +     .type_invert            = true,
-> > > +     .init_ack_masked        = true,
-> > > +     .clear_on_unmask        = true,
-> > > +};
-> > > +
-> > > +static const struct regmap_config max77650_regmap_config = {
-> > > +     .name           = "max77650",
-> > > +     .reg_bits       = 8,
-> > > +     .val_bits       = 8,
-> > > +};
-> > > +
-> > > +static int max77650_setup_irqs(struct device *dev, struct mfd_cell *cells)
-> > > +{
-> > > +     const struct max77650_irq_mapping *mapping;
-> > > +     struct regmap_irq_chip_data *irq_data;
-> > > +     struct i2c_client *i2c;
-> > > +     struct mfd_cell *cell;
-> > > +     struct resource *res;
-> > > +     struct regmap *map;
-> > > +     int i, j, irq, rv;
-> > > +
-> > > +     i2c = to_i2c_client(dev);
-> > > +
-> > > +     map = dev_get_regmap(dev, NULL);
-> > > +     if (!map)
-> > > +             return -ENODEV;
-> > > +
-> > > +     rv = devm_regmap_add_irq_chip(dev, map, i2c->irq,
-> > > +                                   IRQF_ONESHOT | IRQF_SHARED, -1,
-> >
-> > What is -1?  Are you sure this isn't defined somewhere?
-> >
+> See the report of kbuild bot, fix it and send it back.
 > 
-> I don't see any define for negative irq_base argument. I can add that
-> in a separate series and convert the users, but for now I'd stick with
-> -1.
+OK, I will fix the declaration and send it again.
+Thanks!
 
-IMO it should be defined.  You can define it locally for now.
+> > +
+> >  	bank->id = num;
+> >  	bank->mt = mt;
+> >  
+> >  	mtk_thermal_get_bank(bank);
+> >  
+> >  	/* bus clock 66M counting unit is 12 * 15.15ns * 256 = 46.540us */
+> > -	writel(TEMP_MONCTL1_PERIOD_UNIT(12), mt->thermal_base + TEMP_MONCTL1);
+> > +	writel(TEMP_MONCTL1_PERIOD_UNIT(12), controller_base + TEMP_MONCTL1);
+> >  
+> >  	/*
+> >  	 * filt interval is 1 * 46.540us = 46.54us,
+> > @@ -543,21 +571,21 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+> >  	 */
+> >  	writel(TEMP_MONCTL2_FILTER_INTERVAL(1) |
+> >  			TEMP_MONCTL2_SENSOR_INTERVAL(429),
+> > -			mt->thermal_base + TEMP_MONCTL2);
+> > +			controller_base + TEMP_MONCTL2);
+> >  
+> >  	/* poll is set to 10u */
+> >  	writel(TEMP_AHBPOLL_ADC_POLL_INTERVAL(768),
+> > -	       mt->thermal_base + TEMP_AHBPOLL);
+> > +	       controller_base + TEMP_AHBPOLL);
+> >  
+> >  	/* temperature sampling control, 1 sample */
+> > -	writel(0x0, mt->thermal_base + TEMP_MSRCTL0);
+> > +	writel(0x0, controller_base + TEMP_MSRCTL0);
+> >  
+> >  	/* exceed this polling time, IRQ would be inserted */
+> > -	writel(0xffffffff, mt->thermal_base + TEMP_AHBTO);
+> > +	writel(0xffffffff, controller_base + TEMP_AHBTO);
+> >  
+> >  	/* number of interrupts per event, 1 is enough */
+> > -	writel(0x0, mt->thermal_base + TEMP_MONIDET0);
+> > -	writel(0x0, mt->thermal_base + TEMP_MONIDET1);
+> > +	writel(0x0, controller_base + TEMP_MONIDET0);
+> > +	writel(0x0, controller_base + TEMP_MONIDET1);
+> >  
+> >  	/*
+> >  	 * The MT8173 thermal controller does not have its own ADC. Instead it
+> > @@ -572,44 +600,44 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+> >  	 * this value will be stored to TEMP_PNPMUXADDR (TEMP_SPARE0)
+> >  	 * automatically by hw
+> >  	 */
+> > -	writel(BIT(conf->auxadc_channel), mt->thermal_base + TEMP_ADCMUX);
+> > +	writel(BIT(conf->auxadc_channel), controller_base + TEMP_ADCMUX);
+> >  
+> >  	/* AHB address for auxadc mux selection */
+> >  	writel(auxadc_phys_base + AUXADC_CON1_CLR_V,
+> > -	       mt->thermal_base + TEMP_ADCMUXADDR);
+> > +	       controller_base + TEMP_ADCMUXADDR);
+> >  
+> >  	/* AHB address for pnp sensor mux selection */
+> >  	writel(apmixed_phys_base + APMIXED_SYS_TS_CON1,
+> > -	       mt->thermal_base + TEMP_PNPMUXADDR);
+> > +	       controller_base + TEMP_PNPMUXADDR);
+> >  
+> >  	/* AHB value for auxadc enable */
+> > -	writel(BIT(conf->auxadc_channel), mt->thermal_base + TEMP_ADCEN);
+> > +	writel(BIT(conf->auxadc_channel), controller_base + TEMP_ADCEN);
+> >  
+> >  	/* AHB address for auxadc enable (channel 0 immediate mode selected) */
+> >  	writel(auxadc_phys_base + AUXADC_CON1_SET_V,
+> > -	       mt->thermal_base + TEMP_ADCENADDR);
+> > +	       controller_base + TEMP_ADCENADDR);
+> >  
+> >  	/* AHB address for auxadc valid bit */
+> >  	writel(auxadc_phys_base + AUXADC_DATA(conf->auxadc_channel),
+> > -	       mt->thermal_base + TEMP_ADCVALIDADDR);
+> > +	       controller_base + TEMP_ADCVALIDADDR);
+> >  
+> >  	/* AHB address for auxadc voltage output */
+> >  	writel(auxadc_phys_base + AUXADC_DATA(conf->auxadc_channel),
+> > -	       mt->thermal_base + TEMP_ADCVOLTADDR);
+> > +	       controller_base + TEMP_ADCVOLTADDR);
+> >  
+> >  	/* read valid & voltage are at the same register */
+> > -	writel(0x0, mt->thermal_base + TEMP_RDCTRL);
+> > +	writel(0x0, controller_base + TEMP_RDCTRL);
+> >  
+> >  	/* indicate where the valid bit is */
+> >  	writel(TEMP_ADCVALIDMASK_VALID_HIGH | TEMP_ADCVALIDMASK_VALID_POS(12),
+> > -	       mt->thermal_base + TEMP_ADCVALIDMASK);
+> > +	       controller_base + TEMP_ADCVALIDMASK);
+> >  
+> >  	/* no shift */
+> > -	writel(0x0, mt->thermal_base + TEMP_ADCVOLTAGESHIFT);
+> > +	writel(0x0, controller_base + TEMP_ADCVOLTAGESHIFT);
+> >  
+> >  	/* enable auxadc mux write transaction */
+> >  	writel(TEMP_ADCWRITECTRL_ADC_MUX_WRITE,
+> > -	       mt->thermal_base + TEMP_ADCWRITECTRL);
+> > +		controller_base + TEMP_ADCWRITECTRL);
+> >  
+> >  	for (i = 0; i < conf->bank_data[num].num_sensors; i++)
+> >  		writel(conf->sensor_mux_values[conf->bank_data[num].sensors[i]],
+> > @@ -617,11 +645,11 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+> >  		       conf->adcpnp[conf->bank_data[num].sensors[i]]);
+> >  
+> >  	writel((1 << conf->bank_data[num].num_sensors) - 1,
+> > -	       mt->thermal_base + TEMP_MONCTL0);
+> > +	       controller_base + TEMP_MONCTL0);
+> >  
+> >  	writel(TEMP_ADCWRITECTRL_ADC_PNP_WRITE |
+> >  	       TEMP_ADCWRITECTRL_ADC_MUX_WRITE,
+> > -	       mt->thermal_base + TEMP_ADCWRITECTRL);
+> > +	       controller_base + TEMP_ADCWRITECTRL);
+> >  
+> >  	mtk_thermal_put_bank(bank);
+> >  }
+> > @@ -737,7 +765,7 @@ static int mtk_thermal_get_calibration_data(struct device *dev,
+> >  
+> >  static int mtk_thermal_probe(struct platform_device *pdev)
+> >  {
+> > -	int ret, i;
+> > +	int ret, i, ctrl_id;
+> >  	struct device_node *auxadc, *apmixedsys, *np = pdev->dev.of_node;
+> >  	struct mtk_thermal *mt;
+> >  	struct resource *res;
+> > @@ -817,9 +845,10 @@ static int mtk_thermal_probe(struct platform_device *pdev)
+> >  		goto err_disable_clk_auxadc;
+> >  	}
+> >  
+> > -	for (i = 0; i < mt->conf->num_banks; i++)
+> > -		mtk_thermal_init_bank(mt, i, apmixed_phys_base,
+> > -				      auxadc_phys_base);
+> > +	for (ctrl_id = 0; ctrl_id < mt->conf->num_controller ; ctrl_id++)
+> > +		for (i = 0; i < mt->conf->num_banks; i++)
+> > +			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
+> > +					      auxadc_phys_base, ctrl_id);
+> >  
+> >  	platform_set_drvdata(pdev, mt);
+> >  
+> > -- 
+> > 1.9.1
+> > 
 
-> > > +                                   &max77650_irq_chip, &irq_data);
-> > > +     if (rv)
-> > > +             return rv;
-> > > +
-> > > +     for (i = 0; i < ARRAY_SIZE(max77650_irq_mapping_table); i++) {
-> > > +             mapping = &max77650_irq_mapping_table[i];
-> > > +             cell = &cells[mapping->cell_num];
-> > > +
-> > > +             res = devm_kcalloc(dev, sizeof(*res),
-> > > +                                mapping->num_irqs, GFP_KERNEL);
-> > > +             if (!res)
-> > > +                     return -ENOMEM;
-> > > +
-> > > +             cell->resources = res;
-> > > +             cell->num_resources = mapping->num_irqs;
-> > > +
-> > > +             for (j = 0; j < mapping->num_irqs; j++) {
-> > > +                     irq = regmap_irq_get_virq(irq_data, mapping->irqs[j]);
-> > > +                     if (irq < 0)
-> > > +                             return irq;
-> > > +
-> > > +                     res[j].start = res[j].end = irq;
-> > > +                     res[j].flags = IORESOURCE_IRQ;
-> > > +                     res[j].name = mapping->irq_names[j];
-> > > +             }
-> > > +     }
-> >
-> > This is the first time I've seen it done like this (and I hate it).
-> >
-> > Why are you storing the virqs in resources?
-> >
-> > I think this is highly irregular.
-> >
-> 
-> I initially just passed the regmap_irq_chip_data over i2c clientdata
-> and sub-drivers would look up virq numbers from it but was advised by
-> Dmitry Torokhov to use resources instead. After implementing it this
-> way I too think it's more elegant in sub-drivers who can simply do
-> platform_get_irq_byname(). Do you have a different idea?
 
-> What exactly don't you like about this?
-
- * The declaration of a superfluous struct
- * 100 lines of additional/avoidable code
- * Hacky hoop jumping trying to fudge VIRQs into resources
- * Resources were designed for HWIRQs (unless a domain is present)
- * Loads of additional/avoidable CPU cycles setting all this up
-
-Need I go on? :)
-
-Surely the fact that you are using both sides of an API
-(devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
-set some alarm bells ringing?
-
-This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
-
-And for what?  To avoid passing IRQ data to a child driver?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
