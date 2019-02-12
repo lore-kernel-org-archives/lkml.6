@@ -2,199 +2,245 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFF9C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70450C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAF4222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:19:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kYd6gU/0"
+	by mail.kernel.org (Postfix) with ESMTP id 39A00222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbfBLRT1 (ORCPT
+        id S1730413AbfBLRUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:19:27 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:33588 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729347AbfBLRT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:19:26 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 1791E24E138C;
-        Tue, 12 Feb 2019 09:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549991966; bh=XdfyAzVvy5MIDdZ2SbnUXNZW12NBCdwDNe8k3TzI3DE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=kYd6gU/03DpbJpsITqqiygVc3NQ9SMN9IXbVGh3s7jNWHr1qvqKsDKYVxIUZKBcwq
-         X8cMfsB06qB2m0Gfc+KOHwLjsZ+icL5aReaBwzHakd7dVsafUcVZKvLYEWzc2oW3Fi
-         ZSnSFC68OtEEahWtTxGEGeYz24MtAV9GWZZ4lrm7T/JbbDnX1yk4QwA6P0KwPnVMbR
-         T2zIMtMLufl5cZXVOFOFVMQitMeJ28vbp5d3F2ensEyyl5ySQcdFET756sca4ASOse
-         vJ2HPF8LMRZsKqcUqnfVeU0TCB2VWMG9ACzavT1oeRohdBtFIl9902VfYUaKGu6R2N
-         XrIMcpFTobWqQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 08776A0090;
-        Tue, 12 Feb 2019 17:19:25 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Feb 2019 09:17:24 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Feb 2019 22:47:29 +0530
-Received: from [10.10.161.59] (10.10.161.59) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Feb 2019 22:47:28 +0530
-Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        <stable@vger.kernel.org>
-Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel.arc,gmane.linux.kernel
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
- B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
- lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
- zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
- cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
- 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
- nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
- dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
- JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
- F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
- dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
- jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
- xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
- NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
- HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
- djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
- XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
- hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
- d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
- cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
- tf3ClCidHNaGky9KcNSQuQINBFEffBMBEADXZ2pWw4Regpfw+V+Vr6tvZFRl245PV9rWFU72
- xNuvZKq/WE3xMu+ZE7l2JKpSjrEoeOHejtT0cILeQ/Yhf2t2xAlrBLlGOMmMYKK/K0Dc2zf0
- MiPRbW/NCivMbGRZdhAAMx1bpVhInKjU/6/4mT7gcE57Ep0tl3HBfpxCK8RRlZc3v8BHOaEf
- cWSQD7QNTZK/kYJo+Oyux+fzyM5TTuKAaVE63NHCgWtFglH2vt2IyJ1XoPkAMueLXay6enSK
- Nci7qAG2UwicyVDCK9AtEub+ps8NakkeqdSkDRp5tQldJbfDaMXuWxJuPjfSojHIAbFqP6Qa
- ANXvTCSuBgkmGZ58skeNopasrJA4z7OsKRUBvAnharU82HGemtIa4Z83zotOGNdaBBOHNN2M
- HyfGLm+kEoccQheH+my8GtbH1a8eRBtxlk4c02ONkq1Vg1EbIzvgi4a56SrENFx4+4sZcm8o
- ItShAoKGIE/UCkj/jPlWqOcM/QIqJ2bR8hjBny83ONRf2O9nJuEYw9vZAPFViPwWG8tZ7J+R
- euXKai4DDr+8oFOi/40mIDe/Bat3ftyd+94Z1RxDCngd3Q85bw13t2ttNLw5eHufLIpoEyAh
- TCLNQ58eT91YGVGvFs39IuH0b8ovVvdkKGInCT59Vr0MtfgcsqpDxWQXJXYZYTFHd3/RswAR
- AQABiQIlBBgBAgAPAhsMBQJbBYpwBQkLx0HdAAoJEGnX8d3iisJewe8P/36pkZrVTfO+U+Gl
- 1OQh4m6weozuI8Y98/DHLMxEujKAmRzy+zMHYlIl3WgSih1UMOZ7U84yVZQwXQkLItcwXoih
- ChKD5D2BKnZYEOLM+7f9DuJuWhXpee80aNPzEaubBYQ7dYt8rcmB7SdRz/yZq3lALOrF/zb6
- SRleBh0DiBLP/jKUV74UAYV3OYEDHN9blvhWUEFFE0Z+j96M4/kuRdxvbDmp04Nfx79AmJEn
- fv1Vvc9CFiWVbBrNPKomIN+JV7a7m2lhbfhlLpUk0zGFDTWcWejl4qz/pCYSoIUU4r/VBsCV
- ZrOun4vd4cSi/yYJRY4kaAJGCL5k7qhflL2tgldUs+wERH8ZCzimWVDBzHTBojz0Ff3w2+gY
- 6FUbAJBrBZANkymPpdAB/lTsl8D2ZRWyy90f4VVc8LB/QIWY/GiS2towRXQBjHOfkUB1JiEX
- YH/i93k71mCaKfzKGXTVxObU2I441w7r4vtNlu0sADRHCMUqHmkpkjV1YbnYPvBPFrDBS1V9
- OfD9SutXeDjJYe3N+WaLRp3T3x7fYVnkfjQIjDSOdyPWlTzqQv0I3YlUk7KjFrh1rxtrpoYS
- IQKf5HuMowUNtjyiK2VhA5V2XDqd+ZUT3RqfAPf3Y5HjkhKJRqoIDggUKMUKmXaxCkPGi91T
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
-Date:   Tue, 12 Feb 2019 09:17:17 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190208105519.26750-1-abrodkin@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Tue, 12 Feb 2019 12:20:24 -0500
+Received: from mga17.intel.com ([192.55.52.151]:57131 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730496AbfBLRUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:20:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 09:20:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="115638066"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga006.jf.intel.com with ESMTP; 12 Feb 2019 09:20:23 -0800
+Message-ID: <0963dd4b3256265160d7104e256aa606fb3f9519.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Aaron Lu <aaron.lwe@gmail.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+        akpm@linux-foundation.org
+Date:   Tue, 12 Feb 2019 09:20:23 -0800
+In-Reply-To: <ead37c94-4703-170f-0ff4-1bb171556775@gmail.com>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181558.12095.83484.stgit@localhost.localdomain>
+         <5e6d22b2-0f14-43eb-846b-a940e629c02b@gmail.com>
+         <a5b698b0f85667dba9b949dcb6e65a0d806669de.camel@linux.intel.com>
+         <ead37c94-4703-170f-0ff4-1bb171556775@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.59]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 2:55 AM, Alexey Brodkin wrote:
-> By default ARCH_SLAB_MINALIGN is defined in "include/linux/slab.h" as
-> "__alignof__(unsigned long long)" which looks fine but not for ARC.
-
-Just for the record, the issue happens because a LLOCKD (exclusive 64-bit load)
-was trying to use a 32-bit aligned effective address (for atomic64_t), not allowed
-by ISA (LLOCKD can only take 64-bit aligned address, even when the CPU has
-unaligned access enabled).
-
-This in turn was happening because this word is embedded in some other struct and
-happens to be 4 byte aligned
-
-
-> ARC tools ABI sets align of "long long" the same as for "long" = 4
-> instead of 8 one may think of.
-
-Right, this was indeed unexpected and not like most other arches. ARCv2 ISA allows
-regular 64-bit loads/stores (LDD/STD) to take 32-bit aligned addresses. Thus ABI
-relaxing the alignment for 64-bit data potentially causes more packing and less
-space waste. But on the flip side we need to waste space at arbitrary places liek
-this.
-
-So this is all good and theory, but I'm not 100% sure how slab alignment helps
-here (and is future proof). So the outer struct with embedded atomic64_t was
-allocated via slab and your patch ensures that outer struct is 64-bit aligned ?
-
-But how does that guarantee that all embedded atomic64_t in there will be 64-bit
-aligned (in future say) in the light of ARC ABI and the gcc bug/feature which
-Peter alluded to
-
-   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54188
-   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=10360
-
-> Thus slab allocator may easily allocate a buffer which is 32-bit aligned.
-> And most of the time it's OK until we start dealing with 64-bit atomics
-> with special LLOCKD/SCONDD instructions which (as opposed to their 32-bit
-> counterparts LLOCK/SCOND) operate with full 64-bit words but those words
-> must be 64-bit aligned.
-
-Some of this text needed to go above to give more context.
-
+On Tue, 2019-02-12 at 10:09 +0800, Aaron Lu wrote:
+> On 2019/2/11 23:58, Alexander Duyck wrote:
+> > On Mon, 2019-02-11 at 14:40 +0800, Aaron Lu wrote:
+> > > On 2019/2/5 2:15, Alexander Duyck wrote:
+> > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > > > 
+> > > > Because the implementation was limiting itself to only providing hints on
+> > > > pages huge TLB order sized or larger we introduced the possibility for free
+> > > > pages to slip past us because they are freed as something less then
+> > > > huge TLB in size and aggregated with buddies later.
+> > > > 
+> > > > To address that I am adding a new call arch_merge_page which is called
+> > > > after __free_one_page has merged a pair of pages to create a higher order
+> > > > page. By doing this I am able to fill the gap and provide full coverage for
+> > > > all of the pages huge TLB order or larger.
+> > > > 
+> > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > > > ---
+> > > >  arch/x86/include/asm/page.h |   12 ++++++++++++
+> > > >  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
+> > > >  include/linux/gfp.h         |    4 ++++
+> > > >  mm/page_alloc.c             |    2 ++
+> > > >  4 files changed, 46 insertions(+)
+> > > > 
+> > > > diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+> > > > index 4487ad7a3385..9540a97c9997 100644
+> > > > --- a/arch/x86/include/asm/page.h
+> > > > +++ b/arch/x86/include/asm/page.h
+> > > > @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
+> > > >  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+> > > >  		__arch_free_page(page, order);
+> > > >  }
+> > > > +
+> > > > +struct zone;
+> > > > +
+> > > > +#define HAVE_ARCH_MERGE_PAGE
+> > > > +void __arch_merge_page(struct zone *zone, struct page *page,
+> > > > +		       unsigned int order);
+> > > > +static inline void arch_merge_page(struct zone *zone, struct page *page,
+> > > > +				   unsigned int order)
+> > > > +{
+> > > > +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+> > > > +		__arch_merge_page(zone, page, order);
+> > > > +}
+> > > >  #endif
+> > > >  
+> > > >  #include <linux/range.h>
+> > > > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> > > > index 09c91641c36c..957bb4f427bb 100644
+> > > > --- a/arch/x86/kernel/kvm.c
+> > > > +++ b/arch/x86/kernel/kvm.c
+> > > > @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
+> > > >  		       PAGE_SIZE << order);
+> > > >  }
+> > > >  
+> > > > +void __arch_merge_page(struct zone *zone, struct page *page,
+> > > > +		       unsigned int order)
+> > > > +{
+> > > > +	/*
+> > > > +	 * The merging logic has merged a set of buddies up to the
+> > > > +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
+> > > > +	 * advantage of this moment to notify the hypervisor of the free
+> > > > +	 * memory.
+> > > > +	 */
+> > > > +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
+> > > > +		return;
+> > > > +
+> > > > +	/*
+> > > > +	 * Drop zone lock while processing the hypercall. This
+> > > > +	 * should be safe as the page has not yet been added
+> > > > +	 * to the buddy list as of yet and all the pages that
+> > > > +	 * were merged have had their buddy/guard flags cleared
+> > > > +	 * and their order reset to 0.
+> > > > +	 */
+> > > > +	spin_unlock(&zone->lock);
+> > > > +
+> > > > +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
+> > > > +		       PAGE_SIZE << order);
+> > > > +
+> > > > +	/* reacquire lock and resume freeing memory */
+> > > > +	spin_lock(&zone->lock);
+> > > > +}
+> > > > +
+> > > >  #ifdef CONFIG_PARAVIRT_SPINLOCKS
+> > > >  
+> > > >  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
+> > > > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > > > index fdab7de7490d..4746d5560193 100644
+> > > > --- a/include/linux/gfp.h
+> > > > +++ b/include/linux/gfp.h
+> > > > @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+> > > >  #ifndef HAVE_ARCH_FREE_PAGE
+> > > >  static inline void arch_free_page(struct page *page, int order) { }
+> > > >  #endif
+> > > > +#ifndef HAVE_ARCH_MERGE_PAGE
+> > > > +static inline void
+> > > > +arch_merge_page(struct zone *zone, struct page *page, int order) { }
+> > > > +#endif
+> > > >  #ifndef HAVE_ARCH_ALLOC_PAGE
+> > > >  static inline void arch_alloc_page(struct page *page, int order) { }
+> > > >  #endif
+> > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > > index c954f8c1fbc4..7a1309b0b7c5 100644
+> > > > --- a/mm/page_alloc.c
+> > > > +++ b/mm/page_alloc.c
+> > > > @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
+> > > >  		page = page + (combined_pfn - pfn);
+> > > >  		pfn = combined_pfn;
+> > > >  		order++;
+> > > > +
+> > > > +		arch_merge_page(zone, page, order);
+> > > 
+> > > Not a proper place AFAICS.
+> > > 
+> > > Assume we have an order-8 page being sent here for merge and its order-8
+> > > buddy is also free, then order++ became 9 and arch_merge_page() will do
+> > > the hint to host on this page as an order-9 page, no problem so far.
+> > > Then the next round, assume the now order-9 page's buddy is also free,
+> > > order++ will become 10 and arch_merge_page() will again hint to host on
+> > > this page as an order-10 page. The first hint to host became redundant.
+> > 
+> > Actually the problem is even worse the other way around. My concern was
+> > pages being incrementally freed.
+> > 
+> > With this setup I can catch when we have crossed the threshold from
+> > order 8 to 9, and specifically for that case provide the hint. This
+> > allows me to ignore orders above and below 9.
 > 
-> Fixes Ext4 folder removal:
-> --------------------->8-------------------
-> [    4.015732] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
-> [    4.167881]
+> OK, I see, you are now only hinting for pages with order 9, not above.
 
-..
+Right.
 
+> > If I move the hint to the spot after the merging I have no way of
+> > telling if I have hinted the page as a lower order or not. As such I
+> > will hint if it is merged up to orders 9 or greater. So for example if
+> > it merges up to order 9 and stops there then done_merging will report
+> > an order 9 page, then if another page is freed and merged with this up
+> > to order 10 you would be hinting on order 10. By placing the function
+> > here I can guarantee that no more than 1 hint is provided per 2MB page.
 > 
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: <stable@vger.kernel.org> # 4.8+
-> ---
->  arch/arc/include/asm/cache.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> So what's the downside of hinting the page as order-10 after merge
+> compared to as order-9 before the merge? I can see the same physical
+> range can be hinted multiple times, but the total hint number is the
+> same: both are 2 - in your current implementation, we hint twice for
+> each of the 2 order-9 pages; alternatively, we can provide hint for one
+> order-9 page and the merged order-10 page. I think the cost of
+> hypercalls are the same? Is it that we want to ease the host side
+> madvise(DONTNEED) since we can avoid operating the same range multiple
+> times?
+
+The cost for the hypercall overhead is the same, but I would think you
+are in the hypercall a bit longer for the order 10 page because you are
+having to process both order 9 pages in order clear them. In my mind
+doing it that way you end up having to do 50% more madvise work. For a
+THP based setup it probably isn't an issue, but I would think if we are
+having to invalidate things at the 4K page level that cost could add up
+real quick.
+
+I could probably try launching the guest with THP disabled in QEMU to
+verify if the difference is visible or not.
+
+> The reason I asked is, if we can move the arch_merge_page() after
+> done_merging tag, we can theoretically make fewer function calls on free
+> path for the guest. Maybe not a big deal, I don't know...
+
+I suspect it really isn't that big a deal. The two functions are
+essentially inline and only one will ever make use of the hypercall.
+
+> > > I think the proper place is after the done_merging tag.
+> > > 
+> > > BTW, with arch_merge_page() at the proper place, I don't think patch3/4
+> > > is necessary - any freed page will go through merge anyway, we won't
+> > > lose any hint opportunity. Or do I miss anything?
+> > 
+> > You can refer to my comment above. What I want to avoid is us hinting a
+> > page multiple times if we aren't using MAX_ORDER - 1 as the limit. What
 > 
-> diff --git a/arch/arc/include/asm/cache.h b/arch/arc/include/asm/cache.h
-> index f393b663413e..74f8fcaaef5c 100644
-> --- a/arch/arc/include/asm/cache.h
-> +++ b/arch/arc/include/asm/cache.h
-> @@ -52,6 +52,16 @@
->  #define cache_line_size()	SMP_CACHE_BYTES
->  #define ARCH_DMA_MINALIGN	SMP_CACHE_BYTES
->  
-> +/*
-> + * Make sure slab-allocated buffers are 64-bit aligned.
-> + * This is required for llockd/scondd to deal with 64-bit aligned dwords.
-> + * By default ARCH_SLAB_MINALIGN is __alignof__(long long) which in
-> + * case of ARC is 4 instead of 8!
-> + */
-> +#ifdef CONFIG_ARC_HAS_LL64
-> +#define ARCH_SLAB_MINALIGN	8
-> +#endif
-> +
->  extern void arc_cache_init(void);
->  extern char *arc_cache_mumbojumbo(int cpu_id, char *buf, int len);
->  extern void read_decode_cache_bcr(void);
-> 
+> Yeah that's a good point. But is this going to happen?
+
+One of the advantages I have from splitting things out the way I did is
+that I have been able to add some debug counters to track what is freed
+as a higher order page and what isn't. From what I am seeing after boot
+essentially all of the calls are coming from the merge logic.
+
+I'm suspecting the typical use case is that pages are likely going to
+either be freed as something THP or larger, or they will be freed in 4K
+increments. By splitting things up the way I did we end up getting the
+most efficient performance out of the 4K case since we avoid performing
+madvise 1.5 times per page and keep it to once per page.
 
