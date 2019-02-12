@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7DDC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814E9C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA343218E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D1D218E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549991690;
-	bh=/x/1sz2wxImFM5bKOuDzYPoZZ75Qq6dvHF5a0d3G03A=;
+	s=default; t=1549991694;
+	bh=aad0bpcT6EwnNBwB6REovMO/9Y8vdp0bNoNds8FCyvI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aSzEU1mfhYwzMQD0vjKj/Gy+Ju18r69VLEvVSJFsG0Uz3n71GdcsTIMT2V1zdCtvr
-	 DxJhK4o3JPfwhilQHryeGPyoayQ4zD1+/bB1VLpYNMIh4vEj7IoU2D3dUCdzNMP1PK
-	 JpBQARwpTgvqcxvWMQYeNQqedEhkhKeEObr/4zgk=
+	b=m/XnY+9xLgDybFqk1aBbyyvduK87uXLW1ZqVtcKBua0YAZ6f8Zp6GwF1MtlU9NsXz
+	 K9tesLmoMIJndgBQuA6kG1aLIU6lSDZ2dhaHJE3slm49mOx1BR8JGj5mez3nShWkGG
+	 EHMLaPADjyJdZPN0A6Qx7PKiZUaxXklqq3SQ00x8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731401AbfBLROt (ORCPT
+        id S1731412AbfBLROw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:14:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57204 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 12:14:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731386AbfBLROr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:14:47 -0500
+        id S1731386AbfBLROu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:14:50 -0500
 Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6AD62186A;
-        Tue, 12 Feb 2019 17:14:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFF0C217D9;
+        Tue, 12 Feb 2019 17:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549991686;
-        bh=/x/1sz2wxImFM5bKOuDzYPoZZ75Qq6dvHF5a0d3G03A=;
+        s=default; t=1549991689;
+        bh=aad0bpcT6EwnNBwB6REovMO/9Y8vdp0bNoNds8FCyvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Olh1m1j5eTEjOdRHy1ficjOAiVLcl5CzixTDTRL5oTH8v4rgVwl3pQnSZ4gmyZarO
-         td7aAfiKyKzOF86kCL4OUpB5F+IiXoHIep0+aiGvtI1AhB/6sVjiImmx4AvdCqL1e9
-         Di6roNJXaL1vkG1sJ96cnazSHz6it+8YUlPfzeCk=
+        b=B94VF5pRYRAwz8di2ge2/L+VA8XQbFz19ASoxLAAtZpajNgGed0PAQZdKbtSZa1CH
+         pOoI0DdlDTVo6WvBS65r6li4EY5DRVQ7uvl2eC39bN7RTB0YLiHUUL9OUxrndh9SQv
+         uvz4fr/wVFwtabfh1UyFJJ95fJsausj6dBi+79yM=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Pavan Kondeti <pkondeti@codeaurora.org>,
         Ingo Molnar <mingo@kernel.org>,
         Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH 05/32] locking/lockdep: Prepare valid_state() to handle plain masks
-Date:   Tue, 12 Feb 2019 18:13:56 +0100
-Message-Id: <20190212171423.8308-6-frederic@kernel.org>
+Subject: [PATCH 06/32] locking/lockdep: Prepare check_usage_*() to handle plain masks
+Date:   Tue, 12 Feb 2019 18:13:57 +0100
+Message-Id: <20190212171423.8308-7-frederic@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
 References: <20190212171423.8308-1-frederic@kernel.org>
@@ -64,10 +64,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 mark_lock_irq() is going to deal with lock usages that gather multiple
-softirq vectors at once. Therefore the validation through valid_state()
-will need to handle expanded usage masks.
+softirq vectors at once. Therefore the validation through
+check_usage_backwards() and check_usage_forwards() will need to handle
+expanded usage masks.
 
-So enhance valid_state() to that purpose.
+So enhance those functions to that purpose.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
@@ -81,87 +82,97 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/locking/lockdep.c | 44 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 5 deletions(-)
+ kernel/locking/lockdep.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 578dd57f70d3..6b625b70598a 100644
+index 6b625b70598a..bb66327e5cc3 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -2538,7 +2538,26 @@ print_usage_bug(struct task_struct *curr, struct held_lock *this,
- 
- static u64 lock_usage_mask(struct lock_usage *usage)
+@@ -2660,9 +2660,12 @@ print_irq_inversion_bug(struct task_struct *curr,
+  */
+ static int
+ check_usage_forwards(struct task_struct *curr, struct held_lock *this,
+-		     u64 usage_mask, const char *irqclass)
++		     u64 usage_mask, bool read)
  {
--	return BIT(usage->bit);
-+	int nr = 0;
-+	u64 vectors = usage->vector;
-+	u64 mask = 0ULL;
+ 	int ret;
++	u64 intersec;
++	int intersec_bit;
++	const char *irqclass;
+ 	struct lock_list root;
+ 	struct lock_list *uninitialized_var(target_entry);
+ 
+@@ -2674,8 +2677,14 @@ check_usage_forwards(struct task_struct *curr, struct held_lock *this,
+ 	if (ret == 1)
+ 		return ret;
+ 
++	intersec = usage_mask & target_entry->class->usage_mask;
++	intersec_bit = __ffs64(intersec);
++	if (read)
++		intersec_bit += LOCK_USAGE_READ_MASK;
++	irqclass = state_name(intersec_bit);
 +
-+	if (!vectors)
-+		return lock_flag(usage->bit);
-+
-+	/* Only softirqs can have non-zero vectors */
-+	WARN_ON_ONCE(usage->bit < LOCK_USED_IN_SOFTIRQ ||
-+		     usage->bit > LOCK_ENABLED_SOFTIRQ_READ);
-+
-+	while (vectors) {
-+		long fs = __ffs64(vectors) + 1;
-+
-+		vectors >>= fs;
-+		nr += fs;
-+		mask |= lock_flag(usage->bit) << (4 * (nr - 1));
-+	}
-+
-+	return mask;
+ 	return print_irq_inversion_bug(curr, &root, target_entry,
+-					this, 1, irqclass);
++				       this, 1, irqclass);
  }
  
  /*
-@@ -2546,10 +2565,23 @@ static u64 lock_usage_mask(struct lock_usage *usage)
+@@ -2684,9 +2693,12 @@ check_usage_forwards(struct task_struct *curr, struct held_lock *this,
   */
- static inline int
- valid_state(struct task_struct *curr, struct held_lock *this,
--	    enum lock_usage_bit new_bit, enum lock_usage_bit bad_bit)
-+	    u64 new_mask, u64 bad_mask)
+ static int
+ check_usage_backwards(struct task_struct *curr, struct held_lock *this,
+-		      u64 usage_mask, const char *irqclass)
++		      u64 usage_mask, bool read)
  {
--	if (unlikely(hlock_class(this)->usage_mask & lock_flag(bad_bit)))
-+	u64 bad_intersec;
+ 	int ret;
++	u64 intersec;
++	int intersec_bit;
++	const char *irqclass;
+ 	struct lock_list root;
+ 	struct lock_list *uninitialized_var(target_entry);
+ 
+@@ -2698,6 +2710,12 @@ check_usage_backwards(struct task_struct *curr, struct held_lock *this,
+ 	if (ret == 1)
+ 		return ret;
+ 
++	intersec = usage_mask & target_entry->class->usage_mask;
++	intersec_bit = __ffs64(intersec);
++	if (read)
++		intersec_bit += LOCK_USAGE_READ_MASK;
++	irqclass = state_name(intersec_bit);
 +
-+	bad_intersec = hlock_class(this)->usage_mask & bad_mask;
-+
-+	if (unlikely(bad_intersec)) {
-+		enum lock_usage_bit new_bit, bad_bit;
-+		int err;
-+
-+		err = find_exclusive_match(new_mask,
-+					   bad_intersec, &new_bit, &bad_bit);
-+		if (WARN_ON_ONCE(err < 0))
-+			return err;
-+
- 		return print_usage_bug(curr, this, bad_bit, new_bit);
-+	}
- 	return 1;
+ 	return print_irq_inversion_bug(curr, &root, target_entry,
+ 					this, 0, irqclass);
+ }
+@@ -2751,7 +2769,7 @@ static inline int state_verbose(enum lock_usage_bit bit,
  }
  
-@@ -2746,7 +2778,8 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
- 	 * Validate that this particular lock does not have conflicting
- 	 * usage states.
+ typedef int (*check_usage_f)(struct task_struct *, struct held_lock *,
+-			     u64 usage_mask, const char *name);
++			     u64 usage_mask, bool read);
+ 
+ static int
+ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
+@@ -2787,7 +2805,7 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
+ 	 * states.
  	 */
--	if (!valid_state(curr, this, new_usage->bit, excl_usage.bit))
-+	if (!valid_state(curr, this, lock_usage_mask(new_usage),
-+			 lock_usage_mask(&excl_usage)))
+ 	if ((!read || !dir || STRICT_READ_CHECKS) &&
+-	    !usage(curr, this, lock_usage_mask(&excl_usage), state_name(new_usage->bit & ~LOCK_USAGE_READ_MASK)))
++	    !usage(curr, this, lock_usage_mask(&excl_usage), false))
  		return 0;
  
  	/*
-@@ -2762,7 +2795,8 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
- 	 */
- 	if (!read) {
- 		excl_usage.bit += LOCK_USAGE_READ_MASK;
--		if (!valid_state(curr, this, new_usage->bit, excl_usage.bit))
-+		if (!valid_state(curr, this, lock_usage_mask(new_usage),
-+				 lock_usage_mask(&excl_usage)))
- 			return 0;
+@@ -2801,7 +2819,7 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
  
  		if (STRICT_READ_CHECKS &&
+ 		    !usage(curr, this, lock_usage_mask(&excl_usage),
+-			   state_name(new_usage->bit + LOCK_USAGE_READ_MASK)))
++			       true))
+ 			return 0;
+ 	}
+ 
 -- 
 2.17.1
 
