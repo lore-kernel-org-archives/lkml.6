@@ -2,223 +2,115 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F28CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2015C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBB22186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80FDA214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqGMfKq1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfBLOdD (ORCPT
+        id S1729988AbfBLOdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:33:03 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43705 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfBLOa3 (ORCPT
+        Tue, 12 Feb 2019 09:33:17 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40128 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbfBLOdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:29 -0500
-Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4h-0005Af-QL; Tue, 12 Feb 2019 15:30:16 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 08/25] printk: add ring buffer and kthread
-Date:   Tue, 12 Feb 2019 15:29:46 +0100
-Message-Id: <20190212143003.48446-9-john.ogness@linutronix.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 12 Feb 2019 09:33:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q21so3241060wmc.5;
+        Tue, 12 Feb 2019 06:33:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Avxomx1Az8M5EHN2sdyj06xmtx0wYvL0zluK5+/IMaI=;
+        b=hqGMfKq1hZTg0gjddW4ba6k1iH9UAj09LJzc3tm6CRMYGh3jgEw3GCZUp6f2ZYmfiC
+         IpoDhRCS6F0mlnAOdA6FGfKw6bDiPbhRxUNpQzp1yOjZUv2UqAVqbyuxyUsvr4JVi+PZ
+         5VN0fbIzmBa4O41Dn+j/0zMAdVU07SQ6CQJherWx60U1QGVwDMCUPRQ7Xe7ivAXn0Zb5
+         gDpgOa7Opzo2T1l/ZdsIXN7KBiVa6KDPP+qcrOaf1JOIBQ3mlN+GnLjabUSlCLvBgsGQ
+         XbcXpTKk+2suL4rSi6ca/8zi8cfzNzYScF4PCH0521lFFPmCrKcjF/g2sHQdY4CNfa1K
+         b6dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Avxomx1Az8M5EHN2sdyj06xmtx0wYvL0zluK5+/IMaI=;
+        b=At4s+hvL6tfJ64n8IXKHUuJ4vfcaKcU/TpPTGO/RqPsti9nrVcTGvEbvrfsICgeLis
+         icGzrxwoimOMMDymuf4JKAqMBcj2cmMKRPsynwyZgGaiR6ARLLnrDWzG1jpen309aRgx
+         jEO+KTLicDsyjJQ1YiZpD3Z9NzPTvkN0FbrMeQEyJ57BQPfr2U+DzfhyR5L0ogpne3eV
+         fNXAivjdJfKfgGR084AUl+Tz1BZCjNapamAGXDt94B1UwN8FQ9d1eTiyyLo+ZwHnhV9x
+         YcaTPlDVogZELQZkfg3riYgdOB3XuIBQ2j18huNe5t4b/q+PJXZHhNgIncSd8wg+G+XV
+         Yw4Q==
+X-Gm-Message-State: AHQUAubetgcJmN516RwPCnoXFdNGr0ZtzhuAdnnfKYaxBAMmzXBCWltf
+        UvHMxFLKngmiALE7X/3QvWI=
+X-Google-Smtp-Source: AHgI3IZx227cBTMcXkzNAA4Su+BjGjBWJ7tre6DYGxtyvKQa/Yv6G4D1JujTnFhchiot6tXkgOSSGQ==
+X-Received: by 2002:a1c:cf82:: with SMTP id f124mr3229119wmg.95.1549981993880;
+        Tue, 12 Feb 2019 06:33:13 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id 90sm22098998wrk.95.2019.02.12.06.33.12
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 06:33:13 -0800 (PST)
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+To:     Mark Brown <broonie@kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
+Date:   Tue, 12 Feb 2019 15:33:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The printk ring buffer provides an NMI-safe interface for writing
-messages to a ring buffer. Using such a buffer for alleviates printk
-callers from the current burdens of disabled preemption while calling
-the console drivers (and possibly printing out many messages that
-another task put into the log buffer).
+On 2/12/19 3:22 PM, Mark Brown wrote:
+> The patch
+> 
+>    spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+> 
+> has been applied to the spi tree at
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> 
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.  
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
 
-Create a ring buffer to be used for storing messages to be
-printed to the consoles.
+How did that happen when there were still comments and open topics ?
 
-Create a dedicated printk kthread to block on the ring buffer
-and call the console drivers for the read messages.
-
-NOTE: The printk_delay is relocated to _after_ the message is
-      printed, where it makes more sense.
-
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- kernel/printk/printk.c | 105 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index d3d170374ceb..08e079b95652 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -44,6 +44,8 @@
- #include <linux/irq_work.h>
- #include <linux/ctype.h>
- #include <linux/uio.h>
-+#include <linux/kthread.h>
-+#include <linux/printk_ringbuffer.h>
- #include <linux/sched/clock.h>
- #include <linux/sched/debug.h>
- #include <linux/sched/task_stack.h>
-@@ -397,7 +399,12 @@ DEFINE_RAW_SPINLOCK(logbuf_lock);
- 		printk_safe_exit_irqrestore(flags);	\
- 	} while (0)
- 
-+DECLARE_STATIC_PRINTKRB_CPULOCK(printk_cpulock);
-+
- #ifdef CONFIG_PRINTK
-+/* record buffer */
-+DECLARE_STATIC_PRINTKRB(printk_rb, CONFIG_LOG_BUF_SHIFT, &printk_cpulock);
-+
- DECLARE_WAIT_QUEUE_HEAD(log_wait);
- /* the next printk record to read by syslog(READ) or /proc/kmsg */
- static u64 syslog_seq;
-@@ -744,6 +751,10 @@ static ssize_t msg_print_ext_body(char *buf, size_t size,
- 	return p - buf;
- }
- 
-+#define PRINTK_SPRINT_MAX (LOG_LINE_MAX + PREFIX_MAX)
-+#define PRINTK_RECORD_MAX (sizeof(struct printk_log) + \
-+				CONSOLE_EXT_LOG_MAX + PRINTK_SPRINT_MAX)
-+
- /* /dev/kmsg - userspace message inject/listen interface */
- struct devkmsg_user {
- 	u64 seq;
-@@ -1566,6 +1577,34 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
- 	return do_syslog(type, buf, len, SYSLOG_FROM_READER);
- }
- 
-+static void format_text(struct printk_log *msg, u64 seq,
-+			char *ext_text, size_t *ext_len,
-+			char *text, size_t *len, bool time)
-+{
-+	if (suppress_message_printing(msg->level)) {
-+		/*
-+		 * Skip record that has level above the console
-+		 * loglevel and update each console's local seq.
-+		 */
-+		*len = 0;
-+		*ext_len = 0;
-+		return;
-+	}
-+
-+	*len = msg_print_text(msg, console_msg_format & MSG_FORMAT_SYSLOG,
-+			      time, text, PRINTK_SPRINT_MAX);
-+	if (nr_ext_console_drivers) {
-+		*ext_len = msg_print_ext_header(ext_text, CONSOLE_EXT_LOG_MAX,
-+						msg, seq);
-+		*ext_len += msg_print_ext_body(ext_text + *ext_len,
-+					       CONSOLE_EXT_LOG_MAX - *ext_len,
-+					       log_dict(msg), msg->dict_len,
-+					       log_text(msg), msg->text_len);
-+	} else {
-+		*ext_len = 0;
-+	}
-+}
-+
- /*
-  * Special console_lock variants that help to reduce the risk of soft-lockups.
-  * They allow to pass console_lock to another printk() call using a busy wait.
-@@ -2899,6 +2938,72 @@ void wake_up_klogd(void)
- 	preempt_enable();
- }
- 
-+static int printk_kthread_func(void *data)
-+{
-+	struct prb_iterator iter;
-+	struct printk_log *msg;
-+	size_t ext_len;
-+	char *ext_text;
-+	u64 master_seq;
-+	size_t len;
-+	char *text;
-+	char *buf;
-+	int ret;
-+
-+	ext_text = kmalloc(CONSOLE_EXT_LOG_MAX, GFP_KERNEL);
-+	text = kmalloc(PRINTK_SPRINT_MAX, GFP_KERNEL);
-+	buf = kmalloc(PRINTK_RECORD_MAX, GFP_KERNEL);
-+	if (!ext_text || !text || !buf)
-+		return -1;
-+
-+	prb_iter_init(&iter, &printk_rb, NULL);
-+
-+	/* the printk kthread never exits */
-+	for (;;) {
-+		ret = prb_iter_wait_next(&iter, buf,
-+					 PRINTK_RECORD_MAX, &master_seq);
-+		if (ret == -ERESTARTSYS) {
-+			continue;
-+		} else if (ret < 0) {
-+			/* iterator invalid, start over */
-+			prb_iter_init(&iter, &printk_rb, NULL);
-+			continue;
-+		}
-+
-+		msg = (struct printk_log *)buf;
-+		format_text(msg, master_seq, ext_text, &ext_len, text,
-+			    &len, printk_time);
-+
-+		console_lock();
-+		if (len > 0 || ext_len > 0) {
-+			call_console_drivers(ext_text, ext_len, text, len);
-+			boot_delay_msec(msg->level);
-+			printk_delay();
-+		}
-+		console_unlock();
-+	}
-+
-+	kfree(ext_text);
-+	kfree(text);
-+	kfree(buf);
-+
-+	return 0;
-+}
-+
-+static int __init init_printk_kthread(void)
-+{
-+	struct task_struct *thread;
-+
-+	thread = kthread_run(printk_kthread_func, NULL, "printk");
-+	if (IS_ERR(thread)) {
-+		pr_err("printk: unable to create printing thread\n");
-+		return PTR_ERR(thread);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(init_printk_kthread);
-+
- void defer_console_output(void)
- {
- 	preempt_disable();
 -- 
-2.11.0
-
+Best regards,
+Marek Vasut
