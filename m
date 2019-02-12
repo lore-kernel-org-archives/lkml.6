@@ -2,362 +2,368 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A738C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2057FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564282186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D498A2077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:12:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="je1dWxHg"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="nhDy/PSU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbfBLKLW (ORCPT
+        id S1728408AbfBLKMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:11:22 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37516 "EHLO
+        Tue, 12 Feb 2019 05:12:16 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39208 "EHLO
         mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfBLKLV (ORCPT
+        with ESMTP id S1727642AbfBLKMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:11:21 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so6139026iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:11:20 -0800 (PST)
+        Tue, 12 Feb 2019 05:12:15 -0500
+Received: by mail-it1-f195.google.com with SMTP id a6so6111344itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:12:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZFlzjGrgTcPwpLD6dgplnTFefgt4z5bSVKuu7v0QJjw=;
-        b=je1dWxHgYsCs5D2tAuGlWeQtKrMUCGafDQkmdsPN6O+yid83if+cGwO07rjqHl7oYY
-         lJS7mNracShT3XjCfZ9Z0sNFfxAdNshD0911Go2y9h72wpSJqh9VT20EMgP+9Vufkfrp
-         3C+f6p1pEHBElhW8066UtHbdI+R8+8JxzG1MxFbEfFHtEmS8nWFKeoBm5y1NE8wJTv1O
-         eOJkHf2vpuYXq6w7UTGdJScrNwXMAfBNVg5m3OcaA5P+N7Yy++ATyE18gEADqYJFdi0c
-         G0p4cQv3VD1Bq4VK9E6xJWqkaf+QQ0MuOLFc/ki950dLqawHP1SGThi7FwS499bOMz1V
-         EAHw==
+         :cc:content-transfer-encoding;
+        bh=DY0RmzdwwJFYb2isGEJCNGhBwpK4eMqsvncOB02fpeA=;
+        b=nhDy/PSUBZ6ES5h7kSCQlqQL5iQ3G/sgsVAA6ciEHIOxnkskT7Q9wNET6+0BNsoXww
+         bVpBZuAKTmVcP7PuVDjeuR3KYbyWlV6TKxojKJDc6tbIsXcoK2koYt1+877yGXj/6YE1
+         RJeIxvt+naC0nFBD4RoT0go9MaaxEVhupSKbHUFhk4WKLiUNj+lTkVQKuteiXI03YgGd
+         1+9WatJes7T9x73+3j6a2nOdaecChhSaE2ZVFcNbSQvrieQVMoYXS7qyZeXQ+3ByMsvj
+         IwG3OQOBgX/TbZjl81hGAkQwpQfZZ9I/KNp0jj40traT8t1gTLi44MgZb5mntErXLokG
+         6Nyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZFlzjGrgTcPwpLD6dgplnTFefgt4z5bSVKuu7v0QJjw=;
-        b=qfPC1QidcKFnA5DLOuF6H3pZIXY8BmQMur20qXinfSYVX04/vthhdF5kAuBFJ1iI2D
-         J4JGnoRIGmrfmHQliAY4LaLje6yHr68tPF42Dq04nbkvw1JaJQIpAhVeLSz1PoAlQ9Is
-         Idqj7sauwj1LZ9POdJouAjZf6gFfEGKs+xWYv0Tb5mHe44Sb5tvFElI13LDqXfDtoTkx
-         T9GrwI61IZt3nQiDOa0+RZm/O95gV/wtOeYwTrOZoOOlRGH6MzmfWYdPMrSovUAGQU29
-         3yozRx5Q1MwgUguQueX5RCKK6eDhJwoB7cJrkueUUZH6t/88QzpoGF9UU3pU8VLUXUd3
-         3Htw==
-X-Gm-Message-State: AHQUAualDffzxLDWLZoOVn36fI+ZPSufrbH/V2g26tU2arTVT/m9uRtJ
-        WBfUdJBY8m8cVoU4hKnik9OCOnk3UfP7FSRsIeKEjg==
-X-Google-Smtp-Source: AHgI3IaI/Aux3PoBGPmxCNaAetXpXZmkLAN19WmYctZZYX3H29eOxXsxaov8z57wO8AlNS9xekAfGLsYv6WAiUBcvW4=
-X-Received: by 2002:a6b:6511:: with SMTP id z17mr1348361iob.173.1549966279619;
- Tue, 12 Feb 2019 02:11:19 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DY0RmzdwwJFYb2isGEJCNGhBwpK4eMqsvncOB02fpeA=;
+        b=YUmRehJ8lwqCGVtEX9ALwKyyxP7I6zZJ/o3bij6OBgh0ncRD7Lqny549QkgTWJMubl
+         HfliyMQlrbk9J/+/7bBvoJYNfemMGjdL7o91pH9bsiENCL+jhZLHPfa7k3ZNkos3MR0y
+         cp0EXlaRntkNeF5IV9w3nSzw+hw/1TdOe//CIYGqmZKdFEt4JFoACrQZglCCLRUHFNih
+         UueHLSHxjIz4yfNpY6AWwaoWXMmVItEd2nBGzqKQ7NgqTyyvmH84Jir18LMcEdG8GUkN
+         CwfmZeDfV+GRQ3c46fYpvs6r25KlG8oDTaKnBNXKXfD5L9m6smQtHXVOzhppjHKvLE2Y
+         klZg==
+X-Gm-Message-State: AHQUAuarlotyMu6l/4POf2CbTyY4PJorRQbxgIoGOE8mJwjZbN6KrXNT
+        aCpgXLHKl4t0fo3VDHgKgTBkwA8hk1mgBQ2q6cx8Cg==
+X-Google-Smtp-Source: AHgI3IaYEuCqR2vp/A0SsVxgZ8XuMSvX9RAyCYh75NEUrj0bAeDc713A8ayGV+qPEpMFGw0gc3lOlyfHtJIyLru48uE=
+X-Received: by 2002:a02:a901:: with SMTP id n1mr1615706jam.136.1549966332883;
+ Tue, 12 Feb 2019 02:12:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212100825.9113-1-anders.roxell@linaro.org> <20190212100825.9113-2-anders.roxell@linaro.org>
-In-Reply-To: <20190212100825.9113-2-anders.roxell@linaro.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 12 Feb 2019 11:11:07 +0100
-Message-ID: <CAKv+Gu_y++P259Bi92kJr0XHxw8Tvpag74vvFiPQf34DmJq3uw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] efi: fix build error redeclaration of enumerator
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell> <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+In-Reply-To: <20190212095457.GA20638@dell>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 12 Feb 2019 11:12:02 +0100
+Message-ID: <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 11:09, Anders Roxell <anders.roxell@linaro.org> wrote:
+wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
 >
-> Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> include/linux/tpm.h") introduced a build error when both ima and efi is
-> enabled. What happens is that both headers (ima.h and efi.h) defines the
-> same 'NONE' constant, and it broke when they started getting included
-> from the same file.
+> On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
 >
-> In file included from ../security/integrity/ima/ima_fs.c:30:
-> ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
->   hook(NONE)   \
->        ^~~~
-> ../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
->  #define __ima_hook_enumify(ENUM) ENUM,
->                                   ^~~~
-> ../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
->   __ima_hooks(__ima_hook_enumify)
->   ^~~~~~~~~~~
-> In file included from ../arch/arm64/include/asm/acpi.h:15,
->                  from ../include/acpi/acpi_io.h:7,
->                  from ../include/linux/acpi.h:47,
->                  from ../include/linux/tpm.h:26,
->                  from ../security/integrity/ima/ima.h:25,
->                  from ../security/integrity/ima/ima_fs.c:30:
-> ../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
->   NONE,
->   ^~~~
-> make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+> > wt., 12 lut 2019 o 09:36 Lee Jones <lee.jones@linaro.org> napisa=C5=82(=
+a):
+> > >
+> > > On Tue, 05 Feb 2019, Bartosz Golaszewski wrote:
+> > >
+> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > >
+> > > > Add the core mfd driver for max77650 PMIC. We define five sub-devic=
+es
+> > > > for which the drivers will be added in subsequent patches.
+> > > >
+> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > ---
+> > > >  drivers/mfd/Kconfig          |  11 ++
+> > > >  drivers/mfd/Makefile         |   1 +
+> > > >  drivers/mfd/max77650.c       | 342 +++++++++++++++++++++++++++++++=
+++++
+> > > >  include/linux/mfd/max77650.h |  59 ++++++
+> > > >  4 files changed, 413 insertions(+)
+> > > >  create mode 100644 drivers/mfd/max77650.c
+> > > >  create mode 100644 include/linux/mfd/max77650.h
 >
-> Rework to prefix the efi enum with 'EFI_*'.
+> [...]
 >
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
+> > > > +static const struct max77650_irq_mapping max77650_irq_mapping_tabl=
+e[] =3D {
+> > > > +     {
+> > > > +             .cell_num       =3D MAX77650_CELL_CHARGER,
+> > > > +             .irqs           =3D max77650_charger_irqs,
+> > > > +             .irq_names      =3D max77650_charger_irq_names,
+> > > > +             .num_irqs       =3D ARRAY_SIZE(max77650_charger_irqs)=
+,
+> > > > +     },
+> > > > +     {
+> > > > +             .cell_num       =3D MAX77650_CELL_GPIO,
+> > > > +             .irqs           =3D max77650_gpio_irqs,
+> > > > +             .irq_names      =3D max77650_gpio_irq_names,
+> > > > +             .num_irqs       =3D ARRAY_SIZE(max77650_gpio_irqs),
+> > > > +     },
+> > > > +     {
+> > > > +             .cell_num       =3D MAX77650_CELL_ONKEY,
+> > > > +             .irqs           =3D max77650_onkey_irqs,
+> > > > +             .irq_names      =3D max77650_onkey_irq_names,
+> > > > +             .num_irqs       =3D ARRAY_SIZE(max77650_onkey_irqs),
+> > > > +     },
+> > > > +};
+> > >
+> > > This is all a bit convoluted and nasty TBH.
+> > >
+> > > > +static const struct mfd_cell max77650_cells[] =3D {
+> > > > +     [MAX77650_CELL_REGULATOR] =3D {
+> > > > +             .name           =3D "max77650-regulator",
+> > > > +             .of_compatible  =3D "maxim,max77650-regulator",
+> > > > +     },
+> > > > +     [MAX77650_CELL_CHARGER] =3D {
+> > > > +             .name           =3D "max77650-charger",
+> > > > +             .of_compatible  =3D "maxim,max77650-charger",
+> > > > +     },
+> > > > +     [MAX77650_CELL_GPIO] =3D {
+> > > > +             .name           =3D "max77650-gpio",
+> > > > +             .of_compatible  =3D "maxim,max77650-gpio",
+> > > > +     },
+> > > > +     [MAX77650_CELL_LED] =3D {
+> > > > +             .name           =3D "max77650-led",
+> > > > +             .of_compatible  =3D "maxim,max77650-led",
+> > > > +     },
+> > > > +     [MAX77650_CELL_ONKEY] =3D {
+> > > > +             .name           =3D "max77650-onkey",
+> > > > +             .of_compatible  =3D "maxim,max77650-onkey",
+> > > > +     },
+> > > > +};
+> > >
+> > > Why are you numbering the cells?  There is no need to do this.
+> > >
+> >
+> > Just for better readability. It makes sense to me coupled with
+> > MAX77650_NUM_CELLS.
 >
-> We only need one of the two patches applied.
+> You have it the wrong way around.  You define the cell data, then
+> provide the number of them using ARRAY_SIZE().  The enum containing
+> MAX77650_NUM_CELLS should not exist.
+>
+> > > > +static const struct regmap_irq max77650_irqs[] =3D {
+> > > > +     [MAX77650_INT_GPI] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_GPI_MSK,
+> > > > +             .type =3D {
+> > > > +                     .type_falling_val       =3D MAX77650_INT_GPI_=
+F_MSK,
+> > > > +                     .type_rising_val        =3D MAX77650_INT_GPI_=
+R_MSK,
+> > > > +                     .types_supported        =3D IRQ_TYPE_EDGE_BOT=
+H,
+> > > > +             },
+> > > > +     },
+> > > > +     [MAX77650_INT_nEN_F] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_nEN_F_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_nEN_R] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_nEN_R_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_TJAL1_R] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_TJAL1_R_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_TJAL2_R] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_TJAL2_R_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_DOD_R] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_DOD_R_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_THM] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_THM_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_CHG] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_CHG_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_CHGIN] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_CHGIN_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_TJ_REG] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_TJ_REG_MSK,
+> > > > +     },
+> > > > +     [MAX77650_INT_CHGIN_CTRL] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_CHGIN_CTRL_M=
+SK,
+> > > > +     },
+> > > > +     [MAX77650_INT_SYS_CTRL] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_SYS_CTRL_MSK=
+,
+> > > > +     },
+> > > > +     [MAX77650_INT_SYS_CNFG] =3D {
+> > > > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
+> > > > +             .mask                   =3D MAX77650_INT_SYS_CNFG_MSK=
+,
+> > > > +     },
+> > > > +};
+> > >
+> > > If you get rid of all of the horrible hoop jumping in *_setup_irqs(),
+> > > you can use REGMAP_IRQ_REG() like everyone else does.
+> > >
+> >
+> > I could even use it now - except for the first interrupt. I decided to
+> > not use it everywhere as it looks much better that way than having
+> > REGMAP_IRQ_REG() for all definitions and then the first one sticking
+> > out like that. It just looks better.
+>
+> The way it's done at the moment looks terrible.
+>
+> Please use the MACROs to simplify as much of the code as possible.
+>
+> > > > +static const struct regmap_irq_chip max77650_irq_chip =3D {
+> > > > +     .name                   =3D "max77650-irq",
+> > > > +     .irqs                   =3D max77650_irqs,
+> > > > +     .num_irqs               =3D ARRAY_SIZE(max77650_irqs),
+> > > > +     .num_regs               =3D 2,
+> > > > +     .status_base            =3D MAX77650_REG_INT_GLBL,
+> > > > +     .mask_base              =3D MAX77650_REG_INTM_GLBL,
+> > > > +     .type_in_mask           =3D true,
+> > > > +     .type_invert            =3D true,
+> > > > +     .init_ack_masked        =3D true,
+> > > > +     .clear_on_unmask        =3D true,
+> > > > +};
+> > > > +
+> > > > +static const struct regmap_config max77650_regmap_config =3D {
+> > > > +     .name           =3D "max77650",
+> > > > +     .reg_bits       =3D 8,
+> > > > +     .val_bits       =3D 8,
+> > > > +};
+> > > > +
+> > > > +static int max77650_setup_irqs(struct device *dev, struct mfd_cell=
+ *cells)
+> > > > +{
+> > > > +     const struct max77650_irq_mapping *mapping;
+> > > > +     struct regmap_irq_chip_data *irq_data;
+> > > > +     struct i2c_client *i2c;
+> > > > +     struct mfd_cell *cell;
+> > > > +     struct resource *res;
+> > > > +     struct regmap *map;
+> > > > +     int i, j, irq, rv;
+> > > > +
+> > > > +     i2c =3D to_i2c_client(dev);
+> > > > +
+> > > > +     map =3D dev_get_regmap(dev, NULL);
+> > > > +     if (!map)
+> > > > +             return -ENODEV;
+> > > > +
+> > > > +     rv =3D devm_regmap_add_irq_chip(dev, map, i2c->irq,
+> > > > +                                   IRQF_ONESHOT | IRQF_SHARED, -1,
+> > >
+> > > What is -1?  Are you sure this isn't defined somewhere?
+> > >
+> >
+> > I don't see any define for negative irq_base argument. I can add that
+> > in a separate series and convert the users, but for now I'd stick with
+> > -1.
+>
+> IMO it should be defined.  You can define it locally for now.
+>
+> > > > +                                   &max77650_irq_chip, &irq_data);
+> > > > +     if (rv)
+> > > > +             return rv;
+> > > > +
+> > > > +     for (i =3D 0; i < ARRAY_SIZE(max77650_irq_mapping_table); i++=
+) {
+> > > > +             mapping =3D &max77650_irq_mapping_table[i];
+> > > > +             cell =3D &cells[mapping->cell_num];
+> > > > +
+> > > > +             res =3D devm_kcalloc(dev, sizeof(*res),
+> > > > +                                mapping->num_irqs, GFP_KERNEL);
+> > > > +             if (!res)
+> > > > +                     return -ENOMEM;
+> > > > +
+> > > > +             cell->resources =3D res;
+> > > > +             cell->num_resources =3D mapping->num_irqs;
+> > > > +
+> > > > +             for (j =3D 0; j < mapping->num_irqs; j++) {
+> > > > +                     irq =3D regmap_irq_get_virq(irq_data, mapping=
+->irqs[j]);
+> > > > +                     if (irq < 0)
+> > > > +                             return irq;
+> > > > +
+> > > > +                     res[j].start =3D res[j].end =3D irq;
+> > > > +                     res[j].flags =3D IORESOURCE_IRQ;
+> > > > +                     res[j].name =3D mapping->irq_names[j];
+> > > > +             }
+> > > > +     }
+> > >
+> > > This is the first time I've seen it done like this (and I hate it).
+> > >
+> > > Why are you storing the virqs in resources?
+> > >
+> > > I think this is highly irregular.
+> > >
+> >
+> > I initially just passed the regmap_irq_chip_data over i2c clientdata
+> > and sub-drivers would look up virq numbers from it but was advised by
+> > Dmitry Torokhov to use resources instead. After implementing it this
+> > way I too think it's more elegant in sub-drivers who can simply do
+> > platform_get_irq_byname(). Do you have a different idea?
+>
+> > What exactly don't you like about this?
+>
+>  * The declaration of a superfluous struct
+>  * 100 lines of additional/avoidable code
+>  * Hacky hoop jumping trying to fudge VIRQs into resources
+>  * Resources were designed for HWIRQs (unless a domain is present)
+>  * Loads of additional/avoidable CPU cycles setting all this up
 
-Thanks Anders.
-
-I'd argue that we should apply both patches. 'NONE' is far too
-generic, so it requires a subsystem prefix if it has a special meaning
-inside a subsystem.
+While the above may be right, this one is negligible and you know it. :)
 
 >
->  arch/x86/platform/efi/quirks.c          |  2 +-
->  drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
->  include/linux/efi.h                     | 26 +++++++-------
->  3 files changed, 38 insertions(+), 38 deletions(-)
+> Need I go on? :)
 >
-> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-> index 9ce85e605052..b7c0b04ee6ad 100644
-> --- a/arch/x86/platform/efi/quirks.c
-> +++ b/arch/x86/platform/efi/quirks.c
-> @@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
->          * because this case occurs *very* rarely and hence could be improved
->          * on a need by basis.
->          */
-> -       if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-> +       if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
->                 pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
->                 machine_real_restart(MRR_BIOS);
->                 return;
-> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-> index c70df5ae7c4a..28138534643e 100644
-> --- a/drivers/firmware/efi/runtime-wrappers.c
-> +++ b/drivers/firmware/efi/runtime-wrappers.c
-> @@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
->                 pr_err("Failed to queue work to efi_rts_wq.\n");        \
->                                                                         \
->  exit:                                                                  \
-> -       efi_rts_work.efi_rts_id = NONE;                                 \
-> +       efi_rts_work.efi_rts_id = EFI_NONE;                             \
->         efi_rts_work.status;                                            \
->  })
+> Surely the fact that you are using both sides of an API
+> (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> set some alarm bells ringing?
 >
-> @@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
->         arg5 = efi_rts_work.arg5;
+> This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
 >
->         switch (efi_rts_work.efi_rts_id) {
-> -       case GET_TIME:
-> +       case EFI_GET_TIME:
->                 status = efi_call_virt(get_time, (efi_time_t *)arg1,
->                                        (efi_time_cap_t *)arg2);
->                 break;
-> -       case SET_TIME:
-> +       case EFI_SET_TIME:
->                 status = efi_call_virt(set_time, (efi_time_t *)arg1);
->                 break;
-> -       case GET_WAKEUP_TIME:
-> +       case EFI_GET_WAKEUP_TIME:
->                 status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
->                                        (efi_bool_t *)arg2, (efi_time_t *)arg3);
->                 break;
-> -       case SET_WAKEUP_TIME:
-> +       case EFI_SET_WAKEUP_TIME:
->                 status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
->                                        (efi_time_t *)arg2);
->                 break;
-> -       case GET_VARIABLE:
-> +       case EFI_GET_VARIABLE:
->                 status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
->                                        (efi_guid_t *)arg2, (u32 *)arg3,
->                                        (unsigned long *)arg4, (void *)arg5);
->                 break;
-> -       case GET_NEXT_VARIABLE:
-> +       case EFI_GET_NEXT_VARIABLE:
->                 status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
->                                        (efi_char16_t *)arg2,
->                                        (efi_guid_t *)arg3);
->                 break;
-> -       case SET_VARIABLE:
-> +       case EFI_SET_VARIABLE:
->                 status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
->                                        (efi_guid_t *)arg2, *(u32 *)arg3,
->                                        *(unsigned long *)arg4, (void *)arg5);
->                 break;
-> -       case QUERY_VARIABLE_INFO:
-> +       case EFI_QUERY_VARIABLE_INFO:
->                 status = efi_call_virt(query_variable_info, *(u32 *)arg1,
->                                        (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
->                 break;
-> -       case GET_NEXT_HIGH_MONO_COUNT:
-> +       case EFI_GET_NEXT_HIGH_MONO_COUNT:
->                 status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
->                 break;
-> -       case UPDATE_CAPSULE:
-> +       case EFI_UPDATE_CAPSULE:
->                 status = efi_call_virt(update_capsule,
->                                        (efi_capsule_header_t **)arg1,
->                                        *(unsigned long *)arg2,
->                                        *(unsigned long *)arg3);
->                 break;
-> -       case QUERY_CAPSULE_CAPS:
-> +       case EFI_QUERY_CAPSULE_CAPS:
->                 status = efi_call_virt(query_capsule_caps,
->                                        (efi_capsule_header_t **)arg1,
->                                        *(unsigned long *)arg2, (u64 *)arg3,
-> @@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+> And for what?  To avoid passing IRQ data to a child driver?
 >
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-> +       status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
->  }
-> @@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-> +       status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
->  }
-> @@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-> +       status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
->                                 NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-> +       status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
->                                 NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-> +       status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
->                                 data);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-> +       status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-> +       status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
->                                 data);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-> +       status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
->                                 remaining_space, max_variable_size, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-> +       status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
->                         "could not get exclusive access to the firmware\n");
->                 return;
->         }
-> -       efi_rts_work.efi_rts_id = RESET_SYSTEM;
-> +       efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
->         __efi_call_virt(reset_system, reset_type, status, data_size, data);
->         up(&efi_runtime_lock);
->  }
-> @@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-> +       status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-> +       status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
->                                 max_size, reset_type, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index a4de93c96907..b3471b6ff92f 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
->   * fault happened while executing an efi runtime service.
->   */
->  enum efi_rts_ids {
-> -       NONE,
-> -       GET_TIME,
-> -       SET_TIME,
-> -       GET_WAKEUP_TIME,
-> -       SET_WAKEUP_TIME,
-> -       GET_VARIABLE,
-> -       GET_NEXT_VARIABLE,
-> -       SET_VARIABLE,
-> -       QUERY_VARIABLE_INFO,
-> -       GET_NEXT_HIGH_MONO_COUNT,
-> -       RESET_SYSTEM,
-> -       UPDATE_CAPSULE,
-> -       QUERY_CAPSULE_CAPS,
-> +       EFI_NONE,
-> +       EFI_GET_TIME,
-> +       EFI_SET_TIME,
-> +       EFI_GET_WAKEUP_TIME,
-> +       EFI_SET_WAKEUP_TIME,
-> +       EFI_GET_VARIABLE,
-> +       EFI_GET_NEXT_VARIABLE,
-> +       EFI_SET_VARIABLE,
-> +       EFI_QUERY_VARIABLE_INFO,
-> +       EFI_GET_NEXT_HIGH_MONO_COUNT,
-> +       EFI_RESET_SYSTEM,
-> +       EFI_UPDATE_CAPSULE,
-> +       EFI_QUERY_CAPSULE_CAPS,
->  };
->
->  /*
-> --
-> 2.20.1
->
+
+What do you propose? Should I go back to the approach in v1 and pass
+the regmap_irq_chip_data to child drivers?
+
+@Dmitry: what do you think?
+
+Bart
