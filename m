@@ -2,176 +2,105 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8B0C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9A8C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9EC1217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:05:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D229217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:06:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PlyPQsZH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="THeQTI3g"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="MkTo2X3q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730821AbfBLQFg (ORCPT
+        id S1730829AbfBLQGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:05:36 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38914 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730728AbfBLQFg (ORCPT
+        Tue, 12 Feb 2019 11:06:33 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55735 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730758AbfBLQGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:05:36 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5D081608BA; Tue, 12 Feb 2019 16:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549987534;
-        bh=rkZ789ag41kz84dzyh+aactYHY+dusweKLn80VrI+6M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PlyPQsZH0wrYHPMGjHUtoAsX0falC6EpDOJbYTskpnCDB4DCIl3fA/tJKCs4kINZS
-         fYWWQ6hJMRs2mLHpv7k4huSuo1DrBLt43T2TFoGhYqMA2eYHw0NH1ZYgvADPEVbPpD
-         6/fHeakS27GSZgbGTo59edAUeH6maBDTGXsyN2BM=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 29E4E6030D;
-        Tue, 12 Feb 2019 16:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549987533;
-        bh=rkZ789ag41kz84dzyh+aactYHY+dusweKLn80VrI+6M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=THeQTI3gFQ/dcKUPHBfurR+YPYYhVXE2Kgjaa1jMTkLUuhciS86e81VrVuxwMp0Ds
-         vxpkN4O1gf4AhC6jx3vknpbbA66eSkNI6ndErukuzSwHHGdRU3D4pe7x3E58RuZ5v1
-         k48DL/SJibBFAeUdqKZ3T35iEAXRSRttQWQZWT/0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 29E4E6030D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Tue, 12 Feb 2019 09:05:31 -0700
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Evan Green <evgreen@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: sdm845-pinctrl: add wakeup interrupt
- parent for GPIO
-Message-ID: <20190212160531.GA17102@codeaurora.org>
-References: <20181219221105.3004-1-ilina@codeaurora.org>
- <20181219221105.3004-5-ilina@codeaurora.org>
- <20181229000714.GA3654@bogus>
- <20190107185113.GH14960@codeaurora.org>
- <CAL_Jsq+McuN5F9_a2bmECegR65vziNATpUqt4hysKL7FT=b9RA@mail.gmail.com>
- <20190109173111.GB22547@codeaurora.org>
- <CAL_JsqL1z-iOewqBeE43n1cVSGiQyOPHBGbRmEm9zcVLJkoLEA@mail.gmail.com>
+        Tue, 12 Feb 2019 11:06:32 -0500
+Received: by mail-it1-f196.google.com with SMTP id o131so5099694itc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:06:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=x5UGUdhlZ6jxGbIC2Rsw1FTby2fyMVTXpk0fljdo5BE=;
+        b=MkTo2X3qg+gR3GHtUXRYuV3ZhkpOT6/HBgMd15+FYiJv1yhX6rDThShwFQZZj2Sj03
+         0m7cE32LYpKzlQedFdGIvi8DGfn4EB08FVSpb6ZidKD1ZakpS29Me78TZX0sltnb903P
+         7Qky1rQ7ZvIZc+hT9gj3QoU7ILso5DhZHBnwjNTGy7SKgqw2PTTn8WhHianGO49ed+LN
+         7KNdifqWdVpiZx9112Raa2AgX6ukzWOYpEVE/1kncu/HO69EjriZIZE5URlz01bmB53K
+         J8/+BzFr077leLuaB0xW4VKmLw/7/96ncZC7aid7xbz5mZdXvTRMLhOHwopiaWWBII7u
+         Ut+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x5UGUdhlZ6jxGbIC2Rsw1FTby2fyMVTXpk0fljdo5BE=;
+        b=Ze0Py7jECTOPdg9/4Ag23KEl8CtwCKmj4qGNJoyyVvn6xumUGBHuEXrtMp3jHLkm9N
+         BVosH6Gy0G3qXaMEwgk01aY9S1a6XTUyvz32N7jNDcKJBE1PduFCAIwScQnKnK1bvp9U
+         UEGZ3uxUYTHKuMtsWFN8PXMUyVBpJgdFH0R1ASq9rGGyzfNFQojzljxaKgHN25Jf2Dkp
+         OtLmdYKC4IOhFa4J0XUAJeQlIEAT6T7+faVjbELK+YfUJS5obmEwtDmyzZdWyC1BMTgV
+         hAuOmzrqI32V7eI/izmNEGujcsGvwhT+kHi2xk5YFt+/suyREyhu+y9HjxPVPgGnu1Rn
+         OQtA==
+X-Gm-Message-State: AHQUAua7pgAR9CLzHUuaEIUSkcv0fqUg6P9gQMPxfbODlU19f35Ckv4I
+        yjygB272uCYz5BqIz99r1rOCbw==
+X-Google-Smtp-Source: AHgI3IZhb4RpxsReI789CdK54OUFQEi4wAgwxmU+3SMP7+JsAl1PC5P0mOAVutbNl5EywarJg57JqA==
+X-Received: by 2002:a5d:9650:: with SMTP id d16mr2425037ios.289.1549987591523;
+        Tue, 12 Feb 2019 08:06:31 -0800 (PST)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id c128sm1598091itc.43.2019.02.12.08.06.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 08:06:30 -0800 (PST)
+Subject: Re: [PATCH] scsi: sd: fix entropy gathering for most rotational disks
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Cc:     Xuewei Zhang <xueweiz@google.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mikael Pettersson <mikpelinux@gmail.com>
+References: <1549987525.3173.17.camel@HansenPartnership.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e9a411a2-49e2-4897-4e02-1cf790465cbd@kernel.dk>
+Date:   Tue, 12 Feb 2019 09:06:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqL1z-iOewqBeE43n1cVSGiQyOPHBGbRmEm9zcVLJkoLEA@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <1549987525.3173.17.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09 2019 at 12:37 -0700, Rob Herring wrote:
->On Wed, Jan 9, 2019 at 11:31 AM Lina Iyer <ilina@codeaurora.org> wrote:
->>
->> On Tue, Jan 08 2019 at 07:49 -0700, Rob Herring wrote:
->> >On Mon, Jan 7, 2019 at 12:51 PM Lina Iyer <ilina@codeaurora.org> wrote:
->> >>
->> >> On Fri, Dec 28 2018 at 17:07 -0700, Rob Herring wrote:
->> >> >On Wed, Dec 19, 2018 at 03:11:02PM -0700, Lina Iyer wrote:
->> >> >> SDM845 SoC has an always-on interrupt controller (PDC) with select GPIO
->> >> >> routed to the PDC as interrupts that can be used to wake the system up
->> >> >> from deep low power modes and suspend.
->> >> >>
->> >> >> Cc: devicetree@vger.kernel.org
->> >> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> >> >> ---
->> >> >>  .../devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt    | 7 ++++++-
->> >> >>  1 file changed, 6 insertions(+), 1 deletion(-)
->> >> >>
->> >> >> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
->> >> >> index 665aadb5ea28..a522ca46667d 100644
->> >> >> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
->> >> >> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
->> >> >> @@ -29,6 +29,11 @@ SDM845 platform.
->> >> >>      Definition: must be 2. Specifying the pin number and flags, as defined
->> >> >>                  in <dt-bindings/interrupt-controller/irq.h>
->> >> >>
->> >> >> +- wakeup-parent:
->> >> >> +    Usage: optional
->> >> >> +    Value type: <phandle>
->> >> >> +    Definition: A phandle to the wakeup interrupt controller for the SoC.
->> >> >
->> >> >Is this really necessary? Is there more than one possible wakeup-parent
->> >> >node?
->> >> >
->> >> No.  There is only one but depending on the architecture, the wakeup
->> >> interrupt controller could be different device like PDC on SDM845 or MPM
->> >> on SDM820.
->> >>
->> >> What do you have in mind? Let me know if you have a better idea than
->> >> referencing in DT.
->> >
->> >If there's only one possibility for a given platform, then you can
->> >just use of_find_compatible_node(). I don't think it matters that
->> >different platforms have a different device here. It's not going to be
->> >a large table and you may need to know the differences if there's not
->> >an abstracted interface to it (seems there is in your case).
->> The GPIO irqchip would be in hierarchy with the wakeup-parent
->> irqchip and no device specific functions would be called directly.
->> We could achieve this with compatible strings to the irqchip.
->>
->> >Alternatively, if the PDC/MPM code knows what interrupt controller it
->> >is associated with, then it could setup that relationship and the
->> >interrupt controller code could retrieve that. Maybe the stacked
->> >domain support doesn't work in that direction (I haven't looked at the
->> >irq code much since that was added).
->> >
->> The PDC/MPM do not know about the association.
->
->Neither does the main interrupt controller. The association is part of
->SoC integration. You can describe that association in either direction
->and that is sufficient from a DT standpoint. You've probably picked
->putting this in the GIC(?) based on what works more easily with the
->Linux irqdomain code.
->
->> >However, my main concern is documenting something genericish in a
->> >device specific binding. It looks like Tegra is trying to add the same
->> >thing, so this needs to be documented in a common place. One question
->> >is whether wakeup is the only use or if this should be more generally
->> >a secondary interrupt parent?
->> >
->> Yes, wakeup is the only use of this interrupt parent.
->
->Maybe for you, but I was wondering about this more generally. Should
->we encode what the function (e.g. wakeup) is in the property name or
->have something like aux-interrupt-controller? Maybe some platforms
->have some need for a secondary interrupt-controller which is not
->wakeup. Routing interrupts to other cores perhaps?
->
-Rob,
+On 2/12/19 9:05 AM, James Bottomley wrote:
+> The problem is that the default for MQ is not to gather entropy,
+> whereas the default for the legacy queue was always to gather it.  The
+> original attempt to fix entropy gathering for rotational disks under MQ
+> added an else branch in sd_read_block_characteristics(). 
+> Unfortunately, the entire check isn't reached if the device has no
+> characteristics VPD page.  Since this page was only introduced in SBC-3 
+> and its optional anyway, most less expensive rotational disks don't
+> have one, meaning they all stopped gathering entropy when we made MQ
+> the default.  In a wholly unrelated change, openssl and openssh won't
+> function until the random number generator is initialised, meaning lots
+> of people have been seeing large delays before they could log into
+> systems with default MQ kernels due to this lack of entropy, because it
+> now can take tens of minutes to initialise the kernel random number
+> generator.
+> 
+> The fix is to set the non-rotational and add-randomness flags
+> unconditionally early on in the disk initialization path, so they can
+> be reset only if the device actually reports being non-rotational via
+> the VPD page.
 
-Would like to know your opinion on Stephen's idea. Could you take a look
-at this thread again please?
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks,
-Lina
+-- 
+Jens Axboe
 
->> It is powered by
->> an always-on rail and therefore can detect some interrupts that are
->> routed to it even when the GIC is powered off. Though Tegra's
->> implementation of the irqchip is a bit different from QCOM, the idea is
->> generally the same. It would be helpful, if we could make this a
->> generic enough binding.
->>
->> -- Lina
->>
