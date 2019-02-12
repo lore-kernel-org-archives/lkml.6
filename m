@@ -2,116 +2,68 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66BAC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD11C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA1F222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D460222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550007917;
+	bh=IgM4ezCIG86NCZV3+7Jn2Hxmgd/On6ckwP5q/IJ/p40=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=DWkWkT+DyDpqgrEQ98BvmURV1+bl5fvTrwVGyJHKJ7wAKJnUXnqZl35kLGzTxBodE
+	 z4utrO0Jm/Y7ku8j5Jf+i8N6/Wxo1KZbNAR2UdXw21vyZrrxmfNeE+4cDHEBYuWumQ
+	 93ehFeBNIIoerb0aDS6Wuiju3s2Vmtkxlf9vbuFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732307AbfBLVnK (ORCPT
+        id S1732714AbfBLVpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:43:10 -0500
-Received: from gateway33.websitewelcome.com ([192.185.147.108]:13321 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730907AbfBLVnH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:43:07 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id EE6621FCA7D6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:43:06 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tfpagWsRjiQertfpagmKpI; Tue, 12 Feb 2019 15:43:06 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=60010 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtfpZ-003q1E-IE; Tue, 12 Feb 2019 15:43:05 -0600
-Date:   Tue, 12 Feb 2019 15:43:02 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] intel_th: Mark expected switch fall-throughs
-Message-ID: <20190212214302.GA23708@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtfpZ-003q1E-IE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:60010
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 35
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 12 Feb 2019 16:45:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732594AbfBLVpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:45:03 -0500
+Subject: Re: [GIT PULL] ext4 fix for 5.0-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550007903;
+        bh=IgM4ezCIG86NCZV3+7Jn2Hxmgd/On6ckwP5q/IJ/p40=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Jerlec1bNroEswSrkUWdoEM3WR2wfqD2NoFMEvii9GAXWi0iqjknkytLiXwti5kSd
+         KJEU+DX2IluX5rftQTy6vSiOka4a4FHx0409J8UWTfzhq36x4Ft798g74Cs+JZcOI4
+         ACSbJNY1361vs7TZ89zEZ79IByoQ/9MBjYaoFiYU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190212043324.GA15822@mit.edu>
+References: <20190212043324.GA15822@mit.edu>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190212043324.GA15822@mit.edu>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+ tags/ext4_for_linus_stable
+X-PR-Tracked-Commit-Id: 8fdd60f2ae3682caf2a7258626abc21eb4711892
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8ae757efd32bd4962fa16366875416a55307f7c4
+Message-Id: <155000790296.22230.355337373843353995.pr-tracker-bot@kernel.org>
+Date:   Tue, 12 Feb 2019 21:45:02 +0000
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     <torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+The pull request you sent on Mon, 11 Feb 2019 23:33:24 -0500:
 
-This patch fixes the following warnings:
+> git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
 
-drivers/hwtracing/intel_th/sth.c: In function ‘sth_stm_packet’:
-drivers/hwtracing/intel_th/sth.c:86:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   reg += 4;
-   ~~~~^~~~
-drivers/hwtracing/intel_th/sth.c:87:2: note: here
-  case STP_PACKET_XSYNC:
-  ^~~~
-drivers/hwtracing/intel_th/sth.c:88:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   reg += 8;
-   ~~~~^~~~
-drivers/hwtracing/intel_th/sth.c:89:2: note: here
-  case STP_PACKET_TRIG:
-  ^~~~
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8ae757efd32bd4962fa16366875416a55307f7c4
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+Thank you!
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/hwtracing/intel_th/sth.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/hwtracing/intel_th/sth.c b/drivers/hwtracing/intel_th/sth.c
-index 4b7ae47789d2..3a1f4e650378 100644
---- a/drivers/hwtracing/intel_th/sth.c
-+++ b/drivers/hwtracing/intel_th/sth.c
-@@ -84,8 +84,12 @@ static ssize_t notrace sth_stm_packet(struct stm_data *stm_data,
- 	/* Global packets (GERR, XSYNC, TRIG) are sent with register writes */
- 	case STP_PACKET_GERR:
- 		reg += 4;
-+		/* fall through */
-+
- 	case STP_PACKET_XSYNC:
- 		reg += 8;
-+		/* fall through */
-+
- 	case STP_PACKET_TRIG:
- 		if (flags & STP_PACKET_TIMESTAMPED)
- 			reg += 4;
 -- 
-2.20.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
