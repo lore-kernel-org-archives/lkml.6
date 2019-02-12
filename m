@@ -2,86 +2,99 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D185CC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A5BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C26421773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B33920675
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549961338;
+	bh=UAJDprAmUxSF4d6r+opZ3U08q7nFOQU82RNdpKvf9aI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=z7eFxPL8qPbSkb+FHcFXgLoUlwSuaOqf69/KUE4wAvazzaLkPZLiZ0TP5RK0QzLBm
+	 MOKn0sXBqYQXsWb/tx46d+I/OvXqaYw4W4x7MwIjkVbWUas4kUhjgGycL+vdFQuusW
+	 jTf9Cb3ta1VF2Sckb2qohd0faptwUu6N1W0Aggb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbfBLIsh (ORCPT
+        id S1728612AbfBLIs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:48:37 -0500
-Received: from mout.gmx.net ([212.227.15.15]:37213 "EHLO mout.gmx.net"
+        Tue, 12 Feb 2019 03:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbfBLIsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:48:37 -0500
-Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
- (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 0MTSKd-1gU11q46Yp-00SO7U; Tue, 12 Feb 2019 09:48:34 +0100
-From:   Chengguang Xu <cgxu519@gmx.com>
-To:     gregkh@linuxfoundation.org
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 2/2] chardev: showing minor range for chardev in the output of /proc/devices
-Date:   Tue, 12 Feb 2019 16:47:39 +0800
-Message-Id: <20190212084739.27602-2-cgxu519@gmx.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190212084739.27602-1-cgxu519@gmx.com>
-References: <20190212084739.27602-1-cgxu519@gmx.com>
+        id S1728410AbfBLIs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:48:56 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4458D21773;
+        Tue, 12 Feb 2019 08:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549961335;
+        bh=UAJDprAmUxSF4d6r+opZ3U08q7nFOQU82RNdpKvf9aI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=huFYGz4+DC4H80pbzBrsJwZ2xkSUV+6V6uHVMm+15ugQDjVAtpqzdFExErQnd4dgd
+         QgassdDOTpWuHimaRnSf6bYaUtKV2BS/gou+EIGu9M8ub3YtzUPYIbBncq+eus9M+t
+         qWjHjlaWqLN7jVsuRBXxaA6Eaime+oovP/mmyocE=
+Date:   Tue, 12 Feb 2019 09:48:52 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Benjamin Gordon <bmgordon@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Oren Laadan <orenl@cellrox.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Rom Lemarchand <romlem@android.com>,
+        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Elliott Hughes <enh@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.20 282/352] fs/proc/base.c: use ns_capable instead of
+ capable for timerslack_ns
+Message-ID: <20190212084852.GA31657@kroah.com>
+References: <20190211141846.543045703@linuxfoundation.org>
+ <20190211141904.885459037@linuxfoundation.org>
+ <87tvh9es4x.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZMFh0MXWjreN8cG/ZjyXA9hEVUevxgbiwYnBuoIAixfDhckumx1
- 8Dru50++FFhCehRSdp2XdsC+JF8JDzTeZJt8R61cQeziQDUL38vYnDtrTOkdcBB3VtO6BUY
- k3G5lOAAhwRRCNmcRao3JzDTE08ZU2piNu6rlwMIVCwp4wWU8DTXwkttiL7AvIJ/nx35egT
- C2pfPUXzyNK6qOypktZTQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:phu/BBAeqFo=:RVY833ZpIkFbD4/MQgaz3I
- Igo4zHrWAZLFiBjH98t7L61mFbNqx82yafcp3A+cf4kqgXvgYqpuxLmvFuCWv7c7oL8fJAv2U
- 1mhQPYRuVWWI1aKRgJNjS+0jZ9ZPXUxXZNH2U0vQJaLLPK5OzlIHfLgjCKMJVW3RM9lwQMxGR
- RcW/o7EnzIBe7z/06ceDZ5zAdXXE/yhmbAtFCX5e87jLCNX1RoQdwFC/ydLcn/9n+I01OMiiN
- N+5rSALGz/JCsxWex/IgN5J1BAduV3GsHDUXwvp9/8rY4nWLnbGYhG9YVR5ldROYBdlc5HypH
- 7AX3iK2E0NDKvjhGU0Tkmft7dEx3J3wewHd+CZu4NV+dvzrnESCh7orNhW5UfFZr/iQB5cKbD
- sETx19mthLOHEp7QgKl0citziK1Tekhgtw2mGmgPy8DvFcVOdbM7hug4X037cN/hXnrosfGlG
- IP5r0hYv8W3o0Es6t0KaWicfdNI6hp1Efm2hjYLCUHVuQIrLpyMD8+x9uXlxondYfsWXk5B75
- N2OMQ/7vckFSqk4WLiSqjTrnb8fwCWBYwsb2hV/xyBB5L9cSjpAmfkHVm0rXqpjWwKLafpEB/
- KclsoeWpO1yqmbIKt+mh5cZeYWUykiXbCblJA5BC5Pl2Wvr2J7a43/ek/4AcGUOIY8rBVT6n0
- o5oexMM6yOa4arNeSsgJkuqnjRA1Jp2gnuWtF/V3MYIM2YyFkTA7Ajbk7ud6P9FJdbaWNYplm
- LZVZLVh73vyukSKZXCNIAS4pv56fqsHPZE9bfey1fMAav/SBB5++m5PZoRupG+lrrU2n5MpwH
- 4KJKekni4zZT05eq7znWDUz4xV1uMfXGHRQXM0ZM0u6NnsBBw100DqvtfGgfXG3yGDZAEIo8q
- QWqCMF+AdDWV6eKCN/5WR44qlYOVDPRlw669cF0/9sWUKq9qSlj3irY+r7IqDy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tvh9es4x.fsf@xmission.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently chardev allows to share major, showing
-major with minor range for chardev will be more
-helpful.
+On Mon, Feb 11, 2019 at 07:02:06PM -0600, Eric W. Biederman wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> 
+> > 4.20-stable review patch.  If anyone has any objections, please let me
+> > know.
+> 
+> No objection.  But I think of this as a feature addition rather than a
+> fix for something.  As a feature that we now allow something we
+> previously did not does this qualify for a backport to stable?
+> 
+> It is probably no more harmful in this instance than adding PCI IDs to a
+> driver.  So I am not worried.  I am curious the current guidelines
+> are.
+> 
+> In most cases a small relaxation of permissions like this requires a lot
+> of bug fixing as typically code protected by capable(CAP_XXX) has been
+> written and tested assuming a trusted root user.  Those bug fixes are
+> many times too large for a stable backport.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
- fs/char_dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Fair enough, patch is now dropped, thanks for the review.
 
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index b25b1da097d5..6f00acdeb308 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -55,7 +55,9 @@ void chrdev_show(struct seq_file *f, off_t offset)
- 	mutex_lock(&chrdevs_lock);
- 	for (cd = chrdevs[major_to_index(offset)]; cd; cd = cd->next) {
- 		if (cd->major == offset)
--			seq_printf(f, "%3d %s\n", cd->major, cd->name);
-+			seq_printf(f, "%3d %s (%u-%u)\n", cd->major, cd->name,
-+				   cd->baseminor,
-+				   cd->baseminor + cd->minorct - 1);
- 	}
- 	mutex_unlock(&chrdevs_lock);
- }
--- 
-2.20.1
-
+greg k-h
