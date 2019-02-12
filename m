@@ -2,113 +2,100 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DD7C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF69C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D07218D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0583218D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:20:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CjcGASPY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qpA7h6ZH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbfBLKUD (ORCPT
+        id S1728762AbfBLKUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:20:03 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10836 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbfBLKUD (ORCPT
+        Tue, 12 Feb 2019 05:20:07 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46386 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbfBLKUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:20:03 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c629dd50001>; Tue, 12 Feb 2019 02:20:05 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 12 Feb 2019 02:20:02 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 12 Feb 2019 02:20:02 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 10:19:59 +0000
-Subject: Re: [PATCH 4.14 000/205] 4.14.99-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190211141827.214852402@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d91e568f-643c-1226-2592-6e24baadb01a@nvidia.com>
-Date:   Tue, 12 Feb 2019 10:19:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 05:20:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id o6so1066400pls.13;
+        Tue, 12 Feb 2019 02:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8TrihA3fFD8SCmljFjZseCPcdqTX+6RNR1hDHLAg3NY=;
+        b=qpA7h6ZHttjfIpQvFPZamuiG9XOhBVti1a92RN/yB86W/ezq9B38odaoh2oDFTGQw9
+         aMO41RQw0iNBg3GlXw0zgaN71IRdatuhzdu+mruqXCZPiBPu6LRONIRkfhAnk8olGyVr
+         SbES7Pt0HAvnGNG6a6A3ejgLekpuTLuPh7TWdDEZ/l1/r0LxoNaronVObKIEbe2iw8aR
+         Df9/d5qVPxIIv8czJGHhnLY4LFVRIBK5wRelYuh06VMwVNVco+JG6kTbjtAUwsEseacX
+         KwULeF+1aaO+A+uOGFnjyYOVQztbnt/P//C1FtYi0LM6yAvwkp5CiHZEX9LSutiZ66+r
+         dvew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8TrihA3fFD8SCmljFjZseCPcdqTX+6RNR1hDHLAg3NY=;
+        b=gnDh5xcDc/ofhK3CrAwvOZrYxiFKESndUTwPcKZ4jtc6AUhRA6XVLlhCZECyT+7qcl
+         JVJr3Olqp7+oDz04uI08zG8DDBDKo+vRzElmNyajNAQseUmq1A+YXD/i1eNU1zSljLCk
+         Nbbs2caMjOLPN01DmjuN/M8jEmnLEMWRyXVVRWGtooqBB7F3j8GnpLOlMRgI5oLdAve4
+         IDtN6f+WD4ChUlvWK58hDYraZl3dLy8h1tDYQtWOI+ZNmebj3G7lrkGbgidqhGSoS97E
+         q9s36y0vYxK9NRntExxzBY7+UaxGttLBJMGqaK8x0jKzlpZym4zj32G6wnOcAUPJxw2L
+         SIBA==
+X-Gm-Message-State: AHQUAuafQv7p7TYRVrUAtBVotEcinQgMfCai+DKPOZhwdHmGTE1qZltg
+        8HbDJ2Hhd923LutOtDetKFo3buBMT/66sMVAVrE=
+X-Google-Smtp-Source: AHgI3IbuJ6ALZBaqyBr+f7J7q++3mVxBf8qSWBa9xtDFGI4KJTQidt3EcmCMs6oprH+Gy87762Z9smcT6mg43JEhFQM=
+X-Received: by 2002:a17:902:bc88:: with SMTP id bb8mr3323071plb.12.1549966804153;
+ Tue, 12 Feb 2019 02:20:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549966805; bh=xPV7MhF2g6K9wBkFBu4J5WAQkF243Zk5EIUldibKsmQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=CjcGASPYWWVIVOpVoWbPpCxPjEr4aovYMVvA76/yMOjZKpGxQzrPe9XW0FNKzm6Nl
-         7zVOOOC/9cQkeCtCXgfa4E8Xby1JW2M4mWeWT+AZYu83RJfIzDcP8TW4EljjwtmY/w
-         4IGUWcQbWkEghZ5qZVX9K5Ehsxpa/SH6wEZG9acZ0rSYClGZBnG7MWXkD0Rctf2DVy
-         oy7AU9UZcvvupjz4nkwId7srJnhfp6ChRPUaBFzKyrtosaTiulayO9ZGdaNKj9A7SI
-         Kwdpg3ecjOVuiHiDb4GB1gIKnaNCCqLtuRvpA3xFUfAE3OvnOw851R984jp4QQ6XED
-         fWWD7bivcFYiw==
+References: <20190212100825.9113-1-anders.roxell@linaro.org>
+ <20190212100825.9113-2-anders.roxell@linaro.org> <CAKv+Gu_y++P259Bi92kJr0XHxw8Tvpag74vvFiPQf34DmJq3uw@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_y++P259Bi92kJr0XHxw8Tvpag74vvFiPQf34DmJq3uw@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 12 Feb 2019 12:19:53 +0200
+Message-ID: <CAHp75Vd161xYcOgESiA2Ex5gzM39_CSSH11HsVzOyyA+g0rYTw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] efi: fix build error redeclaration of enumerator
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 12, 2019 at 12:16 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On Tue, 12 Feb 2019 at 11:09, Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > Commit a893ea15d764 ("tpm: move tpm_chip definition to
+> > include/linux/tpm.h") introduced a build error when both ima and efi is
+> > enabled. What happens is that both headers (ima.h and efi.h) defines the
+> > same 'NONE' constant, and it broke when they started getting included
+> > from the same file.
 
-On 11/02/2019 14:16, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.99 release.
-> There are 205 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Feb 13 14:17:19 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.99-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+> I'd argue that we should apply both patches. 'NONE' is far too
+> generic, so it requires a subsystem prefix if it has a special meaning
+> inside a subsystem.
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.14.99-rc1-g151d638
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-BTW, I did not seem to receive a 'stable review' for v4.4.175-rc1. I am
-not sure if it is just me, but that last one I see in the archive for
-v4.4 [0] is v4.4-174-rc1.
-
-Cheers
-Jon
-
-[0] https://www.spinics.net/lists/stable/
+I was about to say the same thing.
 
 -- 
-nvpublic
+With Best Regards,
+Andy Shevchenko
