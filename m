@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6561C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F43AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16842186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5417F20838
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbfBLORS (ORCPT
+        id S1730178AbfBLOTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:17:18 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36021 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730114AbfBLORS (ORCPT
+        Tue, 12 Feb 2019 09:19:03 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40892 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727428AbfBLOTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:17:18 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q11so2133336lfd.3;
-        Tue, 12 Feb 2019 06:17:16 -0800 (PST)
+        Tue, 12 Feb 2019 09:19:03 -0500
+Received: by mail-lf1-f67.google.com with SMTP id t14so2122901lfk.7;
+        Tue, 12 Feb 2019 06:19:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tfqNAjZm15OBauurQ8LyTpT7xKYtjf4fzwJmRjJlcn8=;
-        b=ewVlomFn/TXg5A5m7OqvBRHLf/rOBAGDn1uNfNq7e90imnj+/pNEDPtvUTdaFQmXkw
-         0fSXt/jHJiYmlTKjYMDOF0cFLPAXu+PDHECbaVktjj3+ckHwVcHQr+muIYgfo8K50mU9
-         x2zC1Xt0xgJuMMMRDVpWPXQRAKjqdltR0SSKCF6NHp4PaRzCI8g36/Tm/WN3YsRrr9HQ
-         /v+WWCY9oqKm16wsOtMqhLh2y4QVBIQayG/y43OTJz0ZTnTY44NrAebwQm8S3Djq0HHY
-         yY0ZKSV5lDnZ61d1Gd8x8gEPyUJT11p4J2G1LpGUzLyvNkgF1EABNINvlo0tQN/BXHCD
-         70JQ==
-X-Gm-Message-State: AHQUAuZ9BmJiSHYtoM+kFToCEUlbTJB0p+dh+KbqqkXcBQDaX8SF26xz
-        QJByJrKLgRtjLLfyoms7DwE=
-X-Google-Smtp-Source: AHgI3IY9RNheDaYRLbL4UcBK+/htGZA/OHGA0Y2IVPzC/6hwCZ8LurfFp7f33UEs5hFoee24LuTg0g==
-X-Received: by 2002:ac2:5288:: with SMTP id q8mr2677093lfm.157.1549981035159;
-        Tue, 12 Feb 2019 06:17:15 -0800 (PST)
+        bh=KShAM9K0RbgiOLSm3iC6zYpIfcFPVOIEak+23MAnTmA=;
+        b=U2Zt4YVXDP69kdm42WyiKaN1Otagl7UqeasDUYS1pY052MYgDJg4JJ7kcD59GpBZXu
+         YkiT50fi8Ja9NTllE9EJpXVz90l5TuVtnU3DWHdjWY+7j/x+3ojQJ2zWN78usiIm6tB2
+         akdvkSRJwrB2oCqdzqqctym2FbyU0Kmmmqkonv2tBvBQTlRr9H5M5pxz2PmWlu6RtfbA
+         d+zmUSSz4bL5grfKUoCflGWVsEo+TPfdgSGa4B/T2QuqxW3dSMsZbUQGFrxJGYbS/QSS
+         2FMHko4q/K53kgTjnmn5AUJKGSm8f23SezcR8e5YnJtWf1KfJ0IOLxnE2usJHlS8s1BP
+         mdng==
+X-Gm-Message-State: AHQUAubQbsilHrdnOX3IInjYsf85zaxBFdUSArcprIQMm/WCJfcOaQ8l
+        4UbjcU7K+dd4Oscg1IYmrRw=
+X-Google-Smtp-Source: AHgI3IZ6diLqI0OysBUMB6wssgmCcSG2+3ykjdpT2AxUML/B3T2S3DuI5HaMyG/v+csctzPq6G7REg==
+X-Received: by 2002:a19:6806:: with SMTP id d6mr2571782lfc.48.1549981139017;
+        Tue, 12 Feb 2019 06:18:59 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm2708219ljc.26.2019.02.12.06.17.14
+        by smtp.gmail.com with ESMTPSA id p21sm2970755lfd.4.2019.02.12.06.18.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 06:17:14 -0800 (PST)
-Date:   Tue, 12 Feb 2019 16:17:03 +0200
+        Tue, 12 Feb 2019 06:18:58 -0800 (PST)
+Date:   Tue, 12 Feb 2019 16:18:46 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -54,9 +54,9 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Robin Gong =?utf-8?B?4oCO?= <yibin.gong@nxp.com>,
         Elven Wang =?utf-8?B?4oCO?= <elven.wang@nxp.com>,
         Anson Huang =?utf-8?B?4oCO?= <anson.huang@nxp.com>
-Subject: [RFC PATCH v1 1/3] devicetree: bindings: bd718x7: document HW state
- related ROHM specific properties
-Message-ID: <eb0768eb589acdc4b1be3f5dd042e7d8ead26797.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v1 2/3] regulator: add
+ regulator_desc_list_voltage_linear_range
+Message-ID: <b07e501c84c77c59f0a2a67c43576373a140f10f.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -68,102 +68,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ROHM BD71837 / BD71847 specific device tree bindings for
-controlling the PMIC shutdown/reset states and voltages for
-different HW states. The PMIC was designed to be used with NXP
-i.MX8 SoC and it supports SNVS low power state which seems to
-be typical for NXP i.MX SoCs. However, when SNVS is used we must
-not allow SW to control enabling/disabling those regulators which
-are crucial for system to boot as there is a HW limitation which
-causes SW controlled regulators to be kept shut down after SNVS
-reset.
-
-Allow setting the SNVS to be used as reset target state and allow
-marking those regulators which are critical for boot.
+Add regulator_desc_list_voltage_linear_range which can be used
+by drivers for getting the voltages before regulator is registered.
+This may be useful for drivers which need to fetch the voltage
+selectors at device-tree parsing callback.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 17 ++++++++++
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 36 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-index a4b056761eaa..2aff8287fdd8 100644
---- a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -23,6 +23,23 @@ Required properties:
+Please not apply as such. This is compile-tested only and sent
+for collecting feedback. If idea is Ok I will do proper testing
+and send a non RFC patch.
+
+ drivers/regulator/helpers.c      | 39 +++++++++++++++++++++++++++++----------
+ include/linux/regulator/driver.h |  6 ++++++
+ 2 files changed, 35 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
+index 5686a1335bd3..68ac6017ef28 100644
+--- a/drivers/regulator/helpers.c
++++ b/drivers/regulator/helpers.c
+@@ -594,28 +594,30 @@ int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
+ EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
  
- Optional properties:
- - clock-output-names	: Should contain name for output clock.
-+- rohm,reset-snvs-powered : Transfer BD718x7 to SNVS state at reset.
-+
-+The BD718x7 supports two different HW states as reset target states. States
-+are called as SNVS and READY. At the SNVS state all other logic and external
-+devices apart from the SNVS power domain are shut off. Please refer to NXP
-+i.MX8 documentation for further information regarding SNVS state. When a
-+reset is done via SNVS state the PMIC OTP data is not reload.
-+
-+At READY state all the PMIC power outputs go down and OTP is reload. There
-+is a HW quirk in BD718x7 which causes power outputs which have been under
-+SW control to stay down when reset has switched power state to SNVS. If
-+reset is done via READY state the power outputs will be set to HW control
-+by OTP loading. Thus the reset target state is set to READY by default. If
-+SNVS state is used the boot crucial regulators should have
-+"rohm,regulator-crucial-for-boot" property set in regulator node. Please
-+see the ./regulator/rohm,bd71837-regulator.txt for details of regulator
-+bindings.
+ /**
+- * regulator_list_voltage_linear_range - List voltages for linear ranges
++ * regulator_desc_list_voltage_linear_range - List voltages for linear ranges
+  *
+- * @rdev: Regulator device
++ * @desc: Regulator desc for regulator which volatges are to be listed
+  * @selector: Selector to convert into a voltage
+  *
+  * Regulators with a series of simple linear mappings between voltages
+- * and selectors can set linear_ranges in the regulator descriptor and
+- * then use this function as their list_voltage() operation,
++ * and selectors who have set linear_ranges in the regulator descriptor
++ * can use this function prior regulator registration to list voltages.
++ * This is useful when voltages need to be listed during device-tree
++ * parsing.
+  */
+-int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
+-					unsigned int selector)
++int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
++					     unsigned int selector)
+ {
+ 	const struct regulator_linear_range *range;
+ 	int i;
  
- Example:
+-	if (!rdev->desc->n_linear_ranges) {
+-		BUG_ON(!rdev->desc->n_linear_ranges);
++	if (!desc->n_linear_ranges) {
++		BUG_ON(!desc->n_linear_ranges);
+ 		return -EINVAL;
+ 	}
  
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-index 4b98ca26e61a..8ff692891dea 100644
---- a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -27,8 +27,44 @@ BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
- LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
+-	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
+-		range = &rdev->desc->linear_ranges[i];
++	for (i = 0; i < desc->n_linear_ranges; i++) {
++		range = &desc->linear_ranges[i];
  
- Optional properties:
-+- rohm,regulator-crucial-for-boot : Any regulators which are required to stay
-+				    enabled for system to boot must be excluded
-+				    from SW control by this property if SNVS
-+				    state is used as reset target. Please see
-+				    the ../mfd/rohm,bd71837-pmic.txt for more
-+				    details.
-+- rohm,dvs-run-voltage		: PMIC default "RUN" state voltage in uV.
-+				  See below table for bucks which support this.
-+- rohm,dvs-idle-voltage		: PMIC default "IDLE" state voltage in uV.
-+				  See below table for bucks which support this.
-+- rohm,dvs-suspend-voltage	: PMIC default "SUSPEND" state voltage in uV.
-+				  See below table for bucks which support this.
- - Any optional property defined in bindings/regulator/regulator.txt
+ 		if (!(selector >= range->min_sel &&
+ 		      selector <= range->max_sel))
+@@ -628,6 +630,23 @@ int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
  
-+Supported default DVS states:
+ 	return -EINVAL;
+ }
++EXPORT_SYMBOL_GPL(regulator_desc_list_voltage_linear_range);
 +
-+BD71837:
-+buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
-+-----------------------------------------------------------------------------
-+1	| supported		| supported		| supported
-+----------------------------------------------------------------------------
-+2	| supported		| supported		| not supported
-+----------------------------------------------------------------------------
-+3	| supported		| not supported		| not supported
-+----------------------------------------------------------------------------
-+4	| supported		| not supported		| not supported
-+----------------------------------------------------------------------------
-+rest	| not supported		| not supported		| not supported
-+
-+BD71847:
-+buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
-+-----------------------------------------------------------------------------
-+1	| supported		| supported		| supported
-+----------------------------------------------------------------------------
-+2	| supported		| supported		| not supported
-+----------------------------------------------------------------------------
-+rest	| not supported		| not supported		| not supported
-+
- Example:
- regulators {
- 	buck1: BUCK1 {
++/**
++ * regulator_list_voltage_linear_range - List voltages for linear ranges
++ *
++ * @rdev: Regulator device
++ * @selector: Selector to convert into a voltage
++ *
++ * Regulators with a series of simple linear mappings between voltages
++ * and selectors can set linear_ranges in the regulator descriptor and
++ * then use this function as their list_voltage() operation,
++ */
++int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
++					unsigned int selector)
++{
++	return regulator_desc_list_voltage_linear_range(rdev->desc, selector);
++}
+ EXPORT_SYMBOL_GPL(regulator_list_voltage_linear_range);
+ 
+ /**
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 7f8345bff4e1..05efe2b057c1 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -539,4 +539,10 @@ void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
+ void regulator_lock(struct regulator_dev *rdev);
+ void regulator_unlock(struct regulator_dev *rdev);
+ 
++/*
++ * Helper functions intended to be used by regulator drivers prior registering
++ * their regulators.
++ */
++int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
++					     unsigned int selector);
+ #endif
 -- 
 2.14.3
 
