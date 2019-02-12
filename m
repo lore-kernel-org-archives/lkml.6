@@ -2,29 +2,29 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A757CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5943AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB9A214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24BFF214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730407AbfBLOau (ORCPT
+        id S1730418AbfBLOax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:50 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43830 "EHLO
+        Tue, 12 Feb 2019 09:30:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43848 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbfBLOao (ORCPT
+        with ESMTP id S1728288AbfBLOav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:44 -0500
+        Tue, 12 Feb 2019 09:30:51 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4x-0005Af-6c; Tue, 12 Feb 2019 15:30:31 +0100
+        id 1gtZ4c-0005Af-6o; Tue, 12 Feb 2019 15:30:10 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,12 +40,10 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 25/25] printk: remove unused code
-Date:   Tue, 12 Feb 2019 15:30:03 +0100
-Message-Id: <20190212143003.48446-26-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 00/25] printk: new implementation
+Date:   Tue, 12 Feb 2019 15:29:38 +0100
+Message-Id: <20190212143003.48446-1-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -54,357 +52,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code relating to the safe context and anything dealing with the
-previous log buffer implementation is no longer in use. Remove it.
+Hello,
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- kernel/printk/internal.h |  53 ---------------
- kernel/printk/printk.c   | 167 ++++-------------------------------------------
- lib/bust_spinlocks.c     |   3 +-
- 3 files changed, 13 insertions(+), 210 deletions(-)
+As probably many of you are aware, the current printk implementation
+has some issues. This series (against 5.0-rc6) makes some fundamental
+changes in an attempt to address these issues. The particular issues I
+am referring to:
+
+1. The printk buffer is protected by a global raw spinlock for readers
+   and writers. This restricts the contexts that are allowed to
+   access the buffer.
+
+2. Because of #1, NMI and recursive contexts are handled by deferring
+   logging/printing to a spinlock-safe context. This means that
+   messages will not be visible if (for example) the kernel dies in
+   NMI context and the irq_work mechanism does not survive.
+
+3. Because of #1, when *not* using features such as PREEMPT_RT, large
+   latencies exist when printing to slow consoles.
+
+4. Because of #1, when _using_ features such as PREEMPT_RT, printing
+   to the consoles is further restricted to contexts that can sleep.
+   This can cause large latencies in seeing the messages.
+
+5. Printing to consoles is the responsibility of the printk caller
+   and that caller may be required to print many messages that other
+   printk callers inserted. Because of this there can be enormous
+   variance in the runtime of a printk call.
+
+6. The timestamps on the printk messages are generated when the
+   message is inserted into the buffer. But the call to printk may
+   have occurred long before that. This is especially true for
+   messages in the printk_safe context. This means that printk timing
+   information (although neatly "sorted") is neither accurate nor
+   reliable.
+
+7. Loglevel INFO is handled the same as ERR. There seems to be an
+   endless effort to get printk to show _all_ messages as quickly as
+   possible in case of a panic (i.e. printing from any context), but
+   at the same time try not to have printk be too intrusive for the
+   callers. These are conflicting requirements that lead to a printk
+   implementation that does a sub-optimal job of satisfying both
+   sides.
+
+To address these issues this series makes the following changes:
+
+- Implements a new printk ringbuffer that supports lockless multiple
+  readers. Writers are synchronized per-cpu with support for all
+  contexts (including NMI). (This implementation was inspired by a
+  post[0] from Peter Zijlstra.)
+
+- The new printk ringbuffer uses the initialized data segment of the
+  kernel for its data buffer so that it is available on early boot.
+
+- Timestamps are captured at the beginning of the printk call.
+
+- A dedicated kernel thread is created for printing to all consoles in
+  a fully preemptible context.
+
+- A new (optional) console operation "write_atomic" is introduced that
+  console drivers may implement. This function must be NMI-safe. An
+  implementation for the 8250 UART driver is provided.
+
+- The concept of "emergency messages" is introduced that allows
+  important messages (based on a new emergency loglevel threshold) to
+  be immediately written to any consoles supporting write_atomic,
+  regardless of the context. This allows non-emergency printk calls
+  (i.e. INFO) to run in nearly constant time, with their console
+  printing taking place in a separate fully preemptible context. And
+  emergency messages (i.e. ERR) are printed immediately for the user.
+
+- Individual emergency messages are written contiguously and a CPU-ID
+  field is added to all output to allow for sorting of messages being
+  printed by multiple CPUs simultaneously.
+
+Although the RFC series works, there are some open issues that I chose
+to leave open until I received some initial feedback from the community.
+These issues are:
+
+- The behavior of LOG_CONT has been changed. Rather than using the
+  current task as the "cont owner", the CPU ID is used. NMIs have
+  their own cont buffer so NMI and non-NMI tasks can safely use
+  LOG_CONT.
+
+- The runtime resizing features of the printk buffer are not
+  implemented.
+
+- The exported vmcore symbols relating to the printk buffer no longer
+  exist and no replacements have been defined. I do not know all the
+  userspace consequences of making a change here.
+
+- The introduction of the CPU-ID field not only changes the usual
+  printk output, but also defines a new field in the extended console
+  output. I do not know the userspace consequences of making a change
+  here.
+
+- console_flush_on_panic() currently is a NOP. It is pretty clear how
+  this could be implemented if atomic_write was available. But if no
+  such console is registered, it is not clear what should be done. Is
+  this function really even needed?
+
+- Right now the emergency messages are set apart from the
+  non-emergency messages using '\n'. There have been requests that
+  some special markers could be specifiable to make it easier for
+  parsers. Possibly as CONFIG_ and boot options?
+
+- Be aware that printk output is no longer time-sorted. Actually, it
+  never was, but now you see the real timestamps. This seems strange
+  at first.
+
+- The ringbuffer API is not very pretty. It grew to be what it is
+  due to the varying requirements of the different aspects of printk
+  (syslog, kmsg_dump, /dev/kmsg, console) and the complexity of
+  handling lockless reading, which can fall behind at any moment.
+
+- Memory barriers are not my specialty. A critical eye on their
+  usage (or lack thereof) in the ringbuffer code would be greatly
+  appreciated.
+
+The first 7 patches introduce the new printk ringbuffer. The
+remaining 18 go through and replace the various components of the
+printk implementation. All patches are against 5.0-rc6 and each
+yield a buildable/testable system.
+
+John Ogness
+
+[0] http://lkml.kernel.org/r/20181017140044.GK3121@hirez.programming.kicks-ass.net
+
+John Ogness (25):
+  printk-rb: add printk ring buffer documentation
+  printk-rb: add prb locking functions
+  printk-rb: define ring buffer struct and initializer
+  printk-rb: add writer interface
+  printk-rb: add basic non-blocking reading interface
+  printk-rb: add blocking reader support
+  printk-rb: add functionality required by printk
+  printk: add ring buffer and kthread
+  printk: remove exclusive console hack
+  printk: redirect emit/store to new ringbuffer
+  printk_safe: remove printk safe code
+  printk: minimize console locking implementation
+  printk: track seq per console
+  printk: do boot_delay_msec inside printk_delay
+  printk: print history for new consoles
+  printk: implement CON_PRINTBUFFER
+  printk: add processor number to output
+  console: add write_atomic interface
+  printk: introduce emergency messages
+  serial: 8250: implement write_atomic
+  printk: implement KERN_CONT
+  printk: implement /dev/kmsg
+  printk: implement syslog
+  printk: implement kmsg_dump
+  printk: remove unused code
+
+ Documentation/printk-ringbuffer.txt |  377 +++++++
+ drivers/tty/serial/8250/8250.h      |    4 +
+ drivers/tty/serial/8250/8250_core.c |   19 +-
+ drivers/tty/serial/8250/8250_dma.c  |    5 +-
+ drivers/tty/serial/8250/8250_port.c |  154 ++-
+ fs/proc/kmsg.c                      |    4 +-
+ include/linux/console.h             |    6 +
+ include/linux/hardirq.h             |    2 -
+ include/linux/kmsg_dump.h           |    6 +-
+ include/linux/printk.h              |   30 +-
+ include/linux/printk_ringbuffer.h   |  114 +++
+ include/linux/serial_8250.h         |    5 +
+ init/main.c                         |    1 -
+ kernel/kexec_core.c                 |    1 -
+ kernel/panic.c                      |    3 -
+ kernel/printk/Makefile              |    1 -
+ kernel/printk/internal.h            |   79 --
+ kernel/printk/printk.c              | 1895 +++++++++++++++++------------------
+ kernel/printk/printk_safe.c         |  427 --------
+ kernel/trace/trace.c                |    2 -
+ lib/Kconfig.debug                   |   17 +
+ lib/Makefile                        |    2 +-
+ lib/bust_spinlocks.c                |    3 +-
+ lib/nmi_backtrace.c                 |    6 -
+ lib/printk_ringbuffer.c             |  583 +++++++++++
+ 25 files changed, 2137 insertions(+), 1609 deletions(-)
+ create mode 100644 Documentation/printk-ringbuffer.txt
+ create mode 100644 include/linux/printk_ringbuffer.h
  delete mode 100644 kernel/printk/internal.h
+ delete mode 100644 kernel/printk/printk_safe.c
+ create mode 100644 lib/printk_ringbuffer.c
 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-deleted file mode 100644
-index 59ad43dba837..000000000000
---- a/kernel/printk/internal.h
-+++ /dev/null
-@@ -1,53 +0,0 @@
--/*
-- * internal.h - printk internal definitions
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-- */
--#include <linux/percpu.h>
--
--#ifdef CONFIG_PRINTK
--
--#define PRINTK_SAFE_CONTEXT_MASK	 0x3fffffff
--#define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
--#define PRINTK_NMI_CONTEXT_MASK		 0x80000000
--
--extern raw_spinlock_t logbuf_lock;
--
--__printf(5, 0)
--int vprintk_store(int facility, int level,
--		  const char *dict, size_t dictlen,
--		  const char *fmt, va_list args);
--
--__printf(1, 0) int vprintk_default(const char *fmt, va_list args);
--__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
--__printf(1, 0) int vprintk_func(const char *fmt, va_list args);
--
--void defer_console_output(void);
--
--#else
--
--__printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
--
--/*
-- * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
-- * semaphore and some of console functions (console_unlock()/etc.), so
-- * printk-safe must preserve the existing local IRQ guarantees.
-- */
--#endif /* CONFIG_PRINTK */
--
--#define printk_safe_enter_irqsave(flags) local_irq_save(flags)
--#define printk_safe_exit_irqrestore(flags) local_irq_restore(flags)
--
--#define printk_safe_enter_irq() local_irq_disable()
--#define printk_safe_exit_irq() local_irq_enable()
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 6d5bb7f5f584..8ef35c398887 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -60,7 +60,6 @@
- 
- #include "console_cmdline.h"
- #include "braille.h"
--#include "internal.h"
- 
- int console_printk[5] = {
- 	CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
-@@ -346,41 +345,6 @@ __packed __aligned(4)
- #endif
- ;
- 
--/*
-- * The logbuf_lock protects kmsg buffer, indices, counters.  This can be taken
-- * within the scheduler's rq lock. It must be released before calling
-- * console_unlock() or anything else that might wake up a process.
-- */
--DEFINE_RAW_SPINLOCK(logbuf_lock);
--
--/*
-- * Helper macros to lock/unlock logbuf_lock and switch between
-- * printk-safe/unsafe modes.
-- */
--#define logbuf_lock_irq()				\
--	do {						\
--		printk_safe_enter_irq();		\
--		raw_spin_lock(&logbuf_lock);		\
--	} while (0)
--
--#define logbuf_unlock_irq()				\
--	do {						\
--		raw_spin_unlock(&logbuf_lock);		\
--		printk_safe_exit_irq();			\
--	} while (0)
--
--#define logbuf_lock_irqsave(flags)			\
--	do {						\
--		printk_safe_enter_irqsave(flags);	\
--		raw_spin_lock(&logbuf_lock);		\
--	} while (0)
--
--#define logbuf_unlock_irqrestore(flags)		\
--	do {						\
--		raw_spin_unlock(&logbuf_lock);		\
--		printk_safe_exit_irqrestore(flags);	\
--	} while (0)
--
- DECLARE_STATIC_PRINTKRB_CPULOCK(printk_cpulock);
- 
- #ifdef CONFIG_PRINTK
-@@ -390,23 +354,15 @@ DECLARE_STATIC_PRINTKRB(printk_rb, CONFIG_LOG_BUF_SHIFT, &printk_cpulock);
- static DEFINE_MUTEX(syslog_lock);
- DECLARE_STATIC_PRINTKRB_ITER(syslog_iter, &printk_rb);
- 
--DECLARE_WAIT_QUEUE_HEAD(log_wait);
--/* the next printk record to read by syslog(READ) or /proc/kmsg */
-+/* the last printk record read by syslog(READ) or /proc/kmsg */
- static u64 syslog_seq;
- static size_t syslog_partial;
- static bool syslog_time;
- 
--/* index and sequence number of the first record stored in the buffer */
--static u32 log_first_idx;
--
--/* index and sequence number of the next record to store in the buffer */
--static u32 log_next_idx;
--
- static DEFINE_MUTEX(kmsg_dump_lock);
- 
--/* the next printk record to read after the last 'clear' command */
-+/* the last printk record at the last 'clear' command */
- static u64 clear_seq;
--static u32 clear_idx;
- 
- #define PREFIX_MAX		32
- #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
-@@ -414,26 +370,6 @@ static u32 clear_idx;
- #define LOG_LEVEL(v)		((v) & 0x07)
- #define LOG_FACILITY(v)		((v) >> 3 & 0xff)
- 
--/* record buffer */
--#define LOG_ALIGN __alignof__(struct printk_log)
--#define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
--#define LOG_BUF_LEN_MAX (u32)(1 << 31)
--static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
--static char *log_buf = __log_buf;
--static u32 log_buf_len = __LOG_BUF_LEN;
--
--/* Return log buffer address */
--char *log_buf_addr_get(void)
--{
--	return log_buf;
--}
--
--/* Return log buffer size */
--u32 log_buf_len_get(void)
--{
--	return log_buf_len;
--}
--
- /* human readable text of the record */
- static char *log_text(const struct printk_log *msg)
- {
-@@ -944,11 +880,6 @@ const struct file_operations kmsg_fops = {
-  */
- void log_buf_vmcoreinfo_setup(void)
- {
--	VMCOREINFO_SYMBOL(log_buf);
--	VMCOREINFO_SYMBOL(log_buf_len);
--	VMCOREINFO_SYMBOL(log_first_idx);
--	VMCOREINFO_SYMBOL(clear_idx);
--	VMCOREINFO_SYMBOL(log_next_idx);
- 	/*
- 	 * Export struct printk_log size and field offsets. User space tools can
- 	 * parse it and detect any changes to structure down the line.
-@@ -961,6 +892,8 @@ void log_buf_vmcoreinfo_setup(void)
- }
- #endif
- 
-+/* FIXME: no support for buffer resizing */
-+#if 0
- /* requested log_buf_len from kernel cmdline */
- static unsigned long __initdata new_log_buf_len;
- 
-@@ -1026,9 +959,12 @@ static void __init log_buf_add_cpu(void)
- #else /* !CONFIG_SMP */
- static inline void log_buf_add_cpu(void) {}
- #endif /* CONFIG_SMP */
-+#endif /* 0 */
- 
- void __init setup_log_buf(int early)
- {
-+/* FIXME: no support for buffer resizing */
-+#if 0
- 	unsigned long flags;
- 	char *new_log_buf;
- 	unsigned int free;
-@@ -1067,6 +1003,7 @@ void __init setup_log_buf(int early)
- 	pr_info("log_buf_len: %u bytes\n", log_buf_len);
- 	pr_info("early log buf free: %u(%u%%)\n",
- 		free, (free * 100) / __LOG_BUF_LEN);
-+#endif
- }
- 
- static bool __read_mostly ignore_loglevel;
-@@ -2023,31 +1960,6 @@ asmlinkage __visible int printk(const char *fmt, ...)
- 	return r;
- }
- EXPORT_SYMBOL(printk);
--
--#else /* CONFIG_PRINTK */
--
--#define LOG_LINE_MAX		0
--#define PREFIX_MAX		0
--#define printk_time		false
--
--static u64 syslog_seq;
--static u32 log_first_idx;
--static char *log_text(const struct printk_log *msg) { return NULL; }
--static char *log_dict(const struct printk_log *msg) { return NULL; }
--static struct printk_log *log_from_idx(u32 idx) { return NULL; }
--static u32 log_next(u32 idx) { return 0; }
--static ssize_t msg_print_ext_header(char *buf, size_t size,
--				    struct printk_log *msg,
--				    u64 seq) { return 0; }
--static ssize_t msg_print_ext_body(char *buf, size_t size,
--				  char *dict, size_t dict_len,
--				  char *text, size_t text_len) { return 0; }
--static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
--				 const char *text, size_t len, int level) {}
--static size_t msg_print_text(const struct printk_log *msg, bool syslog,
--			     bool time, char *buf, size_t size) { return 0; }
--static bool suppress_message_printing(int level) { return false; }
--
- #endif /* CONFIG_PRINTK */
- 
- #ifdef CONFIG_EARLY_PRINTK
-@@ -2343,15 +2255,10 @@ void console_unblank(void)
- void console_flush_on_panic(void)
- {
- 	/*
--	 * If someone else is holding the console lock, trylock will fail
--	 * and may_schedule may be set.  Ignore and proceed to unlock so
--	 * that messages are flushed out.  As this can be called from any
--	 * context and we don't want to get preempted while flushing,
--	 * ensure may_schedule is cleared.
-+	 * FIXME: This is currently a NOP. Emergency messages will have been
-+	 * printed, but what about if write_atomic is not available on the
-+	 * console? What if the printk kthread is still alive?
- 	 */
--	console_trylock();
--	console_may_schedule = 0;
--	console_unlock();
- }
- 
- /*
-@@ -2700,43 +2607,6 @@ static int __init printk_late_init(void)
- late_initcall(printk_late_init);
- 
- #if defined CONFIG_PRINTK
--/*
-- * Delayed printk version, for scheduler-internal messages:
-- */
--#define PRINTK_PENDING_WAKEUP	0x01
--#define PRINTK_PENDING_OUTPUT	0x02
--
--static DEFINE_PER_CPU(int, printk_pending);
--
--static void wake_up_klogd_work_func(struct irq_work *irq_work)
--{
--	int pending = __this_cpu_xchg(printk_pending, 0);
--
--	if (pending & PRINTK_PENDING_OUTPUT) {
--		/* If trylock fails, someone else is doing the printing */
--		if (console_trylock())
--			console_unlock();
--	}
--
--	if (pending & PRINTK_PENDING_WAKEUP)
--		wake_up_interruptible(&log_wait);
--}
--
--static DEFINE_PER_CPU(struct irq_work, wake_up_klogd_work) = {
--	.func = wake_up_klogd_work_func,
--	.flags = IRQ_WORK_LAZY,
--};
--
--void wake_up_klogd(void)
--{
--	preempt_disable();
--	if (waitqueue_active(&log_wait)) {
--		this_cpu_or(printk_pending, PRINTK_PENDING_WAKEUP);
--		irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
--	}
--	preempt_enable();
--}
--
- static int printk_kthread_func(void *data)
- {
- 	struct prb_iterator iter;
-@@ -2802,22 +2672,9 @@ static int __init init_printk_kthread(void)
- }
- late_initcall(init_printk_kthread);
- 
--void defer_console_output(void)
--{
--	preempt_disable();
--	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
--	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
--	preempt_enable();
--}
--
- int vprintk_deferred(const char *fmt, va_list args)
- {
--	int r;
--
--	r = vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
--	defer_console_output();
--
--	return r;
-+	return vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
- }
- 
- int printk_deferred(const char *fmt, ...)
-diff --git a/lib/bust_spinlocks.c b/lib/bust_spinlocks.c
-index 8be59f84eaea..c6e083323d1b 100644
---- a/lib/bust_spinlocks.c
-+++ b/lib/bust_spinlocks.c
-@@ -26,7 +26,6 @@ void bust_spinlocks(int yes)
- 		unblank_screen();
- #endif
- 		console_unblank();
--		if (--oops_in_progress == 0)
--			wake_up_klogd();
-+		--oops_in_progress;
- 	}
- }
 -- 
 2.11.0
 
