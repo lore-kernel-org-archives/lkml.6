@@ -2,146 +2,109 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1804DC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8585AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41032084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 534952084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbfBLP3u (ORCPT
+        id S1730206AbfBLPbd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:29:50 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41178 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfBLP3u (ORCPT
+        Tue, 12 Feb 2019 10:31:33 -0500
+Received: from gateway36.websitewelcome.com ([192.185.184.18]:35090 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728347AbfBLPbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:29:50 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gta0H-0000AQ-Ue; Tue, 12 Feb 2019 15:29:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: lpfc: fix a handful of indentation issues
-Date:   Tue, 12 Feb 2019 15:29:45 +0000
-Message-Id: <20190212152945.11362-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Feb 2019 10:31:33 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id E1018402048A0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:45:40 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ta20gOwQhiQerta20geRrZ; Tue, 12 Feb 2019 09:31:32 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=47586 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gta1z-000WYa-SN; Tue, 12 Feb 2019 09:31:31 -0600
+Date:   Tue, 12 Feb 2019 09:31:31 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] mtd: lpddr_cmds: Mark expected switch fall-through
+Message-ID: <20190212153131.GA5746@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gta1z-000WYa-SN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:47586
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-There are a handful of statements that are indented incorrectly. Fix these.
+This patch fixes the following warning:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/mtd/lpddr/lpddr_cmds.c: In function ‘chip_ready’:
+drivers/mtd/lpddr/lpddr_cmds.c:319:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (mode == FL_READY && chip->oldstate == FL_READY)
+      ^
+drivers/mtd/lpddr/lpddr_cmds.c:322:2: note: here
+  default:
+  ^~~~~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/scsi/lpfc/lpfc_bsg.c     | 4 ++--
- drivers/scsi/lpfc/lpfc_debugfs.c | 4 ++--
- drivers/scsi/lpfc/lpfc_init.c    | 2 +-
- drivers/scsi/lpfc/lpfc_mbox.c    | 4 ++--
- drivers/scsi/lpfc/lpfc_sli.c     | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/mtd/lpddr/lpddr_cmds.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-index 2dc564e59430..f2494d3b365c 100644
---- a/drivers/scsi/lpfc/lpfc_bsg.c
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c
-@@ -2947,7 +2947,7 @@ static int lpfcdiag_loop_post_rxbufs(struct lpfc_hba *phba, uint16_t rxxri,
- 			cmd->un.cont64[i].addrLow = putPaddrLow(mp[i]->phys);
- 			cmd->un.cont64[i].tus.f.bdeSize =
- 				((struct lpfc_dmabufext *)mp[i])->size;
--					cmd->ulpBdeCount = ++i;
-+			cmd->ulpBdeCount = ++i;
+diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
+index b13557fe52bd..76a4c73e100e 100644
+--- a/drivers/mtd/lpddr/lpddr_cmds.c
++++ b/drivers/mtd/lpddr/lpddr_cmds.c
+@@ -318,6 +318,7 @@ static int chip_ready(struct map_info *map, struct flchip *chip, int mode)
+ 		/* Only if there's no operation suspended... */
+ 		if (mode == FL_READY && chip->oldstate == FL_READY)
+ 			return 0;
++		/* fall through */
  
- 			if ((--num_bde > 0) && (i < 2))
- 				continue;
-@@ -4682,7 +4682,7 @@ lpfc_bsg_issue_mbox(struct lpfc_hba *phba, struct bsg_job *job,
- 	 * Don't allow mailbox commands to be sent when blocked or when in
- 	 * the middle of discovery
- 	 */
--	 if (phba->sli.sli_flag & LPFC_BLOCK_MGMT_IO) {
-+	if (phba->sli.sli_flag & LPFC_BLOCK_MGMT_IO) {
- 		rc = -EAGAIN;
- 		goto job_done;
- 	}
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index ee98ea1c68f9..1215eaa530db 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -1833,7 +1833,7 @@ lpfc_debugfs_disc_trc_open(struct inode *inode, struct file *file)
- 	int rc = -ENOMEM;
- 
- 	if (!lpfc_debugfs_max_disc_trc) {
--		 rc = -ENOSPC;
-+		rc = -ENOSPC;
- 		goto out;
- 	}
- 
-@@ -1883,7 +1883,7 @@ lpfc_debugfs_slow_ring_trc_open(struct inode *inode, struct file *file)
- 	int rc = -ENOMEM;
- 
- 	if (!lpfc_debugfs_max_slow_ring_trc) {
--		 rc = -ENOSPC;
-+		rc = -ENOSPC;
- 		goto out;
- 	}
- 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 900edae7ccc4..18424020ae40 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -10118,7 +10118,7 @@ lpfc_sli4_pci_mem_setup(struct lpfc_hba *phba)
- 			dev_printk(KERN_ERR, &pdev->dev,
- 				"ioremap failed for SLI4 PCI config "
- 				"registers.\n");
--				goto out;
-+			goto out;
- 		}
- 		lpfc_sli4_bar0_register_memmap(phba, if_type);
- 	}
-diff --git a/drivers/scsi/lpfc/lpfc_mbox.c b/drivers/scsi/lpfc/lpfc_mbox.c
-index 4d3b94317515..8abe933bad09 100644
---- a/drivers/scsi/lpfc/lpfc_mbox.c
-+++ b/drivers/scsi/lpfc/lpfc_mbox.c
-@@ -2095,8 +2095,8 @@ lpfc_request_features(struct lpfc_hba *phba, struct lpfcMboxq *mboxq)
- 	if (phba->nvmet_support) {
- 		bf_set(lpfc_mbx_rq_ftr_rq_mrqp, &mboxq->u.mqe.un.req_ftrs, 1);
- 		/* iaab/iaar NOT set for now */
--		 bf_set(lpfc_mbx_rq_ftr_rq_iaab, &mboxq->u.mqe.un.req_ftrs, 0);
--		 bf_set(lpfc_mbx_rq_ftr_rq_iaar, &mboxq->u.mqe.un.req_ftrs, 0);
-+		bf_set(lpfc_mbx_rq_ftr_rq_iaab, &mboxq->u.mqe.un.req_ftrs, 0);
-+		bf_set(lpfc_mbx_rq_ftr_rq_iaar, &mboxq->u.mqe.un.req_ftrs, 0);
- 	}
- 	return;
- }
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 3596822605c3..d0817facdae3 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -1008,7 +1008,7 @@ lpfc_test_rrq_active(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp,
- 	if (!ndlp->active_rrqs_xri_bitmap)
- 		return 0;
- 	if (test_bit(xritag, ndlp->active_rrqs_xri_bitmap))
--			return 1;
-+		return 1;
- 	else
- 		return 0;
- }
+ 	default:
+ sleep:
 -- 
 2.20.1
 
