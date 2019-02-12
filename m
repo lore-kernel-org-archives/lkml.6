@@ -3,71 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E838C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D92C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F9920863
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB909214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbfBLNDw (ORCPT
+        id S1729569AbfBLNEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:03:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43262 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727750AbfBLNDw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:03:52 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gtXir-0002vc-8t; Tue, 12 Feb 2019 14:03:37 +0100
-Date:   Tue, 12 Feb 2019 14:03:36 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Aubrey Li <aubrey.li@linux.intel.com>
-cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
-        ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
- time
-In-Reply-To: <20190212044914.15490-2-aubrey.li@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1902121358050.3710@nanos.tec.linutronix.de>
-References: <20190212044914.15490-1-aubrey.li@linux.intel.com> <20190212044914.15490-2-aubrey.li@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1243373735-1549976617=:3710"
+        Tue, 12 Feb 2019 08:04:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727750AbfBLNEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:04:51 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DF1D5C01DDEB;
+        Tue, 12 Feb 2019 13:04:50 +0000 (UTC)
+Received: from localhost (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ACCA119C7D;
+        Tue, 12 Feb 2019 13:04:46 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V2 0/4] genirq/affinity: add .calc_sets for improving IRQ allocation & spread
+Date:   Tue, 12 Feb 2019 21:04:35 +0800
+Message-Id: <20190212130439.14501-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 12 Feb 2019 13:04:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323329-1243373735-1549976617=:3710
-Content-Type: text/plain; charset=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
+Currently pre-caculated set vectors are provided by driver for
+allocating & spread vectors. This way only works when drivers passes
+same 'max_vecs' and 'min_vecs' to pci_alloc_irq_vectors_affinity(),
+also requires driver to retry the allocating & spread.
 
-On Tue, 12 Feb 2019, Aubrey Li wrote:
+As Bjorn and Keith mentioned, the current usage & interface for irq sets
+is a bit awkward because the retrying should have been avoided by providing
+one resonable 'min_vecs'. However, if 'min_vecs' isn't same with
+'max_vecs', number of the allocated vectors is unknown before calling
+pci_alloc_irq_vectors_affinity(), then each set's vectors can't be
+pre-caculated.
 
-arch/x86/kernel/fpu/xstate.c:1252:6: warning: no previous prototype for ¡avx512_status¢ [-Wmissing-prototypes]
- void avx512_status(struct seq_file *m, struct task_struct *task)
-      ^~~~~~~~~~~~~
-arch/x86/kernel/fpu/xstate.c: In function ¡avx512_status¢:
-arch/x86/kernel/fpu/xstate.c:1254:44: error: ¡struct fpu¢ has no member named ¡avx512_timestamp¢
-  unsigned long timestamp = task->thread.fpu.avx512_timestamp;
-                                            ^
-arch/x86/kernel/fpu/xstate.c: At top level:
-arch/x86/kernel/fpu/xstate.c:1279:6: warning: no previous prototype for ¡arch_proc_pid_status¢ [-Wmissing-prototypes]
- void arch_proc_pid_status(struct seq_file *m, struct task_struct *task)
-      ^~~~~~~~~~~~~~~~~~~~
+Add a new callback of .calc_sets into 'struct irq_affinity' so that
+driver can caculate set vectors after IRQ vector is allocated and
+before spread IRQ vectors. Add 'priv' so that driver may retrieve
+its private data via the 'struct irq_affinity'.
 
-I'm tired of this. 
 
-Thanks,
+V2:
+	- add .calc_sets instead of .setup_affinity() which is easy to
+	be abused by drivers
 
-	tglx
---8323329-1243373735-1549976617=:3710--
+Ming Lei (4):
+  genirq/affinity: store irq set vectors in 'struct irq_affinity'
+  genirq/affinity: add new callback for caculating set vectors
+  nvme-pci: avoid irq allocation retrying via .calc_sets
+  genirq/affinity: Document .calc_sets as required in case of multiple
+    sets
+
+ drivers/nvme/host/pci.c   | 63 ++++++++++++-----------------------------------
+ drivers/pci/msi.c         |  4 +--
+ include/linux/interrupt.h | 13 +++++++---
+ kernel/irq/affinity.c     | 19 +++++++++-----
+ 4 files changed, 41 insertions(+), 58 deletions(-)
+
+-- 
+2.9.5
+
