@@ -2,139 +2,110 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3FFC4151A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71054C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7528222C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550014949;
-	bh=+ljDVPXUImG1Z+vSoOkg9hae4sm9zQLd0klZvq3ppo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ywSYZsAxUnyryGdSFGC9kyv0BnRpFNP8aCTaCg5S5lYlUWHtXHg+bGMbB9KPl8k38
-	 Ku71GjMUaf2GMUhA4CX9kqnctmyyw0N2P/ccLUCBjiFq7pwaMUUibH+nUDds/ogxsL
-	 003k60btqtHRCm/2LE62vqpJuvZbYusMWVZaPan4=
+	by mail.kernel.org (Postfix) with ESMTP id 38BDC222CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732541AbfBLXm2 (ORCPT
+        id S1729997AbfBLXpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44108 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 18:45:44 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:43784 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732343AbfBLXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:42:27 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5B012084E;
-        Tue, 12 Feb 2019 23:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550014946;
-        bh=+ljDVPXUImG1Z+vSoOkg9hae4sm9zQLd0klZvq3ppo0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UnGd2/YVAge9uRcZZCgcz5V08Kl8zL+g1nV66TA1iBWAbXqrxEUyoGnk0oM6JDPiV
-         ueWRe0fctmjmpYtNdzULLonc0fgP/UThgAwDYwLMRcyWLTMIG2DTnP3jEGB7Nk4mvp
-         ak3CFx0o/u68xiGHuNw0MPxHwswS4uwwR+Smoq9E=
-Date:   Tue, 12 Feb 2019 17:42:24 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
-Subject: Re: [PATCH V2 4/4] genirq/affinity: Document .calc_sets as required
- in case of multiple sets
-Message-ID: <20190212234224.GA96272@google.com>
-References: <20190212130439.14501-1-ming.lei@redhat.com>
- <20190212130439.14501-5-ming.lei@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212130439.14501-5-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727039AbfBLXpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 18:45:44 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 8E590E239FC4DE14821F;
+        Wed, 13 Feb 2019 07:45:41 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x1CNjZ1E001782;
+        Wed, 13 Feb 2019 07:45:36 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019021307455443-25782367 ;
+          Wed, 13 Feb 2019 07:45:54 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     narmstrong@baylibre.com
+Cc:     mchehab@kernel.org, khilman@baylibre.com,
+        linux-media@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        "Hans Verkuil (hansverk)" <hansverk@cisco.com>,
+        Wen Yang <yellowriver2010@hotmail.com>
+Subject: [PATCH v2 1/4] media: platform: meson-ao-cec: fix possible object reference leak
+Date:   Wed, 13 Feb 2019 07:44:35 +0800
+Message-Id: <1550015075-41548-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-02-13 07:45:54,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-02-13 07:45:28,
+        Serialize complete at 2019-02-13 07:45:28
+X-MAIL: mse01.zte.com.cn x1CNjZ1E001782
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:04:39PM +0800, Ming Lei wrote:
-> Now NVMe has implemented the .calc_sets callback for caculating each
-> set's vectors.
-> 
-> For other cases of multiple irq sets, it isn't a good way to pre-caculate
-> each set's vectors before allocating IRQ vectors because NVMe's same issue
-> exists too.
+The call to of_parse_phandle() returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
+The of_find_device_by_node() takes a reference to the underlying device
+structure, we also should release that reference.
 
-s/irq/IRQ/ so it's consistent in the paragraph.
+Hans Verkuil says:
+The cec driver should never take a reference of the hdmi device.
+It never accesses the HDMI device, it only needs the HDMI device pointer as
+a key in the notifier list.
+The real problem is that several CEC drivers take a reference of the HDMI
+device and never release it. So those drivers need to be fixed.
 
-> Document .calc_sets as required explicitly for multiple sets.
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+This patch fixes those two issues.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: 7ec2c0f72cb1 ("media: platform: Add Amlogic Meson AO CEC Controller driver")
+Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Wen Yang <yellowriver2010@hotmail.com>
+Cc: linux-media@lists.freedesktop.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+v2->v1: 
+- move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
+- put_device() can be done before the cec = devm_kzalloc line.
 
-Note minor comments below.
+ drivers/media/platform/meson/ao-cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/pci/msi.c         | 4 ++--
->  include/linux/interrupt.h | 3 ++-
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index 4c0b47867258..9f91fa713141 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -1039,7 +1039,7 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
->  	 * If the caller is passing in sets, we can't support a range of
->  	 * vectors. The caller needs to handle that.
+diff --git a/drivers/media/platform/meson/ao-cec.c b/drivers/media/platform/meson/ao-cec.c
+index cd4be38..f757ece 100644
+--- a/drivers/media/platform/meson/ao-cec.c
++++ b/drivers/media/platform/meson/ao-cec.c
+@@ -613,9 +613,11 @@ static int meson_ao_cec_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	hdmi_dev = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (hdmi_dev == NULL)
+ 		return -EPROBE_DEFER;
+ 
++	put_device(&hdmi_dev->dev);
+ 	ao_cec = devm_kzalloc(&pdev->dev, sizeof(*ao_cec), GFP_KERNEL);
+ 	if (!ao_cec)
+ 		return -ENOMEM;
+-- 
+2.9.5
 
-Looks like this comment needs to be tweaked, maybe along the lines of:
-
-  If the caller requests multiple sets of IRQs where each set requires
-  different affinity, it must also supply a ->calc_sets() callback to
-  compute the affinity cpumask for each set.
-
-(I'm not 100% clear on how calc_sets() works, so I might not have
-described this exactly right.)
-
->  	 */
-> -	if (affd && affd->nr_sets && minvec != maxvec)
-> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
->  		return -EINVAL;
->  
->  	if (WARN_ON_ONCE(dev->msi_enabled))
-> @@ -1097,7 +1097,7 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
->  	 * If the caller is passing in sets, we can't support a range of
->  	 * supported vectors. The caller needs to handle that.
-
-Similar comment update here?
-
->  	 */
-> -	if (affd && affd->nr_sets && minvec != maxvec)
-> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
->  		return -EINVAL;
->  
->  	if (WARN_ON_ONCE(dev->msix_enabled))
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 7a27f6ba1f2f..a053f7fb0ff1 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -269,7 +269,8 @@ struct irq_affinity_notify {
->   *			the MSI(-X) vector space
->   * @nr_sets:		Length of passed in *sets array
->   * @set_vectors:	Number of affinitized sets
-> - * @calc_sets:		Callback for caculating set vectors
-> + * @calc_sets:		Callback for caculating set vectors, required for
-> + * 			multiple irq sets.
->   * @priv:		Private data of @calc_sets
->   */
->  struct irq_affinity {
-> -- 
-> 2.9.5
-> 
