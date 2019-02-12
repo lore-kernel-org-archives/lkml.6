@@ -2,269 +2,338 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764B7C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF16C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D3162229F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D002F2229F
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lf4v2QxD"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="baZVsDNB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731716AbfBLSFX (ORCPT
+        id S1730425AbfBLSE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:05:23 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:22564 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731608AbfBLSFT (ORCPT
+        Tue, 12 Feb 2019 13:04:58 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34964 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730933AbfBLSEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:05:19 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190212180515epoutp0298bd964a7b13e2f0844190edf390e2bf~Cr-tI4vX62786327863epoutp027;
-        Tue, 12 Feb 2019 18:05:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190212180515epoutp0298bd964a7b13e2f0844190edf390e2bf~Cr-tI4vX62786327863epoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549994715;
-        bh=Z21vxVORT3Wmbw7H8ccHZm5nDTBzy6Pn1mvaXFj0K3M=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=lf4v2QxDUzh+0M0y9RPJ4VDDj/6rUBsjvTZUrIqtiA/KqF0CxsN7RovI+vjha54Ey
-         fYnZJe8rWK/X4qr+4C7B/FRVXpS2o0R8v0EjoDrH96SQ2UU2gKD1LB5NocKxTVsPtO
-         D+9BjLSP2ZtdqKj2V39dzDzmJH0PG0LXWGVZ/n9w=
-Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20190212180514epcas2p2a9521e8bc97b2abe38fa7fc83b5d9ba9~Cr-r9U6P32848628486epcas2p2T;
-        Tue, 12 Feb 2019 18:05:14 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        68.39.04134.ADA036C5; Wed, 13 Feb 2019 03:05:14 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20190212180513epcas2p128eae26df9eef86550a4f628afd12603~Cr-rmT2cj1898118981epcas2p1E;
-        Tue, 12 Feb 2019 18:05:13 +0000 (GMT)
-X-AuditID: b6c32a47-8abff70000001026-6e-5c630adadd5f
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id B9.30.03689.9DA036C5; Wed, 13 Feb
-        2019 03:05:13 +0900 (KST)
-Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PMT0024XRJ2FB10@mmp2.samsung.com>; Wed, 13 Feb 2019
-        03:05:13 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     broonie@kernel.org
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 10/21] ASoC: samsung: i2s: Move quirks data to common
- driver data structure
-Date:   Tue, 12 Feb 2019 19:03:31 +0100
-Message-id: <20190212180342.32040-11-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.20.1
-In-reply-to: <20190212180342.32040-1-s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsWy7bCmue4truQYg1+/eCyuXDzEZLFxxnpW
-        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZX6auYy24olfR//4HewPjUrUuRg4O
-        CQETib5Lrl2MXBxCAjsYJS6sOcQE4XxnlPi6dC9zFyMnWNH0cxuhEhsYJY52/2WGcH4xSkzd
-        384IUsUmYCjRe7QPzBYREJO4PacTrIhZoIVJYs7cpWCjhAUSJHZcbwWzWQRUJdbPmAJm8wrY
-        SCyYc4QVYp28xPnedewgNidQ/NnCbywQNYISPybfA7OZgWoOXnnOArJAQuAIm8SJ/09YIJpd
-        JNb+72KDsKUlnq3ayAhhV0vs2t7NDNHQwSjRcmE71HPWEoePX2SFmMon0XH4LzskZHglOtqE
-        IEo8JCYuWQ71cj+jxNXVm5kmMErNQnLULCRHLWBkWsUollpQnJueWmxUYKxXnJhbXJqXrpec
-        n7uJERznWu47GLed8znEKMDBqMTDu+JoUowQa2JZcWXuIUYJDmYlEd405uQYId6UxMqq1KL8
-        +KLSnNTiQ4zSHCxK4rwPpedGCwmkJ5akZqemFqQWwWSZODilGhgjJhz+5eqXJJzMLaa9MCT8
-        0lGxbVruX04GeKftmq/N8i1G5YXXjhXqmUbp8ua+d5iZH5vUb2lvz5G9Uro4+LD8vf963ToT
-        XK8ctVeVSH3m2XwpKinS5o/crfgo/c+cUyc5zHV4H9KlL7z6kVuxx1V/4UUMbYaXfTeVvAqL
-        v2CQmzP5D69zsRJLcUaioRZzUXEiAJJ2QrLvAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jQd2bXMkxBgv3m1pcuXiIyWLjjPWs
-        FlMfPmGzOH9+A7vFtysdTBaXd81hs5hxfh+Txdojd9ktDr9pZ7W4uOILkwOXx4bPTWweO2fd
-        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyvkxdx1pwRa+i//0P9gbGpWpdjJwc
-        EgImEtPPbWTqYuTiEBJYxyhx7MJtZgjnF6PEkwPnWUCq2AQMJXqP9jGC2CICYhK353SCFTEL
-        NDFJ7Lp9kb2LkYNDWCBBYvoJU5AaFgFVifUzpjCD2LwCNhIL5hxhhdgmL3G+dx07iM0JFH+2
-        8BsLSKuQgLXElU22EOWCEj8m3wNbywxUfvDKc5YJjHyzkKRmIUktYGRaxSiZWlCcm55bbFRg
-        lJdarlecmFtcmpeul5yfu4kRGMLbDmv172B8vCT+EKMAB6MSD++Ko0kxQqyJZcWVuYcYJTiY
-        lUR405iTY4R4UxIrq1KL8uOLSnNSiw8xSnOwKInz8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUw
-        xsjfUlzlVNAYrSZ7LG32xkWB9o43VfPUGxIcagI7lkcuMzDd8IvbhiP13T0Pl/knLbfPKVgR
-        HMHwzl/gaI3HulNzfC6mn/i3QKGwKN3ho+bHX5ossy3FpgTf+nzdNPZ79LoHWcEbVrLFabuf
-        /K9yqUf53tyn3zzv/d8oFVxtZLDWReJOR7uiEktxRqKhFnNRcSIAlJzz4F0CAAA=
-X-CMS-MailID: 20190212180513epcas2p128eae26df9eef86550a4f628afd12603
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190212180513epcas2p128eae26df9eef86550a4f628afd12603
-References: <20190212180342.32040-1-s.nawrocki@samsung.com>
-        <CGME20190212180513epcas2p128eae26df9eef86550a4f628afd12603@epcas2p1.samsung.com>
+        Tue, 12 Feb 2019 13:04:53 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z15so920152pfa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:04:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=r6ENwjz2em+PBw8qOT4a+apTR0VE4npx0jo+BWKqmVw=;
+        b=baZVsDNBo2pHSNiVtfE6tnQUPVMlzE8OhaZLwaa4S1j/Q2Vyw4fu3qS8TT/T9GXYIF
+         kOrmqB1sba+xoio19/fNVaYfrBdmf3f/OA3yTE8VRL026yXZTIifuUx1ZGFhYhrkbw1y
+         A+yZFz+PwePNMx8mJsJ9qjO+9BWy/xb6Lt8Bs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=r6ENwjz2em+PBw8qOT4a+apTR0VE4npx0jo+BWKqmVw=;
+        b=HKxmCOvAWZwjeXE3EoRlgPYMwoDjp4LhPnMNm3WTqzOUzdYe0IwKm9uIhzl2X0ynJ7
+         df7XmYrD+72eyI3H10AcDWn5QOD6jMd0gE7Otb0aLPBHKn6/2ieNx2zdffhe9wAREI8k
+         rCtJf7K3028Jjxdfsr8M3Q9EaR1jSq9LZ3K1LU3C/r1CA4x8pUNdOI2NRS/moDGQtfzl
+         RGhhJb0+9+3igL+2z1sZYQSmCaGP2X/bWFzlFdzRVeJhojKvp4ZV5YNkr7T196alY+wS
+         sFbU+BhmgM8eRSbGhkRqNwLRZ5l0ARv6yYrXJN/875at9qdDHKANhPNp4anoQMWdZuIU
+         9epw==
+X-Gm-Message-State: AHQUAuaCrlvsPE07050TDnZ/tXbTydMuf8wvSoWxC8iJKB7PBavGg3ZC
+        aWSqqG608cD76M6FseJ3xmyTtA==
+X-Google-Smtp-Source: AHgI3IZCpGdoJmn877c4ImYSEmpyjL0bV/p4J3CmtF2E7bcwojkKsEIzxKc3D4+x7iwpfnEu0GoWlA==
+X-Received: by 2002:a63:2d5:: with SMTP id 204mr3019524pgc.407.1549994692000;
+        Tue, 12 Feb 2019 10:04:52 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id d13sm22534383pfd.58.2019.02.12.10.04.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 10:04:49 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH 1/2] gcc-plugins: structleak: Generalize to all variable types
+Date:   Tue, 12 Feb 2019 10:04:40 -0800
+Message-Id: <20190212180441.15340-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190212180441.15340-1-keescook@chromium.org>
+References: <20190212180441.15340-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The quirk flags are common for the primary and the secondary DAI
-so move respective field from struct i2s_dai to common driver data
-structure.
+This adjusts structleak to also work with non-struct types when they
+are passed by reference, since those variables may leak just like
+anything else. This is exposed via an improved set of Kconfig options.
+(This does mean structleak is slightly misnamed now.)
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Building with CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL should give the
+kernel complete initialization coverage of all stack variables passed
+by reference, including padding (see lib/test_stackinit.c).
+
+Using CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE to count added initializations
+under defconfig:
+
+	..._BYREF:      5945 added initializations
+	..._BYREF_ALL: 16606 added initializations
+
+There is virtually no change to text+data size (both have less than 0.05%
+growth):
+
+   text    data     bss     dec     hex filename
+19502103        5051456 1917000 26470559        193e89f vmlinux.stock
+19513412        5051456 1908808 26473676        193f4cc vmlinux.byref
+19516974        5047360 1900616 26464950        193d2b6 vmlinux.byref_all
+
+The measured performance difference is in the noise for hackbench and
+kernel build benchmarks:
+
+Stock:
+
+	5x hackbench -g 20 -l 1000
+	Mean:   10.649s
+	Std Dev: 0.339
+
+	5x kernel build (4-way parallel)
+	Mean:  261.98s
+	Std Dev: 1.53
+
+CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF:
+
+	5x hackbench -g 20 -l 1000
+	Mean:   10.540s
+	Std Dev: 0.233
+
+	5x kernel build (4-way parallel)
+	Mean:  260.52s
+	Std Dev: 1.31
+
+CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL:
+
+	5x hackbench -g 20 -l 1000
+	Mean:   10.320
+	Std Dev: 0.413
+
+	5x kernel build (4-way parallel)
+	Mean:  260.10
+	Std Dev: 0.86
+
+This does not yet solve missing padding initialization for structures
+on the stack that are never passed by reference (which should be a tiny
+minority). Hopefully this will be more easily addressed by upstream
+compiler fixes after clarifying the C11 padding initialization
+specification.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- sound/soc/samsung/i2s.c | 34 +++++++++++++---------------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
+ scripts/Makefile.gcc-plugins            |  2 +
+ scripts/gcc-plugins/Kconfig             | 58 ++++++++++++++++++++-----
+ scripts/gcc-plugins/structleak_plugin.c | 36 ++++++++++-----
+ 3 files changed, 74 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 8352f610ce35..14d9fd658cfd 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -84,7 +84,6 @@ struct i2s_dai {
- 	struct snd_dmaengine_dai_dma_data dma_capture;
- 	struct snd_dmaengine_dai_dma_data idma_playback;
- 	dma_filter_fn filter;
--	u32	quirks;
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index 35042d96cf5d..5f7df50cfe7a 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -15,6 +15,8 @@ gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)		+= sancov_plugin.so
+ gcc-plugin-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= structleak_plugin.so
+ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE)	\
+ 		+= -fplugin-arg-structleak_plugin-verbose
++gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF)		\
++		+= -fplugin-arg-structleak_plugin-byref
+ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL)	\
+ 		+= -fplugin-arg-structleak_plugin-byref-all
+ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)		\
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index d45f7f36b859..d0cc92e48f6f 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -67,27 +67,63 @@ config GCC_PLUGIN_LATENT_ENTROPY
+ 	   * https://pax.grsecurity.net/
  
- 	struct samsung_i2s_priv *priv;
+ config GCC_PLUGIN_STRUCTLEAK
+-	bool "Force initialization of variables containing userspace addresses"
++	bool "Zero initialize stack variables"
+ 	# Currently STRUCTLEAK inserts initialization out of live scope of
+ 	# variables from KASAN point of view. This leads to KASAN false
+ 	# positive reports. Prohibit this combination for now.
+ 	depends on !KASAN_EXTRA
+ 	help
+-	  This plugin zero-initializes any structures containing a
+-	  __user attribute. This can prevent some classes of information
+-	  exposures.
+-
+-	  This plugin was ported from grsecurity/PaX. More information at:
++	  While the kernel is built with warnings enabled for any missed
++	  stack variable initializations, this warning is silenced for
++	  anything passed by reference to another function, under the
++	  occasionally misguided assumption that the function will do
++	  the initialization. As this regularly leads to exploitable
++	  flaws, this plugin is available to identify and zero-initialize
++	  such variables, depending on the chosen level of coverage.
++
++	  This plugin was originally ported from grsecurity/PaX. More
++	  information at:
+ 	   * https://grsecurity.net/
+ 	   * https://pax.grsecurity.net/
+ 
+-config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+-	bool "Force initialize all struct type variables passed by reference"
++choice
++	prompt "Coverage"
+ 	depends on GCC_PLUGIN_STRUCTLEAK
+-	depends on !COMPILE_TEST
++	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+ 	help
+-	  Zero initialize any struct type local variable that may be passed by
+-	  reference without having been initialized.
++	  This chooses the level of coverage over classes of potentially
++	  uninitialized variables. The selected class will be
++	  zero-initialized before use.
++
++	config GCC_PLUGIN_STRUCTLEAK_USER
++		bool "structs marked for userspace"
++		help
++		  Zero-initialize any structures on the stack containing
++		  a __user attribute. This can prevent some classes of
++		  uninitialized stack variable exploits and information
++		  exposures, like CVE-2013-2141:
++		  https://git.kernel.org/linus/b9e146d8eb3b9eca
++
++	config GCC_PLUGIN_STRUCTLEAK_BYREF
++		bool "structs passed by reference"
++		help
++		  Zero-initialize any structures on the stack that may
++		  be passed by reference and had not already been
++		  explicitly initialized. This can prevent most classes
++		  of uninitialized stack variable exploits and information
++		  exposures, like CVE-2017-1000410:
++		  https://git.kernel.org/linus/06e7e776ca4d3654
++
++	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
++		bool "anything passed by reference"
++		help
++		  Zero-initialize any stack variables that may be passed
++		  by reference and had not already been explicitly
++		  initialized. This is intended to eliminate all classes
++		  of uninitialized stack variable exploits and information
++		  exposures.
++
++endchoice
+ 
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ 	bool "Report forcefully initialized variables"
+diff --git a/scripts/gcc-plugins/structleak_plugin.c b/scripts/gcc-plugins/structleak_plugin.c
+index 10292f791e99..e89be8f5c859 100644
+--- a/scripts/gcc-plugins/structleak_plugin.c
++++ b/scripts/gcc-plugins/structleak_plugin.c
+@@ -16,6 +16,7 @@
+  * Options:
+  * -fplugin-arg-structleak_plugin-disable
+  * -fplugin-arg-structleak_plugin-verbose
++ * -fplugin-arg-structleak_plugin-byref
+  * -fplugin-arg-structleak_plugin-byref-all
+  *
+  * Usage:
+@@ -26,7 +27,6 @@
+  * $ gcc -fplugin=./structleak_plugin.so test.c -O2
+  *
+  * TODO: eliminate redundant initializers
+- *       increase type coverage
+  */
+ 
+ #include "gcc-common.h"
+@@ -37,13 +37,18 @@
+ __visible int plugin_is_GPL_compatible;
+ 
+ static struct plugin_info structleak_plugin_info = {
+-	.version	= "201607271510vanilla",
++	.version	= "20190125vanilla",
+ 	.help		= "disable\tdo not activate plugin\n"
+-			   "verbose\tprint all initialized variables\n",
++			  "byref\tinit structs passed by reference\n"
++			  "byref-all\tinit anything passed by reference\n"
++			  "verbose\tprint all initialized variables\n",
  };
-@@ -122,19 +121,13 @@ struct samsung_i2s_priv {
- 	u32 suspend_i2spsr;
  
- 	const struct samsung_i2s_variant_regs *variant_regs;
-+	u32 quirks;
++#define BYREF_STRUCT	1
++#define BYREF_ALL	2
++
+ static bool verbose;
+-static bool byref_all;
++static int byref;
  
- 	/* The clock provider's data */
- 	struct clk *clk_table[3];
- 	struct clk_onecell_data clk_data;
- };
- 
--struct i2s_dai *samsung_i2s_get_pri_dai(struct device *dev)
--{
--	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
--
--	return &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
--}
--
- /* Returns true if this is the 'overlay' stereo DAI */
- static inline bool is_secondary(struct i2s_dai *i2s)
+ static tree handle_user_attribute(tree *node, tree name, tree args, int flags, bool *no_add_attrs)
  {
-@@ -343,7 +336,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
- {
- 	struct samsung_i2s_priv *priv = i2s->priv;
- 	u32 mod = readl(priv->addr + I2SMOD);
--	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-+	int tdm = priv->quirks & QUIRK_SUPPORTS_TDM;
- 	int bfs_shift = priv->variant_regs->bfs_off;
+@@ -118,6 +123,7 @@ static void initialize(tree var)
+ 	gimple_stmt_iterator gsi;
+ 	tree initializer;
+ 	gimple init_stmt;
++	tree type;
  
- 	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-@@ -563,7 +556,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
- 	case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
- 		mask = 1 << i2s_regs->rclksrc_off;
+ 	/* this is the original entry bb before the forced split */
+ 	bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
+@@ -148,11 +154,15 @@ static void initialize(tree var)
+ 	if (verbose)
+ 		inform(DECL_SOURCE_LOCATION(var),
+ 			"%s variable will be forcibly initialized",
+-			(byref_all && TREE_ADDRESSABLE(var)) ? "byref"
+-							     : "userspace");
++			(byref && TREE_ADDRESSABLE(var)) ? "byref"
++							 : "userspace");
  
--		if ((i2s->quirks & QUIRK_NO_MUXPSR)
-+		if ((priv->quirks & QUIRK_NO_MUXPSR)
- 				|| (clk_id == SAMSUNG_I2S_RCLKSRC_0))
- 			clk_id = 0;
- 		else
-@@ -832,6 +825,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- static int i2s_startup(struct snd_pcm_substream *substream,
- 	  struct snd_soc_dai *dai)
- {
-+	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
- 	struct i2s_dai *i2s = to_info(dai);
- 	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
-@@ -847,7 +841,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 	else
- 		i2s->mode |= DAI_MANAGER;
+ 	/* build the initializer expression */
+-	initializer = build_constructor(TREE_TYPE(var), NULL);
++	type = TREE_TYPE(var);
++	if (AGGREGATE_TYPE_P(type))
++		initializer = build_constructor(type, NULL);
++	else
++		initializer = fold_convert(type, integer_zero_node);
  
--	if (!any_active(i2s) && (i2s->quirks & QUIRK_NEED_RSTCLR))
-+	if (!any_active(i2s) && (priv->quirks & QUIRK_NEED_RSTCLR))
- 		writel(CON_RSTCLR, i2s->priv->addr + I2SCON);
+ 	/* build the initializer stmt */
+ 	init_stmt = gimple_build_assign(var, initializer);
+@@ -184,13 +194,13 @@ static unsigned int structleak_execute(void)
+ 		if (!auto_var_in_fn_p(var, current_function_decl))
+ 			continue;
  
- 	spin_unlock_irqrestore(&lock, flags);
-@@ -929,7 +923,7 @@ static int config_setup(struct i2s_dai *i2s)
- 	if (is_slave(i2s))
- 		return 0;
+-		/* only care about structure types */
+-		if (TREE_CODE(type) != RECORD_TYPE && TREE_CODE(type) != UNION_TYPE)
++		/* only care about structure types unless byref-all */
++		if (byref != BYREF_ALL && TREE_CODE(type) != RECORD_TYPE && TREE_CODE(type) != UNION_TYPE)
+ 			continue;
  
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		psr = priv->rclk_srcrate / i2s->frmclk / rfs;
- 		writel(((psr - 1) << 8) | PSR_PSREN, priv->addr + I2SPSR);
- 		dev_dbg(&i2s->pdev->dev,
-@@ -1068,10 +1062,10 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
- 					   &i2s->dma_capture);
- 
--		if (i2s->quirks & QUIRK_NEED_RSTCLR)
-+		if (priv->quirks & QUIRK_NEED_RSTCLR)
- 			writel(CON_RSTCLR, priv->addr + I2SCON);
- 
--		if (i2s->quirks & QUIRK_SUPPORTS_IDMA)
-+		if (priv->quirks & QUIRK_SUPPORTS_IDMA)
- 			idma_reg_addr_init(priv->addr,
- 					i2s->sec_dai->idma_playback.addr);
- 	}
-@@ -1099,13 +1093,14 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 
- static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- {
-+	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
- 	struct i2s_dai *i2s = to_info(dai);
- 	unsigned long flags;
- 
- 	pm_runtime_get_sync(dai->dev);
- 
- 	if (!is_secondary(i2s)) {
--		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
-+		if (priv->quirks & QUIRK_NEED_RSTCLR) {
- 			spin_lock_irqsave(&priv->lock, flags);
- 			writel(0, i2s->priv->addr + I2SCON);
- 			spin_unlock_irqrestore(&priv->lock, flags);
-@@ -1279,7 +1274,6 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
- 	struct device *dev = &priv->pdev->dev;
--	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = priv->variant_regs;
- 	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
-@@ -1305,7 +1299,7 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 			return -ENOMEM;
+ 		/* if the type is of interest, examine the variable */
+ 		if (TYPE_USERSPACE(type) ||
+-		    (byref_all && TREE_ADDRESSABLE(var)))
++		    (byref && TREE_ADDRESSABLE(var)))
+ 			initialize(var);
  	}
  
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(priv->addr + I2SPSR);
- 		writel(val | PSR_PSREN, priv->addr + I2SPSR);
-@@ -1399,11 +1393,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
--
- 	quirks = np ? i2s_dai_data->quirks : i2s_pdata->type.quirks;
- 	num_dais = (quirks & QUIRK_SEC_DAI) ? 2 : 1;
- 	priv->pdev = pdev;
-+	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
-+	priv->quirks = quirks;
- 
- 	ret = i2s_alloc_dais(priv, i2s_dai_data, num_dais);
- 	if (ret < 0)
-@@ -1458,7 +1452,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
--	pri_dai->quirks = quirks;
- 	pri_dai->priv = priv;
- 
- 	if (quirks & QUIRK_PRI_6CHAN)
-@@ -1481,7 +1474,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+@@ -232,8 +242,12 @@ __visible int plugin_init(struct plugin_name_args *plugin_info, struct plugin_gc
+ 			verbose = true;
+ 			continue;
  		}
- 
- 		sec_dai->dma_playback.addr_width = 4;
--		sec_dai->quirks = quirks;
- 		sec_dai->idma_playback.addr = idma_addr;
- 		sec_dai->pri_dai = pri_dai;
- 		sec_dai->priv = priv;
++		if (!strcmp(argv[i].key, "byref")) {
++			byref = BYREF_STRUCT;
++			continue;
++		}
+ 		if (!strcmp(argv[i].key, "byref-all")) {
+-			byref_all = true;
++			byref = BYREF_ALL;
+ 			continue;
+ 		}
+ 		error(G_("unknown option '-fplugin-arg-%s-%s'"), plugin_name, argv[i].key);
 -- 
-2.20.1
+2.17.1
 
