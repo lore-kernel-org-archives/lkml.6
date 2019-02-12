@@ -2,98 +2,804 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA753C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BEDC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C28E22070D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA432073D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:00:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NUvHThHg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbfBLI5R (ORCPT
+        id S1728586AbfBLJAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:57:17 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51301 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbfBLI5Q (ORCPT
+        Tue, 12 Feb 2019 04:00:02 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40095 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728490AbfBLJAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:57:16 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gtTsL-0004zi-Vz; Tue, 12 Feb 2019 09:57:09 +0100
-Message-ID: <1549961829.2546.19.camel@pengutronix.de>
-Subject: Re: [PATCH 1/2] dt-bindings: imx6q-pcie: Add "pcie_aux" clock for
- imx8mq
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        devicetree@vger.kernel.org
-Date:   Tue, 12 Feb 2019 09:57:09 +0100
-In-Reply-To: <20190212015108.16952-2-andrew.smirnov@gmail.com>
-References: <20190212015108.16952-1-andrew.smirnov@gmail.com>
-         <20190212015108.16952-2-andrew.smirnov@gmail.com>
+        Tue, 12 Feb 2019 04:00:02 -0500
+Received: by mail-it1-f194.google.com with SMTP id i2so5610373ite.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8ZZiRAlmFypfQQGmSI3qwKDALCe2McmX+guvhWHdHbM=;
+        b=NUvHThHgWCOcdVwMoYOBS8u6oPQwoVfHMKMG8zUt0hnI8rXNWI+mzbfvRiihwNN1pF
+         NI7wtcxeRE/WfdNHXy5e8WyFkR2d4P0AZl8DiNVRb/a0xScLmvbR9yQyJRiSULdUGpEO
+         B/Wwv8gPEJqiUNTfGlq/yaleuK1ylV6gFpPX0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8ZZiRAlmFypfQQGmSI3qwKDALCe2McmX+guvhWHdHbM=;
+        b=iCinq4zQmxu6bSc7bsfLyuA9C4mZjXn2Vxc0oJFHlCPGts6ASbMBAND8zfLrU1ZTTe
+         wDeW36LtMP+SCuFVsQfnzFXLgFWDiM6IxCow5xsRDjB5uzscnPqGqaIcEdMAHkniAhc6
+         ZDETv27oG+RyjFfIIFBbYrjC0F/wPXM5WY+ldcIf3U8VDUFEIovB5GjgkEbBSLuAJ4ny
+         zxk5emkP0ckYQZ1GZSRncNmhP7Z68bsTRWQvtDcH+s0oWpC+DkUXKb+bVkXlQeo+oHK9
+         3OKZLjzw/oph4bSO1SAamnN+O8bRWJnG5mHlC+nKISbSz1Zgw6lKpgm9hduhG+hqyJhP
+         XyPg==
+X-Gm-Message-State: AHQUAuZjda7PjowhYZpPswH8DZeSr9Z2yjndr6Fl3K+uah6PPUjZaMTj
+        0bNsxEjVSuGm4hwK88U7/ZOpO9+QN7C3ZejKlaPjlg==
+X-Google-Smtp-Source: AHgI3IbPUzuDXXn0tRahAzKMaiS3jK1WGNVhKk0ZxlW5cVZ6EUZY55juM8m83SmRI9EMlu6vLNEteVUZL8IHPBLXycc=
+X-Received: by 2002:a24:94cb:: with SMTP id j194mr1239510ite.117.1549961999981;
+ Tue, 12 Feb 2019 00:59:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20190212023623.2646-1-hean.loong.ong@intel.com>
+ <20190212023623.2646-4-hean.loong.ong@intel.com> <20190212074605.GW23159@phenom.ffwll.local>
+ <60ce72a2ec9fe9d51a037d300119f912a8eb6aef.camel@intel.com>
+In-Reply-To: <60ce72a2ec9fe9d51a037d300119f912a8eb6aef.camel@intel.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 12 Feb 2019 09:59:47 +0100
+Message-ID: <CAKMK7uE35p6aN0NB7wWKR=ETeY8SqFpd5Gyzg4NVB+EWkBDFGw@mail.gmail.com>
+Subject: Re: [PATCHv13 3/3] ARM:drm ivip Intel FPGA Video and Image Processing Suite
+To:     "Ong, Hean Loong" <hean.loong.ong@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "See, Chin Liang" <chin.liang.see@intel.com>,
+        "Vetter, Daniel" <daniel.vetter@intel.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "rienk.dejong@quest-innovations.com" 
+        <rienk.dejong@quest-innovations.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "Ong@freedesktop.org" <Ong@freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, den 11.02.2019, 17:51 -0800 schrieb Andrey Smirnov:
-> Add a binding for an extra clock required on i.MX8MQ.
-> 
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
+On Tue, Feb 12, 2019 at 9:08 AM Ong, Hean Loong
+<hean.loong.ong@intel.com> wrote:
+> On Tue, 2019-02-12 at 08:46 +0100, Daniel Vetter wrote:
+> > On Tue, Feb 12, 2019 at 10:36:23AM +0800, Hean-Loong, Ong via dri-
+> > devel wrote:
+> > > From: Ong, Hean Loong <hean.loong.ong@intel.com>
+> > >
+> > > Driver for Intel FPGA Video and Image Processing Suite Frame Buffer
+> > > II.
+> > > The driver only supports the Intel Arria10 devkit and its variants.
+> > > This driver can be either loaded staticlly or in modules.
+> > > The OF device tree binding is located at:
+> > > Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+> > >
+> > > Signed-off-by: Ong, Hean Loong <hean.loong.ong@intel.com>
+> >
+> > It looks like your cover letter and patch 2 didn't make it to the
+> > list
+> > somehow. Please check those aren't stuck on your side (list admins
+> > didn't
+> > see them yet).
+> >
+> That's weird my git send-email says everything was okay
+>
+> > > ---
+> > >  drivers/gpu/drm/Kconfig               |    2 +
+> > >  drivers/gpu/drm/Makefile              |    1 +
+> > >  drivers/gpu/drm/ivip/Kconfig          |   14 ++
+> > >  drivers/gpu/drm/ivip/Makefile         |    6 +
+> > >  drivers/gpu/drm/ivip/intel_vip_conn.c |   91 +++++++++
+> > >  drivers/gpu/drm/ivip/intel_vip_drv.c  |  332
+> > > +++++++++++++++++++++++++++++++++
+> > >  drivers/gpu/drm/ivip/intel_vip_drv.h  |   73 +++++++
+> > >  7 files changed, 519 insertions(+), 0 deletions(-)
+> > >  create mode 100644 drivers/gpu/drm/ivip/Kconfig
+> > >  create mode 100644 drivers/gpu/drm/ivip/Makefile
+> > >  create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+> > >  create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.c
+> > >  create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+> > >
+> > > diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> > > index 4385f00..0251a9f 100644
+> > > --- a/drivers/gpu/drm/Kconfig
+> > > +++ b/drivers/gpu/drm/Kconfig
+> > > @@ -235,6 +235,8 @@ source "drivers/gpu/drm/nouveau/Kconfig"
+> > >
+> > >  source "drivers/gpu/drm/i915/Kconfig"
+> > >
+> > > +source "drivers/gpu/drm/ivip/Kconfig"
+> > > +
+> > >  config DRM_VGEM
+> > >     tristate "Virtual GEM provider"
+> > >     depends on DRM
+> > > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> > > index ce8d1d3..85a5694 100644
+> > > --- a/drivers/gpu/drm/Makefile
+> > > +++ b/drivers/gpu/drm/Makefile
+> > > @@ -63,6 +63,7 @@ obj-$(CONFIG_DRM_AMDGPU)+= amd/amdgpu/
+> > >  obj-$(CONFIG_DRM_MGA)      += mga/
+> > >  obj-$(CONFIG_DRM_I810)     += i810/
+> > >  obj-$(CONFIG_DRM_I915)     += i915/
+> > > +obj-$(CONFIG_DRM_IVIP)     += ivip/
+> > >  obj-$(CONFIG_DRM_MGAG200) += mgag200/
+> > >  obj-$(CONFIG_DRM_V3D)  += v3d/
+> > >  obj-$(CONFIG_DRM_VC4)  += vc4/
+> > > diff --git a/drivers/gpu/drm/ivip/Kconfig
+> > > b/drivers/gpu/drm/ivip/Kconfig
+> > > new file mode 100644
+> > > index 0000000..1d08b90
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ivip/Kconfig
+> > > @@ -0,0 +1,14 @@
+> > > +config DRM_IVIP
+> > > +        tristate "Intel FGPA Video and Image Processing"
+> > > +        depends on DRM && OF
+> > > +        select DRM_GEM_CMA_HELPER
+> > > +        select DRM_KMS_HELPER
+> > > +        select DRM_KMS_FB_HELPER
+> > > +        select DRM_KMS_CMA_HELPER
+> > > +        help
+> > > +             Choose this option if you have an Intel FPGA
+> > > Arria 10 system
+> > > +             and above with an Intel Display Port IP. This
+> > > does not support
+> > > +             legacy Intel FPGA Cyclone V display port.
+> > > Currently only single
+> > > +             frame buffer is supported. Note that ACPI and
+> > > X_86 architecture
+> > > +             is not supported for Arria10. If M is selected
+> > > the module will be
+> > > +             called ivip.
+> > > diff --git a/drivers/gpu/drm/ivip/Makefile
+> > > b/drivers/gpu/drm/ivip/Makefile
+> > > new file mode 100644
+> > > index 0000000..8c54e11
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ivip/Makefile
+> > > @@ -0,0 +1,6 @@
+> > > +#
+> > > +# Makefile for the drm device driver.  This driver provides
+> > > support for the
+> > > +# Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and
+> > > higher.
+> > > +
+> > > +obj-$(CONFIG_DRM_IVIP) += ivip.o
+> > > +ivip-objs := intel_vip_drv.o intel_vip_conn.o
+> > > diff --git a/drivers/gpu/drm/ivip/intel_vip_conn.c
+> > > b/drivers/gpu/drm/ivip/intel_vip_conn.c
+> > > new file mode 100644
+> > > index 0000000..93ce0b3
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ivip/intel_vip_conn.c
+> > > @@ -0,0 +1,91 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (C) 2019 Intel Corporation.
+> > > + *
+> > > + * intel_vip_conn.c -- Intel Video and Image Processing(VIP)
+> > > + * Frame Buffer II driver
+> > > + *
+> > > + * This driver supports the Intel VIP Frame Reader component.
+> > > + * More info on the hardware can be found in the Intel Video
+> > > + * and Image Processing Suite User Guide at this address
+> > > + * http://www.altera.com/literature/ug/ug_vip.pdf.
+> > > + *
+> > > + * Authors:
+> > > + * Walter Goossens <waltergoossens@home.nl>
+> > > + * Thomas Chou <thomas@wytron.com.tw>
+> > > + * Chris Rauer <crauer@altera.com>
+> > > + * Ong, Hean-Loong <hean.loong.ong@intel.com>
+> > > + *
+> > > + */
+> > > +
+> > > +#include <linux/init.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <drm/drm_atomic_helper.h>
+> > > +#include <drm/drm_crtc_helper.h>
+> > > +#include <drm/drm_encoder_slave.h>
+> > > +#include <drm/drm_plane_helper.h>
+> > > +
+> > > +static enum drm_connector_status
+> > > +intelvipfb_drm_connector_detect(struct drm_connector *connector,
+> > > bool force)
+> > > +{
+> > > +   return connector_status_connected;
+> > > +}
+> > > +
+> > > +static void intelvipfb_drm_connector_destroy(struct drm_connector
+> > > *connector)
+> > > +{
+> > > +   drm_connector_unregister(connector);
+> > > +   drm_connector_cleanup(connector);
+> > > +}
+> > > +
+> > > +static const struct drm_connector_funcs
+> > > intelvipfb_drm_connector_funcs = {
+> > > +   .detect = intelvipfb_drm_connector_detect,
+> > > +   .reset = drm_atomic_helper_connector_reset,
+> > > +   .fill_modes = drm_helper_probe_single_connector_modes,
+> > > +   .atomic_duplicate_state =
+> > > drm_atomic_helper_connector_duplicate_state,
+> > > +   .atomic_destroy_state =
+> > > drm_atomic_helper_connector_destroy_state,
+> > > +   .destroy = intelvipfb_drm_connector_destroy,
+> > > +};
+> > > +
+> > > +static int intelvipfb_drm_connector_get_modes(struct drm_connector
+> > > *connector)
+> > > +{
+> > > +   struct drm_device *drm = connector->dev;
+> > > +   int count;
+> > > +
+> > > +   count = drm_add_modes_noedid(connector, drm-
+> > > >mode_config.max_width,
+> > > +                   drm->mode_config.max_height);
+> > > +   drm_set_preferred_mode(connector, drm-
+> > > >mode_config.max_width,
+> > > +                   drm->mode_config.max_height);
+> > > +   return count;
+> > > +}
+> > > +
+> > > +static const struct drm_connector_helper_funcs
+> > > +intelvipfb_drm_connector_helper_funcs = {
+> > > +   .get_modes = intelvipfb_drm_connector_get_modes,
+> > > +};
+> > > +
+> > > +struct drm_connector *
+> > > +intelvipfb_conn_setup(struct drm_device *drm)
+> > > +{
+> > > +   struct drm_connector *conn;
+> > > +   int ret;
+> > > +
+> > > +   conn = devm_kzalloc(drm->dev, sizeof(*conn), GFP_KERNEL);
+> > > +   if (IS_ERR(conn))
+> > > +           return NULL;
+> > > +
+> > > +   drm_connector_helper_add(conn,
+> > > &intelvipfb_drm_connector_helper_funcs);
+> > > +   ret = drm_connector_init(drm, conn,
+> > > &intelvipfb_drm_connector_funcs,
+> > > +                   DRM_MODE_CONNECTOR_DisplayPort);
+> > > +   if (ret < 0) {
+> > > +           dev_err(drm->dev, "failed to initialize drm
+> > > connector\n");
+> > > +           ret = -ENOMEM;
+> > > +           goto error_connector_cleanup;
+> > > +   }
+> > > +
+> > > +   return conn;
+> > > +
+> > > +error_connector_cleanup:
+> > > +   drm_connector_cleanup(conn);
+> > > +
+> > > +   return NULL;
+> > > +}
+> > > diff --git a/drivers/gpu/drm/ivip/intel_vip_drv.c
+> > > b/drivers/gpu/drm/ivip/intel_vip_drv.c
+> > > new file mode 100644
+> > > index 0000000..38790b7
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ivip/intel_vip_drv.c
+> > > @@ -0,0 +1,332 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (C) 2019 Intel Corporation.
+> > > + *
+> > > + * intel_vip_core.c -- Intel Video and Image Processing(VIP)
+> > > + * Frame Buffer II driver
+> > > + *
+> > > + * This driver supports the Intel VIP Frame Reader component.
+> > > + * More info on the hardware can be found in the Intel Video
+> > > + * and Image Processing Suite User Guide at this address
+> > > + * http://www.altera.com/literature/ug/ug_vip.pdf.
+> > > + *
+> > > + * Authors:
+> > > + * Walter Goossens <waltergoossens@home.nl>
+> > > + * Thomas Chou <thomas@wytron.com.tw>
+> > > + * Chris Rauer <crauer@altera.com>
+> > > + * Ong, Hean-Loong <hean.loong.ong@intel.com>
+> > > + *
+> > > + */
+> > > +
+> > > +#include <drm/drm_atomic.h>
+> > > +#include <drm/drm_atomic_helper.h>
+> > > +#include <drm/drm_crtc_helper.h>
+> > > +#include <drm/drm_fb_helper.h>
+> > > +#include <drm/drm_fb_cma_helper.h>
+> > > +#include <drm/drm_gem_cma_helper.h>
+> > > +#include <drm/drm_gem_framebuffer_helper.h>
+> > > +#include <drm/drm_plane_helper.h>
+> > > +#include <drm/drm_simple_kms_helper.h>
+> > > +
+> > > +#include <linux/init.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +
+> > > +#include "intel_vip_drv.h"
+> > > +
+> > > +static inline struct intelvipfb_priv *
+> > > +pipe_to_intelvipdrm(struct drm_simple_display_pipe *pipe)
+> > > +{
+> > > +   return container_of(pipe, struct intelvipfb_priv, pipe);
+> > > +}
+> > > +
+> > > +DEFINE_DRM_GEM_CMA_FOPS(drm_fops);
+> > > +
+> > > +static struct drm_driver intelvipfb_drm = {
+> > > +   .driver_features =
+> > > +                   DRIVER_MODESET | DRIVER_GEM |
+> > > +                   DRIVER_PRIME | DRIVER_ATOMIC,
+> > > +   .gem_free_object_unlocked = drm_gem_cma_free_object,
+> > > +   .gem_vm_ops = &drm_gem_cma_vm_ops,
+> > > +   .dumb_create = drm_gem_cma_dumb_create,
+> > > +   .dumb_destroy = drm_gem_dumb_destroy,
+> > > +   .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+> > > +   .prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+> > > +   .gem_prime_export = drm_gem_prime_export,
+> > > +   .gem_prime_import = drm_gem_prime_import,
+> > > +   .gem_prime_get_sg_table = drm_gem_cma_prime_get_sg_table,
+> > > +   .gem_prime_import_sg_table =
+> > > drm_gem_cma_prime_import_sg_table,
+> > > +   .gem_prime_vmap = drm_gem_cma_prime_vmap,
+> > > +   .gem_prime_vunmap = drm_gem_cma_prime_vunmap,
+> > > +   .gem_prime_mmap = drm_gem_cma_prime_mmap,
+> > > +   .name = DRIVER_NAME,
+> > > +   .date = "20190129",
+> > > +   .desc = "Intel FPGA VIP SUITE",
+> > > +   .major = 1,
+> > > +   .minor = 0,
+> > > +   .ioctls = NULL,
+> > > +   .patchlevel = 0,
+> > > +   .fops = &drm_fops,
+> > > +};
+> > > +
+> > > +/*
+> > > + * Setting up information derived from OF Device Tree Nodes
+> > > + * max-width, max-height, bits per pixel, memory port width
+> > > + */
+> > > +
+> > > +static int intelvipfb_drm_setup(struct device *dev,
+> > > +                                   struct intelvipfb_priv
+> > > *priv)
+> > > +{
+> > > +   struct drm_device *drm = priv->drm;
+> > > +   struct device_node *np = dev->of_node;
+> > > +   int mem_word_width;
+> > > +   int max_h, max_w;
+> > > +   int ret;
+> > > +
+> > > +   ret = of_property_read_u32(np, "altr,max-width", &max_w);
+> > > +   if (ret) {
+> > > +           dev_err(dev,
+> > > +                   "Missing required parameter 'altr,max-
+> > > width'");
+> > > +           return ret;
+> > > +   }
+> > > +
+> > > +   ret = of_property_read_u32(np, "altr,max-height", &max_h);
+> > > +   if (ret) {
+> > > +           dev_err(dev,
+> > > +                   "Missing required parameter 'altr,max-
+> > > height'");
+> > > +           return ret;
+> > > +   }
+> > > +
+> > > +   ret = of_property_read_u32(np, "altr,mem-port-width",
+> > > &mem_word_width);
+> > > +   if (ret) {
+> > > +           dev_err(dev, "Missing required parameter
+> > > 'altr,mem-port-width '");
+> > > +           return ret;
+> > > +   }
+> > > +
+> > > +   if (!(mem_word_width >= 32 && mem_word_width % 32 == 0)) {
+> > > +           dev_err(dev,
+> > > +                   "mem-word-width is set to %i. must be >=
+> > > 32 and multiple of 32.",
+> > > +                    mem_word_width);
+> > > +           return -ENODEV;
+> > > +   }
+> > > +
+> > > +   drm->mode_config.min_width = 640;
+> > > +   drm->mode_config.min_height = 480;
+> > > +   drm->mode_config.max_width = max_w;
+> > > +   drm->mode_config.max_height = max_h;
+> > > +   drm->mode_config.preferred_depth = 32;
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > > +static int intelvipfb_of_probe(struct platform_device *pdev)
+> > > +{
+> > > +   int retval;
+> > > +   struct resource *reg_res;
+> > > +   struct intelvipfb_priv *priv;
+> > > +   struct device *dev = &pdev->dev;
+> > > +   struct drm_device *drm;
+> > > +
+> > > +   priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > +   if (!priv)
+> > > +           return -ENOMEM;
+> > > +
+> > > +   /* setup DRM */
+> > > +   drm = drm_dev_alloc(&intelvipfb_drm, dev);
+> >
+> > Just a tiny bikeshed: Recommended style nowadays is to use
+> > drm_dev_init
+> > an embed drm_device into your driver private structure. This means
+> > you
+> > can't use devm_kzalloc (but to be really strict, almost all usage of
+> > devm_kzalloc in drm drivers is broken, but that's an entirely
+> > different
+> > story). Would be great to switch over to drm_dev_init to align better
+> > with
+> > some of the planned work we have.
+> >
+> Sure I think I can fix this
+> >
+> > > +   if (IS_ERR(drm))
+> > > +           return PTR_ERR(drm);
+> > > +
+> > > +   retval = dma_set_mask_and_coherent(drm->dev,
+> > > DMA_BIT_MASK(32));
+> > > +   if (retval)
+> > > +           return -ENODEV;
+> > > +
+> > > +   priv->drm = drm;
+> > > +
+> > > +   reg_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +   if (!reg_res)
+> > > +           return -ENOMEM;
+> > > +
+> > > +   priv->base = devm_ioremap_resource(dev, reg_res);
+> > > +
+> > > +   if (IS_ERR(priv->base)) {
+> > > +           dev_err(dev, "devm_ioremap_resource failed\n");
+> > > +           retval = PTR_ERR(priv->base);
+> > > +           return -ENOMEM;
+> > > +   }
+> > > +
+> > > +   intelvipfb_drm_setup(dev, priv);
+> > > +
+> > > +   dev_set_drvdata(dev, priv);
+> > > +
+> > > +   return intelvipfb_probe(dev);
+> > > +}
+> > > +
+> > > +static int intelvipfb_of_remove(struct platform_device *pdev)
+> > > +{
+> > > +   return intelvipfb_remove(&pdev->dev);
+> > > +}
+> > > +
+> > > +static void intelvipfb_enable(struct drm_simple_display_pipe
+> > > *pipe,
+> > > +                           struct drm_crtc_state *crtc_state,
+> > > +                           struct drm_plane_state *
+> > > +                           plane_state)
+> > > +{
+> > > +   /*
+> > > +    * The frameinfo variable has to correspond to the size of
+> > > the VIP Suite
+> > > +    * Frame Reader register 7 which will determine the
+> > > maximum size used
+> > > +    * in this frameinfo
+> > > +    */
+> > > +   struct intelvipfb_priv *priv = pipe_to_intelvipdrm(pipe);
+> > > +   u32 frameinfo;
+> > > +   void __iomem *base = priv->base;
+> > > +   struct drm_plane_state *state = pipe->plane.state;
+> > > +   dma_addr_t addr;
+> > > +
+> > > +   addr = drm_fb_cma_get_gem_addr(state->fb, state, 0);
+> > > +
+> > > +   frameinfo =
+> > > +           readl(base + INTELVIPFB_FRAME_READER) &
+> > > 0x00ffffff;
+> > > +   writel(frameinfo, base + INTELVIPFB_FRAME_INFO);
+> > > +   writel(addr, base + INTELVIPFB_FRAME_START);
+> > > +   /* Finally set the control register to 1 to start
+> > > streaming */
+> > > +   writel(1, base + INTELVIPFB_CONTROL);
+> > > +}
+> > > +
+> > > +static void intelvipfb_disable(struct drm_simple_display_pipe
+> > > *pipe)
+> > > +{
+> > > +   struct intelvipfb_priv *priv = pipe_to_intelvipdrm(pipe);
+> > > +   void __iomem *base = priv->base;
+> > > +   /* set the control register to 0 to stop streaming */
+> > > +   writel(0, base + INTELVIPFB_CONTROL);
+> > > +}
+> > > +
+> > > +static const struct drm_mode_config_funcs
+> > > intelvipfb_mode_config_funcs = {
+> > > +   .fb_create = drm_gem_fb_create,
+> > > +   .atomic_check = drm_atomic_helper_check,
+> > > +   .atomic_commit = drm_atomic_helper_commit,
+> > > +};
+> > > +
+> > > +static void intelvipfb_setup_mode_config(struct drm_device *drm)
+> > > +{
+> > > +   drm_mode_config_init(drm);
+> > > +   drm->mode_config.funcs = &intelvipfb_mode_config_funcs;
+> > > +}
+> > > +
+> > > +void intelvipfb_display_pipe_update(struct drm_simple_display_pipe
+> > > *pipe,
+> > > +                               struct drm_plane_state
+> > > *old_state)
+> > > +{
+> > > +   struct intelvipfb_priv *priv = pipe_to_intelvipdrm(pipe);
+> > > +   struct drm_framebuffer *fb = pipe->plane.state->fb;
+> > > +   struct drm_crtc *crtc = &priv->pipe.crtc;
+> > > +
+> > > +   if (fb && fb != old_state->fb) {
+> > > +           if (priv->fb_dirty)
+> > > +                   priv->fb_dirty(fb, NULL, 0, 0, NULL, 0);
+> > > +   }
+> >
+> > ->fb_dirty here seems entirely unused. It's also incomplete, there's
+> > a lot
+> > more to implementing manual upload support than just this here (you
+> > need
+> > to setup framebuffers with the dirty callback, plus register the new
+> > damage property). Imo better if we add this when you start using it,
+> > hence
+> > please remove ->fb_dirty here and from the headers.
+>
+> Noted.
+> >
+> > > +
+> > > +   if (crtc->state->event) {
+> > > +           spin_lock_irq(&crtc->dev->event_lock);
+> > > +           drm_crtc_send_vblank_event(crtc, crtc->state-
+> > > >event);
+> > > +           spin_unlock_irq(&crtc->dev->event_lock);
+> > > +           crtc->state->event = NULL;
+> > > +   }
+> > > +}
+> > > +EXPORT_SYMBOL(intelvipfb_display_pipe_update);
+> > > +
+> > > +static struct drm_simple_display_pipe_funcs priv_funcs = {
+> > > +   .prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
+> > > +   .update = intelvipfb_display_pipe_update,
+> > > +   .enable = intelvipfb_enable,
+> > > +   .disable = intelvipfb_disable
+> > > +};
+> > > +
+> > > +int intelvipfb_probe(struct device *dev)
+> > > +{
+> > > +   int retval;
+> > > +   struct drm_device *drm;
+> > > +   struct intelvipfb_priv *priv = dev_get_drvdata(dev);
+> > > +
+> > > +   struct drm_connector *connector;
+> > > +   u32 formats[] = {DRM_FORMAT_XRGB8888};
+> > > +
+> > > +   drm = priv->drm;
+> > > +
+> > > +   intelvipfb_setup_mode_config(drm);
+> >
+> > Personally I'd inline this, it's just 2 lines.
+> >
+> > > +
+> > > +   connector = intelvipfb_conn_setup(drm);
+> > > +   if (!connector) {
+> > > +           dev_err(drm->dev, "Connector setup failed\n");
+> > > +           goto err_mode_config;
+> > > +   }
+> > > +
+> > > +   retval = drm_simple_display_pipe_init(drm,
+> > > +                                           &priv->pipe,
+> > > +                                           &priv_funcs,
+> > > +                                           formats,
+> > > +                                           ARRAY_SIZE(formats
+> > > ),
+> > > +                                           NULL, connector);
+> > > +
+> > > +   if (retval < 0) {
+> > > +           dev_err(drm->dev, "Cannot setup simple display
+> > > pipe\n");
+> > > +           goto err_mode_config;
+> > > +   }
+> > > +
+> > > +   drm_mode_config_reset(drm);
+> > > +
+> > > +   drm_dev_register(drm, 0);
+> > > +
+> > > +   drm_fbdev_generic_setup(drm, 32);
+> > > +
+> > > +   dev_info(drm->dev, "ivip: Successfully created fb\n");
+> > > +
+> > > +   return retval;
+> > > +
+> > > +err_mode_config:
+> > > +
+> > > +   drm_mode_config_cleanup(drm);
+> > > +   return -ENODEV;
+> > > +}
+> > > +
+> > > +int intelvipfb_remove(struct device *dev)
+> > > +{
+> > > +   struct intelvipfb_priv *priv = dev_get_drvdata(dev);
+> > > +   struct drm_device *drm =  priv->drm;
+> > > +
+> > > +   drm_dev_unregister(drm);
+> > > +
+> > > +   drm_mode_config_cleanup(drm);
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > > +static const struct of_device_id intelvipfb_of_match[] = {
+> > > +   { .compatible = "altr,vip-frame-buffer-2.0" },
+> > > +   {},
+> > > +/*
+> > > + * The name vip-frame-buffer-2.0 is derived from
+> > > + * http://www.altera.com/literature/ug/ug_vip.pdf
+> > > + * frame buffer IP cores section 14
+> > > + */
+> > > +};
+> > > +
+> > > +MODULE_DEVICE_TABLE(of, intelvipfb_of_match);
+> > > +
+> > > +static struct platform_driver intelvipfb_driver = {
+> > > +   .probe = intelvipfb_of_probe,
+> > > +   .remove = intelvipfb_of_remove,
+> > > +   .driver = {
+> > > +           .name = DRIVER_NAME,
+> > > +           .of_match_table = intelvipfb_of_match,
+> > > +   },
+> > > +};
+> > > +
+> > > +module_platform_driver(intelvipfb_driver);
+> > > +
+> > > +/* Original author of Altera Frame Buffer*/
+> > > +MODULE_AUTHOR("Walter Goossens <waltergoossens@home.nl>");
+> > > +MODULE_AUTHOR("Thomas Chou <thomas@wytron.com.tw>");
+> > > +MODULE_AUTHOR("Chris Rauer <crauer@altera.com>");
+> > > +/* Author of Intel FPGA Frame Buffer II*/
+> > > +MODULE_AUTHOR("Ong, Hean-Loong <hean.loong.ong@intel.com>");
+> > > +MODULE_DESCRIPTION("Intel VIP Frame Buffer II driver");
+> > > +MODULE_LICENSE("GPL v2");
+> > > diff --git a/drivers/gpu/drm/ivip/intel_vip_drv.h
+> > > b/drivers/gpu/drm/ivip/intel_vip_drv.h
+> > > new file mode 100644
+> > > index 0000000..821e74e
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ivip/intel_vip_drv.h
+> > > @@ -0,0 +1,73 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +/*
+> > > + * Copyright (C) 2019 Intel Corporation.
+> > > + *
+> > > + * Intel Video and Image Processing(VIP) Frame Buffer II driver.
+> > > + * Frame Buffer II driver
+> > > + *
+> > > + * This driver supports the Intel VIP Frame Reader component.
+> > > + * More info on the hardware can be found in the Intel Video
+> > > + * and Image Processing Suite User Guide at this address
+> > > + * http://www.altera.com/literature/ug/ug_vip.pdf.
+> > > + *
+> > > + * Authors:
+> > > + * Walter Goossens <waltergoossens@home.nl>
+> > > + * Thomas Chou <thomas@wytron.com.tw>
+> > > + * Chris Rauer <crauer@altera.com>
+> > > + * Ong, Hean-Loong <hean.loong.ong@intel.com>
+> > > + *
+> > > + */
+> > > +#ifndef _INTEL_VIP_DRV_H
+> > > +#define _INTEL_VIP_DRV_H
+> > > +
+> > > +#define DRIVER_NAME    "intelvipfb"
+> > > +#define BYTES_PER_PIXEL     4
+> > > +#define CRTC_NUM           1
+> > > +#define CONN_NUM           1
+> > > +
+> > > +/* control registers */
+> > > +#define INTELVIPFB_CONTROL       0
+> > > +#define INTELVIPFB_STATUS         0x4
+> > > +#define INTELVIPFB_INTERRUPT           0x8
+> > > +#define INTELVIPFB_FRAME_COUNTER   0xC
+> > > +#define INTELVIPFB_FRAME_DROP         0x10
+> > > +#define INTELVIPFB_FRAME_INFO         0x14
+> > > +#define INTELVIPFB_FRAME_START       0x18
+> > > +#define INTELVIPFB_FRAME_READER             0x1C
+> > > +
+> > > +int intelvipfb_probe(struct device *dev);
+> > > +int intelvipfb_remove(struct device *dev);
+> > > +int intelvipfb_setup_crtc(struct drm_device *drm);
+> > > +struct drm_connector *intelvipfb_conn_setup(struct drm_device
+> > > *drm);
+> > > +
+> > > +struct intelvipfb_priv {
+> > > +   /**
+> > > +    * @pipe: Display pipe structure
+> > > +    */
+> > > +   struct drm_simple_display_pipe pipe;
+> > > +
+> > > +   /**
+> > > +    * @drm: DRM device
+> > > +    */
+> > > +   struct drm_device *drm;
+> > > +
+> > > +   /**
+> > > +    * @dirty_lock: Serializes framebuffer flushing
+> > > +    */
+> > > +   struct mutex dirty_lock;
+> > > +
+> > > +   /**
+> > > +    * @base: Base memory for the framebuffer
+> > > +    */
+> > > +   void    __iomem *base;
+> > > +
+> > > +   /**
+> > > +    * @fb_dirty: Framebuffer dirty callback
+> > > +    */
+> > > +   int (*fb_dirty)(struct drm_framebuffer *framebuffer,
+> > > +                   struct drm_file *file_priv, unsigned int
+> > > flags,
+> > > +                   unsigned int color, struct drm_clip_rect
+> > > *clips,
+> > > +                   unsigned int num_clips);
+> > > +};
+> > > +
+> > > +#endif
+> >
+> > Very tidy driver, nice work. This looks ready (aside from the tiny
+> > nits),
+> > one last question: What's the plan with maintainig this? For small
+> > drivers
+> > I always recommend drm-misc:
+> >
+> > https://drm.pages.freedesktop.org/maintainer-tools/committer-drm-misc
+> > .html#small-drivers
+> >
+> > This would mean you'd need to familiarize yourself with the tooling
+> > and
+> > everything. But this also only makes sense if you expect that there
+> > will
+> > be more contributions from your (or your team).
+> >
+> > If you want to maintain this in drm-misc pls also add a corresponding
+> > MAINTAINERS entry, with you as maintainer and the drm-misc repo as
+> > git
+> > repo.
+> >
+> > Cheers, Daniel
+>
+> Thanks for looking into this Daniel. Currently there are no long term
+> roadmap for this driver but it has to be in the upstream kernel.
+>
+> I'd like to contribute to drm-misc however I'd need some guidance in
+> familiarizing myself with the tooling.
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Ok, in that case just list yourself as reviewer (R: instead of M:) in
+MAINTAINERS, but still including the drm-misc repo as the git repo
+line. We can then work on ramping you up as full committer/maintainer
+in drm-misc once you have more patches.
 
-> ---
->  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt 
-> b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> index 920ca93870a8..933d98328e07 100644
-> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> @@ -55,6 +55,10 @@ Additional required properties for imx7d-pcie and
-> imx8mq-pcie:
->  	       - "apps"
->  	       - "turnoff"
->  
-> +Additional required properties for imx8mq-pcie:
-> +- clock-names: Must include the following additional entries:
-> +	- "pcie_aux"
-> +
->  Example:
->  
->  	pcie@01000000 {
+Cheers, Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
