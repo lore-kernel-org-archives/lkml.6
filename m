@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808A2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B61C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56053222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 854DE222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbfBLVhh (ORCPT
+        id S1732609AbfBLVhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:37:37 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16717 "EHLO mga09.intel.com"
+        Tue, 12 Feb 2019 16:37:42 -0500
+Received: from mga03.intel.com ([134.134.136.65]:41143 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732531AbfBLVhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:37:35 -0500
+        id S1732531AbfBLVhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:37:40 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 13:37:34 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 13:37:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="117400830"
+   d="scan'208";a="114410998"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008.jf.intel.com with ESMTP; 12 Feb 2019 13:37:34 -0800
-Subject: [PATCH 3/7] dax: Check the end of the block-device capacity with
- dax_direct_access()
+  by orsmga007.jf.intel.com with ESMTP; 12 Feb 2019 13:37:39 -0800
+Subject: [PATCH 4/7] libnvdimm/pfn: Introduce super-block minimum version
+ requirements
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+Cc:     Jeff Moyer <jmoyer@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
         linux-fsdevel@vger.kernel.org
-Date:   Tue, 12 Feb 2019 13:24:56 -0800
-Message-ID: <155000669646.348031.16690970886357498896.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Feb 2019 13:25:01 -0800
+Message-ID: <155000670159.348031.17631616775326330606.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -49,99 +49,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The checks in __bdev_dax_supported() helped mitigate a potential data
-corruption bug in the pmem driver's handling of section alignment
-padding. Strengthen the checks, including checking the end of the range,
-to validate the dev_pagemap, Xarray entries, and sector-to-pfn
-translation established for pmem namespaces.
+In support of fixing a pfn info-block interpretation problem that
+requires a backwards incompatible format change introduce a mechanism to
+indicate a minimum support level to the parsing agent. Hopefully this
+mechanism never needs to be used, but it otherwise prevents the need to
+hunt for a state that causes old implementations to bail out.
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+For now, the method chosen to make implementations prior to this
+introduction fail is to use new PFN3_MODE_* values. The use of 'mode'
+ensures that older Linux fails, but agents like the EFI driver that only
+care about 'data_offset' can continue to ignore the requirement. That is
+to say 'data_offset' should always be valid, but the interpretation of
+values that older Linux kernels use to setup the dev_pagemap and perform
+sector-to-pfn translations is going to change.
+
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/super.c |   39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ drivers/nvdimm/pfn.h      |    4 +++-
+ drivers/nvdimm/pfn_devs.c |    7 +++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 6e928f37d084..a27395cfcec6 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -86,12 +86,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
- {
- 	struct dax_device *dax_dev;
- 	bool dax_enabled = false;
-+	pgoff_t pgoff, pgoff_end;
- 	struct request_queue *q;
--	pgoff_t pgoff;
--	int err, id;
--	pfn_t pfn;
--	long len;
- 	char buf[BDEVNAME_SIZE];
-+	void *kaddr, *end_kaddr;
-+	pfn_t pfn, end_pfn;
-+	sector_t last_page;
-+	long len, len2;
-+	int err, id;
+diff --git a/drivers/nvdimm/pfn.h b/drivers/nvdimm/pfn.h
+index dde9853453d3..710cb743fad6 100644
+--- a/drivers/nvdimm/pfn.h
++++ b/drivers/nvdimm/pfn.h
+@@ -20,6 +20,7 @@
+ #define PFN_SIG_LEN 16
+ #define PFN_SIG "NVDIMM_PFN_INFO\0"
+ #define DAX_SIG "NVDIMM_DAX_INFO\0"
++#define PFN_VERSION_SUPPORT 2
  
- 	if (blocksize != PAGE_SIZE) {
- 		pr_debug("%s: error: unsupported blocksize for dax\n",
-@@ -113,6 +115,15 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
- 		return false;
- 	}
+ struct nd_pfn_sb {
+ 	u8 signature[PFN_SIG_LEN];
+@@ -36,7 +37,8 @@ struct nd_pfn_sb {
+ 	__le32 end_trunc;
+ 	/* minor-version-2 record the base alignment of the mapping */
+ 	__le32 align;
+-	u8 padding[4000];
++	__le16 min_version;
++	u8 padding[3998];
+ 	__le64 checksum;
+ };
  
-+	last_page = ALIGN_DOWN(part_nr_sects_read(bdev->bd_part)
-+			- PAGE_SIZE / 512, PAGE_SIZE / 512);
-+	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
-+	if (err) {
-+		pr_debug("%s: error: unaligned partition for dax\n",
-+				bdevname(bdev, buf));
-+		return false;
-+	}
+diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+index ba74a341da5d..108f9f7ed064 100644
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -459,6 +459,12 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+ 	if (__le16_to_cpu(pfn_sb->version_minor) < 2)
+ 		pfn_sb->align = 0;
+ 
++	if (__le16_to_cpu(pfn_sb->version_major) != 1)
++		return -EINVAL;
 +
- 	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
- 	if (!dax_dev) {
- 		pr_debug("%s: error: device does not support dax\n",
-@@ -121,14 +132,15 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
- 	}
- 
- 	id = dax_read_lock();
--	len = dax_direct_access(dax_dev, pgoff, 1, NULL, &pfn);
-+	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
-+	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
- 	dax_read_unlock(id);
- 
- 	put_dax(dax_dev);
- 
--	if (len < 1) {
-+	if (len < 1 || len2 < 1) {
- 		pr_debug("%s: error: dax access failed (%ld)\n",
--				bdevname(bdev, buf), len);
-+				bdevname(bdev, buf), len < 1 ? len : len2);
- 		return false;
- 	}
- 
-@@ -143,13 +155,20 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
- 		 */
- 		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
- 		dax_enabled = true;
--	} else if (pfn_t_devmap(pfn)) {
--		struct dev_pagemap *pgmap;
-+	} else if (pfn_t_devmap(pfn) && pfn_t_devmap(end_pfn)) {
-+		struct dev_pagemap *pgmap, *end_pgmap;
- 
- 		pgmap = get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
--		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
-+		end_pgmap = get_dev_pagemap(pfn_t_to_pfn(end_pfn), NULL);
-+		if (pgmap && pgmap == end_pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX
-+				&& pfn_t_to_page(pfn)->pgmap == pgmap
-+				&& pfn_t_to_page(end_pfn)->pgmap == pgmap
-+				&& pfn_t_to_pfn(pfn) == PHYS_PFN(__pa(kaddr))
-+				&& pfn_t_to_pfn(end_pfn) == PHYS_PFN(__pa(end_kaddr)))
- 			dax_enabled = true;
- 		put_dev_pagemap(pgmap);
-+		put_dev_pagemap(end_pgmap);
++	if (__le16_to_cpu(pfn_sb->min_version) > PFN_VERSION_SUPPORT)
++		return -EINVAL;
 +
- 	}
- 
- 	if (!dax_enabled) {
+ 	switch (le32_to_cpu(pfn_sb->mode)) {
+ 	case PFN_MODE_RAM:
+ 	case PFN_MODE_PMEM:
+@@ -771,6 +777,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+ 	memcpy(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16);
+ 	pfn_sb->version_major = cpu_to_le16(1);
+ 	pfn_sb->version_minor = cpu_to_le16(2);
++	pfn_sb->min_version = cpu_to_le16(2);
+ 	pfn_sb->start_pad = cpu_to_le32(start_pad);
+ 	pfn_sb->end_trunc = cpu_to_le32(end_trunc);
+ 	pfn_sb->align = cpu_to_le32(nd_pfn->align);
 
