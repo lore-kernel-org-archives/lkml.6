@@ -2,126 +2,110 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B4BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156C0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B676721B18
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D676F21B1A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="c9bkZv8g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgwUQ+on"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfBLKYp (ORCPT
+        id S1728783AbfBLKZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:24:45 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51105 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKYo (ORCPT
+        Tue, 12 Feb 2019 05:25:21 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39907 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727903AbfBLKZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:24:44 -0500
-Received: by mail-it1-f193.google.com with SMTP id z7so5981366iti.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:24:44 -0800 (PST)
+        Tue, 12 Feb 2019 05:25:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id f132so1086104pfa.6;
+        Tue, 12 Feb 2019 02:25:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OOI8B7HyQw2dzyQxkjkOOnTIw0ylaTwZx4zlYCeOPes=;
-        b=c9bkZv8grRSuhVKWvGwv5r6pXezREVJ2ZxARiOIc08fqzurxY/XH07tKMx5X3QQUUx
-         ohKo2a4NxsD7cLCHis7Wdy1k8rHbK5iWna7naJJ/Mim021CPTRfqeNMd7rirSxx684TZ
-         k4R4PBY1FtqoyUf1q4KplScpIsOeMSIVjPW4WjsfHs021t4neNv0PexA+Q3/p10emRIj
-         eqP6nHOZwKqjP37zQgmGKoqG5MIVWMJjXLFMfS+GNQ9+kkKtWCnoTxMOe2dqX8k/igIb
-         VywiXfSD3DykR/Tm6yVYmOx2qQct2Jm0Ozt9Uzt8BnMfrj+PM9nOfEaipGX04Q6MwkNJ
-         azBw==
+         :cc;
+        bh=nbfa47FKIarHJs9DYsn8FNr6DF5wjBQdt8qn6ru3eH4=;
+        b=WgwUQ+onrzoOzGT5x7InAr9RUnNdDiw127lk/jmc30D2sY+Si2MZU+aAYlqDa6MiwA
+         hkQKMThpqfNwSc6RcCFVC7sCQc5mICZN/T1jU4ezCRtDaa+viNe3+jnAEZqy/bJmMhYd
+         UUPZKPdE310OeW5dlH5TtrIBL5p7p1WNztDRsjspLCfMs2cXtiwmlQNRTj+vIZpXEZh8
+         yMh48riFoc8UcUub8mPy6akilC0un6/JAsg+L6AO6aRzDBmUi2StGDXT3yS7vGa2gEk4
+         B3RLzQUDscNP6c+MBW7I76/JOZY90g5tyoce/7ymKkwRt3DBtGIjWaOdNn9QIzEozW1w
+         io+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OOI8B7HyQw2dzyQxkjkOOnTIw0ylaTwZx4zlYCeOPes=;
-        b=nLXFxTGQfl8pVKH3sVjtJ64Llp/3mi7cF+ki9gfq7v3WEHyg1BWFLvBRWHkpsDQdS4
-         KAIehWX9mnJE4qlXoH67xblhKvtsYObT44aE3K0M+6Qo7GL1ZGMP9uUOA4X4o+Eb9h3l
-         hyCxd5aF790bUpMcy2jPBIzX7bDqhX31S6NM7j8mC77jY/IMMPa54a3A74owAxVWUdMb
-         OT5duJTkm1jETKc6aOxTpKrXbYP/WdHQ6BUWXD8GPIJpj01dwqKv5O03CpPLcUmc1ace
-         J26Jq/fnHMi4yOApf1+ONITPF8mmUbyWQ9DEb3r2RD5zTyNkHw3/6bpACyw+n5D5k78+
-         qpdw==
-X-Gm-Message-State: AHQUAuaGNFli097DrGy9uwZkKOcI2uLjVr+UdxEJuJToulIVShI5bip2
-        a8/t1wZoX4ESNd1hvnRERJZFQJLDb71DUpJbyhx9Sg==
-X-Google-Smtp-Source: AHgI3Ib0gp/Hk/7Po/24cQgyfhhOK9klQQgCAaxbcAgQvQo+PKwGqWYJCSbHbn0Kj5Q390o4WRCNA1RKmcOretLdHdk=
-X-Received: by 2002:a5d:91d3:: with SMTP id k19mr1575071ior.258.1549967083638;
- Tue, 12 Feb 2019 02:24:43 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=nbfa47FKIarHJs9DYsn8FNr6DF5wjBQdt8qn6ru3eH4=;
+        b=bcZ4gFbYy9KrXUU42rHkbHR+7hQcPzr1pKyQs+NFyNPmA8PfAIPT8WSvGgoVk9EQzq
+         GbFO2+Ke1Wzx3l7t5AJNUMDCGBXVENKk66PKtJTz3/efDlaV9l0Gc5qdxzudJFq4v1ob
+         MIwGbuDyylKdZheidmbyQ6Vm9iatmzA4OLuAv7jA+iUPl0UXb/ZnBDt2eeAOJGTlXl10
+         Xhq0jeuiDefbmaDcbcBbGp0IntpY0B15w6VkgZeQ+K89eeb+WmryNzX/IWYwPEMxwOgn
+         AfPTXZoHrvuY3TmNr5dAJONt7fDzyFJ/h3A9GmxS/0DnGPL8Y9teEynMcb7QL4izNyzZ
+         7gPA==
+X-Gm-Message-State: AHQUAubE8nCZWPAiX4kFUBNQ7g/m+m1nBg3mJKjYSDVRpoH7WRl12XuD
+        /io58xf0xen6Nol5ts3milFDS+CgqycJaG8VHd0zuUMd
+X-Google-Smtp-Source: AHgI3Ib/AiBDVXNA3zFjmn+UP6LLFF6aHySFPnaEFJflLBXQqOmgeouaQ9sLWC5EPtEJFQ0IEohRztF57BngIjVYg8c=
+X-Received: by 2002:a63:d450:: with SMTP id i16mr2947574pgj.246.1549967119759;
+ Tue, 12 Feb 2019 02:25:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell> <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
- <20190212095457.GA20638@dell> <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
- <20190212101835.GB20638@dell>
-In-Reply-To: <20190212101835.GB20638@dell>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 12 Feb 2019 11:24:32 +0100
-Message-ID: <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+ <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
+ <20190211164118.GA23796@genxfsim-desktop> <78e5e6b3-5712-6ef5-283c-83b0f6d3dcc7@linux.intel.com>
+In-Reply-To: <78e5e6b3-5712-6ef5-283c-83b0f6d3dcc7@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 12 Feb 2019 12:25:08 +0200
+Message-ID: <CAHp75VeZwgM9KPNahmpsLzzkmOKDN2JeBKQWO9hBK_O=Gk8oFw@mail.gmail.com>
+Subject: Re: [PATCH 09/10] platform/x86: intel_pmc_core: Add Package cstates
+ residency info
+To:     "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Cc:     Anshuman Gupta <anshuman.gupta@intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
->
-> On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
->
-> > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisa=C5=82(=
-a):
-> > >
-> > >  * The declaration of a superfluous struct
-> > >  * 100 lines of additional/avoidable code
-> > >  * Hacky hoop jumping trying to fudge VIRQs into resources
-> > >  * Resources were designed for HWIRQs (unless a domain is present)
-> > >  * Loads of additional/avoidable CPU cycles setting all this up
-> >
-> > While the above may be right, this one is negligible and you know it. :=
-)
->
-> You have nested for() loops.  You *are* wasting lots of cycles.
->
-> > > Need I go on? :)
-> > >
-> > > Surely the fact that you are using both sides of an API
-> > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
-> > > set some alarm bells ringing?
-> > >
-> > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
-> > >
-> > > And for what?  To avoid passing IRQ data to a child driver?
-> >
-> > What do you propose? Should I go back to the approach in v1 and pass
-> > the regmap_irq_chip_data to child drivers?
->
-> I'm saying you should remove all of this hackery and pass IRQs as they
-> are supposed to be passed (like everyone else does).
->
+On Mon, Feb 11, 2019 at 8:32 PM Bhardwaj, Rajneesh
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+> On 11-Feb-19 10:11 PM, Anshuman Gupta wrote:
+> > On Fri, Feb 01, 2019 at 01:02:33PM +0530, Rajneesh Bhardwaj wrote:
+> >> This patch introduces a new debugfs entry to read current Package
+> >> cstate residency counters. A similar variant of this patch was discussed
+> >> earlier "https://patchwork.kernel.org/patch/9908563/" but didn't make it
+> >> into mainline for various reasons. Current version only adds debugfs
+> >> entry which is quite useful for S0ix debug but excludes the exported API
+> >> that was there in initial version. Though there are tools like turbostat
+> >> and socwatch which can also show this info but sometimes its more
+> >> practical to have it here as it's hard to switch between various tools for
+> >> S0ix debug when pmc_core driver is the primary debug tool. Internal and
+> >> external customers have requested for this patch to be included in the
+> >> PMC driver on many occasions and Google Chrome OS team has already included
+> >> it in their builds. This becomes handy when requesting logs from external
+> >> customers who may not always have above mentioned tools in their integrated
+> >> kernel builds.
 
-I'm not sure what you mean by "like everyone else does" - different
-mfd drivers seem to be doing different things. Is a simple struct
-containing virtual irq numbers passed to sub-drivers fine?
+> >    Tested-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> >    Acked-by: Anshuman Gupta <anshuman.gupta@intel.com>
 
-Bart
+> Hi Andy, Darren - Can i used Acked-and-tested-by instead of these two?
+
+Better to split. I didn't see in common practice acked-and-tested.
+Rather reviewed-and-tested, or reported-and-tested.
+
+-- 
+With Best Regards,
+Andy Shevchenko
