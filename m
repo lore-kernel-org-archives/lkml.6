@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B63C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BD2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC741222C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FEDB2229F
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o/QuVJEg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T4iCwCBr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731836AbfBLSFe (ORCPT
+        id S1731857AbfBLSFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:05:34 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:40187 "EHLO
+        Tue, 12 Feb 2019 13:05:38 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:40196 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731753AbfBLSFc (ORCPT
+        with ESMTP id S1731753AbfBLSFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:05:32 -0500
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190212180530epoutp01f23cf58c33372d2da0e58011c4426e16~Cr-6sA4px1898018980epoutp01x;
-        Tue, 12 Feb 2019 18:05:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190212180530epoutp01f23cf58c33372d2da0e58011c4426e16~Cr-6sA4px1898018980epoutp01x
+        Tue, 12 Feb 2019 13:05:35 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190212180533epoutp01128dcf8e8af8577af71a92a39db7d84a~Cr-_J2i3G1898118981epoutp01s;
+        Tue, 12 Feb 2019 18:05:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190212180533epoutp01128dcf8e8af8577af71a92a39db7d84a~Cr-_J2i3G1898118981epoutp01s
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549994730;
-        bh=mDsrQB9XFl+b+gU0NhyopnqhCmadZz0dft/zEEJkkWo=;
+        s=mail20170921; t=1549994733;
+        bh=DCp4oOvDn8DBezFZRqPxhE/nL/MNMFGTgv5tjZCBKCE=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=o/QuVJEgy0fo7vRkmlXQe8xOV2eVzcMynZtzm3ZuY/PmH9PLffhlf4dAxeS4RU4kL
-         uyVFOhpzBcNCs4Wvs5yHsC28p8xqn4pcWjjaUsjSiXQ4hXtYzlEUPup+bpR/88Qw6T
-         lKELggR3NOEigNsaNGxSdetPC3H3awyxOQzJl3kg=
-Received: from epsmges2p2.samsung.com (unknown [182.195.42.70]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20190212180528epcas2p49b2c3cbbb17dc46f2fb679c735f3224f~Cr-5SQf8A2309023090epcas2p4K;
-        Tue, 12 Feb 2019 18:05:28 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C2.5C.04136.8EA036C5; Wed, 13 Feb 2019 03:05:28 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20190212180528epcas2p1a534f0f69932c28608b0a139ddfd3596~Cr-46qRR82517825178epcas2p1F;
-        Tue, 12 Feb 2019 18:05:28 +0000 (GMT)
-X-AuditID: b6c32a46-2bfff70000001028-96-5c630ae8f109
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 3B.30.03689.8EA036C5; Wed, 13 Feb
-        2019 03:05:28 +0900 (KST)
+        b=T4iCwCBrDnYthmSjWZermauXwJDfb2fXdtcWc4aXi5yRnHwUErrsC/ilct47Lwo1W
+         Ea/0bmVhlH5lWJX3YGvzCtfOUiR0RKT4kKbywQEuoo5nTa1b2WRZTDMhLOKfMlpjQT
+         3ntoIWYbgk8wM+midIUNn/OGDYqO5ZHaETZwBJAM=
+Received: from epsmges1p5.samsung.com (unknown [182.195.42.57]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190212180533epcas1p499418d6c8da90a6bff9b6b2d5c489fb7~Cr-9jKEdI0414104141epcas1p4S;
+        Tue, 12 Feb 2019 18:05:33 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        84.8E.04206.DEA036C5; Wed, 13 Feb 2019 03:05:33 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190212180532epcas1p1d0c276b25c26205a6493cbabfccd74ef~Cr-8dKT_b0083100831epcas1p1Y;
+        Tue, 12 Feb 2019 18:05:32 +0000 (GMT)
+X-AuditID: b6c32a39-d65ff7000000106e-31-5c630aeda1cb
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 95.11.04015.BEA036C5; Wed, 13 Feb
+        2019 03:05:31 +0900 (KST)
 Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PMT0024XRJ2FB10@mmp2.samsung.com>; Wed, 13 Feb 2019
-        03:05:28 +0900 (KST)
+        03:05:31 +0900 (KST)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     broonie@kernel.org
 Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
@@ -60,116 +60,136 @@ Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 14/21] ASoC: samsung: Drop DAI DMA data chan_name
- assignments
-Date:   Tue, 12 Feb 2019 19:03:35 +0100
-Message-id: <20190212180342.32040-15-s.nawrocki@samsung.com>
+Subject: [PATCH v2 15/21] ASoC: dmaengine: Remove unused
+ SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+Date:   Tue, 12 Feb 2019 19:03:36 +0100
+Message-id: <20190212180342.32040-16-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.20.1
 In-reply-to: <20190212180342.32040-1-s.nawrocki@samsung.com>
 MIME-version: 1.0
 Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsWy7bCmhe4LruQYg+lTFSyuXDzEZLFxxnpW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsWy7bCmvu5bruQYg9v/OCyuXDzEZLFxxnpW
         i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZby8rFKwRqjh5O7SBcTN/FyMnh4SA
-        icTs92eYuxi5OIQEdjBKrG/bzQrhfGeU+NKwgB2mat+jn+wQiQ2MEoemnGKDcH4xSrzadpIJ
-        pIpNwFCi92gfI4gtIiAmcXtOJ9hcZoEWJok5c5cygySEBYIkFnR0gdksAqoSTU9XsYHYvAI2
-        EgverWKBWCcvcb53HdhqTqD4s4XfWCBqBCV+TL4HZjMD1Ry88pwFZIGEwB42iRlfrrJBNLtI
-        tO7uYIWwpSWerdrICGFXS+za3s0M0dDBKNFyYTszRMJa4vDxi6wQU/kkOg7/BdrMARTnleho
-        E4IwPSRaHshCfNzPKLG57xTjBEapWUhumoXkpgWMTKsYxVILinPTU4uNCoz0ihNzi0vz0vWS
-        83M3MYJjXMttB+OScz6HGAU4GJV4eFccTYoRYk0sK67MPcQowcGsJMKbxpwcI8SbklhZlVqU
-        H19UmpNafIhRmoNFSZz3ofTcaCGB9MSS1OzU1ILUIpgsEwenVAPjoa8njmhmcmxk0Uu7ZaGf
-        Y/Xzx6K/U343rFpzz740wWyWwOrrracaNU8v3JIyMbzSZffnHy+9khvzrQ8zSGh0+K3uP6mk
-        fSVA6onjnbK7M+aa58bMmqESVuOmKLmje76UfCXzmsOZr6ZNTVpx1PfDQVZR8Uka3M0G71qO
-        PdJfIe4uIqg3SU5GiaU4I9FQi7moOBEAyd50De0CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t9jQd0XXMkxBlNWclhcuXiIyWLjjPWs
+        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZLcvusRc8k66YP+UVewPjVPEuRg4O
+        CQETiV2PiroYuTiEBHYwSlxrusYE4XxnlNjd+Iy5i5ETrGhbdyc7RGIDo8SuxfOZIZxfjBIN
+        azezg1SxCRhK9B7tYwSxRQTEJG7P6QQrYhZoYZKYM3cp2ChhgSyJlsXnmEF2swioSrxeaAsS
+        5hWwkfj3r5sNYpu8xPnedWAzOYHizxZ+Y4GoEZT4MfkemM0MVHPwynMWkPkSAgfYJJY872KH
+        +MdF4vQmRwhTWuLSUVuIkdUSu7Z3M0OUdzBKtFzYDvWZtcTh4xdZIWbySbz72sMK0csr0dEm
+        BFHiIdG5ehsbxL/9jBLTdm1insAoNQvJSbOQnLSAkWkVo1hqQXFuemqxYYGpXnFibnFpXrpe
+        cn7uJkZwhGtZ7mA8ds7nEKMAB6MSD++Ko0kxQqyJZcWVuYcYJTiYlUR405iTY4R4UxIrq1KL
+        8uOLSnNSiw8xSnOwKInzrndwjhESSE8sSc1OTS1ILYLJMnFwSjUwiuhdvnqsK/Xk+RMLfu6t
+        lL3ByhWt+1yHne+k0jnvLJM3EUvi2idwRdjZSOs3v1RlXVywXrjJj2d2c72/3+PzNzyNFOep
+        5LCt6lp29uy+tza6UQ8OzbIxUd8X250k1DVnb71fWvLOr1Kqh1qvBd3Y5ptZUhguFvP1wcuM
+        5rjlTj+rbpwNavquxFKckWioxVxUnAgAvpCeeewCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jQd3XXMkxBrceWVpcuXiIyWLjjPWs
         FlMfPmGzOH9+A7vFtysdTBaXd81hs5hxfh+Txdojd9ktDr9pZ7W4uOILkwOXx4bPTWweO2fd
-        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgy3l5WKFgjVHHydmgD42b+LkZODgkB
-        E4l9j36ydzFycQgJrGOUWHqnhQ3C+cUosePhKSaQKjYBQ4neo32MILaIgJjE7TmdzCBFzAJN
-        TBK7bl9kB0kICwRILH67kw3EZhFQlWh6ugrM5hWwkVjwbhULxDp5ifO968DqOYHizxZ+A4pz
-        AG2zlriyyRaiXFDix+R7YOXMQOUHrzxnmcDINwtJahaS1AJGplWMkqkFxbnpucVGBUZ5qeV6
-        xYm5xaV56XrJ+bmbGIEBvO2wVv8OxsdL4g8xCnAwKvHwrjiaFCPEmlhWXJl7iFGCg1lJhDeN
-        OTlGiDclsbIqtSg/vqg0J7X4EKM0B4uSOC9//rFIIYH0xJLU7NTUgtQimCwTB6dUA6Ptt62c
-        MfFx94OO94b1zLpeoSb0g21PyE3vw+0/QtemNLGE5b/6tiv1T26/yZ0lz5e2ly4TqSo+aa6n
-        XnQ0lI17Wn3AU96w2YGpBrtcF7bnqqffYmGrmbVKtimL9ZG4Nt/U/QIr+p5rOiR28Wj/nKms
-        drZ6V8qp12aHpiqs7rZZnbXRkf1XjhJLcUaioRZzUXEiACsm1hhcAgAA
-X-CMS-MailID: 20190212180528epcas2p1a534f0f69932c28608b0a139ddfd3596
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190212180528epcas2p1a534f0f69932c28608b0a139ddfd3596
+        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyWpbdYy94Jl0xf8or9gbGqeJdjJwc
+        EgImEtu6O9m7GLk4hATWMUqcf3AJyvnFKHHm5V9WkCo2AUOJ3qN9jCC2iICYxO05ncwgRcwC
+        TUwSu25fZAdJCAtkSbQsPgeU4OBgEVCVeL3QFiTMK2Aj8e9fNxvENnmJ873rwMo5geLPFn5j
+        ASkXErCWuLIJqlxQ4sfkeywgNjNQ+cErz1kmMPLNQpKahSS1gJFpFaNkakFxbnpusVGBYV5q
+        uV5xYm5xaV66XnJ+7iZGYAhvO6zVt4Px/pL4Q4wCHIxKPLwrjibFCLEmlhVX5h5ilOBgVhLh
+        TWNOjhHiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQQHpiSWp2ampBahFMlomDU6qB0Z//
+        5mtJn0v3+xmvqXE7eJXr/fhsuC3R4dexT8YaF+pm8xkcjY9L3LE+7GvGcwFOi8lJnfJvpU6o
+        TFl4adtiEa8s/9mvm5k//F5z4LX+A5Gd+8V40loUlzh4+Le6KMw+rHYuPrnXVzPD68SFUMZb
+        d//HNbHZn3/9dNcBqaSAWWptX/5lM39/ocRSnJFoqMVcVJwIAFZ9zp9dAgAA
+X-CMS-MailID: 20190212180532epcas1p1d0c276b25c26205a6493cbabfccd74ef
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190212180532epcas1p1d0c276b25c26205a6493cbabfccd74ef
 References: <20190212180342.32040-1-s.nawrocki@samsung.com>
-        <CGME20190212180528epcas2p1a534f0f69932c28608b0a139ddfd3596@epcas2p1.samsung.com>
+        <CGME20190212180532epcas1p1d0c276b25c26205a6493cbabfccd74ef@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is now no need to pass DMA channel names through the DAI DMA data,
-custom DMA config of the PCM is now used for this purpose.
+There is now no users of this flag so remove it together with related
+data structure field.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- sound/soc/samsung/i2s.c         | 4 ----
- sound/soc/samsung/s3c2412-i2s.c | 2 --
- sound/soc/samsung/s3c24xx-i2s.c | 2 --
- 3 files changed, 8 deletions(-)
+ include/sound/dmaengine_pcm.h         |  6 ------
+ sound/soc/soc-generic-dmaengine-pcm.c | 21 ++++-----------------
+ 2 files changed, 4 insertions(+), 23 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 72282d08d2c1..f438558c4d21 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1450,8 +1450,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	}
- 	pri_dai->dma_playback.addr = regs_base + I2STXD;
- 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
--	pri_dai->dma_playback.chan_name = "tx";
--	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
- 	pri_dai->priv = priv;
-@@ -1466,9 +1464,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+index 2c4cfaa135a6..764c787928a4 100644
+--- a/include/sound/dmaengine_pcm.h
++++ b/include/sound/dmaengine_pcm.h
+@@ -63,7 +63,6 @@ struct dma_chan *snd_dmaengine_pcm_get_chan(struct snd_pcm_substream *substream)
+  * @slave_id: Slave requester id for the DMA channel.
+  * @filter_data: Custom DMA channel filter data, this will usually be used when
+  * requesting the DMA channel.
+- * @chan_name: Custom channel name to use when requesting DMA channel.
+  * @fifo_size: FIFO size of the DAI controller in bytes
+  * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
+  */
+@@ -73,7 +72,6 @@ struct snd_dmaengine_dai_dma_data {
+ 	u32 maxburst;
+ 	unsigned int slave_id;
+ 	void *filter_data;
+-	const char *chan_name;
+ 	unsigned int fifo_size;
+ 	unsigned int flags;
+ };
+@@ -99,10 +97,6 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
+  * playback.
+  */
+ #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
+-/*
+- * The PCM streams have custom channel names specified.
+- */
+-#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
  
- 	if (quirks & QUIRK_SEC_DAI) {
- 		sec_dai = &priv->dai[SAMSUNG_I2S_ID_SECONDARY - 1];
+ /**
+  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
+diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+index 1b44e363c50c..f1ab6285a085 100644
+--- a/sound/soc/soc-generic-dmaengine-pcm.c
++++ b/sound/soc/soc-generic-dmaengine-pcm.c
+@@ -265,7 +265,6 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 	struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
+ 	const struct snd_dmaengine_pcm_config *config = pcm->config;
+ 	struct device *dev = component->dev;
+-	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	struct snd_pcm_substream *substream;
+ 	size_t prealloc_buffer_size;
+ 	size_t max_buffer_size;
+@@ -285,19 +284,9 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 		if (!substream)
+ 			continue;
+ 
+-		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
 -
- 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
--		sec_dai->dma_playback.chan_name = "tx-sec";
+-		if (!pcm->chan[i] &&
+-		    ((pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME) ||
+-		     (config && config->chan_names[i]))) {
+-			const char *chan_name = dma_data->chan_name;
+-
+-			if (config && config->chan_names[i])
+-				chan_name = config->chan_names[i];
+-
++		if (!pcm->chan[i] && config && config->chan_names[i])
+ 			pcm->chan[i] = dma_request_slave_channel(dev,
+-				chan_name);
+-		}
++				config->chan_names[i]);
  
- 		if (!np) {
- 			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
-diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-index c08638b0e458..a00e35147e50 100644
---- a/sound/soc/samsung/s3c2412-i2s.c
-+++ b/sound/soc/samsung/s3c2412-i2s.c
-@@ -35,12 +35,10 @@
- #include <linux/platform_data/asoc-s3c.h>
+ 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+ 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
+@@ -420,10 +409,8 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+ 	const char *name;
+ 	struct dma_chan *chan;
  
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_out = {
--	.chan_name	= "tx",
- 	.addr_width	= 4,
- };
+-	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
+-			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
+-	     (!dev->of_node && !(config && config->dma_dev &&
+-				config->dma_dev->of_node)))
++	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || (!dev->of_node &&
++	    !(config && config->dma_dev && config->dma_dev->of_node)))
+ 		return 0;
  
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_in = {
--	.chan_name	= "rx",
- 	.addr_width	= 4,
- };
- 
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index a8026b640c95..600b3b4cdb5b 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -31,12 +31,10 @@
- #include "s3c24xx-i2s.h"
- 
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
--	.chan_name	= "tx",
- 	.addr_width	= 2,
- };
- 
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
--	.chan_name	= "rx",
- 	.addr_width	= 2,
- };
- 
+ 	if (config && config->dma_dev) {
 -- 
 2.20.1
 
