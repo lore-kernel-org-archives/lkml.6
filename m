@@ -2,106 +2,91 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774A1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4E1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E22222B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D569222B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:11:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vB6zY+ZZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbfBLVKm (ORCPT
+        id S1731356AbfBLVL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:10:42 -0500
-Received: from gateway30.websitewelcome.com ([192.185.149.4]:48626 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728543AbfBLVKm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:10:42 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id B032F18775
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:10:41 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tfKDgWLK0iQertfKDglnxW; Tue, 12 Feb 2019 15:10:41 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=58156 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtfKD-003ZRl-0B; Tue, 12 Feb 2019 15:10:41 -0600
-Date:   Tue, 12 Feb 2019 15:10:40 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] tracing/probes: Mark expected switch fall-through
-Message-ID: <20190212211040.GA24476@embeddedor>
+        Tue, 12 Feb 2019 16:11:26 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:49021 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727932AbfBLVL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:11:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=uuZiwe2HmvADlzNZ6ZS60EzhjyIXxXRW5JdfFSlnIp0=; b=vB6zY+ZZLMRJY8mvZBFgZy9V3H
+        OrVPwegyKpES5IrVYKRZ9HyJWBup0uquS7yD0b35rqD6Di1oqLtMRmBXyCwB56Qx5PfyIh5UQ/Vpb
+        2RXZOSQ4xT+j7J+t4lj6r35weQhtm/smzv/MP+ktQWr9KaRiw0yi1UjWsuNRmceh7Bko=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gtfKs-0007iC-4S; Tue, 12 Feb 2019 22:11:22 +0100
+Date:   Tue, 12 Feb 2019 22:11:22 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 3/4] net: phy: Extract
+ genphy_c45_pma_read_abilities from marvell10g
+Message-ID: <20190212211122.GB27170@lunn.ch>
+References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
+ <20190211142529.22885-4-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtfKD-003ZRl-0B
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:58156
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190211142529.22885-4-maxime.chevallier@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+On Mon, Feb 11, 2019 at 03:25:28PM +0100, Maxime Chevallier wrote:
+> Marvell 10G PHY driver has a generic way of initializing the supported
+> link modes by reading the PHY's C45 PMA abilities. This can be made
+> generic, since these registers are part of the 802.3 specifications.
+> 
+> This commit extracts the config_init link_mode initialization code from
+> marvell10g and uses it to introduce the genphy_c45_pma_read_abilities
+> function.
+> 
+> Only PMA modes are read, it's still up to the caller to set the Pause
+> parameters.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-This patch fixes the following warning:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-kernel/trace/trace_probe.c: In function ‘parse_probe_arg’:
-kernel/trace/trace_probe.c:302:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   arg++; /* Skip '+', because kstrtol() rejects it. */
-   ~~~^~
-kernel/trace/trace_probe.c:303:2: note: here
-  case '-':
-  ^~~~
+> -	__set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
+> -	__set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, supported);
+> +	__set_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->supported);
+> +	__set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->supported);
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+I think someone already pointed out, this is not ideal. The PHY driver
+should only set pause bits, if it needs odd pause settings because of
+HW limitations. If no bits are set, the core will set both bits.
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
+But this is not a new problem introduced by this patch, so it can be
+fixed later, rather than hold up this patchset.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- kernel/trace/trace_probe.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 9962cb5da8ac..89da34b326e3 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -300,6 +300,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 
- 	case '+':	/* deref memory */
- 		arg++;	/* Skip '+', because kstrtol() rejects it. */
-+		/* fall through */
- 	case '-':
- 		tmp = strchr(arg, '(');
- 		if (!tmp)
--- 
-2.20.1
-
+      Andrew
