@@ -2,105 +2,118 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61A3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616AFC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 731902083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549982569;
-	bh=ne1GaoIkFU39IlisZEyCSRLo+/PRrwBzZOEyKO+uo5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bn/QU01N6teHTJv+5EG8fpp8Pa1CW8TxVQm5Sy4EBD1TiyJpDvT3l6qlhaqz/kmaN
-	 WoNcLRNk06ed+R5S7xE+KyMkH5HCkKkVnu6BkqQFrQhsDuy7uXySUM9HHouDnIMgOh
-	 /eId4p7w6mC1ny4iLIthpp+fsQiHBGvJSJVTjZtk=
+	by mail.kernel.org (Postfix) with ESMTP id 2FD672083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:43:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pSl3zbne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbfBLOms (ORCPT
+        id S1730059AbfBLOnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:42:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42904 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727428AbfBLOmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:42:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 54795AF01;
-        Tue, 12 Feb 2019 14:42:43 +0000 (UTC)
-Date:   Tue, 12 Feb 2019 15:42:42 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-Message-ID: <20190212144242.GZ15609@dhcp22.suse.cz>
-References: <20190122103708.11043-1-osalvador@suse.de>
- <20190212124707.000028ea@huawei.com>
- <5FC3163CFD30C246ABAA99954A238FA8392B5DB6@lhreml524-mbs.china.huawei.com>
- <20190212135658.fd3rdil634ztpekj@d104.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212135658.fd3rdil634ztpekj@d104.suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 12 Feb 2019 09:43:05 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51053 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729975AbfBLOnF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 09:43:05 -0500
+Received: by mail-wm1-f68.google.com with SMTP id x7so3223753wmj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:43:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=ZUy0VCT1WuGXUG1KTNtWcsxFWdFXTWKSDbOTngrZcLA=;
+        b=pSl3zbne4W+iYHTH/1UEv8dQigHTIrlQKSWlB+wcwUo1j7DDzFS4nHlCbmqPMSgUhq
+         Lpt+B6jdgBlgyz2bXqcnse+XbxYmBSWdV039c5Kt+6KJcGCduiccf9vrtmHD3hDbGOJd
+         fBPShB9QVyu18wD7dQW0pCRlsS+5ZWTDU+jc7E4ixXpLicp3+BN66cET0P32RIlEIUzn
+         HJfDZnpl2qz+VSo7zLm5LvdVhTjLdI1BxYYHzekOAmKRdu9DVZf6VyA6ILuxJ/d8KD/5
+         kOqc94+TY8oVn1ovW+8exY9572Ju6As+CWegMag95Ws9akJ3B++j4OjzB3fGqsnJk+um
+         HCmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ZUy0VCT1WuGXUG1KTNtWcsxFWdFXTWKSDbOTngrZcLA=;
+        b=QQUVhW2BQwrnI6mYHGFEjNb9BWfzNF/jizcS4H4IuucDSNR7V2vRYAKKcgvB2loHta
+         kAuds87kg0iDtFipA0Kk9OUqq4xGNSZT0rSj+GFuPJf+F/pZ0CBqlgUXwpb0LBAojGUi
+         ZyVggkKY6iFbAGi5GWtgqsIlEA10xMycPHPtsuSh8GhHwXVsoacL8ZjY6evUKdHfUc4b
+         FL2oFzOl4yNns2SkrlQJrG+t4BRguhpIzlmpt7QDPj7ufMFOajdymuDOn1jYkzSKUgAc
+         l/73u/CUYvcIo2C5pLaI7eKiHGqLlzEgoVTJYyMxjwxQXvgPUy9INUlATgMwXJLIZtpa
+         FimQ==
+X-Gm-Message-State: AHQUAubJZ84FsI5qUxkpGs89TuKcvVz3wK3pZJKyjcF1jYuRApSxJzvb
+        +phaAVmc6UgPX8nPI2jh5qmXXg==
+X-Google-Smtp-Source: AHgI3IbuPmVopWs3+dKFaWZNzP7k1eAL4Y4UJqGV0lgkEf5b9kk8sUNznwx/d7GxtOfT8shboocq0g==
+X-Received: by 2002:a1c:2358:: with SMTP id j85mr2972336wmj.130.1549982583020;
+        Tue, 12 Feb 2019 06:43:03 -0800 (PST)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e9sm25037122wrc.56.2019.02.12.06.43.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 12 Feb 2019 06:43:02 -0800 (PST)
+Message-ID: <a2475cc2b0de8a13bc103ef6f4157a4a569c4a6c.camel@baylibre.com>
+Subject: Re: [PATCH 2/3] soc: amlogic: gx-socinfo: Add new SoC IDs and
+ Packages IDs
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Tue, 12 Feb 2019 15:43:01 +0100
+In-Reply-To: <20190212142344.13634-3-narmstrong@baylibre.com>
+References: <20190212142344.13634-1-narmstrong@baylibre.com>
+         <20190212142344.13634-3-narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12-02-19 14:56:58, Oscar Salvador wrote:
-> On Tue, Feb 12, 2019 at 01:21:38PM +0000, Shameerali Kolothum Thodi wrote:
-> > > Hi Oscar,
-> > > 
-> > > I ran tests on one of our arm64 machines. Particular machine doesn't actually
-> > > have
-> > > the mechanics for hotplug, so was all 'faked', but software wise it's all the
-> > > same.
-> > > 
-> > > Upshot, seems to work as expected on arm64 as well.
-> > > Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> Thanks Jonathan for having given it a spin, much appreciated!
-> I was short of arm64 machines.
-> 
-> > (qemu) object_add memory-backend-ram,id=mem1,size=1G
-> > (qemu) device_add pc-dimm,id=dimm1,memdev=mem1,node=1
-> > root@ubuntu:~# 
-> > root@ubuntu:~# numactl -H
-> ...
-> > node 1 cpus:
-> > node 1 size: 1008 MB
-> > node 1 free: 1008 MB
-> > node distances:
-> > node   0   1 
-> >   0:  10  20 
-> >   1:  20  10 
-> > root@ubuntu:~#  
-> 
-> Ok, this is what I wanted to see.
-> When you hotplugged 1GB, 16MB out of 1024MB  were spent
-> for the memmap array, that is why you only see 1008MB there.
-> 
-> I am not sure what is the default section size for arm64, but assuming
-> is 128MB, that would make sense as 1GB would mean 8 sections,
-> and each section takes 2MB.
-> 
-> That means that at least the mechanism works.
+On Tue, 2019-02-12 at 15:23 +0100, Neil Armstrong wrote:
+> This adds the G12A and G12B SoC ids and the S90X2 package ID.
+                                                ^   
+Small typo here --------------------------------|
 
-Please make sure to test on a larger machine which has multi section
-memblocks. This is where I was hitting on bugs hard.
--- 
-Michal Hocko
-SUSE Labs
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/soc/amlogic/meson-gx-socinfo.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c
+> b/drivers/soc/amlogic/meson-gx-socinfo.c
+> index 1ae339f5eadb..c1a9c34d861b 100644
+> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+> @@ -37,6 +37,8 @@ static const struct meson_gx_soc_id {
+>  	{ "AXG", 0x25 },
+>  	{ "GXLX", 0x26 },
+>  	{ "TXHD", 0x27 },
+> +	{ "G12A", 0x28 },
+> +	{ "G12B", 0x29 },
+>  };
+>  
+>  static const struct meson_gx_package_id {
+> @@ -53,11 +55,14 @@ static const struct meson_gx_package_id {
+>  	{ "S905W", 0x21, 0xa0, 0xf0 },
+>  	{ "S905L", 0x21, 0xc0, 0xf0 },
+>  	{ "S905M2", 0x21, 0xe0, 0xf0 },
+> +	{ "S805X", 0x21, 0x30, 0xf0 },
+> +	{ "S805Y", 0x21, 0xb0, 0xf0 },
+>  	{ "S912", 0x22, 0, 0x0 }, /* Only S912 is known for GXM */
+>  	{ "962X", 0x24, 0x10, 0xf0 },
+>  	{ "962E", 0x24, 0x20, 0xf0 },
+>  	{ "A113X", 0x25, 0x37, 0xff },
+>  	{ "A113D", 0x25, 0x22, 0xff },
+> +	{ "S905X2", 0x28, 0x40, 0xf0 },
+>  };
+>  
+>  static inline unsigned int socinfo_to_major(u32 socinfo)
+
+
