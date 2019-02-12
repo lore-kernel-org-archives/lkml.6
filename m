@@ -2,132 +2,301 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AFAC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBACC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8002206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2E442083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:50:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EHVV+ubU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdszizJ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfBLHuD (ORCPT
+        id S1728293AbfBLHuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:50:03 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38272 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBLHuC (ORCPT
+        Tue, 12 Feb 2019 02:50:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40103 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfBLHuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:50:02 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1C7nvYS123938;
-        Tue, 12 Feb 2019 01:49:57 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549957797;
-        bh=NblLj6ZlZlZaQ9vCsm4vs/5cqfQoulS3dM4tsow0qtg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EHVV+ubUbT4q5iiDVjlXv5QxIzTVWhDqNhQYOnQ0LiJFFg8ggH/CsaxGpFvR5INLW
-         7IYncxAEJBxNtm5C3KOE6jSmjvVzuhvE8T5K//HO4I9ep+soej0n1CFU/EmleA1AI0
-         D9Ho4xbokW+FHoqFvDG5Yh+kgk1cPjJqVO5HW2sY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1C7nvPj066401
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 01:49:57 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 01:49:54 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 01:49:54 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1C7nrbL009307;
-        Tue, 12 Feb 2019 01:49:53 -0600
-Subject: Re: [PATCH] mfd: twl6040: Fix device init errors for ACCCTL register
-To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Florian Vaussard <florian.vaussard@epfl.ch>
-References: <20190211225726.38355-1-tony@atomide.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <d749644a-95ae-822d-f7cb-69010a8f71e0@ti.com>
-Date:   Tue, 12 Feb 2019 09:50:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 12 Feb 2019 02:50:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q21so1833494wmc.5;
+        Mon, 11 Feb 2019 23:50:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=QCXubIIbOHHSXJ8wPa/sBG1gluhkJdqbB94JVU4YAG8=;
+        b=rdszizJ8iTmLsiYU3hp8oYltjfPBQCah/htZnkHn143TPYebBQD7b133BT/QEDqsrQ
+         qfQmbtxQWOvlxumts6ou/6xZ2hV1SCANDwlZBPFQESX75G3lcZ2aLb/Z6gNbxHftku4v
+         CZoB/JX2GedB4pPUjNMMjL61s9FZQMM9TGj2VpgR1Zo+jDnYZ2oGwHaap9e0REaGK+59
+         TpW09YNBK5PuTGIDG34EouU6tf0YiCEkOT9Ostj08Mr7Ta70xvG77OgNKISjruTaWX3J
+         zn71jXWexFK41oMTG9Y1JahK8S4wgznmLewUjfTDNCw/UZFNtAgWPYqcDfYa+nOw5swA
+         hLuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=QCXubIIbOHHSXJ8wPa/sBG1gluhkJdqbB94JVU4YAG8=;
+        b=UDw8H0pw40HQN8BoYILjrIn3fFDh+IV3Qj2VsydhtOxdlSMvF7kCMmLSjym0SYHoiq
+         5MoQTVmhIl5nGNWM6axFuTp+t0U9Pq3rcZrm17FVGb0v6Psgso9cQ9/WZrtW03xlO8kX
+         B1cpN8/CETubKMwxmZHkX0VVXsEr+w4yeISEsk20AG1A10XSlOGe3XIYVGUWJkW+KzQv
+         zKVTsB9nmyx+589jiKG5ekfHEiZNhi0ySUfWaE7U++mjgN+0gjUp7RkR1z5UzxtAUx+8
+         xpLCEJSqbcxfyVr+kmYCX82roQ+9TtrX/wMCmyGgoEDxdXC3NmAiF/czHckYwLcjFQ1+
+         CS7g==
+X-Gm-Message-State: AHQUAubF4zZ0S7TVBlMJyLeFyhXRoVa9q2Nq5c20UyUsH94FnPfDndK/
+        /DQOXbDPE9nGevnrBNFchCV75c3ErJVTO768aLw=
+X-Google-Smtp-Source: AHgI3IZ67KcKj+strkScXEd++bNLtJxo0ChbVPfCf0slpGE4SjlxCSMU+2DpRIYH7j+qsu5RCjHTFKI/llwTTA/2C5M=
+X-Received: by 2002:a1c:9c0a:: with SMTP id f10mr1785465wme.73.1549957815410;
+ Mon, 11 Feb 2019 23:50:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211225726.38355-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190211170751.1687-1-sedat.dilek@credativ.de> <20190211175306.GA16698@archlinux-ryzen>
+In-Reply-To: <20190211175306.GA16698@archlinux-ryzen>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Tue, 12 Feb 2019 08:50:04 +0100
+Message-ID: <CA+icZUXjyWkVYoW7HwXTXm5wz1E0KJWhH9uiwGJeODUFzB0DJQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2] fcoe: make use of fip_mode enum complete
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Sedat Dilek <sedat.dilek@credativ.de>,
+        QLogic-Storage-Upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 11, 2019 at 6:53 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Mon, Feb 11, 2019 at 06:07:51PM +0100, Sedat Dilek wrote:
+> > From: Sedat Dilek <sedat.dilek@gmail.com>
+> >
+> > commit 1917d42d14b7 ("fcoe: use enum for fip_mode") introduces a separate
+> > enum for the fip_mode that shall be used during initialisation handling
+> > until it is passed to fcoe_ctrl_link_up to set the initial fip_state.
+> > That change was incomplete and gcc quietly converted in various places
+> > between the fip_mode and the fip_state enum values with implicit enum
+> > conversions, which fortunately cannot cause any issues in the actual
+> > code's execution.
+> >
+> > clang however warns about these implicit enum conversions in the scsi
+> > drivers. This commit consolidates the use of the two enums, guided by
+> > clang's enum-conversion warnings.
+> >
+> > This commit now completes the use of the fip_mode:
+> > It expects and uses fip_mode in {bnx2fc,fcoe}_interface_create and
+> > fcoe_ctlr_init, and it explicitly converts from fip_mode to fip_state
+> > only at the single point in fcoe_ctlr_link_up.
+> >
+> > To eliminate that adding or removing values from fip_mode or fip_state enum
+> > break the right mapping of values, all fip_mode values are assigned to
+> > their fip_state counterparts.
+> >
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/151
+> > Fixes: 1917d42d14b7 ("fcoe: use enum for fip_mode")
+> > Reported-by: Dmitry Golovin "Twisted Pair in my Hair" <dima@golovin.in>
+> > CC: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > CC: Nick Desaulniers <ndesaulniers@google.com>
+> > CC: Nathan Chancellor <natechancellor@gmail.com>
+> > CC: Hannes Reinecke <hare@suse.com>
+> > Suggested-by: Johannes Thumshirn <jthumshirn@suse.de>
+> > ---
+> >
+> > [ v2:
+> >    - Based on the original patch by Lukas Bulwahn
+> >    - Suggestion by Johannes T. [1] required some changes:
+> >      + s/case FIP_ST_VMMP_START/case FIP_ST_V*N*MP_START
+> >      + s/return FIP_ST_AUTO/return FIP_MODE_AUTO
+> >    - Add Link to ClangBuiltLinux issue #151
+> >    - S-o-b line later when there is an OK from the FCoE maintainers
+> >
+> > NOTE: Compile-tested against Linux-v5.0-rc6 with LLVM/Clang from Git with
+> >       experimental asm-goto support via executing:
+> >       $ make V=1 CC=clang-9 HOSTCC=clang-9 drivers/scsi/fcoe/
+> >
+> > [1] https://marc.info/?l=linux-scsi&m=154745527612152&w=2
+> >
+> >   -dileks ]
+> >
+> >  drivers/scsi/bnx2fc/bnx2fc_fcoe.c  |  2 +-
+> >  drivers/scsi/fcoe/fcoe.c           |  2 +-
+> >  drivers/scsi/fcoe/fcoe_ctlr.c      |  4 ++--
+> >  drivers/scsi/fcoe/fcoe_transport.c |  2 +-
+> >  drivers/scsi/qedf/qedf_main.c      |  2 +-
+> >  include/scsi/libfcoe.h             | 22 ++++++++++++++++++++--
+> >  6 files changed, 26 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > index 2e4e7159ebf9..a75e74ad1698 100644
+> > --- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > +++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > @@ -1438,7 +1438,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cnic_dev *cnic)
+> >  static struct bnx2fc_interface *
+> >  bnx2fc_interface_create(struct bnx2fc_hba *hba,
+> >                       struct net_device *netdev,
+> > -                     enum fip_state fip_mode)
+> > +                     enum fip_mode fip_mode)
+> >  {
+> >       struct fcoe_ctlr_device *ctlr_dev;
+> >       struct bnx2fc_interface *interface;
+> > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> > index cd19be3f3405..8ba8862d3292 100644
+> > --- a/drivers/scsi/fcoe/fcoe.c
+> > +++ b/drivers/scsi/fcoe/fcoe.c
+> > @@ -389,7 +389,7 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
+> >   * Returns: pointer to a struct fcoe_interface or NULL on error
+> >   */
+> >  static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
+> > -                                                 enum fip_state fip_mode)
+> > +                                                 enum fip_mode fip_mode)
+> >  {
+> >       struct fcoe_ctlr_device *ctlr_dev;
+> >       struct fcoe_ctlr *ctlr;
+> > diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+> > index 54da3166da8d..a52d3ad94876 100644
+> > --- a/drivers/scsi/fcoe/fcoe_ctlr.c
+> > +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+> > @@ -147,7 +147,7 @@ static void fcoe_ctlr_map_dest(struct fcoe_ctlr *fip)
+> >   * fcoe_ctlr_init() - Initialize the FCoE Controller instance
+> >   * @fip: The FCoE controller to initialize
+> >   */
+> > -void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_state mode)
+> > +void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode mode)
+> >  {
+> >       fcoe_ctlr_set_state(fip, FIP_ST_LINK_WAIT);
+> >       fip->mode = mode;
+> > @@ -454,7 +454,7 @@ void fcoe_ctlr_link_up(struct fcoe_ctlr *fip)
+> >               mutex_unlock(&fip->ctlr_mutex);
+> >               fc_linkup(fip->lp);
+> >       } else if (fip->state == FIP_ST_LINK_WAIT) {
+> > -             fcoe_ctlr_set_state(fip, fip->mode);
+> > +             fcoe_ctlr_set_state(fip, (enum fip_state) fip->mode);
+> >               switch (fip->mode) {
+> >               default:
+> >                       LIBFCOE_FIP_DBG(fip, "invalid mode %d\n", fip->mode);
+> > diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
+> > index f4909cd206d3..b381ab066b9c 100644
+> > --- a/drivers/scsi/fcoe/fcoe_transport.c
+> > +++ b/drivers/scsi/fcoe/fcoe_transport.c
+> > @@ -873,7 +873,7 @@ static int fcoe_transport_create(const char *buffer,
+> >       int rc = -ENODEV;
+> >       struct net_device *netdev = NULL;
+> >       struct fcoe_transport *ft = NULL;
+> > -     enum fip_state fip_mode = (enum fip_state)(long)kp->arg;
+> > +     enum fip_mode fip_mode = (enum fip_mode)(long)kp->arg;
+> >
+> >       mutex_lock(&ft_mutex);
+> >
+> > diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+> > index 9bbc19fc190b..9f9431a4cc0e 100644
+> > --- a/drivers/scsi/qedf/qedf_main.c
+> > +++ b/drivers/scsi/qedf/qedf_main.c
+> > @@ -1418,7 +1418,7 @@ static struct libfc_function_template qedf_lport_template = {
+> >
+> >  static void qedf_fcoe_ctlr_setup(struct qedf_ctx *qedf)
+> >  {
+> > -     fcoe_ctlr_init(&qedf->ctlr, FIP_ST_AUTO);
+> > +     fcoe_ctlr_init(&qedf->ctlr, FIP_MODE_AUTO);
+> >
+> >       qedf->ctlr.send = qedf_fip_send;
+> >       qedf->ctlr.get_src_addr = qedf_get_src_mac;
+> > diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
+> > index cb8a273732cf..38bb5b798a81 100644
+> > --- a/include/scsi/libfcoe.h
+> > +++ b/include/scsi/libfcoe.h
+> > @@ -79,12 +79,30 @@ enum fip_state {
+> >   * It must not change after fcoe_ctlr_init() sets it.
+> >   */
+> >  enum fip_mode {
+> > -     FIP_MODE_AUTO = FIP_ST_AUTO,
+> > +     FIP_MODE_AUTO,
+> >       FIP_MODE_NON_FIP,
+> >       FIP_MODE_FABRIC,
+> >       FIP_MODE_VN2VN,
+> >  };
+> >
+> > +static inline enum fip_mode fip_state_to_mode(enum fip_state state)
+>
+> Hi Sedat,
+>
+> You added this function but you didn't use it anywhere. I think Johannes
+> wanted this function to be used instead of all of the places where
+> you/Lukas changed the cast or raw enum value so that the conversion
+> still happens but it's explicit.
+>
+> I think we'll need two versions of this function, one that goes from
+> state to mode and another that goes from mode to state as both
+> conversions happen (x86 allyesconfig build in drivers/scsi/):
+>
+> drivers/scsi/fcoe/fcoe.c:2225:39: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2363:51: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> drivers/scsi/fnic/fnic_main.c:774:31: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> drivers/scsi/fnic/fnic_main.c:785:31: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> drivers/scsi/fcoe/fcoe_ctlr.c:153:14: warning: implicit conversion from enumeration type 'enum fip_state' to different enumeration type 'enum fip_mode' [-Wenum-conversion]
+> drivers/scsi/fcoe/fcoe_ctlr.c:457:33: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+>
+> Let me know what you think,
+> Nathan
+>
 
+Hi Nathan,
 
-On 12/02/2019 0.57, Tony Lindgren wrote:
-> I noticed that we can get a -EREMOTEIO errors on at least omap4 duovero:
-> 
-> twl6040 0-004b: Failed to write 2d = 19: -121
-> 
-> And then any following register access will produce errors.
-> 
-> There 2d offset above is register ACCCTL that gets written on twl6040
-> powerup. With error checking added to the related regcache_sync() call,
-> the -EREMOTEIO error is reproducable on twl6040 powerup at least
-> duovero.
-> 
-> To fix the error, we need to wait until twl6040 is accessible after the
-> powerup. Based on tests on omap4 duovero, we need to wait over 8ms after
-> powerup before register write will complete without failures. Let's also
-> make sure we warn about possible errors too.
-> 
-> Note that we have twl6040_patch[] reg_sequence with the ACCCTL register
-> configuration and regcache_sync() will write the new value to ACCCTL.
+Thanks for your review.
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+I have no experience with FCoE (just googled "Fibre Channel over
+Ethernet") and its states and modes and what a "fip_mode_to_state()"
+will require.
 
-> 
-> Cc: Florian Vaussard <florian.vaussard@epfl.ch>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/mfd/twl6040.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
-> --- a/drivers/mfd/twl6040.c
-> +++ b/drivers/mfd/twl6040.c
-> @@ -322,8 +322,19 @@ int twl6040_power(struct twl6040 *twl6040, int on)
->  			}
->  		}
->  
-> +		/*
-> +		 * Register access can produce errors after power-up unless we
-> +		 * wait at least 8ms based on measurements on duovero.
-> +		 */
-> +		usleep_range(10000, 12000);
-> +
->  		/* Sync with the HW */
-> -		regcache_sync(twl6040->regmap);
-> +		ret = regcache_sync(twl6040->regmap);
-> +		if (ret) {
-> +			dev_err(twl6040->dev, "%s register write failed: %i\n",
-> +				__func__, ret);
-> +			goto out;
-> +		}
->  
->  		/* Default PLL configuration after power up */
->  		twl6040->pll = TWL6040_SYSCLK_SEL_LPPLL;
-> 
+How did you see these -Wenum-conversion warnings - by using the
+suggested "static inline enum" (fip_state_to_mode()) line?
 
-- Péter
+Let us see what the FCoE maintaineres suggest.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+- Sedat -
+
+> > +{
+> > +     switch (state) {
+> > +     case FIP_ST_AUTO:
+> > +             return FIP_MODE_AUTO;
+> > +     case FIP_ST_NON_FIP:
+> > +             return FIP_MODE_NON_FIP;
+> > +     case FIP_ST_ENABLED:
+> > +             return FIP_MODE_FABRIC;
+> > +     case FIP_ST_VNMP_START:
+> > +             return FIP_MODE_VN2VN;
+> > +     default:
+> > +             WARN(1, "Invalid FIP state");
+> > +     }
+> > +
+> > +     return FIP_MODE_AUTO;
+> > +}
+> > +
+> >  /**
+> >   * struct fcoe_ctlr - FCoE Controller and FIP state
+> >   * @state:      internal FIP state for network link and FIP or non-FIP mode.
+> > @@ -250,7 +268,7 @@ struct fcoe_rport {
+> >  };
+> >
+> >  /* FIP API functions */
+> > -void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_state);
+> > +void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_mode);
+> >  void fcoe_ctlr_destroy(struct fcoe_ctlr *);
+> >  void fcoe_ctlr_link_up(struct fcoe_ctlr *);
+> >  int fcoe_ctlr_link_down(struct fcoe_ctlr *);
+> > --
+> > 2.20.1
+> >
