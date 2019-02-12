@@ -2,128 +2,130 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F6EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480C0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A952F2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1786B2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lUIlMsyi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbfBLLiP (ORCPT
+        id S1728566AbfBLLiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:38:15 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39403 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfBLLiP (ORCPT
+        Tue, 12 Feb 2019 06:38:21 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35084 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727912AbfBLLiT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:38:15 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f16so2644680wmh.4;
-        Tue, 12 Feb 2019 03:38:13 -0800 (PST)
+        Tue, 12 Feb 2019 06:38:19 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z15so429390pfa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 03:38:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k6pAyer58RNNFhdHldiD3k4wD4R5mI/N48g+M0dHSFw=;
+        b=lUIlMsyixC9JiOxpujHG1ZbS/3Bmxp8Mk0PpoAVpJBBLd3slQS9KXgkNSDxgMUluBc
+         GeVry8mJXd1ISgCsXHiHLXjaKmM01emVMXZhG8nuIPMKDygwT0SQRS9jE0zoRIuq1nUi
+         6AEWzrYtWD7BkVsaNh/OoCor6tAQm0slIcyDA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8D9929SXPkFLSZZuHPmXmY66BULgl6R/0b16NOlYTKY=;
-        b=FitJdbbsz/Gj5Cb2pJ4uYlzL1PeonP24i6BIi5ZzSxws980Lczlg4Of7xwysWvGTM+
-         r0oweG7w6Y+B2YMckLuPvShLlQplePlNR5W2eB4NNLXpI455hWWcoeRLaJ3pyFlz4p2B
-         zSx6kdpE6xSuEXUIxZhbhQY46tR0ttoy4nuAJPpI4/ldnE0fF0O1XFqCZ5ro9RJ9JRRF
-         2P9hcMSZHV7mU6uBS6dYdsAPilfWZ6JPiBP1G0aPl9YR4PT1ZheY4yJ3W96pqymttOwd
-         phydTlII8YxiJN0DkpvZ0CTWFWEPeAn8K/abmFovjDNIqtLDllDdhw4AMXaiPJzJDwlY
-         Nsxw==
-X-Gm-Message-State: AHQUAuZkCys/oiMd8D6zHvnJy/SuU1nLmigw9qul7asOXu5u+4QAZraC
-        AHNHWJJBjLBsjz/kUGGn4SA=
-X-Google-Smtp-Source: AHgI3IamFvdRMvHalNAcaMQfzSk1Hy7Ubt8aGLwgNYIDgzzb9cehPjts6XZh+memncwZOru2jmE03g==
-X-Received: by 2002:a1c:6789:: with SMTP id b131mr2581145wmc.22.1549971492424;
-        Tue, 12 Feb 2019 03:38:12 -0800 (PST)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id h13sm4259266wrs.42.2019.02.12.03.38.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k6pAyer58RNNFhdHldiD3k4wD4R5mI/N48g+M0dHSFw=;
+        b=oK1IIw9dYs/5jiUP4IKGVV7b1Vw7ZkD6wTynz861PSSKRTwvZJTCdevnr0nyXtpqTd
+         ZttyK0jSL31fMSrq2SdsFAnZz3vg7s9wVSGWxledwYXwBr4E9EebzqsuxC+djbqG1mlr
+         IH//knqaRMiOk9wOCTmi/ZcamiHuGH9fw0Jg7c7I3hjPhri9gZW2epJ2ndwJlUg3+4v7
+         M5SddwpgXVcThfsZi01j8ORgtkxEe4hPVIk+Jy/aB5NVpstks5MKbS76vEqM8wy7aLUs
+         ITacDyweUvp0KMImfeD/X6qCraD+2Eid/yIAa/KeYOZqwrBtHrfRj9lujYZtcv/BVyek
+         SaKQ==
+X-Gm-Message-State: AHQUAuZ8VFjAVszMsJpa1MnHIxUIGuP4frdRCW/F4zuxYY6CYTquaGe6
+        SHCVPuBfWc7p3oN11SUbKnXkzw==
+X-Google-Smtp-Source: AHgI3IbuX/T5TOQiDafZ/5axHx4F5iMTZigEVlxQJxapu/vf0htRap7fFeS2C2qxeMVFRovSt4NyeA==
+X-Received: by 2002:a62:3241:: with SMTP id y62mr3537498pfy.178.1549971498845;
+        Tue, 12 Feb 2019 03:38:18 -0800 (PST)
+Received: from localhost.localdomain ([115.97.184.151])
+        by smtp.gmail.com with ESMTPSA id b15sm4653478pfj.44.2019.02.12.03.38.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 03:38:11 -0800 (PST)
-Subject: Re: [PATCH v7 05/28] x86/asm/entry: annotate THUNKs
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-References: <20190130124711.12463-1-jslaby@suse.cz>
- <20190130124711.12463-6-jslaby@suse.cz> <20190209112551.GA5089@zn.tnic>
- <b75f2a0d-974a-c63b-64f8-8f333991e826@suse.cz>
- <20190212110501.GB30028@zn.tnic>
-From:   Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- mQINBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABtBtKaXJpIFNsYWJ5
- IDxqc2xhYnlAc3VzZS5jej6JAjgEEwECACIFAk6S6NgCGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAAAoJEL0lsQQGtHBJgDsP/j9wh0vzWXsOPO3rDpHjeC3BT5DKwjVN/KtP7uZttlkB
- duReCYMTZGzSrmK27QhCflZ7Tw0Naq4FtmQSH8dkqVFugirhlCOGSnDYiZAAubjTrNLTqf7e
- 5poQxE8mmniH/Asg4KufD9bpxSIi7gYIzaY3hqvYbVF1vYwaMTujojlixvesf0AFlE4x8WKs
- wpk43fmo0ZLcwObTnC3Hl1JBsPujCVY8t4E7zmLm7kOB+8EHaHiRZ4fFDWweuTzRDIJtVmrH
- LWvRDAYg+IH3SoxtdJe28xD9KoJw4jOX1URuzIU6dklQAnsKVqxz/rpp1+UVV6Ky6OBEFuoR
- 613qxHCFuPbkRdpKmHyE0UzmniJgMif3v0zm/+1A/VIxpyN74cgwxjhxhj/XZWN/LnFuER1W
- zTHcwaQNjq/I62AiPec5KgxtDeV+VllpKmFOtJ194nm9QM9oDSRBMzrG/2AY/6GgOdZ0+qe+
- 4BpXyt8TmqkWHIsVpE7I5zVDgKE/YTyhDuqYUaWMoI19bUlBBUQfdgdgSKRMJX4vE72dl8BZ
- +/ONKWECTQ0hYntShkmdczcUEsWjtIwZvFOqgGDbev46skyakWyod6vSbOJtEHmEq04NegUD
- al3W7Y/FKSO8NqcfrsRNFWHZ3bZ2Q5X0tR6fc6gnZkNEtOm5fcWLY+NVz4HLaKrJuQINBE6S
- 54YBEADPnA1iy/lr3PXC4QNjl2f4DJruzW2Co37YdVMjrgXeXpiDvneEXxTNNlxUyLeDMcIQ
- K8obCkEHAOIkDZXZG8nr4mKzyloy040V0+XA9paVs6/ice5l+yJ1eSTs9UKvj/pyVmCAY1Co
- SNN7sfPaefAmIpduGacp9heXF+1Pop2PJSSAcCzwZ3PWdAJ/w1Z1Dg/tMCHGFZ2QCg4iFzg5
- Bqk4N34WcG24vigIbRzxTNnxsNlU1H+tiB81fngUp2pszzgXNV7CWCkaNxRzXi7kvH+MFHu2
- 1m/TuujzxSv0ZHqjV+mpJBQX/VX62da0xCgMidrqn9RCNaJWJxDZOPtNCAWvgWrxkPFFvXRl
- t52z637jleVFL257EkMI+u6UnawUKopa+Tf+R/c+1Qg0NHYbiTbbw0pU39olBQaoJN7JpZ99
- T1GIlT6zD9FeI2tIvarTv0wdNa0308l00bas+d6juXRrGIpYiTuWlJofLMFaaLYCuP+e4d8x
- rGlzvTxoJ5wHanilSE2hUy2NSEoPj7W+CqJYojo6wTJkFEiVbZFFzKwjAnrjwxh6O9/V3O+Z
- XB5RrjN8hAf/4bSo8qa2y3i39cuMT8k3nhec4P9M7UWTSmYnIBJsclDQRx5wSh0Mc9Y/psx9
- B42WbV4xrtiiydfBtO6tH6c9mT5Ng+d1sN/VTSPyfQARAQABiQIfBBgBAgAJBQJOkueGAhsM
- AAoJEL0lsQQGtHBJN7UQAIDvgxaW8iGuEZZ36XFtewH56WYvVUefs6+Pep9ox/9ZXcETv0vk
- DUgPKnQAajG/ViOATWqADYHINAEuNvTKtLWmlipAI5JBgE+5g9UOT4i69OmP/is3a/dHlFZ3
- qjNk1EEGyvioeycJhla0RjakKw5PoETbypxsBTXk5EyrSdD/I2Hez9YGW/RcI/WC8Y4Z/7FS
- ITZhASwaCOzy/vX2yC6iTx4AMFt+a6Z6uH/xGE8pG5NbGtd02r+m7SfuEDoG3Hs1iMGecPyV
- XxCVvSV6dwRQFc0UOZ1a6ywwCWfGOYqFnJvfSbUiCMV8bfRSWhnNQYLIuSv/nckyi8CzCYIg
- c21cfBvnwiSfWLZTTj1oWyj5a0PPgGOdgGoIvVjYXul3yXYeYOqbYjiC5t99JpEeIFupxIGV
- ciMk6t3pDrq7n7Vi/faqT+c4vnjazJi0UMfYnnAzYBa9+NkfW0w5W9Uy7kW/v7SffH/2yFiK
- 9HKkJqkN9xYEYaxtfl5pelF8idoxMZpTvCZY7jhnl2IemZCBMs6s338wS12Qro5WEAxV6cjD
- VSdmcD5l9plhKGLmgVNCTe8DPv81oDn9s0cIRLg9wNnDtj8aIiH8lBHwfUkpn32iv0uMV6Ae
- sLxhDWfOR4N+wu1gzXWgLel4drkCJcuYK5IL1qaZDcuGR8RPo3jbFO7Y
-Message-ID: <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
-Date:   Tue, 12 Feb 2019 12:38:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 03:38:18 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2] dt-bindings: hwmon: Add missing documentation for lm75
+Date:   Tue, 12 Feb 2019 17:08:08 +0530
+Message-Id: <20190212113808.3040-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-In-Reply-To: <20190212110501.GB30028@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12. 02. 19, 12:05, Borislav Petkov wrote:
-> On Tue, Feb 12, 2019 at 11:27:19AM +0100, Jiri Slaby wrote:
->> Yes, they do not end up in the symbol table. But the macros make clear
->> where is the start of the function and especially where is the end
->> (something like closing bracket '}' in C). If you prefer not annotating
->> local symbols, I can of course drop it from everywhere. But to me it
->> looks more readable to see "here it starts" and "here it ends", still
->> without generating anything to the symbol table.
-> 
-> Agreed. Boundary annotation makes sense.
+Add missing dt-binding documentation for lm75 hwmon sensor.
 
-OK, so I will switch all the *LOCAL* to .L prefix (perhaps as a separate
-patch prior the series/post the series)?
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+-  Add all compatible nodes available in lm75.
 
-thanks,
+ .../devicetree/bindings/hwmon/lm75.txt        | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/lm75.txt
+
+diff --git a/Documentation/devicetree/bindings/hwmon/lm75.txt b/Documentation/devicetree/bindings/hwmon/lm75.txt
+new file mode 100644
+index 000000000000..12d8cf7cf592
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/lm75.txt
+@@ -0,0 +1,37 @@
++*LM75 hwmon sensor.
++
++Required properties:
++- compatible: manufacturer and chip name, one of
++		"adi,adt75",
++		"dallas,ds1775",
++		"dallas,ds75",
++		"dallas,ds7505",
++		"gmt,g751",
++		"national,lm75",
++		"national,lm75a",
++		"national,lm75b",
++		"maxim,max6625",
++		"maxim,max6626",
++		"maxim,max31725",
++		"maxim,max31726",
++		"maxim,mcp980x",
++		"st,stds75",
++		"st,stlm75",
++		"microchip,tcn75",
++		"ti,tmp100",
++		"ti,tmp101",
++		"ti,tmp105",
++		"ti,tmp112",
++		"ti,tmp175",
++		"ti,tmp275",
++		"ti,tmp75",
++		"ti,tmp75c",
++
++- reg: I2C bus address of the device
++
++Example:
++
++sensor@48 {
++	compatible = "st,stlm75";
++	reg = <0x48>;
++};
 -- 
-js
-suse labs
+2.18.0.321.gffc6fa0e3
+
