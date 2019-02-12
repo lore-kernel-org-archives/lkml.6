@@ -2,142 +2,170 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20612C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F849C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B70214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03D01218D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbfBLOFO (ORCPT
+        id S1730146AbfBLOGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:05:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39286 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728126AbfBLOFO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:05:14 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gtYgP-0001PX-51; Tue, 12 Feb 2019 14:05:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <rex.zhu@amd.com>,
-        Evan Quan <evan.quan@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: fix several indentation issues
-Date:   Tue, 12 Feb 2019 14:05:08 +0000
-Message-Id: <20190212140508.9296-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Feb 2019 09:06:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54625 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727428AbfBLOGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 09:06:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 06:06:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="299135175"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 12 Feb 2019 06:06:06 -0800
+Received: from [10.125.252.165] (abudanko-mobl.ccr.corp.intel.com [10.125.252.165])
+        by linux.intel.com (Postfix) with ESMTP id 7A3AD58046D;
+        Tue, 12 Feb 2019 06:06:04 -0800 (PST)
+Subject: Re: [PATCH v2 0/4] perf: enable compression of record mode trace to
+ save storage space
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <20190212122758.GH3269@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <fd3989c7-e6e3-3805-72d1-a621d642e073@linux.intel.com>
+Date:   Tue, 12 Feb 2019 17:06:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212122758.GH3269@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There are several statements that are incorrectly indented. Fix these.
+On 12.02.2019 15:27, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Feb 11, 2019 at 11:17:14PM +0300, Alexey Budankov escreveu:
+>> This is the rebase to the tip of Arnaldo's perf/core repository.
+>  
+>> The patch set implements runtime trace compression for record mode and 
+>> trace file decompression for report mode. Zstandard API [1] is used for 
+>> compression/decompression of data that come from perf_events kernel 
+>> data buffers.
+>  
+>> Realized -z,--compression_level=n option provides ~3-5x avg. trace file 
+> 
+> Realized? Perhaps "Using the -z/--compression_level=n options provides
+> 3.5x average size reduction on..."
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c              | 2 +-
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c                | 2 +-
- drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c               | 2 +-
- drivers/gpu/drm/amd/amdgpu/si.c                      | 2 +-
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c | 2 +-
- drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c   | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+Yep, wording could be adjusted. Thanks!
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index bc62bf41b7e9..b65e18101108 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -207,7 +207,7 @@ int amdgpu_driver_load_kms(struct drm_device *dev, unsigned long flags)
- 	if (!r) {
- 		acpi_status = amdgpu_acpi_init(adev);
- 		if (acpi_status)
--		dev_dbg(&dev->pdev->dev,
-+			dev_dbg(&dev->pdev->dev,
- 				"Error during ACPI methods call\n");
- 	}
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-index db443ec53d3a..bea32f076b91 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-@@ -2980,7 +2980,7 @@ static int dce_v6_0_pageflip_irq(struct amdgpu_device *adev,
- 				 struct amdgpu_irq_src *source,
- 				 struct amdgpu_iv_entry *entry)
- {
--		unsigned long flags;
-+	unsigned long flags;
- 	unsigned crtc_id;
- 	struct amdgpu_crtc *amdgpu_crtc;
- 	struct amdgpu_flip_work *works;
-diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-index 221f26e50322..c69d51598cfe 100644
---- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-+++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-@@ -32,7 +32,7 @@
- 
- static u32 nbio_v7_4_get_rev_id(struct amdgpu_device *adev)
- {
--    u32 tmp = RREG32_SOC15(NBIO, 0, mmRCC_DEV0_EPF0_STRAP0);
-+	u32 tmp = RREG32_SOC15(NBIO, 0, mmRCC_DEV0_EPF0_STRAP0);
- 
- 	tmp &= RCC_DEV0_EPF0_STRAP0__STRAP_ATI_REV_ID_DEV0_F0_MASK;
- 	tmp >>= RCC_DEV0_EPF0_STRAP0__STRAP_ATI_REV_ID_DEV0_F0__SHIFT;
-diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
-index 79c1a9bbcc21..9d8df68893b9 100644
---- a/drivers/gpu/drm/amd/amdgpu/si.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si.c
-@@ -1436,7 +1436,7 @@ static int si_common_early_init(void *handle)
- 			AMD_CG_SUPPORT_UVD_MGCG |
- 			AMD_CG_SUPPORT_HDP_LS |
- 			AMD_CG_SUPPORT_HDP_MGCG;
--			adev->pg_flags = 0;
-+		adev->pg_flags = 0;
- 		adev->external_rev_id = (adev->rev_id == 0) ? 1 :
- 					(adev->rev_id == 1) ? 5 : 6;
- 		break;
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
-index d138ddae563d..58f5589aaf12 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
-@@ -1211,7 +1211,7 @@ int smu7_power_control_set_level(struct pp_hwmgr *hwmgr)
- 				hwmgr->platform_descriptor.TDPAdjustment :
- 				(-1 * hwmgr->platform_descriptor.TDPAdjustment);
- 
--		 if (hwmgr->chip_id > CHIP_TONGA)
-+		if (hwmgr->chip_id > CHIP_TONGA)
- 			target_tdp = ((100 + adjust_percent) * (int)(cac_table->usTDP * 256)) / 100;
- 		else
- 			target_tdp = ((100 + adjust_percent) * (int)(cac_table->usConfigurableTDP * 256)) / 100;
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-index 0769b1ec562b..aad79affb081 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-@@ -3456,7 +3456,7 @@ static int vega20_apply_clocks_adjust_rules(struct pp_hwmgr *hwmgr)
- 	disable_mclk_switching = ((1 < hwmgr->display_config->num_display) &&
-                            !hwmgr->display_config->multi_monitor_in_sync) ||
-                             vblank_too_short;
--    latency = hwmgr->display_config->dce_tolerable_mclk_in_active_latency;
-+	latency = hwmgr->display_config->dce_tolerable_mclk_in_active_latency;
- 
- 	/* gfxclk */
- 	dpm_table = &(data->dpm_table.gfx_table);
--- 
-2.20.1
+> 
+>> size reduction on variety of tested workloads what saves user storage 
+>> space on larger server systems where trace file size can easily reach 
+>> several tens or even hundreds of GiBs, especially when profiling with 
+>> dwarf-based stacks and tracing of  context-switches.
+>  
+>> --mmap-flush option can be used to avoid compressing every single byte 
+> 
+> What is the default for --mmap-flush when -z is used? Does it vary with
+> the compression level? Can we expect something that is reasonable or is
+> using --mmap-flush always needed? If so can we do away with that by
+> using some sensible default according to the -z level used?
 
+Default value is 1 what is equal to the current perf record implementation. 
+The option is independent from -z setting and doesn't vary with compression 
+level. Default could be different if -z is specified.
+
+> 
+>> of data and increase compression ratio at the same time lowering tool 
+>> runtime overhead.
+>>
+>>   $ tools/perf/perf record -z 1 -e cycles -- matrix.gcc
+>>   $ tools/perf/perf record -z 1 --mmap-flush 1024 -e cycles -- matrix.gcc
+>>   $ tools/perf/perf record -z 1 --mmap-flush 1024 --aio -e cycles -- matrix.gcc
+> 
+> Please avoid having these explanations just on the cover letter since it
+> will not get recorded in the git history for the project, please add
+> examples with output from real workloads, preferably providing real
+> cases so that other people can readily replicate your results when
+> having access to similar large machines.
+
+Will do. Thanks!
+
+>  
+>> The compression functionality can be disabled from the command line 
+>> using NO_LIBZSTD define and Zstandard sources can be overridden using 
+>> value of LIBZSTD_DIR define:
+>>
+>>   $ make -C tools/perf NO_LIBZSTD=1 clean all
+>>   $ make -C tools/perf LIBZSTD_DIR=/path/to/zstd-1.3.7 clean all
+> 
+> Showing the relevant output of the these commands before/after
+> installing the libzstd library is useful as well. From what you use
+> above is it fair to conclude that there are no readily made packages for
+> this library and we need to get it from github and build it ourselves?
+
+If your system has some version of the package preinstalled then the build 
+system finds and uses it during the build. Auto detection feature status is 
+reported just before compilation starts.
+
+If you still prefer to compile with some newer version that is not 
+preinstalled, and you don't want upgrading your system with newer version, 
+you have capability to download, build and then refer the compilation to 
+the newer just built library version using LIBZSTD_DIR.
+
+> 
+> On my notebook, a Fedora 29 system:
+> 
+> [root@quaco ~]# dnf search zstd
+> ========================================================== Name & Summary Matched: zstd ==========================================================
+> zstd.x86_64 : Zstd compression library
+> zstd.x86_64 : Zstd compression library
+> libzstd.x86_64 : Zstd shared library
+> libzstd.i686 : Zstd shared library
+> libzstd.x86_64 : Zstd shared library
+> libzstd-devel.i686 : Header files for Zstd library
+> libzstd-devel.x86_64 : Header files for Zstd library
+> ============================================================= Summary Matched: zstd ==============================================================
+> fedora-repo-zdicts.noarch : Zstd dictionaries for Fedora repository metadata
+> [root@quaco ~]#
+> [root@quaco ~]# dnf install libzstd-devel
+> <SNIP>
+>  libzstd-devel                         x86_64                         1.3.8-1.fc29                          updates                          39 k
+> <SNIP>
+> 
+> So, do I need some specific 1.3.7 version? Is that why you used that
+> LIBZSTD_DIR in your example?
+
+v1.3.7 is just an example. v1.3.8 can be also provided.
+
+> 
+> I'm trying these steps, but please consider following these suggestions
+> in future posts,
+> 
+> And thanks for working on this!
+
+Thanks for meaningful comments. Will do my best to follow it.
+
+Thanks,
+Alexey
+
+> 
+> - Arnaldo
+>  
