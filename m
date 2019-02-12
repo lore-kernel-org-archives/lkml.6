@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE19CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E03C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE6120449
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D58720818
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zMMMKSHF"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="pDok3eT4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbfBLKkt (ORCPT
+        id S1729258AbfBLKlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:40:49 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42239 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbfBLKjW (ORCPT
+        Tue, 12 Feb 2019 05:41:04 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33955 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbfBLKjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:39:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so2067962wrx.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:39:22 -0800 (PST)
+        Tue, 12 Feb 2019 05:39:19 -0500
+Received: by mail-wr1-f65.google.com with SMTP id f14so2125228wrg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:39:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aM1xrGIBo2FFuSsmFTHMz/H1xNta7gzJkLnZYdQJhl0=;
-        b=zMMMKSHFQibmHtmVol+4g5z++egugz+ma4x0V9e+S98FunxVu4sxjhnGYnGIZ5bIXw
-         wIfhXxTbF6Tlrn7UbjvEJazD3Tdr5uwa22tYg3bVGL68GIKSRNAq2h6tV1t98wSUhg1X
-         bc4jjGgWpyCUi0awNeRiAI6AQnnL9g1j9f3yLHZhbaFzZJFenWaFvLQ4DzY+iHJZfobD
-         3T/+3BKim7DOpK4pXDbcFqRY9HnirCXCkb1IpvaDgY8qM2B60rmki9nN0/9tPGNI0TAn
-         DU+fs92YqQ0uUnBzwOVPtniaDgKqXl3YoWEeEBZKC7+cOF9vRqZfdNBKCF8VehW5tMo8
-         T6aQ==
+        bh=4I38YIiHSc0ZdT9iV5cSNguHO1bDo83hHtu+LVNIPe0=;
+        b=pDok3eT4L7i0miBraC0DtB/RJ8s/FpyKfn3aRHCQZXTtOIyvcxzQ6A4TdRRwdkjb/0
+         pZQ/U4k03bg2S18HCcZ9OmpS3oSFe8r0H15TXvaA6Q8vzAwEhmY/Pb4QjSRVxGt0cM7Y
+         nFARVR1QlAjckDDEs4u6UCS+1wARyuayOLKVcJUQeFaleH/f0QrNz1AMfKzft5PSyJGj
+         zIiuh0wwJUqEAkcIuFoRB+WRcyyruM+4a06MA+h2R8l8uuFS9q96ZIz8qgyr/L1NosZk
+         23Q8VhroQZfxzGk6SfZMgLO/junNhYlpvDx75WE55+DqtIHvC7Fd29SSP/hr40z4FNOy
+         pMDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aM1xrGIBo2FFuSsmFTHMz/H1xNta7gzJkLnZYdQJhl0=;
-        b=uX3389X1q9VSfrM4K/YJcVFhw7F72arR+FxqlUyVMB/eHKYgOs4Kbx/A+r240yY36o
-         WQjKCinh7XhVNbaUSiC6QNBJEwhySL4exZ8NT9OWAdMIbGgq7xy2ZSI8M+cSgyvYEcvV
-         ww3DzNQoXYxiNDRew8rcQ57Dh6F+WeEOLRYmgyUWbY3nrtEu7Af3nNON0WQycrHf/g84
-         2ZQAYg5k2YY84oWQVpVtrN9LM0Xcd+NM+TPmVT7Hf7k27OOEzS21AWHbElx6RQs8ABTr
-         0JQnzb4MXlHAHHmh5PWBNFRBNAfvnLiwRiwo4bZTY1HyTWGL1qmkdLdSLQz2lXWDtKMQ
-         KVhQ==
-X-Gm-Message-State: AHQUAubzPkICSlHknwbsAOUuoInVPcyOl3IFQuy6SO7Uaur7G7xuFVf0
-        rSSDcrhevJYx479WCa7e8Zjl4w==
-X-Google-Smtp-Source: AHgI3IaR8g4CNnlhzVYgQRzBLI1JVXA/2dvwrTWuQaYyILi/hBazVBrmalD7bNSIDHb/BRkJ5U+sNA==
-X-Received: by 2002:adf:9f54:: with SMTP id f20mr2423842wrg.88.1549967961439;
-        Tue, 12 Feb 2019 02:39:21 -0800 (PST)
+        bh=4I38YIiHSc0ZdT9iV5cSNguHO1bDo83hHtu+LVNIPe0=;
+        b=bo1bsEXML6pA/++TzBZT3GfASCe0gtYtPkSRy2mC4Ue2IrBDQlIdUflxVi1Q9NVKXV
+         uP32PHl/pEEgAhTCtZmQbbM2NH6pJzozvxTtJSikUiBgOmcksb7tvRHY4pkycsVNWbG4
+         7EeWVQ99FedVveKc7MhaVGCxpcZ/wmoOWi7eQn9S/86NtJ080ZqwOFbvRTD69CZydIcr
+         JKEWRmYSYLN8WPQxzcvtfhGd4t+frx1ItOVMhp5QCIQqjb6LHEqPK4//soIvwofU08uU
+         qbEFvZMuvwVbaQzAhXIIi02JFw2i95RH/DcESAkKtEuPwNs5M6PGRAZW3ch4BZPjD6gg
+         MYpQ==
+X-Gm-Message-State: AHQUAuaajatSoNw81NXIvWf3l93f07L5YoKY/N67dgMSYX2gKAmIxnha
+        Fy7ouv4ffXxkilLAFRaIHUfkaQ==
+X-Google-Smtp-Source: AHgI3IYyzonvJQpn4K5gOlcJOHGtqyl4DYQjw59CLzlKc2GSdWKTLCojSkK8BzkU6/3jwFifIFUFfA==
+X-Received: by 2002:adf:f903:: with SMTP id b3mr2498681wrr.82.1549967958092;
+        Tue, 12 Feb 2019 02:39:18 -0800 (PST)
 Received: from localhost.localdomain (aputeaux-684-1-38-32.w90-86.abo.wanadoo.fr. [90.86.93.32])
-        by smtp.gmail.com with ESMTPSA id c14sm3708656wrn.12.2019.02.12.02.39.20
+        by smtp.gmail.com with ESMTPSA id c14sm3708656wrn.12.2019.02.12.02.39.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 02:39:20 -0800 (PST)
+        Tue, 12 Feb 2019 02:39:17 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 21/37] ARM: davinci: aintc: remove unnecessary includes
-Date:   Tue, 12 Feb 2019 11:38:19 +0100
-Message-Id: <20190212103835.7768-22-brgl@bgdev.pl>
+Subject: [PATCH v3 18/37] ARM: davinci: aintc: unify error handling
+Date:   Tue, 12 Feb 2019 11:38:16 +0100
+Message-Id: <20190212103835.7768-19-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212103835.7768-1-brgl@bgdev.pl>
 References: <20190212103835.7768-1-brgl@bgdev.pl>
@@ -79,29 +79,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-These includes are no longer required. Remove them.
+Instead of dumping stack traces, just print a specific error message
+in aintc driver.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/irq.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/mach-davinci/irq.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 92b6e653d8cb..810ccc4fe476 100644
+index 1b2eeddfabd1..2afaf19dc46c 100644
 --- a/arch/arm/mach-davinci/irq.c
 +++ b/arch/arm/mach-davinci/irq.c
-@@ -12,10 +12,6 @@
- #include <linux/io.h>
- #include <linux/irqdomain.h>
+@@ -91,8 +91,10 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
  
--#include <mach/hardware.h>
--#include <mach/cputype.h>
--#include <mach/common.h>
--#include <asm/mach/irq.h>
- #include <asm/exception.h>
+ 	davinci_aintc_base = ioremap(config->reg.start,
+ 				     resource_size(&config->reg));
+-	if (WARN_ON(!davinci_aintc_base))
++	if (!davinci_aintc_base) {
++		pr_err("%s: unable to ioremap register range\n", __func__);
+ 		return;
++	}
  
- #define DAVINCI_AINTC_FIQ_REG0		0x00
+ 	/* Clear all interrupt requests */
+ 	davinci_aintc_writel(~0x0, DAVINCI_AINTC_FIQ_REG0);
+@@ -125,20 +127,28 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
+ 	}
+ 
+ 	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
+-	if (WARN_ON(irq_base < 0))
++	if (irq_base < 0) {
++		pr_err("%s: unable to allocate interrupt descriptors: %d\n",
++		       __func__, irq_base);
+ 		return;
++	}
+ 
+ 	davinci_aintc_irq_domain = irq_domain_add_legacy(NULL,
+ 						config->num_irqs, irq_base, 0,
+ 						&irq_domain_simple_ops, NULL);
+-	if (WARN_ON(!davinci_aintc_irq_domain))
++	if (!davinci_aintc_irq_domain) {
++		pr_err("%s: unable to create interrupt domain\n", __func__);
+ 		return;
++	}
+ 
+ 	ret = irq_alloc_domain_generic_chips(davinci_aintc_irq_domain, 32, 1,
+ 					     "AINTC", handle_edge_irq,
+ 					     IRQ_NOREQUEST | IRQ_NOPROBE, 0, 0);
+-	if (WARN_ON(ret))
++	if (ret) {
++		pr_err("%s: unable to allocate generic irq chips for domain\n",
++		       __func__);
+ 		return;
++	}
+ 
+ 	for (irq_off = 0, reg_off = 0;
+ 	     irq_off < config->num_irqs;
 -- 
 2.20.1
 
