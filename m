@@ -2,75 +2,124 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4718DC4151A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2AEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 183EE2184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A562184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:14:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aXhpJokx"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="I0/FSzXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfBLHNl (ORCPT
+        id S1728081AbfBLHOj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:13:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38180 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfBLHNl (ORCPT
+        Tue, 12 Feb 2019 02:14:39 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:37582 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfBLHOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:13:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i9LiTwoHB7wiaMPBTlIeMEVB3AZ/nu1Ha+0496P9Xhw=; b=aXhpJokxKTjHvTenT6G5Sxflt
-        crVl4dCRJhO2qySfODgiHnBlCXPBeurSoLChoqtBbinIbJL571iZVHu8N7iAYV7u25pMGxtsfKL0z
-        hqlBofz9aq5YdrOtO+vFesTrbvB54ZcitMKucTYR/7cLD57QegBf6/ecR8xwhqMORzQTCes983c5g
-        QLZTDf4G1ZmECbiiOxzTP5MzA/OaTI96Gskn41i69yvUkCqxgUqEzNqJw5hkJWWdY2iCE2KQxj5SP
-        ClhkEm0LLrvaBZUKJTg9MgbY6MwdOTjanlrP4YBhEafEw3Niacara3Gdp4VPp75dgy0wuu074P2o5
-        clwgtjuYQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtSGB-0003Dv-PZ; Tue, 12 Feb 2019 07:13:39 +0000
-Date:   Mon, 11 Feb 2019 23:13:39 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>, linux-kernel@vger.kernel.org,
-        Atish Patra <atish.patra@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
-Message-ID: <20190212071339.GL26747@infradead.org>
-References: <20190118140308.9599-1-johan@kernel.org>
- <20190118140308.9599-6-johan@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118140308.9599-6-johan@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 12 Feb 2019 02:14:36 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x1C7DPdX019269;
+        Tue, 12 Feb 2019 16:13:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x1C7DPdX019269
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549955614;
+        bh=W7SE5qbwsV5rwyJe9i+cPWUmbUQD+IWEIEw4oDfctm8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=I0/FSzXMmmwcZRVqdoNJocDfNuGW9hQQjoC9s67boSMYKaZXGnuTQMmtkks+QGOvG
+         COzcdy5n0w2A+KXCxcLENXdh4eSzaUHZifq9S5C9Z8jX37lId3SxHqu8bBkS3L9Fnu
+         EGHsCx4235f57Nr1bmSnt4uJ67uG02O/ZJU6A0hwPIWeROwjfeX14bm+lIl/B1bknB
+         I8Zdqi6OES0gsiXGJaR7IwokTvdKEt/WeEZeVqDmEwYMtBufDdfSlusM0EHj+54I8i
+         X2x8fw1RArjB+LSLPBeL25NGBdn00cD1/siDJmQ+qhBhYt4uUAeo13BhaskQWDSmUg
+         Nd9VjJXCqAo9w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH v2 09/10] mtd: rawnand: denali: remove DENALI_NR_BANKS macro
+Date:   Tue, 12 Feb 2019 16:13:01 +0900
+Message-Id: <1549955582-30346-10-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549955582-30346-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1549955582-30346-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 03:03:08PM +0100, Johan Hovold wrote:
-> Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
-> instead of open coding. Note that this will allow matching also on the
-> node name instead of the (for FDT) deprecated device_type property.
-> 
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+Use the runtime-detected denali->nbanks instead of hard-coded
+DENALI_NR_BANKS (=4).
 
-I think this is going to conflict with the ELF caps changes from
-Atish.  Maybe the riscv_fill_hwcap hunk should be included in his
-patch?
+The actual number of banks depends on the IP configuration, and
+can be less than DENALI_NR_BANKS. It is pointless to touch
+registers of unsupported banks.
 
-Otherwise looks good:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Changes in v2: None
+
+ drivers/mtd/nand/raw/denali.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index a162bd1..eb58136 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -40,7 +40,6 @@
+ #define DENALI_BANK(denali)	((denali)->active_bank << 24)
+ 
+ #define DENALI_INVALID_BANK	-1
+-#define DENALI_NR_BANKS		4
+ 
+ static struct denali_chip *to_denali_chip(struct nand_chip *chip)
+ {
+@@ -92,7 +91,7 @@ static void denali_enable_irq(struct denali_controller *denali)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DENALI_NR_BANKS; i++)
++	for (i = 0; i < denali->nbanks; i++)
+ 		iowrite32(U32_MAX, denali->reg + INTR_EN(i));
+ 	iowrite32(GLOBAL_INT_EN_FLAG, denali->reg + GLOBAL_INT_ENABLE);
+ }
+@@ -101,7 +100,7 @@ static void denali_disable_irq(struct denali_controller *denali)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DENALI_NR_BANKS; i++)
++	for (i = 0; i < denali->nbanks; i++)
+ 		iowrite32(0, denali->reg + INTR_EN(i));
+ 	iowrite32(0, denali->reg + GLOBAL_INT_ENABLE);
+ }
+@@ -117,7 +116,7 @@ static void denali_clear_irq_all(struct denali_controller *denali)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DENALI_NR_BANKS; i++)
++	for (i = 0; i < denali->nbanks; i++)
+ 		denali_clear_irq(denali, i, U32_MAX);
+ }
+ 
+@@ -130,7 +129,7 @@ static irqreturn_t denali_isr(int irq, void *dev_id)
+ 
+ 	spin_lock(&denali->irq_lock);
+ 
+-	for (i = 0; i < DENALI_NR_BANKS; i++) {
++	for (i = 0; i < denali->nbanks; i++) {
+ 		irq_status = ioread32(denali->reg + INTR_STATUS(i));
+ 		if (irq_status)
+ 			ret = IRQ_HANDLED;
+-- 
+2.7.4
+
