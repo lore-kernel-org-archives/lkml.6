@@ -2,105 +2,183 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9A8C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCF7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D229217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:06:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="MkTo2X3q"
+	by mail.kernel.org (Postfix) with ESMTP id A94AE217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfBLQGd (ORCPT
+        id S1730847AbfBLQHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:06:33 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55735 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbfBLQGc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:06:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id o131so5099694itc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:06:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x5UGUdhlZ6jxGbIC2Rsw1FTby2fyMVTXpk0fljdo5BE=;
-        b=MkTo2X3qg+gR3GHtUXRYuV3ZhkpOT6/HBgMd15+FYiJv1yhX6rDThShwFQZZj2Sj03
-         0m7cE32LYpKzlQedFdGIvi8DGfn4EB08FVSpb6ZidKD1ZakpS29Me78TZX0sltnb903P
-         7Qky1rQ7ZvIZc+hT9gj3QoU7ILso5DhZHBnwjNTGy7SKgqw2PTTn8WhHianGO49ed+LN
-         7KNdifqWdVpiZx9112Raa2AgX6ukzWOYpEVE/1kncu/HO69EjriZIZE5URlz01bmB53K
-         J8/+BzFr077leLuaB0xW4VKmLw/7/96ncZC7aid7xbz5mZdXvTRMLhOHwopiaWWBII7u
-         Ut+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x5UGUdhlZ6jxGbIC2Rsw1FTby2fyMVTXpk0fljdo5BE=;
-        b=Ze0Py7jECTOPdg9/4Ag23KEl8CtwCKmj4qGNJoyyVvn6xumUGBHuEXrtMp3jHLkm9N
-         BVosH6Gy0G3qXaMEwgk01aY9S1a6XTUyvz32N7jNDcKJBE1PduFCAIwScQnKnK1bvp9U
-         UEGZ3uxUYTHKuMtsWFN8PXMUyVBpJgdFH0R1ASq9rGGyzfNFQojzljxaKgHN25Jf2Dkp
-         OtLmdYKC4IOhFa4J0XUAJeQlIEAT6T7+faVjbELK+YfUJS5obmEwtDmyzZdWyC1BMTgV
-         hAuOmzrqI32V7eI/izmNEGujcsGvwhT+kHi2xk5YFt+/suyREyhu+y9HjxPVPgGnu1Rn
-         OQtA==
-X-Gm-Message-State: AHQUAua7pgAR9CLzHUuaEIUSkcv0fqUg6P9gQMPxfbODlU19f35Ckv4I
-        yjygB272uCYz5BqIz99r1rOCbw==
-X-Google-Smtp-Source: AHgI3IZhb4RpxsReI789CdK54OUFQEi4wAgwxmU+3SMP7+JsAl1PC5P0mOAVutbNl5EywarJg57JqA==
-X-Received: by 2002:a5d:9650:: with SMTP id d16mr2425037ios.289.1549987591523;
-        Tue, 12 Feb 2019 08:06:31 -0800 (PST)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id c128sm1598091itc.43.2019.02.12.08.06.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 08:06:30 -0800 (PST)
-Subject: Re: [PATCH] scsi: sd: fix entropy gathering for most rotational disks
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Cc:     Xuewei Zhang <xueweiz@google.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mikael Pettersson <mikpelinux@gmail.com>
-References: <1549987525.3173.17.camel@HansenPartnership.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e9a411a2-49e2-4897-4e02-1cf790465cbd@kernel.dk>
-Date:   Tue, 12 Feb 2019 09:06:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 11:07:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59570 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730675AbfBLQHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:07:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B01DFB02F;
+        Tue, 12 Feb 2019 16:07:11 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id AD5641E09C5; Tue, 12 Feb 2019 17:07:07 +0100 (CET)
+Date:   Tue, 12 Feb 2019 17:07:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190212160707.GA19076@quack2.suse.cz>
+References: <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+ <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+ <20190208044302.GA20493@dastard>
+ <20190208111028.GD6353@quack2.suse.cz>
+ <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+ <20190211102402.GF19029@quack2.suse.cz>
+ <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1549987525.3173.17.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 9:05 AM, James Bottomley wrote:
-> The problem is that the default for MQ is not to gather entropy,
-> whereas the default for the legacy queue was always to gather it.  The
-> original attempt to fix entropy gathering for rotational disks under MQ
-> added an else branch in sd_read_block_characteristics(). 
-> Unfortunately, the entire check isn't reached if the device has no
-> characteristics VPD page.  Since this page was only introduced in SBC-3 
-> and its optional anyway, most less expensive rotational disks don't
-> have one, meaning they all stopped gathering entropy when we made MQ
-> the default.  In a wholly unrelated change, openssl and openssh won't
-> function until the random number generator is initialised, meaning lots
-> of people have been seeing large delays before they could log into
-> systems with default MQ kernels due to this lack of entropy, because it
-> now can take tens of minutes to initialise the kernel random number
-> generator.
+On Mon 11-02-19 09:22:58, Dan Williams wrote:
+> On Mon, Feb 11, 2019 at 2:24 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 08-02-19 12:50:37, Dan Williams wrote:
+> > > On Fri, Feb 8, 2019 at 3:11 AM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Fri 08-02-19 15:43:02, Dave Chinner wrote:
+> > > > > On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
+> > > > > > One approach that may be a clean way to solve this:
+> > > > > > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
+> > > > > >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
+> > > > > >    on the longterm pinned range until the long term pin is removed.
+> > > > >
+> > > > > So, ummm, how do we do block allocation then, which is done on
+> > > > > demand during writes?
+> > > > >
+> > > > > IOWs, this requires the application to set up the file in the
+> > > > > correct state for the filesystem to lock it down so somebody else
+> > > > > can write to it.  That means the file can't be sparse, it can't be
+> > > > > preallocated (i.e. can't contain unwritten extents), it must have zeroes
+> > > > > written to it's full size before being shared because otherwise it
+> > > > > exposes stale data to the remote client (secure sites are going to
+> > > > > love that!), they can't be extended, etc.
+> > > > >
+> > > > > IOWs, once the file is prepped and leased out for RDMA, it becomes
+> > > > > an immutable for the purposes of local access.
+> > > > >
+> > > > > Which, essentially we can already do. Prep the file, map it
+> > > > > read/write, mark it immutable, then pin it via the longterm gup
+> > > > > interface which can do the necessary checks.
+> > > >
+> > > > Hum, and what will you do if the immutable file that is target for RDMA
+> > > > will be a source of reflink? That seems to be currently allowed for
+> > > > immutable files but RDMA store would be effectively corrupting the data of
+> > > > the target inode. But we could treat it similarly as swapfiles - those also
+> > > > have to deal with writes to blocks beyond filesystem control. In fact the
+> > > > similarity seems to be quite large there. What do you think?
+> > >
+> > > This sounds so familiar...
+> > >
+> > >     https://lwn.net/Articles/726481/
+> > >
+> > > I'm not opposed to trying again, but leases was what crawled out
+> > > smoking crater when this last proposal was nuked.
+> >
+> > Umm, don't think this is that similar to daxctl() discussion. We are not
+> > speaking about providing any new userspace API for this.
 > 
-> The fix is to set the non-rotational and add-randomness flags
-> unconditionally early on in the disk initialization path, so they can
-> be reset only if the device actually reports being non-rotational via
-> the VPD page.
+> I thought explicit userspace API was one of the outcomes, i.e. that we
+> can't depend on this behavior being an implicit side effect of a page
+> pin?
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+I was thinking an implicit sideeffect of gup_longterm() call. Similarly as
+swapon(2) does not require the file to be marked in any special way. But
+OTOH I agree that RDMA is a less controlled usage than swapon so it is
+questionable. I'd still require something like CAP_LINUX_IMMUTABLE at least
+for gup_longterm() calls that end up pinning the file.
 
+Inspired by Christoph's idea you reference in [2], maybe gup_longterm()
+will succeed only if there is FL_LAYOUT lease for the range being pinned
+and we don't allow the lease to be released until there's a pinned page in
+the range. And we make the file protected (i.e. treat it like swapfile) if
+there's any such lease in it. But this is just a rough sketch and needs more
+thinking.
+
+> > Also I think the
+> > situation about leases has somewhat cleared up with this discussion - ODP
+> > hardware does not need leases since it can use MMU notifiers, for non-ODP
+> > hardware it is difficult to handle leases as such hardware has only one big
+> > kill-everything call and using that would effectively mean lot of work on
+> > the userspace side to resetup everything to make things useful if workable
+> > at all.
+> >
+> > So my proposal would be:
+> >
+> > 1) ODP hardward uses gup_fast() like direct IO and uses MMU notifiers to do
+> > its teardown when fs needs it.
+> >
+> > 2) Hardware not capable of tearing down pins from MMU notifiers will have
+> > to use gup_longterm() (we may actually rename it to a more suitable name).
+> > FS may just refuse such calls (for normal page cache backed file, it will
+> > just return success but for DAX file it will do sanity checks whether the
+> > file is fully allocated etc. like we currently do for swapfiles) but if
+> > gup_longterm() returns success, it will provide the same guarantees as for
+> > swapfiles. So the only thing that we need is some call from gup_longterm()
+> > to a filesystem callback to tell it - this file is going to be used by a
+> > third party as an IO buffer, don't touch it. And we can (and should)
+> > probably refactor the handling to be shared between swapfiles and
+> > gup_longterm().
+> 
+> Yes, lets pursue this. At the risk of "arguing past 'yes'" this is a
+> solution I thought we dax folks walked away from in the original
+> MAP_DIRECT discussion [1]. Here is where leases were the response to
+> MAP_DIRECT [2]. ...and here is where we had tame discussions about
+> implications of notifying memory-registrations of lease break events
+> [3].
+
+Yeah, thanks for the references.
+
+> I honestly don't like the idea that random subsystems can pin down
+> file blocks as a side effect of gup on the result of mmap. Recall that
+> it's not just RDMA that wants this guarantee. It seems safer to have
+> the file be in an explicit block-allocation-immutable-mode so that the
+> fallocate man page can describe this error case. Otherwise how would
+> you describe the scenarios under which FALLOC_FL_PUNCH_HOLE fails?
+
+So with requiring lease for gup_longterm() to succeed (and the
+FALLOC_FL_PUNCH_HOLE failure being keyed from the existence of such lease),
+does it look more reasonable to you?
+
+> [1]: https://lwn.net/Articles/736333/
+> [2]: https://www.mail-archive.com/linux-nvdimm@lists.01.org/msg06437.html
+> [3]: https://www.mail-archive.com/linux-nvdimm@lists.01.org/msg06499.html
+
+								Honza
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
