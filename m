@@ -2,143 +2,108 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099E9C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF594C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED7421773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CE6A20863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:22:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ezdbI0Vn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ed6pvDtu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbfBLMV7 (ORCPT
+        id S1729413AbfBLMWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:21:59 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56110 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729188AbfBLMV6 (ORCPT
+        Tue, 12 Feb 2019 07:22:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50716 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfBLMWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:21:58 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1CCLqnm101394;
-        Tue, 12 Feb 2019 06:21:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549974112;
-        bh=hQcrJdKbsfwEGzYeAgFNCTXEdwgnwLpObbaZw7QqInA=;
-        h=From:To:CC:Subject:Date;
-        b=ezdbI0VnkRtx2lzbzXmyL4TD4xH1fk8rpdz8mS4XXfu0CV4LXPL1XNOTbO83t6rnd
-         zZw0Hi/Re/J056y8UpMmxXXDa8DXpAyN8EaOANUSNCJN3FHgc5ONwPazvABXkrBmYd
-         phqksB6QFBULbJgoi01pPSNLcl5X1JHk/2AIxBX8=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1CCLqbb114319
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 06:21:52 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 06:21:51 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 06:21:51 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1CCLnro015975;
-        Tue, 12 Feb 2019 06:21:50 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>
-CC:     Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am65-mcu: Add ADC nodes
-Date:   Tue, 12 Feb 2019 17:52:37 +0530
-Message-ID: <20190212122237.10976-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Feb 2019 07:22:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NsLRrNbafIHTfDLz8D4xhJHCooT7lkn4ijDZY6W/w4k=; b=Ed6pvDtueIPmZ/q3r2nNrq5Sl
+        pg/qJpW6afXw5o69VH4TsgPl06FcDS7HxW5LzLE2edJYp57aT0eL0mH4LpVn/aEJSuIuvyxJtelEv
+        QPhChQfH8sJyfelCCawqHPlL0nljFr1Fl8lYUPpkkGv9jsBDRLEfPL/Pp71oKy6BQchwILc28yZqX
+        RqtFP3ZpNzpu3qmqPA7EGal0HliYrydfmpcA6sYwLE7U2cH/COoWy50yHkqRE1urFPmscyAhVQ3R7
+        Mpo4pt6wvZQEl3b7Xc6+TiB2P3idq330+IomaXT2YQ1Pp+Pn8DI1xjdCyX0isL1tJf57ewsq8tXqI
+        giRsonnUA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtX4z-0002C1-5q; Tue, 12 Feb 2019 12:22:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6043923EB8AF7; Tue, 12 Feb 2019 13:22:21 +0100 (CET)
+Date:   Tue, 12 Feb 2019 13:22:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     ndesaulniers@google.com
+Cc:     yamada.masahiro@socionext.com, natechancellor@gmail.com,
+        sedat.dilek@gmail.com, keescook@chromium.org,
+        samitolvanen@google.com, michal.lkml@markovi.net,
+        akpm@linux-foundation.org, hannes@cmpxchg.org,
+        linux@dominikbrodowski.net, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, gor@linux.ibm.com, adrian@lisas.de,
+        rgb@redhat.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rui Ueyama <ruiu@google.com>
+Subject: Re: [PATCH v2 4/4] Makefile: lld: set -O2 linker flag when linking
+ with LLD
+Message-ID: <20190212122221.GF32494@hirez.programming.kicks-ass.net>
+References: <20190211193008.24101-1-ndesaulniers@google.com>
+ <20190211193008.24101-4-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211193008.24101-4-ndesaulniers@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TI AM654 SoC has two ADC instances in the MCU domain. Add DT nodes for
-the same.
+On Mon, Feb 11, 2019 at 11:30:06AM -0800, ndesaulniers@google.com wrote:
+> For arm64:
+> 0.34% size improvement with lld -O2 over lld for vmlinux.
+> 3.3% size improvement with lld -O2 over lld for Image.lz4-dtb.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
-Tero,
+The Changelog is utterly failing to explain what it does.
 
-Could you also pick up DT bindings here: https://patchwork.kernel.org/patch/10751429/
-All the Acks are in place.
+> Link: https://github.com/ClangBuiltLinux/linux/issues/343
 
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       | 30 +++++++++++++++++++
- .../arm64/boot/dts/ti/k3-am654-base-board.dts | 12 ++++++++
- 2 files changed, 42 insertions(+)
+That is irrelevant crap.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 593f718e8fb5..6f7d2b316ded 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -57,4 +57,34 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	tscadc0: tscadc@40200000 {
-+		compatible = "ti,am654-tscadc", "ti,am3359-tscadc";
-+		reg = <0x0 0x40200000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 0 2>;
-+		assigned-clocks = <&k3_clks 0 2>;
-+		assigned-clock-rates = <60000000>;
-+		clock-names = "adc_tsc_fck";
-+
-+		adc {
-+			#io-channel-cells = <1>;
-+			compatible = "ti,am654-adc", "ti,am3359-adc";
-+		};
-+	};
-+
-+	tscadc1: tscadc@40210000 {
-+		compatible = "ti,am654-tscadc", "ti,am3359-tscadc";
-+		reg = <0x0 0x40210000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 1 2>;
-+		assigned-clocks = <&k3_clks 1 2>;
-+		assigned-clock-rates = <60000000>;
-+		clock-names = "adc_tsc_fck";
-+
-+		adc {
-+			#io-channel-cells = <1>;
-+			compatible = "ti,am654-adc", "ti,am3359-adc";
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index e41fc3a5987b..fb6df5c8f85b 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -163,3 +163,15 @@
- 		#size-cells= <1>;
- 	};
- };
-+
-+&tscadc0 {
-+	adc {
-+		ti,adc-channels = <0 1 2 3 4 5 6 7>;
-+	};
-+};
-+
-+&tscadc1 {
-+	adc {
-+		ti,adc-channels = <0 1 2 3 4 5 6 7>;
-+	};
-+};
--- 
-2.20.1
-
+> Suggested-by: Rui Ueyama <ruiu@google.com>
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+> Changes V1->V2:
+> * add tested and reviewed by tags.
+> 
+>  Makefile | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index 00e8e01d23fc..8011555745aa 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -718,6 +718,10 @@ else
+>  KBUILD_CFLAGS += -Wno-unused-but-set-variable
+>  endif
+>  
+> +ifdef CONFIG_LD_IS_LLD
+> +KBUILD_LDFLAGS += -O2
+> +endif
+> +
+>  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+>  ifdef CONFIG_FRAME_POINTER
+>  KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+> -- 
+> 2.20.1.791.gb4d0f1c61a-goog
+> 
