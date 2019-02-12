@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB02C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7509C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F908222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B46B222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:24:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FVkSqv5G"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="etql8x53"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732123AbfBLWYf (ORCPT
+        id S1732561AbfBLWYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:24:35 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43129 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBLWYe (ORCPT
+        Tue, 12 Feb 2019 17:24:38 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37923 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732064AbfBLWYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:24:34 -0500
+        Tue, 12 Feb 2019 17:24:35 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190212222433euoutp021465e49fe7a150fd5bf394f3205ef5a1~CviGhoBKM2689326893euoutp02b
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:24:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190212222433euoutp021465e49fe7a150fd5bf394f3205ef5a1~CviGhoBKM2689326893euoutp02b
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190212222434euoutp01ecaa667d44691c0333d740afdfb48ca8~CviHWCYBo0553905539euoutp01U
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:24:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190212222434euoutp01ecaa667d44691c0333d740afdfb48ca8~CviHWCYBo0553905539euoutp01U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550010273;
-        bh=lHA2/rqEByAHivG24SIu3k7EO9RgSTrK+vi4XMITJ34=;
+        s=mail20170921; t=1550010274;
+        bh=KqkqYXxukBnSIJA+sFmQXEE/iDEhqD/Nl1ve7BwR/As=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FVkSqv5GPIdpOB5lwCpsGFjbgw/5gLEM4NMOJMOQ3CgP1bR2IyNZXn2woB86mOfPY
-         QVvfkitvVEv6XF+SKrZkNDilWBy7YBBl0xri7sMACxh+kHHT1vbncjgGCZNQ0vnbHq
-         rQSF3VTHmjF+qE+vbSK8jWsCiQl9KVlOFA6jb8qo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=etql8x53pr1sJYe3eDSuDr5bobd9B3mb87niiH/Q8oVXXROFYIDRU9RAS25buhrbW
+         wYRTe1RMSjGjEA+ojVfV4IaMmXFfL/f1VQFA8zXuaVCghiTTODQvpIYAyPPp6UErHj
+         7Cz7coIWGceampNl2eWz11isndApEOuezedDi7iU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190212222431eucas1p23802362779a048333c66d59af25d4f06~CviE_2JE91608916089eucas1p2v;
-        Tue, 12 Feb 2019 22:24:31 +0000 (GMT)
+        20190212222433eucas1p28631700a0adcfd382213974273cf7e4e~CviGlnEa72786327863eucas1p2T;
+        Tue, 12 Feb 2019 22:24:33 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id CF.35.04294.F97436C5; Tue, 12
-        Feb 2019 22:24:31 +0000 (GMT)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 25.03.04441.1A7436C5; Tue, 12
+        Feb 2019 22:24:33 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190212222430eucas1p1ad7992e29d224790c1e20ef7442e62fe~CviDaqkvY1210112101eucas1p1z;
-        Tue, 12 Feb 2019 22:24:30 +0000 (GMT)
+        20190212222431eucas1p1697607e6536a90283cf7dad37fa74dbb~CviFEYTL92824728247eucas1p1T;
+        Tue, 12 Feb 2019 22:24:31 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190212222429eusmtrp1815221f601600105e798420aa3d6ff87~CviDLycD_2311323113eusmtrp1f;
-        Tue, 12 Feb 2019 22:24:29 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-fb-5c63479fac1b
+        20190212222431eusmtrp13c30a6b4cee6eb27d53bc41626cb80fa~CviE1lDyx2311323113eusmtrp1g;
+        Tue, 12 Feb 2019 22:24:31 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-df-5c6347a1be68
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E8.93.04128.D97436C5; Tue, 12
-        Feb 2019 22:24:29 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E9.93.04128.F97436C5; Tue, 12
+        Feb 2019 22:24:31 +0000 (GMT)
 Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190212222428eusmtip1091316f65cf88e58985c83afdf41ecf1~CviCScvdN0525605256eusmtip14;
-        Tue, 12 Feb 2019 22:24:28 +0000 (GMT)
+        20190212222430eusmtip16cce7fd7db472b1b5806427db2260e87~CviEKjnVt0525605256eusmtip15;
+        Tue, 12 Feb 2019 22:24:30 +0000 (GMT)
 From:   Lukasz Luba <l.luba@partner.samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
@@ -65,83 +65,143 @@ Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
         joel@joelfernandes.org, chris.diamand@arm.com, mka@chromium.org,
         rostedt@goodmis.org, mingo@redhat.com,
         Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v3 1/7] drivers: devfreq: change deferred work into delayed
-Date:   Tue, 12 Feb 2019 23:23:52 +0100
-Message-Id: <1550010238-24002-2-git-send-email-l.luba@partner.samsung.com>
+Subject: [PATCH v3 2/7] drivers: devfreq: change devfreq workqueue mechanism
+Date:   Tue, 12 Feb 2019 23:23:53 +0100
+Message-Id: <1550010238-24002-3-git-send-email-l.luba@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTURzHO3d3u3ej6W1KHlSUBoo9nCYFl5IoCLsW9KB/MoWc86Kim3av
-        Wmp/TAtnusJS1MpnSa5lLUVMLIfvZ4omI+eSzHwhvtoWIorkvFr/fc739/nyOxwOzpMY+O54
-        nCqZZlTyBKlAhDZ2rw/5V1xQRAQaSjzIuhIDnyyyjqLkN/scn3yt9iEHsxYxclztSY42lwpI
-        26NOQL7rnMDIr62VCGn78AuQlkydgDTmTCJkx6KGT64UsGedqdryWkC9UI+g1APjOEZV1qdQ
-        VdY/fKpt+TNCrRhNAupxgx5Qtnqvq8KbouBoOiEulWYCzkSKYgtNM4KkVtHdzPuoGtjwXCDE
-        IXECDuWPg1wgwiWEDsCf2g0+d7ADONaRL3BYEsIGoGEmda+RV7CKcFINgLNWI/jXqNZNo7kA
-        xwWEDDbpbzsKrsQpOK9ZwBwOj+hGoLWlkOcYuBCXoPb3R9TBKOEDy0otO10xcRF26VTcMi9o
-        Hnq4owu39S9Fb3ZuB4l2DGom2wAnnYer63MCjl3gQk8DxrEnHCjQohyzcDBHv+vcg5q+pl3n
-        NOzoGeE79vKIw9DQHMDF52Dmph1xxJBwgmNLBxwxbxufNhbzuFgMc7IlnO0HG7TDCMcHYU1t
-        EcYpFNSbd1+qHMAJUx2WD7yf/99VCYAeuNEprDKGZoNU9B0ZK1eyKaoYmSJRWQ+2v9HAVo+9
-        CTRvRrUDAgfS/WJdV1SEhC9PZdOU7QDiPKmrODRYESERR8vT0mkm8RaTkkCz7cADR6Vu4ox9
-        k+ESIkaeTMfTdBLN7E0RXOiuBtj39PzEloXGoxrz8lZIL3ats3/FUmIP2wjcYsa1ef6068uw
-        Wm93X+eTPdInoWmW+aobXZEhY8NZ5ut4Z0CoTFFhctb2ZowJj/nai6d+HDLgU2uVb8PTgxRr
-        V6KmVl59Ki5dKpgp63vvc9m2Nu3U/8xYPQvlfgkoYvRnsuMZKcrGyo8f4TGs/C/kS6PxQgMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsVy+t/xu7pz3ZNjDNouy1lsnLGe1WLap8ss
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djPc7oL3ZNjDLpm81psnLGe1WLap8ss
         Fte/PGe1WNaganG26Q27xa0GGYvLu+awWXzuPcJosfbIXXaLSwcWMFl83vCY0eJ24wo2i30d
         D5gsDr9pZ7V4P7nYgd9jzbw1jB6zGy6yeLTsu8XusWBTqcfCT19ZPQ6+28Pk8X7fVTaPvi2r
-        GD0+b5IL4IzSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3S
-        t0vQy5hy9SlbwQGuisZmlgbGzxxdjJwcEgImEt2TPzB1MXJxCAksZZSYu/ciE0RCTGLSvu3s
-        ELawxJ9rXWwQRZ8YJTZd/AKU4OBgE9CT2LGqEKRGRMBG4v3cMywgNcwC15gkbnfcZwVJCAt4
-        S/R83M4CYrMIqErMnXObBaSXV8BL4uiKPIj5chI3z3Uyg9icQOVnpq1kBSkRAippOmgwgZFv
-        ASPDKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMD42Hbs55YdjF3vgg8xCnAwKvHwrjiaFCPE
-        mlhWXJl7iFGCg1lJhNfTJjlGiDclsbIqtSg/vqg0J7X4EKMp0EkTmaVEk/OBsZtXEm9oamhu
-        YWlobmxubGahJM573qAySkggPbEkNTs1tSC1CKaPiYNTqoHxuPq1P367pXh/l2XZr9Vpnqou
-        YHenXyb2rP2jjYKPQgK0AnJ3rnfgqlz8ekl0uBHXrUtSLIJb1y2+4HspXJjPg2fDytb7X1W3
-        yMk/YZ4pEX3k6Wcp+Zdb68pW/fuxPmjR8T9rLOzZj8kYMX1LWfCFba1dxx3vjTNS1iytyW1a
-        toXnYRyn+mkHJZbijERDLeai4kQAR73YgaUCAAA=
-X-CMS-MailID: 20190212222430eucas1p1ad7992e29d224790c1e20ef7442e62fe
+        GD0+b5IL4IzisklJzcksSy3St0vgyvhz8w17wVfJikmTlrA1MD4X7WLk5JAQMJE4dOQ0Uxcj
+        F4eQwApGiTs9vxkhnC+MEoeOPWcDqRIS+Mwocf1VLkzHpa0gcZCi5YwSp7pvscN1LO0/ztLF
+        yMHBJqAnsWNVIUiDiICVxIv2V2A1zALHmCQ+7Z3CDJIQFvCR+NqzGMxmEVCVWHz1MDuIzSvg
+        JXFpw2lWiG1yEjfPdYLVcAp4S5yZtpIVZJCEwCF2iZdPPzBBFLlIXJ64mgXCFpZ4dXwLO4Qt
+        I3F6cg9UvFjibMcqNgi7RqL95A6oGmuJw8cvsoIczSygKbF+lz5E2FFix40jTCBhCQE+iRtv
+        BUHCzEDmpG3TmSHCvBIdbUIQ1RoSW3ouQB0jJrF8zTSo4R4S65+fZ4EEzzxGiVkn37FMYJSf
+        hbBsASPjKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMCUdPrf8U87GL9eSjrEKMDBqMTD
+        u+JoUowQa2JZcWXuIUYJDmYlEV5Pm+QYId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTS
+        E0tSs1NTC1KLYLJMHJxSDYzsxbt5LPfFTy0rXLSOUV6h++V98wpt8a/yamFOSf9E/ut7nVNm
+        8FVxkZlzeO563Sgl2+PNhRdYMjYFc5p7TOzukQ5zkeF3Tl60JvmKyJff1w928K5v8VfvPpQn
+        sVbq5t4Cq11qrEscllyd6zhx7SrrY0tkgx8dE/QvDmlXc9ec+ekGs9tjdSWW4oxEQy3mouJE
+        AD+3q3dFAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsVy+t/xu7rz3ZNjDO5dlLfYOGM9q8W0T5dZ
+        LK5/ec5qsaxB1eJs0xt2i1sNMhaXd81hs/jce4TRYu2Ru+wWlw4sYLL4vOExo8XtxhVsFvs6
+        HjBZHH7TzmrxfnKxA7/HmnlrGD1mN1xk8WjZd4vdY8GmUo+Fn76yehx8t4fJ4/2+q2wefVtW
+        MXp83iQXwBmlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
+        b5egl/Hn5hv2gq+SFZMmLWFrYHwu2sXIySEhYCJxaetzti5GLg4hgaWMEq8ermGHSIhJTNq3
+        HcoWlvhzrQuq6BOjxLZ/K1m6GDk42AT0JHasKgSpERGwkXg/9wwLSA2zwDUmidsd91lBEsIC
+        PhJfexYzg9gsAqoSi68eBhvKK+AlcWnDaVaIBXISN891gtVwCnhLnJm2khVkvhBQTdNBgwmM
+        fAsYGVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIExsi2Yz+37GDsehd8iFGAg1GJh3fF0aQY
+        IdbEsuLK3EOMEhzMSiK8njbJMUK8KYmVValF+fFFpTmpxYcYTYFumsgsJZqcD4zfvJJ4Q1ND
+        cwtLQ3Njc2MzCyVx3vMGlVFCAumJJanZqakFqUUwfUwcnFINjKbzt1TKP+ec+udvpPN5/U02
+        8i0MtzMT13zczqpesOV7Q1SmmlF76eeK7y+U1eIF5UJuJbEImmyX5n0eZ6zZy3jMg/NlfLiY
+        whzJDR1Z7xM2M0081965WDhPZPrvv/N5kz1kJu284F8VljJvg+Wdg3dsJuryrgraWDDjvoPF
+        /sntq9ZOvjVbSomlOCPRUIu5qDgRAJhc+IinAgAA
+X-CMS-MailID: 20190212222431eucas1p1697607e6536a90283cf7dad37fa74dbb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190212222430eucas1p1ad7992e29d224790c1e20ef7442e62fe
+X-RootMTR: 20190212222431eucas1p1697607e6536a90283cf7dad37fa74dbb
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20190212222430eucas1p1ad7992e29d224790c1e20ef7442e62fe
+X-CMS-RootMailID: 20190212222431eucas1p1697607e6536a90283cf7dad37fa74dbb
 References: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190212222430eucas1p1ad7992e29d224790c1e20ef7442e62fe@eucas1p1.samsung.com>
+        <CGME20190212222431eucas1p1697607e6536a90283cf7dad37fa74dbb@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes deferred work to delayed work, which is now not missed
-when timer is put on CPU that entered idle state.
-The devfreq framework governor was not called, thus changing the device's
-frequency did not happen.
-Benchmarks for stressing Dynamic Memory Controller show x2 (in edge cases
-even x5) performance boost with this patch when 'simpleondemand_governor'
-is responsible for monitoring the device load and frequency changes.
-
-With this patch, the delayed work is done no mater CPUs' idle.
-All of the drivers in devfreq which rely on periodic, guaranteed wakeup
-intervals should benefit from it.
+There is no need for creating another workqueue in the system,
+the existing one should meet the requirements.
+This patch removes devfreq's custom workqueue and uses system one.
+It switches from queue_delayed_work() to schedule_delayed_work().
+It also does not wake up the system when it enters suspend (this
+functionality stays the same).
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/devfreq/devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/devfreq.c | 25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 0ae3de7..0c9bff8 100644
+index 0c9bff8..c200b3c 100644
 --- a/drivers/devfreq/devfreq.c
 +++ b/drivers/devfreq/devfreq.c
-@@ -407,7 +407,7 @@ static void devfreq_monitor(struct work_struct *work)
-  */
- void devfreq_monitor_start(struct devfreq *devfreq)
+@@ -31,13 +31,6 @@
+ 
+ static struct class *devfreq_class;
+ 
+-/*
+- * devfreq core provides delayed work based load monitoring helper
+- * functions. Governors can use these or can implement their own
+- * monitoring mechanism.
+- */
+-static struct workqueue_struct *devfreq_wq;
+-
+ /* The list of all device-devfreq governors */
+ static LIST_HEAD(devfreq_governor_list);
+ /* The list of all device-devfreq */
+@@ -391,8 +384,8 @@ static void devfreq_monitor(struct work_struct *work)
+ 	if (err)
+ 		dev_err(&devfreq->dev, "dvfs failed with (%d) error\n", err);
+ 
+-	queue_delayed_work(devfreq_wq, &devfreq->work,
+-				msecs_to_jiffies(devfreq->profile->polling_ms));
++	schedule_delayed_work(&devfreq->work,
++			      msecs_to_jiffies(devfreq->profile->polling_ms));
+ 	mutex_unlock(&devfreq->lock);
+ }
+ 
+@@ -409,7 +402,7 @@ void devfreq_monitor_start(struct devfreq *devfreq)
  {
--	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
-+	INIT_DELAYED_WORK(&devfreq->work, devfreq_monitor);
+ 	INIT_DELAYED_WORK(&devfreq->work, devfreq_monitor);
  	if (devfreq->profile->polling_ms)
- 		queue_delayed_work(devfreq_wq, &devfreq->work,
+-		queue_delayed_work(devfreq_wq, &devfreq->work,
++		schedule_delayed_work(&devfreq->work,
  			msecs_to_jiffies(devfreq->profile->polling_ms));
+ }
+ EXPORT_SYMBOL(devfreq_monitor_start);
+@@ -473,7 +466,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+ 
+ 	if (!delayed_work_pending(&devfreq->work) &&
+ 			devfreq->profile->polling_ms)
+-		queue_delayed_work(devfreq_wq, &devfreq->work,
++		schedule_delayed_work(&devfreq->work,
+ 			msecs_to_jiffies(devfreq->profile->polling_ms));
+ 
+ 	devfreq->last_stat_updated = jiffies;
+@@ -516,7 +509,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+ 
+ 	/* if current delay is zero, start polling with new delay */
+ 	if (!cur_delay) {
+-		queue_delayed_work(devfreq_wq, &devfreq->work,
++		schedule_delayed_work(&devfreq->work,
+ 			msecs_to_jiffies(devfreq->profile->polling_ms));
+ 		goto out;
+ 	}
+@@ -527,7 +520,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+ 		cancel_delayed_work_sync(&devfreq->work);
+ 		mutex_lock(&devfreq->lock);
+ 		if (!devfreq->stop_polling)
+-			queue_delayed_work(devfreq_wq, &devfreq->work,
++			schedule_delayed_work(&devfreq->work,
+ 			      msecs_to_jiffies(devfreq->profile->polling_ms));
+ 	}
+ out:
+@@ -1430,12 +1423,6 @@ static int __init devfreq_init(void)
+ 		return PTR_ERR(devfreq_class);
+ 	}
+ 
+-	devfreq_wq = create_freezable_workqueue("devfreq_wq");
+-	if (!devfreq_wq) {
+-		class_destroy(devfreq_class);
+-		pr_err("%s: couldn't create workqueue\n", __FILE__);
+-		return -ENOMEM;
+-	}
+ 	devfreq_class->dev_groups = devfreq_groups;
+ 
+ 	return 0;
 -- 
 2.7.4
 
