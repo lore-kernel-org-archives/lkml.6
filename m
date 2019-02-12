@@ -2,129 +2,234 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D9EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79782C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA6020823
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4315520823
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbfBLMrT convert rfc822-to-8bit (ORCPT
+        id S1729033AbfBLMrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:47:19 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:58913 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBLMrS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:47:18 -0500
-Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B38EE24000D;
-        Tue, 12 Feb 2019 12:47:13 +0000 (UTC)
-Date:   Tue, 12 Feb 2019 13:47:13 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 2/2] media: cedrus: Add H264 decoding support
-Message-ID: <20190212124713.cqms5jofw433nx6m@flea>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
- <4c00e1ab1e70adb1d94db59c37393250ca3791c5.1549895062.git-series.maxime.ripard@bootlin.com>
- <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com>
+        Tue, 12 Feb 2019 07:47:35 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57180 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725916AbfBLMrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:47:33 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3547DBF3D004DC8D034E;
+        Tue, 12 Feb 2019 20:47:28 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Tue, 12 Feb 2019
+ 20:47:19 +0800
+Date:   Tue, 12 Feb 2019 12:47:07 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Oscar Salvador <osalvador@suse.de>
+CC:     <linux-mm@kvack.org>, <mhocko@suse.com>,
+        <dan.j.williams@intel.com>, <Pavel.Tatashin@microsoft.com>,
+        <david@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <dave.hansen@intel.com>, <shameerali.kolothum.thodi@huawei.com>,
+        <linuxarm@huawei.com>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
+ hotadded memory
+Message-ID: <20190212124707.000028ea@huawei.com>
+In-Reply-To: <20190122103708.11043-1-osalvador@suse.de>
+References: <20190122103708.11043-1-osalvador@suse.de>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 04:48:17PM -0300, Ezequiel Garcia wrote:
-> On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
-> > Introduce some basic H264 decoding support in cedrus. So far, only the
-> > baseline profile videos have been tested, and some more advanced features
-> > used in higher profiles are not even implemented.
-> > 
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> [..]
-> 
-> 
-> > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
-> > +				   struct cedrus_run *run,
-> > +				   const u8 *ref_list, u8 num_ref,
-> > +				   enum cedrus_h264_sram_off sram)
-> > +{
-> > +	const struct v4l2_ctrl_h264_decode_param *decode = run->h264.decode_param;
-> > +	struct vb2_queue *cap_q = &ctx->fh.m2m_ctx->cap_q_ctx.q;
-> > +	const struct vb2_buffer *dst_buf = &run->dst->vb2_buf;
-> > +	struct cedrus_dev *dev = ctx->dev;
-> > +	u8 sram_array[CEDRUS_MAX_REF_IDX];
-> > +	unsigned int size, i;
-> > +
-> > +	memset(sram_array, 0, sizeof(sram_array));
-> > +
-> > +	for (i = 0; i < num_ref; i++) {
-> > +		const struct v4l2_h264_dpb_entry *dpb;
-> > +		const struct cedrus_buffer *cedrus_buf;
-> > +		const struct vb2_v4l2_buffer *ref_buf;
-> > +		unsigned int position;
-> > +		int buf_idx;
-> > +		u8 dpb_idx;
-> > +
-> > +		dpb_idx = ref_list[i];
-> > +		dpb = &decode->dpb[dpb_idx];
-> > +
-> > +		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
-> > +			continue;
-> > +
-> > +		if (dst_buf->timestamp == dpb->timestamp)
-> > +			buf_idx = dst_buf->index;
-> > +		else
-> > +			buf_idx = vb2_find_timestamp(cap_q, dpb->timestamp, 0);
-> > +
-> > +		if (buf_idx < 0)
-> > +			continue;
-> > +
-> > +		ref_buf = to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
-> > +		cedrus_buf = vb2_v4l2_to_cedrus_buffer(ref_buf);
-> > +		position = cedrus_buf->codec.h264.position;
-> > +
-> > +		sram_array[i] |= position << 1;
-> > +		if (ref_buf->field == V4L2_FIELD_BOTTOM)
-> > +			sram_array[i] |= BIT(0);
-> > +	}
-> > +
-> > +	size = min((unsigned int)ALIGN(num_ref, 4), sizeof(sram_array));
-> 
-> Perhaps s/unsigned int/size_t, so the arguments to min() have the same type?
-> 
-> Otherwise, I got this warning:
-> 
-> /home/zeta/repos/linux/media_tree/drivers/staging/media/sunxi/cedrus/cedrus_h264.c: In function ‘_cedrus_write_ref_list’:
-> /home/zeta/repos/linux/media_tree/include/linux/kernel.h:846:29: warning: comparison of distinct pointer types lacks a cast
->    (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+On Tue, 22 Jan 2019 11:37:04 +0100
+Oscar Salvador <osalvador@suse.de> wrote:
 
-Strange, I didn't notice any warning. I'll make sure to fix it.
+> Hi,
+> 
+> this is the v2 of the first RFC I sent back then in October [1].
+> In this new version I tried to reduce the complexity as much as possible,
+> plus some clean ups.
+> 
+> [Testing]
+> 
+> I have tested it on "x86_64" (small/big memblocks) and on "powerpc".
+> On both architectures hot-add/hot-remove online/offline operations
+> worked as expected using vmemmap pages, I have not seen any issues so far.
+> I wanted to try it out on Hyper-V/Xen, but I did not manage to.
+> I plan to do so along this week (if time allows).
+> I would also like to test it on arm64, but I am not sure I can grab
+> an arm64 box anytime soon.
 
-Thanks!
-Maxime
+Hi Oscar,
 
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I ran tests on one of our arm64 machines. Particular machine doesn't actually have
+the mechanics for hotplug, so was all 'faked', but software wise it's all the
+same.
+
+Upshot, seems to work as expected on arm64 as well.
+Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Remove currently relies on some out of tree patches (and dirty hacks) due
+to the usual issue with how arm64 does pfn_valid. It's not even vaguely
+ready for upstream. I'll aim to post an informational set for anyone else
+testing in this area (it's more or less just a rebase of the patches from
+a few years ago).
+
++CC Shameer who has been testing the virtualization side for more details on
+that, and Robin who is driving forward memory hotplug in general on the arm64
+side.
+
+Thanks,
+
+Jonathan
+
+> 
+> [Coverletter]:
+> 
+> This is another step to make the memory hotplug more usable. The primary
+> goal of this patchset is to reduce memory overhead of the hot added
+> memory (at least for SPARSE_VMEMMAP memory model). The current way we use
+> to populate memmap (struct page array) has two main drawbacks:
+> 
+> a) it consumes an additional memory until the hotadded memory itself is
+>    onlined and
+> b) memmap might end up on a different numa node which is especially true
+>    for movable_node configuration.
+> 
+> a) is problem especially for memory hotplug based memory "ballooning"
+>    solutions when the delay between physical memory hotplug and the
+>    onlining can lead to OOM and that led to introduction of hacks like auto
+>    onlining (see 31bc3858ea3e ("memory-hotplug: add automatic onlining
+>    policy for the newly added memory")).
+> 
+> b) can have performance drawbacks.
+> 
+> I have also seen hot-add operations failing on powerpc due to the fact
+> that we try to use order-8 pages when populating the memmap array.
+> Given 64KB base pagesize, that is 16MB.
+> If we run out of those, we just fail the operation and we cannot add
+> more memory.
+> We could fallback to base pages as x86_64 does, but we can do better.
+> 
+> One way to mitigate all these issues is to simply allocate memmap array
+> (which is the largest memory footprint of the physical memory hotplug)
+> from the hotadded memory itself. VMEMMAP memory model allows us to map
+> any pfn range so the memory doesn't need to be online to be usable
+> for the array. See patch 3 for more details. In short I am reusing an
+> existing vmem_altmap which wants to achieve the same thing for nvdim
+> device memory.
+> 
+> There is also one potential drawback, though. If somebody uses memory
+> hotplug for 1G (gigantic) hugetlb pages then this scheme will not work
+> for them obviously because each memory block will contain reserved
+> area. Large x86 machines will use 2G memblocks so at least one 1G page
+> will be available but this is still not 2G...
+> 
+> I am not really sure somebody does that and how reliable that can work
+> actually. Nevertheless, I _believe_ that onlining more memory into
+> virtual machines is much more common usecase. Anyway if there ever is a
+> strong demand for such a usecase we have basically 3 options a) enlarge
+> memory blocks even more b) enhance altmap allocation strategy and reuse
+> low memory sections to host memmaps of other sections on the same NUMA
+> node c) have the memmap allocation strategy configurable to fallback to
+> the current allocation.
+>  
+> [Overall design]:
+> 
+> Let us say we hot-add 2GB of memory on a x86_64 (memblock size = 128M).
+> That is:
+> 
+>  - 16 sections
+>  - 524288 pages
+>  - 8192 vmemmap pages (out of those 524288. We spend 512 pages for each section)
+> 
+>  The range of pages is: 0xffffea0004000000 - 0xffffea0006000000
+>  The vmemmap range is:  0xffffea0004000000 - 0xffffea0004080000
+> 
+>  0xffffea0004000000 is the head vmemmap page (first page), while all the others
+>  are "tails".
+> 
+>  We keep the following information in it:
+> 
+>  - Head page:
+>    - head->_refcount: number of sections
+>    - head->private :  number of vmemmap pages
+>  - Tail page:
+>    - tail->freelist : pointer to the head
+> 
+> This is done because it eases the work in cases where we have to compute the
+> number of vmemmap pages to know how much do we have to skip etc, and to keep
+> the right accounting to present_pages.
+> 
+> When we want to hot-remove the range, we need to be careful because the first
+> pages of that range, are used for the memmap maping, so if we remove those
+> first, we would blow up while accessing the others later on.
+> For that reason we keep the number of sections in head->_refcount, to know how
+> much do we have to defer the free up.
+> 
+> Since in a hot-remove operation, sections are being removed sequentially, the
+> approach taken here is that every time we hit free_section_memmap(), we decrease
+> the refcount of the head.
+> When it reaches 0, we know that we hit the last section, so we call
+> vmemmap_free() for the whole memory-range in backwards, so we make sure that
+> the pages used for the mapping will be latest to be freed up.
+> 
+> The accounting is as follows:
+> 
+>  Vmemmap pages are charged to spanned/present_paged, but not to manages_pages.
+> 
+> I yet have to check a couple of things like creating an accounting item
+> like VMEMMAP_PAGES to show in /proc/meminfo to ease to spot the memory that
+> went in there, testing Hyper-V/Xen to see how they react to the fact that
+> we are using the beginning of the memory-range for our own purposes, and to
+> check the thing about gigantic pages + hotplug.
+> I also have to check that there is no compilation/runtime errors when
+> CONFIG_SPARSEMEM but !CONFIG_SPARSEMEM_VMEMMAP.
+> But before that, I would like to get people's feedback about the overall
+> design, and ideas/suggestions.
+> 
+> 
+> [1] https://patchwork.kernel.org/cover/10685835/
+> 
+> Michal Hocko (3):
+>   mm, memory_hotplug: cleanup memory offline path
+>   mm, memory_hotplug: provide a more generic restrictions for memory
+>     hotplug
+>   mm, sparse: rename kmalloc_section_memmap, __kfree_section_memmap
+> 
+> Oscar Salvador (1):
+>   mm, memory_hotplug: allocate memmap from the added memory range for
+>     sparse-vmemmap
+> 
+>  arch/arm64/mm/mmu.c            |  10 ++-
+>  arch/ia64/mm/init.c            |   5 +-
+>  arch/powerpc/mm/init_64.c      |   7 ++
+>  arch/powerpc/mm/mem.c          |   6 +-
+>  arch/s390/mm/init.c            |  12 ++-
+>  arch/sh/mm/init.c              |   6 +-
+>  arch/x86/mm/init_32.c          |   6 +-
+>  arch/x86/mm/init_64.c          |  20 +++--
+>  drivers/hv/hv_balloon.c        |   1 +
+>  drivers/xen/balloon.c          |   1 +
+>  include/linux/memory_hotplug.h |  42 ++++++++--
+>  include/linux/memremap.h       |   2 +-
+>  include/linux/page-flags.h     |  23 +++++
+>  kernel/memremap.c              |   9 +-
+>  mm/compaction.c                |   8 ++
+>  mm/memory_hotplug.c            | 186 +++++++++++++++++++++++++++++------------
+>  mm/page_alloc.c                |  47 ++++++++++-
+>  mm/page_isolation.c            |  13 +++
+>  mm/sparse.c                    | 124 +++++++++++++++++++++++++--
+>  mm/util.c                      |   2 +
+>  20 files changed, 431 insertions(+), 99 deletions(-)
+> 
+
+
