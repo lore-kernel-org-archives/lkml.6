@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB34C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724B0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0832B2184E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:11:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 315D421773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549987905;
-	bh=8LZm9dNn3cys+j98zjuWUS3/y2IImFDWESUVHisUDgk=;
+	s=default; t=1549987933;
+	bh=M9BzOKcjSHrnF/hxoyZFdVlh1Oa72HK6z/2/YIL0ijY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qQ6OjMNqGHbxvKTrluYBdtCrBTU2+OY0v+JAi6iLNi4XUR4lhauyBrFAcMrJsyArY
-	 8t0yEL2GVP510ZKP3lMr8gnBZX28gsaJ4nCEqhk2LABpK7cviGOoW1K1c2tg+jwBBz
-	 KDzGAurvESJcijCGFFoi7D5hUV40ifdO3A+Us6Aw=
+	b=pwaLgPhnEoaDekwQWSG1nTzgmdgZUJyvzJ7QzS0Gf0JBPm0w8xq0VdXmL1T9w2a8w
+	 MoKRQnPu5K++lv/HKPidydwu0yue3ritFpImo+K6zXaFlqKelEEgbsL3td18nRnNkO
+	 SyffnfEB7ulYPLj7HKhZUuI4DFQsOu+gwxRUuisE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbfBLQLn (ORCPT
+        id S1730892AbfBLQML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:11:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41190 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 11:12:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730818AbfBLQLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:11:42 -0500
+        id S1728585AbfBLQML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:12:11 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11931217D9;
-        Tue, 12 Feb 2019 16:11:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 508B8217D9;
+        Tue, 12 Feb 2019 16:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549987902;
-        bh=8LZm9dNn3cys+j98zjuWUS3/y2IImFDWESUVHisUDgk=;
+        s=default; t=1549987930;
+        bh=M9BzOKcjSHrnF/hxoyZFdVlh1Oa72HK6z/2/YIL0ijY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ww9aOHU2HYU9VptgOQUDW6bhjdjzNg89Z94rSzPC6jEW60rs6tYf7N85gJMomQ4d5
-         T8qWKMBUGqTV6CnvygY76OmudUW/q1J7NCj30ekU/9ssg6Ka4WkjSDb9eK99ylz6SR
-         2tp1QPiPU5qbQ2+0WqrzIjZ+huSpFqTAj5cqM3nw=
+        b=0QS+CdjObBH06OCVvng/Ai/JPUVrXlQB/VHsr3Lqjl/th2rrx3NN76fr+tibisFJH
+         zRc7sx5ne7Bav1IBhkKco93CwcwyS47XT+mcRNJyCuPkGV47yiT/vs5tfABFgxVnfN
+         a0S1d7EuXumL1B0/z5BgPJNFLRXVG1rssgvGeevk=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -45,9 +45,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH -tip v3 01/10] x86/kprobes: Prohibit probing on optprobe template code
-Date:   Wed, 13 Feb 2019 01:11:19 +0900
-Message-Id: <154998787911.31052.15274376330136234452.stgit@devbox>
+Subject: [PATCH -tip v3 02/10] x86/kprobes: Move trampoline code into RODATA
+Date:   Wed, 13 Feb 2019 01:11:47 +0900
+Message-Id: <154998790744.31052.3016106262944915510.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154998785011.31052.1475728497912659748.stgit@devbox>
 References: <154998785011.31052.1475728497912659748.stgit@devbox>
@@ -60,30 +60,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prohibit probing on optprobe template code, since it is not
-a code but a template instruction sequence. If we modify
-this template, copied template must be broken.
+Move optprobe trampoline code into RODATA since it is
+not executed, but copied and modified to be used on
+a trampoline buffer.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: 9326638cbee2 ("kprobes, x86: Use NOKPROBE_SYMBOL() instead of __kprobes annotation")
-Cc: stable@vger.kernel.org
 ---
- arch/x86/kernel/kprobes/opt.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kernel/kprobes/opt.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 6adf6e6c2933..544bd41a514c 100644
+index 544bd41a514c..f14262952015 100644
 --- a/arch/x86/kernel/kprobes/opt.c
 +++ b/arch/x86/kernel/kprobes/opt.c
-@@ -141,6 +141,11 @@ asm (
+@@ -97,6 +97,7 @@ static void synthesize_set_arg1(kprobe_opcode_t *addr, unsigned long val)
+ }
+ 
+ asm (
++			".pushsection .rodata\n"
+ 			"optprobe_template_func:\n"
+ 			".global optprobe_template_entry\n"
+ 			"optprobe_template_entry:\n"
+@@ -136,16 +137,10 @@ asm (
+ #endif
+ 			".global optprobe_template_end\n"
+ 			"optprobe_template_end:\n"
+-			".type optprobe_template_func, @function\n"
+-			".size optprobe_template_func, .-optprobe_template_func\n");
++			".popsection\n");
  
  void optprobe_template_func(void);
  STACK_FRAME_NON_STANDARD(optprobe_template_func);
-+NOKPROBE_SYMBOL(optprobe_template_func);
-+NOKPROBE_SYMBOL(optprobe_template_entry);
-+NOKPROBE_SYMBOL(optprobe_template_val);
-+NOKPROBE_SYMBOL(optprobe_template_call);
-+NOKPROBE_SYMBOL(optprobe_template_end);
+-NOKPROBE_SYMBOL(optprobe_template_func);
+-NOKPROBE_SYMBOL(optprobe_template_entry);
+-NOKPROBE_SYMBOL(optprobe_template_val);
+-NOKPROBE_SYMBOL(optprobe_template_call);
+-NOKPROBE_SYMBOL(optprobe_template_end);
  
  #define TMPL_MOVE_IDX \
  	((long)optprobe_template_val - (long)optprobe_template_entry)
