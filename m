@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748E6C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE34C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C0C222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2B8222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732638AbfBLVhw (ORCPT
+        id S1732652AbfBLVh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:37:52 -0500
-Received: from mga01.intel.com ([192.55.52.88]:48544 "EHLO mga01.intel.com"
+        Tue, 12 Feb 2019 16:37:57 -0500
+Received: from mga18.intel.com ([134.134.136.126]:36601 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731976AbfBLVhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:37:51 -0500
+        id S1731976AbfBLVh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:37:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 13:37:49 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 13:37:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="123993938"
+   d="scan'208";a="319837447"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 13:37:49 -0800
-Subject: [PATCH 6/7] libnvdimm/pfn: Introduce 'struct pfn_map_info'
+  by fmsmga005.fm.intel.com with ESMTP; 12 Feb 2019 13:37:54 -0800
+Subject: [PATCH 7/7] libnvdimm/pfn: Fix 'start_pad' implementation
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 12 Feb 2019 13:25:11 -0800
-Message-ID: <155000671184.348031.10730652743216753279.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vishal.l.verma@intel.com, linux-fsdevel@vger.kernel.org
+Date:   Tue, 12 Feb 2019 13:25:17 -0800
+Message-ID: <155000671719.348031.2347363160141119237.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -46,495 +46,407 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'start_pad' accounting bug resulted from the pmem driver inferring
-properties of the established pagemap to calculate pmem->phys_addr and
-pmem->size, and that nd_pfn->data_offset was identical to
-pmem->data_offset. The assumptions in the current implementation are
-only true when 'start_pad' is zero.
+In the beginning the pmem driver simply passed the persistent memory
+resource range to memremap and was done. With the introduction of
+devm_memremap_pages() and vmem_altmap the implementation needed to
+contend with metadata at the start of the resource to indicate whether
+the vmemmap is located in System RAM or Persistent Memory, and reserve
+vmemmap capacity in pmem for the latter case.
 
-The confusion resulted in the wrong offset being applied for
-sector-to-physical-page translations. In advance of introducing a
-corrected implementation make the mapping parameters and translation
-explicit via a new 'struct pfn_map_info' to carry the mapping and
-device-offset to physical address translation parameters.
+The indication of metadata space was communicated in the
+nd_pfn->data_offset property and it was defined to be identical to the
+pmem_device->data_offset property, i.e. relative to the raw resource
+base of the namespace. Up until this point in the driver's development
+pmem_device->phys_addr == __pa(pmem_device->virt_addr). This
+implementation was fine up until the discovery of platforms with
+physical address layouts that mapped Persistent Memory and System RAM to
+the same Linux memory hotplug section (128MB span).
 
-No functional change intended, this cleanup preserves the existing bug.
+The nd_pfn->start_pad and nd_pfn->end_trunc properties were introduced
+to pad and truncate the capacity to fit within an exclusive Linux
+memory hotplug section span, and it was at this point where the
+->start_pad definition did not comprehend the pmem_device->phys_addr to
+pmem_device->virt_addr relationship. Platforms in the wild typically
+only collided 'System RAM' at the end of the Persistent Memory range so
+->start_pad was often zero.
 
+Lately Linux has encountered platforms that collide Persistent Memory
+regions between each other, specifically cases where ->start_pad needed
+to be non-zero. This lead to commit ae86cbfef381 "libnvdimm, pfn: Pad
+pfn namespaces relative to other regions". That commit allowed
+namespaces to be mapped with devm_memremap_pages(). However dax
+operations on those configurations currently fail if attempted within the
+->start_pad range because pmem_device->data_offset was still relative to
+raw resource base not relative to the section aligned resource range
+mapped by devm_memremap_pages().
+
+Luckily __bdev_dax_supported() caught these failures and simply disabled
+dax. However, to fix this situation a non-backwards compatible change
+needs to be made to the interpretation of the nd_pfn info-block.
+->start_pad needs to be accounted in ->map.map_offset (formerly
+->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
+adjusted to the section aligned resource base used to establish
+->map.map formerly (formerly ->virt_addr).
+
+The guiding principles of the info-block compatibility fixup is to
+maintain the interpretation of ->data_offset for implementations like
+the EFI driver that only care about data_access not dax, but cause older
+Linux implementations that care about the mode and dax to fail to parse
+the new info-block.
+
+A unit test in ndctl is introduced to test the collision case going
+forward as well as how new kernels interpret older info-block
+configurations. Recall that the __bdev_dax_supported() checks have been
+strengthened to catch more failure cases (changed in a previous patch)
+and the new test caught several regressions in the course of developing
+this fixed support.
+
+Fixes: ae86cbfef381 ("libnvdimm, pfn: Pad pfn namespaces relative to other regions")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/pmem.c              |    9 ++-
- drivers/nvdimm/nd.h             |   13 ++++-
- drivers/nvdimm/pfn_devs.c       |   21 ++++++-
- drivers/nvdimm/pmem.c           |  111 ++++++++++++++++++---------------------
- drivers/nvdimm/pmem.h           |   12 +---
- tools/testing/nvdimm/pmem-dax.c |   15 +++--
- 6 files changed, 96 insertions(+), 85 deletions(-)
+ drivers/nvdimm/nd.h       |    2 +
+ drivers/nvdimm/pfn.h      |    2 -
+ drivers/nvdimm/pfn_devs.c |  163 +++++++++++++++++++++++++++++----------------
+ 3 files changed, 109 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-index 2c1f459c0c63..80359df4f662 100644
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -64,6 +64,7 @@ static int dax_pmem_probe(struct device *dev)
- 	struct nd_pfn_sb *pfn_sb;
- 	struct dev_dax *dev_dax;
- 	struct dax_pmem *dax_pmem;
-+	struct pfn_map_info mi;
- 	struct nd_namespace_io *nsio;
- 	struct dax_region *dax_region;
- 	struct nd_namespace_common *ndns;
-@@ -83,7 +84,7 @@ static int dax_pmem_probe(struct device *dev)
- 	rc = devm_nsio_enable(dev, nsio);
- 	if (rc)
- 		return rc;
--	rc = nvdimm_setup_pfn(nd_pfn, &dax_pmem->pgmap);
-+	rc = nvdimm_setup_pfn(nd_pfn, &dax_pmem->pgmap, &mi);
- 	if (rc)
- 		return rc;
- 	devm_nsio_disable(dev, nsio);
-@@ -117,8 +118,10 @@ static int dax_pmem_probe(struct device *dev)
- 		return PTR_ERR(addr);
- 
- 	/* adjust the dax_region resource to the start of data */
--	memcpy(&res, &dax_pmem->pgmap.res, sizeof(res));
--	res.start += le64_to_cpu(pfn_sb->dataoff);
-+	res = (struct resource) {
-+		.start = mi.map_base + mi.map_pad + mi.map_offset,
-+		.end = mi.map_base + mi.map_pad + mi.map_size - 1,
-+	};
- 
- 	rc = sscanf(dev_name(&ndns->dev), "namespace%d.%d", &region_id, &id);
- 	if (rc != 2)
 diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index 379bf4305e61..4339d338928b 100644
+index 4339d338928b..7c33e7f7fae0 100644
 --- a/drivers/nvdimm/nd.h
 +++ b/drivers/nvdimm/nd.h
-@@ -377,13 +377,22 @@ const char *nvdimm_namespace_disk_name(struct nd_namespace_common *ndns,
- unsigned int pmem_sector_size(struct nd_namespace_common *ndns);
- void nvdimm_badblocks_populate(struct nd_region *nd_region,
- 		struct badblocks *bb, const struct resource *res);
-+struct pfn_map_info {
-+	resource_size_t map_base;
-+	unsigned long map_offset;
-+	resource_size_t map_size;
-+	unsigned long map_pad;
-+	u64 pfn_flags;
-+	void *map;
-+};
- #if IS_ENABLED(CONFIG_ND_CLAIM)
--int nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap);
-+int nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
-+		struct pfn_map_info *mi);
- int devm_nsio_enable(struct device *dev, struct nd_namespace_io *nsio);
- void devm_nsio_disable(struct device *dev, struct nd_namespace_io *nsio);
- #else
- static inline int nvdimm_setup_pfn(struct nd_pfn *nd_pfn,
--				   struct dev_pagemap *pgmap)
-+		struct dev_pagemap *pgmap, struct pfn_map_info *mi)
- {
- 	return -ENXIO;
- }
+@@ -198,6 +198,8 @@ enum nd_pfn_mode {
+ 	PFN_MODE_NONE,
+ 	PFN_MODE_RAM,
+ 	PFN_MODE_PMEM,
++	PFN3_MODE_RAM,
++	PFN3_MODE_PMEM,
+ };
+ 
+ struct nd_pfn {
+diff --git a/drivers/nvdimm/pfn.h b/drivers/nvdimm/pfn.h
+index 710cb743fad6..53563a67c48d 100644
+--- a/drivers/nvdimm/pfn.h
++++ b/drivers/nvdimm/pfn.h
+@@ -20,7 +20,7 @@
+ #define PFN_SIG_LEN 16
+ #define PFN_SIG "NVDIMM_PFN_INFO\0"
+ #define DAX_SIG "NVDIMM_DAX_INFO\0"
+-#define PFN_VERSION_SUPPORT 2
++#define PFN_VERSION_SUPPORT 3
+ 
+ struct nd_pfn_sb {
+ 	u8 signature[PFN_SIG_LEN];
 diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-index 110699f4c3e4..1c2a0e707da3 100644
+index 1c2a0e707da3..56fa75a299b7 100644
 --- a/drivers/nvdimm/pfn_devs.c
 +++ b/drivers/nvdimm/pfn_devs.c
-@@ -611,7 +611,8 @@ static unsigned long init_altmap_reserve(resource_size_t base)
- 	return reserve;
+@@ -210,6 +210,36 @@ static ssize_t namespace_store(struct device *dev,
  }
+ static DEVICE_ATTR_RW(namespace);
  
--static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
-+static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
-+		struct pfn_map_info *mi)
- {
- 	struct resource *res = &pgmap->res;
- 	struct vmem_altmap *altmap = &pgmap->altmap;
-@@ -632,6 +633,19 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 	res->start += start_pad;
- 	res->end -= end_trunc;
- 
-+	*mi = (struct pfn_map_info) {
-+		/*
-+		 * TODO fix implementation to properly account for
-+		 * 'start_pad' in map_base, and map_offset. As is, the
-+		 * fact that __va(map_base) != __pa(map) leads
-+		 * mistranslations in pmem_direct_access().
-+		 */
-+		.map_base = nsio->res.start,
-+		.map_pad = start_pad,
-+		.map_offset = offset,
-+		.map_size = resource_size(res),
-+	};
++static u32 pfn_start_pad(struct nd_pfn *nd_pfn)
++{
++	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
 +
- 	if (nd_pfn->mode == PFN_MODE_RAM) {
- 		if (offset < reserve)
- 			return -EINVAL;
-@@ -789,7 +803,8 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
-  * Determine the effective resource range and vmem_altmap from an nd_pfn
-  * instance.
-  */
--int nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
-+int nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
-+		struct pfn_map_info *mi)
++	/* starting v1.3 start_pad is accounted in dataoff */
++	if (__le16_to_cpu(pfn_sb->version_minor) < 3)
++		return __le32_to_cpu(pfn_sb->start_pad);
++	return 0;
++}
++
++/*
++ * Where does data start relative to the start of the namespace resource
++ * base?
++ */
++static u64 pfn_dataoff(struct nd_pfn *nd_pfn)
++{
++	return __le64_to_cpu(nd_pfn->pfn_sb->dataoff);
++}
++
++/*
++ * How much of the namespace resource capacity is taking up by padding,
++ * outside of what is accounted in the data_offset?
++ */
++static u32 pfn_pad(struct nd_pfn *nd_pfn)
++{
++	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
++
++	return pfn_start_pad(nd_pfn) + __le32_to_cpu(pfn_sb->end_trunc);
++}
++
+ static ssize_t resource_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
  {
- 	int rc;
+@@ -218,14 +248,11 @@ static ssize_t resource_show(struct device *dev,
  
-@@ -801,6 +816,6 @@ int nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 		return rc;
+ 	device_lock(dev);
+ 	if (dev->driver) {
+-		struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+-		u64 offset = __le64_to_cpu(pfn_sb->dataoff);
+ 		struct nd_namespace_common *ndns = nd_pfn->ndns;
+-		u32 start_pad = __le32_to_cpu(pfn_sb->start_pad);
+ 		struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
  
- 	/* we need a valid pfn_sb before we can init a dev_pagemap */
--	return __nvdimm_setup_pfn(nd_pfn, pgmap);
-+	return __nvdimm_setup_pfn(nd_pfn, pgmap, mi);
- }
- EXPORT_SYMBOL_GPL(nvdimm_setup_pfn);
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index bc2f700feef8..46b823f3b94d 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -34,9 +34,7 @@
- #include <linux/nd.h>
- #include <linux/backing-dev.h>
- #include "pmem.h"
--#include "pfn.h"
- #include "nd.h"
--#include "nd-core.h"
+ 		rc = sprintf(buf, "%#llx\n", (unsigned long long) nsio->res.start
+-				+ start_pad + offset);
++				+ pfn_dataoff(nd_pfn) + pfn_start_pad(nd_pfn));
+ 	} else {
+ 		/* no address to convey if the pfn instance is disabled */
+ 		rc = -ENXIO;
+@@ -244,16 +271,12 @@ static ssize_t size_show(struct device *dev,
  
- static struct device *to_dev(struct pmem_device *pmem)
+ 	device_lock(dev);
+ 	if (dev->driver) {
+-		struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+-		u64 offset = __le64_to_cpu(pfn_sb->dataoff);
+ 		struct nd_namespace_common *ndns = nd_pfn->ndns;
+-		u32 start_pad = __le32_to_cpu(pfn_sb->start_pad);
+-		u32 end_trunc = __le32_to_cpu(pfn_sb->end_trunc);
+ 		struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+ 
+ 		rc = sprintf(buf, "%llu\n", (unsigned long long)
+-				resource_size(&nsio->res) - start_pad
+-				- end_trunc - offset);
++				resource_size(&nsio->res) - pfn_dataoff(nd_pfn)
++				- pfn_pad(nd_pfn));
+ 	} else {
+ 		/* no size to convey if the pfn instance is disabled */
+ 		rc = -ENXIO;
+@@ -422,10 +445,10 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
+ 
+ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
  {
-@@ -58,7 +56,7 @@ static void hwpoison_clear(struct pmem_device *pmem,
- 	unsigned long pfn_start, pfn_end, pfn;
++	unsigned long align;
+ 	u64 checksum, offset;
+ 	enum nd_pfn_mode mode;
+ 	struct nd_namespace_io *nsio;
+-	unsigned long align, start_pad;
+ 	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+ 	struct nd_namespace_common *ndns = nd_pfn->ndns;
+ 	const u8 *parent_uuid = nd_dev_to_uuid(&ndns->dev);
+@@ -465,20 +488,29 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+ 	if (__le16_to_cpu(pfn_sb->min_version) > PFN_VERSION_SUPPORT)
+ 		return -EINVAL;
  
- 	/* only pmem in the linear map supports HWPoison */
--	if (is_vmalloc_addr(pmem->virt_addr))
-+	if (is_vmalloc_addr(pmem->mi.map))
- 		return;
- 
- 	pfn_start = PHYS_PFN(phys);
-@@ -80,17 +78,18 @@ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
- 		phys_addr_t offset, unsigned int len)
- {
- 	struct device *dev = to_dev(pmem);
-+	struct pfn_map_info *mi = &pmem->mi;
- 	sector_t sector;
- 	long cleared;
- 	blk_status_t rc = BLK_STS_OK;
- 
--	sector = (offset - pmem->data_offset) / 512;
-+	sector = (offset - mi->map_offset) / 512;
- 
--	cleared = nvdimm_clear_poison(dev, pmem->phys_addr + offset, len);
-+	cleared = nvdimm_clear_poison(dev, mi->map_base + offset, len);
- 	if (cleared < len)
- 		rc = BLK_STS_IOERR;
- 	if (cleared > 0 && cleared / 512) {
--		hwpoison_clear(pmem, pmem->phys_addr + offset, cleared);
-+		hwpoison_clear(pmem, mi->map_base + offset, cleared);
- 		cleared /= 512;
- 		dev_dbg(dev, "%#llx clear %ld sector%s\n",
- 				(unsigned long long) sector, cleared,
-@@ -100,7 +99,7 @@ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
- 			sysfs_notify_dirent(pmem->bb_state);
+-	switch (le32_to_cpu(pfn_sb->mode)) {
++	mode = le32_to_cpu(pfn_sb->mode);
++	/*
++	 * PFN3_MODEs are used to make older Linux implementations fail
++	 * to parse the info-block.
++	 */
++	switch (mode) {
+ 	case PFN_MODE_RAM:
+ 	case PFN_MODE_PMEM:
+ 		break;
++	case PFN3_MODE_RAM:
++		mode = PFN_MODE_RAM;
++		break;
++	case PFN3_MODE_PMEM:
++		mode = PFN_MODE_PMEM;
++		break;
+ 	default:
+ 		return -ENXIO;
  	}
  
--	arch_invalidate_pmem(pmem->virt_addr + offset, len);
-+	arch_invalidate_pmem(mi->map + offset, len);
+ 	align = le32_to_cpu(pfn_sb->align);
+ 	offset = le64_to_cpu(pfn_sb->dataoff);
+-	start_pad = le32_to_cpu(pfn_sb->start_pad);
+ 	if (align == 0)
+ 		align = 1UL << ilog2(offset);
+-	mode = le32_to_cpu(pfn_sb->mode);
  
- 	return rc;
- }
-@@ -151,8 +150,9 @@ static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
- {
- 	blk_status_t rc = BLK_STS_OK;
- 	bool bad_pmem = false;
--	phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
--	void *pmem_addr = pmem->virt_addr + pmem_off;
-+	struct pfn_map_info *mi = &pmem->mi;
-+	phys_addr_t pmem_off = sector * 512 + mi->map_offset;
-+	void *pmem_addr = mi->map + pmem_off;
- 
- 	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
- 		bad_pmem = true;
-@@ -247,16 +247,17 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
- __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 		long nr_pages, void **kaddr, pfn_t *pfn)
- {
--	resource_size_t offset = PFN_PHYS(pgoff) + pmem->data_offset;
-+	struct pfn_map_info *mi = &pmem->mi;
-+	resource_size_t offset = PFN_PHYS(pgoff) + mi->map_offset;
- 
- 	if (unlikely(is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512,
- 					PFN_PHYS(nr_pages))))
- 		return -EIO;
- 
- 	if (kaddr)
--		*kaddr = pmem->virt_addr + offset;
-+		*kaddr = mi->map + offset;
- 	if (pfn)
--		*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
-+		*pfn = phys_to_pfn_t(mi->map_base + offset, mi->pfn_flags);
- 
- 	/*
- 	 * If badblocks are present, limit known good range to the
-@@ -264,7 +265,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 	 */
- 	if (unlikely(pmem->bb.count))
- 		return nr_pages;
--	return PHYS_PFN(pmem->size - pmem->pfn_pad - offset);
-+	return PHYS_PFN(mi->map_size - offset);
- }
- 
- static const struct block_device_operations pmem_fops = {
-@@ -354,45 +355,49 @@ static int pmem_attach_disk(struct device *dev,
- 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
- 	struct nd_region *nd_region = to_nd_region(dev->parent);
- 	int nid = dev_to_node(dev), fua;
--	struct resource *res = &nsio->res;
-+	struct pfn_map_info *mi;
- 	struct resource bb_res;
- 	struct nd_pfn *nd_pfn = NULL;
- 	struct dax_device *dax_dev;
--	struct nd_pfn_sb *pfn_sb;
- 	struct pmem_device *pmem;
- 	struct request_queue *q;
- 	struct device *gendev;
- 	struct gendisk *disk;
--	void *addr;
- 	int rc;
- 
- 	pmem = devm_kzalloc(dev, sizeof(*pmem), GFP_KERNEL);
- 	if (!pmem)
- 		return -ENOMEM;
-+	mi = &pmem->mi;
- 
- 	/* while nsio_rw_bytes is active, parse a pfn info block if present */
- 	if (is_nd_pfn(dev)) {
- 		nd_pfn = to_nd_pfn(dev);
--		rc = nvdimm_setup_pfn(nd_pfn, &pmem->pgmap);
-+		rc = nvdimm_setup_pfn(nd_pfn, &pmem->pgmap, mi);
- 		if (rc)
- 			return rc;
-+	} else {
-+		*mi = (struct pfn_map_info) {
-+			.map_offset = 0,
-+			.map_base = nsio->res.start,
-+			.map_size = resource_size(&nsio->res),
-+		};
- 	}
- 
- 	/* we're attaching a block device, disable raw namespace access */
- 	devm_nsio_disable(dev, nsio);
- 
- 	dev_set_drvdata(dev, pmem);
--	pmem->phys_addr = res->start;
--	pmem->size = resource_size(res);
- 	fua = nvdimm_has_flush(nd_region);
- 	if (!IS_ENABLED(CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE) || fua < 0) {
- 		dev_warn(dev, "unable to guarantee persistence of writes\n");
- 		fua = 0;
- 	}
- 
--	if (!devm_request_mem_region(dev, res->start, resource_size(res),
-+	if (!devm_request_mem_region(dev, nsio->res.start,
-+				resource_size(&nsio->res),
- 				dev_name(&ndns->dev))) {
--		dev_warn(dev, "could not reserve region %pR\n", res);
-+		dev_warn(dev, "could not reserve region %pR\n", &nsio->res);
+ 	if (!nd_pfn->uuid) {
+ 		/*
+@@ -534,7 +566,8 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
  		return -EBUSY;
  	}
  
-@@ -403,37 +408,27 @@ static int pmem_attach_disk(struct device *dev,
- 	if (devm_add_action_or_reset(dev, pmem_release_queue, q))
- 		return -ENOMEM;
+-	if ((align && !IS_ALIGNED(nsio->res.start + offset + start_pad, align))
++	if ((align && !IS_ALIGNED(nsio->res.start + offset
++					+ pfn_start_pad(nd_pfn), align))
+ 			|| !IS_ALIGNED(offset, PAGE_SIZE)) {
+ 		dev_err(&nd_pfn->dev,
+ 				"bad offset: %#llx dax disabled align: %#lx\n",
+@@ -586,31 +619,23 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
+ }
+ EXPORT_SYMBOL(nd_pfn_probe);
  
--	pmem->pfn_flags = PFN_DEV;
-+	mi->pfn_flags = PFN_DEV;
- 	pmem->pgmap.ref = &q->q_usage_counter;
- 	pmem->pgmap.kill = pmem_freeze_queue;
- 	if (is_nd_pfn(dev)) {
- 		if (setup_pagemap_fsdax(dev, &pmem->pgmap))
- 			return -ENOMEM;
--		addr = devm_memremap_pages(dev, &pmem->pgmap);
--		pfn_sb = nd_pfn->pfn_sb;
--		pmem->data_offset = le64_to_cpu(pfn_sb->dataoff);
--		pmem->pfn_pad = resource_size(res) -
--			resource_size(&pmem->pgmap.res);
--		pmem->pfn_flags |= PFN_MAP;
--		memcpy(&bb_res, &pmem->pgmap.res, sizeof(bb_res));
--		bb_res.start += pmem->data_offset;
-+		mi->map = devm_memremap_pages(dev, &pmem->pgmap);
-+		mi->pfn_flags |= PFN_MAP;
- 	} else if (pmem_should_map_pages(dev)) {
- 		memcpy(&pmem->pgmap.res, &nsio->res, sizeof(pmem->pgmap.res));
- 		pmem->pgmap.altmap_valid = false;
- 		if (setup_pagemap_fsdax(dev, &pmem->pgmap))
- 			return -ENOMEM;
--		addr = devm_memremap_pages(dev, &pmem->pgmap);
--		pmem->pfn_flags |= PFN_MAP;
--		memcpy(&bb_res, &pmem->pgmap.res, sizeof(bb_res));
--	} else {
--		addr = devm_memremap(dev, pmem->phys_addr,
--				pmem->size, ARCH_MEMREMAP_PMEM);
--		memcpy(&bb_res, &nsio->res, sizeof(bb_res));
--	}
-+		mi->map = devm_memremap_pages(dev, &pmem->pgmap);
-+		mi->pfn_flags |= PFN_MAP;
-+	} else
-+		mi->map = devm_memremap(dev, mi->map_base, mi->map_size,
-+				ARCH_MEMREMAP_PMEM);
- 
--	if (IS_ERR(addr))
--		return PTR_ERR(addr);
--	pmem->virt_addr = addr;
-+	if (IS_ERR(mi->map))
-+		return PTR_ERR(mi->map);
- 
- 	blk_queue_write_cache(q, true, fua);
- 	blk_queue_make_request(q, pmem_make_request);
-@@ -441,7 +436,7 @@ static int pmem_attach_disk(struct device *dev,
- 	blk_queue_logical_block_size(q, pmem_sector_size(ndns));
- 	blk_queue_max_hw_sectors(q, UINT_MAX);
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
--	if (pmem->pfn_flags & PFN_MAP)
-+	if (mi->pfn_flags & PFN_MAP)
- 		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
- 	q->queuedata = pmem;
- 
-@@ -455,10 +450,13 @@ static int pmem_attach_disk(struct device *dev,
- 	disk->flags		= GENHD_FL_EXT_DEVT;
- 	disk->queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
- 	nvdimm_namespace_disk_name(ndns, disk->disk_name);
--	set_capacity(disk, (pmem->size - pmem->pfn_pad - pmem->data_offset)
--			/ 512);
-+	set_capacity(disk, (mi->map_size - mi->map_offset) / 512);
- 	if (devm_init_badblocks(dev, &pmem->bb))
- 		return -ENOMEM;
-+	bb_res = (struct resource) {
-+		.start = mi->map_base + mi->map_pad + mi->map_offset,
-+		.end = mi->map_base + mi->map_pad + mi->map_size - 1,
-+	};
- 	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_res);
- 	disk->bb = &pmem->bb;
- 
-@@ -540,7 +538,6 @@ static void nd_pmem_shutdown(struct device *dev)
- static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
+-static u32 info_block_reserve(void)
++static u32 info_block_reserve(u32 start_pad)
  {
+-	return ALIGN(SZ_8K, PAGE_SIZE);
++	u32 reserve = ALIGN(SZ_8K, PAGE_SIZE);
++
++	/*
++	 * Does the start_pad subsume the info-block at the start of the
++	 * raw resource base?
++	 */
++	if (start_pad <= reserve)
++		return reserve - start_pad;
++	return 0;
+ }
+ 
+ /*
+  * We hotplug memory at section granularity, pad the reserved area from
+  * the previous section base to the namespace base address.
+  */
+-static unsigned long init_altmap_base(resource_size_t base)
+-{
+-	unsigned long base_pfn = PHYS_PFN(base);
+-
+-	return PFN_SECTION_ALIGN_DOWN(base_pfn);
+-}
+-
+-static unsigned long init_altmap_reserve(resource_size_t base)
+-{
+-	unsigned long reserve = info_block_reserve() >> PAGE_SHIFT;
+-	unsigned long base_pfn = PHYS_PFN(base);
+-
+-	reserve += base_pfn - PFN_SECTION_ALIGN_DOWN(base_pfn);
+-	return reserve;
+-}
+-
+ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
+ 		struct pfn_map_info *mi)
+ {
+@@ -618,31 +643,39 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
+ 	struct vmem_altmap *altmap = &pgmap->altmap;
+ 	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+ 	u64 offset = le64_to_cpu(pfn_sb->dataoff);
+-	u32 start_pad = __le32_to_cpu(pfn_sb->start_pad);
++	u32 start_pad = __le32_to_cpu(pfn_sb->start_pad), map_start_pad;
+ 	u32 end_trunc = __le32_to_cpu(pfn_sb->end_trunc);
+-	u32 reserve = info_block_reserve();
++	u32 reserve = info_block_reserve(start_pad);
+ 	struct nd_namespace_common *ndns = nd_pfn->ndns;
+ 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+ 	resource_size_t base = nsio->res.start + start_pad;
++	struct device *dev = &nd_pfn->dev;
+ 	struct vmem_altmap __altmap = {
+-		.base_pfn = init_altmap_base(base),
+-		.reserve = init_altmap_reserve(base),
++		.base_pfn = PHYS_PFN(base),
++		.reserve = PHYS_PFN(reserve),
+ 	};
+ 
+ 	memcpy(res, &nsio->res, sizeof(*res));
+ 	res->start += start_pad;
+ 	res->end -= end_trunc;
+ 
++	/*
++	 * map_start_pad is adjusted to 0 for pre-v1.3 infoblocks to
++	 * preserve a bug in the implementation that can only be fixed
++	 * by migrating to a v1.3+ configuration.
++	 *
++	 * Post v1.3 start_pad is accounted in ->data_offset, and
++	 * ensures that:
++	 *     __va(map_base) == __pa(map)
++	 *
++	 * map_pad is only non-zero when ensuring backwards
++	 * compatibility with pre-v1.3 configurations.
++	 */
++	map_start_pad = start_pad - pfn_start_pad(nd_pfn);
+ 	*mi = (struct pfn_map_info) {
+-		/*
+-		 * TODO fix implementation to properly account for
+-		 * 'start_pad' in map_base, and map_offset. As is, the
+-		 * fact that __va(map_base) != __pa(map) leads
+-		 * mistranslations in pmem_direct_access().
+-		 */
+-		.map_base = nsio->res.start,
+-		.map_pad = start_pad,
+-		.map_offset = offset,
++		.map_base = nsio->res.start + map_start_pad,
++		.map_pad = pfn_start_pad(nd_pfn),
++		.map_offset = offset - map_start_pad,
+ 		.map_size = resource_size(res),
+ 	};
+ 
+@@ -653,14 +686,14 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap,
+ 		pgmap->altmap_valid = false;
+ 	} else if (nd_pfn->mode == PFN_MODE_PMEM) {
+ 		nd_pfn->npfns = PFN_SECTION_ALIGN_UP((resource_size(res)
++					- pfn_start_pad(nd_pfn)
+ 					- offset) / PAGE_SIZE);
+ 		if (le64_to_cpu(nd_pfn->pfn_sb->npfns) > nd_pfn->npfns)
+-			dev_info(&nd_pfn->dev,
+-					"number of pfns truncated from %lld to %ld\n",
++			dev_info(dev, "number of pfns truncated from %lld to %ld\n",
+ 					le64_to_cpu(nd_pfn->pfn_sb->npfns),
+ 					nd_pfn->npfns);
+ 		memcpy(altmap, &__altmap, sizeof(*altmap));
+-		altmap->free = PHYS_PFN(offset - reserve);
++		altmap->free = PHYS_PFN(mi->map_offset - reserve);
+ 		altmap->alloc = 0;
+ 		pgmap->altmap_valid = true;
+ 	} else
+@@ -712,7 +745,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+ {
+ 	struct nd_namespace_common *ndns = nd_pfn->ndns;
+ 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+-	u32 start_pad, end_trunc, reserve = info_block_reserve();
++	u32 start_pad, end_trunc, reserve;
+ 	resource_size_t start, size;
  	struct nd_region *nd_region;
--	resource_size_t offset = 0, end_trunc = 0;
- 	struct nd_namespace_common *ndns;
- 	struct nd_namespace_io *nsio;
- 	struct resource res;
-@@ -556,32 +553,26 @@ static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
- 		ndns = nd_btt->ndns;
- 		nd_region = to_nd_region(ndns->dev.parent);
- 		nsio = to_nd_namespace_io(&ndns->dev);
-+		res = (struct resource) {
-+			.start = nsio->res.start,
-+			.end = nsio->res.end,
-+		};
- 		bb = &nsio->bb;
- 		bb_state = NULL;
- 	} else {
- 		struct pmem_device *pmem = dev_get_drvdata(dev);
-+		struct pfn_map_info *mi = &pmem->mi;
- 
- 		nd_region = to_region(pmem);
- 		bb = &pmem->bb;
- 		bb_state = pmem->bb_state;
- 
--		if (is_nd_pfn(dev)) {
--			struct nd_pfn *nd_pfn = to_nd_pfn(dev);
--			struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
--
--			ndns = nd_pfn->ndns;
--			offset = pmem->data_offset +
--					__le32_to_cpu(pfn_sb->start_pad);
--			end_trunc = __le32_to_cpu(pfn_sb->end_trunc);
--		} else {
--			ndns = to_ndns(dev);
--		}
--
--		nsio = to_nd_namespace_io(&ndns->dev);
-+		res = (struct resource) {
-+			.start = mi->map_base + mi->map_pad + mi->map_offset,
-+			.end = mi->map_base + mi->map_pad + mi->map_size - 1,
-+		};
- 	}
- 
--	res.start = nsio->res.start + offset;
--	res.end = nsio->res.end - end_trunc;
- 	nvdimm_badblocks_populate(nd_region, bb, &res);
- 	if (bb_state)
- 		sysfs_notify_dirent(bb_state);
-diff --git a/drivers/nvdimm/pmem.h b/drivers/nvdimm/pmem.h
-index 59cfe13ea8a8..6c27bbae349f 100644
---- a/drivers/nvdimm/pmem.h
-+++ b/drivers/nvdimm/pmem.h
-@@ -6,19 +6,11 @@
- #include <linux/types.h>
- #include <linux/pfn_t.h>
- #include <linux/fs.h>
-+#include "nd.h"
- 
- /* this definition is in it's own header for tools/testing/nvdimm to consume */
- struct pmem_device {
--	/* One contiguous memory region per device */
--	phys_addr_t		phys_addr;
--	/* when non-zero this device is hosting a 'pfn' instance */
--	phys_addr_t		data_offset;
--	u64			pfn_flags;
--	void			*virt_addr;
--	/* immutable base size of the namespace */
--	size_t			size;
--	/* trim size when namespace capacity has been section aligned */
--	u32			pfn_pad;
-+	struct pfn_map_info	mi;
- 	struct kernfs_node	*bb_state;
- 	struct badblocks	bb;
- 	struct dax_device	*dax_dev;
-diff --git a/tools/testing/nvdimm/pmem-dax.c b/tools/testing/nvdimm/pmem-dax.c
-index 2e7fd8227969..52a8760d2ec5 100644
---- a/tools/testing/nvdimm/pmem-dax.c
-+++ b/tools/testing/nvdimm/pmem-dax.c
-@@ -18,7 +18,8 @@
- long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 		long nr_pages, void **kaddr, pfn_t *pfn)
- {
--	resource_size_t offset = PFN_PHYS(pgoff) + pmem->data_offset;
-+	struct pfn_map_info *mi = &pmem->mi;
-+	resource_size_t offset = PFN_PHYS(pgoff) + mi->map_offset;
- 
- 	if (unlikely(is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512,
- 					PFN_PHYS(nr_pages))))
-@@ -28,12 +29,12 @@ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 	 * Limit dax to a single page at a time given vmalloc()-backed
- 	 * in the nfit_test case.
- 	 */
--	if (get_nfit_res(pmem->phys_addr + offset)) {
-+	if (get_nfit_res(mi->map_base + offset)) {
- 		struct page *page;
- 
- 		if (kaddr)
--			*kaddr = pmem->virt_addr + offset;
--		page = vmalloc_to_page(pmem->virt_addr + offset);
-+			*kaddr = mi->map + offset;
-+		page = vmalloc_to_page(mi->map + offset);
- 		if (pfn)
- 			*pfn = page_to_pfn_t(page);
- 		pr_debug_ratelimited("%s: pmem: %p pgoff: %#lx pfn: %#lx\n",
-@@ -43,9 +44,9 @@ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 	}
- 
- 	if (kaddr)
--		*kaddr = pmem->virt_addr + offset;
-+		*kaddr = mi->map + offset;
- 	if (pfn)
--		*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
-+		*pfn = phys_to_pfn_t(mi->map_base + offset, mi->pfn_flags);
+ 	struct nd_pfn_sb *pfn_sb;
+@@ -750,6 +783,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+ 	if (start_pad + end_trunc)
+ 		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
+ 				dev_name(&ndns->dev), start_pad + end_trunc);
++	reserve = info_block_reserve(start_pad);
  
  	/*
- 	 * If badblocks are present, limit known good range to the
-@@ -53,5 +54,5 @@ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 	 */
- 	if (unlikely(pmem->bb.count))
- 		return nr_pages;
--	return PHYS_PFN(pmem->size - pmem->pfn_pad - offset);
-+	return PHYS_PFN(mi->map_size - offset);
- }
+ 	 * Note, we use 64 here for the standard size of struct page,
+@@ -769,29 +803,44 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+ 		 */
+ 		offset = ALIGN(start + reserve + 64 * npfns,
+ 				max(nd_pfn->align, PMD_SIZE)) - start;
+-	} else if (nd_pfn->mode == PFN_MODE_RAM)
++		offset += start_pad;
++	} else if (nd_pfn->mode == PFN_MODE_RAM) {
+ 		offset = ALIGN(start + reserve, nd_pfn->align) - start;
+-	else
++		offset += start_pad;
++	} else
+ 		return -ENXIO;
+ 
+-	if (offset + start_pad + end_trunc >= size) {
++	if (offset + end_trunc >= size) {
+ 		dev_err(&nd_pfn->dev, "%s unable to satisfy requested alignment\n",
+ 				dev_name(&ndns->dev));
+ 		return -ENXIO;
+ 	}
+ 
+-	npfns = (size - offset - start_pad - end_trunc) / SZ_4K;
+-	pfn_sb->mode = cpu_to_le32(nd_pfn->mode);
++
++	npfns = (size - offset - end_trunc) / SZ_4K;
++
+ 	pfn_sb->dataoff = cpu_to_le64(offset);
+ 	pfn_sb->npfns = cpu_to_le64(npfns);
+ 	memcpy(pfn_sb->signature, sig, PFN_SIG_LEN);
+ 	memcpy(pfn_sb->uuid, nd_pfn->uuid, 16);
+ 	memcpy(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16);
+ 	pfn_sb->version_major = cpu_to_le16(1);
+-	pfn_sb->version_minor = cpu_to_le16(2);
+-	pfn_sb->min_version = cpu_to_le16(2);
+ 	pfn_sb->start_pad = cpu_to_le32(start_pad);
+ 	pfn_sb->end_trunc = cpu_to_le32(end_trunc);
++	if (start_pad) {
++		/*
++		 * Require implementations to account for start_pad in
++		 * data_offset. Use PFN3_MODE to cause versions older
++		 * than the introduction of min_version to fail.
++		 */
++		pfn_sb->mode = cpu_to_le32(nd_pfn->mode + 2);
++		pfn_sb->version_minor = cpu_to_le16(3);
++		pfn_sb->min_version = cpu_to_le16(3);
++	} else {
++		pfn_sb->mode = cpu_to_le32(nd_pfn->mode);
++		pfn_sb->version_minor = cpu_to_le16(2);
++		pfn_sb->min_version = cpu_to_le16(2);
++	}
+ 	pfn_sb->align = cpu_to_le32(nd_pfn->align);
+ 	checksum = nd_sb_checksum((struct nd_gen_sb *) pfn_sb);
+ 	pfn_sb->checksum = cpu_to_le64(checksum);
 
