@@ -2,96 +2,98 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02129C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF964C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42D02080F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7882D2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfBLLdL (ORCPT
+        id S1728516AbfBLLed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:33:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36160 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbfBLLdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:33:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21FE280D;
-        Tue, 12 Feb 2019 03:33:10 -0800 (PST)
-Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7966D3F589;
-        Tue, 12 Feb 2019 03:33:08 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:33:06 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, Stefan Agner <stefan@agner.ch>,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        tpiepho@impinj.com, leonard.crestez@nxp.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
-Message-ID: <20190212113257.GA23658@red-moon>
-References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
- <119211b4f2e9ada55b86041d009656e49c2b5281.1549446867.git.stefan@agner.ch>
- <20190211213900.GA247873@google.com>
- <1549961694.2546.18.camel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1549961694.2546.18.camel@pengutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 12 Feb 2019 06:34:33 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47467 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfBLLec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 06:34:32 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gtWKX-0007GH-Ca; Tue, 12 Feb 2019 12:34:25 +0100
+Message-ID: <1549971262.4800.5.camel@pengutronix.de>
+Subject: Re: [PATCH v4 3/4] gpu: ipu-v3: ipu-ic: Add support for BT.709
+ encoding
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
+Date:   Tue, 12 Feb 2019 12:34:22 +0100
+In-Reply-To: <440e12af-33ea-5eac-e570-8afa74e3133c@gmail.com>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+         <20190209014748.10427-4-slongerbeam@gmail.com>
+         <1549879951.7687.6.camel@pengutronix.de>
+         <440e12af-33ea-5eac-e570-8afa74e3133c@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:54:54AM +0100, Lucas Stach wrote:
-> Hi Bjorn,
+Hi Steve,
+
+On Mon, 2019-02-11 at 17:20 -0800, Steve Longerbeam wrote:
+[...]
+> > Should we support YUV BT.601 <-> YUV REC.709 conversions? That would
+> > require separate encodings for input and output.
 > 
-> Am Montag, den 11.02.2019, 15:39 -0600 schrieb Bjorn Helgaas:
-> > On Wed, Feb 06, 2019 at 10:57:32AM +0100, Stefan Agner wrote:
-> > > Define the length of the DBI registers. This makes sure that
-> > > the kernel does not access registers beyond that point, avoiding
-> > > the following abort on a i.MX 6Quad:
-> > >   # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
-> > >   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
-> > >   ...
-> > >   [  100.056423] PC is at dw_pcie_read+0x50/0x84
-> > >   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
-> > >   ...
-> > 
-> > I assume this problem happens when using the pci_read_config() path or
-> > something similar?
-> > 
-> > Could this be solved using pci_dev.cfg_size instead of building a new
-> > dwc-specific mechanism?  There are some quirks that set dev->cfg_size
-> > to keep from reading past certain points in config space, e.g.,
-> > quirk_citrine(), quirk_nfp6000().
-> > 
-> > I'm not necessarily opposed to doing it in dwc, but maybe there's some
-> > advantage in reducing the number of ways of doing the same thing.
-> 
-> This actually started out as a quirk changing the cfg size. But the
-> valid config space size seems to be different between root ports that
-> share the same (broken) device ID (Synopsys abcd), so I doubt that this
-> would be easier and/or any cleaner to implement as a quirk.
+> How about if we pass the input and output encodings to the init ic task 
+> functions, but for now require they be the same? We can support 
+> transcoding in a later series.
+[...]
+> Again, I think for now, just include input/output quantization but 
+> require full range for RGB and limited range for YUV.
 
-There are two things here: matching the root port and setting
-the cfg size limit.
+Yes, that is fine. I'd just like to avoid unnecessary interface changes
+between ipu-v3 and imx-media. So if we have to change it right now, why
+not plan ahead.
 
-I agree with Bjorn that the cfg size limit, given that it is
-implemented in core code should be leveraged instead of reinventing
-the wheel to solve the same problem in driver specific code.
+> But that really balloons the arguments to ipu_ic_task_init_*(). Should 
+> we create an ipu_ic_task_init structure?
 
-In the quirk code I do not think it is that complicated to retrieve
-the IMX variant to apply the quirk accordingly on the pci_dev.
+I wonder if we should just expose struct ic_csc_params and provide a
+helper to fill it given colorspace and V4L2 encoding/quantization
+parameters. Something like:
 
-Please let me know if that's feasible so that I can drop the
-patches from the branch and update it with a new version.
+	struct ipu_ic_csc_params csc;
 
-Thanks,
-Lorenzo
+	imx_media_init_ic_csc_params(&csc,
+			in_cs, in_encoding, in_quantization,
+			out_cs, out_encoding, out_quantization);
+
+	ipu_ic_task_init(ic,
+			in_width, in_height,
+			out_width, out_height, &csc);
+	// or
+	ipu_ic_task_init_rsc(ic, rsc, &csc);
+
+regards
+Philipp
