@@ -2,137 +2,76 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A938C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEA2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CC221773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549986314;
-	bh=uyCwuVK7m1EdKUW1jMDgbNHxoIArsqofJ5gDugVV8so=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sz0TZcn/opYe2fUsJXMECPCqrr/Do7AzbZFbf55cxe7cC1DqNMcfh1j9woaHDD8jh
-	 4YgiCBo4GiAUupX+jJq/6H+z6Mz7POs2MnvxP6I5RSJHzbP1jC+cglJAVJxgF+8p6Q
-	 xCHuxGiQ4Z64rlT31UpoRce4HNwXG8nTb/g9g9i4=
+	by mail.kernel.org (Postfix) with ESMTP id 7D4AC21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbfBLPpM (ORCPT
+        id S1730691AbfBLPpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:45:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbfBLPpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:45:12 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F39F121773;
-        Tue, 12 Feb 2019 15:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549986311;
-        bh=uyCwuVK7m1EdKUW1jMDgbNHxoIArsqofJ5gDugVV8so=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zef25u1hDtnYTLdkMiNpVudl6DEgCBtDSb4Dc9n7UyMXLYUng/E7V9lbZx8aud2gY
-         Z5yKina+DtMLWT/B3TuRIbF3FG/ndbReqhtIhl4JTqybDngkMEZ6A3DpXAbhbipCRa
-         J1UGfkVzOfqfZM6H+wGNuDF7f/TLuqkeIB0uRhFw=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH v3 4/4] arm64: kprobes: Use arch_populate_kprobe_blacklist()
-Date:   Wed, 13 Feb 2019 00:44:48 +0900
-Message-Id: <154998628802.21869.4041705065539411318.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <154998617300.21869.11457765723750331236.stgit@devbox>
-References: <154998617300.21869.11457765723750331236.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 12 Feb 2019 10:45:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55982 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726238AbfBLPpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:45:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5035CAF50;
+        Tue, 12 Feb 2019 15:45:31 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 16:45:30 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
+ and value
+Message-ID: <20190212154530.wjikbevy5beg2uzc@pathway.suse.cz>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-10-pmladek@suse.com>
+ <20190208172717.GW9224@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208172717.GW9224@smile.fi.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use arch_populate_kprobe_blacklist() instead of
-arch_within_kprobe_blacklist() so that we can see the full
-blacklisted symbols under the debugfs.
+On Fri 2019-02-08 19:27:17, Andy Shevchenko wrote:
+> On Fri, Feb 08, 2019 at 04:23:10PM +0100, Petr Mladek wrote:
+> > We are able to detect invalid values handled by %p[iI] printk specifier.
+> > The current error message is "invalid address". It might cause confusion
+> > against "(efault)" reported by the generic valid_pointer_address() check.
+> > 
+> > Let's unify the style and use the more appropriate error code description
+> > "(einval)".
+> 
+> The proper one should be "invalid address family". The proposed change
+> increases confusion.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
-  Changes in v3
-   - Do not populate blacklist in __kprobe_text in
-     arch_populate_kprobe_blacklist(), since it is already
-     populated in populate_kprobe_blacklist().
-   - Add exception entry text blacklist since those are rejected
-     by in_exception_text().
----
- arch/arm64/kernel/probes/kprobes.c |   45 +++++++++++++++++++++---------------
- 1 file changed, 26 insertions(+), 19 deletions(-)
+I am confused. Is there any error code for "invalid address family"?
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 194262fca5cd..37d913f33a89 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -465,26 +465,33 @@ kprobe_breakpoint_handler(struct pt_regs *regs, unsigned int esr)
- 	return DBG_HOOK_HANDLED;
- }
- 
--bool arch_within_kprobe_blacklist(unsigned long addr)
-+int __init arch_populate_kprobe_blacklist(void)
- {
--	if ((addr >= (unsigned long)__kprobes_text_start &&
--	    addr < (unsigned long)__kprobes_text_end) ||
--	    (addr >= (unsigned long)__entry_text_start &&
--	    addr < (unsigned long)__entry_text_end) ||
--	    (addr >= (unsigned long)__idmap_text_start &&
--	    addr < (unsigned long)__idmap_text_end) ||
--	    (addr >= (unsigned long)__hyp_text_start &&
--	    addr < (unsigned long)__hyp_text_end) ||
--	    in_exception_text(addr))
--		return true;
--
--	if (!is_kernel_in_hyp_mode()) {
--		if ((addr >= (unsigned long)__hyp_idmap_text_start &&
--		    addr < (unsigned long)__hyp_idmap_text_end))
--			return true;
--	}
--
--	return false;
-+	int ret;
-+
-+	ret = kprobe_add_area_blacklist((unsigned long)__entry_text_start,
-+					(unsigned long)__entry_text_end);
-+	if (ret)
-+		return ret;
-+	ret = kprobe_add_area_blacklist((unsigned long)__irqentry_text_start,
-+					(unsigned long)__irqentry_text_end);
-+	if (ret)
-+		return ret;
-+	ret = kprobe_add_area_blacklist((unsigned long)__exception_text_start,
-+					(unsigned long)__exception_text_end);
-+	if (ret)
-+		return ret;
-+	ret = kprobe_add_area_blacklist((unsigned long)__idmap_text_start,
-+					(unsigned long)__idmap_text_end);
-+	if (ret)
-+		return ret;
-+	ret = kprobe_add_area_blacklist((unsigned long)__hyp_text_start,
-+					(unsigned long)__hyp_text_end);
-+	if (ret || is_kernel_in_hyp_mode())
-+		return ret;
-+	ret = kprobe_add_area_blacklist((unsigned long)__hyp_idmap_text_start,
-+					(unsigned long)__hyp_idmap_text_end);
-+	return ret;
- }
- 
- void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
+EINVAL is standard error code used when a wrong value is passed
+as a parameter. In this case, the code is not able to handle
+the given address family.
 
+IMHO, the original message "invalid address" has been even more
+confusing. Oops would happen if it was invalid. In fact, the value
+was invalid.
+
+Best Regards,
+Petr
