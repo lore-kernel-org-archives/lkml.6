@@ -4,65 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6210C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A83DC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFF8222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCFB9222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:17:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nvD3sPQV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVKqyCWC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbfBLRRe (ORCPT
+        id S1730370AbfBLRRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:17:34 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45128 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729807AbfBLRQY (ORCPT
+        Tue, 12 Feb 2019 12:17:41 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35512 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731734AbfBLRQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:16:24 -0500
-Received: by mail-pl1-f193.google.com with SMTP id r14so1584407pls.12
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:16:24 -0800 (PST)
+        Tue, 12 Feb 2019 12:16:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so1555750pgs.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:16:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/lnWMMCIsg4/tFUsl2j1cd75JRahCaG7A5ViWQnd0OY=;
-        b=nvD3sPQVTmPup1RY7P6dkHQg3RQbopWaNl2R7n0ekAHhDAV5NE/q69+aIzpOmXe6XU
-         IcwLyhmnoL2lS90lSvUSI/ta9vrDvlC1/Ub3O/uynQAv0zL3YY+dqzL2GZ3Yw8m49APy
-         +OzEmV3koMukBg5tYr/x0HFN3dTnYQuSOy0JH9M2qBzjO9DMzqagpMDhG/GBa8f247iQ
-         gAz0RJOK0D+R30EfucoL6waUOOzflugJpiWEJATPoMRo61FvUY8AnX9CnnQWTuAYsnN6
-         SZfaOJBeasDCJpcvhKRJYeqCXl7sKm7S+utqmOCNtl5qcQqPoucR/aXS4Zu03+DOsAYY
-         v19g==
+        bh=F3htzumhw0wsBNPb1jzbmXRsC9SD4nCo3kem2V3UyCY=;
+        b=EVKqyCWCkFmsCIw/cwaM55FNXGvjvtuhlkDhHlLuPyeOPf1jNJCvsyST22FJeP3N08
+         SaUxsMOgtm6P50sL15JMmR15PmSkCrH7Rttno88S5ejE67CA5y6fcMGBHTgku9Qvoldn
+         6LHz6eMcW4WrUw+DLg2ZzIZX7HE3TADx1uCL/CAwi7l7OolGwnyBVPQLc58u51PjOREH
+         j09tKlsRce7Blh6xjKlly0m9P2mkNaI0jIfNrVusW8yp/oJGh184U583VnC1fFtUtlGE
+         l+U+UiptDpUXCrhGP5Dkj4MK8dEzNwss8XtKGp9yE+5xMLnzlv0bxS4HsJFkAnp4orIa
+         m2Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/lnWMMCIsg4/tFUsl2j1cd75JRahCaG7A5ViWQnd0OY=;
-        b=PLXTjCX5HiBX3/3i2mJYdJvxGC2WjXNc2qyfvVIB/KGVxPF8GOFiTUj0bWG2fOE2WI
-         RIZbxYhpEVD82FWiW/S3d2aNeinZ8dfZ6YMHpoq2r1i8JMWxqs9C5Xr8eUuCHEYni63R
-         LOW3H8kMAQJvmfHGE3lBrwxRlcEoKFvCtUPs03J5JX5iMuoo4VfKUIAy0P8aMb4JTpcQ
-         tm2b+q4r9/ubeZo4P27Ar3mK1fAuL7v2HGUL6WXRjlT79AF9Sg4BWaMmzLJg6hN0Tf8z
-         HJgn2044WGfwDrrutC19QYD/naw1PIdbni1fx136Hzm3rwmY5IWdvqS24LDRMcLyDHlz
-         h14Q==
-X-Gm-Message-State: AHQUAub/Z8+vcdgoDFJM4TDAJ5n34ddT0YkmDIq5QfqjlPvok3Ik1rZd
-        aE+76zbCOImofkJgA9/PcUpngg==
-X-Google-Smtp-Source: AHgI3Ibg4yRTiwUB97N4T/Zowkzyk+Qz66rIKYI5nXP8LBvvnCG7LvRXo7CLmn5dSW1yFeu7OplNiQ==
-X-Received: by 2002:a17:902:9884:: with SMTP id s4mr4777634plp.1.1549991783804;
-        Tue, 12 Feb 2019 09:16:23 -0800 (PST)
+        bh=F3htzumhw0wsBNPb1jzbmXRsC9SD4nCo3kem2V3UyCY=;
+        b=S1d3kSd8fVziToUiiMZkLvYB0EjTu0IUF9xdDZaYImzaL55Cys2H/jUcYyx6iHcdM7
+         j53y5k8Juv8qW0g3ph3RroeTLWi4B2hU7X+mPgOA/ieFCtTGGtcfNNqboPhUob3k5jbQ
+         Vzg/T96AViy/f1QAc7dJwinT1QNdZ4rMszKGnV55pfsdoqSohKSXL7tUdo/yS4ZZxlM8
+         Pa1x60pl/8aYZgeLY60jJlejjLJZC1ZySIA+uE0Z81v0wfinBYuqS0O4ZRN7JPyygQ0T
+         62TlYlwszbq02JzDqW5fPgxdhEFTu7w/RjPI7Gw35bhIiPxcF1TGYn3lxG0h0q8j6uG3
+         OnXw==
+X-Gm-Message-State: AHQUAubAxphw9SPh8ySSeSGIahvIGE6N+fmZKPGc/IkAXToz4qCKkbaR
+        OErFjGjV2eLf79SIEtwA+Nf5LQ==
+X-Google-Smtp-Source: AHgI3IYVQEgGd8GVx9h2KcqYyLeFJbvp2oQ5fHkPZJ8hTsJjwnPaCpYreGyEhGFYJKr1a9wmYlkuBg==
+X-Received: by 2002:a63:cc4e:: with SMTP id q14mr4499520pgi.291.1549991781471;
+        Tue, 12 Feb 2019 09:16:21 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id z4sm8659231pgu.10.2019.02.12.09.16.22
+        by smtp.gmail.com with ESMTPSA id z4sm8659231pgu.10.2019.02.12.09.16.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 09:16:23 -0800 (PST)
+        Tue, 12 Feb 2019 09:16:20 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org
 Cc:     suzuki.poulose@arm.com, mingo@redhat.com, peterz@infradead.org,
         jolsa@redhat.com, leo.yan@linaro.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/13] perf tools: Fix wrong return values in error path
-Date:   Tue, 12 Feb 2019 10:16:08 -0700
-Message-Id: <20190212171618.25355-4-mathieu.poirier@linaro.org>
+Subject: [PATCH 01/13] perf tools: Remove unused structure field "state"
+Date:   Tue, 12 Feb 2019 10:16:06 -0700
+Message-Id: <20190212171618.25355-2-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212171618.25355-1-mathieu.poirier@linaro.org>
 References: <20190212171618.25355-1-mathieu.poirier@linaro.org>
@@ -71,37 +71,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function cs_etm__mem_access() is supposed to return a u32 but the error
-path returns negative values at a couple of places, something that really
-throws off the clients using it.  Fix the situation by return '0'.
+Field "state" in structure cs_etm_queue is no longer used and needs
+to be removed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- tools/perf/util/cs-etm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/cs-etm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1d9419a0cf0c..f396fee9bb95 100644
+index 0b11d653cfbe..ebd68eb43da9 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -324,7 +324,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
- 	struct	 addr_location al;
- 
- 	if (!etmq)
--		return -1;
-+		return 0;
- 
- 	machine = etmq->etm->machine;
- 	cpumode = cs_etm__cpu_mode(etmq, address);
-@@ -332,7 +332,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
- 	thread = etmq->thread;
- 	if (!thread) {
- 		if (cpumode != PERF_RECORD_MISC_KERNEL)
--			return -EINVAL;
-+			return 0;
- 		thread = etmq->etm->unknown_thread;
- 	}
- 
+@@ -65,7 +65,6 @@ struct cs_etm_queue {
+ 	struct thread *thread;
+ 	struct cs_etm_decoder *decoder;
+ 	struct auxtrace_buffer *buffer;
+-	const struct cs_etm_state *state;
+ 	union perf_event *event_buf;
+ 	unsigned int queue_nr;
+ 	pid_t pid, tid;
 -- 
 2.17.1
 
