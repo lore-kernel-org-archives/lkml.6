@@ -2,140 +2,147 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D1DC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC6BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675B82186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFCD82070C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549956623;
+	bh=VkjIGW1ndGK0G6h3re8+lD4IW+9MML32Do/g8pRJ+X0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=jQUICMY9iDTXMn3RRXRhNytPGjLSrqscV/pC9ndXIaen8uCTNmsXXkEOn49FsfloF
+	 yQjU036ifnm1Bh2YDqv/EdBJ1yeKT1uN2vVnOtmJwhLeETZB+PgkuJNuJQeJsfixzR
+	 OrQJuyFgtUJoDAP5U0k6I2LuThgh6fgVc3BHEWlw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbfBLH3z (ORCPT
+        id S1728028AbfBLHaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:29:55 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35060 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfBLH3z (ORCPT
+        Tue, 12 Feb 2019 02:30:22 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:58007 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726040AbfBLHaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:29:55 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b17so1313105eds.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 23:29:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DKyg29G4Az6thYz0DtsQzwE8vHe9QL+MPXuv2VvZShE=;
-        b=pF9GZT8ylfMkAUfUEOywtRMsWW0ndhIvP9e5w5a0WP5weD3c5HJ1x6Cbyz36QUHp16
-         nCQ7N1wNuNT9B0EK5UyfozrFEsE66Mmgr+VTA8SEipi5KeWf6yHWdkIOBUp1u1iV+Nk5
-         FoUIKA36XA5AbEtX2WIJZNy8fdwgp840wYATMb6q+mDAcS2Yjxh87vlaxEwUA7qpIusg
-         1tkqCeyxhjKh8g8Ddrv0AS+vgtco7DWf3yJSFg2zoqZxOajsMrw9hHbEvA0J7XyUDp69
-         OhNKWLNxgySYuL1DQnE4OXWUGKNwxoseIKPWR2/WsOalADRHJ/2IfeEtHkADhz4m251G
-         sAEQ==
-X-Gm-Message-State: AHQUAuZfZQFgh204HUPljt6/3UOPFJPFiZcTTzXc9U7owY7LKhtO4Ul+
-        sif3N4pzqH2j+C9eHbPxMtbZjQ==
-X-Google-Smtp-Source: AHgI3IbT2XdUEMfJxKkxsTQGG3J15hsLG3mwGNdyLVlTA1qpPvGZBgTqPeyGVeiaSfS+PldZv6MrlQ==
-X-Received: by 2002:a50:d94a:: with SMTP id u10mr1899467edj.214.1549956593800;
-        Mon, 11 Feb 2019 23:29:53 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id b14sm3512812edt.6.2019.02.11.23.29.52
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 23:29:52 -0800 (PST)
-Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in
- platform_get_irq()
-To:     egranata@chromium.org, mika.westerberg@linux.intel.com,
-        dtor@chromium.org, andy.shevchenko@gmail.com, rafael@kernel.org,
-        gregkh@linuxfoundation.org, enric.balletbo@collabora.com,
-        linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        linux-acpi@vger.kernel.org, briannorris@chromium.org,
-        andriy.shevchenko@linux.intel.com
-Cc:     egranata@google.com
-References: <20190207185917.167829-1-egranata@google.com>
- <20190211190112.209286-1-egranata@chromium.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <de453c38-a7f9-62bf-72f6-40ac7a76456f@redhat.com>
-Date:   Tue, 12 Feb 2019 08:29:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 12 Feb 2019 02:30:21 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 7538E231BB;
+        Tue, 12 Feb 2019 02:30:20 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 12 Feb 2019 02:30:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=wrJoYBO97LlCKkoip
+        juoC/+8a4eB+DEm6P5r7lEfh4k=; b=C+nUTRMs5xJcTWDTuihsSpFY2/U9x+D/F
+        bRQk86XyodKJg84SECJSaWxNnPvSeDsxa7JIvCxMj7QBoIFhxl/28zxmP1zL0k1P
+        kJKUDNQkdPeorLVNUWGHkyCbL2y0CYzi3JGpQHLcDF1aWHXzcDeKBxvFJcrpNHZC
+        COc678TvnVkYaeby/7IkQ1/wP1EhyoN4rZcUMF35PAZlsyGA37/SPqhgPZN5iXDt
+        yoeesvha4wGqLUZltAB58SEjCDMigw6CyiLUatzmjlKTnfemPi3hr8tDZC0FTkpk
+        nBnLTWpU4Y6eYJic1NkFmxStr6EyMeZrXjynvrlspGMRinJxcutXQ==
+X-ME-Sender: <xms:C3ZiXEu8CRAv8tXqKOY60TUJ79fGSXZ05V9SFGVkOhFEe8cE9lCAWQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddttddguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
+    fedttdenucenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepfd
+    fvohgsihhnucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhg
+    qeenucfkphepuddvgedrudejuddrvdefrdduheenucfrrghrrghmpehmrghilhhfrhhomh
+    epthhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:C3ZiXPEYKk9fioYjs1EQjO6G-a9OoYq562vpz-3iK6N1UYznYCQoVw>
+    <xmx:C3ZiXFXq99olg93aRXWeATYMamt8Aok7wFkTePAHOD532n7vyM0AaQ>
+    <xmx:C3ZiXK03UGtjcgEdRBfM5ZuBWNoEcmixtCb4cG8t40rQA0I1Xy1zgg>
+    <xmx:DHZiXC7pVmjjDnSQRjbGCEHi81wEOHTOIOib9IQ_qkJvrbSPRuE1Yg>
+Received: from eros.localdomain (124-171-23-15.dyn.iinet.net.au [124.171.23.15])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0137CE4597;
+        Tue, 12 Feb 2019 02:30:17 -0500 (EST)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] xarray: Document erasing entries during iteration
+Date:   Tue, 12 Feb 2019 18:29:58 +1100
+Message-Id: <20190212072958.17373-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190211190112.209286-1-egranata@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The XArray is, in a way, a replacement data structure for linked lists,
+as such, on first use developers may wonder if it is safe to remove
+items while iterating over the array.
 
-On 11-02-19 20:01, egranata@chromium.org wrote:
-> From: Enrico Granata <egranata@chromium.org>
-> 
-> ACPI 5 added support for GpioInt resources as a way to provide
-> information about interrupts mediated via a GPIO controller.
-> 
-> Several device buses (e.g. SPI, I2C) have support for retrieving
-> an IRQ specified via this type of resource, and providing it
-> directly to the driver as an IRQ number.
-> 
-> This is not currently done for the platform drivers, as platform_get_irq()
-> does not try to parse GpioInt() resources. This requires drivers to
-> either have to support only one possible IRQ resource, or to have code
-> in place to try both as a failsafe.
-> 
-> While there is a possibility of ambiguity for devices that exposes
-> multiple IRQs, it is easy and feasible to support the common case
-> of devices that only expose one IRQ which would be of either type
-> depending on the underlying system's architecture.
-> 
-> This commit adds support for parsing a GpioInt resource in order
-> to fulfill a request for the index 0 IRQ for a platform device.
-> 
-> Signed-off-by: Enrico Granata <egranata@chromium.org>
+For example, this is fine:
 
-Looks good to me:
+	DEFINE_XARRAY(things);
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+	void cleanup()
+	{
+		struct thing *thing;
+		unsigned long index;
 
-Regards,
+		xa_for_each(&things, index, thing)
+			xa_erase(&things, index);
+	}
 
-Hans
+Document this feature explicitly in the docs and also for the macro
+definition.
+
+Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+---
+
+Hi Willy,
+
+I had my first go using the XArray today and during that I wondered if
+it was safe to remove items during iteration.  Conceptually it seems
+fine and it seemed to work just fine in code - is this something people
+should not be doing for any reason?  Is this the best way to traverse
+the tree and get every thing just to erase it?  Are we even supposed to
+be thinking this is a tree or should we just be thinking it is an array?
+
+(As you might have guessed I _still_ don't know exactly how a radix tree
+works :)
+
+Oh, and FTR the XArray is hot - good effort man.
+
+thanks,
+Tobin.
 
 
-> ---
-> Changes in v2:
->   - only support IRQ index 0
-> 
->   drivers/base/platform.c | 15 ++++++++++++++-
->   1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 1c958eb33ef4d..0d3611cd1b3bc 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -127,7 +127,20 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->   		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
->   	}
->   
-> -	return r ? r->start : -ENXIO;
-> +	if (r)
-> +		return r->start;
-> +
-> +	/*
-> +	 * For the index 0 interrupt, allow falling back to GpioInt
-> +	 * resources. While a device could have both Interrupt and GpioInt
-> +	 * resources, making this fallback ambiguous, in many common cases
-> +	 * the device will only expose one IRQ, and this fallback
-> +	 * allows a common code path across either kind of resource.
-> +	 */
-> +	if (num == 0 && has_acpi_companion(&dev->dev))
-> +		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-> +
-> +	return -ENXIO;
->   #endif
->   }
->   EXPORT_SYMBOL_GPL(platform_get_irq);
-> 
+ Documentation/core-api/xarray.rst | 3 ++-
+ include/linux/xarray.h            | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 5d54b27c6eba..2578e0bdaa17 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -97,7 +97,8 @@ You can copy entries out of the XArray into a plain array by calling
+ :c:func:`xa_extract`.  Or you can iterate over the present entries in
+ the XArray by calling :c:func:`xa_for_each`.  You may prefer to use
+ :c:func:`xa_find` or :c:func:`xa_find_after` to move to the next present
+-entry in the XArray.
++entry in the XArray.  It is safe to call :c:func:`xa_release` on entries
++as you iterate over the array using :c:func:`xa_for_each`.
+ 
+ Calling :c:func:`xa_store_range` stores the same entry in a range
+ of indices.  If you do this, some of the other operations will behave
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 5d9d318bcf7a..1f8974281a0a 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -407,6 +407,8 @@ static inline bool xa_marked(const struct xarray *xa, xa_mark_t mark)
+  * you should use the xas_for_each() iterator instead.  The xas_for_each()
+  * iterator will expand into more inline code than xa_for_each().
+  *
++ * It is safe to erase entries from the XArray as you iterate over it.
++ *
+  * Context: Any context.  Takes and releases the RCU lock.
+  */
+ #define xa_for_each(xa, index, entry) \
+-- 
+2.20.1
+
