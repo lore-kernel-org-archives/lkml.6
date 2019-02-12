@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397E4C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA0CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F4A20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81CF2214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:19:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="N4vXk5n7"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="iLxtpj78"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbfBLMSF (ORCPT
+        id S1729177AbfBLMT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:18:05 -0500
-Received: from mail-eopbgr40063.outbound.protection.outlook.com ([40.107.4.63]:56832
+        Tue, 12 Feb 2019 07:19:56 -0500
+Received: from mail-eopbgr40055.outbound.protection.outlook.com ([40.107.4.55]:8433
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726192AbfBLMSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:18:04 -0500
+        id S1726192AbfBLMT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:19:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ktt0uq+qJWs3fnLXZAd4ICa5yDhWQBM56n6poc80XTM=;
- b=N4vXk5n7bZPWMndHxtTWAy16WLzIv5Z2dVFDjXDomSPWSI+s69qohsb2Lpbxazw0OmOnwpEAmL0VEPcYccKee8KQvZYeCI4KlHRum4enwEMihX59A3BnMMDEQvuS7dC2a69cjFYImEScUJbnDAT9/AU9Xa0qyOSA7PVtzXc/xhs=
+ bh=IHnjX7Zu9JhmFCi1CiJcp4wiH8pXYYXHBrJn9ioQEzU=;
+ b=iLxtpj78X8PxqlZALF6Ry/WAG4BH8FSR883I/vlxqMfOB0DcgzPr8/FCgoNlhgXQFRsqFQ6cQ4k83E05EqfiqkEUG6TUMDrui5fot4XJLmG4lRokPxq5FhRQJoUoFaYvpE3ad/VFMpkLq/8FOzk3gKjYc79BYXNCBcwD36+/VXQ=
 Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB5080.eurprd05.prod.outlook.com (20.177.36.86) with Microsoft SMTP
+ AM6PR05MB5507.eurprd05.prod.outlook.com (20.177.119.28) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Tue, 12 Feb 2019 12:18:00 +0000
+ 15.20.1622.16; Tue, 12 Feb 2019 12:19:51 +0000
 Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
  ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
  ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
- 12:18:00 +0000
+ 12:19:51 +0000
 From:   Ido Schimmel <idosch@mellanox.com>
 To:     Florian Fainelli <f.fainelli@gmail.com>
 CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
@@ -45,61 +45,66 @@ CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Jiri Pirko <jiri@mellanox.com>,
         "andrew@lunn.ch" <andrew@lunn.ch>,
         "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
-Subject: Re: [PATCH net-next 1/3] mlxsw: spectrum_switchdev: Remove getting
- PORT_BRIDGE_FLAGS
-Thread-Topic: [PATCH net-next 1/3] mlxsw: spectrum_switchdev: Remove getting
- PORT_BRIDGE_FLAGS
-Thread-Index: AQHUwk9U8MSlZzLd30ixNq6Bjp0oiKXcFVwA
-Date:   Tue, 12 Feb 2019 12:18:00 +0000
-Message-ID: <20190212121758.GA12774@splinter>
-References: <20190211211749.19847-1-f.fainelli@gmail.com>
- <20190211211749.19847-2-f.fainelli@gmail.com>
-In-Reply-To: <20190211211749.19847-2-f.fainelli@gmail.com>
+Subject: Re: [PATCH net-next v4 1/9] Documentation: networking: switchdev:
+ Update port parent ID section
+Thread-Topic: [PATCH net-next v4 1/9] Documentation: networking: switchdev:
+ Update port parent ID section
+Thread-Index: AQHUwj11wPuvW3r12UmuI5DBpSCIDaXcFgSA
+Date:   Tue, 12 Feb 2019 12:19:51 +0000
+Message-ID: <20190212121949.GA13138@splinter>
+References: <20190211191001.8623-1-f.fainelli@gmail.com>
+ <20190211191001.8623-2-f.fainelli@gmail.com>
+In-Reply-To: <20190211191001.8623-2-f.fainelli@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0502CA0007.eurprd05.prod.outlook.com
- (2603:10a6:209:1::20) To AM6PR05MB5240.eurprd05.prod.outlook.com
+x-clientproxiedby: AM5PR0601CA0030.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::16) To AM6PR05MB5240.eurprd05.prod.outlook.com
  (2603:10a6:20b:64::22)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=idosch@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [193.47.165.251]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR05MB5080;6:/wIri3Ob1vAZQKMghFEb8chDuHTUYX0+EPFlLJmfTRGyJQ3B1v7as0WRvod6GGLFYNkjRU9qP5m8oczjSRgc6LQ6+PIjF8MDY54mB8UhHB7gSRDoV/Cs4LSTlU+PzMCwoo+GyymKsZ8GhfGl849L3/G9jhsShRBPjjn4WT4jJOTP/JvzvzB+aJm8yhFlYvlnhGkVr6HX7V1IX3zZWzWo6uRbzavDDv/4CNv2f6eGyqIIV795s0/QgGnmIqBuW/79zBKmhJJIQhvuBmhRUCXEHLS2hsCD8k+B06z/pdtHsK63W6SAfEFDyGQvZodgx2BSdMLyP7K6WrPddM8kTq5GCwky5QeKECEUeSVU/S4sHDY9oKflu/++v3YZZu6+cmoKk5c5SXqZoMghu5WaNl8TOZ8WHblcDM6F1wBcMNFhPVecOY6nVw1IUtNB5eIS162HtmyX3tMUMW+ISg1cqtORHg==;5:V0P1dsT394qQHxjrFr3GC6NrkHb1iqInslqzTmpyVLJ9S5KExmKk824iPmUaqR2rGwoWpLqRuXXAVWbZshU4BBRMNg5zU4KyHJ+ja6dYXMjjeKh6Sx5QP5slipv0V+i0wku5nHrnNGE0NOG6IxMMaIfc3ExUmJPo4Q8h/FsE0awb/reyYjt4Sf+Ny0BjOqnJo525s5lFj+7dt0ct5jN9Wg==;7:3d0I42dstQw4xNuoLwhSAjgwm0rT8wtC9I458W+kDF8xjdQ5BItaez9NpNaDCR2Rl/tUXdv5twAx5gqXc5GOTBGjbhJ0mp9d7e00Le5uEL95rg3KSXpynDiVQGMf+Z+VIiSqlXdgZS7akdRPD/Z9Lw==
-x-ms-office365-filtering-correlation-id: 80fdf12d-c2b7-4b50-9624-08d690e42131
+x-microsoft-exchange-diagnostics: 1;AM6PR05MB5507;6:qdjjrMex+iyg/3h+1LiF5Gwgg+ucbnwrBdka5wV/DRUyyWUlDOw8Izls9gB4KsZepVerRg/p5UiOPFDq+4YdCgEcjKhVCV6c+VXHYGKANl9m68uSEWcDkPMZ+LvtKu9vRe/UOAPEERaQqNuCyISve5E9heAld2JHkasGoI4RsJnm6NTjjad6Ozb7RMD1xxN3PV0NS1iq7VGeYQmiTFwztAy6R9zvc0foJ5ziq7SYHQBXSie2fS8Px/ixRlLWX0SUjAM2HpPBdnM7l8XKFN91cViwF9sZEMSHAtrSZx8KazPBywqZPwSUdi0dn1oJgxx42lJQkQbDOYSHeNVcCk0dokCDFvCeVpcAkwK33dYYciRvNWhVz8ZdHAA8cSnTqAFiRdjVjqB2UPyRNvSXP4eopH1MpRyTN7RNgajAGS2a+kep7zYKUSdQOVVF/+u/5x/XT5BRcip8kw6AqbvGuzykdw==;5:Ab3bnQdOHzsyWyjVD05wmgrX2V11ro/qQjiAKdg+IoE4oe6ifuG73DfBFOhCUtwU6Y5z0/N4OpedELVwn8hTLyIRQ6UsaSxx/V6nvUXnr7MxcfZtHPxMoYyubun7jQOVboV6H/IX4HPEHm/K3VcVndhH7t+nwu3hEC8D0C6zSUFvu6eJ6UYbZLv7/5T0aO8tWfhvRV5lnd1RPs7U83CDAQ==;7:1wauOX2d6c6dhzBcR6OqYGDY7+YObbyCiZaA3KXx3gaDl3lIVNQOyaTXcRph6/kPQtyjTmwmY29bqd4lUhRq3+CnYhXZEYPD4FK7QuEvPQr8Z3u1q4hsnVztCdu87o0oi2FVFu/Bs69dQ/elR7CLRQ==
+x-ms-office365-filtering-correlation-id: 9711d989-d256-4b4f-6218-08d690e462f8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB5080;
-x-ms-traffictypediagnostic: AM6PR05MB5080:
-x-microsoft-antispam-prvs: <AM6PR05MB5080C6A4CC5EB371BCB735A2BF650@AM6PR05MB5080.eurprd05.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB5507;
+x-ms-traffictypediagnostic: AM6PR05MB5507:
+x-microsoft-antispam-prvs: <AM6PR05MB5507CAD4A05C9781E5135634BF650@AM6PR05MB5507.eurprd05.prod.outlook.com>
 x-forefront-prvs: 0946DC87A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(39860400002)(346002)(376002)(396003)(366004)(189003)(199004)(6506007)(99286004)(66066001)(386003)(33716001)(86362001)(186003)(102836004)(26005)(6116002)(3846002)(76176011)(6246003)(256004)(33896004)(52116002)(7736002)(558084003)(53936002)(33656002)(54906003)(8936002)(25786009)(316002)(305945005)(8676002)(4326008)(68736007)(478600001)(81166006)(2906002)(1076003)(71190400001)(11346002)(14454004)(486006)(71200400001)(446003)(6486002)(476003)(6916009)(229853002)(6436002)(106356001)(6512007)(97736004)(9686003)(105586002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5080;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(376002)(346002)(39860400002)(396003)(136003)(199004)(189003)(33656002)(386003)(6506007)(99286004)(8676002)(4744005)(81156014)(81166006)(446003)(316002)(476003)(486006)(6486002)(14444005)(71200400001)(71190400001)(53936002)(102836004)(11346002)(106356001)(14454004)(105586002)(256004)(15650500001)(6436002)(25786009)(1076003)(9686003)(33716001)(6512007)(6246003)(68736007)(86362001)(97736004)(66066001)(2906002)(76176011)(186003)(54906003)(52116002)(26005)(7736002)(305945005)(33896004)(229853002)(478600001)(4326008)(6916009)(8936002)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5507;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: aT+OeRuS4ng1NkiuWkD9Z6l09lDGVTgtY6y3zw+4TLlSJ2nTV9xGkohGVV+Op2Hsm52Ye5bR0x/oJ41Jt+BVcUDUJf8lGMavr+Otbu7PBqO4bOrhor4GBQ82yzu83jNNQAu2zBL2SMbtr0WjcY+zDCZvuMlE3ymGgFbtFFXLjxels3QSvk//Iz/k7kzdoIammFiL4qejd07hEWQj4jiErbNFcHEcthInCeQDBh6TUn/GslKp44tKaZ70S4dQspH+Y1WFBJWP4eY/4eI3/hUsBHWveIui7LqfpRy8VA5KQj58WfOqTf36D1BVAlBFcuBhkZYlNwmoJ1M+QBI3HRm8bZRCJ2/13rP2Zdr2PuQ6+hdHXDH7p2hQOox6ix8ujHn5yaSaRzzFHSdnhU8BTkzED1GsJW5TfZ7uaE9qrt+Gg/s=
+x-microsoft-antispam-message-info: J3eG126obxOjJwIMrvR3oI8a+xAOzhNtcVweaReTC4/wrSVQP0Vrh9/uIy+adWb3lYgn8I12ulf/RHqr65YKynY7UtNdG77qB93wZIlmjKav9ofLHvl6CgrH+7dfuqyj06ZASgVlPBr3wwCSNu4lMkuYVbDOJG5ISbAJyGNPUWNAFtx3l42lhu8z6eiCvWa+ali6+Kb5muu7czPk8etJEHOdJt49Hwl6p/tK1tHGpIQbh9BW3YU9FhkMQ/Rrr3WotIGD+H9nJxhEoCrYcR7psc0IWAdmGLJ1MN7SZl5a2Uit4ktg0PZZrTMulOyaEqMpAia1Pd+5duJSrryhjjjqLplGPqoEupvRbNkWnilfQvd2gfAWjDBZjt+0X0CbUK535v+VIiMml7WPN3RmUX6mzCEVyU91onPqMAwjjR8c40g=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C44DEB3C518E4049AE6A045E639E28F5@eurprd05.prod.outlook.com>
+Content-ID: <14994EC13F27AD4B937AB755CEE199C3@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80fdf12d-c2b7-4b50-9624-08d690e42131
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 12:18:00.1433
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9711d989-d256-4b4f-6218-08d690e462f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 12:19:50.4970
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5080
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5507
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:17:47PM -0800, Florian Fainelli wrote:
-> There is no code that will query the SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
-> attribute remove support for that.
+On Mon, Feb 11, 2019 at 11:09:53AM -0800, Florian Fainelli wrote:
+> Update the section about switchdev drivers having to implement a
+> switchdev_port_attr_get() function to return
+> SWITCHDEV_ATTR_ID_PORT_PARENT_ID since that is no longer valid after
+> commit bccb30254a4a ("net: Get rid of
+> SWITCHDEV_ATTR_ID_PORT_PARENT_ID").
 >=20
+> Fixes: bccb30254a4a ("net: Get rid of SWITCHDEV_ATTR_ID_PORT_PARENT_ID")
+> Acked-by: Jiri Pirko <jiri@mellanox.com>
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
 Reviewed-by: Ido Schimmel <idosch@mellanox.com>
