@@ -2,145 +2,105 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CDCC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7C8C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC91222BE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 319F1222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732470AbfBLVWb (ORCPT
+        id S1732482AbfBLVWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:22:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43704 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729512AbfBLVWb (ORCPT
+        Tue, 12 Feb 2019 16:22:47 -0500
+Received: from gateway36.websitewelcome.com ([192.185.200.11]:17568 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728792AbfBLVWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:22:31 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 35D8327FB65
-Message-ID: <4a1346315224850faf31345b577ce3a29c069f3a.camel@collabora.com>
-Subject: Re: [PATCH v3 0/2] media: cedrus: Add H264 decoding support
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
-         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>, linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Tue, 12 Feb 2019 18:22:17 -0300
-In-Reply-To: <CAAFQd5AcqiwAb30ajLxmj6LZoabVygUsAB8A+drpityOAvY60A@mail.gmail.com>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
-         <CAAFQd5AcqiwAb30ajLxmj6LZoabVygUsAB8A+drpityOAvY60A@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1 
+        Tue, 12 Feb 2019 16:22:47 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6EC45400EE1E7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:36:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tfVugWXb2iQertfVugm08T; Tue, 12 Feb 2019 15:22:46 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=58926 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtfVH-003fbV-6e; Tue, 12 Feb 2019 15:22:46 -0600
+Date:   Tue, 12 Feb 2019 15:22:06 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] assoc_array: Mark expected switch fall-through
+Message-ID: <20190212212206.GA16378@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtfVH-003fbV-6e
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:58926
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Tomasz,
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-On Tue, 2019-02-12 at 21:50 +0900, Tomasz Figa wrote:
-> Hi Maxime,
-> 
-> On Mon, Feb 11, 2019 at 11:39 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > Hi,
-> > 
-> > Here is a new version of the H264 decoding support in the cedrus
-> > driver.
-> 
-> Thanks for working on this. Please see my comments below.
-> 
-> > As you might already know, the cedrus driver relies on the Request
-> > API, and is a reverse engineered driver for the video decoding engine
-> > found on the Allwinner SoCs.
-> > 
-> > This work has been possible thanks to the work done by the people
-> > behind libvdpau-sunxi found here:
-> > https://github.com/linux-sunxi/libvdpau-sunxi/
-> > 
-> > I've tested the various ABI using this gdb script:
-> > http://code.bulix.org/jl4se4-505620?raw
-> > 
-> > And this test script:
-> > http://code.bulix.org/8zle4s-505623?raw
-> > 
-> > The application compiled is quite trivial:
-> > http://code.bulix.org/e34zp8-505624?raw
-> > 
-> > The output is:
-> > arm:    builds/arm-test-v4l2-h264-structures
-> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> > x86:    builds/x86-test-v4l2-h264-structures
-> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> > x64:    builds/x64-test-v4l2-h264-structures
-> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> > arm64:  builds/arm64-test-v4l2-h264-structures
-> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> > 
-> > Let me know if there's any flaw using that test setup, or if you have
-> > any comments on the patches.
-> > 
-> > Maxime
-> > 
-> > Changes from v2:
-> >   - Simplified _cedrus_write_ref_list as suggested by Jernej
-> >   - Set whether the frame is used as reference using nal_ref_idc
-> >   - Respect chroma_format_idc
-> >   - Fixes for the scaling list and prediction tables
-> >   - Wrote the documentation for the flags
-> >   - Added a bunch of defines to the driver bit fields
-> >   - Reworded the controls and data format descriptions as suggested
-> >     by Hans
-> >   - Reworked the controls' structure field size to avoid padding
-> >   - Removed the long term reference flag
-> 
-> This and...
-> 
+This patch fixes the following warning:
 
-Maxime has dropped this because of Ayaka's mail about long term references
-not making much sense in stateless decoders.
+lib/assoc_array.c: In function ‘assoc_array_delete’:
+lib/assoc_array.c:1110:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   for (slot = 0; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
+   ^~~
+lib/assoc_array.c:1118:2: note: here
+  case assoc_array_walk_tree_empty:
+  ^~~~
 
-I noticed that RK3399 TRM has a field to specify long term refs and
-so was wondering about this item as well.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-> >   - Reintroduced the neighbor info buffer
-> >   - Removed the ref_pic_list_p0/b0/b1 arrays that are redundant with the
-> >     one in the DPB
-> 
-> these are used in our Rockchip VDEC driver.
-> 
-> Could you elaborate on the reasons why they got removed?
-> 
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-If I understood correctly, there are two reference picture lists.
-P-frames will populate ref_pic_list0 and B-frames will populate both.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ lib/assoc_array.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-According to this, v4l2_ctrl_h264_slice_param.ref_pic_list0 and .ref_pic_list1
-should be enough and ref_pic_list_p0/b0/b1 are not needed.
-
-What do you think?
-
-Regards,
-Ezequiel
+diff --git a/lib/assoc_array.c b/lib/assoc_array.c
+index c6659cb37033..0b61d3b77e5c 100644
+--- a/lib/assoc_array.c
++++ b/lib/assoc_array.c
+@@ -1115,6 +1115,7 @@ struct assoc_array_edit *assoc_array_delete(struct assoc_array *array,
+ 						index_key))
+ 				goto found_leaf;
+ 		}
++		/* fall through */
+ 	case assoc_array_walk_tree_empty:
+ 	case assoc_array_walk_found_wrong_shortcut:
+ 	default:
+-- 
+2.20.1
 
