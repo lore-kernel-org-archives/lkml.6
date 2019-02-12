@@ -2,81 +2,114 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26052C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631D0C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFBE2190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF8C2190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731849AbfBLShC (ORCPT
+        id S1731872AbfBLShp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:37:02 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:56098 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbfBLShC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:37:02 -0500
-Received: from localhost (96-89-128-221-static.hfc.comcastbusiness.net [96.89.128.221])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 813F714C50539;
-        Tue, 12 Feb 2019 10:37:01 -0800 (PST)
-Date:   Tue, 12 Feb 2019 10:37:00 -0800 (PST)
-Message-Id: <20190212.103700.893095897141469287.davem@davemloft.net>
-To:     khlebnikov@yandex-team.ru
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sashal@kernel.org, linux-sctp@vger.kernel.org
-Subject: Re: [PATCH] inet_diag: fix reporting cgroup classid and fallback
- to priority
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <154970855279.305165.13649851988934332761.stgit@buzz>
-References: <154970855279.305165.13649851988934332761.stgit@buzz>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Feb 2019 10:37:01 -0800 (PST)
+        Tue, 12 Feb 2019 13:37:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:41984 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727469AbfBLSho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 13:37:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A345A78;
+        Tue, 12 Feb 2019 10:37:44 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CB8F3F575;
+        Tue, 12 Feb 2019 10:37:42 -0800 (PST)
+Date:   Tue, 12 Feb 2019 18:37:39 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Abhishek Shah <abhishek.shah@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH v2 2/2] PCI: iproc: Add PCIe 32bit outbound memory
+ configuration
+Message-ID: <20190212183739.GB918@e107981-ln.cambridge.arm.com>
+References: <1549342622-9929-1-git-send-email-srinath.mannam@broadcom.com>
+ <1549342622-9929-3-git-send-email-srinath.mannam@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549342622-9929-3-git-send-email-srinath.mannam@broadcom.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Date: Sat, 09 Feb 2019 13:35:52 +0300
+On Tue, Feb 05, 2019 at 10:27:01AM +0530, Srinath Mannam wrote:
+> Add configuration to support IPROC PCIe host controller outbound memory
+> window mapping with SOC address range inside 4GB boundary, which is 32 bit
+> AXI address.
 
-> Field idiag_ext in struct inet_diag_req_v2 used as bitmap of requested
-> extensions has only 8 bits. Thus extensions starting from DCTCPINFO
-> cannot be requested directly. Some of them included into response
-> unconditionally or hook into some of lower 8 bits.
-> 
-> Extension INET_DIAG_CLASS_ID has not way to request from the beginning.
-> 
-> This patch bundle it with INET_DIAG_TCLASS (ipv6 tos), fixes space
-> reservation, and documents behavior for other extensions.
-> 
-> Also this patch adds fallback to reporting socket priority. This filed
-> is more widely used for traffic classification because ipv4 sockets
-> automatically maps TOS to priority and default qdisc pfifo_fast knows
-> about that. But priority could be changed via setsockopt SO_PRIORITY so
-> INET_DIAG_TOS isn't enough for predicting class.
-> 
-> Also cgroup2 obsoletes net_cls classid (it always zero), but we cannot
-> reuse this field for reporting cgroup2 id because it is 64-bit (ino+gen).
-> 
-> So, after this patch INET_DIAG_CLASS_ID will report socket priority
-> for most common setup when net_cls isn't set and/or cgroup2 in use.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Fixes: 0888e372c37f ("net: inet: diag: expose sockets cgroup classid")
+I do not understand what this means, explain it to me and rewrite the
+commit log accordingly.
 
-Applied, and queued up for -stable.
+What does this solve ? Why do we need this patch or rephrased, what
+is missing in the current driver ?
 
-Please always put the Fixes: tag first in the list of tags.  I fixed
-it up for you this time.
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
 
-Thanks.
+Review tags should be given on public mailing lists, these ones seem
+to come from non-public review cycles in which case you must drop
+them.
+
+>  drivers/pci/controller/pcie-iproc.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> index b882255..080f142 100644
+> --- a/drivers/pci/controller/pcie-iproc.c
+> +++ b/drivers/pci/controller/pcie-iproc.c
+> @@ -955,8 +955,25 @@ static int iproc_pcie_setup_ob(struct iproc_pcie *pcie, u64 axi_addr,
+>  			resource_size_t window_size =
+>  				ob_map->window_sizes[size_idx] * SZ_1M;
+>  
+> -			if (size < window_size)
+> -				continue;
+> +			/*
+> +			 * Keep iterating until we reach the last window and
+> +			 * with the minimal window size at index zero. In this
+> +			 * case, we take a compromise by mapping it using the
+> +			 * minimum window size that can be supported
+
+See above, I do not understand clearly what this means.
+
+Lorenzo
+
+> +			 */
+> +			if (size < window_size) {
+> +				if (size_idx > 0 || window_idx > 0)
+> +					continue;
+> +
+> +				/*
+> +				 * For the corner case of reaching the minimal
+> +				 * window size that can be supported on the
+> +				 * last window
+> +				 */
+> +				axi_addr = ALIGN_DOWN(axi_addr, window_size);
+> +				pci_addr = ALIGN_DOWN(pci_addr, window_size);
+> +				size = window_size;
+> +			}
+>  
+>  			if (!IS_ALIGNED(axi_addr, window_size) ||
+>  			    !IS_ALIGNED(pci_addr, window_size)) {
+> -- 
+> 2.7.4
+> 
