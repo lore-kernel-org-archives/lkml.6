@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DC1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D483C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0207D2184E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B36A217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549988104;
-	bh=Xv5OzXSHjGSc0XjZHsImy5SwDPRNMpFpsQfpnURglKA=;
+	s=default; t=1549988131;
+	bh=NGj09ZlYvwysKa4bog5Nt7sVBbwEh+ImPCiZvgE5neI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JQCZAQT/j9yY5nnyOy/hrbwpvKOxvveun7qDbRmngmdVLhEBX2JpmT6SMnxzc9YMs
-	 4zYWkWu4zFO7kt99h97gpZw0w/Ej0FMtqhWGAtHToSZbWnDFTPAZLNZDYDHk6YMbAK
-	 7zmpoYWKrD9t6Uq/zNjf8QxKPRIGScAREuIbZoNo=
+	b=pCsrNUxiTtYvma8ktUn6rCecJONw/03uTmQTIKYC4MGmx0rNxMLKYeicAVAsrxD5y
+	 ZUhIUlJ4jFZ3wR3UgHwZbNuUhbA18g8gvMeC7WWZVkRVInB1iR4xZjbVpPcH769U2l
+	 YMSERWOupE9byoIGuuXB62mHA3QIsgF+GCyldJW8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbfBLQPB (ORCPT
+        id S1730993AbfBLQP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:15:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43348 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 11:15:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbfBLQPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:15:00 -0500
+        id S1730301AbfBLQP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:15:29 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 606EC21773;
-        Tue, 12 Feb 2019 16:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B155921773;
+        Tue, 12 Feb 2019 16:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549988100;
-        bh=Xv5OzXSHjGSc0XjZHsImy5SwDPRNMpFpsQfpnURglKA=;
+        s=default; t=1549988128;
+        bh=NGj09ZlYvwysKa4bog5Nt7sVBbwEh+ImPCiZvgE5neI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4ZhZ47R1zi/Iq36B7tHASuS0xrDSB9K2U70RbAb7WkGBcBe4L1IojSf3LsQQ0lWU
-         WL3QAG0MW/GN1X/+U73EmEaK3TwrLQ+g5IMjsS3eftUeXUCkAU1wKA8H/sgRod0u4/
-         O2ZbLNVaBP7OQ6zNX8c4waAdBUe5MySbsjpM4XmE=
+        b=t4Zk1RjI5+UXq61nxM3NUP15hl6Yi8J9KD8zwDSG54AozNLAKsAkUqTSmubW8IaQ/
+         hKNjRXd+tV2Xa0hNgN2UK0V+laemq6jBBiUVb2Nc4czZ5Sntyc8MmnLYvpF9y9mjlg
+         6932fd+I+M3cwS9z93aA/Uy1Dd0xGJ+iwZlIsZM4=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -45,9 +45,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH -tip v3 08/10] kprobes: Prohibit probing on RCU debug routine
-Date:   Wed, 13 Feb 2019 01:14:37 +0900
-Message-Id: <154998807741.31052.11229157537816341591.stgit@devbox>
+Subject: [PATCH -tip v3 09/10] kprobes: Prohibit probing on lockdep functions
+Date:   Wed, 13 Feb 2019 01:15:05 +0900
+Message-Id: <154998810578.31052.1680977921449292812.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154998785011.31052.1475728497912659748.stgit@devbox>
 References: <154998785011.31052.1475728497912659748.stgit@devbox>
@@ -60,39 +60,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since kprobe itself depends on RCU, probing on RCU debug
-routine can cause recursive breakpoint problem.
-Prohibit probing on RCU debug routines.
-
-int3
- ->do_int3()
-   ->ist_enter()
-     ->RCU_LOCKDEP_WARN()
-       ->debug_lockdep_rcu_enabled() -> int3
+Some lockdep functions can be involved in breakpoint handling
+and probing on those functions can cause a breakpoint recursion.
+Prohibit probing on those functions by blacklist.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/rcu/update.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/locking/lockdep.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 1971869c4072..f4ca36d92138 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -52,6 +52,7 @@
- #include <linux/tick.h>
- #include <linux/rcupdate_wait.h>
- #include <linux/sched/isolation.h>
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 7f7db23fc002..c1653a1b57b7 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -50,6 +50,7 @@
+ #include <linux/random.h>
+ #include <linux/jhash.h>
+ #include <linux/nmi.h>
 +#include <linux/kprobes.h>
  
- #define CREATE_TRACE_POINTS
+ #include <asm/sections.h>
  
-@@ -249,6 +250,7 @@ int notrace debug_lockdep_rcu_enabled(void)
- 	       current->lockdep_recursion == 0;
+@@ -2796,6 +2797,7 @@ void lockdep_hardirqs_on(unsigned long ip)
+ 	__trace_hardirqs_on_caller(ip);
+ 	current->lockdep_recursion = 0;
  }
- EXPORT_SYMBOL_GPL(debug_lockdep_rcu_enabled);
-+NOKPROBE_SYMBOL(debug_lockdep_rcu_enabled);
++NOKPROBE_SYMBOL(lockdep_hardirqs_on);
  
- /**
-  * rcu_read_lock_held() - might we be in RCU read-side critical section?
+ /*
+  * Hardirqs were disabled:
+@@ -2825,6 +2827,7 @@ void lockdep_hardirqs_off(unsigned long ip)
+ 	} else
+ 		debug_atomic_inc(redundant_hardirqs_off);
+ }
++NOKPROBE_SYMBOL(lockdep_hardirqs_off);
+ 
+ /*
+  * Softirqs will be enabled:
+@@ -3638,7 +3641,8 @@ __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
+ 	return 0;
+ }
+ 
+-static int __lock_is_held(const struct lockdep_map *lock, int read)
++static nokprobe_inline
++int __lock_is_held(const struct lockdep_map *lock, int read)
+ {
+ 	struct task_struct *curr = current;
+ 	int i;
+@@ -3871,6 +3875,7 @@ int lock_is_held_type(const struct lockdep_map *lock, int read)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(lock_is_held_type);
++NOKPROBE_SYMBOL(lock_is_held_type);
+ 
+ struct pin_cookie lock_pin_lock(struct lockdep_map *lock)
+ {
 
