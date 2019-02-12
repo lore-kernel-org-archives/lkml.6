@@ -2,110 +2,113 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 156C0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BBBC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D676F21B1A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:25:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgwUQ+on"
+	by mail.kernel.org (Postfix) with ESMTP id D683321B18
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549967199;
+	bh=b0tVa3ej1EOyVDum8RD55CnX7XKjp4rEZYyet+hiOuw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=TQIsKrV/SO66oQn+uoGwPxidn0MeZ4qa34q2NeXmGlXMVqerfQt0kLngXnYv9ZF5M
+	 30Ql45PnY5VzfzyFxb28A+NfAKiyY7CQahy2YcYlFNwwuMpbKzAKLuGs+fCUlXkHeo
+	 7VetrH9uv96+hGQFhbCHT+YhorKP6wcAXetvXnR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfBLKZV (ORCPT
+        id S1728766AbfBLK0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:25:21 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39907 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727903AbfBLKZU (ORCPT
+        Tue, 12 Feb 2019 05:26:38 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36839 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbfBLK0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:25:20 -0500
-Received: by mail-pf1-f193.google.com with SMTP id f132so1086104pfa.6;
-        Tue, 12 Feb 2019 02:25:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nbfa47FKIarHJs9DYsn8FNr6DF5wjBQdt8qn6ru3eH4=;
-        b=WgwUQ+onrzoOzGT5x7InAr9RUnNdDiw127lk/jmc30D2sY+Si2MZU+aAYlqDa6MiwA
-         hkQKMThpqfNwSc6RcCFVC7sCQc5mICZN/T1jU4ezCRtDaa+viNe3+jnAEZqy/bJmMhYd
-         UUPZKPdE310OeW5dlH5TtrIBL5p7p1WNztDRsjspLCfMs2cXtiwmlQNRTj+vIZpXEZh8
-         yMh48riFoc8UcUub8mPy6akilC0un6/JAsg+L6AO6aRzDBmUi2StGDXT3yS7vGa2gEk4
-         B3RLzQUDscNP6c+MBW7I76/JOZY90g5tyoce/7ymKkwRt3DBtGIjWaOdNn9QIzEozW1w
-         io+Q==
+        Tue, 12 Feb 2019 05:26:38 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k98so3567623otk.3;
+        Tue, 12 Feb 2019 02:26:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nbfa47FKIarHJs9DYsn8FNr6DF5wjBQdt8qn6ru3eH4=;
-        b=bcZ4gFbYy9KrXUU42rHkbHR+7hQcPzr1pKyQs+NFyNPmA8PfAIPT8WSvGgoVk9EQzq
-         GbFO2+Ke1Wzx3l7t5AJNUMDCGBXVENKk66PKtJTz3/efDlaV9l0Gc5qdxzudJFq4v1ob
-         MIwGbuDyylKdZheidmbyQ6Vm9iatmzA4OLuAv7jA+iUPl0UXb/ZnBDt2eeAOJGTlXl10
-         Xhq0jeuiDefbmaDcbcBbGp0IntpY0B15w6VkgZeQ+K89eeb+WmryNzX/IWYwPEMxwOgn
-         AfPTXZoHrvuY3TmNr5dAJONt7fDzyFJ/h3A9GmxS/0DnGPL8Y9teEynMcb7QL4izNyzZ
-         7gPA==
-X-Gm-Message-State: AHQUAubE8nCZWPAiX4kFUBNQ7g/m+m1nBg3mJKjYSDVRpoH7WRl12XuD
-        /io58xf0xen6Nol5ts3milFDS+CgqycJaG8VHd0zuUMd
-X-Google-Smtp-Source: AHgI3Ib/AiBDVXNA3zFjmn+UP6LLFF6aHySFPnaEFJflLBXQqOmgeouaQ9sLWC5EPtEJFQ0IEohRztF57BngIjVYg8c=
-X-Received: by 2002:a63:d450:: with SMTP id i16mr2947574pgj.246.1549967119759;
- Tue, 12 Feb 2019 02:25:19 -0800 (PST)
+        bh=cBe9slv4lWWe8TyQe1NJiIvJQhQytL+FI1HCzOEUrUw=;
+        b=qHGMa4SQo9RGNjimrdXcXEkS6Cu4dq07IsSKp3BKgxc19d0wacVXlgt1q4CpK0xULh
+         GE67bCELh7YXRUDiDp2DsJK81ZmdgN0gQeT46h2DRCOgWET7C9CSBbZ9hJqkDzGzT1Q2
+         d417Q0hDMcnzbTe68PvSyUao5dWoRxwNAUjsuJ+h9QqXBDhXusBxx6OiqtLuzweHGDBU
+         S2unl7qSyWiudTgMRHvt8mdr6F9mgLXZaZeKKzmdVDwKRJ3izxINIblmHX27cr06Ra0r
+         0IwOX1qSqFcq3r1/JniboLRuVaykwtVRpQA+ZswfZIpZF0KndtjXOBNl/i1aT6aHaENA
+         ZofA==
+X-Gm-Message-State: AHQUAubOluz1nNRS20mPu/cA3yVJB0FV3Odk11L+oM/r5+VZZgPNmacz
+        Dt35s/HLvYCaDpl9xU53pxPObkCMFWbZ0fYz2VkpDA==
+X-Google-Smtp-Source: AHgI3Ia+GFHZND+TIVz7TD1CXhcF6ms580F6Kvu9mvrSsRi0CnovaKz4bQrPnhRYCIaYRpEheSueac7ygw+YxWfD1WM=
+X-Received: by 2002:a9d:4c0f:: with SMTP id l15mr3067685otf.139.1549967196904;
+ Tue, 12 Feb 2019 02:26:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
- <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
- <20190211164118.GA23796@genxfsim-desktop> <78e5e6b3-5712-6ef5-283c-83b0f6d3dcc7@linux.intel.com>
-In-Reply-To: <78e5e6b3-5712-6ef5-283c-83b0f6d3dcc7@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Feb 2019 12:25:08 +0200
-Message-ID: <CAHp75VeZwgM9KPNahmpsLzzkmOKDN2JeBKQWO9hBK_O=Gk8oFw@mail.gmail.com>
-Subject: Re: [PATCH 09/10] platform/x86: intel_pmc_core: Add Package cstates
- residency info
-To:     "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Cc:     Anshuman Gupta <anshuman.gupta@intel.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+References: <cover.1549955027.git.viresh.kumar@linaro.org> <8030961ef762018fc286e4d3d3a010638e900e53.1549955027.git.viresh.kumar@linaro.org>
+ <CAJZ5v0hLOD-5XDp7jAwt4EqWYGAU9VZzumNchW9_+bt7F1MdQw@mail.gmail.com> <20190212094909.5eivfzfnc62lay7x@vireshk-i7>
+In-Reply-To: <20190212094909.5eivfzfnc62lay7x@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Feb 2019 11:26:25 +0100
+Message-ID: <CAJZ5v0hABvt2w7v9bfxyzf84+a4LU4C4tczVvwFnaDaY=pKG6A@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] cpufreq: dt: Implement online/offline() callbacks
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 8:32 PM Bhardwaj, Rajneesh
-<rajneesh.bhardwaj@linux.intel.com> wrote:
-> On 11-Feb-19 10:11 PM, Anshuman Gupta wrote:
-> > On Fri, Feb 01, 2019 at 01:02:33PM +0530, Rajneesh Bhardwaj wrote:
-> >> This patch introduces a new debugfs entry to read current Package
-> >> cstate residency counters. A similar variant of this patch was discussed
-> >> earlier "https://patchwork.kernel.org/patch/9908563/" but didn't make it
-> >> into mainline for various reasons. Current version only adds debugfs
-> >> entry which is quite useful for S0ix debug but excludes the exported API
-> >> that was there in initial version. Though there are tools like turbostat
-> >> and socwatch which can also show this info but sometimes its more
-> >> practical to have it here as it's hard to switch between various tools for
-> >> S0ix debug when pmc_core driver is the primary debug tool. Internal and
-> >> external customers have requested for this patch to be included in the
-> >> PMC driver on many occasions and Google Chrome OS team has already included
-> >> it in their builds. This becomes handy when requesting logs from external
-> >> customers who may not always have above mentioned tools in their integrated
-> >> kernel builds.
+On Tue, Feb 12, 2019 at 10:49 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 12-02-19, 10:43, Rafael J. Wysocki wrote:
+> > On Tue, Feb 12, 2019 at 8:07 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > Implement the light-weight tear down and bring up helpers to reduce the
+> > > amount of work to do on CPU offline/online operation.
+> > >
+> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > ---
+> > >  drivers/cpufreq/cpufreq-dt.c | 17 +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > >
+> > > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> > > index 7ba392911cd0..1aefaa1b0ca2 100644
+> > > --- a/drivers/cpufreq/cpufreq-dt.c
+> > > +++ b/drivers/cpufreq/cpufreq-dt.c
+> > > @@ -295,6 +295,21 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+> > >         return ret;
+> > >  }
+> > >
+> > > +static int cpufreq_online(struct cpufreq_policy *policy)
+> > > +{
+> > > +       /* We did light-weight tear down earlier, nothing to do here */
+> > > +       return 0;
+> > > +}
+> >
+> > I think you could avoid having to add this empty stub if the core
+> > checked for both online and offline, that is
+> >
+> > if (driver->offline || driver->online) {
+>
+> This doesn't look great as all we should care about here is ->online()
+> and checking for offline as well looks a bit hacky.
 
-> >    Tested-by: Anshuman Gupta <anshuman.gupta@intel.com>
-> >    Acked-by: Anshuman Gupta <anshuman.gupta@intel.com>
+That's a matter of the driver I/F definition.
 
-> Hi Andy, Darren - Can i used Acked-and-tested-by instead of these two?
+You can require online to be there if offline is set and the other way
+around (but then you should check if that's the case while registering
+the driver) or you can allow just one of them to be provided for the
+lightweight online/offline to be done.  In the latter case the
+presence of the other callback plays the role of a flag.
 
-Better to split. I didn't see in common practice acked-and-tested.
-Rather reviewed-and-tested, or reported-and-tested.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Both are basically fine by me, but if you go for the former, please
+add the checks to cpufreq_register_driver().
