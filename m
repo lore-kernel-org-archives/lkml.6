@@ -2,64 +2,131 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4855C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B72C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B3C217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="dPwog4Db"
+	by mail.kernel.org (Postfix) with ESMTP id 9BB8C2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfBLQuN (ORCPT
+        id S1731260AbfBLQu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:50:13 -0500
-Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:55606 "EHLO
-        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729078AbfBLQuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:50:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549990211;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=d9wM12jhuDTWdWt+Pkovf6I5uVUhrDCPMcwRg2iB6/c=;
-        b=dPwog4Db8cxWFTs8RaPbWPHsdjVXXzK6xqpC2es8j1a9vMwSTJTBbxIqClS4bTWi
-        jn3E5648vwwyFuDLlzLP3ebtNmQ8QHcaanGSqOxZWOF9WwuscWPvVRcezYZjIzwFHH3
-        zSJ0zA/tay7p90Jbs8Pdv9fCw9l9ZFY8VqBAPqsw=
-Date:   Tue, 12 Feb 2019 16:50:11 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, jgg@ziepe.ca,
-        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
-        linux-mm@kvack.org, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        hao.wu@intel.com, atull@kernel.org, mdf@kernel.org
-Subject: Re: [PATCH 2/5] vfio/spapr_tce: use pinned_vm instead of locked_vm
- to account pinned pages
-In-Reply-To: <ee4d14db-05c3-6208-503c-16e287fa78eb@ozlabs.ru>
-Message-ID: <01000168e29daf0a-cb3a9394-e3dd-4d88-ad3c-31df1f9ec052-000000@email.amazonses.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com> <20190211224437.25267-3-daniel.m.jordan@oracle.com> <ee4d14db-05c3-6208-503c-16e287fa78eb@ozlabs.ru>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 12 Feb 2019 11:50:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40804 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730744AbfBLQu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:50:28 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C4E3459453;
+        Tue, 12 Feb 2019 16:50:27 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1ADA6600C6;
+        Tue, 12 Feb 2019 16:50:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 12 Feb 2019 17:50:26 +0100 (CET)
+Date:   Tue, 12 Feb 2019 17:50:23 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Ivan Delalande <colona@arista.com>
+Subject: Re: [PATCH 1/2] signal: Always notice exiting tasks
+Message-ID: <20190212165022.GA29263@redhat.com>
+References: <878syu7tcm.fsf@xmission.com>
+ <87tvhi4vl7.fsf@xmission.com>
+ <87o97q1cky.fsf_-_@xmission.com>
+ <20190206180754.GA23476@redhat.com>
+ <87imxwv9jp.fsf@xmission.com>
+ <875ztwt7yy.fsf_-_@xmission.com>
+ <87zhr8rtd6.fsf_-_@xmission.com>
+ <20190211141340.GA21430@redhat.com>
+ <87zhr1g7ls.fsf@xmission.com>
+ <871s4dctci.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.12-54.240.9.35
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871s4dctci.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 12 Feb 2019 16:50:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019, Alexey Kardashevskiy wrote:
+On 02/12, Eric W. Biederman wrote:
+>
+> > Here I was trying for the simple minimal change and I hit this landmine.
+> > Which leaves me with the question of what should be semantics of signal
+> > handling after exit.
 
-> Now it is 3 independent accesses (actually 4 but the last one is
-> diagnostic) with no locking around them. Why do not we need a lock
-> anymore precisely? Thanks,
+Yes, currently it is undefined. Even signal_pending() is random.
 
-Updating a regular counter is racy and requires a lock. It was converted
-to be an atomic which can be incremented without a race.
+> > I think from dim memory of previous conversations the desired semantics
+> > look like:
+> > a) Ignore all signal state except for SIGKILL.
+> > b) Letting SIGKILL wake up the process should be sufficient.
+
+signal_wake_up(true) to make fatal_signal_pending() == T, I think.
+
+> Oleg any ideas on how to make PTRACE_EVENT_EXIT reliably killable?
+
+My answer is very simple: PTRACE_EVENT_EXIT must not stop if the tracee was
+killed by the "real" SIGKILL (not by group_exit/etc), that is all. But this
+is another user-visible change, it can equally confuse, say, strace (albeit
+not too much iiuc).
+
+But this needs another discussion.
+
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 99fa8ff06fd9..a1f154dca73c 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2544,6 +2544,9 @@ bool get_signal(struct ksignal *ksig)
+>                 }
+>
+>         fatal:
+> +               /* No more signals can be pending past this point */
+> +               sigdelset(&current->pending.signal, SIGKILL);
+
+Well, this is very confusing. In fact, this is not really correct. Say, we should
+not remove the pending SIGKILL if we are going to call do_coredump(). This is
+possible if ptrace_signal() was called, or after is_current_pgrp_orphaned() returns
+false.
+
+> +               clear_tsk_thread_flag(current, TIF_SIGPENDING);
+
+I don't understand this change, it looks irrelevant. Possibly makes sense, but
+this connects to "semantics of signal handling after exit".
+
+OK, we need a minimal incremental fix for now. I'd suggest to replace
+
+	ksig->info.si_signo = signr = SIGKILL;
+	if (signal_group_exit(signal))
+		goto fatal;
+
+added by this patch with
+
+	if (__fatal_signal_pending(current)) {
+		ksig->info.si_signo = signr = SIGKILL;
+		sigdelset(&current->pending.signal, SIGKILL);
+		goto fatal;
+	}
+
+__fatal_signal_pending() is cheaper and looks more understandable.
+
+Oleg.
+
