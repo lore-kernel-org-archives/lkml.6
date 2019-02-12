@@ -2,105 +2,108 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC749C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5FBC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871D6218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E0A92082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549960240;
+	bh=L0K06OoDz9rT7X1aeDERGP6HACg3dtMN+7qU4OVipc4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=G9NfmLlk4J0Gu4D72s2KZP3uh1VIkm2XS7GkAAYKxD7qe8WnHh3wivB/OVUer26F7
+	 sDMpzFbWTl1WJjJk7DgXM3LuJdXWcscHWACIRME3Xdww33I/ZMqCmqJgWRgjmkKodA
+	 RthljuDobW/uLgyM/uN9goiMR3OienzKrNhhIhwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbfBLIae (ORCPT
+        id S1728492AbfBLIae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 12 Feb 2019 03:30:34 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:47383 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728218AbfBLIae (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:30:34 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id AB90C30000CD5;
-        Tue, 12 Feb 2019 09:30:31 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 621403187A; Tue, 12 Feb 2019 09:30:31 +0100 (CET)
-Date:   Tue, 12 Feb 2019 09:30:31 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Alex_Gagniuc@Dellteam.com
-Cc:     mr.nuke.me@gmail.com, bhelgaas@google.com, Austin.Bolen@dell.com,
-        keith.busch@intel.com, Shyam.Iyer@dell.com, gustavo@embeddedor.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Message-ID: <20190212083031.2no7mzn5xug7nba3@wunner.de>
-References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
- <20190209115849.244u67h7wmn3eb7o@wunner.de>
- <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: from mail.kernel.org ([198.145.29.99]:34662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728274AbfBLIad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:30:33 -0500
+Received: from localhost.localdomain (unknown [122.234.59.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED4742082F;
+        Tue, 12 Feb 2019 08:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549960232;
+        bh=L0K06OoDz9rT7X1aeDERGP6HACg3dtMN+7qU4OVipc4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UM8MTLVFvsghyW4el53LgD3wvf8uXVAyPCAiYCZxnHDlCt0gcJ/HRNrVdbOHQ7zIh
+         0/EhakmZPVvhjIJmtLLRENUsPWb7I+9szlJFDQTpb9CrU1YRVU/HE9//fB0mGBS6Am
+         Csn050QoImbcxN4+XF6tN1AKePNxyMB1e8gEVU3A=
+From:   guoren@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, ren_guo@c-sky.com
+Subject: [GIT PULL V2] csky fixes for v5.0-rc6
+Date:   Tue, 12 Feb 2019 16:30:25 +0800
+Message-Id: <1549960225-23253-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:48:12PM +0000, Alex_Gagniuc@Dellteam.com wrote:
-> On 2/9/19 5:58 AM, Lukas Wunner wrote:
-> ECN [1] was approved last November, so it's normative spec text. Sorry 
-> if the Ukranians didn't get ahold of it yet. I'll try to explain the delta.
-> There's an in-band PD supported/disable set of bits. If 'supported' is 
-> set, then you can set 'disable', which removes the 'logical OR" and now 
-> PD is only out-of-band presence.
+The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
 
-I see, thanks a lot for relaying this information.  The PCI SIG
-should probably consider granting access to specs to open source
-developers to ease adoption of new features in Linux et al.
+  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
 
+are available in the git repository at:
 
-> > Table 4-14 in sec 4.2.6 is also important because it shows the difference
-> > between Link Up and in-band presence.
-> 
-> So, we'd expect PD to come up at the same time or before DLL?
+  git@github.com:c-sky/csky-linux.git tags/csky-for-linus-5.0-rc6
 
-Per table 4-14 and figure 4-23 (immediately below the table) in r4.0,
-PDC ought to be signaled before DLLSC.  As said, Linux can handle PDC
-after DLLSC if they're not too far apart (100 ms, see pcie_wait_for_link()).
+for you to fetch changes up to 749e649084d0acb8c5d28c0ec502d9cc023bff86:
 
+  csky: Fixup dead loop in show_stack (2019-02-12 10:25:37 +0800)
 
-> I'd like a generic solution. I suspect supporting 'in-band PD disabled' 
-> and quirking for that would be a saner way to do things. If we support 
-> it, then we need to handle PDSC after DLLSC scenarios anyway.
+----------------------------------------------------------------
+arch/csky patches for 5.0-rc6
 
-I agree, having support for this new ECN would be great.
+Here is some fixup patches for 5.0-rc6:
 
-If you look at struct controller in drivers/pci/hotplug/pciehp.h,
-there's a section labelled /* capabilities and quirks */.  An idea
-would be to add an unsigned int there to indicate whether in-band
-presence is disabled.  An alternative would be to add a flag to
-struct pci_dev.
+Guo Ren (10):
+	csky: Fixup _PAGE_GLOBAL bit for 610 tlb entry
+	irqchip/csky: Optimize remove unnecessary loop irq handle
+	irqchip/irq-csky-mpintc: Add triger type and priority
+	dt-bindings: interrupt-controller: Update csky mpintc
+	csky: Fixup wrong pt_regs size
+	csky: coding convention: Use task_stack_page
+	dt-bindings: csky,apb-intc: Add vector irq mode
+	irqchip/csky: Add support-vector-irq for apb-intc
+	csky: Fixup io-range page attribute for mmap("/dev/mem")
+	csky: Fixup dead loop in show_stack
 
-Instead of modifying the logic in pciehp_handle_presence_or_link_change(),
-you could amend pcie_wait_for_link() to poll PDS until it's set, in
-addition to DLLLA.  The rationale would be that although the link is up,
-the hot-added device cannot really be considered accessible until PDS
-is also set.  Unfortunately we cannot do this for all devices because
-(as I've said before), some broken devices hardwire PDS to zero.  But
-it should be safe to constrain it to those which can disable in-band
-presence.
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 
-Be mindful however that pcie_wait_for_link() is also called from the
-DPC driver.  Keith should be able to judge whether a change to that
-function breaks DPC.
+----------------------------------------------------------------
+Guo Ren (10):
+      csky: Fixup _PAGE_GLOBAL bit for 610 tlb entry
+      irqchip/csky: Optimize remove unnecessary loop irq handle
+      irqchip/irq-csky-mpintc: Add triger type and priority
+      dt-bindings: interrupt-controller: Update csky mpintc
+      csky: Fixup wrong pt_regs size
+      csky: coding convention: Use task_stack_page
+      dt-bindings: csky,apb-intc: Add vector irq mode
+      irqchip/csky: Add support-vector-irq for apb-intc
+      csky: Fixup io-range page attribute for mmap("/dev/mem")
+      csky: Fixup dead loop in show_stack
 
-You'll probably also need to add code to disable in-band presence if
-that is supported, either in pcie_init() in pciehp_hpc.c or in generic
-PCI code.
-
-Thanks,
-
-Lukas
+ .../interrupt-controller/csky,apb-intc.txt         |   3 +
+ .../bindings/interrupt-controller/csky,mpintc.txt  |  21 +++-
+ arch/csky/include/asm/pgtable.h                    |   9 +-
+ arch/csky/include/asm/processor.h                  |   4 +-
+ arch/csky/kernel/dumpstack.c                       |   4 +
+ arch/csky/kernel/ptrace.c                          |   3 +-
+ arch/csky/kernel/smp.c                             |   3 +-
+ arch/csky/mm/ioremap.c                             |  14 +++
+ drivers/irqchip/irq-csky-apb-intc.c                |  59 +++++++----
+ drivers/irqchip/irq-csky-mpintc.c                  | 113 +++++++++++++++++++--
+ 10 files changed, 196 insertions(+), 37 deletions(-)
