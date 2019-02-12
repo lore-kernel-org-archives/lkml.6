@@ -2,117 +2,121 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D483C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A9AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B36A217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549988131;
-	bh=NGj09ZlYvwysKa4bog5Nt7sVBbwEh+ImPCiZvgE5neI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pCsrNUxiTtYvma8ktUn6rCecJONw/03uTmQTIKYC4MGmx0rNxMLKYeicAVAsrxD5y
-	 ZUhIUlJ4jFZ3wR3UgHwZbNuUhbA18g8gvMeC7WWZVkRVInB1iR4xZjbVpPcH769U2l
-	 YMSERWOupE9byoIGuuXB62mHA3QIsgF+GCyldJW8=
+	by mail.kernel.org (Postfix) with ESMTP id E1643217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:15:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J+xr6Z4h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730993AbfBLQP3 (ORCPT
+        id S1731006AbfBLQPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:15:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbfBLQP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:15:29 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B155921773;
-        Tue, 12 Feb 2019 16:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549988128;
-        bh=NGj09ZlYvwysKa4bog5Nt7sVBbwEh+ImPCiZvgE5neI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t4Zk1RjI5+UXq61nxM3NUP15hl6Yi8J9KD8zwDSG54AozNLAKsAkUqTSmubW8IaQ/
-         hKNjRXd+tV2Xa0hNgN2UK0V+laemq6jBBiUVb2Nc4czZ5Sntyc8MmnLYvpF9y9mjlg
-         6932fd+I+M3cwS9z93aA/Uy1Dd0xGJ+iwZlIsZM4=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@redhat.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH -tip v3 09/10] kprobes: Prohibit probing on lockdep functions
-Date:   Wed, 13 Feb 2019 01:15:05 +0900
-Message-Id: <154998810578.31052.1680977921449292812.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <154998785011.31052.1475728497912659748.stgit@devbox>
-References: <154998785011.31052.1475728497912659748.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 12 Feb 2019 11:15:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40514 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730301AbfBLQPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LQqbCr6+qSa5UurWQh3Ch+PbdM/uV+xVqJMof24jEuI=; b=J+xr6Z4hRlmgFDht1Pouz4vD4
+        ytU2sSBCkwtqGIW4dq12xe23soI7sOUht4rh3yVsXTF9mA7KOnKaOakGYAHZG3vd5zM55SULOs+Xc
+        MlGRIgCyr8E7+rkDVFmkcV706h/QVAVelTsEDi+DTaMvdicQNTyIWrlN8Q0JEH8d/L1kSIBG7FIN2
+        rjnk3uEhPs58eXlXq1zUQiYulHCQ/k5F1Cr4hPu9MCmtqbxslYsIBZQBNZjad4R/OBwZ/qKi5+Kza
+        PYgaA/SUMiahlZEIFwvvZSBO7X6EvN5HiGi2ZsTssjnUjSmLODga5xY1p1BcaOOrSlX47xHMctGaR
+        rFktGMLAA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtaiW-0003DP-NA; Tue, 12 Feb 2019 16:15:28 +0000
+Date:   Tue, 12 Feb 2019 08:15:28 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Message-ID: <20190212161528.GN12668@bombadil.infradead.org>
+References: <20190212162003.1aa1ffbd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212162003.1aa1ffbd@canb.auug.org.au>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some lockdep functions can be involved in breakpoint handling
-and probing on those functions can cause a breakpoint recursion.
-Prohibit probing on those functions by blacklist.
+On Tue, Feb 12, 2019 at 04:20:03PM +1100, Stephen Rothwell wrote:
+> Caused by commit
+> 
+>   a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
+> 
+> interacting with commits
+> 
+>   e59178d895af ("RDMA/devices: Use xarray to store the clients")
+>   0df91bb67334 ("RDMA/devices: Use xarray to store the client_data")
+> 
+> from the rdma tree.
+> 
+> Its a bit of a pain modifying a published API like this :-(
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/locking/lockdep.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Yes, it is.  I wasn't expecting people to actually start using it ;-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 7f7db23fc002..c1653a1b57b7 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -50,6 +50,7 @@
- #include <linux/random.h>
- #include <linux/jhash.h>
- #include <linux/nmi.h>
-+#include <linux/kprobes.h>
+Seriously, there are several defects in the published API which do
+warrant a change.  The most severe one is that it's really easy to
+forget to initialise the start index.  And while I'm making that change,
+I should fix smaller things like the errno at the same time.
+
+> I have added the following merge fixup patch for today (I assume some
+> of the assignments are also now redundant).
+
+I think the first of these should be using the alloc_cyclic API, like this:
+
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 283ecc2aee89..d0b56c70a553 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -586,20 +586,8 @@ static int assign_name(struct ib_device *device, const char *name)
+ 	}
+ 	strlcpy(device->name, dev_name(&device->dev), IB_DEVICE_NAME_MAX);
  
- #include <asm/sections.h>
+-	/* Cyclically allocate a user visible ID for the device */
+-	device->index = last_id;
+-	ret = xa_alloc(&devices, &device->index, device,
+-		       XA_LIMIT(last_id, INT_MAX), GFP_KERNEL);
+-	if (ret == -ENOSPC) {
+-		device->index = 0;
+-		ret = xa_alloc(&devices, &device->index, device,
+-			       XA_LIMIT(0, INT_MAX), GFP_KERNEL);
+-	}
+-	if (ret)
+-		goto out;
+-	last_id = device->index + 1;
+-
+-	ret = 0;
++	ret = xa_alloc_cyclic(&devices, &device->index, device, xa_limit_31b,
++			&last_id, GFP_KERNEL);
  
-@@ -2796,6 +2797,7 @@ void lockdep_hardirqs_on(unsigned long ip)
- 	__trace_hardirqs_on_caller(ip);
- 	current->lockdep_recursion = 0;
- }
-+NOKPROBE_SYMBOL(lockdep_hardirqs_on);
+ out:
+ 	up_write(&devices_rwsem);
+@@ -750,7 +738,7 @@ int ib_register_device(struct ib_device *device, const char *name)
+ 	int ret;
  
- /*
-  * Hardirqs were disabled:
-@@ -2825,6 +2827,7 @@ void lockdep_hardirqs_off(unsigned long ip)
- 	} else
- 		debug_atomic_inc(redundant_hardirqs_off);
- }
-+NOKPROBE_SYMBOL(lockdep_hardirqs_off);
+ 	ret = assign_name(device, name);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
  
- /*
-  * Softirqs will be enabled:
-@@ -3638,7 +3641,8 @@ __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
- 	return 0;
- }
- 
--static int __lock_is_held(const struct lockdep_map *lock, int read)
-+static nokprobe_inline
-+int __lock_is_held(const struct lockdep_map *lock, int read)
- {
- 	struct task_struct *curr = current;
- 	int i;
-@@ -3871,6 +3875,7 @@ int lock_is_held_type(const struct lockdep_map *lock, int read)
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(lock_is_held_type);
-+NOKPROBE_SYMBOL(lock_is_held_type);
- 
- struct pin_cookie lock_pin_lock(struct lockdep_map *lock)
- {
+ 	ret = setup_device(device);
+
 
