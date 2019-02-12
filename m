@@ -2,177 +2,325 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4CEC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF61C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06BA8222BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E253F222BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:42:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/xhiLiR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhNGFcEK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfBLWlP (ORCPT
+        id S1729739AbfBLWmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:41:15 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45222 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbfBLWlP (ORCPT
+        Tue, 12 Feb 2019 17:42:50 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36594 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbfBLWmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:41:15 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d190so132114ywd.12;
-        Tue, 12 Feb 2019 14:41:14 -0800 (PST)
+        Tue, 12 Feb 2019 17:42:49 -0500
+Received: by mail-ed1-f66.google.com with SMTP id o59so296343edb.3;
+        Tue, 12 Feb 2019 14:42:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=b/tw4UY191kA91aDbYP7jUEiJRfl2Q0e6qfJa7NOBX8=;
-        b=K/xhiLiRsxA80I3cC/I++ukfJhm1oCkrUGq6GPuYvyREFMY6jOo5I+yP840XEvYvZZ
-         l1tGFLckQNxMIhsn4L6uvX/pJpypbKPquENi+UbC7FtW5hqV1swoYLOS9uhU7iGZ0tA3
-         7kcUmSevgxrjpG946SQeYa8L7s+KU6Kv9kgJQji+z4SLrnnjA16IXsaoMY+5mid4hGQT
-         ia/6xXn5jnQetZ+o//QldKLQzWIb5uuUrnIFfjfsMcQJZx0mYf4I8F3qNqT2FGBJ9BiW
-         hQy/bTmPg+2UHF5IUkaoe+LMAKrLJEG178TRHn8qNaEA+Ev8FCd7ucuipDLxEHU8pluZ
-         Ekww==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=O5MLWrw+bp0W9qlKt/oiNk0BXZC6zI+UAweoieqnxvs=;
+        b=lhNGFcEKqGcUbzc/3A9hDUkxwWiPMXpYKSqHsAFRFU8b1relBCohNaxLZSUA7J+0E8
+         TkKbJhDS4PeqanQtcE4wlQ6WzmnGjl5+qgS/yZBsCusXT9BvcF8o07k1DIsVNDT+1AcW
+         Cji+cRXAFPfbPi0wNhZ1Tlm08QoBDnwymffrmfKEZ6MZeOY+mOCyJP193w1Ekpe7+b7r
+         jZ2ApagyC5ZvHoxWRWowx/NLwAtms0BPzBrpToDo6p18+NcY9jvHJEzWC499m9Nx9HQk
+         zD21Fvj4kl56n9xP09VInf3fndnsN0aTxAUOQ5oNhuMSqtEnTNb4doMBxchHkyHoaa48
+         Altw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=b/tw4UY191kA91aDbYP7jUEiJRfl2Q0e6qfJa7NOBX8=;
-        b=WD9psksjTiTfk5uN1j6MUTXXiK8cTAb6IDULzr9vqsxhCmNLcau5bOIb3lvopbF6zS
-         GaDNtgMTN6Puo35OGBOhZQfua9FYYE5UiobGUPQgc2rsEJ3yGBCRXUxEYxOr2PETnhag
-         QMYOmCHfPgI1J2AnDns4WRaxdRaYPwE2UzM19XQVoU+9HQoPbWalnySQp1MOw/jeXLgZ
-         mD2Cz+bb7kTMbd1wvuZJnq6L7m2C2oXdAyjmHG+Kfr/3qjbtGs6rabIDoKoHZ2YYmv1p
-         a5AU+MPwMPO7BEYfo2yj6tIyhWynxHOuAXdDAgm8+DS6vN6LSyBiIVEqaFKduCR8sBXz
-         zV6A==
-X-Gm-Message-State: AHQUAuavNFoNFxUBPBDdyR9ZGkQcBtOr7deuvzk5wWE+sk/iixOkJKNO
-        fRuLMPQL4LO6Y8PYLPwvEE9GiysU43Q4EA==
-X-Google-Smtp-Source: AHgI3IauhEwJ/KKkjsIjZisd9OF/JNjT3502WWg3C4Z4ajeJdnqZ3T5RgDpaynB7Fg2AHKhvWTlNeQ==
-X-Received: by 2002:a81:1c12:: with SMTP id c18mr2162734ywc.487.1550011273683;
-        Tue, 12 Feb 2019 14:41:13 -0800 (PST)
-Received: from [127.0.0.1] (c-73-120-18-128.hsd1.tn.comcast.net. [73.120.18.128])
-        by smtp.gmail.com with ESMTPSA id h3sm5278500ywb.91.2019.02.12.14.41.11
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 14:41:12 -0800 (PST)
-Subject: Re: [PATCH 2/4] Expose O_PATHSTATIC to userspace
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org
-References: <20190212145450.2200-1-demiobenour@gmail.com>
- <20190212145450.2200-2-demiobenour@gmail.com>
- <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
-From:   "Demi M. Obenour" <demiobenour@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <39662373-f333-a5e1-f734-1b003992a468@gmail.com>
-Date:   Tue, 12 Feb 2019 17:41:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=O5MLWrw+bp0W9qlKt/oiNk0BXZC6zI+UAweoieqnxvs=;
+        b=rDp/Ifb4Ck+n4eOs/vNrtvyKCt8PD/Xdy1QUAdslHrV0JvXQiHuKYGNIcWOIY1f/cw
+         8lMnwe3cRlsN/pxdng16Y2tbcvmukdZnqCMtbw3Cj4TtDlRWvDPoFwKjsPrBlv51Uqtt
+         o8I2g3jEYUvGnFMUEpn74HsG423yuLTxbFmjnPJ4am5c0gGFAo4JcsBcvIdfWwPybCMg
+         NHndfa6ku/QwqcfErqcci+kzF+lNRmvtylV7nwGqKleiW5etkuf+gVxiC09iVjepTAa+
+         TedXgOAgM6QfpQ3RZIpuKJqYKKq+ZgqjJ+E7zoxlpv63fONdh5owK3LQ5HaQk/6o2YpF
+         pNOQ==
+X-Gm-Message-State: AHQUAubesUVTgAvhJbMRoGCeD+dxEwUBxhEpD34DgiOGIRqlowcqmD9G
+        +kTS60qoLklywUoUCsL36SA=
+X-Google-Smtp-Source: AHgI3IawSy9SZULcLjye+51/Q2dba//WvrDxGHyYi83+tRblVYheBfWx7q7jpybNxUIi1C88g0WagA==
+X-Received: by 2002:a50:fb92:: with SMTP id e18mr4807003edq.126.1550011366221;
+        Tue, 12 Feb 2019 14:42:46 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id l25sm4108475edr.45.2019.02.12.14.42.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 12 Feb 2019 14:42:45 -0800 (PST)
+Date:   Tue, 12 Feb 2019 15:42:42 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Sedat Dilek <sedat.dilek@credativ.de>,
+        QLogic-Storage-Upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH RFC v2] fcoe: make use of fip_mode enum complete
+Message-ID: <20190212224242.GA29735@archlinux-ryzen>
+References: <20190211170751.1687-1-sedat.dilek@credativ.de>
+ <20190211175306.GA16698@archlinux-ryzen>
+ <CA+icZUXjyWkVYoW7HwXTXm5wz1E0KJWhH9uiwGJeODUFzB0DJQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+icZUXjyWkVYoW7HwXTXm5wz1E0KJWhH9uiwGJeODUFzB0DJQ@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa
-Content-Type: multipart/mixed; boundary="U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA";
- protected-headers="v1"
-From: "Demi M. Obenour" <demiobenour@gmail.com>
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Jeff Layton <jlayton@kernel.org>, "J. Bruce Fields"
- <bfields@fieldses.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Arnd Bergmann <arnd@arndb.de>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- linux-arch@vger.kernel.org
-Message-ID: <39662373-f333-a5e1-f734-1b003992a468@gmail.com>
-Subject: Re: [PATCH 2/4] Expose O_PATHSTATIC to userspace
-References: <20190212145450.2200-1-demiobenour@gmail.com>
- <20190212145450.2200-2-demiobenour@gmail.com>
- <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
-In-Reply-To: <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
+On Tue, Feb 12, 2019 at 08:50:04AM +0100, Sedat Dilek wrote:
+> On Mon, Feb 11, 2019 at 6:53 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 06:07:51PM +0100, Sedat Dilek wrote:
+> > > From: Sedat Dilek <sedat.dilek@gmail.com>
+> > >
+> > > commit 1917d42d14b7 ("fcoe: use enum for fip_mode") introduces a separate
+> > > enum for the fip_mode that shall be used during initialisation handling
+> > > until it is passed to fcoe_ctrl_link_up to set the initial fip_state.
+> > > That change was incomplete and gcc quietly converted in various places
+> > > between the fip_mode and the fip_state enum values with implicit enum
+> > > conversions, which fortunately cannot cause any issues in the actual
+> > > code's execution.
+> > >
+> > > clang however warns about these implicit enum conversions in the scsi
+> > > drivers. This commit consolidates the use of the two enums, guided by
+> > > clang's enum-conversion warnings.
+> > >
+> > > This commit now completes the use of the fip_mode:
+> > > It expects and uses fip_mode in {bnx2fc,fcoe}_interface_create and
+> > > fcoe_ctlr_init, and it explicitly converts from fip_mode to fip_state
+> > > only at the single point in fcoe_ctlr_link_up.
+> > >
+> > > To eliminate that adding or removing values from fip_mode or fip_state enum
+> > > break the right mapping of values, all fip_mode values are assigned to
+> > > their fip_state counterparts.
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/151
+> > > Fixes: 1917d42d14b7 ("fcoe: use enum for fip_mode")
+> > > Reported-by: Dmitry Golovin "Twisted Pair in my Hair" <dima@golovin.in>
+> > > CC: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > CC: Nick Desaulniers <ndesaulniers@google.com>
+> > > CC: Nathan Chancellor <natechancellor@gmail.com>
+> > > CC: Hannes Reinecke <hare@suse.com>
+> > > Suggested-by: Johannes Thumshirn <jthumshirn@suse.de>
+> > > ---
+> > >
+> > > [ v2:
+> > >    - Based on the original patch by Lukas Bulwahn
+> > >    - Suggestion by Johannes T. [1] required some changes:
+> > >      + s/case FIP_ST_VMMP_START/case FIP_ST_V*N*MP_START
+> > >      + s/return FIP_ST_AUTO/return FIP_MODE_AUTO
+> > >    - Add Link to ClangBuiltLinux issue #151
+> > >    - S-o-b line later when there is an OK from the FCoE maintainers
+> > >
+> > > NOTE: Compile-tested against Linux-v5.0-rc6 with LLVM/Clang from Git with
+> > >       experimental asm-goto support via executing:
+> > >       $ make V=1 CC=clang-9 HOSTCC=clang-9 drivers/scsi/fcoe/
+> > >
+> > > [1] https://marc.info/?l=linux-scsi&m=154745527612152&w=2
+> > >
+> > >   -dileks ]
+> > >
+> > >  drivers/scsi/bnx2fc/bnx2fc_fcoe.c  |  2 +-
+> > >  drivers/scsi/fcoe/fcoe.c           |  2 +-
+> > >  drivers/scsi/fcoe/fcoe_ctlr.c      |  4 ++--
+> > >  drivers/scsi/fcoe/fcoe_transport.c |  2 +-
+> > >  drivers/scsi/qedf/qedf_main.c      |  2 +-
+> > >  include/scsi/libfcoe.h             | 22 ++++++++++++++++++++--
+> > >  6 files changed, 26 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > > index 2e4e7159ebf9..a75e74ad1698 100644
+> > > --- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > > +++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> > > @@ -1438,7 +1438,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cnic_dev *cnic)
+> > >  static struct bnx2fc_interface *
+> > >  bnx2fc_interface_create(struct bnx2fc_hba *hba,
+> > >                       struct net_device *netdev,
+> > > -                     enum fip_state fip_mode)
+> > > +                     enum fip_mode fip_mode)
+> > >  {
+> > >       struct fcoe_ctlr_device *ctlr_dev;
+> > >       struct bnx2fc_interface *interface;
+> > > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> > > index cd19be3f3405..8ba8862d3292 100644
+> > > --- a/drivers/scsi/fcoe/fcoe.c
+> > > +++ b/drivers/scsi/fcoe/fcoe.c
+> > > @@ -389,7 +389,7 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
+> > >   * Returns: pointer to a struct fcoe_interface or NULL on error
+> > >   */
+> > >  static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
+> > > -                                                 enum fip_state fip_mode)
+> > > +                                                 enum fip_mode fip_mode)
+> > >  {
+> > >       struct fcoe_ctlr_device *ctlr_dev;
+> > >       struct fcoe_ctlr *ctlr;
+> > > diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+> > > index 54da3166da8d..a52d3ad94876 100644
+> > > --- a/drivers/scsi/fcoe/fcoe_ctlr.c
+> > > +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+> > > @@ -147,7 +147,7 @@ static void fcoe_ctlr_map_dest(struct fcoe_ctlr *fip)
+> > >   * fcoe_ctlr_init() - Initialize the FCoE Controller instance
+> > >   * @fip: The FCoE controller to initialize
+> > >   */
+> > > -void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_state mode)
+> > > +void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode mode)
+> > >  {
+> > >       fcoe_ctlr_set_state(fip, FIP_ST_LINK_WAIT);
+> > >       fip->mode = mode;
+> > > @@ -454,7 +454,7 @@ void fcoe_ctlr_link_up(struct fcoe_ctlr *fip)
+> > >               mutex_unlock(&fip->ctlr_mutex);
+> > >               fc_linkup(fip->lp);
+> > >       } else if (fip->state == FIP_ST_LINK_WAIT) {
+> > > -             fcoe_ctlr_set_state(fip, fip->mode);
+> > > +             fcoe_ctlr_set_state(fip, (enum fip_state) fip->mode);
+> > >               switch (fip->mode) {
+> > >               default:
+> > >                       LIBFCOE_FIP_DBG(fip, "invalid mode %d\n", fip->mode);
+> > > diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
+> > > index f4909cd206d3..b381ab066b9c 100644
+> > > --- a/drivers/scsi/fcoe/fcoe_transport.c
+> > > +++ b/drivers/scsi/fcoe/fcoe_transport.c
+> > > @@ -873,7 +873,7 @@ static int fcoe_transport_create(const char *buffer,
+> > >       int rc = -ENODEV;
+> > >       struct net_device *netdev = NULL;
+> > >       struct fcoe_transport *ft = NULL;
+> > > -     enum fip_state fip_mode = (enum fip_state)(long)kp->arg;
+> > > +     enum fip_mode fip_mode = (enum fip_mode)(long)kp->arg;
+> > >
+> > >       mutex_lock(&ft_mutex);
+> > >
+> > > diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+> > > index 9bbc19fc190b..9f9431a4cc0e 100644
+> > > --- a/drivers/scsi/qedf/qedf_main.c
+> > > +++ b/drivers/scsi/qedf/qedf_main.c
+> > > @@ -1418,7 +1418,7 @@ static struct libfc_function_template qedf_lport_template = {
+> > >
+> > >  static void qedf_fcoe_ctlr_setup(struct qedf_ctx *qedf)
+> > >  {
+> > > -     fcoe_ctlr_init(&qedf->ctlr, FIP_ST_AUTO);
+> > > +     fcoe_ctlr_init(&qedf->ctlr, FIP_MODE_AUTO);
+> > >
+> > >       qedf->ctlr.send = qedf_fip_send;
+> > >       qedf->ctlr.get_src_addr = qedf_get_src_mac;
+> > > diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
+> > > index cb8a273732cf..38bb5b798a81 100644
+> > > --- a/include/scsi/libfcoe.h
+> > > +++ b/include/scsi/libfcoe.h
+> > > @@ -79,12 +79,30 @@ enum fip_state {
+> > >   * It must not change after fcoe_ctlr_init() sets it.
+> > >   */
+> > >  enum fip_mode {
+> > > -     FIP_MODE_AUTO = FIP_ST_AUTO,
+> > > +     FIP_MODE_AUTO,
+> > >       FIP_MODE_NON_FIP,
+> > >       FIP_MODE_FABRIC,
+> > >       FIP_MODE_VN2VN,
+> > >  };
+> > >
+> > > +static inline enum fip_mode fip_state_to_mode(enum fip_state state)
+> >
+> > Hi Sedat,
+> >
+> > You added this function but you didn't use it anywhere. I think Johannes
+> > wanted this function to be used instead of all of the places where
+> > you/Lukas changed the cast or raw enum value so that the conversion
+> > still happens but it's explicit.
+> >
+> > I think we'll need two versions of this function, one that goes from
+> > state to mode and another that goes from mode to state as both
+> > conversions happen (x86 allyesconfig build in drivers/scsi/):
+> >
+> > drivers/scsi/fcoe/fcoe.c:2225:39: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> > drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2363:51: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> > drivers/scsi/fnic/fnic_main.c:774:31: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> > drivers/scsi/fnic/fnic_main.c:785:31: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> > drivers/scsi/fcoe/fcoe_ctlr.c:153:14: warning: implicit conversion from enumeration type 'enum fip_state' to different enumeration type 'enum fip_mode' [-Wenum-conversion]
+> > drivers/scsi/fcoe/fcoe_ctlr.c:457:33: warning: implicit conversion from enumeration type 'enum fip_mode' to different enumeration type 'enum fip_state' [-Wenum-conversion]
+> >
+> > Let me know what you think,
+> > Nathan
+> >
+> 
+> Hi Nathan,
+> 
+> Thanks for your review.
+> 
+> I have no experience with FCoE (just googled "Fibre Channel over
+> Ethernet") and its states and modes and what a "fip_mode_to_state()"
+> will require.
+> 
 
---U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+It should just be the inverse of this function (replace the "case" and
+"return" values).
 
+> How did you see these -Wenum-conversion warnings - by using the
+> suggested "static inline enum" (fip_state_to_mode()) line?
+> 
 
+No, these are the warnings from -next currently.
 
-On 2/12/19 3:18 PM, Andreas Dilger wrote:
-> On Feb 12, 2019, at 7:54 AM, demiobenour@gmail.com wrote:
->>
->> From: "Demi M. Obenour" <demiobenour@gmail.com>
->>
->> This adds the file open flag O_PATHSTATIC, which ensures that symbolic=
+$ make CC=clang allyesconfig drivers/scsi/ |& grep "enum-conversion"
 
->> links are *never* followed, even in path components other than the las=
-t.
->> This is distinct from O_NOFOLLOW, which only prevents symlinks in the
->> *last* component from being followed.
->>
->> This is useful for avoiding race conditions in userspace code that
->> should expose only a subset of the filesystem to clients.  This includ=
-es
->> FTP and SFTP servers, QEMU, and others.
->>
->> Currently, O_NOFOLLOW must be set if O_PATHSTATIC is set.  Otherwise,
->> open() fails with -EINVAL.
->=20
-> I don't want to bikeshed (discard suggestion if you disagree), but why =
-not
-> name the flag "O_NEVER_FOLLOW" so that users can see it is also related=
- to
-> "O_NOFOLLOW"?  Otherwise it seems like they are two completely differen=
-t
-> things from looking at the names, when in fact they are closely related=
-=2E
->=20
-> Cheers, Andreas
->=20
+> Let us see what the FCoE maintaineres suggest.
+> 
 
-Searching for O_PATHSTATIC gives two results:
+Sure.
 
-* https://www.halfdog.net/Security/2010/FilesystemRecursionAndSymlinks
-* https://lists.gnu.org/archive/html/qemu-devel/2017-01/msg06225.html
+Cheers,
+Nathan
 
-O_DIRECTORY_NOFOLLOW would also be a good choice, since that is what the
-flag actually does.  Ideally, we would rename O_NOFOLLOW, but we can=92t.=
-
-
-
---U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA--
-
---JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdodNnxM2uiJZBxxxsoi1X/+cIsEFAlxjS4UACgkQsoi1X/+c
-IsEEQw//eeuvOan9TmZ0gfFNNIc7ibAMoc9o8q0L/Sr0yqTpRithhFdLfr/APzcq
-jlctL4m4Urhg9R2IgEvKJUIH5LXpNgF0px2usODACwXua7MXy9b8ziN5f/+1+GOo
-CiUNtnaR9kMWzR5HhyOGIE3LAAIBZrLgRRAuznvYbKQhojFayhAC5MeIpVsI91so
-T4osAwVw0HHF4hIEIYUWMT5a1CZJfdxDPLb//AbEAWf1fU21XcKQFPxgYHIFMilo
-s+0kkC/AHk/ncewn4N84jSoqsxYMqcmjHVwglVs7/SzCFPKLJoAKOjlKAe9q1l71
-r4zvFIu2xMQ/73qQHNLJN9yWo8U7nCvC1S4oQUWPJP37C0G/6To7qGWXo9rFYZfP
-BEtlX7dWdIEeiL/yM8ZIKE6GoTMl5vrvELRdn5QH3V9qRLCJLewezVivLMG6GjVL
-ilINB6cx9N4YaxShouvNPrJURmPj8SZVyJa/bD4zC8UtfMpaLbWoJg0BjUf51FAb
-tpKhBQqe00ecg1NgGtP0/54lcBVb3QWCVf4zHNDs96DET+c+ttd/nLMZcziYEYZt
-VGwwGEZvRzm0km5/yya6Q0PYtYwM+KW7UW4jAZ/ksDBrQKirNOshC3kyKkggszUq
-N6KU9v4MjvqCcf0xB/2+3CdmOujMdOmjmt63MYSR48cWD+n3b9w=
-=fVy/
------END PGP SIGNATURE-----
-
---JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa--
+> Regards,
+> - Sedat -
+> 
+> > > +{
+> > > +     switch (state) {
+> > > +     case FIP_ST_AUTO:
+> > > +             return FIP_MODE_AUTO;
+> > > +     case FIP_ST_NON_FIP:
+> > > +             return FIP_MODE_NON_FIP;
+> > > +     case FIP_ST_ENABLED:
+> > > +             return FIP_MODE_FABRIC;
+> > > +     case FIP_ST_VNMP_START:
+> > > +             return FIP_MODE_VN2VN;
+> > > +     default:
+> > > +             WARN(1, "Invalid FIP state");
+> > > +     }
+> > > +
+> > > +     return FIP_MODE_AUTO;
+> > > +}
+> > > +
+> > >  /**
+> > >   * struct fcoe_ctlr - FCoE Controller and FIP state
+> > >   * @state:      internal FIP state for network link and FIP or non-FIP mode.
+> > > @@ -250,7 +268,7 @@ struct fcoe_rport {
+> > >  };
+> > >
+> > >  /* FIP API functions */
+> > > -void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_state);
+> > > +void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_mode);
+> > >  void fcoe_ctlr_destroy(struct fcoe_ctlr *);
+> > >  void fcoe_ctlr_link_up(struct fcoe_ctlr *);
+> > >  int fcoe_ctlr_link_down(struct fcoe_ctlr *);
+> > > --
+> > > 2.20.1
+> > >
