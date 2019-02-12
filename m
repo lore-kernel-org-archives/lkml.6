@@ -6,66 +6,65 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DA5C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57E7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37075222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9656E20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:48:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fOZMuFbj"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BmD+CKeH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730334AbfBLRsA (ORCPT
+        id S1730779AbfBLRsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:48:00 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46250 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfBLRsA (ORCPT
+        Tue, 12 Feb 2019 12:48:11 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46837 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728690AbfBLRsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:48:00 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v16so2959630ljg.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:47:59 -0800 (PST)
+        Tue, 12 Feb 2019 12:48:10 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f5so2656466lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:48:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ApO5PhJOy5F4U/cO8FGzo1vuRxGzslRJ42N0POxUQrM=;
-        b=fOZMuFbjFzSycB5imPxK8v2PnsmqnAn6fr2DH+82CMe9Qam09z+uezFaXBS+WtXILO
-         wgC8IB9FY2P/AqD/FBZSPL3wQ6f986xdiwKRLTl3+S1W1r1VIW2HQvhsHHhEW/CCOncV
-         vAZ0p/HntPSMJK07PL+P2izfTwEo2yX2cqsmI=
+        bh=S7GJynW1//DZN8sWxuqUfb0Diu52R1DQ2mOVeMbIEdc=;
+        b=BmD+CKeHsLfeIBYi26wxLm9HkIm4SyX/sZVeuVMACA33n0hK9nud1caFKel6/5jxR0
+         Sm+EUzwIN7or+S3lB/RQ0k+zvGw+m0sgnmSzEuGMqzN7n8kwsQ5Q2UKhuS/ViGMJawhM
+         XE3m2OpJlp7aNO7ANHNBx0u7PNE7sUVzgkEMk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ApO5PhJOy5F4U/cO8FGzo1vuRxGzslRJ42N0POxUQrM=;
-        b=bPuxRo2ISNxkB6p8/qa3r0Gtp3Hsz4u0z/xtC7QIgfqVZ4lUO00+QGjDWvZafvjNwg
-         v5yn8yTujd1TSvXn71kr3vS9a8Kln+SSV4jUMRBQk9lAIY59Zkw80Kax+VmGthpzbmYI
-         jq3IDwMR+eR/M+8KlEHK674JvJg7Uj+3uaWKhWdK5gRW/jIf0VkSeypkp+IyJ36e4DMD
-         01vtINZEnwkM6UW/Fmr2LZ78nrtAQpKpWAPu1tNXe6Hj3QkuCvCRGprUFFO8Y1IRgG+O
-         b9Ag7UXUWPFFVZun/uqWxB5sBFNV6710A7YlCrG8xV3seGTtd9uM8rck88OUPT6om1TB
-         5Z1A==
-X-Gm-Message-State: AHQUAuZVpXjCtjyGD/l07DGyhhpvZWuyWYJz2kdz7o8IdnQTcCd0VRK3
-        cBk86dv0VJN3MNRjnd+5aN1y2LCSgus=
-X-Google-Smtp-Source: AHgI3IYR8JT5OnSKRM0J4t5reaoPengoFUn6mS1aQCN062ntV1KWPoGN5MEPRtdiqK5WZuphr61iug==
-X-Received: by 2002:a2e:131a:: with SMTP id 26-v6mr2900560ljt.107.1549993677861;
-        Tue, 12 Feb 2019 09:47:57 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id 15-v6sm3087643lje.18.2019.02.12.09.47.56
+        bh=S7GJynW1//DZN8sWxuqUfb0Diu52R1DQ2mOVeMbIEdc=;
+        b=KZio61nSl9KTXTr5BEF6kioTxTg+t/v/6zKwTRICTRC44I3Jrpl+MJ6ciEozSkYKeg
+         am9+M9wO5A9qFwYhlsMhFf+NqzdDjiEnDKFXM+B4Ai0alPHXBrrHXSZ5oiMn6wMOQItY
+         cJ/cwx3JsVPB10U/DH4OXDK5QI3YZ6FKPB7DFHm6jX2axRU8F07cUgH5ufmdXTC8hCjm
+         pv3w23tzf2XdSjzzg1fAwYVApUEPH0BSEZmek+OHmw1puIaLeNZd02DM1wHpO7Q5Na8R
+         o1vP1fYNksjWxYCbFu22SY9XihJ+XLlZKDpA96DxbSocCKohXBNjLb6nLYyQdkDuf+eE
+         aYpQ==
+X-Gm-Message-State: AHQUAuY9A65EgeOSpP/qwueZpzW+KX2J4CpXwVNlKQhm7rqjTPZCtAds
+        yP5zv3s3bThRI56xJbXPDVqX4zhv5Tw=
+X-Google-Smtp-Source: AHgI3IbWUrrp74sdmNvQlzMtnZnPxHlvmBJ2YpMwvsPHuU0r5q7tCKNT/jAOsDNO1nWPW+xQp203cg==
+X-Received: by 2002:a19:d250:: with SMTP id j77mr3120948lfg.21.1549993229158;
+        Tue, 12 Feb 2019 09:40:29 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id o6-v6sm2810703ljj.6.2019.02.12.09.40.28
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 09:47:56 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id z25-v6so2984643ljk.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:47:56 -0800 (PST)
-X-Received: by 2002:a2e:9944:: with SMTP id r4-v6mr2977856ljj.185.1549993676154;
- Tue, 12 Feb 2019 09:47:56 -0800 (PST)
+        Tue, 12 Feb 2019 09:40:28 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id n15so2677896lfe.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:40:28 -0800 (PST)
+X-Received: by 2002:a19:7613:: with SMTP id c19mr1652550lff.103.1549993225718;
+ Tue, 12 Feb 2019 09:40:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212171423.8308-1-frederic@kernel.org> <20190212171423.8308-10-frederic@kernel.org>
-In-Reply-To: <20190212171423.8308-10-frederic@kernel.org>
+References: <20190212171423.8308-1-frederic@kernel.org> <20190212171423.8308-4-frederic@kernel.org>
+In-Reply-To: <20190212171423.8308-4-frederic@kernel.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Feb 2019 09:47:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whPfzTR8my+Ktw93SC4YXO8pBc70gTEso06ei_K2jZqRQ@mail.gmail.com>
-Message-ID: <CAHk-=whPfzTR8my+Ktw93SC4YXO8pBc70gTEso06ei_K2jZqRQ@mail.gmail.com>
-Subject: Re: [PATCH 09/32] locking/lockdep: Save stack trace for each softirq
- vector involved
+Date:   Tue, 12 Feb 2019 09:40:09 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiKtW+=x5zVmsxBOUnjQYQKzkfYUhE5F=eY_R=opa-vNA@mail.gmail.com>
+Message-ID: <CAHk-=wiKtW+=x5zVmsxBOUnjQYQKzkfYUhE5F=eY_R=opa-vNA@mail.gmail.com>
+Subject: Re: [PATCH 03/32] locking/lockdep: Convert usage_mask to u64
 To:     Frederic Weisbecker <frederic@kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
@@ -84,19 +83,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 9:15 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+On Tue, Feb 12, 2019 at 9:14 AM Frederic Weisbecker <frederic@kernel.org> wrote:
 >
->
-> +static int save_trace_mask(struct lock_class *class, u64 mask)
-> +{
-> +       int bit = 0;
-> +
-> +       while (mask) {
-> +               long fs = __ffs64(mask) + 1;
-> +
-> +               mask >>= fs;
-> +               bit += fs;
+> The usage mask is going to expand to validate softirq related usages in
+> a per-vector finegrained way.
 
-Same buggy pattern of "ffs+1" and overflow of shift count.
+So here you start explaining why you wanted that u64. Much too late,
+considering that you already changed to u64 earlier.
 
                  Linus
