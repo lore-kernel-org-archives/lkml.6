@@ -2,47 +2,47 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023A3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6561C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5912186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16842186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730200AbfBLOQw (ORCPT
+        id S1730221AbfBLORS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:16:52 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45616 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729954AbfBLOQv (ORCPT
+        Tue, 12 Feb 2019 09:17:18 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36021 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730114AbfBLORS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:16:51 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s5-v6so2322412ljd.12;
-        Tue, 12 Feb 2019 06:16:49 -0800 (PST)
+        Tue, 12 Feb 2019 09:17:18 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q11so2133336lfd.3;
+        Tue, 12 Feb 2019 06:17:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XVxCSh3dYC+FXXwAk8lzA6hyzfU9vHFelmxuysp1HzA=;
-        b=LSasf7NMaplbgxf3z6Wa11HGnVyiKbn8R4C+Q5Obq13duZDglxAXvp3KYB/nQrcCCh
-         AGl13hRva2IIVsi9YIUlWAFDNFKj75+4GMb9oFNwzVKQp4HyocI8av2xMoVdqtF30I8d
-         0km8YOWechmUGUDh4zR1Xwu71pntlPexp2+Dp7sb00Jz9xg6TEN5oo2NbpGFiWsfO0Qh
-         la2WU9heFU93JhqJUzN19Um9xVfQuUmsl1hm8rUm8/lFc1eRIVdjcLuBaU4kLVdexr5F
-         zktZlNGLtt7wrpxT8JEcr8XPVaULbe1T643mhQBKJnEkqAfShABW3mP0i84wKhKVGsMY
-         rYrg==
-X-Gm-Message-State: AHQUAubXKLf74C79buw9WrNKRTUK6izqos/NG3fACsUdpbcGydzh9uHZ
-        oWiC3C1oexb04NQgTMrcoc4=
-X-Google-Smtp-Source: AHgI3IagwhXF7qrAmgfmVBlOSRWt9tqXRYowPd/LUyMujbaaqVZfKjb2IAW1ke49TWvS7i1tMJXYag==
-X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr2481492ljh.63.1549981008454;
-        Tue, 12 Feb 2019 06:16:48 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tfqNAjZm15OBauurQ8LyTpT7xKYtjf4fzwJmRjJlcn8=;
+        b=ewVlomFn/TXg5A5m7OqvBRHLf/rOBAGDn1uNfNq7e90imnj+/pNEDPtvUTdaFQmXkw
+         0fSXt/jHJiYmlTKjYMDOF0cFLPAXu+PDHECbaVktjj3+ckHwVcHQr+muIYgfo8K50mU9
+         x2zC1Xt0xgJuMMMRDVpWPXQRAKjqdltR0SSKCF6NHp4PaRzCI8g36/Tm/WN3YsRrr9HQ
+         /v+WWCY9oqKm16wsOtMqhLh2y4QVBIQayG/y43OTJz0ZTnTY44NrAebwQm8S3Djq0HHY
+         yY0ZKSV5lDnZ61d1Gd8x8gEPyUJT11p4J2G1LpGUzLyvNkgF1EABNINvlo0tQN/BXHCD
+         70JQ==
+X-Gm-Message-State: AHQUAuZ9BmJiSHYtoM+kFToCEUlbTJB0p+dh+KbqqkXcBQDaX8SF26xz
+        QJByJrKLgRtjLLfyoms7DwE=
+X-Google-Smtp-Source: AHgI3IY9RNheDaYRLbL4UcBK+/htGZA/OHGA0Y2IVPzC/6hwCZ8LurfFp7f33UEs5hFoee24LuTg0g==
+X-Received: by 2002:ac2:5288:: with SMTP id q8mr2677093lfm.157.1549981035159;
+        Tue, 12 Feb 2019 06:17:15 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p14sm2968937lfk.16.2019.02.12.06.16.47
+        by smtp.gmail.com with ESMTPSA id 67-v6sm2708219ljc.26.2019.02.12.06.17.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 06:16:47 -0800 (PST)
-Date:   Tue, 12 Feb 2019 16:16:35 +0200
+        Tue, 12 Feb 2019 06:17:14 -0800 (PST)
+Date:   Tue, 12 Feb 2019 16:17:03 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -54,53 +54,116 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Robin Gong =?utf-8?B?4oCO?= <yibin.gong@nxp.com>,
         Elven Wang =?utf-8?B?4oCO?= <elven.wang@nxp.com>,
         Anson Huang =?utf-8?B?4oCO?= <anson.huang@nxp.com>
-Subject: [RFC PATCH v1 0/3] bd718x7: Support SNVS low power state
-Message-ID: <cover.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v1 1/3] devicetree: bindings: bd718x7: document HW state
+ related ROHM specific properties
+Message-ID: <eb0768eb589acdc4b1be3f5dd042e7d8ead26797.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series adding SNVS power state support to ROHM bd718x7 driver.
+Add ROHM BD71837 / BD71847 specific device tree bindings for
+controlling the PMIC shutdown/reset states and voltages for
+different HW states. The PMIC was designed to be used with NXP
+i.MX8 SoC and it supports SNVS low power state which seems to
+be typical for NXP i.MX SoCs. However, when SNVS is used we must
+not allow SW to control enabling/disabling those regulators which
+are crucial for system to boot as there is a HW limitation which
+causes SW controlled regulators to be kept shut down after SNVS
+reset.
 
-The SNVS is a low power state used by i.MX family of SoCs. In SNVS
-state processor and most of the peripherials are shut off in order
-to minimize power consumption.
+Allow setting the SNVS to be used as reset target state and allow
+marking those regulators which are critical for boot.
 
-BD71837 and BD71847 can be configured to use the SNVS state as a
-reset/shutdown target state. There is some HW limitations though.
-Main limitation is that regulators which have been under SW control
-(regarding enable/disable state) will stay shut down after such reset.
-Thus if SNVS is used as reset target the control of boot crucial
-regulators must be left to HW state machine.
-
-This patch seris allows one to describe the boot crucial regulators
-and reset/shutdown target state as well as the default HW state
-voltages from device-tree. I am unsure if the device-tree is the
-correct way to bring this information and hence I send this initial
-patch set as an RFC. Please comment and I will generate properly tested
-patch series on top of this idea if this is seen as a reasonable
-approach.
-
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 17 ++++++++++
+ .../bindings/regulator/rohm,bd71837-regulator.txt  | 36 ++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-Matti Vaittinen (3):
-  devicetree: bindings: bd718x7: document HW state related ROHM specific
-    properties
-  regulator: add regulator_desc_list_voltage_linear_range
-  regulator: bd718x7: Support SNVS low power state
-
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  17 +++
- .../bindings/regulator/rohm,bd71837-regulator.txt  |  36 ++++++
- drivers/regulator/bd718x7-regulator.c              | 135 +++++++++++++++++++++
- drivers/regulator/helpers.c                        |  39 ++++--
- include/linux/regulator/driver.h                   |   6 +
- 5 files changed, 223 insertions(+), 10 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+index a4b056761eaa..2aff8287fdd8 100644
+--- a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -23,6 +23,23 @@ Required properties:
+ 
+ Optional properties:
+ - clock-output-names	: Should contain name for output clock.
++- rohm,reset-snvs-powered : Transfer BD718x7 to SNVS state at reset.
++
++The BD718x7 supports two different HW states as reset target states. States
++are called as SNVS and READY. At the SNVS state all other logic and external
++devices apart from the SNVS power domain are shut off. Please refer to NXP
++i.MX8 documentation for further information regarding SNVS state. When a
++reset is done via SNVS state the PMIC OTP data is not reload.
++
++At READY state all the PMIC power outputs go down and OTP is reload. There
++is a HW quirk in BD718x7 which causes power outputs which have been under
++SW control to stay down when reset has switched power state to SNVS. If
++reset is done via READY state the power outputs will be set to HW control
++by OTP loading. Thus the reset target state is set to READY by default. If
++SNVS state is used the boot crucial regulators should have
++"rohm,regulator-crucial-for-boot" property set in regulator node. Please
++see the ./regulator/rohm,bd71837-regulator.txt for details of regulator
++bindings.
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+index 4b98ca26e61a..8ff692891dea 100644
+--- a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+@@ -27,8 +27,44 @@ BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
+ LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
+ 
+ Optional properties:
++- rohm,regulator-crucial-for-boot : Any regulators which are required to stay
++				    enabled for system to boot must be excluded
++				    from SW control by this property if SNVS
++				    state is used as reset target. Please see
++				    the ../mfd/rohm,bd71837-pmic.txt for more
++				    details.
++- rohm,dvs-run-voltage		: PMIC default "RUN" state voltage in uV.
++				  See below table for bucks which support this.
++- rohm,dvs-idle-voltage		: PMIC default "IDLE" state voltage in uV.
++				  See below table for bucks which support this.
++- rohm,dvs-suspend-voltage	: PMIC default "SUSPEND" state voltage in uV.
++				  See below table for bucks which support this.
+ - Any optional property defined in bindings/regulator/regulator.txt
+ 
++Supported default DVS states:
++
++BD71837:
++buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
++-----------------------------------------------------------------------------
++1	| supported		| supported		| supported
++----------------------------------------------------------------------------
++2	| supported		| supported		| not supported
++----------------------------------------------------------------------------
++3	| supported		| not supported		| not supported
++----------------------------------------------------------------------------
++4	| supported		| not supported		| not supported
++----------------------------------------------------------------------------
++rest	| not supported		| not supported		| not supported
++
++BD71847:
++buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
++-----------------------------------------------------------------------------
++1	| supported		| supported		| supported
++----------------------------------------------------------------------------
++2	| supported		| supported		| not supported
++----------------------------------------------------------------------------
++rest	| not supported		| not supported		| not supported
++
+ Example:
+ regulators {
+ 	buck1: BUCK1 {
 -- 
 2.14.3
 
