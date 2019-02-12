@@ -2,91 +2,107 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4E1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5B9C4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D569222B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:11:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vB6zY+ZZ"
+	by mail.kernel.org (Postfix) with ESMTP id 18EBC222B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbfBLVL0 (ORCPT
+        id S1731530AbfBLVMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:11:26 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:49021 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727932AbfBLVL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:11:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=uuZiwe2HmvADlzNZ6ZS60EzhjyIXxXRW5JdfFSlnIp0=; b=vB6zY+ZZLMRJY8mvZBFgZy9V3H
-        OrVPwegyKpES5IrVYKRZ9HyJWBup0uquS7yD0b35rqD6Di1oqLtMRmBXyCwB56Qx5PfyIh5UQ/Vpb
-        2RXZOSQ4xT+j7J+t4lj6r35weQhtm/smzv/MP+ktQWr9KaRiw0yi1UjWsuNRmceh7Bko=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gtfKs-0007iC-4S; Tue, 12 Feb 2019 22:11:22 +0100
-Date:   Tue, 12 Feb 2019 22:11:22 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 3/4] net: phy: Extract
- genphy_c45_pma_read_abilities from marvell10g
-Message-ID: <20190212211122.GB27170@lunn.ch>
-References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
- <20190211142529.22885-4-maxime.chevallier@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211142529.22885-4-maxime.chevallier@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 12 Feb 2019 16:12:53 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53656 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727932AbfBLVMx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:12:53 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7725E5FA;
+        Tue, 12 Feb 2019 21:12:51 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 13:12:50 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Subject: Re: [PATCH 4/5] kasan, slub: move kasan_poison_slab hook before
+ page_address
+Message-Id: <20190212131250.0f98d6a9cea8e03ca47f980c@linux-foundation.org>
+In-Reply-To: <cd895d627465a3f1c712647072d17f10883be2a1.1549921721.git.andreyknvl@google.com>
+References: <cover.1549921721.git.andreyknvl@google.com>
+        <cd895d627465a3f1c712647072d17f10883be2a1.1549921721.git.andreyknvl@google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 03:25:28PM +0100, Maxime Chevallier wrote:
-> Marvell 10G PHY driver has a generic way of initializing the supported
-> link modes by reading the PHY's C45 PMA abilities. This can be made
-> generic, since these registers are part of the 802.3 specifications.
+On Mon, 11 Feb 2019 22:59:53 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
+
+> With tag based KASAN page_address() looks at the page flags to see
+> whether the resulting pointer needs to have a tag set. Since we don't
+> want to set a tag when page_address() is called on SLAB pages, we call
+> page_kasan_tag_reset() in kasan_poison_slab(). However in allocate_slab()
+> page_address() is called before kasan_poison_slab(). Fix it by changing
+> the order.
 > 
-> This commit extracts the config_init link_mode initialization code from
-> marvell10g and uses it to introduce the genphy_c45_pma_read_abilities
-> function.
-> 
-> Only PMA modes are read, it's still up to the caller to set the Pause
-> parameters.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ...
+>
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1642,12 +1642,15 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+>  	if (page_is_pfmemalloc(page))
+>  		SetPageSlabPfmemalloc(page);
+>  
+> +	kasan_poison_slab(page);
+> +
+>  	start = page_address(page);
+>  
+> -	if (unlikely(s->flags & SLAB_POISON))
+> +	if (unlikely(s->flags & SLAB_POISON)) {
+> +		metadata_access_enable();
+>  		memset(start, POISON_INUSE, PAGE_SIZE << order);
+> -
+> -	kasan_poison_slab(page);
+> +		metadata_access_disable();
+> +	}
+>  
+>  	shuffle = shuffle_freelist(s, page);
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This doesn't compile when CONFIG_SLUB_DEBUG=n.  Please review carefully:
 
-> -	__set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
-> -	__set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, supported);
-> +	__set_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->supported);
-> +	__set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->supported);
+--- a/mm/slub.c~kasan-slub-move-kasan_poison_slab-hook-before-page_address-fix
++++ a/mm/slub.c
+@@ -1357,6 +1357,14 @@ slab_flags_t kmem_cache_flags(unsigned i
+ 
+ #define disable_higher_order_debug 0
+ 
++static inline void metadata_access_enable(void)
++{
++}
++
++static inline void metadata_access_disable(void)
++{
++}
++
+ static inline unsigned long slabs_node(struct kmem_cache *s, int node)
+ 							{ return 0; }
+ static inline unsigned long node_nr_slabs(struct kmem_cache_node *n)
+_
 
-I think someone already pointed out, this is not ideal. The PHY driver
-should only set pause bits, if it needs odd pause settings because of
-HW limitations. If no bits are set, the core will set both bits.
-
-But this is not a new problem introduced by this patch, so it can be
-fixed later, rather than hold up this patchset.
-
-      Andrew
