@@ -2,60 +2,60 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31647C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E36C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E058F20818
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4CE220449
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:40:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="2IlnM4dV"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="EPlsrLlw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbfBLKj2 (ORCPT
+        id S1729257AbfBLKkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:39:28 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37963 "EHLO
+        Tue, 12 Feb 2019 05:40:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37971 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729028AbfBLKjZ (ORCPT
+        with ESMTP id S1729068AbfBLKj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:39:25 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so2093646wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:39:24 -0800 (PST)
+        Tue, 12 Feb 2019 05:39:27 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so2093813wrw.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2DeiZ8D7UiVmGGxb7P14iUU29iY/Sp7nuKJSfeun7aM=;
-        b=2IlnM4dV3gOJLfRdHJF4Y+rxdjyCjkmQekzTqTeIlpjSC70Yx4rMu2FrAU3bTYalRn
-         vFQOBBewpJxrVxCi+uEn4r/5n31uYLuCC5DUmPnxLZn1swldeKf/YNvHI/ASrhuptNxW
-         asXYDUcRByqgbzVD0WAnK9Xzvr1gJxit1duL+QWQ505WBnDIlrqZWhvFcFfcig23gbJ8
-         Gnojfv4NAWzntrp67NbxX7gOfZHW1iz/2fIGqb01x45ivpoI9MTIyrzwD1P/tJ6vHDEI
-         PuXZwU8fYHY06Hm+rSvINSyCyNh+UmwSHYr2TPAFEbf2fFYqbn+WYrPkNyexwUsbqIq3
-         H6vQ==
+        bh=qhFqkmsXZyuazPofYbQWZL9RcZ7Ca/je+Dz4MrjLFaI=;
+        b=EPlsrLlwIM5eQ6qCbBM/iLWsiNRq1swEAhorrsdQfx5Nz7e9/7PIzUL39IrYxQG/cP
+         VQVS28KgHXP9Azk2pU5hxDSOi8GnHfaSFmcbuxpTf2evpuaVUCO01JF79PV3CzCFlmOa
+         /CKumZ5ZdyTuwh2Q5pLkbskmGRaYpXBVJ8+Nb3TP55db2tno4A3ML9lqqMRnJ5UWZ4MC
+         YfJimjI4/n6N4aGczwo+aEAf3iPM3V80mma8+jXkHS712XIhb//qFjCu0PQjRFOh8h5B
+         8cyxZe+/ncF/jxiS1baSZxc2hMpp5XHW+tMug5qB3fhYtLpi7l2jIuyUPhebQs8B6MgO
+         r45A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2DeiZ8D7UiVmGGxb7P14iUU29iY/Sp7nuKJSfeun7aM=;
-        b=NEyfJRwOMsqYCx9NDDFmh5DqXW2jZf+tXbsMyvCFtpFOkQWIVJc3vgjJsDBOKVXQ0G
-         JjYpjqgonMWCbZaYopesqubHX8BJDA+21K1l1ZqbHQHV9/sOMak4rGrbVOPJz8XSu4lK
-         ynX8nent/p4KN8FZblCRnJn6wxunAoLdgdyLZ1q1Fedvt6ezdUpkBfmtwQ8II66hy5yA
-         yB4U5KsACk4z1IiPBE7ynoTseQ+Oxs2b8LbnPJkLQQ9U/zF4AXydX7RPtvpDkMa5Dh/p
-         ZuH3Q0cAQQJ5qRXSAVvAemCkDj6lzfamU0PXkf+CXc+KFzHM/uA/7RrdusbKUnZ76ge6
-         1Dow==
-X-Gm-Message-State: AHQUAuZTxaiRX6RiiATtiFxq1EFlfAwGYHD+NrWZwDQottOwLrXSfXzz
-        HSza0q+Yb7cY+bNF5STSKf0B0A==
-X-Google-Smtp-Source: AHgI3IYwsV02KuHXl6IVV0UUgsKLP8dbVucN5m1fTSaUPBAGu4lIXjHFtOmaMBvldP6uSLLcIRwoMg==
-X-Received: by 2002:adf:8506:: with SMTP id 6mr2458186wrh.128.1549967963687;
-        Tue, 12 Feb 2019 02:39:23 -0800 (PST)
+        bh=qhFqkmsXZyuazPofYbQWZL9RcZ7Ca/je+Dz4MrjLFaI=;
+        b=Bh3O4WBKi2TZLv/TKexjxcZ/82qL6mAHMe0tH2hpxyxrhi1OvNOKk5D/EVqcGWcVEM
+         nQnPqHyM/agoOxdjfAwFlL4p8DLqEgxcSavw31La79s8qg4rn7k7rTYxhyt4yNsIgUxi
+         LiadinnZ6L/v4ejVdFzmT8vDd2h7hr9qT6I1wnCvqI1kHf/SlZ23u7tzPE8Cp16RumR1
+         w+DmYIJcFEQkMwI9m9KqNkNRlV/qYfDOXhqc3QwOh4KpHr/ogqm1vk5c+HOY7btP/wjl
+         jcDST50VxjIGgHJI7f5Lj8+bSa6HKHhLA6SPja3Dsj3TM8xYv0Pz1nKy5bwuFNPBKYvH
+         ODyQ==
+X-Gm-Message-State: AHQUAubSFoCr+HF1rW1k+bR0AgrV5mr48ZO7L1mOER4GIJ/0nOgLOXrX
+        5aXJqsmuI0GQurRmsgZsroUHKA==
+X-Google-Smtp-Source: AHgI3IaHYJQXAFGCW6IoU/bSVxGT/oCXiB6qrYsPXsWCvUatBlekF+zInG72x6L84+RgvwAbRGoNug==
+X-Received: by 2002:adf:e5c5:: with SMTP id a5mr2318947wrn.13.1549967966020;
+        Tue, 12 Feb 2019 02:39:26 -0800 (PST)
 Received: from localhost.localdomain (aputeaux-684-1-38-32.w90-86.abo.wanadoo.fr. [90.86.93.32])
-        by smtp.gmail.com with ESMTPSA id c14sm3708656wrn.12.2019.02.12.02.39.22
+        by smtp.gmail.com with ESMTPSA id c14sm3708656wrn.12.2019.02.12.02.39.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 02:39:23 -0800 (PST)
+        Tue, 12 Feb 2019 02:39:25 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 23/37] ARM: davinci: cp-intc: remove cp_intc.h
-Date:   Tue, 12 Feb 2019 11:38:21 +0100
-Message-Id: <20190212103835.7768-24-brgl@bgdev.pl>
+Subject: [PATCH v3 25/37] irqchip: davinci-cp-intc: add a new config structure
+Date:   Tue, 12 Feb 2019 11:38:23 +0100
+Message-Id: <20190212103835.7768-26-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212103835.7768-1-brgl@bgdev.pl>
 References: <20190212103835.7768-1-brgl@bgdev.pl>
@@ -79,185 +79,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-There's no need to have a local header for cp-intc. Move the only
-declaration for a public function to common.h. Move all register
-offsets into the driver source file and drop all unused defines.
-Make cp_intc_of_init() static.
+Add a config structure that will be used by cp-intc-based platforms.
+It contains the register range resource and the number of interrupts.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/board-da830-evm.c     |  1 -
- arch/arm/mach-davinci/board-da850-evm.c     |  1 -
- arch/arm/mach-davinci/board-mityomapl138.c  |  1 -
- arch/arm/mach-davinci/board-omapl138-hawk.c |  1 -
- arch/arm/mach-davinci/cp_intc.c             | 20 +++++++-
- arch/arm/mach-davinci/cp_intc.h             | 57 ---------------------
- arch/arm/mach-davinci/include/mach/common.h |  1 +
- 7 files changed, 19 insertions(+), 63 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/cp_intc.h
+ include/linux/irqchip/irq-davinci-cp-intc.h | 23 +++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 7b8c4aeca096..f81c92b9cf07 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -39,7 +39,6 @@
- #include <mach/mux.h>
- #include <mach/da8xx.h>
- 
--#include "cp_intc.h"
- #include "irqs.h"
- 
- #define DA830_EVM_PHY_ID		""
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index b0814bd30a1f..1cc49e7bf128 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -46,7 +46,6 @@
- #include <mach/da8xx.h>
- #include <mach/mux.h>
- 
--#include "cp_intc.h"
- #include "irqs.h"
- #include "sram.h"
- 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 8df16e81b69e..eb6a9465f229 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -27,7 +27,6 @@
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <mach/common.h>
--#include "cp_intc.h"
- #include <mach/da8xx.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 94c4f126ef86..7f852722ff08 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -27,7 +27,6 @@
- #include <asm/mach/arch.h>
- 
- #include <mach/common.h>
--#include "cp_intc.h"
- #include <mach/da8xx.h>
- #include <mach/mux.h>
- 
-diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index 4e293cde20fb..82110d332c82 100644
---- a/arch/arm/mach-davinci/cp_intc.c
-+++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -21,7 +21,22 @@
- 
- #include <asm/exception.h>
- #include <mach/common.h>
--#include "cp_intc.h"
+diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
+new file mode 100644
+index 000000000000..2270a6167b98
+--- /dev/null
++++ b/include/linux/irqchip/irq-davinci-cp-intc.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2019 Texas Instruments
++ */
 +
-+#define CP_INTC_CTRL			0x04
-+#define CP_INTC_HOST_CTRL		0x0C
-+#define CP_INTC_GLOBAL_ENABLE		0x10
-+#define CP_INTC_SYS_STAT_IDX_CLR	0x24
-+#define CP_INTC_SYS_ENABLE_IDX_SET	0x28
-+#define CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
-+#define CP_INTC_HOST_ENABLE_IDX_SET	0x34
-+#define CP_INTC_HOST_ENABLE_IDX_CLR	0x38
-+#define CP_INTC_PRIO_IDX		0x80
-+#define CP_INTC_SYS_STAT_CLR(n)		(0x0280 + (n << 2))
-+#define CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
-+#define CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
-+#define CP_INTC_SYS_POLARITY(n)		(0x0D00 + (n << 2))
-+#define CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
-+#define CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
- 
- #define DAVINCI_CP_INTC_PRI_INDX_MASK		GENMASK(9, 0)
- #define DAVINCI_CP_INTC_GPIR_NONE		BIT(31)
-@@ -141,7 +156,8 @@ static const struct irq_domain_ops cp_intc_host_ops = {
- 	.xlate = irq_domain_xlate_onetwocell,
- };
- 
--int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
-+static int __init cp_intc_of_init(struct device_node *node,
-+				  struct device_node *parent)
- {
- 	u32 num_irq		= davinci_soc_info.intc_irq_num;
- 	u8 *irq_prio		= davinci_soc_info.intc_irq_prios;
-diff --git a/arch/arm/mach-davinci/cp_intc.h b/arch/arm/mach-davinci/cp_intc.h
-deleted file mode 100644
-index 827bbe9baed4..000000000000
---- a/arch/arm/mach-davinci/cp_intc.h
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/*
-- * TI Common Platform Interrupt Controller (cp_intc) definitions
-- *
-- * Author: Steve Chen <schen@mvista.com>
-- * Copyright (C) 2008-2009, MontaVista Software, Inc. <source@mvista.com>
-- *
-- * This file is licensed under the terms of the GNU General Public License
-- * version 2. This program is licensed "as is" without any warranty of any
-- * kind, whether express or implied.
-- */
--#ifndef __ASM_HARDWARE_CP_INTC_H
--#define __ASM_HARDWARE_CP_INTC_H
--
--#define CP_INTC_REV			0x00
--#define CP_INTC_CTRL			0x04
--#define CP_INTC_HOST_CTRL		0x0C
--#define CP_INTC_GLOBAL_ENABLE		0x10
--#define CP_INTC_GLOBAL_NESTING_LEVEL	0x1C
--#define CP_INTC_SYS_STAT_IDX_SET	0x20
--#define CP_INTC_SYS_STAT_IDX_CLR	0x24
--#define CP_INTC_SYS_ENABLE_IDX_SET	0x28
--#define CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
--#define CP_INTC_GLOBAL_WAKEUP_ENABLE	0x30
--#define CP_INTC_HOST_ENABLE_IDX_SET	0x34
--#define CP_INTC_HOST_ENABLE_IDX_CLR	0x38
--#define CP_INTC_PACING_PRESCALE 	0x40
--#define CP_INTC_VECTOR_BASE		0x50
--#define CP_INTC_VECTOR_SIZE		0x54
--#define CP_INTC_VECTOR_NULL		0x58
--#define CP_INTC_PRIO_IDX		0x80
--#define CP_INTC_PRIO_VECTOR		0x84
--#define CP_INTC_SECURE_ENABLE		0x90
--#define CP_INTC_SECURE_PRIO_IDX 	0x94
--#define CP_INTC_PACING_PARAM(n) 	(0x0100 + (n << 4))
--#define CP_INTC_PACING_DEC(n)		(0x0104 + (n << 4))
--#define CP_INTC_PACING_MAP(n)		(0x0108 + (n << 4))
--#define CP_INTC_SYS_RAW_STAT(n) 	(0x0200 + (n << 2))
--#define CP_INTC_SYS_STAT_CLR(n) 	(0x0280 + (n << 2))
--#define CP_INTC_SYS_ENABLE_SET(n)	(0x0300 + (n << 2))
--#define CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
--#define CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
--#define CP_INTC_HOST_MAP(n)		(0x0800 + (n << 2))
--#define CP_INTC_HOST_PRIO_IDX(n)	(0x0900 + (n << 2))
--#define CP_INTC_SYS_POLARITY(n) 	(0x0D00 + (n << 2))
--#define CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
--#define CP_INTC_WAKEUP_ENABLE(n)	(0x0E00 + (n << 2))
--#define CP_INTC_DEBUG_SELECT(n) 	(0x0F00 + (n << 2))
--#define CP_INTC_SYS_SECURE_ENABLE(n)	(0x1000 + (n << 2))
--#define CP_INTC_HOST_NESTING_LEVEL(n)	(0x1100 + (n << 2))
--#define CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
--#define CP_INTC_HOST_PRIO_VECTOR(n)	(0x1600 + (n << 2))
--#define CP_INTC_VECTOR_ADDR(n)		(0x2000 + (n << 2))
--
--void cp_intc_init(void);
--int cp_intc_of_init(struct device_node *, struct device_node *);
--
--#endif	/* __ASM_HARDWARE_CP_INTC_H */
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index 14e0e1c40611..3f3f1169d47e 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -22,6 +22,7 @@
- #define DAVINCI_INTC_START		NR_IRQS
- #define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
- 
-+void cp_intc_init(void);
- void davinci_timer_init(struct clk *clk);
- 
- struct davinci_timer_instance {
++#ifndef _LINUX_IRQ_DAVINCI_CP_INTC_
++#define _LINUX_IRQ_DAVINCI_CP_INTC_
++
++#include <linux/ioport.h>
++
++/**
++ * struct davinci_cp_intc_config - configuration data for davinci-cp-intc
++ *                                 driver.
++ *
++ * @reg: register range to map
++ * @num_irqs: number of HW interrupts supported by the controller
++ */
++struct davinci_cp_intc_config {
++	struct resource reg;
++	unsigned int num_irqs;
++};
++
++#endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
 -- 
 2.20.1
 
