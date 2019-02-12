@@ -2,99 +2,92 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FD8C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FDFC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3641C217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549984858;
-	bh=LDbace6o6NhLXUidBW87UB5OdTTwSw9f14Ng+TopNHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hwXgef7W4RkwttBxDXsp3fgKNOK58am3JpNkxWlJuVMMTbOyOoHrRiAC4FMDwQqyd
-	 5ApxF5e1b2luojpXjBxhj1sbXzcCz07wM/Zk1LIN0AlyP4u9e6NvOXuTnRI7XnIH1y
-	 fFpaYxPWNTO9D7Ja5rahopbuBMHBxCDg79WzV39g=
+	by mail.kernel.org (Postfix) with ESMTP id 284CD207E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfBLPU4 (ORCPT
+        id S1729964AbfBLPWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:20:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36182 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 10:22:32 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47087 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfBLPU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:20:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31EAB207E0;
-        Tue, 12 Feb 2019 15:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549984855;
-        bh=LDbace6o6NhLXUidBW87UB5OdTTwSw9f14Ng+TopNHk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lveEPcle2u3NuNqxK6xJPpbLYV2bBz9frJN30BpLmeouCwazd4c0AruQULR7fxUSC
-         FlUet27Ip4vtEmIHiEqDwz7bjmC2UPYxWiOYtI+DL+U7r8yfimgUlgTNVYTrHW+WE+
-         707L8hhNaaIzRSMG/Cp3TiuV+uNnS1B7XEHqN+DY=
-Date:   Tue, 12 Feb 2019 16:20:53 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     cgxu519 <cgxu519@gmx.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] chardev: showing minor range for chardev in the
- output of /proc/devices
-Message-ID: <20190212152053.GA25804@kroah.com>
-References: <20190212084739.27602-1-cgxu519@gmx.com>
- <20190212084739.27602-2-cgxu519@gmx.com>
- <20190212090212.GE31657@kroah.com>
- <a8332299-818e-571c-efc9-7885f18eddb8@gmx.com>
+        id S1728851AbfBLPWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:22:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 07:22:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="114320895"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga007.jf.intel.com with ESMTP; 12 Feb 2019 07:22:31 -0800
+Received: from fmsmsx151.amr.corp.intel.com (10.18.125.4) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 12 Feb 2019 07:22:31 -0800
+Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
+ FMSMSX151.amr.corp.intel.com (10.18.125.4) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 12 Feb 2019 07:22:31 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.227]) by
+ LCSMSX153.ger.corp.intel.com ([169.254.8.211]) with mapi id 14.03.0415.000;
+ Tue, 12 Feb 2019 17:22:28 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     cgxu519 <cgxu519@gmx.com>, Greg KH <gregkh@linuxfoundation.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] mei: expand minor range when registering chrdev region
+Thread-Topic: [PATCH] mei: expand minor range when registering chrdev region
+Thread-Index: AQHUwuL4UEcuv89Gu0Gd9FSK0M1FpKXcQwDg
+Date:   Tue, 12 Feb 2019 15:22:27 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DAA3809@hasmsx108.ger.corp.intel.com>
+References: <20190212060252.8948-1-cgxu519@gmx.com>
+ <20190212092902.GD27450@kroah.com>
+ <03e93235-9fc8-dbc5-49e4-45be8e715398@gmx.com>
+In-Reply-To: <03e93235-9fc8-dbc5-49e4-45be8e715398@gmx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.126.36]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8332299-818e-571c-efc9-7885f18eddb8@gmx.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 11:18:22PM +0800, cgxu519 wrote:
-> On 2/12/19 5:02 PM, Greg KH wrote:
-> > On Tue, Feb 12, 2019 at 04:47:39PM +0800, Chengguang Xu wrote:
-> > > Currently chardev allows to share major, showing
-> > > major with minor range for chardev will be more
-> > > helpful.
-> > > 
-> > > Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> > > ---
-> > >   fs/char_dev.c | 4 +++-
-> > >   1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/char_dev.c b/fs/char_dev.c
-> > > index b25b1da097d5..6f00acdeb308 100644
-> > > --- a/fs/char_dev.c
-> > > +++ b/fs/char_dev.c
-> > > @@ -55,7 +55,9 @@ void chrdev_show(struct seq_file *f, off_t offset)
-> > >   	mutex_lock(&chrdevs_lock);
-> > >   	for (cd = chrdevs[major_to_index(offset)]; cd; cd = cd->next) {
-> > >   		if (cd->major == offset)
-> > > -			seq_printf(f, "%3d %s\n", cd->major, cd->name);
-> > > +			seq_printf(f, "%3d %s (%u-%u)\n", cd->major, cd->name,
-> > > +				   cd->baseminor,
-> > > +				   cd->baseminor + cd->minorct - 1);
-> > You are changing the format of a userspace file, what tools are going to
-> > break when you do this?
-> 
-> I'll remove this part in V2. Do you have any idea how to get the minor
-> range info for particular major? Or adding a similar file to somewhere
-> under /sys is acceptable?
-
-Why do you need to know the minor range?  What can userspace do with
-this that actually matters?
-
-thanks,
-
-greg k-h
+DQo+IA0KPiBPbiAyLzEyLzE5IDU6MjkgUE0sIEdyZWcgS0ggd3JvdGU6DQo+ID4gT24gVHVlLCBG
+ZWIgMTIsIDIwMTkgYXQgMDI6MDI6NTJQTSArMDgwMCwgQ2hlbmdndWFuZyBYdSB3cm90ZToNCj4g
+Pj4gQWN0dWFsbHksIHRvdGFsIGFtb3VudCBvZiBhdmFpbGFibGUgbWlub3IgbnVtYmVyIGZvciBh
+IHNpbmdsZSBtYWpvcg0KPiA+PiBpcyBNSU5PUk1BUksgKyAxLiBTbyBleHBhbmQgbWlub3IgcmFu
+Z2Ugd2hlbiByZWdpc3RlcmluZyBjaHJkZXYNCj4gPj4gcmVnaW9uLg0KPiA+Pg0KPiA+PiBTaWdu
+ZWQtb2ZmLWJ5OiBDaGVuZ2d1YW5nIFh1IDxjZ3h1NTE5QGdteC5jb20+DQo+ID4+IC0tLQ0KPiA+
+PiAgIGRyaXZlcnMvbWlzYy9tZWkvbWFpbi5jIHwgMiArLQ0KPiA+PiAgIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9taXNjL21laS9tYWluLmMgYi9kcml2ZXJzL21pc2MvbWVpL21haW4uYyBpbmRleA0K
+PiA+PiA4NzI4MWIzNjk1ZTYuLjNkZjU0ZjFlMWE4YiAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVy
+cy9taXNjL21laS9tYWluLmMNCj4gPj4gKysrIGIvZHJpdmVycy9taXNjL21laS9tYWluLmMNCj4g
+Pj4gQEAgLTg2OSw3ICs4NjksNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9u
+cyBtZWlfZm9wcyA9IHsNCj4gPj4NCj4gPj4gICBzdGF0aWMgc3RydWN0IGNsYXNzICptZWlfY2xh
+c3M7DQo+ID4+ICAgc3RhdGljIGRldl90IG1laV9kZXZ0Ow0KPiA+PiAtI2RlZmluZSBNRUlfTUFY
+X0RFVlMgIE1JTk9STUFTSw0KPiA+PiArI2RlZmluZSBNRUlfTUFYX0RFVlMgIChNSU5PUk1BU0sg
+KyAxKQ0KPiA+IFdoeSBpcyB0aGlzIG5lZWRlZD8gIEhhdmUgeW91IHJlYWxseSBydW4gb3V0IG9m
+IHRoYXQgbWFueSBtaW5vciBub2Rlcw0KPiA+IGZvciB0aGlzIGRyaXZlcj8NCj4gDQo+IE5vdCBy
+ZWFsbHksIHByYWN0aWNhbGx5IG1heWJlIHdlIGNhbm5vdCByZWFjaCB0byB0aGUgbGltaXQuDQo+
+IEkgd2FzIGp1c3QgY3VyaW91cyB3aHkgb25seSBvbmUgbWlub3IgbnVtYmVyIGxlZnQgdGhlcmUg
+YW5kIGFzc3VtZWQgdGhhdCB3YXMNCj4gZnJvbSBhIG1pc3Rha2Uoc2luY2UgSSd2ZSBzZWVuIHNp
+bWlsYXIgbWlzdGFrZSBpbiBvdGhlciBkcml2ZXIpLg0KPiBIb3dldmVyLCBpZiBpdCBleHBsaWNp
+dGx5IHNldHMgdG8gTUlOT1JNQVNLIGZvciBzb21lIHJlYXNvbnMsIHRoZW4gaXQncyBiZXR0ZXIN
+Cj4gdG8ga2VlcCBhcyBpcy4NCg0KSSBndWVzcyB0aGlzIHdhcyBhIGJvaWxlcnBsYXRlIGNvZGUs
+IGJ1dCBJJ20gc3VyZSB3ZSBkb24ndCBuZWVkIHNvIG1hbnkgZGV2aWNlcy4NCg0KVGhhbmtzDQpU
+b21hcw0KDQoNCg==
