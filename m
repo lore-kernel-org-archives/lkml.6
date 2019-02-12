@@ -2,90 +2,94 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4A6C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7604C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7D1217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549990243;
-	bh=Y3CSSx75Y/hO0GPrKCgc6I+o5fwCbw3WykLU+L+ihSQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=crfN8YgccEiB3G7TdPh2jPhzBMalsY6bfOi6DQmAR3gulSKExj9EOUBSKXmmdcPE1
-	 88XIGf0LWWzX4c/U+lIOEoxjW01KFCVj6VrJqTvgPO+7IKjgk4zHMMMuHM/YVFDbcS
-	 wgcWENSccqRGJ0odmyXap0ACHstmm6CEL93KQIHM=
+	by mail.kernel.org (Postfix) with ESMTP id A0F5B217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbfBLQum (ORCPT
+        id S1731333AbfBLQuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:50:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731300AbfBLQuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:50:37 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29E69217D9;
-        Tue, 12 Feb 2019 16:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549990237;
-        bh=Y3CSSx75Y/hO0GPrKCgc6I+o5fwCbw3WykLU+L+ihSQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p58lw/6/lRGrEa5EMdS/sDLZwPZyH9vw+VG/iKEW87lKs+u1xcGobvOTO33JMRqVj
-         HTgu9YSJkou7eS0kacGL+9QV16Olm2e7qHFOEPBapGdry8QmC7EQ1tihyu1VACKHy+
-         BXqSOZH0euJpy1XyhDnYdsNN0tmr+HyqgIiXaTMQ=
-Date:   Tue, 12 Feb 2019 11:50:36 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 4.9 034/137] ARM: mmp/mmp2: dt: enable the clock
-Message-ID: <20190212165036.GE69686@sasha-vm>
-References: <20190211141811.964925535@linuxfoundation.org>
- <20190211141815.120436242@linuxfoundation.org>
- <20190211205125.GB22473@amd>
+        Tue, 12 Feb 2019 11:50:44 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50722 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730844AbfBLQuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:50:40 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DBF00DF7E33A091663B7;
+        Wed, 13 Feb 2019 00:50:36 +0800 (CST)
+Received: from j00421895-HPW10.huawei.com (10.202.226.61) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 13 Feb 2019 00:50:26 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     <jonathan.cameron@huawei.com>, <linux-mm@kvack.org>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <linuxarm@huawei.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Michal Hocko <mhocko@kernel.org>, <jcm@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 3/3] ACPI: Let ACPI know we support Generic Initiator Affinity Structures
+Date:   Tue, 12 Feb 2019 16:49:26 +0000
+Message-ID: <20190212164926.202-4-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190212164926.202-1-Jonathan.Cameron@huawei.com>
+References: <20190212164926.202-1-Jonathan.Cameron@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190211205125.GB22473@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 09:51:25PM +0100, Pavel Machek wrote:
->Hi!
->
->> 4.9-stable review patch.  If anyone has any objections, please let me know.
->>
->> ------------------
->>
->> [ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
->>
->> The device-tree booted MMP2 needs to enable the timer clock, otherwise
->> it would stop ticking when the boot finishes.
->>
->> It can also use the clock rate from the clk, the non-DT boards need to
->> keep using the hardcoded rates.
->>
->> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
->> Acked-by: Pavel Machek <pavel@ucw.cz>
->> Signed-off-by: Olof Johansson <olof@lixom.net>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->While I agree this is good idea for mainline (thus my ack), I don't
->think it is suitable for stable, as older kernels will not run on OLPC
->in useful way, anyway.
+Until we tell ACPI that we support generic initiators, it will have
+to operate in fall back domain mode and all _PXM entries should
+be on existing non GI domains.
 
-Interesting, so OLPC doesn't run on 4.20?
+This patch sets the relevant OSC bit to make that happen.
 
---
-Thanks,
-Sasha
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+
+Note that this will need platform guards unless we make generic initiators
+work on all ACPI platforms from the start.
+
+ drivers/acpi/bus.c   | 1 +
+ include/linux/acpi.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 5c093ce01bcd..461fb393346a 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -315,6 +315,7 @@ static void acpi_bus_osc_support(void)
+ 
+ 	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_HOTPLUG_OST_SUPPORT;
+ 	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_PCLPI_SUPPORT;
++	capbuf[OSC_SUPPORT_DWORD] |= OSC_SB_GENERIC_INITIATOR_SUPPORT;
+ 
+ #ifdef CONFIG_X86
+ 	if (boot_cpu_has(X86_FEATURE_HWP)) {
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 87715f20b69a..760c6f3d57f0 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -498,6 +498,7 @@ acpi_status acpi_run_osc(acpi_handle handle, struct acpi_osc_context *context);
+ #define OSC_SB_PCLPI_SUPPORT			0x00000080
+ #define OSC_SB_OSLPI_SUPPORT			0x00000100
+ #define OSC_SB_CPC_DIVERSE_HIGH_SUPPORT		0x00001000
++#define OSC_SB_GENERIC_INITIATOR_SUPPORT	0x00002000
+ 
+ extern bool osc_sb_apei_support_acked;
+ extern bool osc_pc_lpi_support_confirmed;
+-- 
+2.18.0
+
+
