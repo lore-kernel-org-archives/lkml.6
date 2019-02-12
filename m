@@ -2,117 +2,137 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A71FC282D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59897C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5F821855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FB821773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:33:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="boLhc8UC"
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="HcYWjtS4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfBLEQA (ORCPT
+        id S1727550AbfBLEdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 23:16:00 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:56712 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726961AbfBLEQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 23:16:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C8DD18EE235;
-        Mon, 11 Feb 2019 20:15:59 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PB-VvO3JcdoZ; Mon, 11 Feb 2019 20:15:59 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3A90B8EE121;
-        Mon, 11 Feb 2019 20:15:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1549944959;
-        bh=DEMAfkza0rPxuTxRwwivaRv9qwcKG5pJu2Q7b44VlyE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=boLhc8UCzWW55O51ZYu/TBe54u8RP7ydReHOSsUG7YRvHdSoonGKpx/yKhtu51v3O
-         3q1ntRCyHzxwF2EbYyEqQNspd19yYcIscI6DW47jOCHs0zb0Tlx9rl/Fb1gxEV/ElC
-         eYsF2AhDhFF+A6JCA31V/szuusm17KoZo8pcYW2A=
-Message-ID: <1549944957.2857.13.camel@HansenPartnership.com>
-Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes
- 5 minute delay during boot on Sun Blade 2500
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Mikael Pettersson <mikpelinux@gmail.com>
-Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Date:   Mon, 11 Feb 2019 20:15:57 -0800
-In-Reply-To: <AT5PR8401MB1169D3DBEBC4F88D76BD1710AB650@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
-         <1549736341.2971.7.camel@HansenPartnership.com>
-         <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
-         <1549813472.4142.3.camel@HansenPartnership.com>
-         <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
-         <1549815924.4142.8.camel@HansenPartnership.com>
-         <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
-         <1549898730.2831.6.camel@HansenPartnership.com>
-         <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
-         <1549899773.2831.12.camel@HansenPartnership.com>
-         <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
-         <1549902521.2831.23.camel@HansenPartnership.com>
-         <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
-         <1549937598.2857.8.camel@HansenPartnership.com>
-         <fc547d40-9a42-a823-b62f-460c3244fe7d@kernel.dk>
-         <AT5PR8401MB1169D3DBEBC4F88D76BD1710AB650@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Feb 2019 23:33:32 -0500
+Received: from mail-eopbgr710095.outbound.protection.outlook.com ([40.107.71.95]:38176
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727166AbfBLEdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 23:33:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cLLYiH9rfels9vMe4aarAw182iF4B51UIpOaVFpno2U=;
+ b=HcYWjtS4r9WmoTIfLpkyhLrT5PRkt0E3+YEJ4y0PoaTqnA4z3DpkbocOgrmCr6z1Bs+0HlsIKkUf4ksGOOhXJZbc96+5A5lYx0vmg4spK7iOsnPz/4AkRdUdvJdBKp4YPVr4Q0QlshaDYhc+tx+ZOvtIi3EFvHj3Zt12tPq3qo4=
+Received: from SN2PR01CA0009.prod.exchangelabs.com (2603:10b6:804:2::19) by
+ BYAPR01MB3750.prod.exchangelabs.com (2603:10b6:a02:81::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.21; Tue, 12 Feb 2019 04:33:28 +0000
+Received: from CO1NAM03FT011.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::208) by SN2PR01CA0009.outlook.office365.com
+ (2603:10b6:804:2::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1601.17 via Frontend
+ Transport; Tue, 12 Feb 2019 04:33:27 +0000
+Authentication-Results: spf=pass (sender IP is 18.9.28.11)
+ smtp.mailfrom=mit.edu; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=mit.edu;
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ CO1NAM03FT011.mail.protection.outlook.com (10.152.80.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Tue, 12 Feb 2019 04:33:27 +0000
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x1C4XPcZ013844
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Feb 2019 23:33:26 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C79E57A4EAE; Mon, 11 Feb 2019 23:33:24 -0500 (EST)
+Date:   Mon, 11 Feb 2019 23:33:24 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     <torvalds@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-ext4@vger.kernel.org>
+Subject: [GIT PULL] ext4 fix for 5.0-rc7
+Message-ID: <20190212043324.GA15822@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(136003)(346002)(2980300002)(189003)(199004)(33656002)(54906003)(58126008)(2616005)(126002)(246002)(316002)(36906005)(786003)(47776003)(476003)(6266002)(4744005)(486006)(26826003)(478600001)(88552002)(42186006)(16586007)(8936002)(6916009)(106002)(1076003)(2906002)(8676002)(305945005)(46406003)(97756001)(103686004)(2351001)(106466001)(23726003)(52956003)(336012)(90966002)(356004)(186003)(75432002)(86362001)(50466002)(36756003)(26005)(4326008)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR01MB3750;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT011;1:U8vvw7bk9rNpX0nIMS74ozqWPkFBlaANy37wVVUHo6HNAtX/6H0JlibpUsSP0ylEJbz/h4Q5KkZIVV7sy12cVCQOoMHzC8N69Tfu/L0zBkBiZTF3ydB2jp91MeCYta4mwoiJHUDUhqkKimWTJTd6TApOAnZgUj9YyHlhkr73AA8=
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5f544cad-9ba3-45aa-3882-08d690a33bda
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4608076)(4709027)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR01MB3750;
+X-MS-TrafficTypeDiagnostic: BYAPR01MB3750:
+X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR01MB3750;20:LuzDEai4OupzWj22y5lYv4QBLPLsY6b1bY2uGHy+u+wUA5aVj3t41+QcSS76iVgdoMymxNrdKVsO42iZDCkD5TZI6JAvoI7tjamcXl21NI5bLA43hsRzSbZ3fg1KHQhiK1P6XkgOeeY620ZGMbW0ag5Ef1+YQK5DLnp2vYJmnZAbbyNJMwRBispNND3TlJVyyIGBcSUmh9JM93Xb7rx3BNtVD6CHjVsxfLzXp6L5T+mftjs9QWHXvyD9F7OYnC4d6DlREdWjedRhrS0Ta0hKt+wtDys1+3XhCExziszAy6l0bYs+HNxPfN4iQCSnW7E2Ki5atFmlXoAZRTOYDkE8Sk5pOBicF58tLOVHESqt/xrGYWnTxOxd0Vu/2n4iHeZCwFbNC+lE7Q4NrtI5Rw+I6zRFw/CFvkYRZT84cVhyKPg9MNWekrIk4U4PTkRbLCJe0NCSYC0Ru2C1+WSu8wnVzT8V28IZJLajzoYV7QzkAfdxYJnDHBHIUHMwCruzyiOvol/53VVP0tjWcGZnbhCR8knaaLW2SYhmSfZTxb52BB1MSEj5uPzN/CR+Jw4W0wY0bR3pgkK+pj0igfnsoul6T7pXtRzKw8mvP/QDmKMklK4=
+X-Microsoft-Antispam-PRVS: <BYAPR01MB37504E3D9AF49D53F91822FAB5650@BYAPR01MB3750.prod.exchangelabs.com>
+X-Forefront-PRVS: 0946DC87A1
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR01MB3750;23:xVhWIM/jODq1yWkFNO7/7AVqpo4W0q0oX8g1rI6iy?=
+ =?us-ascii?Q?4Y2v3zFsJaxD5Dfy+sq6dZqSey6gLeYfohEHB3wf172qSyxfu57kjt0mWiIg?=
+ =?us-ascii?Q?89rA53lDI4MDXlaaF2KeLCM5d7aOJ6/dHJ7GKCxEZPQ4l3Qad0+RBwvAaqry?=
+ =?us-ascii?Q?+BNZU4lk/YosPo6+8Sw+fzbj+29XeuG2MFUL53Epe/w5ykDoENNF5/A0sFCa?=
+ =?us-ascii?Q?NJzOAi11XWsM3+t8z6Bpe7XngvBrW5W6sHRP1ERUfc7ZdoIIuqKUmksZLWsV?=
+ =?us-ascii?Q?eQkhsdv1fbXlygnnIAA33+3noJ9NXD/W4cunAu3bmoXMwylpro7erG2QCtKS?=
+ =?us-ascii?Q?TawlSQeLH8jBul16ZEurzuF2lWXKzA154DQouTfLrTqSOgf4huJuuBhAxtS6?=
+ =?us-ascii?Q?9cCplmmE4zqPxe4aCms8dVI4Q4p4Q7wyMHMgR4O+4ONY1pWBRVbmWYv0AKP4?=
+ =?us-ascii?Q?RjylC86+A0SmLnBwcYt2mhFX9yT0InTday6dQXwscRXGBc0u0ID6FdmoxJQT?=
+ =?us-ascii?Q?l3Ba5Abcd7sPR1Vs4nE8389kUJAUnR/AhrbNg19XTaCst5SMJd+1Iu12+fFM?=
+ =?us-ascii?Q?t/pCUKSYXFuU/sznOcCP3IL6Kp64ITlCUm8qAIY2bF5EK4Augz9sFqgOkhaG?=
+ =?us-ascii?Q?Pht2BSutsnDm9yf4SsPuDo8rUgtdG+vJiH5lAyXKDCl+biRaPNVr+SizqGe5?=
+ =?us-ascii?Q?wK/HBW1noF83cpqtcNG+STmgsB69pArJox7BdBQzVZ/DrmaLjSxRqT+hUYFA?=
+ =?us-ascii?Q?4VVUV6X1Jl0xAfAavqvvR92ogpX730APV/bdmqzfoFzOAknKWJdMF54CzjOs?=
+ =?us-ascii?Q?d892nlS4A3+/M1kg2NUsNLk6TMrny7xZhmnAYKdzGkmwDmMhE+C5ta/R0g5w?=
+ =?us-ascii?Q?Ow4CDmVxIewH+YN6n9rO7fagsYX6Ia/XqrUeU9YEbqJvKz8inRkIxr1GPTb4?=
+ =?us-ascii?Q?yZe6k7QMmjt/bcOezRFrdvKYca3aN4ppd6uAJkNyu85rN7ByIwjN4tULGksR?=
+ =?us-ascii?Q?Z8jHAH99fb47f8IMdBTEKvnkGLXGyo9hU+Tmv6hJq4btuhSZYIUyK0FcxSvK?=
+ =?us-ascii?Q?F86OqFwPxlmmvha7RuoGUBHVv55inozwsVXiEwZZpTYSe7IJp0HiBnz3jg9/?=
+ =?us-ascii?Q?UvYF6x3z6mMfFhUYi07UzywN/O0sjoq?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: XHHLrqwMqLXpvfp9UiZrtitHWwK4EFzaL9+ThoLWfPXZNfoDwQBKLngFWWLVOlvFXqyJJq7O0uD0itSr25+SwF3RjvzDHYLtZVjKQPxzIHDNPhrIdRWo3x7iCaeiJUBYgDu/SeOChYnOCuu8rRBq1J1a8TX5uXq5N/FcHvBQb4p0ILUTGsjzC7SafLQ0ybMfQEireaw2mg2awJ0g9jJT0pYD026wMuO39tg8Bg0uVAJsKrw8C8cpGTmvpvsEo6/ViPdzygvgF5W1FFF5Cz+wuVA4VVdHFRomkkcMzGQ1OSeIXWwyMj34/65yfZ7AHCoGfmgCrqgV1q4ht7EhpfcJPiuDabde3Lq4O5lQgqeHvjpPmSOLptbABXOQ/LZ58wmKwAHHcc9WLmi+TFOHll0nmgZRW3v7S1Da7ubMj43bkO4=
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2019 04:33:27.4431
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f544cad-9ba3-45aa-3882-08d690a33bda
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR01MB3750
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-12 at 03:37 +0000, Elliott, Robert (Persistent Memory)
-wrote:
-> > -----Original Message-----
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > owner@vger.kernel.org> On Behalf Of Jens Axboe
-> > Sent: Monday, February 11, 2019 8:50 PM
-> > To: James Bottomley <James.Bottomley@HansenPartnership.com>; Mikael
-> > Pettersson <mikpelinux@gmail.com>
-> > Cc: Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>;
-> > linux-block@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > scsi
-> > <linux-scsi@vger.kernel.org>
-> > Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO
-> > path"
-> > causes 5 minute delay during boot on Sun Blade 2500
-> 
-> ...
-> 
-> > > We can either fix this by setting the QUEUE_FLAG_ADD_RANDOM if
-> > > there's no 0xB1 page or by setting the default as Jens proposed.
-> > 
-> > I'd recommend just doing my patch, since that'll be the same
-> > behavior that SCSI had before.
-> 
-> When blk-mq and scsi-mq were introduced to boost SAS SSDs over
-> 1 million IOPS, this was purposely kept off, because it generated
-> a noticeable 3-12 us latency blip whenever the "fast_mix" code ran
-> out of bits. If Jens' patch changes the default to be enabled for
-> all scsi-mq users, that'll be a change for the newer legacy
-> scsi-mq users (except for users that don't trust the default and
-> always set the value in sysfs).
+The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
 
-All high IOPs devices have a device characteristics page, so even if we
- default this to ON, it will get turned off for these devices which
-should be the desired result regardless of the default setting. 
+  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
 
-James
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
+
+for you to fetch changes up to 8fdd60f2ae3682caf2a7258626abc21eb4711892:
+
+  Revert "ext4: use ext4_write_inode() when fsyncing w/o a journal" (2019-01-31 23:41:11 -0500)
+
+----------------------------------------------------------------
+Revert a commit which landed in v5.0-rc1 since it makes fsync in ext4
+nojournal mode unsafe.
+
+----------------------------------------------------------------
+Theodore Ts'o (1):
+      Revert "ext4: use ext4_write_inode() when fsyncing w/o a journal"
+
+ fs/ext4/fsync.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
