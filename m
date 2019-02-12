@@ -2,82 +2,78 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A7CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF52C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6112073D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB2720821
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549962613;
+	bh=juo7FCnQMIuEyX8VOz5Vmyjk9rOLVg1YY8bxa+Cl9kU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Owp9KFYwPS+ASDUGFXgy50zyK4f2yraHNvJ6JmuWLvfTs31+BHD3wvhSJ18LGEJgC
+	 Ch4VoZ0lRJS/ax+UCxOIhZmt7hYVD0pBPHZCc8eOufb2+PFgGlHS9vISVR7lXaCFrM
+	 1JEGssg+A56uDFFqXcOSk4jAHqolxtD7CgUnGJ2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfBLJIn (ORCPT
+        id S1728682AbfBLJKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:08:43 -0500
-Received: from mga11.intel.com ([192.55.52.93]:36700 "EHLO mga11.intel.com"
+        Tue, 12 Feb 2019 04:10:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfBLJIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:08:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 01:08:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
-   d="scan'208";a="299077865"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga005.jf.intel.com with SMTP; 12 Feb 2019 01:08:36 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 12 Feb 2019 11:08:35 +0200
-Date:   Tue, 12 Feb 2019 11:08:35 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     egranata@chromium.org
-Cc:     hdegoede@redhat.com, dtor@chromium.org, andy.shevchenko@gmail.com,
-        rafael@kernel.org, gregkh@linuxfoundation.org,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org,
-        gwendal@chromium.org, linux-acpi@vger.kernel.org,
-        briannorris@chromium.org, andriy.shevchenko@linux.intel.com,
-        egranata@google.com
-Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in
- platform_get_irq()
-Message-ID: <20190212090835.GD7875@lahna.fi.intel.com>
-References: <20190207185917.167829-1-egranata@google.com>
- <20190211190112.209286-1-egranata@chromium.org>
+        id S1728353AbfBLJKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:10:11 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A608020836;
+        Tue, 12 Feb 2019 09:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549962610;
+        bh=juo7FCnQMIuEyX8VOz5Vmyjk9rOLVg1YY8bxa+Cl9kU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vLKDn+VHO+xsxtWtvy8MYUwC7LnwBNyL6S/BIeQMpUi3OgURalWwQ/cpf7/JIRdqO
+         efKZDPisvP4iAKzbWJlaH+t9tWKICrBvcNj3mCFNRj5gwWfDHCt4eg8jnvpqsMycvl
+         hVy4hF9VqFJLUegG1P51zPik/j3vXKxuz8epTP2U=
+Date:   Tue, 12 Feb 2019 17:09:56 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        marcel.ziswiler@toradex.com, s.hauer@pengutronix.de,
+        linux-kernel@vger.kernel.org, stefan@agner.ch,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        thierry.reding@gmail.com, NXP Linux Team <linux-imx@nxp.com>,
+        max.krummenacher@toradex.com, linux-tegra@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] Adding DTS to support STMPE811 ADC on Toradex Boards
+Message-ID: <20190212090954.GP22487@dragon>
+References: <20190122132135.5012-1-dev@pschenker.ch>
+ <20190201033633.GE19882@dragon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211190112.209286-1-egranata@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190201033633.GE19882@dragon>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:01:12AM -0800, egranata@chromium.org wrote:
-> From: Enrico Granata <egranata@chromium.org>
+On Fri, Feb 01, 2019 at 11:36:34AM +0800, Shawn Guo wrote:
+> On Tue, Jan 22, 2019 at 02:21:33PM +0100, Philippe Schenker wrote:
+> > Philippe Schenker (2):
+> >   ARM: dts: Add stmpe-adc DT node to Toradex iMX6 modules
+> >   ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
 > 
-> ACPI 5 added support for GpioInt resources as a way to provide
-> information about interrupts mediated via a GPIO controller.
-> 
-> Several device buses (e.g. SPI, I2C) have support for retrieving
-> an IRQ specified via this type of resource, and providing it
-> directly to the driver as an IRQ number.
-> 
-> This is not currently done for the platform drivers, as platform_get_irq()
-> does not try to parse GpioInt() resources. This requires drivers to
-> either have to support only one possible IRQ resource, or to have code
-> in place to try both as a failsafe.
-> 
-> While there is a possibility of ambiguity for devices that exposes
-> multiple IRQs, it is easy and feasible to support the common case
-> of devices that only expose one IRQ which would be of either type
-> depending on the underlying system's architecture.
-> 
-> This commit adds support for parsing a GpioInt resource in order
-> to fulfill a request for the index 0 IRQ for a platform device.
-> 
-> Signed-off-by: Enrico Granata <egranata@chromium.org>
+> Applied both, thanks.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Sorry, the T30 one shouldn't be applied by me.  Dropped from my tree.
+
+Shawn
