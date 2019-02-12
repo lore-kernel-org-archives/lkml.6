@@ -2,96 +2,222 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D62DC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9E6C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F87A222C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:00:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="USOYqAlF"
+	by mail.kernel.org (Postfix) with ESMTP id 02D44222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbfBLUAd (ORCPT
+        id S1730941AbfBLUBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:00:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38841 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729830AbfBLUAb (ORCPT
+        Tue, 12 Feb 2019 15:01:43 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39248 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728438AbfBLUBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:00:31 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so4132332wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:00:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lofy8RA50K+szKa+a3qI2piKtixtV4KDHf5fd6Bgcow=;
-        b=USOYqAlFI6o0L4l3yIu9puAZowiipcPLbPCnjdqDtaqbF7UBpPSV5a6wTiQ4iOeEyT
-         DSIRRZEc9cp0Qp/sjiZjlKAdqWlz2bKdD9BNmrpjIQ1DjpndSgAg2PZ4iTbl/ZV/ZwsK
-         jYDCeY54oNkv8pw1cTk40VI2CKeI8RqDChf4NGnxUiQBifUDb9NZ6J5AmmK3+vInEA7B
-         njPhEwxrbmyzJpp5v6lcHMFhY7GDB41g624auJ8E2GszszttRa6TV/L3wtZMVLE5AxUm
-         XtDGS8cK7XlCdy45IIwyxyKL+m1v+p2icDw2gkODWQ5Vx3jQ97q4vDJM1OUIIRMYr4AA
-         +A6g==
+        Tue, 12 Feb 2019 15:01:42 -0500
+Received: by mail-qt1-f193.google.com with SMTP id o6so4478440qtk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:01:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lofy8RA50K+szKa+a3qI2piKtixtV4KDHf5fd6Bgcow=;
-        b=FjRAHtHin/qwSWoGHo3YWXUDDlfNMFaFDxrF1Xu/5s5j28XoTMcPfpQoeH6NM8U4hF
-         2C8Xe2ZYHuhOd5l38aATpXWW6eP4GX+a/euFW+B1TOz3FWHckuGkQXeI+inn2mUwK0uU
-         NKSzKe8K6aCq44gHbEHurVky/A1ZX7cLDu+9/f3AKztIrkmSr5mkSqtWbhJJCCEjv7an
-         W9BsEZ6ZSvqW7G4yCgRpZc0Q+Z9cpmU9Ythj6tAam51QCAWgDMVWdDOJ6PXSV2x5DE/V
-         +qWEAYIOXLm0KcSlpereddqeGiGcR3eA27Ob5LYoGm2/XOxmf5FjpE8HPk36QFXCTZis
-         x4Fw==
-X-Gm-Message-State: AHQUAubitdrMfFlHH1OdJgj/yjO/4M1kycYTgQXH5NhNXq/L8S3P0K63
-        3HafC7iBqRBB6DWzJ9myTaFltBUgjXSP69pbUY2glw==
-X-Google-Smtp-Source: AHgI3IYSTSqAUthWbrQABSgT+w5kpkBrEbysYt9vmH1EtRj+PL+qgaMlvn9dUvquuMciTojfBV6MJTm6aMUbm8XfKtY=
-X-Received: by 2002:a5d:4f10:: with SMTP id c16mr4313181wru.177.1550001629193;
- Tue, 12 Feb 2019 12:00:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5J3BEVMX8I3R6aDWiylH49L5Eh0Yio3E7KsL+Og9pHE=;
+        b=FTGRj2/zg0aDbncfgeenjJeItqDh2drHs2MkCwjTtHB6Tm2WsFz87Q+SJ3a//sIZCn
+         91ay4Ajum2R85riVca9AA8fFPNG41/LxW/dfsH23UkY+3sHlCrcoUH3eJOEL29asFtr3
+         5D++QCtzIWEh1DKc2clxFgIKXbqZU18p6vBcocLW1TXFm0ns2ztR7UhKU2fzSYJ1quvr
+         a3ru4+yqzk4nZjJgYIxQVlnjmuDU3qv1SRL2m1r5Rz+QgncKS/QRrjcCpqeGOwTzv2S3
+         UlilXcBFxwWxAyVb8hhAVEQm8hixXscYA4pIZQr+2y7DEuIYA4nPAYIOxAlElBvN2qrD
+         z4Ig==
+X-Gm-Message-State: AHQUAua6AvMttL1NxZR6xECbU1gxoXZ0Q6XaYIvwzR5aLNOId41LHri7
+        ywWZorb5NcMh42pjzotWfHycWQ==
+X-Google-Smtp-Source: AHgI3Ibb/fAwJBL5b9xb1ME5M4mJiSWWwndBNvOjwi+A3vbQNEu+Xmy/HhD6sB4kQ8UGZQAnBK23iQ==
+X-Received: by 2002:ac8:21ce:: with SMTP id 14mr4243520qtz.306.1550001701410;
+        Tue, 12 Feb 2019 12:01:41 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::112f? ([2601:602:9800:dae6::112f])
+        by smtp.gmail.com with ESMTPSA id t123sm14960812qkc.6.2019.02.12.12.01.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 12:01:40 -0800 (PST)
+Subject: Re: [RFC PATCH v7 05/16] arm64/mm: Add support for XPFO
+To:     Khalid Aziz <khalid.aziz@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
+        ak@linux.intel.com, torvalds@linux-foundation.org,
+        liran.alon@oracle.com, keescook@google.com,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        joao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
+        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Tycho Andersen <tycho@docker.com>
+References: <cover.1547153058.git.khalid.aziz@oracle.com>
+ <89f03091af87f5ab27bd6cafb032236d5bd81d65.1547153058.git.khalid.aziz@oracle.com>
+ <20190123142410.GC19289@Konrads-MacBook-Pro.local>
+ <4dfba458-1bf6-25ff-df4c-b96a1221cd95@oracle.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <7497bd44-1fda-e073-ba7f-18a76577b64a@redhat.com>
+Date:   Tue, 12 Feb 2019 12:01:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1549987525.3173.17.camel@HansenPartnership.com>
- <e9a411a2-49e2-4897-4e02-1cf790465cbd@kernel.dk> <yq1zhr1t028.fsf@oracle.com>
-In-Reply-To: <yq1zhr1t028.fsf@oracle.com>
-From:   Xuewei Zhang <xueweiz@google.com>
-Date:   Tue, 12 Feb 2019 12:00:18 -0800
-Message-ID: <CAPtwhKpqggL1k8wsh-ECS6aUr7qThUyHjgx9BGeL84bCbj9Lvw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: sd: fix entropy gathering for most rotational disks
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mikael Pettersson <mikpelinux@gmail.com>,
-        Theodore Tso <tytso@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4dfba458-1bf6-25ff-df4c-b96a1221cd95@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the fix James!
+On 2/12/19 7:52 AM, Khalid Aziz wrote:
+> On 1/23/19 7:24 AM, Konrad Rzeszutek Wilk wrote:
+>> On Thu, Jan 10, 2019 at 02:09:37PM -0700, Khalid Aziz wrote:
+>>> From: Juerg Haefliger <juerg.haefliger@canonical.com>
+>>>
+>>> Enable support for eXclusive Page Frame Ownership (XPFO) for arm64 and
+>>> provide a hook for updating a single kernel page table entry (which is
+>>> required by the generic XPFO code).
+>>>
+>>> v6: use flush_tlb_kernel_range() instead of __flush_tlb_one()
+>>>
+>>> CC: linux-arm-kernel@lists.infradead.org
+>>> Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+>>> Signed-off-by: Tycho Andersen <tycho@docker.com>
+>>> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+>>> ---
+>>>   arch/arm64/Kconfig     |  1 +
+>>>   arch/arm64/mm/Makefile |  2 ++
+>>>   arch/arm64/mm/xpfo.c   | 58 ++++++++++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 61 insertions(+)
+>>>   create mode 100644 arch/arm64/mm/xpfo.c
+>>>
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index ea2ab0330e3a..f0a9c0007d23 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -171,6 +171,7 @@ config ARM64
+>>>   	select SWIOTLB
+>>>   	select SYSCTL_EXCEPTION_TRACE
+>>>   	select THREAD_INFO_IN_TASK
+>>> +	select ARCH_SUPPORTS_XPFO
+>>>   	help
+>>>   	  ARM 64-bit (AArch64) Linux support.
+>>>   
+>>> diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
+>>> index 849c1df3d214..cca3808d9776 100644
+>>> --- a/arch/arm64/mm/Makefile
+>>> +++ b/arch/arm64/mm/Makefile
+>>> @@ -12,3 +12,5 @@ KASAN_SANITIZE_physaddr.o	+= n
+>>>   
+>>>   obj-$(CONFIG_KASAN)		+= kasan_init.o
+>>>   KASAN_SANITIZE_kasan_init.o	:= n
+>>> +
+>>> +obj-$(CONFIG_XPFO)		+= xpfo.o
+>>> diff --git a/arch/arm64/mm/xpfo.c b/arch/arm64/mm/xpfo.c
+>>> new file mode 100644
+>>> index 000000000000..678e2be848eb
+>>> --- /dev/null
+>>> +++ b/arch/arm64/mm/xpfo.c
+>>> @@ -0,0 +1,58 @@
+>>> +/*
+>>> + * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
+>>> + * Copyright (C) 2016 Brown University. All rights reserved.
+>>> + *
+>>> + * Authors:
+>>> + *   Juerg Haefliger <juerg.haefliger@hpe.com>
+>>> + *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify it
+>>> + * under the terms of the GNU General Public License version 2 as published by
+>>> + * the Free Software Foundation.
+>>> + */
+>>> +
+>>> +#include <linux/mm.h>
+>>> +#include <linux/module.h>
+>>> +
+>>> +#include <asm/tlbflush.h>
+>>> +
+>>> +/*
+>>> + * Lookup the page table entry for a virtual address and return a pointer to
+>>> + * the entry. Based on x86 tree.
+>>> + */
+>>> +static pte_t *lookup_address(unsigned long addr)
+>>> +{
+>>> +	pgd_t *pgd;
+>>> +	pud_t *pud;
+>>> +	pmd_t *pmd;
+>>> +
+>>> +	pgd = pgd_offset_k(addr);
+>>> +	if (pgd_none(*pgd))
+>>> +		return NULL;
+>>> +
+>>> +	pud = pud_offset(pgd, addr);
+>>> +	if (pud_none(*pud))
+>>> +		return NULL;
+>>> +
+>>> +	pmd = pmd_offset(pud, addr);
+>>> +	if (pmd_none(*pmd))
+>>> +		return NULL;
+>>> +
+>>> +	return pte_offset_kernel(pmd, addr);
+>>> +}
+>>> +
+>>> +/* Update a single kernel page table entry */
+>>> +inline void set_kpte(void *kaddr, struct page *page, pgprot_t prot)
+>>> +{
+>>> +	pte_t *pte = lookup_address((unsigned long)kaddr);
+>>> +
+>>> +	set_pte(pte, pfn_pte(page_to_pfn(page), prot));
+>>
+>> Thought on the other hand.. what if the page is PMD? Do you really want
+>> to do this?
+>>
+>> What if 'pte' is NULL?
+>>> +}
+>>> +
+>>> +inline void xpfo_flush_kernel_tlb(struct page *page, int order)
+>>> +{
+>>> +	unsigned long kaddr = (unsigned long)page_address(page);
+>>> +	unsigned long size = PAGE_SIZE;
+>>> +
+>>> +	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
+>>
+>> Ditto here. You are assuming it is PTE, but it may be PMD or such.
+>> Or worts - the lookup_address could be NULL.
+>>
+>>> +}
+>>> -- 
+>>> 2.17.1
+>>>
+> 
+> Hi Konrad,
+> 
+> This makes sense. x86 version of set_kpte() checks pte for NULL and also
+> checks if the page is PMD. Now what you said about adding level to
+> lookup_address() for arm makes more sense.
+> 
+> Can someone with knowledge of arm64 mmu make recommendations here?
+> 
+> Thanks,
+> Khalid
+> 
 
-On Tue, Feb 12, 2019 at 8:59 AM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Jens,
->
-> >> The fix is to set the non-rotational and add-randomness flags
-> >> unconditionally early on in the disk initialization path, so they can
-> >> be reset only if the device actually reports being non-rotational via
-> >> the VPD page.
-> >
-> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
+arm64 can't split larger pages and requires everything must be
+mapped as pages (see [RFC PATCH v7 08/16] arm64/mm: disable
+section/contiguous mappings if XPFO is enabled) . Any
+situation where we would get something other than a pte
+would be a bug.
 
-Reviewed-by: Xuewei Zhang <xueweiz@google.com>
-
->
-> Yeah, this looks good to me. I'll queue it up for fixes.
->
-> --
-> Martin K. Petersen      Oracle Linux Engineering
+Thanks,
+Laura
