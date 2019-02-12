@@ -2,193 +2,132 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A84AC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2476BC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104F720821
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA0020821
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:11:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWNQRm+X"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lYlOIuKL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbfBLMLK (ORCPT
+        id S1729426AbfBLMLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:11:10 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56177 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729383AbfBLMLH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:11:07 -0500
-Received: by mail-it1-f195.google.com with SMTP id o131so3299358itc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:11:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U3KPunqeQ9IBIfY3ju/dkpjS3sCKHwTw6046QncIMv0=;
-        b=mWNQRm+XXgiEeMaShjb4OTpOMYjOaea/cyQVighth9JIA4LuQxR90c8/oiIgoMl9kM
-         NTWdbksy2T5pJ4J2sIYLuVQAViNGQ6jmc9fPZaem0jQOqf363QLOgXCyb/IflAHQkNRT
-         67oGumf0KwX6kXWsUpZOSiZ7uS/1pO6nn8JK5OpikKQD4iZucCPnUORtDdSsI4b9PWzK
-         cRuqGv0gFnrw222pptp/jMgSyOpzsYt89qgTZ/DqVK5aQk1BBMUsHovbzU2iCVX0T4U1
-         0Y2/aoK/huCs2P/Kr8hZ8ywhDl6fEvrYAM9Rau7ohqKrjn74C1JVXFmF/1zlqShNnjsv
-         LKTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U3KPunqeQ9IBIfY3ju/dkpjS3sCKHwTw6046QncIMv0=;
-        b=NyEYMThNj2ofXqxKl+rEozVZB3HOPtr7tlbGX+0cAfM7Wp8ixidoPuFlSn8RDf1jag
-         +ONq0UJt3viY6AXcgXUmgE5pZw7zc6We/yIJf3wK6Wjs2+k4LRTMqbWUxRmuVN3nZU2V
-         6BXBvEy3IUUeuHpUezPL1Sztcu0sYgDLstEVR7tBhvGDijbsPIUNoehfsxlboy5J4ItA
-         ieIfR5VVLC/lb6oy0G8KWV61bf7GQzR/9wyEQNtLv0JXCZkbi3ufDVzqcXXH3ZvkxoQz
-         mUaHykIWQf/TG6n83o54xjH1k9hjSBBoEAmZsPd1ZzNkc2yX3Ans/PO2zqsAJYKVlR0y
-         DH5A==
-X-Gm-Message-State: AHQUAuZg+6ldvBmzjhfgNyNWdfzbPpAV/mT8TibVy7caos/sfPBf8TH7
-        Jps+o1s3kU4GaZ+Nd6oCZLbsO1tnNUGiAuiJLY5W/A==
-X-Google-Smtp-Source: AHgI3IYmkF6GCGgaXM0+GEIW5AQwdHRRnKRzREKPwnAdv07tyEZwS7WLxIhM4GfYAQ7ZGiiDv4jvm192wh/LmCRHZYY=
-X-Received: by 2002:a5e:9704:: with SMTP id w4mr2028689ioj.60.1549973466506;
- Tue, 12 Feb 2019 04:11:06 -0800 (PST)
-MIME-Version: 1.0
-References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
- <CAKv+Gu_RJHb_FwTz+R1bXNQQMsoi0xxcKzn54NF5ib3z2xnH0w@mail.gmail.com> <CAFA6WYMXSZPz2qi9+g=EW3+Lm_vuNAOE_M2zWQ_RkfwLfkwjyQ@mail.gmail.com>
-In-Reply-To: <CAFA6WYMXSZPz2qi9+g=EW3+Lm_vuNAOE_M2zWQ_RkfwLfkwjyQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 12 Feb 2019 13:10:55 +0100
-Message-ID: <CAKv+Gu-aHENw3xO8E4UrxWONL+xccTt=no0o8xVWfCO0k35p0w@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Introduce TEE bus driver framework
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
+        Tue, 12 Feb 2019 07:11:19 -0500
+Received: from mail-eopbgr10088.outbound.protection.outlook.com ([40.107.1.88]:57438
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728059AbfBLMLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:11:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7na6WwPdNhNLYWqdrKqMz9wgkBZMFr5WaJcaZiTOuLQ=;
+ b=lYlOIuKLqvr7mitrS+pBjy0cah5nWn+f/vnJvzcdm0j6CkWqkvszFrlS2bUqoPnP766enLIG8uYY+mRb8DSisOHMAb1KoTrOMh5ClT1E1Ufs1OWeuaX0E+UHUDaGRYlQ8VwO8tkQaqkMIv8qviWXywmo2XRiccWZcbieWU8bPkA=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB6323.eurprd04.prod.outlook.com (20.179.36.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Tue, 12 Feb 2019 12:11:02 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
+ 12:11:02 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Matt Mackall <mpm@selenic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] arm64: dts: imx8mq: Add cpu opp table
+Thread-Topic: [PATCH] arm64: dts: imx8mq: Add cpu opp table
+Thread-Index: AQHUwswF0jCrGFVmyEmVHUYdS4x2MQ==
+Date:   Tue, 12 Feb 2019 12:11:02 +0000
+Message-ID: <1549973439-26706-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P193CA0077.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:88::18) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB6323;6:phQZR894/LNjRfPmhZIF5yH4ApBXePIc+SOWPfLVT1cQ9emLcfeZJxisyGVUgLaAIjuhmlXues7JghmLgttzct6SGyiJr661ccnBGnYs/55ZKbxXKL+RUQjbhSSyrSHMVfFnwxPT00NfjDprPjYk/GCsDH5GCLlCpTz9vDbqzlaf3p90W+dIsVlL6SAhpOIBK4lvFfu2Njo6j82+NsawSYEIJY5BQlzuRRp7BDMZ0DVdTVnI17QgWB3ZcMi2Tc+RltH/xT9CTYbhAXt5CxQvZrpws/Hbc+F89aA2FkALRoLwWvyiM4D8w1B6WYPWA4iMSRshw8olmpO0Ovv+hBVCSCEUCIQ1JlM5AZu8zYtciR74i+I+Yw68HECjFS/hG4HClZvAKAU7biKe3gblRRV8U/4hX0qLs7tqfzyNH+0so3C9F3Mab24w3ce6OYcyczKj6bPucmqRTjQJAqeYkouMww==;5:czntZSPWwsPKaA5+dvnb9ljZUxfPAqglCg3XI7kra6prRkhAndlsQHRz8GHq7ZC9iCb8+X/MJPFJSy0a2MDLcr18u+ck5Y2L/qJE/n52YBHVjJH/JbSH4eMC/YdF2oE5BwANi5i4wiy2T2/R55HqQH0A+DPm0zfnuQECjCYOYdml0gck1xMkbO5WT3zcBnkSWY/wGFJXvBlyVVYiuKsTxg==;7:sRgcL4XQ47wXSfMJ7dpdmv9RZ8/Oa9w0fijyAsqHRmk8t7OQMnQP6WnKIZ8VxKMUmXx6LphZ5u/bihUfqnOU/efVQ2B9/nkgARyEpnBNgPtZPWlAFDrXp/K3UAYSuhFwBYO0GfZ4hrM8CkSsTcDxCA==
+x-ms-office365-filtering-correlation-id: be0eeb5f-2f75-4218-40fd-08d690e327ef
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6323;
+x-ms-traffictypediagnostic: AM0PR04MB6323:
+x-microsoft-antispam-prvs: <AM0PR04MB63233532C742B046660FFE24F6650@AM0PR04MB6323.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(376002)(366004)(39860400002)(199004)(189003)(4326008)(4744005)(25786009)(36756003)(106356001)(71190400001)(6436002)(68736007)(6486002)(71200400001)(6116002)(2906002)(14454004)(8936002)(3846002)(7736002)(50226002)(102836004)(97736004)(86362001)(186003)(6512007)(478600001)(53936002)(256004)(8676002)(2616005)(316002)(66066001)(54906003)(81166006)(110136005)(81156014)(105586002)(44832011)(386003)(6506007)(99286004)(486006)(26005)(476003)(305945005)(52116002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6323;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fYSUxUw4qvxiW1nrN71dBbt+lkOxx/ybQHsvsabhtieYRi15sul5kUXG7KYpSWwqIGSP1C+KmwDgcMzp/3PyVuQYQ6HaNLIAOO18KYy77fcQJhxpelNFuxFuYf3MT3VGnuolZ0KJXg9qWlxO/vP9RoPZ6eQd1mFFTktbCNjkPqdmY67Kb4UJExpphIb6nTq1bIKa9lqIYVxkhQHz+NlaEiJVBSaUOX5akq6oKLNJeFAvh4GoqG7jr6iWenQ4AHS7trF0SBdZfNhPKd000ZXnwNyZCm1Zfi+k48Ni/TctLYg76Zh/iroDBu0TidNuH09I+T9P13Mxf60AbDiSKNVdxOCgKs/pPlee4qjFRw2j92o6w6JJdWpgAqYqsIhET4yFJaYqMilreu1SypOWHOS294r0dP+eivaQF0MyL5yxhrg=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be0eeb5f-2f75-4218-40fd-08d690e327ef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 12:11:01.5066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 13:09, Sumit Garg <sumit.garg@linaro.org> wrote:
->
-> On Tue, 12 Feb 2019 at 16:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Tue, 29 Jan 2019 at 06:50, Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > This series introduces a generic TEE bus driver concept for TEE based
-> > > kernel drivers which would like to communicate with TEE based devices/
-> > > services.
-> > >
-> > > Patch #1 adds TEE bus concept where devices/services are identified via
-> > > Universally Unique Identifier (UUID) and drivers register a table of
-> > > device UUIDs which they can support. This concept also allows for device
-> > > enumeration to be specific to corresponding TEE implementation like
-> > > OP-TEE etc.
-> > >
-> > > Patch #2 adds supp_nowait flag for non-blocking requests arising via
-> > > TEE internal client interface.
-> > >
-> > > Patch #3 adds TEE bus device enumeration support for OP-TEE. OP-TEE
-> > > provides a pseudo TA to enumerate TAs which can act as devices/services
-> > > for TEE bus.
-> > >
-> > > Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
-> > > On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-> > > might not be accessible to normal world (linux in this case) and rather
-> > > accessible to secure world (OP-TEE in this case) only. So this driver
-> > > aims to provides a generic interface to OP-TEE based random number
-> > > generator service.
-> > >
-> > > Example case is Developerbox based on Socionext's Synquacer SoC [1]
-> > > which provides 7 thermal sensors accessible from secure world only which
-> > > could be used as entropy sources (thermal/measurement noise).
-> > >
-> > > [1] https://www.96boards.org/product/developerbox/
-> > >
-> > > Changes in v6:
-> > >
-> > > 1. Incorporate some nitpicks in patch #1 and #3.
-> > > 2. Bundle all statics in a data structure in patch #4 and use dev_*
-> > >    instead of pr_*.
-> > > 3. Add reviewed-by tags for patch #1, #2 and #3.
-> > >
-> > > Changes in v5:
-> > >
-> > > 1. Add support in module device table for TEE bus devices.
-> > > 2. Correct license for optee-rng module.
-> > >
-> > > Changes in v4:
-> > >
-> > > 1. Use typedef instead of single member tee_client_device_id struct.
-> > > 2. Incorporate TEE bus nitpicks.
-> > >
-> > > Changes in v3:
-> > >
-> > > 1. Fixed bus error path in Patch #1.
-> > > 2. Reversed order of Patch #2 and #3.
-> > > 3. Fixed miscellaneous syntax comments and memory leak.
-> > > 4. Added comments in Patch #2 for supp_nowait flag.
-> > >
-> > > Changes in v2:
-> > >
-> > > Based on review comments, the scope of this series has increased as
-> > > follows:
-> > >
-> > > 1. Added TEE bus driver framework.
-> > > 2. Added OP-TEE based device enumeration.
-> > > 3. Register optee-rng driver as TEE bus driver.
-> > > 4. Removed DT dependency for optee-rng device UUID.
-> > > 5. Added supp_nowait flag.
-> > >
-> > > Sumit Garg (4):
-> > >   tee: add bus driver framework for TEE based devices
-> > >   tee: add supp_nowait flag in tee_context struct
-> > >   tee: optee: add TEE bus device enumeration support
-> > >   hwrng: add OP-TEE based rng driver
-> > >
-> >
-> > For this series
-> >
-> > Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >
->
-> Thanks. BTW, Jens has created a GIT PULL[1] to incorporate this patch-set.
->
-> > although I had to load optee.ko manually in order for the udev
-> > autoload of optee_rng to trigger.
->
-> Did you built OP-TEE module as out-of-tree? OP-TEE by-default is
-> built-in kernel module as per following configs in default defconfig:
->
-> CONFIG_TEE=y
-> CONFIG_OPTEE=y
->
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Yes, but the distros will carry it as a module.
+Add i.MX8MQ cpu OPP table info for cpu-freq driver.
 
-> > Not sure where the discussion went
-> > last time, but could we please add "linaro,optee-tz" as a DT modalias
-> > to the optee.ko module in any case?
-> >
->
-> This change is already part of your RFC patch [2] and I agree to make
-> OP-TEE as platform driver.
->
-> [1] https://lkml.org/lkml/2019/2/4/104
-> [2] https://lkml.org/lkml/2018/12/27/196
->
+Signed-off-by: Anson Huang <anson.huang@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Indeed, but iirc there was a question from Jens and I wasn't sure it
-had been answered in the mean time.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
+s/freescale/imx8mq.dtsi
+index 9155bd4..579015c 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -672,3 +672,17 @@
+ 		};
+ 	};
+ };
++
++&A53_0 {
++	operating-points =3D <
++		/* kHz    uV */
++		1200000 900000
++		800000  900000
++	>;
++	clocks =3D <&clk IMX8MQ_CLK_A53_DIV>, <&clk IMX8MQ_CLK_A53_SRC>,
++		<&clk IMX8MQ_ARM_PLL>, <&clk IMX8MQ_ARM_PLL_OUT>,
++		<&clk IMX8MQ_SYS1_PLL_800M>;
++	clock-names =3D "a53", "arm_a53_src", "arm_pll",
++		"arm_pll_out", "sys1_pll_800m";
++	clock-latency =3D <61036>;
++};
+--=20
+2.7.4
+
