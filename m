@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE79C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6860EC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB16E2186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC08214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfBLOaf (ORCPT
+        id S1730363AbfBLOak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:35 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43751 "EHLO
+        Tue, 12 Feb 2019 09:30:40 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43788 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730218AbfBLOac (ORCPT
+        with ESMTP id S1730285AbfBLOag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:32 -0500
+        Tue, 12 Feb 2019 09:30:36 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4m-0005Af-QD; Tue, 12 Feb 2019 15:30:21 +0100
+        id 1gtZ4p-0005Af-Me; Tue, 12 Feb 2019 15:30:23 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 14/25] printk: do boot_delay_msec inside printk_delay
-Date:   Tue, 12 Feb 2019 15:29:52 +0100
-Message-Id: <20190212143003.48446-15-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 17/25] printk: add processor number to output
+Date:   Tue, 12 Feb 2019 15:29:55 +0100
+Message-Id: <20190212143003.48446-18-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,74 +54,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both functions needed to be called one after the other, so just
-integrate boot_delay_msec into printk_delay for simplification.
+It can be difficult to sort printk out if multiple processors are
+printing simultaneously. Add the processor number to the printk
+output to allow the messages to be sorted.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- kernel/printk/printk.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ kernel/printk/printk.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index ebd9aac06323..897219f34cab 100644
+index b97d4195b09a..cde036d8487a 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -1453,6 +1453,21 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
- 	return do_syslog(type, buf, len, SYSLOG_FROM_READER);
+@@ -331,6 +331,7 @@ enum log_flags {
+ 
+ struct printk_log {
+ 	u64 ts_nsec;		/* timestamp in nanoseconds */
++	u16 cpu;		/* cpu that generated record */
+ 	u16 len;		/* length of entire record */
+ 	u16 text_len;		/* length of text buffer */
+ 	u16 dict_len;		/* length of dictionary buffer */
+@@ -475,7 +476,7 @@ static u32 log_next(u32 idx)
+ 
+ /* insert record into the buffer, discard old ones, update heads */
+ static int log_store(int facility, int level,
+-		     enum log_flags flags, u64 ts_nsec,
++		     enum log_flags flags, u64 ts_nsec, u16 cpu,
+ 		     const char *dict, u16 dict_len,
+ 		     const char *text, u16 text_len)
+ {
+@@ -506,6 +507,7 @@ static int log_store(int facility, int level,
+ 	msg->level = level & 7;
+ 	msg->flags = flags & 0x1f;
+ 	msg->ts_nsec = ts_nsec;
++	msg->cpu = cpu;
+ 	msg->len = size;
+ 
+ 	/* insert message */
+@@ -570,9 +572,9 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ 
+ 	do_div(ts_usec, 1000);
+ 
+-	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
++	return scnprintf(buf, size, "%u,%llu,%llu,%c,%hu;",
+ 		       (msg->facility << 3) | msg->level, seq, ts_usec,
+-		       msg->flags & LOG_CONT ? 'c' : '-');
++		       msg->flags & LOG_CONT ? 'c' : '-', msg->cpu);
  }
  
-+int printk_delay_msec __read_mostly;
-+
-+static inline void printk_delay(int level)
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+@@ -1110,6 +1112,11 @@ static inline void boot_delay_msec(int level)
+ static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
+ module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
+ 
++static size_t print_cpu(u16 cpu, char *buf)
 +{
-+	boot_delay_msec(level);
-+	if (unlikely(printk_delay_msec)) {
-+		int m = printk_delay_msec;
-+
-+		while (m--) {
-+			mdelay(1);
-+			touch_nmi_watchdog();
-+		}
-+	}
++	return sprintf(buf, "%03hu: ", cpu);
 +}
 +
- static void print_console_dropped(struct console *con, u64 count)
+ static size_t print_syslog(unsigned int level, char *buf)
  {
- 	char text[64];
-@@ -1534,20 +1549,6 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
- 	}
+ 	return sprintf(buf, "<%u>", level);
+@@ -1132,6 +1139,7 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 		len = print_syslog((msg->facility << 3) | msg->level, buf);
+ 	if (time)
+ 		len += print_time(msg->ts_nsec, buf + len);
++	len += print_cpu(msg->cpu, buf + len);
+ 	return len;
  }
  
--int printk_delay_msec __read_mostly;
--
--static inline void printk_delay(void)
--{
--	if (unlikely(printk_delay_msec)) {
--		int m = printk_delay_msec;
--
--		while (m--) {
--			mdelay(1);
--			touch_nmi_watchdog();
--		}
--	}
--}
--
- /* FIXME: no support for LOG_CONT */
- #if 0
- /*
-@@ -2506,10 +2507,8 @@ static int printk_kthread_func(void *data)
- 		console_lock();
- 		call_console_drivers(master_seq, ext_text,
- 				     ext_len, text, len);
--		if (len > 0 || ext_len > 0) {
--			boot_delay_msec(msg->level);
--			printk_delay();
--		}
-+		if (len > 0 || ext_len > 0)
-+			printk_delay(msg->level);
- 		console_unlock();
+@@ -1698,6 +1706,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	u64 ts_nsec;
+ 	char *text;
+ 	char *rbuf;
++	int cpu;
+ 
+ 	ts_nsec = local_clock();
+ 
+@@ -1707,6 +1716,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		return printed_len;
  	}
  
++	cpu = raw_smp_processor_id();
++
+ 	text = rbuf;
+ 	text_len = vscnprintf(text, PRINTK_SPRINT_MAX, fmt, args);
+ 
+@@ -1744,7 +1755,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	if (dict)
+ 		lflags |= LOG_PREFIX|LOG_NEWLINE;
+ 
+-	printed_len = log_store(facility, level, lflags, ts_nsec,
++	printed_len = log_store(facility, level, lflags, ts_nsec, cpu,
+ 				dict, dictlen, text, text_len);
+ 
+ 	prb_commit(&h);
 -- 
 2.11.0
 
