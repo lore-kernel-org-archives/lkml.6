@@ -2,108 +2,96 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B6FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E4CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3002921773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E69321773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:52:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yqlGqFFc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+cDA7H9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfBLDqZ (ORCPT
+        id S1727407AbfBLDwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:46:25 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:53954 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfBLDqY (ORCPT
+        Mon, 11 Feb 2019 22:52:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41554 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbfBLDwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:46:24 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x1C3j8aH007458;
-        Tue, 12 Feb 2019 12:45:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x1C3j8aH007458
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549943109;
-        bh=qBZd1c9KzcEe6uaLQVppkNCLI29LIZhWS8mr/U0FrbI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yqlGqFFcSlVvnI1KWllZ44LJtZUJtfaw+/CSlz8RvVrIRoQYga3eucc+oz829AF26
-         f5Q18XuL4+m4TtbIPGM6fN9JraQ1j61JtI0uoGfPKbBSkgjDZ58FuJaDkfgb1SP/ag
-         ctr+Oy+9mKsUueoz1bPBiKYzJ63UuH0ts76OEeJZJ0cra0EZKiScf+BZ6s17ORmJPz
-         FaSpoxipfjImLYC94coZhKrvZlZjM6u6ZxdWnuOnDyKe8JDV/D1xHKZROSFgjDKD2Y
-         md37GqkWzwIpxh5VYEzhOKCaV56bPEsqWebN6u3DkSrTLOWjTef1a5O5GwmR0YPgc7
-         +E0F+pTYe+eNw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mon, 11 Feb 2019 22:52:01 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so608508pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 19:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=yNNbD6//shUgVJDqF6KkOVva8DupadW9tZS+I+T4ju8=;
+        b=i+cDA7H9QfmewUC29F2PK07rfP/QTMGy++9SRwsK9yFiSU1r16P0XzVUD3wORds3NP
+         R6ZlyvdugRISarS8v0HVuAjhSekp/JxCjnjLOX9WcIa5hjTqRLUiNRfFLbR15oUw80XM
+         CfswiSZZ+56c1W3eKtlmB35L9Ni5sK/cVAfTR6Pi//CtMSJUxeSwA++UouyawNeHftk0
+         IEHc4AgRZfTQYrYkoHcKtbPLeT519oBvHLwB0IwKgEI9g+fAdXejFxKoSnYRLxJDgfLP
+         fZOLe4fPBXADSsyLaDjD2sAx89ZC5zv+oseaZSu7HOaC/rQKN2eq9XCpE9VhaRvgEk/1
+         blLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yNNbD6//shUgVJDqF6KkOVva8DupadW9tZS+I+T4ju8=;
+        b=Yv1uH709AXrH1yvmjJBRO45ylCVNDFF8y4ft26vr2EhT2t4UKczcO+PTHzjTVbolQi
+         noUKLQaub5PFWvE8npf0QXwHSXxepB15GYWd9f/OGhr1DFO+PPml2eG8D6ycY4UZcGiv
+         GYVDv7o/H7HCA+FNR9BcYojU6kkf7Uwu7HtyqdzIDmhR+viHl54tPnKzzYbSa9WKFYC1
+         gu+aduutfxu3PV0Sp/Dwg2vDS4WJ04A8/bERUS8SEbPQDlYX0cPTTOhDxN3XuCZfuvtx
+         yHIqpP24F16yNgDxFE9mz0DxbIiafVvpHnCJ++CzHNSwoqs1YwJbz4EQTF1Hb630Gst+
+         HnQw==
+X-Gm-Message-State: AHQUAuaeCqjx2nvEn9gIC1HIbJYW80oaGjTyB1gcY8AWRD2zVanO+rDV
+        aQkvOwFaCiItSgTcAZppBCtUyw==
+X-Google-Smtp-Source: AHgI3IZHX18AzaQOVLSpHAkcDO03lmNTkvZBqwuY4k4MZHIx7Js6XgCG2GzIh1KOaWCjLRpxnZJQqw==
+X-Received: by 2002:a62:28c9:: with SMTP id o192mr1871984pfo.57.1549943520323;
+        Mon, 11 Feb 2019 19:52:00 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m3sm20311131pfi.102.2019.02.11.19.51.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 19:51:59 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brian Masney <masneyb@onstation.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-efi@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Alistair Strachan <astrachan@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] efi/libstub: refactor cmd_stubcopy
-Date:   Tue, 12 Feb 2019 12:44:55 +0900
-Message-Id: <1549943095-10956-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+Subject: [PATCH] qcom: spmi-gpio: Fix boundary conditions IRQ domain translate
+Date:   Mon, 11 Feb 2019 19:52:05 -0800
+Message-Id: <20190212035205.23477-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It took me a while to understand what is going on in the nested
-if-blocks.
+GPIOs on the SPMI PMIC are numbered 1..ngpio, so the boundary check in
+pmic_gpio_domain_translate() is off by one, correct this.
 
-Simplify it by removing unneeded code.
-
-  - if_changed automatically adds 'set -e', so any failure in the
-    series of commands makes it immediately fail as a whole.
-    So, the outer if block is entirely redundant.
-
-  - Since commit 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special
-    target"), GNU Make automatically deletes the target on any failure
-    in its recipe. The explicit 'rm -f $@' is redundant.
-
-  - surrounding commands with ( ) will spawn a subshell to execute them
-    in it, but it is rarely useful to do so.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/firmware/efi/libstub/Makefile | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index d984509..7788e8a 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -86,12 +86,13 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
- # this time, use objcopy and leave all sections in place.
- #
- quiet_cmd_stubcopy = STUBCPY $@
--      cmd_stubcopy = if $(STRIP) --strip-debug $(STUBCOPY_RM-y) -o $@ $<; \
--		     then if $(OBJDUMP) -r $@ | grep $(STUBCOPY_RELOC-y); \
--		     then (echo >&2 "$@: absolute symbol references not allowed in the EFI stub"; \
--			   rm -f $@; /bin/false); 			  \
--		     else $(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@; fi	  \
--		     else /bin/false; fi
-+      cmd_stubcopy =							\
-+	$(STRIP) --strip-debug $(STUBCOPY_RM-y) -o $@ $<;		\
-+	if $(OBJDUMP) -r $@ | grep $(STUBCOPY_RELOC-y); then		\
-+		echo "$@: absolute symbol references not allowed in the EFI stub" >&2; \
-+		/bin/false;						\
-+	fi;								\
-+	$(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index e01a556ac586..cb512c7a5251 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -962,7 +962,8 @@ static int pmic_gpio_domain_translate(struct irq_domain *domain,
+ 						     struct pmic_gpio_state,
+ 						     chip);
  
- #
- # ARM discards the .data section because it disallows r/w data in the
+-	if (fwspec->param_count != 2 || fwspec->param[0] >= state->chip.ngpio)
++	if (fwspec->param_count != 2 ||
++	    fwspec->param[0] < 1 || fwspec->param[0] > state->chip.ngpio)
+ 		return -EINVAL;
+ 
+ 	*hwirq = fwspec->param[0] - PMIC_GPIO_PHYSICAL_OFFSET;
 -- 
-2.7.4
+2.18.0
 
