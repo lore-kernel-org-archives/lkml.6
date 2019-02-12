@@ -2,96 +2,76 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E4CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A51C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E69321773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:52:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+cDA7H9"
+	by mail.kernel.org (Postfix) with ESMTP id 5687820842
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfBLDwD (ORCPT
+        id S1727530AbfBLECf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:52:03 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41554 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbfBLDwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:52:01 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b7so608508pfi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 19:52:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=yNNbD6//shUgVJDqF6KkOVva8DupadW9tZS+I+T4ju8=;
-        b=i+cDA7H9QfmewUC29F2PK07rfP/QTMGy++9SRwsK9yFiSU1r16P0XzVUD3wORds3NP
-         R6ZlyvdugRISarS8v0HVuAjhSekp/JxCjnjLOX9WcIa5hjTqRLUiNRfFLbR15oUw80XM
-         CfswiSZZ+56c1W3eKtlmB35L9Ni5sK/cVAfTR6Pi//CtMSJUxeSwA++UouyawNeHftk0
-         IEHc4AgRZfTQYrYkoHcKtbPLeT519oBvHLwB0IwKgEI9g+fAdXejFxKoSnYRLxJDgfLP
-         fZOLe4fPBXADSsyLaDjD2sAx89ZC5zv+oseaZSu7HOaC/rQKN2eq9XCpE9VhaRvgEk/1
-         blLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yNNbD6//shUgVJDqF6KkOVva8DupadW9tZS+I+T4ju8=;
-        b=Yv1uH709AXrH1yvmjJBRO45ylCVNDFF8y4ft26vr2EhT2t4UKczcO+PTHzjTVbolQi
-         noUKLQaub5PFWvE8npf0QXwHSXxepB15GYWd9f/OGhr1DFO+PPml2eG8D6ycY4UZcGiv
-         GYVDv7o/H7HCA+FNR9BcYojU6kkf7Uwu7HtyqdzIDmhR+viHl54tPnKzzYbSa9WKFYC1
-         gu+aduutfxu3PV0Sp/Dwg2vDS4WJ04A8/bERUS8SEbPQDlYX0cPTTOhDxN3XuCZfuvtx
-         yHIqpP24F16yNgDxFE9mz0DxbIiafVvpHnCJ++CzHNSwoqs1YwJbz4EQTF1Hb630Gst+
-         HnQw==
-X-Gm-Message-State: AHQUAuaeCqjx2nvEn9gIC1HIbJYW80oaGjTyB1gcY8AWRD2zVanO+rDV
-        aQkvOwFaCiItSgTcAZppBCtUyw==
-X-Google-Smtp-Source: AHgI3IZHX18AzaQOVLSpHAkcDO03lmNTkvZBqwuY4k4MZHIx7Js6XgCG2GzIh1KOaWCjLRpxnZJQqw==
-X-Received: by 2002:a62:28c9:: with SMTP id o192mr1871984pfo.57.1549943520323;
-        Mon, 11 Feb 2019 19:52:00 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m3sm20311131pfi.102.2019.02.11.19.51.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 19:51:59 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brian Masney <masneyb@onstation.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] qcom: spmi-gpio: Fix boundary conditions IRQ domain translate
-Date:   Mon, 11 Feb 2019 19:52:05 -0800
-Message-Id: <20190212035205.23477-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 11 Feb 2019 23:02:35 -0500
+Received: from gate.crashing.org ([63.228.1.57]:41053 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbfBLECe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 23:02:34 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x1C41DlZ010377;
+        Mon, 11 Feb 2019 22:01:21 -0600
+Message-ID: <d2ac1cab3b3bd7de05b6a29feda5d74a591c0081.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Date:   Tue, 12 Feb 2019 15:01:13 +1100
+In-Reply-To: <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+References: <20190211172948.3322-1-will.deacon@arm.com>
+         <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GPIOs on the SPMI PMIC are numbered 1..ngpio, so the boundary check in
-pmic_gpio_domain_translate() is off by one, correct this.
+On Mon, 2019-02-11 at 14:34 -0800, Linus Torvalds wrote:
+> On Mon, Feb 11, 2019 at 9:30 AM Will Deacon <will.deacon@arm.com> wrote:
+> > +
+> > +     1. All readX() and writeX() accesses to the same peripheral are ordered
+> > +        with respect to each other. For example, this ensures that MMIO register
+> > +       writes by the CPU to a particular device will arrive in program order.
+> 
+> Hmm. I'd like more people look at strengthening this one wrt across
+> CPUs and locking.
+> 
+> Right now we document mmiowb(), but that "documentation" is really
+> just a fairy tale. Very *very* few drivers actually do mmiowb() on
+> their own.
+> 
+> IOW, we should seriously just consider making the rule be that locking
+> will order mmio too. Because that's practically the rule anyway.
+> 
+> Powerpc already does it. IO within a locked region will serialize with the lock.
 
-Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yup. It's a bit ugly but I felt back then that getting drivers to use
+mmiowb() properly was going to be a losing battle.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index e01a556ac586..cb512c7a5251 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -962,7 +962,8 @@ static int pmic_gpio_domain_translate(struct irq_domain *domain,
- 						     struct pmic_gpio_state,
- 						     chip);
- 
--	if (fwspec->param_count != 2 || fwspec->param[0] >= state->chip.ngpio)
-+	if (fwspec->param_count != 2 ||
-+	    fwspec->param[0] < 1 || fwspec->param[0] > state->chip.ngpio)
- 		return -EINVAL;
- 
- 	*hwirq = fwspec->param[0] - PMIC_GPIO_PHYSICAL_OFFSET;
--- 
-2.18.0
+Cheers,
+Ben.
 
