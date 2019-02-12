@@ -2,110 +2,177 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C54AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4CEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD4B222BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BA8222BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:41:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fCfFjWCV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/xhiLiR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbfBLWjS (ORCPT
+        id S1729472AbfBLWlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:39:18 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:41334 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbfBLWjR (ORCPT
+        Tue, 12 Feb 2019 17:41:15 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:45222 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfBLWlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:39:17 -0500
-Received: by mail-ua1-f68.google.com with SMTP id z24so118799ual.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:39:16 -0800 (PST)
+        Tue, 12 Feb 2019 17:41:15 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so132114ywd.12;
+        Tue, 12 Feb 2019 14:41:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
-        b=fCfFjWCVZvK//Azw02gHCq2Wf+TZyzQo67PjdK4cZacIFv71S2Z88FtQXX3fKTBpKP
-         09egXjQE+WgB9m24FrKqUeXC9Wmv7R1TozcnA7aWOgsJazvsA8JJftiYgf64Zajp4I0D
-         vPdV4Vxq+YQkzTFZITS1EP8feXnIFOX9/9N+s=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=b/tw4UY191kA91aDbYP7jUEiJRfl2Q0e6qfJa7NOBX8=;
+        b=K/xhiLiRsxA80I3cC/I++ukfJhm1oCkrUGq6GPuYvyREFMY6jOo5I+yP840XEvYvZZ
+         l1tGFLckQNxMIhsn4L6uvX/pJpypbKPquENi+UbC7FtW5hqV1swoYLOS9uhU7iGZ0tA3
+         7kcUmSevgxrjpG946SQeYa8L7s+KU6Kv9kgJQji+z4SLrnnjA16IXsaoMY+5mid4hGQT
+         ia/6xXn5jnQetZ+o//QldKLQzWIb5uuUrnIFfjfsMcQJZx0mYf4I8F3qNqT2FGBJ9BiW
+         hQy/bTmPg+2UHF5IUkaoe+LMAKrLJEG178TRHn8qNaEA+Ev8FCd7ucuipDLxEHU8pluZ
+         Ekww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
-        b=S2743z2EhdVFjm8rEeKnRMeMJ2hCvW/n0Q+ZBRdRGbQDKP3tKALceJVa1Fl0+Y/Qn0
-         buZDwQUL6lLjCxyrwJQu9H3/zvlI7zhGQaj9asz6L3FMPodO7MLHzKo1vWIOWElG+r6d
-         rBfpCChQ2F0j9elfAVirKlDX9nzHauxuAF2hDLEHCbo65JRVATLanXVQL9JRrulQvnsW
-         c3Ep914nvolI6scxunVZDV+uDNOFfqkxG5T2U0/XRuWogDYmHKjn6FFYDcab2+oyXthR
-         RA6BQyALR3M1IE3tUvOElDmEJQZmfYO4olR9tCW8ZR+SUh7xY3D7zaqgQT9NeFc6Xg7E
-         Kqfw==
-X-Gm-Message-State: AHQUAuZnYBW7wAjsz3fbOk0sw3g+JEKSa+7D/cfKHXA7fuk2b+QWaxCl
-        j6YbBX5FzpLWR8tX+Yf3jEBG1pQ78cc=
-X-Google-Smtp-Source: AHgI3IbFbHWAwRE2af1pS2UPlDdgUxvaPgJ7APjgNXAzQHaN/JNn2r/CcDSlI24gvY8WI7qBeqM0Xg==
-X-Received: by 2002:ab0:6995:: with SMTP id t21mr2468263uaq.124.1550011155391;
-        Tue, 12 Feb 2019 14:39:15 -0800 (PST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id o8sm2676373vsd.27.2019.02.12.14.39.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 14:39:14 -0800 (PST)
-Received: by mail-vs1-f50.google.com with SMTP id e10so246577vsp.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:39:14 -0800 (PST)
-X-Received: by 2002:a67:eb4a:: with SMTP id x10mr2523974vso.172.1550011153602;
- Tue, 12 Feb 2019 14:39:13 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=b/tw4UY191kA91aDbYP7jUEiJRfl2Q0e6qfJa7NOBX8=;
+        b=WD9psksjTiTfk5uN1j6MUTXXiK8cTAb6IDULzr9vqsxhCmNLcau5bOIb3lvopbF6zS
+         GaDNtgMTN6Puo35OGBOhZQfua9FYYE5UiobGUPQgc2rsEJ3yGBCRXUxEYxOr2PETnhag
+         QMYOmCHfPgI1J2AnDns4WRaxdRaYPwE2UzM19XQVoU+9HQoPbWalnySQp1MOw/jeXLgZ
+         mD2Cz+bb7kTMbd1wvuZJnq6L7m2C2oXdAyjmHG+Kfr/3qjbtGs6rabIDoKoHZ2YYmv1p
+         a5AU+MPwMPO7BEYfo2yj6tIyhWynxHOuAXdDAgm8+DS6vN6LSyBiIVEqaFKduCR8sBXz
+         zV6A==
+X-Gm-Message-State: AHQUAuavNFoNFxUBPBDdyR9ZGkQcBtOr7deuvzk5wWE+sk/iixOkJKNO
+        fRuLMPQL4LO6Y8PYLPwvEE9GiysU43Q4EA==
+X-Google-Smtp-Source: AHgI3IauhEwJ/KKkjsIjZisd9OF/JNjT3502WWg3C4Z4ajeJdnqZ3T5RgDpaynB7Fg2AHKhvWTlNeQ==
+X-Received: by 2002:a81:1c12:: with SMTP id c18mr2162734ywc.487.1550011273683;
+        Tue, 12 Feb 2019 14:41:13 -0800 (PST)
+Received: from [127.0.0.1] (c-73-120-18-128.hsd1.tn.comcast.net. [73.120.18.128])
+        by smtp.gmail.com with ESMTPSA id h3sm5278500ywb.91.2019.02.12.14.41.11
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 14:41:12 -0800 (PST)
+Subject: Re: [PATCH 2/4] Expose O_PATHSTATIC to userspace
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arch@vger.kernel.org
+References: <20190212145450.2200-1-demiobenour@gmail.com>
+ <20190212145450.2200-2-demiobenour@gmail.com>
+ <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
+From:   "Demi M. Obenour" <demiobenour@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <39662373-f333-a5e1-f734-1b003992a468@gmail.com>
+Date:   Tue, 12 Feb 2019 17:41:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <cover.1549927666.git.igor.stoppa@huawei.com> <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
- <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com> <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
- <CAH2bzCRZ5xYOT0R8piqZx4mSGj1_8fNG=Ce4UU8i6F7mYD9m9Q@mail.gmail.com>
- <CAGXu5jLRJZuWjnwEuK=7AMeCrj-eioVGksPL9dE9pbzHM=+Rmg@mail.gmail.com> <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
-In-Reply-To: <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 12 Feb 2019 14:39:02 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
-Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:09 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
-> wr_assign() does just that.
->
-> However, reading again your previous mails, I realize that I might have
-> misinterpreted what you were suggesting.
->
-> If the advice is to have also a default memset_user() which relies on
-> put_user(), but do not activate the feature by default for every
-> architecture, I definitely agree that it would be good to have it.
-> I just didn't think about it before.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa
+Content-Type: multipart/mixed; boundary="U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA";
+ protected-headers="v1"
+From: "Demi M. Obenour" <demiobenour@gmail.com>
+To: Andreas Dilger <adilger@dilger.ca>
+Cc: Jeff Layton <jlayton@kernel.org>, "J. Bruce Fields"
+ <bfields@fieldses.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Arnd Bergmann <arnd@arndb.de>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ linux-arch@vger.kernel.org
+Message-ID: <39662373-f333-a5e1-f734-1b003992a468@gmail.com>
+Subject: Re: [PATCH 2/4] Expose O_PATHSTATIC to userspace
+References: <20190212145450.2200-1-demiobenour@gmail.com>
+ <20190212145450.2200-2-demiobenour@gmail.com>
+ <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
+In-Reply-To: <EC2075E7-CB9B-4DC0-B041-1EA1100D6748@dilger.ca>
 
-Yeah, I just mean you could have an arch-agnostic memset_user() implementation.
+--U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> But I now realize that most likely you were just suggesting to have
-> full, albeit inefficient default support and then let various archs
-> review/enhance it. I can certainly do this.
 
-Right.
 
-> Regarding testing I have a question: how much can/should I lean on qemu?
-> In most cases the MMU might not need to be fully emulated, so I wonder
-> how well qemu-based testing can ensure that real life scenarios will work.
+On 2/12/19 3:18 PM, Andreas Dilger wrote:
+> On Feb 12, 2019, at 7:54 AM, demiobenour@gmail.com wrote:
+>>
+>> From: "Demi M. Obenour" <demiobenour@gmail.com>
+>>
+>> This adds the file open flag O_PATHSTATIC, which ensures that symbolic=
 
-I think qemu lets you know if it works (kvm is using the real MMU),
-and baremetal will give you more stable performance numbers.
+>> links are *never* followed, even in path components other than the las=
+t.
+>> This is distinct from O_NOFOLLOW, which only prevents symlinks in the
+>> *last* component from being followed.
+>>
+>> This is useful for avoiding race conditions in userspace code that
+>> should expose only a subset of the filesystem to clients.  This includ=
+es
+>> FTP and SFTP servers, QEMU, and others.
+>>
+>> Currently, O_NOFOLLOW must be set if O_PATHSTATIC is set.  Otherwise,
+>> open() fails with -EINVAL.
+>=20
+> I don't want to bikeshed (discard suggestion if you disagree), but why =
+not
+> name the flag "O_NEVER_FOLLOW" so that users can see it is also related=
+ to
+> "O_NOFOLLOW"?  Otherwise it seems like they are two completely differen=
+t
+> things from looking at the names, when in fact they are closely related=
+=2E
+>=20
+> Cheers, Andreas
+>=20
 
--- 
-Kees Cook
+Searching for O_PATHSTATIC gives two results:
+
+* https://www.halfdog.net/Security/2010/FilesystemRecursionAndSymlinks
+* https://lists.gnu.org/archive/html/qemu-devel/2017-01/msg06225.html
+
+O_DIRECTORY_NOFOLLOW would also be a good choice, since that is what the
+flag actually does.  Ideally, we would rename O_NOFOLLOW, but we can=92t.=
+
+
+
+--U98QdikU4hBjqnfGgi2wkgmNBgqxGWAbA--
+
+--JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdodNnxM2uiJZBxxxsoi1X/+cIsEFAlxjS4UACgkQsoi1X/+c
+IsEEQw//eeuvOan9TmZ0gfFNNIc7ibAMoc9o8q0L/Sr0yqTpRithhFdLfr/APzcq
+jlctL4m4Urhg9R2IgEvKJUIH5LXpNgF0px2usODACwXua7MXy9b8ziN5f/+1+GOo
+CiUNtnaR9kMWzR5HhyOGIE3LAAIBZrLgRRAuznvYbKQhojFayhAC5MeIpVsI91so
+T4osAwVw0HHF4hIEIYUWMT5a1CZJfdxDPLb//AbEAWf1fU21XcKQFPxgYHIFMilo
+s+0kkC/AHk/ncewn4N84jSoqsxYMqcmjHVwglVs7/SzCFPKLJoAKOjlKAe9q1l71
+r4zvFIu2xMQ/73qQHNLJN9yWo8U7nCvC1S4oQUWPJP37C0G/6To7qGWXo9rFYZfP
+BEtlX7dWdIEeiL/yM8ZIKE6GoTMl5vrvELRdn5QH3V9qRLCJLewezVivLMG6GjVL
+ilINB6cx9N4YaxShouvNPrJURmPj8SZVyJa/bD4zC8UtfMpaLbWoJg0BjUf51FAb
+tpKhBQqe00ecg1NgGtP0/54lcBVb3QWCVf4zHNDs96DET+c+ttd/nLMZcziYEYZt
+VGwwGEZvRzm0km5/yya6Q0PYtYwM+KW7UW4jAZ/ksDBrQKirNOshC3kyKkggszUq
+N6KU9v4MjvqCcf0xB/2+3CdmOujMdOmjmt63MYSR48cWD+n3b9w=
+=fVy/
+-----END PGP SIGNATURE-----
+
+--JdhHrYvC79uJTKDrSt0jFVgT7zCVPlvsa--
