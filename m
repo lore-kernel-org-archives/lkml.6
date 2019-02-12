@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7233EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD3DC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4277B21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADD821773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfBLDAN (ORCPT
+        id S1728227AbfBLDAU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:00:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43708 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 22:00:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34210 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726811AbfBLDAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:00:13 -0500
+        id S1726751AbfBLDAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 22:00:19 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C56DF9FDCC;
-        Tue, 12 Feb 2019 03:00:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0FC7D85362;
+        Tue, 12 Feb 2019 03:00:19 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CD0EF600C6;
-        Tue, 12 Feb 2019 02:59:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15BC8600CC;
+        Tue, 12 Feb 2019 03:00:12 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -44,92 +44,112 @@ Cc:     David Hildenbrand <david@redhat.com>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH v2 18/26] khugepaged: skip collapse if uffd-wp detected
-Date:   Tue, 12 Feb 2019 10:56:24 +0800
-Message-Id: <20190212025632.28946-19-peterx@redhat.com>
+Subject: [PATCH v2 19/26] userfaultfd: introduce helper vma_find_uffd
+Date:   Tue, 12 Feb 2019 10:56:25 +0800
+Message-Id: <20190212025632.28946-20-peterx@redhat.com>
 In-Reply-To: <20190212025632.28946-1-peterx@redhat.com>
 References: <20190212025632.28946-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 12 Feb 2019 03:00:13 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 03:00:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't collapse the huge PMD if there is any userfault write protected
-small PTEs.  The problem is that the write protection is in small page
-granularity and there's no way to keep all these write protection
-information if the small pages are going to be merged into a huge PMD.
+We've have multiple (and more coming) places that would like to find a
+userfault enabled VMA from a mm struct that covers a specific memory
+range.  This patch introduce the helper for it, meanwhile apply it to
+the code.
 
-The same thing needs to be considered for swap entries and migration
-entries.  So do the check as well disregarding khugepaged_max_ptes_swap.
-
+Suggested-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/trace/events/huge_memory.h |  1 +
- mm/khugepaged.c                    | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ mm/userfaultfd.c | 54 +++++++++++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 24 deletions(-)
 
-diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-index dd4db334bd63..2d7bad9cb976 100644
---- a/include/trace/events/huge_memory.h
-+++ b/include/trace/events/huge_memory.h
-@@ -13,6 +13,7 @@
- 	EM( SCAN_PMD_NULL,		"pmd_null")			\
- 	EM( SCAN_EXCEED_NONE_PTE,	"exceed_none_pte")		\
- 	EM( SCAN_PTE_NON_PRESENT,	"pte_non_present")		\
-+	EM( SCAN_PTE_UFFD_WP,		"pte_uffd_wp")			\
- 	EM( SCAN_PAGE_RO,		"no_writable_page")		\
- 	EM( SCAN_LACK_REFERENCED_PAGE,	"lack_referenced_page")		\
- 	EM( SCAN_PAGE_NULL,		"page_null")			\
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 4f017339ddb2..396c7e4da83e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -29,6 +29,7 @@ enum scan_result {
- 	SCAN_PMD_NULL,
- 	SCAN_EXCEED_NONE_PTE,
- 	SCAN_PTE_NON_PRESENT,
-+	SCAN_PTE_UFFD_WP,
- 	SCAN_PAGE_RO,
- 	SCAN_LACK_REFERENCED_PAGE,
- 	SCAN_PAGE_NULL,
-@@ -1123,6 +1124,15 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 		pte_t pteval = *_pte;
- 		if (is_swap_pte(pteval)) {
- 			if (++unmapped <= khugepaged_max_ptes_swap) {
-+				/*
-+				 * Always be strict with uffd-wp
-+				 * enabled swap entries.  Please see
-+				 * comment below for pte_uffd_wp().
-+				 */
-+				if (pte_swp_uffd_wp(pteval)) {
-+					result = SCAN_PTE_UFFD_WP;
-+					goto out_unmap;
-+				}
- 				continue;
- 			} else {
- 				result = SCAN_EXCEED_SWAP_PTE;
-@@ -1142,6 +1152,19 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 			result = SCAN_PTE_NON_PRESENT;
- 			goto out_unmap;
- 		}
-+		if (pte_uffd_wp(pteval)) {
-+			/*
-+			 * Don't collapse the page if any of the small
-+			 * PTEs are armed with uffd write protection.
-+			 * Here we can also mark the new huge pmd as
-+			 * write protected if any of the small ones is
-+			 * marked but that could bring uknown
-+			 * userfault messages that falls outside of
-+			 * the registered range.  So, just be simple.
-+			 */
-+			result = SCAN_PTE_UFFD_WP;
-+			goto out_unmap;
-+		}
- 		if (pte_write(pteval))
- 			writable = true;
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 80bcd642911d..fefa81c301b7 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -20,6 +20,34 @@
+ #include <asm/tlbflush.h>
+ #include "internal.h"
  
++/*
++ * Find a valid userfault enabled VMA region that covers the whole
++ * address range, or NULL on failure.  Must be called with mmap_sem
++ * held.
++ */
++static struct vm_area_struct *vma_find_uffd(struct mm_struct *mm,
++					    unsigned long start,
++					    unsigned long len)
++{
++	struct vm_area_struct *vma = find_vma(mm, start);
++
++	if (!vma)
++		return NULL;
++
++	/*
++	 * Check the vma is registered in uffd, this is required to
++	 * enforce the VM_MAYWRITE check done at uffd registration
++	 * time.
++	 */
++	if (!vma->vm_userfaultfd_ctx.ctx)
++		return NULL;
++
++	if (start < vma->vm_start || start + len > vma->vm_end)
++		return NULL;
++
++	return vma;
++}
++
+ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 			    pmd_t *dst_pmd,
+ 			    struct vm_area_struct *dst_vma,
+@@ -228,20 +256,9 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+ 	 */
+ 	if (!dst_vma) {
+ 		err = -ENOENT;
+-		dst_vma = find_vma(dst_mm, dst_start);
++		dst_vma = vma_find_uffd(dst_mm, dst_start, len);
+ 		if (!dst_vma || !is_vm_hugetlb_page(dst_vma))
+ 			goto out_unlock;
+-		/*
+-		 * Check the vma is registered in uffd, this is
+-		 * required to enforce the VM_MAYWRITE check done at
+-		 * uffd registration time.
+-		 */
+-		if (!dst_vma->vm_userfaultfd_ctx.ctx)
+-			goto out_unlock;
+-
+-		if (dst_start < dst_vma->vm_start ||
+-		    dst_start + len > dst_vma->vm_end)
+-			goto out_unlock;
+ 
+ 		err = -EINVAL;
+ 		if (vma_hpagesize != vma_kernel_pagesize(dst_vma))
+@@ -488,20 +505,9 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+ 	 * both valid and fully within a single existing vma.
+ 	 */
+ 	err = -ENOENT;
+-	dst_vma = find_vma(dst_mm, dst_start);
++	dst_vma = vma_find_uffd(dst_mm, dst_start, len);
+ 	if (!dst_vma)
+ 		goto out_unlock;
+-	/*
+-	 * Check the vma is registered in uffd, this is required to
+-	 * enforce the VM_MAYWRITE check done at uffd registration
+-	 * time.
+-	 */
+-	if (!dst_vma->vm_userfaultfd_ctx.ctx)
+-		goto out_unlock;
+-
+-	if (dst_start < dst_vma->vm_start ||
+-	    dst_start + len > dst_vma->vm_end)
+-		goto out_unlock;
+ 
+ 	err = -EINVAL;
+ 	/*
 -- 
 2.17.1
 
