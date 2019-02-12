@@ -2,101 +2,147 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3102C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D1EC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90C18222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549991901;
-	bh=DUcofyO8/UmAYNhgoQstOpkbXlN1AH31spkP270JnjU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wGAtzrJC173SS4TAdUR0WWeGOMSk7mKQTapI/AAjnuSi8bo6FBZhXZSlok2JaA2OC
-	 Dp67Vdow2VGCNKD3ak1dH3A2F57kuJEq8R/jscszcN1r7Qvb824O5WH68J+bb8xFsB
-	 L2KR2kEK/fKH55YfYHROjJnnnsYxK+GoDc8S9/DU=
+	by mail.kernel.org (Postfix) with ESMTP id D64C32070D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:18:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cAWqpD7p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731517AbfBLRPU (ORCPT
+        id S1729209AbfBLRS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:15:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731501AbfBLRPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:15:16 -0500
-Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCCD21B25;
-        Tue, 12 Feb 2019 17:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549991715;
-        bh=DUcofyO8/UmAYNhgoQstOpkbXlN1AH31spkP270JnjU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=El7EGAzoI5V9PsDmAmamD6+MH8BpTUDgRoMt21Ot1nYAMhKYqal9LkVCE2smVi+p8
-         oyly0SEcMxZTnEZl5vJJUVXB1ds/Wal5Y1AwLgFR/1YrnhVsHbjKLEkZGGkOufe0Pc
-         /h09ufI+lFgOnkssfAMMf4PMB2LgtGiwDPMWsSbs=
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH 14/32] x86: Revert "x86/irq: Demote irq_cpustat_t::__softirq_pending to u16"
-Date:   Tue, 12 Feb 2019 18:14:05 +0100
-Message-Id: <20190212171423.8308-15-frederic@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
-References: <20190212171423.8308-1-frederic@kernel.org>
+        Tue, 12 Feb 2019 12:18:56 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49100 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfBLRSz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:18:55 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1CH9Ntn177072;
+        Tue, 12 Feb 2019 17:18:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=VmxsxuHb/nNuCt+dhukfv0Psv77KAOzs+jgh6bmnEkg=;
+ b=cAWqpD7pHuas7OAJKc8a16t6RRPPDvFeCUPvPLZSU1DV0m2niD9UyXU3JG8AYTXb3UxD
+ cosODj0IWQ1vAiERykYUlPqGoibt95GRbbgdi4RD4ABybKDbmwmFElonnj8b4ddSz/QK
+ 6nleplkWrOjhJNgKzwYLwOHDzLMxbXqaBJoPzKcoD/svMYyNKKM/JoQzurdj0tdkZKl8
+ HDDbK5VE+Z/Zj+rEul6f03Zbw6ns6ncUl17Yj3kLDMrDh4Fh7x3jWua+z1d3wCExktWc
+ EJfg2BAMbjN87Ls8vB3umLoTeN1KX8AHFvGt7O1pcQtaYUJIMPmAjNOUFJUjqd0m/RDL ww== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qhre5da28-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Feb 2019 17:18:25 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1CHIOKL026587
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Feb 2019 17:18:24 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1CHIKOJ029838;
+        Tue, 12 Feb 2019 17:18:20 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Feb 2019 09:18:20 -0800
+Date:   Tue, 12 Feb 2019 12:18:40 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>, jgg@ziepe.ca,
+        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
+        linux-mm@kvack.org, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
+        paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        hao.wu@intel.com, atull@kernel.org, mdf@kernel.org
+Subject: Re: [PATCH 2/5] vfio/spapr_tce: use pinned_vm instead of locked_vm
+ to account pinned pages
+Message-ID: <20190212171839.env4rnjwdjyips6z@ca-dmjordan1.us.oracle.com>
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211224437.25267-3-daniel.m.jordan@oracle.com>
+ <ee4d14db-05c3-6208-503c-16e287fa78eb@ozlabs.ru>
+ <01000168e29daf0a-cb3a9394-e3dd-4d88-ad3c-31df1f9ec052-000000@email.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01000168e29daf0a-cb3a9394-e3dd-4d88-ad3c-31df1f9ec052-000000@email.amazonses.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9165 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=18 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902120122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 9aee5f8a7e30330d0a8f4c626dc924ca5590aba5.
+On Tue, Feb 12, 2019 at 04:50:11PM +0000, Christopher Lameter wrote:
+> On Tue, 12 Feb 2019, Alexey Kardashevskiy wrote:
+> 
+> > Now it is 3 independent accesses (actually 4 but the last one is
+> > diagnostic) with no locking around them. Why do not we need a lock
+> > anymore precisely? Thanks,
+> 
+> Updating a regular counter is racy and requires a lock. It was converted
+> to be an atomic which can be incremented without a race.
 
-We are going to need the 16 high bits above in order to implement
-a softirq enable mask. x86 is the only architecture that doesn't use
-unsigned int to implement softirq_pending.
+Yes, though Alexey may have meant that the multiple reads of the atomic in
+decrement_pinned_vm are racy.  It only matters when there's a bug that would
+make the counter go negative, but it's there.
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Pavan Kondeti <pkondeti@codeaurora.org>
-Cc: Paul E . McKenney <paulmck@linux.vnet.ibm.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- arch/x86/include/asm/hardirq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And FWIW the debug print in try_increment_pinned_vm is also racy.
 
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index d9069bb26c7f..a8e8e126b421 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -5,7 +5,7 @@
- #include <linux/threads.h>
+This fixes all that.  It doesn't try to correct the negative pinned_vm as the
+old code did because it's already a bug and adjusting the value by the negative
+amount seems to do nothing but make debugging harder.
+
+If it's ok, I'll respin the whole series this way (another point for common
+helper)
+
+diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
+index f47e020dc5e4..b79257304de6 100644
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -53,25 +53,24 @@ static long try_increment_pinned_vm(struct mm_struct *mm, long npages)
+ 		atomic64_sub(npages, &mm->pinned_vm);
+ 	}
  
- typedef struct {
--	u16	     __softirq_pending;
-+	unsigned int __softirq_pending;
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- 	u8	     kvm_cpu_l1tf_flush_l1d;
- #endif
--- 
-2.17.1
+-	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %ld/%lu%s\n", current->pid,
+-			npages << PAGE_SHIFT,
+-			atomic64_read(&mm->pinned_vm) << PAGE_SHIFT,
+-			rlimit(RLIMIT_MEMLOCK), ret ? " - exceeded" : "");
++	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %lld/%lu%s\n", current->pid,
++			npages << PAGE_SHIFT, pinned << PAGE_SHIFT,
++			lock_limit, ret ? " - exceeded" : "");
+ 
+ 	return ret;
+ }
+ 
+ static void decrement_pinned_vm(struct mm_struct *mm, long npages)
+ {
++	s64 pinned;
++
+ 	if (!mm || !npages)
+ 		return;
+ 
+-	if (WARN_ON_ONCE(npages > atomic64_read(&mm->pinned_vm)))
+-		npages = atomic64_read(&mm->pinned_vm);
+-	atomic64_sub(npages, &mm->pinned_vm);
+-	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %ld/%lu\n", current->pid,
+-			npages << PAGE_SHIFT,
+-			atomic64_read(&mm->pinned_vm) << PAGE_SHIFT,
++	pinned = atomic64_sub_return(npages, &mm->pinned_vm);
++	WARN_ON_ONCE(pinned < 0);
++	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %lld/%lu\n", current->pid,
++			npages << PAGE_SHIFT, pinned << PAGE_SHIFT,
+ 			rlimit(RLIMIT_MEMLOCK));
+ }
+ 
 
