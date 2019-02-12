@@ -2,96 +2,113 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F640C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8C3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5202190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10839222C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ZmeCzXbA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Ex3ib8ky"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfBLTbK (ORCPT
+        id S1731880AbfBLTcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:31:10 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:43328 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbfBLTbK (ORCPT
+        Tue, 12 Feb 2019 14:32:04 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:18326 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbfBLTcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:31:10 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 209F85C026A;
-        Tue, 12 Feb 2019 20:31:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1549999868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mlRbHEOXyiu40U9NCbv3zqgTF73UAsRWJa7LCVDhGlQ=;
-        b=ZmeCzXbAbdKcB+EezCMBjqPkU8P/iX6dt0PA+vkXqULIS2i6TcBnyrVh3IwsFD2mpzGJdQ
-        FPmQ9WxidmZKbZEgWtaWrCg0GZaOz4IA68E6/8o06jbF+FvEc0ZeNPOYwgygkMmMxiM0kY
-        rYZjDj1bfOsdoVu09IRnesL+O+xQdiQ=
+        Tue, 12 Feb 2019 14:32:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549999919;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=srsW5XV2evoYsiR+WjtWPqDx2l+Rpp40ZvD9oBayhVk=;
+        b=Ex3ib8kygujiKQ1SD5YAlSoM2Ml5DxeLqenP022hoHqwgVpV3hGDB7n6zfR8xPcFZy
+        F6aZGqs9jEOCZ3/lTy9JNBLT3E71N9P6Y6GQLvR6qkEqwZqrME69iyEIoRFjLlWODlaS
+        ateb79cWzd+Ss2LTL8JdUaJ/YxTvWMLekaRVa9aFjpw3uQuiFsYPNxCCo71+whC2yHBR
+        KbY6mauB8eRjj/27zPZqcdIjTkJp1x0FelAI9+8vsV3yScoLjuhNM1f6ofakj7mLIz69
+        UzadmZQTAYnV6YNAEcibhEaqVzqsFa2Pv4Yt/H1ccPlnOmXI59COLfoEz1s8thFngrd4
+        UzsA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CldjiKRzWNYwK19ivDpIsfNmMN15w=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:b071:4d43:dec6:a483]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv1CJVuRuI
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 12 Feb 2019 20:31:56 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20190204123852.GA10428@lst.de>
+ <b1c0161f-4211-03af-022d-0db7237516e9@xenosoft.de>
+ <20190206151505.GA31065@lst.de> <20190206151655.GA31172@lst.de>
+ <61EC67B1-12EF-42B6-B69B-B59F9E4FC474@xenosoft.de>
+ <7c1f208b-6909-3b0a-f9f9-38ff1ac3d617@xenosoft.de>
+ <20190208091818.GA23491@lst.de>
+ <4e7137db-e600-0d20-6fb2-6d0f9739aca3@xenosoft.de>
+ <20190211073804.GA15841@lst.de>
+ <820bfeb1-30c0-3d5a-54a2-c4f9a8c15b0e@xenosoft.de>
+ <20190212152543.GA24061@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <47bff9d1-7001-4d92-4ad1-e24215b56555@xenosoft.de>
+Date:   Tue, 12 Feb 2019 20:31:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190212152543.GA24061@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Feb 2019 20:31:08 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     linux@armlinux.org.uk, ndesaulniers@google.com,
-        natechancellor@gmail.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        thierry.reding@gmail.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] ARM: convert to unified syntax
-In-Reply-To: <nycvar.YSQ.7.76.1902101620430.2213@knanqh.ubzr>
-References: <cover.1549753425.git.stefan@agner.ch>
- <nycvar.YSQ.7.76.1902101620430.2213@knanqh.ubzr>
-Message-ID: <da23b2ceddf2a73e1c772b7994f52d2f@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.02.2019 22:24, Nicolas Pitre wrote:
-> On Sun, 10 Feb 2019, Stefan Agner wrote:
-> 
->> This patchset converts all assembly code to unified assembler
->> language (UAL) compatible assembly code. From what I can tell,
->> this mainly boils down to using conditional infixes instead of
->> postfixes.
+On 12 February 2019 at 4:25PM, Christoph Hellwig wrote:
+> On Tue, Feb 12, 2019 at 01:42:56PM +0100, Christian Zigotzky wrote:
+>> On 11 February 2019 at 08:38AM, Christoph Hellwig wrote:
+>>> On Sun, Feb 10, 2019 at 01:00:20PM +0100, Christian Zigotzky wrote:
+>>>> I tested the whole series today. The kernels boot and the P.A. Semi
+>>>> Ethernet works! :-) Thanks a lot!
+>>>>
+>>>> I also tested it in a virtual e5500 QEMU machine today. Unfortunately the
+>>>> kernel crashes.
+>>> This looks like a patch I fixed in mainline a while ago, but which
+>>> the powerpc tree didn't have yet.
+>>>
+>>> I've cherry picked this commit
+>>> ("swiotlb: clear io_tlb_start and io_tlb_end in swiotlb_exit")
+>>>
+>>> and added it to the powerpc-dma.6 tree, please retry with that one.
+>>>
+>> Hello Christoph,
 >>
->> Most of the conversion has been done using the following regular
->> expression:
->>   find ./arch/arm/ -name "*.[hSc]" -exec sed -i -r \
->>     "s/^((\s*[._a-zA-Z0-9]*[\:\(])?\s*)([a-z]{3})(eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)([a-z]{1,2})(\s)/\1\3\5\4\6/"
->> \
->>     {} \;
->>
->> The expression resulted in some false positives and missed some
->> instances where infix conditionals have been used. With this
->> changes applied, I compiled several kernel configurations
->> successfully and without a warning.
->>
->> The file arch/arm/probes/kprobes/test-arm.c is still using some
->> divided syntax assembler.
->>
->> This does not allow to use LLVM's integrated assembler just yet,
->> there is still some assembler which the integrated assembler does
->> not like (yet). But it is a big step towards that direction.
-> 
-> OK....
-> 
-> Please document why you added .syntax unified in the commit log of each 
-> patch where this is added along with a link to the gcc PR.  Then you may 
-> add Acked-by: Nicolas Pitre <nico@linaro.org> to the whole series.
+>> Have you added it to the powerpc-dma.6 tree yet? The last commit was 4 days
+>> ago.
+> I added it, but forgot to push it out.  It is there now, sorry:
+>
+> http://git.infradead.org/users/hch/misc.git/commitdiff/2cf0745b7420af4a3e871d5a970a45662dfae69c
+>
+Hi Christoph
 
-Agreed, that is a good idea. Will send v3. Thanks for the Acks.
+Many thanks! Your Git kernel works in a virtual e5500 machine now! :-)
 
---
-Stefan
+I think we have reached the end of testing! All things are working with 
+your DMA updates.
+
+I am looking forward to test your DMA changes in the next merge window 
+again. :-)
+
+Cheers
+Christian
+
