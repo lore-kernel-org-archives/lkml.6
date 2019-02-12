@@ -2,109 +2,81 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52FFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067E8C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7238D2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4944222C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549993564;
+	bh=mCMJyo7VtrJCKbTL0coPi8tQwBGv5oshlEKt9XIzZf8=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=bBqfZBFoYdY3XTtn2+RiFsw2a2CxUxY3w6YyxZTKR4RlU7JDNQ/HUUtnKdocRVSGL
+	 LTLtSJ4d6H60/mWsx3rU4aqox/bu2bC1J830cAu9D/lxo2gUouY9As21AVjAw1ICkI
+	 hAsUse86RrCTqnQnRFIKki0ntwVN43UZbjdZ7kqM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731457AbfBLRnV (ORCPT
+        id S1731425AbfBLRqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:43:21 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.84]:40895 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728199AbfBLRnU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:43:20 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id AE1734B39
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 11:43:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tc5Xgiqby2PzOtc5XgDcsA; Tue, 12 Feb 2019 11:43:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=49590 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtc5X-001j8L-2e; Tue, 12 Feb 2019 11:43:19 -0600
-Date:   Tue, 12 Feb 2019 11:43:18 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] parport: ieee1284: mark expected switch fall-through
-Message-ID: <20190212174318.GA22735@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtc5X-001j8L-2e
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:49590
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 12 Feb 2019 12:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727865AbfBLRqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:46:02 -0500
+Received: from localhost.localdomain (unknown [194.230.155.153])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A81E020842;
+        Tue, 12 Feb 2019 17:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549993562;
+        bh=mCMJyo7VtrJCKbTL0coPi8tQwBGv5oshlEKt9XIzZf8=;
+        h=From:To:Subject:Date:From;
+        b=05BL48sgJ1Whf3TZzGbhrTfVI01E8eqvBDuI4+tfQ1kAfdc+4AG3067f8MpKywfgW
+         LfcMOGTy+lwiTZlQs0swbDJltFjz+IKBnrhHz4/30bjqTJNRm4dakcK5Q33u1rFkN1
+         g3jiVFUXKWJT2xWaj8tcCbmmiAtyFM1G87IyX3Ck=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM/dts/iio: exynos-adc: Use proper number of channels for Exynos4x12
+Date:   Tue, 12 Feb 2019 18:45:48 +0100
+Message-Id: <20190212174550.4383-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Hi,
 
-This patch fixes the following warning:
+The DTS patch depends on iio change.  I will take it through samsung-soc
+for consecutive release, once iio/adc gets accepted.
 
-drivers/parport/ieee1284.c: In function ‘parport_read’:
-drivers/parport/ieee1284.c:722:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (parport_negotiate (port, IEEE1284_MODE_NIBBLE)) {
-      ^
-drivers/parport/ieee1284.c:726:2: note: here
-  case IEEE1284_MODE_NIBBLE:
-  ^~~~
+Best regards,
+Krzysztof
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
 
-Notice that, in this particular case, the code comment is modified
-in accordance with what GCC is expecting to find.
+Krzysztof Kozlowski (2):
+  iio: adc: exynos-adc: Use proper number of channels for Exynos4x12
+  ARM: dts: exynos: Use ADC for Exynos4x12 on Exyno4412
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
+ .../bindings/iio/adc/samsung,exynos-adc.txt     |  4 +++-
+ arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
+ drivers/iio/adc/exynos_adc.c                    | 17 +++++++++++++++++
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/parport/ieee1284.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/parport/ieee1284.c b/drivers/parport/ieee1284.c
-index f12b9da69255..90fb73575495 100644
---- a/drivers/parport/ieee1284.c
-+++ b/drivers/parport/ieee1284.c
-@@ -722,7 +722,7 @@ ssize_t parport_read (struct parport *port, void *buffer, size_t len)
- 		if (parport_negotiate (port, IEEE1284_MODE_NIBBLE)) {
- 			return -EIO;
- 		}
--		/* fall through to NIBBLE */
-+		/* fall through - to NIBBLE */
- 	case IEEE1284_MODE_NIBBLE:
- 		DPRINTK (KERN_DEBUG "%s: Using nibble mode\n", port->name);
- 		fn = port->ops->nibble_read_data;
 -- 
-2.20.1
+2.17.1
 
