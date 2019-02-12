@@ -2,159 +2,116 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F17C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE110C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9735620842
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549988940;
-	bh=42qN9V0zQqq54p/Jaod/0sVbjQGOIAueFthA4zQbuTo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jV4UNI6HZgYYfp5lAX/qJpHetJ5r+UCCFm4RtvDMjVKRyCfVrASHnqHT5MT1IbZ1K
-	 j3tgZNpKBysqHdC+JhZHPimZFmx27br1wovpyH9J1PxY1Vpga/fmKP0SzW8tjKPm1S
-	 HGHRX645Ehxa38cQg9eCDOKcKQDYty3lT9zoEfmI=
+	by mail.kernel.org (Postfix) with ESMTP id 8CE8C20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EYNMnV5s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731067AbfBLQ27 (ORCPT
+        id S1731094AbfBLQ3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:28:59 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43285 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbfBLQ26 (ORCPT
+        Tue, 12 Feb 2019 11:29:04 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36239 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731076AbfBLQ3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:28:58 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n71so5373583ota.10;
-        Tue, 12 Feb 2019 08:28:58 -0800 (PST)
+        Tue, 12 Feb 2019 11:29:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id o17so3389263wrw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:29:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4mSsCon6GBdcpXgNWgQbQrrv5VNk+/N3Jshnb+5ts0=;
+        b=EYNMnV5sNrocF3iwg2e/cigLaHz3u46sUAY2IMLd1kQVCvsVlT6E1M+TCyeRlzi1Ee
+         OGPR82Olaayvqjshmjzf8ljY+Be0a8XlYfZ2ELHT8r3VXpz+Ba7WLEzi8YYoyG8rmuz2
+         e+tJHdsBUwZ3b69w5lYtBDDWorao1ykUkIo0llc0QrvEzXs5fnsQ+rbD1jO7sMdLyfQa
+         U1gBOpgpGerIn/P3REMsGP8CWFBFDSzH/hGtWW6Scs56p8ROIcK4ZYlLp46O3oObx8pK
+         b2Zr9YbGy0iMfmor00avHsafnOTazaf7om+PG91NshuDn3x6gfr+bbwpiwKRuOA/0DCQ
+         szwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fseXW1aQ+MNpVWzEhj80Xv7V/c9aS3/ACQPeP06BvyA=;
-        b=QcI5GRn5cPGAFIYKsoLhDGEACIrCACFB7oMamxPi41aeKrKo/elVgHCYIDxzMkikrU
-         t3bjYM7agQC30aNSgoVVEBW99kkFSTU2BsMBGCTxeXmZAEoaRSxw8dSJBzZbktAQCBsP
-         c8JzpN94Vc8y+1m7mk+XSciEEiW+wrz39ldJrZXewj5SHAT5PJcC2bo8j1em6l7Xz2A0
-         u1AQPdVjs9JmmSCj6eGaG4FyVS5is39ALGaMx+vLb4vlLWKzaQVVtWQstV6Fd9nwDoYq
-         YM+Ht/vBOjCt+i6jPoZW2zFvlNhCt9r07OGzPPlzTN+Gh5A61crip+hf2/Oqfh5DBSzs
-         Sq9Q==
-X-Gm-Message-State: AHQUAuaKSum21sMwxivV6+jBYJlDedlKockUQ6V0kEg6cnNareL8I7Pt
-        SFpd6HefteN8mC1YybNPTVihLVfcSH4mT4f94uk=
-X-Google-Smtp-Source: AHgI3IYcp5pXTrM2455oJPGH7prD24yaC5oOjzVrm9HFf/vYDg34UT3jy3d4W5hOdpx4CNQLz6bAXLMdI73VbNFB//g=
-X-Received: by 2002:a9d:7990:: with SMTP id h16mr4467156otm.222.1549988937515;
- Tue, 12 Feb 2019 08:28:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4mSsCon6GBdcpXgNWgQbQrrv5VNk+/N3Jshnb+5ts0=;
+        b=IrlE2FLRhXTFilciO7PDphgAuV0i6w8kCVpzuJHMEe8T0XBaOgqIABXQJPRVmjY5Ya
+         iIwpZ1p2ong1+HXauIMD/mb98bEZ4jEcgmq/+T8R1IljR0h/xHsuTE+/ZtRmSYmuz+Lu
+         OWEVU5k0e9Mn4zvTRFsFJV5WvAZlD+zUH81DoWYL4i1DaTqzoTD8N547VZGCg1gOqsvJ
+         nsxxK+2m0zA2AyRb785rurMEeqIGNKlaxDJ3eWTLtCSU7g7Zk/+B+j2XRw1ETZNiuSDp
+         5kN6E8g8uUw0EDe/hv6nyn0Y9okPc1XzGmwJfYipNP13tQd8fXaufE1j7gkpNwVXgCLE
+         aM4Q==
+X-Gm-Message-State: AHQUAuatpfpMvGdcPDWCXusMJ+3C7pIiOVT16LmFOIGUWsRT4KaI3O0C
+        05MeNhX9Gn/w54E/vxIs5zLPFA==
+X-Google-Smtp-Source: AHgI3IaQ2zjXoLynNNuxjOAdM0y1ZygLbnhTGP/eGVeg5u2m9LLrFped1p8aXSRHPDTmLhkLU8B9Jw==
+X-Received: by 2002:adf:8068:: with SMTP id 95mr3563270wrk.181.1549988941394;
+        Tue, 12 Feb 2019 08:29:01 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id z1sm7800876wrw.28.2019.02.12.08.29.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 12 Feb 2019 08:29:00 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: meson: Add G12A AO Clock + Reset Controller
+Date:   Tue, 12 Feb 2019 17:28:57 +0100
+Message-Id: <20190212162859.20743-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <1670239.00ZbddH1IV@aspire.rjw.lan>
- <CAPDyKFoR+evmvDehgTJvxcZ70ZLTqU5J4To_c=2vYdOk26h92w@mail.gmail.com>
-In-Reply-To: <CAPDyKFoR+evmvDehgTJvxcZ70ZLTqU5J4To_c=2vYdOk26h92w@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 12 Feb 2019 17:28:46 +0100
-Message-ID: <CAJZ5v0jv6dboQd=iu9pHA_B2HzCEhd2WaN3-732S9px_u6MA-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM-runtime: Fix __pm_runtime_set_status() race with
- runtime resume
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 5:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Tue, 12 Feb 2019 at 13:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Commit 4080ab083000 ("PM-runtime: Take suppliers into account in
-> > __pm_runtime_set_status()") introduced a race condition that may
-> > trigger if __pm_runtime_set_status() is used incorrectly (that is,
-> > if it is called when PM-runtime is enabled for the target device
-> > and working).
-> >
-> > In that case, if the original PM-runtime status of the device is
-> > RPM_SUSPENDED, a runtime resume of the device may occur after
-> > __pm_runtime_set_status() has dropped its power.lock spinlock
-> > and before deactivating its suppliers, so the suppliers may be
-> > deactivated while the device is PM-runtime-active which may lead
-> > to functional issues.
-> >
-> > To avoid that, modify __pm_runtime_set_status() to check whether
-> > or not PM-runtime is enabled for the device before activating its
-> > suppliers (if the new status is RPM_ACTIVE) and either return an
-> > error if that's the case or increment the device's disable_depth
-> > counter to prevent PM-runtime from being enabled for it while
-> > the remaining part of the function is running (disable_depth is
-> > then decremented on the way out).
-> >
-> > Fixes: 4080ab083000 ("PM-runtime: Take suppliers into account in __pm_runtime_set_status()")
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/base/power/runtime.c |   24 ++++++++++++++++++------
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> >
-> > Index: linux-pm/drivers/base/power/runtime.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/base/power/runtime.c
-> > +++ linux-pm/drivers/base/power/runtime.c
-> > @@ -1129,6 +1129,22 @@ int __pm_runtime_set_status(struct devic
-> >         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
-> >                 return -EINVAL;
-> >
-> > +       spin_lock_irq(&dev->power.lock);
-> > +
-> > +       /*
-> > +        * Prevent PM-runtime from being enabled for the device or return an
-> > +        * error if it is enabled already and working.
-> > +        */
-> > +       if (dev->power.runtime_error || dev->power.disable_depth)
-> > +               dev->power.disable_depth++;
-> > +       else
-> > +               error = -EAGAIN;
-> > +
-> > +       spin_unlock_irq(&dev->power.lock);
-> > +
-> > +       if (error)
-> > +               return error;
-> > +
-> >         /*
-> >          * If the new status is RPM_ACTIVE, the suppliers can be activated
-> >          * upfront regardless of the current status, because next time
-> > @@ -1147,12 +1163,6 @@ int __pm_runtime_set_status(struct devic
-> >
-> >         spin_lock_irq(&dev->power.lock);
-> >
-> > -       if (!dev->power.runtime_error && !dev->power.disable_depth) {
-> > -               status = dev->power.runtime_status;
-> > -               error = -EAGAIN;
-> > -               goto out;
-> > -       }
-> > -
-> >         if (dev->power.runtime_status == status || !parent)
-> >                 goto out_set;
-> >
-> > @@ -1205,6 +1215,8 @@ int __pm_runtime_set_status(struct devic
-> >                 device_links_read_unlock(idx);
-> >         }
-> >
-> > +       pm_runtime_enable(dev);
->
-> pm_runtime_enable() uses spin_lock_irqsave(), rather than
-> spin_lock_irq() - is there a reason to why you want to allow that
-> here, but not earlier in the function?
+This patchset add support for the Amlogic G12A SoC family Always-On
+clock and reset controller.
 
-Device links locking cannot be used in interrupt context.
+This adds support for clocks on the Always-On domain like :
+- Always-On UARTS & I2C Controllers
+- CEC Controllers
+- SARADC source and bus clock
+- Infrared Decoder/Encoder bus clock
+- USB 32K reference clock
+
+This also adds resets lines for :
+- Always-On UARTS & I2C Controllers
+- SARADC, Infrared Decoder/Encoder
+
+This patchset depends on the ("clk: meson: rework drivers dependencies")
+from Jerome Brunet at [1].
+
+Changes from v1 at [2]:
+- Moved unused bindings ID out of the dt-bindings header
+- Added comment about CLK_IGNORE_UNUSED
+
+[1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
+[2] https://lkml.kernel.org/r/20190204091331.9298-1-narmstrong@baylibre.com
+
+Neil Armstrong (2):
+  dt-bindings: clk: add G12A AO Clock and Reset Bindings
+  clk: meson: Add G12A AO Clock + Reset Controller
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+ drivers/clk/meson/Kconfig                     |   2 +
+ drivers/clk/meson/Makefile                    |   2 +-
+ drivers/clk/meson/g12a-aoclk.c                | 454 ++++++++++++++++++
+ drivers/clk/meson/g12a-aoclk.h                |  34 ++
+ include/dt-bindings/clock/g12a-aoclkc.h       |  34 ++
+ include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
+ 7 files changed, 544 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/g12a-aoclk.c
+ create mode 100644 drivers/clk/meson/g12a-aoclk.h
+ create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
+
+-- 
+2.20.1
+
