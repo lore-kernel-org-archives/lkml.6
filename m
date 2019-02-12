@@ -2,126 +2,136 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2600DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E959BC282D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F11492084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C242720863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbfBLANe (ORCPT
+        id S1727628AbfBLAVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:13:34 -0500
-Received: from mga12.intel.com ([192.55.52.136]:17231 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfBLANd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:13:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 16:13:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="137828118"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga001.jf.intel.com with ESMTP; 11 Feb 2019 16:13:31 -0800
-Date:   Tue, 12 Feb 2019 08:13:08 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, jack@suse.cz,
-        dan.j.williams@intel.com
-Subject: Re: [PATCH] kernel, resource: use resource_overlaps() to simplify
- region_intersects()
-Message-ID: <20190212001308.GA27906@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20190121012028.3913-1-richardw.yang@linux.intel.com>
+        Mon, 11 Feb 2019 19:21:47 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61446 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfBLAVr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:21:47 -0500
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0LeYu051397;
+        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
+ Tue, 12 Feb 2019 09:21:40 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0Lexx051393;
+        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1C0LeYB051392;
+        Tue, 12 Feb 2019 09:21:40 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902120021.x1C0LeYB051392@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH] LSM: Ignore =?ISO-2022-JP?B?InNlY3VyaXR5PSIgd2hlbiAibHNtPSIg?=
+ =?ISO-2022-JP?B?aXMgc3BlY2lmaWVk?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121012028.3913-1-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Tue, 12 Feb 2019 09:21:40 +0900
+References: <20190211225403.GA7769@beast>
+In-Reply-To: <20190211225403.GA7769@beast>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:20:28AM +0800, Wei Yang wrote:
->The three checks in region_intersects() is to see whether two resources
->overlap. This means it could be simplified with one resource_overlaps().
->
->Also fix two typo in related function.
->
->Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Kees Cook wrote:
+> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> used on the command line, and report that it is happening.
 
-Hello~
+To maintain the existing behavior of CONFIG_DEFAULT_SECURITY, I also suggest this change.
+This saves e.g. Ubuntu users who are using only AppArmor from explicitly specifying
+security=apparmor when they don't want to enable other LSM_FLAG_LEGACY_MAJOR modules.
 
-Would someone like to take a look?
+---
+ security/Kconfig    | 37 +++++++++++++++++++++++++++++++++++++
+ security/security.c |  5 ++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
 
->---
-> kernel/iomem.c    |  4 ++--
-> kernel/resource.c | 11 +++++------
-> 2 files changed, 7 insertions(+), 8 deletions(-)
->
->diff --git a/kernel/iomem.c b/kernel/iomem.c
->index f7525e14ebc6..93c264444510 100644
->--- a/kernel/iomem.c
->+++ b/kernel/iomem.c
->@@ -55,7 +55,7 @@ static void *try_ram_remap(resource_size_t offset, size_t size,
->  *
->  * MEMREMAP_WB - matches the default mapping for System RAM on
->  * the architecture.  This is usually a read-allocate write-back cache.
->- * Morever, if MEMREMAP_WB is specified and the requested remap region is RAM
->+ * Moreover, if MEMREMAP_WB is specified and the requested remap region is RAM
->  * memremap() will bypass establishing a new mapping and instead return
->  * a pointer into the direct map.
->  *
->@@ -86,7 +86,7 @@ void *memremap(resource_size_t offset, size_t size, unsigned long flags)
-> 	/* Try all mapping types requested until one returns non-NULL */
-> 	if (flags & MEMREMAP_WB) {
-> 		/*
->-		 * MEMREMAP_WB is special in that it can be satisifed
->+		 * MEMREMAP_WB is special in that it can be satisfied
-> 		 * from the direct map.  Some archs depend on the
-> 		 * capability of memremap() to autodetect cases where
-> 		 * the requested range is potentially in System RAM.
->diff --git a/kernel/resource.c b/kernel/resource.c
->index b0fbf685c77a..34dfb94305bb 100644
->--- a/kernel/resource.c
->+++ b/kernel/resource.c
->@@ -521,21 +521,20 @@ EXPORT_SYMBOL_GPL(page_is_ram);
-> int region_intersects(resource_size_t start, size_t size, unsigned long flags,
-> 		      unsigned long desc)
-> {
->-	resource_size_t end = start + size - 1;
->+	struct resource res;
-> 	int type = 0; int other = 0;
-> 	struct resource *p;
-> 
->+	res.start = start;
->+	res.end = start + size - 1;
->+
-> 	read_lock(&resource_lock);
-> 	for (p = iomem_resource.child; p ; p = p->sibling) {
-> 		bool is_type = (((p->flags & flags) == flags) &&
-> 				((desc == IORES_DESC_NONE) ||
-> 				 (desc == p->desc)));
-> 
->-		if (start >= p->start && start <= p->end)
->-			is_type ? type++ : other++;
->-		if (end >= p->start && end <= p->end)
->-			is_type ? type++ : other++;
->-		if (p->start >= start && p->end <= end)
->+		if (resource_overlaps(p, &res))
-> 			is_type ? type++ : other++;
-> 	}
-> 	read_unlock(&resource_lock);
->-- 
->2.19.1
-
+diff --git a/security/Kconfig b/security/Kconfig
+index 9555f49..6a40995 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -250,5 +250,42 @@ config LSM
+ 
+ 	  If unsure, leave this as the default.
+ 
++choice
++	prompt "Default exclusive security module"
++	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
++	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
++	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
++	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
++	default DEFAULT_SECURITY_DAC
++
++	help
++	  The security module where only one of these modules should be enabled if
++	  neither the "security=" parameter nor the "lsm=" parameter is specified.
++
++	config DEFAULT_SECURITY_SELINUX
++		bool "SELinux" if SECURITY_SELINUX=y
++
++	config DEFAULT_SECURITY_SMACK
++		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
++
++	config DEFAULT_SECURITY_TOMOYO
++		bool "TOMOYO" if SECURITY_TOMOYO=y
++
++	config DEFAULT_SECURITY_APPARMOR
++		bool "AppArmor" if SECURITY_APPARMOR=y
++
++	config DEFAULT_SECURITY_DAC
++		bool "Unix Discretionary Access Controls"
++
++endchoice
++
++config DEFAULT_SECURITY
++	string
++	default "selinux" if DEFAULT_SECURITY_SELINUX
++	default "smack" if DEFAULT_SECURITY_SMACK
++	default "tomoyo" if DEFAULT_SECURITY_TOMOYO
++	default "apparmor" if DEFAULT_SECURITY_APPARMOR
++	default "" if DEFAULT_SECURITY_DAC
++
+ endmenu
+ 
+diff --git a/security/security.c b/security/security.c
+index e6153ed..c44e3cd 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -294,8 +294,11 @@ static void __init ordered_lsm_init(void)
+ 			chosen_major_lsm = NULL;
+ 		}
+ 		ordered_lsm_parse(chosen_lsm_order, "cmdline");
+-	} else
++	} else {
++		if (!chosen_major_lsm)
++			chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
+ 		ordered_lsm_parse(builtin_lsm_order, "builtin");
++	}
+ 
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+ 		prepare_lsm(*lsm);
 -- 
-Wei Yang
-Help you, Help me
+1.8.3.1
+
