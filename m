@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EE1C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B984C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 451C921773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01F3B21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfBLC54 (ORCPT
+        id S1728089AbfBLC6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:57:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32774 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 21:58:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57278 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbfBLC54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:57:56 -0500
+        id S1726226AbfBLC6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 21:58:03 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DA48A81DEB;
-        Tue, 12 Feb 2019 02:57:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB26BE6A60;
+        Tue, 12 Feb 2019 02:58:02 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D30F600C6;
-        Tue, 12 Feb 2019 02:57:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 62382600C6;
+        Tue, 12 Feb 2019 02:57:56 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -43,67 +43,100 @@ Cc:     David Hildenbrand <david@redhat.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: [PATCH v2 06/26] userfaultfd: wp: add helper for writeprotect check
-Date:   Tue, 12 Feb 2019 10:56:12 +0800
-Message-Id: <20190212025632.28946-7-peterx@redhat.com>
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH v2 07/26] userfaultfd: wp: hook userfault handler to write protection fault
+Date:   Tue, 12 Feb 2019 10:56:13 +0800
+Message-Id: <20190212025632.28946-8-peterx@redhat.com>
 In-Reply-To: <20190212025632.28946-1-peterx@redhat.com>
 References: <20190212025632.28946-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 02:57:56 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 12 Feb 2019 02:58:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaohua Li <shli@fb.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-add helper for writeprotect check. Will use it later.
+There are several cases write protection fault happens. It could be a
+write to zero page, swaped page or userfault write protected
+page. When the fault happens, there is no way to know if userfault
+write protect the page before. Here we just blindly issue a userfault
+notification for vma with VM_UFFD_WP regardless if app write protects
+it yet. Application should be ready to handle such wp fault.
 
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Pavel Emelyanov <xemul@parallels.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Shaohua Li <shli@fb.com>
+v1: From: Shaohua Li <shli@fb.com>
+
+v2: Handle the userfault in the common do_wp_page. If we get there a
+pagetable is present and readonly so no need to do further processing
+until we solve the userfault.
+
+In the swapin case, always swapin as readonly. This will cause false
+positive userfaults. We need to decide later if to eliminate them with
+a flag like soft-dirty in the swap entry (see _PAGE_SWP_SOFT_DIRTY).
+
+hugetlbfs wouldn't need to worry about swapouts but and tmpfs would
+be handled by a swap entry bit like anonymous memory.
+
+The main problem with no easy solution to eliminate the false
+positives, will be if/when userfaultfd is extended to real filesystem
+pagecache. When the pagecache is freed by reclaim we can't leave the
+radix tree pinned if the inode and in turn the radix tree is reclaimed
+as well.
+
+The estimation is that full accuracy and lack of false positives could
+be easily provided only to anonymous memory (as long as there's no
+fork or as long as MADV_DONTFORK is used on the userfaultfd anonymous
+range) tmpfs and hugetlbfs, it's most certainly worth to achieve it
+but in a later incremental patch.
+
+v3: Add hooking point for THP wrprotect faults.
+
+CC: Shaohua Li <shli@fb.com>
 Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/userfaultfd_k.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ mm/memory.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 37c9eba75c98..38f748e7186e 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -50,6 +50,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
- 	return vma->vm_flags & VM_UFFD_MISSING;
- }
- 
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-+{
-+	return vma->vm_flags & VM_UFFD_WP;
-+}
-+
- static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+diff --git a/mm/memory.c b/mm/memory.c
+index e11ca9dd823f..00781c43407b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2483,6 +2483,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
  {
- 	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
-@@ -94,6 +99,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
- 	return false;
- }
+ 	struct vm_area_struct *vma = vmf->vma;
  
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
++	if (userfaultfd_wp(vma)) {
++		pte_unmap_unlock(vmf->pte, vmf->ptl);
++		return handle_userfault(vmf, VM_UFFD_WP);
++	}
 +
- static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ 	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
+ 	if (!vmf->page) {
+ 		/*
+@@ -2800,6 +2805,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+ 	pte = mk_pte(page, vma->vm_page_prot);
++	if (userfaultfd_wp(vma))
++		vmf->flags &= ~FAULT_FLAG_WRITE;
+ 	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+ 		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
+ 		vmf->flags &= ~FAULT_FLAG_WRITE;
+@@ -3684,8 +3691,11 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+ /* `inline' is required to avoid gcc 4.1.2 build error */
+ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
  {
- 	return false;
+-	if (vma_is_anonymous(vmf->vma))
++	if (vma_is_anonymous(vmf->vma)) {
++		if (userfaultfd_wp(vmf->vma))
++			return handle_userfault(vmf, VM_UFFD_WP);
+ 		return do_huge_pmd_wp_page(vmf, orig_pmd);
++	}
+ 	if (vmf->vma->vm_ops->huge_fault)
+ 		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+ 
 -- 
 2.17.1
 
