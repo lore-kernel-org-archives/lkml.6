@@ -2,94 +2,107 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A86FC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6964FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF1C2077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372A82077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="DWfwx5tb"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IMdHSw/u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfBLKN2 (ORCPT
+        id S1728592AbfBLKNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:13:28 -0500
-Received: from mail-wr1-f54.google.com ([209.85.221.54]:36133 "EHLO
-        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfBLKN2 (ORCPT
+        Tue, 12 Feb 2019 05:13:44 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:6443 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfBLKNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:13:28 -0500
-Received: by mail-wr1-f54.google.com with SMTP id o17so2018700wrw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:13:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=g0JsiH41KjwvocfsMp0bTb3XeLXE9iKeGB1xz8dT32A=;
-        b=DWfwx5tbB6IVo4HIIiFhkNsfJ4SZ6/zDimJNgTlVGK+CvuSgxyZcPuDigAGLkxqqHn
-         aFEj3qBL+1KRbmVapS9XSNRwti4AEpOCmAiow73iKHa6A1utJW1qabjNj/+e7aCRWGFa
-         mf406VjNtP0kT3H6Yf5OlhFAOfQwD6DmX8RII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g0JsiH41KjwvocfsMp0bTb3XeLXE9iKeGB1xz8dT32A=;
-        b=FqKyAJtITlvhWmvTmEwl2Pf5WalXw/+6Saz9Q/1qDCrtNRfOGywmulWJaAgRnEhQqt
-         syta9i7vsIEc6XUQHxc1ClMyrZWCAo2X10H56dkc0d6nQgcgw/KKvfW0HNcYVFSJSVr3
-         +XZM+LvB5bV+fPPns0Z0n9HxlDqEn6emmOP2FR2ILAURGCTO7vkwU5Ppx16CtcO2MOYB
-         efR+scfq+Sj2RiIE30Cre415xDdi5QxaW7CpfD+uu2AsZ6I2J7ONxoAYDReXPDt+8UNd
-         WsL+lD0r+DW0kXROXM9Stb5wrxp7noPeBqdExMY/myKfW+krnqNPcUQ5tekCzeUoSkWs
-         vimQ==
-X-Gm-Message-State: AHQUAuYB8OEHk5Tts8NuEVxySjSzqDyvAJ8391qZqA78RFgbnz0V90qv
-        yca53slrpV6oT1XWunRAx//vRw==
-X-Google-Smtp-Source: AHgI3IZPZNArtBqTt7cgQ07OzsRJFORv/tckhbBOEZQDfGJt12ChgEvQA3SGdcEssYqkBT43NTRbSw==
-X-Received: by 2002:adf:9dc4:: with SMTP id q4mr2340947wre.330.1549966406403;
-        Tue, 12 Feb 2019 02:13:26 -0800 (PST)
-Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id o9sm1809180wmh.3.2019.02.12.02.13.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 02:13:25 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:13:16 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
- operations
-Message-ID: <20190212101316.GA6905@andrea>
-References: <20190211083846.18888-1-ying.huang@intel.com>
+        Tue, 12 Feb 2019 05:13:41 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c629c560000>; Tue, 12 Feb 2019 02:13:42 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 12 Feb 2019 02:13:41 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 12 Feb 2019 02:13:41 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
+ 2019 10:13:38 +0000
+Subject: Re: [PATCH 4.9 000/137] 4.9.156-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190211141811.964925535@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1cc961d6-cc8d-070d-26ee-422731c00efc@nvidia.com>
+Date:   Tue, 12 Feb 2019 10:13:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211083846.18888-1-ying.huang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549966422; bh=eYbFZQdUWe03xB3jgazFdJ+1r4xUsGYRAn55QyhODvQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=IMdHSw/uLqIc55WvNX16m4hSIYevn/vnjebeX5e3Cz+AQsr0gxvPw12+NA8GSdFWe
+         dA4d3hoaLvoMmGMfezcy5m1dcodQl47Awg8lyNAU8gKv+qEDyTvaxP6EP7vSQsflQa
+         xo8zT0cJ33TQ30nFmOWwlblwLal2TTo+gLOx7HgELmizKLnXAidXqaAIPLAxwh0uVd
+         4ME9AA5QlbIotzrrrZhD2Qj/mK4kfX3BgSFV7eG+4NVghf4PidePjCiXI3JPGZO211
+         hJvWGeuaRWYIckZO2UtAJN0KgQA1oQ1Y872krGQtuoiLPiNUqpKE4mdge1WIHIs3xs
+         MTXxK06fnvv6w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Alternative implementation could be replacing disable preemption with
-> rcu_read_lock_sched and stop_machine() with synchronize_sched().
 
-JFYI, starting with v4.20-rc1, synchronize_rcu{,expedited}() also wait
-for preempt-disable sections (the intent seems to retire the RCU-sched
-update-side API), so that here you could instead use preempt-disable +
-synchronize_rcu{,expedited}().  This LWN article gives an overview of
-the latest RCU API/semantics changes: https://lwn.net/Articles/777036/.
+On 11/02/2019 14:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.156 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb 13 14:17:22 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.156-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-  Andrea
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.9.156-rc1-g850a7fe
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
