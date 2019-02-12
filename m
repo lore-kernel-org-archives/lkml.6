@@ -2,260 +2,134 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AD2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649C3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B67217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:20:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iMxQk1nx"
+	by mail.kernel.org (Postfix) with ESMTP id 3CCDC217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfBLFUJ (ORCPT
+        id S1726265AbfBLF07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 00:20:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:41399 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfBLFUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 00:20:09 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43z9vm11yNz9s3x;
-        Tue, 12 Feb 2019 16:20:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549948804;
-        bh=PXcPRKwX2FxTek5U65nhmrJsk37fDAIoXelA/qoSBgo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=iMxQk1nx5x/ffgWFuXaijoYdQr+mKmB2Sp/UVe4B0zRj3ScEnfMmylX1w4v8xSd6z
-         gd4VM9kEzS3D1xnbJr1uJEg0jzSxhH7wx02iXEvb0avUYpcAfp1inJtxyH59aqDN9r
-         A4jW1XP6Gj38zCY53DnUpy+b80X7HjdOy86A9MiK+djQet2sZskinug0q2nRvTOfyX
-         PIEK258tq5LEs7j2RCveAoavj5FYHQ840OmKE0LIeWRvTw0QsnM+NxRA70uB3PHXoj
-         akAaFIUIIDxI7Dlyf9/MWHJu7MAKErD8m1IwjBotCI/4f4ZPja2HkVARTkZY7d3ycP
-         QFh+WVpz6hxcQ==
-Date:   Tue, 12 Feb 2019 16:20:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the xarray tree
-Message-ID: <20190212162003.1aa1ffbd@canb.auug.org.au>
+        Tue, 12 Feb 2019 00:26:59 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:23133 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfBLF07 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 00:26:59 -0500
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C5QYhT092674;
+        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Tue, 12 Feb 2019 14:26:34 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C5QYA1092668;
+        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1C5QYXX092667;
+        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902120526.x1C5QYXX092667@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH v2] fs: Allow opening only regular files during execve().
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        syzbot 
+        <bot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zp94lxzFZ8Wtk+cbgvBz+cv"; protocol="application/pgp-signature"
+Date:   Tue, 12 Feb 2019 14:26:34 +0900
+References: <20190128154205.214ae010da6c2f02d379bbc8@linux-foundation.org> 
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zp94lxzFZ8Wtk+cbgvBz+cv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Tetsuo Handa wrote:
+> Andrew Morton wrote:
+> > > --- a/fs/open.c
+> > > +++ b/fs/open.c
+> > > @@ -733,6 +733,12 @@ static int do_dentry_open(struct file *f,
+> > >  		return 0;
+> > >  	}
+> > >  
+> > > +	/* Any file opened for execve()/uselib() has to be a regular file. */
+> > > +	if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) {
+> > > +		error = -EACCES;
+> > > +		goto cleanup_file;
+> > > +	}
+> > > +
+> > >  	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
+> > >  		error = get_write_access(inode);
+> > >  		if (unlikely(error))
+> > 
+> > This change sounds legitimate for various other reasons, but it's a
+> > concern that this locking error occurred in the first place.  There's a
+> > problem somewhere (probably the pipe code) which may bite us in other
+> > situations, even with this workaround in place.
+> > 
+> > 
+> 
+> This error seems to be introduced in 2.6.39-rc1 by commit a9712bc12c40c172
+> ("deal with races in /proc/*/{syscall,stack,personality}"). Thus, I don't
+> think that this patch will bite us in other situations.
+> Al, how do you want to handle this?
+> 
 
-Hi all,
+According to bisection, commit 8924feff66f35fe2 ("splice: lift pipe_lock out of splice_to_pipe()")
+added in 4.9-rc1 is the trigger of this deadlock. Thus, the fix needs to go to 4.9+.
 
-After merging the xarray tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-In file included from include/linux/list.h:9,
-                 from include/linux/module.h:9,
-                 from drivers/infiniband/core/device.c:34:
-drivers/infiniband/core/device.c: In function 'assign_name':
-include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
-es pointer from integer without a cast [-Wint-conversion]
- #define INT_MAX  ((int)(~0U>>1))
-                  ^~~~~~~~~~~~~~~
-drivers/infiniband/core/device.c:591:43: note: in expansion of macro 'INT_M=
-AX'
-  ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
-                                           ^~~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
-pe 'int'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-   ~~~~~~^~~~~
-drivers/infiniband/core/device.c:591:52: error: incompatible type for argum=
-ent 4 of 'xa_alloc'
-  ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
-                                                    ^~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
-t is of type 'struct ib_device *'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-                ~~~~~~~~~~~~~~~~^~~~~
-In file included from include/linux/list.h:9,
-                 from include/linux/module.h:9,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
-es pointer from integer without a cast [-Wint-conversion]
- #define INT_MAX  ((int)(~0U>>1))
-                  ^~~~~~~~~~~~~~~
-drivers/infiniband/core/device.c:594:44: note: in expansion of macro 'INT_M=
-AX'
-   ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
-                                            ^~~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
-pe 'int'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-   ~~~~~~^~~~~
-drivers/infiniband/core/device.c:594:53: error: incompatible type for argum=
-ent 4 of 'xa_alloc'
-   ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
-                                                     ^~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
-t is of type 'struct ib_device *'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-                ~~~~~~~~~~~~~~~~^~~~~
-In file included from include/linux/list.h:9,
-                 from include/linux/module.h:9,
-                 from drivers/infiniband/core/device.c:34:
-drivers/infiniband/core/device.c: In function 'assign_client_id':
-include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
-es pointer from integer without a cast [-Wint-conversion]
- #define INT_MAX  ((int)(~0U>>1))
-                  ^~~~~~~~~~~~~~~
-drivers/infiniband/core/device.c:826:47: note: in expansion of macro 'INT_M=
-AX'
-  ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
-                                               ^~~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
-pe 'int'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-   ~~~~~~^~~~~
-drivers/infiniband/core/device.c:826:56: error: incompatible type for argum=
-ent 4 of 'xa_alloc'
-  ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
-                                                        ^~~~~~
-In file included from include/linux/radix-tree.h:31,
-                 from include/linux/idr.h:15,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:16,
-                 from include/linux/kobject.h:20,
-                 from include/linux/module.h:17,
-                 from drivers/infiniband/core/device.c:34:
-include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
-t is of type 'struct ib_client *'
-   void *entry, struct xa_limit limit, gfp_t gfp)
-                ~~~~~~~~~~~~~~~~^~~~~
-
-Caused by commit
-
-  a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
-
-interacting with commits
-
-  e59178d895af ("RDMA/devices: Use xarray to store the clients")
-  0df91bb67334 ("RDMA/devices: Use xarray to store the client_data")
-
-from the rdma tree.
-
-Its a bit of a pain modifying a published API like this :-(
-
-I have added the following merge fixup patch for today (I assume some
-of the assignments are also now redundant).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 12 Feb 2019 16:09:58 +1100
-Subject: [PATCH] RDMA/devices: fix up for xa_alloc API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/infiniband/core/device.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/dev=
-ice.c
-index 3325be4f91a5..283ecc2aee89 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -588,11 +588,12 @@ static int assign_name(struct ib_device *device, cons=
-t char *name)
-=20
- 	/* Cyclically allocate a user visible ID for the device */
- 	device->index =3D last_id;
--	ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
-+	ret =3D xa_alloc(&devices, &device->index, device,
-+		       XA_LIMIT(last_id, INT_MAX), GFP_KERNEL);
- 	if (ret =3D=3D -ENOSPC) {
- 		device->index =3D 0;
--		ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
--			       GFP_KERNEL);
-+		ret =3D xa_alloc(&devices, &device->index, device,
-+			       XA_LIMIT(0, INT_MAX), GFP_KERNEL);
- 	}
- 	if (ret)
- 		goto out;
-@@ -823,8 +824,8 @@ static int assign_client_id(struct ib_client *client)
- 		client->client_id =3D
- 			list_last_entry(&client_list, struct ib_client, list)
- 				->client_id;
--	ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
--		       GFP_KERNEL);
-+	ret =3D xa_alloc(&clients, &client->client_id, client,
-+		       XA_LIMIT(client->client_id, INT_MAX), GFP_KERNEL);
- 	if (ret)
- 		goto out;
-=20
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zp94lxzFZ8Wtk+cbgvBz+cv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxiV4MACgkQAVBC80lX
-0Gy/fQf/R8zSv4ADGK5tjOwla8mCRTPX9jLAuOoym0LcigxKAbGRYgMtRvPLhS2N
-Opla/Q3fs1UeiGeO4CskTKDRvCzAQiVrDEAfyOUyBmN/jykspcRMOpmenl2rNzVG
-1gYV6HVL3VqkQgHVYvmuR0wxlsVYKWE8siTL1kibdw+WYj/RYbQLfm1hgGu7CkzN
-P3FlsbXkzsWb1Yw1ccsze1lBLrgMqlvCCVZ9462ROWVHwQMn7+hKs8UqUGtmW5Ou
-pzklJE1CvnG9l9Mdgmq5b0RmdP/BekKck6grBMDCqb8ot8UOfi+RFJ6v53JOQZed
-Gs7m88whOKDxdsN/R4gFZtyPGBMtAA==
-=yFml
------END PGP SIGNATURE-----
-
---Sig_/zp94lxzFZ8Wtk+cbgvBz+cv--
+# bad: [abb5a14fa20fdd400995926134b7be9eb8ce6048] Merge branch 'work.misc' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
+# good: [c8d2bc9bc39ebea8437fd974fdbc21847bb897a3] Linux 4.8
+# good: [523d939ef98fd712632d93a5a2b588e477a7565e] Linux 4.7
+# good: [2dcd0af568b0cf583645c8a317dd12e344b1c72a] Linux 4.6
+# good: [b562e44f507e863c6792946e4e1b1449fbbac85d] Linux 4.5
+# good: [afd2ff9b7e1b367172f18ba7f693dfb62bdcb2dc] Linux 4.4
+# good: [6a13feb9c82803e2b815eca72fa7a9f5561d7861] Linux 4.3
+# good: [64291f7db5bd8150a74ad2036f1037e6a0428df2] Linux 4.2
+# good: [b953c0d234bc72e8489d3bf51a276c5c4ec85345] Linux 4.1
+# good: [39a8804455fb23f09157341d3ba7db6d7ae6ee76] Linux 4.0
+git bisect start 'HEAD' 'v4.8' 'v4.7' 'v4.6' 'v4.5' 'v4.4' 'v4.3' 'v4.2' 'v4.1' 'v4.0'
+# good: [5691f0e9a3e7855832d5fd094801bf600347c2d0] Merge tag 'sound-4.9-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good 5691f0e9a3e7855832d5fd094801bf600347c2d0
+# good: [530a70617cb6325bd7781e7a993d732d6d37915a] Merge branch 'greybus' into staging-testing
+git bisect good 530a70617cb6325bd7781e7a993d732d6d37915a
+# good: [bc75450cc3db3485db1e289fef8c1028ba38296a] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid
+git bisect good bc75450cc3db3485db1e289fef8c1028ba38296a
+# bad: [00e729c933950cda694c49260ff67855fdbfd00a] Merge tag 'armsoc-dt' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+git bisect bad 00e729c933950cda694c49260ff67855fdbfd00a
+# bad: [5acb6052ce304d89e36f599f1e27a7c63d389ca0] Merge tag 'armsoc-defconfig' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+git bisect bad 5acb6052ce304d89e36f599f1e27a7c63d389ca0
+# bad: [d1f5323370fceaed43a7ee38f4c7bfc7e70f28d0] Merge branch 'work.splice_read' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
+git bisect bad d1f5323370fceaed43a7ee38f4c7bfc7e70f28d0
+# good: [87840a2b7e048018d18d60bdac5c09224de85370] Merge branch 'i2c/for-4.9' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
+git bisect good 87840a2b7e048018d18d60bdac5c09224de85370
+# good: [513a4befae06c4469abfb836e8f71977de58c636] Merge branch 'for-4.9/block' of git://git.kernel.dk/linux-block
+git bisect good 513a4befae06c4469abfb836e8f71977de58c636
+# good: [cca32b7eeb4ea24fa6596650e06279ad9130af98] ext4: allow DAX writeback for hole punch
+git bisect good cca32b7eeb4ea24fa6596650e06279ad9130af98
+# bad: [fba597db4218ac324eee34b64736ea94829c95bf] pipe: add pipe_buf_confirm() helper
+git bisect bad fba597db4218ac324eee34b64736ea94829c95bf
+# bad: [d82718e348fee15dbce8f578ff2588982b7cc7ca] fuse_dev_splice_read(): switch to add_to_pipe()
+git bisect bad d82718e348fee15dbce8f578ff2588982b7cc7ca
+# good: [db85a9eb2e364e24e71f94798e85dbaa8111bb4d] splice: switch get_iovec_page_array() to iov_iter
+git bisect good db85a9eb2e364e24e71f94798e85dbaa8111bb4d
+# bad: [79fddc4efd5d4de5cf210fe5ecf4d2734140849a] new helper: add_to_pipe()
+git bisect bad 79fddc4efd5d4de5cf210fe5ecf4d2734140849a
+# bad: [8924feff66f35fe22ce77aafe3f21eb8e5cff881] splice: lift pipe_lock out of splice_to_pipe()
+git bisect bad 8924feff66f35fe22ce77aafe3f21eb8e5cff881
