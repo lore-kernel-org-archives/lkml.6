@@ -2,107 +2,182 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF925C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96302C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2542083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:20:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F5F2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:21:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hYNIx/+f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfBLDU5 (ORCPT
+        id S1727478AbfBLDVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:20:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59772 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfBLDU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:20:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63BDBEBD;
-        Mon, 11 Feb 2019 19:20:56 -0800 (PST)
-Received: from [10.162.43.137] (p8cg001049571a15.blr.arm.com [10.162.43.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8DBC3F557;
-        Mon, 11 Feb 2019 19:20:53 -0800 (PST)
-Subject: Re: [PATCH v2] mm/memory-hotplug: Add sysfs hot-remove trigger
-To:     Robin Murphy <robin.murphy@arm.com>, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        osalvador@suse.de
-References: <49ef5e6c12f5ede189419d4dcced5dc04957c34d.1549906631.git.robin.murphy@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <4d92d783-736b-b94c-dbfd-1560c0936fb3@arm.com>
-Date:   Tue, 12 Feb 2019 08:50:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 11 Feb 2019 22:21:32 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:44021 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfBLDVc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 22:21:32 -0500
+Received: by mail-wr1-f47.google.com with SMTP id r2so994862wrv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 19:21:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hLXs27rPVddlIN2Y+VY1rZ6x4qsTrdDdtBkRfaDycQ8=;
+        b=hYNIx/+fk/bGYAS2+WwLqvKoiPxJutjp2NNdAaH4IO5Xft3SQgLmo0/0W+iOst95ce
+         NN6FRvJppnNOMFp8cVcbTseaUPEeAKgKGFlZI2Ff2Vq2o/hIj0tRcEnsZQ2xW7epHxKo
+         c6adUEh13UoF2lC9nQ7e2Y18JYHddeupS/B/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hLXs27rPVddlIN2Y+VY1rZ6x4qsTrdDdtBkRfaDycQ8=;
+        b=gBk8kzEru4FN3/KTTI0GJEwrkj5iFb1/bOEsVvWCfIr462gfgoeZg/BhVFZokYGeEG
+         9ljN+/VeyeIt5eexZAK6CevFpj4RS46vqx0ynQCFdvImRdAWo8mHxxDzcjzakI/BtKrd
+         QdhYAnSPU7Jaf7VZPsuMJRNkGeiiyhtimT9SZSkbpUUjQkyrxyBDIK/Be2AqUHWkZbid
+         kfv7ttj86czJQv88hMpzbJkw8fSDZy29JsTLLawj0UnxilJNPfOfspkgG4HR4epyK9AI
+         NGJM00A/THaiI7a1qUDwQExYO4UB+f96NH/axCYVlnklKSKK+RZvdA+yZ08g8can3Rla
+         7gHw==
+X-Gm-Message-State: AHQUAuZ8+gvws7CXov8Ek2WdAYiqkLxaOaH9nANVSTZD/P5oSQD8pyeu
+        Ayyvx0qOJuz4NMmhIkGos/T8hw==
+X-Google-Smtp-Source: AHgI3IYQlZs1R9XBHjuFplPiz6hJrtSGlTv38M2J/qPbf6gBkDJIx5iGwneN1TqZFFM3tfFYBQ9npA==
+X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr1027963wrt.241.1549941689950;
+        Mon, 11 Feb 2019 19:21:29 -0800 (PST)
+Received: from andrea ([89.22.71.151])
+        by smtp.gmail.com with ESMTPSA id k126sm2200699wme.27.2019.02.11.19.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 19:21:29 -0800 (PST)
+Date:   Tue, 12 Feb 2019 04:21:21 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
+ operations
+Message-ID: <20190212032121.GA2723@andrea>
+References: <20190211083846.18888-1-ying.huang@intel.com>
+ <20190211190646.j6pdxqirc56inbbe@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <49ef5e6c12f5ede189419d4dcced5dc04957c34d.1549906631.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211190646.j6pdxqirc56inbbe@ca-dmjordan1.us.oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/11/2019 11:20 PM, Robin Murphy wrote:
-> ARCH_MEMORY_PROBE is a useful thing for testing and debugging hotplug,
-> but being able to exercise the (arguably trickier) hot-remove path would
-> be even more useful. Extend the feature to allow removal of offline
-> sections to be triggered manually to aid development.
+> > +	if (!si)
+> > +		goto bad_nofile;
+> > +
+> > +	preempt_disable();
+> > +	if (!(si->flags & SWP_VALID))
+> > +		goto unlock_out;
 > 
-> Since process dictates the new sysfs entry be documented, let's also
-> document the existing probe entry to match - better 13-and-a-half years
-> late than never, as they say...
+> After Hugh alluded to barriers, it seems the read of SWP_VALID could be
+> reordered with the write in preempt_disable at runtime.  Without smp_mb()
+> between the two, couldn't this happen, however unlikely a race it is?
 > 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
+> CPU0                                CPU1
 > 
-> v2: Use is_memblock_offlined() helper, write up documentation
-> 
->  .../ABI/testing/sysfs-devices-memory          | 25 +++++++++++
->  drivers/base/memory.c                         | 42 ++++++++++++++++++-
->  2 files changed, 66 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
-> index deef3b5723cf..02a4250964e0 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-memory
-> +++ b/Documentation/ABI/testing/sysfs-devices-memory
-> @@ -91,3 +91,28 @@ Description:
->  		memory section directory.  For example, the following symbolic
->  		link is created for memory section 9 on node0.
->  		/sys/devices/system/node/node0/memory9 -> ../../memory/memory9
-> +
-> +What:		/sys/devices/system/memory/probe
-> +Date:		October 2005
-> +Contact:	Linux Memory Management list <linux-mm@kvack.org>
-> +Description:
-> +		The file /sys/devices/system/memory/probe is write-only, and
-> +		when written will simulate a physical hot-add of a memory
+> __swap_duplicate()
+>     get_swap_device()
+>         // sees SWP_VALID set
+>                                    swapoff
+>                                        p->flags &= ~SWP_VALID;
+>                                        spin_unlock(&p->lock); // pair w/ smp_mb
+>                                        ...
+>                                        stop_machine(...)
+>                                        p->swap_map = NULL;
+>         preempt_disable()
+>     read NULL p->swap_map
 
-Small nit. It does not 'simulate' but really does add the memory block into
-the memblock, buddy allocator and so on.
 
-> +		section at the given address. For example, assuming a section
-> +		of unused memory exists at physical address 0x80000000, it can
-> +		be introduced to the kernel with the following command:
-> +		# echo 0x80000000 > /sys/devices/system/memory/probe
-> +Users:		Memory hotplug testing and development
-> +
-> +What:		/sys/devices/system/memory/memoryX/remove
-> +Date:		February 2019
-> +Contact:	Linux Memory Management list <linux-mm@kvack.org>
-> +Description:
-> +		The file /sys/devices/system/memory/memoryX/remove is
-> +		write-only, and when written with a boolean 'true' value will
-> +		simulate a physical hot-remove of that memory section. For
+I don't think that that smp_mb() is necessary.  I elaborate:
 
-Same here.
-> +		example, assuming a 1GB section size, the section added by the
-> +		above "probe" example could be removed again with the following
+An important piece of information, I think, that is missing in the
+diagram above is the stopper thread which executes the work queued
+by stop_machine().  We have two cases to consider, that is,
 
-There is no need to mention specific memory block sizes like 1G in documentation
-for this generic interface which would work for all possible sizes.
+  1) the stopper is "executed before" the preempt-disable section
+
+	CPU0
+
+	cpu_stopper_thread()
+	...
+	preempt_disable()
+	...
+	preempt_enable()
+
+  2) the stopper is "executed after" the preempt-disable section
+
+	CPU0
+
+	preempt_disable()
+	...
+	preempt_enable()
+	...
+	cpu_stopper_thread()
+
+Notice that the reads from p->flags and p->swap_map in CPU0 cannot
+cross cpu_stopper_thread().  The claim is that CPU0 sees SWP_VALID
+unset in (1) and that it sees a non-NULL p->swap_map in (2).
+
+I consider the two cases separately:
+
+  1) CPU1 unsets SPW_VALID, it locks the stopper's lock, and it
+     queues the stopper work; CPU0 locks the stopper's lock, it
+     dequeues this work, and it reads from p->flags.
+
+     Diagrammatically, we have the following MP-like pattern:
+
+	CPU0				CPU1
+
+	lock(stopper->lock)		p->flags &= ~SPW_VALID
+	get @work			lock(stopper->lock)
+	unlock(stopper->lock)		add @work
+	reads p->flags 			unlock(stopper->lock)
+
+     where CPU0 must see SPW_VALID unset (if CPU0 sees the work
+     added by CPU1).
+
+  2) CPU0 reads from p->swap_map, it locks the completion lock,
+     and it signals completion; CPU1 locks the completion lock,
+     it checks for completion, and it writes to p->swap_map.
+
+     (If CPU0 doesn't signal the completion, or CPU1 doesn't see
+     the completion, then CPU1 will have to iterate the read and
+     to postpone the control-dependent write to p->swap_map.)
+
+     Diagrammatically, we have the following LB-like pattern:
+
+	CPU0				CPU1
+
+	reads p->swap_map		lock(completion)
+	lock(completion)		read completion->done
+	completion->done++		unlock(completion)
+	unlock(completion)		p->swap_map = NULL
+
+     where CPU0 must see a non-NULL p->swap_map if CPU1 sees the
+     completion from CPU0.
+
+Does this make sense?
+
+  Andrea
