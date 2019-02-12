@@ -2,150 +2,109 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D699FC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 046E6C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF3D2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C569D2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:32:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TR0xj5P7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728519AbfBLIb5 (ORCPT
+        id S1728528AbfBLIcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:31:57 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52277 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728209AbfBLIb5 (ORCPT
+        Tue, 12 Feb 2019 03:32:07 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39605 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728209AbfBLIcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:31:57 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1C8VOwd016393;
-        Tue, 12 Feb 2019 09:31:40 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qjfy63dwg-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Feb 2019 09:31:40 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CAFFE38;
-        Tue, 12 Feb 2019 08:31:38 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8468A2449;
-        Tue, 12 Feb 2019 08:31:38 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.47) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 12 Feb
- 2019 09:31:37 +0100
-Subject: Re: [PATCH v2 3/3] pwm: core: add consumer device link
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-CC:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <tduszyns@gmail.com>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1549901522-15071-1-git-send-email-fabrice.gasnier@st.com>
- <1549901522-15071-4-git-send-email-fabrice.gasnier@st.com>
- <20190211190628.eisyi6wjus4ltrrn@pengutronix.de>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <b9f1bb5c-36cd-f6e6-e6c6-a0257cf38b7e@st.com>
-Date:   Tue, 12 Feb 2019 09:31:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 03:32:06 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n8so3051547otl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:32:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=r/MtKpa4761DXWQUhuz6Dd1LL8SOhaerQOxx15a6k3g=;
+        b=TR0xj5P7yc2Csi1UPes3wPhR18oWs/tTD5xusancZlJtjcak9JrNv0A9kUXWXchV1m
+         3o8i1HU5HLMd5QLkEF5kkQkS6CfLROEFBDp+7dCJutSOZsPPgR/aaXfLm/fn4vhClJXQ
+         huUfRBaGKUZWKpgYbgJG0YvuxGroDDBZraRNO62iqepOt47Dx0fY7A5GJps/rK+5fwds
+         0SGkuTXTMgOHkzTHEziOVy6H8LOL0u9yP8wwKxDrBkIgtCX2gT93T3/4MgRpMQow/kpe
+         FjLYoyr3UPwws/C6NUz7Bv3jgicNjqHfSdQPS/oNm+tkrMwaHIFcqS+NAaajooPpEfdm
+         AJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=r/MtKpa4761DXWQUhuz6Dd1LL8SOhaerQOxx15a6k3g=;
+        b=IlaU/oW5QTkQ8mqnjC10Dc8ucKLp7egz4ZkyGW1qGrGTnpUi0yI4oQViDLEQYJ66c+
+         w6jRi4+UjM0XC6Vkm2kEVcG775liQUnEHmlPZm71NEhFZcVOlaCZGtB3GEQIeG6yoS53
+         ENX1KTdzMGSMzWzF3musy7HBhuErNMI3F8si1dSiyMiH3luzQq8gmqamVKPda5XhXc+H
+         YCC9rA4lcK5kmboTej1YjaaM3LG/2AOPW0QLSYv7nxEtD8MG0dI+Mh7dyDyvZwgCwFXB
+         xKO5EOWWP9WSYLcxG/bElsk4ISF4MdgKv2W8+1UgGJayk0SOQQb3xwW4kORz/vwLGDMQ
+         K4nQ==
+X-Gm-Message-State: AHQUAuZo/s64R4AGJaQEgHxWoaKM2qXjV4aaHvodpRHb3WKwVpjPaDPZ
+        Iuf9gMfnYwezthKO5IzZOokAP76GEpxja89L/k97SQ==
+X-Google-Smtp-Source: AHgI3Ia+dhS3kqkHVI512MvgSHV+MHbl80BetH5wNP878OMvJJ7YK/nA58fNKqSAcWSETd7fKODREoVbgxQP2Tg+cEE=
+X-Received: by 2002:a9d:6191:: with SMTP id g17mr2680441otk.56.1549960326066;
+ Tue, 12 Feb 2019 00:32:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211190628.eisyi6wjus4ltrrn@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_06:,,
- signatures=0
+References: <20190211122606.8662-1-brgl@bgdev.pl> <a333fac0-955e-d04a-6076-42a5b6edda34@ti.com>
+In-Reply-To: <a333fac0-955e-d04a-6076-42a5b6edda34@ti.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 12 Feb 2019 09:31:55 +0100
+Message-ID: <CAMpxmJWZoPkM7LW8HvVi2SRP5097f9YTnbEZMAXpbM69JHG8fg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 00/33] ARM: davinci: modernize the irq support
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Lechner <david@lechnology.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 8:06 PM, Uwe Kleine-König wrote:
-> Hello Fabrice,
-> 
-> On Mon, Feb 11, 2019 at 05:12:02PM +0100, Fabrice Gasnier wrote:
->> Add a device link between the PWM consumer and the PWM provider. This
->> enforces the PWM user to get suspended before the PWM provider. It
->> allows proper synchronization of suspend/resume sequences: the PWM user
->> is responsible for properly stopping PWM, before the provider gets
->> suspended: see [1]. Add the device link in:
->> - pwm_get()
->> - devm_pwm_get()
->> - devm_of_pwm_get()
->> as it requires a reference to the device for the PWM consumer.
->>
->> [1] https://lkml.org/lkml/2019/2/5/770
->>
->> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  drivers/pwm/core.c | 13 +++++++++++--
->>  1 file changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
->> index 1581f6a..2835e27 100644
->> --- a/drivers/pwm/core.c
->> +++ b/drivers/pwm/core.c
->> @@ -770,8 +770,13 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
->>  	int err;
->>  
->>  	/* look up via DT first */
->> -	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
->> -		return of_pwm_get(dev->of_node, con_id);
->> +	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
->> +		pwm = of_pwm_get(dev->of_node, con_id);
->> +		if (!IS_ERR(pwm))
->> +			device_link_add(dev, pwm->chip->dev,
->> +					DL_FLAG_AUTOREMOVE_CONSUMER);
->> +		return pwm;
->> +	}
->>  
->>  	/*
->>  	 * We look up the provider in the static table typically provided by
->> @@ -851,6 +856,8 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
->>  	pwm->args.period = chosen->period;
->>  	pwm->args.polarity = chosen->polarity;
->>  
->> +	device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
->> +
->>  	return pwm;
->>  }
->>  EXPORT_SYMBOL_GPL(pwm_get);
->> @@ -943,6 +950,8 @@ struct pwm_device *devm_of_pwm_get(struct device *dev, struct device_node *np,
->>  	if (!IS_ERR(pwm)) {
->>  		*ptr = pwm;
->>  		devres_add(dev, ptr);
->> +		device_link_add(dev, pwm->chip->dev,
->> +				DL_FLAG_AUTOREMOVE_CONSUMER);
-> 
-> IMHO it's surprising that devm_of_pwm_get() does more than of_pwm_get()
-> + devres stuff. I'd put device_link_add() into of_pwm_get().
+wt., 12 lut 2019 o 09:24 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 11/02/19 5:55 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > NOTE: resending due to missing irqchip maintainers in Cc
+> >
+> > This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> > the irqchip drivers and moves them over to drivers/irqchip.
+> >
+> > The series can be logically split into four parts. The first (1-8) aims
+> > at introducing support for SPARSE_IRQ. It contains a couple changes
+> > required for that functionality and the final patch actually selecting
+> > it.
+> >
+> > Second part (9-19) makes the aintc driver suitable for drivers/irqchip
+> > and eventually moves it over there.
+> >
+> > Part 3 (20-32) does the same for the cp-intc driver.
+> >
+> > Last patch removes unnecessary code.
+> >
+> > The series has been tested on da850-lcdk (for cp-intc) and
+> > dm365-evm (for aintc).
+>
+> There is build breakage in drivers/input/keyboard/davinci_keyscan.c
+> after this series due to <mach/irqs.h> removal.
+>
+> Thanks,
+> Sekhar
 
-Hi Uwe,
+Thanks, I'll fix that.
 
-I also agree with this. But I think this implies modifying the API for
-of_pwm_get():
- /**
-  * of_pwm_get() - request a PWM via the PWM framework
-+ * @dev: device for PWM consumer
-  * @np: device node to get the PWM from
-  * @con_id: consumer name
-
-It seems there aren't much of_pwm_get() users currently.
-Does this look sensible ?
-
-Best regards,
-Fabrice
-
-> 
-> Best regards
-> Uwe
-> 
+Bart
