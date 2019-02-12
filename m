@@ -2,103 +2,87 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE05C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067D6C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE08A218D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lwO80HSm"
+	by mail.kernel.org (Postfix) with ESMTP id CACC92070D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549959934;
+	bh=+Fd0EwoqWU/kz4L0k58lT9or/eJJ9P6/DgNPCoknYmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0ZjXm0W4mEUmw5XNOEGHaWCvf5+D4cH/1DzYtIwj5MoQ4uxUX3LIB+7a0p95NvdMw
+	 gUd4V6T0b27aYmNb/wtze7piaLdzkfgYIzMfXTlA5mJ+1q8n8S4p6NyJV/hUevshD8
+	 ePRLxDj5HbIZSEr1Jp/q42yWFSJh8IPFU29HkZ1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfBLIZ3 (ORCPT
+        id S1728463AbfBLIZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:25:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:47352 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfBLIZ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:25:28 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1C8OBYx029956;
-        Tue, 12 Feb 2019 02:24:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549959851;
-        bh=IpuQ1fod8zBY4+LMvrI8N0OYgFve4HTqRq42722JrOI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lwO80HSmU/vXCdCjF7xU2878vndsM48q1UbUsTaKcgH7SIf3XbyAy+5YdHYs3JJfB
-         W3twLDM6FbM8rYfrvjAG03Lh1ZC+ieVC0B9xH/F/mYTyVt9XhXRAZzKGXAAB0Q/IIN
-         gkCZnPKcNiMLcLhQliS4A59nRi1jaRWUED5hezeE=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1C8OBpe106760
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 02:24:11 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 02:24:10 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 02:24:10 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1C8O67P020205;
-        Tue, 12 Feb 2019 02:24:07 -0600
-Subject: Re: [RESEND PATCH v2 00/33] ARM: davinci: modernize the irq support
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190211122606.8662-1-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a333fac0-955e-d04a-6076-42a5b6edda34@ti.com>
-Date:   Tue, 12 Feb 2019 13:54:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 03:25:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728095AbfBLIZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:25:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E9F72070D;
+        Tue, 12 Feb 2019 08:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549959932;
+        bh=+Fd0EwoqWU/kz4L0k58lT9or/eJJ9P6/DgNPCoknYmQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fRufwKv4/Ur9qK9i3CEi8Cs9E4TUpr37mUp81/orBP2Csv/XAcmRXG2cVOXEzIhMy
+         YwgCt8Ql7xfsLWbkHwlT8LQEHQ4woygwE++mOD9u8RkdFecQJBW6jxT+kwirMnNCYT
+         Y7GWI93immvQTeXvgZ+pWdflT+X2LWUdGmP1hlLA=
+Date:   Tue, 12 Feb 2019 09:25:17 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: RFC: drop ISA support in the synlink tty driver?
+Message-ID: <20190212082517.GA27889@kroah.com>
+References: <20190211132534.29407-1-hch@lst.de>
+ <20190212075151.GA7588@kroah.com>
+ <7585c8b6-6dc4-2556-d14f-2fd60dc7df90@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7585c8b6-6dc4-2556-d14f-2fd60dc7df90@suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/19 5:55 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Feb 12, 2019 at 09:08:41AM +0100, Jiri Slaby wrote:
+> On 12. 02. 19, 8:51, Greg Kroah-Hartman wrote:
+> > On Mon, Feb 11, 2019 at 02:25:33PM +0100, Christoph Hellwig wrote:
+> >> Hi Greg and Jiri,
+> >>
+> >> I've been working hard to get rid of the remaining callers the pass a
+> >> NULL struct device to the DMA mapping functions and am almost done.
+> >>
+> >> The only non-trivial driver is the synclink driver, which has legacy
+> >> early 90s style ISA support that doesn't use the device model at all.
+> >>
+> >> In theory we could convert it to an isa_driver, but without testing
+> >> that seems rather dangerous.  So for now I would suggest that we
+> >> remove the ISA support in this driver - if anyone cares enough we
+> >> can resurrect it from the git history and convert it to use the driver
+> >> model.
+> > 
+> > No objection from me at all, I'll go queue this up now, thanks.
 > 
-> NOTE: resending due to missing irqchip maintainers in Cc
-> 
-> This series ports the davinci platform to using SPARSE_IRQ, cleans up
-> the irqchip drivers and moves them over to drivers/irqchip.
-> 
-> The series can be logically split into four parts. The first (1-8) aims
-> at introducing support for SPARSE_IRQ. It contains a couple changes
-> required for that functionality and the final patch actually selecting
-> it.
-> 
-> Second part (9-19) makes the aintc driver suitable for drivers/irqchip
-> and eventually moves it over there.
-> 
-> Part 3 (20-32) does the same for the cp-intc driver.
-> 
-> Last patch removes unnecessary code.
-> 
-> The series has been tested on da850-lcdk (for cp-intc) and
-> dm365-evm (for aintc).
+> Agreed, but I would kill also the MGSL_BUS_TYPE_ISA macro proper.
 
-There is build breakage in drivers/input/keyboard/davinci_keyscan.c
-after this series due to <mach/irqs.h> removal.
+It's just a #define, in a uapi file, so we should probably leave it as
+userspace programs _might_ depend on it.  I have no idea why, but oh
+well...
 
-Thanks,
-Sekhar
+thanks,
+
+greg k-h
