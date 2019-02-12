@@ -2,632 +2,307 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD27C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0555FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B9C20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1ggGNRya"
+	by mail.kernel.org (Postfix) with ESMTP id BE95B21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfBLIxJ (ORCPT
+        id S1728647AbfBLIxO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:53:09 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34093 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728501AbfBLIxJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:53:09 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so1104797itd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:53:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=G0nU90RwDsfWZmCoy18n45kYZJGISsIrZa6kbcFKYl8=;
-        b=1ggGNRyaAIkavmCpur87BqcTWA18z70wpaEzSs30Bv8UUOjLo9C6m5Tnl2sDQu6B2Y
-         9RgkgasT7AcIDwx8z16SCt2I3hxNpmf8svFqyXb3LFJ7ptj/3L1qxU7K3UwXBLkF/d+Z
-         l7+FWfaLhWuXDWo4jaNXRHytqOy6TGyZnmqe8siKIwPbzU+f7ndn8fhg/vnrpeR20R5O
-         PvfiROA6+7IgdsJ7GdHy/vOEdHXoWZjWtnkswznzgr4cxho/O3BxbPrisgryYg5xPYQ9
-         xaaiOWpSUwDNYncoJQETVChzP7q8jlkYzH00ygIPzSuXdcyCloLLBn2UqUtImEVY1eXm
-         dCMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=G0nU90RwDsfWZmCoy18n45kYZJGISsIrZa6kbcFKYl8=;
-        b=REmA336bwhDSBfy0H6y31R1jGcaGISB14bIjsv5r2M0s5I6EczzMXsLuLFnjfmePu6
-         QJ50xplMLgDfzRpu/OzpFWfa996jl3JSIBKtQ4p9yEFTddDIHEpLgxjFrWTUIcUiYsBT
-         x0HV2TU1KGI7+T1nH0KR9UynQaNFYrRZhz7dI2SUN/l6nZ97JlxM10yfyOXlOHv3LKCq
-         hoOVNPBHrR0Ei2LyMPshvmSlCO5U0jQYGnCPBalM59xfU6tUgXtMJA6Wz/PnISkcANkW
-         /t3636f8WZjBYV8TWs1c9yfUuskgAm89SHxWa3x9yw6pxCZz/rWOGtbW1j4LL2Z7Tllp
-         HWSw==
-X-Gm-Message-State: AHQUAubUoW5Q/xZcK1+iZKTXVmox2Gi1PW3NkDw8rUBmPZuyn6Zon59g
-        4be/O5pkXhahmrLk3VsUAKGYkFa8GO2UR7RM0PUl0Q==
-X-Google-Smtp-Source: AHgI3IZIs+W+zi233E6237eEtaPtZVV9hCS8qyjd7JuBpNdjNg03OdADmmrx8VyeluRCgP1wkNIWLe9l8GefmGvgJ9c=
-X-Received: by 2002:a5d:91d3:: with SMTP id k19mr1407169ior.258.1549961587336;
- Tue, 12 Feb 2019 00:53:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell>
-In-Reply-To: <20190212083642.GT20638@dell>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 12 Feb 2019 09:52:56 +0100
-Message-ID: <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Tue, 12 Feb 2019 03:53:14 -0500
+Received: from foss.arm.com ([217.140.101.70]:33604 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728501AbfBLIxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:53:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38C42EBD;
+        Tue, 12 Feb 2019 00:53:12 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E6773F557;
+        Tue, 12 Feb 2019 00:53:09 -0800 (PST)
+Date:   Tue, 12 Feb 2019 08:53:00 +0000
+Message-ID: <867ee5tmkz.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/9] irq/irq_sim: use irq domain
+In-Reply-To: <CAMpxmJXN0g10BMd1Mj1yx2_F6HuoKEyjHPoW+jS9pgmk-uNs8g@mail.gmail.com>
+References: <20190129084411.30495-1-brgl@bgdev.pl>
+        <20190129084411.30495-3-brgl@bgdev.pl>
+        <20190211222610.42e9189b@why.wild-wind.fr.eu.org>
+        <CAMpxmJXN0g10BMd1Mj1yx2_F6HuoKEyjHPoW+jS9pgmk-uNs8g@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 12 lut 2019 o 09:36 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
->
-> On Tue, 05 Feb 2019, Bartosz Golaszewski wrote:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Bartosz,
+
+On Tue, 12 Feb 2019 08:30:32 +0000,
+Bartosz Golaszewski <bgolaszewski@baylibre.com> wrote:
+> 
+> pon., 11 lut 2019 o 23:26 Marc Zyngier <marc.zyngier@arm.com> napisał(a):
 > >
-> > Add the core mfd driver for max77650 PMIC. We define five sub-devices
-> > for which the drivers will be added in subsequent patches.
+> > On Tue, 29 Jan 2019 09:44:04 +0100
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/mfd/Kconfig          |  11 ++
-> >  drivers/mfd/Makefile         |   1 +
-> >  drivers/mfd/max77650.c       | 342 +++++++++++++++++++++++++++++++++++
-> >  include/linux/mfd/max77650.h |  59 ++++++
-> >  4 files changed, 413 insertions(+)
-> >  create mode 100644 drivers/mfd/max77650.c
-> >  create mode 100644 include/linux/mfd/max77650.h
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > >
+> > > Delegate the offset to virq number mapping to the provided framework
+> > > instead of handling it locally. Use the legacy domain as we want to
+> > > preallocate the irq descriptors.
 > >
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index 76f9909cf396..a80c3fe80fbe 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -734,6 +734,17 @@ config MFD_MAX77620
-> >         provides common support for accessing the device; additional dr=
-ivers
-> >         must be enabled in order to use the functionality of the device=
-.
+> > Why?
 > >
-> > +config MFD_MAX77650
-> > +     tristate "Maxim MAX77650/77651 PMIC Support"
-> > +     depends on I2C
-> > +     depends on OF || COMPILE_TEST
-> > +     select MFD_CORE
-> > +     select REGMAP_I2C
-> > +     help
-> > +       Say yes here to add support for Maxim Semiconductor MAX77650 an=
-d
-> > +       MAX77651 Power Management ICs. This is the core multifunction
-> > +       driver for interacting with the device.
-> > +
-> >  config MFD_MAX77686
-> >       tristate "Maxim Semiconductor MAX77686/802 PMIC Support"
-> >       depends on I2C
-> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> > index 12980a4ad460..3b912a4015d1 100644
-> > --- a/drivers/mfd/Makefile
-> > +++ b/drivers/mfd/Makefile
-> > @@ -151,6 +151,7 @@ obj-$(CONFIG_MFD_DA9150)  +=3D da9150-core.o
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > ---
+> > >  include/linux/irq_sim.h |  6 +--
+> > >  kernel/irq/irq_sim.c    | 94 +++++++++++++++++++++++++++++------------
+> > >  2 files changed, 71 insertions(+), 29 deletions(-)
+> > >
+> > > diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> > > index eda132c22b57..b96c2f752320 100644
+> > > --- a/include/linux/irq_sim.h
+> > > +++ b/include/linux/irq_sim.h
+> > > @@ -8,6 +8,7 @@
+> > >
+> > >  #include <linux/irq.h>
+> > >  #include <linux/irq_work.h>
+> > > +#include <linux/irqdomain.h>
+> > >  #include <linux/device.h>
+> > >
+> > >  /*
+> > > @@ -21,16 +22,15 @@ struct irq_sim_work_ctx {
+> > >  };
+> > >
+> > >  struct irq_sim_irq_ctx {
+> > > -     int                     irqnum;
+> > >       bool                    enabled;
+> > >  };
+> > >
+> > >  struct irq_sim {
+> > >       struct irq_chip         chip;
+> > > +     struct irq_domain       *domain;
+> > >       struct irq_sim_work_ctx work_ctx;
+> > > -     int                     irq_base;
+> > > +     int                     virq_base;
+> > >       unsigned int            irq_count;
+> > > -     struct irq_sim_irq_ctx  *irqs;
+> > >  };
+> > >
+> > >  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+> > > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> > > index b732e4e2e45b..2bcdbab1bc5a 100644
+> > > --- a/kernel/irq/irq_sim.c
+> > > +++ b/kernel/irq/irq_sim.c
+> > > @@ -44,6 +44,43 @@ static void irq_sim_handle_irq(struct irq_work *work)
+> > >       }
+> > >  }
+> > >
+> > > +static int irq_sim_domain_map(struct irq_domain *domain,
+> > > +                           unsigned int virq, irq_hw_number_t hw)
+> > > +{
+> > > +     struct irq_sim *sim = domain->host_data;
+> > > +     struct irq_sim_irq_ctx *ctx;
+> > > +
+> > > +     ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> > > +     if (!ctx)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     irq_set_chip(virq, &sim->chip);
+> > > +     irq_set_chip_data(virq, ctx);
+> > > +     irq_set_handler(virq, handle_simple_irq);
 > >
-> >  obj-$(CONFIG_MFD_MAX14577)   +=3D max14577.o
-> >  obj-$(CONFIG_MFD_MAX77620)   +=3D max77620.o
-> > +obj-$(CONFIG_MFD_MAX77650)   +=3D max77650.o
-> >  obj-$(CONFIG_MFD_MAX77686)   +=3D max77686.o
-> >  obj-$(CONFIG_MFD_MAX77693)   +=3D max77693.o
-> >  obj-$(CONFIG_MFD_MAX77843)   +=3D max77843.o
-> > diff --git a/drivers/mfd/max77650.c b/drivers/mfd/max77650.c
-> > new file mode 100644
-> > index 000000000000..7c6164f1fde4
-> > --- /dev/null
-> > +++ b/drivers/mfd/max77650.c
-> > @@ -0,0 +1,342 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +//
-> > +// Copyright (C) 2018 BayLibre SAS
-> > +// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > +//
-> > +// Core MFD driver for MAXIM 77650/77651 charger/power-supply.
-> > +
-> > +#include <linux/i2c.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/irq.h>
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/mfd/max77650.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#define MAX77650_INT_GPI_F_MSK               BIT(0)
-> > +#define MAX77650_INT_GPI_R_MSK               BIT(1)
-> > +#define MAX77650_INT_GPI_MSK \
-> > +                     (MAX77650_INT_GPI_F_MSK | MAX77650_INT_GPI_R_MSK)
-> > +#define MAX77650_INT_nEN_F_MSK               BIT(2)
-> > +#define MAX77650_INT_nEN_R_MSK               BIT(3)
-> > +#define MAX77650_INT_TJAL1_R_MSK     BIT(4)
-> > +#define MAX77650_INT_TJAL2_R_MSK     BIT(5)
-> > +#define MAX77650_INT_DOD_R_MSK               BIT(6)
-> > +
-> > +#define MAX77650_INT_THM_MSK         BIT(0)
-> > +#define MAX77650_INT_CHG_MSK         BIT(1)
-> > +#define MAX77650_INT_CHGIN_MSK               BIT(2)
-> > +#define MAX77650_INT_TJ_REG_MSK              BIT(3)
-> > +#define MAX77650_INT_CHGIN_CTRL_MSK  BIT(4)
-> > +#define MAX77650_INT_SYS_CTRL_MSK    BIT(5)
-> > +#define MAX77650_INT_SYS_CNFG_MSK    BIT(6)
-> > +
-> > +#define MAX77650_INT_GLBL_OFFSET     0
-> > +#define MAX77650_INT_CHG_OFFSET              1
-> > +
-> > +#define MAX77650_SBIA_LPM_MASK               BIT(5)
-> > +#define MAX77650_SBIA_LPM_DISABLED   0x00
-> > +
-> > +enum {
-> > +     MAX77650_INT_GPI =3D 0,
-> > +     MAX77650_INT_nEN_F,
-> > +     MAX77650_INT_nEN_R,
-> > +     MAX77650_INT_TJAL1_R,
-> > +     MAX77650_INT_TJAL2_R,
-> > +     MAX77650_INT_DOD_R,
-> > +     MAX77650_INT_THM,
-> > +     MAX77650_INT_CHG,
-> > +     MAX77650_INT_CHGIN,
-> > +     MAX77650_INT_TJ_REG,
-> > +     MAX77650_INT_CHGIN_CTRL,
-> > +     MAX77650_INT_SYS_CTRL,
-> > +     MAX77650_INT_SYS_CNFG,
-> > +};
-> > +
-> > +enum {
-> > +     MAX77650_CELL_REGULATOR =3D 0,
-> > +     MAX77650_CELL_CHARGER,
-> > +     MAX77650_CELL_GPIO,
-> > +     MAX77650_CELL_LED,
-> > +     MAX77650_CELL_ONKEY,
-> > +     MAX77650_NUM_CELLS,
-> > +};
-> > +
-> > +struct max77650_irq_mapping {
-> > +     int cell_num;
-> > +     const int *irqs;
-> > +     const char *const *irq_names;
-> > +     unsigned int num_irqs;
-> > +};
-> > +
-> > +static const int max77650_charger_irqs[] =3D {
-> > +     MAX77650_INT_CHG,
-> > +     MAX77650_INT_CHGIN,
-> > +};
-> > +
-> > +static const int max77650_gpio_irqs[] =3D {
-> > +     MAX77650_INT_GPI,
-> > +};
-> > +
-> > +static const int max77650_onkey_irqs[] =3D {
-> > +     MAX77650_INT_nEN_F,
-> > +     MAX77650_INT_nEN_R,
-> > +};
-> > +
-> > +static const char *const max77650_charger_irq_names[] =3D {
-> > +     "CHG",
-> > +     "CHGIN",
-> > +};
-> > +
-> > +static const char *const max77650_gpio_irq_names[] =3D {
-> > +     "GPI",
-> > +};
-> > +
-> > +static const char *const max77650_onkey_irq_names[] =3D {
-> > +     "nEN_F",
-> > +     "nEN_R",
-> > +};
-> > +
-> > +static const struct max77650_irq_mapping max77650_irq_mapping_table[] =
-=3D {
-> > +     {
-> > +             .cell_num       =3D MAX77650_CELL_CHARGER,
-> > +             .irqs           =3D max77650_charger_irqs,
-> > +             .irq_names      =3D max77650_charger_irq_names,
-> > +             .num_irqs       =3D ARRAY_SIZE(max77650_charger_irqs),
-> > +     },
-> > +     {
-> > +             .cell_num       =3D MAX77650_CELL_GPIO,
-> > +             .irqs           =3D max77650_gpio_irqs,
-> > +             .irq_names      =3D max77650_gpio_irq_names,
-> > +             .num_irqs       =3D ARRAY_SIZE(max77650_gpio_irqs),
-> > +     },
-> > +     {
-> > +             .cell_num       =3D MAX77650_CELL_ONKEY,
-> > +             .irqs           =3D max77650_onkey_irqs,
-> > +             .irq_names      =3D max77650_onkey_irq_names,
-> > +             .num_irqs       =3D ARRAY_SIZE(max77650_onkey_irqs),
-> > +     },
-> > +};
->
-> This is all a bit convoluted and nasty TBH.
->
-> > +static const struct mfd_cell max77650_cells[] =3D {
-> > +     [MAX77650_CELL_REGULATOR] =3D {
-> > +             .name           =3D "max77650-regulator",
-> > +             .of_compatible  =3D "maxim,max77650-regulator",
-> > +     },
-> > +     [MAX77650_CELL_CHARGER] =3D {
-> > +             .name           =3D "max77650-charger",
-> > +             .of_compatible  =3D "maxim,max77650-charger",
-> > +     },
-> > +     [MAX77650_CELL_GPIO] =3D {
-> > +             .name           =3D "max77650-gpio",
-> > +             .of_compatible  =3D "maxim,max77650-gpio",
-> > +     },
-> > +     [MAX77650_CELL_LED] =3D {
-> > +             .name           =3D "max77650-led",
-> > +             .of_compatible  =3D "maxim,max77650-led",
-> > +     },
-> > +     [MAX77650_CELL_ONKEY] =3D {
-> > +             .name           =3D "max77650-onkey",
-> > +             .of_compatible  =3D "maxim,max77650-onkey",
-> > +     },
-> > +};
->
-> Why are you numbering the cells?  There is no need to do this.
->
+> > Consider using modern APIs such as irq_domain_set_info().
+> >
+> > > +     irq_modify_status(virq, IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
+> >
+> > Where is this requirement coming from?
+> >
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static void irq_sim_domain_free(struct irq_domain *domain,
+> > > +                             unsigned int virq, unsigned int num_irqs)
+> > > +{
+> > > +     struct irq_sim_irq_ctx *ctx;
+> > > +     struct irq_data *irq;
+> > > +     int i;
+> > > +
+> > > +     for (i = 0; i < num_irqs; i++) {
+> > > +             irq = irq_domain_get_irq_data(domain, virq + i);
+> > > +             ctx = irq_data_get_irq_chip_data(irq);
+> > > +             kfree(ctx);
+> > > +     }
+> > > +}
+> > > +
+> > > +static const struct irq_domain_ops irq_sim_domain_ops = {
+> > > +     .map = irq_sim_domain_map,
+> > > +     .free = irq_sim_domain_free,
+> >
+> > The intended use of the v2 API is to have alloc and free as a pair, and
+> > no map. So please choose which version of the API you're using here.
+> > The safest bet would be to move what you do on map into alloc.
+> >
+> > > +};
+> > > +
+> > >  /**
+> > >   * irq_sim_init - Initialize the interrupt simulator: allocate a range of
+> > >   *                dummy interrupts.
+> > > @@ -56,16 +93,15 @@ static void irq_sim_handle_irq(struct irq_work *work)
+> > >   */
+> > >  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+> > >  {
+> > > -     int i;
+> > > -
+> > > -     sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
+> > > -     if (!sim->irqs)
+> > > +     sim->virq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
+> > > +     if (sim->virq_base < 0)
+> > > +             return sim->virq_base;
+> > > +
+> > > +     sim->domain = irq_domain_add_legacy(NULL, num_irqs, sim->virq_base,
+> > > +                                         0, &irq_sim_domain_ops, sim);
+> >
+> > Why do you need a legacy domain? As far as I can tell, this is new
+> > code, hence it has no legacy.
+> >
+> > > +     if (!sim->domain) {
+> > > +             irq_free_descs(sim->virq_base, num_irqs);
+> > >               return -ENOMEM;
+> > > -
+> > > -     sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
+> > > -     if (sim->irq_base < 0) {
+> > > -             kfree(sim->irqs);
+> > > -             return sim->irq_base;
+> > >       }
+> > >
+> > >       sim->chip.name = "irq_sim";
+> > > @@ -74,25 +110,15 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+> > >
+> > >       sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
+> > >       if (!sim->work_ctx.pending) {
+> > > -             kfree(sim->irqs);
+> > > -             irq_free_descs(sim->irq_base, num_irqs);
+> > > +             irq_domain_remove(sim->domain);
+> > > +             irq_free_descs(sim->virq_base, num_irqs);
+> > >               return -ENOMEM;
+> > >       }
+> > >
+> > > -     for (i = 0; i < num_irqs; i++) {
+> > > -             sim->irqs[i].irqnum = sim->irq_base + i;
+> > > -             sim->irqs[i].enabled = false;
+> > > -             irq_set_chip(sim->irq_base + i, &sim->chip);
+> > > -             irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
+> > > -             irq_set_handler(sim->irq_base + i, &handle_simple_irq);
+> > > -             irq_modify_status(sim->irq_base + i,
+> > > -                               IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
+> > > -     }
+> > > -
+> > >       init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
+> > >       sim->irq_count = num_irqs;
+> > >
+> > > -     return sim->irq_base;
+> > > +     return sim->virq_base;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(irq_sim_init);
+> > >
+> > > @@ -106,8 +132,8 @@ void irq_sim_fini(struct irq_sim *sim)
+> > >  {
+> > >       irq_work_sync(&sim->work_ctx.work);
+> > >       bitmap_free(sim->work_ctx.pending);
+> > > -     irq_free_descs(sim->irq_base, sim->irq_count);
+> > > -     kfree(sim->irqs);
+> > > +     irq_domain_free_irqs(sim->virq_base, sim->irq_count);
+> > > +     irq_domain_remove(sim->domain);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(irq_sim_fini);
+> > >
+> > > @@ -151,6 +177,20 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+> > >
+> > > +static struct irq_sim_irq_ctx *
+> > > +irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
+> > > +{
+> > > +     struct irq_sim_irq_ctx *ctx;
+> > > +     struct irq_data *irq;
+> > > +     int virq;
+> > > +
+> > > +     virq = irq_find_mapping(sim->domain, offset);
+> > > +     irq = irq_domain_get_irq_data(sim->domain, virq);
+> > > +     ctx = irq_data_get_irq_chip_data(irq);
+> > > +
+> > > +     return ctx;
+> > > +}
+> > > +
+> > >  /**
+> > >   * irq_sim_fire - Enqueue an interrupt.
+> > >   *
+> > > @@ -159,7 +199,9 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+> > >   */
+> > >  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+> > >  {
+> > > -     if (sim->irqs[offset].enabled) {
+> > > +     struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
+> > > +
+> > > +     if (ctx->enabled) {
+> > >               set_bit(offset, sim->work_ctx.pending);
+> > >               irq_work_queue(&sim->work_ctx.work);
+> > >       }
+> > > @@ -175,6 +217,6 @@ EXPORT_SYMBOL_GPL(irq_sim_fire);
+> > >   */
+> > >  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+> > >  {
+> > > -     return sim->irqs[offset].irqnum;
+> > > +     return irq_find_mapping(sim->domain, offset);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(irq_sim_irqnum);
+> >
+> >
+> > Thanks,
+> >
+> >         M.
+> > --
+> > Without deviation from the norm, progress is not possible.
+> 
+> Hi Marc,
+> 
+> since we're so late in the release cycle and I really only need patch
+> 3/9 from this series - I'll drop this patch and 1/9 as well in v3. We
+> can come back to this in the next cycle.
 
-Just for better readability. It makes sense to me coupled with
-MAX77650_NUM_CELLS.
+Then this series doesn't even compile once you remove these two
+patches (just removing patch #1 breaks everything). Please repost a
+fixed series that can be reviewed in the light of your new, reduced
+requirements.
 
-> > +static const struct regmap_irq max77650_irqs[] =3D {
-> > +     [MAX77650_INT_GPI] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_GPI_MSK,
-> > +             .type =3D {
-> > +                     .type_falling_val       =3D MAX77650_INT_GPI_F_MS=
-K,
-> > +                     .type_rising_val        =3D MAX77650_INT_GPI_R_MS=
-K,
-> > +                     .types_supported        =3D IRQ_TYPE_EDGE_BOTH,
-> > +             },
-> > +     },
-> > +     [MAX77650_INT_nEN_F] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_nEN_F_MSK,
-> > +     },
-> > +     [MAX77650_INT_nEN_R] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_nEN_R_MSK,
-> > +     },
-> > +     [MAX77650_INT_TJAL1_R] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_TJAL1_R_MSK,
-> > +     },
-> > +     [MAX77650_INT_TJAL2_R] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_TJAL2_R_MSK,
-> > +     },
-> > +     [MAX77650_INT_DOD_R] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_GLBL_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_DOD_R_MSK,
-> > +     },
-> > +     [MAX77650_INT_THM] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_THM_MSK,
-> > +     },
-> > +     [MAX77650_INT_CHG] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_CHG_MSK,
-> > +     },
-> > +     [MAX77650_INT_CHGIN] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_CHGIN_MSK,
-> > +     },
-> > +     [MAX77650_INT_TJ_REG] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_TJ_REG_MSK,
-> > +     },
-> > +     [MAX77650_INT_CHGIN_CTRL] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_CHGIN_CTRL_MSK,
-> > +     },
-> > +     [MAX77650_INT_SYS_CTRL] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_SYS_CTRL_MSK,
-> > +     },
-> > +     [MAX77650_INT_SYS_CNFG] =3D {
-> > +             .reg_offset             =3D MAX77650_INT_CHG_OFFSET,
-> > +             .mask                   =3D MAX77650_INT_SYS_CNFG_MSK,
-> > +     },
-> > +};
->
-> If you get rid of all of the horrible hoop jumping in *_setup_irqs(),
-> you can use REGMAP_IRQ_REG() like everyone else does.
->
+I'd also appreciate if you could answer the questions I have above, as
+it appears that you intend to bring this patch back in the future.
 
-I could even use it now - except for the first interrupt. I decided to
-not use it everywhere as it looks much better that way than having
-REGMAP_IRQ_REG() for all definitions and then the first one sticking
-out like that. It just looks better.
+Thanks,
 
-> > +static const struct regmap_irq_chip max77650_irq_chip =3D {
-> > +     .name                   =3D "max77650-irq",
-> > +     .irqs                   =3D max77650_irqs,
-> > +     .num_irqs               =3D ARRAY_SIZE(max77650_irqs),
-> > +     .num_regs               =3D 2,
-> > +     .status_base            =3D MAX77650_REG_INT_GLBL,
-> > +     .mask_base              =3D MAX77650_REG_INTM_GLBL,
-> > +     .type_in_mask           =3D true,
-> > +     .type_invert            =3D true,
-> > +     .init_ack_masked        =3D true,
-> > +     .clear_on_unmask        =3D true,
-> > +};
-> > +
-> > +static const struct regmap_config max77650_regmap_config =3D {
-> > +     .name           =3D "max77650",
-> > +     .reg_bits       =3D 8,
-> > +     .val_bits       =3D 8,
-> > +};
-> > +
-> > +static int max77650_setup_irqs(struct device *dev, struct mfd_cell *ce=
-lls)
-> > +{
-> > +     const struct max77650_irq_mapping *mapping;
-> > +     struct regmap_irq_chip_data *irq_data;
-> > +     struct i2c_client *i2c;
-> > +     struct mfd_cell *cell;
-> > +     struct resource *res;
-> > +     struct regmap *map;
-> > +     int i, j, irq, rv;
-> > +
-> > +     i2c =3D to_i2c_client(dev);
-> > +
-> > +     map =3D dev_get_regmap(dev, NULL);
-> > +     if (!map)
-> > +             return -ENODEV;
-> > +
-> > +     rv =3D devm_regmap_add_irq_chip(dev, map, i2c->irq,
-> > +                                   IRQF_ONESHOT | IRQF_SHARED, -1,
->
-> What is -1?  Are you sure this isn't defined somewhere?
->
+	M.
 
-I don't see any define for negative irq_base argument. I can add that
-in a separate series and convert the users, but for now I'd stick with
--1.
-
-> > +                                   &max77650_irq_chip, &irq_data);
-> > +     if (rv)
-> > +             return rv;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(max77650_irq_mapping_table); i++) {
-> > +             mapping =3D &max77650_irq_mapping_table[i];
-> > +             cell =3D &cells[mapping->cell_num];
-> > +
-> > +             res =3D devm_kcalloc(dev, sizeof(*res),
-> > +                                mapping->num_irqs, GFP_KERNEL);
-> > +             if (!res)
-> > +                     return -ENOMEM;
-> > +
-> > +             cell->resources =3D res;
-> > +             cell->num_resources =3D mapping->num_irqs;
-> > +
-> > +             for (j =3D 0; j < mapping->num_irqs; j++) {
-> > +                     irq =3D regmap_irq_get_virq(irq_data, mapping->ir=
-qs[j]);
-> > +                     if (irq < 0)
-> > +                             return irq;
-> > +
-> > +                     res[j].start =3D res[j].end =3D irq;
-> > +                     res[j].flags =3D IORESOURCE_IRQ;
-> > +                     res[j].name =3D mapping->irq_names[j];
-> > +             }
-> > +     }
->
-> This is the first time I've seen it done like this (and I hate it).
->
-> Why are you storing the virqs in resources?
->
-> I think this is highly irregular.
->
-
-I initially just passed the regmap_irq_chip_data over i2c clientdata
-and sub-drivers would look up virq numbers from it but was advised by
-Dmitry Torokhov to use resources instead. After implementing it this
-way I too think it's more elegant in sub-drivers who can simply do
-platform_get_irq_byname(). Do you have a different idea? What exactly
-don't you like about this?
-
-> > +     return 0;
-> > +}
-> > +
-> > +static int max77650_i2c_probe(struct i2c_client *i2c)
-> > +{
-> > +     struct device *dev =3D &i2c->dev;
-> > +     struct mfd_cell *cells;
-> > +     struct regmap *map;
-> > +     unsigned int val;
-> > +     int rv;
-> > +
-> > +     map =3D devm_regmap_init_i2c(i2c, &max77650_regmap_config);
-> > +     if (IS_ERR(map))
->
-> What error messages does devm_regmap_init_i2c() report?  Does it print
-> out its own error messages internally?  If not it would be better to
-> provide a suitable error message here.
->
-> > +             return PTR_ERR(map);
-> > +
-> > +     rv =3D regmap_read(map, MAX77650_REG_CID, &val);
-> > +     if (rv)
->
-> Better to provide a suitable error message here.
->
-> > +             return rv;
-> > +
-> > +     switch (MAX77650_CID_BITS(val)) {
-> > +     case MAX77650_CID_77650A:
-> > +     case MAX77650_CID_77650C:
-> > +     case MAX77650_CID_77651A:
-> > +     case MAX77650_CID_77651B:
-> > +             break;
-> > +     default:
->
-> Better to provide a suitable error message here.
->
-> > +             return -ENODEV;
-> > +     }
-> > +
-> > +     /*
-> > +      * This IC has a low-power mode which reduces the quiescent curre=
-nt
-> > +      * consumption to ~5.6uA but is only suitable for systems consumi=
-ng
-> > +      * less than ~2mA. Since this is not likely the case even on
-> > +      * linux-based wearables - keep the chip in normal power mode.
-> > +      */
-> > +     rv =3D regmap_update_bits(map,
-> > +                             MAX77650_REG_CNFG_GLBL,
-> > +                             MAX77650_SBIA_LPM_MASK,
-> > +                             MAX77650_SBIA_LPM_DISABLED);
-> > +     if (rv)
->
-> Better to provide a suitable error message here.
->
-> > +             return rv;
-> > +
-> > +     cells =3D devm_kmemdup(dev, max77650_cells,
-> > +                          sizeof(max77650_cells), GFP_KERNEL);
-> > +     if (!cells)
-> > +             return -ENOMEM;
-> > +
-> > +     rv =3D max77650_setup_irqs(dev, cells);
-> > +     if (rv)
-> > +             return rv;
-> > +
-> > +     return devm_mfd_add_devices(dev, -1, cells,
->
-> Use the correct defines instead of -1.
->
-
-Will do that and add the error messages.
-
-Bart
-
-> `git grep mfd_add_devices`
->
-> > +                                 MAX77650_NUM_CELLS, NULL, 0, NULL);
-> > +}
-> > +
-> > +static const struct of_device_id max77650_of_match[] =3D {
-> > +     { .compatible =3D "maxim,max77650" },
-> > +     { }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, max77650_of_match);
-> > +
-> > +static struct i2c_driver max77650_i2c_driver =3D {
-> > +     .driver =3D {
-> > +             .name =3D "max77650",
-> > +             .of_match_table =3D of_match_ptr(max77650_of_match),
-> > +     },
-> > +     .probe_new =3D max77650_i2c_probe,
-> > +};
-> > +module_i2c_driver(max77650_i2c_driver);
-> > +
-> > +MODULE_DESCRIPTION("MAXIM 77650/77651 multi-function core driver");
-> > +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-> > +MODULE_LICENSE("GPL v2");
-> > diff --git a/include/linux/mfd/max77650.h b/include/linux/mfd/max77650.=
-h
-> > new file mode 100644
-> > index 000000000000..c809e211a8cd
-> > --- /dev/null
-> > +++ b/include/linux/mfd/max77650.h
-> > @@ -0,0 +1,59 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2018 BayLibre SAS
-> > + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > + *
-> > + * Common definitions for MAXIM 77650/77651 charger/power-supply.
-> > + */
-> > +
-> > +#ifndef MAX77650_H
-> > +#define MAX77650_H
-> > +
-> > +#include <linux/bits.h>
-> > +
-> > +#define MAX77650_REG_INT_GLBL                0x00
-> > +#define MAX77650_REG_INT_CHG         0x01
-> > +#define MAX77650_REG_STAT_CHG_A              0x02
-> > +#define MAX77650_REG_STAT_CHG_B              0x03
-> > +#define MAX77650_REG_ERCFLAG         0x04
-> > +#define MAX77650_REG_STAT_GLBL               0x05
-> > +#define MAX77650_REG_INTM_GLBL               0x06
-> > +#define MAX77650_REG_INTM_CHG                0x07
-> > +#define MAX77650_REG_CNFG_GLBL               0x10
-> > +#define MAX77650_REG_CID             0x11
-> > +#define MAX77650_REG_CNFG_GPIO               0x12
-> > +#define MAX77650_REG_CNFG_CHG_A              0x18
-> > +#define MAX77650_REG_CNFG_CHG_B              0x19
-> > +#define MAX77650_REG_CNFG_CHG_C              0x1a
-> > +#define MAX77650_REG_CNFG_CHG_D              0x1b
-> > +#define MAX77650_REG_CNFG_CHG_E              0x1c
-> > +#define MAX77650_REG_CNFG_CHG_F              0x1d
-> > +#define MAX77650_REG_CNFG_CHG_G              0x1e
-> > +#define MAX77650_REG_CNFG_CHG_H              0x1f
-> > +#define MAX77650_REG_CNFG_CHG_I              0x20
-> > +#define MAX77650_REG_CNFG_SBB_TOP    0x28
-> > +#define MAX77650_REG_CNFG_SBB0_A     0x29
-> > +#define MAX77650_REG_CNFG_SBB0_B     0x2a
-> > +#define MAX77650_REG_CNFG_SBB1_A     0x2b
-> > +#define MAX77650_REG_CNFG_SBB1_B     0x2c
-> > +#define MAX77650_REG_CNFG_SBB2_A     0x2d
-> > +#define MAX77650_REG_CNFG_SBB2_B     0x2e
-> > +#define MAX77650_REG_CNFG_LDO_A              0x38
-> > +#define MAX77650_REG_CNFG_LDO_B              0x39
-> > +#define MAX77650_REG_CNFG_LED0_A     0x40
-> > +#define MAX77650_REG_CNFG_LED1_A     0x41
-> > +#define MAX77650_REG_CNFG_LED2_A     0x42
-> > +#define MAX77650_REG_CNFG_LED0_B     0x43
-> > +#define MAX77650_REG_CNFG_LED1_B     0x44
-> > +#define MAX77650_REG_CNFG_LED2_B     0x45
-> > +#define MAX77650_REG_CNFG_LED_TOP    0x46
-> > +
-> > +#define MAX77650_CID_MASK            GENMASK(3, 0)
-> > +#define MAX77650_CID_BITS(_reg)              (_reg & MAX77650_CID_MASK=
-)
-> > +
-> > +#define MAX77650_CID_77650A          0x03
-> > +#define MAX77650_CID_77650C          0x0a
-> > +#define MAX77650_CID_77651A          0x06
-> > +#define MAX77650_CID_77651B          0x08
-> > +
-> > +#endif /* MAX77650_H */
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+-- 
+Jazz is not dead, it just smell funny.
