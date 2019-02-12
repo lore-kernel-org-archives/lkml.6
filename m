@@ -2,77 +2,156 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88380C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5779FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525DE2084D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:40:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dLZ3YKCT"
+	by mail.kernel.org (Postfix) with ESMTP id 2F5C22084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfBLCkB (ORCPT
+        id S1727532AbfBLCmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:40:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50950 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbfBLCkB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:40:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A4uV7OxwwlFjvs3auauasxWHYI8sc0UwMreHo8r1FQ8=; b=dLZ3YKCTVAmmJgA0OWYL3TZix
-        OyJNL4vPuZLORMjtNHRZbhe5pf5Os3LJ9RGgyAsJ2EvcdT9wRO/a4KjxCqFsuHn+QtCep+ZYZ7QNZ
-        MyjJaK/L778ktCQlYqY1wVphX6wGIxwxq+Tb7Pup8hIIFcokg5J3zdlRhNPEoRWK0YNlabtH2E+/I
-        1jGsPYqSYmDhgWDsBtcJzkXNmFlrpTV48VRqy6HuWG8l8Vudy/CFPXfqcXAxK0wXDyhMB5Xx3N4LH
-        Rw47FZ2vYK4g1S+opcWPmc90V0Gv8y1qfZtig1fjDJ7VwSXvzxOWczW7gRuwdDA2lKuiTvaXk4bGR
-        oL34pWb+g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtNzE-0000DQ-KM; Tue, 12 Feb 2019 02:39:52 +0000
-Date:   Mon, 11 Feb 2019 18:39:52 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
+        Mon, 11 Feb 2019 21:42:46 -0500
+Received: from mga07.intel.com ([134.134.136.100]:10698 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbfBLCmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 21:42:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 18:42:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="117155911"
+Received: from wahaih-mobl.ger.corp.intel.com (HELO [10.254.213.215]) ([10.254.213.215])
+  by orsmga008.jf.intel.com with ESMTP; 11 Feb 2019 18:42:40 -0800
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Subject: Re: [PATCH] perf/core: don't WARN for impossible rb sizes
+To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc:     julien.thierry@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 01/12] __wr_after_init: Core and default arch
-Message-ID: <20190212023952.GK12668@bombadil.infradead.org>
-References: <cover.1549927666.git.igor.stoppa@huawei.com>
- <9d03ef9d09446da2dd92c357aa39af6cd071d7c4.1549927666.git.igor.stoppa@huawei.com>
+        "Jin, Yao" <yao.jin@intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <20190110142745.25495-1-mark.rutland@arm.com>
+Message-ID: <1f71da66-4783-0108-668c-cdffca499719@linux.intel.com>
+Date:   Tue, 12 Feb 2019 10:42:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d03ef9d09446da2dd92c357aa39af6cd071d7c4.1549927666.git.igor.stoppa@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190110142745.25495-1-mark.rutland@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 01:27:38AM +0200, Igor Stoppa wrote:
-> +#ifndef CONFIG_PRMEM
-[...]
-> +#else
+Hi Mark,
+
+Looks I hit a regression issue on SKL desktop.
+
+For example,
+
+root@skl:/tmp# perf record -g -a
+failed to mmap with 12 (Cannot allocate memory)
+
+In this case, size = 1264, order_base_2 = 11, MAX_ORDER = 11
+
+if (order_base_2(size) >= MAX_ORDER)
+	goto fail;
+
+It will goto fail directly. Is it really correct? Could you help to look 
+at this?
+
+BTW, I tested with Arnaldo's perf/core branch.
+
+Thanks
+Jin Yao
+
+On 1/10/2019 10:27 PM, Mark Rutland wrote:
+> The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+> large its ringbuffer mmap should be. This can be configured to arbitrary
+> values, which can be larger than the maximum possible allocation from
+> kmalloc.
+> 
+> When this is configured to a suitably large value (e.g. thanks to the
+> perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+> __alloc_pages_nodemask():
+> 
+> [  337.316688] WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511
+> __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316694] Modules linked in:
+> [  337.316704] CPU: 2 PID: 5666 Comm: perf Not tainted 5.0.0-rc1 #2669
+> [  337.316708] Hardware name: ARM Juno development board (r0) (DT)
+> [  337.316714] pstate: 20000005 (nzCv daif -PAN -UAO)
+> [  337.316720] pc : __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316728] lr : alloc_pages_current+0x80/0xe8
+> [  337.316732] sp : ffff000016eeb9e0
+> [  337.316736] x29: ffff000016eeb9e0 x28: 0000000000080001
+> [  337.316744] x27: 0000000000000000 x26: ffff0000111e21f0
+> [  337.316751] x25: 0000000000000001 x24: 0000000000000000
+> [  337.316757] x23: 0000000000080001 x22: 0000000000000000
+> [  337.316762] x21: 0000000000000000 x20: 000000000000000b
+> [  337.316768] x19: 000000000060c0c0 x18: 0000000000000000
+> [  337.316773] x17: 0000000000000000 x16: 0000000000000000
+> [  337.316779] x15: 0000000000000000 x14: 0000000000000000
+> [  337.316784] x13: 0000000000000000 x12: 0000000000000000
+> [  337.316789] x11: 0000000000100000 x10: 0000000000000000
+> [  337.316795] x9 : 0000000010044400 x8 : 0000000080001000
+> [  337.316800] x7 : 0000000000000000 x6 : ffff800975584700
+> [  337.316806] x5 : 0000000000000000 x4 : ffff0000111cd6c8
+> [  337.316811] x3 : 0000000000000000 x2 : 0000000000000000
+> [  337.316816] x1 : 000000000000000b x0 : 000000000060c0c0
+> [  337.316822] Call trace:
+> [  337.316828]  __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316834]  alloc_pages_current+0x80/0xe8
+> [  337.316841]  kmalloc_order+0x14/0x30
+> [  337.316848]  __kmalloc+0x1dc/0x240
+> [  337.316854]  rb_alloc+0x3c/0x170
+> [  337.316860]  perf_mmap+0x3bc/0x470
+> [  337.316867]  mmap_region+0x374/0x4f8
+> [  337.316873]  do_mmap+0x300/0x430
+> [  337.316878]  vm_mmap_pgoff+0xe4/0x110
+> [  337.316884]  ksys_mmap_pgoff+0xc0/0x230
+> [  337.316892]  __arm64_sys_mmap+0x28/0x38
+> [  337.316899]  el0_svc_common+0xb4/0x118
+> [  337.316905]  el0_svc_handler+0x2c/0x80
+> [  337.316910]  el0_svc+0x8/0xc
+> [  337.316915] ---[ end trace fa29167e20ef0c62 ]---
+> 
+> Let's avoid this by checking that the requested allocation is possible
+> before calling kzalloc.
+> 
+> Reported-by: Julien Thierry <julien.thierry@arm.com>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> ---
+>   kernel/events/ring_buffer.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> index 4a9937076331..309ef5a64af5 100644
+> --- a/kernel/events/ring_buffer.c
+> +++ b/kernel/events/ring_buffer.c
+> @@ -734,6 +734,9 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+>   	size = sizeof(struct ring_buffer);
+>   	size += nr_pages * sizeof(void *);
+>   
+> +	if (order_base_2(size) >= MAX_ORDER)
+> +		goto fail;
 > +
-> +#include <linux/mm.h>
-
-It's a mistake to do conditional includes like this.  That way you see
-include loops with some configs and not others.  Our headers are already
-so messy, better to just include mm.h unconditionally.
-
+>   	rb = kzalloc(size, GFP_KERNEL);
+>   	if (!rb)
+>   		goto fail;
+> 
