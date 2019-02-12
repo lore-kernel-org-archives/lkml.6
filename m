@@ -2,114 +2,130 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C3FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D85FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8C720700
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549961637;
-	bh=G5bVZTqmi2e33Ig50TrLWrxU0vetepI/WBqpWKFaAls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PuGhZaLRL9U9OluBcUSbLGZrlN7xbDsGp968QFNgY3uls3LrPTLVjjfVkeGhSGgzb
-	 qfZCK8Q+/HX9NWxHETa+604IQNFrX8gHn5Pqhngb785mb5RMpf83GvhYhYwxMklFix
-	 1h49BIbMsvsUQUiybmSH6heuBPyRBPwO0dasDOLU=
+	by mail.kernel.org (Postfix) with ESMTP id 230ED2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbfBLIxz (ORCPT
+        id S1728609AbfBLIzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:53:55 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46233 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbfBLIxz (ORCPT
+        Tue, 12 Feb 2019 03:55:08 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57627 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728086AbfBLIzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:53:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v16so1472324ljg.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:53:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EKvsYtgzxxN2IFq90tTBe+XystKVPP02/T9yj2UzJjs=;
-        b=hg+WdV4nmFzdjWQu3lzBhn3hkXXkNBlMvTIf9Nki9pZlvlIANBh5I6llJbkXLuLoXc
-         l/N81jDjO12DsQrtNJpvhrynxU0z/plzBab2gnFnWzo0LwXRvTfcaQdONeDiO0Lrhcy2
-         uPyUZJxVNyKE/iqzcxMZxoszN09wNr+3WTOgigH0geM6nfgG39W0HU1LWeGc9ZrnOTlP
-         8jqPkSCLV4OiRqjgk1FL02u/z8VbKi/tCp0fejA0GFQH0dnWvJqwqb0z7tE1UacHWN5k
-         5njtI2MwED5nVXv4NlNhVnviiUqodLUflrHrSnorCoYCs26TF0z90UPA68im4OYlZkmK
-         ZIjw==
-X-Gm-Message-State: AHQUAubBzVvEys0kJInFP9cfPvGHN+XxNq3Sdham4Vlpew8hRM3GO01A
-        +vWy8NnqztPsNowxrHcvmPA=
-X-Google-Smtp-Source: AHgI3IYlWrp1TuyBfHAGCvZqaIRtxwLnYnl0wM5o5uEkRIm0jo1bF3N/lpWfCak+oXcWA4dRnfx23g==
-X-Received: by 2002:a2e:90ca:: with SMTP id o10-v6mr1621904ljg.134.1549961632951;
-        Tue, 12 Feb 2019 00:53:52 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q6sm2803135lfh.52.2019.02.12.00.53.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 00:53:52 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gtTp3-0007O1-2c; Tue, 12 Feb 2019 09:53:45 +0100
-Date:   Tue, 12 Feb 2019 09:53:45 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
-Message-ID: <20190212085345.GA28278@localhost>
-References: <20190118140308.9599-1-johan@kernel.org>
- <20190118140308.9599-6-johan@kernel.org>
- <20190212071339.GL26747@infradead.org>
- <20190212082621.GA26912@localhost>
- <6518a7ff-0586-be7a-4a43-6c9a35194a05@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6518a7ff-0586-be7a-4a43-6c9a35194a05@wdc.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 12 Feb 2019 03:55:08 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gtTqC-0004fM-KI; Tue, 12 Feb 2019 09:54:56 +0100
+Message-ID: <1549961694.2546.18.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>, Stefan Agner <stefan@agner.ch>
+Cc:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, tpiepho@impinj.com,
+        leonard.crestez@nxp.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 12 Feb 2019 09:54:54 +0100
+In-Reply-To: <20190211213900.GA247873@google.com>
+References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
+         <119211b4f2e9ada55b86041d009656e49c2b5281.1549446867.git.stefan@agner.ch>
+         <20190211213900.GA247873@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 12:47:09AM -0800, Atish Patra wrote:
-> On 2/12/19 12:26 AM, Johan Hovold wrote:
-> > On Mon, Feb 11, 2019 at 11:13:39PM -0800, Christoph Hellwig wrote:
-> >> On Fri, Jan 18, 2019 at 03:03:08PM +0100, Johan Hovold wrote:
-> >>> Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
-> >>> instead of open coding. Note that this will allow matching also on the
-> >>> node name instead of the (for FDT) deprecated device_type property.
-> >>>
-> >>> Signed-off-by: Johan Hovold <johan@kernel.org>
-> >>
-> >> I think this is going to conflict with the ELF caps changes from
-> >> Atish.  Maybe the riscv_fill_hwcap hunk should be included in his
-> >> patch?
-> > 
-> > Since that patch had some issues (e.g. the node reference underflow) it
-> > may be better to rebase it on top of this series. The changes are
-> > otherwise distinct after all.
-> > 
-> 
-> I have fixed the node reference underflow issue and made some more 
-> changes based on comments.
-> 
-> Some other patches(1,3,4,5) in this series may conflict with my series 
-> as well. I can rebase my series on top of yours and send it as one 
-> series if that's okay with you and Palmer.
+Hi Bjorn,
 
-No need for you to resend these patches as they are reviewed any ready
-to be merged. Just rebase your series and mention the dependency in the
-cover letter as I did with Andreas's patch which this series depended
-on.
+Am Montag, den 11.02.2019, 15:39 -0600 schrieb Bjorn Helgaas:
+> On Wed, Feb 06, 2019 at 10:57:32AM +0100, Stefan Agner wrote:
+> > Define the length of the DBI registers. This makes sure that
+> > the kernel does not access registers beyond that point, avoiding
+> > the following abort on a i.MX 6Quad:
+> >   # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
+> >   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
+> >   ...
+> >   [  100.056423] PC is at dw_pcie_read+0x50/0x84
+> >   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
+> >   ...
+> 
+> I assume this problem happens when using the pci_read_config() path or
+> something similar?
+> 
+> Could this be solved using pci_dev.cfg_size instead of building a new
+> dwc-specific mechanism?  There are some quirks that set dev->cfg_size
+> to keep from reading past certain points in config space, e.g.,
+> quirk_citrine(), quirk_nfp6000().
+> 
+> I'm not necessarily opposed to doing it in dwc, but maybe there's some
+> advantage in reducing the number of ways of doing the same thing.
 
-Thanks,
-Johan
+This actually started out as a quirk changing the cfg size. But the
+valid config space size seems to be different between root ports that
+share the same (broken) device ID (Synopsys abcd), so I doubt that this
+would be easier and/or any cleaner to implement as a quirk.
+
+Regards,
+Lucas
+
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > > Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> > Changes in v3:
+> > - Rebase on pci/dwc
+> > Changes in v4:
+> > - Rebase on pci/dwc
+> > Changes in v5:
+> > - Rebased ontop of pci/dwc
+> > - Use DBI length of 0x200
+> > 
+> >  drivers/pci/controller/dwc/pci-imx6.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> > index c1d434ba3642..1ef7be1232f3 100644
+> > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > @@ -55,6 +55,7 @@ enum imx6_pcie_variants {
+> >  struct imx6_pcie_drvdata {
+> > > >  	enum imx6_pcie_variants variant;
+> > > >  	u32 flags;
+> > > > +	int dbi_length;
+> >  };
+> >  
+> >  struct imx6_pcie {
+> > @@ -1087,6 +1088,8 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+> > > >  		break;
+> > > >  	}
+> >  
+> > > > +	pci->dbi_length = imx6_pcie->drvdata->dbi_length;
+> > +
+> > > >  	/* Grab turnoff reset */
+> > > >  	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
+> > > >  	if (IS_ERR(imx6_pcie->turnoff_reset)) {
+> > @@ -1170,6 +1173,7 @@ static const struct imx6_pcie_drvdata drvdata[] = {
+> > > >  		.variant = IMX6Q,
+> > > >  		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
+> > > >  			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
+> > > > +		.dbi_length = 0x200,
+> > > >  	},
+> > > >  	[IMX6SX] = {
+> > > >  		.variant = IMX6SX,
+> > -- 
+> > 2.20.1
+> > 
