@@ -2,163 +2,128 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D844C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F82C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15B9021B68
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LpRCutjt"
+	by mail.kernel.org (Postfix) with ESMTP id 8FE2521B68
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:34:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfBLUeQ (ORCPT
+        id S1731134AbfBLUex convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:34:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35829 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729424AbfBLUeM (ORCPT
+        Tue, 12 Feb 2019 15:34:53 -0500
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:46039 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728093AbfBLUew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:34:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t18so49962wrx.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:34:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=k2rTYGUMoziXNB0Eh+P6HjdMe2voTeBpEVqv0rfRBao=;
-        b=LpRCutjtNEQM2DRD1kxfRJ+4msYKaBBlXQ5GDaRTIArRd+9Uibdfwwh51wVtDMzZFB
-         XolHgZP2K9nlmA+HcnhWwqOl760LzNavM+mzVGRWfteab/JcQDV79tMyeAxMeSQUqgq5
-         QDgrZ+rSI4cf1iGspedccvo1BtTTtfrw9jwdASQgl7dVA+5A1Xage48Q1fb9r5lcgTD7
-         FONGT1oRkpPWnisMyU5kyY8rd48c6W4/z/F+TEx+57/aNWvJ8V8U2U9K/yPBGu8hKT2O
-         LNtDn6lINm8/bROVH/7n1ACAnhtfZA/CblbffBo7IL2htz3QbR1mox/3wDgnGu1XfeIt
-         bULg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=k2rTYGUMoziXNB0Eh+P6HjdMe2voTeBpEVqv0rfRBao=;
-        b=N+qsQDyrRGsBVM6oz/dU44byK4xw9CYEi3DsiaCNfLBI4li3DJaSnsaAy9U0j0uepo
-         kp9jw48EwnxkqLCRa9IBDxRyJdnvN+x2AU/JKvlKZ1zCSpnIMe0eVO1wgjfHDmUtHLIB
-         /hppeEFNKoF/Cd73BaJrexKGHtRX6LOfHKVNRWLdQ+3BOasTc+2zvmAG1FbbWwdtwPLc
-         0qdC6QVq+fp+UthGZ3ISLH3W+cRtbQHQ9aWiKKxmp37Z4+tINZC6YJsdT/WX1jCk4U+z
-         YOYzou4eQ2NKusU3NUCfnu7EsQvsC2rTSs5Qw62aowu7cB/xH/sZrcLaTa12mNxsoqSn
-         oUsA==
-X-Gm-Message-State: AHQUAua4VPqTUE2sErxay7FMwWgSdYIetIYkVOgdxmFlIAY5azVSjV9/
-        AmhjOMnnfXJm2zu5YpiKnM2D8w==
-X-Google-Smtp-Source: AHgI3Iaxif/6MOnjS7T/zAr1mU9N4u21uXGGg5QZglxA0VrEPA2YsD9qO2CVSqj9sga2qedRIylS3Q==
-X-Received: by 2002:adf:ec8f:: with SMTP id z15mr4214555wrn.290.1550003650623;
-        Tue, 12 Feb 2019 12:34:10 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id s187sm4019022wms.8.2019.02.12.12.34.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 12:34:10 -0800 (PST)
-Date:   Tue, 12 Feb 2019 20:34:08 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Message-ID: <20190212203408.GA1863@dell>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
+        Tue, 12 Feb 2019 15:34:52 -0500
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id C314645BB8F;
+        Tue, 12 Feb 2019 21:34:49 +0100 (CET)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     debian-legal@lists.debian.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Ben Finney <bignose@debian.org>,
+        Martin Steigerwald <Martin.Steigerwald@proact.de>,
+        Domenico Andreoli <cavok@debian.org>, 919356@bugs.debian.org,
+        Kristian Fiskerstrand <k_f@gentoo.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: Bug#919356: Licensing of include/linux/hash.h
+Date:   Tue, 12 Feb 2019 21:34:49 +0100
+Message-ID: <35245979.F6S9gYasto@merkaba>
+In-Reply-To: <8a87da85-3aef-a113-f93f-c96ab465c96f@kernel.dk>
+References: <20190115170017.5gxarqxzfezgr5ld@dumbo> <86va1p7c7z.fsf@benfinney.id.au> <8a87da85-3aef-a113-f93f-c96ab465c96f@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190119090318.GB187380@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Jens Axboe - 12.02.19, 17:16:
+> On 2/11/19 11:27 PM, Ben Finney wrote:
+> > Martin Steigerwald <Martin.Steigerwald@proact.de> writes:
+> >> Well the file has in its header:
+> >> 
+> >> /* Fast hashing routine for a long.
+> >> 
+> >>    (C) 2002 William Lee Irwin III, IBM */
+> >> 
+> >> /*
+> >> 
+> >>  * Knuth recommends primes in approximately golden ratio to the
+> >>  maximum * integer representable by a machine word for
+> >>  multiplicative hashing. * Chuck Lever verified the effectiveness
+> >>  of this technique:
+> >>  * http://www.citi.umich.edu/techreports/reports/citi-tr-00-1.pdf
+> >>  *
+> >>  * These primes are chosen to be bit-sparse, that is operations on
+> >>  * them can use shifts and additions instead of multiplications for
+> >>  * machines where multiplications are slow.
+> >>  */
+> >> 
+> >> It has been quite a while ago. I bet back then I did not regard
+> >> this
+> >> as license information since it does not specify a license. Thus I
+> >> assumed it to be GPL-2 as the other files which have no license
+> >> boiler plate. I.e.: Check file is it has different license, if
+> >> not, then assume it has license as specified in COPYING.
+> >> 
+> >> Not specifying a license can however also mean in this context that
+> >> it has no license as the file contains copyright information from
+> >> another author.
 > > 
-> > Add support for the push- and slide-button events for max77650.
+> > If a work (even one file) “has no license”, that means no special
+> > permissions are granted and normal copyright applies: All rights
+> > reserved, i.e. not redistributable. So, no license is grounds to
+> > consider a work non-free and non-redistributable.
 > > 
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/input/misc/Kconfig          |   9 ++
-> >  drivers/input/misc/Makefile         |   1 +
-> >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
-> >  3 files changed, 145 insertions(+)
-> >  create mode 100644 drivers/input/misc/max77650-onkey.c
-
-[...]
-
-Moving things around a bit:
-
-> > +static int max77650_onkey_probe(struct platform_device *pdev)
-> > +{
-
-> > +	irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
-> > +	if (irq_f <= 0)
-> > +		return -EINVAL;
-> > +
-> > +	irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
-> > +	if (irq_r <= 0)
-> > +		return -EINVAL;
+> > If, on the other hand, the file is to be free software, there would
+> > need to be a clear grant of some free software license to that
+> > work.
+> > 
+> > Given the confusion over this file, I would consider it a
+> > significant
+> > risk to just assume we have GPLv2 permissions without being told
+> > that
+> > explicitly by the copyright holder. Rather, the reason we are
+> > seeking a clearly-granted free license for this one file, is
+> > because we are trying to replace a probably non-free file with the
+> > same code in it.
+> > 
+> > It seems we need to keep looking, and in the meantime assume we have
+> > no free license in this file.
 > 
-> Ugh, it would be better if you handled IRQ mapping in the MFD piece and
-> passed it as resources of platform device. Then you'd simply call
-> platform_get_irq() here and did not have to reach into parent device for
-> "irq_dara".
+> FWIW, fio.c includes the following mention:
+> 
+>  * The license below covers all files distributed with fio unless
+> otherwise * noted in the file itself.
+> 
+> followed by the GPL v2 license. I'll go through and add SPDX headers
+> to everything to avoid wasting anymore time on this nonsense.
 
-These device IRQs were defined and registered with the Regmap *set*
-(actually init()) APIs and thus should be pulled out using the
-appropriate reverse Regmap *get* APIs here in the device.
+Thank you, Jens, for settling this. I did not remember that one. It may 
+very well be that I have seen this note as I initially packaged fio as my 
+first package for Debian about 10 years ago.
 
-Registering them with Regmap *and* pulling them back out again in the
-same (MFD in this case) driver, only to register them as platform data
-is certainly not how I see the API being designed/used.
+I forwarded your mail and the one from Domenico with the SPDX patch to 
+Debian bug
 
-> > +	struct regmap_irq_chip_data *irq_data;
-> > +	struct device *dev, *parent;
+#922112 fio: hash.h is not DFSG compliant
+https://bugs.debian.org/922112
 
-> > +	dev = &pdev->dev;
-> > +	parent = dev->parent;
-> > +	i2c = to_i2c_client(parent);
-> > +	irq_data = i2c_get_clientdata(i2c);
-> > +
-> > +	map = dev_get_regmap(parent, NULL);
-> > +	if (!map)
-> > +		return -ENODEV;
+which I closed before as you told already that hash.c is GPL-2.
 
-However, this hoop jumping is a bit crazy and for the most part
-superfluous.  Instead, create a struct of attributes you wish to share
-with the child devices (containing both regmap (which you should call
-regmap and not map by the way) and irq_data) and pass it as either
-platform data (preferred) or as device data.
-
-If you choose the latter, you do not need to convert from 'device' to
-'i2c' to do the look-up.  Since this function (probe()) is provided
-with a platform_device, you can just use platform_get_drvdata() to
-achieve the same as above.
-
-If you go the preferred (platform data) route, then you should use
-dev_get_platdata() instead.
-
+Thanks,
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Martin
+
+
