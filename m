@@ -2,137 +2,131 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C1CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABF6C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57C262184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66130218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="UVQVryGP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oAfGh3aL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbfBLNjt (ORCPT
+        id S1729907AbfBLNjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:39:49 -0500
-Received: from rcdn-iport-4.cisco.com ([173.37.86.75]:8015 "EHLO
-        rcdn-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728126AbfBLNjt (ORCPT
+        Tue, 12 Feb 2019 08:39:54 -0500
+Received: from mail-yb1-f178.google.com ([209.85.219.178]:43773 "EHLO
+        mail-yb1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728126AbfBLNjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:39:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=3810; q=dns/txt; s=iport;
-  t=1549978788; x=1551188388;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=Jklf2a1pZXYqoTcXtiEuoDDB5Q+1QogyoztqPzndhn0=;
-  b=UVQVryGPXOJ70VYYyKgb001K8kHkxwwgitWRWBZfFEhriy9iGXhjv1/r
-   P5rFk7AYJINDdUkkjCpTCvyAvHxwEQVX09xZDqo4m5otEDefy+DfDIywE
-   4SqHfVKT4N1ra/ZY3TEpiY/9lJY9QEkegfBzGGQcCg1lNNVYSZptYD1o1
-   g=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAABfy2Jc/5JdJa1jGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA2eBAycKg3qIGo1/gmGGSY5pgXsLAQEjhEk?=
- =?us-ascii?q?Zgz4iNAkNAQMBAQIBAQJtHAyFSgEBAQMBJw06CxACAQYCDgoEKAICMBoLAgQ?=
- =?us-ascii?q?BDQUIgx2BaQMNCA+QB5tbCHoziikFgQeLPBeBQD+BEYMSgldHBBiBJSIXgm6?=
- =?us-ascii?q?CWwKJYguYfzMJAoc2h16BEIIiIYFthUuLKIozhT+BKop5AhEUgScfOIFWcBU?=
- =?us-ascii?q?7gmyCKBctiDKFP0ExAY1cgR+BHwEB?=
-X-IronPort-AV: E=Sophos;i="5.58,362,1544486400"; 
-   d="scan'208";a="516922639"
-Received: from rcdn-core-10.cisco.com ([173.37.93.146])
-  by rcdn-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 13:39:47 +0000
-Received: from XCH-ALN-015.cisco.com (xch-aln-015.cisco.com [173.36.7.25])
-        by rcdn-core-10.cisco.com (8.15.2/8.15.2) with ESMTPS id x1CDdlsH004529
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 13:39:47 GMT
-Received: from xch-aln-012.cisco.com (173.36.7.22) by XCH-ALN-015.cisco.com
- (173.36.7.25) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 07:39:45 -0600
-Received: from xch-aln-012.cisco.com ([173.36.7.22]) by XCH-ALN-012.cisco.com
- ([173.36.7.22]) with mapi id 15.00.1395.000; Tue, 12 Feb 2019 07:39:44 -0600
-From:   "Hans Verkuil (hansverk)" <hansverk@cisco.com>
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?UmU6ILTwuLQ6IFtQQVRDSCAxLzRdIG1lZGlhOiBjZWMtbm90aWZpZXI6IGZp?=
- =?gb2312?Q?x_possible_object_reference_leak?=
-Thread-Topic: =?gb2312?B?tPC4tDogW1BBVENIIDEvNF0gbWVkaWE6IGNlYy1ub3RpZmllcjogZml4IHBv?=
- =?gb2312?Q?ssible_object_reference_leak?=
-Thread-Index: AQHUwCH951ryS7AxYU2IkMLJINPqbQ==
-Date:   Tue, 12 Feb 2019 13:39:44 +0000
-Message-ID: <7021cb53c38d49c8b111bc67503f70f0@XCH-ALN-012.cisco.com>
-References: <HK0PR02MB363461179B3A702DB9CAEC55B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
- <3ed515b78a404ec4a22b5f69ed9d6e28@XCH-ALN-012.cisco.com>
- <6b7fc837599e4069b876b32473b31746@XCH-ALN-012.cisco.com>
- <HK0PR02MB3634D1937109CD28ECBF1654B2650@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.47.79.183]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Tue, 12 Feb 2019 08:39:52 -0500
+Received: by mail-yb1-f178.google.com with SMTP id s76so1010867ybs.10;
+        Tue, 12 Feb 2019 05:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c5TOuGrQ+VF3jI2wWFU64HANCazjU6JKCsapIQL56xg=;
+        b=oAfGh3aLezK+RVJXZn6zTbeshDTDat0dXxk/X9zW1pd2GvsWmzH78H+fPY9lQjeXPt
+         wDrm0RoP3xr87E1fyaYRHNh38eLeKKZi/Yqte4ykcBj8yzyBMBUozceXJiy8z4L6b1oA
+         2SGiP5tZ1MBKmZQ+m19TpMCHHEd/2Z042fQe1X6zjsKqxJfHKG3q3w5ODHApLvrn80c2
+         YUf1FLVNBwwrq/femw8V5bd8PC9vLTI43whNX2lHOCiSh0auHdW7D/zhx5uEwfUasymy
+         bkNf6TELtqrGgqQuETdQWLz63KWUx2vpXD6+7Zfl6g+hqf9vmvVxlgA3P0C3E+FNqwVZ
+         H3/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c5TOuGrQ+VF3jI2wWFU64HANCazjU6JKCsapIQL56xg=;
+        b=aBf7fvOKproEjMG3dgV+clxxND2AXFPHHQWxQrRIFHEtmGh0l6U8RDZ+sj7i6sE3Xg
+         Oe5x9tIj2miGfoTmIUngjpx0v/mSEe/Gqmfu3utiNpNVxJrownkso2tSBkdSvJ2kNqTs
+         2F4Suu8cnd7yrx8F8gIbbwvZbiyZoZfcLlkfll3iIJ53dhJMSy17FfHR1EauqqyaSkXZ
+         KC95Q1FoadM89amwAonvlVX3XVxfSqDMdJsyAuQtILO/jYka3gnfqmJprIoShUulA6UX
+         gsrLiPnWEF1ABwrifSr7iQFnBOVzVzaONi5zxmk4f2hX6Lvae5omHYGJhPI+4D1ZbbbX
+         MSLQ==
+X-Gm-Message-State: AHQUAubgsr+v6ifOmnpLIMPhhbeTpP6SwE+a20ZTLbXy9iyUX5Dveq/Y
+        RfjcAPgg3bZtGpjxrKvppVd+ZBezbvc09UKC1Fw=
+X-Google-Smtp-Source: AHgI3Ia9/vs3cHZOOMkwQ1aJlrxBfnpq1E/fcnxXUc5OwQn5/IRfqmYfCSuMQknyM+j8myneQLFubcqLa+WsNhnQGnM=
+X-Received: by 2002:a25:1488:: with SMTP id 130mr2931126ybu.507.1549978790150;
+ Tue, 12 Feb 2019 05:39:50 -0800 (PST)
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 173.36.7.25, xch-aln-015.cisco.com
-X-Outbound-Node: rcdn-core-10.cisco.com
+References: <000000000000701c3305818e4814@google.com> <CAOQ4uxhhRs6kBH2rgbPyjd=tXoxxuJG76Y2vpCYmD0c0HzLwhA@mail.gmail.com>
+ <CAJfpegvjLgXa1HOCZkz6RKup7UdioMGyY7W4miyqcRtn9PL4QA@mail.gmail.com>
+ <CAJfpegsJo8X+efgWSa4QwSGpAGADpoossZZg=m7x5ApPXhxCoA@mail.gmail.com>
+ <CAOQ4uxj0nKK1csWGxxLT-EvC3hv8Zz5-HpvMF_a2r2iVcLXt1A@mail.gmail.com>
+ <CAJfpegsadeK=3EON9HgZ8rLCDWCJXR9QrXxA3ZZjdjzq6FDRjw@mail.gmail.com> <20190212111402.GU19029@quack2.suse.cz>
+In-Reply-To: <20190212111402.GU19029@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 12 Feb 2019 15:39:38 +0200
+Message-ID: <CAOQ4uxh_o53RimG-yKPYkN9sszQhwjQbmHw9pHc4kJU5MywMNA@mail.gmail.com>
+Subject: Re: possible deadlock in pipe_lock (2)
+To:     Jan Kara <jack@suse.cz>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+31d8b84465a7cbfd8515@syzkaller.appspotmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgV2VuLAoKT24gMi8xMi8xOSAyOjA0IFBNLCBXZW4gWWFuZyB3cm90ZToKPiBIaSBIYW5zLCB0
-aGFuayB5b3UgZm9yIHlvdXIgY29tbWVudHMuCj4gSSB3aWxsIHVzZSBteSBjb21wYW55J3MgbWFp
-bGJveCBhbmQgc3VibWl0IGEgdjIgcGF0Y2ggdG8gZml4IHRoZXNlIHByb2JsZW1zIHRvbW9ycm93
-LgoKSSBtYWRlIGEgYnVuY2ggb2YgcGF0Y2hlcyBmaXhpbmcgdGhpcyB5ZXN0ZXJkYXkuIEl0J3Mg
-YXZhaWxhYmxlIGhlcmU6CgpodHRwczovL2dpdC5saW51eHR2Lm9yZy9odmVya3VpbC9tZWRpYV90
-cmVlLmdpdC9sb2cvP2g9Y2VjLXJlZmNudAoKSSBoYXZlbid0IHBvc3RlZCBhbnl0aGluZyBzaW5j
-ZSBJIGhhZCBubyBjaGFuY2UgdG8gdGVzdCBpdCB3aXRoIGFjdHVhbApoYXJkd2FyZS4gQnV0IGlm
-IHlvdSBoYXZlIGhhcmR3YXJlIGFuZCBhcmUgYWJsZSB0byB2ZXJpZnkgdGhhdCB0aGlzCnNvbHZl
-cyB0aGUgaXNzdWUsIHRoZW4gcGxlYXNlIGxldCBtZSBrbm93IHNvIHRoYXQgSSBjYW4gZ2V0IHRo
-aXMgbWVyZ2VkLgoKUmVnYXJkcywKCglIYW5zCgo+IAo+IFJlZ2FyZHMsCj4gCj4gICAgICAgICBX
-ZW4KPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gt6K8/sjL
-OiBIYW5zIFZlcmt1aWwgKGhhbnN2ZXJrKSA8aGFuc3ZlcmtAY2lzY28uY29tPgo+ILeiy83Ksbzk
-OiAyMDE5xOoy1MIxMcjVIDEwOjU3Cj4gytW8/sjLOiBXZW4gWWFuZzsgSGFucyBWZXJrdWlsOyBN
-YXVybyBDYXJ2YWxobyBDaGVoYWIKPiCzrcvNOiBMaW51eCBNZWRpYSBNYWlsaW5nIExpc3Q7IExL
-TUwKPiDW98ziOiBSZTogW1BBVENIIDEvNF0gbWVkaWE6IGNlYy1ub3RpZmllcjogZml4IHBvc3Np
-YmxlIG9iamVjdCByZWZlcmVuY2UgbGVhawo+IAo+IE9uIDExLzAyLzIwMTkgMTE6MzgsIEhhbnMg
-VmVya3VpbCAoaGFuc3ZlcmspIHdyb3RlOgo+PiBPbiAwOS8wMi8yMDE5IDAzOjQ4LCBXZW4gWWFu
-ZyB3cm90ZToKPj4+IHB1dF9kZXZpY2UoKSBzaG91bGQgYmUgY2FsbGVkIGluIGNlY19ub3RpZmll
-cl9yZWxlYXNlKCksCj4+PiBzaW5jZSB0aGUgZGV2IGlzIGJlaW5nIHBhc3NlZCBkb3duIHRvIGNl
-Y19ub3RpZmllcl9nZXRfY29ubigpLAo+Pj4gd2hpY2ggaG9sZHMgcmVmZXJlbmNlLiBPbiBjZWNf
-bm90aWZpZXIgZGVzdHJ1Y3Rpb24sIGl0Cj4+PiBzaG91bGQgZHJvcCB0aGUgcmVmZXJlbmNlIHRv
-IHRoZSBkZXZpY2UuCj4+Pgo+Pj4gRml4ZXM6IDY5MTdhN2I3NzQxMyAoIlttZWRpYV0gbWVkaWE6
-IGFkZCBDRUMgbm90aWZpZXIgc3VwcG9ydCIpCj4+PiBTaWduZWQtb2ZmLWJ5OiBXZW4gWWFuZyA8
-eWVsbG93cml2ZXIyMDEwQGhvdG1haWwuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9tZWRpYS9j
-ZWMvY2VjLW5vdGlmaWVyLmMgfCAxICsKPj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9jZWMvY2VjLW5vdGlmaWVyLmMg
-Yi9kcml2ZXJzL21lZGlhL2NlYy9jZWMtbm90aWZpZXIuYwo+Pj4gaW5kZXggZGQyMDc4Yi4uNjIx
-ZDRhZSAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvbWVkaWEvY2VjL2NlYy1ub3RpZmllci5jCj4+
-PiArKysgYi9kcml2ZXJzL21lZGlhL2NlYy9jZWMtbm90aWZpZXIuYwo+Pj4gQEAgLTY2LDYgKzY2
-LDcgQEAgc3RhdGljIHZvaWQgY2VjX25vdGlmaWVyX3JlbGVhc2Uoc3RydWN0IGtyZWYgKmtyZWYp
-Cj4+PiAgICAgICAgICAgICAgY29udGFpbmVyX29mKGtyZWYsIHN0cnVjdCBjZWNfbm90aWZpZXIs
-IGtyZWYpOwo+Pj4KPj4+ICAgICAgbGlzdF9kZWwoJm4tPmhlYWQpOwo+Pj4gKyAgICBwdXRfZGV2
-aWNlKG4tPmRldik7Cj4+PiAgICAgIGtmcmVlKG4tPmNvbm4pOwo+Pj4gICAgICBrZnJlZShuKTsK
-Pj4+ICB9Cj4+Pgo+Pgo+PiBTb3JyeSwgbm8uIFRoZSBkZXYgcG9pbnRlciBpcyBqdXN0IGEgc2Vh
-cmNoIGtleSB0aGF0IHRoZSBub3RpZmllciBjb2RlIGxvb2tzCj4+IGZvci4gSXQgaXMgbm90IHRo
-ZSBub3RpZmllcidzIHJlc3BvbnNpYmlsaXR5IHRvIHRha2UgYSByZWZlcmVuY2UsIHRoYXQgd291
-bGQKPj4gYmUgdGhlIHJlc3BvbnNpYmlsaXR5IG9mIHRoZSBoZG1pIGFuZCBjZWMgZHJpdmVycy4K
-PiAKPiBDb3JyZWN0aW9uOiB0aGUgY2VjIGRyaXZlciBzaG91bGQgbmV2ZXIgdGFrZSBhIHJlZmVy
-ZW5jZSBvZiB0aGUgaGRtaSBkZXZpY2UuCj4gSXQgbmV2ZXIgYWNjZXNzZXMgdGhlIEhETUkgZGV2
-aWNlLCBpdCBvbmx5IG5lZWRzIHRoZSBIRE1JIGRldmljZSBwb2ludGVyIGFzCj4gYSBrZXkgaW4g
-dGhlIG5vdGlmaWVyIGxpc3QuCj4gCj4gVGhlIHJlYWwgcHJvYmxlbSBpcyB0aGF0IHNldmVyYWwg
-Q0VDIGRyaXZlcnMgdGFrZSBhIHJlZmVyZW5jZSBvZiB0aGUgSERNSSBkZXZpY2UKPiBhbmQgbmV2
-ZXIgcmVsZWFzZSBpdC4gU28gdGhvc2UgZHJpdmVycyBuZWVkIHRvIGJlIGZpeGVkLgo+IAo+IFJl
-Z2FyZHMsCj4gCj4gICAgICAgICBIYW5zCj4gCj4+Cj4+IElmIHlvdSBjYW4gZGVtb25zdHJhdGUg
-dGhhdCB0aGVyZSBpcyBhbiBvYmplY3QgcmVmZXJlbmNlIGxlYWssIHRoZW4gcGxlYXNlCj4+IHBy
-b3ZpZGUgdGhlIGRldGFpbHM6IGl0IGlzIGxpa2VseSBhIGJ1ZyBlbHNld2hlcmUgYW5kIG5vdCBp
-biB0aGUgbm90aWZpZXIKPj4gY29kZS4KPj4KPj4gQlRXLCB5b3VyIHBhdGNoIHNlcmllcyBkaWRu
-J3QgYXJyaXZlIG9uIHRoZSBsaW51eC1tZWRpYSBtYWlsaW5nbGlzdCBmb3IKPj4gc29tZSByZWFz
-b24uCj4+Cj4+IFJlZ2FyZHMsCj4+Cj4+ICAgICAgIEhhbnMKPj4KPiAKPiAKCg==
+> > My other thought is that perhaps sb_start_write() should invoke
+> > s_ops->start_write() so that overlay can do the freeze protection on
+> > the upper early.
+>
+> So my understanding of overlayfs is pretty basic so I'm sorry if I miss
+> something. If I'm right, we have three superblocks here: ovl, upper, lower.
+> Now 'lower' is read-only so for freezing purposes we can just forget about
+> it. 'upper' is where the real changes are going into and 'ovl' is a wrapper
+> virtual superblock that handles merging of 'lower' and 'upper'. Correct so
+> far?
+
+Yes.
+
+>
+> And the problem seems to be that when you acquire freeze protection for the
+> 'ovl' superblock, you in fact want to acquire freeze protection for the
+> 'upper' (as 'ovl' is just virtual and has no disk state to protect). So I
+
+There are use case for freezing ovl (i.e. ovl snapshots) but it is not
+implemented
+at the moment.
+
+Overlayfs already gets upper freeze protection internally before any
+modification
+to upper.
+The problem that locking order of upper freeze is currently under overlay
+inode mutex. And that brings a problem with the above pipe case.
+
+> agree that a callback to allow overlayfs to acquire freeze protection on
+> 'upper' right away would be one solution. Or we could make s_writers a
+> pointer and redirect ovl->s_writers to upper->s_writers. Then VFS should do
+> the right thing from the start unless overlayfs calls back into operations
+> on 'upper' that will try to acquire the freeze protection again. Thoughts?
+
+Overlayfs definitely calls into operations on upper and upper certainly
+acquires several levels of s_writers itself.
+
+The problem with the proposal to change locking order to
+ovl freeze -> upper freeze -> ovl inode -> upper inode
+is that for some non-write operations (e.g. lookup, readdir)
+overlay may end up updating xattrs on upper, so will need
+to take upper freeze after ovl inode lock without ovl freeze
+being called by vfs.
+
+I suggested that we may use upper freeze trylock in those
+cases and skip xattr update if trylock fails.
+
+Not sure if my assumption is correct that this would be ok
+w.r.t locking rules?
+Not sure if we can get away with trylock in all the cases that
+we need to modify upper.
+
+Thanks,
+Amir.
