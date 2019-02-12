@@ -2,151 +2,101 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE07DC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CA5C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56442082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 698F520663
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:13:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="SIeZE/G+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfBLMM5 (ORCPT
+        id S1729266AbfBLMNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:12:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:36586 "EHLO foss.arm.com"
+        Tue, 12 Feb 2019 07:13:54 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47678 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfBLMMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:12:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2A8780D;
-        Tue, 12 Feb 2019 04:12:53 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1C6E3F589;
-        Tue, 12 Feb 2019 04:12:51 -0800 (PST)
-Date:   Tue, 12 Feb 2019 12:12:42 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload the
- driver
-Message-ID: <20190212121235.GA23166@e107981-ln.cambridge.arm.com>
-References: <PU1P153MB0169F06340FC519C2802C5CFBF680@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        id S1726565AbfBLMNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:13:54 -0500
+Received: from zn.tnic (p200300EC2BCF3C00E17E3E33645BAC72.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3c00:e17e:3e33:645b:ac72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 96E4C1EC0104;
+        Tue, 12 Feb 2019 13:13:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549973632;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=nn/1DHqBgMQ7XQ36X7KvIHrMtqWIvvyiI2CUcxTw5mY=;
+        b=SIeZE/G+Dj62SYM/raPx4+wFeg72L6xOWQh5u/r4ICJ4lKWELHYQBhfPwcPKXpAgpZgsDn
+        37xwbSu4UEA+VO7B7vCZWEC37Px3z66V68YSoEwr/D+FXetmSP1ef7t134hW9AmJrhgjQg
+        y2raDAQHGhjESvNU8AzDWFxNiWVhLs4=
+Date:   Tue, 12 Feb 2019 13:13:47 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH v7 05/28] x86/asm/entry: annotate THUNKs
+Message-ID: <20190212121347.GD30028@zn.tnic>
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-6-jslaby@suse.cz>
+ <20190209112551.GA5089@zn.tnic>
+ <b75f2a0d-974a-c63b-64f8-8f333991e826@suse.cz>
+ <20190212110501.GB30028@zn.tnic>
+ <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
+ <20190212114654.GC30028@zn.tnic>
+ <37e83ece-28c0-a7ec-86a3-b9b5ca2c61f6@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PU1P153MB0169F06340FC519C2802C5CFBF680@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <37e83ece-28c0-a7ec-86a3-b9b5ca2c61f6@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 08:36:32PM +0000, Dexuan Cui wrote:
+On Tue, Feb 12, 2019 at 12:51:08PM +0100, Jiri Slaby wrote:
+> And what if the LOCAL macros prepend .L automatically? The references
+> would need to be via macro or by manually adding .L. I mean:
 > 
-> When we unload pci-hyperv, the host doesn't send us a PCI_EJECT message.
-> In this case we also need to make sure the sysfs pci slot directory
-> is removed, otherwise "cat /sys/bus/pci/slots/2/address" will trigger
-> "BUG: unable to handle kernel paging request". And, if we unload/reload
-> the driver several times, we'll have multiple pci slot directories in
-> /sys/bus/pci/slots/ like this:
+> SYM_CODE_START_LOCAL(function)
+>   ret
+> SYM_CODE_END(function)
 > 
-> root@localhost:~# ls -rtl  /sys/bus/pci/slots/
-> total 0
-> drwxr-xr-x 2 root root 0 Feb  7 10:49 2
-> drwxr-xr-x 2 root root 0 Feb  7 10:49 2-1
-> drwxr-xr-x 2 root root 0 Feb  7 10:51 2-2
+> And then used as:
+> call .Lfunction
+> or
+> call SYM_LOCAL(function)
 > 
-> The patch adds the missing code, and in hv_eject_device_work() it also
-> moves pci_destroy_slot() to an earlier place where we hold the pci lock.
+> Is that too ugly?
 
-This patch fixes three bugs:
+I'd prefer SYM_LOCAL because not everyone is aware of the fact that the
+GNU toolchain makes .L-prepended symbols local.
 
-1) set hpdev->pci_slot to NULL
-2) move code destroying the slot inside a locked region in
-   hv_eject_device_work()
-3) Add missing slots removal code in hv_pci_remove()
+However:
 
-We need three patches, not one.
+"Local Symbol Names
 
-(1) and (2), I am not entirely sure we want them in stable kernels,
-since they are potential bugs, waiting for your input.
+A local symbol is any symbol beginning with certain local label
+prefixes. By default, the local label prefix is `.L' for ELF systems or
+`L' for traditional a.out systems, but each target may have its own set
+of local label prefixes. On the HPPA local symbols begin with `L$'."
 
-Lorenzo
+Now if you make those macros arch-independent, you need to have the
+correct local symbol definition for those arches and targets(!) which
+differ.
 
-> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> Cc: stable@vger.kernel.org
-> Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> ---
->  drivers/pci/controller/pci-hyperv.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index 9ba4d12c179c..6b4773727525 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -1491,6 +1491,21 @@ static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
->  	}
->  }
->  
-> +/*
-> + * Remove entries in sysfs pci slot directory.
-> + */
-> +static void hv_pci_remove_slots(struct hv_pcibus_device *hbus)
-> +{
-> +	struct hv_pci_dev *hpdev;
-> +
-> +	list_for_each_entry(hpdev, &hbus->children, list_entry) {
-> +		if (!hpdev->pci_slot)
-> +			continue;
-> +		pci_destroy_slot(hpdev->pci_slot);
-> +		hpdev->pci_slot = NULL;
-> +	}
-> +}
-> +
->  /**
->   * create_root_hv_pci_bus() - Expose a new root PCI bus
->   * @hbus:	Root PCI bus, as understood by this driver
-> @@ -1887,6 +1902,10 @@ static void hv_eject_device_work(struct work_struct *work)
->  		pci_lock_rescan_remove();
->  		pci_stop_and_remove_bus_device(pdev);
->  		pci_dev_put(pdev);
-> +		if (hpdev->pci_slot) {
-> +			pci_destroy_slot(hpdev->pci_slot);
-> +			hpdev->pci_slot = NULL;
-> +		}
->  		pci_unlock_rescan_remove();
->  	}
->  
-> @@ -1894,9 +1913,6 @@ static void hv_eject_device_work(struct work_struct *work)
->  	list_del(&hpdev->list_entry);
->  	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
->  
-> -	if (hpdev->pci_slot)
-> -		pci_destroy_slot(hpdev->pci_slot);
-> -
->  	memset(&ctxt, 0, sizeof(ctxt));
->  	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
->  	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
-> @@ -2682,6 +2698,7 @@ static int hv_pci_remove(struct hv_device *hdev)
->  		pci_lock_rescan_remove();
->  		pci_stop_root_bus(hbus->pci_bus);
->  		pci_remove_root_bus(hbus->pci_bus);
-> +		hv_pci_remove_slots(hbus);
->  		pci_unlock_rescan_remove();
->  		hbus->state = hv_pcibus_removed;
->  	}
-> -- 
-> 2.19.1
-> 
+If you don't macroize the local symbols stuff, OTOH, then that's one
+less problem you have.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
