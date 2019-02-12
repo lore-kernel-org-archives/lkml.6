@@ -2,224 +2,318 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F45C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308E9C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5ABA21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFF7F21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X7zr7M1m"
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="0rVmao9w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbfBLLGN (ORCPT
+        id S1729229AbfBLLGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:06:13 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36178 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbfBLLGM (ORCPT
+        Tue, 12 Feb 2019 06:06:51 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42890 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728827AbfBLLGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:06:12 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n22so1140266pfa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 03:06:11 -0800 (PST)
+        Tue, 12 Feb 2019 06:06:51 -0500
+Received: by mail-yw1-f67.google.com with SMTP id v201so829631ywa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 03:06:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eInlvY5FKDw6XUYNat+PshXZTd4NDkDRgZK+3JHQYNc=;
-        b=X7zr7M1mBBhPgZRnWEr8FDlVXEw2I+jreFQ6+3EzulF10/Y4ubePPASDVHZXEZmQGI
-         VvWNDiJMM3PXmULr9CmCYhGg5oRcRVuVIgpdqLag0wnm4jguulaJIoM3/dXvVWeISycZ
-         lC0uwqV7TkVRvVEzbitBhyqa6QSdCwmyr1zJitLc4joWCdlqJGBuWfFSE9R4W7GXPqAq
-         pXZ8aKLOXpMpXKGnLCBI3b5W6fPfKQ8dhMms9Vw/xX9vr7oU+6JFh9vYpmXF1HY0m1go
-         Kxm8GiFr9tAW8VewcZ1SzTWubsRGC9oGG4bmCRqSjCsv+zgKOfes9H2fiRDHldWSiDve
-         iAKA==
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ffgy+Ihrxny8kltfexYOi745w+fb3oVxQWzVL3oOP9k=;
+        b=0rVmao9wjojW97L0JyB1CRZQYB382Nv6OJZ6Hw8W+vgzZKTfoPf1lExpUyjzRWV/GW
+         JBIdb8QmpLP2YTQqm7kl2tjqmwclKlAbyxcklZzOpSB9yrFnGIZp41XqvBg8vfM29vx4
+         +8QnnAXMV91TuRez2zPNtFwGDLT1Gu/xGDHZzMsljDYilbXKKHx3bcwC64cfVITQa4NB
+         aqK1ffpNugNzNM0sKpJ5bcGtHxMbxUZJx2ViELtsExglBYoUGFONkeIwNzAhraYf9bSQ
+         Hw+nGS5IIizjTiJB5pTW2iHl4x9G70Iw+rEtdzDbKWak2T9rVO8ibZMYjfRQyBlVxJWt
+         qTNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eInlvY5FKDw6XUYNat+PshXZTd4NDkDRgZK+3JHQYNc=;
-        b=Fto3aQZbTOTLOYQ0/cg4/n1VDt80QMonxHDKDCCcf80QIao9ia9lSiS0jSQjV2QhrB
-         Mn3QMH/xcbyfBZmuqX0PHec7/lEaVCgbqgaqNXJ5IywPOipZkkP3cIEkKDphad7F5fbp
-         xLJ8OPdQ71kg6+UTP7FB1I33xMojSOaPrHFLAJzvU9I8LN27qyeMav6KKX+PgRTHQ/yM
-         L8BUyd7yZ45xrxKLmu3zHcKhmsQhTI/k4L67oRNg5Bj5F36730F7k5RAi0VtWZV1BumC
-         zpUaTTU8dy5UnjdBH/GWe9uI6cOGt3jQcJTAdVxUxuqoyYnaD2dCxwtRrMoDHTU6gDj8
-         SK7A==
-X-Gm-Message-State: AHQUAubaXaNLCt4BdefFDhL4Lw8Hdnt/ArkMavv+5dlPE/jbGWY9HLIq
-        lqjIiSWvY8U6j2ocB1y/telaWHIHL9o=
-X-Google-Smtp-Source: AHgI3IZslvoLWef9ODVpER9JiEQpbdkzX084iTzcLeKO3doYlQYVbyMd2KZszN3fubqxZSQxRYmPdQ==
-X-Received: by 2002:a63:481f:: with SMTP id v31mr3127660pga.29.1549969571419;
-        Tue, 12 Feb 2019 03:06:11 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id c7sm24160206pfa.24.2019.02.12.03.06.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 03:06:10 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V4 1/2] cpufreq: Allow light-weight tear down and bring up of CPUs
-Date:   Tue, 12 Feb 2019 16:36:04 +0530
-Message-Id: <7fcdface56ccc5df0e50738253eb3e696b2f8980.1549969209.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
-In-Reply-To: <f48f04ddfe3bd072f40154cdd971079199db0e4b.1549955027.git.viresh.kumar@linaro.org>
-References: <f48f04ddfe3bd072f40154cdd971079199db0e4b.1549955027.git.viresh.kumar@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ffgy+Ihrxny8kltfexYOi745w+fb3oVxQWzVL3oOP9k=;
+        b=UDxp0yBLghYy0btVVLyo7Ut2A0g/J3V9JUAyOObUqY6MhiggBt8CZbigeTWFN9qvOh
+         OUQrjLcoD/Zeb/MQsuzGi8LSwBmFaFhh0u5IKIJqIgimIiDCu0H8KDVrnsVS2Eqz3VVy
+         RDU6UxF6+KGNXLFzwrwHzlDG5/RGu6j4j2WFTEPYSn43/1rKO1VOoUjjCEiYfWg3+FOZ
+         /SawmEF65PT3iYucaUzaMzEqh4lZ6Ps9TWAeAxceINlGBCXIIpq7WWBdW7q4sMJSlbPJ
+         seCiys6QmvYKE5qjOfOaY/Vq69WlDp8Rb/jVCV2OLLgmUbq5WEo84QS9yFqSZ0MGCJbk
+         uyAg==
+X-Gm-Message-State: AHQUAuZr1MAIAiTQMZvBX1eqG1aqcWq/1kAfPQd8OFL1OSIgdlNgO4TE
+        SZxodKLD96YPAlx4AMsO7UCwhOXw4iVJ2EZ8KgOqUA==
+X-Google-Smtp-Source: AHgI3IYdzGGESEnOzCcb7tU5rJKvckQGtvsiEQNfTQ43mQKpOcn/sNYhobNL+BBn8gCEXuzE36ecJ5z5bMP8lEZCfpg=
+X-Received: by 2002:a81:3a8d:: with SMTP id h135mr2318008ywa.391.1549969609779;
+ Tue, 12 Feb 2019 03:06:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190211161754.23902-1-nava.manne@xilinx.com>
+In-Reply-To: <20190211161754.23902-1-nava.manne@xilinx.com>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Tue, 12 Feb 2019 03:06:38 -0800
+Message-ID: <CAAtXAHfXaerVYzfdnA_09rK5AgLVJAiRcE2KEqosfrMZBuO3xQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] fpga manager: Adding FPGA Manager support for
+ Xilinx zynqmp
+To:     Nava kishore Manne <nava.manne@xilinx.com>
+Cc:     Alan Tull <atull@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajanv@xilinx.com>, Jolly Shah <jollys@xilinx.com>,
+        linux-fpga@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kishore m <chinnikishore369@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpufreq core doesn't remove the cpufreq policy anymore on CPU
-offline operation, rather that happens when the CPU device gets
-unregistered from the kernel. This allows faster recovery when the CPU
-comes back online. This is also very useful during system wide
-suspend/resume where we offline all non-boot CPUs during suspend and
-then bring them back on resume.
+Hi Nava,
 
-This commit takes the same idea a step ahead to allow drivers to do
-light weight tear-down and bring-up during CPU offline and online
-operations.
+On Sun, Feb 10, 2019 at 8:17 AM Nava kishore Manne
+<nava.manne@xilinx.com> wrote:
+>
+> This patch adds FPGA Manager support for the Xilinx
+> ZynqMP chip.
+>
+> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> ---
+> Changes for v3:
+>                 -Created patches on top of 5.0-rc5.
+>                  No functional changes.
+> Changes for v2:
+>                 -Fixed some minor coding issues as suggested by
+>                  Moritz
+>
+> Changes for v1:
+>                 -None.
+>
+> Changes for RFC-V2:
+>                 -Updated the Fpga Mgr registrations call's
+>                  to 4.18
+>
+>  drivers/fpga/Kconfig       |   9 +++
+>  drivers/fpga/Makefile      |   1 +
+>  drivers/fpga/zynqmp-fpga.c | 165 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 175 insertions(+)
+>  create mode 100644 drivers/fpga/zynqmp-fpga.c
+>
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 0bb7b5c..9f17203 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -204,4 +204,13 @@ config FPGA_DFL_PCI
+>
+>           To compile this as a module, choose M here.
+>
+> +config FPGA_MGR_ZYNQMP_FPGA
+> +       tristate "Xilinx ZynqMP FPGA"
+> +       depends on ARCH_ZYNQMP || COMPILE_TEST
+> +       help
+> +         FPGA manager driver support for Xilinx ZynqMP FPGAs.
+> +         This driver uses the processor configuration port(PCAP)
+> +         to configure the programmable logic(PL) through PS
+> +         on ZynqMP SoC.
+> +
+>  endif # FPGA
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index c0dd4c8..312b937 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -17,6 +17,7 @@ obj-$(CONFIG_FPGA_MGR_STRATIX10_SOC)  += stratix10-soc.o
+>  obj-$(CONFIG_FPGA_MGR_TS73XX)          += ts73xx-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_SPI)      += xilinx-spi.o
+>  obj-$(CONFIG_FPGA_MGR_ZYNQ_FPGA)       += zynq-fpga.o
+> +obj-$(CONFIG_FPGA_MGR_ZYNQMP_FPGA)     += zynqmp-fpga.o
+>  obj-$(CONFIG_ALTERA_PR_IP_CORE)         += altera-pr-ip-core.o
+>  obj-$(CONFIG_ALTERA_PR_IP_CORE_PLAT)    += altera-pr-ip-core-plat.o
+>
+> diff --git a/drivers/fpga/zynqmp-fpga.c b/drivers/fpga/zynqmp-fpga.c
+> new file mode 100644
+> index 0000000..f40c3bb
+> --- /dev/null
+> +++ b/drivers/fpga/zynqmp-fpga.c
+> @@ -0,0 +1,165 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2019 Xilinx, Inc.
+> + */
+> +
+> +#include <linux/dma-mapping.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/string.h>
+> +#include <linux/firmware/xlnx-zynqmp.h>
+> +
+> +/* Constant Definitions */
+> +#define IXR_FPGA_DONE_MASK     0X00000008U
+> +
+> +/**
+> + * struct zynqmp_fpga_priv - Private data structure
+> + * @dev:       Device data structure
+> + * @flags:     flags which is used to identify the bitfile type
+> + */
+> +struct zynqmp_fpga_priv {
+> +       struct device *dev;
+> +       u32 flags;
+> +};
+> +
+> +static int zynqmp_fpga_ops_write_init(struct fpga_manager *mgr,
+> +                                     struct fpga_image_info *info,
+> +                                     const char *buf, size_t size)
+> +{
+> +       struct zynqmp_fpga_priv *priv;
+> +
+> +       priv = mgr->priv;
+> +       priv->flags = info->flags;
+> +
+> +       return 0;
+> +}
+> +
+> +static int zynqmp_fpga_ops_write(struct fpga_manager *mgr,
+> +                                const char *buf, size_t size)
+> +{
+> +       const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+> +       struct zynqmp_fpga_priv *priv;
+> +       dma_addr_t dma_addr;
+> +       u32 eemi_flags = 0;
+> +       char *kbuf;
+> +       int ret;
+> +
+> +       if (!eemi_ops || !eemi_ops->fpga_load)
+> +               return -ENXIO;
+> +
+> +       priv = mgr->priv;
+> +
+> +       kbuf = dma_alloc_coherent(priv->dev, size, &dma_addr, GFP_KERNEL);
+> +       if (!kbuf)
+> +               return -ENOMEM;
+> +
+> +       memcpy(kbuf, buf, size);
+> +
+> +       wmb(); /* ensure all writes are done before initiate FW call */
+> +
+> +       if (priv->flags & FPGA_MGR_PARTIAL_RECONFIG)
+> +               eemi_flags |= XILINX_ZYNQMP_PM_FPGA_PARTIAL;
+> +
+> +       ret = eemi_ops->fpga_load(dma_addr, size, eemi_flags);
+> +
+> +       dma_free_coherent(priv->dev, size, kbuf, dma_addr);
+> +
+> +       return ret;
+> +}
+> +
+> +static int zynqmp_fpga_ops_write_complete(struct fpga_manager *mgr,
+> +                                         struct fpga_image_info *info)
+> +{
+> +       return 0;
+> +}
+> +
+> +static enum fpga_mgr_states zynqmp_fpga_ops_state(struct fpga_manager *mgr)
+> +{
+> +       const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+> +       u32 status;
+> +
+> +       if (!eemi_ops || !eemi_ops->fpga_get_status)
+> +               return FPGA_MGR_STATE_UNKNOWN;
+> +
+> +       eemi_ops->fpga_get_status(&status);
+> +       if (status & IXR_FPGA_DONE_MASK)
+> +               return FPGA_MGR_STATE_OPERATING;
+> +
+> +       return FPGA_MGR_STATE_UNKNOWN;
+> +}
+> +
+> +static const struct fpga_manager_ops zynqmp_fpga_ops = {
+> +       .state = zynqmp_fpga_ops_state,
+> +       .write_init = zynqmp_fpga_ops_write_init,
+> +       .write = zynqmp_fpga_ops_write,
+> +       .write_complete = zynqmp_fpga_ops_write_complete,
+> +};
+> +
+> +static int zynqmp_fpga_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct zynqmp_fpga_priv *priv;
+> +       struct fpga_manager *mgr;
+> +       int err, ret;
 
-A new set of callbacks is introduced, online/offline(). online() gets
-called when the first CPU of an inactive policy is brought up and
-offline() gets called when all the CPUs of a policy are offlined.
+Just use err everywhere, or ret, your choice.
+> +
+> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->dev = dev;
+> +       ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(44));
+Here?
+> +       if (ret < 0) {
+> +               dev_err(dev, "no usable DMA configuration");
+> +               return ret;
+> +       }
+> +
+> +       mgr = fpga_mgr_create(dev, "Xilinx ZynqMP FPGA Manager",
+> +                             &zynqmp_fpga_ops, priv);
+> +       if (!mgr)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, mgr);
+> +
+> +       err = fpga_mgr_register(mgr);
+vs here.
+> +       if (err) {
+> +               dev_err(dev, "unable to register FPGA manager");
+> +               fpga_mgr_free(mgr);
+> +               return err;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int zynqmp_fpga_remove(struct platform_device *pdev)
+> +{
+> +       struct fpga_manager *mgr = platform_get_drvdata(pdev);
+> +
+> +       fpga_mgr_unregister(mgr);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id zynqmp_fpga_of_match[] = {
+> +       { .compatible = "xlnx,zynqmp-pcap-fpga", },
+> +       {},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, zynqmp_fpga_of_match);
+> +
+> +static struct platform_driver zynqmp_fpga_driver = {
+> +       .probe = zynqmp_fpga_probe,
+> +       .remove = zynqmp_fpga_remove,
+> +       .driver = {
+> +               .name = "zynqmp_fpga_manager",
+> +               .of_match_table = of_match_ptr(zynqmp_fpga_of_match),
+> +       },
+> +};
+> +
+> +module_platform_driver(zynqmp_fpga_driver);
+> +
+> +MODULE_AUTHOR("Nava kishore Manne <navam@xilinx.com>");
+> +MODULE_DESCRIPTION("Xilinx ZynqMp FPGA Manager");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.7.4
+>
 
-The existing init/exit() callback get called on policy
-creation/destruction. They also get called instead of online/offline()
-callbacks if the online/offline() callbacks aren't provided.
-
-This also moves around some code to get executed only for the new-policy
-case going forward.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V3->V4:
-- Use != instead of ^
-
- drivers/cpufreq/cpufreq.c | 58 +++++++++++++++++++++++++--------------
- include/linux/cpufreq.h   |  2 ++
- 2 files changed, 40 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 96a69c67a545..55e9795801a4 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1201,28 +1201,39 @@ static int cpufreq_online(unsigned int cpu)
- 			return -ENOMEM;
- 	}
- 
--	cpumask_copy(policy->cpus, cpumask_of(cpu));
-+	if (!new_policy && cpufreq_driver->online) {
-+		ret = cpufreq_driver->online(policy);
-+		if (ret) {
-+			pr_debug("%s: %d: initialization failed\n", __func__,
-+				 __LINE__);
-+			goto out_exit_policy;
-+		}
- 
--	/* call driver. From then on the cpufreq must be able
--	 * to accept all calls to ->verify and ->setpolicy for this CPU
--	 */
--	ret = cpufreq_driver->init(policy);
--	if (ret) {
--		pr_debug("initialization failed\n");
--		goto out_free_policy;
--	}
-+		/* Recover policy->cpus using related_cpus */
-+		cpumask_copy(policy->cpus, policy->related_cpus);
-+	} else {
-+		cpumask_copy(policy->cpus, cpumask_of(cpu));
- 
--	ret = cpufreq_table_validate_and_sort(policy);
--	if (ret)
--		goto out_exit_policy;
-+		/*
-+		 * Call driver. From then on the cpufreq must be able
-+		 * to accept all calls to ->verify and ->setpolicy for this CPU.
-+		 */
-+		ret = cpufreq_driver->init(policy);
-+		if (ret) {
-+			pr_debug("%s: %d: initialization failed\n", __func__,
-+				 __LINE__);
-+			goto out_free_policy;
-+		}
- 
--	down_write(&policy->rwsem);
-+		ret = cpufreq_table_validate_and_sort(policy);
-+		if (ret)
-+			goto out_exit_policy;
- 
--	if (new_policy) {
- 		/* related_cpus should at least include policy->cpus. */
- 		cpumask_copy(policy->related_cpus, policy->cpus);
- 	}
- 
-+	down_write(&policy->rwsem);
- 	/*
- 	 * affected cpus must always be the one, which are online. We aren't
- 	 * managing offline cpus here.
-@@ -1421,11 +1432,12 @@ static int cpufreq_offline(unsigned int cpu)
- 		cpufreq_exit_governor(policy);
- 
- 	/*
--	 * Perform the ->exit() even during light-weight tear-down,
--	 * since this is a core component, and is essential for the
--	 * subsequent light-weight ->init() to succeed.
-+	 * Perform the ->offline() during light-weight tear-down, as
-+	 * that allows fast recovery when the CPU comes back.
- 	 */
--	if (cpufreq_driver->exit) {
-+	if (cpufreq_driver->offline) {
-+		cpufreq_driver->offline(policy);
-+	} else if (cpufreq_driver->exit) {
- 		cpufreq_driver->exit(policy);
- 		policy->freq_table = NULL;
- 	}
-@@ -1454,8 +1466,13 @@ static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
- 	cpumask_clear_cpu(cpu, policy->real_cpus);
- 	remove_cpu_dev_symlink(policy, dev);
- 
--	if (cpumask_empty(policy->real_cpus))
-+	if (cpumask_empty(policy->real_cpus)) {
-+		/* We did light-weight exit earlier, do full tear down now */
-+		if (cpufreq_driver->offline)
-+			cpufreq_driver->exit(policy);
-+
- 		cpufreq_policy_free(policy);
-+	}
- }
- 
- /**
-@@ -2488,7 +2505,8 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
- 		    driver_data->target) ||
- 	     (driver_data->setpolicy && (driver_data->target_index ||
- 		    driver_data->target)) ||
--	     (!!driver_data->get_intermediate != !!driver_data->target_intermediate))
-+	     (!!driver_data->get_intermediate != !!driver_data->target_intermediate) ||
-+	     (!driver_data->online != !driver_data->offline))
- 		return -EINVAL;
- 
- 	pr_debug("trying to register driver %s\n", driver_data->name);
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 9db074ecbbd7..b160e98076e3 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -325,6 +325,8 @@ struct cpufreq_driver {
- 	/* optional */
- 	int		(*bios_limit)(int cpu, unsigned int *limit);
- 
-+	int		(*online)(struct cpufreq_policy *policy);
-+	int		(*offline)(struct cpufreq_policy *policy);
- 	int		(*exit)(struct cpufreq_policy *policy);
- 	void		(*stop_cpu)(struct cpufreq_policy *policy);
- 	int		(*suspend)(struct cpufreq_policy *policy);
--- 
-2.20.1.321.g9e740568ce00
-
+Thanks,
+Moritz
