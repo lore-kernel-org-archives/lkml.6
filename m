@@ -2,118 +2,100 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DB2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B992EC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC7A21900
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7465721B18
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="WIfEsyfv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbfBLKXa (ORCPT
+        id S1728706AbfBLKXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:23:30 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:49223 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKXa (ORCPT
+        Tue, 12 Feb 2019 05:23:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38969 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbfBLKXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:23:30 -0500
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 40364200004;
-        Tue, 12 Feb 2019 10:23:25 +0000 (UTC)
-Date:   Tue, 12 Feb 2019 11:23:24 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     nicolas.dufresne@collabora.com, tfiga@chromium.org,
-        posciak@chromium.org, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        jenskuske@gmail.com, jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH v3 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-Message-ID: <20190212102324.3tdurso54fumlkwr@flea>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
- <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
- <209bafb880bd9410f875f5e6f16923e38ec76df4.camel@collabora.com>
+        Tue, 12 Feb 2019 05:23:34 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so2030503wra.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7W8G/8FaSOJk9M7YHMfYt+bUiItd3l+RK8BDFjOuhhM=;
+        b=WIfEsyfvAQS08gsNmMtnHMcv70Li+F9ZXFAafM6QykN3Gdm2PFkAO6YR2wEFpGLXE6
+         4Zno41jwiiocRF91A8WKY4PslqX3MyWFTdzUHGrddos/ekqQ14yMEAWXRV9lRyotx2Qo
+         Y+aOop1/iC5p8pblhWMtr8zIWoxl1ACFyMELp/2Zy4mT35xuyqgYyPfsaDZSM5extvm/
+         QwOExDWW2w2G9YPwy5/2s64+Ng7/ZEwYc6A/ZcYLdPG9qy/FEy18ZcUbvPdXkyqxaBQ3
+         rHph/51Iy9aaGZm+PeO1Uans3WhW76dD8HTwe6HLWZ2x+EiHa6hZDviC4EPytVa39jvr
+         eU3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7W8G/8FaSOJk9M7YHMfYt+bUiItd3l+RK8BDFjOuhhM=;
+        b=HJCzRtqwYeXPi4wbvtQr7Fj+1iEuEhTYA7QGnbV9/ztnldUqhEi07HKT+P2670eNsk
+         r4Fijix3T1DG12n2ORi0r/Wo/wwJftQD+q+8OYPlZPHmlxfdGVMTQ60NJ21xYh8UkjA8
+         MOmRKjX67T2FSwP5Y3r0C4CoCrS9wUtN3VjUN188P1qpJY3LhaEYrlC9Jz0R6QgW8gwD
+         PVgvmGAy1eP2gjCp2IGZ3ojq4dexoYHoBr5/bL9i5m//y3wRx7HY5HkKbOPGKqqkjJu8
+         XM2jzwG7olSc/nUhinBeCSYQRrBN3c/3LLVA+zBCT4MkNzJljhp664RpUA7EPTB1wVhr
+         W08A==
+X-Gm-Message-State: AHQUAubY/52YJDGlNZgOrLrsqs+eQ5qSx99YoNMx0PznUIW+nU2nTRX9
+        mViMgXUqnw5HGGDvIeY2/O5HDw6naWKHfUVs8LPciQ==
+X-Google-Smtp-Source: AHgI3IY41xL2N5YF5uACORhGdY4bkLqRC823BuTXZ+5OcQgKQSlaaltMz8m1Kin3220iHkzvDN+NxZq889ztE4yDEH8=
+X-Received: by 2002:adf:ee07:: with SMTP id y7mr2333442wrn.187.1549967012363;
+ Tue, 12 Feb 2019 02:23:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="drrdy3tibi4hg6l4"
-Content-Disposition: inline
-In-Reply-To: <209bafb880bd9410f875f5e6f16923e38ec76df4.camel@collabora.com>
-User-Agent: NeoMutt/20180716
+References: <20190119132650.9978-1-anup.patel@wdc.com> <20190119132650.9978-7-anup.patel@wdc.com>
+ <20190212070807.GD26747@infradead.org>
+In-Reply-To: <20190212070807.GD26747@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 12 Feb 2019 15:53:21 +0530
+Message-ID: <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 12, 2019 at 12:38 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Sat, Jan 19, 2019 at 01:28:59PM +0000, Anup Patel wrote:
+> > This patch implements keepinitrd kernel parameter. By default,
+> > keepinitrd=1 but users can pass "keepinitrd=0" to free-up
+> > initrd memory at boot-time in free_initrd_mem() function.
+> >
+> > The keepinitrd kernel parameter is already implemented by
+> > unicore32, arm, and arm64 architectures and it is documented
+> > at: Documentation/admin-guide/kernel-parameters.txt
+>
+> But why do we need it?  Is there any good reason every not to free
+> the initrd / initramfs memory when it is not used?
 
---drrdy3tibi4hg6l4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If it is initramfs (i.e. CPIO image) then contents of CPIO archive
+are extracted to create a ramfs instance.
 
-On Mon, Feb 11, 2019 at 02:12:25PM -0300, Ezequiel Garcia wrote:
-> On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
-> >=20
-> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
-ev2.h
-> > index d6eed479c3a6..6fc955926bdb 100644
-> > --- a/include/uapi/linux/videodev2.h
-> > +++ b/include/uapi/linux/videodev2.h
-> > @@ -645,6 +645,7 @@ struct v4l2_pix_format {
-> >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 =
-with start codes */
-> >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H26=
-4 without start codes */
-> >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 =
-MVC */
-> > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H26=
-4 parsed slices */
->=20
-> Nicolas and I have discussed the pixel format, and came up with
-> the following proposal.
->=20
-> Given this format represents H264 parsed slices, without any start code,
-> perhpaps we name it as:
->=20
-> V4L2_PIX_FMT_H264_SLICE_RAW
->=20
-> Then, we'd also add:
->=20
-> V4L2_PIX_FMT_H264_SLICE_ANNEX_B
->=20
-> To represent H264 parsed slices with annex B (3- or 4-byte) start code.
-> This one is what the Rockchip VPU driver would expose.
->=20
-> Ideas?
+If it is initrd (i.e. some filesystem image) then RAM block device
+is created in-place at initrd location. (Please correct me if I am
+wrong about initrd here).
 
-I think we discussed that idea already, and I'm all for it.
+So in case of initrd we might not want to free-up the RAM but
+we can certainly free-up in case of initramfs.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---drrdy3tibi4hg6l4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGKenAAKCRDj7w1vZxhR
-xW+MAP9jbBHZlCQuCB5NsMT18YGAkvbt2059lhnKbRNmfwEwqwD/SafCidHKsDSl
-2sdRRj1tVdOCB3oTJRS3WNE83XwAKgM=
-=cJo3
------END PGP SIGNATURE-----
-
---drrdy3tibi4hg6l4--
+Regards,
+Anup
