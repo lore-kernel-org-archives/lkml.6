@@ -2,162 +2,99 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A403C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8803FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F32218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbuvdiXo"
+	by mail.kernel.org (Postfix) with ESMTP id 6180B2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbfBLJtm (ORCPT
+        id S1728404AbfBLJt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:49:42 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35367 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbfBLJth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:49:37 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t200so2285689wmt.0;
-        Tue, 12 Feb 2019 01:49:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uqe/TFtTZ0ij7Yuis+KAoIHGt2xbd1SMI4ZKNHTGhLs=;
-        b=bbuvdiXoO4qmGCB1F9eX2x0tME1+jJWavdYsDdC2ih2RxgKpPgtkjifbNWs5OZKz5g
-         zxEOfzsZRFfCxF11PwdOtl/crKgm2Hyu4CbCef9X0XlfSbof5AX31DH2o2HF5zGYqMHv
-         I3GRc1XsGMmTY3ndcvOl6KSC/IZeNTaqUt2FlatjoB9ebmSmwWiv+5GC7EFSWpTN46VH
-         FBIARHL163sGayAMJpI4AiMhraJIvYcii+3AVFtPArd/TVW4PGxrPiY7vyc+h4MT3R2w
-         cBT83v4GhiqYRWzJxQQHLoz9XiGmW9ctHqBBikM40P3xux/y7d3P5R2ZXu3pnLy3wggO
-         Y+uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uqe/TFtTZ0ij7Yuis+KAoIHGt2xbd1SMI4ZKNHTGhLs=;
-        b=brnxa6woTWEgpXNbsM/C1wA+Kkg5efxYZ4xQBlGeIwMyJlQRO1rL4jJSvuRDCxybTW
-         1j+/zqm2f8jdUM/9fKInpBoMS1usGqSTBeqzIzvpRuI4lv9Omqd2V9ekYDAaI0jSEVYI
-         OXt8N5YjEnU/AhnCTEVvkwLe0F0CJtz0g6IDFgG3BoVaw5enILWXV2g7DreJfJBA+NXP
-         /4d25sXUt6kiashoiAm91uN28yNoHutDWNNr3zTOSlRLMWUuBpwEJDsmenYLn9CnNvfb
-         NSpVIioTUbU5u6gO/G+eaHaMWZrgqNc9arrNZOsXT/TFF46+rzDlGV09vUz6nBjH6OhP
-         P+ww==
-X-Gm-Message-State: AHQUAuaDJ3qfWZF2L0iV6wD7WZUsiQUxsxaJ1XO2AzTExE1pf4YCFlcx
-        ZanMgTCOV6zc1Tuq7XZutSAHcDQVP1E=
-X-Google-Smtp-Source: AHgI3IblHVRXcMnVWn+hkF424TDLgbbXXf7vx3xOyKihoESrAq2HygoB15m9Q9NNtBBIpLOPnhWJLQ==
-X-Received: by 2002:a7b:c7c2:: with SMTP id z2mr2055796wmk.47.1549964974696;
-        Tue, 12 Feb 2019 01:49:34 -0800 (PST)
-Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
-        by smtp.gmail.com with ESMTPSA id d2sm9299843wrs.97.2019.02.12.01.49.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 01:49:33 -0800 (PST)
-From:   Mathieu Othacehe <m.othacehe@gmail.com>
-To:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mathieu Othacehe <m.othacehe@gmail.com>
-Subject: [PATCH 2/2] pwm: hibvt: Add hi3559v100 support
-Date:   Tue, 12 Feb 2019 10:49:27 +0100
-Message-Id: <20190212094927.5900-2-m.othacehe@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190212094927.5900-1-m.othacehe@gmail.com>
-References: <20190212094927.5900-1-m.othacehe@gmail.com>
+        Tue, 12 Feb 2019 04:49:59 -0500
+Received: from mga12.intel.com ([192.55.52.136]:31034 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727600AbfBLJt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:49:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 01:49:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="125800641"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga003.jf.intel.com with ESMTP; 12 Feb 2019 01:49:56 -0800
+Subject: Re: [PATCH v9 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
+ time
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Aubrey Li <aubrey.li@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20190211185931.4386-1-aubrey.li@intel.com>
+ <20190211185931.4386-2-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1902120905420.1654@nanos.tec.linutronix.de>
+ <efe3e5c9-c477-8a28-5489-c943fe63efaa@linux.intel.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <7fb97f08-daac-1dad-f51e-13fe6753832c@linux.intel.com>
+Date:   Tue, 12 Feb 2019 17:49:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
+MIME-Version: 1.0
+In-Reply-To: <efe3e5c9-c477-8a28-5489-c943fe63efaa@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for hi3559v100-shub-pwm and hisilicon,hi3559v100-pwm
-platforms. They require a special quirk: pwm has to be enabled again
-to force duty_cycle refresh.
+On 2019/2/12 17:14, Li, Aubrey wrote:
+> On 2019/2/12 16:22, Thomas Gleixner wrote:
+>> On Tue, 12 Feb 2019, Aubrey Li wrote:
+>>> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+>>> index d53c54b842da..60ee932070fe 100644
+>>> --- a/arch/x86/include/asm/processor.h
+>>> +++ b/arch/x86/include/asm/processor.h
+>>> @@ -996,5 +996,7 @@ enum l1tf_mitigations {
+>>>  };
+>>>  
+>>>  extern enum l1tf_mitigations l1tf_mitigation;
+>>> +/* Add support for architecture specific output in /proc/pid/status */
+>>> +extern void arch_proc_pid_status(struct seq_file *m, struct task_struct *task);
+>>
+>> Sigh. This is absolutely the wrong place. The weak function is declared and
+>> used in fs/proc/... So the prototype wants to be in a header which is
+>> included from there independent of x86...
+> 
+> Can the prototype be in the architecture header if they want to call the function?
+> Like the following? arch_report_meminfo() is used in fs/proc/... as well.
+> 
+> $ find . -name *.h | xargs grep arch_report_meminfo
+> ./arch/s390/include/asm/pgtable.h:void arch_report_meminfo(struct seq_file *m);
+> ./arch/x86/include/asm/pgtable_types.h:extern void arch_report_meminfo(struct seq_file *m);
+> ./arch/parisc/include/asm/pgtable.h:extern void arch_report_meminfo(struct seq_file *m);
+> 
 
-Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
----
- drivers/pwm/pwm-hibvt.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+Actually both way exist in the current kernel,the reason I chose to put the prototype
+into architecture header file is that I found some architectures rename the function
+name by a micro definition while others use prototype. See below:
 
-diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
-index 27c107e78d59..bf33aa24433c 100644
---- a/drivers/pwm/pwm-hibvt.c
-+++ b/drivers/pwm/pwm-hibvt.c
-@@ -49,6 +49,7 @@ struct hibvt_pwm_chip {
- 	struct clk *clk;
- 	void __iomem *base;
- 	struct reset_control *rstc;
-+	bool quirk_force_enable;
- };
- 
- struct hibvt_pwm_soc {
-@@ -56,6 +57,7 @@ struct hibvt_pwm_soc {
- };
- 
- static const struct hibvt_pwm_soc pwm_soc[2] = {
-+	{ .num_pwms = 2 },
- 	{ .num_pwms = 4 },
- 	{ .num_pwms = 8 },
- };
-@@ -148,13 +150,19 @@ static void hibvt_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- static int hibvt_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 				struct pwm_state *state)
- {
-+	struct hibvt_pwm_chip *hi_pwm_chip = to_hibvt_pwm_chip(chip);
-+
- 	if (state->polarity != pwm->state.polarity)
- 		hibvt_pwm_set_polarity(chip, pwm, state->polarity);
- 
- 	if (state->period != pwm->state.period ||
--		state->duty_cycle != pwm->state.duty_cycle)
-+		state->duty_cycle != pwm->state.duty_cycle) {
- 		hibvt_pwm_config(chip, pwm, state->duty_cycle, state->period);
- 
-+		if (hi_pwm_chip->quirk_force_enable && state->enabled)
-+			hibvt_pwm_enable(chip, pwm);
-+	}
-+
- 	if (state->enabled != pwm->state.enabled) {
- 		if (state->enabled)
- 			hibvt_pwm_enable(chip, pwm);
-@@ -176,6 +184,7 @@ static int hibvt_pwm_probe(struct platform_device *pdev)
- {
- 	const struct hibvt_pwm_soc *soc =
- 				of_device_get_match_data(&pdev->dev);
-+	struct device_node *np = pdev->dev.of_node;
- 	struct hibvt_pwm_chip *pwm_chip;
- 	struct resource *res;
- 	int ret;
-@@ -199,6 +208,15 @@ static int hibvt_pwm_probe(struct platform_device *pdev)
- 	pwm_chip->chip.of_xlate = of_pwm_xlate_with_flags;
- 	pwm_chip->chip.of_pwm_n_cells = 3;
- 
-+	/*
-+	 * On those platforms, it is required to enable the
-+	 * pwm again each time we want to refresh the duty
-+	 * cycle.
-+	 */
-+	if (of_device_is_compatible(np, "hisilicon,hi3559v100-shub-pwm") ||
-+		of_device_is_compatible(np, "hisilicon,hi3559v100-pwm"))
-+		pwm_chip->quirk_force_enable = true;
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pwm_chip->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(pwm_chip->base))
-@@ -250,8 +268,10 @@ static int hibvt_pwm_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id hibvt_pwm_of_match[] = {
--	{ .compatible = "hisilicon,hi3516cv300-pwm", .data = &pwm_soc[0] },
--	{ .compatible = "hisilicon,hi3519v100-pwm", .data = &pwm_soc[1] },
-+	{ .compatible = "hisilicon,hi3516cv300-pwm", .data = &pwm_soc[1] },
-+	{ .compatible = "hisilicon,hi3519v100-pwm", .data = &pwm_soc[2] },
-+	{ .compatible = "hisilicon,hi3559v100-shub-pwm", .data = &pwm_soc[2] },
-+	{ .compatible = "hisilicon,hi3559v100-pwm", .data = &pwm_soc[0] },
- 	{  }
- };
- MODULE_DEVICE_TABLE(of, hibvt_pwm_of_match);
--- 
-2.17.1
+$ find . -name *.h | xargs grep arch_irq_stat
+./arch/arm64/include/asm/hardirq.h:#define arch_irq_stat_cpu	smp_irq_stat_cpu
+./arch/arm/include/asm/hardirq.h:#define arch_irq_stat_cpu	smp_irq_stat_cpu
+./arch/x86/include/asm/hardirq.h:extern u64 arch_irq_stat_cpu(unsigned int cpu);
 
+This looks more flexible than it in the common header file.
+
+Anyway, putting the prototype into the common header file like include/linux/proc_fs.h
+is also acceptable to me if you persist, please just let me know, :)
+
+Thanks,
+-Aubrey
