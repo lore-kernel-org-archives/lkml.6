@@ -2,103 +2,105 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77FFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53457C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B66972082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:33:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GUTAM4/9"
+	by mail.kernel.org (Postfix) with ESMTP id 2342B218AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549960414;
+	bh=ANEJorn+eZueJIlUmODeIM0LaXedjnc9zZep9TBt1GQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Y9QVzY2lqx65VM7peff9NotGXUWMPnOoJdaZoe2oFPTjKP1kh/YKOtTlSYD0+Ip5L
+	 rVyq8RmffEOA0pJArtzm+8MjIPZPD6/bl6pPb7KRHwidn9vc3q5GAu8VZjoYSxCXML
+	 zuUzePsYr97XUBSNe4UEF7oeq5IDpJjjBYXEfoAw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbfBLIdS (ORCPT
+        id S1728539AbfBLIdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:33:18 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48596 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbfBLIdP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:33:15 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1C8W4cN032279;
-        Tue, 12 Feb 2019 02:32:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549960324;
-        bh=Axvh0Rq6fFXHZYgk8AwVcglhNQjlBrZKQRI16zrgGF8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GUTAM4/9Q70LYSEFNj8H/lNYHj3TS0jy6uYkGo4c8jPXvLgjXjwp6XSi4snvc5wOv
-         wC/4U+tB27UirlhfvKDVhuhoKSPXN07Kj6EUVhgns86nxSdwGjiozCneClc3ubrzrA
-         bnCbmbP5KAJVIR+bG1ig6bEj/j1bGHvq6gF1RqQE=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1C8W41P006214
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 02:32:04 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 02:32:03 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 02:32:03 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1C8VxVN028341;
-        Tue, 12 Feb 2019 02:32:00 -0600
-Subject: Re: [RESEND PATCH v2 08/33] ARM: davinci: make irqs.h a local header
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190211122606.8662-1-brgl@bgdev.pl>
- <20190211122606.8662-9-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <5bd7552d-a6fc-9701-beb2-5e76a295d635@ti.com>
-Date:   Tue, 12 Feb 2019 14:01:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 03:33:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46840 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728209AbfBLIdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:33:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4EC3EAF17;
+        Tue, 12 Feb 2019 08:33:31 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 09:33:29 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     akpm@linux-foundation.org, david@redhat.com,
+        anthony.yznaga@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,memory_hotplug: Explicitly pass the head to
+ isolate_huge_page
+Message-ID: <20190212083329.GN15609@dhcp22.suse.cz>
+References: <20190208090604.975-1-osalvador@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20190211122606.8662-9-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208090604.975-1-osalvador@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/19 5:55 PM, Bartosz Golaszewski wrote:
-> diff --git a/arch/arm/mach-davinci/usb.c b/arch/arm/mach-davinci/usb.c
-> index 9d4a58a3113a..cde72ba35dc3 100644
-> --- a/arch/arm/mach-davinci/usb.c
-> +++ b/arch/arm/mach-davinci/usb.c
-> @@ -5,13 +5,14 @@
->  #include <linux/init.h>
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
-> -
-> +#include <linux/platform_data/usb-davinci.h>
->  #include <linux/usb/musb.h>
+On Fri 08-02-19 10:06:04, Oscar Salvador wrote:
+> isolate_huge_page() expects we pass the head of hugetlb page to it:
+> 
+> bool isolate_huge_page(...)
+> {
+> 	...
+> 	VM_BUG_ON_PAGE(!PageHead(page), page);
+> 	...
+> }
+> 
+> While I really cannot think of any situation where we end up with a
+> non-head page between hands in do_migrate_range(), let us make sure
+> the code is as sane as possible by explicitly passing the Head.
+> Since we already got the pointer, it does not take us extra effort.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Btw.
+
+> ---
+>  mm/memory_hotplug.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 656ff386ac15..d5f7afda67db 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1378,12 +1378,12 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
 >  
->  #include <mach/common.h>
-> -#include <mach/irqs.h>
->  #include <mach/cputype.h>
-> -#include <linux/platform_data/usb-davinci.h>
-> +
-> +
+>  		if (PageHuge(page)) {
+>  			struct page *head = compound_head(page);
+> -			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+>  			if (compound_order(head) > PFN_SECTION_SHIFT) {
+>  				ret = -EBUSY;
+>  				break;
+>  			}
 
-Drop one extra empty line here.
+Why are we doing this, btw? 
 
-> +#include "irqs.h"
+> -			isolate_huge_page(page, &source);
+> +			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+> +			isolate_huge_page(head, &source);
+>  			continue;
+>  		} else if (PageTransHuge(page))
+>  			pfn = page_to_pfn(compound_head(page))
+> -- 
+> 2.13.7
 
-Thanks,
-Sekhar
-
+-- 
+Michal Hocko
+SUSE Labs
