@@ -7,202 +7,81 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3697BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D185CC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10D0D21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C26421773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBLIs3 (ORCPT
+        id S1728598AbfBLIsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:48:29 -0500
-Received: from mout.gmx.net ([212.227.15.18]:51713 "EHLO mout.gmx.net"
+        Tue, 12 Feb 2019 03:48:37 -0500
+Received: from mout.gmx.net ([212.227.15.15]:37213 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbfBLIs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:48:28 -0500
+        id S1728410AbfBLIsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:48:37 -0500
 Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
  (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 0MbOoG-1gd3Jl0Ya4-00IjLv; Tue, 12 Feb 2019 09:48:25 +0100
+ 0MTSKd-1gU11q46Yp-00SO7U; Tue, 12 Feb 2019 09:48:34 +0100
 From:   Chengguang Xu <cgxu519@gmx.com>
 To:     gregkh@linuxfoundation.org
 Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 1/2] chardev: fix an overlap misjudgement case in __register_chrdev_region()
-Date:   Tue, 12 Feb 2019 16:47:38 +0800
-Message-Id: <20190212084739.27602-1-cgxu519@gmx.com>
+Subject: [PATCH 2/2] chardev: showing minor range for chardev in the output of /proc/devices
+Date:   Tue, 12 Feb 2019 16:47:39 +0800
+Message-Id: <20190212084739.27602-2-cgxu519@gmx.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190212084739.27602-1-cgxu519@gmx.com>
+References: <20190212084739.27602-1-cgxu519@gmx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZVkklKB4yA20TBa5UAKpbccy7+P0JS1aSvFoJF48KeWHWfCAP8b
- o6s/bHx/VGJP/CQR/OgM626GQyDSeWxKswIg+DQUTIMHLpdjFdTioTIVNHeA05LFrxqrzhH
- tfYk57jrrlRZpICjJiNHjKsuuCyMXLG7dA7lShVGEtn9rOp7X3uf4rGUMTGSm2UkNnXL2Dt
- ifHaS0LV8nEJOBW3JUUdQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1P+skBUiQ6g=:8F+DXF2AAq2cMvd9Z55qcN
- jXR3VzkTS82U74eXgGfnYGX0Q9JW1X/VbLb/CQblTADKQL2IP4f3VN3QZHsKUi+B6EYrXFnyh
- 6H/HtyvoHNfIufBaj4y2VxKmGhINus1El4RryH2T4A/+3OXlJD3WvzmmfxeiDWPjRoMlzVGYo
- 0MfFsRnxE0fGQ2/T+jlyfUBOBE3paXIW9RLXf4YF+a1vIcqu7BbkFY+j0jOrZebtyYSHpw2O0
- vik/BTCRxmBVVf73/iSLXqsz6tGm/qgYk0/T7yKezxqnLApzquUaEA4ja3/K81xLuuT86glM1
- 1ofMJJaqN2SxART/pCckVq97BUetD8rC5qvyr3Ib4iqYxVzioLlqUrxji9u6xJmDMz0HByu5g
- /L0XmBSVSmWIgOQVEiYOVTuYGSc5hnFJQ0L9LklfprqtNqSB3xYVsjlgaW+Iis5qBszDOm0jg
- DHWY313Eetu1jP2owTFccU6F78xHIFdp+DEagrFdRAUn25xpy15lGYU+0BHhVZffmS+klvE0Y
- inP/p5tnfBNJHkw/3pWQFJ2jOUXWCJAR5GM8E85P4uVtNJ0dFzVGr5HEH/3OOFC6vDPWuPFYF
- R5UME6w9IwapAc9Vt5Kp7K1zkmudH8UpF0yheAzda4GYqVaCewurOdbKixlrEwI/jTK8CyPRS
- TwF6sohf8SgT/JOpqKXHNdWw1l1MOln42t4tfPHRVxx2Gk3TtDtoJwgld3w6Ui720hkTUFtuK
- zt/5YmYaZxLfESKIannLANY+WfKHSWqk8ve5wi90CYGuzExs15WtgSXy1Zu4n32QOPp77ITvF
- UW/HnmuJKXi3WPfEM95NVRvF4aF0uzEi9m7v4n0HDgRaWA6vkZ89DjyucmZU4pTKGBrrT+JlA
- oDzwmTj9UnObZQHvlMY/sfmuWSz+q5+vAnZ5jPrShVqJKI4ViKfCExuPtpjPCt
+X-Provags-ID: V03:K1:ZMFh0MXWjreN8cG/ZjyXA9hEVUevxgbiwYnBuoIAixfDhckumx1
+ 8Dru50++FFhCehRSdp2XdsC+JF8JDzTeZJt8R61cQeziQDUL38vYnDtrTOkdcBB3VtO6BUY
+ k3G5lOAAhwRRCNmcRao3JzDTE08ZU2piNu6rlwMIVCwp4wWU8DTXwkttiL7AvIJ/nx35egT
+ C2pfPUXzyNK6qOypktZTQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:phu/BBAeqFo=:RVY833ZpIkFbD4/MQgaz3I
+ Igo4zHrWAZLFiBjH98t7L61mFbNqx82yafcp3A+cf4kqgXvgYqpuxLmvFuCWv7c7oL8fJAv2U
+ 1mhQPYRuVWWI1aKRgJNjS+0jZ9ZPXUxXZNH2U0vQJaLLPK5OzlIHfLgjCKMJVW3RM9lwQMxGR
+ RcW/o7EnzIBe7z/06ceDZ5zAdXXE/yhmbAtFCX5e87jLCNX1RoQdwFC/ydLcn/9n+I01OMiiN
+ N+5rSALGz/JCsxWex/IgN5J1BAduV3GsHDUXwvp9/8rY4nWLnbGYhG9YVR5ldROYBdlc5HypH
+ 7AX3iK2E0NDKvjhGU0Tkmft7dEx3J3wewHd+CZu4NV+dvzrnESCh7orNhW5UfFZr/iQB5cKbD
+ sETx19mthLOHEp7QgKl0citziK1Tekhgtw2mGmgPy8DvFcVOdbM7hug4X037cN/hXnrosfGlG
+ IP5r0hYv8W3o0Es6t0KaWicfdNI6hp1Efm2hjYLCUHVuQIrLpyMD8+x9uXlxondYfsWXk5B75
+ N2OMQ/7vckFSqk4WLiSqjTrnb8fwCWBYwsb2hV/xyBB5L9cSjpAmfkHVm0rXqpjWwKLafpEB/
+ KclsoeWpO1yqmbIKt+mh5cZeYWUykiXbCblJA5BC5Pl2Wvr2J7a43/ek/4AcGUOIY8rBVT6n0
+ o5oexMM6yOa4arNeSsgJkuqnjRA1Jp2gnuWtF/V3MYIM2YyFkTA7Ajbk7ud6P9FJdbaWNYplm
+ LZVZLVh73vyukSKZXCNIAS4pv56fqsHPZE9bfey1fMAav/SBB5++m5PZoRupG+lrrU2n5MpwH
+ 4KJKekni4zZT05eq7znWDUz4xV1uMfXGHRQXM0ZM0u6NnsBBw100DqvtfGgfXG3yGDZAEIo8q
+ QWqCMF+AdDWV6eKCN/5WR44qlYOVDPRlw669cF0/9sWUKq9qSlj3irY+r7IqDy
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current overlap check of minor range cannot correctly
-handle a case which is baseminor < existing baseminor &&
-baseminor + minorct > existing baseminor + minorct.
-Fix it and meanwhile do some code cleanups.
+Currently chardev allows to share major, showing
+major with minor range for chardev will be more
+helpful.
 
-Fixes: 01d553d0fe9f90 ("Chardev checking of overlapping ranges")
 Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Cc: stable@vger.kernel.org
 ---
- fs/char_dev.c | 94 ++++++++++++++++++++++++---------------------------
- 1 file changed, 44 insertions(+), 50 deletions(-)
+ fs/char_dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/char_dev.c b/fs/char_dev.c
-index a279c58fe360..b25b1da097d5 100644
+index b25b1da097d5..6f00acdeb308 100644
 --- a/fs/char_dev.c
 +++ b/fs/char_dev.c
-@@ -88,86 +88,80 @@ static int find_dynamic_major(void)
- /*
-  * Register a single major with a specified minor range.
-  *
-- * If major == 0 this functions will dynamically allocate a major and return
-- * its number.
-- *
-- * If major > 0 this function will attempt to reserve the passed range of
-- * minors and will return zero on success.
-+ * If major == 0 this function will dynamically allocate an unused major,
-+ * otherwise attempt to reserve the range of minors with given major.
-  *
-- * Returns a -ve errno on failure.
-  */
- static struct char_device_struct *
- __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 			   int minorct, const char *name)
- {
--	struct char_device_struct *cd, **cp;
--	int ret = 0;
-+	struct char_device_struct *new, *curr, *prev = NULL;
-+	int ret = -EBUSY;
- 	int i;
- 
--	cd = kzalloc(sizeof(struct char_device_struct), GFP_KERNEL);
--	if (cd == NULL)
-+	if (major >= CHRDEV_MAJOR_MAX) {
-+		pr_err("CHRDEV \"%s\" major requested (%u) is greater than the maximum (%u)\n",
-+		       name, major, CHRDEV_MAJOR_MAX-1);
-+		return  ERR_PTR(-EINVAL);
-+	}
-+
-+	if (minorct > MINORMASK + 1 - baseminor) {
-+		pr_err("CHRDEV \"%s\" minor range requested (%u-%u) is out of range of maximum range (%u-%u) for a single major\n",
-+		       name, baseminor, baseminor + minorct - 1, 0, MINORMASK);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	new = kzalloc(sizeof(struct char_device_struct), GFP_KERNEL);
-+	if (new == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
+@@ -55,7 +55,9 @@ void chrdev_show(struct seq_file *f, off_t offset)
  	mutex_lock(&chrdevs_lock);
- 
- 	if (major == 0) {
--		ret = find_dynamic_major();
--		if (ret < 0) {
-+		major = find_dynamic_major();
-+		if (major < 0) {
- 			pr_err("CHRDEV \"%s\" dynamic allocation region is full\n",
- 			       name);
- 			goto out;
- 		}
--		major = ret;
+ 	for (cd = chrdevs[major_to_index(offset)]; cd; cd = cd->next) {
+ 		if (cd->major == offset)
+-			seq_printf(f, "%3d %s\n", cd->major, cd->name);
++			seq_printf(f, "%3d %s (%u-%u)\n", cd->major, cd->name,
++				   cd->baseminor,
++				   cd->baseminor + cd->minorct - 1);
  	}
- 
--	if (major >= CHRDEV_MAJOR_MAX) {
--		pr_err("CHRDEV \"%s\" major requested (%u) is greater than the maximum (%u)\n",
--		       name, major, CHRDEV_MAJOR_MAX-1);
--		ret = -EINVAL;
--		goto out;
--	}
--
--	cd->major = major;
--	cd->baseminor = baseminor;
--	cd->minorct = minorct;
--	strlcpy(cd->name, name, sizeof(cd->name));
--
- 	i = major_to_index(major);
-+	for (curr = chrdevs[i]; curr; prev = curr, curr = curr->next) {
-+		if (curr->major < major)
-+			continue;
- 
--	for (cp = &chrdevs[i]; *cp; cp = &(*cp)->next)
--		if ((*cp)->major > major ||
--		    ((*cp)->major == major &&
--		     (((*cp)->baseminor >= baseminor) ||
--		      ((*cp)->baseminor + (*cp)->minorct > baseminor))))
-+		if (curr->major > major)
- 			break;
- 
--	/* Check for overlapping minor ranges.  */
--	if (*cp && (*cp)->major == major) {
--		int old_min = (*cp)->baseminor;
--		int old_max = (*cp)->baseminor + (*cp)->minorct - 1;
--		int new_min = baseminor;
--		int new_max = baseminor + minorct - 1;
-+		if (curr->baseminor + curr->minorct <= baseminor)
-+			continue;
- 
--		/* New driver overlaps from the left.  */
--		if (new_max >= old_min && new_max <= old_max) {
--			ret = -EBUSY;
--			goto out;
--		}
-+		if (curr->baseminor >= baseminor + minorct)
-+			break;
- 
--		/* New driver overlaps from the right.  */
--		if (new_min <= old_max && new_min >= old_min) {
--			ret = -EBUSY;
--			goto out;
--		}
-+		goto out;
-+	}
-+
-+	new->major = major;
-+	new->baseminor = baseminor;
-+	new->minorct = minorct;
-+	strlcpy(new->name, name, sizeof(new->name));
-+
-+	if (!prev) {
-+		new->next = curr;
-+		chrdevs[i] = new;
-+	} else {
-+		new->next = prev->next;
-+		prev->next = new;
- 	}
- 
--	cd->next = *cp;
--	*cp = cd;
  	mutex_unlock(&chrdevs_lock);
--	return cd;
-+	return new;
- out:
- 	mutex_unlock(&chrdevs_lock);
--	kfree(cd);
-+	kfree(new);
- 	return ERR_PTR(ret);
  }
- 
 -- 
 2.20.1
 
