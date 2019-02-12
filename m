@@ -2,110 +2,130 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12A0C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D38EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB158222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9441222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549997991;
+	bh=SCUU0UbiaJ6fXeu8zCEe26tPKGXEP5M/CgOZC5cl7p8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=BJ/cVPfLWehbNy651xyOCvZhbYrBopFsOflwy8LbC3mGekFaW5sWcZStY+8WO9sgu
+	 0hzdEdxhPWDrZRardSxo9BqCekNrRqtG2EoRwCv+JFWCJaXqQOUc0tqCWnbqxP/M5w
+	 AOye6KckzOw8qH5nZd9lxqL6/HwsUxxMNMOv/5eg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbfBLS5a (ORCPT
+        id S1731210AbfBLS7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:57:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45308 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729371AbfBLS53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:57:29 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DE17369CA;
-        Tue, 12 Feb 2019 18:57:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 919C3194A0;
-        Tue, 12 Feb 2019 18:57:25 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 295CE220992; Tue, 12 Feb 2019 13:57:25 -0500 (EST)
-Date:   Tue, 12 Feb 2019 13:57:25 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: Re: [PATCH 00/52] [RFC] virtio-fs: shared file system for virtual
- machines
-Message-ID: <20190212185725.GD6273@redhat.com>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <871s4dc85b.fsf@linux.ibm.com>
+        Tue, 12 Feb 2019 13:59:50 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39648 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbfBLS7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 13:59:50 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n8so6270074otl.6;
+        Tue, 12 Feb 2019 10:59:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SCUU0UbiaJ6fXeu8zCEe26tPKGXEP5M/CgOZC5cl7p8=;
+        b=tTbTpGKm/qcwVl/d07/sFJZlSK+dSdlxO9VZt0Ih+uLbKBm4txJLBZtTtGHupW568J
+         Dns2gGnbUeeu3wC4w+h/eS9XvtECYicBSx6McgYOzY+m7kAMiI2MMFoZ+mPdwQAH1LmB
+         +7Uxchwj/7RaOopKxQShHe5bgO20UrWF4f/M9ZiNu2cgF275KBKndxuhETZ51f9PhZ3f
+         iDhnMlyznTWV5fcTXKBhbmtpHuV3qn12PwoHm/ZkQTPRuxp2ZpjoRUWxWgWlDNibv0Un
+         nNIeGb/ySgDuTFfPe6mwF5wp0KY82BybDsvPYzJ332GEeKh5KTIvkquFi0j9yGkQ+kLu
+         lNnA==
+X-Gm-Message-State: AHQUAubn5VEgF23HyFSqhn2qkabkdEJzjHByqea3XWFK+OxKZCS0H+Dq
+        rt+SKd5rf0VsTbYcXtaIpswbTAxonostzfIvbsI=
+X-Google-Smtp-Source: AHgI3IazJP0f7qdFrQRTcom2UyynRnmrIgMPdqcJRNCOefQMsFnmAlxzjzAakFosY7CSjPYfpC6A7YGJgBLZd4w5/Ow=
+X-Received: by 2002:a9d:718d:: with SMTP id o13mr4973817otj.119.1549997988850;
+ Tue, 12 Feb 2019 10:59:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871s4dc85b.fsf@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 12 Feb 2019 18:57:29 +0000 (UTC)
+References: <20190206150935.12140-1-sudeep.holla@arm.com> <CAPDyKFr2qwXoOL3SRy7Crf-pg4FMn_qecPrw__BE+YpVAjAFZA@mail.gmail.com>
+ <20190207103600.GA14464@e107155-lin> <CAPDyKFpkiaP0J_LJxP6tRUOyz3QKtDgA+PuhL-9vew7-RfKyNA@mail.gmail.com>
+ <20190207150638.GB14464@e107155-lin> <CAPDyKFoenSDhYk_xNLFn6kB+rqvQQ+p71F27Mvevu-H9Nhxhuw@mail.gmail.com>
+ <20190207152908.GC14464@e107155-lin> <CAPDyKFrV7XpKK-Pds=BNgJm9EC50C0wB_f99DK-6N7+K8aZXZw@mail.gmail.com>
+ <20190212174937.GA19095@e107155-lin> <CAJZ5v0hQ=M1mtoMTSHnO3E2XSP4eC8SH+_WWXafk7ZVCG__MJg@mail.gmail.com>
+ <20190212182041.GB19095@e107155-lin>
+In-Reply-To: <20190212182041.GB19095@e107155-lin>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Feb 2019 19:59:37 +0100
+Message-ID: <CAJZ5v0gH7Q1ZaM_DFcg4DVY6NU-QYmeOOzoXZj50UiuydZisDA@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: add support to skip power management in
+ device/driver model
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:26:48PM +0530, Aneesh Kumar K.V wrote:
-> Vivek Goyal <vgoyal@redhat.com> writes:
-> 
-> > Hi,
+On Tue, Feb 12, 2019 at 7:20 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Tue, Feb 12, 2019 at 07:07:31PM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Feb 12, 2019 at 6:49 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > >
+> > > On Mon, Feb 11, 2019 at 05:20:20PM +0100, Ulf Hansson wrote:
+> > > > On Thu, 7 Feb 2019 at 16:29, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > > > >
+> > > > > On Thu, Feb 07, 2019 at 04:18:57PM +0100, Ulf Hansson wrote:
+> > > > > > On Thu, 7 Feb 2019 at 16:06, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > > Indeed, I was ignoring knowing that it's harmless. But more people
+> > > > > > > started to complain, and Rafael suggested this which I agree as we
+> > > > > > > have several pseudo devices created in the kernel that we can bypass
+> > > > > > > some of these pm handling knowing we won't need it.
+> > > > > >
+> > > > > > Okay, I see.
+> > > > > >
+> > > > > > Anyway, I will likely need to restore part of this change, via my
+> > > > > > cluster idling series then. As from that point, the cpu device that
+> > > > > > you call device_set_pm_not_required() for, starts to be used from both
+> > > > > > PM core and runtime PM point of view. But I guess that's okay then.
+> > > > > >
+> > > > >
+> > > > > Ah I see. I can drop for CPU devices then. Since I didn't see any use for
+> > > > > them, I set the flag, but I can drop it now or you can do that as part
+> > > > > of that series.
+> > > >
+> > > > Well, I prefer if you drop it for CPU devices, as least for now.
+> > > >
+> > > > > There are quite a few devices(especially the ones
+> > > > > registered under system subsys can set this but I would take it separate
+> > > > > once we settle on this). Also Rafael may have seen use for few more
+> > > > > devices when he suggested this.
+> > > >
+> > > > Yep, let's find another first user of this.
+> > > >
+> > > > Additionally, it seems like we should drop the print in device_pm_add().
+> > > >
+> > >
+> > > Hi Rafael,
+> > >
+> > > Do you prefer to drop the error message or retain it as is ?
 > >
-> > Here are RFC patches for virtio-fs. Looking for feedback on this approach.
+> > Do you mean the one in device_pm_add()?
 > >
-> > These patches should apply on top of 4.20-rc5. We have also put code for
-> > various components here.
-> >
-> > https://gitlab.com/virtio-fs
-> >
-> > Problem Description
-> > ===================
-> > We want to be able to take a directory tree on the host and share it with
-> > guest[s]. Our goal is to be able to do it in a fast, consistent and secure
-> > manner. Our primary use case is kata containers, but it should be usable in
-> > other scenarios as well.
-> >
-> > Containers may rely on local file system semantics for shared volumes,
-> > read-write mounts that multiple containers access simultaneously.  File
-> > system changes must be visible to other containers with the same consistency
-> > expected of a local file system, including mmap MAP_SHARED.
-> >
-> > Existing Solutions
-> > ==================
-> > We looked at existing solutions and virtio-9p already provides basic shared
-> > file system functionality although does not offer local file system semantics,
-> > causing some workloads and test suites to fail.
-> 
-> Can you elaborate on this? Is this with 9p2000.L ? We did quiet a lot of
-> work to make sure posix test suite pass on 9p file system. Also 
-> was the mount option with cache=loose?
+>
+> Yes, the warning "parent should not be sleeping" in device_pm_add(). I
+> would prefer to keep it as is for now.
 
-Hi Aneesh,
-
-Yes this is with 9p2000.L and cache=loose. I used following mount option.
-
-mount -t 9p -o trans=virtio hostShared /mnt/virtio-9p/ -oversion=9p2000.L,posixacl,cache=loose
-
-We noticed primarily two issues.
-
-- Ran pjdfstests and a lot of them are failing. I think even kata
-  container folks also experienced pjdfstests failures. I have never
-  looked into details of why it is failing.
-
-- We thought mmap(MAP_SHARED) will not work with virtio-9p when two
-  clients are running in two different VMs and mapped same file with
-  MAP_SHARED.
-
-Having said that, biggest concern with virtio-9p seems to be performance.
-We are looking for ways to improve performance with virtio-fs. Hoping
-DAX can provide faster data access and fuse protocol itself seems to
-be faster (in primilinary testing results).
-
-Thanks
-Vivek
+OK, do that, then. :-)
