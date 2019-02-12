@@ -2,256 +2,184 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B81C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D17C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7459720700
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06E242084D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:14:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="ajTzVlB9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbfBLRK5 (ORCPT
+        id S1729657AbfBLROH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:10:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53836 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729662AbfBLRK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:10:56 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A8BDC6696E;
-        Tue, 12 Feb 2019 17:10:55 +0000 (UTC)
-Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC3BF62667;
-        Tue, 12 Feb 2019 17:10:53 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
- free pages
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, david@redhat.com,
-        dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-References: <20190204201854.2328-7-nitesh@redhat.com>
- <20190205153607-mutt-send-email-mst@kernel.org>
- <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
- <20190205165514-mutt-send-email-mst@kernel.org>
- <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
- <ab03c35e-b2bb-cb96-4701-436a4e2770d1@redhat.com>
- <CAKgT0UcEFi7Rq9+EnLNNm61782QYRT6XZQDgbWFt2S8eMLf=qA@mail.gmail.com>
- <e304f4ed-5aea-4a2b-1b83-7d4f8bb37e6e@redhat.com>
- <20190208163601-mutt-send-email-mst@kernel.org>
- <CAKgT0UcKkS2RsZj28sB3SzMyX9_VrMtZTd+aGYD_FPJn_DA4UA@mail.gmail.com>
- <20190209192104-mutt-send-email-mst@kernel.org>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <941fc3c3-e38d-a744-5d4a-94a63c6ad62e@redhat.com>
-Date:   Tue, 12 Feb 2019 12:10:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 12:14:07 -0500
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:48416 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727903AbfBLROH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:14:07 -0500
+Received: from pps.filterd (m0098778.ppops.net [127.0.0.1])
+        by mx0b-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CHBaPI027585;
+        Tue, 12 Feb 2019 11:13:53 -0600
+Authentication-Results: ppops.net;
+        dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
+Received: from nam02-bl2-obe.outbound.protection.outlook.com (mail-bl2nam02lp2055.outbound.protection.outlook.com [104.47.38.55])
+        by mx0b-00010702.pphosted.com with ESMTP id 2qhvq127sf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Feb 2019 11:13:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nio365.onmicrosoft.com; s=selector1-ni-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XksUYprki6nADSZ117haZo2ckmWykYQ/aWPVQ6hPbyk=;
+ b=ajTzVlB9ZnK4P33qIrlipklalO8XPI6MZGE0RGOtF8oD0mo40hRSY1FuszGWSPMB/7SOSkIllsftjUomLdFln9qeAGpxW+RcziYRNZMGAK4+OKLlZJPCyirnHxIq8NWc62FSkd03d2hzfBj64OjwqahRDv825kpstRIwV74U5nA=
+Received: from BN6PR04MB0963.namprd04.prod.outlook.com (10.174.233.163) by
+ BN6PR04MB0501.namprd04.prod.outlook.com (10.173.202.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.22; Tue, 12 Feb 2019 17:13:52 +0000
+Received: from BN6PR04MB0963.namprd04.prod.outlook.com
+ ([fe80::c98f:5fe:e801:6c2f]) by BN6PR04MB0963.namprd04.prod.outlook.com
+ ([fe80::c98f:5fe:e801:6c2f%7]) with mapi id 15.20.1622.016; Tue, 12 Feb 2019
+ 17:13:52 +0000
+From:   Julia Cartwright <julia@ni.com>
+To:     Julien Grall <julien.grall@arm.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "Dave.Martin@arm.com" <Dave.Martin@arm.com>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
+ FPSIMD/SVE state
+Thread-Topic: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
+ FPSIMD/SVE state
+Thread-Index: AQHUwvZT+u5+kYL9Lk22jUl9JqQNCQ==
+Date:   Tue, 12 Feb 2019 17:13:51 +0000
+Message-ID: <20190212171350.GB1002@jcartwri.amer.corp.natinst.com>
+References: <20190208165513.8435-1-julien.grall@arm.com>
+In-Reply-To: <20190208165513.8435-1-julien.grall@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR04CA0083.namprd04.prod.outlook.com
+ (2603:10b6:805:f2::24) To BN6PR04MB0963.namprd04.prod.outlook.com
+ (2603:10b6:405:43::35)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [130.164.62.151]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7964376e-d4e2-4753-f6e4-08d6910d75cc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR04MB0501;
+x-ms-traffictypediagnostic: BN6PR04MB0501:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;BN6PR04MB0501;23:I6RTTq+HtMOuC9nt/sx8e3Z0dT2cRuq7EfMw9RnNz?=
+ =?us-ascii?Q?UtPnHd6B2WJ9sJ3uRmYVpwnnsQKBipLyzarmTLhCZPCL3HSkvKKR2q3umOBh?=
+ =?us-ascii?Q?+hY0EEoQWvOHru1quVT8ruBCx6XyiNRBtXTCl3EfxHV8nnAWDaD53PsSvgan?=
+ =?us-ascii?Q?4MUs5DSgf966OkcDs3iVYnVlGTBZczneMi8Cr+N7VWoNfnkddTopbCABXqRG?=
+ =?us-ascii?Q?ey2Bd9rKHxjPKY/EqDrNOpo4DQ1Luqwp3EwlCmxoFhLVqC+n2cayAr/P3Nlh?=
+ =?us-ascii?Q?BKYSo+r75BG22XZCLLWMVP6MSzw7Matqh7LCvK+MuN1a4YLvGW0PQ5FlzrJq?=
+ =?us-ascii?Q?6eNqjJK9PdWgd0nSsy2zHuqoVobGkBHqAFcuKNqhkSco4NY9TqOQtBC1GGV9?=
+ =?us-ascii?Q?a/s+o5YBTi7eb0Xh414HtkQpblorx25zKd+xocHNFTucGevFZ4fnBFsBKxmD?=
+ =?us-ascii?Q?TbakxPajeT5Pp3D1FsgGTkGYD8A+mMbjDUsF9gZMZGW+dbdXFrF7o37kWqO5?=
+ =?us-ascii?Q?SHD3du+K2ytBc5HAjXVHTSmA/LaY0FUy7FRMJ8UBFTIkWcdlQ7zN5hGj/6/b?=
+ =?us-ascii?Q?2NxU7ZtPm1Zt100ruxmx3cN45UM2eqizCKrLR3bwPTf58pOf1BGbHiKDQzG6?=
+ =?us-ascii?Q?wmDSsyH14eZLxQ5GgAlh4mAVWUTbXh2kj9/xAfhM/HkjZQJgAKZx3WF9MY99?=
+ =?us-ascii?Q?B5rURF7QvhvwaW3Yst5CuiOc/4NSSgbVe9mkh/bgcNxllr6eF1W/724ua+jA?=
+ =?us-ascii?Q?o+Eaxh2vq/TSV+fB2ScAkT7RiX+5e/LOUNok9tLnr/NRoz8mjRHrJcMBlvfS?=
+ =?us-ascii?Q?oKIamQrPdAlYg4K4nA+shTZCmkv+UpECHn1ur3vU+h1eXr6Y8VOzAIm71bd7?=
+ =?us-ascii?Q?Y/guxR+UZhYFtHj+n/jV5sbsnEfmdM+RC8pROnI6ilm1CosaMGlLPCDi8Zz7?=
+ =?us-ascii?Q?Jefl+pruyoOblTC4rQWnBaX13GNO4bwyhgmr9YevhCVyPPzteprMmtj91IdT?=
+ =?us-ascii?Q?+WP9eX9D8hoTeTjWlXsDUZqF1k28IDbge7J6T5TBoGtgndhy01JD7vwL9NJw?=
+ =?us-ascii?Q?Yamd4OHGkvLZpeplOaQY5Y9dJKv+VX6eiME38DHLtFOqCU0sNnsUuxHLanzF?=
+ =?us-ascii?Q?88QwZc/mMLUqRjHHt/MXnLmbC3bRg4k96FKvebYwAK9dqHN71nJLSvhJpAxq?=
+ =?us-ascii?Q?glvib5eBKZo7n8ogn9YmwETjvwp2PohD7XK?=
+x-microsoft-antispam-prvs: <BN6PR04MB050164B47727501D31001CF4F4650@BN6PR04MB0501.namprd04.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(366004)(136003)(199004)(189003)(6116002)(6916009)(386003)(6506007)(106356001)(305945005)(3846002)(105586002)(33656002)(316002)(54906003)(6436002)(7736002)(53936002)(6486002)(6246003)(229853002)(66066001)(25786009)(14444005)(2906002)(102836004)(26005)(9686003)(6512007)(33896004)(486006)(476003)(97736004)(186003)(256004)(4326008)(11346002)(446003)(1076003)(71190400001)(99286004)(68736007)(8936002)(478600001)(81156014)(81166006)(14454004)(71200400001)(8676002)(52116002)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR04MB0501;H:BN6PR04MB0963.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: ni.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: EP3p/YIpj+sp+F+LPr1J/u7UKOYUP/EGq7ev/cGnA06t428lDB7eykT30rmg3ky55URpyHd7FjthCAFR32EfOgSRycIgaes57D0ssduO9chl4Az7ODggW5AIZeHuAOqVt1g5Ag7FPgcT9ZXob+9pdI/S6Wbd6v6DyOea4RrjVvYUL1As2EW+7o5XR0csq2sU4ZgHLqr5biNmFHRU8DFoVhQSL8taRFsvjPaMl3S3npKt3m0M2L4OnOwdNeJ2BSMDgcgaLK19GNrcRzdZrQYfmyE1cBYlEjS4eehjyjcSfrh84kJAKpY5d98u96Qq4YVzP1/H08m4AmT5QY0d60IhGl8KawaUhH3pMIkghUyaTaW5cKyrw4biqn1ey4Usi9hD3Hnevgv2oGU5n3rbe/E7QeRHrFcg5D+X7UI02Au9pI4=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6941E45E7C585249A46385C75F22405D@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190209192104-mutt-send-email-mst@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="7J8ManGoh82i3G7TWYecVQdqYvIjZDxYF"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 12 Feb 2019 17:10:55 +0000 (UTC)
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7964376e-d4e2-4753-f6e4-08d6910d75cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 17:13:51.5972
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB0501
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=544 adultscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902120122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---7J8ManGoh82i3G7TWYecVQdqYvIjZDxYF
-Content-Type: multipart/mixed; boundary="LGoU5OqJvrWR8z2fPxS0Q9CW28nUTKijU";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
- Alexander Duyck <alexander.duyck@gmail.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
- pagupta@redhat.com, wei.w.wang@intel.com,
- Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
- david@redhat.com, dodgen@google.com,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, dhildenb@redhat.com,
- Andrea Arcangeli <aarcange@redhat.com>
-Message-ID: <941fc3c3-e38d-a744-5d4a-94a63c6ad62e@redhat.com>
-Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
- free pages
-References: <20190204201854.2328-7-nitesh@redhat.com>
- <20190205153607-mutt-send-email-mst@kernel.org>
- <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
- <20190205165514-mutt-send-email-mst@kernel.org>
- <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
- <ab03c35e-b2bb-cb96-4701-436a4e2770d1@redhat.com>
- <CAKgT0UcEFi7Rq9+EnLNNm61782QYRT6XZQDgbWFt2S8eMLf=qA@mail.gmail.com>
- <e304f4ed-5aea-4a2b-1b83-7d4f8bb37e6e@redhat.com>
- <20190208163601-mutt-send-email-mst@kernel.org>
- <CAKgT0UcKkS2RsZj28sB3SzMyX9_VrMtZTd+aGYD_FPJn_DA4UA@mail.gmail.com>
- <20190209192104-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190209192104-mutt-send-email-mst@kernel.org>
+Hello Julien-
 
---LGoU5OqJvrWR8z2fPxS0Q9CW28nUTKijU
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+On Fri, Feb 08, 2019 at 04:55:13PM +0000, Julien Grall wrote:
+> When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
+> the kernel may be able to use FPSIMD/SVE. This is for instance the case
+> for crypto code.
+>=20
+> Any use of FPSIMD/SVE in the kernel are clearly marked by using the
+> function kernel_neon_{begin, end}. Furthermore, this can only be used
+> when may_use_simd() returns true.
+>=20
+> The current implementation of may_use_simd() allows softirq to use
+> FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
+> When in used, softirqs usually fallback to a software method.
+>=20
+> At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
+> when touching the FPSIMD/SVE context. This has the drawback to disable
+> all softirqs even if they are not using FPSIMD/SVE.
+>=20
+> As a softirq should not rely on been able to use simd at a given time,
+> there are limited reason to keep softirq disabled when touching the
+> FPSIMD/SVE context. Instead, we can only disable preemption and tell
+> the NEON unit is currently in use.
+>=20
+> This patch introduces two new helpers kernel_neon_{disable, enable} to
+> mark the area using FPSIMD/SVE context and use them in replacement of
+> local_bh_{disable, enable}. The functions kernel_neon_{begin, end} are
+> also re-implemented to use the new helpers.
+>=20
+> Signed-off-by: Julien Grall <julien.grall@arm.com>
+>=20
+> ---
+>=20
+> I have been exploring this solution as an alternative approach to the RT
+> patch "arm64: fpsimd: use preemp_disable in addition to local_bh_disable(=
+)".
+>=20
+> So far, the patch has only been lightly tested.
+>=20
+> For RT-linux, it might be possible to use migrate_{enable, disable}. I
+> am quite new with RT and have some trouble to understand the semantics
+> of migrate_{enable, disable}. So far, I am still unsure if it is possible
+> to run another userspace task on the same CPU while getting preempted
+> when the migration is disabled.
 
+Yes, a thread in a migrate_disable()-protected critical section can be
+preempted, and another thread on the same CPU may enter the critical
+section.
 
-On 2/9/19 7:38 PM, Michael S. Tsirkin wrote:
-> On Fri, Feb 08, 2019 at 02:05:09PM -0800, Alexander Duyck wrote:
->> On Fri, Feb 8, 2019 at 1:38 PM Michael S. Tsirkin <mst@redhat.com> wro=
-te:
->>> On Fri, Feb 08, 2019 at 03:41:55PM -0500, Nitesh Narayan Lal wrote:
->>>>>> I am also planning to try Michael's suggestion of using MAX_ORDER =
-- 1.
->>>>>> However I am still thinking about a workload which I can use to te=
-st its
->>>>>> effectiveness.
->>>>> You might want to look at doing something like min(MAX_ORDER - 1,
->>>>> HUGETLB_PAGE_ORDER). I know for x86 a 2MB page is the upper limit f=
-or
->>>>> THP which is the most likely to be used page size with the guest.
->>>> Sure, thanks for the suggestion.
->>> Given current hinting in balloon is MAX_ORDER I'd say
->>> share code. If you feel a need to adjust down the road,
->>> adjust both of them with actual testing showing gains.
->> Actually I'm left kind of wondering why we are even going through
->> virtio-balloon for this?
-> Just look at what does it do.
->
-> It improves memory overcommit if guests are cooperative, and it does
-> this by giving the hypervisor addresses of pages which it can discard.
->
-> It's just *exactly* like the balloon with all the same limitations.
->
->> It seems like this would make much more sense
->> as core functionality of KVM itself for the specific architectures
->> rather than some side thing.
-> Well same as balloon: whether it's useful to you at all
-> would very much depend on your workloads.
->
-> This kind of cooperative functionality is good for co-located
-> single-tenant VMs. That's pretty niche.  The core things in KVM
-> generally don't trust guests.
->
->
->> In addition this could end up being
->> redundant when you start getting into either the s390 or PowerPC
->> architectures as they already have means of providing unused page
->> hints.
-> Interesting. Is there host support in kvm?
->
->
->> I have a set of patches I proposed that add similar functionality via
->> a KVM hypercall for x86 instead of doing it as a part of a Virtio
->> device[1].  I'm suspecting the overhead of doing things this way is
->> much less then having to make multiple madvise system calls from QEMU
->> back into the kernel.
-> Well whether it's a virtio device is orthogonal to whether it's an
-> madvise call, right? You can build vhost-pagehint and that can
-> handle requests in a VQ within balloon and do it
-> within host kernel directly.
->
-> virtio rings let you pass multiple pages so it's really hard to
-> say which will win outright - maybe it's more important
-> to coalesce exits.
->
-> Nitesh, how about trying same tests and reporting performance?
-Noted, I can give it a try before my next positing.
->
->
->> One other concern that has been pointed out with my patchset that
->> would likely need to be addressed here as well is what do we do about
->> other hypervisors that decide to implement page hinting. We probably
->> should look at making this KVM/QEMU specific code run through the
->> paravirtual infrastructure instead of trying into the x86 arch code
->> directly.
->>
->> [1] https://lkml.org/lkml/2019/2/4/903
->
-> So virtio is a paravirtual interface, that's an argument for
-> using it then.
->
-> In any case pls copy the Cc'd crowd on future version of your patches.
->
---=20
-Regards
-Nitesh
+If it's necessary to prevent this from happening, then you need to also
+make use of a per-CPU mutex.  On RT, this would do the right thing
+w.r.t. priority inheritance.
 
-
---LGoU5OqJvrWR8z2fPxS0Q9CW28nUTKijU--
-
---7J8ManGoh82i3G7TWYecVQdqYvIjZDxYF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxi/hwACgkQo4ZA3AYy
-ozm79g//UvTPI4aVhIteaZHs3qkezYTAZa/qjveQePvFwZwxnL2zPu28xPUOU0E1
-rsobZJYN8xSLDqRdje2p3eJZHx03ChNT9cRO3XhMWRdHLqnBQ7gt0SJFPd+qWEf+
-YpLUjlWVC4kepIeEKlaPvFlGQ8sXDdc9OX6aTrIccmXsD2F7wOYVldlAT5qoZ+K9
-lzKugk3gAesdlTJSAoGy2aaQ3MEAFCpqGgDpmHIOU2za9AAPLL3PUBpwC5PVtPtb
-wgMc5yYebCWxDTICWupYjcw+yceNkF0Es829r5ivPwk1DKEMrPK98piv9+8jjvWj
-XgflFyfrHiU1tUpdhLkmLk+bZIkhxigHwAUBNY6Kdh6OAN11kgBQgsDh0FSDbXcC
-l/EMrv2Pnktw9VfcsoABO43Y42FHZN8qLkKmq+re4YwkHy2QgVilBR2uNbSzDNrM
-J1xig2TTMs652QED4DLa/+7r71ceoP9WImtWuH8OGSkZan2ybInOC07fR2/QL7+m
-9NUss4eSes3u95470h5jUh9D1yVrwwT6Vz8+t91XHZc7K6AfGEezo653A6ekH6pl
-ZvHa0WJ0ZBNkZnEFH/G68Yegm3/ZO9Wph6v+O9lWKjTD1uNL3GFZU/1+Je6XtMHJ
-3PXiummtTXTgPpZdO7VOCFhLJGeTug7T9GTVSCf6wYhaMaquEqE=
-=E0SH
------END PGP SIGNATURE-----
-
---7J8ManGoh82i3G7TWYecVQdqYvIjZDxYF--
+   Julia
