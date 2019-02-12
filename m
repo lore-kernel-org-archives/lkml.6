@@ -2,183 +2,145 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F99C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CDCC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433AF222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC91222BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbfBLVVW convert rfc822-to-8bit (ORCPT
+        id S1732470AbfBLVWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:21:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729512AbfBLVVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:21:21 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E8A7559448;
-        Tue, 12 Feb 2019 21:21:19 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-121-56.rdu2.redhat.com [10.10.121.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A32D67D8C4;
-        Tue, 12 Feb 2019 21:21:16 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] locking/rwsem: Optimize down_read_trylock()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1549913486-16799-1-git-send-email-longman@redhat.com>
- <1549913486-16799-3-git-send-email-longman@redhat.com>
- <CAHk-=wjTmSg6zX=xKFSPZor7FWi3s4D0dy-hz_M=yeF_6478QA@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <ef66f262-d68e-58ea-34f6-15b88803cf71@redhat.com>
-Date:   Tue, 12 Feb 2019 16:21:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 12 Feb 2019 16:22:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43704 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729512AbfBLVWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:22:31 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 35D8327FB65
+Message-ID: <4a1346315224850faf31345b577ce3a29c069f3a.camel@collabora.com>
+Subject: Re: [PATCH v3 0/2] media: cedrus: Add H264 decoding support
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        jenskuske@gmail.com, Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Tue, 12 Feb 2019 18:22:17 -0300
+In-Reply-To: <CAAFQd5AcqiwAb30ajLxmj6LZoabVygUsAB8A+drpityOAvY60A@mail.gmail.com>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+         <CAAFQd5AcqiwAb30ajLxmj6LZoabVygUsAB8A+drpityOAvY60A@mail.gmail.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjTmSg6zX=xKFSPZor7FWi3s4D0dy-hz_M=yeF_6478QA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 12 Feb 2019 21:21:21 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2019 02:58 PM, Linus Torvalds wrote:
-> On Mon, Feb 11, 2019 at 11:31 AM Waiman Long <longman@redhat.com> wrote:
->> Modify __down_read_trylock() to make it generate slightly better code
->> (smaller and maybe a tiny bit faster).
-> This looks good, but I would ask you to try one slightly different approach.
->
-> Instead of this:
->
->>        long tmp = atomic_long_read(&sem->count);
->>
->>        while (tmp >= 0) {
->>                if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
->>                                        tmp + RWSEM_ACTIVE_READ_BIAS)) {
->>                        return 1;
->>                }
->>        }
-> try doing this instead:
->
->         long tmp = 0;
->
->         do {
->                 if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
->                                         tmp + RWSEM_ACTIVE_READ_BIAS)) {
->                         return 1;
->         } while (tmp >= 0);
->         return 0;
->
-> because especially when it comes to locking, it's usually better to
-> just *guess* that the lock is unlocked, than it is to actually read
-> from the line to see what the state is.
->
-> Often - but certainly not always - the lock is the first access to the
-> target cacheline, and assuming the trylock is successful (which I
-> think is the case we want to optimize for), we're much better off
-> causing that first access to be a read-for-ownership, rather than a
-> read-for-sharing.
->
-> Because if you first read from the line, and then do a cmpxchg, and if
-> the line was not in the cache, your cache coherency protocol will
-> generally go through two states: first shared (for the initial read)
-> and then exclusive-dirty (for the cmpxchg).
->
-> Now, this is obviously very micro-architecture dependent, and in fact
-> the microarchitecture could even see the "predict fallthrough to a
-> cmpxchg with the same address" and turn the first read into a
-> read-for-ownership, but we've done this at some point before, and the
-> "guess unlocked" was actually the one that performed better.
->
-> Of course, the downside is that it might be worse when the guess is
-> incorrect - either because of a nested read lock or due to an actual
-> conflict with a write, but on the whole those *should* be the rare
-> cases, and not the cases where we necessarily optimize for latency of
-> the operation.
->
-> Hmm?
+Hey Tomasz,
 
-I looked at the assembly code in arch/x86/include/asm/rwsem.h. For both
-trylocks (read & write), the count is read first before attempting to
-lock it. We did the same for all trylock functions in other locks.
-Depending on how the trylock is used and how contended the lock is, it
-may help or hurt performance. Changing down_read_trylock to do an
-unconditional cmpxchg will change the performance profile of existing
-code. So I would prefer keeping the current code.
+On Tue, 2019-02-12 at 21:50 +0900, Tomasz Figa wrote:
+> Hi Maxime,
+> 
+> On Mon, Feb 11, 2019 at 11:39 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > Hi,
+> > 
+> > Here is a new version of the H264 decoding support in the cedrus
+> > driver.
+> 
+> Thanks for working on this. Please see my comments below.
+> 
+> > As you might already know, the cedrus driver relies on the Request
+> > API, and is a reverse engineered driver for the video decoding engine
+> > found on the Allwinner SoCs.
+> > 
+> > This work has been possible thanks to the work done by the people
+> > behind libvdpau-sunxi found here:
+> > https://github.com/linux-sunxi/libvdpau-sunxi/
+> > 
+> > I've tested the various ABI using this gdb script:
+> > http://code.bulix.org/jl4se4-505620?raw
+> > 
+> > And this test script:
+> > http://code.bulix.org/8zle4s-505623?raw
+> > 
+> > The application compiled is quite trivial:
+> > http://code.bulix.org/e34zp8-505624?raw
+> > 
+> > The output is:
+> > arm:    builds/arm-test-v4l2-h264-structures
+> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
+> > x86:    builds/x86-test-v4l2-h264-structures
+> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
+> > x64:    builds/x64-test-v4l2-h264-structures
+> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
+> > arm64:  builds/arm64-test-v4l2-h264-structures
+> >         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
+> > 
+> > Let me know if there's any flaw using that test setup, or if you have
+> > any comments on the patches.
+> > 
+> > Maxime
+> > 
+> > Changes from v2:
+> >   - Simplified _cedrus_write_ref_list as suggested by Jernej
+> >   - Set whether the frame is used as reference using nal_ref_idc
+> >   - Respect chroma_format_idc
+> >   - Fixes for the scaling list and prediction tables
+> >   - Wrote the documentation for the flags
+> >   - Added a bunch of defines to the driver bit fields
+> >   - Reworded the controls and data format descriptions as suggested
+> >     by Hans
+> >   - Reworked the controls' structure field size to avoid padding
+> >   - Removed the long term reference flag
+> 
+> This and...
+> 
 
-I do notice now that the generic down_write_trylock() code is doing an
-unconditional compxchg. So I wonder if we should change it to read the
-lock first like other trylocks or just leave it as it is.
+Maxime has dropped this because of Ayaka's mail about long term references
+not making much sense in stateless decoders.
 
-Cheers,
-Longman
+I noticed that RK3399 TRM has a field to specify long term refs and
+so was wondering about this item as well.
 
+> >   - Reintroduced the neighbor info buffer
+> >   - Removed the ref_pic_list_p0/b0/b1 arrays that are redundant with the
+> >     one in the DPB
+> 
+> these are used in our Rockchip VDEC driver.
+> 
+> Could you elaborate on the reasons why they got removed?
+> 
+
+If I understood correctly, there are two reference picture lists.
+P-frames will populate ref_pic_list0 and B-frames will populate both.
+
+According to this, v4l2_ctrl_h264_slice_param.ref_pic_list0 and .ref_pic_list1
+should be enough and ref_pic_list_p0/b0/b1 are not needed.
+
+What do you think?
+
+Regards,
+Ezequiel
 
