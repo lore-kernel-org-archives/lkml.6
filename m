@@ -2,154 +2,177 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC0AC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3FEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E882C222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AC9721905
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549998335;
+	bh=Y8MyvqeUmegmXo+IkrKYysprqOtjlP0qrRBisdZAGWo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SRrZAqll9Rs5CsVuwtXFLAs4/5leN5sP08sPiCtEWneng32itZMG/oD/ugQZO8rGT
+	 XGtibDxSUAXDvHFRP2OgngGwGz37Vt8+XPayjDqDXjR/mysD8y4bfxEyzxr4BT5Off
+	 +tKuMpwZfcanNyg2Ig6Qm4Oh1HJzIkmAcOqlTYKA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731662AbfBLTE3 (ORCPT
+        id S1731470AbfBLTFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:04:29 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:55083 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730723AbfBLTE2 (ORCPT
+        Tue, 12 Feb 2019 14:05:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46939 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727977AbfBLTFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:04:28 -0500
-Received: by mail-it1-f197.google.com with SMTP id m196so6538599itc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 11:04:27 -0800 (PST)
+        Tue, 12 Feb 2019 14:05:33 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so6178211otm.13;
+        Tue, 12 Feb 2019 11:05:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Bg8keZyoBFaW9e6ndcmY+/jT5YAWt029ZRHt1l6Aghw=;
-        b=QA9QQd6JnUYJLzGnx3Vo9zQIW3EyrCe5hma5ztcXNQ2+7XPqDOVx8SGllU5JWlb6hN
-         Osyf4wU+cN4MiSsGO36XkX2becS0c0nVOXtNlDNBF0FmBNp7KuOgIgmh0F7l84zyFMRn
-         TvXNK+VYI4OyubrAAn6q6vTr92JgbfceuFu6qEs7NuJ0tflk6RrvFkYU5HCICVm0c4hF
-         QoSlcZ/tABS1mgoazicjmyyECSOWD/CjBNzH91BSBnS+Fgqvhi5aggxv+MYVgzFEVjAa
-         +GtIEDSzdfYRhT0kuXUrEXcS1jb+NcSGtEl77cW45MwhTBo7FpI3mda05ngRdn4fkbsG
-         gPnA==
-X-Gm-Message-State: AHQUAuaGbWBqDGwjU/vmy5qG6aMuwcTHRWjkpohXFP7Ky18msK3LKI5C
-        UnG2wNl7JAEmJP5Gee2H/+18BOJ1wZIeJAOfcqRrFSCW9ysZ
-X-Google-Smtp-Source: AHgI3IasqKOvRbLNLyy0xV+VHVj5oSQ6kVuUt6Ehnh5UAQ30l1Yoz43mOE30UGn8QqCo+v9/Bb17fPun6H5Oql4KhlYTQYEpfHjM
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AdMl9D1EQubWNGa4FwxZw9A50X7SiJSRx6uxLDxexyM=;
+        b=Q41QbnEFIDyGJc9xWysvjOh5YyvshInkb/Mpp3G5qtY4vze6HceXSvvcK1grXKQQbh
+         HZb3YhcxaLT3T8ZCCJeLefErBux/OO7eFHaMFn5O4QCksmqPpScTgVVpphV8IZti1Jhs
+         iHplIp2l/gCWoCghgVg8NQBVN/JOZvXra6eFDrc3bzzlO51ubv7bDOkpfNYit34HlMNQ
+         gDZydMscfAGOrYC7/tFzyX2fG5zstEGNTzTak1COnx72JekYIrpZpbNG7N1dilZ2bKKz
+         3YqEp5xrxSolwmC98uO/oLKdzQzbbQb3BhomZnCd0L8qrFhVZsPBjRLP5mt2bwryn9Yo
+         zgLQ==
+X-Gm-Message-State: AHQUAuZnQf/1Y/hFiRaxiJNeWbTa2Cp92Libka2bAq9Jo4OzL3Zzfcqh
+        /5XrkIz1i587G0+1Q/J6Ifsq7Q9YB0KTbs23Hsk=
+X-Google-Smtp-Source: AHgI3IbXTQ/nyNRWIUKku4SVDRypvOekUiQFqxp8J52uq8CgQA3mO9KSirfQvizLvegZylLnfPpeqA5yOuU893pB2f0=
+X-Received: by 2002:a9d:5a09:: with SMTP id v9mr3644755oth.244.1549998332374;
+ Tue, 12 Feb 2019 11:05:32 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b281:: with SMTP id b123mr3636223iof.39.1549998267538;
- Tue, 12 Feb 2019 11:04:27 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:04:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023a7e70581b71894@google.com>
-Subject: general protection fault in idr_remove
-From:   syzbot <syzbot+3d07f0ffd652af4f49e6@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <5510642.nRbR3bcduN@aspire.rjw.lan> <1670239.00ZbddH1IV@aspire.rjw.lan>
+ <CAPDyKFoR+evmvDehgTJvxcZ70ZLTqU5J4To_c=2vYdOk26h92w@mail.gmail.com>
+ <CAJZ5v0jv6dboQd=iu9pHA_B2HzCEhd2WaN3-732S9px_u6MA-w@mail.gmail.com> <CAPDyKFpNWrVCW9xwwsWf=vGukEkSj4qYs58terDy0tmmrhyLDw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpNWrVCW9xwwsWf=vGukEkSj4qYs58terDy0tmmrhyLDw@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Feb 2019 20:05:21 +0100
+Message-ID: <CAJZ5v0i6U3PW=MbFsNKFROUTajRpRBg1oWatAW-rXF1M7ihJYA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: Fix __pm_runtime_set_status() race with
+ runtime resume
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Feb 12, 2019 at 7:28 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Tue, 12 Feb 2019 at 17:28, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Tue, Feb 12, 2019 at 5:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > On Tue, 12 Feb 2019 at 13:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > >
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > Commit 4080ab083000 ("PM-runtime: Take suppliers into account in
+> > > > __pm_runtime_set_status()") introduced a race condition that may
+> > > > trigger if __pm_runtime_set_status() is used incorrectly (that is,
+> > > > if it is called when PM-runtime is enabled for the target device
+> > > > and working).
+> > > >
+> > > > In that case, if the original PM-runtime status of the device is
+> > > > RPM_SUSPENDED, a runtime resume of the device may occur after
+> > > > __pm_runtime_set_status() has dropped its power.lock spinlock
+> > > > and before deactivating its suppliers, so the suppliers may be
+> > > > deactivated while the device is PM-runtime-active which may lead
+> > > > to functional issues.
+> > > >
+> > > > To avoid that, modify __pm_runtime_set_status() to check whether
+> > > > or not PM-runtime is enabled for the device before activating its
+> > > > suppliers (if the new status is RPM_ACTIVE) and either return an
+> > > > error if that's the case or increment the device's disable_depth
+> > > > counter to prevent PM-runtime from being enabled for it while
+> > > > the remaining part of the function is running (disable_depth is
+> > > > then decremented on the way out).
+> > > >
+> > > > Fixes: 4080ab083000 ("PM-runtime: Take suppliers into account in __pm_runtime_set_status()")
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  drivers/base/power/runtime.c |   24 ++++++++++++++++++------
+> > > >  1 file changed, 18 insertions(+), 6 deletions(-)
+> > > >
+> > > > Index: linux-pm/drivers/base/power/runtime.c
+> > > > ===================================================================
+> > > > --- linux-pm.orig/drivers/base/power/runtime.c
+> > > > +++ linux-pm/drivers/base/power/runtime.c
+> > > > @@ -1129,6 +1129,22 @@ int __pm_runtime_set_status(struct devic
+> > > >         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
+> > > >                 return -EINVAL;
+> > > >
+> > > > +       spin_lock_irq(&dev->power.lock);
+> > > > +
+> > > > +       /*
+> > > > +        * Prevent PM-runtime from being enabled for the device or return an
+> > > > +        * error if it is enabled already and working.
+> > > > +        */
+> > > > +       if (dev->power.runtime_error || dev->power.disable_depth)
+> > > > +               dev->power.disable_depth++;
+> > > > +       else
+> > > > +               error = -EAGAIN;
+> > > > +
+> > > > +       spin_unlock_irq(&dev->power.lock);
+> > > > +
+> > > > +       if (error)
+> > > > +               return error;
+> > > > +
+> > > >         /*
+> > > >          * If the new status is RPM_ACTIVE, the suppliers can be activated
+> > > >          * upfront regardless of the current status, because next time
+> > > > @@ -1147,12 +1163,6 @@ int __pm_runtime_set_status(struct devic
+> > > >
+> > > >         spin_lock_irq(&dev->power.lock);
+> > > >
+> > > > -       if (!dev->power.runtime_error && !dev->power.disable_depth) {
+> > > > -               status = dev->power.runtime_status;
+> > > > -               error = -EAGAIN;
+> > > > -               goto out;
+> > > > -       }
+> > > > -
+> > > >         if (dev->power.runtime_status == status || !parent)
+> > > >                 goto out_set;
+> > > >
+> > > > @@ -1205,6 +1215,8 @@ int __pm_runtime_set_status(struct devic
+> > > >                 device_links_read_unlock(idx);
+> > > >         }
+> > > >
+> > > > +       pm_runtime_enable(dev);
+> > >
+> > > pm_runtime_enable() uses spin_lock_irqsave(), rather than
+> > > spin_lock_irq() - is there a reason to why you want to allow that
+> > > here, but not earlier in the function?
+> >
+> > Device links locking cannot be used in interrupt context.
+>
+> I get that, but thanks for clarifying.
+>
+> However, then why did you convert __pm_runtime_set_status() from using
+> spin_lock_irqsave() to spin_lock_irq() in commit "PM-runtime: Take
+> suppliers into account in __pm_runtime_set_status()"?
+>
+> As far as I can tell, the spin_lock is not being held while we operate
+> on the device links anyway. Or is this just to give the caller an
+> indication what kind of context the function can be called from?
 
-syzbot found the following crash on:
-
-HEAD commit:    b5829453d81a Add linux-next specific files for 20190212
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1662de24c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4085ec231ef9027d
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d07f0ffd652af4f49e6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3d07f0ffd652af4f49e6@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 16586 Comm: syz-executor.5 Not tainted 5.0.0-rc6-next-20190212  
-#33
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:idr_remove+0x28/0x60 lib/idr.c:153
-Code: 40 00 55 48 89 e5 41 54 49 89 fc 53 48 89 f3 e8 9e a5 6f fa 49 8d 7c  
-24 48 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
-c0 74 04 3c 03 7e 1a 41 8b 44 24 48 4c 89 e7 31 d2
-RSP: 0018:ffff8880263c7820 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 00000000000180a4 RCX: ffffc90010870000
-RDX: 000000000000020b RSI: ffffffff8700a952 RDI: 0000000000001058
-RBP: ffff8880263c7830 R08: 1ffff11004c78ef5 R09: ffffed1004c78ef6
-R10: ffffed1004c78ef5 R11: 0000000000000003 R12: 0000000000001010
-R13: ffff88808eb137e0 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f1aa164c700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbbc506316b CR3: 00000000a9547000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
-  kernfs_put fs/kernfs/dir.c:542 [inline]
-  kernfs_put+0x342/0x600 fs/kernfs/dir.c:506
-  kernfs_create_dir_ns+0x135/0x160 fs/kernfs/dir.c:1035
-  sysfs_create_dir_ns+0x131/0x2a0 fs/sysfs/dir.c:59
-  create_dir lib/kobject.c:88 [inline]
-  kobject_add_internal lib/kobject.c:247 [inline]
-  kobject_add_internal.cold+0xe5/0x5d4 lib/kobject.c:217
-  kobject_add_varg lib/kobject.c:382 [inline]
-  kobject_add+0x150/0x1c0 lib/kobject.c:426
-  device_add+0x3d5/0x18a0 drivers/base/core.c:2070
-  hci_register_dev+0x304/0x880 net/bluetooth/hci_core.c:3264
-  __vhci_create_device+0x2d0/0x5a0 drivers/bluetooth/hci_vhci.c:139
-  vhci_create_device drivers/bluetooth/hci_vhci.c:163 [inline]
-  vhci_get_user drivers/bluetooth/hci_vhci.c:219 [inline]
-  vhci_write+0x2d0/0x470 drivers/bluetooth/hci_vhci.c:299
-  call_write_iter include/linux/fs.h:1853 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x613/0x8e0 fs/read_write.c:487
-  vfs_write+0x20c/0x580 fs/read_write.c:549
-  ksys_write+0xea/0x1f0 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1aa164bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000000005
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1aa164c6d4
-R13: 00000000004c6e80 R14: 00000000004dc6a0 R15: 00000000ffffffff
-Modules linked in:
----[ end trace 7fdd458eb72d2ee0 ]---
-RIP: 0010:idr_remove+0x28/0x60 lib/idr.c:153
-Code: 40 00 55 48 89 e5 41 54 49 89 fc 53 48 89 f3 e8 9e a5 6f fa 49 8d 7c  
-24 48 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
-c0 74 04 3c 03 7e 1a 41 8b 44 24 48 4c 89 e7 31 d2
-RSP: 0018:ffff8880263c7820 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 00000000000180a4 RCX: ffffc90010870000
-RDX: 000000000000020b RSI: ffffffff8700a952 RDI: 0000000000001058
-RBP: ffff8880263c7830 R08: 1ffff11004c78ef5 R09: ffffed1004c78ef6
-R10: ffffed1004c78ef5 R11: 0000000000000003 R12: 0000000000001010
-R13: ffff88808eb137e0 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f1aa164c700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbbc506316b CR3: 00000000a9547000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+The latter plus getting rid of saving/restoring the flags which isn't necessary.
