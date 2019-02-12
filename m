@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29069C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB90C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED157214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 411542186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbfBLOas (ORCPT
+        id S1730443AbfBLObI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43835 "EHLO
+        Tue, 12 Feb 2019 09:31:08 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43838 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730377AbfBLOap (ORCPT
+        with ESMTP id S1730350AbfBLOar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:45 -0500
+        Tue, 12 Feb 2019 09:30:47 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4g-0005Af-52; Tue, 12 Feb 2019 15:30:14 +0100
+        id 1gtZ4s-0005Af-CY; Tue, 12 Feb 2019 15:30:26 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 06/25] printk-rb: add blocking reader support
-Date:   Tue, 12 Feb 2019 15:29:44 +0100
-Message-Id: <20190212143003.48446-7-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 20/25] serial: 8250: implement write_atomic
+Date:   Tue, 12 Feb 2019 15:29:58 +0100
+Message-Id: <20190212143003.48446-21-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,160 +54,461 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a blocking read function for readers. An irq_work function is
-used to signal the wait queue so that write notification can
-be triggered from any context.
+Implement a non-sleeping NMI-safe write_atomic console function in
+order to support emergency printk messages.
+
+Since interrupts need to be disabled during transmit, all usage of
+the IER register was wrapped with access functions that use the
+console_atomic_lock function to synchronize register access while
+tracking the state of the interrupts. This was necessary because
+write_atomic is can be calling from an NMI context that has
+preempted write_atomic.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- include/linux/printk_ringbuffer.h | 20 ++++++++++++++++
- lib/printk_ringbuffer.c           | 49 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
+ drivers/tty/serial/8250/8250.h      |   4 +
+ drivers/tty/serial/8250/8250_core.c |  19 +++--
+ drivers/tty/serial/8250/8250_dma.c  |   5 +-
+ drivers/tty/serial/8250/8250_port.c | 154 +++++++++++++++++++++++++++---------
+ include/linux/serial_8250.h         |   5 ++
+ 5 files changed, 139 insertions(+), 48 deletions(-)
 
-diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
-index 5fdaf632c111..106f20ef8b4d 100644
---- a/include/linux/printk_ringbuffer.h
-+++ b/include/linux/printk_ringbuffer.h
-@@ -2,8 +2,10 @@
- #ifndef _LINUX_PRINTK_RINGBUFFER_H
- #define _LINUX_PRINTK_RINGBUFFER_H
- 
-+#include <linux/irq_work.h>
- #include <linux/atomic.h>
- #include <linux/percpu.h>
-+#include <linux/wait.h>
- 
- struct prb_cpulock {
- 	atomic_t owner;
-@@ -22,6 +24,10 @@ struct printk_ringbuffer {
- 
- 	struct prb_cpulock *cpulock;
- 	atomic_t ctx;
-+
-+	struct wait_queue_head *wq;
-+	atomic_long_t wq_counter;
-+	struct irq_work *wq_work;
- };
- 
- struct prb_entry {
-@@ -59,6 +65,15 @@ struct prb_iterator {
- #define DECLARE_STATIC_PRINTKRB(name, szbits, cpulockptr)		\
- static char _##name##_buffer[1 << (szbits)]				\
- 	__aligned(__alignof__(long));					\
-+static DECLARE_WAIT_QUEUE_HEAD(_##name##_wait);				\
-+static void _##name##_wake_work_func(struct irq_work *irq_work)		\
-+{									\
-+	wake_up_interruptible_all(&_##name##_wait);			\
-+}									\
-+static struct irq_work _##name##_wake_work = {				\
-+	.func = _##name##_wake_work_func,				\
-+	.flags = IRQ_WORK_LAZY,						\
-+};									\
- static struct printk_ringbuffer name = {				\
- 	.buffer = &_##name##_buffer[0],					\
- 	.size_bits = szbits,						\
-@@ -68,6 +83,9 @@ static struct printk_ringbuffer name = {				\
- 	.reserve = ATOMIC_LONG_INIT(-111 * sizeof(long)),		\
- 	.cpulock = cpulockptr,						\
- 	.ctx = ATOMIC_INIT(0),						\
-+	.wq = &_##name##_wait,						\
-+	.wq_counter = ATOMIC_LONG_INIT(0),				\
-+	.wq_work = &_##name##_wake_work,				\
- }
- 
- /* writer interface */
-@@ -80,6 +98,8 @@ void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
- 		   u64 *seq);
- void prb_iter_copy(struct prb_iterator *dest, struct prb_iterator *src);
- int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq);
-+int prb_iter_wait_next(struct prb_iterator *iter, char *buf, int size,
-+		       u64 *seq);
- int prb_iter_data(struct prb_iterator *iter, char *buf, int size, u64 *seq);
- 
- /* utility functions */
-diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-index 1d1e886a0966..c2ddf4cb9f92 100644
---- a/lib/printk_ringbuffer.c
-+++ b/lib/printk_ringbuffer.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/sched.h>
- #include <linux/smp.h>
- #include <linux/string.h>
- #include <linux/errno.h>
-@@ -154,6 +155,7 @@ static bool push_tail(struct printk_ringbuffer *rb, unsigned long tail)
- void prb_commit(struct prb_handle *h)
+diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
+index ebfb0bd5bef5..1d36337d40a2 100644
+--- a/drivers/tty/serial/8250/8250.h
++++ b/drivers/tty/serial/8250/8250.h
+@@ -255,3 +255,7 @@ static inline int serial_index(struct uart_port *port)
  {
- 	struct printk_ringbuffer *rb = h->rb;
-+	bool changed = false;
- 	struct prb_entry *e;
- 	unsigned long head;
- 	unsigned long res;
-@@ -175,6 +177,7 @@ void prb_commit(struct prb_handle *h)
- 			}
- 			e->seq = ++rb->seq;
- 			head += e->size;
-+			changed = true;
- 		}
- 		atomic_long_set_release(&rb->head, res);
- 		atomic_dec(&rb->ctx);
-@@ -185,6 +188,12 @@ void prb_commit(struct prb_handle *h)
+ 	return port->minor - 64;
+ }
++
++void set_ier(struct uart_8250_port *up, unsigned char ier);
++void clear_ier(struct uart_8250_port *up);
++void restore_ier(struct uart_8250_port *up);
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index e441221e04b9..1daea9709ce2 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -265,7 +265,7 @@ static void serial8250_timeout(struct timer_list *t)
+ static void serial8250_backup_timeout(struct timer_list *t)
+ {
+ 	struct uart_8250_port *up = from_timer(up, t, timer);
+-	unsigned int iir, ier = 0, lsr;
++	unsigned int iir, lsr;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&up->port.lock, flags);
+@@ -274,10 +274,8 @@ static void serial8250_backup_timeout(struct timer_list *t)
+ 	 * Must disable interrupts or else we risk racing with the interrupt
+ 	 * based handler.
+ 	 */
+-	if (up->port.irq) {
+-		ier = serial_in(up, UART_IER);
+-		serial_out(up, UART_IER, 0);
+-	}
++	if (up->port.irq)
++		clear_ier(up);
+ 
+ 	iir = serial_in(up, UART_IIR);
+ 
+@@ -300,7 +298,7 @@ static void serial8250_backup_timeout(struct timer_list *t)
+ 		serial8250_tx_chars(up);
+ 
+ 	if (up->port.irq)
+-		serial_out(up, UART_IER, ier);
++		restore_ier(up);
+ 
+ 	spin_unlock_irqrestore(&up->port.lock, flags);
+ 
+@@ -578,6 +576,14 @@ serial8250_register_ports(struct uart_driver *drv, struct device *dev)
+ 
+ #ifdef CONFIG_SERIAL_8250_CONSOLE
+ 
++static void univ8250_console_write_atomic(struct console *co, const char *s,
++					  unsigned int count)
++{
++	struct uart_8250_port *up = &serial8250_ports[co->index];
++
++	serial8250_console_write_atomic(up, s, count);
++}
++
+ static void univ8250_console_write(struct console *co, const char *s,
+ 				   unsigned int count)
+ {
+@@ -663,6 +669,7 @@ static int univ8250_console_match(struct console *co, char *name, int idx,
+ 
+ static struct console univ8250_console = {
+ 	.name		= "ttyS",
++	.write_atomic	= univ8250_console_write_atomic,
+ 	.write		= univ8250_console_write,
+ 	.device		= uart_console_device,
+ 	.setup		= univ8250_console_setup,
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index bfa1a857f3ff..2fb394ddc420 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -36,7 +36,7 @@ static void __dma_tx_complete(void *param)
+ 	ret = serial8250_tx_dma(p);
+ 	if (ret) {
+ 		p->ier |= UART_IER_THRI;
+-		serial_port_out(&p->port, UART_IER, p->ier);
++		set_ier(p, p->ier);
  	}
  
- 	prb_unlock(rb->cpulock, h->cpu);
-+
-+	if (changed) {
-+		atomic_long_inc(&rb->wq_counter);
-+		if (wq_has_sleeper(rb->wq))
-+			irq_work_queue(rb->wq_work);
-+	}
+ 	spin_unlock_irqrestore(&p->port.lock, flags);
+@@ -101,8 +101,7 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 	if (dma->tx_err) {
+ 		dma->tx_err = 0;
+ 		if (p->ier & UART_IER_THRI) {
+-			p->ier &= ~UART_IER_THRI;
+-			serial_out(p, UART_IER, p->ier);
++			set_ier(p, p->ier);
+ 		}
+ 	}
+ 	return 0;
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index d2f3310abe54..c1f308c1aaec 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -731,7 +731,7 @@ static void serial8250_set_sleep(struct uart_8250_port *p, int sleep)
+ 			serial_out(p, UART_EFR, UART_EFR_ECB);
+ 			serial_out(p, UART_LCR, 0);
+ 		}
+-		serial_out(p, UART_IER, sleep ? UART_IERX_SLEEP : 0);
++		set_ier(p, sleep ? UART_IERX_SLEEP : 0);
+ 		if (p->capabilities & UART_CAP_EFR) {
+ 			serial_out(p, UART_LCR, UART_LCR_CONF_MODE_B);
+ 			serial_out(p, UART_EFR, efr);
+@@ -1433,7 +1433,7 @@ static void serial8250_stop_rx(struct uart_port *port)
+ 
+ 	up->ier &= ~(UART_IER_RLSI | UART_IER_RDI);
+ 	up->port.read_status_mask &= ~UART_LSR_DR;
+-	serial_port_out(port, UART_IER, up->ier);
++	set_ier(up, up->ier);
+ 
+ 	serial8250_rpm_put(up);
+ }
+@@ -1451,7 +1451,7 @@ static void __do_stop_tx_rs485(struct uart_8250_port *p)
+ 		serial8250_clear_and_reinit_fifos(p);
+ 
+ 		p->ier |= UART_IER_RLSI | UART_IER_RDI;
+-		serial_port_out(&p->port, UART_IER, p->ier);
++		set_ier(p, p->ier);
+ 	}
+ }
+ static enum hrtimer_restart serial8250_em485_handle_stop_tx(struct hrtimer *t)
+@@ -1504,7 +1504,7 @@ static inline void __do_stop_tx(struct uart_8250_port *p)
+ {
+ 	if (p->ier & UART_IER_THRI) {
+ 		p->ier &= ~UART_IER_THRI;
+-		serial_out(p, UART_IER, p->ier);
++		set_ier(p, p->ier);
+ 		serial8250_rpm_put_tx(p);
+ 	}
+ }
+@@ -1557,7 +1557,7 @@ static inline void __start_tx(struct uart_port *port)
+ 
+ 	if (!(up->ier & UART_IER_THRI)) {
+ 		up->ier |= UART_IER_THRI;
+-		serial_port_out(port, UART_IER, up->ier);
++		set_ier(up, up->ier);
+ 
+ 		if (up->bugs & UART_BUG_TXEN) {
+ 			unsigned char lsr;
+@@ -1663,7 +1663,7 @@ static void serial8250_disable_ms(struct uart_port *port)
+ 		return;
+ 
+ 	up->ier &= ~UART_IER_MSI;
+-	serial_port_out(port, UART_IER, up->ier);
++	set_ier(up, up->ier);
  }
  
- /*
-@@ -437,3 +446,43 @@ int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq)
+ static void serial8250_enable_ms(struct uart_port *port)
+@@ -1677,7 +1677,7 @@ static void serial8250_enable_ms(struct uart_port *port)
+ 	up->ier |= UART_IER_MSI;
  
- 	return 1;
+ 	serial8250_rpm_get(up);
+-	serial_port_out(port, UART_IER, up->ier);
++	set_ier(up, up->ier);
+ 	serial8250_rpm_put(up);
  }
+ 
+@@ -2050,6 +2050,52 @@ static void wait_for_xmitr(struct uart_8250_port *up, int bits)
+ 	}
+ }
+ 
++static atomic_t ier_counter = ATOMIC_INIT(0);
++static atomic_t ier_value = ATOMIC_INIT(0);
 +
-+/*
-+ * prb_iter_wait_next: Advance to the next record, blocking if none available.
-+ * @iter: Iterator tracking the current position.
-+ * @buf: A buffer to store the data of the next record. May be NULL.
-+ * @size: The size of @buf. (Ignored if @buf is NULL.)
-+ * @seq: The sequence number of the next record. May be NULL.
-+ *
-+ * If a next record is already available, this function works like
-+ * prb_iter_next(). Otherwise block interruptible until a next record is
-+ * available.
-+ *
-+ * When a next record is available, @iter is advanced and (if specified)
-+ * the data and/or sequence number of that record are provided.
-+ *
-+ * This function might sleep.
-+ *
-+ * Returns 1 if @iter was advanced, -EINVAL if @iter is now invalid, or
-+ * -ERESTARTSYS if interrupted by a signal.
-+ */
-+int prb_iter_wait_next(struct prb_iterator *iter, char *buf, int size, u64 *seq)
++void set_ier(struct uart_8250_port *up, unsigned char ier)
 +{
-+	unsigned long last_seen;
-+	int ret;
++	struct uart_port *port = &up->port;
++	unsigned int flags;
 +
-+	for (;;) {
-+		last_seen = atomic_long_read(&iter->rb->wq_counter);
-+
-+		ret = prb_iter_next(iter, buf, size, seq);
-+		if (ret != 0)
-+			break;
-+
-+		ret = wait_event_interruptible(*iter->rb->wq,
-+			last_seen != atomic_long_read(&iter->rb->wq_counter));
-+		if (ret < 0)
-+			break;
-+	}
-+
-+	return ret;
++	console_atomic_lock(&flags);
++	if (atomic_read(&ier_counter) > 0)
++		atomic_set(&ier_value, ier);
++	else
++		serial_port_out(port, UART_IER, ier);
++	console_atomic_unlock(flags);
 +}
++
++void clear_ier(struct uart_8250_port *up)
++{
++	struct uart_port *port = &up->port;
++	unsigned int ier_cleared = 0;
++	unsigned int flags;
++	unsigned int ier;
++
++	console_atomic_lock(&flags);
++	atomic_inc(&ier_counter);
++	ier = serial_port_in(port, UART_IER);
++	if (up->capabilities & UART_CAP_UUE)
++		ier_cleared = UART_IER_UUE;
++	if (ier != ier_cleared) {
++		serial_port_out(port, UART_IER, ier_cleared);
++		atomic_set(&ier_value, ier);
++	}
++	console_atomic_unlock(flags);
++}
++
++void restore_ier(struct uart_8250_port *up)
++{
++	struct uart_port *port = &up->port;
++	unsigned int flags;
++
++	console_atomic_lock(&flags);
++	if (atomic_fetch_dec(&ier_counter) == 1)
++		serial_port_out(port, UART_IER, atomic_read(&ier_value));
++	console_atomic_unlock(flags);
++}
++
+ #ifdef CONFIG_CONSOLE_POLL
+ /*
+  * Console polling routines for writing and reading from the uart while
+@@ -2081,18 +2127,10 @@ static int serial8250_get_poll_char(struct uart_port *port)
+ static void serial8250_put_poll_char(struct uart_port *port,
+ 			 unsigned char c)
+ {
+-	unsigned int ier;
+ 	struct uart_8250_port *up = up_to_u8250p(port);
+ 
+ 	serial8250_rpm_get(up);
+-	/*
+-	 *	First save the IER then disable the interrupts
+-	 */
+-	ier = serial_port_in(port, UART_IER);
+-	if (up->capabilities & UART_CAP_UUE)
+-		serial_port_out(port, UART_IER, UART_IER_UUE);
+-	else
+-		serial_port_out(port, UART_IER, 0);
++	clear_ier(up);
+ 
+ 	wait_for_xmitr(up, BOTH_EMPTY);
+ 	/*
+@@ -2105,7 +2143,7 @@ static void serial8250_put_poll_char(struct uart_port *port,
+ 	 *	and restore the IER
+ 	 */
+ 	wait_for_xmitr(up, BOTH_EMPTY);
+-	serial_port_out(port, UART_IER, ier);
++	restore_ier(up);
+ 	serial8250_rpm_put(up);
+ }
+ 
+@@ -2417,7 +2455,7 @@ void serial8250_do_shutdown(struct uart_port *port)
+ 	 */
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	up->ier = 0;
+-	serial_port_out(port, UART_IER, 0);
++	set_ier(up, 0);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+ 	synchronize_irq(port->irq);
+@@ -2728,7 +2766,7 @@ serial8250_do_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if (up->capabilities & UART_CAP_RTOIE)
+ 		up->ier |= UART_IER_RTOIE;
+ 
+-	serial_port_out(port, UART_IER, up->ier);
++	set_ier(up, up->ier);
+ 
+ 	if (up->capabilities & UART_CAP_EFR) {
+ 		unsigned char efr = 0;
+@@ -3192,7 +3230,7 @@ EXPORT_SYMBOL_GPL(serial8250_set_defaults);
+ 
+ #ifdef CONFIG_SERIAL_8250_CONSOLE
+ 
+-static void serial8250_console_putchar(struct uart_port *port, int ch)
++static void serial8250_console_putchar_locked(struct uart_port *port, int ch)
+ {
+ 	struct uart_8250_port *up = up_to_u8250p(port);
+ 
+@@ -3200,6 +3238,18 @@ static void serial8250_console_putchar(struct uart_port *port, int ch)
+ 	serial_port_out(port, UART_TX, ch);
+ }
+ 
++static void serial8250_console_putchar(struct uart_port *port, int ch)
++{
++	struct uart_8250_port *up = up_to_u8250p(port);
++	unsigned int flags;
++
++	wait_for_xmitr(up, UART_LSR_THRE);
++
++	console_atomic_lock(&flags);
++	serial8250_console_putchar_locked(port, ch);
++	console_atomic_unlock(flags);
++}
++
+ /*
+  *	Restore serial console when h/w power-off detected
+  */
+@@ -3221,6 +3271,42 @@ static void serial8250_console_restore(struct uart_8250_port *up)
+ 	serial8250_out_MCR(up, UART_MCR_DTR | UART_MCR_RTS);
+ }
+ 
++void serial8250_console_write_atomic(struct uart_8250_port *up,
++				     const char *s, unsigned int count)
++{
++	struct uart_port *port = &up->port;
++	unsigned int flags;
++	bool locked;
++
++	console_atomic_lock(&flags);
++
++	/*
++	 * If possible, keep any other CPUs from working with the
++	 * UART until the atomic message is completed. This helps
++	 * to keep the output more orderly.
++	 */
++	locked = spin_trylock(&port->lock);
++
++	touch_nmi_watchdog();
++
++	clear_ier(up);
++
++	if (atomic_fetch_inc(&up->console_printing)) {
++		uart_console_write(port, "\n", 1,
++				   serial8250_console_putchar_locked);
++	}
++	uart_console_write(port, s, count, serial8250_console_putchar_locked);
++	atomic_dec(&up->console_printing);
++
++	wait_for_xmitr(up, BOTH_EMPTY);
++	restore_ier(up);
++
++	if (locked)
++		spin_unlock(&port->lock);
++
++	console_atomic_unlock(flags);
++}
++
+ /*
+  *	Print a string to the serial port trying not to disturb
+  *	any possible real use of the port...
+@@ -3232,27 +3318,13 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+ {
+ 	struct uart_port *port = &up->port;
+ 	unsigned long flags;
+-	unsigned int ier;
+-	int locked = 1;
+ 
+ 	touch_nmi_watchdog();
+ 
+ 	serial8250_rpm_get(up);
++	spin_lock_irqsave(&port->lock, flags);
+ 
+-	if (oops_in_progress)
+-		locked = spin_trylock_irqsave(&port->lock, flags);
+-	else
+-		spin_lock_irqsave(&port->lock, flags);
+-
+-	/*
+-	 *	First save the IER then disable the interrupts
+-	 */
+-	ier = serial_port_in(port, UART_IER);
+-
+-	if (up->capabilities & UART_CAP_UUE)
+-		serial_port_out(port, UART_IER, UART_IER_UUE);
+-	else
+-		serial_port_out(port, UART_IER, 0);
++	clear_ier(up);
+ 
+ 	/* check scratch reg to see if port powered off during system sleep */
+ 	if (up->canary && (up->canary != serial_port_in(port, UART_SCR))) {
+@@ -3260,14 +3332,16 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+ 		up->canary = 0;
+ 	}
+ 
++	atomic_inc(&up->console_printing);
+ 	uart_console_write(port, s, count, serial8250_console_putchar);
++	atomic_dec(&up->console_printing);
+ 
+ 	/*
+ 	 *	Finally, wait for transmitter to become empty
+ 	 *	and restore the IER
+ 	 */
+ 	wait_for_xmitr(up, BOTH_EMPTY);
+-	serial_port_out(port, UART_IER, ier);
++	restore_ier(up);
+ 
+ 	/*
+ 	 *	The receive handling will happen properly because the
+@@ -3279,8 +3353,7 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+ 	if (up->msr_saved_flags)
+ 		serial8250_modem_status(up);
+ 
+-	if (locked)
+-		spin_unlock_irqrestore(&port->lock, flags);
++	spin_unlock_irqrestore(&port->lock, flags);
+ 	serial8250_rpm_put(up);
+ }
+ 
+@@ -3301,6 +3374,7 @@ static unsigned int probe_baud(struct uart_port *port)
+ 
+ int serial8250_console_setup(struct uart_port *port, char *options, bool probe)
+ {
++	struct uart_8250_port *up = up_to_u8250p(port);
+ 	int baud = 9600;
+ 	int bits = 8;
+ 	int parity = 'n';
+@@ -3309,6 +3383,8 @@ int serial8250_console_setup(struct uart_port *port, char *options, bool probe)
+ 	if (!port->iobase && !port->membase)
+ 		return -ENODEV;
+ 
++	atomic_set(&up->console_printing, 0);
++
+ 	if (options)
+ 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+ 	else if (probe)
+diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
+index 5a655ba8d273..a2dbeb0bc005 100644
+--- a/include/linux/serial_8250.h
++++ b/include/linux/serial_8250.h
+@@ -11,6 +11,7 @@
+ #ifndef _LINUX_SERIAL_8250_H
+ #define _LINUX_SERIAL_8250_H
+ 
++#include <linux/atomic.h>
+ #include <linux/serial_core.h>
+ #include <linux/serial_reg.h>
+ #include <linux/platform_device.h>
+@@ -126,6 +127,8 @@ struct uart_8250_port {
+ #define MSR_SAVE_FLAGS UART_MSR_ANY_DELTA
+ 	unsigned char		msr_saved_flags;
+ 
++	atomic_t		console_printing;
++
+ 	struct uart_8250_dma	*dma;
+ 	const struct uart_8250_ops *ops;
+ 
+@@ -177,6 +180,8 @@ void serial8250_init_port(struct uart_8250_port *up);
+ void serial8250_set_defaults(struct uart_8250_port *up);
+ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+ 			      unsigned int count);
++void serial8250_console_write_atomic(struct uart_8250_port *up, const char *s,
++				     unsigned int count);
+ int serial8250_console_setup(struct uart_port *port, char *options, bool probe);
+ 
+ extern void serial8250_set_isa_configurator(void (*v)
 -- 
 2.11.0
 
