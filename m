@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59094C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894ACC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F0F214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C866214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbfBLOae (ORCPT
+        id S1730364AbfBLOck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:34 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43683 "EHLO
+        Tue, 12 Feb 2019 09:32:40 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43723 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727248AbfBLOa3 (ORCPT
+        with ESMTP id S1729496AbfBLOad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:29 -0500
+        Tue, 12 Feb 2019 09:30:33 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4f-0005Af-FO; Tue, 12 Feb 2019 15:30:13 +0100
+        id 1gtZ4j-0005Af-9R; Tue, 12 Feb 2019 15:30:17 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 05/25] printk-rb: add basic non-blocking reading interface
-Date:   Tue, 12 Feb 2019 15:29:43 +0100
-Message-Id: <20190212143003.48446-6-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 10/25] printk: redirect emit/store to new ringbuffer
+Date:   Tue, 12 Feb 2019 15:29:48 +0100
+Message-Id: <20190212143003.48446-11-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,264 +54,430 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reader iterator static declaration/initializer, dynamic
-initializer, and functions to iterate and retrieve ring buffer data.
+vprintk_emit and vprintk_store are the main functions that all printk
+variants eventually go through. Change these to store the message in
+the new printk ring buffer that the printk kthread is reading.
+
+Remove functions no longer in use because of the changes to
+vprintk_emit and vprintk_store.
+
+In order to handle interrupts and NMIs, a second per-cpu ring buffer
+(sprint_rb) is added. This ring buffer is used for NMI-safe memory
+allocation in order to format the printk messages.
+
+NOTE: LOG_CONT is ignored for now and handled as individual messages.
+      LOG_CONT functions are masked behind "#if 0" blocks until their
+      functionality can be restored
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- include/linux/printk_ringbuffer.h |  20 ++++
- lib/printk_ringbuffer.c           | 190 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 210 insertions(+)
+ kernel/printk/printk.c | 319 ++++++++-----------------------------------------
+ 1 file changed, 51 insertions(+), 268 deletions(-)
 
-diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
-index 1aec9d5666b1..5fdaf632c111 100644
---- a/include/linux/printk_ringbuffer.h
-+++ b/include/linux/printk_ringbuffer.h
-@@ -43,6 +43,19 @@ static struct prb_cpulock name = {					\
- 	.irqflags = &_##name##_percpu_irqflags,				\
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 5a5a685bb128..b6a6f1002741 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -493,90 +493,6 @@ static u32 log_next(u32 idx)
+ 	return idx + msg->len;
  }
  
-+#define PRB_INIT ((unsigned long)-1)
-+
-+#define DECLARE_STATIC_PRINTKRB_ITER(name, rbaddr)			\
-+static struct prb_iterator name = {					\
-+	.rb = rbaddr,							\
-+	.lpos = PRB_INIT,						\
-+}
-+
-+struct prb_iterator {
-+	struct printk_ringbuffer *rb;
-+	unsigned long lpos;
-+};
-+
- #define DECLARE_STATIC_PRINTKRB(name, szbits, cpulockptr)		\
- static char _##name##_buffer[1 << (szbits)]				\
- 	__aligned(__alignof__(long));					\
-@@ -62,6 +75,13 @@ char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
- 		  unsigned int size);
- void prb_commit(struct prb_handle *h);
+-/*
+- * Check whether there is enough free space for the given message.
+- *
+- * The same values of first_idx and next_idx mean that the buffer
+- * is either empty or full.
+- *
+- * If the buffer is empty, we must respect the position of the indexes.
+- * They cannot be reset to the beginning of the buffer.
+- */
+-static int logbuf_has_space(u32 msg_size, bool empty)
+-{
+-	u32 free;
+-
+-	if (log_next_idx > log_first_idx || empty)
+-		free = max(log_buf_len - log_next_idx, log_first_idx);
+-	else
+-		free = log_first_idx - log_next_idx;
+-
+-	/*
+-	 * We need space also for an empty header that signalizes wrapping
+-	 * of the buffer.
+-	 */
+-	return free >= msg_size + sizeof(struct printk_log);
+-}
+-
+-static int log_make_free_space(u32 msg_size)
+-{
+-	while (log_first_seq < log_next_seq &&
+-	       !logbuf_has_space(msg_size, false)) {
+-		/* drop old messages until we have enough contiguous space */
+-		log_first_idx = log_next(log_first_idx);
+-		log_first_seq++;
+-	}
+-
+-	if (clear_seq < log_first_seq) {
+-		clear_seq = log_first_seq;
+-		clear_idx = log_first_idx;
+-	}
+-
+-	/* sequence numbers are equal, so the log buffer is empty */
+-	if (logbuf_has_space(msg_size, log_first_seq == log_next_seq))
+-		return 0;
+-
+-	return -ENOMEM;
+-}
+-
+-/* compute the message size including the padding bytes */
+-static u32 msg_used_size(u16 text_len, u16 dict_len, u32 *pad_len)
+-{
+-	u32 size;
+-
+-	size = sizeof(struct printk_log) + text_len + dict_len;
+-	*pad_len = (-size) & (LOG_ALIGN - 1);
+-	size += *pad_len;
+-
+-	return size;
+-}
+-
+-/*
+- * Define how much of the log buffer we could take at maximum. The value
+- * must be greater than two. Note that only half of the buffer is available
+- * when the index points to the middle.
+- */
+-#define MAX_LOG_TAKE_PART 4
+-static const char trunc_msg[] = "<truncated>";
+-
+-static u32 truncate_msg(u16 *text_len, u16 *trunc_msg_len,
+-			u16 *dict_len, u32 *pad_len)
+-{
+-	/*
+-	 * The message should not take the whole buffer. Otherwise, it might
+-	 * get removed too soon.
+-	 */
+-	u32 max_text_len = log_buf_len / MAX_LOG_TAKE_PART;
+-	if (*text_len > max_text_len)
+-		*text_len = max_text_len;
+-	/* enable the warning message */
+-	*trunc_msg_len = strlen(trunc_msg);
+-	/* disable the "dict" completely */
+-	*dict_len = 0;
+-	/* compute the size again, count also the warning message */
+-	return msg_used_size(*text_len + *trunc_msg_len, 0, pad_len);
+-}
+-
+ /* insert record into the buffer, discard old ones, update heads */
+ static int log_store(int facility, int level,
+ 		     enum log_flags flags, u64 ts_nsec,
+@@ -584,54 +500,36 @@ static int log_store(int facility, int level,
+ 		     const char *text, u16 text_len)
+ {
+ 	struct printk_log *msg;
+-	u32 size, pad_len;
+-	u16 trunc_msg_len = 0;
+-
+-	/* number of '\0' padding bytes to next message */
+-	size = msg_used_size(text_len, dict_len, &pad_len);
+-
+-	if (log_make_free_space(size)) {
+-		/* truncate the message if it is too long for empty buffer */
+-		size = truncate_msg(&text_len, &trunc_msg_len,
+-				    &dict_len, &pad_len);
+-		/* survive when the log buffer is too small for trunc_msg */
+-		if (log_make_free_space(size))
+-			return 0;
+-	}
++	struct prb_handle h;
++	char *rbuf;
++	u32 size;
  
-+/* reader interface */
-+void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
-+		   u64 *seq);
-+void prb_iter_copy(struct prb_iterator *dest, struct prb_iterator *src);
-+int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq);
-+int prb_iter_data(struct prb_iterator *iter, char *buf, int size, u64 *seq);
+-	if (log_next_idx + size + sizeof(struct printk_log) > log_buf_len) {
++	size = sizeof(*msg) + text_len + dict_len;
 +
- /* utility functions */
- void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store);
- void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store);
-diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-index 90c7f9a9f861..1d1e886a0966 100644
---- a/lib/printk_ringbuffer.c
-+++ b/lib/printk_ringbuffer.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/smp.h>
-+#include <linux/string.h>
-+#include <linux/errno.h>
- #include <linux/printk_ringbuffer.h>
- 
- #define PRB_SIZE(rb) (1 << rb->size_bits)
-@@ -8,6 +10,7 @@
- #define PRB_WRAPS(rb, lpos) (lpos >> rb->size_bits)
- #define PRB_WRAP_LPOS(rb, lpos, xtra) \
- 	((PRB_WRAPS(rb, lpos) + xtra) << rb->size_bits)
-+#define PRB_DATA_SIZE(e) (e->size - sizeof(struct prb_entry))
- #define PRB_DATA_ALIGN sizeof(long)
- 
- static bool __prb_trylock(struct prb_cpulock *cpu_lock,
-@@ -247,3 +250,190 @@ char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
- 
- 	return &h->entry->data[0];
- }
-+
-+/*
-+ * prb_iter_copy: Copy an iterator.
-+ * @dest: The iterator to copy to.
-+ * @src: The iterator to copy from.
-+ *
-+ * Make a deep copy of an iterator. This is particularly useful for making
-+ * backup copies of an iterator in case a form of rewinding it needed.
-+ *
-+ * It is safe to call this function from any context and state. But
-+ * note that this function is not atomic. Callers should not make copies
-+ * to/from iterators that can be accessed by other tasks/contexts.
-+ */
-+void prb_iter_copy(struct prb_iterator *dest, struct prb_iterator *src)
-+{
-+	memcpy(dest, src, sizeof(*dest));
-+}
-+
-+/*
-+ * prb_iter_init: Initialize an iterator for a ring buffer.
-+ * @iter: The iterator to initialize.
-+ * @rb: A ring buffer to that @iter should iterate.
-+ * @seq: The sequence number of the position preceding the first record.
-+ *       May be NULL.
-+ *
-+ * Initialize an iterator to be used with a specified ring buffer. If @seq
-+ * is non-NULL, it will be set such that prb_iter_next() will provide a
-+ * sequence value of "@seq + 1" if no records were missed.
-+ *
-+ * It is safe to call this function from any context and state.
-+ */
-+void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
-+		   u64 *seq)
-+{
-+	memset(iter, 0, sizeof(*iter));
-+	iter->rb = rb;
-+	iter->lpos = PRB_INIT;
-+
-+	if (!seq)
-+		return;
-+
-+	for (;;) {
-+		struct prb_iterator tmp_iter;
-+		int ret;
-+
-+		prb_iter_copy(&tmp_iter, iter);
-+
-+		ret = prb_iter_next(&tmp_iter, NULL, 0, seq);
-+		if (ret < 0)
-+			continue;
-+
-+		if (ret == 0)
-+			*seq = 0;
-+		else
-+			(*seq)--;
-+		break;
-+	}
-+}
-+
-+static bool is_valid(struct printk_ringbuffer *rb, unsigned long lpos)
-+{
-+	unsigned long head, tail;
-+
-+	tail = atomic_long_read(&rb->tail);
-+	head = atomic_long_read(&rb->head);
-+	head -= tail;
-+	lpos -= tail;
-+
-+	if (lpos >= head)
-+		return false;
-+	return true;
-+}
-+
-+/*
-+ * prb_iter_data: Retrieve the record data at the current position.
-+ * @iter: Iterator tracking the current position.
-+ * @buf: A buffer to store the data of the record. May be NULL.
-+ * @size: The size of @buf. (Ignored if @buf is NULL.)
-+ * @seq: The sequence number of the record. May be NULL.
-+ *
-+ * If @iter is at a record, provide the data and/or sequence number of that
-+ * record (if specified by the caller).
-+ *
-+ * It is safe to call this function from any context and state.
-+ *
-+ * Returns >=0 if the current record contains valid data (returns 0 if @buf
-+ * is NULL or returns the size of the data block if @buf is non-NULL) or
-+ * -EINVAL if @iter is now invalid.
-+ */
-+int prb_iter_data(struct prb_iterator *iter, char *buf, int size, u64 *seq)
-+{
-+	struct printk_ringbuffer *rb = iter->rb;
-+	unsigned long lpos = iter->lpos;
-+	unsigned int datsize = 0;
-+	struct prb_entry *e;
-+
-+	if (buf || seq) {
-+		e = to_entry(rb, lpos);
-+		if (!is_valid(rb, lpos))
-+			return -EINVAL;
-+		/* memory barrier to ensure valid lpos */
-+		smp_rmb();
-+		if (buf) {
-+			datsize = PRB_DATA_SIZE(e);
-+			/* memory barrier to ensure load of datsize */
-+			smp_rmb();
-+			if (!is_valid(rb, lpos))
-+				return -EINVAL;
-+			if (PRB_INDEX(rb, lpos) + datsize >
-+			    PRB_SIZE(rb) - PRB_DATA_ALIGN) {
-+				return -EINVAL;
-+			}
-+			if (size > datsize)
-+				size = datsize;
-+			memcpy(buf, &e->data[0], size);
-+		}
-+		if (seq)
-+			*seq = e->seq;
-+		/* memory barrier to ensure loads of entry data */
-+		smp_rmb();
-+	}
-+
-+	if (!is_valid(rb, lpos))
-+		return -EINVAL;
-+
-+	return datsize;
-+}
-+
-+/*
-+ * prb_iter_next: Advance to the next record.
-+ * @iter: Iterator tracking the current position.
-+ * @buf: A buffer to store the data of the next record. May be NULL.
-+ * @size: The size of @buf. (Ignored if @buf is NULL.)
-+ * @seq: The sequence number of the next record. May be NULL.
-+ *
-+ * If a next record is available, @iter is advanced and (if specified)
-+ * the data and/or sequence number of that record are provided.
-+ *
-+ * It is safe to call this function from any context and state.
-+ *
-+ * Returns 1 if @iter was advanced, 0 if @iter is at the end of the list, or
-+ * -EINVAL if @iter is now invalid.
-+ */
-+int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq)
-+{
-+	struct printk_ringbuffer *rb = iter->rb;
-+	unsigned long next_lpos;
-+	struct prb_entry *e;
-+	unsigned int esize;
-+
-+	if (iter->lpos == PRB_INIT) {
-+		next_lpos = atomic_long_read(&rb->tail);
-+	} else {
-+		if (!is_valid(rb, iter->lpos))
-+			return -EINVAL;
-+		/* memory barrier to ensure valid lpos */
-+		smp_rmb();
-+		e = to_entry(rb, iter->lpos);
-+		esize = e->size;
-+		/* memory barrier to ensure load of size */
-+		smp_rmb();
-+		if (!is_valid(rb, iter->lpos))
-+			return -EINVAL;
-+		next_lpos = iter->lpos + esize;
-+	}
-+	if (next_lpos == atomic_long_read(&rb->head))
++	rbuf = prb_reserve(&h, &printk_rb, size);
++	if (!rbuf) {
+ 		/*
+-		 * This message + an additional empty header does not fit
+-		 * at the end of the buffer. Add an empty header with len == 0
+-		 * to signify a wrap around.
++		 * An emergency message would have been printed, but
++		 * it cannot be stored in the log.
+ 		 */
+-		memset(log_buf + log_next_idx, 0, sizeof(struct printk_log));
+-		log_next_idx = 0;
++		prb_inc_lost(&printk_rb);
 +		return 0;
-+	if (!is_valid(rb, next_lpos))
-+		return -EINVAL;
-+	/* memory barrier to ensure valid lpos */
-+	smp_rmb();
-+
-+	iter->lpos = next_lpos;
-+	e = to_entry(rb, iter->lpos);
-+	esize = e->size;
-+	/* memory barrier to ensure load of size */
-+	smp_rmb();
-+	if (!is_valid(rb, iter->lpos))
-+		return -EINVAL;
-+	if (esize == -1)
-+		iter->lpos = PRB_WRAP_LPOS(rb, iter->lpos, 1);
-+
-+	if (prb_iter_data(iter, buf, size, seq) < 0)
-+		return -EINVAL;
-+
-+	return 1;
+ 	}
+ 
+ 	/* fill message */
+-	msg = (struct printk_log *)(log_buf + log_next_idx);
++	msg = (struct printk_log *)rbuf;
+ 	memcpy(log_text(msg), text, text_len);
+ 	msg->text_len = text_len;
+-	if (trunc_msg_len) {
+-		memcpy(log_text(msg) + text_len, trunc_msg, trunc_msg_len);
+-		msg->text_len += trunc_msg_len;
+-	}
+ 	memcpy(log_dict(msg), dict, dict_len);
+ 	msg->dict_len = dict_len;
+ 	msg->facility = facility;
+ 	msg->level = level & 7;
+ 	msg->flags = flags & 0x1f;
+-	if (ts_nsec > 0)
+-		msg->ts_nsec = ts_nsec;
+-	else
+-		msg->ts_nsec = local_clock();
+-	memset(log_dict(msg) + dict_len, 0, pad_len);
++	msg->ts_nsec = ts_nsec;
+ 	msg->len = size;
+ 
+ 	/* insert message */
+-	log_next_idx += msg->len;
+-	log_next_seq++;
++	prb_commit(&h);
+ 
+ 	return msg->text_len;
+ }
+@@ -1675,70 +1573,6 @@ static int console_lock_spinning_disable_and_check(void)
+ 	return 1;
+ }
+ 
+-/**
+- * console_trylock_spinning - try to get console_lock by busy waiting
+- *
+- * This allows to busy wait for the console_lock when the current
+- * owner is running in specially marked sections. It means that
+- * the current owner is running and cannot reschedule until it
+- * is ready to lose the lock.
+- *
+- * Return: 1 if we got the lock, 0 othrewise
+- */
+-static int console_trylock_spinning(void)
+-{
+-	struct task_struct *owner = NULL;
+-	bool waiter;
+-	bool spin = false;
+-	unsigned long flags;
+-
+-	if (console_trylock())
+-		return 1;
+-
+-	printk_safe_enter_irqsave(flags);
+-
+-	raw_spin_lock(&console_owner_lock);
+-	owner = READ_ONCE(console_owner);
+-	waiter = READ_ONCE(console_waiter);
+-	if (!waiter && owner && owner != current) {
+-		WRITE_ONCE(console_waiter, true);
+-		spin = true;
+-	}
+-	raw_spin_unlock(&console_owner_lock);
+-
+-	/*
+-	 * If there is an active printk() writing to the
+-	 * consoles, instead of having it write our data too,
+-	 * see if we can offload that load from the active
+-	 * printer, and do some printing ourselves.
+-	 * Go into a spin only if there isn't already a waiter
+-	 * spinning, and there is an active printer, and
+-	 * that active printer isn't us (recursive printk?).
+-	 */
+-	if (!spin) {
+-		printk_safe_exit_irqrestore(flags);
+-		return 0;
+-	}
+-
+-	/* We spin waiting for the owner to release us */
+-	spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
+-	/* Owner will clear console_waiter on hand off */
+-	while (READ_ONCE(console_waiter))
+-		cpu_relax();
+-	spin_release(&console_owner_dep_map, 1, _THIS_IP_);
+-
+-	printk_safe_exit_irqrestore(flags);
+-	/*
+-	 * The owner passed the console lock to us.
+-	 * Since we did not spin on console lock, annotate
+-	 * this as a trylock. Otherwise lockdep will
+-	 * complain.
+-	 */
+-	mutex_acquire(&console_lock_dep_map, 0, 1, _THIS_IP_);
+-
+-	return 1;
+-}
+-
+ /*
+  * Call the console drivers, asking them to write out
+  * log_buf[start] to log_buf[end - 1].
+@@ -1759,7 +1593,7 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
+ 			continue;
+ 		if (!con->write)
+ 			continue;
+-		if (!cpu_online(smp_processor_id()) &&
++		if (!cpu_online(raw_smp_processor_id()) &&
+ 		    !(con->flags & CON_ANYTIME))
+ 			continue;
+ 		if (con->flags & CON_EXTENDED)
+@@ -1783,6 +1617,8 @@ static inline void printk_delay(void)
+ 	}
+ }
+ 
++/* FIXME: no support for LOG_CONT */
++#if 0
+ /*
+  * Continuation lines are buffered, and not committed to the record buffer
+  * until the line is complete, or a race forces it. The line fragments
+@@ -1837,53 +1673,44 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
+ 
+ 	return true;
+ }
++#endif /* 0 */
+ 
+-static size_t log_output(int facility, int level, enum log_flags lflags, const char *dict, size_t dictlen, char *text, size_t text_len)
+-{
+-	/*
+-	 * If an earlier line was buffered, and we're a continuation
+-	 * write from the same process, try to add it to the buffer.
+-	 */
+-	if (cont.len) {
+-		if (cont.owner == current && (lflags & LOG_CONT)) {
+-			if (cont_add(facility, level, lflags, text, text_len))
+-				return text_len;
+-		}
+-		/* Otherwise, make sure it's flushed */
+-		cont_flush();
+-	}
+-
+-	/* Skip empty continuation lines that couldn't be added - they just flush */
+-	if (!text_len && (lflags & LOG_CONT))
+-		return 0;
+-
+-	/* If it doesn't end in a newline, try to buffer the current line */
+-	if (!(lflags & LOG_NEWLINE)) {
+-		if (cont_add(facility, level, lflags, text, text_len))
+-			return text_len;
+-	}
+-
+-	/* Store it in the record log */
+-	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
+-}
+-
+-/* Must be called under logbuf_lock. */
+ int vprintk_store(int facility, int level,
+ 		  const char *dict, size_t dictlen,
+ 		  const char *fmt, va_list args)
+ {
+-	static char textbuf[LOG_LINE_MAX];
+-	char *text = textbuf;
+-	size_t text_len;
++	return vprintk_emit(facility, level, dict, dictlen, fmt, args);
 +}
++
++/* ring buffer used as memory allocator for temporary sprint buffers */
++DECLARE_STATIC_PRINTKRB(sprint_rb,
++			ilog2(PRINTK_RECORD_MAX + sizeof(struct prb_entry) +
++			      sizeof(long)) + 2, &printk_cpulock);
++
++asmlinkage int vprintk_emit(int facility, int level,
++			    const char *dict, size_t dictlen,
++			    const char *fmt, va_list args)
++{
+ 	enum log_flags lflags = 0;
++	int printed_len = 0;
++	struct prb_handle h;
++	size_t text_len;
++	u64 ts_nsec;
++	char *text;
++	char *rbuf;
+ 
+-	/*
+-	 * The printf needs to come first; we need the syslog
+-	 * prefix which might be passed-in as a parameter.
+-	 */
+-	text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
++	ts_nsec = local_clock();
+ 
+-	/* mark and strip a trailing newline */
++	rbuf = prb_reserve(&h, &sprint_rb, PRINTK_SPRINT_MAX);
++	if (!rbuf) {
++		prb_inc_lost(&printk_rb);
++		return printed_len;
++	}
++
++	text = rbuf;
++	text_len = vscnprintf(text, PRINTK_SPRINT_MAX, fmt, args);
++
++	/* strip and flag a trailing newline */
+ 	if (text_len && text[text_len-1] == '\n') {
+ 		text_len--;
+ 		lflags |= LOG_NEWLINE;
+@@ -1917,54 +1744,10 @@ int vprintk_store(int facility, int level,
+ 	if (dict)
+ 		lflags |= LOG_PREFIX|LOG_NEWLINE;
+ 
+-	return log_output(facility, level, lflags,
+-			  dict, dictlen, text, text_len);
+-}
+-
+-asmlinkage int vprintk_emit(int facility, int level,
+-			    const char *dict, size_t dictlen,
+-			    const char *fmt, va_list args)
+-{
+-	int printed_len;
+-	bool in_sched = false, pending_output;
+-	unsigned long flags;
+-	u64 curr_log_seq;
+-
+-	if (level == LOGLEVEL_SCHED) {
+-		level = LOGLEVEL_DEFAULT;
+-		in_sched = true;
+-	}
+-
+-	boot_delay_msec(level);
+-	printk_delay();
+-
+-	/* This stops the holder of console_sem just where we want him */
+-	logbuf_lock_irqsave(flags);
+-	curr_log_seq = log_next_seq;
+-	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
+-	pending_output = (curr_log_seq != log_next_seq);
+-	logbuf_unlock_irqrestore(flags);
+-
+-	/* If called from the scheduler, we can not call up(). */
+-	if (!in_sched && pending_output) {
+-		/*
+-		 * Disable preemption to avoid being preempted while holding
+-		 * console_sem which would prevent anyone from printing to
+-		 * console
+-		 */
+-		preempt_disable();
+-		/*
+-		 * Try to acquire and then immediately release the console
+-		 * semaphore.  The release will print out buffers and wake up
+-		 * /dev/kmsg and syslog() users.
+-		 */
+-		if (console_trylock_spinning())
+-			console_unlock();
+-		preempt_enable();
+-	}
++	printed_len = log_store(facility, level, lflags, ts_nsec,
++				dict, dictlen, text, text_len);
+ 
+-	if (pending_output)
+-		wake_up_klogd();
++	prb_commit(&h);
+ 	return printed_len;
+ }
+ EXPORT_SYMBOL(vprintk_emit);
+@@ -2429,7 +2212,7 @@ void console_unlock(void)
+ 		console_lock_spinning_enable();
+ 
+ 		stop_critical_timings();	/* don't trace print latency */
+-		call_console_drivers(ext_text, ext_len, text, len);
++		//call_console_drivers(ext_text, ext_len, text, len);
+ 		start_critical_timings();
+ 
+ 		if (console_lock_spinning_disable_and_check()) {
 -- 
 2.11.0
 
