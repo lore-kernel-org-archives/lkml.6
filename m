@@ -2,60 +2,74 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E664BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0090AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA8C21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B319D21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:24:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="OMC9mDd2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbfBLNVu convert rfc822-to-8bit (ORCPT
+        id S1729627AbfBLNYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:21:50 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32892 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727102AbfBLNVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:21:50 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id B2E65315BB3DCEAA294A;
-        Tue, 12 Feb 2019 13:21:48 +0000 (GMT)
-Received: from LHREML524-MBS.china.huawei.com ([169.254.2.78]) by
- lhreml701-cah.china.huawei.com ([10.201.108.42]) with mapi id 14.03.0415.000;
- Tue, 12 Feb 2019 13:21:39 +0000
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Oscar Salvador <osalvador@suse.de>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: RE: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-Thread-Topic: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-Thread-Index: AQHUwtEdigDNP0y6HEKCgupIm+NFFKXcIEiQ
-Date:   Tue, 12 Feb 2019 13:21:38 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA8392B5DB6@lhreml524-mbs.china.huawei.com>
-References: <20190122103708.11043-1-osalvador@suse.de>
- <20190212124707.000028ea@huawei.com>
-In-Reply-To: <20190212124707.000028ea@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 12 Feb 2019 08:24:04 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:56413 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbfBLNYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:24:03 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43zNf83L7sz9vBGW;
+        Tue, 12 Feb 2019 14:24:00 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=OMC9mDd2; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id R6-zuh5ph3Pa; Tue, 12 Feb 2019 14:24:00 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43zNf82GSdz9vBGV;
+        Tue, 12 Feb 2019 14:24:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549977840; bh=G0jidUg5d6gJlIq+oKUNqVQmqODA+FqVgSEbsJIj7Mc=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=OMC9mDd2V9IQqv0XUY/Gzph638uMO2n2HMxuqVhLfgXzQobMosX8/iet0cyriUXmR
+         I4H5fJJLL1Bcj0FKPRsxrIZ1nCddAlCwfJp2G0EhrMIqWEQGxuylzxhIdI0tc1e6ef
+         UgxP1yjMgwAppYh8Aj2D7lmJ956NrwPIQMg7Jw+k=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A418B8B7F7;
+        Tue, 12 Feb 2019 14:24:01 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id BodTgny8Iun2; Tue, 12 Feb 2019 14:24:01 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1E2978B7EB;
+        Tue, 12 Feb 2019 14:24:01 +0100 (CET)
+Subject: Re: [RFC PATCH] powerpc/6xx: Don't set back MSR_RI before reenabling
+ MMU
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <9f9dd859d571e324c7412ed9db9da8cfba678257.1548956511.git.christophe.leroy@c-s.fr>
+ <87lg2zojbt.fsf@concordia.ellerman.id.au>
+ <17b00097-a807-e9b9-3dce-198df4a3153f@c-s.fr>
+Message-ID: <b8c1836e-1172-285d-4935-5a4dcced4b3d@c-s.fr>
+Date:   Tue, 12 Feb 2019 14:24:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <17b00097-a807-e9b9-3dce-198df4a3153f@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,264 +77,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-> -----Original Message-----
-> From: Jonathan Cameron
-> Sent: 12 February 2019 12:47
-> To: Oscar Salvador <osalvador@suse.de>
-> Cc: linux-mm@kvack.org; mhocko@suse.com; dan.j.williams@intel.com;
-> Pavel.Tatashin@microsoft.com; david@redhat.com;
-> linux-kernel@vger.kernel.org; dave.hansen@intel.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Linuxarm
-> <linuxarm@huawei.com>; Robin Murphy <robin.murphy@arm.com>
-> Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
-> hotadded memory
+Le 01/02/2019 à 12:51, Christophe Leroy a écrit :
 > 
-> On Tue, 22 Jan 2019 11:37:04 +0100
-> Oscar Salvador <osalvador@suse.de> wrote:
 > 
-> > Hi,
-> >
-> > this is the v2 of the first RFC I sent back then in October [1].
-> > In this new version I tried to reduce the complexity as much as possible,
-> > plus some clean ups.
-> >
-> > [Testing]
-> >
-> > I have tested it on "x86_64" (small/big memblocks) and on "powerpc".
-> > On both architectures hot-add/hot-remove online/offline operations
-> > worked as expected using vmemmap pages, I have not seen any issues so far.
-> > I wanted to try it out on Hyper-V/Xen, but I did not manage to.
-> > I plan to do so along this week (if time allows).
-> > I would also like to test it on arm64, but I am not sure I can grab
-> > an arm64 box anytime soon.
+> Le 01/02/2019 à 12:10, Michael Ellerman a écrit :
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>
+>>> By delaying the setting of MSR_RI, a 1% improvment is optained on
+>>> null_syscall selftest on an mpc8321.
+>>>
+>>> Without this patch:
+>>>
+>>> root@vgoippro:~# ./null_syscall
+>>>     1134.33 ns     378.11 cycles
+>>>
+>>> With this patch:
+>>>
+>>> root@vgoippro:~# ./null_syscall
+>>>     1121.85 ns     373.95 cycles
+>>>
+>>> The drawback is that a machine check during that period
+>>> would be unrecoverable, but as only main memory is accessed
+>>> during that period, it shouldn't be a concern.
+>>
+>> On 64-bit server CPUs accessing main memory can cause a UE
+>> (Uncorrectable Error) which can trigger a machine check.
+>>
+>> So it may still be a concern, it depends how paranoid you are.
+>>
+>>> diff --git a/arch/powerpc/kernel/head_32.S 
+>>> b/arch/powerpc/kernel/head_32.S
+>>> index 146385b1c2da..ea28a6ab56ec 100644
+>>> --- a/arch/powerpc/kernel/head_32.S
+>>> +++ b/arch/powerpc/kernel/head_32.S
+>>> @@ -282,8 +282,6 @@ __secondary_hold_acknowledge:
+>>>       stw    r1,GPR1(r11);    \
+>>>       stw    r1,0(r11);    \
+>>>       tovirt(r1,r11);            /* set new kernel sp */    \
+>>> -    li    r10,MSR_KERNEL & ~(MSR_IR|MSR_DR); /* can take exceptions 
+>>> */ \
+>>> -    MTMSRD(r10);            /* (except for mach check in rtas) */ \
+>>>       stw    r0,GPR0(r11);    \
+>>>       lis    r10,STACK_FRAME_REGS_MARKER@ha; /* exception frame 
+>>> marker */ \
+>>>       addi    r10,r10,STACK_FRAME_REGS_MARKER@l; \
+>>
+>> Where does RI get enabled? I don't see it anywhere obvious.
 > 
-> Hi Oscar,
+> MSR_RI is part of MSR_KERNEL, it gets then enabled when reenabling MMU 
+> when calling the exception handler.
 > 
-> I ran tests on one of our arm64 machines. Particular machine doesn't actually
-> have
-> the mechanics for hotplug, so was all 'faked', but software wise it's all the
-> same.
+> #define EXC_XFER_TEMPLATE(n, hdlr, trap, copyee, tfer, ret)    \
+>      li    r10,trap;                    \
+>      stw    r10,_TRAP(r11);                    \
+>      li    r10,MSR_KERNEL;                    \
+>      copyee(r10, r9);                    \
+>      bl    tfer;                        \
+> i##n:                                \
+>      .long    hdlr;                        \
+>      .long    ret
 > 
-> Upshot, seems to work as expected on arm64 as well.
-> Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> where tfer = transfer_to_handler.
 > 
-> Remove currently relies on some out of tree patches (and dirty hacks) due
-> to the usual issue with how arm64 does pfn_valid. It's not even vaguely
-> ready for upstream. I'll aim to post an informational set for anyone else
-> testing in this area (it's more or less just a rebase of the patches from
-> a few years ago).
+> In transfer_to_handler (kernel/entry_32.S) you have:
 > 
-> +CC Shameer who has been testing the virtualization side for more details on
-> that, 
-
-Right, I have sent out a RFC series[1] to enable mem hotplug for Qemu ARM virt
-platform. Using this Qemu, I ran few tests with your patches on a HiSilicon ARM64
-platform. Looks like it is doing the job.
-
-root@ubuntu:~# uname -a
-Linux ubuntu 5.0.0-rc1-mm1-00173-g22b0744 #5 SMP PREEMPT Tue Feb 5 10:32:26 GMT 2019 aarch64 aarch64 aarch64 GNU/Linux
-
-root@ubuntu:~# numactl -H
-available: 2 nodes (0-1)
-node 0 cpus: 0
-node 0 size: 981 MB
-node 0 free: 854 MB
-node 1 cpus:
-node 1 size: 0 MB
-node 1 free: 0 MB
-node distances:
-node   0   1 
-  0:  10  20 
-  1:  20  10 
-root@ubuntu:~# (qemu) 
-(qemu) object_add memory-backend-ram,id=mem1,size=1G
-(qemu) device_add pc-dimm,id=dimm1,memdev=mem1,node=1
-root@ubuntu:~# 
-root@ubuntu:~# numactl -H
-available: 2 nodes (0-1)
-node 0 cpus: 0
-node 0 size: 981 MB
-node 0 free: 853 MB
-node 1 cpus:
-node 1 size: 1008 MB
-node 1 free: 1008 MB
-node distances:
-node   0   1 
-  0:  10  20 
-  1:  20  10 
-root@ubuntu:~#  
-
-FWIW,
-Tested-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
-[1] https://lists.gnu.org/archive/html/qemu-devel/2019-01/msg06966.html
-
-and Robin who is driving forward memory hotplug in general on the arm64
-> side.
+> transfer_to_handler_cont:
+> 3:
+>      mflr    r9
+>      lwz    r11,0(r9)        /* virtual address of handler */
+>      lwz    r9,4(r9)        /* where to go when done */
+> [...]
+>      mtspr    SPRN_SRR0,r11
+>      mtspr    SPRN_SRR1,r10
+>      mtlr    r9
+>      SYNC
+>      RFI                /* jump to handler, enable MMU */
 > 
-> Thanks,
-> 
-> Jonathan
-> 
-> >
-> > [Coverletter]:
-> >
-> > This is another step to make the memory hotplug more usable. The primary
-> > goal of this patchset is to reduce memory overhead of the hot added
-> > memory (at least for SPARSE_VMEMMAP memory model). The current way
-> we use
-> > to populate memmap (struct page array) has two main drawbacks:
-> >
-> > a) it consumes an additional memory until the hotadded memory itself is
-> >    onlined and
-> > b) memmap might end up on a different numa node which is especially true
-> >    for movable_node configuration.
-> >
-> > a) is problem especially for memory hotplug based memory "ballooning"
-> >    solutions when the delay between physical memory hotplug and the
-> >    onlining can lead to OOM and that led to introduction of hacks like auto
-> >    onlining (see 31bc3858ea3e ("memory-hotplug: add automatic onlining
-> >    policy for the newly added memory")).
-> >
-> > b) can have performance drawbacks.
-> >
-> > I have also seen hot-add operations failing on powerpc due to the fact
-> > that we try to use order-8 pages when populating the memmap array.
-> > Given 64KB base pagesize, that is 16MB.
-> > If we run out of those, we just fail the operation and we cannot add
-> > more memory.
-> > We could fallback to base pages as x86_64 does, but we can do better.
-> >
-> > One way to mitigate all these issues is to simply allocate memmap array
-> > (which is the largest memory footprint of the physical memory hotplug)
-> > from the hotadded memory itself. VMEMMAP memory model allows us to
-> map
-> > any pfn range so the memory doesn't need to be online to be usable
-> > for the array. See patch 3 for more details. In short I am reusing an
-> > existing vmem_altmap which wants to achieve the same thing for nvdim
-> > device memory.
-> >
-> > There is also one potential drawback, though. If somebody uses memory
-> > hotplug for 1G (gigantic) hugetlb pages then this scheme will not work
-> > for them obviously because each memory block will contain reserved
-> > area. Large x86 machines will use 2G memblocks so at least one 1G page
-> > will be available but this is still not 2G...
-> >
-> > I am not really sure somebody does that and how reliable that can work
-> > actually. Nevertheless, I _believe_ that onlining more memory into
-> > virtual machines is much more common usecase. Anyway if there ever is a
-> > strong demand for such a usecase we have basically 3 options a) enlarge
-> > memory blocks even more b) enhance altmap allocation strategy and reuse
-> > low memory sections to host memmaps of other sections on the same NUMA
-> > node c) have the memmap allocation strategy configurable to fallback to
-> > the current allocation.
-> >
-> > [Overall design]:
-> >
-> > Let us say we hot-add 2GB of memory on a x86_64 (memblock size = 128M).
-> > That is:
-> >
-> >  - 16 sections
-> >  - 524288 pages
-> >  - 8192 vmemmap pages (out of those 524288. We spend 512 pages for each
-> section)
-> >
-> >  The range of pages is: 0xffffea0004000000 - 0xffffea0006000000
-> >  The vmemmap range is:  0xffffea0004000000 - 0xffffea0004080000
-> >
-> >  0xffffea0004000000 is the head vmemmap page (first page), while all the
-> others
-> >  are "tails".
-> >
-> >  We keep the following information in it:
-> >
-> >  - Head page:
-> >    - head->_refcount: number of sections
-> >    - head->private :  number of vmemmap pages
-> >  - Tail page:
-> >    - tail->freelist : pointer to the head
-> >
-> > This is done because it eases the work in cases where we have to compute
-> the
-> > number of vmemmap pages to know how much do we have to skip etc, and to
-> keep
-> > the right accounting to present_pages.
-> >
-> > When we want to hot-remove the range, we need to be careful because the
-> first
-> > pages of that range, are used for the memmap maping, so if we remove
-> those
-> > first, we would blow up while accessing the others later on.
-> > For that reason we keep the number of sections in head->_refcount, to know
-> how
-> > much do we have to defer the free up.
-> >
-> > Since in a hot-remove operation, sections are being removed sequentially, the
-> > approach taken here is that every time we hit free_section_memmap(), we
-> decrease
-> > the refcount of the head.
-> > When it reaches 0, we know that we hit the last section, so we call
-> > vmemmap_free() for the whole memory-range in backwards, so we make
-> sure that
-> > the pages used for the mapping will be latest to be freed up.
-> >
-> > The accounting is as follows:
-> >
-> >  Vmemmap pages are charged to spanned/present_paged, but not to
-> manages_pages.
-> >
-> > I yet have to check a couple of things like creating an accounting item
-> > like VMEMMAP_PAGES to show in /proc/meminfo to ease to spot the
-> memory that
-> > went in there, testing Hyper-V/Xen to see how they react to the fact that
-> > we are using the beginning of the memory-range for our own purposes, and
-> to
-> > check the thing about gigantic pages + hotplug.
-> > I also have to check that there is no compilation/runtime errors when
-> > CONFIG_SPARSEMEM but !CONFIG_SPARSEMEM_VMEMMAP.
-> > But before that, I would like to get people's feedback about the overall
-> > design, and ideas/suggestions.
-> >
-> >
-> > [1] https://patchwork.kernel.org/cover/10685835/
-> >
-> > Michal Hocko (3):
-> >   mm, memory_hotplug: cleanup memory offline path
-> >   mm, memory_hotplug: provide a more generic restrictions for memory
-> >     hotplug
-> >   mm, sparse: rename kmalloc_section_memmap,
-> __kfree_section_memmap
-> >
-> > Oscar Salvador (1):
-> >   mm, memory_hotplug: allocate memmap from the added memory range
-> for
-> >     sparse-vmemmap
-> >
-> >  arch/arm64/mm/mmu.c            |  10 ++-
-> >  arch/ia64/mm/init.c            |   5 +-
-> >  arch/powerpc/mm/init_64.c      |   7 ++
-> >  arch/powerpc/mm/mem.c          |   6 +-
-> >  arch/s390/mm/init.c            |  12 ++-
-> >  arch/sh/mm/init.c              |   6 +-
-> >  arch/x86/mm/init_32.c          |   6 +-
-> >  arch/x86/mm/init_64.c          |  20 +++--
-> >  drivers/hv/hv_balloon.c        |   1 +
-> >  drivers/xen/balloon.c          |   1 +
-> >  include/linux/memory_hotplug.h |  42 ++++++++--
-> >  include/linux/memremap.h       |   2 +-
-> >  include/linux/page-flags.h     |  23 +++++
-> >  kernel/memremap.c              |   9 +-
-> >  mm/compaction.c                |   8 ++
-> >  mm/memory_hotplug.c            | 186
-> +++++++++++++++++++++++++++++------------
-> >  mm/page_alloc.c                |  47 ++++++++++-
-> >  mm/page_isolation.c            |  13 +++
-> >  mm/sparse.c                    | 124
-> +++++++++++++++++++++++++--
-> >  mm/util.c                      |   2 +
-> >  20 files changed, 431 insertions(+), 99 deletions(-)
-> >
+> So MSR_RI is restored above as r10 contains MSR_KERNEL [ | MSR_EE ]
 > 
 
+Looks like fast_exception_return, which is called by hash page handlers 
+at least, expects MSR_RI to be set. Allthough it works well on 603 
+(because it doesn't hash), I would most likely not work on others.
+
+This 1% improvment is not worth it, I give up for now.
