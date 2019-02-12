@@ -2,69 +2,65 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64331C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D56C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3309320842
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C0E320855
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbfBLKhC (ORCPT
+        id S1728868AbfBLKhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:37:02 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:48015 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfBLKhC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:37:02 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 5013A300002BC;
-        Tue, 12 Feb 2019 11:37:00 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 2C0C757528; Tue, 12 Feb 2019 11:37:00 +0100 (CET)
-Date:   Tue, 12 Feb 2019 11:37:00 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Alex_Gagniuc@Dellteam.com
-Cc:     mr.nuke.me@gmail.com, bhelgaas@google.com, Austin.Bolen@dell.com,
-        keith.busch@intel.com, Shyam.Iyer@dell.com, gustavo@embeddedor.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Message-ID: <20190212103700.iqhprfelukalbhdl@wunner.de>
-References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
- <20190209115849.244u67h7wmn3eb7o@wunner.de>
- <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
- <20190212083031.2no7mzn5xug7nba3@wunner.de>
+        Tue, 12 Feb 2019 05:37:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41280 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726756AbfBLKhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 05:37:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9316AE98;
+        Tue, 12 Feb 2019 10:37:35 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "linux-riscv\@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+References: <20190119132650.9978-1-anup.patel@wdc.com>
+        <20190119132650.9978-7-anup.patel@wdc.com>
+        <20190212070807.GD26747@infradead.org>
+        <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
+X-Yow:  Yow!  We're going to a new disco!
+Date:   Tue, 12 Feb 2019 11:37:34 +0100
+In-Reply-To: <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
+        (Anup Patel's message of "Tue, 12 Feb 2019 15:53:21 +0530")
+Message-ID: <mvmva1ps369.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212083031.2no7mzn5xug7nba3@wunner.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:30:31AM +0100, Lukas Wunner wrote:
-> Instead of modifying the logic in pciehp_handle_presence_or_link_change(),
-> you could amend pcie_wait_for_link() to poll PDS until it's set, in
-> addition to DLLLA.  The rationale would be that although the link is up,
-> the hot-added device cannot really be considered accessible until PDS
-> is also set.  Unfortunately we cannot do this for all devices because
-> (as I've said before), some broken devices hardwire PDS to zero.  But
-> it should be safe to constrain it to those which can disable in-band
-> presence.
+On Feb 12 2019, Anup Patel <anup@brainfault.org> wrote:
 
-An alternative approach would of course be to only enable one of PDC or
-DLLSC events if in-band presence is disabled.  In the case of DLLSC,
-you'd also need to modify pciehp_reset_slot() in addition to
-pcie_enable_notification().
+> So in case of initrd we might not want to free-up the RAM but
+> we can certainly free-up in case of initramfs.
 
-Thanks,
+But the default should be keepinitrd=0, shoudn't it?
 
-Lukas
+Andreas.
+
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
