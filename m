@@ -2,167 +2,146 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6033EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DB7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F90222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDBF222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICqcvFON"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="E+sbEZrh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbfBLRlC (ORCPT
+        id S1731409AbfBLRld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:41:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45666 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfBLRlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:41:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w17so3633492wrn.12;
-        Tue, 12 Feb 2019 09:41:00 -0800 (PST)
+        Tue, 12 Feb 2019 12:41:33 -0500
+Received: from mail-eopbgr710126.outbound.protection.outlook.com ([40.107.71.126]:31724
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbfBLRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:41:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YnLvRw9RaPoLOPBbxQEcuTU7gQILlzbwqlFbkMK1C88=;
-        b=ICqcvFONieXI2ZLIoXDHhIcT3PG9fvgk4FuDKh3u/SksAtBFPX9XMjtpf+6hErRVzY
-         5VOW6jU7ZnNH3Lty8qx2/u+r1iKkq4Y0PT56K3A/nbGsgWMofURHRc5roA3DHR2mn78E
-         tTiUXFCd4swRe6UGgEQgFiBBc77ALFbjEmw7TrrtqOm4R3fQcj5nCBAMlcdXEU6Gh/A7
-         T306LxUQKJ2zk7CvcBwyvhXip9mBXYQcFL1K50KVsdJpsOUrEKAsovy08crLSUopNtOO
-         F/DSwDyk6KG0GneMZ9+UcgeonlvdULlIR5HT/fu8biHan1u6qkJzKLPLQ13WdpHyuOqC
-         eH4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YnLvRw9RaPoLOPBbxQEcuTU7gQILlzbwqlFbkMK1C88=;
-        b=HgZJjnrcUs4U9B6ygM+649iC6asglHNrylc/1fSJbu35lIV3LztceAuLCHI8M5rSh6
-         Owc+UPsja9KGThIREXNfE3hvFhTQ2DX9/yU2mZGfQ06d5Od1KAFUgB0zw0Lru+YhVnkT
-         UUxDtqk7F2DQObRvpdhWr1ukNIKn5bwTK7ZEvaHT004zQJ/hVRBAlkg/BvSDD0bQncGC
-         zg75RA1jjxhQz2yzBK8lXiTgOCVRW8QfN0eGBRhF9A+Z9nmpnGmhR6liDehftepaqAno
-         dX8uF9jiX7jnlSOIG101dp21j9lqXdec+AnDpD54i9wMjL4H+6zVv3pHB+dOwQ+1qeqF
-         3eXw==
-X-Gm-Message-State: AHQUAuZ8JQ5Ziup+jXJ7/yox48Sxc5J5Te2D0iW096NxuAcNcc44PhDl
-        edP0g0pzZm2nrCDzqDKZNB4=
-X-Google-Smtp-Source: AHgI3IbemB+UWRIpSc6wfWKk7HsFQ0oBbyp61ZnT0K5v6cbCYLYTTROj5FmV7J5NYQoBP0BtI0Avfw==
-X-Received: by 2002:adf:ba8d:: with SMTP id p13mr3977217wrg.53.1549993259789;
-        Tue, 12 Feb 2019 09:40:59 -0800 (PST)
-Received: from jernej-laptop.localnet (APN-123-243-40-gprs.simobil.net. [46.123.243.40])
-        by smtp.gmail.com with ESMTPSA id n3sm3578193wmf.46.2019.02.12.09.40.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 09:40:58 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jonas@kwiboo.se, linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 2/2] media: cedrus: Add H264 decoding support
-Date:   Tue, 12 Feb 2019 18:40:56 +0100
-Message-ID: <3363003.VFAkYA4tHV@jernej-laptop>
-In-Reply-To: <20190212124713.cqms5jofw433nx6m@flea>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com> <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com> <20190212124713.cqms5jofw433nx6m@flea>
-MIME-Version: 1.0
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KzHri6CLot8P0aoDr2YWXhFBeBcNIkmWwnUxAzEnLSg=;
+ b=E+sbEZrhBgMyXJZSp0QxTvkzAobUG5qTTag5ULBZI9dXOxXON+RRG9tXWH3OrAaeGkfq0BQzIdd4ilyyoEJ1tdmg87sFVetsBR5B1SrOBK1ogtrLVrexjMpF3GebMA2opOR0dKSOdS6fMpp0AhQZkfGuF7NnmO1A++mM2DSYE4A=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1310.namprd22.prod.outlook.com (10.174.162.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.22; Tue, 12 Feb 2019 17:41:28 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
+ 17:41:28 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     John Crispin <john@phrozen.org>, Vinod Koul <vkoul@kernel.org>,
+        Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH 01/18] MIPS: lantiq: pass struct device to DMA API
+ functions
+Thread-Topic: [PATCH 01/18] MIPS: lantiq: pass struct device to DMA API
+ functions
+Thread-Index: AQHUugtMSEi4XkuS4UKpOJkg4WEy1aXcgEOA
+Date:   Tue, 12 Feb 2019 17:41:27 +0000
+Message-ID: <MWHPR2201MB12775A18B8F8F034F44D61BAC1650@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20190201084801.10983-2-hch@lst.de>
+In-Reply-To: <20190201084801.10983-2-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0046.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::23) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.99.198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7bcf1dab-6dc1-45dc-3d80-08d6911150ac
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1310;
+x-ms-traffictypediagnostic: MWHPR2201MB1310:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR2201MB1310;23:QP+EYlsHeR091078ttrQ7IO9Q0xF+m93S+82Z?=
+ =?iso-8859-1?Q?t0gbh8nPK27K6BFCqAuk/T0lGj9LH3zntRlKnOrB2L6WffDn4CZsLjXv7r?=
+ =?iso-8859-1?Q?EB69PM6xqc1FzEVpOday5SrEQ99fQNSufUlw0laDw2c0iKpHIATULbVe0d?=
+ =?iso-8859-1?Q?DtvWT8+UZ7wJZ34awbKeeBXjvSUaoTSmAwNHDWXtQzw1RPVsWppUbId/St?=
+ =?iso-8859-1?Q?19flm326sRLtRDAPckfISdzDfo0tG4dQ2R7bo7C0ZRq/IXHIWvvOd30Q15?=
+ =?iso-8859-1?Q?hIGWJcidYgAPuFPtdkxtFuWyFRJk8JJirvtSHgd+htjGnuF28PSzfUyLGs?=
+ =?iso-8859-1?Q?bFOHCSWI1P+UCMOyH/hmeBXP4S8xuASkkauCgqQ/Z5jTIPYho8NlO2kM6t?=
+ =?iso-8859-1?Q?I2WUt2T7YZ6lOuYiIhElo8C8TMnPe/3eyU/dwkUDyrofD6Ko/IzMMZKV27?=
+ =?iso-8859-1?Q?UrnsUyqr3v9oxmUaVUgGj1F74Xxnbc+sNyQFgIq+XMIdaGGiQAS4Zb661/?=
+ =?iso-8859-1?Q?dUGrGHU0xE89OgfD8RvN/H2MxCANfrYPXjulmWb7Q/v2qlFFUa/dWX0Uf6?=
+ =?iso-8859-1?Q?KkE8FvXc/rFR90q6t/nrgpI2EsHYrWSETBHxgRiy3Y12kU42o6NtG9eFSz?=
+ =?iso-8859-1?Q?VE47sBOm+Ne7PMb39oDHqSBfNfh/ETUM7+Y5fjUPmvEMPHW4KLxNOcZ9U6?=
+ =?iso-8859-1?Q?Qkt643Hq3iv634I4T5x5hJa7JTZJ46mzV6cCR293utf1SaVcaWeaogkAbm?=
+ =?iso-8859-1?Q?abRMnLyvdShitQgBFetnnA5K3SGcQIEUypmS5A3JqTuza3sPuwwUKosqbV?=
+ =?iso-8859-1?Q?Ts4ui7oW4JDH1p01L+EjH0D+8PogBunFyM9WJzEfIQukscNOIHkFrTg0VD?=
+ =?iso-8859-1?Q?XkJ/dN/18SLy1omJmN1wmHENJCZScynE1qHMYRf36C8BSwUz4/syepX+I+?=
+ =?iso-8859-1?Q?NAR83BIb6kLIsYnqRHG9HrFADl9DQAEmrAonAZEdEU5/RmZEmJ8/zfQSW1?=
+ =?iso-8859-1?Q?sDAxXTwJizT71V9rAqsLThVsHieEqIYn9SyaR/IV/vFr0rXMxbv2FuNiq5?=
+ =?iso-8859-1?Q?6jPIczPZHt1SQWoC4t/faY5V11dy8KGroeIwbf4PA533ilJupi3PH5ioG2?=
+ =?iso-8859-1?Q?RAh07rat5ianAm3tzb/ti/PZ2MLSBqkNV++hsCd7KT5kvRCXfxsuai4iUA?=
+ =?iso-8859-1?Q?5aF3DLVERQ6mzTsk3YPbXWOHXXqtNjMiPGihEn+/9NLCKSgW0wDF2hIL6j?=
+ =?iso-8859-1?Q?ozSe+3O3HiSyKBmdRlCBhyS4raUv6lPOTkwFNiOi7TeYxNdBohFt8YEuY/?=
+ =?iso-8859-1?Q?dtC0/zv7mx3JqEPNK1fSCHyQc+fIIPWQRG2DsTmueAec7tg=3D=3D?=
+x-microsoft-antispam-prvs: <MWHPR2201MB1310C4425C2B57E4BD644464C1650@MWHPR2201MB1310.namprd22.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(366004)(376002)(39840400004)(199004)(189003)(97736004)(6506007)(486006)(42882007)(386003)(2906002)(217873002)(6916009)(81156014)(26005)(66066001)(8676002)(102836004)(81166006)(44832011)(7736002)(305945005)(256004)(186003)(68736007)(14444005)(8936002)(74316002)(229853002)(316002)(55016002)(6246003)(71190400001)(4744005)(53936002)(6436002)(9686003)(14454004)(54906003)(106356001)(33656002)(105586002)(71200400001)(478600001)(25786009)(3846002)(7416002)(11346002)(476003)(6116002)(7696005)(446003)(99286004)(52116002)(76176011)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1310;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ihiOkelFhYgx9ZNXxh0GRQ67FNNLb5y1Pg/x3TkjtU2QOVEaDFFMv36KCAc0O05q23qe1FcoRXi+d4/YVRoUEp9bf5fFGaWqldAd9c8om3BUd0ptzrvfA+C1o44+2+mgvqU7qbnmFGAC0YmHPsO8iymQjn8cLaPy3u41pSdnf52Hft+ZccchAj5VxdEm+9c+ZEG/sMHw8KD8SM9tP25c44m/26eCLfw9gvb36PeKaOEFQr7mI6z/xPlNGas598Eh1l3gBW745BfHm3gFVnRPj5tmPMYUEZ3JJKkOHfM6Ea1/P/hfbiFTHz0TRs+wXOWLVQdqE5zmyMNliJ5p3U6cWPukF3a/HRlndvk6Q0h+8E5ROjSkSeqseYBSv+LikMR8Pmr9wyTCbALrWQOEw+Xe6yg8ZUoKHgjrN4GDxYbwEg4=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bcf1dab-6dc1-45dc-3d80-08d6911150ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 17:41:27.2880
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1310
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne torek, 12. februar 2019 ob 13:47:13 CET je Maxime Ripard napisal(a):
-> On Mon, Feb 11, 2019 at 04:48:17PM -0300, Ezequiel Garcia wrote:
-> > On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
-> > > Introduce some basic H264 decoding support in cedrus. So far, only the
-> > > baseline profile videos have been tested, and some more advanced
-> > > features
-> > > used in higher profiles are not even implemented.
-> > >=20
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> >=20
-> > [..]
-> >=20
-> > > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
-> > > +				   struct cedrus_run *run,
-> > > +				   const u8 *ref_list, u8=20
-num_ref,
-> > > +				   enum cedrus_h264_sram_off sram)
-> > > +{
-> > > +	const struct v4l2_ctrl_h264_decode_param *decode =3D
-> > > run->h264.decode_param; +	struct vb2_queue *cap_q =3D
-> > > &ctx->fh.m2m_ctx->cap_q_ctx.q;
-> > > +	const struct vb2_buffer *dst_buf =3D &run->dst->vb2_buf;
-> > > +	struct cedrus_dev *dev =3D ctx->dev;
-> > > +	u8 sram_array[CEDRUS_MAX_REF_IDX];
-> > > +	unsigned int size, i;
-> > > +
-> > > +	memset(sram_array, 0, sizeof(sram_array));
-> > > +
-> > > +	for (i =3D 0; i < num_ref; i++) {
-> > > +		const struct v4l2_h264_dpb_entry *dpb;
-> > > +		const struct cedrus_buffer *cedrus_buf;
-> > > +		const struct vb2_v4l2_buffer *ref_buf;
-> > > +		unsigned int position;
-> > > +		int buf_idx;
-> > > +		u8 dpb_idx;
-> > > +
-> > > +		dpb_idx =3D ref_list[i];
-> > > +		dpb =3D &decode->dpb[dpb_idx];
-> > > +
-> > > +		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
-> > > +			continue;
-> > > +
-> > > +		if (dst_buf->timestamp =3D=3D dpb->timestamp)
-> > > +			buf_idx =3D dst_buf->index;
-> > > +		else
-> > > +			buf_idx =3D vb2_find_timestamp(cap_q, dpb-
->timestamp, 0);
-> > > +
-> > > +		if (buf_idx < 0)
-> > > +			continue;
-> > > +
-> > > +		ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
-> > > +		cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
-> > > +		position =3D cedrus_buf->codec.h264.position;
-> > > +
-> > > +		sram_array[i] |=3D position << 1;
-> > > +		if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
-> > > +			sram_array[i] |=3D BIT(0);
-> > > +	}
-> > > +
-> > > +	size =3D min((unsigned int)ALIGN(num_ref, 4), sizeof(sram_array));
-> >=20
-> > Perhaps s/unsigned int/size_t, so the arguments to min() have the same
-> > type?
-> >=20
-> > Otherwise, I got this warning:
-> >=20
-> > /home/zeta/repos/linux/media_tree/drivers/staging/media/sunxi/cedrus/ce=
-dru
-> > s_h264.c: In function =E2=80=98_cedrus_write_ref_list=E2=80=99:
-> > /home/zeta/repos/linux/media_tree/include/linux/kernel.h:846:29: warnin=
-g:
-> > comparison of distinct pointer types lacks a cast>=20
-> >    (!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
+Hello,
+
+Christoph Hellwig wrote:
+> The DMA API generally relies on a struct device to work properly, and
+> only barely works without one for legacy reasons.  Pass the easily
+> available struct device from the platform_device to remedy this.
 >=20
-> Strange, I didn't notice any warning. I'll make sure to fix it.
+> Also use GFP_KERNEL instead of GFP_ATOMIC as the gfp_t for the memory
+> allocation, as we aren't in interrupt context or under a lock.
+>=20
+> Note that this whole function looks somewhat bogus given that we never
+> even look at the returned dma address, and the CPHYSADDR magic on
+> a returned noncached mapping looks "interesting".  But I'll leave
+> that to people more familiar with the code to sort out.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I guess this is one of those warnings which pops out only on 64-bit platfor=
-ms.
+Applied to mips-fixes.
 
-Best regards,
-Jernej
+Thanks,
+    Paul
 
-
-
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paul.burton@mips.com to report it. ]
