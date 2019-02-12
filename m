@@ -2,82 +2,168 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7DAC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 570E0C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2309021B18
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E36721B18
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:13:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="unqG1yui"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfBLCNH (ORCPT
+        id S1728107AbfBLCNW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:13:07 -0500
-Received: from mga09.intel.com ([134.134.136.24]:26869 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfBLCMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:12:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 18:12:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
-   d="scan'208";a="146057852"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Feb 2019 18:12:52 -0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.or,
-        tglx@linutronix.de, Wei Yang <richardw.yang@linux.intel.com>
-Subject: [PATCH 2/6] x86, mm: remove check in save_mr
-Date:   Tue, 12 Feb 2019 10:12:11 +0800
-Message-Id: <20190212021215.13247-3-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190212021215.13247-1-richardw.yang@linux.intel.com>
-References: <20190212021215.13247-1-richardw.yang@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Feb 2019 21:13:22 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55792 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726892AbfBLCNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 21:13:21 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 941058EE235;
+        Mon, 11 Feb 2019 18:13:20 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UrtSqye5YGDN; Mon, 11 Feb 2019 18:13:20 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E4A1E8EE121;
+        Mon, 11 Feb 2019 18:13:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549937600;
+        bh=KBhzEtkPpbaseZywwnvd0oXt0Bsk3bbNgDswOxjTeSo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=unqG1yuiNG6vL0WKdiW56GJaxZs1/TNIith53lbmY+rfR4kx59YwFNR0AHoCwP0ET
+         seu0j6rvvMD1Sd6s0LX9rYTVTusYSDlwGSFXqI7UMwXZ+q97ukPQgBk1ZQhjyplgjG
+         EHZbae58pZfgmQQPU0cx94jYqBfq4s3st284pgBU=
+Message-ID: <1549937598.2857.8.camel@HansenPartnership.com>
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes
+ 5 minute delay during boot on Sun Blade 2500
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mikael Pettersson <mikpelinux@gmail.com>
+Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Date:   Mon, 11 Feb 2019 18:13:18 -0800
+In-Reply-To: <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+         <1549736341.2971.7.camel@HansenPartnership.com>
+         <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+         <1549813472.4142.3.camel@HansenPartnership.com>
+         <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+         <1549815924.4142.8.camel@HansenPartnership.com>
+         <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+         <1549898730.2831.6.camel@HansenPartnership.com>
+         <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
+         <1549899773.2831.12.camel@HansenPartnership.com>
+         <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
+         <1549902521.2831.23.camel@HansenPartnership.com>
+         <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This check has been validated before calling save_mr. It is not
-necessary to do this again.
+On Mon, 2019-02-11 at 09:31 -0700, Jens Axboe wrote:
+> On 2/11/19 9:28 AM, James Bottomley wrote:
+> > On Mon, 2019-02-11 at 08:46 -0700, Jens Axboe wrote:
+> > > On 2/11/19 8:42 AM, James Bottomley wrote:
+> > > > On Mon, 2019-02-11 at 08:28 -0700, Jens Axboe wrote:
+> > > > > On 2/11/19 8:25 AM, James Bottomley wrote:
+> > > > > > On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
+> > > > > > > On 2/10/19 9:25 AM, James Bottomley wrote:
+> > 
+> > [...]
+> > > > > > > > That check wasn't changed by the code removal.
+> > > > > > > 
+> > > > > > > As I said above, for sd. This isn't true for non-disks.
+> > > > > > 
+> > > > > > Yes, but the behaviour above doesn't change across a switch
+> > > > > > to MQ, so I don't quite understand how it bisects back to
+> > > > > > that change.  If we're not gathering entropy for the device
+> > > > > > now, we wouldn't have been before the switch, so the
+> > > > > > entropy characteristics shouldn't have changed.
+> > > > > 
+> > > > > But it does, as I also wrote in that first email. The legacy
+> > > > > queue flags had QUEUE_FLAG_ADD_RANDOM set by default, the MQ
+> > > > > ones do not. Hence any non-sd device would previously ALWAYS
+> > > > > have ADD_RANDOM set, now none of them do. Also see the patch
+> > > > > I sent.
+> > > > 
+> > > > So your theory is that the disk in question never gets to the
+> > > > rotational check?  because the check will clear the flag if
+> > > > it's non-rotational and set it if it's not, so the default
+> > > > state of the flag shouldn't matter.
+> > > 
+> > > No, my point is about non-disks, devices that aren't driven by
+> > > sd. The behavior for sd hasn't changed, as it sets/clears it
+> > > unconditionally. 
+> > 
+> > I agree, but I don't think any of them were significant entropy
+> > contributors before: things like nvme have always been outside of
+> > this and sr and st don't really contribute much to the seek load
+> > during boot because they're probed but not used by the boot
+> > sequence, so I can't see how they would cause this behaviour.  I
+> > suppose it could be target probing, but even that seems unlikely
+> > because it should be dwarfed by the number of root disk reads
+> > during boot.
+> > 
+> > For the rng to take an additional 5 minutes to initialize, we must
+> > have lost a significant entropy source somewhere.
+> 
+> I agree it's not a significant amount of entropy, but even just one
+> bit could mean a long stall if that put us over the edge of just not
+> having enough for whatever is blocking on /dev/random. Mikael's boot
+> did have a CDROM, it's not impossible that the handful of commands we
+> end up doing to that device would have contributed enough entropy to
+> get the boot done without stalling for minutes.
+> 
+> One way to know for sure, and that's if Mikael tests the patch.
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+I think I've got the root cause.  I have one system in my test bed
+exhibiting this behaviour.  It turns out the disk in it has no
+characteristics VPD page.  The 0xB1 VPD was a SBC-3 addition, so that's
+not surprising.  However, the characteristics check bails before
+setting the flags, so it takes the default flag which has flipped.
+
+We can either fix this by setting the QUEUE_FLAG_ADD_RANDOM if there's
+no 0xB1 page or by setting the default as Jens proposed.
+
+James
+
 ---
- arch/x86/mm/init.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 1b980b70911a..6fb84be79c7c 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -259,14 +259,12 @@ static int __meminit save_mr(struct map_range *mr, int nr_range,
- 			     unsigned long start_pfn, unsigned long end_pfn,
- 			     unsigned long page_size_mask)
- {
--	if (start_pfn < end_pfn) {
--		if (nr_range >= NR_RANGE_MR)
--			panic("run out of range for init_memory_mapping\n");
--		mr[nr_range].start = start_pfn<<PAGE_SHIFT;
--		mr[nr_range].end   = end_pfn<<PAGE_SHIFT;
--		mr[nr_range].page_size_mask = page_size_mask;
--		nr_range++;
--	}
-+	if (nr_range >= NR_RANGE_MR)
-+		panic("run out of range for init_memory_mapping\n");
-+	mr[nr_range].start = start_pfn<<PAGE_SHIFT;
-+	mr[nr_range].end   = end_pfn<<PAGE_SHIFT;
-+	mr[nr_range].page_size_mask = page_size_mask;
-+	nr_range++;
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index d0a980915801..1f3a1474042e 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2961,6 +2961,10 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
  
- 	return nr_range;
- }
--- 
-2.19.1
-
+ 	buffer = kmalloc(vpd_len, GFP_KERNEL);
+ 
++	/* set to rotational in case no device characteristic page exists */
++	blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
++	blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
++
+ 	if (!buffer ||
+ 	    /* Block Device Characteristics VPD */
+ 	    scsi_get_vpd_page(sdkp->device, 0xb1, buffer, vpd_len))
+@@ -2971,9 +2975,6 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+ 	if (rot == 1) {
+ 		blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+ 		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+-	} else {
+-		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
+-		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
+ 	}
+ 
+ 	if (sdkp->device->type == TYPE_ZBC) {
