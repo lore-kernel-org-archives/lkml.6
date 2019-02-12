@@ -2,158 +2,139 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E119FC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3FFC4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B897A2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7528222C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550014949;
+	bh=+ljDVPXUImG1Z+vSoOkg9hae4sm9zQLd0klZvq3ppo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ywSYZsAxUnyryGdSFGC9kyv0BnRpFNP8aCTaCg5S5lYlUWHtXHg+bGMbB9KPl8k38
+	 Ku71GjMUaf2GMUhA4CX9kqnctmyyw0N2P/ccLUCBjiFq7pwaMUUibH+nUDds/ogxsL
+	 003k60btqtHRCm/2LE62vqpJuvZbYusMWVZaPan4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbfBLXmN (ORCPT
+        id S1732541AbfBLXm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:42:13 -0500
-Received: from mga01.intel.com ([192.55.52.88]:56264 "EHLO mga01.intel.com"
+        Tue, 12 Feb 2019 18:42:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732237AbfBLXmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:42:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:42:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="125983266"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.160])
-  by orsmga003.jf.intel.com with ESMTP; 12 Feb 2019 15:42:10 -0800
-Subject: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial reads
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Date:   Tue, 12 Feb 2019 15:42:10 -0800
-Message-ID: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
+        id S1732343AbfBLXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 18:42:27 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5B012084E;
+        Tue, 12 Feb 2019 23:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550014946;
+        bh=+ljDVPXUImG1Z+vSoOkg9hae4sm9zQLd0klZvq3ppo0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UnGd2/YVAge9uRcZZCgcz5V08Kl8zL+g1nV66TA1iBWAbXqrxEUyoGnk0oM6JDPiV
+         ueWRe0fctmjmpYtNdzULLonc0fgP/UThgAwDYwLMRcyWLTMIG2DTnP3jEGB7Nk4mvp
+         ak3CFx0o/u68xiGHuNw0MPxHwswS4uwwR+Smoq9E=
+Date:   Tue, 12 Feb 2019 17:42:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH V2 4/4] genirq/affinity: Document .calc_sets as required
+ in case of multiple sets
+Message-ID: <20190212234224.GA96272@google.com>
+References: <20190212130439.14501-1-ming.lei@redhat.com>
+ <20190212130439.14501-5-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212130439.14501-5-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Three new tests added:
-1. Send get random cmd, read header in 1st read, read the rest in second
-   read - expect success
-2. Send get random cmd, read only part of the response, send another
-   get random command, read the response - expect success
-3. Send get random cmd followed by another get random cmd, without
-   reading the first response - expect the second cmd to fail with -EBUSY
+On Tue, Feb 12, 2019 at 09:04:39PM +0800, Ming Lei wrote:
+> Now NVMe has implemented the .calc_sets callback for caculating each
+> set's vectors.
+> 
+> For other cases of multiple irq sets, it isn't a good way to pre-caculate
+> each set's vectors before allocating IRQ vectors because NVMe's same issue
+> exists too.
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
+s/irq/IRQ/ so it's consistent in the paragraph.
 
-v2:
-- Removed extra logging
-- Changed subject tag to selftest/tpm2:
----
- tools/testing/selftests/tpm2/tpm2.py       |    1 
- tools/testing/selftests/tpm2/tpm2_tests.py |   66 ++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
+> Document .calc_sets as required explicitly for multiple sets.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 
-diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
-index c2b9f2b1a0ac..828c18584624 100644
---- a/tools/testing/selftests/tpm2/tpm2.py
-+++ b/tools/testing/selftests/tpm2/tpm2.py
-@@ -22,6 +22,7 @@ TPM2_CC_UNSEAL = 0x015E
- TPM2_CC_FLUSH_CONTEXT = 0x0165
- TPM2_CC_START_AUTH_SESSION = 0x0176
- TPM2_CC_GET_CAPABILITY	= 0x017A
-+TPM2_CC_GET_RANDOM = 0x017B
- TPM2_CC_PCR_READ = 0x017E
- TPM2_CC_POLICY_PCR = 0x017F
- TPM2_CC_PCR_EXTEND = 0x0182
-diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
-index 3bb066fea4a0..e82d84043c3f 100644
---- a/tools/testing/selftests/tpm2/tpm2_tests.py
-+++ b/tools/testing/selftests/tpm2/tpm2_tests.py
-@@ -158,6 +158,72 @@ class SmokeTest(unittest.TestCase):
-             pass
-         self.assertEqual(rejected, True)
- 
-+    def test_read_partial_resp(self):
-+        """Reads random in two subsequent reads"""
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+            hdr = self.client.tpm.read(10)
-+            sz = struct.unpack('>I', hdr[2:6])[0]
-+            rsp = self.client.tpm.read()
-+        except:
-+            pass
-+        self.assertEqual(sz, 10 + 2 + 32)
-+        self.assertEqual(len(rsp), 2 + 32)
-+
-+    def test_read_partial_overwrite(self):
-+        """Reads only part of the response and issue a new cmd"""
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+            # Read part of the respone
-+            rsp1 = self.client.tpm.read(15)
-+
-+            # Send a new cmd
-+            self.client.tpm.write(cmd)
-+
-+            # Read the whole respone
-+            rsp2 = self.client.tpm.read()
-+        except:
-+            pass
-+        self.assertEqual(len(rsp1), 15)
-+        self.assertEqual(len(rsp2), 10 + 2 + 32)
-+
-+    def test_send_two_cmds(self):
-+        """Send two cmds without reading a response"""
-+        rejected = False
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+
-+            # expect the second one to raise -EBUSY error
-+            self.client.tpm.write(cmd)
-+            rsp = self.client.tpm.read()
-+
-+        except IOError, e:
-+            # read the response
-+            rsp = self.client.tpm.read()
-+            rejected = True
-+            pass
-+        except:
-+            pass
-+        self.assertEqual(rejected, True)
-+
- class SpaceTest(unittest.TestCase):
-     def setUp(self):
-         logging.basicConfig(filename='SpaceTest.log', level=logging.DEBUG)
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
+Note minor comments below.
+
+> ---
+>  drivers/pci/msi.c         | 4 ++--
+>  include/linux/interrupt.h | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index 4c0b47867258..9f91fa713141 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -1039,7 +1039,7 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+>  	 * If the caller is passing in sets, we can't support a range of
+>  	 * vectors. The caller needs to handle that.
+
+Looks like this comment needs to be tweaked, maybe along the lines of:
+
+  If the caller requests multiple sets of IRQs where each set requires
+  different affinity, it must also supply a ->calc_sets() callback to
+  compute the affinity cpumask for each set.
+
+(I'm not 100% clear on how calc_sets() works, so I might not have
+described this exactly right.)
+
+>  	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
+>  		return -EINVAL;
+>  
+>  	if (WARN_ON_ONCE(dev->msi_enabled))
+> @@ -1097,7 +1097,7 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+>  	 * If the caller is passing in sets, we can't support a range of
+>  	 * supported vectors. The caller needs to handle that.
+
+Similar comment update here?
+
+>  	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
+>  		return -EINVAL;
+>  
+>  	if (WARN_ON_ONCE(dev->msix_enabled))
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 7a27f6ba1f2f..a053f7fb0ff1 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -269,7 +269,8 @@ struct irq_affinity_notify {
+>   *			the MSI(-X) vector space
+>   * @nr_sets:		Length of passed in *sets array
+>   * @set_vectors:	Number of affinitized sets
+> - * @calc_sets:		Callback for caculating set vectors
+> + * @calc_sets:		Callback for caculating set vectors, required for
+> + * 			multiple irq sets.
+>   * @priv:		Private data of @calc_sets
+>   */
+>  struct irq_affinity {
+> -- 
+> 2.9.5
+> 
