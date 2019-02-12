@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1045C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33719C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AB9222AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED35C222AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549991734;
-	bh=O6ln6NhnDId73YVWTrLXgXCOfvOeGlPM7cP9NkHbaxI=;
+	s=default; t=1549991737;
+	bh=MiLqOzr/GmjbggE9JgAj+pL3uB0Tu6jPeBNrqQh0Cvk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nAX3B7KwKZEYdkuhUPrC/gt8Gxq5c6iWGkBP7bpq+hxwgdCDHjTgsXTQXO+KJsiXh
-	 NRNlQqKT5w4UYyDomWnsuwO3mpmPA/iLz2qfa+kly4VQb1IrlJ4mQFcUtEaUeY4uQh
-	 hd/Qcpv7sn3l5NOlWJ9C6oHSsPruTko6v5VgElzQ=
+	b=UuW8kRK0/LVw2S1Q+0Zq8PtYpYYGCcp0M4VPTQNXBOu8vQJjed9gJ1MgPbTMghs6i
+	 WKvq8/wrsRM+IYC5OhvQkGC2o07dpltFYe2P/E7LxLpopwZ4hNwnUoGsV1HVpCvnwt
+	 HaqBZLusFZEgCYcPqDYCtn5JzkLBwgQfZ0bcF4K8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbfBLRPc (ORCPT
+        id S1731587AbfBLRPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:15:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 12:15:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729862AbfBLRP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:15:29 -0500
+        id S1731570AbfBLRPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:15:33 -0500
 Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE9C4222A5;
-        Tue, 12 Feb 2019 17:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB585222A7;
+        Tue, 12 Feb 2019 17:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549991728;
-        bh=O6ln6NhnDId73YVWTrLXgXCOfvOeGlPM7cP9NkHbaxI=;
+        s=default; t=1549991732;
+        bh=MiLqOzr/GmjbggE9JgAj+pL3uB0Tu6jPeBNrqQh0Cvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1hrl8eeKno7wGuitGC4FtFj4FJKIKPhCfLt/+BGr0T//SrIoO5+xHYnGcrtsrmaum
-         E1jDglt8KuyuFdrzgDEe7g8g5aUq3l7F3g8rjKqFOtZ2/1JYiaG51TlpA4+k2bs2C3
-         ufdXP+4HsYKN2OQl89Q55eMBLalXCOYMPW62t3Ks=
+        b=1XtQBZ9CxyvY3ohklC+3bT6wM1rCWUimhXlObw7E83b/slO/8PmVZE0qDAoFJaCDb
+         nPB1pMzujgz84Bk5cNWGbQwcs9xtW+arv5HBta93NP5S5PWUGv3Li85iry36AJ70vV
+         UqZrAWwR1dke3Z5lFqfvre5q6e7YPM+PD2x5PZtw=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Pavan Kondeti <pkondeti@codeaurora.org>,
         Ingo Molnar <mingo@kernel.org>,
         Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH 18/32] softirq: Introduce disabled softirq vectors bits
-Date:   Tue, 12 Feb 2019 18:14:09 +0100
-Message-Id: <20190212171423.8308-19-frederic@kernel.org>
+Subject: [PATCH 19/32] softirq: Rename _local_bh_enable() to local_bh_enable_no_softirq()
+Date:   Tue, 12 Feb 2019 18:14:10 +0100
+Message-Id: <20190212171423.8308-20-frederic@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
 References: <20190212171423.8308-1-frederic@kernel.org>
@@ -64,13 +64,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disabling the softirqs is currently an all-or-nothing operation: either
-all softirqs are enabled or none of them. However we plan to introduce a
-per vector granularity of this ability to improve latency response and
-make each softirq vector interruptible by the others.
+The bottom half masking APIs have become interestingly confusing with all
+these flavours:
 
-The first step carried here is to provide the necessary APIs to control
-the per-vector enable bits.
+		local_bh_enable()
+		_local_bh_enable()
+		local_bh_enable_ip()
+		__local_bh_enable_ip()
+
+_local_bh_enable() is an exception here because it's the only version
+that won't execute do_softirq() in the end.
+
+Clarify this straight in the name. It may help reviewers who are already
+familiar with functions such as preempt_enable_no_resched().
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
@@ -84,101 +90,112 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/s390/include/asm/hardirq.h |  9 ++++--
- include/linux/interrupt.h       | 53 ++++++++++++++++++++++++++++++---
- 2 files changed, 56 insertions(+), 6 deletions(-)
+ arch/s390/lib/delay.c       |  2 +-
+ drivers/s390/char/sclp.c    |  2 +-
+ drivers/s390/cio/cio.c      |  2 +-
+ include/linux/bottom_half.h |  2 +-
+ kernel/softirq.c            | 12 ++++++------
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/s390/include/asm/hardirq.h b/arch/s390/include/asm/hardirq.h
-index 54e81f520175..377fd4184f86 100644
---- a/arch/s390/include/asm/hardirq.h
-+++ b/arch/s390/include/asm/hardirq.h
-@@ -13,9 +13,14 @@
+diff --git a/arch/s390/lib/delay.c b/arch/s390/lib/delay.c
+index d4aa10795605..3f83ee9446b7 100644
+--- a/arch/s390/lib/delay.c
++++ b/arch/s390/lib/delay.c
+@@ -91,7 +91,7 @@ void __udelay(unsigned long long usecs)
+ 	if (raw_irqs_disabled_flags(flags)) {
+ 		local_bh_disable();
+ 		__udelay_disabled(usecs);
+-		_local_bh_enable();
++		local_bh_enable_no_softirq();
+ 		goto out;
+ 	}
+ 	__udelay_enabled(usecs);
+diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+index e9aa71cdfc44..6c6b7456b368 100644
+--- a/drivers/s390/char/sclp.c
++++ b/drivers/s390/char/sclp.c
+@@ -572,7 +572,7 @@ sclp_sync_wait(void)
+ 	local_irq_disable();
+ 	__ctl_load(cr0, 0, 0);
+ 	if (!irq_context)
+-		_local_bh_enable();
++		local_bh_enable_no_softirq();
+ 	local_tick_enable(old_tick);
+ 	local_irq_restore(flags);
+ }
+diff --git a/drivers/s390/cio/cio.c b/drivers/s390/cio/cio.c
+index de744ca158fd..e3fb83b3c6c1 100644
+--- a/drivers/s390/cio/cio.c
++++ b/drivers/s390/cio/cio.c
+@@ -607,7 +607,7 @@ void cio_tsch(struct subchannel *sch)
+ 		inc_irq_stat(IRQIO_CIO);
+ 	if (!irq_context) {
+ 		irq_exit();
+-		_local_bh_enable();
++		local_bh_enable_no_softirq();
+ 	}
+ }
  
- #include <asm/lowcore.h>
+diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
+index a19519f4241d..a104f815efcf 100644
+--- a/include/linux/bottom_half.h
++++ b/include/linux/bottom_half.h
+@@ -19,7 +19,7 @@ static inline void local_bh_disable(void)
+ 	__local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
+ }
  
--#define local_softirq_pending() (S390_lowcore.softirq_data)
--#define softirq_pending_clear_mask(x) (S390_lowcore.softirq_data &= ~(x))
-+#define local_softirq_data() (S390_lowcore.softirq_data)
-+#define local_softirq_pending() (local_softirq_data() & SOFTIRQ_PENDING_MASK)
-+#define local_softirq_disabled() (local_softirq_data() & ~SOFTIRQ_PENDING_MASK)
-+#define softirq_enabled_set_mask(x) (S390_lowcore.softirq_data |= ((x) << SOFTIRQ_ENABLED_SHIFT))
-+#define softirq_enabled_clear_mask(x) (S390_lowcore.softirq_data &= ~((x) << SOFTIRQ_ENABLED_SHIFT))
-+#define softirq_enabled_set(x) (S390_lowcore.softirq_data = ((x) << SOFTIRQ_ENABLED_SHIFT))
- #define softirq_pending_set_mask(x)  (S390_lowcore.softirq_data |= (x))
-+#define softirq_pending_clear_mask(x) (S390_lowcore.softirq_data &= ~(x))
+-extern void _local_bh_enable(void);
++extern void local_bh_enable_no_softirq(void);
+ extern void __local_bh_enable_ip(unsigned long ip, unsigned int cnt);
  
- #define __ARCH_IRQ_STAT
- #define __ARCH_HAS_DO_SOFTIRQ
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index c402770ae45b..1a08fb0e4781 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -474,16 +474,61 @@ enum
- #define SOFTIRQ_STOP_IDLE_MASK (~(1 << RCU_SOFTIRQ))
- #define SOFTIRQ_ALL_MASK (BIT(NR_SOFTIRQS) - 1)
+ static inline void local_bh_enable_ip(unsigned long ip)
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 5f167fc43ab9..d305b4c8d1a7 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -139,7 +139,7 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+ EXPORT_SYMBOL(__local_bh_disable_ip);
+ #endif /* CONFIG_TRACE_IRQFLAGS */
  
--#ifndef local_softirq_pending
-+#define SOFTIRQ_ENABLED_SHIFT 16
-+#define SOFTIRQ_PENDING_MASK (BIT(SOFTIRQ_ENABLED_SHIFT) - 1)
-+
-+
-+#ifndef local_softirq_data
+-static void __local_bh_enable(unsigned int cnt)
++static void __local_bh_enable_no_softirq(unsigned int cnt)
+ {
+ 	lockdep_assert_irqs_disabled();
  
- #ifndef local_softirq_data_ref
- #define local_softirq_data_ref irq_stat.__softirq_data
- #endif
+@@ -156,12 +156,12 @@ static void __local_bh_enable(unsigned int cnt)
+  * Special-case - softirqs can safely be enabled by __do_softirq(),
+  * without processing still-pending softirqs:
+  */
+-void _local_bh_enable(void)
++void local_bh_enable_no_softirq(void)
+ {
+ 	WARN_ON_ONCE(in_irq());
+-	__local_bh_enable(SOFTIRQ_DISABLE_OFFSET);
++	__local_bh_enable_no_softirq(SOFTIRQ_DISABLE_OFFSET);
+ }
+-EXPORT_SYMBOL(_local_bh_enable);
++EXPORT_SYMBOL(local_bh_enable_no_softirq);
  
--#define local_softirq_pending()	(__this_cpu_read(local_softirq_data_ref))
--#define softirq_pending_clear_mask(x)	(__this_cpu_and(local_softirq_data_ref, ~(x)))
--#define softirq_pending_set_mask(x)	(__this_cpu_or(local_softirq_data_ref, (x)))
-+static inline unsigned int local_softirq_data(void)
-+{
-+	return __this_cpu_read(local_softirq_data_ref);
-+}
+ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+ {
+@@ -316,7 +316,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
  
-+static inline unsigned int local_softirq_enabled(void)
-+{
-+	return local_softirq_data() >> SOFTIRQ_ENABLED_SHIFT;
-+}
-+
-+static inline unsigned int local_softirq_pending(void)
-+{
-+	return local_softirq_data() & SOFTIRQ_PENDING_MASK;
-+}
-+
-+static inline void softirq_enabled_clear_mask(unsigned int enabled)
-+{
-+	enabled <<= SOFTIRQ_ENABLED_SHIFT;
-+	__this_cpu_and(local_softirq_data_ref, ~enabled);
-+}
-+
-+static inline void softirq_enabled_set_mask(unsigned int enabled)
-+{
-+	enabled <<= SOFTIRQ_ENABLED_SHIFT;
-+	__this_cpu_or(local_softirq_data_ref, enabled);
-+}
-+
-+static inline void softirq_enabled_set(unsigned int enabled)
-+{
-+	unsigned int data;
-+
-+	data = enabled << SOFTIRQ_ENABLED_SHIFT;
-+	data |= local_softirq_pending();
-+	__this_cpu_write(local_softirq_data_ref, data);
-+}
-+
-+static inline void softirq_pending_clear_mask(unsigned int pending)
-+{
-+	__this_cpu_and(local_softirq_data_ref, ~pending);
-+}
-+
-+static inline void softirq_pending_set_mask(unsigned int pending)
-+{
-+	__this_cpu_or(local_softirq_data_ref, pending);
-+}
- #endif /* local_softirq_pending */
+ 	lockdep_softirq_end(in_hardirq);
+ 	account_irq_exit_time(current);
+-	__local_bh_enable(SOFTIRQ_OFFSET);
++	__local_bh_enable_no_softirq(SOFTIRQ_OFFSET);
+ 	WARN_ON_ONCE(in_interrupt());
+ 	current_restore_flags(old_flags, PF_MEMALLOC);
+ }
+@@ -352,7 +352,7 @@ void irq_enter(void)
+ 		 */
+ 		local_bh_disable();
+ 		tick_irq_enter();
+-		_local_bh_enable();
++		local_bh_enable_no_softirq();
+ 	}
  
- /* map softirq index to softirq name. update 'softirq_to_name' in
+ 	__irq_enter();
 -- 
 2.17.1
 
