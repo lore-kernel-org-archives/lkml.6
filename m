@@ -7,65 +7,68 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3FFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFA0C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFE521773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC662084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSdMmufz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTTfFT5o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbfBLOy5 (ORCPT
+        id S1730595AbfBLOzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:54:57 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:43110 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbfBLOy4 (ORCPT
+        Tue, 12 Feb 2019 09:55:02 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44624 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730561AbfBLOzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:54:56 -0500
-Received: by mail-yb1-f195.google.com with SMTP id s76so1112034ybs.10;
-        Tue, 12 Feb 2019 06:54:56 -0800 (PST)
+        Tue, 12 Feb 2019 09:55:00 -0500
+Received: by mail-yb1-f196.google.com with SMTP id b15so1110341ybn.11;
+        Tue, 12 Feb 2019 06:55:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xFA+Mm5utO4rafbneyRLgd2Qn/kfya7WxVy+rmH3IzA=;
-        b=gSdMmufz4PgD5cdwmNLSShkKS6pB2JH8Tz1iF2KnOSjSWiJ0scu1npmGGbKzeSUqiI
-         A/EBpzGBYaSGBSB3fpV3owSBDx/K5uM5ZDWxW3Z0cvs2PHlU50nYBTRniFRrX2lmfxXf
-         s1XElZ4haCSJJW5zsPHdeLBdRC7cXV8gp/QPTIiwEy2j5+3SJO6MaM4Vxf4SW1I3VLfp
-         cs5UoXriJiaxXnB+GgwVFefK55qtoXuj+UlKZRSN0PdNAo7iOBC+1Zp7abG4hjnldwBY
-         9vArwq2ku7qRz5T+op9fLnShwWY740crtfEnRDq/BvwxXS5l3JmncXPAo25V3emv9bZq
-         go3A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4bipEG85DvMxlE/UsDnKVFPVryYnL+gbbKWtw53ErjY=;
+        b=FTTfFT5ohFBOFkA0Dq3y+fMb8A+au9e/mNLR/iALb5KqaDrnTqAsc0rVkhsF83SDUU
+         wzR+RlvHeuSUKFMh8IttFwu0qxPHECdhUe8bnNx7H2xhEEGmMxQXLSB8l3S61WV4z1uu
+         hxg2RlvAwCpWQZDGnwWqdHFlmjnEFNVAIGpcfN5aQIK4oqH3IUMioL8u7rgLzbkCfjQz
+         xNJ5JxlbXcnF/+zrkgbfbAuPnu7Ffwd5/v1tsVLyxPTP/qkhGM8GyNQCKmha0pi9wjdJ
+         zlh4OYhS80wm6upUKZAwNLLUROyerZ3Puptcerc7kpp0NYQ+j3PkUyQKxy2rS1nbp/WT
+         R99w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xFA+Mm5utO4rafbneyRLgd2Qn/kfya7WxVy+rmH3IzA=;
-        b=fmnkNtjnYsSqghJtefBkEbrOc5e9CMERqR3XQ73vb129HdabHC4hA1xLyPROJeDsfp
-         0dkm1GeeI4xodL3TBSkYVZ5X7lBIGCY1D+ebSLalYifIB1Mag/Ro51Fsp8ldPg4AK6yt
-         OAIsGZEtbjBR4XtkbHBJTLeNA3o8XMDb4Ahf4ooRqR0LoTq7iz/vc+UCkKhzEXpYCqAS
-         O2qRZphlW2QxmjDKkSjYFX56HBMhCRFE3vXuVE4Tnm1leA1diN2Z/XjmDh9LYlH+sbRC
-         xOFGeQkF8Wfdw3haqSGOuYMrRijtpySGxkv5IwB9RmUdSlsBs2IlMa5vSRxdtmeEvMrh
-         v8+w==
-X-Gm-Message-State: AHQUAuZDyaeDJQHV6VM6gqhv7GfzKIn+2xSn+/S0gafcdbO3HeG+S1ej
-        75K5EUiUp2iDykujepdNBm7qqAM0R0tOvQ==
-X-Google-Smtp-Source: AHgI3IZSyfMJZ2OTG5LqGDRhl0do4Eq9/xLoYli2JiiJbu3atrG8U77+YfrjcznNVGz+3RTc3vMirw==
-X-Received: by 2002:a5b:9c2:: with SMTP id y2mr3349083ybq.319.1549983295667;
-        Tue, 12 Feb 2019 06:54:55 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4bipEG85DvMxlE/UsDnKVFPVryYnL+gbbKWtw53ErjY=;
+        b=ZSyJTzuvezTaYWVEha4PQfy8HiJEdLGbUXUazWwJPSJQQYMfDhKQLj//xvYqENOJ0z
+         netY5guvff/mn+kajYiNNL+Ogmt4/2ZL2ADmb6tTFGECzhADrU274sQmLMZcCJhZ5AO+
+         zbdLfnnuqkjOOxz9xNj294v59wjk/4MiY135ANazBaGahmG2rdHxAl9RHVeB0ZRda/7h
+         MgNIvSji6fMdmSfYzxCdCCvVRPbR/c+Q86Q50JJX55T00jpBv/PSzZxrO4sO8FXr0Th/
+         tE2gGscp2hQW+8Kn5PldtZ7RrOy3plAulbLxc+pAJwnCac+E/TWdjNRe07BA1DMlTK04
+         dzfQ==
+X-Gm-Message-State: AHQUAublVfYQoUaDDuumSwXJseDJ1yTlJnQ0HAky4IS6hHG3LfwtZaot
+        zYgMWogoXPbRuJNgb8tDSk8=
+X-Google-Smtp-Source: AHgI3IY+BI2iIKayPDu8LJXV0qdif6ytsoyyntUG8xvUZCCzGiocTUW7GxkhqaY9d3xLckTMUEbHhg==
+X-Received: by 2002:a25:a3c1:: with SMTP id e59mr3223403ybi.96.1549983299573;
+        Tue, 12 Feb 2019 06:54:59 -0800 (PST)
 Received: from localhost.localdomain (c-73-120-18-128.hsd1.tn.comcast.net. [73.120.18.128])
-        by smtp.gmail.com with ESMTPSA id v134sm4987967ywv.90.2019.02.12.06.54.54
+        by smtp.gmail.com with ESMTPSA id v134sm4987967ywv.90.2019.02.12.06.54.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 06:54:54 -0800 (PST)
+        Tue, 12 Feb 2019 06:54:58 -0800 (PST)
 From:   demiobenour@gmail.com
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        "Demi M. Obenour" <demiobenour@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
         linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
         infrastructure)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/4] Add path resolution flag LOOKUP_NEVER_FOLLOW
-Date:   Tue, 12 Feb 2019 09:54:44 -0500
-Message-Id: <20190212145450.2200-1-demiobenour@gmail.com>
+Cc:     "Demi M. Obenour" <demiobenour@gmail.com>
+Subject: [PATCH 3/4] Add AT_PATHSTATIC to linkat()
+Date:   Tue, 12 Feb 2019 09:54:46 -0500
+Message-Id: <20190212145450.2200-3-demiobenour@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190212145450.2200-1-demiobenour@gmail.com>
+References: <20190212145450.2200-1-demiobenour@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,51 +78,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Demi M. Obenour" <demiobenour@gmail.com>
 
-This adds the flag LOOKUP_NEVER_FOLLOW to path resolution, which tells
-the code in fs/namei.c to never follow symlinks.  This flag overrides
-LOOKUP_FOLLOW, since this makes internal APIs simpler: code can set the
-flag without needing to also clear LOOKUP_FOLLOW, which is often set by
-default.
-
-This is a prerequisite to adding O_PATHSTATIC, but is also useful for
-kernel-internal use.
+This has the same meaning as O_PATHSTATIC does in openat(), and has the
+same uses.
 ---
- fs/namei.c            | 4 +++-
- include/linux/namei.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ fs/namei.c                 | 8 +++++++-
+ include/uapi/linux/fcntl.h | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 914178cdbe94..54fbd2c7ba82 100644
+index 4c90f265c103..b47f89af00f2 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1720,7 +1720,9 @@ static int pick_link(struct nameidata *nd, struct path *link,
- {
- 	int error;
- 	struct saved *last;
--	if (unlikely(nd->total_link_count++ >= MAXSYMLINKS)) {
-+	const int max_symlinks = (nd->flags & LOOKUP_NEVER_FOLLOW) ?
-+		0 : MAXSYMLINKS;
-+	if (unlikely(nd->total_link_count++ >= max_symlinks)) {
- 		path_to_nameidata(link, nd);
- 		return -ELOOP;
+@@ -4291,8 +4291,14 @@ int do_linkat(int olddfd, const char __user *oldname, int newdfd,
+ 		how = LOOKUP_EMPTY;
  	}
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index a78606e8e3df..f065502a653d 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -24,10 +24,12 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
-  *  - internal "there are more path components" flag
-  *  - dentry cache is untrusted; force a real lookup
-  *  - suppress terminal automount
-+ *  - never follow symbolic links, even internally
-  */
- #define LOOKUP_FOLLOW		0x0001
- #define LOOKUP_DIRECTORY	0x0002
- #define LOOKUP_AUTOMOUNT	0x0004
-+#define LOOKUP_NEVER_FOLLOW	0x0008
  
- #define LOOKUP_PARENT		0x0010
- #define LOOKUP_REVAL		0x0020
+-	if (flags & AT_SYMLINK_FOLLOW)
++	if (flags & AT_SYMLINK_FOLLOW) {
++		if (flags & AT_PATHSTATIC)
++			return -EINVAL;
+ 		how |= LOOKUP_FOLLOW;
++	}
++
++	if (flags & AT_PATHSTATIC)
++		how |= LOOKUP_NEVER_FOLLOW;
+ retry:
+ 	error = user_path_at(olddfd, oldname, how, &old_path);
+ 	if (error)
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6448cdd9a350..a2f65635c8fc 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -89,6 +89,7 @@
+ #define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
+ #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
+ #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
++#define AT_PATHSTATIC		0x8000	/* Do not follow symbolic links anywhere. */
+ 
+ 
+ #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
 2.20.1
 
