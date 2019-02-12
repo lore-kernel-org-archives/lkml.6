@@ -2,39 +2,39 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8801AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3E3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB5E2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49F52080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbfBLNwm (ORCPT
+        id S1730027AbfBLNwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:52:42 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1121 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729889AbfBLNwQ (ORCPT
+        Tue, 12 Feb 2019 08:52:14 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36390 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729889AbfBLNwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:52:16 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CDpTSv020433;
-        Tue, 12 Feb 2019 14:52:06 +0100
+        Tue, 12 Feb 2019 08:52:14 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CDpWEw001497;
+        Tue, 12 Feb 2019 14:52:01 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qhurj0jdp-1
+        by mx08-00178001.pphosted.com with ESMTP id 2qjfy65318-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Feb 2019 14:52:06 +0100
+        Tue, 12 Feb 2019 14:52:01 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DD9AC4D;
-        Tue, 12 Feb 2019 13:52:05 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E7CD938;
+        Tue, 12 Feb 2019 13:52:00 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag4node2.st.com [10.75.127.11])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 93DE75127;
-        Tue, 12 Feb 2019 13:52:05 +0000 (GMT)
-Received: from localhost (10.75.127.50) by SFHDAG4NODE2.st.com (10.75.127.11)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 12 Feb 2019 14:52:05
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BA6225125;
+        Tue, 12 Feb 2019 13:52:00 +0000 (GMT)
+Received: from localhost (10.75.127.49) by SFHDAG4NODE2.st.com (10.75.127.11)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 12 Feb 2019 14:52:00
  +0100
 From:   <gabriel.fernandez@st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -46,16 +46,14 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH 6/7] clk: stm32mp1: remove unnecessary CLK_DIVIDER_ALLOW_ZERO flag
-Date:   Tue, 12 Feb 2019 14:51:53 +0100
-Message-ID: <20190212135154.2733-7-gabriel.fernandez@st.com>
+Subject: [PATCH 0/7] update STM32MP1 clocks
+Date:   Tue, 12 Feb 2019 14:51:47 +0100
+Message-ID: <20190212135154.2733-1-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190212135154.2733-1-gabriel.fernandez@st.com>
-References: <20190212135154.2733-1-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_08:,,
  signatures=0
@@ -66,32 +64,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch removes unnecessary CLK_DIVIDER_ALLOW_ZERO flag of
-ethptp_k and ck_hse_rtc clocks.
+This patch-set fixes minor corrections (fixes and documentation alignment)
+- add missing parent clocks
+- don't change parent on set rate for kernel clocks
+- set ck_csi clock as critical
+- fix divider configuration
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32mp1.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 863586a71d49..6c99950c6135 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -1958,11 +1958,10 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  CLK_SET_RATE_NO_REPARENT,
- 		  _NO_GATE,
- 		  _MMUX(M_ETHCK),
--		  _DIV(RCC_ETHCKSELR, 4, 4, CLK_DIVIDER_ALLOW_ZERO, NULL)),
-+		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
- 
- 	/* RTC clock */
--	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7,
--	    CLK_DIVIDER_ALLOW_ZERO),
-+	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7, 0),
- 
- 	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
- 		   CLK_SET_RATE_PARENT,
+
+Gabriel Fernandez (7):
+  clk: stm32mp1: parent clocks update
+  clk: stm32mp1: add CLK_SET_RATE_NO_REPARENT to Kernel clocks
+  clk: stm32mp1: set ck_csi as critical clock
+  clk: stm32mp1: fix mcu divider table
+  clk: stm32mp1: fix HSI divider flag
+  clk: stm32mp1: remove unnecessary CLK_DIVIDER_ALLOW_ZERO flag
+  clk: stm32mp1: fix bit width of hse_rtc divider
+
+ drivers/clk/clk-stm32mp1.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
+
 -- 
 2.17.0
 
