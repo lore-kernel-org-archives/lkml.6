@@ -4,40 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010C3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBE9C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12EE2186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9CAC2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YFdTzQFw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrbtHkRT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfBLH0A (ORCPT
+        id S1728225AbfBLH0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:26:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58836 "EHLO
+        Tue, 12 Feb 2019 02:26:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58626 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbfBLHZ6 (ORCPT
+        with ESMTP id S1725916AbfBLHZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:25:58 -0500
+        Tue, 12 Feb 2019 02:25:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sg1qZTQ7f9C8PWpCTPEQSLyZ0uNPVzWT71WdI2nlxFk=; b=YFdTzQFwF+TYW3Ckxd01RI5yWB
-        y7pAh5SBC3oI/fHE2Vo8lK3y5zXFkhXGOOKpPd3XtuGw0K8r8Pa0G68uvfD/7P9T/5BV4Ol0g34Zf
-        Uttz6iyMzZemhFH+2hhl8P0XUdUt36xP0AkivZ52Ilguuul5nsnZxdLH358eQmDGvpq3qf8SijTRE
-        1zwjvvOYXSWdA76FQ2HP9/+220hOuzA9Neeoe1NRXt1HT86yQFsi2NUqaAC4/aI1hVSqFWL19bur+
-        ZJspyCFxuZorXHxeKxvUheYK2cGr0hR0KTDJpjKOroa6aYAu/f0uuYe3lG7OedfFTbMqhcxve3jJL
-        Dq4n5NVw==;
+        bh=ovnWwJIGZbyfHvIMSi3gnaeG6dQuOk395gFp+nBctN0=; b=NrbtHkRT6Z+C3+uU+bxHlZOUll
+        zWPT5RGApLR2o6c7fUaATBfsn6CtXcGBW1WBma7ZSH/ukFGUDGSRa4Oi8HllH5lxkm3N5x+GyQRBH
+        /PELARLRldb6aoHikIOXLdXGqnzpWWAqzsdD+WHAz9g9iTaApNjuqX+07f4NxEsowrRKapJ6wqZWp
+        yWJj+eJDx0V678li+sUuQab15AwJxd1AljfcHlN6kt2osOAhExT+rIL/R5cl3yqqk5tbOVepUP7zp
+        dOD+CpYcJwKnizSIeeqZUjbl5Pd1/a5IUUK1ppxVAftIw6TJyhMHHvLMeRwfs8bAsljSGucCuyzqg
+        GLmehhCQ==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtSRu-0002XO-Kx; Tue, 12 Feb 2019 07:25:47 +0000
+        id 1gtSRr-0002US-VE; Tue, 12 Feb 2019 07:25:44 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Ulf Hansson <ulf.hansson@linaro.org>
 Cc:     Russell King <linux@armlinux.org.uk>,
@@ -46,9 +45,9 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Ben Dooks <ben-linux@fluff.org>, linux-mmc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/14] mmc: omap: handle highmem pages
-Date:   Tue, 12 Feb 2019 08:25:20 +0100
-Message-Id: <20190212072528.13167-7-hch@lst.de>
+Subject: [PATCH 05/14] mmc: moxart: handle highmem pages
+Date:   Tue, 12 Feb 2019 08:25:19 +0100
+Message-Id: <20190212072528.13167-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212072528.13167-1-hch@lst.de>
 References: <20190212072528.13167-1-hch@lst.de>
@@ -61,75 +60,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Instead of setting up a kernel pointer to track the current PIO address,
-track the offset in the current page, and do an atomic kmap for the page
-while doing the actual PIO operations.
+track the offset in the current page, and do a kmap for the page while
+doing the actual PIO operations.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/mmc/host/omap.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/mmc/host/moxart-mmc.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-index c60a7625b1fa..6741c95f2281 100644
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -148,7 +148,7 @@ struct mmc_omap_host {
+diff --git a/drivers/mmc/host/moxart-mmc.c b/drivers/mmc/host/moxart-mmc.c
+index a0670e9cd012..116964e6506d 100644
+--- a/drivers/mmc/host/moxart-mmc.c
++++ b/drivers/mmc/host/moxart-mmc.c
+@@ -311,7 +311,7 @@ static void moxart_transfer_pio(struct moxart_host *host)
+ 	if (host->data_len == data->bytes_xfered)
+ 		return;
  
- 	unsigned int		sg_len;
- 	int			sg_idx;
--	u16 *			buffer;
-+	u32			buffer_offset;
- 	u32			buffer_bytes_left;
- 	u32			total_bytes_left;
+-	sgp = sg_virt(host->cur_sg);
++	sgp = kmap(sg_page(host->cur_sg)) + host->cur_sg->offset;
+ 	remain = host->data_remain;
  
-@@ -649,7 +649,7 @@ mmc_omap_sg_to_buf(struct mmc_omap_host *host)
+ 	if (data->flags & MMC_DATA_WRITE) {
+@@ -319,8 +319,7 @@ static void moxart_transfer_pio(struct moxart_host *host)
+ 			if (moxart_wait_for_status(host, FIFO_URUN, &status)
+ 			     == -ETIMEDOUT) {
+ 				data->error = -ETIMEDOUT;
+-				complete(&host->pio_complete);
+-				return;
++				goto done;
+ 			}
+ 			for (len = 0; len < remain && len < host->fifo_width;) {
+ 				iowrite32(*sgp, host->base + REG_DATA_WINDOW);
+@@ -335,8 +334,7 @@ static void moxart_transfer_pio(struct moxart_host *host)
+ 			if (moxart_wait_for_status(host, FIFO_ORUN, &status)
+ 			    == -ETIMEDOUT) {
+ 				data->error = -ETIMEDOUT;
+-				complete(&host->pio_complete);
+-				return;
++				goto done;
+ 			}
+ 			for (len = 0; len < remain && len < host->fifo_width;) {
+ 				/* SCR data must be read in big endian. */
+@@ -356,10 +354,15 @@ static void moxart_transfer_pio(struct moxart_host *host)
+ 	data->bytes_xfered += host->data_remain - remain;
+ 	host->data_remain = remain;
  
- 	sg = host->data->sg + host->sg_idx;
- 	host->buffer_bytes_left = sg->length;
--	host->buffer = sg_virt(sg);
-+	host->buffer_offset = sg->offset;
- 	if (host->buffer_bytes_left > host->total_bytes_left)
- 		host->buffer_bytes_left = host->total_bytes_left;
+-	if (host->data_len != data->bytes_xfered)
++	if (host->data_len != data->bytes_xfered) {
++		kunmap(sg_page(host->cur_sg));
+ 		moxart_next_sg(host);
+-	else
+-		complete(&host->pio_complete);
++		return;
++	}
++
++done:
++	kunmap(sg_page(host->cur_sg));
++	complete(&host->pio_complete);
  }
-@@ -666,7 +666,9 @@ mmc_omap_clk_timer(struct timer_list *t)
- static void
- mmc_omap_xfer_data(struct mmc_omap_host *host, int write)
- {
-+	struct scatterlist *sg = host->data->sg + host->sg_idx;
- 	int n, nwords;
-+	void *p;
  
- 	if (host->buffer_bytes_left == 0) {
- 		host->sg_idx++;
-@@ -684,15 +686,17 @@ mmc_omap_xfer_data(struct mmc_omap_host *host, int write)
- 	host->total_bytes_left -= n;
- 	host->data->bytes_xfered += n;
+ static void moxart_prepare_data(struct moxart_host *host)
+@@ -614,6 +617,7 @@ static int moxart_probe(struct platform_device *pdev)
+ 	spin_lock_init(&host->lock);
  
-+	p = sg_kmap_atomic(sg);
- 	if (write) {
- 		__raw_writesw(host->virt_base + OMAP_MMC_REG(host, DATA),
--			      host->buffer, nwords);
-+			      p + host->buffer_offset, nwords);
- 	} else {
- 		__raw_readsw(host->virt_base + OMAP_MMC_REG(host, DATA),
--			     host->buffer, nwords);
-+			     p + host->buffer_offset, nwords);
- 	}
-+	sg_kunmap_atomic(sg, p);
- 
--	host->buffer += nwords;
-+	host->buffer_offset += nwords;
- }
- 
- #ifdef CONFIG_MMC_DEBUG
-@@ -1250,6 +1254,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
- 		mmc->caps |= MMC_CAP_4_BIT_DATA | MMC_CAP_ERASE;
- 
- 	mmc->ops = &mmc_omap_ops;
+ 	mmc->ops = &moxart_ops;
 +	mmc->need_kmap = 1;
- 	mmc->f_min = 400000;
- 
- 	if (mmc_omap2())
+ 	mmc->f_max = DIV_ROUND_CLOSEST(host->sysclk, 2);
+ 	mmc->f_min = DIV_ROUND_CLOSEST(host->sysclk, CLK_DIV_MASK * 2);
+ 	mmc->ocr_avail = 0xffff00;	/* Support 2.0v - 3.6v power. */
 -- 
 2.20.1
 
