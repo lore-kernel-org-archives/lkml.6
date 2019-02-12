@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B045C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED39EC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4812229F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B46DD222C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:05:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kLJidmYp"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rnv6qFrV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbfBLSFw (ORCPT
+        id S1731932AbfBLSFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:05:52 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:40229 "EHLO
+        Tue, 12 Feb 2019 13:05:55 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:40243 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731868AbfBLSFt (ORCPT
+        with ESMTP id S1731911AbfBLSFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:05:49 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190212180547epoutp0156f9b3a2f62a32407ff6ce068408803b~CsAKt5CeU1587815878epoutp01O;
-        Tue, 12 Feb 2019 18:05:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190212180547epoutp0156f9b3a2f62a32407ff6ce068408803b~CsAKt5CeU1587815878epoutp01O
+        Tue, 12 Feb 2019 13:05:52 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190212180550epoutp01ddab7d48f35b37991e003dc1f293df05~CsANrxs0c1898118981epoutp01u;
+        Tue, 12 Feb 2019 18:05:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190212180550epoutp01ddab7d48f35b37991e003dc1f293df05~CsANrxs0c1898118981epoutp01u
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549994747;
-        bh=HCP/HOvIqfJnCB1JzhPJMtblSFmTHvuIraOFg1C02fk=;
+        s=mail20170921; t=1549994750;
+        bh=J2fEmrpa9P+9AF6G1uzK4HmVkrvrdiclGfzK5O2Xtxk=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=kLJidmYp8kIdmF6vEgq+iZsFnr9A5lG+c2pTjTeHNDwM7nx67Q70LwltUJzX+5RYO
-         pSyxMD72cLONp5hTWRhGYCCLR795sEGSOwKzTUpGIOKsUphAKGOvfZKGMPh9Lny8U9
-         bro9vd4EJIFBWcxr7lsFDmCWA/upLwOebac/TVv4=
-Received: from epsmges1p2.samsung.com (unknown [182.195.42.54]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190212180547epcas1p2a158ec5a5a8c78c15e127eb0083ea944~CsAKar4TQ1314613146epcas1p2r;
-        Tue, 12 Feb 2019 18:05:46 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        29.FC.04173.AFA036C5; Wed, 13 Feb 2019 03:05:46 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        b=Rnv6qFrVAlFyMyFiYkcJu7E6nZ35F2JXSEMQFVFa2AciVqY4jwtqiLwn6iNXVwJRi
+         84t3ByJaFJMysy7fjAgS3DbOYBk4vY7G4ekxe7A/ORzMMF6ifNltJbEUPrYGwjOOMo
+         QM1Ord+n0yCLaUlEvn2jnaztDZL1YwDM6XfLJw+A=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
         epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190212180546epcas1p1df261edb23d09dd0b33697f4a279cbd0~CsAJrhzKa0084400844epcas1p1k;
-        Tue, 12 Feb 2019 18:05:46 +0000 (GMT)
-X-AuditID: b6c32a36-5c1ff7000000104d-7c-5c630afa134c
+        20190212180550epcas1p162903ddb8396924783c2032cb17286f6~CsANbKwlT0083900839epcas1p1t;
+        Tue, 12 Feb 2019 18:05:50 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        30.CF.04074.EFA036C5; Wed, 13 Feb 2019 03:05:50 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190212180549epcas1p20b5cc51ba13fb934056196d1b89d67ab~CsANCKXWQ0631306313epcas1p2U;
+        Tue, 12 Feb 2019 18:05:49 +0000 (GMT)
+X-AuditID: b6c32a35-27fff70000000fea-e7-5c630afea74f
 Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id F6.11.04015.AFA036C5; Wed, 13 Feb
-        2019 03:05:46 +0900 (KST)
+        (Symantec Messaging Gateway) with SMTP id A7.11.04015.DFA036C5; Wed, 13 Feb
+        2019 03:05:49 +0900 (KST)
 Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PMT0024XRJ2FB10@mmp2.samsung.com>; Wed, 13 Feb 2019
-        03:05:46 +0900 (KST)
+        03:05:49 +0900 (KST)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     broonie@kernel.org
 Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
@@ -60,79 +60,80 @@ Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 19/21] ASoC: samsung: i2s: Convert to SPDX License
- Indentifier
-Date:   Tue, 12 Feb 2019 19:03:40 +0100
-Message-id: <20190212180342.32040-20-s.nawrocki@samsung.com>
+Subject: [PATCH v2 20/21] ARM: dts: exynos5422-odroidxu3: Add support for
+ secondary DAI
+Date:   Tue, 12 Feb 2019 19:03:41 +0100
+Message-id: <20190212180342.32040-21-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.20.1
 In-reply-to: <20190212180342.32040-1-s.nawrocki@samsung.com>
 MIME-version: 1.0
 Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsWy7bCmnu4vruQYg0evrS2uXDzEZLFxxnpW
-        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZv3+HFRzmqGhdcZy9gbGTvYuRg0NC
-        wERi247ELkYuDiGBHYwSL3r6mSGc74wSr39dYYYpav8aDxHfwCixddsCNgjnF6PE5CMHGbsY
-        OTnYBAwleo/2gdkiAmISt+d0gk1iFmhhkpgzdykzSEJYIFhi/a6zYFNZBFQlTi5gBwnzCthI
-        vH3+HsyWEJCXON+7DszmBIo/W/iNBaJGUOLH5HtgNjNQzcErz1lA5ksIHGGT2PT1IxNEs4tE
-        y5E1TBBXS0tcOmoLEa6W2LW9mxmivoNRouXCdmaIhLXE4eMXWSGG8km8+9rDCtHLK9HRJgRR
-        4iHx9vxvaKj0M0o8P/mWcQKj1CwkN81CctMCRqZVjGKpBcW56anFhgVGesWJucWleel6yfm5
-        mxjB8a1ltoNx0TmfQ4wCHIxKPLwrjibFCLEmlhVX5h5ilOBgVhLhTWNOjhHiTUmsrEotyo8v
-        Ks1JLT7EKM3BoiTOu97BOUZIID2xJDU7NbUgtQgmy8TBKdXAeOTXzKlBvL1xC96LhuzebbpQ
-        qSfo5gT1rXHG2TpOnEvrTZdVPQy/knHcSbNtcWp0Keted5mGvd8nl5bt6jo1z7WLjdf9l2ub
-        n4Hv3d2q/yNEi0zWb9r9OvCoammKx6Iftx5k3Fdqfvss9N6c39ZvfvJe3W265se9NzP+KUv3
-        RH4vbTm3ZZ/qWiWW4oxEQy3mouJEAAHOmXzrAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t9jQd1fXMkxBg/WcltcuXiIyWLjjPWs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7bCmnu4/ruQYg3k97BZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MH9O+Mxfs56g48qyLuYHxA1sXIyeH
+        hICJxNl3x4FsLg4hgR2MEqfvH4ZyvjNKtF/+xwJT9aythRUisQEocWgGO4Tzi1GipWcK2Cw2
+        AUOJ3qN9jCC2iICYxO05ncwgRcwCLUwSc+YuZQZJCAtEShydfgnMZhFQlZgxczWYzStgI7Fy
+        Asw6eYnzvevYQWxOoPizhd9YIGoEJX5MvgdmMwPVHLzyHKr+AJvEubm+ELaLxNzXPUBxDiBb
+        WuLSUVuIcLXEru3dYPdICHQAHX1hOzNEwlri8PGLrBAz+STefe1hhejllehoE4Io8ZDYvfEB
+        M8TD/YwSc259Y5vAKDULyUmzkJy0gJFpFaNYakFxbnpqsWGBoV5xYm5xaV66XnJ+7iZGcJRr
+        me5gnHLO5xCjAAejEg/viqNJMUKsiWXFlbmHGCU4mJVEeNOYk2OEeFMSK6tSi/Lji0pzUosP
+        MUpzsCiJ8653cI4REkhPLEnNTk0tSC2CyTJxcEo1MObfq/UrDFq2bHIIN+us08sCFDeZuks6
+        r3o3ndPYeirDu9o1/eJrDb03Te7uDJ9txvbi2b91bX+MJuxPOGg6mTH7hYCy6dIJzBd/nrFd
+        1SvE7hV7ac6Z28svbxK/u1eiN2VCks4q6dVRZao7Lk8TXVjytcP2sm7Nq3N8q66l1d4I8H3M
+        5+h2UF6JpTgj0VCLuag4EQDtK2Cd7gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t9jQd2/XMkxBsem6llcuXiIyWLjjPWs
         FlMfPmGzOH9+A7vFtysdTBaXd81hs5hxfh+Txdojd9ktDr9pZ7W4uOILkwOXx4bPTWweO2fd
-        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyfv8OKzjMUdG64jh7A2MnexcjB4eE
-        gIlE+9f4LkYuDiGBdYwS++Z1MkI4vxgldrT+Zepi5ORgEzCU6D3axwhiiwiISdye08kMUsQs
-        0MQksev2RXaQhLBAsMT6XWeZQaayCKhKnFwAFuYVsJF4+/w9mC0hIC9xvncdmM0JFH+28BsL
-        SLmQgLXElU22EOWCEj8m32MBsZmByg9eec4ygZFvFpLULCSpBYxMqxglUwuKc9Nzi40KDPNS
-        y/WKE3OLS/PS9ZLzczcxAsN322Gtvh2M95fEH2IU4GBU4uFdcTQpRog1say4MvcQowQHs5II
-        bxpzcowQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNITS1KzU1MLUotgskwcnFINjIu/
-        mpwLeX7Yuu29hsPBReX2wl8Nvnct8/165OX1Y+VLin5/CIw/2HB3I8PmP8VxEaoHEyZv9K38
-        IJuVZX9XuO7Vw8i9jJuXeXN4e3h94GELmdWjk39k7oZtc1mYLr6c0x/un39vZ8qRuIPXMwId
-        +b4Gv/2d1ejzTWoL0+lZd7hvKD/5E/Py8xQlluKMREMt5qLiRACytOegWwIAAA==
-X-CMS-MailID: 20190212180546epcas1p1df261edb23d09dd0b33697f4a279cbd0
+        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyfkz7zlywn6PiyLMu5gbGD2xdjJwc
+        EgImEs/aWli7GLk4hATWMUoc6XzKCOH8YpS4OOs7E0gVm4ChRO/RPkYQW0RATOL2nE5mkCJm
+        gSYmiV23L7KDJIQFIiWOTr/EDGKzCKhKzJi5GszmFbCRWDnhHwvEOnmJ873rwOo5geLPFn4D
+        inMAbbOWuLLJFqJcUOLH5Htg5cxA5QevPGeZwMg3C0lqFpLUAkamVYySqQXFuem5xUYFhnmp
+        5XrFibnFpXnpesn5uZsYgUG87bBW3w7G+0viDzEKcDAq8fCuOJoUI8SaWFZcmXuIUYKDWUmE
+        N405OUaINyWxsiq1KD++qDQntfgQozQHi5I47+28Y5FCAumJJanZqakFqUUwWSYOTqkGxsij
+        4bne8iazWNb87aifkbd0d5SzreQkD5fda/8kJ/zM8MpvkvXy+WaaMfc0R/h7nqa06YzT3z8N
+        WurvIvPmYVPWA4Mt0b9OzvXd1btm3UrpVlX9nJJJ77ef1yt+/Ts2baPQim2F05ZtPxV9Wezo
+        r5N3ioVKPAsZ/3Gk68hzTt2Yk5wnXnvzjhJLcUaioRZzUXEiAJ6UDwReAgAA
+X-CMS-MailID: 20190212180549epcas1p20b5cc51ba13fb934056196d1b89d67ab
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20190212180546epcas1p1df261edb23d09dd0b33697f4a279cbd0
+X-CMS-RootMailID: 20190212180549epcas1p20b5cc51ba13fb934056196d1b89d67ab
 References: <20190212180342.32040-1-s.nawrocki@samsung.com>
-        <CGME20190212180546epcas1p1df261edb23d09dd0b33697f4a279cbd0@epcas1p1.samsung.com>
+        <CGME20190212180549epcas1p20b5cc51ba13fb934056196d1b89d67ab@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+This patch extends DAPM routing and adds secondary CPU DAI entry
+to support the secondary audio PCM interface on Odroid XU3.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 77c0f70beab1..e820d95a86be 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1,13 +1,9 @@
--/*
-- * ALSA SoC Audio Layer - Samsung I2S Controller driver
-- *
-- * Copyright (c) 2010 Samsung Electronics Co. Ltd.
-- *	Jaswinder Singh <jassisinghbrar@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// ALSA SoC Audio Layer - Samsung I2S Controller driver
-+//
-+// Copyright (c) 2010 Samsung Electronics Co. Ltd.
-+// 	Jaswinder Singh <jassisinghbrar@gmail.com>
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+index e84544b220b9..51a843bd65ed 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -24,7 +24,9 @@
+ 			"Headphone Jack", "MICBIAS",
+ 			"IN1", "Headphone Jack",
+ 			"Speakers", "SPKL",
+-			"Speakers", "SPKR";
++			"Speakers", "SPKR",
++			"I2S Playback", "Mixer DAI TX",
++			"HiFi Playback", "Mixer DAI TX";
  
- #include <dt-bindings/sound/samsung-i2s.h>
- #include <linux/delay.h>
+ 		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+@@ -51,7 +53,7 @@
+ 				<196608000>;
+ 
+ 		cpu {
+-			sound-dai = <&i2s0 0>;
++			sound-dai = <&i2s0 0>, <&i2s0 1>;
+ 		};
+ 		codec {
+ 			sound-dai = <&hdmi>, <&max98090>;
 -- 
 2.20.1
 
