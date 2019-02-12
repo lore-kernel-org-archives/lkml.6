@@ -2,93 +2,105 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6388C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61A3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12D82083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D3pERqbt"
+	by mail.kernel.org (Postfix) with ESMTP id 731902083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549982569;
+	bh=ne1GaoIkFU39IlisZEyCSRLo+/PRrwBzZOEyKO+uo5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bn/QU01N6teHTJv+5EG8fpp8Pa1CW8TxVQm5Sy4EBD1TiyJpDvT3l6qlhaqz/kmaN
+	 WoNcLRNk06ed+R5S7xE+KyMkH5HCkKkVnu6BkqQFrQhsDuy7uXySUM9HHouDnIMgOh
+	 /eId4p7w6mC1ny4iLIthpp+fsQiHBGvJSJVTjZtk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfBLOmm (ORCPT
+        id S1730005AbfBLOms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:42:42 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36531 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbfBLOmm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:42:42 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r124so1358696pgr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:42:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bWN/Ds4yifyduWyWjng4M5eUe6ihpkX+4HQVzLhVysA=;
-        b=D3pERqbtsoIlTIbszyeKTNXPZ+GkLddmdSRUSvwJHDhWYZ0EqlXl5JJAr/GMcG6cjm
-         8w5vx8/SDFhkqzbZgsKpqr0f4nZk6teNBoiF5JrHjo07S6czoaoyELtYc71vGpzyzs9l
-         NKnFgwCi60/YZdMaMFGrYNIrZJZn2mSb2Q2hCQyeJR0pu0bSXUDOZdvsVvhftOd+WrVn
-         CvLXALeXUkj7euauowxZvk3pJCCGMmVB494ZHjnVWNUCk968lBDIAv3zbmoFePfV+G42
-         kpqNIiqSitztWYrh796I+tCga+Avu7baBk7xTqV0UC/zalFM85YdC+Wi6QZRI4PmQ/WT
-         b3dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bWN/Ds4yifyduWyWjng4M5eUe6ihpkX+4HQVzLhVysA=;
-        b=D6NN/NuLyJOn+sVXHEhwIAJ4X9qwGt8ouD7auPveW/brKRebuseafBYBL3flBefdrL
-         6I2L48CDi12rpV9NQ4RADYNThqAwIqlKYY2urfzOoTRHmPsvfZtjZoVjJdS9jmOWDiFY
-         GqCbHHlA3Itt7gqRkEXlSXmzOeoSKUpVEdRuIoBLbgYgMcK8VLep9FYwGXqZ0FQW+eVn
-         J4JFXXekbh0yeXkgZmyc26cdKIHHhY5qINi238eGOlLfmlsC5/5g160dZgkp5r2/ec/m
-         omTZaa8wgVEeovNnFIrGPO+sd/yYw9LrKMzWtTalOpzYjZEwR1Ob9TCS6yP31h4OIHZc
-         bHqw==
-X-Gm-Message-State: AHQUAuYq+YFn0nijtWru9mSGpdNB7FBzCv4UffZLYjTHVb+JqDyCAGS8
-        39OD1E9rpWChyTMdLKE31anJn1mQVfFlTGkBgQ6v7g==
-X-Google-Smtp-Source: AHgI3IYgtw7553bt/kX1nbTlW7KCUUqhRqSJL+6wm63TySJUMnntddOnlFpHAngJvAlvJHA369dBbKh2JM1nLqBFX/I=
-X-Received: by 2002:a62:6047:: with SMTP id u68mr4229328pfb.239.1549982561579;
- Tue, 12 Feb 2019 06:42:41 -0800 (PST)
+        Tue, 12 Feb 2019 09:42:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42904 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727428AbfBLOmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 09:42:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 54795AF01;
+        Tue, 12 Feb 2019 14:42:43 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 15:42:42 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
+ hotadded memory
+Message-ID: <20190212144242.GZ15609@dhcp22.suse.cz>
+References: <20190122103708.11043-1-osalvador@suse.de>
+ <20190212124707.000028ea@huawei.com>
+ <5FC3163CFD30C246ABAA99954A238FA8392B5DB6@lhreml524-mbs.china.huawei.com>
+ <20190212135658.fd3rdil634ztpekj@d104.suse.de>
 MIME-Version: 1.0
-References: <cover.1549921721.git.andreyknvl@google.com> <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
- <4bc08cee-cb49-885d-ef8a-84b188d3b5b3@lca.pw> <CAAeHK+zv5=oHJQg-bx7-tiD9197J7wdMeeRSgaxAfJjXEs3EyA@mail.gmail.com>
- <c92d6890-a718-a968-9937-13bdfeda773c@lca.pw>
-In-Reply-To: <c92d6890-a718-a968-9937-13bdfeda773c@lca.pw>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 12 Feb 2019 15:42:30 +0100
-Message-ID: <CAAeHK+xDYvjMxrkczTQaDbMSu5u3GsxW_mFi1=9OAjCi2Q-6iQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] kasan, slub: fix conflicts with CONFIG_SLAB_FREELIST_HARDENED
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212135658.fd3rdil634ztpekj@d104.suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 2:43 PM Qian Cai <cai@lca.pw> wrote:
->
->
->
-> On 2/12/19 8:26 AM, Andrey Konovalov wrote:
-> > Hm, did you apply all 6 patches (the one that you sent and these five)
-> Yes.
+On Tue 12-02-19 14:56:58, Oscar Salvador wrote:
+> On Tue, Feb 12, 2019 at 01:21:38PM +0000, Shameerali Kolothum Thodi wrote:
+> > > Hi Oscar,
+> > > 
+> > > I ran tests on one of our arm64 machines. Particular machine doesn't actually
+> > > have
+> > > the mechanics for hotplug, so was all 'faked', but software wise it's all the
+> > > same.
+> > > 
+> > > Upshot, seems to work as expected on arm64 as well.
+> > > Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> Thanks Jonathan for having given it a spin, much appreciated!
+> I was short of arm64 machines.
+> 
+> > (qemu) object_add memory-backend-ram,id=mem1,size=1G
+> > (qemu) device_add pc-dimm,id=dimm1,memdev=mem1,node=1
+> > root@ubuntu:~# 
+> > root@ubuntu:~# numactl -H
+> ...
+> > node 1 cpus:
+> > node 1 size: 1008 MB
+> > node 1 free: 1008 MB
+> > node distances:
+> > node   0   1 
+> >   0:  10  20 
+> >   1:  20  10 
+> > root@ubuntu:~#  
+> 
+> Ok, this is what I wanted to see.
+> When you hotplugged 1GB, 16MB out of 1024MB  were spent
+> for the memmap array, that is why you only see 1008MB there.
+> 
+> I am not sure what is the default section size for arm64, but assuming
+> is 128MB, that would make sense as 1GB would mean 8 sections,
+> and each section takes 2MB.
+> 
+> That means that at least the mechanism works.
 
-I'm failing to reproduce this in QEMU. You're still using the same
-config, right? Could you share whole dmesg until the first BUG?
+Please make sure to test on a larger machine which has multi section
+memblocks. This is where I was hitting on bugs hard.
+-- 
+Michal Hocko
+SUSE Labs
