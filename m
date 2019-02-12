@@ -2,205 +2,107 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE61BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF925C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C032217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:15:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iE426UAV"
+	by mail.kernel.org (Postfix) with ESMTP id 7F2542083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbfBLDPD (ORCPT
+        id S1727302AbfBLDU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:15:03 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:61441 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfBLDPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:15:03 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x1C3Cw6G008379;
-        Tue, 12 Feb 2019 12:12:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1C3Cw6G008379
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549941179;
-        bh=qMy6FZDSu1/xHp/khIDpyofAIIqjTVr/9btizRrU+vU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iE426UAV8AFI66i46nLGzTF0pKBescU33o/j4v1ff6KNJH8xnx46gO7MCyGRmhF+d
-         /tP8x8FjR6bmnzdnsts8cjPE5kborpIAW2rtWjDkRMX8UqtA+QBvuAbqekVo9rCxnI
-         VVdhE511UhqF+lsoiIN6mlkS+COxixcGCBbkWcuK9Bwr0iAbnkVMFdpdb08ew2wkzh
-         dtgVDbUinS58afa/mALmhTqJVmnmyS/T9jLnJlyyVC+ogAtaUV15hMFmJiN9Re+JDF
-         +5CfiV+CtW5xjQb3h3yZYxsqzgIOXJIJNq3c2LGoH2G9+pc69OYAAwg8n7mSXO4VKP
-         O6ci9oYCDmk1Q==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH] kernel/configs: use .incbin directive to embed config_data.gz
-Date:   Tue, 12 Feb 2019 12:12:40 +0900
-Message-Id: <1549941160-8084-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 11 Feb 2019 22:20:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59772 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726699AbfBLDU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 22:20:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63BDBEBD;
+        Mon, 11 Feb 2019 19:20:56 -0800 (PST)
+Received: from [10.162.43.137] (p8cg001049571a15.blr.arm.com [10.162.43.137])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8DBC3F557;
+        Mon, 11 Feb 2019 19:20:53 -0800 (PST)
+Subject: Re: [PATCH v2] mm/memory-hotplug: Add sysfs hot-remove trigger
+To:     Robin Murphy <robin.murphy@arm.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        osalvador@suse.de
+References: <49ef5e6c12f5ede189419d4dcced5dc04957c34d.1549906631.git.robin.murphy@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <4d92d783-736b-b94c-dbfd-1560c0936fb3@arm.com>
+Date:   Tue, 12 Feb 2019 08:50:52 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <49ef5e6c12f5ede189419d4dcced5dc04957c34d.1549906631.git.robin.murphy@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This slightly optimizes the kernel/configs.c build.
 
-bin2c is not very efficient because it converts a data file into a
-huge array to embed it into a *.c file.
 
-Instead, we can use the .incbin directive.
+On 02/11/2019 11:20 PM, Robin Murphy wrote:
+> ARCH_MEMORY_PROBE is a useful thing for testing and debugging hotplug,
+> but being able to exercise the (arguably trickier) hot-remove path would
+> be even more useful. Extend the feature to allow removal of offline
+> sections to be triggered manually to aid development.
+> 
+> Since process dictates the new sysfs entry be documented, let's also
+> document the existing probe entry to match - better 13-and-a-half years
+> late than never, as they say...
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+> 
+> v2: Use is_memblock_offlined() helper, write up documentation
+> 
+>  .../ABI/testing/sysfs-devices-memory          | 25 +++++++++++
+>  drivers/base/memory.c                         | 42 ++++++++++++++++++-
+>  2 files changed, 66 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+> index deef3b5723cf..02a4250964e0 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-memory
+> +++ b/Documentation/ABI/testing/sysfs-devices-memory
+> @@ -91,3 +91,28 @@ Description:
+>  		memory section directory.  For example, the following symbolic
+>  		link is created for memory section 9 on node0.
+>  		/sys/devices/system/node/node0/memory9 -> ../../memory/memory9
+> +
+> +What:		/sys/devices/system/memory/probe
+> +Date:		October 2005
+> +Contact:	Linux Memory Management list <linux-mm@kvack.org>
+> +Description:
+> +		The file /sys/devices/system/memory/probe is write-only, and
+> +		when written will simulate a physical hot-add of a memory
 
-Also, this simplifies the code; Makefile is cleaner, and the way to
-get the offset/size of the config_data.gz is more straightforward.
+Small nit. It does not 'simulate' but really does add the memory block into
+the memblock, buddy allocator and so on.
 
-I used the "asm" statement in *.c instead of splitting it into *.S
-because MODULE_* tags are not supported in *.S files.
+> +		section at the given address. For example, assuming a section
+> +		of unused memory exists at physical address 0x80000000, it can
+> +		be introduced to the kernel with the following command:
+> +		# echo 0x80000000 > /sys/devices/system/memory/probe
+> +Users:		Memory hotplug testing and development
+> +
+> +What:		/sys/devices/system/memory/memoryX/remove
+> +Date:		February 2019
+> +Contact:	Linux Memory Management list <linux-mm@kvack.org>
+> +Description:
+> +		The file /sys/devices/system/memory/memoryX/remove is
+> +		write-only, and when written with a boolean 'true' value will
+> +		simulate a physical hot-remove of that memory section. For
 
-I also cleaned up kernel/.gitignore; "config_data.gz" is unneeded
-because the top-level .gitignore takes care of the "*.gz" pattern.
+Same here.
+> +		example, assuming a 1GB section size, the section added by the
+> +		above "probe" example could be removed again with the following
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- Documentation/dontdiff |  1 -
- kernel/.gitignore      |  2 --
- kernel/Makefile        | 11 +----------
- kernel/configs.c       | 41 +++++++++++++++++++----------------------
- 4 files changed, 20 insertions(+), 35 deletions(-)
-
-diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-index 2228fcc..ef25a06 100644
---- a/Documentation/dontdiff
-+++ b/Documentation/dontdiff
-@@ -106,7 +106,6 @@ compile.h*
- conf
- config
- config-*
--config_data.h*
- config.mak
- config.mak.autogen
- conmakehash
-diff --git a/kernel/.gitignore b/kernel/.gitignore
-index b3097bd..6e69910 100644
---- a/kernel/.gitignore
-+++ b/kernel/.gitignore
-@@ -1,7 +1,5 @@
- #
- # Generated files
- #
--config_data.h
--config_data.gz
- timeconst.h
- hz.bc
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 6aa7543..6c57e78 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -116,17 +116,8 @@ obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += stackleak.o
- KASAN_SANITIZE_stackleak.o := n
- KCOV_INSTRUMENT_stackleak.o := n
- 
--$(obj)/configs.o: $(obj)/config_data.h
-+$(obj)/configs.o: $(obj)/config_data.gz
- 
- targets += config_data.gz
- $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
- 	$(call if_changed,gzip)
--
--filechk_ikconfiggz = \
--	echo "static const char kernel_config_data[] __used = MAGIC_START"; \
--	cat $< | scripts/bin2c; \
--	echo "MAGIC_END;"
--
--targets += config_data.h
--$(obj)/config_data.h: $(obj)/config_data.gz FORCE
--	$(call filechk,ikconfiggz)
-diff --git a/kernel/configs.c b/kernel/configs.c
-index 2df132b..684c5d8 100644
---- a/kernel/configs.c
-+++ b/kernel/configs.c
-@@ -30,37 +30,34 @@
- #include <linux/init.h>
- #include <linux/uaccess.h>
- 
--/**************************************************/
--/* the actual current config file                 */
--
- /*
-- * Define kernel_config_data and kernel_config_data_size, which contains the
-- * wrapped and compressed configuration file.  The file is first compressed
-- * with gzip and then bounded by two eight byte magic numbers to allow
-- * extraction from a binary kernel image:
-- *
-- *   IKCFG_ST
-- *   <image>
-- *   IKCFG_ED
-+ * "IKCFG_ST" and "IKCFG_ED" are used to extract the config data from
-+ * a binary kernel image or a module. See scripts/extract-ikconfig.
-  */
--#define MAGIC_START	"IKCFG_ST"
--#define MAGIC_END	"IKCFG_ED"
--#include "config_data.h"
--
--
--#define MAGIC_SIZE (sizeof(MAGIC_START) - 1)
--#define kernel_config_data_size \
--	(sizeof(kernel_config_data) - 1 - MAGIC_SIZE * 2)
-+asm (
-+"	.section .rodata, \"a\"			\n"
-+"	.ascii \"IKCFG_ST\"			\n"
-+"	.global kernel_config_data		\n"
-+"kernel_config_data:				\n"
-+"	.incbin \"kernel/config_data.gz\"	\n"
-+"	.global kernel_config_data_end		\n"
-+"kernel_config_data_end:			\n"
-+"	.ascii \"IKCFG_ED\"			\n"
-+);
- 
- #ifdef CONFIG_IKCONFIG_PROC
- 
-+extern char kernel_config_data;
-+extern char kernel_config_data_end;
-+
- static ssize_t
- ikconfig_read_current(struct file *file, char __user *buf,
- 		      size_t len, loff_t * offset)
- {
- 	return simple_read_from_buffer(buf, len, offset,
--				       kernel_config_data + MAGIC_SIZE,
--				       kernel_config_data_size);
-+				       &kernel_config_data,
-+				       &kernel_config_data_end -
-+				       &kernel_config_data);
- }
- 
- static const struct file_operations ikconfig_file_ops = {
-@@ -79,7 +76,7 @@ static int __init ikconfig_init(void)
- 	if (!entry)
- 		return -ENOMEM;
- 
--	proc_set_size(entry, kernel_config_data_size);
-+	proc_set_size(entry, &kernel_config_data_end - &kernel_config_data);
- 
- 	return 0;
- }
--- 
-2.7.4
-
+There is no need to mention specific memory block sizes like 1G in documentation
+for this generic interface which would work for all possible sizes.
