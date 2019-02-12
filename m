@@ -2,143 +2,130 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F225C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC796C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9092084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DPtteqb9"
+	by mail.kernel.org (Postfix) with ESMTP id C18342084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:17:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbfBLLOL (ORCPT
+        id S1729364AbfBLLR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:14:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41477 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728900AbfBLLOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:14:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id x10so2193086wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 03:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4hIHLwfUAJSeqewYADEu2g7Z4YgZdnPP16ibpzE0COE=;
-        b=DPtteqb9o+xC6gdPJxVi8kytlxbR64zM3dMeRZiKRB4cZ07KYwL49siXslw42i4Lkd
-         bPrwywXwRRBLb/7/lJnGfSUR/4f/WDboiqlAC1woyg05lt1xB5SDVQRWQ4rYBSSM5z5m
-         mt9uj2kj9mtPd2btnZlCkFbCThKXOFj3Y4XEUeoRJzxqGXrHRrsi1nzd67dv50gv/K0u
-         +DSJwnjYFAFhv+xAIjHh40FvT4ZdOm9FYBUNmXu8kiHPWjFJqgIw2DxQaN6aVy6q2Hfq
-         7UdyCKONkxeaZDy2B5qyr3/SJACKDKIjmdnXaIqIDLmFljSKKDgXz8vhMkrs5O/VT1hH
-         AVzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4hIHLwfUAJSeqewYADEu2g7Z4YgZdnPP16ibpzE0COE=;
-        b=Z02W6dopW7dLZMFh205EmDAqgkA0oEUHlOKUk6LWmUQ6QbiRe3BIncD7HiAEllIqFE
-         nuvsfz3SwF1iFaVa8cPopDaRdic739KqRms5GQOpLEeOJFluiwaFPDEbr+CC/HtJ4KWm
-         zc8we3qwaPxJ5VLtZu0cqRh9WK41/PHkQHNpubFzganbTb4ONDgo77d9ylth1ECT/d+2
-         HdmblLztSPXhn56mmZ22jb3Wrcs3w8xgl6hOy+UJ2V2xHPAzJ97pc8BAH/B6+nf04JA+
-         curjNqwvGAyPtgLllLCEVmUxuo/hJHz4st6JMS/GVoPaHgBTynDw+zYVof23H/Yibnyq
-         knsw==
-X-Gm-Message-State: AHQUAuaMrLunVmMNEl62wMBnFF9XkMowz4cGzmjMTf/EqMbjENNzh1h4
-        gch60WW8Bm1eUkzbL/lJDtE6rQ==
-X-Google-Smtp-Source: AHgI3IZnJ38lsP94Ke44meE0ia8DF9cDGtCPhTaYVshghy6hsWlnEp/nd6meoy+VKkByHGgRkVEJ5A==
-X-Received: by 2002:adf:ba12:: with SMTP id o18mr2664464wrg.326.1549970047469;
-        Tue, 12 Feb 2019 03:14:07 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id c10sm9828984wrr.69.2019.02.12.03.14.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 03:14:06 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:14:03 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-Message-ID: <20190212111403.GC20638@dell>
-References: <20190205091237.6448-1-brgl@bgdev.pl>
- <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell>
- <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
- <20190212095457.GA20638@dell>
- <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
- <20190212101835.GB20638@dell>
- <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+        Tue, 12 Feb 2019 06:17:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37432 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728566AbfBLLR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 06:17:57 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 040F95858E;
+        Tue, 12 Feb 2019 11:17:57 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A171716929;
+        Tue, 12 Feb 2019 11:17:46 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 19:17:40 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
+ affinity
+Message-ID: <20190212111738.GE24251@ming.t460p>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-3-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1902101723400.8784@nanos.tec.linutronix.de>
+ <20190211035358.GA8638@ming.t460p>
+ <20190211143950.GA151039@google.com>
+ <alpine.DEB.2.21.1902112322470.1654@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1902112322470.1654@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 12 Feb 2019 11:17:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+Hi Thomas,
 
-> wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
-> >
-> > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-> >
-> > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
-> > > >
-> > > >  * The declaration of a superfluous struct
-> > > >  * 100 lines of additional/avoidable code
-> > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
-> > > >  * Resources were designed for HWIRQs (unless a domain is present)
-> > > >  * Loads of additional/avoidable CPU cycles setting all this up
-> > >
-> > > While the above may be right, this one is negligible and you know it. :)
-> >
-> > You have nested for() loops.  You *are* wasting lots of cycles.
-> >
-> > > > Need I go on? :)
-> > > >
-> > > > Surely the fact that you are using both sides of an API
-> > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
-> > > > set some alarm bells ringing?
-> > > >
-> > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
-> > > >
-> > > > And for what?  To avoid passing IRQ data to a child driver?
-> > >
-> > > What do you propose? Should I go back to the approach in v1 and pass
-> > > the regmap_irq_chip_data to child drivers?
-> >
-> > I'm saying you should remove all of this hackery and pass IRQs as they
-> > are supposed to be passed (like everyone else does).
+On Mon, Feb 11, 2019 at 11:38:07PM +0100, Thomas Gleixner wrote:
+> Ming,
 > 
-> I'm not sure what you mean by "like everyone else does" - different
-> mfd drivers seem to be doing different things. Is a simple struct
-> containing virtual irq numbers passed to sub-drivers fine?
+> On Mon, 11 Feb 2019, Bjorn Helgaas wrote:
+> 
+> > On Mon, Feb 11, 2019 at 11:54:00AM +0800, Ming Lei wrote:
+> > > On Sun, Feb 10, 2019 at 05:30:41PM +0100, Thomas Gleixner wrote:
+> > > > On Fri, 25 Jan 2019, Ming Lei wrote:
+> > > > 
+> > > > > This patch introduces callback of .setup_affinity into 'struct
+> > > > > irq_affinity', so that:
+> > > > 
+> > > > Please see Documentation/process/submitting-patches.rst. Search for 'This
+> > > > patch' ....
+> > > 
+> > > Sorry for that, because I am not a native English speaker and it looks a bit
+> > > difficult for me to understand the subtle difference.
+> 
+> Sorry I was a bit terse.
+> 
+> > I think Thomas is saying that instead of "This patch introduces
+> > callback ...", you could say "Introduce callback of ...".
+> > 
+> > The changelog is *part* of the patch, so the context is obvious and
+> > there's no need to include the words "This patch".
+> > 
+> > I make the same changes to patches I receive.  In fact, I would go
+> > even further and say "Add callback .setup_affinity() ..." because "add"
+> > means the same as "introduce" but is shorter and simpler.
+> 
+> Thanks for the explanation, Bjorn!
+> 
+> There is another point here. It's not only the 'This patch introduces ...'
+> part. It's also good practice to structure the changelog so it provides
+> context and reasoning first and then tells what the change is, e.g.:
+> 
+>    The current handling of multiple interrupt sets in the core interrupt
+>    affinity logic, requires the driver to do .......  This is necessary
+>    because ....
+> 
+>    This handling should be in the core code, but the core implementation
+>    has no way to recompute the interrupt sets for a given number of
+>    vectors.
+> 
+>    Add an optional callback to struct affd, which lets the driver recompute
+>    the interrupt set before the interrupt affinity spreading takes place.
+> 
+> The first paragraph provides context, i.e. the status quo, The second
+> paragraph provides reasoning what is missing and the last one tells what's
+> done to solve it.
+> 
+> That's pretty much the same for all changelogs, even if you fix a bug. Just
+> in the bug case, the second paragraph describes the details of the bug and
+> the possible consequences.
+> 
+> You really need to look at the changelog as a stand alone information
+> source. That's important when you look at a commit as an outsider or even
+> if you look at your own patch 6 month down the road when you already paged
+> out all the details.
+> 
+> Hope that clarifies it.
 
-How do you plan on deriving the VIRQs to place into the struct?
+Your description about how to write changelog is really helpful and useful
+for me, thanks!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Maybe you can add it into Documentation/SubmittingPatches, so that lots
+of people can benefit from the guide.
+
+
+Thanks,
+Ming
