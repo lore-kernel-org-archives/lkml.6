@@ -2,354 +2,129 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8F4C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5586DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE8F20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFB12184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:57:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hekjxa6G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfBLJz6 (ORCPT
+        id S1728443AbfBLJ5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:55:58 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:30914 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726480AbfBLJz5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:55:57 -0500
-X-UUID: 5bdad7c0b016417d9c56d07c3761917a-20190212
-X-UUID: 5bdad7c0b016417d9c56d07c3761917a-20190212
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <michael.kao@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1814503087; Tue, 12 Feb 2019 17:55:43 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 12 Feb 2019 17:55:42 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Feb 2019 17:55:42 +0800
-Message-ID: <1549965342.22716.9.camel@mtksdccf07>
-Subject: Re: [PATCH 4/7] thermal: mediatek: add thermal controller offset
-From:   Michael Kao <michael.kao@mediatek.com>
-To:     Eduardo Valentin <edubezval@gmail.com>
-CC:     =Zhang Rui <rui.zhang@intel.com>,
-        =Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =Rob Herring <robh+dt@kernel.org>,
-        "=Mark Rutland" <mark.rutland@arm.com>,
-        =Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Tue, 12 Feb 2019 17:55:42 +0800
-In-Reply-To: <20190206005300.GD19687@localhost.localdomain>
-References: <1549006693-11659-1-git-send-email-michael.kao@mediatek.com>
-         <1549006693-11659-5-git-send-email-michael.kao@mediatek.com>
-         <20190206005300.GD19687@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Feb 2019 04:57:37 -0500
+Received: from mail-eopbgr70072.outbound.protection.outlook.com ([40.107.7.72]:8224
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbfBLJ5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:57:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KGYoMosSug0clgOuvCqJruQWpJGQ+jDHIEQWXlMHTSg=;
+ b=hekjxa6GvCXR/9vKaCc+/7hrEpSssLvbHN0hdJOo6XBFRsRtNExWMTya8Hn+5dHnILQJsFTd4QIEWU9nwERArmIiIZTh5B4yaKJqgGiM8WUCVxlcZ/COlR6mx2z7pobE1hoHOnohLoYLAOMQy3SAkCdkMQaCRCQ9ZsVWORBwHDw=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB6116.eurprd04.prod.outlook.com (20.179.33.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Tue, 12 Feb 2019 09:57:32 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
+ 09:57:32 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+CC:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Carlo Caione <ccaione@baylibre.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>
+Subject: Re: [PATCH 1/3] dt-bindings: imx-ocotp: Add i.MX8MQ compatible
+Thread-Topic: [PATCH 1/3] dt-bindings: imx-ocotp: Add i.MX8MQ compatible
+Thread-Index: AQHUwinfXUV9s79yzE6xqkNTp1E4f6Xb7mmA
+Date:   Tue, 12 Feb 2019 09:57:31 +0000
+Message-ID: <20190212095731.ffyd33vndaldrp7i@fsr-ub1664-175>
+References: <20190211165011.5114-1-l.stach@pengutronix.de>
+In-Reply-To: <20190211165011.5114-1-l.stach@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB6116;6:w9w2DV9jkwCgQ2ZCiNqY2dElT/r8rk6G8SgdN9vF6jTDjeOft3B8YAIYZE+rJAsMafGTndR8gehVdPG2R6eoTb1UBwjIzyGrlXY2aX0m8YKrfn5Q8My4SBkb8y+yKdTYTWP8YtrpGNKByFtJtAdWHYmXsQAdgLZnGcQjHfUPFBUg9GszPTKKkyIAhs4sn41F7FJjCfkCkTjEZEyoiuYOyUzeFBN+mAu8ntBfqBe99iyZR7g+qhGzUlgalmSUPPZsgg7cVAu8aZxyI0x4bVW4eZzZtwgLUdvu86no/53hOwbN2Hzv39f8hXx07cJ/rjOcqvy55VBFmOaXbB5pkYQ/N0TVagc8HwRNwJYd4zjG78PlUGmD2fG5sO5ut5++CEP8j8b0ZwP5zxLpD2748eYWDJZClNE109PYg8Aj+h5wpM+n4tZFPyjGY1BGh3ftGABazA1QbX7V4z7EcSI6iK0OJQ==;5:gam54GkTET+6+jVhIA0XIMkaVULBBe0yHCH821YY3IxjyOIYOXm8aVzWcGac9/Zc5r9Uzqj6CyKQW20b5ZPaDiJTD8P9vOWzhEcAqrfS/K9MZZjfnOW5+7raS8bNVbDqy0M4f+9ENZWtujnNrypIsKBWaBWyObgjJNjq1iJUo7Rl1msUj3bfHq67EyBEEODzfAD5Jm+gH0UbBuTxvy/hdw==;7:x8kjee2wQxAPDWBFNc91e7AdqqXSN5TqXSPyeRbjRMnIEqU0VdDwoBPn/KL6+9YtWxOvfuGyZoiW4GZBAlb4vfAGFiYBNSOFA16SleW06hCRhGgKFuTIqdwgE++i3K4j/0J19ynmXR1kN73qD7Ohtw==
+x-ms-office365-filtering-correlation-id: 2e29a5d7-4d95-45e2-f93c-08d690d08192
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6116;
+x-ms-traffictypediagnostic: AM0PR04MB6116:
+x-microsoft-antispam-prvs: <AM0PR04MB611611E42153D75AA1E4B7B3F6650@AM0PR04MB6116.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(7916004)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(478600001)(486006)(66066001)(14454004)(97736004)(1076003)(71190400001)(71200400001)(186003)(26005)(105586002)(106356001)(446003)(11346002)(476003)(53936002)(256004)(14444005)(25786009)(3846002)(6116002)(6246003)(4326008)(102836004)(7736002)(53546011)(6506007)(86362001)(9686003)(6512007)(8676002)(2906002)(8936002)(305945005)(81166006)(81156014)(6436002)(6916009)(33716001)(76176011)(33896004)(229853002)(99286004)(68736007)(6486002)(44832011)(316002)(54906003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6116;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: lZWuuQ7zgMY/a6cHiLkVe1vn1IMQRkVzU+qCOLfSq8dEcKHP0Z/iFzovLXDAuceqGA4iNd8Uu9yHyOlwGiZ+sEXWDYLAl0kOvQdlldgrE1zYbcnaooN7l3hg69GmLqw2eMBIZQoevgQbxPXrRot+x3K+KjtFokWUoR6aBL/NJKc8tNpj4u4WzdBnUjrICFrZmLx2o25/oVNilB373kIgEQO1WRZMnQgcy1yPgyIQ5byIAmPHz+uVnF42mR0w8D8G88UdNmKMonuKDUwqUJHyaLHcaYh7BC9Y/EGuZd3caO7sll1LdHF9SGz04zoVHwC9Ojrwr3V6QNNM/XgzYQkzDpy3CaZdaLDSVQ0VmdyQC/fk6O2ZxpRgv26Ng9v6AzAnh/oPVP7i4mXMU3QMHw/fZ1Y0grkBuZVkVrCabuZo4Ns=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <21AA47679148184C87CDC2646C2CB6FE@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 321B214D3E6AE8C43F9485D49CB6BD849B4262412767725CA3B76C321BF81CB72000:8
-X-MTK:  N
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e29a5d7-4d95-45e2-f93c-08d690d08192
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 09:57:32.0103
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-05 at 16:53 -0800, Eduardo Valentin wrote:
-> On Fri, Feb 01, 2019 at 03:38:10PM +0800, michael.kao@mediatek.com wrote:
-> > From: Michael Kao <michael.kao@mediatek.com>
-> > 
-> > One thermal controller can read four sensors at most,
-> > so we need to add controller_offset for the project with
-> > more than four sensors to reuse the same register settings.
-> > 
-> > Signed-off-by: Michael Kao <michael.kao@mediatek.com>
-> > ---
-> >  drivers/thermal/mtk_thermal.c | 79 +++++++++++++++++++++++++++++--------------
-> >  1 file changed, 54 insertions(+), 25 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-> > index 45c6587..e5cf3f4 100644
-> > --- a/drivers/thermal/mtk_thermal.c
-> > +++ b/drivers/thermal/mtk_thermal.c
-> > @@ -105,6 +105,9 @@
-> >  /* The number of sensing points per bank */
-> >  #define MT8173_NUM_SENSORS_PER_ZONE	4
-> >  
-> > +/* The number of controller in the MT8173 */
-> > +#define MT8173_NUM_CONTROLLER		1
-> > +
-> >  /* The calibration coefficient of sensor  */
-> >  #define MT8173_CALIBRATION	165
-> >  
-> > @@ -150,6 +153,9 @@ enum {
-> >  /* The number of sensing points per bank */
-> >  #define MT2701_NUM_SENSORS_PER_ZONE	3
-> >  
-> > +/* The number of controller in the MT2701 */
-> > +#define MT2701_NUM_CONTROLLER		1
-> > +
-> >  /* The calibration coefficient of sensor  */
-> >  #define MT2701_CALIBRATION	165
-> >  
-> > @@ -168,6 +174,9 @@ enum {
-> >  /* The number of sensing points per bank */
-> >  #define MT2712_NUM_SENSORS_PER_ZONE	4
-> >  
-> > +/* The number of controller in the MT2712 */
-> > +#define MT2712_NUM_CONTROLLER		1
-> > +
-> >  /* The calibration coefficient of sensor  */
-> >  #define MT2712_CALIBRATION	165
-> >  
-> > @@ -176,6 +185,7 @@ enum {
-> >  #define MT7622_NUM_ZONES		1
-> >  #define MT7622_NUM_SENSORS_PER_ZONE	1
-> >  #define MT7622_TS1	0
-> > +#define MT7622_NUM_CONTROLLER		1
-> >  
-> >  /* The calibration coefficient of sensor  */
-> >  #define MT7622_CALIBRATION	165
-> > @@ -201,6 +211,8 @@ struct mtk_thermal_data {
-> >  	const int *msr;
-> >  	const int *adcpnp;
-> >  	const int cali_val;
-> > +	const int num_controller;
-> > +	const int *controller_offset;
-> >  	struct thermal_bank_cfg bank_data[];
-> >  };
-> >  
-> > @@ -240,6 +252,7 @@ struct mtk_thermal {
-> >  };
-> >  
-> >  static const int mt8173_mux_values[MT8173_NUM_SENSORS] = { 0, 1, 2, 3, 16 };
-> > +static const int mt8173_tc_offset[MT8173_NUM_CONTROLLER] = { 0x0, };
-> >  
-> >  static const int mt8173_vts_index[MT8173_NUM_SENSORS] = {
-> >  	VTS1, VTS2, VTS3, VTS4, VTSABB
-> > @@ -259,6 +272,7 @@ struct mtk_thermal {
-> >  };
-> >  
-> >  static const int mt2701_mux_values[MT2701_NUM_SENSORS] = { 0, 1, 16 };
-> > +static const int mt2701_tc_offset[MT2701_NUM_CONTROLLER] = { 0x0, };
-> >  
-> >  static const int mt2701_vts_index[MT2701_NUM_SENSORS] = {
-> >  	VTS1, VTS2, VTS3
-> > @@ -278,6 +292,7 @@ struct mtk_thermal {
-> >  };
-> >  
-> >  static const int mt2712_mux_values[MT2712_NUM_SENSORS] = { 0, 1, 2, 3 };
-> > +static const int mt2712_tc_offset[MT2712_NUM_CONTROLLER] = { 0x0, };
-> >  
-> >  static const int mt2712_vts_index[MT2712_NUM_SENSORS] = {
-> >  	VTS1, VTS2, VTS3, VTS4
-> > @@ -289,6 +304,7 @@ struct mtk_thermal {
-> >  static const int mt7622_adcpnp[MT7622_NUM_SENSORS_PER_ZONE] = { TEMP_ADCPNP0, };
-> >  static const int mt7622_mux_values[MT7622_NUM_SENSORS] = { 0, };
-> >  static const int mt7622_vts_index[MT7622_NUM_SENSORS] = { VTS1 };
-> > +static const int mt7622_tc_offset[MT7622_NUM_CONTROLLER] = { 0x0, };
-> >  
-> >  /**
-> >   * The MT8173 thermal controller has four banks. Each bank can read up to
-> > @@ -309,6 +325,8 @@ struct mtk_thermal {
-> >  	.num_sensors = MT8173_NUM_SENSORS,
-> >  	.vts_index = mt8173_vts_index,
-> >  	.cali_val = MT8173_CALIBRATION,
-> > +	.num_controller = MT8173_NUM_CONTROLLER,
-> > +	.controller_offset = mt8173_tc_offset,
-> >  	.bank_data = {
-> >  		{
-> >  			.num_sensors = 2,
-> > @@ -345,6 +363,8 @@ struct mtk_thermal {
-> >  	.num_sensors = MT2701_NUM_SENSORS,
-> >  	.vts_index = mt2701_vts_index,
-> >  	.cali_val = MT2701_CALIBRATION,
-> > +	.num_controller = MT2701_NUM_CONTROLLER,
-> > +	.controller_offset = mt2701_tc_offset,
-> >  	.bank_data = {
-> >  		{
-> >  			.num_sensors = 3,
-> > @@ -372,6 +392,8 @@ struct mtk_thermal {
-> >  	.num_sensors = MT2712_NUM_SENSORS,
-> >  	.vts_index = mt2712_vts_index,
-> >  	.cali_val = MT2712_CALIBRATION,
-> > +	.num_controller = MT2712_NUM_CONTROLLER,
-> > +	.controller_offset = mt2712_tc_offset,
-> >  	.bank_data = {
-> >  		{
-> >  			.num_sensors = 4,
-> > @@ -393,6 +415,8 @@ struct mtk_thermal {
-> >  	.num_sensors = MT7622_NUM_SENSORS,
-> >  	.vts_index = mt7622_vts_index,
-> >  	.cali_val = MT7622_CALIBRATION,
-> > +	.num_controller = MT7622_NUM_CONTROLLER,
-> > +	.controller_offset = mt7622_tc_offset,
-> >  	.bank_data = {
-> >  		{
-> >  			.num_sensors = 1,
-> > @@ -523,19 +547,23 @@ static int mtk_read_temp(void *data, int *temperature)
-> >  };
-> >  
-> >  static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> > -				  u32 apmixed_phys_base, u32 auxadc_phys_base)
-> > +				  u32 apmixed_phys_base, u32 auxadc_phys_base,
-> > +				  int ctrl_id)
-> >  {
-> >  	struct mtk_thermal_bank *bank = &mt->banks[num];
-> >  	const struct mtk_thermal_data *conf = mt->conf;
-> >  	int i;
-> >  
-> > +	int offset = mt->conf->controller_offset[ctrl_id];
-> > +	void *controller_base = mt->thermal_base + offset;
-> 
-> This void * has to be at least __iomem, right?
-> 
-> See the report of kbuild bot, fix it and send it back.
-> 
-OK, I will fix the declaration and send it again.
-Thanks!
+On 19-02-11 17:50:09, Lucas Stach wrote:
+> Add compatible for i.MX8MQ and add both i.MX7D/S and i.M8MQ
+> to the description.
+>=20
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Docu=
+mentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> index 792bc5fafeb9..bb8fb8fc6217 100644
+> --- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> +++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> @@ -1,7 +1,8 @@
+>  Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
+> =20
+>  This binding represents the on-chip eFuse OTP controller found on
+> -i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL and i.MX6SLL SoCs.
+> +i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6SLL, i.MX7D/S
+> +and i.MX8MQ SoCs.
+> =20
+>  Required properties:
+>  - compatible: should be one of
+> @@ -11,6 +12,7 @@ Required properties:
+>  	"fsl,imx6ul-ocotp" (i.MX6UL),
+>  	"fsl,imx7d-ocotp" (i.MX7D/S),
+>  	"fsl,imx6sll-ocotp" (i.MX6SLL),
+> +	"fsl,imx8mq-ocotp" (i.MX8MQ),
+>  	followed by "syscon".
+>  - #address-cells : Should be 1
+>  - #size-cells : Should be 1
+> --=20
+> 2.20.1
+>=20
 
-> > +
-> >  	bank->id = num;
-> >  	bank->mt = mt;
-> >  
-> >  	mtk_thermal_get_bank(bank);
-> >  
-> >  	/* bus clock 66M counting unit is 12 * 15.15ns * 256 = 46.540us */
-> > -	writel(TEMP_MONCTL1_PERIOD_UNIT(12), mt->thermal_base + TEMP_MONCTL1);
-> > +	writel(TEMP_MONCTL1_PERIOD_UNIT(12), controller_base + TEMP_MONCTL1);
-> >  
-> >  	/*
-> >  	 * filt interval is 1 * 46.540us = 46.54us,
-> > @@ -543,21 +571,21 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> >  	 */
-> >  	writel(TEMP_MONCTL2_FILTER_INTERVAL(1) |
-> >  			TEMP_MONCTL2_SENSOR_INTERVAL(429),
-> > -			mt->thermal_base + TEMP_MONCTL2);
-> > +			controller_base + TEMP_MONCTL2);
-> >  
-> >  	/* poll is set to 10u */
-> >  	writel(TEMP_AHBPOLL_ADC_POLL_INTERVAL(768),
-> > -	       mt->thermal_base + TEMP_AHBPOLL);
-> > +	       controller_base + TEMP_AHBPOLL);
-> >  
-> >  	/* temperature sampling control, 1 sample */
-> > -	writel(0x0, mt->thermal_base + TEMP_MSRCTL0);
-> > +	writel(0x0, controller_base + TEMP_MSRCTL0);
-> >  
-> >  	/* exceed this polling time, IRQ would be inserted */
-> > -	writel(0xffffffff, mt->thermal_base + TEMP_AHBTO);
-> > +	writel(0xffffffff, controller_base + TEMP_AHBTO);
-> >  
-> >  	/* number of interrupts per event, 1 is enough */
-> > -	writel(0x0, mt->thermal_base + TEMP_MONIDET0);
-> > -	writel(0x0, mt->thermal_base + TEMP_MONIDET1);
-> > +	writel(0x0, controller_base + TEMP_MONIDET0);
-> > +	writel(0x0, controller_base + TEMP_MONIDET1);
-> >  
-> >  	/*
-> >  	 * The MT8173 thermal controller does not have its own ADC. Instead it
-> > @@ -572,44 +600,44 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> >  	 * this value will be stored to TEMP_PNPMUXADDR (TEMP_SPARE0)
-> >  	 * automatically by hw
-> >  	 */
-> > -	writel(BIT(conf->auxadc_channel), mt->thermal_base + TEMP_ADCMUX);
-> > +	writel(BIT(conf->auxadc_channel), controller_base + TEMP_ADCMUX);
-> >  
-> >  	/* AHB address for auxadc mux selection */
-> >  	writel(auxadc_phys_base + AUXADC_CON1_CLR_V,
-> > -	       mt->thermal_base + TEMP_ADCMUXADDR);
-> > +	       controller_base + TEMP_ADCMUXADDR);
-> >  
-> >  	/* AHB address for pnp sensor mux selection */
-> >  	writel(apmixed_phys_base + APMIXED_SYS_TS_CON1,
-> > -	       mt->thermal_base + TEMP_PNPMUXADDR);
-> > +	       controller_base + TEMP_PNPMUXADDR);
-> >  
-> >  	/* AHB value for auxadc enable */
-> > -	writel(BIT(conf->auxadc_channel), mt->thermal_base + TEMP_ADCEN);
-> > +	writel(BIT(conf->auxadc_channel), controller_base + TEMP_ADCEN);
-> >  
-> >  	/* AHB address for auxadc enable (channel 0 immediate mode selected) */
-> >  	writel(auxadc_phys_base + AUXADC_CON1_SET_V,
-> > -	       mt->thermal_base + TEMP_ADCENADDR);
-> > +	       controller_base + TEMP_ADCENADDR);
-> >  
-> >  	/* AHB address for auxadc valid bit */
-> >  	writel(auxadc_phys_base + AUXADC_DATA(conf->auxadc_channel),
-> > -	       mt->thermal_base + TEMP_ADCVALIDADDR);
-> > +	       controller_base + TEMP_ADCVALIDADDR);
-> >  
-> >  	/* AHB address for auxadc voltage output */
-> >  	writel(auxadc_phys_base + AUXADC_DATA(conf->auxadc_channel),
-> > -	       mt->thermal_base + TEMP_ADCVOLTADDR);
-> > +	       controller_base + TEMP_ADCVOLTADDR);
-> >  
-> >  	/* read valid & voltage are at the same register */
-> > -	writel(0x0, mt->thermal_base + TEMP_RDCTRL);
-> > +	writel(0x0, controller_base + TEMP_RDCTRL);
-> >  
-> >  	/* indicate where the valid bit is */
-> >  	writel(TEMP_ADCVALIDMASK_VALID_HIGH | TEMP_ADCVALIDMASK_VALID_POS(12),
-> > -	       mt->thermal_base + TEMP_ADCVALIDMASK);
-> > +	       controller_base + TEMP_ADCVALIDMASK);
-> >  
-> >  	/* no shift */
-> > -	writel(0x0, mt->thermal_base + TEMP_ADCVOLTAGESHIFT);
-> > +	writel(0x0, controller_base + TEMP_ADCVOLTAGESHIFT);
-> >  
-> >  	/* enable auxadc mux write transaction */
-> >  	writel(TEMP_ADCWRITECTRL_ADC_MUX_WRITE,
-> > -	       mt->thermal_base + TEMP_ADCWRITECTRL);
-> > +		controller_base + TEMP_ADCWRITECTRL);
-> >  
-> >  	for (i = 0; i < conf->bank_data[num].num_sensors; i++)
-> >  		writel(conf->sensor_mux_values[conf->bank_data[num].sensors[i]],
-> > @@ -617,11 +645,11 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> >  		       conf->adcpnp[conf->bank_data[num].sensors[i]]);
-> >  
-> >  	writel((1 << conf->bank_data[num].num_sensors) - 1,
-> > -	       mt->thermal_base + TEMP_MONCTL0);
-> > +	       controller_base + TEMP_MONCTL0);
-> >  
-> >  	writel(TEMP_ADCWRITECTRL_ADC_PNP_WRITE |
-> >  	       TEMP_ADCWRITECTRL_ADC_MUX_WRITE,
-> > -	       mt->thermal_base + TEMP_ADCWRITECTRL);
-> > +	       controller_base + TEMP_ADCWRITECTRL);
-> >  
-> >  	mtk_thermal_put_bank(bank);
-> >  }
-> > @@ -737,7 +765,7 @@ static int mtk_thermal_get_calibration_data(struct device *dev,
-> >  
-> >  static int mtk_thermal_probe(struct platform_device *pdev)
-> >  {
-> > -	int ret, i;
-> > +	int ret, i, ctrl_id;
-> >  	struct device_node *auxadc, *apmixedsys, *np = pdev->dev.of_node;
-> >  	struct mtk_thermal *mt;
-> >  	struct resource *res;
-> > @@ -817,9 +845,10 @@ static int mtk_thermal_probe(struct platform_device *pdev)
-> >  		goto err_disable_clk_auxadc;
-> >  	}
-> >  
-> > -	for (i = 0; i < mt->conf->num_banks; i++)
-> > -		mtk_thermal_init_bank(mt, i, apmixed_phys_base,
-> > -				      auxadc_phys_base);
-> > +	for (ctrl_id = 0; ctrl_id < mt->conf->num_controller ; ctrl_id++)
-> > +		for (i = 0; i < mt->conf->num_banks; i++)
-> > +			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
-> > +					      auxadc_phys_base, ctrl_id);
-> >  
-> >  	platform_set_drvdata(pdev, mt);
-> >  
-> > -- 
-> > 1.9.1
-> > 
+The entire series looks good to me.
 
-
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=
