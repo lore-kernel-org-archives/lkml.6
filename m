@@ -2,105 +2,109 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4A8C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B16C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D356222BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O6M+rOXH"
+	by mail.kernel.org (Postfix) with ESMTP id 982E0222BD
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549991764;
+	bh=2cFSXGV0SxQOKPgYAd/PhZoB8p6TkUfYiu8QQH6JSjk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NVu5/vNAn0+2dPk2/bRr6uJWn+ddPycyjFundwrRIoaJlJ8yLsGxItX4GaS2QQSAV
+	 mgSK/CnAovmx3DmnNuAkFWCOjhh4iH7DQh5TFGzyRAtrY7IPY5By2dG3dkEbjkCYnz
+	 BOchdj4CCsbGVUX2vzHr4zPwaXmHZc32heUkScZk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731671AbfBLRQA (ORCPT
+        id S1731682AbfBLRQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:16:00 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38371 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731650AbfBLRP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:15:57 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h58so2863523edb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:15:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9b6SDcWcNASqToIPGqXapMx5Mz7l/Dq+R+y7ygNEt7Q=;
-        b=O6M+rOXHGCsFiSG6C4sVHS6ci6YD+AnYVsLTkzlJeykrDgaY6YP0Hl3EOnGcPzs/MK
-         6NxDr5iVsJXqdFIvkp3heHwAnwUlIsqUa7BISotapag2KnoS5ehYsBqErP8wawpqV7Se
-         XIxGYuBqP/aMJPUneDkR/RI2O0/gs1jI5dIlg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9b6SDcWcNASqToIPGqXapMx5Mz7l/Dq+R+y7ygNEt7Q=;
-        b=SgrVK0jE5c02j0FmKYHNrgNn0h6E9szX1KDau12TCr52fgLQuyw3rFiQDJLJ3HJzBm
-         Qwg+CDI58D2IUEAc7koO6J6Wy8+ihS6KZ5PXSFpHDw+b+Al5E+VBCbVyq91ITGpNof8m
-         VToFBHTbeGmYIOVnzUaRbSotTVmE8+S+xEtv29icsjwkoUifZrrzb+4SB9H4CosGnfnf
-         pIioHRZ3EhzPoB16mKkN7rt7rrFaX7s+2v4yhOVRoZX7Fjk3M5ot9nJqYCmPAqnooPwG
-         2P1Cd5lD9ViktJgmOtD62YsbjW7rqGTqfOx+Je71Yj6wmhQfDbj58T7zkUdCo0D96evH
-         1MeQ==
-X-Gm-Message-State: AHQUAuZVtOAXDGEKMsCBGSo2IWlejEBwQ8o2J6Thd/VOZ3rZPT5r4Q+5
-        wYZBv2OxWxvDmKxK8a/kpjaXLBNWeZY=
-X-Google-Smtp-Source: AHgI3IaFUDtTTiuu+Sb7ZFZRld/NTrKp0yH7kAJll/ts9gQv9g+quoM9f7XGwrGyvi+Mer5UDZ/r6g==
-X-Received: by 2002:a17:906:d1c4:: with SMTP id bs4mr3486623ejb.205.1549991754769;
-        Tue, 12 Feb 2019 09:15:54 -0800 (PST)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
-        by smtp.gmail.com with ESMTPSA id f1sm2246279ejl.65.2019.02.12.09.15.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 09:15:53 -0800 (PST)
-Received: by mail-wr1-f43.google.com with SMTP id v13so3569853wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:15:53 -0800 (PST)
-X-Received: by 2002:adf:ecc7:: with SMTP id s7mr3585818wro.255.1549991752805;
- Tue, 12 Feb 2019 09:15:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20190212143003.48446-1-john.ogness@linutronix.de> <20190212143003.48446-8-john.ogness@linutronix.de>
-In-Reply-To: <20190212143003.48446-8-john.ogness@linutronix.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Feb 2019 09:15:36 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whToBNHN_X_BQkO4zSyhSBaGqTH8XEtxg2_AxoBdDnEdg@mail.gmail.com>
-Message-ID: <CAHk-=whToBNHN_X_BQkO4zSyhSBaGqTH8XEtxg2_AxoBdDnEdg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 07/25] printk-rb: add functionality required by printk
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Tue, 12 Feb 2019 12:16:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731650AbfBLRQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:16:01 -0500
+Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B3AF222B7;
+        Tue, 12 Feb 2019 17:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549991760;
+        bh=2cFSXGV0SxQOKPgYAd/PhZoB8p6TkUfYiu8QQH6JSjk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gY5NWxTfJV+0L+DJ8em0JbLXwayjBLeyeu2HB9rFxekNetKE4fBiPluCLbeNLvTXy
+         Wh/SQWaLWY5JIMnVvCx42wiCQf8l39Szg+1/xjsxwOrKNBNcxCHzQ9T2WgV4VHjxkU
+         n4CE+bCycg07BlmChk00cWxNQ+Bi2Gow67GUqJV0=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: [PATCH 28/32] locking/lockdep: Update check_flags() according to new layout
+Date:   Tue, 12 Feb 2019 18:14:19 +0100
+Message-Id: <20190212171423.8308-29-frederic@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
+References: <20190212171423.8308-1-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 6:30 AM John Ogness <john.ogness@linutronix.de> wrote:
->
-> +                       while (atomic_long_read(&rb->lost)) {
-> +                               atomic_long_dec(&rb->lost);
-> +                               rb->seq++;
-> +                       }
+current->softirqs_enabled used to mean that either all or no softirqs
+are enabled. Now things are getting a bit different with the new per
+vector masking extension after which current->softirqs_enabled will
+stay on as long as there is a single vector still enabled.
 
-This looks like crazy garbage. It's neither atomic nor sane.
+Let's adapt the check to the updated semantics. We can't deduce much
+from softirq_count() alone anymore except when it's 0.
 
-Why isn't it something like
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Pavan Kondeti <pkondeti@codeaurora.org>
+Cc: Paul E . McKenney <paulmck@linux.vnet.ibm.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+---
+ kernel/locking/lockdep.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-    if (atomic_long_read(&rb->lost)) {
-        long lost = atomic_xchg(&rb->lost, 0);
-        rb->seq += lost;
-    }
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 9bb39677fd97..acd82145f6a6 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3909,13 +3909,8 @@ static void check_flags(unsigned long flags)
+ 	 * check if not in hardirq contexts:
+ 	 */
+ 	if (!hardirq_count()) {
+-		if (softirq_count()) {
+-			/* like the above, but with softirqs */
+-			DEBUG_LOCKS_WARN_ON(current->softirqs_enabled);
+-		} else {
+-			/* lick the above, does it taste good? */
++		if (!softirq_count())
+ 			DEBUG_LOCKS_WARN_ON(!current->softirqs_enabled);
+-		}
+ 	}
+ 
+ 	if (!debug_locks)
+-- 
+2.17.1
 
-instead?
-
-                Linus
