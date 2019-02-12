@@ -2,117 +2,127 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDE8C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3579C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C21206A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE656206A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:36:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UWVKchDp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbfBLAfN convert rfc822-to-8bit (ORCPT
+        id S1728024AbfBLAgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:35:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:20975 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbfBLAfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:35:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 16:35:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="318189983"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Feb 2019 16:35:11 -0800
-Received: from fmsmsx157.amr.corp.intel.com (10.18.116.73) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 16:35:11 -0800
-Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
- FMSMSX157.amr.corp.intel.com (10.18.116.73) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 11 Feb 2019 16:35:11 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
- CRSMSX103.amr.corp.intel.com ([169.254.4.180]) with mapi id 14.03.0415.000;
- Mon, 11 Feb 2019 18:35:09 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     Davidlohr Bueso <dave@stgolabs.net>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "dledford@redhat.com" <dledford@redhat.com>,
-        "jgg@mellanox.com" <jgg@mellanox.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 7/6] Documentation/infiniband: update from locked to
- pinned_vm
-Thread-Topic: [PATCH 7/6] Documentation/infiniband: update from locked to
- pinned_vm
-Thread-Index: AQHUvoT55Uy7G877J0q1705BUMR+vKXbWG0A
-Date:   Tue, 12 Feb 2019 00:35:08 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BCF60F@CRSMSX101.amr.corp.intel.com>
-References: <20190206175920.31082-1-dave@stgolabs.net>
- <20190207013155.lq5diwqc2svyt3t3@linux-r8p5>
-In-Reply-To: <20190207013155.lq5diwqc2svyt3t3@linux-r8p5>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzcxNjc5YjktMWQzNC00MTc0LTgwNTAtNzBhOGM3YWZiZTIyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoienppekg3cjdhNlpkTGlmOVF1c1JWXC9QamsrbjlLQ1ZTWStKcnhXSTR1WE5Jc2FvZ2lHNDUrWkRCTEtcLytQUERcLyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 11 Feb 2019 19:36:44 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39535 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727926AbfBLAgo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:36:44 -0500
+Received: by mail-qk1-f196.google.com with SMTP id x6so7673716qki.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 16:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=p6UZlmJNvW6qn9lMpKGAK6h+ZzY5nTSp1ppNfG3zito=;
+        b=UWVKchDptb/mMvXJH9eaB8sONNav2zs3oXVVHA5crBHGZhtrPABF+Jmp/e6N34QkOh
+         8yzZN0l3BbHFjPaGNM5Y21GEgbheGKJX/rOWLWeijXS/oyVVFH5Bo8mXzRCw+Kj+3d+g
+         jaE2E0AX1jfFbP2lO2Ot5uqndRvxFRSBUYb6kSdLNjvmM+ED0rN6MJxH6uUQPi7DJ9A8
+         Fnv+63IA3AQtyY26+pY2VjCEPnII2Yka/faT9thWhNixbqPOCmBjTq181g/njQUAMEFL
+         tsfmA95a4Dp9O9gUcXlKXnOe2I9ndbypXH6q6Ic6dM+Koez8aELRa8LYecQS87VhQBi8
+         nK3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=p6UZlmJNvW6qn9lMpKGAK6h+ZzY5nTSp1ppNfG3zito=;
+        b=Tn3YFhFr5g8GOVH0ZfBhmg/6zjERwzNEwPGOLRJqZcFFcfTiILSNBceb+7BB3yks7S
+         5ixOBgaDuo5fKvZ7Uc+OCmQ+xBK0g3pz/ljqTp1QLpd7gC1WcDW+wA69nzBS3dmPJyUc
+         sTfvd6Z0dNo2hUE2OMrmKPBklloONh4xVsKZxmtpDO57EoOY8PBK4IJEPqicto3K2UnV
+         Rui1AiD7CFjUBhh73MCpue0xQFOdvA2PE1rW88NfCEShh6dZNrp+9BD3ODoybNz07ZkH
+         3g0trLqR6p25lX+KTrN34iNDSAXGeGbrTy6f61j+Rfyg6wmk/7HK/iuy7M39ugSGr8N2
+         jOfA==
+X-Gm-Message-State: AHQUAuZKCgazz44jyLEIwN9mUQp1hv07ViU8cdIrGwPZURLoYKHMlsoF
+        Mr85bv352mjWasd+MkKHT0FAcR56yVk=
+X-Google-Smtp-Source: AHgI3IZ4gDwEtOxJyTPIOZ/X3r46Q9RkizJvkG/Mq9uFnWxS2ErKHmLm18k4YefmbFenNhpPuOYlow==
+X-Received: by 2002:ae9:ea0f:: with SMTP id f15mr700826qkg.113.1549931802995;
+        Mon, 11 Feb 2019 16:36:42 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id i126sm11758710qkc.78.2019.02.11.16.36.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 16:36:42 -0800 (PST)
+Date:   Mon, 11 Feb 2019 19:36:41 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     Matthew Whitehead <tedheadster@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] vt: perform safe console erase in the right order
+Message-ID: <nycvar.YSQ.7.76.1902111931420.2031@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Davidlohr Bueso [mailto:dave@stgolabs.net]
-> Sent: Wednesday, February 06, 2019 5:32 PM
-> To: jgg@ziepe.ca; akpm@linux-foundation.org
-> Cc: dledford@redhat.com; jgg@mellanox.com; jack@suse.cz;
-> willy@infradead.org; Weiny, Ira <ira.weiny@intel.com>; linux-
-> rdma@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 7/6] Documentation/infiniband: update from locked to
-> pinned_vm
-> 
-> We are really talking about pinned_vm here.
-> 
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Commit 4b4ecd9cb853 ("vt: Perform safe console erase only once") removed
+what appeared to be an extra call to scr_memsetw(). This missed the fact
+that set_origin() must be called before clearing the screen otherwise
+old screen content gets restored on the screen when using vgacon. Let's
+fix that by moving all the scrollback handling to flush_scrollback()
+where it logically belongs, and invoking it before the actual screen
+clearing in csi_J(), making the code simpler in the end.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Reported-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Matthew Whitehead <tedheadster@gmail.com>
+Fixes: 4b4ecd9cb853 ("vt: Perform safe console erase only once")
+Cc: stable@vger.kernel.org
 
-> ---
->  Documentation/infiniband/user_verbs.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/infiniband/user_verbs.txt
-> b/Documentation/infiniband/user_verbs.txt
-> index df049b9f5b6e..47ebf2f80b2b 100644
-> --- a/Documentation/infiniband/user_verbs.txt
-> +++ b/Documentation/infiniband/user_verbs.txt
-> @@ -46,11 +46,11 @@ Memory pinning
->    I/O targets be kept resident at the same physical address.  The
->    ib_uverbs module manages pinning and unpinning memory regions via
->    get_user_pages() and put_page() calls.  It also accounts for the
-> -  amount of memory pinned in the process's locked_vm, and checks that
-> +  amount of memory pinned in the process's pinned_vm, and checks that
->    unprivileged processes do not exceed their RLIMIT_MEMLOCK limit.
-> 
->    Pages that are pinned multiple times are counted each time they are
-> -  pinned, so the value of locked_vm may be an overestimate of the
-> +  pinned, so the value of pinned_vm may be an overestimate of the
->    number of pages pinned by a process.
-> 
->  /dev files
-> --
-> 2.16.4
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index bba75560d1..9646ff63e7 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -935,8 +935,11 @@ static void flush_scrollback(struct vc_data *vc)
+ {
+ 	WARN_CONSOLE_UNLOCKED();
+ 
++	set_origin(vc);
+ 	if (vc->vc_sw->con_flush_scrollback)
+ 		vc->vc_sw->con_flush_scrollback(vc);
++	else
++		vc->vc_sw->con_switch(vc);
+ }
+ 
+ /*
+@@ -1503,8 +1506,10 @@ static void csi_J(struct vc_data *vc, int vpar)
+ 			count = ((vc->vc_pos - vc->vc_origin) >> 1) + 1;
+ 			start = (unsigned short *)vc->vc_origin;
+ 			break;
++		case 3: /* include scrollback */
++			flush_scrollback(vc);
++			/* fallthrough */
+ 		case 2: /* erase whole display */
+-		case 3: /* (and scrollback buffer later) */
+ 			vc_uniscr_clear_lines(vc, 0, vc->vc_rows);
+ 			count = vc->vc_cols * vc->vc_rows;
+ 			start = (unsigned short *)vc->vc_origin;
+@@ -1513,13 +1518,7 @@ static void csi_J(struct vc_data *vc, int vpar)
+ 			return;
+ 	}
+ 	scr_memsetw(start, vc->vc_video_erase_char, 2 * count);
+-	if (vpar == 3) {
+-		set_origin(vc);
+-		flush_scrollback(vc);
+-		if (con_is_visible(vc))
+-			update_screen(vc);
+-	} else if (con_should_update(vc))
+-		do_update_region(vc, (unsigned long) start, count);
++	update_region(vc, (unsigned long) start, count);
+ 	vc->vc_need_wrap = 0;
+ }
+ 
