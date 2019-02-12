@@ -2,168 +2,115 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82426C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABDEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA50218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA962081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbfBLITN (ORCPT
+        id S1728385AbfBLIUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:19:13 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:37442 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfBLITN (ORCPT
+        Tue, 12 Feb 2019 03:20:23 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28710 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727509AbfBLIUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:19:13 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtTHa-0000rX-Px; Tue, 12 Feb 2019 01:19:10 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtTHO-00037T-3y; Tue, 12 Feb 2019 01:19:10 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Ivan Delalande <colona@arista.com>
-References: <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
-        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
-        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
-        <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
-        <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com>
-        <875ztwt7yy.fsf_-_@xmission.com> <87zhr8rtd6.fsf_-_@xmission.com>
-        <20190211141340.GA21430@redhat.com> <87zhr1g7ls.fsf@xmission.com>
-Date:   Tue, 12 Feb 2019 02:18:53 -0600
-In-Reply-To: <87zhr1g7ls.fsf@xmission.com> (Eric W. Biederman's message of
-        "Mon, 11 Feb 2019 18:42:39 -0600")
-Message-ID: <871s4dctci.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 12 Feb 2019 03:20:22 -0500
+X-UUID: 3407cdf92e8d4a4dab858e746932f055-20190212
+X-UUID: 3407cdf92e8d4a4dab858e746932f055-20190212
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <michael.kao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 557104309; Tue, 12 Feb 2019 16:20:14 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 12 Feb 2019 16:20:13 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 12 Feb 2019 16:20:13 +0800
+Message-ID: <1549959613.22716.6.camel@mtksdccf07>
+Subject: Re: [PATCH 1/7] thermal: mediatek: fix register index error
+From:   Michael Kao <michael.kao@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     =Zhang Rui <rui.zhang@intel.com>,
+        =Eduardo Valentin <edubezval@gmail.com>,
+        =Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "=Rob Herring" <robh+dt@kernel.org>,
+        =Mark Rutland <mark.rutland@arm.com>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Tue, 12 Feb 2019 16:20:13 +0800
+In-Reply-To: <6496b13f-57e4-af86-bb59-91a4705d91b0@gmail.com>
+References: <1549006693-11659-1-git-send-email-michael.kao@mediatek.com>
+         <1549006693-11659-2-git-send-email-michael.kao@mediatek.com>
+         <6496b13f-57e4-af86-bb59-91a4705d91b0@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gtTHO-00037T-3y;;;mid=<871s4dctci.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/5dCfzS53GpYDhVOp1N74vkAeJoU40h38=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] signal: Always notice exiting tasks
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+On Mon, 2019-02-04 at 18:24 +0100, Matthias Brugger wrote:
+> 
+> On 01/02/2019 08:38, michael.kao@mediatek.com wrote:
+> > From: Michael Kao <michael.kao@mediatek.com>
+> > 
+> > The index of msr and adcpnp should match the sensor
+> > which belongs to the selected bank in the for loop.
+> > 
+> 
+> If I get that right, this fixes
+> b7cf0053738c ("thermal: Add Mediatek thermal driver for mt2701.")
+> 
+> So please add a fixes tag to the commit.
 
-> Oleg Nesterov <oleg@redhat.com> writes:
->
->> sorry again for delay...
->>
->> On 02/07, Eric W. Biederman wrote:
->>>
->>> --- a/kernel/signal.c
->>> +++ b/kernel/signal.c
->>> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
->>>  		goto relock;
->>>  	}
->>>  
->>> +	/* Has this task already been marked for death? */
->>> +	ksig->info.si_signo = signr = SIGKILL;
->>> +	if (signal_group_exit(signal))
->>> +		goto fatal;
->>> +
->>>  	for (;;) {
->>>  		struct k_sigaction *ka;
->>>  
->>> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
->>>  			continue;
->>>  		}
->>>  
->>> +	fatal:
->>>  		spin_unlock_irq(&sighand->siglock);
->>
->> Eric, but this is wrong. At least this is the serious user-visible
->> change.
->>
->> Afaics, with this patch the tracee will never stop in PTRACE_EVENT_EXIT in case
->> of group_exit/exec, because schedule() in TASK_TRACED state won't block due to
->> __fatal_signal_pending().
->>
->> Yes, yes, as I said many times the semantics of PTRACE_EVENT_EXIT was never really
->> defined, it depends on /dev/random, but still I don't think we should break it even
->> more.
->
-> Well it changes PTRACE_EVENT_EXIT I grant that.  It looks like that
-> changes makes PTRACE_EVENT_EXIT is less than useful.
->
-> The only way to perfectly preserve the previous semantics is probably to
-> do something like my JOBCTL_TASK_EXIT proposal.
->
-> That said I don't think even adding a JOBCTL_TASK_EXIT is enough to have
-> a reliable stop of ptrace_event_exit after a process has exited.  As any
-> other pending signal can cause problems there as well.
->
-> I have received a report that strace -f in some cases is not noticing
-> children before they die and it looks like a stop in PTRACE_EVENT_EXIT
-> would fix that strace behavior.
->
-> Sigh.
->
-> Here I was trying for the simple minimal change and I hit this landmine.
-> Which leaves me with the question of what should be semantics of signal
-> handling after exit.
->
-> I think from dim memory of previous conversations the desired semantics
-> look like:
-> a) Ignore all signal state except for SIGKILL.
-> b) Letting SIGKILL wake up the process should be sufficient.
->
-> I will see if I can reproduce the strace failure and see if I can cook
-> up something minimal that addresses just that.  If you have suggestions
-> I would love to hear them.
->
-> As this was a minimal fix for SIGKILL being broken I have already sent
-> the fix to Linus.  So we are looking at an incremental fix at this
-> point.
+It is true that the patch is fix b7cf0053738c.
+I will add 
+Fixes: b7cf0053738c ("thermal: Add Mediatek thermal driver for mt2701.")
+to the commit message of next version.
 
-In my testing I found something that concerns me.  Because we wind up
-with SIGKILL in shard_pending we can not kill a process in do_exit that
-has stopped at PTRACE_EVENT_EXIT.  That bug seems to go back a long ways.
+> Thanks,
+> Matthias
+> 
+> > Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> > ---
+> >  drivers/thermal/mtk_thermal.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
+> > index 0691f26..f646436 100644
+> > --- a/drivers/thermal/mtk_thermal.c
+> > +++ b/drivers/thermal/mtk_thermal.c
+> > @@ -431,7 +431,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
+> >  	u32 raw;
+> >  
+> >  	for (i = 0; i < conf->bank_data[bank->id].num_sensors; i++) {
+> > -		raw = readl(mt->thermal_base + conf->msr[i]);
+> > +		raw = readl(mt->thermal_base +
+> > +			    conf->msr[conf->bank_data[bank->id].sensors[i]]);
+> >  
+> >  		temp = raw_to_mcelsius(mt,
+> >  				       conf->bank_data[bank->id].sensors[i],
+> > @@ -568,7 +569,8 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+> >  
+> >  	for (i = 0; i < conf->bank_data[num].num_sensors; i++)
+> >  		writel(conf->sensor_mux_values[conf->bank_data[num].sensors[i]],
+> > -		       mt->thermal_base + conf->adcpnp[i]);
+> > +		       mt->thermal_base +
+> > +		       conf->adcpnp[conf->bank_data[num].sensors[i]]);
+> >  
+> >  	writel((1 << conf->bank_data[num].num_sensors) - 1,
+> >  	       mt->thermal_base + TEMP_MONCTL0);
+> > 
 
-Other than that, it looks like we can do the following to fix the
-regression I introduced.
 
-Oleg any ideas on how to make PTRACE_EVENT_EXIT reliably killable?
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 99fa8ff06fd9..a1f154dca73c 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2544,6 +2544,9 @@ bool get_signal(struct ksignal *ksig)
-                }
- 
-        fatal:
-+               /* No more signals can be pending past this point */
-+               sigdelset(&current->pending.signal, SIGKILL);
-+               clear_tsk_thread_flag(current, TIF_SIGPENDING);
-                spin_unlock_irq(&sighand->siglock);
- 
-                /*
-
-Eric
