@@ -2,158 +2,280 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56240C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3E1C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD0F2184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4775218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:48:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FmCO67VL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBLBrc (ORCPT
+        id S1727301AbfBLBsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 20:47:32 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:28448 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726852AbfBLBrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 20:47:32 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 8C51FFC6A
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 19:47:30 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tNAYg48IQ2qH7tNAYgcPSr; Mon, 11 Feb 2019 19:47:30 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=35152 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtNAX-001LGq-US; Mon, 11 Feb 2019 19:47:30 -0600
-Subject: Re: [PATCH net-next] ipvs: Use struct_size() helper
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Wensong Zhang <wensong@linux-vs.org>, Julian Anastasov <ja@ssi.bg>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-kernel@vger.kernel.org
-References: <20190208004456.GA15845@embeddedor>
- <20190208095648.la4ushbjxkqgqzb6@verge.net.au>
- <20190211234033.wwpygxamqwvsuxmv@salvia>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <40215a8b-3b64-cf6c-c6cd-7d8d5dd971d3@embeddedor.com>
-Date:   Mon, 11 Feb 2019 19:47:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190211234033.wwpygxamqwvsuxmv@salvia>
-Content-Type: text/plain; charset=utf-8
+        Mon, 11 Feb 2019 20:48:43 -0500
+Received: from mail-eopbgr680100.outbound.protection.outlook.com ([40.107.68.100]:43648
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726079AbfBLBsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 20:48:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ogkp6pOfNCesQuySg/44pmy14D0T+5w9WoBzYJaHK0Y=;
+ b=FmCO67VLodBkjEYcegFzv8w5MmxO3gXfIcvsegakyQ5FiYqwXlYU0D7ymYfsKZzIN1xMkD2OW3U+PWac/AbsGaxdEI93Jx0zfpBYZqILEP+pmdIcVvYYPhGDGFUJu27Wne84aCsa/VeF3KF7RzDvcd5H+6Ohewh4sipZna79uFA=
+Received: from DM5PR21MB0140.namprd21.prod.outlook.com (10.173.173.15) by
+ DM5PR21MB0763.namprd21.prod.outlook.com (10.173.172.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1643.0; Tue, 12 Feb 2019 01:48:36 +0000
+Received: from DM5PR21MB0140.namprd21.prod.outlook.com
+ ([fe80::14fc:ecd:4819:e723]) by DM5PR21MB0140.namprd21.prod.outlook.com
+ ([fe80::14fc:ecd:4819:e723%13]) with mapi id 15.20.1643.004; Tue, 12 Feb 2019
+ 01:48:36 +0000
+From:   Pavel Shilovskiy <pshilov@microsoft.com>
+To:     Sasha Levin <sashal@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC:     Steven French <Steven.French@microsoft.com>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
+Subject: RE: [PATCH AUTOSEL 4.20 40/42] CIFS: Move credit processing to mid
+ callbacks for SMB3
+Thread-Topic: [PATCH AUTOSEL 4.20 40/42] CIFS: Move credit processing to mid
+ callbacks for SMB3
+Thread-Index: AQHUwKgRxb6nGrt8ykKkmMfryN1KoaXbZtXw
+Date:   Tue, 12 Feb 2019 01:48:36 +0000
+Message-ID: <DM5PR21MB0140FF0B60DBF17DF7C676BEB6650@DM5PR21MB0140.namprd21.prod.outlook.com>
+References: <20190209184734.125935-1-sashal@kernel.org>
+ <20190209184734.125935-40-sashal@kernel.org>
+In-Reply-To: <20190209184734.125935-40-sashal@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtNAX-001LGq-US
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:35152
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=pshilov@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-12T01:48:34.3162771Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=d548e795-b34d-4c98-bbda-376cf67d338a;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+x-originating-ip: [2601:600:8080:117f:d0a:2088:54:bcdd]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3d0c0f4e-bd52-4588-590f-08d6908c341d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0763;
+x-ms-traffictypediagnostic: DM5PR21MB0763:
+x-ms-exchange-purlcount: 2
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DM5PR21MB0763;23:/BGNwikXV1WVk28wOitmK4sN0MiRQwvQ6YPSGA31u?=
+ =?us-ascii?Q?hi0J6DDj6xEjKA1IDuQhXDjvjEk8KSu4u5/kpdSNvnXQVSWBh11bJDhAPaC0?=
+ =?us-ascii?Q?Xy4GfojssvXYJHwFRmCcEu622wXqq3y3LY8o5SjodE0rairBu2CA8SFJ+nOa?=
+ =?us-ascii?Q?CzxgipV860w/FLOnijqIcIXJa2lClmQonsfXTKgCvrU7Eq5H495TpUn+2yS1?=
+ =?us-ascii?Q?O3pXoSg5p014KEbCO7cYqXksXUaTDtjtyMe27ijzBj0dDsL4yhAYsO6Bk7od?=
+ =?us-ascii?Q?pXXA4c9pJihC39Ksct6qTNiBFyRiL5Vn0N1OrT4AriKzBXhTA9c5cH1EMPCp?=
+ =?us-ascii?Q?2D0UQL8CJWNcjQKyx6nTdBOedpDjyFZA2e0SIvqk33ReCKcokSEXNKgwocsR?=
+ =?us-ascii?Q?VxLLMhRD0yb8s0Q+gD0f0kWFGIM1DxUc5aNmhMvyedf8XsXZbfi1JQ1BAkrV?=
+ =?us-ascii?Q?TC2ZifnrlTV2drQ10EeMMeEFAsWRIUdKUSZVdEdzNaFjeF1/te7w3Lmy9+lb?=
+ =?us-ascii?Q?H6957qmdXxjia/iDs35t6MAJwd+zVPE8FXgZ+KUnJ38QE2yfXs9fdt4iYxat?=
+ =?us-ascii?Q?CXkNrFPN5VF3IEMK2If0Cskh8UD0BDx5QSqLop/+4ERSXnE0r5uPmmUhOlVG?=
+ =?us-ascii?Q?i5zvMeQPkOXskInZhb3LplGU1DV3jbOiqWwhu+NSKlOyE8e3p03yMK3BwsrV?=
+ =?us-ascii?Q?dOX4MT1C96iozdvgi/BCKTXdC8FXemso7/CbbIBhqPgyQmtKeA0CXZrKMA75?=
+ =?us-ascii?Q?2qaQgOCTBSa8O/rT51ZvLcAF84wtnGAqn3rVeiUVT76PWlrD6ySaP66QCPxk?=
+ =?us-ascii?Q?7mmjAktlCKtOAqlgj2lIaDw7XMTcmZEHMnkOJU24+nTSRo/BQIkLg8Ds/cYz?=
+ =?us-ascii?Q?sfcA7Yu2Eyip6Vgx9q8jrhnwxAnxfMHTur/EjdewEMWwn6SQmCIWE7E5tU1d?=
+ =?us-ascii?Q?/TKmpvWkM2d3f7uHeAGoU/8QGRfjU+DQNWpNWAViMlGEtzrT0lXrkfTBLiTp?=
+ =?us-ascii?Q?NaFxF8/zOio34g38HaDHU7B885NQaeFjX45OyVwpsC5LeDhgmrZrv53LSBMU?=
+ =?us-ascii?Q?9duqOCJHAea1vaRLBn+XLlXk9XfSTO89MqxZSoq7p2j9SPliVZQm/HDAEJqH?=
+ =?us-ascii?Q?G5sScQVwbyeNWDGQpIavkre3os5zu9lqwj+UUw7rcUd2nFINnk89gaeSdgTU?=
+ =?us-ascii?Q?m2Jve4fmkwrKRKq4uv73Gp+NMvdzv9RBCkX/rzp/gSci8K0Ba4edZacve9I6?=
+ =?us-ascii?Q?hzJDkPLDn2xazRzpU88yCi8LTCSGVD1K1k3qO+WH9a0W/ue3rqRpl9F8bVCF?=
+ =?us-ascii?Q?MtV08NCVu7ZU2BD1CrWDFmWtZXf0xAMJhO9gshRUczn15jZQ3xyDhTMIb7Q9?=
+ =?us-ascii?Q?5hdT6V1cJhbdqoPikI+TBunWmSYg9fgO8mpXRVICsliu6Qs?=
+x-microsoft-antispam-prvs: <DM5PR21MB07636DD72D959E26CB7D2688B6650@DM5PR21MB0763.namprd21.prod.outlook.com>
+x-forefront-prvs: 0946DC87A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(396003)(366004)(39860400002)(199004)(189003)(69234005)(476003)(86362001)(81166006)(81156014)(8676002)(486006)(8936002)(446003)(2201001)(46003)(11346002)(76176011)(6506007)(97736004)(102836004)(106356001)(105586002)(6346003)(99286004)(10090500001)(7696005)(71200400001)(186003)(71190400001)(86612001)(6116002)(4326008)(25786009)(14454004)(478600001)(55016002)(10290500003)(6306002)(9686003)(229853002)(966005)(6436002)(7736002)(33656002)(256004)(14444005)(8990500004)(2501003)(110136005)(54906003)(53936002)(74316002)(305945005)(22452003)(316002)(217873002)(2906002)(6246003)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0763;H:DM5PR21MB0140.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pshilov@microsoft.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /Tu29qSPpLZrpqOSbTI4nxirgUUJ2H2z0cvWi8S7bVmLIEzEM6NqK5QjOkPkiXcyYE3kgdL0Ba+4aOS8QlKWQSatWHAf7zlVWfmsSOmnyclxlSFbWgwR4aPo873X5oCHj9+F/oySPetwbhUss3oeknh9/s1fgmGrf1lOd/w+eh66/QeE2//pKQIn8vvv9jX6PqHI7UB9yWaVwRFcjdiLbmpB6zSNaavtRwJ5vPvGpO8/aQHi5yBIuPsJZe700DSWAdDlH9BKNVEx/It5pGh6fuMW6Dgh9Da2MkuOAil3ZB2r9MTQhFgXCusNUDQu1Pk+xvuWOJB+SkcqJ8QYmQhgHahbbZZCmkwQ3nibYTGVtLByWn3nhn05IS9B2zC+IfkFeFiDSHyNl4/JhPY2URT4NJ3kmgOTp5buPXOs1Bb82Ts=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d0c0f4e-bd52-4588-590f-08d6908c341d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 01:48:36.3013
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0763
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Sat, Feb 9 2019, 10:56AM, Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Pavel Shilovsky <pshilov@microsoft.com>
+>
+> [ Upstream commit ee258d79159afed52ca9372aeb9c1a51e89b32ee ]
+>
+> Currently we account for credits in the thread initiating a request
+> and waiting for a response. The demultiplex thread receives the response,
+> wakes up the thread and the latter collects credits from the response
+> buffer and add them to the server structure on the client. This approach
+> is not accurate, because it may race with reconnect events in the
+> demultiplex thread which resets the number of credits.
+>
+> Fix this by moving credit processing to new mid callbacks that collect
+> credits granted by the server from the response in the demultiplex thread=
+.
+>
+> Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+> Signed-off-by: Steve French <stfrench@microsoft.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/cifs/transport.c | 51 ++++++++++++++++++++++++++++++---------------
+>  1 file changed, 34 insertions(+), 17 deletions(-)
+>
+> diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+> index 4dbf62bb51b2..0dab276eced8 100644
+> --- a/fs/cifs/transport.c
+> +++ b/fs/cifs/transport.c
+> @@ -781,12 +781,7 @@ cifs_setup_request(struct cifs_ses *ses, struct smb_=
+rqst *rqst)
+>  }
+>
+>  static void
+> -cifs_noop_callback(struct mid_q_entry *mid)
+> -{
+> -}
+> -
+> -static void
+> -cifs_cancelled_callback(struct mid_q_entry *mid)
+> +cifs_compound_callback(struct mid_q_entry *mid)
+>  {
+>         struct TCP_Server_Info *server =3D mid->server;
+>         unsigned int optype =3D mid->optype;
+> @@ -799,10 +794,23 @@ cifs_cancelled_callback(struct mid_q_entry *mid)
+>                         cifs_dbg(FYI, "Bad state for cancelled MID\n");
+>         }
+>
+> -       DeleteMidQEntry(mid);
+>         add_credits(server, credits_received, optype);
+>  }
+>
+> +static void
+> +cifs_compound_last_callback(struct mid_q_entry *mid)
+> +{
+> +       cifs_compound_callback(mid);
+> +       cifs_wake_up_task(mid);
+> +}
+> +
+> +static void
+> +cifs_cancelled_callback(struct mid_q_entry *mid)
+> +{
+> +       cifs_compound_callback(mid);
+> +       DeleteMidQEntry(mid);
+> +}
+> +
+>  int
+>  compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+>                    const int flags, const int num_rqst, struct smb_rqst *=
+rqst,
+> @@ -880,11 +888,14 @@ compound_send_recv(const unsigned int xid, struct c=
+ifs_ses *ses,
+>                 midQ[i]->mid_state =3D MID_REQUEST_SUBMITTED;
+>                 midQ[i]->optype =3D optype;
+>                 /*
+> -                * We don't invoke the callback compounds unless it is th=
+e last
+> -                * request.
+> +                * Invoke callback for every part of the compound chain
+> +                * to calculate credits properly. Wake up this thread onl=
+y when
+> +                * the last element is received.
+>                  */
+>                 if (i < num_rqst - 1)
+> -                       midQ[i]->callback =3D cifs_noop_callback;
+> +                       midQ[i]->callback =3D cifs_compound_callback;
+> +               else
+> +                       midQ[i]->callback =3D cifs_compound_last_callback=
+;
+>         }
+>         cifs_in_send_inc(ses->server);
+>         rc =3D smb_send_rqst(ses->server, num_rqst, rqst, flags);
+> @@ -898,8 +909,20 @@ compound_send_recv(const unsigned int xid, struct ci=
+fs_ses *ses,
+>
+>         mutex_unlock(&ses->server->srv_mutex);
+>
+> -       if (rc < 0)
+> +       if (rc < 0) {
+> +               /* Sending failed for some reason - return credits back *=
+/
+> +               for (i =3D 0; i < num_rqst; i++)
+> +                       add_credits(ses->server, credits[i], optype);
+>                 goto out;
+> +       }
+> +
+> +       /*
+> +        * At this point the request is passed to the network stack - we =
+assume
+> +        * that any credits taken from the server structure on the client=
+ have
+> +        * been spent and we can't return them back. Once we receive resp=
+onses
+> +        * we will collect credits granted by the server in the mid callb=
+acks
+> +        * and add those credits to the server structure.
+> +        */
+>
+>         /*
+>          * Compounding is never used during session establish.
+> @@ -932,11 +955,6 @@ compound_send_recv(const unsigned int xid, struct ci=
+fs_ses *ses,
+>                 }
+>         }
+>
+> -       for (i =3D 0; i < num_rqst; i++)
+> -               if (!cancelled_mid[i] && midQ[i]->resp_buf
+> -                   && (midQ[i]->mid_state =3D=3D MID_RESPONSE_RECEIVED))
+> -                       credits[i] =3D ses->server->ops->get_credits(midQ=
+[i]);
+> -
+>         for (i =3D 0; i < num_rqst; i++) {
+>                 if (rc < 0)
+>                         goto out;
+> @@ -995,7 +1013,6 @@ out:
+>         for (i =3D 0; i < num_rqst; i++) {
+>                 if (!cancelled_mid[i])
+>                         cifs_delete_mid(midQ[i]);
+> -               add_credits(ses->server, credits[i], optype);
+>         }
+>
+>         return rc;
+> --
+> 2.19.1
+>
 
-On 2/11/19 5:40 PM, Pablo Neira Ayuso wrote:
-> On Fri, Feb 08, 2019 at 10:56:48AM +0100, Simon Horman wrote:
->> On Thu, Feb 07, 2019 at 06:44:56PM -0600, Gustavo A. R. Silva wrote:
->>> One of the more common cases of allocation size calculations is finding
->>> the size of a structure that has a zero-sized array at the end, along
->>> with memory for some number of elements for that array. For example:
->>>
->>> struct foo {
->>>     int stuff;
->>>     struct boo entry[];
->>> };
->>>
->>> size = sizeof(struct foo) + count * sizeof(struct boo);
->>> instance = alloc(size, GFP_KERNEL)
->>>
->>> Instead of leaving these open-coded and prone to type mistakes, we can
->>> now use the new struct_size() helper:
->>>
->>> size = struct_size(instance, entry, count);
->>>
->>> This code was detected with the help of Coccinelle.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>
->> Acked-by: Simon Horman <horms+renesas@verge.net.au>
->>
->> Pablo, could you consider applying this?
-> 
-> Applied, thanks!
-> 
+Please apply the following two patches too:
 
-Thank you both, Simon and Pablo.
+https://patchwork.ozlabs.org/patch/1030180/
+https://patchwork.ozlabs.org/patch/1030181/
+
+The 1st fixes some minor regressions introduces by the proposing patch and =
+the 2nd adds the same logic to processing of async responses as the proposi=
+ng patch is doing for sync ones.
 
 --
-Gustavo
+Best regards,
+Pavel Shilovsky
