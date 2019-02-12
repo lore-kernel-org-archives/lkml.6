@@ -2,95 +2,140 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D400CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977B0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FCFF2073D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A582073D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:04:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbfBLJDO (ORCPT
+        id S1728684AbfBLJEC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:03:14 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45433 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfBLJDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:03:13 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gtTy6-0005hT-DZ; Tue, 12 Feb 2019 10:03:06 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gtTy4-0001GE-Kh; Tue, 12 Feb 2019 10:03:04 +0100
-Date:   Tue, 12 Feb 2019 10:03:04 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, tduszyns@gmail.com,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 3/3] pwm: core: add consumer device link
-Message-ID: <20190212090304.3j4iqj6sodtdvhr7@pengutronix.de>
-References: <1549901522-15071-1-git-send-email-fabrice.gasnier@st.com>
- <1549901522-15071-4-git-send-email-fabrice.gasnier@st.com>
- <20190211190628.eisyi6wjus4ltrrn@pengutronix.de>
- <b9f1bb5c-36cd-f6e6-e6c6-a0257cf38b7e@st.com>
+        Tue, 12 Feb 2019 04:04:02 -0500
+Received: from mga11.intel.com ([192.55.52.93]:36381 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728495AbfBLJEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:04:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 01:04:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="299075799"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga005.jf.intel.com with ESMTP; 12 Feb 2019 01:04:01 -0800
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 12 Feb 2019 01:04:00 -0800
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 12 Feb 2019 01:04:00 -0800
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.194]) with mapi id 14.03.0415.000;
+ Tue, 12 Feb 2019 17:03:58 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXb13cw
+Date:   Tue, 12 Feb 2019 09:03:57 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+In-Reply-To: <20190204201854.2328-1-nitesh@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWMyOTkzODItZTAzYi00NjIwLWI5ZDgtNThhOTE1MmRmMGIxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUVwvSHhTS28xTERXNWIwWVpUSHlHd21Jc2VqVTdGNGZ0cVJybXVRYUI4NnlNSFl2V0NpRnZVSjM3Mm13NkZqdSsifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b9f1bb5c-36cd-f6e6-e6c6-a0257cf38b7e@st.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Fabrice,
-
-On Tue, Feb 12, 2019 at 09:31:37AM +0100, Fabrice Gasnier wrote:
-> On 2/11/19 8:06 PM, Uwe Kleine-König wrote:
-> > On Mon, Feb 11, 2019 at 05:12:02PM +0100, Fabrice Gasnier wrote:
-> >> @@ -943,6 +950,8 @@ struct pwm_device *devm_of_pwm_get(struct device *dev, struct device_node *np,
-> >>  	if (!IS_ERR(pwm)) {
-> >>  		*ptr = pwm;
-> >>  		devres_add(dev, ptr);
-> >> +		device_link_add(dev, pwm->chip->dev,
-> >> +				DL_FLAG_AUTOREMOVE_CONSUMER);
-> > 
-> > IMHO it's surprising that devm_of_pwm_get() does more than of_pwm_get()
-> > + devres stuff. I'd put device_link_add() into of_pwm_get().
+On Tuesday, February 5, 2019 4:19 AM, Nitesh Narayan Lal wrote:
+> The following patch-set proposes an efficient mechanism for handing freed
+> memory between the guest and the host. It enables the guests with no page
+> cache to rapidly free and reclaims memory to and from the host respectively.
 > 
-> Hi Uwe,
+> Benefit:
+> With this patch-series, in our test-case, executed on a single system and
+> single NUMA node with 15GB memory, we were able to successfully launch
+> atleast 5 guests when page hinting was enabled and 3 without it. (Detailed
+> explanation of the test procedure is provided at the bottom).
 > 
-> I also agree with this. But I think this implies modifying the API for
-> of_pwm_get():
->  /**
->   * of_pwm_get() - request a PWM via the PWM framework
-> + * @dev: device for PWM consumer
->   * @np: device node to get the PWM from
->   * @con_id: consumer name
+> Changelog in V8:
+> In this patch-series, the earlier approach [1] which was used to capture and
+> scan the pages freed by the guest has been changed. The new approach is
+> briefly described below:
 > 
-> It seems there aren't much of_pwm_get() users currently.
-> Does this look sensible ?
+> The patch-set still leverages the existing arch_free_page() to add this
+> functionality. It maintains a per CPU array which is used to store the pages
+> freed by the guest. The maximum number of entries which it can hold is
+> defined by MAX_FGPT_ENTRIES(1000). When the array is completely filled, it
+> is scanned and only the pages which are available in the buddy are stored.
+> This process continues until the array is filled with pages which are part of
+> the buddy free list. After which it wakes up a kernel per-cpu-thread.
+> This kernel per-cpu-thread rescans the per-cpu-array for any re-allocation
+> and if the page is not reallocated and present in the buddy, the kernel
+> thread attempts to isolate it from the buddy. If it is successfully isolated, the
+> page is added to another per-cpu array. Once the entire scanning process is
+> complete, all the isolated pages are reported to the host through an existing
+> virtio-balloon driver.
 
-In my eyes this looks sensible, yes.
+ Hi Nitesh,
 
-Best regards
-Uwe
+Have you guys thought about something like below, which would be simpler:
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+- use bitmaps to record free pages, e.g. xbitmap: https://lkml.org/lkml/2018/1/9/304.
+  The bitmap can be indexed by the guest pfn, and it's globally accessed by all the CPUs;
+- arch_free_page(): set the bits of the freed pages from the bitmap
+ (no per-CPU array with hardcoded fixed length and no per-cpu scanning thread)
+- arch_alloc_page(): clear the related bits from the bitmap
+- expose 2 APIs for the callers:
+  -- unsigned long get_free_page_hints(unsigned long pfn_start, unsigned int nr); 
+     This API searches for the next free page chunk (@nr of pages), starting from @pfn_start.
+     Bits of those free pages will be cleared after this function returns.
+  -- void put_free_page_hints(unsigned long pfn_start, unsigned int nr);
+     This API sets the @nr continuous bits starting from pfn_start.
+
+Usage example with balloon:
+1) host requests to start ballooning;
+2) balloon driver get_free_page_hints and report the hints to host via report_vq;
+3) host calls madvise(pfn_start, DONTNEED) for each reported chunk of free pages and put back pfn_start to ack_vq;
+4) balloon driver receives pfn_start and calls put_free_page_hints(pfn_start) to have the related bits from the bitmap to be set, indicating that those free pages are ready to be allocated.
+
+In above 2), get_free_page_hints clears the bits which indicates that those pages are not ready to be used by the guest yet. Why?
+This is because 3) will unmap the underlying physical pages from EPT. Normally, when guest re-visits those pages, EPT violations and QEMU page faults will get a new host page to set up the related EPT entry. If guest uses that page before the page gets unmapped (i.e. right before step 3), no EPT violation happens and the guest will use the same physical page that will be unmapped and given to other host threads. So we need to make sure that the guest free page is usable only after step 3 finishes.
+
+Back to arch_alloc_page(), it needs to check if the allocated pages have "1" set in the bitmap, if that's true, just clear the bits. Otherwise, it means step 2) above has happened and step 4) hasn't been reached. In this case, we can either have arch_alloc_page() busywaiting a bit till 4) is done for that page
+Or better to have a balloon callback which prioritize 3) and 4) to make this page usable by the guest.
+
+Using bitmaps to record free page hints don't need to take the free pages off the buddy list and return them later, which needs to go through the long allocation/free code path.
+
+Best,
+Wei
