@@ -2,86 +2,96 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF2BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F640C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12B52190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B5202190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:31:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ZmeCzXbA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfBLT2m (ORCPT
+        id S1729500AbfBLTbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:28:42 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46537 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbfBLT2l (ORCPT
+        Tue, 12 Feb 2019 14:31:10 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:43328 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbfBLTbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:28:41 -0500
-X-Originating-IP: 86.202.231.219
-Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id EDE311C0007;
-        Tue, 12 Feb 2019 19:28:38 +0000 (UTC)
-Date:   Tue, 12 Feb 2019 20:28:38 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: DT for 5.1
-Message-ID: <20190212192838.GA12677@piout.net>
+        Tue, 12 Feb 2019 14:31:10 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 209F85C026A;
+        Tue, 12 Feb 2019 20:31:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1549999868;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mlRbHEOXyiu40U9NCbv3zqgTF73UAsRWJa7LCVDhGlQ=;
+        b=ZmeCzXbAbdKcB+EezCMBjqPkU8P/iX6dt0PA+vkXqULIS2i6TcBnyrVh3IwsFD2mpzGJdQ
+        FPmQ9WxidmZKbZEgWtaWrCg0GZaOz4IA68E6/8o06jbF+FvEc0ZeNPOYwgygkMmMxiM0kY
+        rYZjDj1bfOsdoVu09IRnesL+O+xQdiQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Feb 2019 20:31:08 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     linux@armlinux.org.uk, ndesaulniers@google.com,
+        natechancellor@gmail.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        thierry.reding@gmail.com, will.deacon@arm.com,
+        julien.thierry@arm.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/5] ARM: convert to unified syntax
+In-Reply-To: <nycvar.YSQ.7.76.1902101620430.2213@knanqh.ubzr>
+References: <cover.1549753425.git.stefan@agner.ch>
+ <nycvar.YSQ.7.76.1902101620430.2213@knanqh.ubzr>
+Message-ID: <da23b2ceddf2a73e1c772b7994f52d2f@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Olof,
+On 10.02.2019 22:24, Nicolas Pitre wrote:
+> On Sun, 10 Feb 2019, Stefan Agner wrote:
+> 
+>> This patchset converts all assembly code to unified assembler
+>> language (UAL) compatible assembly code. From what I can tell,
+>> this mainly boils down to using conditional infixes instead of
+>> postfixes.
+>>
+>> Most of the conversion has been done using the following regular
+>> expression:
+>>   find ./arch/arm/ -name "*.[hSc]" -exec sed -i -r \
+>>     "s/^((\s*[._a-zA-Z0-9]*[\:\(])?\s*)([a-z]{3})(eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)([a-z]{1,2})(\s)/\1\3\5\4\6/"
+>> \
+>>     {} \;
+>>
+>> The expression resulted in some false positives and missed some
+>> instances where infix conditionals have been used. With this
+>> changes applied, I compiled several kernel configurations
+>> successfully and without a warning.
+>>
+>> The file arch/arm/probes/kprobes/test-arm.c is still using some
+>> divided syntax assembler.
+>>
+>> This does not allow to use LLVM's integrated assembler just yet,
+>> there is still some assembler which the integrated assembler does
+>> not like (yet). But it is a big step towards that direction.
+> 
+> OK....
+> 
+> Please document why you added .syntax unified in the commit log of each 
+> patch where this is added along with a link to the gcc PR.  Then you may 
+> add Acked-by: Nicolas Pitre <nico@linaro.org> to the whole series.
 
-Here is the only AT91 pull request for this cycle.
+Agreed, that is a good idea. Will send v3. Thanks for the Acks.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.1-dt
-
-for you to fetch changes up to 31f031f73a01fb83fd6f4abfff04a79b360219e1:
-
-  ARM: dts: at91: replace gpio-key,wakeup with wakeup-source property (2019-01-08 19:12:40 +0100)
-
-----------------------------------------------------------------
-AT91 DT for 5.1
-
- - Enable QSPI NOR on sama5d2 SoM1
- - replace deprecated gpio-key,wakeup property
-
-----------------------------------------------------------------
-Claudiu Beznea (2):
-      ARM: dts: at91: at91-sama5d27_som1: add QSPI1 + SPI NOR memory nodes
-      ARM: dts: at91: at91-sama5d27_som1_ek: enable qspi1 memory
-
-Sudeep Holla (1):
-      ARM: dts: at91: replace gpio-key,wakeup with wakeup-source property
-
- arch/arm/boot/dts/at91-nattis-2-natte-2.dts |  2 +-
- arch/arm/boot/dts/at91-sama5d27_som1.dtsi   | 30 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/at91-sama5d27_som1_ek.dts |  4 ++++
- arch/arm/boot/dts/at91-wb45n.dts            |  2 +-
- arch/arm/boot/dts/at91-wb50n.dts            |  4 ++--
- 5 files changed, 38 insertions(+), 4 deletions(-)
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--
+Stefan
