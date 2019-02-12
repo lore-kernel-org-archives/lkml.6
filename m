@@ -3,45 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40D2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BA7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A111C222BE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2087222BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbfBLV2X (ORCPT
+        id S1729783AbfBLVb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:28:23 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.101]:45500 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729783AbfBLV2W (ORCPT
+        Tue, 12 Feb 2019 16:31:28 -0500
+Received: from gateway20.websitewelcome.com ([192.185.67.41]:37380 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726882AbfBLVb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:28:22 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id CD8D417F7ED
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:28:21 -0600 (CST)
+        Tue, 12 Feb 2019 16:31:28 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 94AD0400D38AB
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:31:27 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id tfbJgel8GdnCetfbJgdtPd; Tue, 12 Feb 2019 15:28:21 -0600
+        id tfeJgnOyD2PzOtfeJgI8fU; Tue, 12 Feb 2019 15:31:27 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=59222 helo=embeddedor)
+Received: from [189.250.119.20] (port=59366 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gtfbJ-003iet-07; Tue, 12 Feb 2019 15:28:21 -0600
-Date:   Tue, 12 Feb 2019 15:28:20 -0600
+        id 1gtfeI-003kN6-Rp; Tue, 12 Feb 2019 15:31:27 -0600
+Date:   Tue, 12 Feb 2019 15:31:26 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH] drbd_receiver: mark expected switch fall-throughs
-Message-ID: <20190212212820.GA15942@embeddedor>
+Subject: [PATCH] char: lp: mark expected switch fall-through
+Message-ID: <20190212213126.GA7625@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -55,13 +53,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.119.20
 X-Source-L: No
-X-Exim-ID: 1gtfbJ-003iet-07
+X-Exim-ID: 1gtfeI-003kN6-Rp
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:59222
+X-Source-Sender: (embeddedor) [189.250.119.20]:59366
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 23
+X-Email-Count: 27
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,18 +72,19 @@ cases where we are expecting to fall through.
 
 This patch fixes the following warnings:
 
-drivers/block/drbd/drbd_receiver.c: In function ‘drbd_asb_recover_0p’:
-drivers/block/drbd/drbd_receiver.c:3093:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (self == 1 && peer == 0) {
+drivers/char/lp.c: In function ‘lp_compat_ioctl’:
+drivers/char/lp.c:756:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (!COMPAT_USE_64BIT_TIME) {
       ^
-drivers/block/drbd/drbd_receiver.c:3098:2: note: here
-  case ASB_DISCARD_OLDER_PRI:
+drivers/char/lp.c:761:2: note: here
+  case LPSETTIMEOUT_NEW:
   ^~~~
-drivers/block/drbd/drbd_receiver.c:3120:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (after_sb_0p == ASB_DISCARD_ZERO_CHG)
+drivers/char/lp.c: In function ‘lp_ioctl’:
+drivers/char/lp.c:728:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (BITS_PER_LONG == 32) {
       ^
-drivers/block/drbd/drbd_receiver.c:3123:2: note: here
-  case ASB_DISCARD_LEAST_CHG:
+drivers/char/lp.c:733:2: note: here
+  case LPSETTIMEOUT_NEW:
   ^~~~
 
 Warning level 3 was used: -Wimplicit-fallthrough=3
@@ -98,31 +97,31 @@ This patch is part of the ongoing efforts to enable
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/block/drbd/drbd_receiver.c | 4 ++--
+ drivers/char/lp.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index c7ad88d91a09..78bb763a367d 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3094,7 +3094,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
- 			rv =  1;
+diff --git a/drivers/char/lp.c b/drivers/char/lp.c
+index 5c8d780637bd..3406852f67ff 100644
+--- a/drivers/char/lp.c
++++ b/drivers/char/lp.c
+@@ -729,7 +729,7 @@ static long lp_ioctl(struct file *file, unsigned int cmd,
+ 			ret = lp_set_timeout32(minor, (void __user *)arg);
  			break;
  		}
--		/* Else fall through to one of the other strategies... */
-+		/* Else fall through - to one of the other strategies... */
- 	case ASB_DISCARD_OLDER_PRI:
- 		if (self == 0 && peer == 1) {
- 			rv = 1;
-@@ -3119,7 +3119,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
- 		}
- 		if (after_sb_0p == ASB_DISCARD_ZERO_CHG)
+-		/* fallthrough for 64-bit */
++		/* fall through - for 64-bit */
+ 	case LPSETTIMEOUT_NEW:
+ 		ret = lp_set_timeout64(minor, (void __user *)arg);
+ 		break;
+@@ -757,7 +757,7 @@ static long lp_compat_ioctl(struct file *file, unsigned int cmd,
+ 			ret = lp_set_timeout32(minor, (void __user *)arg);
  			break;
--		/* else: fall through */
-+		/* Else fall through */
- 	case ASB_DISCARD_LEAST_CHG:
- 		if	(ch_self < ch_peer)
- 			rv = -1;
+ 		}
+-		/* fallthrough for x32 mode */
++		/* fall through - for x32 mode */
+ 	case LPSETTIMEOUT_NEW:
+ 		ret = lp_set_timeout64(minor, (void __user *)arg);
+ 		break;
 -- 
 2.20.1
 
