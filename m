@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAECBC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A938C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78707217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69CC221773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549986285;
-	bh=cOkRumOfvL1eFJehoxj9QVbXEqGehq/bppBluJ7ALYs=;
+	s=default; t=1549986314;
+	bh=uyCwuVK7m1EdKUW1jMDgbNHxoIArsqofJ5gDugVV8so=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WPrtYUY4pvMPnSe5Cs/UpeXl1zq5QxxgkIGXhiiqSiL4Me1kj3qx8VbTa8ULcTaU6
-	 MPXDqNqhKYzT2AppS82xvs+NdASgfap5TlIOXDYdVf6JwNw67D8ut2/IFCAztKV5QS
-	 kOwJsS99GNanbHQSqMr3+sjyUTORWCgloj8uyTKg=
+	b=Sz0TZcn/opYe2fUsJXMECPCqrr/Do7AzbZFbf55cxe7cC1DqNMcfh1j9woaHDD8jh
+	 4YgiCBo4GiAUupX+jJq/6H+z6Mz7POs2MnvxP6I5RSJHzbP1jC+cglJAVJxgF+8p6Q
+	 xCHuxGiQ4Z64rlT31UpoRce4HNwXG8nTb/g9g9i4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbfBLPon (ORCPT
+        id S1730679AbfBLPpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48202 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 10:45:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbfBLPon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:44:43 -0500
+        id S1726238AbfBLPpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:45:12 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79B6721773;
-        Tue, 12 Feb 2019 15:44:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F39F121773;
+        Tue, 12 Feb 2019 15:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549986282;
-        bh=cOkRumOfvL1eFJehoxj9QVbXEqGehq/bppBluJ7ALYs=;
+        s=default; t=1549986311;
+        bh=uyCwuVK7m1EdKUW1jMDgbNHxoIArsqofJ5gDugVV8so=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YfMfzuh38/J16K+MtphMf6srnr1Z1IgO3uGeDgtAPJi+v3HMr3C6XIuLhiqTwMJsc
-         AsNim30goU8qLCIYeMWuFeXE/dHghMQ2pJbEhIMoDgA17dwqEUJ0uvIsGvWlV7Xu/i
-         e6qJmmfoou+P97aufw3gbnxNZWb8C+J5aruSfDio=
+        b=Zef25u1hDtnYTLdkMiNpVudl6DEgCBtDSb4Dc9n7UyMXLYUng/E7V9lbZx8aud2gY
+         Z5yKina+DtMLWT/B3TuRIbF3FG/ndbReqhtIhl4JTqybDngkMEZ6A3DpXAbhbipCRa
+         J1UGfkVzOfqfZM6H+wGNuDF7f/TLuqkeIB0uRhFw=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
@@ -47,9 +47,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         James Morse <james.morse@arm.com>
-Subject: [PATCH v3 3/4] arm64: kprobes: Move exception_text check in blacklist
-Date:   Wed, 13 Feb 2019 00:44:19 +0900
-Message-Id: <154998625948.21869.8505204111913908807.stgit@devbox>
+Subject: [PATCH v3 4/4] arm64: kprobes: Use arch_populate_kprobe_blacklist()
+Date:   Wed, 13 Feb 2019 00:44:48 +0900
+Message-Id: <154998628802.21869.4041705065539411318.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154998617300.21869.11457765723750331236.stgit@devbox>
 References: <154998617300.21869.11457765723750331236.stgit@devbox>
@@ -62,39 +62,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move exception/irqentry text address check in blacklist,
-since those are symbol based rejection.
-
-If we prohibit probing on the symbols in exception_text,
-those should be blacklisted.
+Use arch_populate_kprobe_blacklist() instead of
+arch_within_kprobe_blacklist() so that we can see the full
+blacklisted symbols under the debugfs.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+  Changes in v3
+   - Do not populate blacklist in __kprobe_text in
+     arch_populate_kprobe_blacklist(), since it is already
+     populated in populate_kprobe_blacklist().
+   - Add exception entry text blacklist since those are rejected
+     by in_exception_text().
+---
+ arch/arm64/kernel/probes/kprobes.c |   45 +++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 19 deletions(-)
 
 diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index bd06b4b13fa9..194262fca5cd 100644
+index 194262fca5cd..37d913f33a89 100644
 --- a/arch/arm64/kernel/probes/kprobes.c
 +++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -98,9 +98,6 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
- 	/* copy instruction */
- 	p->opcode = le32_to_cpu(*p->addr);
+@@ -465,26 +465,33 @@ kprobe_breakpoint_handler(struct pt_regs *regs, unsigned int esr)
+ 	return DBG_HOOK_HANDLED;
+ }
  
--	if (in_exception_text(probe_addr))
--		return -EINVAL;
+-bool arch_within_kprobe_blacklist(unsigned long addr)
++int __init arch_populate_kprobe_blacklist(void)
+ {
+-	if ((addr >= (unsigned long)__kprobes_text_start &&
+-	    addr < (unsigned long)__kprobes_text_end) ||
+-	    (addr >= (unsigned long)__entry_text_start &&
+-	    addr < (unsigned long)__entry_text_end) ||
+-	    (addr >= (unsigned long)__idmap_text_start &&
+-	    addr < (unsigned long)__idmap_text_end) ||
+-	    (addr >= (unsigned long)__hyp_text_start &&
+-	    addr < (unsigned long)__hyp_text_end) ||
+-	    in_exception_text(addr))
+-		return true;
 -
- 	if (search_exception_tables(probe_addr))
- 		return -EINVAL;
+-	if (!is_kernel_in_hyp_mode()) {
+-		if ((addr >= (unsigned long)__hyp_idmap_text_start &&
+-		    addr < (unsigned long)__hyp_idmap_text_end))
+-			return true;
+-	}
+-
+-	return false;
++	int ret;
++
++	ret = kprobe_add_area_blacklist((unsigned long)__entry_text_start,
++					(unsigned long)__entry_text_end);
++	if (ret)
++		return ret;
++	ret = kprobe_add_area_blacklist((unsigned long)__irqentry_text_start,
++					(unsigned long)__irqentry_text_end);
++	if (ret)
++		return ret;
++	ret = kprobe_add_area_blacklist((unsigned long)__exception_text_start,
++					(unsigned long)__exception_text_end);
++	if (ret)
++		return ret;
++	ret = kprobe_add_area_blacklist((unsigned long)__idmap_text_start,
++					(unsigned long)__idmap_text_end);
++	if (ret)
++		return ret;
++	ret = kprobe_add_area_blacklist((unsigned long)__hyp_text_start,
++					(unsigned long)__hyp_text_end);
++	if (ret || is_kernel_in_hyp_mode())
++		return ret;
++	ret = kprobe_add_area_blacklist((unsigned long)__hyp_idmap_text_start,
++					(unsigned long)__hyp_idmap_text_end);
++	return ret;
+ }
  
-@@ -477,7 +474,8 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
- 	    (addr >= (unsigned long)__idmap_text_start &&
- 	    addr < (unsigned long)__idmap_text_end) ||
- 	    (addr >= (unsigned long)__hyp_text_start &&
--	    addr < (unsigned long)__hyp_text_end))
-+	    addr < (unsigned long)__hyp_text_end) ||
-+	    in_exception_text(addr))
- 		return true;
- 
- 	if (!is_kernel_in_hyp_mode()) {
+ void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
 
