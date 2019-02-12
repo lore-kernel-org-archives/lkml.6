@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6860EC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FDCC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC08214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0113214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730363AbfBLOak (ORCPT
+        id S1730380AbfBLOan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:40 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43788 "EHLO
+        Tue, 12 Feb 2019 09:30:43 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43824 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730285AbfBLOag (ORCPT
+        with ESMTP id S1730350AbfBLOal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:36 -0500
+        Tue, 12 Feb 2019 09:30:41 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4p-0005Af-Me; Tue, 12 Feb 2019 15:30:23 +0100
+        id 1gtZ4d-0005Af-HH; Tue, 12 Feb 2019 15:30:11 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 17/25] printk: add processor number to output
-Date:   Tue, 12 Feb 2019 15:29:55 +0100
-Message-Id: <20190212143003.48446-18-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 02/25] printk-rb: add prb locking functions
+Date:   Tue, 12 Feb 2019 15:29:40 +0100
+Message-Id: <20190212143003.48446-3-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,102 +54,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It can be difficult to sort printk out if multiple processors are
-printing simultaneously. Add the processor number to the printk
-output to allow the messages to be sorted.
+Add processor-reentrant spin locking functions. These allow
+restricting the number of possible contexts to 2, which can simplify
+implementing code that also supports NMI interruptions.
+
+    prb_lock();
+
+    /*
+     * This code is synchronized with all contexts
+     * except an NMI on the same processor.
+     */
+
+    prb_unlock();
+
+In order to support printk's emergency messages, a
+processor-reentrant spin lock will be used to control raw access to
+the emergency console. However, it must be the same
+processor-reentrant spin lock as the one used by the ring buffer,
+otherwise a deadlock can occur:
+
+    CPU1: printk lock -> emergency -> serial lock
+    CPU2: serial lock -> printk lock
+
+By making the processor-reentrant implemtation available externally,
+printk can use the same atomic_t for the ring buffer as for the
+emergency console and thus avoid the above deadlock.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- kernel/printk/printk.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ include/linux/printk_ringbuffer.h | 24 ++++++++++++
+ lib/Makefile                      |  2 +-
+ lib/printk_ringbuffer.c           | 77 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 102 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/printk_ringbuffer.h
+ create mode 100644 lib/printk_ringbuffer.c
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index b97d4195b09a..cde036d8487a 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -331,6 +331,7 @@ enum log_flags {
- 
- struct printk_log {
- 	u64 ts_nsec;		/* timestamp in nanoseconds */
-+	u16 cpu;		/* cpu that generated record */
- 	u16 len;		/* length of entire record */
- 	u16 text_len;		/* length of text buffer */
- 	u16 dict_len;		/* length of dictionary buffer */
-@@ -475,7 +476,7 @@ static u32 log_next(u32 idx)
- 
- /* insert record into the buffer, discard old ones, update heads */
- static int log_store(int facility, int level,
--		     enum log_flags flags, u64 ts_nsec,
-+		     enum log_flags flags, u64 ts_nsec, u16 cpu,
- 		     const char *dict, u16 dict_len,
- 		     const char *text, u16 text_len)
- {
-@@ -506,6 +507,7 @@ static int log_store(int facility, int level,
- 	msg->level = level & 7;
- 	msg->flags = flags & 0x1f;
- 	msg->ts_nsec = ts_nsec;
-+	msg->cpu = cpu;
- 	msg->len = size;
- 
- 	/* insert message */
-@@ -570,9 +572,9 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
- 
- 	do_div(ts_usec, 1000);
- 
--	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
-+	return scnprintf(buf, size, "%u,%llu,%llu,%c,%hu;",
- 		       (msg->facility << 3) | msg->level, seq, ts_usec,
--		       msg->flags & LOG_CONT ? 'c' : '-');
-+		       msg->flags & LOG_CONT ? 'c' : '-', msg->cpu);
- }
- 
- static ssize_t msg_print_ext_body(char *buf, size_t size,
-@@ -1110,6 +1112,11 @@ static inline void boot_delay_msec(int level)
- static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
- module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
- 
-+static size_t print_cpu(u16 cpu, char *buf)
-+{
-+	return sprintf(buf, "%03hu: ", cpu);
+diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
+new file mode 100644
+index 000000000000..75f5708ea902
+--- /dev/null
++++ b/include/linux/printk_ringbuffer.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_PRINTK_RINGBUFFER_H
++#define _LINUX_PRINTK_RINGBUFFER_H
++
++#include <linux/atomic.h>
++#include <linux/percpu.h>
++
++struct prb_cpulock {
++	atomic_t owner;
++	unsigned long __percpu *irqflags;
++};
++
++#define DECLARE_STATIC_PRINTKRB_CPULOCK(name)				\
++static DEFINE_PER_CPU(unsigned long, _##name##_percpu_irqflags);	\
++static struct prb_cpulock name = {					\
++	.owner = ATOMIC_INIT(-1),					\
++	.irqflags = &_##name##_percpu_irqflags,				\
 +}
 +
- static size_t print_syslog(unsigned int level, char *buf)
- {
- 	return sprintf(buf, "<%u>", level);
-@@ -1132,6 +1139,7 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
- 		len = print_syslog((msg->facility << 3) | msg->level, buf);
- 	if (time)
- 		len += print_time(msg->ts_nsec, buf + len);
-+	len += print_cpu(msg->cpu, buf + len);
- 	return len;
- }
- 
-@@ -1698,6 +1706,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 	u64 ts_nsec;
- 	char *text;
- 	char *rbuf;
-+	int cpu;
- 
- 	ts_nsec = local_clock();
- 
-@@ -1707,6 +1716,8 @@ asmlinkage int vprintk_emit(int facility, int level,
- 		return printed_len;
- 	}
- 
-+	cpu = raw_smp_processor_id();
++/* utility functions */
++void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store);
++void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store);
 +
- 	text = rbuf;
- 	text_len = vscnprintf(text, PRINTK_SPRINT_MAX, fmt, args);
++#endif /*_LINUX_PRINTK_RINGBUFFER_H */
+diff --git a/lib/Makefile b/lib/Makefile
+index e1b59da71418..77a20bfd232e 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -19,7 +19,7 @@ KCOV_INSTRUMENT_dynamic_debug.o := n
  
-@@ -1744,7 +1755,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 	if (dict)
- 		lflags |= LOG_PREFIX|LOG_NEWLINE;
- 
--	printed_len = log_store(facility, level, lflags, ts_nsec,
-+	printed_len = log_store(facility, level, lflags, ts_nsec, cpu,
- 				dict, dictlen, text, text_len);
- 
- 	prb_commit(&h);
+ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
+-	 idr.o int_sqrt.o extable.o \
++	 idr.o int_sqrt.o extable.o printk_ringbuffer.o \
+ 	 sha1.o chacha.o irq_regs.o argv_split.o \
+ 	 flex_proportions.o ratelimit.o show_mem.o \
+ 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
+new file mode 100644
+index 000000000000..28958b0cf774
+--- /dev/null
++++ b/lib/printk_ringbuffer.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/smp.h>
++#include <linux/printk_ringbuffer.h>
++
++static bool __prb_trylock(struct prb_cpulock *cpu_lock,
++			  unsigned int *cpu_store)
++{
++	unsigned long *flags;
++	unsigned int cpu;
++
++	cpu = get_cpu();
++
++	*cpu_store = atomic_read(&cpu_lock->owner);
++	/* memory barrier to ensure the current lock owner is visible */
++	smp_rmb();
++	if (*cpu_store == -1) {
++		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
++		local_irq_save(*flags);
++		if (atomic_try_cmpxchg_acquire(&cpu_lock->owner,
++					       cpu_store, cpu)) {
++			return true;
++		}
++		local_irq_restore(*flags);
++	} else if (*cpu_store == cpu) {
++		return true;
++	}
++
++	put_cpu();
++	return false;
++}
++
++/*
++ * prb_lock: Perform a processor-reentrant spin lock.
++ * @cpu_lock: A pointer to the lock object.
++ * @cpu_store: A "flags" pointer to store lock status information.
++ *
++ * If no processor has the lock, the calling processor takes the lock and
++ * becomes the owner. If the calling processor is already the owner of the
++ * lock, this function succeeds immediately. If lock is locked by another
++ * processor, this function spins until the calling processor becomes the
++ * owner.
++ *
++ * It is safe to call this function from any context and state.
++ */
++void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store)
++{
++	for (;;) {
++		if (__prb_trylock(cpu_lock, cpu_store))
++			break;
++		cpu_relax();
++	}
++}
++
++/*
++ * prb_unlock: Perform a processor-reentrant spin unlock.
++ * @cpu_lock: A pointer to the lock object.
++ * @cpu_store: A "flags" object storing lock status information.
++ *
++ * Release the lock. The calling processor must be the owner of the lock.
++ *
++ * It is safe to call this function from any context and state.
++ */
++void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
++{
++	unsigned long *flags;
++	unsigned int cpu;
++
++	cpu = atomic_read(&cpu_lock->owner);
++	atomic_set_release(&cpu_lock->owner, cpu_store);
++
++	if (cpu_store == -1) {
++		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
++		local_irq_restore(*flags);
++	}
++
++	put_cpu();
++}
 -- 
 2.11.0
 
