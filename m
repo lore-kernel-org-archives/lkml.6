@@ -2,92 +2,184 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FDFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DF0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284CD207E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1545020863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:24:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="be4ovrtR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbfBLPWc (ORCPT
+        id S1729994AbfBLPYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:22:32 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47087 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728851AbfBLPWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:22:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 07:22:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="114320895"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga007.jf.intel.com with ESMTP; 12 Feb 2019 07:22:31 -0800
-Received: from fmsmsx151.amr.corp.intel.com (10.18.125.4) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 12 Feb 2019 07:22:31 -0800
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- FMSMSX151.amr.corp.intel.com (10.18.125.4) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 12 Feb 2019 07:22:31 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.227]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.211]) with mapi id 14.03.0415.000;
- Tue, 12 Feb 2019 17:22:28 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     cgxu519 <cgxu519@gmx.com>, Greg KH <gregkh@linuxfoundation.org>
-CC:     "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mei: expand minor range when registering chrdev region
-Thread-Topic: [PATCH] mei: expand minor range when registering chrdev region
-Thread-Index: AQHUwuL4UEcuv89Gu0Gd9FSK0M1FpKXcQwDg
-Date:   Tue, 12 Feb 2019 15:22:27 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DAA3809@hasmsx108.ger.corp.intel.com>
-References: <20190212060252.8948-1-cgxu519@gmx.com>
- <20190212092902.GD27450@kroah.com>
- <03e93235-9fc8-dbc5-49e4-45be8e715398@gmx.com>
-In-Reply-To: <03e93235-9fc8-dbc5-49e4-45be8e715398@gmx.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.126.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 12 Feb 2019 10:24:13 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33934 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727248AbfBLPYM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:24:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 457DE8EE1A4;
+        Tue, 12 Feb 2019 07:24:12 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id BB-nU0NLE4nO; Tue, 12 Feb 2019 07:24:12 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8C9CF8EE0E9;
+        Tue, 12 Feb 2019 07:24:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549985051;
+        bh=aMg0DSQ4n/Oa8YY0OlX8mifTi163h3Bndg4yTi/z6Tk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=be4ovrtRhytJQRNLZfvQPLyez4/TQjFDRQ/hzMI/wetdnkVfnHpQisZouLO/26J0V
+         rZt54HVJXf9+n6Osv5uAEBWiACdtaCjXR9//SYaIfEG+OoCD/2tMc4If+yTY50ZkUw
+         0XsGJj0Bavpjtbu4MnnXjCu/OA5pzUH2RxI19lRE=
+Message-ID: <1549985049.3173.3.camel@HansenPartnership.com>
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes
+ 5 minute delay during boot on Sun Blade 2500
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mikael Pettersson <mikpelinux@gmail.com>,
+        Xuewei Zhang <xueweiz@google.com>
+Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Date:   Tue, 12 Feb 2019 07:24:09 -0800
+In-Reply-To: <fc547d40-9a42-a823-b62f-460c3244fe7d@kernel.dk>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+         <1549736341.2971.7.camel@HansenPartnership.com>
+         <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+         <1549813472.4142.3.camel@HansenPartnership.com>
+         <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+         <1549815924.4142.8.camel@HansenPartnership.com>
+         <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+         <1549898730.2831.6.camel@HansenPartnership.com>
+         <44bb4374-0b7c-733b-a53e-92d2f03f2f49@kernel.dk>
+         <1549899773.2831.12.camel@HansenPartnership.com>
+         <1a00da0e-cb8e-30ea-8d17-120f97242b2f@kernel.dk>
+         <1549902521.2831.23.camel@HansenPartnership.com>
+         <fce66227-ff41-3a4e-4c6a-f4c2ca492b95@kernel.dk>
+         <1549937598.2857.8.camel@HansenPartnership.com>
+         <fc547d40-9a42-a823-b62f-460c3244fe7d@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IA0KPiBPbiAyLzEyLzE5IDU6MjkgUE0sIEdyZWcgS0ggd3JvdGU6DQo+ID4gT24gVHVlLCBG
-ZWIgMTIsIDIwMTkgYXQgMDI6MDI6NTJQTSArMDgwMCwgQ2hlbmdndWFuZyBYdSB3cm90ZToNCj4g
-Pj4gQWN0dWFsbHksIHRvdGFsIGFtb3VudCBvZiBhdmFpbGFibGUgbWlub3IgbnVtYmVyIGZvciBh
-IHNpbmdsZSBtYWpvcg0KPiA+PiBpcyBNSU5PUk1BUksgKyAxLiBTbyBleHBhbmQgbWlub3IgcmFu
-Z2Ugd2hlbiByZWdpc3RlcmluZyBjaHJkZXYNCj4gPj4gcmVnaW9uLg0KPiA+Pg0KPiA+PiBTaWdu
-ZWQtb2ZmLWJ5OiBDaGVuZ2d1YW5nIFh1IDxjZ3h1NTE5QGdteC5jb20+DQo+ID4+IC0tLQ0KPiA+
-PiAgIGRyaXZlcnMvbWlzYy9tZWkvbWFpbi5jIHwgMiArLQ0KPiA+PiAgIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9taXNjL21laS9tYWluLmMgYi9kcml2ZXJzL21pc2MvbWVpL21haW4uYyBpbmRleA0K
-PiA+PiA4NzI4MWIzNjk1ZTYuLjNkZjU0ZjFlMWE4YiAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVy
-cy9taXNjL21laS9tYWluLmMNCj4gPj4gKysrIGIvZHJpdmVycy9taXNjL21laS9tYWluLmMNCj4g
-Pj4gQEAgLTg2OSw3ICs4NjksNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9u
-cyBtZWlfZm9wcyA9IHsNCj4gPj4NCj4gPj4gICBzdGF0aWMgc3RydWN0IGNsYXNzICptZWlfY2xh
-c3M7DQo+ID4+ICAgc3RhdGljIGRldl90IG1laV9kZXZ0Ow0KPiA+PiAtI2RlZmluZSBNRUlfTUFY
-X0RFVlMgIE1JTk9STUFTSw0KPiA+PiArI2RlZmluZSBNRUlfTUFYX0RFVlMgIChNSU5PUk1BU0sg
-KyAxKQ0KPiA+IFdoeSBpcyB0aGlzIG5lZWRlZD8gIEhhdmUgeW91IHJlYWxseSBydW4gb3V0IG9m
-IHRoYXQgbWFueSBtaW5vciBub2Rlcw0KPiA+IGZvciB0aGlzIGRyaXZlcj8NCj4gDQo+IE5vdCBy
-ZWFsbHksIHByYWN0aWNhbGx5IG1heWJlIHdlIGNhbm5vdCByZWFjaCB0byB0aGUgbGltaXQuDQo+
-IEkgd2FzIGp1c3QgY3VyaW91cyB3aHkgb25seSBvbmUgbWlub3IgbnVtYmVyIGxlZnQgdGhlcmUg
-YW5kIGFzc3VtZWQgdGhhdCB3YXMNCj4gZnJvbSBhIG1pc3Rha2Uoc2luY2UgSSd2ZSBzZWVuIHNp
-bWlsYXIgbWlzdGFrZSBpbiBvdGhlciBkcml2ZXIpLg0KPiBIb3dldmVyLCBpZiBpdCBleHBsaWNp
-dGx5IHNldHMgdG8gTUlOT1JNQVNLIGZvciBzb21lIHJlYXNvbnMsIHRoZW4gaXQncyBiZXR0ZXIN
-Cj4gdG8ga2VlcCBhcyBpcy4NCg0KSSBndWVzcyB0aGlzIHdhcyBhIGJvaWxlcnBsYXRlIGNvZGUs
-IGJ1dCBJJ20gc3VyZSB3ZSBkb24ndCBuZWVkIHNvIG1hbnkgZGV2aWNlcy4NCg0KVGhhbmtzDQpU
-b21hcw0KDQoNCg==
+On Mon, 2019-02-11 at 19:50 -0700, Jens Axboe wrote:
+> On 2/11/19 7:13 PM, James Bottomley wrote:
+> > On Mon, 2019-02-11 at 09:31 -0700, Jens Axboe wrote:
+> > > On 2/11/19 9:28 AM, James Bottomley wrote:
+> > > > On Mon, 2019-02-11 at 08:46 -0700, Jens Axboe wrote:
+> > > > > On 2/11/19 8:42 AM, James Bottomley wrote:
+> > > > > > On Mon, 2019-02-11 at 08:28 -0700, Jens Axboe wrote:
+> > > > > > > On 2/11/19 8:25 AM, James Bottomley wrote:
+> > > > > > > > On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
+> > > > > > > > > On 2/10/19 9:25 AM, James Bottomley wrote:
+> > > > 
+> > > > [...]
+> > > > > > > > > > That check wasn't changed by the code removal.
+> > > > > > > > > 
+> > > > > > > > > As I said above, for sd. This isn't true for non-
+> > > > > > > > > disks.
+> > > > > > > > 
+> > > > > > > > Yes, but the behaviour above doesn't change across a
+> > > > > > > > switch
+> > > > > > > > to MQ, so I don't quite understand how it bisects back
+> > > > > > > > to
+> > > > > > > > that change.  If we're not gathering entropy for the
+> > > > > > > > device
+> > > > > > > > now, we wouldn't have been before the switch, so the
+> > > > > > > > entropy characteristics shouldn't have changed.
+> > > > > > > 
+> > > > > > > But it does, as I also wrote in that first email. The
+> > > > > > > legacy
+> > > > > > > queue flags had QUEUE_FLAG_ADD_RANDOM set by default, the
+> > > > > > > MQ
+> > > > > > > ones do not. Hence any non-sd device would previously
+> > > > > > > ALWAYS
+> > > > > > > have ADD_RANDOM set, now none of them do. Also see the
+> > > > > > > patch
+> > > > > > > I sent.
+> > > > > > 
+> > > > > > So your theory is that the disk in question never gets to
+> > > > > > the
+> > > > > > rotational check?  because the check will clear the flag if
+> > > > > > it's non-rotational and set it if it's not, so the default
+> > > > > > state of the flag shouldn't matter.
+> > > > > 
+> > > > > No, my point is about non-disks, devices that aren't driven
+> > > > > by
+> > > > > sd. The behavior for sd hasn't changed, as it sets/clears it
+> > > > > unconditionally. 
+> > > > 
+> > > > I agree, but I don't think any of them were significant entropy
+> > > > contributors before: things like nvme have always been outside
+> > > > of
+> > > > this and sr and st don't really contribute much to the seek
+> > > > load
+> > > > during boot because they're probed but not used by the boot
+> > > > sequence, so I can't see how they would cause this
+> > > > behaviour.  I
+> > > > suppose it could be target probing, but even that seems
+> > > > unlikely
+> > > > because it should be dwarfed by the number of root disk reads
+> > > > during boot.
+> > > > 
+> > > > For the rng to take an additional 5 minutes to initialize, we
+> > > > must
+> > > > have lost a significant entropy source somewhere.
+> > > 
+> > > I agree it's not a significant amount of entropy, but even just
+> > > one
+> > > bit could mean a long stall if that put us over the edge of just
+> > > not
+> > > having enough for whatever is blocking on /dev/random. Mikael's
+> > > boot
+> > > did have a CDROM, it's not impossible that the handful of
+> > > commands we
+> > > end up doing to that device would have contributed enough entropy
+> > > to
+> > > get the boot done without stalling for minutes.
+> > > 
+> > > One way to know for sure, and that's if Mikael tests the patch.
+> > 
+> > I think I've got the root cause.  I have one system in my test bed
+> > exhibiting this behaviour.  It turns out the disk in it has no
+> > characteristics VPD page.  The 0xB1 VPD was a SBC-3 addition, so
+> > that's
+> > not surprising.  However, the characteristics check bails before
+> > setting the flags, so it takes the default flag which has flipped.
+> > 
+> > We can either fix this by setting the QUEUE_FLAG_ADD_RANDOM if
+> > there's
+> > no 0xB1 page or by setting the default as Jens proposed.
+> 
+> I'd recommend just doing my patch, since that'll be the same behavior
+> that SCSI had before.
+
+I've got the history now, it's this patch
+
+Author: Xuewei Zhang <xueweiz@google.com>
+Date:   Thu Sep 6 13:37:19 2018 -0700
+
+    scsi: sd: Contribute to randomness when running rotational device
+
+It added the else branch to the if (rot == 1).  It's the position of
+that else branch which is wrong because not all disks have a SBC-3
+characteristics VPD page, so they're the ones under MQ which stop
+contributing entropy.  Whichever patch we go with will need a fixes:
+for this.
+
+James
+
