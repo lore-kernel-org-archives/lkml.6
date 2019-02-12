@@ -2,148 +2,103 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA55C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE05C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B14AE2070D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE08A218D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qnh8semr"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lwO80HSm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbfBLIZG (ORCPT
+        id S1728444AbfBLIZ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:25:06 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34527 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbfBLIZF (ORCPT
+        Tue, 12 Feb 2019 03:25:29 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:47352 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbfBLIZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:25:05 -0500
-Received: by mail-lf1-f67.google.com with SMTP id u21so1324406lfu.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:25:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wktXpzSXXJvpSrZpX4mhoTSLqogh/PevmF85W+dF9cM=;
-        b=Qnh8semrh1DcHuUkDn5qlRRsHDJtErWfRjfO0x5CZad7WonhInbg3jmEkYvfRyWr25
-         KfC+FMr6Zytqe8TroVrLAsmbRNO+QVtYvZN4k+vPsRELO/BpNsEkvilYGbUzaT431WAu
-         MxYMmoeN0xDvQLLJREa4eQV97ehPXqe0x6TnT9KwtvMYNLanvKjr4no5lI19yFDp0SXQ
-         j8j+L6HMY6i628yPGr2c8yF9I2e7XHzPRTHkqYJ1Ane9yuMiM+VIFhTpAC+06mQ23yFk
-         ht/Du1kNG1fcJQHZ0kHR7Nc56WuBOf8P1hPIVjzWeQv8QharGPdSrVKLlZGGY0ssE3h9
-         lp8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wktXpzSXXJvpSrZpX4mhoTSLqogh/PevmF85W+dF9cM=;
-        b=DZ+uV0zpIG9GF8h1+G5X9en8dBYeXlkTbLHG6fwdu9Ie/vXXVztCVqukgsnJgZ8e+x
-         GBN4PpOvkCT1u0Qz1iopk6ei13j3asNfttGuRwGOTVApGEbc9XwqkVOX+ip0Y7H294ok
-         7SrPVyNZOBtoVDjvmeL+/DO1I+SQ9ZmFS7yQVronB7pH1QRLV+kmQ1C5Z9Dq2kIfOPXc
-         CStXWxeOH5EFkmKzdnwdwbjjqqkRuNJ7zlbg2pkuKi0bHjZXcWtOnQ7vkAtxaKkNQTxH
-         /mD+MvF+N0aVeyIhUGxetpulNjWkh2JSMTLD6AG64tR9gv+gusqpmhY7aTSeUwglVMPm
-         kH9Q==
-X-Gm-Message-State: AHQUAuYnwPLFWQ8T5TPjPYD4tzCkZwwHHurZMBfK3rfLIksbA9P7virC
-        Hr7tivy4ESmgDpMTE5BY0grgVQMTCavBu0Piavf6ciNYz5Q=
-X-Google-Smtp-Source: AHgI3IYYib9XJLsQp00hGP3I2v1BP6kkaVEtUEkfH7PpxS7yItLf9x3za9NEjPM/h8WYvpIMMI/RdGWDDMekSQyqATo=
-X-Received: by 2002:ac2:42c5:: with SMTP id n5mr1565426lfl.115.1549959903405;
- Tue, 12 Feb 2019 00:25:03 -0800 (PST)
+        Tue, 12 Feb 2019 03:25:28 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1C8OBYx029956;
+        Tue, 12 Feb 2019 02:24:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549959851;
+        bh=IpuQ1fod8zBY4+LMvrI8N0OYgFve4HTqRq42722JrOI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=lwO80HSmU/vXCdCjF7xU2878vndsM48q1UbUsTaKcgH7SIf3XbyAy+5YdHYs3JJfB
+         W3twLDM6FbM8rYfrvjAG03Lh1ZC+ieVC0B9xH/F/mYTyVt9XhXRAZzKGXAAB0Q/IIN
+         gkCZnPKcNiMLcLhQliS4A59nRi1jaRWUED5hezeE=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1C8OBpe106760
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Feb 2019 02:24:11 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
+ Feb 2019 02:24:10 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 12 Feb 2019 02:24:10 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1C8O67P020205;
+        Tue, 12 Feb 2019 02:24:07 -0600
+Subject: Re: [RESEND PATCH v2 00/33] ARM: davinci: modernize the irq support
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Lechner <david@lechnology.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190211122606.8662-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <a333fac0-955e-d04a-6076-42a5b6edda34@ti.com>
+Date:   Tue, 12 Feb 2019 13:54:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <a9718ae1e97a5911f47874fe23c00ef297d7fed8.1548158832.git.baolin.wang@linaro.org>
- <CAK8P3a2zkhrZLMi5KZ5=fGJCt85dad3_pZC0o7GqcwJkk4es9w@mail.gmail.com> <CAMz4ku+PR4bHtcPu2uT2f974+FWJVi8Tp3WzmuqE1TS-M-QawQ@mail.gmail.com>
-In-Reply-To: <CAMz4ku+PR4bHtcPu2uT2f974+FWJVi8Tp3WzmuqE1TS-M-QawQ@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 12 Feb 2019 16:24:51 +0800
-Message-ID: <CAMz4kuLEut0LqZ4bSAGJDufE8xHr6DgZ3Z1RCLQ10q_k6MUesw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: dmaengine: Add one new cell to present
- hardware slave id
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, eric.long@unisoc.com,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On 11/02/19 5:55 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> NOTE: resending due to missing irqchip maintainers in Cc
+> 
+> This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> the irqchip drivers and moves them over to drivers/irqchip.
+> 
+> The series can be logically split into four parts. The first (1-8) aims
+> at introducing support for SPARSE_IRQ. It contains a couple changes
+> required for that functionality and the final patch actually selecting
+> it.
+> 
+> Second part (9-19) makes the aintc driver suitable for drivers/irqchip
+> and eventually moves it over there.
+> 
+> Part 3 (20-32) does the same for the cp-intc driver.
+> 
+> Last patch removes unnecessary code.
+> 
+> The series has been tested on da850-lcdk (for cp-intc) and
+> dm365-evm (for aintc).
 
-On Fri, 1 Feb 2019 at 19:53, Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> Hi Arnd,
-> On Thu, 31 Jan 2019 at 00:52, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Tue, Jan 22, 2019 at 2:21 PM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > >
-> > > The DMA engine clients can trigger DMA engine automatically by setting
-> > > the corresponding hardware slave id for the DMA engine. Thus add one
-> > > cell to present the hardware slave id for DMA clients.
-> > >
-> > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/dma/sprd-dma.txt |   12 +++++++-----
-> > >  1 file changed, 7 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/dma/sprd-dma.txt b/Documentation/devicetree/bindings/dma/sprd-dma.txt
-> > > index 7a10fea..7812cf0 100644
-> > > --- a/Documentation/devicetree/bindings/dma/sprd-dma.txt
-> > > +++ b/Documentation/devicetree/bindings/dma/sprd-dma.txt
-> > > @@ -6,8 +6,8 @@ Required properties:
-> > >  - compatible: Should be "sprd,sc9860-dma".
-> > >  - reg: Should contain DMA registers location and length.
-> > >  - interrupts: Should contain one interrupt shared by all channel.
-> > > -- #dma-cells: must be <1>. Used to represent the number of integer
-> > > -       cells in the dmas property of client device.
-> > > +- #dma-cells: must be <2>. Used to represent the channel id and slave id
-> > > +       of integer cells in the dmas property of client device.
-> > >  - #dma-channels : Number of DMA channels supported. Should be 32.
-> > >  - clock-names: Should contain the clock of the DMA controller.
-> > >  - clocks: Should contain a clock specifier for each entry in clock-names.
-> > > @@ -28,14 +28,16 @@ apdma: dma-controller@20100000 {
-> > >
-> > >  Client:
-> > >  DMA clients connected to the Spreadtrum DMA controller must use the format
-> > > -described in the dma.txt file, using a two-cell specifier for each channel.
-> > > -The two cells in order are:
-> > > +described in the dma.txt file, using a three-cell specifier for each channel.
-> > > +The three cells in order are:
-> > >  1. A phandle pointing to the DMA controller.
-> > >  2. The channel id.
-> > > +3. The hardware slave id which is used for clients to trigger DMA engine
-> > > +automatically.
-> >
-> > I notice that this is an incompatible binding change. Is that necessary?
-> > If the current code works, I'd suggest allowing both #dma-cells=<2>
-> > and <3>, and then implementing both in the driver.
->
-> Yes, this is necessary.
->
-> Yes, current code can work, but the problem is that the DMA clients
-> must add one property (something like "sprd,slave-id") to specify the
-> slave id. So considering this, we want to change the dma-cells to 2,
-> including dma channel and dma slave id, which can avoid introducing
-> some similar properties for DMA clients.
->
-> Now there are no DMA clients in mainline for Spreadtrum platform, and
-> we want to upstream our first DMA clients: SPI controller. So no other
-> drivers need to change when we changing dma cells. Thanks.
+There is build breakage in drivers/input/keyboard/davinci_keyscan.c
+after this series due to <mach/irqs.h> removal.
 
-Do you have any other concerns about this patch set? If not, I think
-Vinod can apply this patch set. Thanks.
-
--- 
-Baolin Wang
-Best Regards
+Thanks,
+Sekhar
