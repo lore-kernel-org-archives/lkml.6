@@ -2,139 +2,109 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2235C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F78C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2CF220844
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E8DC217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:47:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UO4cG8cl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbfBLAm5 (ORCPT
+        id S1727996AbfBLArL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:42:57 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:60667 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727863AbfBLAm4 (ORCPT
+        Mon, 11 Feb 2019 19:47:11 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41624 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbfBLArL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:42:56 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtMA2-0006fH-KI; Mon, 11 Feb 2019 17:42:54 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtM9s-0001Qz-0E; Mon, 11 Feb 2019 17:42:54 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
-        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
-        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
-        <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
-        <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com>
-        <875ztwt7yy.fsf_-_@xmission.com> <87zhr8rtd6.fsf_-_@xmission.com>
-        <20190211141340.GA21430@redhat.com>
-Date:   Mon, 11 Feb 2019 18:42:39 -0600
-In-Reply-To: <20190211141340.GA21430@redhat.com> (Oleg Nesterov's message of
-        "Mon, 11 Feb 2019 15:13:40 +0100")
-Message-ID: <87zhr1g7ls.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 11 Feb 2019 19:47:11 -0500
+Received: by mail-vs1-f68.google.com with SMTP id i64so540508vsc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 16:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u1NgC8GXGyioSAhYQLIf5mJA4+toxCV5RE8n2dMeuvY=;
+        b=UO4cG8clCIKQDK9/zmKwPZ8QIQZgcYQggmkiSOyvw22UGFAcR3kWcR6xbmQW9KMZeU
+         D2dRym+fyDyZKSpGlJFk5Mu+zKSZXOKtzAwPx4ioyemVdvOIh0l9fUKc6FTZbcUgk2Up
+         9ETqSmjk+xFILiwWDtUQRCPRRgTFWy/tcMKE4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u1NgC8GXGyioSAhYQLIf5mJA4+toxCV5RE8n2dMeuvY=;
+        b=mZbAudjBLVyF/g0pMy9bql3hNUyTBxXbOqEIlJo82/Wl1N8VjCldmGmR1NvmikzDW0
+         NPoX2H7KBCmsrhHT23C9vBlqshQi1bUy8WCWmihbkGcPdBoh7w7b8s3/VbtreX/5uglM
+         PfH63p81ri/O+4qSP9tLVy8/ujeF2solX+i0BiL1I5VsDi6t1mC5iEnoTVYeKvYNOsw+
+         Cm5hpw4zyamIXdvwsDj6DwEO/B1tBJYn7+hRZHycUbf2bACnTeiVNi1SyBzttXfBRxe0
+         7LXYZ33CgkCsWdyFpqztZPvtUT3MJPNuQ/mOPw/daHSzlHpCEA1Ae0A7KshN3rPiE4fL
+         gaJA==
+X-Gm-Message-State: AHQUAuaEAPyrYg+nSSPotmAu0H2/AgJzJ+UW9ccmYUx3MK3i2Dqdmb7t
+        AcO3rKYI8aebJRYSdUKn0sQnH9BctUM=
+X-Google-Smtp-Source: AHgI3IaT04gjqjJ0KJE/bn6roBIcrs1dSR+nXk9jvX+NXsnquHHpdpTt2ijxTO50vH1g3qjMeEzwvA==
+X-Received: by 2002:a67:d601:: with SMTP id n1mr472893vsj.208.1549932429522;
+        Mon, 11 Feb 2019 16:47:09 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id a68sm11898356vsd.24.2019.02.11.16.47.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 16:47:08 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id v26so308520uap.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 16:47:08 -0800 (PST)
+X-Received: by 2002:ab0:470d:: with SMTP id h13mr450189uac.122.1549932428183;
+ Mon, 11 Feb 2019 16:47:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gtM9s-0001Qz-0E;;;mid=<87zhr1g7ls.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19hBHkbM8iRU+eB6uN27rihvsQkezNpLQ8=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] signal: Always notice exiting tasks
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <cover.1549927666.git.igor.stoppa@huawei.com> <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+ <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com>
+In-Reply-To: <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 11 Feb 2019 16:46:56 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
+Message-ID: <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
-
-> sorry again for delay...
+On Mon, Feb 11, 2019 at 4:37 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
 >
-> On 02/07, Eric W. Biederman wrote:
->>
->> --- a/kernel/signal.c
->> +++ b/kernel/signal.c
->> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
->>  		goto relock;
->>  	}
->>  
->> +	/* Has this task already been marked for death? */
->> +	ksig->info.si_signo = signr = SIGKILL;
->> +	if (signal_group_exit(signal))
->> +		goto fatal;
->> +
->>  	for (;;) {
->>  		struct k_sigaction *ka;
->>  
->> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
->>  			continue;
->>  		}
->>  
->> +	fatal:
->>  		spin_unlock_irq(&sighand->siglock);
 >
-> Eric, but this is wrong. At least this is the serious user-visible
-> change.
 >
-> Afaics, with this patch the tracee will never stop in PTRACE_EVENT_EXIT in case
-> of group_exit/exec, because schedule() in TASK_TRACED state won't block due to
-> __fatal_signal_pending().
+> On 12/02/2019 02:09, Kees Cook wrote:
+> > On Mon, Feb 11, 2019 at 3:28 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+> > It looked like only the memset() needed architecture support. Is there
+> > a reason for not being able to implement memset() in terms of an
+> > inefficient put_user() loop instead? That would eliminate the need for
+> > per-arch support, yes?
 >
-> Yes, yes, as I said many times the semantics of PTRACE_EVENT_EXIT was never really
-> defined, it depends on /dev/random, but still I don't think we should break it even
-> more.
+> So far, yes, however from previous discussion about power arch, I
+> understood this implementation would not be so easy to adapt.
+> Lacking other examples where the extra mapping could be used, I did not
+> want to add code without a use case.
+>
+> Probably both arm and x86 32 bit could do, but I would like to first get
+> to the bitter end with memory protection (the other 2 thirds).
+>
+> Mostly, I hated having just one arch and I also really wanted to have arm64.
 
-Well it changes PTRACE_EVENT_EXIT I grant that.  It looks like that
-changes makes PTRACE_EVENT_EXIT is less than useful.
+Right, I meant, if you implemented the _memset() case with put_user()
+in this version, you could drop the arch-specific _memset() and shrink
+the patch series. Then you could also enable this across all the
+architectures in one patch. (Would you even need the Kconfig patches,
+i.e. won't this "Just Work" on everything with an MMU?)
 
-The only way to perfectly preserve the previous semantics is probably to
-do something like my JOBCTL_TASK_EXIT proposal.
-
-That said I don't think even adding a JOBCTL_TASK_EXIT is enough to have
-a reliable stop of ptrace_event_exit after a process has exited.  As any
-other pending signal can cause problems there as well.
-
-I have received a report that strace -f in some cases is not noticing
-children before they die and it looks like a stop in PTRACE_EVENT_EXIT
-would fix that strace behavior.
-
-Sigh.
-
-Here I was trying for the simple minimal change and I hit this landmine.
-Which leaves me with the question of what should be semantics of signal
-handling after exit.
-
-I think from dim memory of previous conversations the desired semantics
-look like:
-a) Ignore all signal state except for SIGKILL.
-b) Letting SIGKILL wake up the process should be sufficient.
-
-I will see if I can reproduce the strace failure and see if I can cook
-up something minimal that addresses just that.  If you have suggestions
-I would love to hear them.
-
-As this was a minimal fix for SIGKILL being broken I have already sent
-the fix to Linus.  So we are looking at an incremental fix at this point.
-
-Eric
+-- 
+Kees Cook
