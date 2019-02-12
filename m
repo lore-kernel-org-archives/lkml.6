@@ -2,164 +2,108 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B46EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FF3C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3DE21855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A9BE217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfBLBC0 (ORCPT
+        id S1728038AbfBLBCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 20:02:26 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:55881 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbfBLBCZ (ORCPT
+        Mon, 11 Feb 2019 20:02:46 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:43110 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727492AbfBLBCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 20:02:25 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtMSs-0007Sg-Pn; Mon, 11 Feb 2019 18:02:22 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtMSh-0005SX-Nm; Mon, 11 Feb 2019 18:02:22 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Benjamin Gordon <bmgordon@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-        <20190211141904.885459037@linuxfoundation.org>
-Date:   Mon, 11 Feb 2019 19:02:06 -0600
-In-Reply-To: <20190211141904.885459037@linuxfoundation.org> (Greg
-        Kroah-Hartman's message of "Mon, 11 Feb 2019 15:18:29 +0100")
-Message-ID: <87tvh9es4x.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 11 Feb 2019 20:02:46 -0500
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1C11Ghw001122;
+        Mon, 11 Feb 2019 19:02:40 -0600
+Received: from ni.com (skprod3.natinst.com [130.164.80.24])
+        by mx0a-00010702.pphosted.com with ESMTP id 2qhw8uh4um-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Feb 2019 19:02:40 -0600
+Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
+        by us-aus-skprod3.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x1C12dJc016754
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 11 Feb 2019 19:02:39 -0600
+Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Mon, 11 Feb 2019 19:02:39 -0600
+Received: from nisurp-linux-2.ni.corp.natinst.com (130.164.49.7) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Mon, 11 Feb 2019 19:02:39 -0600
+From:   Virendra Kakade <virendra.kakade@ni.com>
+To:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <sre@kernel.org>,
+        <moritz.fischer@ettus.com>,
+        Virendra Kakade <virendra.kakade@ni.com>
+Subject: [RFC 0/6] Add support for Ettus Research E31x devices PMU
+Date:   Mon, 11 Feb 2019 19:01:37 -0600
+Message-ID: <20190212010143.3729-1-virendra.kakade@ni.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1gtMSh-0005SX-Nm;;;mid=<87tvh9es4x.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX184pEWpyPE07UBzc04qKB3dbVw1qNDY/LI=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 4.20 282/352] fs/proc/base.c: use ns_capable instead of capable for timerslack_ns
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+E31x devices are embedded devices made by Ettus Research which have
+a Zynq based FPGA architecture. This code adds driver support for the
+charger and battery to enable query of properties like voltage,
+temperature, charge and online status among others via the device tree
+on addition of overlay.
 
-> 4.20-stable review patch.  If anyone has any objections, please let me
-> know.
+The driver follows a MFD structure with a parent driver and two
+sub-drivers.
 
-No objection.  But I think of this as a feature addition rather than a
-fix for something.  As a feature that we now allow something we
-previously did not does this qualify for a backport to stable?
+* Patch 1 and 2: Add device bindings and E31x-PMU MFD device driver
 
-It is probably no more harmful in this instance than adding PCI IDs to a
-driver.  So I am not worried.  I am curious the current guidelines
-are.
+* Patch 3 and 4: Add device bindings for the charger and the sub-driver
+  for it. This driver shares the register map from its parent MFD
+  driver.
 
-In most cases a small relaxation of permissions like this requires a lot
-of bug fixing as typically code protected by capable(CAP_XXX) has been
-written and tested assuming a trusted root user.  Those bug fixes are
-many times too large for a stable backport.
+* Patch 5 and 6: Add device bindings for the battery and the sub-driver
+  for it. Register map is re-used.
 
-Eric
+Virendra Kakade (6):
+  mfd: Support for Ettus Research E31x devices PMU
+  mfd: Support for Ettus Research E31x devices PMU
+  power: supply: Ettus Research E31x charger driver
+  power: supply: Ettus Research E31x charger driver
+  power: supply: Ettus Research E31x battery driver
+  power: supply: Ettus Research E31x battery driver
 
+ .../devicetree/bindings/mfd/e31x-pmu.txt      |  28 ++
+ .../bindings/power/supply/e31x-battery.txt    |  14 +
+ .../bindings/power/supply/e31x-charger.txt    |  14 +
+ drivers/mfd/Kconfig                           |   7 +
+ drivers/mfd/Makefile                          |   2 +-
+ drivers/mfd/e31x-pmu.c                        |  89 +++++
+ drivers/power/supply/Kconfig                  |  12 +
+ drivers/power/supply/Makefile                 |   2 +
+ drivers/power/supply/e31x-battery.c           | 357 ++++++++++++++++++
+ drivers/power/supply/e31x-charger.c           | 190 ++++++++++
+ include/linux/mfd/e31x-pmu.h                  |  35 ++
+ 11 files changed, 749 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/e31x-battery.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/e31x-charger.txt
+ create mode 100644 drivers/mfd/e31x-pmu.c
+ create mode 100644 drivers/power/supply/e31x-battery.c
+ create mode 100644 drivers/power/supply/e31x-charger.c
+ create mode 100644 include/linux/mfd/e31x-pmu.h
 
-> ------------------
->
-> [ Upstream commit 8da0b4f692c6d90b09c91f271517db746a22ff67 ]
->
-> Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-> in its effective capability set, but the current check looks in the root
-> namespace instead of the process' user namespace.  Since a process is
-> allowed to do other activities controlled by CAP_SYS_NICE inside a
-> namespace, it should also be able to adjust timerslack_ns.
->
-> Link: http://lkml.kernel.org/r/20181030180012.232896-1-bmgordon@google.com
-> Signed-off-by: Benjamin Gordon <bmgordon@google.com>
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> Cc: Oren Laadan <orenl@cellrox.com>
-> Cc: Ruchi Kandoi <kandoiruchi@google.com>
-> Cc: Rom Lemarchand <romlem@android.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Nick Kralevich <nnk@google.com>
-> Cc: Dmitry Shmidt <dimitrysh@google.com>
-> Cc: Elliott Hughes <enh@google.com>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/proc/base.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ce3465479447..98525af0953e 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2356,10 +2356,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
->  		return -ESRCH;
->  
->  	if (p != current) {
-> -		if (!capable(CAP_SYS_NICE)) {
-> +		rcu_read_lock();
-> +		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-> +			rcu_read_unlock();
->  			count = -EPERM;
->  			goto out;
->  		}
-> +		rcu_read_unlock();
->  
->  		err = security_task_setscheduler(p);
->  		if (err) {
-> @@ -2392,11 +2395,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
->  		return -ESRCH;
->  
->  	if (p != current) {
-> -
-> -		if (!capable(CAP_SYS_NICE)) {
-> +		rcu_read_lock();
-> +		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-> +			rcu_read_unlock();
->  			err = -EPERM;
->  			goto out;
->  		}
-> +		rcu_read_unlock();
-> +
->  		err = security_task_getscheduler(p);
->  		if (err)
->  			goto out;
+-- 
+2.17.1
+
