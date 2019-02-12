@@ -2,181 +2,99 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2112BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81889C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE062075C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5392B2075C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbfBLPQ0 (ORCPT
+        id S1729849AbfBLPSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:16:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728700AbfBLPQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:16:26 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CF9Ci4131283
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:16:25 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qm0hd0cs8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:16:22 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 12 Feb 2019 15:16:20 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Feb 2019 15:16:17 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CFGGs59175332
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 15:16:16 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F389A405B;
-        Tue, 12 Feb 2019 15:16:16 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DCA7A4062;
-        Tue, 12 Feb 2019 15:16:14 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.59.139])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 12 Feb 2019 15:16:14 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 12 Feb 2019 17:16:13 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-parisc@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2] parisc: use memblock_alloc() instead of custom get_memblock()
-Date:   Tue, 12 Feb 2019 17:16:12 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19021215-0016-0000-0000-000002559364
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021215-0017-0000-0000-000032AFB5C7
-Message-Id: <1549984572-10867-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120108
+        Tue, 12 Feb 2019 10:18:34 -0500
+Received: from mout.gmx.net ([212.227.15.18]:60533 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727343AbfBLPSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:18:34 -0500
+Received: from [10.0.0.4] ([113.116.50.220]) by mail.gmx.com (mrgmx002
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0LanoO-1hM0lh3zuy-00kLF2; Tue, 12
+ Feb 2019 16:18:32 +0100
+Subject: Re: [PATCH 2/2] chardev: showing minor range for chardev in the
+ output of /proc/devices
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20190212084739.27602-1-cgxu519@gmx.com>
+ <20190212084739.27602-2-cgxu519@gmx.com> <20190212090212.GE31657@kroah.com>
+From:   cgxu519 <cgxu519@gmx.com>
+Message-ID: <a8332299-818e-571c-efc9-7885f18eddb8@gmx.com>
+Date:   Tue, 12 Feb 2019 23:18:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190212090212.GE31657@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:Xa4wh6d0Mod13N5cTbofoHCAh4XwuCAuP1h3KZCFcfnNClZkAFL
+ cN32xEp9ono7gfnpy4ugs7iIFPtXmvhA7GdSnfG45p51N3IyIWqqkLu2svlrQRc2Wx/rR5j
+ kfg46qeBDvsREV/vN7/mIn5zsHcvd7MdUTL6+3r+JTxk71sNHd7LYIJr4/YRK67vbpkr51S
+ V2m4qu3rZ41elPkXkzLRQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:trjpudQHjio=:y7sDnD293Qps6sTR0FVvTh
+ kUbDdgouXtux0rsTMQGFx7PTqzj4hSU02p1QRvYpHXwt+YFSiPiDya/2v2Em3y1N5QeSdRkyN
+ cpWVJpM2kzY1+vF3kxnzRGXeWMDfCNYxfpHdbvHUuOhvRYSJnjUyix5rXPayodwblFy3zx9EA
+ wWyJzqrgajZENCKcWTq413wGoD9LfYapEd9baTwVObj6KBi0odurtNbONNzw+Njvbnev6uSXw
+ aRK623+EZSk5kVMid9mPcS8w/GrVnWMfNUGiA9BdOwUqldcQMk9jPFVzDv/p3SFC04FKGqjdY
+ IQL5qQmz8H6s72J2wUeb+yA+ogGDGQabyXKfJb6KcrXiI4tbLDThhVGVObKMfoS/E+9MS7W2I
+ APDqOFebtTe2S11pmcKuf5hR6DXx9OOxFN48rta1ULf/KO8XE8Iw+g8B+meOr6AZQbr1PVNBX
+ GYsP/fJFpjjOlWh+IRgAyfHPUcGtqzTJqFnQv69tp0EX22/857vVWHpYohowLw4IcvweoOWW8
+ bmU02iQ59mmzzK4NIhfzaWyg2wXPbjNMWadIitUgOvXd/tD4shKfrG5IUqub3t06/qT/ePSpt
+ hk+kWGXwLu2kXs4nOQJYkqJrTUxPfs6npWiEafKkHniLxeOEyY+XUBEumZHFbN3b4Tl7NVkuq
+ k5bpHN+wGp5+x5a4qGeRAGENxnzXT41q+3zME21b5HUV8AO3Yx5aAUh6upbtHAB7Bl1QEJTEz
+ L9djnnAouRMM4ASa8UCzxQoLwyXb6tMbJXSpxNmaL42yApxv5Xzs1ZXikfKMuWQArvAXatUXv
+ 6tFieMpoUSgaXEs0HsNSCmvV0+MAvM2OQHLUH0cvXqwNMUdc6bKvyVn1bsiLPdVNSIvn7R9rg
+ sDgaOEnT2uBB3KXtsVRimw/atn/nQeNFhWQzAVES0Lqadr+cJc0uvJ2d/4V5dbtwzthWHOkVc
+ +c+sm9b7tjQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The get_memblock() function implements custom bottom-up memblock allocator.
-Setting 'memblock_bottom_up = true' before any memblock allocation is done
-allows replacing get_memblock() calls with memblock_alloc().
+On 2/12/19 5:02 PM, Greg KH wrote:
+> On Tue, Feb 12, 2019 at 04:47:39PM +0800, Chengguang Xu wrote:
+>> Currently chardev allows to share major, showing
+>> major with minor range for chardev will be more
+>> helpful.
+>>
+>> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+>> ---
+>>   fs/char_dev.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/char_dev.c b/fs/char_dev.c
+>> index b25b1da097d5..6f00acdeb308 100644
+>> --- a/fs/char_dev.c
+>> +++ b/fs/char_dev.c
+>> @@ -55,7 +55,9 @@ void chrdev_show(struct seq_file *f, off_t offset)
+>>   	mutex_lock(&chrdevs_lock);
+>>   	for (cd = chrdevs[major_to_index(offset)]; cd; cd = cd->next) {
+>>   		if (cd->major == offset)
+>> -			seq_printf(f, "%3d %s\n", cd->major, cd->name);
+>> +			seq_printf(f, "%3d %s (%u-%u)\n", cd->major, cd->name,
+>> +				   cd->baseminor,
+>> +				   cd->baseminor + cd->minorct - 1);
+> You are changing the format of a userspace file, what tools are going to
+> break when you do this?
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
-v2: fix allocation alignment
+I'll remove this part in V2. Do you have any idea how to get the minor
+range info for particular major? Or adding a similar file to somewhere
+under /sys is acceptable?
 
- arch/parisc/mm/init.c | 52 +++++++++++++++++++--------------------------------
- 1 file changed, 19 insertions(+), 33 deletions(-)
+Thanks
 
-diff --git a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-index 059187a..d0b1662 100644
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -79,36 +79,6 @@ static struct resource sysram_resources[MAX_PHYSMEM_RANGES] __read_mostly;
- physmem_range_t pmem_ranges[MAX_PHYSMEM_RANGES] __read_mostly;
- int npmem_ranges __read_mostly;
- 
--/*
-- * get_memblock() allocates pages via memblock.
-- * We can't use memblock_find_in_range(0, KERNEL_INITIAL_SIZE) here since it
-- * doesn't allocate from bottom to top which is needed because we only created
-- * the initial mapping up to KERNEL_INITIAL_SIZE in the assembly bootup code.
-- */
--static void * __init get_memblock(unsigned long size)
--{
--	static phys_addr_t search_addr __initdata;
--	phys_addr_t phys;
--
--	if (!search_addr)
--		search_addr = PAGE_ALIGN(__pa((unsigned long) &_end));
--	search_addr = ALIGN(search_addr, size);
--	while (!memblock_is_region_memory(search_addr, size) ||
--		memblock_is_region_reserved(search_addr, size)) {
--		search_addr += size;
--	}
--	phys = search_addr;
--
--	if (phys)
--		memblock_reserve(phys, size);
--	else
--		panic("get_memblock() failed.\n");
--
--	memset(__va(phys), 0, size);
--
--	return __va(phys);
--}
--
- #ifdef CONFIG_64BIT
- #define MAX_MEM         (~0UL)
- #else /* !CONFIG_64BIT */
-@@ -321,6 +291,13 @@ static void __init setup_bootmem(void)
- 			max_pfn = start_pfn + npages;
- 	}
- 
-+	/*
-+	 * We can't use memblock top-down allocations because we only
-+	 * created the initial mapping up to KERNEL_INITIAL_SIZE in
-+	 * the assembly bootup code.
-+	 */
-+	memblock_set_bottom_up(true);
-+
- 	/* IOMMU is always used to access "high mem" on those boxes
- 	 * that can support enough mem that a PCI device couldn't
- 	 * directly DMA to any physical addresses.
-@@ -442,7 +419,10 @@ static void __init map_pages(unsigned long start_vaddr,
- 		 */
- 
- 		if (!pmd) {
--			pmd = (pmd_t *) get_memblock(PAGE_SIZE << PMD_ORDER);
-+			pmd = memblock_alloc(PAGE_SIZE << PMD_ORDER,
-+					     PAGE_SIZE << PMD_ORDER);
-+			if (!pmd)
-+				panic("pmd allocation failed.\n");
- 			pmd = (pmd_t *) __pa(pmd);
- 		}
- 
-@@ -461,7 +441,10 @@ static void __init map_pages(unsigned long start_vaddr,
- 
- 			pg_table = (pte_t *)pmd_address(*pmd);
- 			if (!pg_table) {
--				pg_table = (pte_t *) get_memblock(PAGE_SIZE);
-+				pg_table = memblock_alloc(PAGE_SIZE,
-+							  PAGE_SIZE);
-+				if (!pg_table)
-+					panic("page table allocation failed\n");
- 				pg_table = (pte_t *) __pa(pg_table);
- 			}
- 
-@@ -700,7 +683,10 @@ static void __init pagetable_init(void)
- 	}
- #endif
- 
--	empty_zero_page = get_memblock(PAGE_SIZE);
-+	empty_zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-+	if (!empty_zero_page)
-+		panic("zero page allocation failed.\n");
-+
- }
- 
- static void __init gateway_init(void)
--- 
-2.7.4
+
 
