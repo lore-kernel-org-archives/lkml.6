@@ -2,128 +2,129 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A841CC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D9EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8043620823
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA6020823
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfBLMqN (ORCPT
+        id S1728866AbfBLMrT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:46:13 -0500
-Received: from mga11.intel.com ([192.55.52.93]:49733 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfBLMqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:46:12 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 04:46:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="274417410"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga004.jf.intel.com with ESMTP; 12 Feb 2019 04:46:09 -0800
-Received: from andy by smile with local (Exim 4.92-RC5)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1gtXRv-0001kG-Kx; Tue, 12 Feb 2019 14:46:07 +0200
-Date:   Tue, 12 Feb 2019 14:46:07 +0200
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     egranata@chromium.org
-Cc:     hdegoede@redhat.com, mika.westerberg@linux.intel.com,
-        dtor@chromium.org, rafael@kernel.org, gregkh@linuxfoundation.org,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org,
-        gwendal@chromium.org, linux-acpi@vger.kernel.org,
-        briannorris@chromium.org, egranata@google.com
-Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in
- platform_get_irq()
-Message-ID: <20190212124607.GI9224@smile.fi.intel.com>
-References: <20190207185917.167829-1-egranata@google.com>
- <20190211190112.209286-1-egranata@chromium.org>
+        Tue, 12 Feb 2019 07:47:19 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:58913 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfBLMrS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:47:18 -0500
+Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B38EE24000D;
+        Tue, 12 Feb 2019 12:47:13 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 13:47:13 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        jernej.skrabec@gmail.com, jonas@kwiboo.se,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 2/2] media: cedrus: Add H264 decoding support
+Message-ID: <20190212124713.cqms5jofw433nx6m@flea>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+ <4c00e1ab1e70adb1d94db59c37393250ca3791c5.1549895062.git-series.maxime.ripard@bootlin.com>
+ <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190211190112.209286-1-egranata@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <5a31f5596c04390d76bf34fdb8b71b6a96306943.camel@collabora.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:01:12AM -0800, egranata@chromium.org wrote:
-> From: Enrico Granata <egranata@chromium.org>
+On Mon, Feb 11, 2019 at 04:48:17PM -0300, Ezequiel Garcia wrote:
+> On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
+> > Introduce some basic H264 decoding support in cedrus. So far, only the
+> > baseline profile videos have been tested, and some more advanced features
+> > used in higher profiles are not even implemented.
+> > 
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> [..]
 > 
-> ACPI 5 added support for GpioInt resources as a way to provide
-> information about interrupts mediated via a GPIO controller.
 > 
-> Several device buses (e.g. SPI, I2C) have support for retrieving
-> an IRQ specified via this type of resource, and providing it
-> directly to the driver as an IRQ number.
+> > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
+> > +				   struct cedrus_run *run,
+> > +				   const u8 *ref_list, u8 num_ref,
+> > +				   enum cedrus_h264_sram_off sram)
+> > +{
+> > +	const struct v4l2_ctrl_h264_decode_param *decode = run->h264.decode_param;
+> > +	struct vb2_queue *cap_q = &ctx->fh.m2m_ctx->cap_q_ctx.q;
+> > +	const struct vb2_buffer *dst_buf = &run->dst->vb2_buf;
+> > +	struct cedrus_dev *dev = ctx->dev;
+> > +	u8 sram_array[CEDRUS_MAX_REF_IDX];
+> > +	unsigned int size, i;
+> > +
+> > +	memset(sram_array, 0, sizeof(sram_array));
+> > +
+> > +	for (i = 0; i < num_ref; i++) {
+> > +		const struct v4l2_h264_dpb_entry *dpb;
+> > +		const struct cedrus_buffer *cedrus_buf;
+> > +		const struct vb2_v4l2_buffer *ref_buf;
+> > +		unsigned int position;
+> > +		int buf_idx;
+> > +		u8 dpb_idx;
+> > +
+> > +		dpb_idx = ref_list[i];
+> > +		dpb = &decode->dpb[dpb_idx];
+> > +
+> > +		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> > +			continue;
+> > +
+> > +		if (dst_buf->timestamp == dpb->timestamp)
+> > +			buf_idx = dst_buf->index;
+> > +		else
+> > +			buf_idx = vb2_find_timestamp(cap_q, dpb->timestamp, 0);
+> > +
+> > +		if (buf_idx < 0)
+> > +			continue;
+> > +
+> > +		ref_buf = to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
+> > +		cedrus_buf = vb2_v4l2_to_cedrus_buffer(ref_buf);
+> > +		position = cedrus_buf->codec.h264.position;
+> > +
+> > +		sram_array[i] |= position << 1;
+> > +		if (ref_buf->field == V4L2_FIELD_BOTTOM)
+> > +			sram_array[i] |= BIT(0);
+> > +	}
+> > +
+> > +	size = min((unsigned int)ALIGN(num_ref, 4), sizeof(sram_array));
 > 
-> This is not currently done for the platform drivers, as platform_get_irq()
-> does not try to parse GpioInt() resources. This requires drivers to
-> either have to support only one possible IRQ resource, or to have code
-> in place to try both as a failsafe.
+> Perhaps s/unsigned int/size_t, so the arguments to min() have the same type?
 > 
-> While there is a possibility of ambiguity for devices that exposes
-> multiple IRQs, it is easy and feasible to support the common case
-> of devices that only expose one IRQ which would be of either type
-> depending on the underlying system's architecture.
+> Otherwise, I got this warning:
 > 
-> This commit adds support for parsing a GpioInt resource in order
-> to fulfill a request for the index 0 IRQ for a platform device.
-> 
+> /home/zeta/repos/linux/media_tree/drivers/staging/media/sunxi/cedrus/cedrus_h264.c: In function ‘_cedrus_write_ref_list’:
+> /home/zeta/repos/linux/media_tree/include/linux/kernel.h:846:29: warning: comparison of distinct pointer types lacks a cast
+>    (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
 
-Yes, let's go this way as a compromise to get major of the cases working.
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Strange, I didn't notice any warning. I'll make sure to fix it.
 
-> Signed-off-by: Enrico Granata <egranata@chromium.org>
-> ---
-> Changes in v2:
->  - only support IRQ index 0
-> 
->  drivers/base/platform.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 1c958eb33ef4d..0d3611cd1b3bc 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -127,7 +127,20 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->  		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
->  	}
->  
-> -	return r ? r->start : -ENXIO;
-> +	if (r)
-> +		return r->start;
-> +
-> +	/*
-> +	 * For the index 0 interrupt, allow falling back to GpioInt
-> +	 * resources. While a device could have both Interrupt and GpioInt
-> +	 * resources, making this fallback ambiguous, in many common cases
-> +	 * the device will only expose one IRQ, and this fallback
-> +	 * allows a common code path across either kind of resource.
-> +	 */
-> +	if (num == 0 && has_acpi_companion(&dev->dev))
-> +		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-> +
-> +	return -ENXIO;
->  #endif
->  }
->  EXPORT_SYMBOL_GPL(platform_get_irq);
-> -- 
-> 2.20.1.791.gb4d0f1c61a-goog
-> 
+Thanks!
+Maxime
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
