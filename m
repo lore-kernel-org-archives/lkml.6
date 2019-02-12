@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1974C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB01C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C090E222C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986D220869
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:57:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsKPvlBS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrYOH5Dd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbfBLR5V (ORCPT
+        id S1731010AbfBLR5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:57:21 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41861 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbfBLR5S (ORCPT
+        Tue, 12 Feb 2019 12:57:25 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34377 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730479AbfBLR5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:57:18 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k15so1651436pls.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:57:18 -0800 (PST)
+        Tue, 12 Feb 2019 12:57:19 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j18so1660602pfe.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:57:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JDU7hPspNg25hPl2OvBKS7YvtxIGkNRnjLg+s4xyhDM=;
-        b=ZsKPvlBSND/BBli5ocsBaMaB7S8odXyIT8DmJfUMHKbU8LQFv8ZJBe6VkCGW6UXfxg
-         5qYud7MxGIilXgI8DJUK9T6Oe6cONgQuIS3uwg+cl8HAjPSL5Il/zuHcV0SIkC927B1F
-         EYlJdurDGZjozSxpH5mR5GIJwSwAyxU4Kc3pQTRycew3NMPW/pfNEm3Va1/jzTICbNm+
-         ToWjMq8dtVE8BV84AjpIFM2XR9De2VX/FTdBKqO7NPLnb7313azhRYP9OFQWEgljFljU
-         YIGeGSOY2Sqs+QsslDvU6Sdw+WQUw2wWFSaZKaVpfLTPlADbmPMQlFn4SnDiyoPCQpkP
-         iCsg==
+        bh=gKD32Yoy3OQX5/4gri4PxomY3lVn8k0uhfbQMdVmPC8=;
+        b=lrYOH5DduVB4SGWITtLwhHB5PkSnt7X1YF/ulNlufQPN10JdBC3JKMtQnvkf5vzP9A
+         YLiuTZoCEu/56JlQngg6SGr+/UVhtpx0a7rvpj98atfRfeSC90uCghKgOA/jrV3byYfR
+         DGprnMtdxx+R7cP3dAL5wPq20Lhz1S40qCx/xiOXW987jnfMQQi1jZIpUKswiA5qxLsN
+         XcBHq4BkH3HQchxPa9HhnAnVtKHnrXLj2zs/a4wdF+cpd6CagMnzw5KWAmZrD5aKtUvE
+         cw33AoTM4HaBgNIVtq6bsALkld1RsUlDXCu2Q1ePr2kSjJGox+I/lilx+murwmqMyiYX
+         aSiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JDU7hPspNg25hPl2OvBKS7YvtxIGkNRnjLg+s4xyhDM=;
-        b=JH/dbVI0TiX/rTaj9qSrsJUjZvdgC/mXrbeC9aKUyY9G5U2sk/pLD1KEzLAJHViqf+
-         x9RBOm2scB7dG4HLaXNglgoC0Jvp6+5AYaDFALhfBoTHir2flRaZ7aZJ7u52fR0CX2gF
-         URsWnc1XPwBWZ+xRga3khJF+nDFUjTDJUO9/tEAfZ6mTUQinh0JuU2nLPIHgqEUtiDpK
-         sGj5vo6ECiS5xsT46UWqLkRRmqqzbvUHWVVXc90O+r3553vLiJHF/Elhhn6bASnoF+zI
-         sTOaa5nzMIAt/4oInt4UD4ShQPSWnXZ//PbZt9MDX1B9ab49bT9T/f5VNdlwdcEg9DHO
-         ykow==
-X-Gm-Message-State: AHQUAuYCU7Uod0+hartV6ORi5UGRwMZYBYhuXmpvosOylGhz+2Uz6bRp
-        zidHu6i+ijuQTRUh3uj7iSE=
-X-Google-Smtp-Source: AHgI3IbIqG76F5iw/WVx3RtEmtdN8RqImuM6uM/rK60cWCtO/s3g+/3YiAcKucPyCDktEnwvUciCUw==
-X-Received: by 2002:a17:902:1d4a:: with SMTP id u10mr5002457plu.122.1549994237645;
-        Tue, 12 Feb 2019 09:57:17 -0800 (PST)
+        bh=gKD32Yoy3OQX5/4gri4PxomY3lVn8k0uhfbQMdVmPC8=;
+        b=dGObYjX6ranMgXjk3NglIlJpi+hozQOucKJyLqVqNdl7F2qi5HbsceHgoDDjUUctC3
+         K2e9Vq4Y1jqjGh/QOpKt+TZqZN3fpZMnByEIjEQEI9CedYNhe2JksouB5fikDTjRFaGq
+         XGtxjSO+X/dIIykd+E2j2Q8vSVJCcgfs+3pZgTKmfAxAfJzyZ/Abx/31yoxqNy53YxYT
+         Z01cC39gVuXtqhlL6ToU3FxP8e3lh/xDD/ba4CX/TukuM2Wy9B8PTVEuEBiaLo9YN3SZ
+         vV88RF9SjjvVsv0H0lSChKc4bGH53LVmNNvm2uEDL3CDG5WWkjpw8U2OQoHFcxVjQsux
+         B+5g==
+X-Gm-Message-State: AHQUAubtQsEks+KllERMCuxADd9W7NJjNfF4M6u6vx+Gffuu5elNWr/T
+        U/0nFKIxpFGkvwLtH+qQDEs=
+X-Google-Smtp-Source: AHgI3IaILzRq1X2DE5NdW31PIJY1d8o4nzOM96VGqUakZek+QPBqTvVl5YHHHJPpQ2A6etEQ4l7PmA==
+X-Received: by 2002:a65:614a:: with SMTP id o10mr4701974pgv.387.1549994238809;
+        Tue, 12 Feb 2019 09:57:18 -0800 (PST)
 Received: from tower.thefacebook.com ([2620:10d:c090:200::5:4d62])
-        by smtp.gmail.com with ESMTPSA id z186sm18608427pfz.119.2019.02.12.09.57.16
+        by smtp.gmail.com with ESMTPSA id z186sm18608427pfz.119.2019.02.12.09.57.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 09:57:16 -0800 (PST)
+        Tue, 12 Feb 2019 09:57:18 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     linux-mm@kvack.org
@@ -64,9 +64,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>
-Subject: [PATCH v2 2/3] mm: separate memory allocation and actual work in alloc_vmap_area()
-Date:   Tue, 12 Feb 2019 09:56:47 -0800
-Message-Id: <20190212175648.28738-3-guro@fb.com>
+Subject: [PATCH v2 3/3] mm: show number of vmalloc pages in /proc/meminfo
+Date:   Tue, 12 Feb 2019 09:56:48 -0800
+Message-Id: <20190212175648.28738-4-guro@fb.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212175648.28738-1-guro@fb.com>
 References: <20190212175648.28738-1-guro@fb.com>
@@ -77,107 +77,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-alloc_vmap_area() is allocating memory for the vmap_area, and
-performing the actual lookup of the vm area and vmap_area
-initialization.
+Vmalloc() is getting more and more used these days (kernel stacks,
+bpf and percpu allocator are new top users), and the total %
+of memory consumed by vmalloc() can be pretty significant
+and changes dynamically.
 
-This prevents us from using a pre-allocated memory for the map_area
-structure, which can be used in some cases to minimize the number
-of required memory allocations.
+/proc/meminfo is the best place to display this information:
+its top goal is to show top consumers of the memory.
 
-Let's keep the memory allocation part in alloc_vmap_area() and
-separate everything else into init_vmap_area().
+Since the VmallocUsed field in /proc/meminfo is not in use
+for quite a long time (it has been defined to 0 by the
+commit a5ad88ce8c7f ("mm: get rid of 'vmalloc_info' from
+/proc/meminfo")), let's reuse it for showing the actual
+physical memory consumption of vmalloc().
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Matthew Wilcox <willy@infradead.org>
 ---
- mm/vmalloc.c | 50 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 33 insertions(+), 17 deletions(-)
+ fs/proc/meminfo.c       |  2 +-
+ include/linux/vmalloc.h |  2 ++
+ mm/vmalloc.c            | 16 ++++++++++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 568d90e17c17..465ea0153b2a 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -120,7 +120,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	show_val_kb(m, "Committed_AS:   ", committed);
+ 	seq_printf(m, "VmallocTotal:   %8lu kB\n",
+ 		   (unsigned long)VMALLOC_TOTAL >> 10);
+-	show_val_kb(m, "VmallocUsed:    ", 0ul);
++	show_val_kb(m, "VmallocUsed:    ", vmalloc_nr_pages());
+ 	show_val_kb(m, "VmallocChunk:   ", 0ul);
+ 	show_val_kb(m, "Percpu:         ", pcpu_nr_pages());
+ 
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 398e9c95cd61..0b497408272b 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -63,10 +63,12 @@ extern void vm_unmap_aliases(void);
+ 
+ #ifdef CONFIG_MMU
+ extern void __init vmalloc_init(void);
++extern unsigned long vmalloc_nr_pages(void);
+ #else
+ static inline void vmalloc_init(void)
+ {
+ }
++static inline unsigned long vmalloc_nr_pages(void) { return 0; }
+ #endif
+ 
+ extern void *vmalloc(unsigned long size);
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 8f0179895fb5..f1f19d1105c4 100644
+index f1f19d1105c4..8dd490d8d191 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -395,16 +395,10 @@ static void purge_vmap_area_lazy(void);
+@@ -340,6 +340,19 @@ static unsigned long cached_align;
  
- static BLOCKING_NOTIFIER_HEAD(vmap_notify_list);
+ static unsigned long vmap_area_pcpu_hole;
  
--/*
-- * Allocate a region of KVA of the specified size and alignment, within the
-- * vstart and vend.
-- */
--static struct vmap_area *alloc_vmap_area(unsigned long size,
--				unsigned long align,
--				unsigned long vstart, unsigned long vend,
--				int node, gfp_t gfp_mask)
-+static int init_vmap_area(struct vmap_area *va, unsigned long size,
-+			  unsigned long align, unsigned long vstart,
-+			  unsigned long vend, int node, gfp_t gfp_mask)
- {
--	struct vmap_area *va;
- 	struct rb_node *n;
- 	unsigned long addr;
- 	int purged = 0;
-@@ -416,11 +410,6 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 
- 	might_sleep();
- 
--	va = kmalloc_node(sizeof(struct vmap_area),
--			gfp_mask & GFP_RECLAIM_MASK, node);
--	if (unlikely(!va))
--		return ERR_PTR(-ENOMEM);
--
- 	/*
- 	 * Only scan the relevant parts containing pointers to other objects
- 	 * to avoid false negatives.
-@@ -516,7 +505,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	BUG_ON(va->va_start < vstart);
- 	BUG_ON(va->va_end > vend);
- 
--	return va;
-+	return 0;
- 
- overflow:
- 	spin_unlock(&vmap_area_lock);
-@@ -538,8 +527,35 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	if (!(gfp_mask & __GFP_NOWARN) && printk_ratelimit())
- 		pr_warn("vmap allocation for size %lu failed: use vmalloc=<size> to increase size\n",
- 			size);
--	kfree(va);
--	return ERR_PTR(-EBUSY);
++static DEFINE_PER_CPU(unsigned long, nr_vmalloc_pages);
 +
-+	return -EBUSY;
++unsigned long vmalloc_nr_pages(void)
++{
++	unsigned long pages = 0;
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		pages += per_cpu(nr_vmalloc_pages, cpu);
++
++	return pages;
 +}
 +
-+/*
-+ * Allocate a region of KVA of the specified size and alignment, within the
-+ * vstart and vend.
-+ */
-+static struct vmap_area *alloc_vmap_area(unsigned long size,
-+					 unsigned long align,
-+					 unsigned long vstart,
-+					 unsigned long vend,
-+					 int node, gfp_t gfp_mask)
-+{
-+	struct vmap_area *va;
-+	int ret;
-+
-+	va = kmalloc_node(sizeof(struct vmap_area),
-+			gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!va))
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = init_vmap_area(va, size, align, vstart, vend, node, gfp_mask);
-+	if (ret) {
-+		kfree(va);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return va;
- }
+ static struct vmap_area *__find_vmap_area(unsigned long addr)
+ {
+ 	struct rb_node *n = vmap_area_root.rb_node;
+@@ -1566,6 +1579,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			BUG_ON(!page);
+ 			__free_pages(page, 0);
+ 		}
++		this_cpu_sub(nr_vmalloc_pages, area->nr_pages);
  
- int register_vmap_purge_notifier(struct notifier_block *nb)
+ 		kvfree(area->pages);
+ 	}
+@@ -1742,12 +1756,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 		if (unlikely(!page)) {
+ 			/* Successfully allocated i pages, free them in __vunmap() */
+ 			area->nr_pages = i;
++			this_cpu_add(nr_vmalloc_pages, area->nr_pages);
+ 			goto fail;
+ 		}
+ 		area->pages[i] = page;
+ 		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+ 			cond_resched();
+ 	}
++	this_cpu_add(nr_vmalloc_pages, area->nr_pages);
+ 
+ 	if (map_vm_area(area, prot, pages))
+ 		goto fail;
 -- 
 2.20.1
 
