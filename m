@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922D7C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB5CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4512186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 666CF2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbfBLOcL (ORCPT
+        id S1730305AbfBLOaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:32:11 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43811 "EHLO
+        Tue, 12 Feb 2019 09:30:35 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43714 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730325AbfBLOai (ORCPT
+        with ESMTP id S1729495AbfBLOa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:38 -0500
+        Tue, 12 Feb 2019 09:30:29 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4t-0005Af-6K; Tue, 12 Feb 2019 15:30:27 +0100
+        id 1gtZ4i-0005Af-Hu; Tue, 12 Feb 2019 15:30:16 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 21/25] printk: implement KERN_CONT
-Date:   Tue, 12 Feb 2019 15:29:59 +0100
-Message-Id: <20190212143003.48446-22-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 09/25] printk: remove exclusive console hack
+Date:   Tue, 12 Feb 2019 15:29:47 +0100
+Message-Id: <20190212143003.48446-10-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,140 +54,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement KERN_CONT based on the printing CPU rather than on the
-printing task. As long as the KERN_CONT messages are coming from the
-same CPU and no non-KERN_CONT messages come, the messages are assumed
-to belong to each other.
+In order to support printing the printk log history when new
+consoles are registered, a global exclusive_console variable is
+temporarily set. This only works because printk runs with
+preemption disabled.
+
+When console printing is moved to a fully preemptible dedicated
+kthread, this hack no longer works.
+
+Remove exclusive_console usage.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- kernel/printk/printk.c | 73 +++++++++++++++++++++++++++++---------------------
- 1 file changed, 42 insertions(+), 31 deletions(-)
+ kernel/printk/printk.c | 30 ++++--------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index eebe6f4fdbba..306e7575499c 100644
+index 08e079b95652..5a5a685bb128 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -1649,8 +1649,6 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
- 	}
- }
+@@ -251,11 +251,6 @@ static void __up_console_sem(unsigned long ip)
+ static int console_locked, console_suspended;
  
--/* FIXME: no support for LOG_CONT */
--#if 0
  /*
-  * Continuation lines are buffered, and not committed to the record buffer
-  * until the line is complete, or a race forces it. The line fragments
-@@ -1660,52 +1658,57 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
- static struct cont {
- 	char buf[LOG_LINE_MAX];
- 	size_t len;			/* length == 0 means unused buffer */
--	struct task_struct *owner;	/* task of first print*/
-+	int cpu_owner;			/* cpu of first print*/
- 	u64 ts_nsec;			/* time of first print */
- 	u8 level;			/* log level of first message */
- 	u8 facility;			/* log facility of first message */
- 	enum log_flags flags;		/* prefix, newline flags */
--} cont;
-+} cont[2];
+- * If exclusive_console is non-NULL then only this console is to be printed to.
+- */
+-static struct console *exclusive_console;
+-
+-/*
+  *	Array of consoles built from command line options (console=)
+  */
  
--static void cont_flush(void)
-+static void cont_flush(int ctx)
- {
--	if (cont.len == 0)
-+	struct cont *c = &cont[ctx];
-+
-+	if (c->len == 0)
+@@ -423,7 +418,6 @@ static u32 log_next_idx;
+ /* the next printk record to write to the console */
+ static u64 console_seq;
+ static u32 console_idx;
+-static u64 exclusive_console_stop_seq;
+ 
+ /* the next printk record to read after the last 'clear' command */
+ static u64 clear_seq;
+@@ -1761,8 +1755,6 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
  		return;
  
--	log_store(cont.facility, cont.level, cont.flags, cont.ts_nsec,
--		  NULL, 0, cont.buf, cont.len);
--	cont.len = 0;
-+	log_store(c->facility, c->level, c->flags, c->ts_nsec, c->cpu_owner,
-+		  NULL, 0, c->buf, c->len);
-+	c->len = 0;
- }
+ 	for_each_console(con) {
+-		if (exclusive_console && con != exclusive_console)
+-			continue;
+ 		if (!(con->flags & CON_ENABLED))
+ 			continue;
+ 		if (!con->write)
+@@ -2044,7 +2036,6 @@ static u64 syslog_seq;
+ static u32 syslog_idx;
+ static u64 console_seq;
+ static u32 console_idx;
+-static u64 exclusive_console_stop_seq;
+ static u64 log_first_seq;
+ static u32 log_first_idx;
+ static u64 log_next_seq;
+@@ -2413,12 +2404,6 @@ void console_unlock(void)
+ 			goto skip;
+ 		}
  
--static bool cont_add(int facility, int level, enum log_flags flags, const char *text, size_t len)
-+static void cont_add(int ctx, int cpu, int facility, int level,
-+		     enum log_flags flags, const char *text, size_t len)
- {
-+	struct cont *c = &cont[ctx];
-+
-+	if (cpu != c->cpu_owner || !(flags & LOG_CONT))
-+		cont_flush(ctx);
-+
- 	/* If the line gets too long, split it up in separate records. */
--	if (cont.len + len > sizeof(cont.buf)) {
--		cont_flush();
--		return false;
--	}
-+	while (c->len + len > sizeof(c->buf))
-+		cont_flush(ctx);
- 
--	if (!cont.len) {
--		cont.facility = facility;
--		cont.level = level;
--		cont.owner = current;
--		cont.ts_nsec = local_clock();
--		cont.flags = flags;
-+	if (!c->len) {
-+		c->facility = facility;
-+		c->level = level;
-+		c->cpu_owner = cpu;
-+		c->ts_nsec = local_clock();
-+		c->flags = flags;
- 	}
- 
--	memcpy(cont.buf + cont.len, text, len);
--	cont.len += len;
-+	memcpy(c->buf + c->len, text, len);
-+	c->len += len;
- 
--	// The original flags come from the first line,
--	// but later continuations can add a newline.
-+	/*
-+	 * The original flags come from the first line,
-+	 * but later continuations can add a newline.
-+	 */
- 	if (flags & LOG_NEWLINE) {
--		cont.flags |= LOG_NEWLINE;
--		cont_flush();
-+		c->flags |= LOG_NEWLINE;
-+		cont_flush(ctx);
- 	}
+-		/* Output to all consoles once old messages replayed. */
+-		if (unlikely(exclusive_console &&
+-			     console_seq >= exclusive_console_stop_seq)) {
+-			exclusive_console = NULL;
+-		}
 -
--	return true;
- }
--#endif /* 0 */
- 
- /* ring buffer used as memory allocator for temporary sprint buffers */
- DECLARE_STATIC_PRINTKRB(sprint_rb,
-@@ -1717,6 +1720,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 			    const char *fmt, va_list args)
- {
- 	enum log_flags lflags = 0;
-+	int ctx = !!in_nmi();
- 	int printed_len = 0;
- 	struct prb_handle h;
- 	size_t text_len;
-@@ -1784,8 +1788,15 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		len += msg_print_text(msg,
+ 				console_msg_format & MSG_FORMAT_SYSLOG,
+ 				printk_time, text + len, sizeof(text) - len);
+@@ -2736,17 +2721,6 @@ void register_console(struct console *newcon)
+ 		logbuf_lock_irqsave(flags);
+ 		console_seq = syslog_seq;
+ 		console_idx = syslog_idx;
+-		/*
+-		 * We're about to replay the log buffer.  Only do this to the
+-		 * just-registered console to avoid excessive message spam to
+-		 * the already-registered consoles.
+-		 *
+-		 * Set exclusive_console with disabled interrupts to reduce
+-		 * race window with eventual console_flush_on_panic() that
+-		 * ignores console_lock.
+-		 */
+-		exclusive_console = newcon;
+-		exclusive_console_stop_seq = console_seq;
+ 		logbuf_unlock_irqrestore(flags);
+ 	}
+ 	console_unlock();
+@@ -2758,6 +2732,10 @@ void register_console(struct console *newcon)
+ 	 * boot consoles, real consoles, etc - this is to ensure that end
+ 	 * users know there might be something in the kernel's log buffer that
+ 	 * went to the bootconsole (that they do not see on the real console)
++	 *
++	 * This message is also important because it will trigger the
++	 * printk kthread to begin dumping the log buffer to the newly
++	 * registered console.
  	 */
- 	printk_emergency(rbuf, level, ts_nsec, cpu, text, text_len);
- 
--	printed_len = log_store(facility, level, lflags, ts_nsec, cpu,
--				dict, dictlen, text, text_len);
-+	if ((lflags & LOG_CONT) || !(lflags & LOG_NEWLINE)) {
-+		cont_add(ctx, cpu, facility, level, lflags, text, text_len);
-+		printed_len = text_len;
-+	} else {
-+		if (cpu == cont[ctx].cpu_owner)
-+			cont_flush(ctx);
-+		printed_len = log_store(facility, level, lflags, ts_nsec, cpu,
-+					dict, dictlen, text, text_len);
-+	}
- 
- 	prb_commit(&h);
- 	return printed_len;
+ 	pr_info("%sconsole [%s%d] enabled\n",
+ 		(newcon->flags & CON_BOOT) ? "boot" : "" ,
 -- 
 2.11.0
 
