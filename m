@@ -2,116 +2,123 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5972FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13212C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC49222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBE5F222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XQA659dL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qgKoLKFm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731539AbfBLRqP (ORCPT
+        id S1731506AbfBLRqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:46:15 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33793 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731506AbfBLRqN (ORCPT
+        Tue, 12 Feb 2019 12:46:43 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40152 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfBLRqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:46:13 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v14-v6so3024909ljv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:46:12 -0800 (PST)
+        Tue, 12 Feb 2019 12:46:42 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q21so3967877wmc.5;
+        Tue, 12 Feb 2019 09:46:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4TPAfWelPCvV4Dy+iauCizZilE4PXUD+0SrDLJh8oMc=;
-        b=XQA659dLudu/jXbkmJNoyHlATFdsZOtXkxitRUH1ejUKg0A0Stm8tjQNdhQ299o/q2
-         rn8MEgkcfpxfRJq7aqdCMq7E4yUtnTvCJ5afIDS9DIHgSSJhOMMusQcLJXds9Lm4e1g3
-         xx+0J0BjUYadIiF6asbiopCNrKP8iJIw0K32c=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=w4gEFxIxyax5TlhbyybnDHgnUurqHD/qF92buHHcIR8=;
+        b=qgKoLKFmkAuxh1Ar6DdvgYrww1WOQersJ5ep5UCiUi0J+9yhwEkFpUCCy8yfQmKs0F
+         O7B2p6q6/iq8xSEYfuJ9SJhl04BwUhPNSCVqmEr314+Ig1yj83cG1TfXkNst80XutOIO
+         n7t9JWJS9XIJ/ZWr3kpfo3/Vv8XuhMUgXopwcOD4Wh9PMgI93mxVtXzZL7DrGjYZtH4+
+         bM0uXg6iSpjZRPDC14l9NsVSZDYB3O/6vyny+N9pGx9VUWCGPrxevcUNZWO/Iqh5C3x2
+         xb1WqgwKxQ7vVRK6zYMmr5wcMsMOhQrKdBYl4VJ6btXG/C9iO7iamMf3Og/asoc4uVUr
+         d+2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4TPAfWelPCvV4Dy+iauCizZilE4PXUD+0SrDLJh8oMc=;
-        b=XLkpmqGuIZVI/OaolGwUNqDl4wbL8lSjdBsG3MTuaVQ7WGIR95M1EYgXa3UXJBqinn
-         fPbiKTUugg8q5jfxPRp/GGY6o1bweuJp7PVmmv/tYbQB9JC/8Q0j81m/MtkUFBbSzELI
-         wEQ4hVxjB9abD2ibxpTeeZpufhTe9lbbXT26x6lSSFl8kK8NGEJ4OEBP+pcE3aOtxjQT
-         xcwg5VIRg43MF/Jo+3k+kSZtIMz0H4kxdKX59GRmb3rg3zfluIWMWQewb0/wJuO0bpV+
-         JUwhAoE/3Cd259GCYE8EJVKc+ec8ECWz84IE9VRHVyP2dIRBoxpL5swQGcoPxYWcaolt
-         InBw==
-X-Gm-Message-State: AHQUAuZNvHhxDgU2WH+DnQAyg7KrKJuD9/22JIOrJ+dM5WHpaKD9Q7O8
-        Lx7utjMwOxCKU51kTrWL4BzHOtmlbgc=
-X-Google-Smtp-Source: AHgI3IbAMpSHUUe7+CRjgg521HGaTJyGvK/pfo9KDPjWJa7nWGf3RgvZmaAFEUZX7Z0wzdqZ6JYtMw==
-X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr3053857ljj.95.1549993570617;
-        Tue, 12 Feb 2019 09:46:10 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id h129sm501059lfg.78.2019.02.12.09.46.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 09:46:09 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id t14so2681085lfk.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:46:09 -0800 (PST)
-X-Received: by 2002:a19:2794:: with SMTP id n142mr3120798lfn.77.1549993568938;
- Tue, 12 Feb 2019 09:46:08 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=w4gEFxIxyax5TlhbyybnDHgnUurqHD/qF92buHHcIR8=;
+        b=PeQxv5PwrrPsWjnrE2sTXseFb8iGifO3/J1apWoreRwy08iFawfFyf7lxqI63GcVp8
+         LHzXSUMEjVUpN4j1y5LyyRWX+FV2M+2zUf7p5/tq4b0sPSBuwf0IeeVOQ7mHmK/2zAXP
+         b5NE+0fH+rIDuUHFVFVI6JjwvB+coqcg5IUtzNEjspq6Jip0idBwMp5V6NLFwpg/s47L
+         SUPlgusvMnS94r504Uv2OjUaZgWv9wqEA3IUnT8S69/+pA5FSvjP0aLJvj5polYT6ltw
+         PGnLOnMNCMfTiSyX9ysm0VOUMKCwBb420rBpKP/kmZKx4pQ1ZcDPfjOucwu8+IhHnvmP
+         2C7g==
+X-Gm-Message-State: AHQUAuaQr5Kk1Gg/ZRndyv6/z3+ZB53aR/jsiz3DrARC0FGup11yw/+k
+        cEwcdkqYu4PKxO6SDl1Tdzo=
+X-Google-Smtp-Source: AHgI3Iayj8bfyM5tDVPZR2hBc8CMXzT1/nAImWh/xGu6k4WGUoqn2o87bSsiO+4IN7cxta26eUGwTw==
+X-Received: by 2002:a1c:e10a:: with SMTP id y10mr9289wmg.73.1549993601070;
+        Tue, 12 Feb 2019 09:46:41 -0800 (PST)
+Received: from jernej-laptop.localnet (APN-123-243-40-gprs.simobil.net. [46.123.243.40])
+        by smtp.gmail.com with ESMTPSA id q9sm9102303wrv.26.2019.02.12.09.46.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 09:46:40 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        jonas@kwiboo.se, ezequiel@collabora.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH v3 2/2] media: cedrus: Add H264 decoding support
+Date:   Tue, 12 Feb 2019 18:46:38 +0100
+Message-ID: <3572175.7W1cnfb8sa@jernej-laptop>
+In-Reply-To: <20190212104314.slytpbufwhf5ujv7@flea>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com> <12916702.RFRCeC2GgE@jernej-laptop> <20190212104314.slytpbufwhf5ujv7@flea>
 MIME-Version: 1.0
-References: <20190212171423.8308-1-frederic@kernel.org> <20190212171423.8308-6-frederic@kernel.org>
-In-Reply-To: <20190212171423.8308-6-frederic@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Feb 2019 09:45:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whhGQuMuuBkLBKGL3kM+8j3+TC_xt+QKFCs1qNySBv3-A@mail.gmail.com>
-Message-ID: <CAHk-=whhGQuMuuBkLBKGL3kM+8j3+TC_xt+QKFCs1qNySBv3-A@mail.gmail.com>
-Subject: Re: [PATCH 05/32] locking/lockdep: Prepare valid_state() to handle
- plain masks
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 9:14 AM Frederic Weisbecker <frederic@kernel.org> wrote:
->
-> +
-> +       while (vectors) {
-> +               long fs = __ffs64(vectors) + 1;
-> +
-> +               vectors >>= fs;
+Dne torek, 12. februar 2019 ob 11:43:14 CET je Maxime Ripard napisal(a):
+> Hi,
+>=20
+> On Mon, Feb 11, 2019 at 08:21:31PM +0100, Jernej =C5=A0krabec wrote:
+> > > +	reg =3D 0;
+> > > +	/*
+> > > +	 * FIXME: This bit tells the video engine to use the default
+> > > +	 * quantization matrices. This will obviously need to be
+> > > +	 * changed to support the profiles supporting custom
+> > > +	 * quantization matrices.
+> > > +	 */
+> > > +	reg |=3D VE_H264_SHS_QP_SCALING_MATRIX_DEFAULT;
+> >=20
+> > This flag should not be needed anymore. From what I see, you correctly =
+set
+> > scaling matrix every time.
+>=20
+> The scaling matrix control is optional, so I guess we should protect
+> that by a check on whether that control has been set or not. What do
+> you think?
 
-This is wrong.
+Is it? Consider following snippet from your patch:
 
-If "vectors" only has the high hit set, you end up with "fs" having
-the value "64".
+<snip>
+{
+	.id	=3D V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX,
+	.elem_size	=3D sizeof(struct v4l2_ctrl_h264_scaling_matrix),
+	.codec	=3D CEDRUS_CODEC_H264,
+	.required	=3D true,
+},
+<snip>
 
-And then "vectors >>= fs" is undefined and won't actually do anything
-at all on x86.
+Doesn't "required =3D true" mean that it's mandatory? But yes, if it's opti=
+onal,=20
+then you should add a check.
 
-In general, avoid "ffs()", and the stupid pattern of "__ffs(x)+1".
+Best regards,
+Jernej
 
-Bit numbering starts at 0. "ffs()" is wrong. And you never *ever* just
-add one to a bit number in order to shift by one more bit, exactly
-because of overflow issues.
 
-So it may look inefficient, but the correct thing to do is
 
-    long bit = __ffs64(vectors);
-    vectors >>= fs;
-    vectors >>= 1;
-
-because that actually works.
-
-                     Linus
