@@ -1,82 +1,82 @@
 Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9FDC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D32C1C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15F9221855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B63B217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfBLA4l (ORCPT
+        id S1727959AbfBLA7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:56:41 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52680 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbfBLA4l (ORCPT
+        Mon, 11 Feb 2019 19:59:21 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57582 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbfBLA7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:56:41 -0500
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B87B6D460;
-        Tue, 12 Feb 2019 00:56:39 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 16:56:38 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     David Engraf <david.engraf@sysgo.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] initramfs: cleanup incomplete rootfs
-Message-Id: <20190211165638.e7820ab0491bbef8a0ca960e@linux-foundation.org>
-In-Reply-To: <CAHp75VdWyGv2QyuwE+4-oFJt8St2UmeuaHhveeLAFPPPuN5=tg@mail.gmail.com>
-References: <20181022134048.19693-1-david.engraf@sysgo.com>
-        <20181030151805.5519-1-david.engraf@sysgo.com>
-        <CAHp75VdOSC8j_1G3z-UO01_JYN20M-YMGOC2JkFDhi8njNZAvA@mail.gmail.com>
-        <20190208140810.76ef6c25825a5644d9625f0a@linux-foundation.org>
-        <CAHp75VdWyGv2QyuwE+4-oFJt8St2UmeuaHhveeLAFPPPuN5=tg@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 11 Feb 2019 19:59:20 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0xFNk071749;
+        Tue, 12 Feb 2019 09:59:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Tue, 12 Feb 2019 09:59:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C0xE24071745;
+        Tue, 12 Feb 2019 09:59:14 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1C0xEbp071744;
+        Tue, 12 Feb 2019 09:59:14 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902120059.x1C0xEbp071744@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH] LSM: Ignore =?ISO-2022-JP?B?InNlY3VyaXR5PSIgd2hlbiAibHNtPSIg?=
+ =?ISO-2022-JP?B?aXMgc3BlY2lmaWVk?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+Date:   Tue, 12 Feb 2019 09:59:14 +0900
+References: <201902120021.x1C0LeYB051392@www262.sakura.ne.jp> <CAGXu5jJ86XosW71111EaaSKcVwzw+UYvi4j619KwoBn=DNwrNw@mail.gmail.com>
+In-Reply-To: <CAGXu5jJ86XosW71111EaaSKcVwzw+UYvi4j619KwoBn=DNwrNw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Feb 2019 12:35:03 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
-> On Sat, Feb 9, 2019 at 12:08 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Fri, 8 Feb 2019 21:45:21 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > On Tue, Oct 30, 2018 at 5:22 PM David Engraf <david.engraf@sysgo.com> wrote:
-> > > >
-> > > > Unpacking an external initrd may fail e.g. not enough memory. This leads
-> > > > to an incomplete rootfs because some files might be extracted already.
-> > > > Fixed by cleaning the rootfs so the kernel is not using an incomplete
-> > > > rootfs.
-> > >
-> > > This breaks my setup where I have U-boot provided more size of
-> > > initramfs than needed. This allows a bit of flexibility to increase or
-> > > decrease initramfs compressed image without taking care of bootloader.
-> > > The proper solution is to do this if we sure that we didn't get enough
-> > > memory, otherwise I can't consider the error fatal to clean up rootfs.
+Kees Cook wrote:
+> On Mon, Feb 11, 2019 at 4:21 PM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
 > >
-> > OK, thanks.  Maybe David can suggest a fix - I'll queue up a revert
-> > meanwhile.
+> > Kees Cook wrote:
+> > > To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> > > used on the command line, and report that it is happening.
 > >
-> > I don't really understand the failure.  Why does an oversized initramfs
-> > cause unpack_to_rootfs() to fail?
+> > To maintain the existing behavior of CONFIG_DEFAULT_SECURITY, I also suggest this change.
+> > This saves e.g. Ubuntu users who are using only AppArmor from explicitly specifying
+> > security=apparmor when they don't want to enable other LSM_FLAG_LEGACY_MAJOR modules.
 > 
-> In my case I have got "Junk in compressed archive". I don't know (I
-> would check if needed) which exact condition I got  since there are
-> three places with this message.
+> No, this completely disables the purpose of lsm=
+> 
+> I don't understand the use-case you're concerned about?
 
-Well that's a plain irritating screwup right there.  Could someone
-please cook up a patch to give us three distinct (and hopefully more
-informative) error messages?
+The purpose of lsm= remains.
 
+I worry that distro users who don't explicitly specify security= parameter
+suddenly find TOMOYO messages because TOMOYO is no longer exclusive.
+There are two ways for avoiding it. One is to explicitly specify security=
+parameter. The other is to remove tomoyo from CONFIG_LSM. This change adds
+the third way; preserve current security= behavior until they start explicitly
+specifying lsm= parameter.
