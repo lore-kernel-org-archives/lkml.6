@@ -2,146 +2,183 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94701C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8923C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58DBE20863
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64E692184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJl5JR6u"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PyS+Leow"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfBLFfY (ORCPT
+        id S1726796AbfBLFqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 00:35:24 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37835 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbfBLFfY (ORCPT
+        Tue, 12 Feb 2019 00:46:32 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:36942 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLFqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 00:35:24 -0500
-Received: by mail-it1-f193.google.com with SMTP id b5so4566740iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 21:35:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k16c7Vwqs2BtbxacAaCK2evvPfhEyH6pxlx6O4bySs4=;
-        b=BJl5JR6udyA177kKw6+kpZIIdsck2dfSCDZf0zE6ojzr6ofJGec1b6QsMuFWrRKllf
-         JPsV4IoqkzE+MSwcadi4OKNov/1ejtGCxe6PEWFrIbno0BpjvzZ8ZROMzkuV4mG627kB
-         xiCPUl0/PJbIXi8JCZ0RxJnRv465mhiGG3ofSyslLwa8qT2UsTOhH1PaEjXYVpE3xfXB
-         kqp2lUqQuuahuw7xEf48iXYhO1p1Q68TzryYS7OxeTDruWatTvWbeT9QANYB+PeQbmiI
-         oXXYFBfBwp0dhXxEHwAyp7wj+J5NBRxpAwPLQIYM6o41WVvQ1GEESUUce0YVxh2aVEKB
-         ZvgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k16c7Vwqs2BtbxacAaCK2evvPfhEyH6pxlx6O4bySs4=;
-        b=M8C3052oVszSXXGw1UoQqIKyc1gTVA/bunwW2B2JQpAY+6aYFtehQdAyfx2/kgZnvw
-         anhOYBfTbk/RN/iHjWkmEG7g2sC/aZbpby9JEY12lq1BNLvHRT+AUqvH58BaCL7HLUf5
-         t07mEvpoFmwriB41yQnKY3ItT7MV8DLGprYlmpIZZSKRU9PDbQjmTth9zRpv1ukqnVn2
-         ZEshq0VQ7S/7wcKBzzBIi1Iigx+wMn1vyoBe6uBNVfjnPJIX5t2esB6+UqauxqR3/zsr
-         XvLyCkcYpAe0bBP/xN9pHLT4gJ5b1ljztgrSmjHyO4cmXJEbYDn5tTEsBSkXeexcY3Yd
-         wDGQ==
-X-Gm-Message-State: AHQUAub/e6AhIqAdRV5MzziNoUuqojAXLjFfAsdSfboopKa7NNi9UZ/V
-        OTBZWUQJHLUrVlpoNnPjGKMG6SaLvvLSkHF8Bw==
-X-Google-Smtp-Source: AHgI3IYjdlKatJkCbM6WN+xQNWMLeDvpl/gXyukV1W1ujr3n8HtPjD+XO3iH00Gz8EwehoUPqFV9WHpnECzGTuBIJuU=
-X-Received: by 2002:a24:a10:: with SMTP id 16mr1062640itw.42.1549949723046;
- Mon, 11 Feb 2019 21:35:23 -0800 (PST)
+        Tue, 12 Feb 2019 00:46:32 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190212054629epoutp03d40eb4c44917b172a65b380dfe5a843c~Ch6rLsP832994829948epoutp03T
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 05:46:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190212054629epoutp03d40eb4c44917b172a65b380dfe5a843c~Ch6rLsP832994829948epoutp03T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549950389;
+        bh=ObE5qjcK2olro++mN1w+JJtXEXm23mAFGBEQ4PTB2JQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=PyS+LeowN+D1Iu18dwcKpqIDx5cZWQcACV+htWdu3AlDNttVzd+J5dbGlsMRWh32C
+         YzhonKKxQvaVmooMWyxSUC8ekiVBQ7sb4jalbRG5OB4UpYrTY2PN7ufqMs2wCNa7td
+         ZslxnSN7lp33Y9QFIpWspgjaA5oqL7lfireHHj0o=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190212054626epcas1p44c21c292f4a472fe00fa9531de2122d3~Ch6owcC3w0944809448epcas1p4b;
+        Tue, 12 Feb 2019 05:46:26 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        78.A2.04074.0BD526C5; Tue, 12 Feb 2019 14:46:24 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190212054624epcas1p166fb85b935e9f9cd3d2836f6fb84a450~Ch6mpbE9Y3169531695epcas1p1o;
+        Tue, 12 Feb 2019 05:46:24 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190212054624epsmtrp1bede74b35324828ac7333df738558601~Ch6mniLOr1861418614epsmtrp1H;
+        Tue, 12 Feb 2019 05:46:24 +0000 (GMT)
+X-AuditID: b6c32a35-6eb5f9c000000fea-0e-5c625db0ad90
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        90.4B.03601.0BD526C5; Tue, 12 Feb 2019 14:46:24 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190212054624epsmtip1dab53f7a91e7f844d7e57e459c53971e~Ch6maW1A31256112561epsmtip1E;
+        Tue, 12 Feb 2019 05:46:24 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] drivers: devfreq: fix and optimize workqueue
+ mechanism
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, joel@joelfernandes.org,
+        chris.diamand@arm.com, mka@chromium.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <26e38213-630f-94bc-ff80-1cad708c7f83@samsung.com>
+Date:   Tue, 12 Feb 2019 14:46:24 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190125103924.GB27998@zn.tnic> <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic> <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
- <20190131105732.GC6749@zn.tnic> <20190131222732.GA946@anatevka>
- <20190131234740.GO6749@zn.tnic> <20190204223016.GB11986@anatevka>
- <20190205081552.GG21801@zn.tnic> <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
- <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 12 Feb 2019 13:35:11 +0800
-Message-ID: <CAFgQCTv0gkXpvJ6U+RztfVe+eL=5nL+=_TVaNV0VozX_dKtrWQ@mail.gmail.com>
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1549899005-7760-1-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmvu6G2KQYgwU79S02zljPajHt02UW
+        i2UNqhZnm96wW9xqkLG4vGsOm8Xn3iOMFmuP3GW3+LzhMaPF7cYVbBaH37SzOnB7rJm3htFj
+        dsNFFo+Fn76yehx8t4fJo2/LKkaPz5vkAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0M
+        DHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak
+        5BRYFugVJ+YWl+al6yXn51oZGhgYmQIVJmRn9B35zVhwRrhidpN8A+Mb/i5GTg4JAROJ3r4z
+        jF2MXBxCAjsYJY59XckIkhAS+MQosfRWKETiG6PE/dmvWWE6Fh88zwaR2MsocW3DSiYI5z2j
+        xOWtvewgVcICIRJr+g4wg9giAmkSb9vvMoHYzAInGCV6JlqB2GwCWhL7X9xgA7H5BRQlrv54
+        DLaaV8BO4tfW72A2i4CqxNx1HWC9ogIREod730HVCEqcnPmEBcTmFPCSuLXuKhvEfHGJW0/m
+        Q+2Sl2jeOpsZ5DgJgcnsEq+etDFBvOAicapjGQuELSzx6vgWdghbSuJlfxuUXS2x8uQRNojm
+        DkaJLfsvQP1vLLF/6WSgQRxAGzQl1u/Sh1jGJ/Huaw8rSFhCgFeio00IolpZ4vKDu1BrJSUW
+        t3eyQdgeEi+OrmedwKg4C8k7s5C8MAvJC7MQli1gZFnFKJZaUJybnlpsWGCIHNmbGMEJV8t0
+        B+OUcz6HGAU4GJV4eBVyE2OEWBPLiitzDzFKcDArifD+8E+KEeJNSaysSi3Kjy8qzUktPsRo
+        CgzticxSosn5wGyQVxJvaGpkbGxsYWJoZmpoqCTOu97BOUZIID2xJDU7NbUgtQimj4mDU6qB
+        0Un4CnNMMm+bisLjbbbhn1Iffnlwurnb6p+Utcsubonqzz+CFkqIfXCdXuu9V69cZMuGSMdv
+        SY/t5l537Ph43GzXVx7pCMHaUFYdM73wz9vsNl76tyRBbpJGdM7CsI0xbfvq327JzRRbvZBp
+        0yvbnt3TBGP7tZvNin/PsD84IUv9yb2Y45x/lViKMxINtZiLihMB5UzpUM4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSnO6G2KQYg+07JS02zljPajHt02UW
+        i2UNqhZnm96wW9xqkLG4vGsOm8Xn3iOMFmuP3GW3+LzhMaPF7cYVbBaH37SzOnB7rJm3htFj
+        dsNFFo+Fn76yehx8t4fJo2/LKkaPz5vkAtiiuGxSUnMyy1KL9O0SuDL6jvxmLDgjXDG7Sb6B
+        8Q1/FyMnh4SAicTig+fZuhi5OIQEdjNKzJ+3jR0iISkx7eJR5i5GDiBbWOLw4WKImreMEu3P
+        zrGB1AgLhEis6TvADGKLCKRJHGq4zQ5SxCxwglFi2/FTTBAdcxklnk/ZBtbBJqAlsf/FDTCb
+        X0BR4uqPx4wgNq+AncSvrd/BbBYBVYm56zqYQGxRgQiJj0/3MUHUCEqcnPmEBcTmFPCSuLXu
+        KtgcZgF1iT/zLjFD2OISt57MZ4Kw5SWat85mnsAoPAtJ+ywkLbOQtMxC0rKAkWUVo2RqQXFu
+        em6xYYFRXmq5XnFibnFpXrpecn7uJkZw9Glp7WA8cSL+EKMAB6MSD69CbmKMEGtiWXFl7iFG
+        CQ5mJRHeH/5JMUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOPRQoJpCeWpGanphakFsFkmTg4
+        pRoYZxoXy/5Q6dnzKnxFgerSQ2zLl+gfvl3hfqSo84bduVZ519ecC5KzPYwtfq6On/y7asZz
+        Xb15zi9PmIRtSNzQqbMns9Vx1t9zxgL7/abvafsslFcy1WCzd8H7TV+dfr5he3g/tmtOL4Pn
+        H9Vp5i9FDFW+bd+rGsu50/ZihiurWOzS3yKfF9V9U2Ipzkg01GIuKk4EAJYnVXG6AgAA
+X-CMS-MailID: 20190212054624epcas1p166fb85b935e9f9cd3d2836f6fb84a450
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190211153030eucas1p19bd9a7eca565ca066ab00dc2243cfb46
+References: <CGME20190211153030eucas1p19bd9a7eca565ca066ab00dc2243cfb46@eucas1p1.samsung.com>
+        <1549899005-7760-1-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 4:48 AM Dave Young <dyoung@redhat.com> wrote:
->
-> On 02/06/19 at 08:08pm, Dave Young wrote:
-> > On 02/05/19 at 09:15am, Borislav Petkov wrote:
-> > > On Mon, Feb 04, 2019 at 03:30:16PM -0700, Jerry Hoemann wrote:
-> > > > Is your objection only to the second fallback of allocating
-> > > > memory above >= 4GB?   Or are you objecting to allocating from
-> > > > (896 .. 4GB) as well?
-> > >
-> > > My problem is why should the user need to specify high or low allocation
-> > > explicitly when we can handle all that in the kernel automatically.
-> > >
-> > > The presence of crashkernel= on the cmdline sure means that the user
-> > > wants to allocate memory for a second kernel.
-> > >
-> > > Now, if the requested allocation fails, we say:
-> > >
-> > >   Error reserving crashkernel
-> > >
-> > > So, instead of saying that, we can *try* *again* and say
-> > >
-> > >   Error reserving requested crashkernel at @..., attempting a high range.
-> > >
-> > > and run memblock_find_in_range() on the other regions which we deemed
-> > > are ok to allocate from.
-> > >
-> > > Why aren't we doing that by default instead of placing all those
-> > > different options in front of the user and expecting her/him to know
-> > > something about all those magic ranges?
-> >
-> > As we talked in another reply, for the >4G allocation we can not avoid
-> > the swiotlb issue,  but if one request for 256M in high region and we
-> > allocate the low part automatically, it will eat more memory eg. 512M.
-> >
-> > But probably in case allacation failed in low region ,high is a must for kdump
-> > reservation, since no other choices perhaps we can make that as you said
->
-> That is exactly what Pingfan is doing in this patch.
->
-> Even we make it automatic in kernel, but we have to have some default
-> value for swiotlb in case crashkernel can not find a free region under 4G.
-> So this default value can not work for every use cases, people need
-> manually use crashkernel=,low and crashkernel=,high in case
-> crashkernel=X does not work.  One can tune it for their use:
->
-> 1) crashkernel=X reservation fails, likely the ,low default value is
-> still too big, one can shrink the value and manually try other value
-> 2) crashkernel=X reserve successfully on high memory and along with some
-> default low memory region. But the low region is not enough.  In this
-> case one can increase the
->
-> This should answer the question why ,high and ,low is still needed.
->
-> But for above consumption 1),  KASLR can still cause default ,low memory
-> failed to reserve.  So I wonder if KASLR can skip the 0-896M if the
-> system memory is big enough.
->
-A little fix about the comment. Refer to reserve_crashkernel_low(),
-low_base = memblock_find_in_range(0, 1ULL << 32, low_size,
-CRASH_ALIGN); So it should try 0~4G for ",low". And the default size
-for low is 256M. Given the limited memory region reserved by other
-component before crashkernel, we always can find a continuous chunk of
-256M inside the fragmented [0,4G], which is split by initrd, KASLR.
+Hi Lukasz,
 
-Thanks,
-Pingfan
+On 19. 2. 12. 오전 12:30, Lukasz Luba wrote:
+> This patch set changes workqueue related features in devfreq framework.
+> First patch switches to delayed work instead of deferred.
+> The second switches to regular system work and deletes custom 'devfreq'.
+> 
+> Using deferred work in this context might harm the system performance.
+> When the CPU enters idle, deferred work is not fired. The devfreq device's
+> utilization does not have to be connected with a particular CPU.
+> The drivers for GPUs, Network on Chip, cache L3 rely on devfreq governor.
+> They all are missing opportunity to check the HW state and react when
+> the deferred work is not fired.
+> A corner test case, when Dynamic Memory Controller is utilized by CPUs running
+> on full speed, might show x5 worse performance if the crucial CPU is in idle.
+
+The devfreq framework keeps the balancing between performance
+and power-consumption. It is wrong to focus on only either
+performance or power.
+
+This cover-letter focus on the only performance without any power-consumption
+disadvantages. It is easy to raise the performance with short sampling rate
+with polling modes. To get the performance, it is good as short as possible
+of period.
+
+Sometimes, when cpu is idle, the device might require the busy state.
+It is very difficult to catch the always right timing between them.
+
+Also, this patch cannot prevent the unneeded wakeup from idle state.
+Apparently, it only focuses on performance without considering
+the power-consumption disadvantage. In the embedded device,
+the power-consumption is very important point. We can not ignore
+the side effect.
+
+Always, I hope to improve the devfreq framwork more that older.
+But, frankly, it is difficult to agree because it only consider
+the performance without considering the side-effect.
+
+The power management framework always have to consider
+the power-consumption issue. This point is always true.
+
+> 
+> Changes:
+> v2:
+> - single patch split into two
+> - added cover letter
+> 
+> link for the previous version and discussion:
+> https://marc.info/?l=linux-pm&m=154904631226997&w=2
+> 
+> Regards,
+> Lukasz Luba
+> 
+> Lukasz Luba (2):
+>   drivers: devfreq: change devfreq workqueue mechanism
+>   drivers: devfreq: change deferred work into delayed
+> 
+>  drivers/devfreq/devfreq.c | 27 +++++++--------------------
+>  1 file changed, 7 insertions(+), 20 deletions(-)
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
