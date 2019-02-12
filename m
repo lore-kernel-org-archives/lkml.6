@@ -2,99 +2,95 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C0AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C82CC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1960218D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549966589;
-	bh=AAlWMkasilpiQMUn/yEZByNHGtbIQ22Hd9QLQtPmXb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gz0drV+vUVRv7IORH0bEUmYd1aRfZKlP7+BRVqVVLOW4+y00DOPvcTby9J7XTixQ0
-	 AW6+Wq19uyAJJhk7i2YaIB+g7IxqCNH2gnOCIzEDMws9S0EO7Y6en8A2yIyOdaU2y5
-	 K9D6mPeg84i6yu8Pkf1CcXgxg1UK08JB/iGjqmKc=
+	by mail.kernel.org (Postfix) with ESMTP id 2B7D32077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfBLKQ1 (ORCPT
+        id S1728596AbfBLKRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:16:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbfBLKQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:16:27 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 737852077B;
-        Tue, 12 Feb 2019 10:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549966587;
-        bh=AAlWMkasilpiQMUn/yEZByNHGtbIQ22Hd9QLQtPmXb0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JWJ0dyYL7NCJfoTlNl8/hDx5TcP9HBbyb91WBGiro4x4MFmhf7GjoX5rML/6RgIkr
-         PvncXuKsQN/wOFkhxUWdu894rCaxqulzRJnbQKSxgcP7cb1P5PaZPKmCdz2fl2xXcO
-         RFYig0h6U6XpRbICu+dtAXVAr4WZqnbBVlznZDLs=
-Date:   Tue, 12 Feb 2019 11:16:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     jcrouse@codeaurora.org, robdclark@gmail.com, evgreen@chromium.org,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: Add support for an interconnect path
-Message-ID: <20190212101624.GA20915@kroah.com>
-References: <20190212095238.12306-1-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212095238.12306-1-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 12 Feb 2019 05:17:51 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58721 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLKRu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 05:17:50 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gtV8M-00068m-Sn; Tue, 12 Feb 2019 11:17:46 +0100
+Message-ID: <1549966666.4800.3.camel@pengutronix.de>
+Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
+ matrices
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Tue, 12 Feb 2019 11:17:46 +0100
+In-Reply-To: <0f987e19-e6e9-a56e-00ec-61e7e300a92e@gmail.com>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+         <20190209014748.10427-2-slongerbeam@gmail.com>
+         <1549879117.7687.2.camel@pengutronix.de>
+         <0f987e19-e6e9-a56e-00ec-61e7e300a92e@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 11:52:38AM +0200, Georgi Djakov wrote:
-> From: Jordan Crouse <jcrouse@codeaurora.org>
-> 
-> Try to get the interconnect path for the GPU and vote for the maximum
-> bandwidth to support all frequencies. This is needed for performance.
-> Later we will want to scale the bandwidth based on the frequency to
-> also optimize for power but that will require some device tree
-> infrastructure that does not yet exist.
-> 
-> v6: use icc_set_bw() instead of icc_set()
-> v5: Remove hardcoded interconnect name and just use the default
-> v4: Don't use a port string at all to skip the need for names in the DT
-> v3: Use macros and change port string per Georgi Djakov
-> 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> Acked-by: Rob Clark <robdclark@gmail.com>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
-> 
-> Hi Greg,
-> 
-> If not too late, could you please take this patch into char-misc-next.
-> It is adding the first consumer of the interconnect API. We are just
-> getting the code in place, without making it functional yet, as some
-> DT bits are still needed to actually enable it. We have Rob's Ack to
-> merge this together with the interconnect code. This patch has already
-> spent some time in linux-next without any issues.
+Hi Steve,
 
-I have a question about the interconnect code.  Last week I saw a
-presentation about the resctrl/RDT code from ARM that is coming (MPAM),
-and it really looks like the same functionality as this interconnect
-code.  In fact, this code looks like the existing resctrl stuff, right?
+On Mon, 2019-02-11 at 10:24 -0800, Steve Longerbeam wrote:
+[...]
+> Looking more closely at these coefficients now, I see you are right, 
+> they are the BT.601 YUV full-range coefficients (Y range 0 to 1, U and V 
+> range -0.5 to 0.5). Well, not even that -- the coefficients are not 
+> being scaled to the limited ranges, but the 0.5 offset (128) _is_ being 
+> added to U/V, but no offset for Y. So it is even more messed up.
+>
+> Your corrected coefficients and offsets look correct to me: Y 
+> coefficients scaled to (235 - 16) / 255 and U/V coefficients scaled to 
+> (240 - 16)  / 255, and add the offsets for both Y and U/V.
+> 
+> But what about this "SAT_MODE" field in the IC task parameter memory? 
 
-So why shouldn't we just drop the interconnect code and use resctrl
-instead as it's already merged?
+That just controls the saturation. The result after the matrix
+multiplication is either saturated to [0..255] or to [16..235]/[16..240]
+when converting from the internal representation to the 8 bit output.
 
-thanks,
+> According to the manual the hardware will automatically convert the 
+> written coefficients to the correct limited ranges.
 
-greg k-h
+Where did you get that from? "The final calculation result is limited
+according to the SAT_MODE parameter and rounded to 8 bits." I see no
+mention of coefficients being modified.
+
+> I see there is a "sat" field defined in the struct but is not being
+> set in the tables.
+> 
+> So what should we do, define the full range coefficients, and make use 
+> of SAT_MODE h/w feature, or scale/offset the coefficients ourselves and 
+> not use SAT_MODE? I'm inclined to do the former.
+
+SAT_MODE should be set for conversions to YUV limited range so that the
+coefficients can be rounded to the closest value. Otherwise we'd have to
+round towards zero, possibly with a larger error, to make sure the
+results are inside the valid ranges.
+
+regards
+Philipp
