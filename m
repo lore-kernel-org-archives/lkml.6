@@ -2,210 +2,98 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46411C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F386C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 084522084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p3dwJTaN"
+	by mail.kernel.org (Postfix) with ESMTP id 3C7CE2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730583AbfBLOzB (ORCPT
+        id S1730624AbfBLOzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:55:01 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:46579 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbfBLOy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:54:59 -0500
-Received: by mail-yb1-f195.google.com with SMTP id 7so1104439ybp.13;
-        Tue, 12 Feb 2019 06:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5CBOJRGTcQGmlNCKUj0Pt249I45F4hVPySjhHRNwryE=;
-        b=p3dwJTaNaKkGTeOKYMqlI/sGsuuoK/mTjbzapom1ILyv6Qua0Zh16d/oOZedv6ezGg
-         2lqg1gW3755SN8Ti7VNSd2JyZiT/fqT+aLADH77nzDeKAFMN9OhHnEbe13AfnevCIJLh
-         g+5aosgzFhO/p5/vOGQA30eC3oZu7m2yvS5w8kmhzcVdLnR6YA2EpiCdV17S7st2/JXr
-         044kR0FXdUyPLaw2IG9NaHOwEtxiHLcgx0Affzqwo+zN+/cSffC7WtrznekDJ1ACaL5P
-         /l/9aM64U0oeqU2dX/d+VUgR9JbEkovLFiVpJy9Ln5l5WPW1FSWW2yXeF9JAxIxnSaw9
-         2Y+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5CBOJRGTcQGmlNCKUj0Pt249I45F4hVPySjhHRNwryE=;
-        b=UU+bWKFRv2Fo5O/p9Zocar8lSKTazTsa+iD2Q85pVj6GjbMoFrYT054y+ucvpydAgX
-         zCwZS1oQb4qBuGCKOSuvInQF5wg1xwR+MNCPBUv1ERqZUe+iMVKx6RNhK1rEFYcoesf5
-         UVDJwBfjuaa4jmcX0jvYjbJ+IbOgIeZSy9SbFjOsIRS8kUaBjfQ1w9foc3ue4U0Sp3Za
-         yxX2yZWe8lzlqkOKIcwdBhqHGW9GarScIbId+NtixugDMue3f6OdHy9RSfYD4P0tUVnH
-         lADrrb1fPj4EoexBzZsWp9P1qhohwI/s8E8BAQPA3RRTruSpStGsqsHA5XhjCWN1wHmq
-         XWqg==
-X-Gm-Message-State: AHQUAubtoAfit0TysoJWQ4go85ceJx4u7EYqwmLy1u0zfmIin63fH1jU
-        C/fwzjNVHknvySYsEznWgjs6KuouKSJmpA==
-X-Google-Smtp-Source: AHgI3IbE5eyb3heigYm7wsbkfI7cPM4Fjr4YLixP9rit9V2jL3xGQRZk02P5gQ9dPNKcU5s8y2Wcvg==
-X-Received: by 2002:a25:bc83:: with SMTP id e3mr3130135ybk.164.1549983298074;
-        Tue, 12 Feb 2019 06:54:58 -0800 (PST)
-Received: from localhost.localdomain (c-73-120-18-128.hsd1.tn.comcast.net. [73.120.18.128])
-        by smtp.gmail.com with ESMTPSA id v134sm4987967ywv.90.2019.02.12.06.54.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 06:54:57 -0800 (PST)
-From:   demiobenour@gmail.com
-To:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel@vger.kernel.org (open list:FILE LOCKING (flock() and
-        fcntl()/lockf())), linux-kernel@vger.kernel.org (open list),
-        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES)
-Cc:     "Demi M. Obenour" <demiobenour@gmail.com>
-Subject: [PATCH 2/4] Expose O_PATHSTATIC to userspace
-Date:   Tue, 12 Feb 2019 09:54:45 -0500
-Message-Id: <20190212145450.2200-2-demiobenour@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190212145450.2200-1-demiobenour@gmail.com>
-References: <20190212145450.2200-1-demiobenour@gmail.com>
+        Tue, 12 Feb 2019 09:55:17 -0500
+Received: from mout.gmx.net ([212.227.15.18]:33415 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730534AbfBLOzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 09:55:15 -0500
+Received: from [10.0.0.4] ([113.116.50.220]) by mail.gmx.com (mrgmx002
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0LwaMR-1h9amx0Ru3-018Lcx; Tue, 12
+ Feb 2019 15:55:08 +0100
+Subject: Re: [PATCH] mei: expand minor range when registering chrdev region
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tomas.winkler@intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <20190212060252.8948-1-cgxu519@gmx.com>
+ <20190212092902.GD27450@kroah.com>
+From:   cgxu519 <cgxu519@gmx.com>
+Message-ID: <03e93235-9fc8-dbc5-49e4-45be8e715398@gmx.com>
+Date:   Tue, 12 Feb 2019 22:55:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212092902.GD27450@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:AIrixuBjTVkp14BkG/iQ6wUjF6Bn4jUQ7Q6JQtO0Id7wo4fD5c6
+ NBWgvq/FpkVVpYOjjRvdbSn/rnAhCSTMd4KGuIiVLjHkQ0BKmIXq+UC0v28LjFRrsFTSy5B
+ uKwmRka9NcCWydRMw2dkB/GdybpLg9QB5/0lfsHtIqOpexcPgVO89NuUv62e65EN5ePjqsW
+ PH5nUTGXEWr1MLG0BRfdQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2cGxVbKRY5c=:ZWR4rpNyX8BxtGKooyy1Qr
+ Sh7qf4Haw97/UuttTCgd1qiyxbP00OZRWa+tF/F57X0KXYRpm2m72t6uaFyMKvubOOahPB1Qw
+ w86AuX+iMOQuV8cRMewJcd6UXXtkLtH20+g68uIZJ8epbmRHUSUT7PMc0WCGt9K5QbPeTqP4d
+ LZ900w9bWKtkV6o/3AbVVtERH9rYQ5phA4q0e8UbyVhAJjbqRMtZKXJS125YDZ78wttugmvuk
+ LCUI2paU2cPzQwVQozW/hEGxv5l+QLXx6veYWC4XN/EpXaNd2biOiDjswvcHFjxOOtAe6VSCO
+ hpyMwhYmyzcaMBsGZSyS53rkeqBufhctbmASGez45x4SBiNgvO8gIZ3H8mGEV6m6yyMqgixdF
+ Q/3YBlxyWvnmulFfJNLEWTNbjm9Yz95oxD1qky3IuGKK+lYxRquCb1n9s3Fmq9W+Xd0x2cV1w
+ SwpI0birPeNDjZZZXysxlXu43RfHMF8znXvDEDPP6h5nbg1OW2Wj6DtX4eJaTVzwfaJXlWUcp
+ KxRvz0XrblFB253QQdsrWUZqf7ekL/qs/tVoe5n+j8lLhFhS9CzMJG/b6zmVtyDbi4c2TeIoz
+ qn2i/8yPGxfAN/aBvCOcjC1eecNRFFyG/DSQJZZybwCWiPLRw4g/5VwXiPGEnjCXyzXf1Y+LP
+ GmegrT7iBu91/dq5GRSXrPXO1szuA9ksZz+xzSApLtelMBocLhssVgo94OVIudNHMXNVzedP7
+ 3ljU25VNk3KY7+7KCUMrJ9QHsg1BJBPQL724rMMrgJAi1Fvy9MQEQ4jOLoQTOxJIhABD4Srbt
+ 7O34HaHiDWCl62SnPTV/Kq1/K3Eb4M1XdLPuMXWBMrqCvTDf08dj4XS91RYQjyAJstUwdoMBH
+ vnLG+JndZjsODXBR0v9F9edmLrfkC0L+LSKKKfTdrbmCJuP1LiAMng5CQZgoA0URNI0OmnVQl
+ I5gmv7WZJwQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Demi M. Obenour" <demiobenour@gmail.com>
+On 2/12/19 5:29 PM, Greg KH wrote:
+> On Tue, Feb 12, 2019 at 02:02:52PM +0800, Chengguang Xu wrote:
+>> Actually, total amount of available minor number
+>> for a single major is MINORMARK + 1. So expand
+>> minor range when registering chrdev region.
+>>
+>> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+>> ---
+>>   drivers/misc/mei/main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
+>> index 87281b3695e6..3df54f1e1a8b 100644
+>> --- a/drivers/misc/mei/main.c
+>> +++ b/drivers/misc/mei/main.c
+>> @@ -869,7 +869,7 @@ static const struct file_operations mei_fops = {
+>>   
+>>   static struct class *mei_class;
+>>   static dev_t mei_devt;
+>> -#define MEI_MAX_DEVS  MINORMASK
+>> +#define MEI_MAX_DEVS  (MINORMASK + 1)
+> Why is this needed?  Have you really run out of that many minor nodes
+> for this driver?
 
-This adds the file open flag O_PATHSTATIC, which ensures that symbolic
-links are *never* followed, even in path components other than the last.
-This is distinct from O_NOFOLLOW, which only prevents symlinks in the
-*last* component from being followed.
+Not really, practically maybe we cannot reach to the limit.
+I was just curious why only one minor number left there and assumed
+that was from a mistake(since I've seen similar mistake in other driver).
+However, if it explicitly sets to MINORMASK for some reasons, then it's
+better to keep as is.
 
-This is useful for avoiding race conditions in userspace code that
-should expose only a subset of the filesystem to clients.  This includes
-FTP and SFTP servers, QEMU, and others.
+Thanks
 
-Currently, O_NOFOLLOW must be set if O_PATHSTATIC is set.  Otherwise,
-open() fails with -EINVAL.
----
- fs/fcntl.c                       |  2 +-
- fs/namei.c                       |  6 ++++++
- fs/open.c                        | 24 ++++++++++++++++++++++--
- include/linux/fcntl.h            |  2 +-
- include/uapi/asm-generic/fcntl.h |  4 ++++
- 5 files changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 083185174c6d..6c85c4d0c006 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/namei.c b/fs/namei.c
-index 54fbd2c7ba82..4c90f265c103 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3282,6 +3282,12 @@ static int do_last(struct nameidata *nd,
- 	if (!(open_flag & O_CREAT)) {
- 		if (nd->last.name[nd->last.len])
- 			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-+
-+		if (open_flag & O_PATHSTATIC) {
-+			nd->flags |= LOOKUP_NEVER_FOLLOW;
-+			nd->flags &= ~LOOKUP_FOLLOW;
-+		}
-+
- 		/* we _can_ be in RCU mode here */
- 		error = lookup_fast(nd, &path, &inode, &seq);
- 		if (likely(error > 0))
-diff --git a/fs/open.c b/fs/open.c
-index 0285ce7dbd51..717afa8179c0 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -940,6 +940,24 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 	/* Must never be set by userspace */
- 	flags &= ~FMODE_NONOTIFY & ~O_CLOEXEC;
- 
-+	/*
-+	 * If nonzero, setting O_PATHSTATIC but not O_NOFOLLOW fails with
-+	 * -EINVAL.  Otherwise, setting O_PATHSTATIC automatically sets
-+	 * O_NOFOLLOW.
-+	 */
-+#define REQUIRE_NOFOLLOW_FOR_PATHSTATIC 1
-+
-+#if REQUIRE_NOFOLLOW_FOR_PATHSTATIC
-+	/* O_PATHSTATIC doesn't make sense without O_NOFOLLOW */
-+	if (unlikely((flags & O_PATHSTATIC) && !(flags & O_NOFOLLOW)))
-+		return -EINVAL;
-+#elif defined REQUIRE_NOFOLLOW_FOR_PATHSTATIC
-+	if (flags & O_PATHSTATIC)
-+		flags &= O_NOFOLLOW;
-+#else
-+#error REQUIRE_NOFOLLOW_FOR_PATHSTATIC must be defined
-+#endif
-+
- 	/*
- 	 * O_SYNC is implemented as __O_SYNC|O_DSYNC.  As many places only
- 	 * check for O_DSYNC if the need any syncing at all we enforce it's
-@@ -959,7 +977,7 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 		 * If we have O_PATH in the open flag. Then we
- 		 * cannot have anything other than the below set of flags
- 		 */
--		flags &= O_DIRECTORY | O_NOFOLLOW | O_PATH;
-+		flags &= O_DIRECTORY | O_NOFOLLOW | O_PATH | O_PATHSTATIC;
- 		acc_mode = 0;
- 	}
- 
-@@ -986,7 +1004,9 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 
- 	if (flags & O_DIRECTORY)
- 		lookup_flags |= LOOKUP_DIRECTORY;
--	if (!(flags & O_NOFOLLOW))
-+	if (flags & O_PATHSTATIC)
-+		lookup_flags |= LOOKUP_NEVER_FOLLOW;
-+	else if (!(flags & O_NOFOLLOW))
- 		lookup_flags |= LOOKUP_FOLLOW;
- 	op->lookup_flags = lookup_flags;
- 	return 0;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 27dc7a60693e..6f91e1490592 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_PATHSTATIC)
- 
- #ifndef force_o_largefile
- #define force_o_largefile() (BITS_PER_LONG != 32)
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..314ea1cecf44 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,10 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_PATHSTATIC
-+#define O_PATHSTATIC	040000000
-+#endif
-+
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
--- 
-2.20.1
+
 
