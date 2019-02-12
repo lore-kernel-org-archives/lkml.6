@@ -2,110 +2,76 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C95C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83028C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE052081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qpc/xs9w"
+	by mail.kernel.org (Postfix) with ESMTP id 5A9612084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732108AbfBLXjC (ORCPT
+        id S1732230AbfBLXmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:39:02 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52714 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727871AbfBLXjB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:39:01 -0500
-Received: by mail-it1-f195.google.com with SMTP id r11so1253532itc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dzWjMapjpHtL53gMYeYkX51A6xddEI4xv6rvmvwj2Y8=;
-        b=qpc/xs9wOLlkmb0meKC6FJ4tHHCLwOYiuTAtd9Jcd44iX8RcPbsjFQl1D5LXp2BaX0
-         IjrAVGZU5xhGg4v4bjXbd9iYBWXjN2hOzGXh7YkWFIumGYXM0PpC+XTnfN/yo+Vl6cED
-         anICUkhTT3LpULayddUzpgUhwJ8cKmNW75SO3E4qygXJST+sFZyLi9N19Kyhe1l084CB
-         i+JZVRf2kxRNM637Eek0AO56n9qF0MSuelzgO96HH9mbKV9YUCxLpDpBK+sNFm6ynLyv
-         aybZByVB17I6nLomlP6HDugC5222sDt5H+qYEwIIxSgJO7d8OHOXvBGklwhkGt3gW/dO
-         j53g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dzWjMapjpHtL53gMYeYkX51A6xddEI4xv6rvmvwj2Y8=;
-        b=Zm6J6jGopJ69V8ckEunZk4skrril/yA5HfCD125YLvD4aTWNqa33F1XHmsdynXMKlW
-         zQurRBU79dOPClvp9hIuTKZtmsv/MvItg2rjQmcJ+BgCxF0iVkWZ1xgLJBFTbN1rCod2
-         be9F1DUgSdSAOHBXMr5EYmjmgvVFRU2RpyvNdfaxTalWB04fqCII9XKTLNsnOdeHxiBF
-         lqbcax7XWjalFzH7QKZNHFyylbTBioARp9HbtJoxNHSykdIOgpIVzpDwwtn196+4EAIN
-         R7co5ukVkjZv37ErA2Cuj0wZqEZNQ7tvO0loxbvRNU8MZExbiSGhKmRCBJ+2Y22tlDxm
-         aSGw==
-X-Gm-Message-State: AHQUAuYolFs3VeCVIJzj1lrwDCTNrnWOQc+Y1o7oG7Vbx3jaBJ749Hbs
-        ZSAzZPxB16EoGxpa3VsiELHYEg//9yHNww==
-X-Google-Smtp-Source: AHgI3IZIL9KMsQ3+LVt7/qFsKjAHiWCiADAHvidShmN5/0ux8jJUd9wdU5VmvvH2XUe0BCQaFNGdCQ==
-X-Received: by 2002:a24:5f4c:: with SMTP id r73mr932306itb.25.1550014740954;
-        Tue, 12 Feb 2019 15:39:00 -0800 (PST)
-Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id m25sm6601078ioh.74.2019.02.12.15.39.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 15:39:00 -0800 (PST)
-Date:   Tue, 12 Feb 2019 16:38:58 -0700
-From:   Yu Zhao <yuzhao@google.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: fix potential build error in compaction.h
-Message-ID: <20190212233858.GA95899@google.com>
-References: <20190208080437.253322-1-yuzhao@google.com>
- <20190212120358.GC7584@dhcp22.suse.cz>
+        Tue, 12 Feb 2019 18:42:07 -0500
+Received: from mga03.intel.com ([134.134.136.65]:49179 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732164AbfBLXmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 18:42:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:42:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="115726031"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.160])
+  by orsmga006.jf.intel.com with ESMTP; 12 Feb 2019 15:42:05 -0800
+Subject: [PATCH  v2 1/2] selftests/tpm2: Open tpm dev in unbuffered mode
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Date:   Tue, 12 Feb 2019 15:42:05 -0800
+Message-ID: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212120358.GC7584@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 01:03:58PM +0100, Michal Hocko wrote:
-> On Fri 08-02-19 01:04:37, Yu Zhao wrote:
-> > Declaration of struct node is required regardless. On UMA system,
-> > including compaction.h without proceeding node.h shouldn't cause
-> > build error.
-> 
-> Anybody requiring struct node shouldn't depend on compaction.h to get
-> the declaration.
+In order to have control over how many bytes are read or written
+the device needs to be opened in unbuffered mode.
 
-Yes, but the problem is the other way around. Build error happens
-when somebody includes compaction.h without definition or
-declaration of struct node, if CONFIG_NUMA is not set.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
 
-compaction.h already has struct node declaration to avoid the error
-when CONFIG_NUMA is set, but we need it for both cases.
+v2:
+- Changed subject tags to selftests/tpm2:
+---
+ tools/testing/selftests/tpm2/tpm2.py |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Anyway have you seen an actual build breakage?
+diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+index 40ea95ce2ead..c2b9f2b1a0ac 100644
+--- a/tools/testing/selftests/tpm2/tpm2.py
++++ b/tools/testing/selftests/tpm2/tpm2.py
+@@ -357,9 +357,9 @@ class Client:
+         self.flags = flags
+ 
+         if (self.flags & Client.FLAG_SPACE) == 0:
+-            self.tpm = open('/dev/tpm0', 'r+b')
++            self.tpm = open('/dev/tpm0', 'r+b', buffering=0)
+         else:
+-            self.tpm = open('/dev/tpmrm0', 'r+b')
++            self.tpm = open('/dev/tpmrm0', 'r+b', buffering=0)
+ 
+     def close(self):
+         self.tpm.close()
 
-Yes. I ran into the problem while trying to include compaction.h
-in this order, and had to move it to the bottom as a workaround.
-
-#include <linux/backing-dev.h>
-#include <linux/compaction.h>
-#include <linux/ctype.h>
-#include <linux/freezer.h>
-#include <linux/hugetlb.h>
-#include <linux/kstaled.h>
-#include <linux/kthread.h>
-#include <linux/mm_inline.h>
-#include <linux/mm_types.h>
-#include <linux/module.h>
-#include <linux/pagemap.h>
-#include <linux/sched/task_stack.h>
-#include <linux/swap.h>
