@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200CFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C5FC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B5F214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43C43214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="eGeQXCrA"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="I+DbVC7/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbfBLMxQ (ORCPT
+        id S1729562AbfBLMxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:53:16 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34714 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbfBLMxP (ORCPT
+        Tue, 12 Feb 2019 07:53:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36029 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729550AbfBLMxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:53:15 -0500
-Received: by mail-pf1-f195.google.com with SMTP id j18so1273384pfe.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:53:15 -0800 (PST)
+        Tue, 12 Feb 2019 07:53:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so1271757plo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gsJS4yIBKT28AV4SM0RQ9vanzyz+KIa+304VYw5cpNg=;
-        b=eGeQXCrAfG8ecew51ixd+Ac7u9cHblpOfC3x2VIestEm3l6OJrv91fKp/chn7pHbmw
-         qTGPdy7Sm2e8YJLLunTQ32oxestJRfmAdc18+vosvs0/GFLPp4q2Z8ch1aCN3r2mxUlD
-         pLpVdysDGowHQ6fU2NRlixxGsEJfsQs80CW/IDLZIlLpN2g/ZxUMMdBPB5vi8APmxOF1
-         6MEW5kEnp/Vr8eTsv0FbKDaz/pUhjqs7NpfxolIO7fPBrZFgtIZgpTIF+YMC2BAPZmDM
-         9SfpgtsbdoOwxcKkvfSUIAgBi6e3WO7KpRog68VmEtymfcTNaf9D92zAG657pA+dxdVf
-         4zHw==
+        bh=kuVNCLAmtNZ7nQGEdg5l4VKoYRRZRzHCCstiWr3/9CU=;
+        b=I+DbVC7/okKpwAiJJcB1GATjESetKUgkI0BoI3+DjMgrS8FUYAuRtMHAxn3ESb6CQH
+         IuEHvlLhzRPqo4FOvyWlGTZJomz++sVlyCakfoWx/3yER5xlZxZ62KrZ0QbmF96PO+27
+         iHllMe7JB5y3RhqJSAio49yAL1FaJzwKGBghC9PP+S+k4ygCHo+cEQfMIlwJzaQUlwM0
+         fpdp0Fw5h0pKS+DR0DdanPrtIpneNmnNEb5o8o67kjCCZNFD0eUhEZp7rsur/IXxd4xR
+         D7JKYoG3gTzBSvcbkIcPQebLGMI0M5voyRNUMMqnVjMGYqSMbn3exMOadC3jqbIEo1qN
+         O4kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gsJS4yIBKT28AV4SM0RQ9vanzyz+KIa+304VYw5cpNg=;
-        b=J3ZHs2kirRLkwizMZd9ZQaVnf481JlQXGUFESWGDMpxu8zl9QUDtS4jwEKmQFyHCD4
-         rFNxwZPyC1Ku9WM8GNzuL49YRtJFuppkF6rWsBYHt4qba7dq3gnRYAfvZkiuOwudrepr
-         0cC0XwFTu9g2sRVF/vUThz/E7rk7shIhmKjcB/NfDIJtB3DiJMXEN7DoXzF6YqC8og1c
-         MlZh/zt/XA3vDa9WB1WuO8n76t+if+4J3MLLnz6LFaNpRggj3fMODDPiCHacZCsy4Md/
-         VXRkTNh4EuGxJwSUxRqT/F40XAYMF1sGZu6lUwiQ8KkZJ6M4Jx6NwUdWZ4umhJ5MaUFC
-         NI1w==
-X-Gm-Message-State: AHQUAuZpEnxos60fEMCBz9ApjDyiDw2pzPkrmJ+L0PXFGbN27AeYNsnL
-        mqViuLae0LcJeETVzgfepvgK+g==
-X-Google-Smtp-Source: AHgI3IbZlbgAG111vB2Qds3H2DoDuEUXcMbwnPw8/9IQsf02qUY+paif0M6Mj0tE45zdvj+zjrz03g==
-X-Received: by 2002:a63:1544:: with SMTP id 4mr3590228pgv.290.1549975994963;
-        Tue, 12 Feb 2019 04:53:14 -0800 (PST)
+        bh=kuVNCLAmtNZ7nQGEdg5l4VKoYRRZRzHCCstiWr3/9CU=;
+        b=PkCZ9RZUPiwcHUWJIMrMl+sPO/AQIz6bzNm3bZVgXu/bo2SyuSxyUhGK0mfe82R1KT
+         zWB6Fxwkgaf2Gpk+dGOe8yaw4NCw9ajCFr55H/2p0Ta6IkYgX6ZPmRegZvp0oQJVGoY5
+         jVzqiTKdWLV+Nit076s9l8ot6UZaQBkij+DJ4D9kSpjpFqxuiG/Nfe1Ll9O8Be5VUrh7
+         ewRPBmGS99V5ZDux2rO5Nj5/PQPWUZ2hiJ+Wb5RE+CErjZlYu2eIo93ALwZhff9hC0QE
+         sTgFhznLszej3mYu9fbaRDZN3orbsKDuBFgw2MIPiUzmK4JMiXmbDqtONpyNAjNDAqjP
+         lHLA==
+X-Gm-Message-State: AHQUAubUwkZALtwy2VrhN5/bj6I9LdYbWUKlegMfcaYuuYV0XqwP838T
+        ZPVdNiyps/T0XRwMY5WZ4sLcQ4xw4rW3ZQ==
+X-Google-Smtp-Source: AHgI3IYLdLL+MySfql0HYFYy9zD1GRJ8Mh86SWC5YPd157Wu6QBnP+sEFlqPdwT5SvSAuutd7b39Bw==
+X-Received: by 2002:a17:902:583:: with SMTP id f3mr3992870plf.202.1549976000057;
+        Tue, 12 Feb 2019 04:53:20 -0800 (PST)
 Received: from localhost.localdomain ([49.207.48.205])
-        by smtp.gmail.com with ESMTPSA id z67sm27894828pfd.188.2019.02.12.04.53.11
+        by smtp.gmail.com with ESMTPSA id z67sm27894828pfd.188.2019.02.12.04.53.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 04:53:14 -0800 (PST)
+        Tue, 12 Feb 2019 04:53:19 -0800 (PST)
 From:   Anup Patel <anup@brainfault.org>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -66,9 +66,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Christoph Hellwig <hch@infradead.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         Anup Patel <anup@brainfault.org>
-Subject: [PATCH v6 3/4] irqchip: sifive-plic: Differentiate between PLIC handler and context
-Date:   Tue, 12 Feb 2019 18:22:45 +0530
-Message-Id: <20190212125246.69239-4-anup@brainfault.org>
+Subject: [PATCH v6 4/4] irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
+Date:   Tue, 12 Feb 2019 18:22:46 +0530
+Message-Id: <20190212125246.69239-5-anup@brainfault.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212125246.69239-1-anup@brainfault.org>
 References: <20190212125246.69239-1-anup@brainfault.org>
@@ -77,71 +77,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We explicitly differentiate between PLIC handler and context because
-PLIC context is for given mode of HART whereas PLIC handler is per-CPU
-software construct meant for handling interrupts from a particular
-PLIC context.
+Currently on SMP host, all CPUs take external interrupts routed via
+PLIC. All CPUs will try to claim a given external interrupt but only
+one of them will succeed while other CPUs would simply resume whatever
+they were doing before. This means if we have N CPUs then for every
+external interrupt N-1 CPUs will always fail to claim it and waste
+their CPU time.
 
-To achieve this differentiation, we rename "nr_handlers" to "nr_contexts"
-and "nr_mapped" to "nr_handlers" in plic_init().
+Instead of above, external interrupts should be taken by only one CPU
+and we should have provision to explicitly specify IRQ affinity from
+kernel-space or user-space.
+
+This patch provides irq_set_affinity() implementation for PLIC driver.
+It also updates irq_enable() such that PLIC interrupts are only enabled
+for one of CPUs specified in IRQ affinity mask.
+
+With this patch in-place, we can change IRQ affinity at any-time from
+user-space using procfs.
+
+Example:
+
+/ # cat /proc/interrupts
+           CPU0       CPU1       CPU2       CPU3
+  8:         44          0          0          0  SiFive PLIC   8  virtio0
+ 10:         48          0          0          0  SiFive PLIC  10  ttyS0
+IPI0:        55        663         58        363  Rescheduling interrupts
+IPI1:         0          1          3         16  Function call interrupts
+/ #
+/ #
+/ # echo 4 > /proc/irq/10/smp_affinity
+/ #
+/ # cat /proc/interrupts
+           CPU0       CPU1       CPU2       CPU3
+  8:         45          0          0          0  SiFive PLIC   8  virtio0
+ 10:        160          0         17          0  SiFive PLIC  10  ttyS0
+IPI0:        68        693         77        410  Rescheduling interrupts
+IPI1:         0          2          3         16  Function call interrupts
 
 Signed-off-by: Anup Patel <anup@brainfault.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/irqchip/irq-sifive-plic.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/irqchip/irq-sifive-plic.c | 45 ++++++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index da09f46fad64..542a9e4c47fc 100644
+index 542a9e4c47fc..5eba0713b2e1 100644
 --- a/drivers/irqchip/irq-sifive-plic.c
 +++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -177,7 +177,7 @@ static int plic_find_hart_id(struct device_node *node)
- static int __init plic_init(struct device_node *node,
- 		struct device_node *parent)
+@@ -83,29 +83,59 @@ static inline void plic_toggle(struct plic_handler *handler,
+ 	raw_spin_unlock(&handler->enable_lock);
+ }
+ 
+-static inline void plic_irq_toggle(struct irq_data *d, int enable)
++static inline void plic_irq_toggle(const struct cpumask *mask,
++				   int hwirq, int enable)
  {
--	int error = 0, nr_handlers, nr_mapped = 0, i;
-+	int error = 0, nr_contexts, nr_handlers = 0, i;
- 	u32 nr_irqs;
+ 	int cpu;
  
- 	if (plic_regs) {
-@@ -194,10 +194,10 @@ static int __init plic_init(struct device_node *node,
- 	if (WARN_ON(!nr_irqs))
- 		goto out_iounmap;
+-	writel(enable, plic_regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+-	for_each_cpu(cpu, irq_data_get_affinity_mask(d)) {
++	writel(enable, plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
++	for_each_cpu(cpu, mask) {
+ 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
  
--	nr_handlers = of_irq_count(node);
--	if (WARN_ON(!nr_handlers))
-+	nr_contexts = of_irq_count(node);
-+	if (WARN_ON(!nr_contexts))
- 		goto out_iounmap;
--	if (WARN_ON(nr_handlers < num_possible_cpus()))
-+	if (WARN_ON(nr_contexts < num_possible_cpus()))
- 		goto out_iounmap;
- 
- 	error = -ENOMEM;
-@@ -206,7 +206,7 @@ static int __init plic_init(struct device_node *node,
- 	if (WARN_ON(!plic_irqdomain))
- 		goto out_iounmap;
- 
--	for (i = 0; i < nr_handlers; i++) {
-+	for (i = 0; i < nr_contexts; i++) {
- 		struct of_phandle_args parent;
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
-@@ -245,11 +245,11 @@ static int __init plic_init(struct device_node *node,
- 		writel(0, handler->hart_base + CONTEXT_THRESHOLD);
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
--		nr_mapped++;
-+		nr_handlers++;
+ 		if (handler->present)
+-			plic_toggle(handler, d->hwirq, enable);
++			plic_toggle(handler, hwirq, enable);
  	}
+ }
  
--	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
--		nr_irqs, nr_mapped, nr_handlers);
-+	pr_info("mapped %d interrupts with %d handlers for %d contexts.\n",
-+		nr_irqs, nr_handlers, nr_contexts);
- 	set_handle_irq(plic_handle_irq);
- 	return 0;
+ static void plic_irq_enable(struct irq_data *d)
+ {
+-	plic_irq_toggle(d, 1);
++	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
++					   cpu_online_mask);
++	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
++		return;
++	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+ }
  
+ static void plic_irq_disable(struct irq_data *d)
+ {
+-	plic_irq_toggle(d, 0);
++	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+ }
+ 
++#ifdef CONFIG_SMP
++static int plic_set_affinity(struct irq_data *d,
++			     const struct cpumask *mask_val, bool force)
++{
++	unsigned int cpu;
++
++	if (force)
++		cpu = cpumask_first(mask_val);
++	else
++		cpu = cpumask_any_and(mask_val, cpu_online_mask);
++
++	if (cpu >= nr_cpu_ids)
++		return -EINVAL;
++
++	if (!irqd_irq_disabled(d)) {
++		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
++		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
++	}
++
++	irq_data_update_effective_affinity(d, cpumask_of(cpu));
++
++	return IRQ_SET_MASK_OK_DONE;
++}
++#endif
++
+ static struct irq_chip plic_chip = {
+ 	.name		= "SiFive PLIC",
+ 	/*
+@@ -114,6 +144,9 @@ static struct irq_chip plic_chip = {
+ 	 */
+ 	.irq_enable	= plic_irq_enable,
+ 	.irq_disable	= plic_irq_disable,
++#ifdef CONFIG_SMP
++	.irq_set_affinity = plic_set_affinity,
++#endif
+ };
+ 
+ static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
 -- 
 2.17.1
 
