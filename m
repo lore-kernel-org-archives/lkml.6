@@ -2,76 +2,115 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABFCC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3369C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6AE214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FAA92186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549982245;
+	bh=wSQp1s7vV/Fk7aOZeyAQNu1tFbXx1ebe+cxsy91/sXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VHiDDRXMzBOOJwq32+mdSqd27Ae0Di/Lwh0Y8D4WFs3U7bmG0hSltlvYc83UCtLBw
+	 SbCi98o+HcMoLdqr+ON5dBlrEBl7EmMim0ADus6FSgyouggfikT1iaRan17d/F3Usg
+	 mcxXcnf8neFxQRcfR1ivF0Yo/eH+QOnpTgMKVer8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfBLOg0 (ORCPT
+        id S1729706AbfBLOhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:36:26 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44486 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729579AbfBLOg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:36:26 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q128so2213727ljb.11;
-        Tue, 12 Feb 2019 06:36:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=guuYew1Ncjl7H1KyN/+d4GhN9hKbdQmhfcnFG/18cZU=;
-        b=IJm50y3tHXtY48COGEM79qzUYcw7UGn9rjdAsk13OA20ma5DD0Sfw9stsP7/OvRK9b
-         dNGW6E55kP1yJ6JIMqnaVIqC3tjLEYHCfsiGRJaO9zDjEp0d2xnwO5YC+TueHHApplq9
-         wwcICMqyoBoRjgoaCBcLFfwvmhnhjKYtr/wi3Cp1/+XNL+aNs+U6+RZeYAyJtYl6rGNS
-         oCUunJ9iPZ8c1BaqisyHKyiaQGHuauFAf0zVNWNnbZVranFb+rkmpKXYkhQ5SX0nsB1s
-         CThFrrPntKiKFx4FuY5/DUw6oFO2dyn1ktTwUxWQB3H2rbMnSvgvjeByBUTGhV1MRZzM
-         Cp8Q==
-X-Gm-Message-State: AHQUAuaz4pf4nAv+gcitSVQAs44e4wF7dQVw4EoYEtcxseSphiRW6D86
-        vRsnmsZUSLo4Y2CcUXmyfiok8LRlHd+9wRP2g/s=
-X-Google-Smtp-Source: AHgI3IbPzxguFa34PG3FKW8c0uyEzlnlQmomlROznWScUAB6LPdsjcVkPEXcjkFEnx2R1RHt5rxvJ0a/rDl7O16QcaU=
-X-Received: by 2002:a2e:4942:: with SMTP id b2-v6mr2303448ljd.168.1549982183866;
- Tue, 12 Feb 2019 06:36:23 -0800 (PST)
+        Tue, 12 Feb 2019 09:37:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728993AbfBLOhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 09:37:23 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6137214DA;
+        Tue, 12 Feb 2019 14:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549982243;
+        bh=wSQp1s7vV/Fk7aOZeyAQNu1tFbXx1ebe+cxsy91/sXc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FwUNo0fUatxok5NpzhCWkdW+cHbSMSlg5up20wY/5Nk6lKBe5tN3L/w8RQjilUiQ+
+         kD/SUPNpmnwgBW4k0yrDZn/KwXfFvg3PdhUdAd3Hk9UKym142jHPd9mXWp5B+soe8K
+         xWo15yBi/g/v50ZUyJZ2VoVzCC64z508RZEE9Fc4=
+Date:   Tue, 12 Feb 2019 15:37:20 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mhiramat@kernel.org, bigeasy@linutronix.de
+Subject: Re: Oops in rpc_clnt_debugfs_register() from debugfs change
+Message-ID: <20190212143720.GA16380@kroah.com>
+References: <19914.1549970944@warthog.procyon.org.uk>
+ <14223.1549981874@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <1549861699-11875-1-git-send-email-guoren@kernel.org> <CAHk-=wh9kycrBtNOUN1-aOR_JL4scBgs=6NUkGQonfWFyzhvVw@mail.gmail.com>
-In-Reply-To: <CAHk-=wh9kycrBtNOUN1-aOR_JL4scBgs=6NUkGQonfWFyzhvVw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 12 Feb 2019 15:36:04 +0100
-Message-ID: <CAK8P3a1=LdgyzbgMYfppZQZsKPJ1uCkKMAXQTYuMcXiyZpCCRg@mail.gmail.com>
-Subject: Re: [GIT PULL] csky fixes for v5.0-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guo Ren <guoren@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Guo Ren <ren_guo@c-sky.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14223.1549981874@warthog.procyon.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 7:28 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, Feb 10, 2019 at 9:08 PM <guoren@kernel.org> wrote:
-> >
-> > arch/csky patches for 5.0-rc6
->
-> The bulk of this seems to be new hardware support code.
->
-> Please send it during the 5.1 merge window, not as fixes at post-rc6 time.
+On Tue, Feb 12, 2019 at 02:31:14PM +0000, David Howells wrote:
+> I've bisected an oops that occurs in rpc_clnt_debugfs_register() trying to
+> dereference a pointer with -EACCES in it.  This is the causing commit, though
+> I suspect the bug is in sunrpc expecting to see NULL rather than an error.
+> 
+> ff9fb72bc07705c00795ca48631f7fffe24d2c6b is the first bad commit
+> commit ff9fb72bc07705c00795ca48631f7fffe24d2c6b
+> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Date:   Wed Jan 23 11:28:14 2019 +0100
+> 
+>     debugfs: return error values, not NULL
+>     
+>     When an error happens, debugfs should return an error pointer value, not
+>     NULL.  This will prevent the totally theoretical error where a debugfs
+>     call fails due to lack of memory, returning NULL, and that dentry value
+>     is then passed to another debugfs call, which would end up succeeding,
+>     creating a file at the root of the debugfs tree, but would then be
+>     impossible to remove (because you can not remove the directory NULL).
+>     
+>     So, to make everyone happy, always return errors, this makes the users
+>     of debugfs much simpler (they do not have to ever check the return
+>     value), and everyone can rest easy.
+>     ...
+> 
+> The attached oops occurs during boot from the gssproxy process in
+> rpc_clnt_debugfs_register().  The code at this point is:
+> 
+>    0xffffffff8195cbdd <+450>:   mov    0x50(%rax),%rcx   <--- oopsing
+>    0xffffffff8195cbe1 <+454>:   mov    $0xffffffff821cc8ba,%rdx
+>    0xffffffff8195cbe8 <+461>:   mov    $0x18,%esi
+>    0xffffffff8195cbed <+466>:   lea    -0x30(%rbp),%rdi
+>    0xffffffff8195cbf1 <+470>:   callq  0xffffffff819db773 <snprintf>
+> 
+> RAX is -EACCES.
+> 
+> Looking in the source:
+> 
+> 	len = snprintf(name, sizeof(name), "../../rpc_xprt/%s",
+> 			xprt->debugfs->d_name.name);
+> 
+> I think xprt->debugfs is the value in RAX.
+> 
+> 	(gdb) p &((struct dentry *)0)->d_name.name
+> 	$5 = (const unsigned char **) 0x50 <irq_stack_union+80>
+> 
+> which matches the offset on the oopsing MOV instruction.
+> 
+> This is with linus/master (aa0c38cf39de73bf7360a3da8f1707601261e518).
 
-Aside from this, I also noticed that the new code is for drivers/irqchip,
-which is a separate subsystems with its own maintainers, who were
-neither on Cc nor did they Ack the patches.
+Ugh, yeah, I see the problem, sorry about that.
 
-Generally, those should get merged through the respective subsystem
-trees as listed in the linux/MAINTAINERS file.
+I wonder why the debugfs call is always failing, that's not good...
 
+let me dig and see if I already have a patch for this...
 
-      Arnd
+greg k-h
