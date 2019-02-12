@@ -2,61 +2,141 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C55EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247C0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089F7222B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:54:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1DAF222B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:56:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yty5PS2O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732767AbfBLVyH (ORCPT
+        id S1729795AbfBLV42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:54:07 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:58690 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732370AbfBLVyF (ORCPT
+        Tue, 12 Feb 2019 16:56:28 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41221 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728356AbfBLV42 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:54:05 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7335E14C5F2F2;
-        Tue, 12 Feb 2019 13:54:04 -0800 (PST)
-Date:   Tue, 12 Feb 2019 13:54:01 -0800 (PST)
-Message-Id: <20190212.135401.857430040745833995.davem@davemloft.net>
-To:     f.fainelli@gmail.com
-Cc:     netdev@vger.kernel.org, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org
+        Tue, 12 Feb 2019 16:56:28 -0500
+Received: by mail-pl1-f193.google.com with SMTP id k15so102631pls.8;
+        Tue, 12 Feb 2019 13:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7SKB3P5I1eM1Vmlts7raj61vmrMPIEk1TjGbrHy9/pc=;
+        b=Yty5PS2O1L+24tjCkQkOMyxnuSbXQMSkQ3qRGvYsatJJw3tw+gS+acgs4Ebb/aY2ch
+         C9Xg6XTwn5BIqrCPjZ4GirBuSq/4iT6eQNr+9Dszqcumsu7KC4yp9jiEO16EdL+SgfGS
+         yuhLODH767NMuWDT3EYsNKq8y6VqKKHuWE+RIDtWzZJ5yfSWV5p0lzM2VDe1JQmKzM1t
+         ERjAErx5UtlOQqGkuLSDmJe1Npk5rK/XH9whDXTGxMVNJg7cSq8hPACe3Yv+gWXkN8ai
+         we9lqm3FDgWmliarF5NGpj2Lu1GM+tx0a0/SlmY9OeFIlxpPvesXv5vgryQg+K8PrOlx
+         4sGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=7SKB3P5I1eM1Vmlts7raj61vmrMPIEk1TjGbrHy9/pc=;
+        b=JK0TMRtaLe9r4L3266peBXugCvjV4cwGeJOQsMpr1bRtunIpXJ0wcJ5cFymVFHdgIC
+         f7dDlt2Pa8noI/FAg/Bvjd0AwtVtNn+cXkW+8GuRxDAYGIQM0GaZREo3r8wbYI4WcUlz
+         IC7hv4ouCpZc5SSQ0kioZdr3EMF15z1vdggqa3KrYX2JDB8+QB718R5bQZ1F9BmBxyHp
+         CLVVoF3I1L7dSqk7ZqEJdOI2nrD7a3BwioSO49zrioll4BKT4+ld/PIndhyBjljD89at
+         8Oeo9+zkNrAolFJwBA61ss2US+/3G/HMKNzwNteEi/2/OWSSSjh9SZe6lCQ+qu9kO8/M
+         8EyA==
+X-Gm-Message-State: AHQUAuYB8ci8fn59MFXokoHWJTN2NEXQ54YHq98bo3hpQ5y9yymxYbQF
+        AeJM/Z25/W8x18ono/8OhxnWJs5S
+X-Google-Smtp-Source: AHgI3Ia898gWPQMYU3qKI+fjjCieCW69nMeryyl/IzZZ0K1jwU8jhFVsZqTcqkoouH/KpTCjK3cOCg==
+X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr6214461plo.316.1550008586718;
+        Tue, 12 Feb 2019 13:56:26 -0800 (PST)
+Received: from [10.69.78.41] ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id d26sm5681055pfn.12.2019.02.12.13.56.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 13:56:25 -0800 (PST)
 Subject: Re: [PATCH net-next] rocker: Remove port_attr_bridge_flags_get
  assignment
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190212213905.26559-1-f.fainelli@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org
 References: <20190212213905.26559-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Feb 2019 13:54:04 -0800 (PST)
+ <20190212.135401.857430040745833995.davem@davemloft.net>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ w0j9Sw==
+Message-ID: <3544199f-dbc3-74db-d7bf-29a9a0b92891@gmail.com>
+Date:   Tue, 12 Feb 2019 13:56:19 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190212.135401.857430040745833995.davem@davemloft.net>
+Content-Type: text/plain; charset=iso-8859-7
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+DQpEYXRlOiBUdWUs
-IDEyIEZlYiAyMDE5IDEzOjM5OjA1IC0wODAwDQoNCj4gQWZ0ZXIgNjEwZDJiNjAxYmJhICgicm9j
-a2VyOiBSZW1vdmUgZ2V0dGluZyBQT1JUX0JSSURHRV9GTEFHUyIpIHdlIG5vDQo+IGxvbmdlciBo
-YXZlIGEgcG9ydF9hdHRyX2JyaWRnZV9mbGFnc19nZXQgbWVtYmVyIGluIHRoZSByb2NrZXJfd29y
-bGRfb3BzDQo+IHN0cnVjdHJlLCBmaXggdGhhdC4NCj4gDQo+IEZpeGVzOiA2MTBkMmI2MDFiYmEg
-KCJyb2NrZXI6IFJlbW92ZSBnZXR0aW5nIFBPUlRfQlJJREdFX0ZMQUdTIikNCj4gU2lnbmVkLW9m
-Zi1ieTogRmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+DQoNCkFwcGxpZWQs
-IEknbSBhbHNvIGdldHRpbmcgdGhpczoNCg0KZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
-bWx4c3cvc3BlY3RydW1fc3dpdGNoZGV2LmM6IEluIGZ1bmN0aW9uIKFtbHhzd19zcF9wb3J0X2F0
-dHJfZ2V0ojoNCmRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seHN3L3NwZWN0cnVtX3N3
-aXRjaGRldi5jOjQzODoxOTogd2FybmluZzogdW51c2VkIHZhcmlhYmxlIKFtbHhzd19zcKIgWy1X
-dW51c2VkLXZhcmlhYmxlXQ0KICBzdHJ1Y3QgbWx4c3dfc3AgKm1seHN3X3NwID0gbWx4c3dfc3Bf
-cG9ydC0+bWx4c3dfc3A7DQogICAgICAgICAgICAgICAgICAgXn5+fn5+fn4NCg0KUmVsYXRlZD8N
-Cg==
+
+
+On 2/12/2019 1:54 PM, David Miller wrote:
+> From: Florian Fainelli <f.fainelli@gmail.com>
+> Date: Tue, 12 Feb 2019 13:39:05 -0800
+> 
+>> After 610d2b601bba ("rocker: Remove getting PORT_BRIDGE_FLAGS") we no
+>> longer have a port_attr_bridge_flags_get member in the rocker_world_ops
+>> structre, fix that.
+>>
+>> Fixes: 610d2b601bba ("rocker: Remove getting PORT_BRIDGE_FLAGS")
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> 
+> Applied, I'm also getting this:
+> 
+> drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c: In function ¡mlxsw_sp_port_attr_get¢:
+> drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:438:19: warning: unused variable ¡mlxsw_sp¢ [-Wunused-variable]
+>   struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port->mlxsw_sp;
+>                    ^~~~~~~~
+> 
+> Related?
+
+Unfortunately yes, that whole patch series was used as test for my build
+scripts, which clearly failed miserably here.. Follow-up patches in the
+next hours.
+-- 
+Florian
