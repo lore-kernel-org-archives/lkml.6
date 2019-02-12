@@ -2,107 +2,201 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F236C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C6EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA9A8217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549987405;
-	bh=8EGT0xdqv/il9De3JSWzQU2nJqNAtwyLjjBNu8h/6wQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=l+9qp5mVFQiUAbAUdboROz/mBLJzNNaNpT9p7d7aMoIlB3InPKs5z1dNhfwyzy553
-	 6ewhcDoa0r03BAdbzzEOFyCSiaaYp7EV+OTX4O4zKs+aMZSa3AUVtzWFBd77oUZU1a
-	 sJ1jHEqHakjepuckHd5SZm/P4sGQLh/hGt3ogdHA=
+	by mail.kernel.org (Postfix) with ESMTP id 3F36A217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:03:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EpQ0OFjT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbfBLQDX (ORCPT
+        id S1730803AbfBLQD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Feb 2019 11:03:27 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43547 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbfBLQDX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 11:03:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbfBLQDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:03:23 -0500
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0754A218E0;
-        Tue, 12 Feb 2019 16:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549987402;
-        bh=8EGT0xdqv/il9De3JSWzQU2nJqNAtwyLjjBNu8h/6wQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tQiN/Qytw60Dcmpei9FRnTzBJku7+K9W5/vPuqSxbb8eVfc8CHpRwAkB45P+a/LW5
-         RlcfsvrvsK225TKIvu78MCv/IyNlA9PRKU6EQ5nJu9ZACg+54hg9sKpgqi9VBQlWpX
-         D/4JGFAdL5NMQxXgWj+g3VN3tmFNf6iKnQYow7Rw=
-Received: by mail-qt1-f182.google.com with SMTP id v10so3494421qtp.8;
-        Tue, 12 Feb 2019 08:03:21 -0800 (PST)
-X-Gm-Message-State: AHQUAuZCD5OV6ZnDlBbA5BJ9tJQ1QxqW4itlrr/4pa8OLt26jgzwfB39
-        VwJqsX19jcGyL/zdFq1nGZt/RhbTfR3VrWfNKA==
-X-Google-Smtp-Source: AHgI3Iam+6/yVnFxn0GKbiSQFfFEr74tEcIazYgDBBeUE5oT6H0niNc0WT76LVJw3bCIV+arGJN8D7RrJghxPHLsbzw=
-X-Received: by 2002:ac8:25d1:: with SMTP id f17mr3315819qtf.38.1549987401158;
+Received: by mail-vs1-f67.google.com with SMTP id x1so1871396vsc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:03:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IW6oyooiyElwXzdr0ELMOraJbp6sXK31o1uL5KyAEfY=;
+        b=EpQ0OFjTI8OH3LPAZoMDTn9J4/XgHezjW8/+4hxl6bijigsC+nv7BVGFORnqrtwmoz
+         wrvwBOT//7CB2TnMNG0inGj4jLQabKrgsvmeqEc03hjELFDI7RICb+raDSG2/V97vH9q
+         jbgkrjF9PnSwFkpmx5KRpFARIefh90SVawFqXE0ovKgFX4tkf4YLAmXPAzek8BZgpNEi
+         ssexOqWkYmsoxhZpImnrNPmRlDsWM94u2jkjFkhDb1DGfhN1NqpJgxhBj4HkrgVn+5Qk
+         +tBJ+ZDFjifYHZ8rXbAEB8uzvIkwSGhrpQtkpWj5zbawBnhwlH23vq09851zbXsUwNob
+         PfTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IW6oyooiyElwXzdr0ELMOraJbp6sXK31o1uL5KyAEfY=;
+        b=safoobGTV0lZiff6iujKY5hIKvGWrTogFYnWMDU4IW6Yh4my04oHhagzHOCKheGqBa
+         MY+Kb9I7Q3DpWIpRzC1e4rNKb5/qWBVNbSMK/pbZhkVF58B/HQK+SlrVmOKMY3uD/Xjy
+         lNUYHLRw9Yqu0cxELdH5N18KWvFfO+ebcrAccSgIVXPLvks4WqHuKLfbsH0T8aGSty/N
+         TjdE4+VWpakfS9TLtlBhEBN98rrtH/XpN2MS21tSm13+/blWbIbi46ALVCWLHnukuWBI
+         4nL/wKOnInTCbjZppkbb19/T1KxP32ltEeebJk18cIAetddHPlyO1R2FfE0xrrGAhFq4
+         UkQQ==
+X-Gm-Message-State: AHQUAuYEfJwYBQWBMJvnCcTdaBWf1iooOmU+O4mrQHgQ8Q3MNSVa2n1V
+        6R0A9B0T8TaePkiZvCEV4s4rzHOFiA1Vy9ue98kW5Q==
+X-Google-Smtp-Source: AHgI3IYz/j3pVCHuurfo3JHrQskzU4GYFHKpawqNJWp5lDckT3bcbyKacRVIp+Vu8mPL5uCuBEGl/IrPpOxwKyDaJB4=
+X-Received: by 2002:a67:74c2:: with SMTP id p185mr1904172vsc.34.1549987401523;
  Tue, 12 Feb 2019 08:03:21 -0800 (PST)
 MIME-Version: 1.0
-References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com> <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
- <20190121143704.GE29504@arrakis.emea.arm.com> <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
- <20190121174234.GC26461@rapoport-lnx> <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
- <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr> <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
- <20190123055414.GA4747@rapoport-lnx> <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
- <20190123123143.GE4747@rapoport-lnx> <4b8f82c4-7f8f-b814-c1ec-9902e43963f6@free.fr>
- <617e0d57-342d-4162-bd21-ece18e481d87@free.fr>
-In-Reply-To: <617e0d57-342d-4162-bd21-ece18e481d87@free.fr>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 12 Feb 2019 10:03:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKbCg-rGmLoA3mPv54=LMuQBfevfzL8f2QPVyjN-sNk8w@mail.gmail.com>
-Message-ID: <CAL_JsqKbCg-rGmLoA3mPv54=LMuQBfevfzL8f2QPVyjN-sNk8w@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2] of: fix kmemleak crash caused by imbalance in
- early memory reservation
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Prateek Patel <prpatel@nvidia.com>,
-        DT <devicetree@vger.kernel.org>,
+References: <3917694.ab5GGAjohB@aspire.rjw.lan> <1634058.cXDNg15SOd@aspire.rjw.lan>
+In-Reply-To: <1634058.cXDNg15SOd@aspire.rjw.lan>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Feb 2019 17:02:44 +0100
+Message-ID: <CAPDyKFon_Wnm1AZDfrov8jEufh5poGXunt=Zf+gaM1JNem-fpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: Take suppliers into account in __pm_runtime_set_status()
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:47 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+On Thu, 7 Feb 2019 at 19:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 >
-> On 04/02/2019 15:37, Marc Gonzalez wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> > Cc: stable@vger.kernel.org # 3.15+
-> > Fixes: 3f0c820664483 ("drivers: of: add initialization code for dynamic reserved memory")
-> > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Prateek Patel <prpatel@nvidia.com>
-> > Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > ---
-> > Resend with DT CCed to reach robh's patch queue
-> > I added CC: stable, Fixes, and Prateek's ack
-> > Trim recipients list to minimize inconvenience
+> If the target device has any suppliers, as reflected by device links
+> to them, __pm_runtime_set_status() does not take them into account,
+> which is not consistent with the other parts of the PM-runtime
+> framework and may lead to programming mistakes.
 >
-> Mike, Stephen,
+> Modify __pm_runtime_set_status() to take suppliers into account by
+> activating them upfront if the new status is RPM_ACTIVE and
+> deactivating them on exit if the new status is RPM_SUSPENDED.
 >
-> I'm confused over commit 3532b3b554a216f30edb841d29eef48521bdc592 in linux-next
-> "memblock: drop __memblock_alloc_base()"
+> If the activation of one of the suppliers fails, the new status
+> will be RPM_SUSPENDED and the (remaining) suppliers will be
+> deactivated on exit (the child count of the device's parent
+> will be dropped too then).
 >
-> It's definitely going to conflict with the proposed patch
-> over drivers/of/of_reserved_mem.c
+> Of course, adding device links locking to __pm_runtime_set_status()
+> means that it cannot be run fron interrupt context, so make it use
+> spin_lock_irq() and spin_unlock_irq() instead of spin_lock_irqsave()
+> and spin_unlock_irqrestore(), respectively.
 >
-> Rob, what's the next step then?
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Rebase it on top of what's in linux-next and apply it to the tree
-which has the above dependency. I'm guessing that is Andrew Morton's
-tree.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Rob
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/base/power/runtime.c |   45 ++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 40 insertions(+), 5 deletions(-)
+>
+> Index: linux-pm/drivers/base/power/runtime.c
+> ===================================================================
+> --- linux-pm.orig/drivers/base/power/runtime.c
+> +++ linux-pm/drivers/base/power/runtime.c
+> @@ -1102,20 +1102,43 @@ EXPORT_SYMBOL_GPL(pm_runtime_get_if_in_u
+>   * and the device parent's counter of unsuspended children is modified to
+>   * reflect the new status.  If the new status is RPM_SUSPENDED, an idle
+>   * notification request for the parent is submitted.
+> + *
+> + * If @dev has any suppliers (as reflected by device links to them), and @status
+> + * is RPM_ACTIVE, they will be activated upfront and if the activation of one
+> + * of them fails, the status of @dev will be changed to RPM_SUSPENDED (instead
+> + * of the @status value) and the suppliers will be deacticated on exit.  The
+> + * error returned by the failing supplier activation will be returned in that
+> + * case.
+>   */
+>  int __pm_runtime_set_status(struct device *dev, unsigned int status)
+>  {
+>         struct device *parent = dev->parent;
+> -       unsigned long flags;
+>         bool notify_parent = false;
+>         int error = 0;
+>
+>         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
+>                 return -EINVAL;
+>
+> -       spin_lock_irqsave(&dev->power.lock, flags);
+> +       /*
+> +        * If the new status is RPM_ACTIVE, the suppliers can be activated
+> +        * upfront regardless of the current status, because next time
+> +        * rpm_put_suppliers() runs, the rpm_active refcounts of the links
+> +        * involved will be dropped down to one anyway.
+> +        */
+> +       if (status == RPM_ACTIVE) {
+> +               int idx = device_links_read_lock();
+> +
+> +               error = rpm_get_suppliers(dev);
+> +               if (error)
+> +                       status = RPM_SUSPENDED;
+> +
+> +               device_links_read_unlock(idx);
+> +       }
+> +
+> +       spin_lock_irq(&dev->power.lock);
+>
+>         if (!dev->power.runtime_error && !dev->power.disable_depth) {
+> +               status = dev->power.runtime_status;
+>                 error = -EAGAIN;
+>                 goto out;
+>         }
+> @@ -1147,19 +1170,31 @@ int __pm_runtime_set_status(struct devic
+>
+>                 spin_unlock(&parent->power.lock);
+>
+> -               if (error)
+> +               if (error) {
+> +                       status = RPM_SUSPENDED;
+>                         goto out;
+> +               }
+>         }
+>
+>   out_set:
+>         __update_runtime_status(dev, status);
+> -       dev->power.runtime_error = 0;
+> +       if (!error)
+> +               dev->power.runtime_error = 0;
+> +
+>   out:
+> -       spin_unlock_irqrestore(&dev->power.lock, flags);
+> +       spin_unlock_irq(&dev->power.lock);
+>
+>         if (notify_parent)
+>                 pm_request_idle(parent);
+>
+> +       if (status == RPM_SUSPENDED) {
+> +               int idx = device_links_read_lock();
+> +
+> +               rpm_put_suppliers(dev);
+> +
+> +               device_links_read_unlock(idx);
+> +       }
+> +
+>         return error;
+>  }
+>  EXPORT_SYMBOL_GPL(__pm_runtime_set_status);
+>
