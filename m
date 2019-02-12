@@ -2,216 +2,82 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662B1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B63AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2049F21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:12:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qEOKw80m"
+	by mail.kernel.org (Postfix) with ESMTP id EADE621773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbfBLJMR (ORCPT
+        id S1728664AbfBLJPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:12:17 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:3873 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbfBLJMR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:12:17 -0500
-X-IronPort-AV: E=Sophos;i="5.58,361,1544511600"; 
-   d="scan'208";a="26128148"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Feb 2019 02:12:15 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 12 Feb 2019 02:12:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zAc622ONusGQ1xJrFVCqyoGTf3Ez3DzytIQtfPQbpIM=;
- b=qEOKw80m0QLfCmxtvzIYtsVXgqZl/ktZ0u9RBa9ah573M//4HLYiib+RVkiJV4gfJVD35Wo6DMhrDti5B1+kR+bWVdwUO4E8LcyBpKimmWbTaiFK5Gnyvjpbx6jZPFNGPRms6ja+30aGMKCBdHbGmRbm38FWdf+XxCxrYzK+NWI=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
- BN6PR11MB0051.namprd11.prod.outlook.com (10.161.153.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Tue, 12 Feb 2019 09:12:13 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
- 09:12:13 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <bbrezillon@kernel.org>
-CC:     <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Topic: [PATCH v6 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Index: AQHUwq48b4jWhW2KSkah1PkAN2keT6Xb4K6A
-Date:   Tue, 12 Feb 2019 09:12:12 +0000
-Message-ID: <f6df1931-1243-d112-fdc1-8184b561bce9@microchip.com>
-References: <20190212083809.6534-1-vigneshr@ti.com>
- <20190212083809.6534-3-vigneshr@ti.com>
-In-Reply-To: <20190212083809.6534-3-vigneshr@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P195CA0050.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::39) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:101::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 58302064-2fed-4259-7314-08d690ca2c8d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB0051;
-x-ms-traffictypediagnostic: BN6PR11MB0051:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCTjZQUjExTUIwMDUxOzIzOnZNMFpiRUxWWU5TT2d3VEdYQXJldFNSUjgx?=
- =?utf-8?B?c1BsRXVIWlpGaGlESnNlcFJLNkdkWkxNNzA3V2RmT0xKZnp1bUZCSkwwTWd1?=
- =?utf-8?B?ZFpFM1Z3RHcwa01sazN6UlJIV2Iwd3lqUTFDVTI3NGZGdVJ0MlVtMStLZ3I4?=
- =?utf-8?B?Wmp1dXp4K3A4cmttUUd4YjY1NTFnM3hndUlPclNNSVZwZE5MdFplWkE2ZThQ?=
- =?utf-8?B?Z3I0SyszMVRmbzRhekpKWGNzWUY4NWxXN2l0S0YzSitLZkZITjkrMFZrREE3?=
- =?utf-8?B?Z241b3pVakd3R0xFcFoxN21TMm5GbXJ4V0taMjZId0l6K2Zsa1cwd3puY3FY?=
- =?utf-8?B?TU1NcWxuamVCcU1iNUxSaUFPdXN2MzlrSTkzQVB0NnBPazIwOU9WTi9jSkRE?=
- =?utf-8?B?alZoUFBYZlMvb1V2Ukx0N1cvb3BGUTZkVVVGWVVrU1V5WFJCNjFSVEtjZFdF?=
- =?utf-8?B?VUVOZHhJd2ltcmtHaWx1Vyt1RG0zUlk2d1orT0ZTbFFBVUN3Y25FeUR5SHNz?=
- =?utf-8?B?RFNYNEY4N05hWmY0SmlacDlucGtvSEJYYzZIZnhzaFl4dlhSemZKQmZ6Ni80?=
- =?utf-8?B?S2NVdjRWUjE1U0Y3dVNqVXRYQTdobXI5MmFnbERKbHFWazg2UmRYaE9vNGt5?=
- =?utf-8?B?aHJWYkx6SWx3ZGp5QU5CUkVvWVBKdVBYRncxbmtleEs4MERNRnUyOEFZdmJw?=
- =?utf-8?B?WktXNktIeENYVVNpQms5Rm5WcHJyKzNCeWRBY0xIOXFEQVc3bVVPbS9zVjNv?=
- =?utf-8?B?NHdJcFd1WWMwR1NNMTN1dXVUTzNOSzRCanFXdHBiZXZmL1FIM1lhalQ3RU5I?=
- =?utf-8?B?YjcrOHJlcWEzVmdkN3R5RGd2TUJVU0NFRHNtWk41ampkQzJXL05ySVJwZ3k0?=
- =?utf-8?B?WGZjL09DaFh2ak41djJXSG9LQ09kaE5zWlpKUy84eXlTZnc4b3FreHcvTUFS?=
- =?utf-8?B?WHYwaFFyV28zR2dEbDhrazFBeUtsaStKaXdRUjdwS0JVazE4NEc2RWxuWTln?=
- =?utf-8?B?UlVCeHhteVhQTDJreEF4M3BZWGFiTTlnNHJaL2FPVCtuRU1neFNJWk9QeEhQ?=
- =?utf-8?B?YTk2Y1pVR2NFbFVnV3FsN29xdWxJb21QUFBZRzNDdWRIeTIwT1IyTmRLdEE1?=
- =?utf-8?B?RXgxaGl0aW95R2tDdEVRUDkvVmFpODlLbGRwais1cGl3ZURwdkp0QXN2M2ZZ?=
- =?utf-8?B?WHFmQjAxUnlMbWtnRm0weVZhUXlBTks4QWxsYVprbHlGbnFpN3pPWFZ2c25Q?=
- =?utf-8?B?VU5Cd1RUQm5wdmJNMjV2dlBZNmhtc0x1eGJJMWt2clFXenZqejJvd01qRzhM?=
- =?utf-8?B?V0Z4cVUxTEg0ZS8vbG1sVnBKaldQVDQ4SUVyZEhldTVrdXgxL2pwRG42QlMr?=
- =?utf-8?B?REpnbmozYzBNQjNzRDJoMitsTWNpN1ZGdDhibndBS0Vsa1llT2FaWFVkaGdD?=
- =?utf-8?B?UHdmOXZVR3l5bzVMZnFCdU9Na0pzV2FtWDFuTDlpUEVTL2d3K0g3T2V4aGtV?=
- =?utf-8?B?ekFVWVQ2QWgwUTdVSXZkeTdUUi9FTTMzaHpZT29Ud0JLa1lHS1hYTnMwNFNV?=
- =?utf-8?B?S1M3TGFQTm5Zb3pyaTdmWkhLMElyTjlLSGdEUmQ2S3I5TzFad2xDUHNSS3pK?=
- =?utf-8?B?TmI2VktOMWlZbCtEbitNZlN4SDFoWnFGTks1LzRIVXlUSTg5NTZIblZtYmRX?=
- =?utf-8?B?cE9nVEpyMlgzdVpxUURzTzYxTHhOMGJkaE5KQnZ1SDJFL2xWQ2pCcEtacUVz?=
- =?utf-8?B?MFlsZmhtM3NhaVI1MFNkZz09?=
-x-microsoft-antispam-prvs: <BN6PR11MB00515893E097CAC342CCCB07F0650@BN6PR11MB0051.namprd11.prod.outlook.com>
-x-forefront-prvs: 0946DC87A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(376002)(346002)(199004)(189003)(66066001)(2906002)(97736004)(68736007)(6436002)(106356001)(7736002)(2616005)(4326008)(476003)(486006)(31696002)(316002)(14444005)(256004)(71200400001)(71190400001)(6116002)(3846002)(53546011)(6506007)(386003)(86362001)(25786009)(81166006)(72206003)(14454004)(186003)(478600001)(53936002)(8676002)(105586002)(26005)(31686004)(6246003)(102836004)(8936002)(229853002)(446003)(11346002)(305945005)(6486002)(76176011)(52116002)(99286004)(6512007)(81156014)(110136005)(54906003)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0051;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 733aQXQZip8LBT04SpfG1KB/1vz+J0UTCUTjSgvFcfaUEg28WJVPJnRXplT0Nn1Me8NDA/BVQ67RR8mBwb5VBkHYrxymJdUCb9AUY1Gjd2wqVmX5ZKT5rY2C2WLdOVfd40T4KYge+1T7Mc9OTQ7Z6rZult8V70srAkIqYLql2UhZJFam91IIDGSe36q9WTHpoa5M+t9AOMXtuPwouayiHQGkr6HBY8U1UsST591nJ232sJqAVnUlT6adAgW2MUi+gxx1l555bNVqndewHbJBDsodwTUWZ5cZnG6Ghx+rieZpdk61kO2zUURSHJbQ+uwySMP5BV1EG62VlOOeu1jAX+e16XyAO6ZtZqsGqq4QLfunJwombvJ0ibzX1u/j0LSs75XIbtq6mulm05nm9oLjfdyR1W8ApVGjBoI0hA2LDKc=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5870068622B13F48A383633C690E53A4@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 12 Feb 2019 04:15:05 -0500
+Received: from mga17.intel.com ([192.55.52.151]:24428 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbfBLJPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:15:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 01:15:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="125792428"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga003.jf.intel.com with ESMTP; 12 Feb 2019 01:15:01 -0800
+Subject: Re: [PATCH v9 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
+ time
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Aubrey Li <aubrey.li@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20190211185931.4386-1-aubrey.li@intel.com>
+ <20190211185931.4386-2-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1902120905420.1654@nanos.tec.linutronix.de>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <efe3e5c9-c477-8a28-5489-c943fe63efaa@linux.intel.com>
+Date:   Tue, 12 Feb 2019 17:14:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58302064-2fed-4259-7314-08d690ca2c8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 09:12:11.2274
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB0051
-X-OriginatorOrg: microchip.com
+In-Reply-To: <alpine.DEB.2.21.1902120905420.1654@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAyLzEyLzIwMTkgMTA6MzggQU0sIFZpZ25lc2ggUiB3cm90ZToNCj4gQ2FkZW5jZSBP
-U1BJIGNvbnRyb2xsZXIgSVAgc3VwcG9ydHMgT2N0YWwgSU8gKHg4IElPIGxpbmVzKSwNCj4gSXQg
-YWxzbyBoYXMgYW4gaW50ZWdyYXRlZCBQSFkuIElQIHJlZ2lzdGVyIGxheW91dCBpcyB2ZXJ5DQo+
-IHNpbWlsYXIgdG8gZXhpc3RpbmcgUVNQSSBJUCBleGNlcHQgZm9yIGFkZGl0aW9uYWwgYml0cyB0
-byBzdXBwb3J0IE9jdGFsDQo+IGFuZCBPY3RhbCBERFIgbW9kZS4gVGhlcmVmb3JlLCBleHRlbmQg
-Y3VycmVudCBkcml2ZXIgdG8gc3VwcG9ydCBPY3RhbA0KPiBtb2RlLiBPbmx5IE9jdGFsIFNEUiBy
-ZWFkICgxLTEtOCltb2RlIGlzIHN1cHBvcnRlZCBmb3Igbm93Lg0KPiANCj4gVGVzdGVkIHdpdGgg
-bXQzNXh1NTEyYWJhIE9jdGFsIGZsYXNoIG9uIFRJJ3MgQU02NTQgRVZNLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogVmlnbmVzaCBSIDx2aWduZXNockB0aS5jb20+DQoNClJldmlld2VkLWJ5OiBUdWRv
-ciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQoNCj4gLS0tDQo+IHY2OiBS
-ZXR1cm4gZXJyb3Igd2hlbiBkcml2ZXIgZGF0YSBpcyBub3QgZm91bmQNCj4gDQo+ICBkcml2ZXJz
-L210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIHwgNTkgKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25z
-KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1YWRz
-cGkuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gaW5kZXggMDRj
-ZWRkM2EyYmY2Li5jOGI4MWUwYTc2Y2MgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbXRkL3NwaS1u
-b3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNl
-LXF1YWRzcGkuYw0KPiBAQCAtNDQsNiArNDQsMTIgQEANCj4gIC8qIFF1aXJrcyAqLw0KPiAgI2Rl
-ZmluZSBDUVNQSV9ORUVEU19XUl9ERUxBWQkJQklUKDApDQo+ICANCj4gKy8qIENhcGFiaWxpdGll
-cyBtYXNrICovDQo+ICsjZGVmaW5lIENRU1BJX0JBU0VfSFdDQVBTX01BU0sJCQkJCVwNCj4gKwko
-U05PUl9IV0NBUFNfUkVBRCB8IFNOT1JfSFdDQVBTX1JFQURfRkFTVCB8CQlcDQo+ICsJU05PUl9I
-V0NBUFNfUkVBRF8xXzFfMiB8IFNOT1JfSFdDQVBTX1JFQURfMV8xXzQgfAlcDQo+ICsJU05PUl9I
-V0NBUFNfUFApDQo+ICsNCj4gIHN0cnVjdCBjcXNwaV9zdDsNCj4gIA0KPiAgc3RydWN0IGNxc3Bp
-X2ZsYXNoX3BkYXRhIHsNCj4gQEAgLTkzLDYgKzk5LDExIEBAIHN0cnVjdCBjcXNwaV9zdCB7DQo+
-ICAJc3RydWN0IGNxc3BpX2ZsYXNoX3BkYXRhIGZfcGRhdGFbQ1FTUElfTUFYX0NISVBTRUxFQ1Rd
-Ow0KPiAgfTsNCj4gIA0KPiArc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSB7DQo+ICsJdTMy
-IGh3Y2Fwc19tYXNrOw0KPiArCXU4IHF1aXJrczsNCj4gK307DQo+ICsNCj4gIC8qIE9wZXJhdGlv
-biB0aW1lb3V0IHZhbHVlICovDQo+ICAjZGVmaW5lIENRU1BJX1RJTUVPVVRfTVMJCQk1MDANCj4g
-ICNkZWZpbmUgQ1FTUElfUkVBRF9USU1FT1VUX01TCQkJMTANCj4gQEAgLTEwMSw2ICsxMTIsNyBA
-QCBzdHJ1Y3QgY3FzcGlfc3Qgew0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfU0lOR0xFCQkJ
-MA0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfRFVBTAkJCTENCj4gICNkZWZpbmUgQ1FTUElf
-SU5TVF9UWVBFX1FVQUQJCQkyDQo+ICsjZGVmaW5lIENRU1BJX0lOU1RfVFlQRV9PQ1RBTAkJCTMN
-Cj4gIA0KPiAgI2RlZmluZSBDUVNQSV9EVU1NWV9DTEtTX1BFUl9CWVRFCQk4DQo+ICAjZGVmaW5l
-IENRU1BJX0RVTU1ZX0JZVEVTX01BWAkJCTQNCj4gQEAgLTkxMSw2ICs5MjMsOSBAQCBzdGF0aWMg
-aW50IGNxc3BpX3NldF9wcm90b2NvbChzdHJ1Y3Qgc3BpX25vciAqbm9yLCBjb25zdCBpbnQgcmVh
-ZCkNCj4gIAkJY2FzZSBTTk9SX1BST1RPXzFfMV80Og0KPiAgCQkJZl9wZGF0YS0+ZGF0YV93aWR0
-aCA9IENRU1BJX0lOU1RfVFlQRV9RVUFEOw0KPiAgCQkJYnJlYWs7DQo+ICsJCWNhc2UgU05PUl9Q
-Uk9UT18xXzFfODoNCj4gKwkJCWZfcGRhdGEtPmRhdGFfd2lkdGggPSBDUVNQSV9JTlNUX1RZUEVf
-T0NUQUw7DQo+ICsJCQlicmVhazsNCj4gIAkJZGVmYXVsdDoNCj4gIAkJCXJldHVybiAtRUlOVkFM
-Ow0KPiAgCQl9DQo+IEBAIC0xMjEzLDIxICsxMjI4LDIzIEBAIHN0YXRpYyB2b2lkIGNxc3BpX3Jl
-cXVlc3RfbW1hcF9kbWEoc3RydWN0IGNxc3BpX3N0ICpjcXNwaSkNCj4gIA0KPiAgc3RhdGljIGlu
-dCBjcXNwaV9zZXR1cF9mbGFzaChzdHJ1Y3QgY3FzcGlfc3QgKmNxc3BpLCBzdHJ1Y3QgZGV2aWNl
-X25vZGUgKm5wKQ0KPiAgew0KPiAtCWNvbnN0IHN0cnVjdCBzcGlfbm9yX2h3Y2FwcyBod2NhcHMg
-PSB7DQo+IC0JCS5tYXNrID0gU05PUl9IV0NBUFNfUkVBRCB8DQo+IC0JCQlTTk9SX0hXQ0FQU19S
-RUFEX0ZBU1QgfA0KPiAtCQkJU05PUl9IV0NBUFNfUkVBRF8xXzFfMiB8DQo+IC0JCQlTTk9SX0hX
-Q0FQU19SRUFEXzFfMV80IHwNCj4gLQkJCVNOT1JfSFdDQVBTX1BQLA0KPiAtCX07DQo+ICAJc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IGNxc3BpLT5wZGV2Ow0KPiAgCXN0cnVjdCBkZXZp
-Y2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ICsJY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0
-ZGF0YSAqZGRhdGE7DQo+ICsJc3RydWN0IHNwaV9ub3JfaHdjYXBzIGh3Y2FwczsNCj4gIAlzdHJ1
-Y3QgY3FzcGlfZmxhc2hfcGRhdGEgKmZfcGRhdGE7DQo+ICAJc3RydWN0IHNwaV9ub3IgKm5vcjsN
-Cj4gIAlzdHJ1Y3QgbXRkX2luZm8gKm10ZDsNCj4gIAl1bnNpZ25lZCBpbnQgY3M7DQo+ICAJaW50
-IGksIHJldDsNCj4gIA0KPiArCWRkYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7
-DQo+ICsJaWYgKCFkZGF0YSkgew0KPiArCQlkZXZfZXJyKGRldiwgIkNvdWxkbnQndCBmaW5kIGRy
-aXZlciBkYXRhXG4iKTsNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJfQ0KPiArCWh3Y2Fwcy5t
-YXNrID0gZGRhdGEtPmh3Y2Fwc19tYXNrOw0KPiArDQo+ICAJLyogR2V0IGZsYXNoIGRldmljZSBk
-YXRhICovDQo+ICAJZm9yX2VhY2hfYXZhaWxhYmxlX2NoaWxkX29mX25vZGUoZGV2LT5vZl9ub2Rl
-LCBucCkgew0KPiAgCQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihucCwgInJlZyIsICZjcyk7
-DQo+IEBAIC0xMzEwLDcgKzEzMjcsNyBAQCBzdGF0aWMgaW50IGNxc3BpX3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJc3RydWN0IGNxc3BpX3N0ICpjcXNwaTsNCj4gIAlz
-dHJ1Y3QgcmVzb3VyY2UgKnJlczsNCj4gIAlzdHJ1Y3QgcmVzb3VyY2UgKnJlc19haGI7DQo+IC0J
-dW5zaWduZWQgbG9uZyBkYXRhOw0KPiArCWNvbnN0IHN0cnVjdCBjcXNwaV9kcml2ZXJfcGxhdGRh
-dGEgKmRkYXRhOw0KPiAgCWludCByZXQ7DQo+ICAJaW50IGlycTsNCj4gIA0KPiBAQCAtMTM3Nyw4
-ICsxMzk0LDggQEAgc3RhdGljIGludCBjcXNwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQ0KPiAgCX0NCj4gIA0KPiAgCWNxc3BpLT5tYXN0ZXJfcmVmX2Nsa19oeiA9IGNsa19n
-ZXRfcmF0ZShjcXNwaS0+Y2xrKTsNCj4gLQlkYXRhICA9ICh1bnNpZ25lZCBsb25nKW9mX2Rldmlj
-ZV9nZXRfbWF0Y2hfZGF0YShkZXYpOw0KPiAtCWlmIChkYXRhICYgQ1FTUElfTkVFRFNfV1JfREVM
-QVkpDQo+ICsJZGRhdGEgID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7DQo+ICsJaWYg
-KGRkYXRhICYmIChkZGF0YS0+cXVpcmtzICYgQ1FTUElfTkVFRFNfV1JfREVMQVkpKQ0KPiAgCQlj
-cXNwaS0+d3JfZGVsYXkgPSA1ICogRElWX1JPVU5EX1VQKE5TRUNfUEVSX1NFQywNCj4gIAkJCQkJ
-CSAgIGNxc3BpLT5tYXN0ZXJfcmVmX2Nsa19oeik7DQo+ICANCj4gQEAgLTE0NjAsMTQgKzE0Nzcs
-MzIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIGNxc3BpX19kZXZfcG1fb3BzID0g
-ew0KPiAgI2RlZmluZSBDUVNQSV9ERVZfUE1fT1BTCU5VTEwNCj4gICNlbmRpZg0KPiAgDQo+ICtz
-dGF0aWMgY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSBjZG5zX3FzcGkgPSB7DQo+
-ICsJLmh3Y2Fwc19tYXNrID0gQ1FTUElfQkFTRV9IV0NBUFNfTUFTSywNCj4gK307DQo+ICsNCj4g
-K3N0YXRpYyBjb25zdCBzdHJ1Y3QgY3FzcGlfZHJpdmVyX3BsYXRkYXRhIGsyZ19xc3BpID0gew0K
-PiArCS5od2NhcHNfbWFzayA9IENRU1BJX0JBU0VfSFdDQVBTX01BU0ssDQo+ICsJLnF1aXJrcyA9
-IENRU1BJX05FRURTX1dSX0RFTEFZLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIGNvbnN0IHN0cnVj
-dCBjcXNwaV9kcml2ZXJfcGxhdGRhdGEgYW02NTRfb3NwaSA9IHsNCj4gKwkuaHdjYXBzX21hc2sg
-PSBDUVNQSV9CQVNFX0hXQ0FQU19NQVNLIHwgU05PUl9IV0NBUFNfUkVBRF8xXzFfOCwNCj4gKwku
-cXVpcmtzID0gQ1FTUElfTkVFRFNfV1JfREVMQVksDQo+ICt9Ow0KPiArDQo+ICBzdGF0aWMgY29u
-c3Qgc3RydWN0IG9mX2RldmljZV9pZCBjcXNwaV9kdF9pZHNbXSA9IHsNCj4gIAl7DQo+ICAJCS5j
-b21wYXRpYmxlID0gImNkbnMscXNwaS1ub3IiLA0KPiAtCQkuZGF0YSA9ICh2b2lkICopMCwNCj4g
-KwkJLmRhdGEgPSAmY2Ruc19xc3BpLA0KPiAgCX0sDQo+ICAJew0KPiAgCQkuY29tcGF0aWJsZSA9
-ICJ0aSxrMmctcXNwaSIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKilDUVNQSV9ORUVEU19XUl9ERUxB
-WSwNCj4gKwkJLmRhdGEgPSAmazJnX3FzcGksDQo+ICsJfSwNCj4gKwl7DQo+ICsJCS5jb21wYXRp
-YmxlID0gInRpLGFtNjU0LW9zcGkiLA0KPiArCQkuZGF0YSA9ICZhbTY1NF9vc3BpLA0KPiAgCX0s
-DQo+ICAJeyAvKiBlbmQgb2YgdGFibGUgKi8gfQ0KPiAgfTsNCj4gDQo=
+On 2019/2/12 16:22, Thomas Gleixner wrote:
+> On Tue, 12 Feb 2019, Aubrey Li wrote:
+>> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+>> index d53c54b842da..60ee932070fe 100644
+>> --- a/arch/x86/include/asm/processor.h
+>> +++ b/arch/x86/include/asm/processor.h
+>> @@ -996,5 +996,7 @@ enum l1tf_mitigations {
+>>  };
+>>  
+>>  extern enum l1tf_mitigations l1tf_mitigation;
+>> +/* Add support for architecture specific output in /proc/pid/status */
+>> +extern void arch_proc_pid_status(struct seq_file *m, struct task_struct *task);
+> 
+> Sigh. This is absolutely the wrong place. The weak function is declared and
+> used in fs/proc/... So the prototype wants to be in a header which is
+> included from there independent of x86...
+
+Can the prototype be in the architecture header if they want to call the function?
+Like the following? arch_report_meminfo() is used in fs/proc/... as well.
+
+$ find . -name *.h | xargs grep arch_report_meminfo
+./arch/s390/include/asm/pgtable.h:void arch_report_meminfo(struct seq_file *m);
+./arch/x86/include/asm/pgtable_types.h:extern void arch_report_meminfo(struct seq_file *m);
+./arch/parisc/include/asm/pgtable.h:extern void arch_report_meminfo(struct seq_file *m);
+
+Thanks,
+-Aubrey
