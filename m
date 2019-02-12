@@ -7,61 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 194D7C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC6DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBD9D222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B405D222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="W9CqhISl"
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="iSZ2ZAQI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfBLVmC (ORCPT
+        id S1731775AbfBLVmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:42:02 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35473 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730701AbfBLVmA (ORCPT
+        Tue, 12 Feb 2019 16:42:07 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43081 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731057AbfBLVmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:42:00 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b17so186566eds.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 13:41:59 -0800 (PST)
+        Tue, 12 Feb 2019 16:42:05 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so146660eds.10
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 13:42:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=s1ajbwFM2/cHMrtrC8SBFapOLKtmmpbqxTzxUukdDc0=;
-        b=W9CqhISlgFAjnn8ydwLkvlcl4Pst0IwCsJ9yyo+RHykfgKUa+i2Q5yOfI3yLvYGuJZ
-         0ko58RgH0degqe36QmCwDRlGs3GDyNKe0vz7Pstd9XAAu2B8gJrJe7krRf5eBMTOMLzX
-         MOr2lrGX4gQUFcjmmtFo6OXw2Gfta7pzZMwtc=
+        bh=c/DP+/WPa+Jq+JAZdR/A0ANzlyTG7UQQ0eBVWCTtWwc=;
+        b=iSZ2ZAQIrQiu4zvswrqxRbv/hOc15iZsZHSIg0qRcuB7IlbKMG8RWvp+MgAUlw7VOo
+         VSzLPYMyKNl873vKJOyKjjodhd/QC3DaAgrIE8m4UPnreR5SYyA8sn8puWcD8mvxSFSS
+         yVIeIuKbBGx6/r/lyrPdmGoLzAY13QaB5xy0M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=s1ajbwFM2/cHMrtrC8SBFapOLKtmmpbqxTzxUukdDc0=;
-        b=Mr4NTWOcjqA0U6hTnRFiqeGb2kFss6f37bijXVi3Gbq5sXx7iygiBE5V88nPixKhju
-         VLiAVtKRa2ZWyN10Y2cIbNZYZUeqfPbtVIFSpHREiD/ipBXjiKIP0HiENoYl8cCKzJsh
-         ChH/irhmB7aZBcr9NL2qYjtZjQZcIDJ52+Sl8ErPzrWaOoTtkS0/tPr0ZkmUKSqKZYC/
-         J9JJsbSLko+uP+vRvr2AGWMczBHmgvh3H8BlEHOZB0XsTNSoXitqRQbD6QdgZxgQYp1F
-         YA0Lak6s3F/0QJTZ15l/du5fgy/bZ6s8sSW2s7WZ91RFZ8ECMt93bNSqdW5ig/uhcsrj
-         PY6w==
-X-Gm-Message-State: AHQUAubgP0S/OGdKuiZzhm2hsh4YgynGqq+uTcbESIj713EA099MTyCX
-        2BkG3kNOEBIS+rxUG/ldmkjitQ==
-X-Google-Smtp-Source: AHgI3IZXwk3m8/+8AvOn+Xj5xliy5TDN3X/TfvxQ/8H2I/fMtorH4BxY2t9FQqLUjGM/OXGf2QtsEA==
-X-Received: by 2002:a50:d797:: with SMTP id w23mr4914465edi.19.1550007718433;
-        Tue, 12 Feb 2019 13:41:58 -0800 (PST)
+        bh=c/DP+/WPa+Jq+JAZdR/A0ANzlyTG7UQQ0eBVWCTtWwc=;
+        b=XcGEFptonzj1JxdBgwlSfpKDFs3WRnGNJnBgpiR3Hhac8TFK04WFaLrz0gzGgmV9W/
+         zHaO/S63AlFGIsHZdn2XpZeFyI444njKEqTrJJ5SvUBFH3hJtTCttMUpClskdOd0U++V
+         CcYQ820stYwI6N1pzmQHf3jLUv3vC5J7icWD24uVQNVinV79k/COJYG4dInn2pJO1fXB
+         pl1pYdU09Axm5IUeeDK9QOHm5lX3/yVoSzRW+o0X9LaGvDaET/WAb7K7/mWRaVu4HgQg
+         OHKJ2cyNl0shzuk43PZqNn55yWyZlbEI3pzHNb7G0zf5pNiD8vzNcZSpILUoV5GPdSh6
+         BUjw==
+X-Gm-Message-State: AHQUAubQUBEuR6mlDKaDw4npipPdDYwBNDLw7Re0kXjqDUp+Mi/fZPQB
+        lIoQHst1gfK4HLbzNQPLASXk5g==
+X-Google-Smtp-Source: AHgI3Ialyaz6Q4vU9n5eHDQiT/dIOOvq67rwbx4q4+Yb9jl0YIdK6BqnB1JHWIT0VIiVF7okO4ZtgQ==
+X-Received: by 2002:a17:906:4306:: with SMTP id j6mr4229872ejm.174.1550007723363;
+        Tue, 12 Feb 2019 13:42:03 -0800 (PST)
 Received: from prevas-ravi.waoo.dk (ip-5-186-119-174.cgn.fibianet.dk. [5.186.119.174])
-        by smtp.gmail.com with ESMTPSA id v1sm3697607eds.47.2019.02.12.13.41.57
+        by smtp.gmail.com with ESMTPSA id v1sm3697607eds.47.2019.02.12.13.42.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 13:41:57 -0800 (PST)
+        Tue, 12 Feb 2019 13:42:02 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Jason Baron <jbaron@akamai.com>
 Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev@vger.kernel.org
-Subject: [PATCH v4 02/14] linux/net.h: use DYNAMIC_DEBUG_BRANCH in net_dbg_ratelimited
-Date:   Tue, 12 Feb 2019 22:41:38 +0100
-Message-Id: <20190212214150.4807-3-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v4 06/14] dynamic_debug: use pointer comparison in ddebug_remove_module
+Date:   Tue, 12 Feb 2019 22:41:42 +0100
+Message-Id: <20190212214150.4807-7-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212214150.4807-1-linux@rasmusvillemoes.dk>
 References: <20190212214150.4807-1-linux@rasmusvillemoes.dk>
@@ -72,31 +71,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-net_dbg_ratelimited tests the dynamic debug descriptor the
-old-fashioned way, and doesn't utilize the static key/jump label
-implementation when CONFIG_JUMP_LABEL is set. Use the
-DYNAMIC_DEBUG_BRANCH which is defined appropriately.
+Now that we store the passed-in string directly in ddebug_add_module, we
+can use pointer equality instead of strcmp. This is a little more
+efficient, but more importantly, this also makes the code somewhat more
+correct:
 
-Cc: netdev@vger.kernel.org
+Currently, if one loads and then unloads a module whose name happens to
+match the KBUILD_MODNAME of some built-in functionality (which need not
+even be modular at all), all of their dynamic debug entries vanish along
+with those of the actual module. For example, loading and unloading a
+core.ko hides all pr_debugs from drivers/base/core.c and other built-in
+files called core.c (incidentally, there is an in-tree module whose name
+is core, but I just tested this with an out-of-tree trivial one).
+
 Acked-by: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/net.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/dynamic_debug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/net.h b/include/linux/net.h
-index e0930678c8bf..651fca72286c 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -263,7 +263,7 @@ do {								\
- #define net_dbg_ratelimited(fmt, ...)					\
- do {									\
- 	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
--	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
-+	if (DYNAMIC_DEBUG_BRANCH(descriptor) &&				\
- 	    net_ratelimit())						\
- 		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
- 		                   ##__VA_ARGS__);			\
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 8274c4ea75e0..214828c65625 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -929,9 +929,10 @@ int ddebug_remove_module(const char *mod_name)
+ 
+ 	mutex_lock(&ddebug_lock);
+ 	list_for_each_entry_safe(dt, nextdt, &ddebug_tables, link) {
+-		if (!strcmp(dt->mod_name, mod_name)) {
++		if (dt->mod_name == mod_name) {
+ 			ddebug_table_free(dt);
+ 			ret = 0;
++			break;
+ 		}
+ 	}
+ 	mutex_unlock(&ddebug_lock);
 -- 
 2.20.1
 
