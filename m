@@ -2,202 +2,86 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6110C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965B1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99FF0214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:55:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RhSFa4SB"
+	by mail.kernel.org (Postfix) with ESMTP id 63BBF20863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbfBLMzY (ORCPT
+        id S1729469AbfBLM7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:55:24 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33127 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfBLMzX (ORCPT
+        Tue, 12 Feb 2019 07:59:30 -0500
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:51121 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728145AbfBLM73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:55:23 -0500
-Received: by mail-vs1-f68.google.com with SMTP id k11so1510945vsm.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:55:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DIKige9dZTqFRJNAYb0OrMSYW+c/EwZN2KD7sQCZWWk=;
-        b=RhSFa4SBU71AwfbOX/ckWSqd1dgUUFcc5nU+Y1fM2ZFY09PPQSBu8JvXQ9IB15vtyR
-         FEr5zx8sf/niYS3KPCOXKURMizWaGwgRRODuX15K8z+jPV6Mfw2j9XIytne7mrj6wG73
-         +OPtMwZk/VzFzVduhu5lyWus85ODvwbFCNm65B6UGfh9GnatRF4Sib16XV1x4mf6rMNc
-         yaoDp7NUXNICrry8ivgjQzKd8odQjY0Nr16G8P0cvTSkOls/YlxgJ0KAhBvqGWhyYo8Z
-         T/Jtqiz/xadhFpsFP0DCYvB8SiE0fWRoz3x+k1fD5GtXvMPUUZmgmHCVywmWInxk+TnA
-         4iIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DIKige9dZTqFRJNAYb0OrMSYW+c/EwZN2KD7sQCZWWk=;
-        b=pzbVvoXVeBWdzd/RkLK0ZLYectX208X/vnYLC5tXtYNSB5lQTH4cggu4eR14Br61ij
-         8b5iECcXJbSnIuEVcuDWYRB9qA0cnRBiF+1R9pYQ1ve3lVHM6dYloL/Kc1ff4Dm8Etxv
-         vG51CBa7Wxx2iyDAjdtmb8KcevGijiSIRww9+SpnsklIxV60WGTS87IjX6JAuMgEaaC5
-         pBPWi7/ZLwtPFfCHCCngXH/1HtZf91ZgxmLnubin1n6zxVLFZ7nPe+LEmcujU/qI9fJs
-         1MyWO1CtSInjUwsiBsDJ4R/k0QoKppNOtW70BNPRjZXGpp301r3wajpHQHEZcFOddjNP
-         hO3g==
-X-Gm-Message-State: AHQUAuYU7dD+dOkIIygOtT250B0/ba6gp5Oy22RmibMn03zZS21Vmw64
-        bXFumZIfqzCcgeH2rNRiCV0RaU/n3Jo5iisb/z5Lig==
-X-Google-Smtp-Source: AHgI3IbDIthD0Ym9Rg/49mRggo17etucCnnaz65WXx6Em8M/NOOTNU5hTHN03iuXg7bvLt7l7QnzIbv1kTCc+LoiitU=
-X-Received: by 2002:a67:8cc2:: with SMTP id o185mr1384485vsd.55.1549976122034;
- Tue, 12 Feb 2019 04:55:22 -0800 (PST)
+        Tue, 12 Feb 2019 07:59:29 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 6F97F2800B1DF;
+        Tue, 12 Feb 2019 13:59:27 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 2D6F44B560; Tue, 12 Feb 2019 13:59:27 +0100 (CET)
+Date:   Tue, 12 Feb 2019 13:59:27 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 12/28] thunderbolt: Add functions for allocating and
+ releasing hop IDs
+Message-ID: <20190212125927.yvotrkyzqtdxm6n7@wunner.de>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+ <20190206131738.43696-13-mika.westerberg@linux.intel.com>
+ <20190210121353.fw7gj4pm7ce3flvf@wunner.de>
+ <20190211083043.GT7875@lahna.fi.intel.com>
+ <20190212124333.hgrnm6owtuqzp4iu@wunner.de>
+ <20190212125125.GG7875@lahna.fi.intel.com>
 MIME-Version: 1.0
-References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
- <CAKv+Gu_RJHb_FwTz+R1bXNQQMsoi0xxcKzn54NF5ib3z2xnH0w@mail.gmail.com>
- <CAFA6WYMXSZPz2qi9+g=EW3+Lm_vuNAOE_M2zWQ_RkfwLfkwjyQ@mail.gmail.com> <CAKv+Gu-aHENw3xO8E4UrxWONL+xccTt=no0o8xVWfCO0k35p0w@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-aHENw3xO8E4UrxWONL+xccTt=no0o8xVWfCO0k35p0w@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 12 Feb 2019 18:25:11 +0530
-Message-ID: <CAFA6WYNbLMOdR6mQSC=ywS0EpfCTSGQ16Qr_xBc13AzW_d-FGA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Introduce TEE bus driver framework
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Matt Mackall <mpm@selenic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212125125.GG7875@lahna.fi.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 17:41, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Tue, 12 Feb 2019 at 13:09, Sumit Garg <sumit.garg@linaro.org> wrote:
-> >
-> > On Tue, 12 Feb 2019 at 16:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> > >
-> > > On Tue, 29 Jan 2019 at 06:50, Sumit Garg <sumit.garg@linaro.org> wrote:
-> > > >
-> > > > This series introduces a generic TEE bus driver concept for TEE based
-> > > > kernel drivers which would like to communicate with TEE based devices/
-> > > > services.
-> > > >
-> > > > Patch #1 adds TEE bus concept where devices/services are identified via
-> > > > Universally Unique Identifier (UUID) and drivers register a table of
-> > > > device UUIDs which they can support. This concept also allows for device
-> > > > enumeration to be specific to corresponding TEE implementation like
-> > > > OP-TEE etc.
-> > > >
-> > > > Patch #2 adds supp_nowait flag for non-blocking requests arising via
-> > > > TEE internal client interface.
-> > > >
-> > > > Patch #3 adds TEE bus device enumeration support for OP-TEE. OP-TEE
-> > > > provides a pseudo TA to enumerate TAs which can act as devices/services
-> > > > for TEE bus.
-> > > >
-> > > > Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
-> > > > On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-> > > > might not be accessible to normal world (linux in this case) and rather
-> > > > accessible to secure world (OP-TEE in this case) only. So this driver
-> > > > aims to provides a generic interface to OP-TEE based random number
-> > > > generator service.
-> > > >
-> > > > Example case is Developerbox based on Socionext's Synquacer SoC [1]
-> > > > which provides 7 thermal sensors accessible from secure world only which
-> > > > could be used as entropy sources (thermal/measurement noise).
-> > > >
-> > > > [1] https://www.96boards.org/product/developerbox/
-> > > >
-> > > > Changes in v6:
-> > > >
-> > > > 1. Incorporate some nitpicks in patch #1 and #3.
-> > > > 2. Bundle all statics in a data structure in patch #4 and use dev_*
-> > > >    instead of pr_*.
-> > > > 3. Add reviewed-by tags for patch #1, #2 and #3.
-> > > >
-> > > > Changes in v5:
-> > > >
-> > > > 1. Add support in module device table for TEE bus devices.
-> > > > 2. Correct license for optee-rng module.
-> > > >
-> > > > Changes in v4:
-> > > >
-> > > > 1. Use typedef instead of single member tee_client_device_id struct.
-> > > > 2. Incorporate TEE bus nitpicks.
-> > > >
-> > > > Changes in v3:
-> > > >
-> > > > 1. Fixed bus error path in Patch #1.
-> > > > 2. Reversed order of Patch #2 and #3.
-> > > > 3. Fixed miscellaneous syntax comments and memory leak.
-> > > > 4. Added comments in Patch #2 for supp_nowait flag.
-> > > >
-> > > > Changes in v2:
-> > > >
-> > > > Based on review comments, the scope of this series has increased as
-> > > > follows:
-> > > >
-> > > > 1. Added TEE bus driver framework.
-> > > > 2. Added OP-TEE based device enumeration.
-> > > > 3. Register optee-rng driver as TEE bus driver.
-> > > > 4. Removed DT dependency for optee-rng device UUID.
-> > > > 5. Added supp_nowait flag.
-> > > >
-> > > > Sumit Garg (4):
-> > > >   tee: add bus driver framework for TEE based devices
-> > > >   tee: add supp_nowait flag in tee_context struct
-> > > >   tee: optee: add TEE bus device enumeration support
-> > > >   hwrng: add OP-TEE based rng driver
-> > > >
-> > >
-> > > For this series
-> > >
-> > > Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >
-> >
-> > Thanks. BTW, Jens has created a GIT PULL[1] to incorporate this patch-set.
-> >
-> > > although I had to load optee.ko manually in order for the udev
-> > > autoload of optee_rng to trigger.
-> >
-> > Did you built OP-TEE module as out-of-tree? OP-TEE by-default is
-> > built-in kernel module as per following configs in default defconfig:
-> >
-> > CONFIG_TEE=y
-> > CONFIG_OPTEE=y
-> >
->
-> Yes, but the distros will carry it as a module.
->
+On Tue, Feb 12, 2019 at 02:51:25PM +0200, Mika Westerberg wrote:
+> On Tue, Feb 12, 2019 at 01:43:33PM +0100, Lukas Wunner wrote:
+> > On Mon, Feb 11, 2019 at 10:30:43AM +0200, Mika Westerberg wrote:
+> > > On Sun, Feb 10, 2019 at 01:13:53PM +0100, Lukas Wunner wrote:
+> > > > If there are two Macs at the ends of the daisy-chain with Thunderbolt
+> > > > devices in-between, the other Mac may already have established tunnels
+> > > > to some of the devices and therefore has occupied hop entries in the
+> > > > devices' path config space.  How do you ensure that you don't allocate
+> > > > the same entries and overwrite the other Mac's hop entries, thereby
+> > > > breaking its tunnels?
+> > > 
+> > > If the other Mac has enumerated the device (set the upstream port,
+> > > route, depth) then the other Mac cannot access the device. You get an
+> > > error (we deal with that in the later patch in the series when we
+> > > identify XDomain connections). The Hop ID allocation is only relevant in
+> > > a single domain.  Crossing one needs to have protocol such as we have in
+> > > case of ThunderboltIP to negotiate Hop IDs used in the link between two
+> > > domains.
+> > 
+> > Understood now, thanks.  (Well, in part at least.)
+> > 
+> > It looks like there's a race condition currently in tb_switch_configure()
+> > wherein two machines on the daisy chain may write the config simultaneously
+> > and overwrite each other's changes.  Isn't there some kind of synchonization
+> > mechanism available to prevent such an outcome?
+> 
+> AFAICT that's expected. The host that first enumerated the device wins.
 
-Hmm, I see. So in this case OP-TEE module needs to be loaded manually
-due to missing modalias for udev autoload.
-
--Sumit
-
-> > > Not sure where the discussion went
-> > > last time, but could we please add "linaro,optee-tz" as a DT modalias
-> > > to the optee.ko module in any case?
-> > >
-> >
-> > This change is already part of your RFC patch [2] and I agree to make
-> > OP-TEE as platform driver.
-> >
-> > [1] https://lkml.org/lkml/2019/2/4/104
-> > [2] https://lkml.org/lkml/2018/12/27/196
-> >
->
-> Indeed, but iirc there was a question from Jens and I wasn't sure it
-> had been answered in the mean time.
+Yes but tb_switch_configure() goes on to blindly call
+tb_plug_events_active().  Does that or any other subsequently called
+function fail if another machine managed to overwrite the switch config?
