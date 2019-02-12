@@ -2,113 +2,60 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73521C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D4DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7D520863
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27BEC217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbfBLP0C (ORCPT
+        id S1730455AbfBLP1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:26:02 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.251]:48568 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728273AbfBLP0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:26:02 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 080FED7D7C
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:26:01 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tZwegfSYh2PzOtZwegAGOt; Tue, 12 Feb 2019 09:26:01 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=47564 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtZwd-000Tii-Mq; Tue, 12 Feb 2019 09:25:59 -0600
-Date:   Tue, 12 Feb 2019 09:25:58 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Hu Ziji <huziji@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] mmc: sdhci-xenon: Mark expected switch fall-through
-Message-ID: <20190212152558.GA21933@embeddedor>
+        Tue, 12 Feb 2019 10:27:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728273AbfBLP1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 10:27:00 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 610D7E6A73;
+        Tue, 12 Feb 2019 15:27:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26562648B6;
+        Tue, 12 Feb 2019 15:26:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190212150323.GA19074@kroah.com>
+References: <20190212150323.GA19074@kroah.com> <19914.1549970944@warthog.procyon.org.uk> <14223.1549981874@warthog.procyon.org.uk> <20190212143720.GA16380@kroah.com> <20190212144214.GA17111@kroah.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     dhowells@redhat.com, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bigeasy@linutronix.de
+Subject: Re: Oops in rpc_clnt_debugfs_register() from debugfs change
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtZwd-000Tii-Mq
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:47564
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27349.1549985217.1@warthog.procyon.org.uk>
+Date:   Tue, 12 Feb 2019 15:26:57 +0000
+Message-ID: <27350.1549985217@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 12 Feb 2019 15:27:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-This patch fixes the following warning:
+> And, if you want my larger fix that I will be sending to netdev one of
+> these days, here's that one.  It includes the above patch as part of it.
 
-drivers/mmc/host/sdhci-xenon-phy.c: In function ‘xenon_emmc_phy_slow_mode’:
-drivers/mmc/host/sdhci-xenon-phy.c:527:47: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if ((priv->init_card_type == MMC_TYPE_SDIO) ||
-       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-       params->slow_mode) {
-       ~~~~~~~~~~~~~~~~~
-drivers/mmc/host/sdhci-xenon-phy.c:534:2: note: here
-  default:
-  ^~~~~~~
+That works.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-Notice that, in this particular case, the code comment is modified
-in accordance with what GCC is expecting to find.
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/mmc/host/sdhci-xenon-phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-index 5b5eb53a63d2..8d07ee1b8f08 100644
---- a/drivers/mmc/host/sdhci-xenon-phy.c
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -530,7 +530,7 @@ static bool xenon_emmc_phy_slow_mode(struct sdhci_host *host,
- 			ret = true;
- 			break;
- 		}
--		/* else: fall through */
-+		/* fall through */
- 	default:
- 		reg &= ~XENON_TIMING_ADJUST_SLOW_MODE;
- 		ret = false;
--- 
-2.20.1
-
+Tested-by: David Howells <dhowells@redhat.com>
