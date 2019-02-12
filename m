@@ -2,105 +2,126 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86636C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B4BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEFA21B18
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B676721B18
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:24:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzsOeNar"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="c9bkZv8g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbfBLKXi (ORCPT
+        id S1728769AbfBLKYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:23:38 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43041 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKXg (ORCPT
+        Tue, 12 Feb 2019 05:24:45 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51105 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLKYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:23:36 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q17so1076102pfh.10;
-        Tue, 12 Feb 2019 02:23:35 -0800 (PST)
+        Tue, 12 Feb 2019 05:24:44 -0500
+Received: by mail-it1-f193.google.com with SMTP id z7so5981366iti.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:24:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vTTJdqf/ZWLOUT+uK18iY5fQAanEzmeGSK8RyC8mzgo=;
-        b=fzsOeNarDEfKHlAntINZHVZGIhmhjydkfu2/SuhWPNq6Jv/cjgPERGaSPnnjiLNBmp
-         3p+jjD/8ZhnkHPSlrqlE4c+LKREjP985LoD3qsy05XoeHD1oo0PWbW80rJB9iAoh0C/+
-         oQbTnu0lEw/zZvnrULDHXSu7f4vcNFfKjUpkCDyLNQ0YCxCq9tn9Wmf+DUbKBGwVtbkA
-         pRzZyEyfmabYXcefe750yMup2FhKXIlxFn5bCRUuFiBza5BuNqmeak9AXlfgRUgVhHrM
-         FCj7AJ5mJxTm99yj42GmrymH1PhTBi/HVHbFVNA3AuBAqDfbNzO9shxxbFts7LvQRwm+
-         I4aQ==
+         :cc:content-transfer-encoding;
+        bh=OOI8B7HyQw2dzyQxkjkOOnTIw0ylaTwZx4zlYCeOPes=;
+        b=c9bkZv8grRSuhVKWvGwv5r6pXezREVJ2ZxARiOIc08fqzurxY/XH07tKMx5X3QQUUx
+         ohKo2a4NxsD7cLCHis7Wdy1k8rHbK5iWna7naJJ/Mim021CPTRfqeNMd7rirSxx684TZ
+         k4R4PBY1FtqoyUf1q4KplScpIsOeMSIVjPW4WjsfHs021t4neNv0PexA+Q3/p10emRIj
+         eqP6nHOZwKqjP37zQgmGKoqG5MIVWMJjXLFMfS+GNQ9+kkKtWCnoTxMOe2dqX8k/igIb
+         VywiXfSD3DykR/Tm6yVYmOx2qQct2Jm0Ozt9Uzt8BnMfrj+PM9nOfEaipGX04Q6MwkNJ
+         azBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vTTJdqf/ZWLOUT+uK18iY5fQAanEzmeGSK8RyC8mzgo=;
-        b=bEqfWy/cbFXEg2PRZGSyQdcy5lhgoiWoa0bjetL7pX6Ti2dXMHBV8LS5+3CVKL+xjS
-         Yons0cE1sVn7aj6rNMV5MCw7/Bjp8MfybTqkoBr9F/Q1M1q6mHVn69Tt6UfcNyPsiDXr
-         OdUzxUEQ4Bze6rxXatj0LgadiKBO42YhOcGE94ojZHwFqjX86WyUOWPyixeWoFDlSHQW
-         viMZAYetor4tu/WkvacNzbCBz3rGRle1u7iZIbPmvDBypTQ8CD79rdg/rRpSdZoDbpqR
-         9kbg4L5bBP9M8vohd2/fralNe8q4n7UpfNvvzXEjmEc0spG4/3y4xcxfj52dnYUMWYkE
-         t1Fg==
-X-Gm-Message-State: AHQUAuZpWXpPXxRfVa5BZAsk5nM3TKlc+o5sT/sfXobIfte2n5gKLpP2
-        yg0xTpZQ7Eo5QCCcSHpAH/Hzy9KAUVIVAdmJ0hY=
-X-Google-Smtp-Source: AHgI3IY2kmVlUdKv8f9Sk+glks2rXPkq7jQagqImqXSs1fMz/TOg7fuP1h2Iql1nmVyW9H/AsHpoBxNwNsrqnbixArc=
-X-Received: by 2002:a63:4a21:: with SMTP id x33mr3033356pga.428.1549967015050;
- Tue, 12 Feb 2019 02:23:35 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OOI8B7HyQw2dzyQxkjkOOnTIw0ylaTwZx4zlYCeOPes=;
+        b=nLXFxTGQfl8pVKH3sVjtJ64Llp/3mi7cF+ki9gfq7v3WEHyg1BWFLvBRWHkpsDQdS4
+         KAIehWX9mnJE4qlXoH67xblhKvtsYObT44aE3K0M+6Qo7GL1ZGMP9uUOA4X4o+Eb9h3l
+         hyCxd5aF790bUpMcy2jPBIzX7bDqhX31S6NM7j8mC77jY/IMMPa54a3A74owAxVWUdMb
+         OT5duJTkm1jETKc6aOxTpKrXbYP/WdHQ6BUWXD8GPIJpj01dwqKv5O03CpPLcUmc1ace
+         J26Jq/fnHMi4yOApf1+ONITPF8mmUbyWQ9DEb3r2RD5zTyNkHw3/6bpACyw+n5D5k78+
+         qpdw==
+X-Gm-Message-State: AHQUAuaGNFli097DrGy9uwZkKOcI2uLjVr+UdxEJuJToulIVShI5bip2
+        a8/t1wZoX4ESNd1hvnRERJZFQJLDb71DUpJbyhx9Sg==
+X-Google-Smtp-Source: AHgI3Ib0gp/Hk/7Po/24cQgyfhhOK9klQQgCAaxbcAgQvQo+PKwGqWYJCSbHbn0Kj5Q390o4WRCNA1RKmcOretLdHdk=
+X-Received: by 2002:a5d:91d3:: with SMTP id k19mr1575071ior.258.1549967083638;
+ Tue, 12 Feb 2019 02:24:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212100825.9113-1-anders.roxell@linaro.org> <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
-In-Reply-To: <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Feb 2019 12:23:24 +0200
-Message-ID: <CAHp75VcPeKDLOB7vKeSG9+UfsYnPfTPy_omuTgJSUgKzC0caNw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ima: fix build error redeclaration of enumerator
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell> <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell> <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell>
+In-Reply-To: <20190212101835.GB20638@dell>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 12 Feb 2019 11:24:32 +0100
+Message-ID: <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 12:21 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
 >
-> On Tue, Feb 12, 2019 at 12:15 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+> On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+>
+> > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisa=C5=82(=
+a):
+> > >
+> > >  * The declaration of a superfluous struct
+> > >  * 100 lines of additional/avoidable code
+> > >  * Hacky hoop jumping trying to fudge VIRQs into resources
+> > >  * Resources were designed for HWIRQs (unless a domain is present)
+> > >  * Loads of additional/avoidable CPU cycles setting all this up
 > >
-> > Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> > include/linux/tpm.h") introduced a build error when both ima and efi is
-> > enabled. What happens is that both headers (ima.h and efi.h) defines the
-> > same 'NONE' constant, and it broke when they started getting included
-> > from the same file.
+> > While the above may be right, this one is negligible and you know it. :=
+)
 >
-> > We only need one of the two patches applied.
+> You have nested for() loops.  You *are* wasting lots of cycles.
 >
-> I would argue that we need two patches applied. Namespace is a hidden
-> issue in the code.
+> > > Need I go on? :)
+> > >
+> > > Surely the fact that you are using both sides of an API
+> > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> > > set some alarm bells ringing?
+> > >
+> > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+> > >
+> > > And for what?  To avoid passing IRQ data to a child driver?
+> >
+> > What do you propose? Should I go back to the approach in v1 and pass
+> > the regmap_irq_chip_data to child drivers?
 >
-> This patch looks good to me, FWIW,
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> I'm saying you should remove all of this hackery and pass IRQs as they
+> are supposed to be passed (like everyone else does).
+>
 
-Oh, did you change ABI? So, I have to say that enum changes are okay,
-but ABI, if any, are not.
+I'm not sure what you mean by "like everyone else does" - different
+mfd drivers seem to be doing different things. Is a simple struct
+containing virtual irq numbers passed to sub-drivers fine?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Bart
