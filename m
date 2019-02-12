@@ -2,101 +2,101 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991D8C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE02CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FEE42084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981CE217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549985658;
+	bh=MPfS3yAE4LffhTQ5LbqMKMwK1D32DakL8odo6LErh0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=l8+paQ6+ZOqnEGmoD4wdfWv74dM0B5DPGuIZ8klIk8/VuGlla2BaQMfdeaEK90cGG
+	 UODQZGFdmi3V6lE+cecyxvG8Xsda940q0ydP/wYA6okNnnT28a1UH1djW9fcsGqMyV
+	 CvvyFdxUePvGlPMyjTjJwN2ttIbJ6E30ICc5Vs7Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbfBLPbk (ORCPT
+        id S1729611AbfBLPeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:31:40 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16960 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728347AbfBLPbj (ORCPT
+        Tue, 12 Feb 2019 10:34:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35226 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfBLPeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:31:39 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CFH0Yu019267;
-        Tue, 12 Feb 2019 16:31:27 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qhurj1344-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Feb 2019 16:31:27 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 825FF3A;
-        Tue, 12 Feb 2019 15:31:26 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag4node2.st.com [10.75.127.11])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 611305494;
-        Tue, 12 Feb 2019 15:31:26 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG4NODE2.st.com (10.75.127.11)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 12 Feb 2019 16:31:25
- +0100
-From:   <gabriel.fernandez@st.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <giuseppe.condorelli@st.com>,
-        Nate Drude <nate.drude@ohmlinxelectronics.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v1] Input: st-keyscan - fix potential zalloc NULL dereference
-Date:   Tue, 12 Feb 2019 16:30:55 +0100
-Message-ID: <20190212153055.3925-1-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 12 Feb 2019 10:34:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MPfS3yAE4LffhTQ5LbqMKMwK1D32DakL8odo6LErh0Q=; b=tRnb1/g9mazclAHsd608t7ZU8
+        tVuMUqa/4uo+oms0fu6c070C0tRJmCucF41D4reTZcjG9psPi+gJ27V9J9HcRS3+MbWn3pCdqXckY
+        d5GfDHtcNdF+jkw0z2SSg2S6qyAoI/9cgNQbKuz/iM8Ta8NHT5c+1WyZkicbc6D/v87Ds=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gta4W-0005KQ-Up; Tue, 12 Feb 2019 15:34:08 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 24A931128113; Tue, 12 Feb 2019 15:34:08 +0000 (GMT)
+Date:   Tue, 12 Feb 2019 15:34:08 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Robin Gong <yibin.gong@nxp.com>,
+        Elven Wang <elven.wang@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Subject: Re: [RFC PATCH v1 2/3] regulator: add
+ regulator_desc_list_voltage_linear_range
+Message-ID: <20190212153408.GE20635@sirena.org.uk>
+References: <b07e501c84c77c59f0a2a67c43576373a140f10f.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_08:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="19uQFt6ulqmgNgg1"
+Content-Disposition: inline
+In-Reply-To: <b07e501c84c77c59f0a2a67c43576373a140f10f.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: tax office, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch fixes the following static checker warning:
+--19uQFt6ulqmgNgg1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-drivers/input/keyboard/st-keyscan.c:156 keyscan_probe()
-error: potential zalloc NULL dereference: 'keypad_data->input_dev'
+On Tue, Feb 12, 2019 at 04:18:46PM +0200, Matti Vaittinen wrote:
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/input/keyboard/st-keyscan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Add regulator_desc_list_voltage_linear_range which can be used
+> by drivers for getting the voltages before regulator is registered.
+> This may be useful for drivers which need to fetch the voltage
+> selectors at device-tree parsing callback.
 
-diff --git a/drivers/input/keyboard/st-keyscan.c b/drivers/input/keyboard/st-keyscan.c
-index babcfb165e4f..3b85631fde91 100644
---- a/drivers/input/keyboard/st-keyscan.c
-+++ b/drivers/input/keyboard/st-keyscan.c
-@@ -153,6 +153,8 @@ static int keyscan_probe(struct platform_device *pdev)
- 
- 	input_dev->id.bustype = BUS_HOST;
- 
-+	keypad_data->input_dev = input_dev;
-+
- 	error = keypad_matrix_key_parse_dt(keypad_data);
- 	if (error)
- 		return error;
-@@ -168,8 +170,6 @@ static int keyscan_probe(struct platform_device *pdev)
- 
- 	input_set_drvdata(input_dev, keypad_data);
- 
--	keypad_data->input_dev = input_dev;
--
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	keypad_data->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(keypad_data->base))
--- 
-2.17.0
+This seems fine.
 
+--19uQFt6ulqmgNgg1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxi528ACgkQJNaLcl1U
+h9A2Wgf/WiSjmwLgHQTPyCGf1Sbz8vbqTBhUHH54wARjgAV284XgiCShR+gN36Yy
+SgqwuDospXsR2ieWwDSIGaSWGP2ZszxI9IMO+ln7g46IbwEQcfjG6vpehRft05Fp
+A3ScY61nkouQttCGUvrZSwnMZLUs4NXm4lQ/9QFZDvt69N3uzZpuOGiieRUfcKPx
+EMNiYCmEyOyesYzcyTySRarE6OdIdnCMuGZx8xSWLUf6lAWgUiQzbg1DadB+yjBk
+m2kFKmmHl+bHOPTUOKHYJEnXzHZBV4gbFPdnCqaO0+OGxQLFKbGHMrutU/9/sWuc
+ikXke/wV8Ta9uTnhnNmaakdDxtR9mg==
+=KZNW
+-----END PGP SIGNATURE-----
+
+--19uQFt6ulqmgNgg1--
