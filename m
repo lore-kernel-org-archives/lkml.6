@@ -2,142 +2,110 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3464C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12A0C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B092C222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YZ/xQS8c"
+	by mail.kernel.org (Postfix) with ESMTP id BB158222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731119AbfBLS5Y (ORCPT
+        id S1731263AbfBLS5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:57:24 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41306 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730735AbfBLS5Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:57:24 -0500
-Received: by mail-ua1-f67.google.com with SMTP id z24so1247923ual.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:57:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IUNHmrobcIG4oQzAePQtOJCStl1TB5+6T++n6rptimE=;
-        b=YZ/xQS8cjOe6q/iuleVhRh0H4H8n53DKDBqLuDCCoxatodAYzBqq1D8ATipqwRI68y
-         AJlpOEioy8+mU7ZK8IwGhbauz4zAqw8nV5FhyMBIv/vgoc2TUvHBwFovDZYw2I7IYX5E
-         +UMbveXkGwJLvA7jKW1pAFyaHUoOROSndT9qY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IUNHmrobcIG4oQzAePQtOJCStl1TB5+6T++n6rptimE=;
-        b=cXRzohhacrpubtbFENzKnKjfcnoWhIWDG/G9qLx6xuG0oN+RGIocrsjoz2lxha4y1s
-         AFXlBrzODofJmlhplqVI/u7F8n1a4ywG7jdyea6/At+4A3E+6H2+dDDzSTxUlaxQXEEJ
-         V/UkskIHX4T1CCnvVvm1m/ohVOBororDUxSNi/Oin2fTcKuqrhJD1M2LTRlrynmiDXzO
-         96mfvqZPAoCKjJCQuttdoGeuQjGoFyKUg6BXHocOFalWxS78KXy/wz80ibFEOmtoW01g
-         Hz8wLxUPgHDGW0nQWe+BGWnPG8p95tlS7bUGkYljdE35B0lSm3L+ijXl1aEPYmwh5U+T
-         OiAw==
-X-Gm-Message-State: AHQUAuaVAQwYxjTd0i9D0XNSWovPta4JjxU26Gw2SossS1JoyKIhxuTl
-        dO5CGt12EZI5riAp5oE9Ch83DtUQlmw=
-X-Google-Smtp-Source: AHgI3IZX4mCCuIag84BGySFxeTjhAQY0j8IT1oBvN4YLjdY90BgJ38U+Lchx5WE2LwtLoGQMcYN/CA==
-X-Received: by 2002:ab0:2017:: with SMTP id v23mr2061308uak.5.1549997840766;
-        Tue, 12 Feb 2019 10:57:20 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id s195sm2868039vks.28.2019.02.12.10.57.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 10:57:19 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id t13so2270181vsk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:57:18 -0800 (PST)
-X-Received: by 2002:a67:848a:: with SMTP id g132mr2127227vsd.222.1549997838512;
- Tue, 12 Feb 2019 10:57:18 -0800 (PST)
+        Tue, 12 Feb 2019 13:57:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45308 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729371AbfBLS53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 13:57:29 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7DE17369CA;
+        Tue, 12 Feb 2019 18:57:29 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 919C3194A0;
+        Tue, 12 Feb 2019 18:57:25 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 295CE220992; Tue, 12 Feb 2019 13:57:25 -0500 (EST)
+Date:   Tue, 12 Feb 2019 13:57:25 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, miklos@szeredi.hu, stefanha@redhat.com,
+        dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH 00/52] [RFC] virtio-fs: shared file system for virtual
+ machines
+Message-ID: <20190212185725.GD6273@redhat.com>
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+ <871s4dc85b.fsf@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
-In-Reply-To: <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 12 Feb 2019 10:57:05 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com>
-Message-ID: <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871s4dc85b.fsf@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 12 Feb 2019 18:57:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrot=
-e:
->
-> On Mon, 11 Feb 2019 at 19:40, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
+On Tue, Feb 12, 2019 at 09:26:48PM +0530, Aneesh Kumar K.V wrote:
+> Vivek Goyal <vgoyal@redhat.com> writes:
+> 
+> > Hi,
 > >
-> > In preparation to enabling -Wimplicit-fallthrough, mark switch
-> > cases where we are expecting to fall through.
+> > Here are RFC patches for virtio-fs. Looking for feedback on this approach.
 > >
-> > This patch fixes the following warnings:
+> > These patches should apply on top of 4.20-rc5. We have also put code for
+> > various components here.
 > >
-> > drivers/clk/samsung/clk-s3c2443.c: In function =E2=80=98s3c2443_common_=
-clk_init=E2=80=99:
-> > drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fa=
-ll through [-Wimplicit-fallthrough=3D]
-> >    samsung_clk_register_alias(ctx, s3c2450_aliases,
-> >    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >      ARRAY_SIZE(s3c2450_aliases));
-> >      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
-> >   case S3C2416:
-> >   ^~~~
+> > https://gitlab.com/virtio-fs
 > >
-> > Warning level 3 was used: -Wimplicit-fallthrough=3D3
+> > Problem Description
+> > ===================
+> > We want to be able to take a directory tree on the host and share it with
+> > guest[s]. Our goal is to be able to do it in a fast, consistent and secure
+> > manner. Our primary use case is kata containers, but it should be usable in
+> > other scenarios as well.
 > >
-> > Notice that, in this particular case,  the code comment is modified
-> > in accordance with what GCC is expecting to find.
+> > Containers may rely on local file system semantics for shared volumes,
+> > read-write mounts that multiple containers access simultaneously.  File
+> > system changes must be visible to other containers with the same consistency
+> > expected of a local file system, including mmap MAP_SHARED.
 > >
-> > This patch is part of the ongoing efforts to enable
-> > -Wimplicit-fallthrough.
->
-> I saw this in multiple places already and I think fix is wrong. The
-> point is that the code is correct - the fall through is marked
-> properly.
->
-> It is just the GCC which has to be fixed not the code. You want to
-> adjust the code for specific version of GCC and what if GCC changes
-> its warning? For example GCC might require "fall through: "... or any
-> other syntax. Another point - what about clang's syntax?
+> > Existing Solutions
+> > ==================
+> > We looked at existing solutions and virtio-9p already provides basic shared
+> > file system functionality although does not offer local file system semantics,
+> > causing some workloads and test suites to fail.
+> 
+> Can you elaborate on this? Is this with 9p2000.L ? We did quiet a lot of
+> work to make sure posix test suite pass on 9p file system. Also 
+> was the mount option with cache=loose?
 
--Wimplicit-fallthrough=3D3 is stricter and maps to -Wextra, hence its
-choice. GCC's levels were chosen based on the existing linters, static
-analyzers, etc. The patterns are unlikely to change (see the gcc
-man-page).
+Hi Aneesh,
 
-Clang doesn't recognize anything in C mode (hopefully this will be
-fixed in the future[1]).
+Yes this is with 9p2000.L and cache=loose. I used following mount option.
 
-As long as one of the compilers is able to check this, we'll avoid the
-bugs associated with this mis-pattern. Gustavo's efforts here have
-found kind of a lot of bugs, so I think it's worth a little churn to
-add these (and make minor adjustments to existing comments).
+mount -t 9p -o trans=virtio hostShared /mnt/virtio-9p/ -oversion=9p2000.L,posixacl,cache=loose
 
-[1] https://bugs.llvm.org/show_bug.cgi?id=3D37135
+We noticed primarily two issues.
 
---=20
-Kees Cook
+- Ran pjdfstests and a lot of them are failing. I think even kata
+  container folks also experienced pjdfstests failures. I have never
+  looked into details of why it is failing.
+
+- We thought mmap(MAP_SHARED) will not work with virtio-9p when two
+  clients are running in two different VMs and mapped same file with
+  MAP_SHARED.
+
+Having said that, biggest concern with virtio-9p seems to be performance.
+We are looking for ways to improve performance with virtio-fs. Hoping
+DAX can provide faster data access and fuse protocol itself seems to
+be faster (in primilinary testing results).
+
+Thanks
+Vivek
