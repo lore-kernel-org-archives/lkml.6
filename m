@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94E3C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010C3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F632186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C12EE2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:26:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j0IKJPsB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YFdTzQFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfBLHZy (ORCPT
+        id S1728193AbfBLH0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:25:54 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58324 "EHLO
+        Tue, 12 Feb 2019 02:26:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58836 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBLHZx (ORCPT
+        with ESMTP id S1728145AbfBLHZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:25:53 -0500
+        Tue, 12 Feb 2019 02:25:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PbFY06L85QwqIqZmMhvtYp32gN0YEkn+6lQLGyA+51Q=; b=j0IKJPsBmNLGNK6Mp0W59c8TZb
-        pz0+BmX/GQtSXZYtHbGPgm03L1Fw03F+nSCFJFiEN5gHi+FAW94SJUSwX2ZHw7rweQXUNHfxsErKT
-        eYau7OcJkMKLF2+5XlRhL8DHr0Xr4lP89ighqxrlgx6Inl0S+CD1SO57z1+tb1uMsptlodjSyfdRm
-        4RrJL1opr1hrp90hDCWxN7ERNTa3RlQHF8C0y3UCiaTzThQ3iqbdIIcJkdK7MGHaptS5j7EI4CJSo
-        B9AzOI7S2AvKAlK5DUiemxN7hdQGdsYIAROk/4GQnS9oc7uS+gu6CkQz4PhPm92L33ez26wmhAOb2
-        5N/iEUeA==;
+        bh=sg1qZTQ7f9C8PWpCTPEQSLyZ0uNPVzWT71WdI2nlxFk=; b=YFdTzQFwF+TYW3Ckxd01RI5yWB
+        y7pAh5SBC3oI/fHE2Vo8lK3y5zXFkhXGOOKpPd3XtuGw0K8r8Pa0G68uvfD/7P9T/5BV4Ol0g34Zf
+        Uttz6iyMzZemhFH+2hhl8P0XUdUt36xP0AkivZ52Ilguuul5nsnZxdLH358eQmDGvpq3qf8SijTRE
+        1zwjvvOYXSWdA76FQ2HP9/+220hOuzA9Neeoe1NRXt1HT86yQFsi2NUqaAC4/aI1hVSqFWL19bur+
+        ZJspyCFxuZorXHxeKxvUheYK2cGr0hR0KTDJpjKOroa6aYAu/f0uuYe3lG7OedfFTbMqhcxve3jJL
+        Dq4n5NVw==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtSRp-0002RZ-8Y; Tue, 12 Feb 2019 07:25:41 +0000
+        id 1gtSRu-0002XO-Kx; Tue, 12 Feb 2019 07:25:47 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Ulf Hansson <ulf.hansson@linaro.org>
 Cc:     Russell King <linux@armlinux.org.uk>,
@@ -46,9 +46,9 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Ben Dooks <ben-linux@fluff.org>, linux-mmc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/14] mmc: davinci: handle highmem pages
-Date:   Tue, 12 Feb 2019 08:25:18 +0100
-Message-Id: <20190212072528.13167-5-hch@lst.de>
+Subject: [PATCH 06/14] mmc: omap: handle highmem pages
+Date:   Tue, 12 Feb 2019 08:25:20 +0100
+Message-Id: <20190212072528.13167-7-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212072528.13167-1-hch@lst.de>
 References: <20190212072528.13167-1-hch@lst.de>
@@ -66,86 +66,70 @@ while doing the actual PIO operations.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/mmc/host/davinci_mmc.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/mmc/host/omap.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
-index 9e68c3645e22..6a16d7a1d5bc 100644
---- a/drivers/mmc/host/davinci_mmc.c
-+++ b/drivers/mmc/host/davinci_mmc.c
-@@ -194,11 +194,12 @@ struct mmc_davinci_host {
- #define DAVINCI_MMC_DATADIR_WRITE	2
- 	unsigned char data_dir;
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index c60a7625b1fa..6741c95f2281 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -148,7 +148,7 @@ struct mmc_omap_host {
  
--	/* buffer is used during PIO of one scatterlist segment, and
--	 * is updated along with buffer_bytes_left.  bytes_left applies
--	 * to all N blocks of the PIO transfer.
-+	/*
-+	 * buffer_offset is used during PIO of one scatterlist segment, and is
-+	 * updated along with buffer_bytes_left.  bytes_left applies to all N
-+	 * blocks of the PIO transfer.
- 	 */
--	u8 *buffer;
-+	u32 buffer_offset;
- 	u32 buffer_bytes_left;
- 	u32 bytes_left;
+ 	unsigned int		sg_len;
+ 	int			sg_idx;
+-	u16 *			buffer;
++	u32			buffer_offset;
+ 	u32			buffer_bytes_left;
+ 	u32			total_bytes_left;
  
-@@ -229,8 +230,8 @@ static irqreturn_t mmc_davinci_irq(int irq, void *dev_id);
- /* PIO only */
- static void mmc_davinci_sg_to_buf(struct mmc_davinci_host *host)
- {
-+	host->buffer_offset = host->sg->offset;
- 	host->buffer_bytes_left = sg_dma_len(host->sg);
--	host->buffer = sg_virt(host->sg);
- 	if (host->buffer_bytes_left > host->bytes_left)
- 		host->buffer_bytes_left = host->bytes_left;
+@@ -649,7 +649,7 @@ mmc_omap_sg_to_buf(struct mmc_omap_host *host)
+ 
+ 	sg = host->data->sg + host->sg_idx;
+ 	host->buffer_bytes_left = sg->length;
+-	host->buffer = sg_virt(sg);
++	host->buffer_offset = sg->offset;
+ 	if (host->buffer_bytes_left > host->total_bytes_left)
+ 		host->buffer_bytes_left = host->total_bytes_left;
  }
-@@ -238,7 +239,7 @@ static void mmc_davinci_sg_to_buf(struct mmc_davinci_host *host)
- static void davinci_fifo_data_trans(struct mmc_davinci_host *host,
- 					unsigned int n)
+@@ -666,7 +666,9 @@ mmc_omap_clk_timer(struct timer_list *t)
+ static void
+ mmc_omap_xfer_data(struct mmc_omap_host *host, int write)
  {
--	u8 *p;
-+	u8 *p, *base;
- 	unsigned int i;
++	struct scatterlist *sg = host->data->sg + host->sg_idx;
+ 	int n, nwords;
++	void *p;
  
  	if (host->buffer_bytes_left == 0) {
-@@ -246,7 +247,8 @@ static void davinci_fifo_data_trans(struct mmc_davinci_host *host,
- 		mmc_davinci_sg_to_buf(host);
- 	}
+ 		host->sg_idx++;
+@@ -684,15 +686,17 @@ mmc_omap_xfer_data(struct mmc_omap_host *host, int write)
+ 	host->total_bytes_left -= n;
+ 	host->data->bytes_xfered += n;
  
--	p = host->buffer;
-+	base = sg_kmap_atomic(host->sg);
-+	p = base + host->buffer_offset;
- 	if (n > host->buffer_bytes_left)
- 		n = host->buffer_bytes_left;
- 	host->buffer_bytes_left -= n;
-@@ -275,7 +277,8 @@ static void davinci_fifo_data_trans(struct mmc_davinci_host *host,
- 			p = p + (n & 3);
- 		}
++	p = sg_kmap_atomic(sg);
+ 	if (write) {
+ 		__raw_writesw(host->virt_base + OMAP_MMC_REG(host, DATA),
+-			      host->buffer, nwords);
++			      p + host->buffer_offset, nwords);
+ 	} else {
+ 		__raw_readsw(host->virt_base + OMAP_MMC_REG(host, DATA),
+-			     host->buffer, nwords);
++			     p + host->buffer_offset, nwords);
  	}
--	host->buffer = p;
-+	host->buffer_offset = p - base;
-+	sg_kunmap_atomic(host->sg, base);
++	sg_kunmap_atomic(sg, p);
+ 
+-	host->buffer += nwords;
++	host->buffer_offset += nwords;
  }
  
- static void mmc_davinci_start_command(struct mmc_davinci_host *host,
-@@ -572,7 +575,7 @@ mmc_davinci_prepare_data(struct mmc_davinci_host *host, struct mmc_request *req)
- 			host->base + DAVINCI_MMCFIFOCTL);
- 	}
+ #ifdef CONFIG_MMC_DEBUG
+@@ -1250,6 +1254,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
+ 		mmc->caps |= MMC_CAP_4_BIT_DATA | MMC_CAP_ERASE;
  
--	host->buffer = NULL;
-+	host->buffer_offset = 0;
- 	host->bytes_left = data->blocks * data->blksz;
- 
- 	/* For now we try to use DMA whenever we won't need partial FIFO
-@@ -1291,6 +1294,7 @@ static int davinci_mmcsd_probe(struct platform_device *pdev)
- 
- 	mmc->ops = &mmc_davinci_ops;
- 	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+ 	mmc->ops = &mmc_omap_ops;
 +	mmc->need_kmap = 1;
+ 	mmc->f_min = 400000;
  
- 	/* With no iommu coalescing pages, each phys_seg is a hw_seg.
- 	 * Each hw_seg uses one EDMA parameter RAM slot, always one
+ 	if (mmc_omap2())
 -- 
 2.20.1
 
