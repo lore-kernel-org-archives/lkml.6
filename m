@@ -2,87 +2,101 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067D6C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00534C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CACC92070D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE1F2070D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549959934;
-	bh=+Fd0EwoqWU/kz4L0k58lT9or/eJJ9P6/DgNPCoknYmQ=;
+	s=default; t=1549959993;
+	bh=q/MieP8cnsIanHpiUUhtp80wp54Bpb9UtsV3iwbylO0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0ZjXm0W4mEUmw5XNOEGHaWCvf5+D4cH/1DzYtIwj5MoQ4uxUX3LIB+7a0p95NvdMw
-	 gUd4V6T0b27aYmNb/wtze7piaLdzkfgYIzMfXTlA5mJ+1q8n8S4p6NyJV/hUevshD8
-	 ePRLxDj5HbIZSEr1Jp/q42yWFSJh8IPFU29HkZ1c=
+	b=qDH1QQRezxYg7MxdZlr2W/pFEBdGP/5sHJbltEWC9LawDjpudlxmL+5Odt14BtRa8
+	 7fHquoM8dRarMiYiaQy4q3TfpSeCPCXw/lgchbvNRiXSA0T8d8wTfefXtY7N7QFfOo
+	 swJG3XY1hgOvWFK9cAlzzcsuDkWPo+kjMtMwan0U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbfBLIZd (ORCPT
+        id S1728467AbfBLI0b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:25:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbfBLIZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:25:32 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E9F72070D;
-        Tue, 12 Feb 2019 08:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549959932;
-        bh=+Fd0EwoqWU/kz4L0k58lT9or/eJJ9P6/DgNPCoknYmQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fRufwKv4/Ur9qK9i3CEi8Cs9E4TUpr37mUp81/orBP2Csv/XAcmRXG2cVOXEzIhMy
-         YwgCt8Ql7xfsLWbkHwlT8LQEHQ4woygwE++mOD9u8RkdFecQJBW6jxT+kwirMnNCYT
-         Y7GWI93immvQTeXvgZ+pWdflT+X2LWUdGmP1hlLA=
-Date:   Tue, 12 Feb 2019 09:25:17 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: RFC: drop ISA support in the synlink tty driver?
-Message-ID: <20190212082517.GA27889@kroah.com>
-References: <20190211132534.29407-1-hch@lst.de>
- <20190212075151.GA7588@kroah.com>
- <7585c8b6-6dc4-2556-d14f-2fd60dc7df90@suse.cz>
+        Tue, 12 Feb 2019 03:26:31 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36275 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbfBLI0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:26:31 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q11so1317925lfd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:26:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a+2h7gpQxkc9JQfd9EdYxmd37Yt7ECu246HBXw6YV9o=;
+        b=gTIr/qJi0Irk0lBDQnZHxyt+uiXmFXybuOUnIm9vd1e0+MUH/ddBzW/8BwS5nreupV
+         0XNboMOjzd9WlwPLaakRS7cS0ogv/mTD5tsAvGIPuJg63kEO44jLaXKrsC2ukBFfnM+9
+         QaWNlFVzNThegPSBx62LCMY6EYi9+D+JHYp4hERM19mqi9QSuaDt0NefLk1xdyA079QJ
+         vCl13Cp5TryDtzvpZk6QAnym9RtDlL78EXme67vsX5mcMbMqa8ie/oaUTVNY7cEj6tOA
+         cnuwW2w24I7g90SBwZevo0TA99/XOEV7e/+LKrA1CPxUqXrZO1xxIzSM91GbmZ0L7x2S
+         IQKw==
+X-Gm-Message-State: AHQUAuYhFWh5rZCjc7Wm25tYZh4D9in+VpAnx1dyQ0wKbpZjpu+BFMEF
+        D5r6oKB1xzuXlSI4erWEwQzYcJRG
+X-Google-Smtp-Source: AHgI3IawQsz13vKtdO8RDNQ9qEgjslqcVxaQiK9xKywWZBslPO6oabAHqaE81o6jZOLkVhWXgfZa8Q==
+X-Received: by 2002:ac2:5593:: with SMTP id v19mr1594914lfg.60.1549959989317;
+        Tue, 12 Feb 2019 00:26:29 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id q1sm2209253lfk.15.2019.02.12.00.26.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 00:26:28 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gtTOX-0007Et-DK; Tue, 12 Feb 2019 09:26:21 +0100
+Date:   Tue, 12 Feb 2019 09:26:21 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>, linux-kernel@vger.kernel.org,
+        Atish Patra <atish.patra@wdc.com>,
+        Anup Patel <anup@brainfault.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
+Message-ID: <20190212082621.GA26912@localhost>
+References: <20190118140308.9599-1-johan@kernel.org>
+ <20190118140308.9599-6-johan@kernel.org>
+ <20190212071339.GL26747@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7585c8b6-6dc4-2556-d14f-2fd60dc7df90@suse.cz>
+In-Reply-To: <20190212071339.GL26747@infradead.org>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:08:41AM +0100, Jiri Slaby wrote:
-> On 12. 02. 19, 8:51, Greg Kroah-Hartman wrote:
-> > On Mon, Feb 11, 2019 at 02:25:33PM +0100, Christoph Hellwig wrote:
-> >> Hi Greg and Jiri,
-> >>
-> >> I've been working hard to get rid of the remaining callers the pass a
-> >> NULL struct device to the DMA mapping functions and am almost done.
-> >>
-> >> The only non-trivial driver is the synclink driver, which has legacy
-> >> early 90s style ISA support that doesn't use the device model at all.
-> >>
-> >> In theory we could convert it to an isa_driver, but without testing
-> >> that seems rather dangerous.  So for now I would suggest that we
-> >> remove the ISA support in this driver - if anyone cares enough we
-> >> can resurrect it from the git history and convert it to use the driver
-> >> model.
+On Mon, Feb 11, 2019 at 11:13:39PM -0800, Christoph Hellwig wrote:
+> On Fri, Jan 18, 2019 at 03:03:08PM +0100, Johan Hovold wrote:
+> > Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
+> > instead of open coding. Note that this will allow matching also on the
+> > node name instead of the (for FDT) deprecated device_type property.
 > > 
-> > No objection from me at all, I'll go queue this up now, thanks.
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
-> Agreed, but I would kill also the MGSL_BUS_TYPE_ISA macro proper.
+> I think this is going to conflict with the ELF caps changes from
+> Atish.  Maybe the riscv_fill_hwcap hunk should be included in his
+> patch?
 
-It's just a #define, in a uapi file, so we should probably leave it as
-userspace programs _might_ depend on it.  I have no idea why, but oh
-well...
+Since that patch had some issues (e.g. the node reference underflow) it
+may be better to rebase it on top of this series. The changes are
+otherwise distinct after all.
 
-thanks,
+> Otherwise looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-greg k-h
+Thanks for reviewing!
+
+Johan
