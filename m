@@ -2,134 +2,146 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649C3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94701C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CCDC217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58DBE20863
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:35:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJl5JR6u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfBLF07 (ORCPT
+        id S1726340AbfBLFfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 00:26:59 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:23133 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbfBLF07 (ORCPT
+        Tue, 12 Feb 2019 00:35:24 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37835 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfBLFfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 00:26:59 -0500
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C5QYhT092674;
-        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Tue, 12 Feb 2019 14:26:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1C5QYA1092668;
-        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1C5QYXX092667;
-        Tue, 12 Feb 2019 14:26:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201902120526.x1C5QYXX092667@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH v2] fs: Allow opening only regular files during execve().
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        syzbot 
-        <bot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+        Tue, 12 Feb 2019 00:35:24 -0500
+Received: by mail-it1-f193.google.com with SMTP id b5so4566740iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 21:35:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k16c7Vwqs2BtbxacAaCK2evvPfhEyH6pxlx6O4bySs4=;
+        b=BJl5JR6udyA177kKw6+kpZIIdsck2dfSCDZf0zE6ojzr6ofJGec1b6QsMuFWrRKllf
+         JPsV4IoqkzE+MSwcadi4OKNov/1ejtGCxe6PEWFrIbno0BpjvzZ8ZROMzkuV4mG627kB
+         xiCPUl0/PJbIXi8JCZ0RxJnRv465mhiGG3ofSyslLwa8qT2UsTOhH1PaEjXYVpE3xfXB
+         kqp2lUqQuuahuw7xEf48iXYhO1p1Q68TzryYS7OxeTDruWatTvWbeT9QANYB+PeQbmiI
+         oXXYFBfBwp0dhXxEHwAyp7wj+J5NBRxpAwPLQIYM6o41WVvQ1GEESUUce0YVxh2aVEKB
+         ZvgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k16c7Vwqs2BtbxacAaCK2evvPfhEyH6pxlx6O4bySs4=;
+        b=M8C3052oVszSXXGw1UoQqIKyc1gTVA/bunwW2B2JQpAY+6aYFtehQdAyfx2/kgZnvw
+         anhOYBfTbk/RN/iHjWkmEG7g2sC/aZbpby9JEY12lq1BNLvHRT+AUqvH58BaCL7HLUf5
+         t07mEvpoFmwriB41yQnKY3ItT7MV8DLGprYlmpIZZSKRU9PDbQjmTth9zRpv1ukqnVn2
+         ZEshq0VQ7S/7wcKBzzBIi1Iigx+wMn1vyoBe6uBNVfjnPJIX5t2esB6+UqauxqR3/zsr
+         XvLyCkcYpAe0bBP/xN9pHLT4gJ5b1ljztgrSmjHyO4cmXJEbYDn5tTEsBSkXeexcY3Yd
+         wDGQ==
+X-Gm-Message-State: AHQUAub/e6AhIqAdRV5MzziNoUuqojAXLjFfAsdSfboopKa7NNi9UZ/V
+        OTBZWUQJHLUrVlpoNnPjGKMG6SaLvvLSkHF8Bw==
+X-Google-Smtp-Source: AHgI3IYjdlKatJkCbM6WN+xQNWMLeDvpl/gXyukV1W1ujr3n8HtPjD+XO3iH00Gz8EwehoUPqFV9WHpnECzGTuBIJuU=
+X-Received: by 2002:a24:a10:: with SMTP id 16mr1062640itw.42.1549949723046;
+ Mon, 11 Feb 2019 21:35:23 -0800 (PST)
 MIME-Version: 1.0
-Date:   Tue, 12 Feb 2019 14:26:34 +0900
-References: <20190128154205.214ae010da6c2f02d379bbc8@linux-foundation.org> 
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+References: <20190125103924.GB27998@zn.tnic> <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
+ <20190125140823.GC27998@zn.tnic> <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
+ <20190131105732.GC6749@zn.tnic> <20190131222732.GA946@anatevka>
+ <20190131234740.GO6749@zn.tnic> <20190204223016.GB11986@anatevka>
+ <20190205081552.GG21801@zn.tnic> <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
+ <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 12 Feb 2019 13:35:11 +0800
+Message-ID: <CAFgQCTv0gkXpvJ6U+RztfVe+eL=5nL+=_TVaNV0VozX_dKtrWQ@mail.gmail.com>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tetsuo Handa wrote:
-> Andrew Morton wrote:
-> > > --- a/fs/open.c
-> > > +++ b/fs/open.c
-> > > @@ -733,6 +733,12 @@ static int do_dentry_open(struct file *f,
-> > >  		return 0;
-> > >  	}
-> > >  
-> > > +	/* Any file opened for execve()/uselib() has to be a regular file. */
-> > > +	if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) {
-> > > +		error = -EACCES;
-> > > +		goto cleanup_file;
-> > > +	}
-> > > +
-> > >  	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
-> > >  		error = get_write_access(inode);
-> > >  		if (unlikely(error))
-> > 
-> > This change sounds legitimate for various other reasons, but it's a
-> > concern that this locking error occurred in the first place.  There's a
-> > problem somewhere (probably the pipe code) which may bite us in other
-> > situations, even with this workaround in place.
-> > 
-> > 
-> 
-> This error seems to be introduced in 2.6.39-rc1 by commit a9712bc12c40c172
-> ("deal with races in /proc/*/{syscall,stack,personality}"). Thus, I don't
-> think that this patch will bite us in other situations.
-> Al, how do you want to handle this?
-> 
+On Tue, Feb 12, 2019 at 4:48 AM Dave Young <dyoung@redhat.com> wrote:
+>
+> On 02/06/19 at 08:08pm, Dave Young wrote:
+> > On 02/05/19 at 09:15am, Borislav Petkov wrote:
+> > > On Mon, Feb 04, 2019 at 03:30:16PM -0700, Jerry Hoemann wrote:
+> > > > Is your objection only to the second fallback of allocating
+> > > > memory above >= 4GB?   Or are you objecting to allocating from
+> > > > (896 .. 4GB) as well?
+> > >
+> > > My problem is why should the user need to specify high or low allocation
+> > > explicitly when we can handle all that in the kernel automatically.
+> > >
+> > > The presence of crashkernel= on the cmdline sure means that the user
+> > > wants to allocate memory for a second kernel.
+> > >
+> > > Now, if the requested allocation fails, we say:
+> > >
+> > >   Error reserving crashkernel
+> > >
+> > > So, instead of saying that, we can *try* *again* and say
+> > >
+> > >   Error reserving requested crashkernel at @..., attempting a high range.
+> > >
+> > > and run memblock_find_in_range() on the other regions which we deemed
+> > > are ok to allocate from.
+> > >
+> > > Why aren't we doing that by default instead of placing all those
+> > > different options in front of the user and expecting her/him to know
+> > > something about all those magic ranges?
+> >
+> > As we talked in another reply, for the >4G allocation we can not avoid
+> > the swiotlb issue,  but if one request for 256M in high region and we
+> > allocate the low part automatically, it will eat more memory eg. 512M.
+> >
+> > But probably in case allacation failed in low region ,high is a must for kdump
+> > reservation, since no other choices perhaps we can make that as you said
+>
+> That is exactly what Pingfan is doing in this patch.
+>
+> Even we make it automatic in kernel, but we have to have some default
+> value for swiotlb in case crashkernel can not find a free region under 4G.
+> So this default value can not work for every use cases, people need
+> manually use crashkernel=,low and crashkernel=,high in case
+> crashkernel=X does not work.  One can tune it for their use:
+>
+> 1) crashkernel=X reservation fails, likely the ,low default value is
+> still too big, one can shrink the value and manually try other value
+> 2) crashkernel=X reserve successfully on high memory and along with some
+> default low memory region. But the low region is not enough.  In this
+> case one can increase the
+>
+> This should answer the question why ,high and ,low is still needed.
+>
+> But for above consumption 1),  KASLR can still cause default ,low memory
+> failed to reserve.  So I wonder if KASLR can skip the 0-896M if the
+> system memory is big enough.
+>
+A little fix about the comment. Refer to reserve_crashkernel_low(),
+low_base = memblock_find_in_range(0, 1ULL << 32, low_size,
+CRASH_ALIGN); So it should try 0~4G for ",low". And the default size
+for low is 256M. Given the limited memory region reserved by other
+component before crashkernel, we always can find a continuous chunk of
+256M inside the fragmented [0,4G], which is split by initrd, KASLR.
 
-According to bisection, commit 8924feff66f35fe2 ("splice: lift pipe_lock out of splice_to_pipe()")
-added in 4.9-rc1 is the trigger of this deadlock. Thus, the fix needs to go to 4.9+.
-
-# bad: [abb5a14fa20fdd400995926134b7be9eb8ce6048] Merge branch 'work.misc' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
-# good: [c8d2bc9bc39ebea8437fd974fdbc21847bb897a3] Linux 4.8
-# good: [523d939ef98fd712632d93a5a2b588e477a7565e] Linux 4.7
-# good: [2dcd0af568b0cf583645c8a317dd12e344b1c72a] Linux 4.6
-# good: [b562e44f507e863c6792946e4e1b1449fbbac85d] Linux 4.5
-# good: [afd2ff9b7e1b367172f18ba7f693dfb62bdcb2dc] Linux 4.4
-# good: [6a13feb9c82803e2b815eca72fa7a9f5561d7861] Linux 4.3
-# good: [64291f7db5bd8150a74ad2036f1037e6a0428df2] Linux 4.2
-# good: [b953c0d234bc72e8489d3bf51a276c5c4ec85345] Linux 4.1
-# good: [39a8804455fb23f09157341d3ba7db6d7ae6ee76] Linux 4.0
-git bisect start 'HEAD' 'v4.8' 'v4.7' 'v4.6' 'v4.5' 'v4.4' 'v4.3' 'v4.2' 'v4.1' 'v4.0'
-# good: [5691f0e9a3e7855832d5fd094801bf600347c2d0] Merge tag 'sound-4.9-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
-git bisect good 5691f0e9a3e7855832d5fd094801bf600347c2d0
-# good: [530a70617cb6325bd7781e7a993d732d6d37915a] Merge branch 'greybus' into staging-testing
-git bisect good 530a70617cb6325bd7781e7a993d732d6d37915a
-# good: [bc75450cc3db3485db1e289fef8c1028ba38296a] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid
-git bisect good bc75450cc3db3485db1e289fef8c1028ba38296a
-# bad: [00e729c933950cda694c49260ff67855fdbfd00a] Merge tag 'armsoc-dt' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-git bisect bad 00e729c933950cda694c49260ff67855fdbfd00a
-# bad: [5acb6052ce304d89e36f599f1e27a7c63d389ca0] Merge tag 'armsoc-defconfig' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-git bisect bad 5acb6052ce304d89e36f599f1e27a7c63d389ca0
-# bad: [d1f5323370fceaed43a7ee38f4c7bfc7e70f28d0] Merge branch 'work.splice_read' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
-git bisect bad d1f5323370fceaed43a7ee38f4c7bfc7e70f28d0
-# good: [87840a2b7e048018d18d60bdac5c09224de85370] Merge branch 'i2c/for-4.9' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-git bisect good 87840a2b7e048018d18d60bdac5c09224de85370
-# good: [513a4befae06c4469abfb836e8f71977de58c636] Merge branch 'for-4.9/block' of git://git.kernel.dk/linux-block
-git bisect good 513a4befae06c4469abfb836e8f71977de58c636
-# good: [cca32b7eeb4ea24fa6596650e06279ad9130af98] ext4: allow DAX writeback for hole punch
-git bisect good cca32b7eeb4ea24fa6596650e06279ad9130af98
-# bad: [fba597db4218ac324eee34b64736ea94829c95bf] pipe: add pipe_buf_confirm() helper
-git bisect bad fba597db4218ac324eee34b64736ea94829c95bf
-# bad: [d82718e348fee15dbce8f578ff2588982b7cc7ca] fuse_dev_splice_read(): switch to add_to_pipe()
-git bisect bad d82718e348fee15dbce8f578ff2588982b7cc7ca
-# good: [db85a9eb2e364e24e71f94798e85dbaa8111bb4d] splice: switch get_iovec_page_array() to iov_iter
-git bisect good db85a9eb2e364e24e71f94798e85dbaa8111bb4d
-# bad: [79fddc4efd5d4de5cf210fe5ecf4d2734140849a] new helper: add_to_pipe()
-git bisect bad 79fddc4efd5d4de5cf210fe5ecf4d2734140849a
-# bad: [8924feff66f35fe22ce77aafe3f21eb8e5cff881] splice: lift pipe_lock out of splice_to_pipe()
-git bisect bad 8924feff66f35fe22ce77aafe3f21eb8e5cff881
+Thanks,
+Pingfan
