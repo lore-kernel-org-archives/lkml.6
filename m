@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB485C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD8BC282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37442186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F7021855
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 01:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfBLB35 (ORCPT
+        id S1727213AbfBLBaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 20:29:57 -0500
-Received: from smtp-out-so.shaw.ca ([64.59.136.138]:38712 "EHLO
-        smtp-out-so.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfBLB35 (ORCPT
+        Mon, 11 Feb 2019 20:30:06 -0500
+Received: from smtp-out-no.shaw.ca ([64.59.134.12]:40946 "EHLO
+        smtp-out-no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfBLBaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 20:29:57 -0500
-X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 20:29:57 EST
+        Mon, 11 Feb 2019 20:30:06 -0500
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Feb 2019 20:30:05 EST
 Received: from tethys.mmayer.net ([70.68.144.247])
         by shaw.ca with ESMTP
-        id tMoxg0aBZnBo4tMoygxuBp; Mon, 11 Feb 2019 18:25:12 -0700
-X-Authority-Analysis: v=2.3 cv=J8fUEzvS c=1 sm=1 tr=0
+        id tMp5g3tDH8uQmtMp6gllNg; Mon, 11 Feb 2019 18:25:20 -0700
+X-Authority-Analysis: v=2.3 cv=XKpOtjpE c=1 sm=1 tr=0
  a=5Vvn7CJLxh9yo+qVPaC6cg==:117 a=5Vvn7CJLxh9yo+qVPaC6cg==:17
- a=CFTnQlWoA9kA:10 a=Q-fNiiVtAAAA:8 a=8SHd0I_PIW9-B648SIoA:9
+ a=CFTnQlWoA9kA:10 a=Q-fNiiVtAAAA:8 a=0ATYKpzErnXFKjwkkVMA:9
  a=Fp8MccfUoT0GBdDC_Lng:22
 Received: by tethys.mmayer.net (Postfix, from userid 501)
-        id 2DE26300BE54AB; Mon, 11 Feb 2019 17:25:11 -0800 (PST)
+        id 0B324300BE54B1; Mon, 11 Feb 2019 17:25:19 -0800 (PST)
 From:   Markus Mayer <code@mmayer.net>
 To:     Brian Norris <computersforpeace@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -38,18 +38,18 @@ Cc:     Markus Mayer <mmayer@broadcom.com>,
         Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
         ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/3] soc: brcmstb: dpfe: optimize generic_show()
-Date:   Mon, 11 Feb 2019 17:24:42 -0800
-Message-Id: <20190212012443.21819-3-code@mmayer.net>
+Subject: [PATCH 3/3] soc: brcmstb: dpfe: use byte 3 of registers MR4-MR8
+Date:   Mon, 11 Feb 2019 17:24:43 -0800
+Message-Id: <20190212012443.21819-4-code@mmayer.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212012443.21819-1-code@mmayer.net>
 References: <20190212012443.21819-1-code@mmayer.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfOAYmQTxl3zMxNymv1fRFLjaANYo3+g7uICio1b4AKt7wwmuZiPN320uU7dPNl+BeiTaMlVukvpKiGuu1e1lOdVt5wSCZ4muuRRGgM3KgU86I3m0bY5B
- 0lDLcT0ynboThqE3g860/diULKc4Vav3H+5KkvAE/IXo3sIBheFJBfS9Pk+kILsij0TwyaCQjgd81WgEYInxSMloswUoPP/kV1wWQQzPpuw+v3SpavEQ85Hg
- qmIpBLS7j1Pc9UoLTvIvcWNEUatnouGqmBsd/RqOAcUHoWE/CHkq4XPxte5mfKE/hmqcOGbpFmi/Eg1W/JJJ0cinZQaC0W90F8JwxkC3GfyF0zdSHDtuwddI
- Loj3JGyTSNOgU2R/PUOvWn9HQYD6+nrPeAsuTJ6G5LlJQGXVSLPHoeJ+jxPkPJQr4ZkSS/IGKT6oP4rLf0FgpaEGbzKFTg==
+X-CMAE-Envelope: MS4wfO5mSS2yQryG4meHgQdu/aHB+Vz7BsNKwBnrnIKqsHtUGeP4vSKYssNz6u/EgaXj47DWVB6MnZzWHvtkXorXbprcL4zeBSdPPakmD+AKoXo34HczN706
+ EynfdiGnEjxctDpxbM6Dc8thA1+3XYN/QIsHPpfMNNQkRi7NwCsnuBDR3ACbCTk14JrssQbGMKqNXIJNgi8hKHQgQ659E8Jyn3XsXgO07xOLHIEeQ2l4h0OM
+ TFQxWDhxMEZLksW1wuPA9keh64usOiLbV/j8vVY5IDKXK9QkGj2I2aqx1dyapufo67OGngqls6z9d0gjqVAAIPecqehJRxHf4jTAfmUOccdewdPd1JZJkK7y
+ pqN9IpOBqMaK5OKE6xHRpIR1RNGzkfgdmm4tC+nvjEBCwheee8Fc1AqPZHE55fZzrLnOuY53v5RhxvXnJEKPjxmW5epXuw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,78 +57,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Mayer <mmayer@broadcom.com>
 
-We can pass a (struct priv_data *) to generic_show() rather than a
-(struct device *). For two of the three callers of this function, the
-change means one less call to dev_get_drvdata(). For the third caller,
-it makes no difference.
+For dual-rank LPDDR4, result data for any command is placed in byte 0
+and byte 3 of the corresponding MR register by the firmware.
+Single-rank RAM was supposed to work the same way. However, due to a
+firmware bug, result values are only placed in byte 3 of the
+corresponding MR register.
+
+Since byte 3 works for single-rank and dual-rank setups, we change the
+Linux driver to always use byte 3, thus returning the correct value in
+either case.
 
 Signed-off-by: Markus Mayer <mmayer@broadcom.com>
 ---
- drivers/memory/brcmstb_dpfe.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/memory/brcmstb_dpfe.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-index 8e1ccdb0e59d..1095c1d95df4 100644
+index 1095c1d95df4..fae3ac3d65c6 100644
 --- a/drivers/memory/brcmstb_dpfe.c
 +++ b/drivers/memory/brcmstb_dpfe.c
-@@ -527,12 +527,10 @@ static int brcmstb_dpfe_download_firmware(struct platform_device *pdev,
- }
+@@ -61,6 +61,7 @@
+ #define DRAM_INFO_MR4		0x4
+ #define DRAM_INFO_ERROR		0x8
+ #define DRAM_INFO_MR4_MASK	0xff
++#define DRAM_INFO_MR4_SHIFT	24	/* We need to look at byte 3 */
  
- static ssize_t generic_show(unsigned int command, u32 response[],
--			    struct device *dev, char *buf)
-+			    struct private_data *priv, char *buf)
- {
--	struct private_data *priv;
- 	int ret;
+ /* DRAM MR4 Offsets & Masks */
+ #define DRAM_MR4_REFRESH	0x0	/* Refresh rate */
+@@ -82,6 +83,7 @@
+ #define DRAM_VENDOR_MR8		0xc
+ #define DRAM_VENDOR_ERROR	0x10
+ #define DRAM_VENDOR_MASK	0xff
++#define DRAM_VENDOR_SHIFT	24	/* We need to look at byte 3 */
  
--	priv = dev_get_drvdata(dev);
- 	if (!priv)
- 		return sprintf(buf, "ERROR: driver private data not set\n");
- 
-@@ -547,10 +545,12 @@ static ssize_t show_info(struct device *dev, struct device_attribute *devattr,
- 			 char *buf)
- {
- 	u32 response[MSG_FIELD_MAX];
-+	struct private_data *priv;
- 	unsigned int info;
- 	ssize_t ret;
- 
--	ret = generic_show(DPFE_CMD_GET_INFO, response, dev, buf);
-+	priv = dev_get_drvdata(dev);
-+	ret = generic_show(DPFE_CMD_GET_INFO, response, priv, buf);
- 	if (ret)
- 		return ret;
- 
-@@ -573,12 +573,11 @@ static ssize_t show_refresh(struct device *dev,
- 	u32 mr4;
- 	ssize_t ret;
- 
--	ret = generic_show(DPFE_CMD_GET_REFRESH, response, dev, buf);
-+	priv = dev_get_drvdata(dev);
-+	ret = generic_show(DPFE_CMD_GET_REFRESH, response, priv, buf);
- 	if (ret)
- 		return ret;
- 
--	priv = dev_get_drvdata(dev);
--
- 	info = get_msg_ptr(priv, response[MSG_ARG0], buf, &ret);
+ /* Reset register bits & masks */
+ #define DCPU_RESET_SHIFT	0x0
+@@ -582,7 +584,8 @@ static ssize_t show_refresh(struct device *dev,
  	if (!info)
  		return ret;
-@@ -632,12 +631,11 @@ static ssize_t show_vendor(struct device *dev, struct device_attribute *devattr,
+ 
+-	mr4 = readl_relaxed(info + DRAM_INFO_MR4) & DRAM_INFO_MR4_MASK;
++	mr4 = (readl_relaxed(info + DRAM_INFO_MR4) >> DRAM_INFO_MR4_SHIFT) &
++	      DRAM_INFO_MR4_MASK;
+ 
+ 	refresh = (mr4 >> DRAM_MR4_REFRESH) & DRAM_MR4_REFRESH_MASK;
+ 	sr_abort = (mr4 >> DRAM_MR4_SR_ABORT) & DRAM_MR4_SR_ABORT_MASK;
+@@ -630,6 +633,7 @@ static ssize_t show_vendor(struct device *dev, struct device_attribute *devattr,
+ 	struct private_data *priv;
  	void __iomem *info;
  	ssize_t ret;
++	u32 mr5, mr6, mr7, mr8, err;
  
--	ret = generic_show(DPFE_CMD_GET_VENDOR, response, dev, buf);
-+	priv = dev_get_drvdata(dev);
-+	ret = generic_show(DPFE_CMD_GET_VENDOR, response, priv, buf);
- 	if (ret)
- 		return ret;
- 
--	priv = dev_get_drvdata(dev);
--
- 	info = get_msg_ptr(priv, response[MSG_ARG0], buf, &ret);
+ 	priv = dev_get_drvdata(dev);
+ 	ret = generic_show(DPFE_CMD_GET_VENDOR, response, priv, buf);
+@@ -640,13 +644,17 @@ static ssize_t show_vendor(struct device *dev, struct device_attribute *devattr,
  	if (!info)
  		return ret;
+ 
+-	return sprintf(buf, "%#x %#x %#x %#x %#x\n",
+-		       readl_relaxed(info + DRAM_VENDOR_MR5) & DRAM_VENDOR_MASK,
+-		       readl_relaxed(info + DRAM_VENDOR_MR6) & DRAM_VENDOR_MASK,
+-		       readl_relaxed(info + DRAM_VENDOR_MR7) & DRAM_VENDOR_MASK,
+-		       readl_relaxed(info + DRAM_VENDOR_MR8) & DRAM_VENDOR_MASK,
+-		       readl_relaxed(info + DRAM_VENDOR_ERROR) &
+-				     DRAM_VENDOR_MASK);
++	mr5 = (readl_relaxed(info + DRAM_VENDOR_MR5) >> DRAM_VENDOR_SHIFT) &
++		DRAM_VENDOR_MASK;
++	mr6 = (readl_relaxed(info + DRAM_VENDOR_MR6) >> DRAM_VENDOR_SHIFT) &
++		DRAM_VENDOR_MASK;
++	mr7 = (readl_relaxed(info + DRAM_VENDOR_MR7) >> DRAM_VENDOR_SHIFT) &
++		DRAM_VENDOR_MASK;
++	mr8 = (readl_relaxed(info + DRAM_VENDOR_MR8) >> DRAM_VENDOR_SHIFT) &
++		DRAM_VENDOR_MASK;
++	err = readl_relaxed(info + DRAM_VENDOR_ERROR) & DRAM_VENDOR_MASK;
++
++	return sprintf(buf, "%#x %#x %#x %#x %#x\n", mr5, mr6, mr7, mr8, err);
+ }
+ 
+ static int brcmstb_dpfe_resume(struct platform_device *pdev)
 -- 
 2.17.1
 
