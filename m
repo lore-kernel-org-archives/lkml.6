@@ -2,245 +2,115 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70450C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB83C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A00222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6745D222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbfBLRUY (ORCPT
+        id S1730473AbfBLRVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:20:24 -0500
-Received: from mga17.intel.com ([192.55.52.151]:57131 "EHLO mga17.intel.com"
+        Tue, 12 Feb 2019 12:21:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55956 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730496AbfBLRUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:20:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 09:20:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="115638066"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga006.jf.intel.com with ESMTP; 12 Feb 2019 09:20:23 -0800
-Message-ID: <0963dd4b3256265160d7104e256aa606fb3f9519.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Aaron Lu <aaron.lwe@gmail.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
-        akpm@linux-foundation.org
-Date:   Tue, 12 Feb 2019 09:20:23 -0800
-In-Reply-To: <ead37c94-4703-170f-0ff4-1bb171556775@gmail.com>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181558.12095.83484.stgit@localhost.localdomain>
-         <5e6d22b2-0f14-43eb-846b-a940e629c02b@gmail.com>
-         <a5b698b0f85667dba9b949dcb6e65a0d806669de.camel@linux.intel.com>
-         <ead37c94-4703-170f-0ff4-1bb171556775@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727915AbfBLRVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:21:09 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 269D888E55;
+        Tue, 12 Feb 2019 17:21:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8B426600C6;
+        Tue, 12 Feb 2019 17:21:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 12 Feb 2019 18:21:08 +0100 (CET)
+Date:   Tue, 12 Feb 2019 18:21:04 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH 2/2] signal: Better detection of synchronous signals
+Message-ID: <20190212172104.GC29263@redhat.com>
+References: <8736p37xcn.fsf@xmission.com>
+ <878syu7tcm.fsf@xmission.com>
+ <87tvhi4vl7.fsf@xmission.com>
+ <87o97q1cky.fsf_-_@xmission.com>
+ <20190206180754.GA23476@redhat.com>
+ <87imxwv9jp.fsf@xmission.com>
+ <875ztwt7yy.fsf_-_@xmission.com>
+ <87tvhgrtce.fsf_-_@xmission.com>
+ <20190211151840.GB21430@redhat.com>
+ <87va1pj2n0.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87va1pj2n0.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 17:21:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-12 at 10:09 +0800, Aaron Lu wrote:
-> On 2019/2/11 23:58, Alexander Duyck wrote:
-> > On Mon, 2019-02-11 at 14:40 +0800, Aaron Lu wrote:
-> > > On 2019/2/5 2:15, Alexander Duyck wrote:
-> > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > 
-> > > > Because the implementation was limiting itself to only providing hints on
-> > > > pages huge TLB order sized or larger we introduced the possibility for free
-> > > > pages to slip past us because they are freed as something less then
-> > > > huge TLB in size and aggregated with buddies later.
-> > > > 
-> > > > To address that I am adding a new call arch_merge_page which is called
-> > > > after __free_one_page has merged a pair of pages to create a higher order
-> > > > page. By doing this I am able to fill the gap and provide full coverage for
-> > > > all of the pages huge TLB order or larger.
-> > > > 
-> > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > ---
-> > > >  arch/x86/include/asm/page.h |   12 ++++++++++++
-> > > >  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
-> > > >  include/linux/gfp.h         |    4 ++++
-> > > >  mm/page_alloc.c             |    2 ++
-> > > >  4 files changed, 46 insertions(+)
-> > > > 
-> > > > diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> > > > index 4487ad7a3385..9540a97c9997 100644
-> > > > --- a/arch/x86/include/asm/page.h
-> > > > +++ b/arch/x86/include/asm/page.h
-> > > > @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
-> > > >  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> > > >  		__arch_free_page(page, order);
-> > > >  }
-> > > > +
-> > > > +struct zone;
-> > > > +
-> > > > +#define HAVE_ARCH_MERGE_PAGE
-> > > > +void __arch_merge_page(struct zone *zone, struct page *page,
-> > > > +		       unsigned int order);
-> > > > +static inline void arch_merge_page(struct zone *zone, struct page *page,
-> > > > +				   unsigned int order)
-> > > > +{
-> > > > +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> > > > +		__arch_merge_page(zone, page, order);
-> > > > +}
-> > > >  #endif
-> > > >  
-> > > >  #include <linux/range.h>
-> > > > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > > > index 09c91641c36c..957bb4f427bb 100644
-> > > > --- a/arch/x86/kernel/kvm.c
-> > > > +++ b/arch/x86/kernel/kvm.c
-> > > > @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
-> > > >  		       PAGE_SIZE << order);
-> > > >  }
-> > > >  
-> > > > +void __arch_merge_page(struct zone *zone, struct page *page,
-> > > > +		       unsigned int order)
-> > > > +{
-> > > > +	/*
-> > > > +	 * The merging logic has merged a set of buddies up to the
-> > > > +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
-> > > > +	 * advantage of this moment to notify the hypervisor of the free
-> > > > +	 * memory.
-> > > > +	 */
-> > > > +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
-> > > > +		return;
-> > > > +
-> > > > +	/*
-> > > > +	 * Drop zone lock while processing the hypercall. This
-> > > > +	 * should be safe as the page has not yet been added
-> > > > +	 * to the buddy list as of yet and all the pages that
-> > > > +	 * were merged have had their buddy/guard flags cleared
-> > > > +	 * and their order reset to 0.
-> > > > +	 */
-> > > > +	spin_unlock(&zone->lock);
-> > > > +
-> > > > +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
-> > > > +		       PAGE_SIZE << order);
-> > > > +
-> > > > +	/* reacquire lock and resume freeing memory */
-> > > > +	spin_lock(&zone->lock);
-> > > > +}
-> > > > +
-> > > >  #ifdef CONFIG_PARAVIRT_SPINLOCKS
-> > > >  
-> > > >  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
-> > > > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> > > > index fdab7de7490d..4746d5560193 100644
-> > > > --- a/include/linux/gfp.h
-> > > > +++ b/include/linux/gfp.h
-> > > > @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
-> > > >  #ifndef HAVE_ARCH_FREE_PAGE
-> > > >  static inline void arch_free_page(struct page *page, int order) { }
-> > > >  #endif
-> > > > +#ifndef HAVE_ARCH_MERGE_PAGE
-> > > > +static inline void
-> > > > +arch_merge_page(struct zone *zone, struct page *page, int order) { }
-> > > > +#endif
-> > > >  #ifndef HAVE_ARCH_ALLOC_PAGE
-> > > >  static inline void arch_alloc_page(struct page *page, int order) { }
-> > > >  #endif
-> > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > > index c954f8c1fbc4..7a1309b0b7c5 100644
-> > > > --- a/mm/page_alloc.c
-> > > > +++ b/mm/page_alloc.c
-> > > > @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
-> > > >  		page = page + (combined_pfn - pfn);
-> > > >  		pfn = combined_pfn;
-> > > >  		order++;
-> > > > +
-> > > > +		arch_merge_page(zone, page, order);
-> > > 
-> > > Not a proper place AFAICS.
-> > > 
-> > > Assume we have an order-8 page being sent here for merge and its order-8
-> > > buddy is also free, then order++ became 9 and arch_merge_page() will do
-> > > the hint to host on this page as an order-9 page, no problem so far.
-> > > Then the next round, assume the now order-9 page's buddy is also free,
-> > > order++ will become 10 and arch_merge_page() will again hint to host on
-> > > this page as an order-10 page. The first hint to host became redundant.
-> > 
-> > Actually the problem is even worse the other way around. My concern was
-> > pages being incrementally freed.
-> > 
-> > With this setup I can catch when we have crossed the threshold from
-> > order 8 to 9, and specifically for that case provide the hint. This
-> > allows me to ignore orders above and below 9.
-> 
-> OK, I see, you are now only hinting for pages with order 9, not above.
+On 02/11, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> >> +	/*
+> >> +	 * Check if there is another siginfo for the same signal.
+> >> +	 */
+> >> +	list_for_each_entry_continue(q, &pending->list, list) {
+> >> +		if (q->info.si_signo == sync->info.si_signo)
+> >> +			goto still_pending;
+> >> +	}
+> >
+> > But this must not be possible? SYNCHRONOUS_MASK doesn't include real-time
+> > signals, we can't have 2 siginfo's for the same signal < SIGRTMIN.
+>
+> Yes for that reason it should be safe to strip that logic out at the
+> moment.  I overlooked that when writing the code.
+>
+> However.  I am not certain that is a limit we actually want to honor
+> with synchronous signals.  As it results in a louzy quality of
+> implementation.
+>
+> We start with an instruction in the program being debugged.  In
+> principle before that instruction starts we know that no signals
+> are pending because they were not delivered to that process.
+>
+> If we for some reason send signal A to the process and at the same time
+> hit a fault that is reported as signal A.  It is currently a race which
+> one wins.  I think we could legitimately say that the fault happened
+> before signal A was enqueued, and deliver both. It is a bit murkier if
+> signal A was blocked.
+>
+> If we let the enqueued signal A win (as we do today) we have SA_SIGNFO
+> that is not useful for describing the fault the instruction generated.
+> Which is a really lousy quality of implementation.
 
-Right.
+I doubt this would be really useful but this doesn't matter right now,
 
-> > If I move the hint to the spot after the merging I have no way of
-> > telling if I have hinted the page as a lower order or not. As such I
-> > will hint if it is merged up to orders 9 or greater. So for example if
-> > it merges up to order 9 and stops there then done_merging will report
-> > an order 9 page, then if another page is freed and merged with this up
-> > to order 10 you would be hinting on order 10. By placing the function
-> > here I can guarantee that no more than 1 hint is provided per 2MB page.
-> 
-> So what's the downside of hinting the page as order-10 after merge
-> compared to as order-9 before the merge? I can see the same physical
-> range can be hinted multiple times, but the total hint number is the
-> same: both are 2 - in your current implementation, we hint twice for
-> each of the 2 order-9 pages; alternatively, we can provide hint for one
-> order-9 page and the merged order-10 page. I think the cost of
-> hypercalls are the same? Is it that we want to ease the host side
-> madvise(DONTNEED) since we can avoid operating the same range multiple
-> times?
+> Which is a long way of saying I think that hunk of code is useful as it
+> allows us the possibility of fixing a lousy quality of implementation in
+> our code today.
 
-The cost for the hypercall overhead is the same, but I would think you
-are in the hypercall a bit longer for the order 10 page because you are
-having to process both order 9 pages in order clear them. In my mind
-doing it that way you end up having to do 50% more madvise work. For a
-THP based setup it probably isn't an issue, but I would think if we are
-having to invalidate things at the 4K page level that cost could add up
-real quick.
+If we ever rework the legacy_queue() logic we can easily add this hunk back.
 
-I could probably try launching the guest with THP disabled in QEMU to
-verify if the difference is visible or not.
+Until then it complicates the code for no reason imo, just to confuse the reader.
 
-> The reason I asked is, if we can move the arch_merge_page() after
-> done_merging tag, we can theoretically make fewer function calls on free
-> path for the guest. Maybe not a big deal, I don't know...
-
-I suspect it really isn't that big a deal. The two functions are
-essentially inline and only one will ever make use of the hypercall.
-
-> > > I think the proper place is after the done_merging tag.
-> > > 
-> > > BTW, with arch_merge_page() at the proper place, I don't think patch3/4
-> > > is necessary - any freed page will go through merge anyway, we won't
-> > > lose any hint opportunity. Or do I miss anything?
-> > 
-> > You can refer to my comment above. What I want to avoid is us hinting a
-> > page multiple times if we aren't using MAX_ORDER - 1 as the limit. What
-> 
-> Yeah that's a good point. But is this going to happen?
-
-One of the advantages I have from splitting things out the way I did is
-that I have been able to add some debug counters to track what is freed
-as a higher order page and what isn't. From what I am seeing after boot
-essentially all of the calls are coming from the merge logic.
-
-I'm suspecting the typical use case is that pages are likely going to
-either be freed as something THP or larger, or they will be freed in 4K
-increments. By splitting things up the way I did we end up getting the
-most efficient performance out of the 4K case since we avoid performing
-madvise 1.5 times per page and keep it to once per page.
+Oleg.
 
