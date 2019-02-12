@@ -2,107 +2,132 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC75C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1E0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5CE217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C98217FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 06:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfBLGkw (ORCPT
+        id S1727489AbfBLGll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 01:40:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:54549 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfBLGkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 01:40:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 22:40:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
-   d="scan'208";a="142668988"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.151])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 22:40:49 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Andrea Parri" <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap operations
-References: <20190211083846.18888-1-ying.huang@intel.com>
-        <20190211190646.j6pdxqirc56inbbe@ca-dmjordan1.us.oracle.com>
-Date:   Tue, 12 Feb 2019 14:40:48 +0800
-In-Reply-To: <20190211190646.j6pdxqirc56inbbe@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Mon, 11 Feb 2019 14:06:46 -0500")
-Message-ID: <87a7j1ldan.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 12 Feb 2019 01:41:41 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60962 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727247AbfBLGll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 01:41:41 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1C6XoNX052446
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:41:40 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qkr1mt8dd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:41:39 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
+        Tue, 12 Feb 2019 06:41:37 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Feb 2019 06:41:35 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1C6fYlS56819860
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Feb 2019 06:41:34 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C39B52052;
+        Tue, 12 Feb 2019 06:41:34 +0000 (GMT)
+Received: from JAVRIS.in.ibm.com (unknown [9.122.211.111])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 357E752054;
+        Tue, 12 Feb 2019 06:41:33 +0000 (GMT)
+Date:   Tue, 12 Feb 2019 12:11:28 +0530
+From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>
+Subject: Re: [PATCH] livepatch: Enforce reliable stack trace as config
+ dependency
+References: <20190209091728.23046-1-kamalesh@linux.vnet.ibm.com>
+ <20190211140813.z7kap634gz3gp6a4@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211140813.z7kap634gz3gp6a4@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19021206-4275-0000-0000-0000030E6941
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021206-4276-0000-0000-0000381C7CFE
+Message-Id: <20190212064128.GA20554@JAVRIS.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902120049
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+On Mon, Feb 11, 2019 at 08:08:13AM -0600, Josh Poimboeuf wrote:
+> On Sat, Feb 09, 2019 at 02:47:28PM +0530, Kamalesh Babulal wrote:
+> > After removal of the immediate flag by commit d0807da78e11
+> > ("livepatch: Remove immediate feature"), reliable stack trace became
+> > enforcing dependency for livepatch support on any architecture. In
+> > the current code, we ensure that the dependency is met when
+> > enabling the patch during the module load.
+> > 
+> > This dependency check can be improved by moving it to the Kconfig,
+> > which disables the support for livepatching in the kernel for unmet
+> > dependencies. This patch moves both HAVE_RELIABLE_STACKTRACE and
+> > STACKTRACE under config LIVEPATCH, it also removes the
+> > klp_have_reliable_stack() function.
+> > 
+> > Loading a livepatching module on an architecture where reliable
+> > stack trace is yet to be implemented, the user should see:
+> > 
+> > insmod: ERROR: could not insert module ./livepatch-sample.ko: Invalid module format
+> > 
+> > ...
+> > [  286.453463] livepatch_sample: module is marked as livepatch module, but livepatch support is disabled
+> 
+> Wouldn't the module fail to build in the first place, since
+> CONFIG_LIVEPATCH is disabled?
 
-> On Mon, Feb 11, 2019 at 04:38:46PM +0800, Huang, Ying wrote:
->> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
->> +{
->> +	struct swap_info_struct *si;
->> +	unsigned long type, offset;
->> +
->> +	if (!entry.val)
->> +		goto out;
->
->> +	type = swp_type(entry);
->> +	si = swap_type_to_swap_info(type);
->
-> These lines can be collapsed into swp_swap_info if you want.
+Yes, with this patch applied, the livepatch modules will fail to build.
+The intention was to paste the output of a module load, marked as the
+livepatch but without the reliable stack trace support. I used the
+previously compiled livepatch sample module for the illustration but
+yeah we would not have a functioning module build in the first place.
 
-Yes.  I can use that function to reduce another line from the patch.
-Thanks!  Will do that.
+> 
+> Anyway, I'm not sure about this approach.  This patch makes the s390
+> livepatch code no longer compilable, turning it into completely dead
+> code.  So if something changes in the s390 code which causes it to stop
+> compiling, nobody will notice.
 
->> +	if (!si)
->> +		goto bad_nofile;
->> +
->> +	preempt_disable();
->> +	if (!(si->flags & SWP_VALID))
->> +		goto unlock_out;
->
-> After Hugh alluded to barriers, it seems the read of SWP_VALID could be
-> reordered with the write in preempt_disable at runtime.  Without smp_mb()
-> between the two, couldn't this happen, however unlikely a race it is?
->
-> CPU0                                CPU1
->
-> __swap_duplicate()
->     get_swap_device()
->         // sees SWP_VALID set
->                                    swapoff
->                                        p->flags &= ~SWP_VALID;
->                                        spin_unlock(&p->lock); // pair w/ smp_mb
->                                        ...
->                                        stop_machine(...)
->                                        p->swap_map = NULL;
->         preempt_disable()
->     read NULL p->swap_map
+Fair point, we can drop this patch in favor of getting compile time
+testing for s390.
 
-Andrea has helped to explain this.
+> 
+> I think I'd rather go in the opposite direction: allow the patches to be
+> loaded.  Then they can be forced, if needed.  That enables both compile
+> and runtime testing.  That way we don't make any backward progress,
+> until such arches get reliable stacktraces.
 
-Best Regards,
-Huang, Ying
+klp_have_reliable_stack() enforces implementation of reliable
+stack trace and run time testing will not be complete with we returning
+after the check.  We can re-think about enforcing the dependency after
+we have the reliable stack trace for s390.
+
+-- 
+Kamalesh
+
