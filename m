@@ -2,160 +2,86 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AD0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF2BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED7E222C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:26:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="OFoUjrv+"
+	by mail.kernel.org (Postfix) with ESMTP id D12B52190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:28:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732339AbfBLT0j (ORCPT
+        id S1728259AbfBLT2m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:26:39 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:43232 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729500AbfBLT0i (ORCPT
+        Tue, 12 Feb 2019 14:28:42 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46537 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbfBLT2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:26:38 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 012025C08D0;
-        Tue, 12 Feb 2019 20:26:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1549999596;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vMAsB1iZFN1YlAUlS1QoRPtJAL//cY9F2EkH1ZgpbxQ=;
-        b=OFoUjrv+26oYRTa6vjpk2jFsvuaxdACurbDjQXyvlQ3O+WC+SwFgAazXGvEeNaStYK/yrL
-        9q/W9tn0lGUDILBNx+CEP7m2fd8I+sYdgWl/AbLcYMBsEYMqJ/p16PRSDrK9PCpuYV76nS
-        YDGPDKuIrIqF8V7JSy61tTMMDjYEelA=
+        Tue, 12 Feb 2019 14:28:41 -0500
+X-Originating-IP: 86.202.231.219
+Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id EDE311C0007;
+        Tue, 12 Feb 2019 19:28:38 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 20:28:38 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 5.1
+Message-ID: <20190212192838.GA12677@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Feb 2019 20:26:35 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, julien.thierry@arm.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 4/5] ARM: use unified assembler in c files
-In-Reply-To: <CAKwvOdnqOkdD9fFoXmSKZNmceaXcWtdaZ2iwKej3=X-LL0DS9Q@mail.gmail.com>
-References: <cover.1549532513.git.stefan@agner.ch>
- <fed4850fb5d8a8ca874affa05d8d116d53e25b88.1549532513.git.stefan@agner.ch>
- <db0e6b8f034f832c7e52fe3dd47073ad@agner.ch>
- <CAKwvOdnqOkdD9fFoXmSKZNmceaXcWtdaZ2iwKej3=X-LL0DS9Q@mail.gmail.com>
-Message-ID: <d0bab705305af664772b87d40c9c0ffd@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.02.2019 19:17, Nick Desaulniers wrote:
-> On Sat, Feb 9, 2019 at 9:28 AM Stefan Agner <stefan@agner.ch> wrote:
->>
->> Thanks for the reviews so far.
->>
->> During some more testing I stumbled upon another issue:
->>
->> On 07.02.2019 10:48, Stefan Agner wrote:
->> > Use unified assembler syntax (UAL) in inline assembler. Divided
->> > syntax is considered depricated. This will also allow to build
->> > the kernel using LLVM's integrated assembler.
->> >
->> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->> > ---
->> >  arch/arm/mm/copypage-v4mc.c | 2 +-
->> >  arch/arm/mm/copypage-v4wb.c | 2 +-
->> >  arch/arm/mm/copypage-v4wt.c | 2 +-
->> >  3 files changed, 3 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/arch/arm/mm/copypage-v4mc.c b/arch/arm/mm/copypage-v4mc.c
->> > index b03202cddddb..b19c7ad1a6de 100644
->> > --- a/arch/arm/mm/copypage-v4mc.c
->> > +++ b/arch/arm/mm/copypage-v4mc.c
->> > @@ -56,7 +56,7 @@ static void mc_copy_user_page(void *from, void *to)
->> >       ldmia   %0!, {r2, r3, ip, lr}           @ 4\n\
->> >       subs    %2, %2, #1                      @ 1\n\
->> >       stmia   %1!, {r2, r3, ip, lr}           @ 4\n\
->> > -     ldmneia %0!, {r2, r3, ip, lr}           @ 4\n\
->> > +     ldmiane %0!, {r2, r3, ip, lr}           @ 4\n\
->> >       bne     1b                              @ "
->> >       : "+&r" (from), "+&r" (to), "=&r" (tmp)
->> >       : "2" (PAGE_SIZE / 64)
->> > diff --git a/arch/arm/mm/copypage-v4wb.c b/arch/arm/mm/copypage-v4wb.c
->> > index cd3e165afeed..6e3c9b69dd25 100644
->> > --- a/arch/arm/mm/copypage-v4wb.c
->> > +++ b/arch/arm/mm/copypage-v4wb.c
->> > @@ -38,7 +38,7 @@ static void v4wb_copy_user_page(void *kto, const void *kfrom)
->> >       ldmia   %1!, {r3, r4, ip, lr}           @ 4\n\
->> >       subs    %2, %2, #1                      @ 1\n\
->> >       stmia   %0!, {r3, r4, ip, lr}           @ 4\n\
->> > -     ldmneia %1!, {r3, r4, ip, lr}           @ 4\n\
->> > +     ldmiane %1!, {r3, r4, ip, lr}           @ 4\n\
->> >       bne     1b                              @ 1\n\
->> >       mcr     p15, 0, %1, c7, c10, 4          @ 1   drain WB"
->> >       : "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
->> > diff --git a/arch/arm/mm/copypage-v4wt.c b/arch/arm/mm/copypage-v4wt.c
->> > index 8614572e1296..4a40fa1cbc2a 100644
->> > --- a/arch/arm/mm/copypage-v4wt.c
->> > +++ b/arch/arm/mm/copypage-v4wt.c
->> > @@ -34,7 +34,7 @@ static void v4wt_copy_user_page(void *kto, const void *kfrom)
->> >       ldmia   %1!, {r3, r4, ip, lr}           @ 4\n\
->> >       subs    %2, %2, #1                      @ 1\n\
->> >       stmia   %0!, {r3, r4, ip, lr}           @ 4\n\
->> > -     ldmneia %1!, {r3, r4, ip, lr}           @ 4\n\
->> > +     ldmiane %1!, {r3, r4, ip, lr}           @ 4\n\
->> >       bne     1b                              @ 1\n\
->> >       mcr     p15, 0, %2, c7, c7, 0           @ flush ID cache"
->> >       : "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
->>
->> When compiling with gcc, this leads to:
->>
->> /tmp/ccrvA1wy.s: Assembler messages:
->> /tmp/ccrvA1wy.s:180: Error: bad instruction `ldmiane r0!,{r3,r4,ip,lr}'
->> make[1]: *** [scripts/Makefile.build:277: arch/arm/mm/copypage-v4wb.o]
->> Error 1
->> make: *** [Makefile:1042: arch/arm/mm] Error 2
->>
->> Unfortunately, the gcc option -masm-syntax-unified which allows unified
->> syntax in inline assembly is broken (see also
->> https://lkml.org/lkml/2019/1/7/1320).
->>
->> So this requires to sprinkle those inline assembly with ".syntax
->> unified" strings, similar to how I've done it in uaccess.h.
-> 
-> Not sure if this is purely a bug in GCC; Clang treats inline asm
-> statements as unique, so asm directives do not carry over from one
-> inline asm statement to another.  This has caused issues in other
-> arch's inline assembly, where we need to repeat asm directives
-> repeatedly for each inline asm statement.
-> https://bugs.llvm.org/show_bug.cgi?id=19749
+Arnd, Olof,
 
-I don't think that this Clang bug is related.
+Here is the only AT91 pull request for this cycle.
 
-GCC always emits a ".syntax xxx". The -masm-syntax-unified flag allows
-to select unified syntax, but it is broken in current GCC releases. I
-reported the bug and sent a fix to the GCC community, the upcoming GCC
-9, as well as 7 and 8 bugfix releases, will have it fixed.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-See:
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88648
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
---
-Stefan
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.1-dt
+
+for you to fetch changes up to 31f031f73a01fb83fd6f4abfff04a79b360219e1:
+
+  ARM: dts: at91: replace gpio-key,wakeup with wakeup-source property (2019-01-08 19:12:40 +0100)
+
+----------------------------------------------------------------
+AT91 DT for 5.1
+
+ - Enable QSPI NOR on sama5d2 SoM1
+ - replace deprecated gpio-key,wakeup property
+
+----------------------------------------------------------------
+Claudiu Beznea (2):
+      ARM: dts: at91: at91-sama5d27_som1: add QSPI1 + SPI NOR memory nodes
+      ARM: dts: at91: at91-sama5d27_som1_ek: enable qspi1 memory
+
+Sudeep Holla (1):
+      ARM: dts: at91: replace gpio-key,wakeup with wakeup-source property
+
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts |  2 +-
+ arch/arm/boot/dts/at91-sama5d27_som1.dtsi   | 30 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/at91-sama5d27_som1_ek.dts |  4 ++++
+ arch/arm/boot/dts/at91-wb45n.dts            |  2 +-
+ arch/arm/boot/dts/at91-wb50n.dts            |  4 ++--
+ 5 files changed, 38 insertions(+), 4 deletions(-)
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
