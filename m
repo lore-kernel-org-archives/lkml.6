@@ -2,168 +2,125 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2E1C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E495FC282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7CD82077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B45A02077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:40:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ncentric-com.20150623.gappssmtp.com header.i=@ncentric-com.20150623.gappssmtp.com header.b="kpcXt28I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfBLJjX (ORCPT
+        id S1728050AbfBLJkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:39:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41474 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfBLJjW (ORCPT
+        Tue, 12 Feb 2019 04:40:18 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44838 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfBLJkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:39:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e27so1454117lfj.8;
-        Tue, 12 Feb 2019 01:39:20 -0800 (PST)
+        Tue, 12 Feb 2019 04:40:17 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b20so672769edw.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:40:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ncentric-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=m40E0RFz2+bZWJt8CP0U1q4pqgosoM86BVYaFPqHB+o=;
+        b=kpcXt28IUyxT+naLA33FpJH12VeaVKKzyS/SxRdlD1PZlLCFaV0ptQ0d8OBB0Ybf1a
+         4NECvs9zYfN6m1uF1kD1MgzSDBH5dkzRew9k00oro0YvAQnZTf6TE33TO6MpM7xc3FI9
+         nrTt0Yjiv2no2DU2DqHe+IeCWflRS8ubR5aIo8fzZ6VdEH7bR7Uiqcwcwh88AgN7zTOK
+         nzId/krcrI+Ix9PWtqCmAlSXEvX3j0pAMNtneucmfey9nnRZ7n1ZinmiSjSQPDiNeEMn
+         xHHVFgwm4yZH6qRm8jQRT22o1qQABYUOoQ1ToRZ2A8ZUFd2yEaS/3Hg9XFa1YvRCczBk
+         mroA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=IYzTZa8cMrYHVdAvDdmKbju5m8+XCJc2uxdGTPkEE9c=;
-        b=V/yZ/+cxnBDMLJpg5InreWGWAV7/GyLPLpUUantZNCv+t+wxVqbGEH4rtM7xZq9Sqn
-         lZOUK9Vkhrtfk5T8ba8YQFxP0FfjRj5GliRCcpf8wnRY6NiPSv43UH4/eCkuNUcnfFXc
-         Upn7axSypF8nmVwRwgH+oFPyYtAkP7pCGHz/g9YQtrde2wna+tdSRaJzhLEIaeD5Nf5H
-         62IqEvjFesGAMf5VvhzE34CiBcvLSiI3W0jaJ33kZ5nuE5KVsceFfce0Njg2SQ5UStOW
-         eNvIXyaHZgJWUdk9261SredwQ53Gem7mc3fIbd5AFB17RtnvZAcofUnLlm3z0sWuK4PC
-         iseQ==
-X-Gm-Message-State: AHQUAuZ4n3b6zpUxqyTEGXSrb9BcosqrKaxdPd46nrKEJeaggsFa4FD7
-        0pe409m2VWjZMPLMxYkQvFf7c5vT
-X-Google-Smtp-Source: AHgI3IaB/hrmn5dbNT2bh9vbY8McYTMyFn7sJ7vPahR0Mq3C55IPyOWXQBeQYvhDVS/rgfhA4S1B2g==
-X-Received: by 2002:a19:2794:: with SMTP id n142mr1790046lfn.77.1549964359414;
-        Tue, 12 Feb 2019 01:39:19 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p14sm2829049lfk.16.2019.02.12.01.39.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 01:39:18 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:37:59 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <20190212093759.GA12247@localhost.localdomain>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140053.GG20638@dell>
- <20190207162807.GB1920@localhost.localdomain>
- <20190208105743.GI20638@dell>
- <20190208124111.GB3012@localhost.localdomain>
- <20190212091723.GZ20638@dell>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=m40E0RFz2+bZWJt8CP0U1q4pqgosoM86BVYaFPqHB+o=;
+        b=WWklkrMmyNWFPbGoAdBrx3mBUz5Tkx94ySIyBPCyvcoSw0/8Iba2xdhr6p595/nA2m
+         MBSJfW5UHFr/Pm7llsl8ORD3ZMGCkz8BNkbwZCxKomRD6xo3x0fwYorFqU5Gcdep1Yzn
+         8GeRgMFYNIq/LFFObYMZdjMEgcl1cQbuhRYtYkhtQ5psGgeL/DZBb60QEvDRgtc2eArU
+         bQR1lMu8CtEfboT+rO7t2YW2puAESjorZ1uzLiYxeB16WSnCkXRCVx2GFoO6yinO3m+C
+         dSuJeDSMLYLQ1UntTjOPiyq5ElxO8GPDNyoI3H4zrnkNbF465i8igqOXwbwRWkin1XsD
+         diAQ==
+X-Gm-Message-State: AHQUAuZQxcRLuzXIzMIAb2hTW5OxjHQ0V50PUADZZ1kpfEO7b5PjO26G
+        C+r532n8KLicnVmz7kcGuUIhgg==
+X-Google-Smtp-Source: AHgI3IaQsCKn9lsYZJDD+TCuI5Tm52FaoL00TPKEV0Wuiw1kOmY1dmWRtzJqI48YUgmo1I8YRIh4Rw==
+X-Received: by 2002:a50:cf01:: with SMTP id c1mr2347724edk.94.1549964415546;
+        Tue, 12 Feb 2019 01:40:15 -0800 (PST)
+Received: from [192.168.3.176] (d515300d8.static.telenet.be. [81.83.0.216])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm826700ejf.64.2019.02.12.01.40.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 01:40:14 -0800 (PST)
+Subject: Re: [PATCH 4.20 018/352] ath9k: dynack: use authentication messages
+ for late ack
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+ <20190211141847.541071852@linuxfoundation.org>
+ <e3740a06-8735-eed3-b427-e924f3e185ae@ncentric.com>
+ <20190211170252.GE21634@kroah.com>
+From:   Koen Vandeputte <koen.vandeputte@ncentric.com>
+Message-ID: <b76468d1-13db-b4e6-beb1-097251f5627c@ncentric.com>
+Date:   Tue, 12 Feb 2019 10:40:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212091723.GZ20638@dell>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190211170252.GE21634@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Again Lee,
 
-On Tue, Feb 12, 2019 at 09:17:23AM +0000, Lee Jones wrote:
-> On Fri, 08 Feb 2019, Matti Vaittinen wrote:
-> 
-> > > I think an exported function with comments would be better.
-> > So do you mean you would prefer exported function over the pointer from
-> Yes please.  Call-back pointers for non-subsystem level actions are a
-> bit messy IMHO.
+On 11.02.19 18:02, Greg Kroah-Hartman wrote:
+>>
+>> Dear Greg,
+>>
+>> No idea if this is the proper location to report this or if I should inform
+>> stable@vger.. , but:
+>>
+>> This backport alone is useless without backporting following 2 commits below
+>> also, unless the 2 wifi devices using dynack start off at very close
+>> distance.
+>>
+>> Their commits messages indicate them as improvements, but they should be
+>> considered as fixes.
+>>
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=0c60c490830a1a756c80f8de8d33d9c6359d4a36
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.0-rc6&id=9d3d65a91f027b8a9af5e63752d9b78cb10eb92d
+>>
+>>
+>> It's safe to add them to all stables involved (4.20, 4.19, 4.14, 4.9)
+> Thanks, that looks reasonable, now queued up.
+>
+> greg k-h
 
-That's fine. I'll go with exported function then =)
 
-> > case it just hides the meaning of values we are passing as arguments.
-> > With raw assignment we at least have some idea what the 0x40 or 0x20 are
-> > referring to =)
-> 
-> Well I do agree with your last comment.
-> 
-> Maybe doing the following would help with the ugliness (i.e. the shear
-> number of chars):
-> 
->  unsigned int type_reg_offset_inc = 0;
->  for (i = BD70528_INT_GPIO0; i <=  BD70528_INT_GPIO3; i++) {
->         <blar> *t = irqs[i].type;
->         t->type_reg_offset     = type_reg_offset_inc;
->  	t->type_rising_val     = 0x20;
->  	t->type_falling_val    = 0x10;
->  	t->type_level_high_val = 0x40;
->  	t->type_level_low_val  = 0x50;
->  	t->types_supported =
->  		(IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
->  	type_reg_offset_inc += 2;
->  }
+Hi Greg,
 
-I'll go with this for next version.
+Just noticed the primary dynack patch also got merged into 4.4 stable rc
 
-> > > > > > +	/* wdt_set must be called rtc_timer_lock held */
-> > > > > 
-> > > > > This doesn't make sense.
-> > > > 
-> > > > Umm.. The comment does not make sense? Maybe I can explain it further.
-> > > 
-> > > "wdt_set must be called when the rtc_timer_lock is held"
-> > 
-> > Yes. I wanted to say that who-ever is calling the wdt_set function
-> > below, should have locked the rtc_timer_lock mutex (last in this
-> > struct). The function does not do locking inside because we want the RTC
-> > to be able to perform:
-> > 
-> > lock
-> > disable wdt (store original state)
-> > set RTC
-> > return wdt original state
-> > unlock
-> > 
-> > Locking is needed so that we can exclude the watchdog enabling or
-> > disabling the WDT timer between moments when RTC is getting the original
-> > WDT state and re-turning back the old state. Without the lock we have a
-> > risk that WDT-driver enables or disables the timer when RTC is being
-> > set, and RTC overwrites the watchdog driver changes when writing back
-> > the old state. I hope this makes sense now... Any suggestions how to
-> > explain this nicely in english?
-> 
-> I think I did already:
-> 
->  "wdt_set must be called when the rtc_timer_lock is held"
-> 
-> Actually, this is a little ambiguous.  A better sentence could read:
-> 
->  "rtc_timer_lock must be taken before calling wdt_set()"
+Could you also apply the 2 fixes above to 4.4?
 
-Sure. I'll ruthlessy plagiarize that sentence. (And as I am not at all
-sure if "ruthlessy plagiarize" actually means what I think it does -
-I tried to say that I'll take your suggestion and use it :] )
 
-Once again, thanks for the help =)
+Checked older versions (< 4.4) .. and they are not required there.
 
-Br,
-	Matti
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Highly appreciated,
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Koen
+
