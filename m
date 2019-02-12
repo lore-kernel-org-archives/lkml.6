@@ -2,229 +2,227 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E75C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816A3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4522320855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4626E20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:39:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XBMg4IDq"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Zhrmsu6w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfBLKh6 (ORCPT
+        id S1728891AbfBLKi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:37:58 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33645 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfBLKh5 (ORCPT
+        Tue, 12 Feb 2019 05:38:58 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35118 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbfBLKi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:37:57 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i20so3648160otl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:37:57 -0800 (PST)
+        Tue, 12 Feb 2019 05:38:58 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t18so2111269wrx.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:38:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1XrINfiykEItjpkj9w/akl+IWNcNz4ULWAKxX25eP+o=;
-        b=XBMg4IDqI9/0xng1Ga7XXJd5PZJSBUlvr21ts27NbxquTpY7Ca0ULjAHMKxl58ahEF
-         /GalBcRXUzdW700de8hcsamlo7m36OtKHGLr9wL+NBSXxsjaVZkaE25HzR1J9eoNuM89
-         Kd2lk5O0pCE23wVVM86PXqz6QD6/gzyPkMUYynjm42Go4IQcCq9F3jiMKLP55l3A8oLg
-         dMfiI504oHEOZhImbwJ8h/KnxNAhoDNLx9t8o0cTDCDqgOGqz6WFHWhd3e8hFIUwqad/
-         ORXRSC6xOF12PFXmfTliV4ZUGr2UmfHg2oxvM3SPi4Mr0VZIPy10S/rC7uMR6sjCMWIc
-         SUtA==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PDjNBvyvVoHvvc5JUb/baeUz66OyAJ8u1fDtgbl0Wsk=;
+        b=Zhrmsu6wBiqmoiFJ8pKfCnPEDPg/EwiEBiANshFQqYUSXwGctIS69qTbBK484nL5Xf
+         292ougMtQOdrsRe+J5MGGiWBglBXAuW0RA+VamCzUIRaL3HorLxXCiliU/SCrbDo+yaO
+         FS74wB5O1DMjmgWk1mwa29AlmCCeoYyFXnPaEQWxkAuk0YVdm+HSYqucZ71kuZrb17D4
+         m2i6DLQs5qL6NTwCQmxjqhbLncNmMKC/rPIq9HjHX/2eGlxFHIFR/fr1QkotlYiLq9Wb
+         VRbkK2mVMpIE6n3BtIOonf5TK/MrSwAkjU5ZaT3JRIi3uPbl8RelUIRRGGLzp7Ep3zTp
+         0YXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1XrINfiykEItjpkj9w/akl+IWNcNz4ULWAKxX25eP+o=;
-        b=jgQxwX2Z1LwwuAkqsaMS0T/Tq3dOkA4EZMSFRDXLCFLQ8PRbh5GojxhscIW0FpwH9J
-         a2HWb+uJ688WF/J2tlOtHDWk4bgWEleGy0d+Fmn0HW3HehQwMBnecBQl4o8XihOyVYM7
-         DKMSI5ZQuBCyFuOjIBbPFckIblTaGuc4bp8yOofDFni9U4OZfJ76eLkqyoKGTY04DLRy
-         lkQJ3aLEjlNhl7lMZf0tLwAwcHhtr5IQUhdjI/0UPi5oTJBFhU7Vk2K9Bf5KjHIHjZxZ
-         uHpaQf2rXM55oNh1zSAnM6v8mNT3UTTD4yRi8dQOnoMF9sXaN7tOCA1Dw1FQOBjVJ8A5
-         rL4Q==
-X-Gm-Message-State: AHQUAuZOpnlllxE0K661IZATJxkNQeh+bjKW652R57t04VMiP4bzL284
-        zC41wxKg9OIiiAtR7Y6bsfm6Va3+4ImPINNVXmAKlg==
-X-Google-Smtp-Source: AHgI3IbVGlB8RoByxbKt67QJ5ebMCO2BOBiVvtRHMgylxHvq6peitmvROKI1dvBxX54MLqTIfBTU0cZ/762K3OUYj4k=
-X-Received: by 2002:a9d:32c7:: with SMTP id u65mr2925784otb.236.1549967876645;
- Tue, 12 Feb 2019 02:37:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-4-brgl@bgdev.pl>
- <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com> <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
- <c562c67d-d6e3-15c3-b10b-315e8fb181a5@arm.com>
-In-Reply-To: <c562c67d-d6e3-15c3-b10b-315e8fb181a5@arm.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 12 Feb 2019 11:37:45 +0100
-Message-ID: <CAMpxmJWyxhjWrUVCePeg=g6uA=LEEbVBHGXTMQJ95jav4Zhyvg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PDjNBvyvVoHvvc5JUb/baeUz66OyAJ8u1fDtgbl0Wsk=;
+        b=nXjN9wJZXM5u9F1Nn0QuNvAB5kmr4BTsChnCT6Pcgp3jaENJqxU37mlKFFFA6yS/q+
+         exMeDv4S0rLQgzCh31W+MoiV2q5mU/KGBM6tTTQ6ZeGGlYj04+UrHdzLL9gz0NUSv/y/
+         +EFL1FFkNZCFy4Sw/borQA5xz6m52vFiHbsJViX9CLKCulbcEwa4USsVvpotflM3GbTH
+         DoXqFy7MWITU1i+unRoTFQ82Afiklp0doJiYY/CeF099Nr8XlN+wudb1Oy9mnlbrR1MM
+         bT5owiys39IBLtccCMWyXu2Q3XCKQ34n+XAK0EW62K/MAYn6EhSI41ScEUZjA2MmuM3L
+         Yc2A==
+X-Gm-Message-State: AHQUAuZ9gHd+nC1Stu9pXFkePL1v5G+yxSDWRHkp0qgMTrJqraBFPfaA
+        kay72C4EXOQ3ZwQzYs2VseEWLw==
+X-Google-Smtp-Source: AHgI3IYELN4e3xXG0/g/+NOPYoGj2FA+Vt4HUCEqeGuTT6AV3mX26/X1rCq7ciuOZCufXORVNExvKA==
+X-Received: by 2002:a5d:49cf:: with SMTP id t15mr2228262wrs.94.1549967935722;
+        Tue, 12 Feb 2019 02:38:55 -0800 (PST)
+Received: from localhost.localdomain (aputeaux-684-1-38-32.w90-86.abo.wanadoo.fr. [90.86.93.32])
+        by smtp.gmail.com with ESMTPSA id c14sm3708656wrn.12.2019.02.12.02.38.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 02:38:54 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 00/37] ARM: davinci: modernize the irq support
+Date:   Tue, 12 Feb 2019 11:37:58 +0100
+Message-Id: <20190212103835.7768-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 12 lut 2019 o 11:27 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(a=
-):
->
-> On 12/02/2019 09:19, Bartosz Golaszewski wrote:
-> > wt., 12 lut 2019 o 10:10 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=
-=82(a):
-> >>
-> >> On 29/01/2019 08:44, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>>
-> >>> Provide a more specialized variant of irq_sim_fire() that allows to
-> >>> specify the type of the fired interrupt. The type is stored in the
-> >>> dummy irq context struct via the set_type callback.
-> >>>
-> >>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>> ---
-> >>>  include/linux/irq_sim.h |  9 ++++++++-
-> >>>  kernel/irq/irq_sim.c    | 26 ++++++++++++++++++++++----
-> >>>  2 files changed, 30 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> >>> index b96c2f752320..647a6c8ffb31 100644
-> >>> --- a/include/linux/irq_sim.h
-> >>> +++ b/include/linux/irq_sim.h
-> >>> @@ -23,6 +23,7 @@ struct irq_sim_work_ctx {
-> >>>
-> >>>  struct irq_sim_irq_ctx {
-> >>>       bool                    enabled;
-> >>> +     unsigned int            type;
-> >>>  };
-> >>>
-> >>>  struct irq_sim {
-> >>> @@ -37,7 +38,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int=
- num_irqs);
-> >>>  int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
-> >>>                     unsigned int num_irqs);
-> >>>  void irq_sim_fini(struct irq_sim *sim);
-> >>> -void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
-> >>> +void irq_sim_fire_type(struct irq_sim *sim,
-> >>> +                    unsigned int offset, unsigned int type);
-> >>>  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
-> >>>
-> >>> +static inline void irq_sim_fire(struct irq_sim *sim, unsigned int of=
-fset)
-> >>> +{
-> >>> +     irq_sim_fire_type(sim, offset, IRQ_TYPE_DEFAULT);
-> >>> +}
-> >>> +
-> >>>  #endif /* _LINUX_IRQ_SIM_H */
-> >>> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> >>> index 2bcdbab1bc5a..e3160b5e59b8 100644
-> >>> --- a/kernel/irq/irq_sim.c
-> >>> +++ b/kernel/irq/irq_sim.c
-> >>> @@ -25,6 +25,15 @@ static void irq_sim_irqunmask(struct irq_data *dat=
-a)
-> >>>       irq_ctx->enabled =3D true;
-> >>>  }
-> >>>
-> >>> +static int irq_sim_set_type(struct irq_data *data, unsigned int type=
-)
-> >>> +{
-> >>> +     struct irq_sim_irq_ctx *irq_ctx =3D irq_data_get_irq_chip_data(=
-data);
-> >>> +
-> >>> +     irq_ctx->type =3D type;
-> >>> +
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>>  static void irq_sim_handle_irq(struct irq_work *work)
-> >>>  {
-> >>>       struct irq_sim_work_ctx *work_ctx;
-> >>> @@ -107,6 +116,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned in=
-t num_irqs)
-> >>>       sim->chip.name =3D "irq_sim";
-> >>>       sim->chip.irq_mask =3D irq_sim_irqmask;
-> >>>       sim->chip.irq_unmask =3D irq_sim_irqunmask;
-> >>> +     sim->chip.irq_set_type =3D irq_sim_set_type;
-> >>>
-> >>>       sim->work_ctx.pending =3D bitmap_zalloc(num_irqs, GFP_KERNEL);
-> >>>       if (!sim->work_ctx.pending) {
-> >>> @@ -192,21 +202,29 @@ irq_sim_get_ctx(struct irq_sim *sim, unsigned i=
-nt offset)
-> >>>  }
-> >>>
-> >>>  /**
-> >>> - * irq_sim_fire - Enqueue an interrupt.
-> >>> + * irq_sim_fire_type - Enqueue an interrupt.
-> >>>   *
-> >>>   * @sim:        The interrupt simulator object.
-> >>>   * @offset:     Offset of the simulated interrupt which should be fi=
-red.
-> >>> + * @type:    Type of the fired interrupt. Must be one of the followi=
-ng:
-> >>> + *           IRQ_TYPE_EDGE_RISING, IRQ_TYPE_EDGE_FALLING,
-> >>> + *           IRQ_TYPE_EDGE_BOTH, IRQ_TYPE_LEVEL_HIGH,
-> >>> + *           IRQ_TYPE_LEVEL_LOW, IRQ_TYPE_DEFAULT
-> >>>   */
-> >>> -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> >>> +void irq_sim_fire_type(struct irq_sim *sim,
-> >>> +                    unsigned int offset, unsigned int type)
-> >>>  {
-> >>>       struct irq_sim_irq_ctx *ctx =3D irq_sim_get_ctx(sim, offset);
-> >>>
-> >>> -     if (ctx->enabled) {
-> >>> +     /* Only care about relevant flags. */
-> >>> +     type &=3D IRQ_TYPE_SENSE_MASK;
-> >>> +
-> >>> +     if (ctx->enabled && (ctx->type & type)) {
-> >>
-> >> I wonder how realistic this is, given that you do not track the releas=
-e
-> >> of a level. In short, mo matter what the type is, you treat everything
-> >> as edge.
-> >>
-> >> What is the point of this?
-> >>
-> >
-> > When userspace wants to monitor GPIO line interrupts, the GPIO
-> > framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
-> > IRQF_TRIGGER_RISING or both. The testing module tries to act like real
-> > hardware and so if we pass only one of the *_TRIGGER_* flags, we want
-> > the simulated interrupt of corresponding type to be fired.
->
-> Well, that's not how HW works.
->
-> >
-> > Another solution - if you don't like this one -  would be to have more
-> > specialized functions: irq_sim_fire_rising() and
-> > irq_sim_fire_falling(). How about that?
->
-> I think you're missing the point. So far, your API has been "an
-> interrupt has fired", no matter what the trigger is, and that's fine.
-> That's just modeling the output of an abstract interrupt controller into
-> whatever the irqsim is simulating.
->
-> Now, what you're exposing is "this is how the line changed". Which is an
-> entirely different business, as you're now exposing the device output
-> line. Yes, you can model it with raising/falling, but you need at least
-> resampling for level interrupts, and actual edge detection (raising
-> followed by raising only generates a single interrupt, while
-> raising-falling-raising generates two).
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This logic is later taken care of in the gpio-mockup driver in this
-series. It checks the line state changes and decides if the interrupt
-should be fired.
+This series ports the davinci platform to using SPARSE_IRQ, cleans up
+the irqchip drivers and moves them over to drivers/irqchip.
 
-Bart
+The series can be logically split into five parts. The first patch
+preemptively fixes a problem in an input driver that would have caused
+problems later. Patches (2-9) aim at introducing support for SPARSE_IRQ.
+They contain a couple changes required for that functionality and do some
+cleanup at the end.
 
-> At the moment, I don't see any of that so I seriously doubt the validity
-> of the approach.
->
+Third part (10-22) makes the aintc driver suitable for drivers/irqchip
+and eventually moves it over there.
+
+Part 4 (23-36) does the same for the cp-intc driver.
+
+Last patch removes unnecessary code.
+
+The series has been tested on da850-lcdk (for cp-intc) and
+dm365-evm (for aintc).
+
+v1 -> v2:
+- made commit messages readable without reading the subject line first
+- collected David's Reviewed-by tags for patches that haven been
+  significantly modified since v1
+- added handling of spurious interrupts in cp-intc
+- added comments explaining the irq handlers (C versions translated from
+  assembly)
+- dropped the patches removing the hardware interrupt numbers from
+  the priority tables
+- don't remove irqs.h, make it a local header instead
+- rearranged the patches in order not to remove the code added
+  by earlier ones
+- renamed d*_init_irqs to d*_init_irq to fit the name of the relevant
+  callback in machine info struct
+- fixed license identifiers where needed
+- added comments to config structures for irqchip drivers
+- fixed all off-by-one errors in resource sizes
+- clarified the comments on the weird handling of IRQ_TINT1_TINT34 as level
+  irq and added missing calls to irq_set_handler() to dm3* SoCs
+- fixed one function that was missing a correct prefix in cp_intc
+- return value variables should be called ret not rv
+- added a patch converting calls to _raw_readl/writel() to their _relaxed
+  counterparts
+- fixed the commit message prefix in patches that belong to the irqchip
+  subsystem
+
+v2 -> v3:
+- added a patch preventing a build problem in davinci_keyscan driver
+- converted another usage of 'int rv' to 'int ret'
+- don't use __raw_readl/writel() in new patches, but leave patches converting
+  previous uses
+- drop a stray newline in usb.c when removing irqs.h
+- when unifying the error handling: use specific messages instead of WARN_ON()
+- do the above for aintc as well
+- add patches adding calls to request_mem_region() to both drivers
+
+Bartosz Golaszewski (37):
+  input: davinci_keyscan: remove unnecessary includes
+  ARM: davinci: remove intc_host_map from davinci_soc_info struct
+  ARM: davinci: aintc: use irq domain
+  ARM: davinci: select GENERIC_IRQ_MULTI_HANDLER
+  ARM: davinci: remove davinci_intc_type
+  ARM: davinci: pull davinci_intc_base into the respective intc drivers
+  ARM: davinci: wrap HW interrupt numbers with a macro
+  ARM: davinci: select SPARSE_IRQ
+  ARM: davinci: make irqs.h a local header
+  ARM: davinci: aintc: drop GPL license boilerplate
+  ARM: davinci: aintc: wrap davinci_irq_init() with a helper
+  ARM: davinci: aintc: use a common prefix for symbols in the driver
+  ARM: davinci: aintc: drop the 00 prefix from register offsets
+  ARM: davinci: aintc: use readl/writel_relaxed()
+  irqchip: davinci-aintc: add a new config structure
+  ARM: davinci: aintc: use the new irqchip config structure in dm* SoCs
+  ARM: davinci: aintc: use the new config structure
+  ARM: davinci: aintc: unify error handling
+  ARM: davinci: aintc: request memory region before remapping it
+  ARM: davinci: aintc: move timer-specific irq_set_handler() out of
+    irq.c
+  ARM: davinci: aintc: remove unnecessary includes
+  irqchip: davinci-aintc: move the driver to drivers/irqchip
+  ARM: davinci: cp-intc: remove cp_intc.h
+  ARM: davinci: cp-intc: add a wrapper around cp_intc_init()
+  irqchip: davinci-cp-intc: add a new config structure
+  ARM: davinci: cp-intc: add the new config structures for da8xx SoCs
+  ARM: davinci: cp-intc: use a common prefix for all symbols
+  ARM: davinci: cp-intc: convert all hex numbers to lowercase
+  ARM: davinci: cp-intc: use the new-style config structure
+  ARM: davinci: cp-intc: request the memory region before remapping it
+  ARM: davinci: cp-intc: improve coding style
+  ARM: davinci: cp-intc: unify error handling
+  ARM: davinci: cp-intc: use readl/writel_relaxed()
+  ARM: davinci: cp-intc: drop GPL license boilerplate
+  ARM: davinci: cp-intc: remove redundant comments
+  irqchip: davinci-cp-intc: move the driver to drivers/irqchip
+  ARM: davinci: remove intc related fields from davinci_soc_info
+
+ arch/arm/Kconfig                              |   2 +
+ arch/arm/mach-davinci/Kconfig                 |  19 +-
+ arch/arm/mach-davinci/Makefile                |   3 -
+ arch/arm/mach-davinci/asp.h                   |   8 +-
+ arch/arm/mach-davinci/board-da830-evm.c       |   5 +-
+ arch/arm/mach-davinci/board-da850-evm.c       |   5 +-
+ arch/arm/mach-davinci/board-dm355-evm.c       |   2 +-
+ arch/arm/mach-davinci/board-dm355-leopard.c   |   2 +-
+ arch/arm/mach-davinci/board-dm365-evm.c       |   2 +-
+ arch/arm/mach-davinci/board-dm644x-evm.c      |   8 +-
+ arch/arm/mach-davinci/board-dm646x-evm.c      |   7 +-
+ arch/arm/mach-davinci/board-mityomapl138.c    |   3 +-
+ arch/arm/mach-davinci/board-neuros-osd2.c     |   2 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c   |   3 +-
+ arch/arm/mach-davinci/board-sffsdr.c          |   2 +-
+ arch/arm/mach-davinci/common.c                |   3 -
+ arch/arm/mach-davinci/cp_intc.c               | 215 ---------------
+ arch/arm/mach-davinci/cp_intc.h               |  57 ----
+ arch/arm/mach-davinci/da830.c                 | 128 ++-------
+ arch/arm/mach-davinci/da850.c                 | 154 ++---------
+ arch/arm/mach-davinci/davinci.h               |   4 +
+ arch/arm/mach-davinci/devices-da8xx.c         | 147 +++++-----
+ arch/arm/mach-davinci/devices.c               |  40 +--
+ arch/arm/mach-davinci/dm355.c                 |  86 +++---
+ arch/arm/mach-davinci/dm365.c                 | 110 +++++---
+ arch/arm/mach-davinci/dm644x.c                |  76 +++--
+ arch/arm/mach-davinci/dm646x.c                |  90 +++---
+ arch/arm/mach-davinci/include/mach/common.h   |  14 +-
+ arch/arm/mach-davinci/include/mach/da8xx.h    |   2 +
+ .../mach-davinci/include/mach/entry-macro.S   |  39 ---
+ arch/arm/mach-davinci/irq.c                   | 117 --------
+ .../mach-davinci/{include/mach => }/irqs.h    |   4 -
+ arch/arm/mach-davinci/usb-da8xx.c             |   9 +-
+ arch/arm/mach-davinci/usb.c                   |  13 +-
+ drivers/input/keyboard/davinci_keyscan.c      |   4 -
+ drivers/irqchip/Kconfig                       |  10 +
+ drivers/irqchip/Makefile                      |   2 +
+ drivers/irqchip/irq-davinci-aintc.c           | 163 +++++++++++
+ drivers/irqchip/irq-davinci-cp-intc.c         | 260 ++++++++++++++++++
+ include/linux/irqchip/irq-davinci-aintc.h     |  27 ++
+ include/linux/irqchip/irq-davinci-cp-intc.h   |  25 ++
+ 41 files changed, 912 insertions(+), 960 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/cp_intc.c
+ delete mode 100644 arch/arm/mach-davinci/cp_intc.h
+ delete mode 100644 arch/arm/mach-davinci/include/mach/entry-macro.S
+ delete mode 100644 arch/arm/mach-davinci/irq.c
+ rename arch/arm/mach-davinci/{include/mach => }/irqs.h (98%)
+ create mode 100644 drivers/irqchip/irq-davinci-aintc.c
+ create mode 100644 drivers/irqchip/irq-davinci-cp-intc.c
+ create mode 100644 include/linux/irqchip/irq-davinci-aintc.h
+ create mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
+
+-- 
+2.20.1
+
