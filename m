@@ -2,138 +2,239 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF3CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCF2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBADD2190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7374D222BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbfBLSt6 (ORCPT
+        id S1729840AbfBLSxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:49:58 -0500
-Received: from gateway36.websitewelcome.com ([192.185.200.11]:24225 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728383AbfBLSt5 (ORCPT
+        Tue, 12 Feb 2019 13:53:06 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:37691 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbfBLSxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:49:57 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 940D7400D002D
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:04:04 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id td80gYrlYYTGMtd80gsbZs; Tue, 12 Feb 2019 12:49:56 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=44598 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtd7z-002Kg7-OG; Tue, 12 Feb 2019 12:49:55 -0600
-Subject: Re: [PATCH] iscsi_ibft: Fix missing break in switch statement
-To:     Konrad Rzeszutek Wilk <konrad@darnok.org>
-Cc:     Peter Jones <pjones@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad@kernel.org>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20190211184323.GA3671@embeddedor>
- <20190212184636.GB19464@localhost.localdomain>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <1efba085-8a04-9080-df7f-091b5fa7ceda@embeddedor.com>
-Date:   Tue, 12 Feb 2019 12:49:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 13:53:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id t18so6290932itk.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:53:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ImCQTuFBewZOp25d5spuYB3HPJdIM+9X1htAC9pHj3I=;
+        b=PWm5j/ghuwrF4osTlN5g2Ul6Kf1ifTbdqJx8PA8N3mcVNp7GNLwEwrm9IBjSfSJLoF
+         +zhPhuKzgEBarYLRs4O4Zv/JIyM1Fqy+16FXHPqg3Db+mTm43G2J3lSz2JDbsqu7Ev6J
+         OzfpN9o7/jpEg0/QArVs44IEn8N30t7ev7CXmM87fsq8OzzxUao96sMLQN8cXkDkzfXa
+         DhvnZ+/gwoVR2TG3PeorxJcTIk1/EvgFgLIPhoGha6ynkIi5SqUwK6AdPUCRa/gqBWA6
+         7wcaNDndC9hH+J+PpFkTVPkl9Dtffn0JQPgnXYOZuCu6axOo3apwH8YKggzQCqwP3+5O
+         MuqA==
+X-Gm-Message-State: AHQUAubtR5/gtvw5tUKE55O6AeAL1UVdNF17M4nGe4m1cRPHoS0lpPlD
+        qW4mKqdQbNCoY3x8jCqHhmb36EQOwl8gQDvf+uf4hMDspa13
+X-Google-Smtp-Source: AHgI3IaH27TEPP9l/lg4cO+rWR4OSNbs1+TiH15lY8AklbeHJeSLT0obrtPL6qh8xTHMvAZ7lSOH2hDE/cwcwpE7rSGuCDXRtHkT
 MIME-Version: 1.0
-In-Reply-To: <20190212184636.GB19464@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtd7z-002Kg7-OG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:44598
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Received: by 2002:a02:347:: with SMTP id y68mr3110162jad.9.1549997584060;
+ Tue, 12 Feb 2019 10:53:04 -0800 (PST)
+Date:   Tue, 12 Feb 2019 10:53:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000066aa5f0581b6effe@google.com>
+Subject: KASAN: use-after-free Read in rt_cache_valid
+From:   syzbot <syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    aa0c38cf39de Merge branch 'fixes' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1460eca7400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4c4b2bb358bb936ad7e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1197cb88c00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com
+
+Enabling of bearer <udp:syz1> rejected, already enabled
+Enabling of bearer <udp:syz1> rejected, already enabled
+Enabling of bearer <udp:syz1> rejected, already enabled
+Enabling of bearer <udp:syz1> rejected, already enabled
+==================================================================
+BUG: KASAN: use-after-free in rt_cache_valid+0x158/0x190  
+net/ipv4/route.c:1510
+Read of size 2 at addr ffff88809bfce836 by task udevd/7435
+
+CPU: 1 PID: 7435 Comm: udevd Not tainted 5.0.0-rc6+ #69
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load2_noabort+0x14/0x20 mm/kasan/generic_report.c:133
+  rt_cache_valid+0x158/0x190 net/ipv4/route.c:1510
+  __mkroute_output net/ipv4/route.c:2260 [inline]
+  ip_route_output_key_hash_rcu+0x89d/0x30e0 net/ipv4/route.c:2492
+Enabling of bearer <udp:syz1> rejected, already enabled
+  ip_route_output_key_hash+0x212/0x380 net/ipv4/route.c:2321
+Enabling of bearer <udp:syz1> rejected, already enabled
+  __ip_route_output_key include/net/route.h:124 [inline]
+  ip_route_output_flow+0x28/0xc0 net/ipv4/route.c:2576
+  ip_route_output_key include/net/route.h:134 [inline]
+  tipc_udp_xmit.isra.0+0x55d/0xcc0 net/tipc/udp_media.c:173
+Enabling of bearer <udp:syz1> rejected, already enabled
+  tipc_udp_send_msg+0x295/0x4a0 net/tipc/udp_media.c:247
+  tipc_bearer_xmit_skb+0x172/0x360 net/tipc/bearer.c:503
+Enabling of bearer <udp:syz1> rejected, already enabled
+  tipc_disc_timeout+0x933/0xd60 net/tipc/discover.c:332
+  call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
+Enabling of bearer <udp:syz1> rejected, already enabled
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers kernel/time/timer.c:1681 [inline]
+  __run_timers kernel/time/timer.c:1649 [inline]
+  run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
+Enabling of bearer <udp:syz1> rejected, already enabled
+  __do_softirq+0x266/0x95a kernel/softirq.c:292
+Enabling of bearer <udp:syz1> rejected, already enabled
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+Enabling of bearer <udp:syz1> rejected, already enabled
+RIP: 0010:generic_fillattr+0x54c/0x6e0 fs/stat.c:51
+Code: 7c 24 0c 48 89 fa 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03  
+38 d0 7c 08 84 d2 0f 85 ee 00 00 00 45 8b 64 24 0c 31 ff <41> 81 e4 00 08  
+00 00 44 89 e6 e8 15 21 bf ff 45 85 e4 74 2c e8 8b
+RSP: 0018:ffff88809894fc58 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: ffff88809894fde8 RCX: ffffffff81b0c113
+RDX: 0000000000000000 RSI: ffffffff81b0c146 RDI: 0000000000000000
+RBP: ffff88809894fc78 R08: ffff8880925de340 R09: ffff88809894fde8
+R10: ffffed1013129fcd R11: ffff88809894fe6f R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000800 R15: ffff888098d4d100
+  vfs_getattr_nosec+0x140/0x180 fs/stat.c:82
+  vfs_getattr+0x4b/0x70 fs/stat.c:116
+Enabling of bearer <udp:syz1> rejected, already enabled
+  vfs_statx+0x157/0x200 fs/stat.c:189
+Enabling of bearer <udp:syz1> rejected, already enabled
+  vfs_stat include/linux/fs.h:3171 [inline]
+  __do_sys_newstat+0xa4/0x130 fs/stat.c:339
+Enabling of bearer <udp:syz1> rejected, already enabled
+Enabling of bearer <udp:syz1> rejected, already enabled
+kobject: 'loop0' (000000003275aa21): kobject_uevent_env
+  __se_sys_newstat fs/stat.c:335 [inline]
+  __x64_sys_newstat+0x54/0x80 fs/stat.c:335
+kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7fda7f482c65
+Code: 00 00 00 e8 5d 01 00 00 48 83 c4 18 c3 90 90 90 90 90 90 90 90 83 ff  
+01 48 89 f0 77 18 48 89 c7 48 89 d6 b8 04 00 00 00 0f 05 <48> 3d 00 f0 ff  
+ff 77 17 f3 c3 90 48 8b 05 a1 51 2b 00 64 c7 00 16
+RSP: 002b:00007ffefd39a338 EFLAGS: 00000246 ORIG_RAX: 0000000000000004
+Enabling of bearer <udp:syz1> rejected, already enabled
+RAX: ffffffffffffffda RBX: 00007ffefd39a3d0 RCX: 00007fda7f482c65
+RDX: 00007ffefd39a340 RSI: 00007ffefd39a340 RDI: 00007ffefd39a3d0
+RBP: 0000000001125980 R08: 00007ffefd39a3e0 R09: 00007fda7f4d9790
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000001114250
+R13: 0000000000000000 R14: 00007ffefd39a840 R15: 0000000000000001
+Enabling of bearer <udp:syz1> rejected, already enabled
+
+Allocated by task 7724:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+kobject: 'loop0' (000000003275aa21): kobject_uevent_env
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+  kasan_kmalloc mm/kasan/common.c:504 [inline]
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
+Enabling of bearer <udp:syz1> rejected, already enabled
+  kmem_cache_alloc+0x12d/0x710 mm/slab.c:3543
+  dst_alloc+0x10e/0x1d0 net/core/dst.c:105
+  rt_dst_alloc+0x83/0x3f0 net/ipv4/route.c:1566
+  __mkroute_output net/ipv4/route.c:2265 [inline]
+  ip_route_output_key_hash_rcu+0x97d/0x30e0 net/ipv4/route.c:2492
+Enabling of bearer <udp:syz1> rejected, already enabled
+  ip_route_output_key_hash+0x212/0x380 net/ipv4/route.c:2321
+  __ip_route_output_key include/net/route.h:124 [inline]
+  ip_route_connect include/net/route.h:302 [inline]
+  __ip4_datagram_connect+0x6fb/0x1330 net/ipv4/datagram.c:51
+  __ip6_datagram_connect+0xa6a/0x1390 net/ipv6/datagram.c:152
+kobject: 'loop0' (000000003275aa21): kobject_uevent_env
+  ip6_datagram_connect+0x30/0x50 net/ipv6/datagram.c:273
+  inet_dgram_connect+0x150/0x2e0 net/ipv4/af_inet.c:571
+  __sys_connect+0x266/0x330 net/socket.c:1662
+  __do_sys_connect net/socket.c:1673 [inline]
+  __se_sys_connect net/socket.c:1670 [inline]
+  __x64_sys_connect+0x73/0xb0 net/socket.c:1670
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+
+Freed by task 0:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3749
+  dst_destroy+0x2a0/0x3c0 net/core/dst.c:141
+  dst_destroy_rcu+0x16/0x19 net/core/dst.c:154
+  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2452 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
+  rcu_process_callbacks+0x928/0x1390 kernel/rcu/tree.c:2754
+cgroup: fork rejected by pids controller in /syz0
+  __do_softirq+0x266/0x95a kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff88809bfce800
+  which belongs to the cache ip_dst_cache of size 160
+The buggy address is located 54 bytes inside of
+  160-byte region [ffff88809bfce800, ffff88809bfce8a0)
+The buggy address belongs to the page:
+page:ffffea00026ff380 count:1 mapcount:0 mapping:ffff88821af8d1c0 index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000297e848 ffff8880a68abd48 ffff88821af8d1c0
+raw: 0000000000000000 ffff88809bfce000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809bfce700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff88809bfce780: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88809bfce800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                      ^
+  ffff88809bfce880: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88809bfce900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
-On 2/12/19 12:46 PM, Konrad Rzeszutek Wilk wrote:
-> On Mon, Feb 11, 2019 at 12:43:23PM -0600, Gustavo A. R. Silva wrote:
->> Add missing break statement in order to prevent the code from falling
->> through to case ISCSI_BOOT_TGT_NAME, which is unnecessary.
->>
->> This bug was found thanks to the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Fixes: b33a84a38477 ("ibft: convert iscsi_ibft module to iscsi boot lib")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> 
-> Queued it up in https://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Great.
-
-Thanks, Konrad.
---
-Gustavo
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
