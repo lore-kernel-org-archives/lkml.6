@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCDEC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FE2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9EA920823
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4570720823
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="YpNW7JlM";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="P41l3QNJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="FHa+wip3";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="nzz5qKs8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfBLOAY (ORCPT
+        id S1730116AbfBLOAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:00:24 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:45616 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbfBLOAX (ORCPT
+        Tue, 12 Feb 2019 09:00:30 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:62965 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730097AbfBLOA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:00:23 -0500
+        Tue, 12 Feb 2019 09:00:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1549980023; x=1581516023;
+  t=1549980029; x=1581516029;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=vN8txHa9eKbHp7FQJ7smEDvEdJGYAGARBV8FGwbfewQ=;
-  b=YpNW7JlM6jbSEko6p7yX/PqgRyYFfOz8JwqXSdvwFIA/7snHDrNx0LKk
-   X4KiVq/NP7eU3Y/xzAgLkVOmrgz40GGyn7HWeg+/mk//yXvt++h7FZANU
-   +vkEhiQcSF+cUijFaoeaXB7tbH9gfZKI5FHBiHMof8DldBz6fDTmJ3y19
-   wY7acJXN8rl0VUB7KGjc4nloT7hF7ZcSW30/UmL4GvinHeVV20r+B4ZCM
-   gcxZdtbs1SqWd/VNzMgD77/M8Qc9oWJ/M9Pq7CcHvrgZYYj5+DoGeHwSn
-   7ICJH0qCiqCTBnCj0Iud4bt4zhfr3zLp4lm3ZxvxIG4g39TNfz8fZzLgM
-   w==;
+  bh=MMaSjPVSOs1KuGPAIVXOULMT9o2j1tPbTgBb8+q2ItQ=;
+  b=FHa+wip3Kg8ltSLGw1UepHvqxj87w9AGpShbaNeJAGlDtzcBre7dWP7h
+   7LBN1PX2f9qwnvy6sZijdSmvZAnzwYf9CgVIMeS5CjkgBzDYyVlmdkdoj
+   lgD7ejDVYYcTs9BVMmf00TslrXPhAJ/BwOtCFBSFR7EEoiWUrl7XlK9zt
+   XbdT/Npgt9nCQ9MdtwoZTmiOPPI3g0T2t0efVbGI2v4Nb+K7gr8nhPxLG
+   RZqrKfljrqtBbXCczHbEodIAy7bAxEzPoJbbYqE4ZHcPBFS4jsBEEaoE2
+   t80jSQvr+1BR1VCL6Fm8GFYva0dbHX3QWtvIVaqCLv3WlOBDZu2HK1jjC
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.58,362,1544457600"; 
-   d="scan'208";a="206165797"
-Received: from mail-bn3nam01lp2058.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.58])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2019 22:00:22 +0800
+   d="scan'208";a="101010259"
+Received: from mail-bn3nam04lp2055.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([104.47.46.55])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2019 22:00:28 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=71ZzPWQxZILvR2Jm5FIM90PuiFR9mOI/0ZWkIZRe7aU=;
- b=P41l3QNJma5HOGnCl+oa+w5DYqAUo83pl0rWHo4VQQBNOQMzXmwlK6CxvHbRclh4zxEJG/ultCCNlzZtvHWqvSJUs6untuAIP7ra/1H/48LcPVJUN9/O/Sci8c1IJE1vKMOCeDFWi/bWQbUxI943M3E+lodjZZOn20uORg5N5aQ=
+ bh=lL6B39zTRMesFFycvJsi7f9wzh2NABawCwlr1Qo+OTc=;
+ b=nzz5qKs8CZYupXh34LRzcvbUuUlJ+lUMKWHPKRYwAFx9HDMCc/61tBCM66jlsUALnfVo+anRlu8W/VdxoGB+e7cFXtOucZfw8+7fL+RCN5dX6U72DMPgB76l4WnVMAFga6I4cR24WTtA/ng3fUdoNgwmduiiV0NYxDSJ3xlneZc=
 Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.247.148) by
- MN2PR04MB6062.namprd04.prod.outlook.com (20.178.247.149) with Microsoft SMTP
+ MN2PR04MB6224.namprd04.prod.outlook.com (20.178.247.75) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.21; Tue, 12 Feb 2019 14:00:21 +0000
+ 15.20.1601.22; Tue, 12 Feb 2019 14:00:26 +0000
 Received: from MN2PR04MB6061.namprd04.prod.outlook.com
  ([fe80::2cdb:c465:af57:8be1]) by MN2PR04MB6061.namprd04.prod.outlook.com
  ([fe80::2cdb:c465:af57:8be1%7]) with mapi id 15.20.1601.023; Tue, 12 Feb 2019
- 14:00:21 +0000
+ 14:00:26 +0000
 From:   Anup Patel <Anup.Patel@wdc.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>
@@ -63,11 +63,11 @@ CC:     Atish Patra <Atish.Patra@wdc.com>,
         "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v3 2/6] RISC-V: Setup init_mm before parse_early_param()
-Thread-Topic: [PATCH v3 2/6] RISC-V: Setup init_mm before parse_early_param()
-Thread-Index: AQHUwttKwXHCxLSmn0+7Lx/MnaLB8w==
-Date:   Tue, 12 Feb 2019 14:00:21 +0000
-Message-ID: <20190212135942.105008-3-anup.patel@wdc.com>
+Subject: [PATCH v3 3/6] RISC-V: Move setup_bootmem() to mm/init.c
+Thread-Topic: [PATCH v3 3/6] RISC-V: Move setup_bootmem() to mm/init.c
+Thread-Index: AQHUwttOdTsDzGHhY0ijRWgwbLe67g==
+Date:   Tue, 12 Feb 2019 14:00:26 +0000
+Message-ID: <20190212135942.105008-4-anup.patel@wdc.com>
 References: <20190212135942.105008-1-anup.patel@wdc.com>
 In-Reply-To: <20190212135942.105008-1-anup.patel@wdc.com>
 Accept-Language: en-US
@@ -83,94 +83,201 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [49.207.48.205]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7e34f63d-4bd2-4034-54ab-08d690f26cff
+x-ms-office365-filtering-correlation-id: b065dd46-7425-4aec-8e56-08d690f2705a
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR04MB6062;
-x-ms-traffictypediagnostic: MN2PR04MB6062:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR04MB6224;
+x-ms-traffictypediagnostic: MN2PR04MB6224:
 wdcipoutbound: EOP-TRUE
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MN2PR04MB6062;23:0mhnT2oxJraaEGSbckte0tnsxgNj3NBsEqN/1+E?=
- =?iso-8859-1?Q?WLmilUOy9PuO8NLrO9TQrUgQiyHOyiHxHS/+1mT10luB+udrmLFtqktOF7?=
- =?iso-8859-1?Q?ovyk1UtBuvx8KKS1qb9Mjp4vJHgqfyHXKQsmPLJCZc50gKi2cdJsqphGkn?=
- =?iso-8859-1?Q?Vz020/4KqChYf9mS9M16hLdMqsEw5KeZzsNdOEtDp6Dl0l/dSkRPHAXemU?=
- =?iso-8859-1?Q?mdT0QUDmw2bapXmx/2SYd+CN3AA2qStGBVWOC4iNy9qWosqxreX72QVDGQ?=
- =?iso-8859-1?Q?eaZebWgKFksv9re/nCAOvfhGPzGttwn2Z9kgHB/H0EpyWKBKXQgrA6zKeT?=
- =?iso-8859-1?Q?ZNkUmLNMr48Je4LzgRTQzPtizgID0L4oZmwlO6XFivsuPSOL6ni7kswDIY?=
- =?iso-8859-1?Q?nOHsCiTC8hGC5ZsHWUmSIM65CLQM1ePv+oZd2sx9EH57rerCi/eLBSHXnl?=
- =?iso-8859-1?Q?gr+HcK56Oa9Gtm+FqBGPlf+ZNjWRlUJNjc05M8W/bTuf2Tmj7ntMivX2I3?=
- =?iso-8859-1?Q?2wGh9DU/ZTeGhEvm7dO+SYRLPo8pXzADhWKI5CO7dI2PFuoXKtymr3lHpW?=
- =?iso-8859-1?Q?AOkWRSQNOc3hFg9J3mnGqHoqLwhDyc0JQogym3ImvqowvGaAS3cYxjcoss?=
- =?iso-8859-1?Q?6gZmcNFgvlRFiKYt6nmCqvpT50MPNJoYod6elB2epnInJZXlCQoTkCY5Fs?=
- =?iso-8859-1?Q?xYcKQ6yt3n+GLTJIc6LsVGsbb1uJAYKKGRCZOT1QZff+VQ9QL6Ehr8PucK?=
- =?iso-8859-1?Q?jividrThrKAr9E3fgFnl112eOAy6tLuK27KFy65bb9oMF4FMKcEj8yOHDQ?=
- =?iso-8859-1?Q?J8VT7M2zV15pB60mPfrFz/ecj8Uuo0tMP+TmQiI0/p1syOlKSQnAFOLzBr?=
- =?iso-8859-1?Q?06wMnXtfBv9EybGyu3ButLZe4sg9z7iSdbNu7sDDibDYXyR7ABaSd0GIo9?=
- =?iso-8859-1?Q?5+Ru74JTx6mah+7UnJ8uGh2STXDGi2V1d0kI29HB1qJVlmsQTSzphR1fyh?=
- =?iso-8859-1?Q?mXDmTA2fck5KouEsrzynESufdxugEMrnsTNmHBvN5ph5712kT6uvhOJTxZ?=
- =?iso-8859-1?Q?X+FLOaIZs79BIOcFm+jqgGXiFEmX+6iRGmvX0Q54sMmWVGhQksT+M4ZpBS?=
- =?iso-8859-1?Q?vsRNeV6+1BQldMd72AVUHhKJZ1K0zGD0zf89+xzsXX7JDG971QAgs4cE8F?=
- =?iso-8859-1?Q?8sY54WfTh1u/Fl6UbfHwzfKrnmJCZJFXgSUoVg4uf6GWW6rW/SQvJsK6Z/?=
- =?iso-8859-1?Q?tboY8jKHtH5wKVROsiLxumdPz3sLP2/24lD3vXlkQbXNCBlNWjjxhjiYxY?=
- =?iso-8859-1?Q?51LOTpGx6MxtBsrXmei3yTN?=
-x-microsoft-antispam-prvs: <MN2PR04MB60628A855C04626EE09D91218D650@MN2PR04MB6062.namprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MN2PR04MB6224;23:VrxPQrMbKRy8sKWy5l1c5n74D/O5l24F1/+pQdh?=
+ =?iso-8859-1?Q?pnZ0UPenzobqAMVFINR/KHx6tb/Q/4SSoeDJTmOASiUdoXhQ3Mx4asE+qN?=
+ =?iso-8859-1?Q?BWmRKHeZ8M4Do1IyZ6YS1qpRXSSW2JNbiEFc4MH3Y8kUC2KzbyWncywqGJ?=
+ =?iso-8859-1?Q?rfbP3zheJKX5AZlrBG6MRN2ainRmbZnyciTh09sTcZu9LhNJ4evRReCDsY?=
+ =?iso-8859-1?Q?cAd87l2RfRVV4KaihSVXhQT7HhjiMsyjK/7HBZbiHAbvyEreiijFoNL2fQ?=
+ =?iso-8859-1?Q?ZoGqN1zmtgjeYPnNcAF8C5Bp2fQi5DXVQSXsQCM3XlNiW/Z5QGjfDMsb3Y?=
+ =?iso-8859-1?Q?vt1HogqehVnX21okxufPbcq23IsIAprtP6siuS/NtrSBULlsCi+E8Q3CLW?=
+ =?iso-8859-1?Q?b+6VjAT94p3osOW5vPdlh3tcRWv3xdx2hranVwY+gy+tmjJCymeK8j3N0X?=
+ =?iso-8859-1?Q?sZdO/YkL9DGJxej0KiYZCr/2sTizn/4gIWfKIHiQU/k6jrJR8aUFQd6dhL?=
+ =?iso-8859-1?Q?O0l3qm+EEJ8jSK+izIdC5IQ7/TlvAmImOZPfYHSWLQFnpKLPg6U7yDm05q?=
+ =?iso-8859-1?Q?rCa4R/dI7gs/YcBGITlXB62aEPW0bwNnHji3yhaue+dH+xZxdMT+uwLXgO?=
+ =?iso-8859-1?Q?ZFgz/+kurNEqHDERO+GG0bakIHaJDE9vLGAEpmzbWuORfOB2YSVhFWJytY?=
+ =?iso-8859-1?Q?+KMa0ZOQNjgmzxvrTmuNxQ8WbUasQHm2Hprv4PpReX3vC0frlvBp+/2che?=
+ =?iso-8859-1?Q?7a7y4QcAjvMdkLgYwgyM/+dRt/NTOTSAtKMDboBeNzCqGDK5TYyMOMzO7f?=
+ =?iso-8859-1?Q?OMFScUa9MfgDDjzBTWT6zJvAA/vB4/GmRaq6iUDdXzXkdXBLicwghXeL90?=
+ =?iso-8859-1?Q?z6x6bUqaBhPDTYUt7srgy80wLUNdFM/d8+/wz4+lHP8iAGDXNedL41r2og?=
+ =?iso-8859-1?Q?4VLQaFp4D4CWu9SagNSF9QLFfXZsDVi62Epa35YEc+wOtlNHy6FwDUg4lW?=
+ =?iso-8859-1?Q?KRx0kSgq28iJ1faKbQuSrHFiuKds7rJW+RYSCif5U0CCYLFbgtvC+Qq/V+?=
+ =?iso-8859-1?Q?kXfiSdhTVFCwPGfZZySonuezhCTJsKi5e9V3jr7uUhgikpuecMcGcpFQxx?=
+ =?iso-8859-1?Q?+3TFlbgXwEd6E9gvjAjBOWAcivjPYQSBcWMCZPzDMOyCj2e7zQO6a5Huha?=
+ =?iso-8859-1?Q?bRp16+kQuR0ijuvWyhK3wMp6gmyQ1wdZRRiMK1h674JoWOHwntiNzq6EWn?=
+ =?iso-8859-1?Q?m/BMH7TIB7NQUAi9VMTmKE4oAIkOWHeJJPDliNLc0lmbYLVpcCc0r5lNMy?=
+ =?iso-8859-1?Q?tYImwY/WjKLyatL3v0S2QFP?=
+x-microsoft-antispam-prvs: <MN2PR04MB62241D411D743B927294142F8D650@MN2PR04MB6224.namprd04.prod.outlook.com>
 x-forefront-prvs: 0946DC87A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(136003)(366004)(396003)(199004)(189003)(8676002)(2906002)(81166006)(86362001)(44832011)(50226002)(2616005)(11346002)(106356001)(446003)(68736007)(316002)(53936002)(476003)(81156014)(76176011)(105586002)(25786009)(486006)(8936002)(55236004)(14454004)(6116002)(256004)(4326008)(36756003)(3846002)(71200400001)(71190400001)(102836004)(66066001)(386003)(52116002)(6506007)(99286004)(1076003)(186003)(6512007)(2171002)(54906003)(110136005)(6436002)(7736002)(26005)(72206003)(478600001)(305945005)(6486002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6062;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(346002)(376002)(136003)(199004)(189003)(11346002)(25786009)(2616005)(72206003)(486006)(2171002)(478600001)(4326008)(446003)(14454004)(6512007)(476003)(52116002)(36756003)(110136005)(97736004)(3846002)(6116002)(8936002)(50226002)(76176011)(54906003)(99286004)(7736002)(256004)(106356001)(316002)(81166006)(105586002)(68736007)(186003)(8676002)(44832011)(1076003)(6486002)(6436002)(86362001)(66066001)(53936002)(2906002)(305945005)(55236004)(386003)(71200400001)(102836004)(6506007)(71190400001)(26005)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6224;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ZGGqylWD8RZ1iXaZc4a4DAmj1PbmlI6yPb0TYqTsikxjR1Otl9ClG5UdiNqxeu4CSu/FEdTDP5HR+WaIHVnQcY4j6q8b7RJOG1vX+n8KKh/95EkyoCGGwPwxK3d0DOrM1ShFvrawRiY1M40BPjD3fro0/xhKkZOvUgKxyeaEd0x9rtxQ0QePqJGoBOyZxfofxZFv22xDxcuTFYf63YnQ7V7nnzoSgIo7jNDS0sfYvOKKWJ37BGnR8XwbqDIxlH/RbPCYzIGfhaKnGXeoAjk939288Ruz3zmHscAqYmCnIjOAP14NejqoUYRWh25kldPSKoSnmn5d5HnvPt2+ytx2gi9XlE4C8hD1fIuEqe1ekvvB8IRe7ejC+OQ1zJw9rVDFHBmBTOmrLGxkF857n8Ho0YDO3yv/XESzOWeSm0yqEWQ=
+x-microsoft-antispam-message-info: +My5kfXJ+yNGSpeXFSzUxdzTdZeyWV8hts1Da/a016BF4D4+7Vb3LclqSdmbm5MIWlXo+EnbCj7S5bp4icPeah7mpkp2paZ/WuTZAnFg2jGhUQZXEaG9H++38TN2+QJmKM5ktGNFjKQEyWnLoJKu/+R9uempVHnSb/KnkdS0bsvFZSU7Upm12INAkNubJkPPQi5ij4JtjIESYxoU0gvizdReIZ1ccQTAQ8wZ/24yLknQ439nVzGacOmo3IppRNJirnVpkeEgBVOqLbA17l/mLsIwiYXbkP7sFCm3nf4yXYsjro4zVdZRAWXMw+UTnJHmACTXYs5qN+e/nFSkwUucB02dYR53RCdvg+Yt0HFVNfzjGxTBnF7thORaoIeZHusz8Wqem3/aajkx/zu8JfsCkaX3HixXf9wAodnZEyftl5c=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e34f63d-4bd2-4034-54ab-08d690f26cff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 14:00:18.0284
+X-MS-Exchange-CrossTenant-Network-Message-Id: b065dd46-7425-4aec-8e56-08d690f2705a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2019 14:00:23.6544
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6062
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should setup init_mm before doing parse_early_param() in setup_arch()
-to be consistent with setup_arch() of other architectures such as x86,
-ARM, and ARM64.
+The setup_bootmem() mainly populates memblocks and does early memory
+reservations. The right location for this function is mm/init.c.
 
 Signed-off-by: Anup Patel <anup.patel@wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/kernel/setup.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/riscv/include/asm/pgtable.h |  1 +
+ arch/riscv/kernel/setup.c        | 48 ++++----------------------------
+ arch/riscv/mm/init.c             | 40 ++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+), 43 deletions(-)
 
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgta=
+ble.h
+index 16301966d65b..35893810cba3 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -404,6 +404,7 @@ static inline int ptep_clear_flush_young(struct vm_area=
+_struct *vma,
+ #define kern_addr_valid(addr)   (1) /* FIXME */
+ #endif
+=20
++extern void setup_bootmem(void);
+ extern void paging_init(void);
+=20
+ static inline void pgtable_cache_init(void)
 diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 36f60b4d2147..9e6395b7d409 100644
+index 9e6395b7d409..ab29a66a17fc 100644
 --- a/arch/riscv/kernel/setup.c
 +++ b/arch/riscv/kernel/setup.c
-@@ -208,15 +208,15 @@ static void __init setup_bootmem(void)
+@@ -163,49 +163,6 @@ void __init parse_dtb(unsigned int hartid, void *dtb)
+ #endif
+ }
 =20
+-static void __init setup_bootmem(void)
+-{
+-	struct memblock_region *reg;
+-	phys_addr_t mem_size =3D 0;
+-
+-	/* Find the memory region containing the kernel */
+-	for_each_memblock(memory, reg) {
+-		phys_addr_t vmlinux_end =3D __pa(_end);
+-		phys_addr_t end =3D reg->base + reg->size;
+-
+-		if (reg->base <=3D vmlinux_end && vmlinux_end <=3D end) {
+-			/*
+-			 * Reserve from the start of the region to the end of
+-			 * the kernel
+-			 */
+-			memblock_reserve(reg->base, vmlinux_end - reg->base);
+-			mem_size =3D min(reg->size, (phys_addr_t)-PAGE_OFFSET);
+-		}
+-	}
+-	BUG_ON(mem_size =3D=3D 0);
+-
+-	set_max_mapnr(PFN_DOWN(mem_size));
+-	max_low_pfn =3D PFN_DOWN(memblock_end_of_DRAM());
+-
+-#ifdef CONFIG_BLK_DEV_INITRD
+-	setup_initrd();
+-#endif /* CONFIG_BLK_DEV_INITRD */
+-
+-	early_init_fdt_reserve_self();
+-	early_init_fdt_scan_reserved_mem();
+-	memblock_allow_resize();
+-	memblock_dump_all();
+-
+-	for_each_memblock(memory, reg) {
+-		unsigned long start_pfn =3D memblock_region_memory_base_pfn(reg);
+-		unsigned long end_pfn =3D memblock_region_memory_end_pfn(reg);
+-
+-		memblock_set_node(PFN_PHYS(start_pfn),
+-		                  PFN_PHYS(end_pfn - start_pfn),
+-		                  &memblock.memory, 0);
+-	}
+-}
+-
  void __init setup_arch(char **cmdline_p)
  {
--	*cmdline_p =3D boot_command_line;
--
--	parse_early_param();
--
  	init_mm.start_code =3D (unsigned long) _stext;
- 	init_mm.end_code   =3D (unsigned long) _etext;
- 	init_mm.end_data   =3D (unsigned long) _edata;
- 	init_mm.brk        =3D (unsigned long) _end;
+@@ -218,6 +175,11 @@ void __init setup_arch(char **cmdline_p)
+ 	parse_early_param();
 =20
-+	*cmdline_p =3D boot_command_line;
-+
-+	parse_early_param();
-+
  	setup_bootmem();
++
++#ifdef CONFIG_BLK_DEV_INITRD
++	setup_initrd();
++#endif /* CONFIG_BLK_DEV_INITRD */
++
  	paging_init();
  	unflatten_device_tree();
-@@ -235,4 +235,3 @@ void __init setup_arch(char **cmdline_p)
 =20
- 	riscv_fill_hwcap();
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 504a5e491f5a..a57dba8ac9e7 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -16,6 +16,7 @@
+ #include <linux/memblock.h>
+ #include <linux/swap.h>
+ #include <linux/sizes.h>
++#include <linux/of_fdt.h>
+=20
+ #include <asm/tlbflush.h>
+ #include <asm/sections.h>
+@@ -63,3 +64,42 @@ void free_initmem(void)
+ {
+ 	free_initmem_default(0);
  }
--
++
++void __init setup_bootmem(void)
++{
++	struct memblock_region *reg;
++	phys_addr_t mem_size =3D 0;
++
++	/* Find the memory region containing the kernel */
++	for_each_memblock(memory, reg) {
++		phys_addr_t vmlinux_end =3D __pa(_end);
++		phys_addr_t end =3D reg->base + reg->size;
++
++		if (reg->base <=3D vmlinux_end && vmlinux_end <=3D end) {
++			/*
++			 * Reserve from the start of the region to the end of
++			 * the kernel
++			 */
++			memblock_reserve(reg->base, vmlinux_end - reg->base);
++			mem_size =3D min(reg->size, (phys_addr_t)-PAGE_OFFSET);
++		}
++	}
++	BUG_ON(mem_size =3D=3D 0);
++
++	set_max_mapnr(PFN_DOWN(mem_size));
++	max_low_pfn =3D memblock_end_of_DRAM();
++
++	early_init_fdt_reserve_self();
++	early_init_fdt_scan_reserved_mem();
++	memblock_allow_resize();
++	memblock_dump_all();
++
++	for_each_memblock(memory, reg) {
++		unsigned long start_pfn =3D memblock_region_memory_base_pfn(reg);
++		unsigned long end_pfn =3D memblock_region_memory_end_pfn(reg);
++
++		memblock_set_node(PFN_PHYS(start_pfn),
++				  PFN_PHYS(end_pfn - start_pfn),
++				  &memblock.memory, 0);
++	}
++}
 --=20
 2.17.1
 
