@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FDCC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A757CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0113214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EB9A214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:30:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbfBLOan (ORCPT
+        id S1730407AbfBLOau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:30:43 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43824 "EHLO
+        Tue, 12 Feb 2019 09:30:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43830 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730350AbfBLOal (ORCPT
+        with ESMTP id S1728288AbfBLOao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:30:41 -0500
+        Tue, 12 Feb 2019 09:30:44 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4d-0005Af-HH; Tue, 12 Feb 2019 15:30:11 +0100
+        id 1gtZ4x-0005Af-6c; Tue, 12 Feb 2019 15:30:31 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 02/25] printk-rb: add prb locking functions
-Date:   Tue, 12 Feb 2019 15:29:40 +0100
-Message-Id: <20190212143003.48446-3-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 25/25] printk: remove unused code
+Date:   Tue, 12 Feb 2019 15:30:03 +0100
+Message-Id: <20190212143003.48446-26-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,167 +54,357 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add processor-reentrant spin locking functions. These allow
-restricting the number of possible contexts to 2, which can simplify
-implementing code that also supports NMI interruptions.
-
-    prb_lock();
-
-    /*
-     * This code is synchronized with all contexts
-     * except an NMI on the same processor.
-     */
-
-    prb_unlock();
-
-In order to support printk's emergency messages, a
-processor-reentrant spin lock will be used to control raw access to
-the emergency console. However, it must be the same
-processor-reentrant spin lock as the one used by the ring buffer,
-otherwise a deadlock can occur:
-
-    CPU1: printk lock -> emergency -> serial lock
-    CPU2: serial lock -> printk lock
-
-By making the processor-reentrant implemtation available externally,
-printk can use the same atomic_t for the ring buffer as for the
-emergency console and thus avoid the above deadlock.
+Code relating to the safe context and anything dealing with the
+previous log buffer implementation is no longer in use. Remove it.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- include/linux/printk_ringbuffer.h | 24 ++++++++++++
- lib/Makefile                      |  2 +-
- lib/printk_ringbuffer.c           | 77 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/printk_ringbuffer.h
- create mode 100644 lib/printk_ringbuffer.c
+ kernel/printk/internal.h |  53 ---------------
+ kernel/printk/printk.c   | 167 ++++-------------------------------------------
+ lib/bust_spinlocks.c     |   3 +-
+ 3 files changed, 13 insertions(+), 210 deletions(-)
+ delete mode 100644 kernel/printk/internal.h
 
-diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
-new file mode 100644
-index 000000000000..75f5708ea902
---- /dev/null
-+++ b/include/linux/printk_ringbuffer.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_PRINTK_RINGBUFFER_H
-+#define _LINUX_PRINTK_RINGBUFFER_H
-+
-+#include <linux/atomic.h>
-+#include <linux/percpu.h>
-+
-+struct prb_cpulock {
-+	atomic_t owner;
-+	unsigned long __percpu *irqflags;
-+};
-+
-+#define DECLARE_STATIC_PRINTKRB_CPULOCK(name)				\
-+static DEFINE_PER_CPU(unsigned long, _##name##_percpu_irqflags);	\
-+static struct prb_cpulock name = {					\
-+	.owner = ATOMIC_INIT(-1),					\
-+	.irqflags = &_##name##_percpu_irqflags,				\
-+}
-+
-+/* utility functions */
-+void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store);
-+void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store);
-+
-+#endif /*_LINUX_PRINTK_RINGBUFFER_H */
-diff --git a/lib/Makefile b/lib/Makefile
-index e1b59da71418..77a20bfd232e 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -19,7 +19,7 @@ KCOV_INSTRUMENT_dynamic_debug.o := n
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+deleted file mode 100644
+index 59ad43dba837..000000000000
+--- a/kernel/printk/internal.h
++++ /dev/null
+@@ -1,53 +0,0 @@
+-/*
+- * internal.h - printk internal definitions
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+- */
+-#include <linux/percpu.h>
+-
+-#ifdef CONFIG_PRINTK
+-
+-#define PRINTK_SAFE_CONTEXT_MASK	 0x3fffffff
+-#define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
+-#define PRINTK_NMI_CONTEXT_MASK		 0x80000000
+-
+-extern raw_spinlock_t logbuf_lock;
+-
+-__printf(5, 0)
+-int vprintk_store(int facility, int level,
+-		  const char *dict, size_t dictlen,
+-		  const char *fmt, va_list args);
+-
+-__printf(1, 0) int vprintk_default(const char *fmt, va_list args);
+-__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+-__printf(1, 0) int vprintk_func(const char *fmt, va_list args);
+-
+-void defer_console_output(void);
+-
+-#else
+-
+-__printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
+-
+-/*
+- * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
+- * semaphore and some of console functions (console_unlock()/etc.), so
+- * printk-safe must preserve the existing local IRQ guarantees.
+- */
+-#endif /* CONFIG_PRINTK */
+-
+-#define printk_safe_enter_irqsave(flags) local_irq_save(flags)
+-#define printk_safe_exit_irqrestore(flags) local_irq_restore(flags)
+-
+-#define printk_safe_enter_irq() local_irq_disable()
+-#define printk_safe_exit_irq() local_irq_enable()
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 6d5bb7f5f584..8ef35c398887 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -60,7 +60,6 @@
  
- lib-y := ctype.o string.o vsprintf.o cmdline.o \
- 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
--	 idr.o int_sqrt.o extable.o \
-+	 idr.o int_sqrt.o extable.o printk_ringbuffer.o \
- 	 sha1.o chacha.o irq_regs.o argv_split.o \
- 	 flex_proportions.o ratelimit.o show_mem.o \
- 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
-diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-new file mode 100644
-index 000000000000..28958b0cf774
---- /dev/null
-+++ b/lib/printk_ringbuffer.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/smp.h>
-+#include <linux/printk_ringbuffer.h>
-+
-+static bool __prb_trylock(struct prb_cpulock *cpu_lock,
-+			  unsigned int *cpu_store)
-+{
-+	unsigned long *flags;
-+	unsigned int cpu;
-+
-+	cpu = get_cpu();
-+
-+	*cpu_store = atomic_read(&cpu_lock->owner);
-+	/* memory barrier to ensure the current lock owner is visible */
-+	smp_rmb();
-+	if (*cpu_store == -1) {
-+		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
-+		local_irq_save(*flags);
-+		if (atomic_try_cmpxchg_acquire(&cpu_lock->owner,
-+					       cpu_store, cpu)) {
-+			return true;
-+		}
-+		local_irq_restore(*flags);
-+	} else if (*cpu_store == cpu) {
-+		return true;
-+	}
-+
-+	put_cpu();
-+	return false;
-+}
-+
-+/*
-+ * prb_lock: Perform a processor-reentrant spin lock.
-+ * @cpu_lock: A pointer to the lock object.
-+ * @cpu_store: A "flags" pointer to store lock status information.
-+ *
-+ * If no processor has the lock, the calling processor takes the lock and
-+ * becomes the owner. If the calling processor is already the owner of the
-+ * lock, this function succeeds immediately. If lock is locked by another
-+ * processor, this function spins until the calling processor becomes the
-+ * owner.
-+ *
-+ * It is safe to call this function from any context and state.
-+ */
-+void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store)
-+{
-+	for (;;) {
-+		if (__prb_trylock(cpu_lock, cpu_store))
-+			break;
-+		cpu_relax();
-+	}
-+}
-+
-+/*
-+ * prb_unlock: Perform a processor-reentrant spin unlock.
-+ * @cpu_lock: A pointer to the lock object.
-+ * @cpu_store: A "flags" object storing lock status information.
-+ *
-+ * Release the lock. The calling processor must be the owner of the lock.
-+ *
-+ * It is safe to call this function from any context and state.
-+ */
-+void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
-+{
-+	unsigned long *flags;
-+	unsigned int cpu;
-+
-+	cpu = atomic_read(&cpu_lock->owner);
-+	atomic_set_release(&cpu_lock->owner, cpu_store);
-+
-+	if (cpu_store == -1) {
-+		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
-+		local_irq_restore(*flags);
-+	}
-+
-+	put_cpu();
-+}
+ #include "console_cmdline.h"
+ #include "braille.h"
+-#include "internal.h"
+ 
+ int console_printk[5] = {
+ 	CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
+@@ -346,41 +345,6 @@ __packed __aligned(4)
+ #endif
+ ;
+ 
+-/*
+- * The logbuf_lock protects kmsg buffer, indices, counters.  This can be taken
+- * within the scheduler's rq lock. It must be released before calling
+- * console_unlock() or anything else that might wake up a process.
+- */
+-DEFINE_RAW_SPINLOCK(logbuf_lock);
+-
+-/*
+- * Helper macros to lock/unlock logbuf_lock and switch between
+- * printk-safe/unsafe modes.
+- */
+-#define logbuf_lock_irq()				\
+-	do {						\
+-		printk_safe_enter_irq();		\
+-		raw_spin_lock(&logbuf_lock);		\
+-	} while (0)
+-
+-#define logbuf_unlock_irq()				\
+-	do {						\
+-		raw_spin_unlock(&logbuf_lock);		\
+-		printk_safe_exit_irq();			\
+-	} while (0)
+-
+-#define logbuf_lock_irqsave(flags)			\
+-	do {						\
+-		printk_safe_enter_irqsave(flags);	\
+-		raw_spin_lock(&logbuf_lock);		\
+-	} while (0)
+-
+-#define logbuf_unlock_irqrestore(flags)		\
+-	do {						\
+-		raw_spin_unlock(&logbuf_lock);		\
+-		printk_safe_exit_irqrestore(flags);	\
+-	} while (0)
+-
+ DECLARE_STATIC_PRINTKRB_CPULOCK(printk_cpulock);
+ 
+ #ifdef CONFIG_PRINTK
+@@ -390,23 +354,15 @@ DECLARE_STATIC_PRINTKRB(printk_rb, CONFIG_LOG_BUF_SHIFT, &printk_cpulock);
+ static DEFINE_MUTEX(syslog_lock);
+ DECLARE_STATIC_PRINTKRB_ITER(syslog_iter, &printk_rb);
+ 
+-DECLARE_WAIT_QUEUE_HEAD(log_wait);
+-/* the next printk record to read by syslog(READ) or /proc/kmsg */
++/* the last printk record read by syslog(READ) or /proc/kmsg */
+ static u64 syslog_seq;
+ static size_t syslog_partial;
+ static bool syslog_time;
+ 
+-/* index and sequence number of the first record stored in the buffer */
+-static u32 log_first_idx;
+-
+-/* index and sequence number of the next record to store in the buffer */
+-static u32 log_next_idx;
+-
+ static DEFINE_MUTEX(kmsg_dump_lock);
+ 
+-/* the next printk record to read after the last 'clear' command */
++/* the last printk record at the last 'clear' command */
+ static u64 clear_seq;
+-static u32 clear_idx;
+ 
+ #define PREFIX_MAX		32
+ #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+@@ -414,26 +370,6 @@ static u32 clear_idx;
+ #define LOG_LEVEL(v)		((v) & 0x07)
+ #define LOG_FACILITY(v)		((v) >> 3 & 0xff)
+ 
+-/* record buffer */
+-#define LOG_ALIGN __alignof__(struct printk_log)
+-#define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
+-#define LOG_BUF_LEN_MAX (u32)(1 << 31)
+-static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
+-static char *log_buf = __log_buf;
+-static u32 log_buf_len = __LOG_BUF_LEN;
+-
+-/* Return log buffer address */
+-char *log_buf_addr_get(void)
+-{
+-	return log_buf;
+-}
+-
+-/* Return log buffer size */
+-u32 log_buf_len_get(void)
+-{
+-	return log_buf_len;
+-}
+-
+ /* human readable text of the record */
+ static char *log_text(const struct printk_log *msg)
+ {
+@@ -944,11 +880,6 @@ const struct file_operations kmsg_fops = {
+  */
+ void log_buf_vmcoreinfo_setup(void)
+ {
+-	VMCOREINFO_SYMBOL(log_buf);
+-	VMCOREINFO_SYMBOL(log_buf_len);
+-	VMCOREINFO_SYMBOL(log_first_idx);
+-	VMCOREINFO_SYMBOL(clear_idx);
+-	VMCOREINFO_SYMBOL(log_next_idx);
+ 	/*
+ 	 * Export struct printk_log size and field offsets. User space tools can
+ 	 * parse it and detect any changes to structure down the line.
+@@ -961,6 +892,8 @@ void log_buf_vmcoreinfo_setup(void)
+ }
+ #endif
+ 
++/* FIXME: no support for buffer resizing */
++#if 0
+ /* requested log_buf_len from kernel cmdline */
+ static unsigned long __initdata new_log_buf_len;
+ 
+@@ -1026,9 +959,12 @@ static void __init log_buf_add_cpu(void)
+ #else /* !CONFIG_SMP */
+ static inline void log_buf_add_cpu(void) {}
+ #endif /* CONFIG_SMP */
++#endif /* 0 */
+ 
+ void __init setup_log_buf(int early)
+ {
++/* FIXME: no support for buffer resizing */
++#if 0
+ 	unsigned long flags;
+ 	char *new_log_buf;
+ 	unsigned int free;
+@@ -1067,6 +1003,7 @@ void __init setup_log_buf(int early)
+ 	pr_info("log_buf_len: %u bytes\n", log_buf_len);
+ 	pr_info("early log buf free: %u(%u%%)\n",
+ 		free, (free * 100) / __LOG_BUF_LEN);
++#endif
+ }
+ 
+ static bool __read_mostly ignore_loglevel;
+@@ -2023,31 +1960,6 @@ asmlinkage __visible int printk(const char *fmt, ...)
+ 	return r;
+ }
+ EXPORT_SYMBOL(printk);
+-
+-#else /* CONFIG_PRINTK */
+-
+-#define LOG_LINE_MAX		0
+-#define PREFIX_MAX		0
+-#define printk_time		false
+-
+-static u64 syslog_seq;
+-static u32 log_first_idx;
+-static char *log_text(const struct printk_log *msg) { return NULL; }
+-static char *log_dict(const struct printk_log *msg) { return NULL; }
+-static struct printk_log *log_from_idx(u32 idx) { return NULL; }
+-static u32 log_next(u32 idx) { return 0; }
+-static ssize_t msg_print_ext_header(char *buf, size_t size,
+-				    struct printk_log *msg,
+-				    u64 seq) { return 0; }
+-static ssize_t msg_print_ext_body(char *buf, size_t size,
+-				  char *dict, size_t dict_len,
+-				  char *text, size_t text_len) { return 0; }
+-static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
+-				 const char *text, size_t len, int level) {}
+-static size_t msg_print_text(const struct printk_log *msg, bool syslog,
+-			     bool time, char *buf, size_t size) { return 0; }
+-static bool suppress_message_printing(int level) { return false; }
+-
+ #endif /* CONFIG_PRINTK */
+ 
+ #ifdef CONFIG_EARLY_PRINTK
+@@ -2343,15 +2255,10 @@ void console_unblank(void)
+ void console_flush_on_panic(void)
+ {
+ 	/*
+-	 * If someone else is holding the console lock, trylock will fail
+-	 * and may_schedule may be set.  Ignore and proceed to unlock so
+-	 * that messages are flushed out.  As this can be called from any
+-	 * context and we don't want to get preempted while flushing,
+-	 * ensure may_schedule is cleared.
++	 * FIXME: This is currently a NOP. Emergency messages will have been
++	 * printed, but what about if write_atomic is not available on the
++	 * console? What if the printk kthread is still alive?
+ 	 */
+-	console_trylock();
+-	console_may_schedule = 0;
+-	console_unlock();
+ }
+ 
+ /*
+@@ -2700,43 +2607,6 @@ static int __init printk_late_init(void)
+ late_initcall(printk_late_init);
+ 
+ #if defined CONFIG_PRINTK
+-/*
+- * Delayed printk version, for scheduler-internal messages:
+- */
+-#define PRINTK_PENDING_WAKEUP	0x01
+-#define PRINTK_PENDING_OUTPUT	0x02
+-
+-static DEFINE_PER_CPU(int, printk_pending);
+-
+-static void wake_up_klogd_work_func(struct irq_work *irq_work)
+-{
+-	int pending = __this_cpu_xchg(printk_pending, 0);
+-
+-	if (pending & PRINTK_PENDING_OUTPUT) {
+-		/* If trylock fails, someone else is doing the printing */
+-		if (console_trylock())
+-			console_unlock();
+-	}
+-
+-	if (pending & PRINTK_PENDING_WAKEUP)
+-		wake_up_interruptible(&log_wait);
+-}
+-
+-static DEFINE_PER_CPU(struct irq_work, wake_up_klogd_work) = {
+-	.func = wake_up_klogd_work_func,
+-	.flags = IRQ_WORK_LAZY,
+-};
+-
+-void wake_up_klogd(void)
+-{
+-	preempt_disable();
+-	if (waitqueue_active(&log_wait)) {
+-		this_cpu_or(printk_pending, PRINTK_PENDING_WAKEUP);
+-		irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
+-	}
+-	preempt_enable();
+-}
+-
+ static int printk_kthread_func(void *data)
+ {
+ 	struct prb_iterator iter;
+@@ -2802,22 +2672,9 @@ static int __init init_printk_kthread(void)
+ }
+ late_initcall(init_printk_kthread);
+ 
+-void defer_console_output(void)
+-{
+-	preempt_disable();
+-	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
+-	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
+-	preempt_enable();
+-}
+-
+ int vprintk_deferred(const char *fmt, va_list args)
+ {
+-	int r;
+-
+-	r = vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
+-	defer_console_output();
+-
+-	return r;
++	return vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
+ }
+ 
+ int printk_deferred(const char *fmt, ...)
+diff --git a/lib/bust_spinlocks.c b/lib/bust_spinlocks.c
+index 8be59f84eaea..c6e083323d1b 100644
+--- a/lib/bust_spinlocks.c
++++ b/lib/bust_spinlocks.c
+@@ -26,7 +26,6 @@ void bust_spinlocks(int yes)
+ 		unblank_screen();
+ #endif
+ 		console_unblank();
+-		if (--oops_in_progress == 0)
+-			wake_up_klogd();
++		--oops_in_progress;
+ 	}
+ }
 -- 
 2.11.0
 
