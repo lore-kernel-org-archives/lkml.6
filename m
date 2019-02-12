@@ -2,214 +2,114 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8CFC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4B4C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D75021773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87AAD21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:20:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="R0AF+Bmw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hTHlFZki"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfBLJTg (ORCPT
+        id S1728795AbfBLJUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:19:36 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43509 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfBLJTg (ORCPT
+        Tue, 12 Feb 2019 04:20:06 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:34341 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfBLJUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:19:36 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n71so3203032ota.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:19:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2uLupT1QQwxU8AFl9JvO1v3r42Gob4IGk4YOh/TsaI4=;
-        b=R0AF+Bmwxp3KBazX0Iuu+wUwr/1rd94g6SrNjDtg/TZwFGcKKq7+C3jZp54LWKiHUG
-         Aplm3c3YiDnikHPE0W0y4AumVQF0Uz/n7SaG+N50jes/RoOIP7bwDd7B07ucz0ucY78G
-         sD4P2s/1vXMHw1lb4bF4TXK8hGATFH2VsJq4de6hF1YkA7rRrjbK7UfsHrbJKk7Y78vG
-         M20DUOPXMKhDV7//R34TiwLtfmR/Jsxpk/Y6dQ1UDSQwhmZUz/HSkisemSkJfqMyOa6j
-         hQSEPZ/yEHlyslv8uA4WAM2v8L/5anVWF7P3AtUjTyP61I1+roqSyRNvBat6p2+kMB1G
-         m3uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2uLupT1QQwxU8AFl9JvO1v3r42Gob4IGk4YOh/TsaI4=;
-        b=VYwc5bIToYVbXGhjepk4wEsMh5gmcikQ77S6sZvva+FuCsU6FYkWFcepMThbrJmR73
-         2TK57NUs67X+Pgaomij01bXf7aUaTPMw81NRNZN8J3FEUujMPNvLDTldQLIjd2eS+Sgi
-         Cdvh3bwEFGgRQW9sbBWGB1Aqo6UkKGXGiFTh+rsFAQE8cbW9NAyX00PWRcUHSvf9fhh3
-         9faiZVmHVnMJwsqQBLn+PbdfWOLp5EJ7lHeaIR3Pqw3sQmHcgjh1QO7jSYpeiPBIZzRE
-         RLl4S5Ls9SH39EP6acK6Z4qr5+Ipk2q8WHLmm/rtIdEXdFg79295jNZNwWaa8gRC13F8
-         uMBQ==
-X-Gm-Message-State: AHQUAuapc08lVSPC6YmQ/8vrd9iv/y8CX4RZnqEOvDZcY9zwKFDyDcKX
-        VXWXnmdSylx70mFkPgPL9DTCjzy2lXmR3MBH71d8MA==
-X-Google-Smtp-Source: AHgI3IbZ6KvFbpulYeVakIpeJFF3D8jLJqoKIvE4saDnSAK2oF7kh+0DhgnuORlJXZPiCQHdETc85Aa9/u8xV8pzhFU=
-X-Received: by 2002:a9d:4595:: with SMTP id x21mr2688993ote.234.1549963170895;
- Tue, 12 Feb 2019 01:19:30 -0800 (PST)
+        Tue, 12 Feb 2019 04:20:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1549963206; x=1581499206;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=0u22az8QufOyM/1E8fitgYFXGVFr+R6CmRAnfANUXRc=;
+  b=hTHlFZkin7gwbXPgwB8cIXBEFdApvHfT/aAnyh9kBk+u48uXrlP0JL99
+   hG+CXmXD6PAEXB/kV9DXqw5WOfdCH/NH/IH6e+Ee50/Jew8txkUZo2CBm
+   kt3o4aIWTDLQsGpSQUkdWGKYpAJrXuffa6+CmFvudAayldhZjfO73b89J
+   hnaiwJQIujWuit5YHI2T+9PkmPgVTG8YBXDFGq/j9HDGqmNePfujV6Kdj
+   rOK6cpzQU7iVgnNwRAxFKP1eSdTpd+9xAYzuAgaDgUhlCOQhwiWxrJQTu
+   lcS6jvLgCqXxNLAEQUWLDUnNk7BOywEVNFtCj3UVOXx6FHo1HC5xQBRrN
+   g==;
+X-IronPort-AV: E=Sophos;i="5.58,361,1544457600"; 
+   d="scan'208";a="102300598"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2019 17:20:05 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 12 Feb 2019 01:00:41 -0800
+Received: from ds141g2.ad.shared (HELO [10.86.48.95]) ([10.86.48.95])
+  by uls-op-cesaip02.wdc.com with ESMTP; 12 Feb 2019 01:20:05 -0800
+Subject: Re: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anup Patel <anup@brainfault.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+References: <20190118140308.9599-1-johan@kernel.org>
+ <20190118140308.9599-6-johan@kernel.org>
+ <20190212071339.GL26747@infradead.org> <20190212082621.GA26912@localhost>
+ <6518a7ff-0586-be7a-4a43-6c9a35194a05@wdc.com>
+ <20190212085345.GA28278@localhost>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <3ceda2a6-72f1-bbab-96bd-5c1e91fff50a@wdc.com>
+Date:   Tue, 12 Feb 2019 01:20:03 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-4-brgl@bgdev.pl>
- <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
-In-Reply-To: <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 12 Feb 2019 10:19:20 +0100
-Message-ID: <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190212085345.GA28278@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 12 lut 2019 o 10:10 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(a=
-):
->
-> On 29/01/2019 08:44, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Provide a more specialized variant of irq_sim_fire() that allows to
-> > specify the type of the fired interrupt. The type is stored in the
-> > dummy irq context struct via the set_type callback.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  include/linux/irq_sim.h |  9 ++++++++-
-> >  kernel/irq/irq_sim.c    | 26 ++++++++++++++++++++++----
-> >  2 files changed, 30 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> > index b96c2f752320..647a6c8ffb31 100644
-> > --- a/include/linux/irq_sim.h
-> > +++ b/include/linux/irq_sim.h
-> > @@ -23,6 +23,7 @@ struct irq_sim_work_ctx {
-> >
-> >  struct irq_sim_irq_ctx {
-> >       bool                    enabled;
-> > +     unsigned int            type;
-> >  };
-> >
-> >  struct irq_sim {
-> > @@ -37,7 +38,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int n=
-um_irqs);
-> >  int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
-> >                     unsigned int num_irqs);
-> >  void irq_sim_fini(struct irq_sim *sim);
-> > -void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
-> > +void irq_sim_fire_type(struct irq_sim *sim,
-> > +                    unsigned int offset, unsigned int type);
-> >  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
-> >
-> > +static inline void irq_sim_fire(struct irq_sim *sim, unsigned int offs=
-et)
-> > +{
-> > +     irq_sim_fire_type(sim, offset, IRQ_TYPE_DEFAULT);
-> > +}
-> > +
-> >  #endif /* _LINUX_IRQ_SIM_H */
-> > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> > index 2bcdbab1bc5a..e3160b5e59b8 100644
-> > --- a/kernel/irq/irq_sim.c
-> > +++ b/kernel/irq/irq_sim.c
-> > @@ -25,6 +25,15 @@ static void irq_sim_irqunmask(struct irq_data *data)
-> >       irq_ctx->enabled =3D true;
-> >  }
-> >
-> > +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
-> > +{
-> > +     struct irq_sim_irq_ctx *irq_ctx =3D irq_data_get_irq_chip_data(da=
-ta);
-> > +
-> > +     irq_ctx->type =3D type;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static void irq_sim_handle_irq(struct irq_work *work)
-> >  {
-> >       struct irq_sim_work_ctx *work_ctx;
-> > @@ -107,6 +116,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int =
-num_irqs)
-> >       sim->chip.name =3D "irq_sim";
-> >       sim->chip.irq_mask =3D irq_sim_irqmask;
-> >       sim->chip.irq_unmask =3D irq_sim_irqunmask;
-> > +     sim->chip.irq_set_type =3D irq_sim_set_type;
-> >
-> >       sim->work_ctx.pending =3D bitmap_zalloc(num_irqs, GFP_KERNEL);
-> >       if (!sim->work_ctx.pending) {
-> > @@ -192,21 +202,29 @@ irq_sim_get_ctx(struct irq_sim *sim, unsigned int=
- offset)
-> >  }
-> >
-> >  /**
-> > - * irq_sim_fire - Enqueue an interrupt.
-> > + * irq_sim_fire_type - Enqueue an interrupt.
-> >   *
-> >   * @sim:        The interrupt simulator object.
-> >   * @offset:     Offset of the simulated interrupt which should be fire=
-d.
-> > + * @type:    Type of the fired interrupt. Must be one of the following=
-:
-> > + *           IRQ_TYPE_EDGE_RISING, IRQ_TYPE_EDGE_FALLING,
-> > + *           IRQ_TYPE_EDGE_BOTH, IRQ_TYPE_LEVEL_HIGH,
-> > + *           IRQ_TYPE_LEVEL_LOW, IRQ_TYPE_DEFAULT
-> >   */
-> > -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> > +void irq_sim_fire_type(struct irq_sim *sim,
-> > +                    unsigned int offset, unsigned int type)
-> >  {
-> >       struct irq_sim_irq_ctx *ctx =3D irq_sim_get_ctx(sim, offset);
-> >
-> > -     if (ctx->enabled) {
-> > +     /* Only care about relevant flags. */
-> > +     type &=3D IRQ_TYPE_SENSE_MASK;
-> > +
-> > +     if (ctx->enabled && (ctx->type & type)) {
->
-> I wonder how realistic this is, given that you do not track the release
-> of a level. In short, mo matter what the type is, you treat everything
-> as edge.
->
-> What is the point of this?
+On 2/12/19 12:53 AM, Johan Hovold wrote:
+> On Tue, Feb 12, 2019 at 12:47:09AM -0800, Atish Patra wrote:
+>> On 2/12/19 12:26 AM, Johan Hovold wrote:
+>>> On Mon, Feb 11, 2019 at 11:13:39PM -0800, Christoph Hellwig wrote:
+>>>> On Fri, Jan 18, 2019 at 03:03:08PM +0100, Johan Hovold wrote:
+>>>>> Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
+>>>>> instead of open coding. Note that this will allow matching also on the
+>>>>> node name instead of the (for FDT) deprecated device_type property.
+>>>>>
+>>>>> Signed-off-by: Johan Hovold <johan@kernel.org>
+>>>>
+>>>> I think this is going to conflict with the ELF caps changes from
+>>>> Atish.  Maybe the riscv_fill_hwcap hunk should be included in his
+>>>> patch?
+>>>
+>>> Since that patch had some issues (e.g. the node reference underflow) it
+>>> may be better to rebase it on top of this series. The changes are
+>>> otherwise distinct after all.
+>>>
+>>
+>> I have fixed the node reference underflow issue and made some more
+>> changes based on comments.
+>>
+>> Some other patches(1,3,4,5) in this series may conflict with my series
+>> as well. I can rebase my series on top of yours and send it as one
+>> series if that's okay with you and Palmer.
+> 
+> No need for you to resend these patches as they are reviewed any ready
+> to be merged. Just rebase your series and mention the dependency in the
+> cover letter as I did with Andreas's patch which this series depended
+> on.
 >
 
-When userspace wants to monitor GPIO line interrupts, the GPIO
-framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
-IRQF_TRIGGER_RISING or both. The testing module tries to act like real
-hardware and so if we pass only one of the *_TRIGGER_* flags, we want
-the simulated interrupt of corresponding type to be fired.
+Sure. I will do that.
 
-Another solution - if you don't like this one -  would be to have more
-specialized functions: irq_sim_fire_rising() and
-irq_sim_fire_falling(). How about that?
-
-Bart
-
-> >               set_bit(offset, sim->work_ctx.pending);
-> >               irq_work_queue(&sim->work_ctx.work);
-> >       }
-> >  }
-> > -EXPORT_SYMBOL_GPL(irq_sim_fire);
-> > +EXPORT_SYMBOL_GPL(irq_sim_fire_type);
-> >
-> >  /**
-> >   * irq_sim_irqnum - Get the allocated number of a dummy interrupt.
-> >
->
+Regards,
+Atish
 > Thanks,
->
->         M.
-> --
-> Jazz is not dead. It just smells funny...
+> Johan
+> 
+
