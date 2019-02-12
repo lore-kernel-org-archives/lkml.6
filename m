@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E600FC282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53D9C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE79C222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B68F7222C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549993871;
-	bh=ZZhDk/cs5E7cdc6G2U0UHD3UnGmDAktYf+dZuZUYFY8=;
+	s=default; t=1549993875;
+	bh=wdBGAn6LPu5DlmekMMQ2Nmm/ROb3O2h/2jhToyeSOKc=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z6ogibiLXPcrnsRdMSQ9wUbZgxZZaYoeUNtiJuGhRuAOFw3mR1X6OdX1pDIoIyI8x
-	 QWoT5rg8wD5BoMSg354/BtjTwEMfy5ccKCLX9VL2sq+HR2uYrbiNsQikFyUXGqRguz
-	 N1/8zb+iSJC+jgAf4xbKuXYGZaYhz3P50TNyRvlw=
+	b=lbIc0j126dxRR8n6R/Jeudtzm667TIflVLbhMZWisjCi7x0kFq5mBI47fsga8WdBn
+	 YuR66Cdvcwl4ShQ5e5Y8tMBxsQVlkk57oi3fBVVpcBJq5JTqFLxeEaCwNmrkHroWRR
+	 /5HC8wXRZS5hK3RQNYiskXdKF3MDt+9UCRwYdACE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbfBLRvK (ORCPT
+        id S1731178AbfBLRvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:51:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55454 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 12:51:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728438AbfBLRvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:51:08 -0500
+        id S1727684AbfBLRvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:51:12 -0500
 Received: from localhost.localdomain (unknown [194.230.155.153])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E43DC222C5;
-        Tue, 12 Feb 2019 17:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6C0D20842;
+        Tue, 12 Feb 2019 17:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549993868;
-        bh=ZZhDk/cs5E7cdc6G2U0UHD3UnGmDAktYf+dZuZUYFY8=;
+        s=default; t=1549993871;
+        bh=wdBGAn6LPu5DlmekMMQ2Nmm/ROb3O2h/2jhToyeSOKc=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=0SlodYO/uTt6kRaV4K3cr6E0Q3+zhWYT/xh1i/+/KcEcG2/z0MDq2Xbqa5lzsC6Ah
-         3+ApPx8aamQdu02lB6QdIs4NYKXSNNl+kpzVgtWPPOyqwdnskkjHulGkw017BY/f5v
-         woQ6J1XyckiD2B3kVm6A1aY+yTUzkdnBsPexLbXg=
+        b=YoJJZ7j9E6vl6bXUz40FkjJ0rwcMHQGYrPIDLW/paTc4mzcTi7ru5RwQ2JW14en4h
+         8d04k0q3ML+pWl7UQP5dJtR7DAdpbLe9MkOzjx93dZnU+/po8vjWP0QvJFRyF6YsxB
+         oG34Ao2YPWCBKwJQjv5M2TjkzdN0xnch7I/scaPg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -51,9 +51,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 2/4] dt-bindings: clock: exynos: Add ADC clock ID to Exynos5410
-Date:   Tue, 12 Feb 2019 18:50:50 +0100
-Message-Id: <20190212175052.6310-3-krzk@kernel.org>
+Subject: [PATCH 3/4] clk: samsung: exynos5410: Add gate clock for ADC
+Date:   Tue, 12 Feb 2019 18:50:51 +0100
+Message-Id: <20190212175052.6310-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212175052.6310-1-krzk@kernel.org>
 References: <20190212175052.6310-1-krzk@kernel.org>
@@ -62,27 +62,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ID for TSADC clock to Exynos5410.  Choose the same value of ID as in
-Exynos5420 to make it simpler/compatible in future (although clock
-driver code is not shared).
+Add the gate clock for ADC block on Exynos5410.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/dt-bindings/clock/exynos5410.h | 1 +
+ drivers/clk/samsung/clk-exynos5410.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 5b911ede0534..86c2ad56c5ef 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -45,6 +45,7 @@
- #define CLK_USI1		266
- #define CLK_USI2		267
- #define CLK_USI3		268
-+#define CLK_TSADC		270
- #define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_WDT			316
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 0a0b09591e6f..b2da2c8fa0c7 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -209,6 +209,7 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+ 	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
+ 	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
+ 	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
++	GATE(CLK_TSADC, "tsadc", "aclk66", GATE_IP_PERIC, 15, 0, 0),
+ 	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
+ 
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
 -- 
 2.17.1
 
