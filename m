@@ -2,148 +2,530 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9895C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B8CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB03222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:25:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VY3IrDsp"
+	by mail.kernel.org (Postfix) with ESMTP id 1CA5E222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732826AbfBLWZF (ORCPT
+        id S1730396AbfBLW1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:25:05 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43145 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbfBLWYg (ORCPT
+        Tue, 12 Feb 2019 17:27:06 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43872 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbfBLW1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:24:36 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190212222435euoutp02fdcd909be767d2374c6288ca64993349~CviInXxQe2689326893euoutp02d
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:24:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190212222435euoutp02fdcd909be767d2374c6288ca64993349~CviInXxQe2689326893euoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550010275;
-        bh=cM4MfP71aUVFJaWpBz2QSD5VGLiKRykfFn1oLctogTs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VY3IrDspo8b9YlJfaI4sHkfoALQQyCsKCyn98zRyZ3ahqSVaeUf+b3lG+IuPt+kWw
-         f5uQbMQQ7Dene0KgCtw5x2+Yq+tI/Hk8pbnTn3FUKj7tXtXy+t03Z8agrCWLgDPJZZ
-         mWBrS6e34HtCYnCKlWwjcWOWNaVxsptuoJ3GNY6k=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190212222434eucas1p1bbda4ca2a1e6367dbd296b7b51455916~CviH2XwOi1210112101eucas1p10;
-        Tue, 12 Feb 2019 22:24:34 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4C.0F.04806.2A7436C5; Tue, 12
-        Feb 2019 22:24:34 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190212222433eucas1p264602d67a916c644c7eb5012932fc17a~CviGyLBjj1609016090eucas1p2v;
-        Tue, 12 Feb 2019 22:24:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190212222433eusmtrp262a8241c83eac7a5a8cf1ccaeee1285a~CviGjUmy42980329803eusmtrp2N;
-        Tue, 12 Feb 2019 22:24:33 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-83-5c6347a2f882
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2D.2C.04284.1A7436C5; Tue, 12
-        Feb 2019 22:24:33 +0000 (GMT)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190212222432eusmtip13bf63b9c5752e75a5ce987641c16c259~CviFqa3wH0525605256eusmtip16;
-        Tue, 12 Feb 2019 22:24:32 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com, tkjos@google.com,
-        joel@joelfernandes.org, chris.diamand@arm.com, mka@chromium.org,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v3 3/7] Kconfig: drivers: devfreq: add default idle polling
-Date:   Tue, 12 Feb 2019 23:23:54 +0100
-Message-Id: <1550010238-24002-4-git-send-email-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djPc7qL3JNjDGZul7fYOGM9q8W0T5dZ
-        LK5/ec5qsaxB1eJs0xt2i1sNMhaXd81hs/jce4TRYu2Ru+wWlw4sYLL4vOExo8XtxhVsFvs6
-        HjBZHH7TzmrxfnKxA7/HmnlrGD1mN1xk8WjZd4vdY8GmUo+Fn76yehx8t4fJ4/2+q2wefVtW
-        MXp83iQXwBnFZZOSmpNZllqkb5fAlfFz9l62gr2cFfM/SzUwXmbvYuTkkBAwkdjx9AVbFyMX
-        h5DACkaJ84c3MkE4Xxgluud8hcp8ZpT48KKbCaZl4czzzBCJ5YwS9ybvZIZr6dr2maWLkYOD
-        TUBPYseqQpAGEQEriRftr9hBapgFjjFJfNo7hRkkISzgLfHidwMbiM0ioCqx9cMXMJtXwEti
-        btsnRohtchI3z3WC1XMC1Z+ZtpIVIn6IXeLFhnII20Xi0opHUA8JS7w6vgXKlpH4v3M+1NXF
-        Emc7VrFB2DUS7Sd3QNVYSxw+fpEV5GZmAU2J9bv0IcKOEjcP/gULSwjwSdx4KwgSZgYyJ22b
-        zgwR5pXoaBOCqNaQ2NJzAWqRmMTyNdOghntItF+7BA3QeYwSR84uZJ7AKD8LYdkCRsZVjOKp
-        pcW56anFxnmp5XrFibnFpXnpesn5uZsYgQnp9L/jX3cw7vuTdIhRgINRiYd3xdGkGCHWxLLi
-        ytxDjBIczEoivJ42yTFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeasZHkQLCaQnlqRmp6YWpBbB
-        ZJk4OIGpwMfcmkOnY8miWRWH/xxQ2b3u/vq3izbuernCZgnrwolJqo9uzDCJtH3bu/DdR/ap
-        2w4uXXP+x1//G81bmgWC9ix7ULKj9/5mTtPvt0RZdRMj4rr5Ez+KTBAsVp43Oe3D9+cuLkr/
-        NS6oVruGPQpRWL/I99U+xjwGgZv7V1vUbFzieWlp4SVmn9tKLMUZiYZazEXFiQBNj/NSRAMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsVy+t/xu7oL3ZNjDBpvsltsnLGe1WLap8ss
-        Fte/PGe1WNaganG26Q27xa0GGYvLu+awWXzuPcJosfbIXXaLSwcWMFl83vCY0eJ24wo2i30d
-        D5gsDr9pZ7V4P7nYgd9jzbw1jB6zGy6yeLTsu8XusWBTqcfCT19ZPQ6+28Pk8X7fVTaPvi2r
-        GD0+b5IL4IzSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3S
-        t0vQy/g5ey9bwV7OivmfpRoYL7N3MXJySAiYSCyceZ65i5GLQ0hgKaPEo/YWqISYxKR926Fs
-        YYk/17rYIIo+MUrcXXGdsYuRg4NNQE9ix6pCkBoRARuJ93PPsIDUMAtcY5K43XGfFSQhLOAt
-        8eJ3AxuIzSKgKrH1wxcwm1fAS2Ju2ydGiAVyEjfPdTKD2JxA9WemrWQFmS8EVNN00GACI98C
-        RoZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgRGy7djPzTsYL20MPsQowMGoxMO74mhSjBBr
-        YllxZe4hRgkOZiURXk+b5Bgh3pTEyqrUovz4otKc1OJDjKZAN01klhJNzgdGb15JvKGpobmF
-        paG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk5gGDavZj/0tqFqcfeVTdrXU4QWzu9b
-        +HXnhi82/bqsSXO/MVY7dPQon/2aKZtVfq+yaXJ7bmlu/cnq8yy9X0vl5xtYLg3X/NXwsGFR
-        95x/lstOvuQI4Hhpfe6tl+U044xnMsZOoc48sxPTTkl/Tbi0M23b6q37d80p6t6m+3oDo9z7
-        kElBEoe+CimxFGckGmoxFxUnAgDhlyGkpgIAAA==
-X-CMS-MailID: 20190212222433eucas1p264602d67a916c644c7eb5012932fc17a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190212222433eucas1p264602d67a916c644c7eb5012932fc17a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190212222433eucas1p264602d67a916c644c7eb5012932fc17a
-References: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190212222433eucas1p264602d67a916c644c7eb5012932fc17a@eucas1p2.samsung.com>
+        Tue, 12 Feb 2019 17:27:04 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id ED58127F300
+Received: by earth.universe (Postfix, from userid 1000)
+        id 83A173C08DD; Tue, 12 Feb 2019 23:26:58 +0100 (CET)
+Date:   Tue, 12 Feb 2019 23:26:58 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Virendra Kakade <virendra.kakade@ni.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, moritz.fischer@ettus.com
+Subject: Re: [RFC 6/6] power: supply: Ettus Research E31x battery driver
+Message-ID: <20190212222658.qjbdh5qprx5zyxfo@earth.universe>
+References: <20190212010143.3729-1-virendra.kakade@ni.com>
+ <20190212010143.3729-7-virendra.kakade@ni.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kacp5tln7qg4tapl"
+Content-Disposition: inline
+In-Reply-To: <20190212010143.3729-7-virendra.kakade@ni.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds default idle polling value for devfreq devices.
-It is used in idle state, when the device is running at lowest frequency.
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- drivers/devfreq/Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+--kacp5tln7qg4tapl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 6a172d3..f0fcc5e 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -29,6 +29,19 @@ menuconfig PM_DEVFREQ
- 
- if PM_DEVFREQ
- 
-+config DEVFREQ_DEFAULT_POLLING_IDLE_MS
-+	int "Default polling interval in idle state (ms)"
-+	default 500
-+	help
-+	  The devfreq device is being polled by the devfreq framework.
-+	  There are two states for the device operation: normal and idle.
-+	  Each state has corresponding polling interval.
-+	  When a device is not heavily loaded and runs at lowest frequency,
-+	  it is in 'idle' state and longer polling interval is used.
-+	  This setting controls the idle polling interval.
-+	  It is designed to lower for power consumption.
-+	  Set this to non-zero if the default value is to big for your system.
-+
- comment "DEVFREQ Governors"
- 
- config DEVFREQ_GOV_SIMPLE_ONDEMAND
--- 
-2.7.4
+Hi,
 
+On Mon, Feb 11, 2019 at 07:01:43PM -0600, Virendra Kakade wrote:
+> Add support for E31x devices battery which is a sub-device of E31X-PMU.
+> Enables query of battery properties from device tree.
+>=20
+> Signed-off-by: Virendra Kakade <virendra.kakade@ni.com>
+> ---
+>  drivers/power/supply/Kconfig        |   6 +
+>  drivers/power/supply/Makefile       |   1 +
+>  drivers/power/supply/e31x-battery.c | 357 ++++++++++++++++++++++++++++
+>  include/linux/mfd/e31x-pmu.h        |  15 +-
+>  4 files changed, 377 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/power/supply/e31x-battery.c
+>=20
+> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> index 3d043b8fd49c..e05e02dffc49 100644
+> --- a/drivers/power/supply/Kconfig
+> +++ b/drivers/power/supply/Kconfig
+> @@ -666,4 +666,10 @@ config E31X_CHARGER
+>  	help
+>  	 This adds support for the battery charger in Ettus Research E31x PMU.
+> =20
+> +config E31X_BATTERY
+> +	tristate "Ettus Research E31x battery support"
+> +	depends on MFD_E31X_PMU
+> +	help
+> +	 This adds support for the battery in Ettus Research E31x PMU.
+> +
+>  endif # POWER_SUPPLY
+> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+> index 6f4f8ca5484e..3850d08db942 100644
+> --- a/drivers/power/supply/Makefile
+> +++ b/drivers/power/supply/Makefile
+> @@ -88,3 +88,4 @@ obj-$(CONFIG_CHARGER_CROS_USBPD)	+=3D cros_usbpd-charge=
+r.o
+>  obj-$(CONFIG_CHARGER_SC2731)	+=3D sc2731_charger.o
+>  obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+=3D sc27xx_fuel_gauge.o
+>  obj-$(CONFIG_E31X_CHARGER)	+=3D e31x-charger.o
+> +obj-$(CONFIG_E31X_BATTERY)	+=3D e31x-battery.o
+> diff --git a/drivers/power/supply/e31x-battery.c b/drivers/power/supply/e=
+31x-battery.c
+> new file mode 100644
+> index 000000000000..d44a639e8bc2
+> --- /dev/null
+> +++ b/drivers/power/supply/e31x-battery.c
+> @@ -0,0 +1,357 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+same issue as in charger driver.
+
+> +/*
+> + * Copyright (c) 2018 National Instruments Corp
+> + * Author: Virendra Kakade <virendra.kakade@ni.com>
+> + *
+> + * Ettus Research E31x battery driver
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/mutex.h>
+> +#include <linux/regmap.h>
+> +#include <linux/string.h>
+> +#include <linux/slab.h>
+> +#include <linux/power_supply.h>
+> +#include <linux/delay.h>
+> +#include <linux/mfd/e31x-pmu.h>
+
+I also believe a few of those includes are unused.
+
+> +#define E31X_PMU_BATTERY_VOLTAGE_MASK		GENMASK(23, 8)
+> +#define E31X_PMU_BATTERY_VOLTAGE_SHIFT		8
+> +#define E31X_PMU_BATTERY_TEMP_ALERT_MASK	GENMASK(7, 6)
+> +#define E31X_PMU_BATTERY_TEMP_ALERT_SHIFT	6
+> +#define E31X_PMU_BATTERY_ONLINE_MASK		BIT(5)
+> +#define E31X_PMU_BATTERY_ONLINE_SHIFT		5
+> +#define E31X_PMU_BATTERY_HEALTH_MASK		GENMASK(4, 2)
+> +#define E31X_PMU_BATTERY_HEALTH_SHIFT		2
+> +#define E31X_PMU_BATTERY_STATUS_MASK		GENMASK(1, 0)
+> +#define E31X_PMU_BATTERY_STATUS_SHIFT		0
+> +
+> +#define E31X_PMU_GAUGE_TEMP_MASK		GENMASK(31, 16)
+> +#define E31X_PMU_GAUGE_TEMP_SHIFT		16
+> +#define E31X_PMU_GAUGE_CHARGE_MASK		GENMASK(15, 0)
+> +#define E31X_PMU_GAUGE_CHARGE_SHIFT		0
+> +
+> +#define E31X_PMU_GAUGE_VOLTAGE_MASK		GENMASK(15, 0)
+> +#define E31X_PMU_GAUGE_VOLTAGE_SHIFT		0
+> +
+> +#define E31X_PMU_GAUGE_CHARGE_LAST_FULL_MASK	GENMASK(15, 0)
+> +#define E31X_PMU_GAUGE_CHARGE_LAST_FULL_SHIFT	0
+> +
+> +#define E31X_BATTERY_CHARGE_DESIGN_FULL		(3200000)
+> +#define E31X_PMU_VSENSE				(6000)
+> +
+> +struct e31x_battery_dev {
+> +	struct regmap *regmap;
+> +	struct power_supply *supply;
+> +};
+> +
+> +static int e31x_battery_set_prop(struct power_supply *psy,
+> +				 enum power_supply_property psp,
+> +				 const union power_supply_propval *val)
+> +{
+> +	return 0;
+> +}
+
+If you don't have writable properties you do not have to
+specify any handler.
+
+> +static int e31x_battery_get_status(struct e31x_battery_dev *bat,
+> +				   union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_CHARGER, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(CHARGER_ONLINE, value);
+> +
+> +	/* if charger is offline, we're discharging, period */
+> +	if (!value) {
+> +		val->intval =3D POWER_SUPPLY_STATUS_DISCHARGING;
+> +		return 0;
+> +	}
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_BATTERY, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value &=3D E31X_PMU_BATTERY_STATUS_MASK;
+> +
+> +	switch (value) {
+> +	case 0x0:
+> +		val->intval =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +		break;
+> +	case 0x1:
+> +		val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
+> +		break;
+> +	case 0x2:
+> +		val->intval =3D POWER_SUPPLY_STATUS_FULL;
+> +		break;
+> +	case 0x3:
+> +		val->intval =3D POWER_SUPPLY_STATUS_DISCHARGING;
+> +		break;
+> +	default:
+> +		return -EIO;
+> +	};
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_health(struct e31x_battery_dev *bat,
+> +				   union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_BATTERY, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(BATTERY_HEALTH, value);
+> +
+> +	switch (value) {
+> +	case 0x00:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_GOOD;
+> +		break;
+> +	case 0x01:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_UNSPEC_FAILURE;
+> +		break;
+> +	case 0x02:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_OVERVOLTAGE;
+> +		break;
+> +	case 0x03:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_OVERHEAT;
+> +		break;
+> +	case 0x04:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_COLD;
+> +		break;
+> +	default:
+> +		val->intval =3D POWER_SUPPLY_HEALTH_UNKNOWN;
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_online(struct e31x_battery_dev *bat,
+> +				   union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_BATTERY, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	val->intval =3D !!(value & E31X_PMU_BATTERY_ONLINE_MASK);
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_voltage_now(struct e31x_battery_dev *bat,
+> +					union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_BATTERY, &value);
+> +
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(BATTERY_VOLTAGE, value);
+> +
+> +	val->intval =3D 10000 * (value * E31X_PMU_VSENSE / GENMASK(15, 0));
+> +
+> +	return 0;
+> +}
+> +
+> +#define E31X_PMU_BIN_TO_UAH(x) ((x) * 53)
+> +#define E31X_PMU_UAH_TO_BIN(x) ((x) / 53)
+> +
+> +static int e31x_battery_get_charge_now(struct e31x_battery_dev *bat,
+> +				       union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_GAUGE, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(GAUGE_CHARGE, value);
+> +	val->intval =3D E31X_PMU_BIN_TO_UAH(value);
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_temp(struct e31x_battery_dev *bat,
+> +				 union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_GAUGE, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(GAUGE_TEMP, value);
+> +	val->intval =3D 10 * (((600 * value) / 0xffff) - 273);
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_charge_full(struct e31x_battery_dev *bat,
+> +					union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_LAST, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(GAUGE_CHARGE_LAST_FULL, value);
+> +	val->intval =3D E31X_PMU_BIN_TO_UAH(value);
+> +
+> +	return 0;
+> +}
+> +
+> +static const int e31x_pmu_temp_values[] =3D {
+> +	600, 800, 1000, 1200
+> +};
+> +
+> +static int e31x_battery_get_temp_alert_max(struct e31x_battery_dev *bat,
+> +					   union power_supply_propval *val)
+> +{
+> +	u32 value;
+> +	int err;
+> +	int i;
+> +
+> +	err =3D regmap_read(bat->regmap, E31X_PMU_REG_BATTERY, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value =3D E31X_PMU_GET_FIELD(BATTERY_TEMP_ALERT, value);
+> +	for (i =3D 1; i < ARRAY_SIZE(e31x_pmu_temp_values); i++)
+> +		if (e31x_pmu_temp_values[i] > value)
+> +			break;
+> +
+> +	val->intval =3D e31x_pmu_temp_values[i - 1];
+> +
+> +	return 0;
+> +}
+> +
+> +static int e31x_battery_get_prop(struct power_supply *psy,
+> +				 enum power_supply_property psp,
+> +				 union power_supply_propval *val)
+> +{
+> +	struct e31x_battery_dev *battery =3D power_supply_get_drvdata(psy);
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_STATUS:
+> +		return e31x_battery_get_status(battery, val);
+> +	case POWER_SUPPLY_PROP_HEALTH:
+> +		return e31x_battery_get_health(battery, val);
+> +	case POWER_SUPPLY_PROP_ONLINE:
+> +		return e31x_battery_get_online(battery, val);
+> +	case POWER_SUPPLY_PROP_TECHNOLOGY:
+> +		val->intval =3D POWER_SUPPLY_TECHNOLOGY_LION;
+> +		break;
+> +	case POWER_SUPPLY_PROP_TEMP:
+> +		return e31x_battery_get_temp(battery, val);
+> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +		return e31x_battery_get_voltage_now(battery, val);
+> +	case POWER_SUPPLY_PROP_CHARGE_NOW:
+> +		return e31x_battery_get_charge_now(battery, val);
+> +	case POWER_SUPPLY_PROP_CHARGE_FULL:
+> +		return e31x_battery_get_charge_full(battery, val);
+> +	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
+> +		val->intval =3D E31X_BATTERY_CHARGE_DESIGN_FULL;
+> +		return 0;
+> +	case POWER_SUPPLY_PROP_TEMP_ALERT_MAX:
+> +		return e31x_battery_get_temp_alert_max(battery, val);
+> +	default:
+> +		break;
+> +	};
+> +
+> +	return 0;
+> +}
+> +
+> +static enum power_supply_property e31x_battery_props[] =3D {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_HEALTH,
+> +	POWER_SUPPLY_PROP_ONLINE,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_TEMP,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_TEMP_ALERT_MAX,
+> +};
+> +
+> +static int e31x_battery_prop_writeable(struct power_supply *psy,
+> +				       enum power_supply_property psp)
+> +{
+> +	return psp =3D=3D POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN ||
+> +	       psp =3D=3D POWER_SUPPLY_PROP_SCOPE;
+> +}
+
+You'r e31x_battery_set_prop() is empty and you do not even
+expose POWER_SUPPLY_PROP_SCOPE.
+
+> +static const struct power_supply_desc e31x_battery_desc =3D {
+> +	.name =3D "e31x-battery",
+> +	.type =3D POWER_SUPPLY_TYPE_BATTERY,
+> +	.properties =3D e31x_battery_props,
+> +	.num_properties =3D ARRAY_SIZE(e31x_battery_props),
+> +	.property_is_writeable =3D e31x_battery_prop_writeable,
+> +	.get_property =3D e31x_battery_get_prop,
+> +	.set_property =3D e31x_battery_set_prop,
+> +};
+> +
+> +static const struct of_device_id e31x_battery_id[] =3D {
+> +	{ .compatible =3D "ni,e31x-battery" },
+> +	{ },
+> +};
+> +
+> +static int e31x_battery_probe(struct platform_device *pdev)
+> +{
+> +	struct power_supply_config psy_cfg =3D {};
+> +	struct e31x_battery_dev *battery;
+> +
+> +	if (!of_device_is_available(pdev->dev.of_node))
+> +		return -ENODEV;
+
+Why is this needed? I would expect, that the driver is not being
+probed for a disabled node.
+
+> +	battery =3D devm_kzalloc(&pdev->dev, sizeof(*battery), GFP_KERNEL);
+> +	if (!battery)
+> +		return -ENOMEM;
+> +
+> +	battery->regmap =3D syscon_regmap_lookup_by_phandle(\
+
+useless \
+
+> +			pdev->dev.parent->of_node, "regmap");
+> +
+> +	psy_cfg.of_node =3D pdev->dev.of_node;
+> +	psy_cfg.drv_data =3D battery;
+> +
+> +	battery->supply =3D devm_power_supply_register(&pdev->dev,
+> +						     &e31x_battery_desc,
+> +						     &psy_cfg);
+> +	if (IS_ERR(battery->supply))
+> +		return PTR_ERR(battery->supply);
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver e31x_battery_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "e31x-battery",
+> +		.of_match_table =3D e31x_battery_id,
+> +	},
+> +	.probe =3D e31x_battery_probe,
+> +};
+> +module_platform_driver(e31x_battery_driver);
+> +
+> +MODULE_AUTHOR("Virendra Kakade <virendra.kakade@ni.com>");
+> +MODULE_DESCRIPTION("E31x battery driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/e31x-pmu.h b/include/linux/mfd/e31x-pmu.h
+> index e0649845fe4d..0441f8f896ca 100644
+> --- a/include/linux/mfd/e31x-pmu.h
+> +++ b/include/linux/mfd/e31x-pmu.h
+> @@ -11,13 +11,24 @@
+> =20
+>  #include <linux/bitops.h>
+> =20
+> -#define E31X_PMU_REG_MISC      0x04
+> -#define E31X_PMU_REG_CHARGER   0x0c
+> +#define E31X_PMU_REG_MISC	0x04
+> +#define E31X_PMU_REG_BATTERY	0x08
+> +#define E31X_PMU_REG_CHARGER	0x0c
+> +#define E31X_PMU_REG_GAUGE	0x10
+> +#define E31X_PMU_REG_STATUS	0x14
+> +#define E31X_PMU_REG_LAST	0x18
+> +#define E31X_PMU_REG_EEPROM	0x1c
+> =20
+>  #define E31X_PMU_GET_FIELD(name, reg) \
+>  	(((reg) & E31X_PMU_## name ##_MASK) >> \
+>  	E31X_PMU_## name ##_SHIFT)
+> =20
+> +/* the eeprom register */
+> +static const u32 E31X_PMU_EEPROM_AUTOBOOT_MASK =3D BIT(0);
+> +static const u32 E31X_PMU_EEPROM_AUTOBOOT_SHIFT;
+> +static const u32 E31X_PMU_EEPROM_DB_POWER_MASK =3D BIT(1);
+> +static const u32 E31X_PMU_EEPROM_DB_POWER_SHIFT =3D 1;
+> +
+>  #define E31X_PMU_CHARGER_ONLINE_MASK	BIT(2)
+>  #define E31X_PMU_CHARGER_ONLINE_SHIFT	2
+
+Otherwise looks good.
+
+-- Sebastian
+
+--kacp5tln7qg4tapl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxjSC8ACgkQ2O7X88g7
++prb2Q//Zo09R/HxYfQp8BQX1SU8/qtc7LypDeHHRPPl2kl7MDw+ZPj32giPVuu3
+RaiRq41QaraE3C2yBIaZU5772s+wysoDdAOvCarROjavd0VS3Mq6EsWw9Teop0L0
+RKuNls3KJuW4BkoMtp/zFhlrE3vGXM8rt8xar4sYrf1ziDLnHuhcnYD8r2b8IXe8
+7mu5lZJSDUH+xF54fp3I8Xav1WerP471vnl1fYRx2G8rtIbpRppeVK5HQVYDPcES
+hY/RhiNdRoQbtUgtxqhMZlcjn69QNgBGAQmu1m7r/v47PRB28DNXPbwnQCOCcSrz
+/ZWZvnrxsVQhsJguub5n6XCvKXGCizlHE2M8QhW2yvU0+0wHzRlQAMdShqEyd8cT
+nuzDvlNL4tCZuC3JLtygSo1Y2dRXh4Bg3C0j4oCdX3TAwIRVPZYVrVtuwqP+OY1B
+Ps2gM+zyvi2ESF6qfqFWaTuFUfPNJtXoAcS9pNmbewkC8mOQeQAAxkFBWHih4vD/
+YG4Q7Vad03tgH64/LSDOQxpbz+3zSGErrhPE566pjzlDKzpVwAHUIDhg7WlYHP7F
+7/1z7p8rOHTQDE6oO8ZxdNt1KLvFJP3LNZv7L6wLGgPEntXhzZKx1FeZ/pDQL4pN
+DptxH0SZJY2RrgzWhsX7C0A6DPV3VPO4lNGyu6EKDnxEaXwetrY=
+=Hc7y
+-----END PGP SIGNATURE-----
+
+--kacp5tln7qg4tapl--
