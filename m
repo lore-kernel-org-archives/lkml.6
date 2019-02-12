@@ -2,124 +2,116 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACB9C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB233C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62911217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549988467;
-	bh=2HMe8DI7Wr6lW8obRpDZoBKFRyZ9MsGnT60qDsaAFZY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=UZaPxc3Thx+Yzaz4MJn3DDvZ7Rw81qMIHiB432ZYUl9E3g0WdxakeC+XgGh2gty0+
-	 eMYCJCFIM6yg84guq7jvk9CabtrxnDDkGXZe2mAPMf2n2KAJTcCX4fkjfa/41Pqr3h
-	 EyUe2scTerctv5rWNcgDRE5SZFNP6xo71hYAcZ0c=
+	by mail.kernel.org (Postfix) with ESMTP id AA49D217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:21:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uu8EPKB/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbfBLQVF (ORCPT
+        id S1731019AbfBLQV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:21:05 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46389 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfBLQVF (ORCPT
+        Tue, 12 Feb 2019 11:21:56 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50635 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbfBLQV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:21:05 -0500
-Received: by mail-ot1-f65.google.com with SMTP id w25so5237690otm.13;
-        Tue, 12 Feb 2019 08:21:04 -0800 (PST)
+        Tue, 12 Feb 2019 11:21:56 -0500
+Received: by mail-it1-f193.google.com with SMTP id z7so8611674iti.0;
+        Tue, 12 Feb 2019 08:21:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8btgNXZv4xnAj7Q1ZEA/tKZmZrLdKCuelXmTGcsS/EM=;
+        b=Uu8EPKB/gHIzhUcCUdAAS/eXGcxTpi9xo9JIon7sKTENGaJ2RpSs6WxOmZ9HGCSuXT
+         YY1dTe6eZxwVNtexdzfuZbCy7v1GUxzX5FJybU053+w/dEblDoACaOk/D1707GQr6qBE
+         yEDSGjgL1aWqc+26slZQVMR1QCyrdQYJJQBB/Yu3qFly373mItN+RoJdpr+QSroHSGiZ
+         JslyF1ydkTUDJXNFW07eQydoM6LplaF7YGm8otUgjZk3ovQH+hU8hfPYpxtPeYGJtCm0
+         X3+WVkyp4OQ23ic11+64OOU/CEBniD9FpLaA5g1kt5TVJRkiJPTH6RZ9YkWpCjN6Mgjh
+         eQig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Do9rfiLxIAhp7ZjItRDSZ03DtQyTyuV/ANb87gWojQs=;
-        b=PbG9XnKfGX8/SR91hcEsF4PtglcYQLcm44axq7E8pPrbOfZ6geUWjruThE8ZqGwr91
-         zxYixluQRlurTOjp2ch9H2jEqtaHRwDJXc6tjkIztq9GaXRxAXaDEoqUodfpAfp9NCMv
-         hquvREIrS5Gl0JMnyfO8SzX9B3urkgl6dgygDRFLFKvewmx+yXF1GVmpxVz58ThZ3LeT
-         NcfzzTkY8s6LxG1BtyvU5qSzIDDTFiezl70s3gX9WrIUEUbxMSqmt67D9UD7w0we5dE7
-         UQCF4po4GkScr4Ni8L5rLvsRw95RwupeKtEx4aAjUHxe8ZOlX7L8EMFW7QGzIOpql6+w
-         Ny3A==
-X-Gm-Message-State: AHQUAubtLzWO1QZT0kZSxjYr/3wfnENGz1MZZb8cnCGC+Bgg74mC1pj5
-        J4CzhdpdXiX3rtkivfiN5+ax4pjRj0K7S2QipJo=
-X-Google-Smtp-Source: AHgI3IawrDb+QRaJHQl5/YdYpVvGqDhk7y+QAqnE2xJBh94alX1xE+m8lUN4wYUhnVq5v4X+dOw6xcl0IhXAFxHA3Yo=
-X-Received: by 2002:a9d:7990:: with SMTP id h16mr4432605otm.222.1549988464008;
- Tue, 12 Feb 2019 08:21:04 -0800 (PST)
-MIME-Version: 1.0
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <20190212140924.GA14444@kroah.com>
- <CAPDyKFoSGO5Y8wOF8Jd=b7DDSz6Lb2M4+pn7EXOJ4U_AFz+4gQ@mail.gmail.com> <20190212150618.GB19188@kroah.com>
-In-Reply-To: <20190212150618.GB19188@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 12 Feb 2019 17:20:52 +0100
-Message-ID: <CAJZ5v0judv8gvK53Zidn=OEkbgms-5mgQL2URpdfKCrO2nkXoQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] driver core: Fixes related to device links
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8btgNXZv4xnAj7Q1ZEA/tKZmZrLdKCuelXmTGcsS/EM=;
+        b=W0DhSsqUonHITKXWwcJOPgIgDqvv0ipDDBJcBGw66IY/dJrx1dcIdyAQWMrcvTw0z+
+         Uz8g94K65OUvGQYaRFMGGt6TkG4yDQ4kzNyUq09kIsCiLDUC0AMVfprXdo9UlsuC/+Yz
+         +5jbU4TKPoTvB9mXxKDtYfoG61WIenqcVA3eET6oD7Q++Ce26KsZpTX3Vq1XQlA1+2Qb
+         CxQQ9SmoXjfHWSthET1QeOEufq5JtBFT4OqB6ixYSKMA/Ln3luRJcitFA1kzB9z/hPaE
+         vxVVs0jRVy7ZqFExFqrSFKI7jz1yxj4tdaxHgP9jWhZnKYb4mFi2UAJwwCRl9IcffIbP
+         DljA==
+X-Gm-Message-State: AHQUAuZecZiAhY3tCAk4WFqofCGI2s4iA1SieCoLG6qIavScXHM2ib/i
+        EH6zpBenFT9N1/8uIFeqhDvJzJbn
+X-Google-Smtp-Source: AHgI3Ibu2BkRqrUMY/9rZ6e64MU3jSldCbyY4Vqq+njQ1Ks6ZUiU5sjp9mT4TIPKmvIZdyMjXxTKRQ==
+X-Received: by 2002:a24:3982:: with SMTP id l124mr2091595ita.116.1549988515530;
+        Tue, 12 Feb 2019 08:21:55 -0800 (PST)
+Received: from localhost.localdomain ([198.52.185.227])
+        by smtp.gmail.com with ESMTPSA id o16sm1564013ito.19.2019.02.12.08.21.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 08:21:54 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] power: supply: ds2782: fix possible use-after-free on remove
+Date:   Tue, 12 Feb 2019 11:21:49 -0500
+Message-Id: <20190212162149.21583-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 4:06 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Feb 12, 2019 at 03:52:53PM +0100, Ulf Hansson wrote:
-> > On Tue, 12 Feb 2019 at 15:09, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Tue, Feb 12, 2019 at 01:01:13PM +0100, Rafael J. Wysocki wrote:
-> > > > Hi Greg at al,
-> > > >
-> > > > These fix two issues on top of the recent device links material in
-> > > > driver-core/driver-core-next.
-> > > >
-> > > > The first one fixes a race condition that may trigger when
-> > > > __pm_runtime_set_status() is used incorrectly (that is, when it is
-> > > > called with PM-runtime enabled for the target device and working).
-> > > >
-> > > > The second one fixes a supplier PM-runtime usage counter imbalance
-> > > > resulting from adding and removing (e.g. in the error code path) a
-> > > > stateless device link to it from within the consumer driver's probe
-> > > > callback.
-> > > >
-> > > > Please refer to the patch changelogs for details.
-> > >
-> > > Looks good, all now queued up, thanks.
-> >
-> > Greg, please don't get me wrong, but ~1.5 hours isn't sufficient for
-> > me to review/test submitted patches.
-> >
-> > I have been trying to collaborate (review/test) device links related
-> > code with Rafael, but what's the point if you queue up the patches,
-> > before I even got the change to look at them. Shall I interpret it as
-> > you don't care about me reviewing this, then just tell me so I don't
-> > have to waste my time.
->
-> As they are just in my -testing branch, I can easily drop them now if
-> you find problems.  I didn't realize that Rafael was wanting you to
-> review this as they were marked as "fixes:" for previous patches.
+In remove(), use cancel_delayed_work_sync() to cancel the
+delayed work. Otherwise there's a chance that this work
+will continue to run until after the device has been removed.
 
-Sorry for the confusion.
+While we're here, fix the deallocation order in remove(),
+to correspond to the inverse of the probe() allocation
+order. This guarantees that any remaining work can run
+to completion with all driver structures still intact.
 
-From my perspective they fix issues on top of the previous commits as
-indicated by the Fixes: tags and they work on my systems, but even
-though *I* think that they are all good, there still may be problems
-with them that I don't see.  As usual. :-)
+This issue was detected with the help of Coccinelle.
 
-I guess I should have sent them as RFC this time.
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
 
-Cheers,
-Rafael
+v2: fix silly use-after-free in remove()
+
+ drivers/power/supply/ds2782_battery.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply/ds2782_battery.c
+index 019c58493e3d..04b0fe7d7d62 100644
+--- a/drivers/power/supply/ds2782_battery.c
++++ b/drivers/power/supply/ds2782_battery.c
+@@ -319,17 +319,17 @@ static void ds278x_power_supply_init(struct power_supply_desc *battery)
+ static int ds278x_battery_remove(struct i2c_client *client)
+ {
+ 	struct ds278x_info *info = i2c_get_clientdata(client);
++	int id = info->id;
+ 
+ 	power_supply_unregister(info->battery);
++	cancel_delayed_work_sync(&info->bat_work);
+ 	kfree(info->battery_desc.name);
++	kfree(info);
+ 
+ 	mutex_lock(&battery_lock);
+-	idr_remove(&battery_id, info->id);
++	idr_remove(&battery_id, id);
+ 	mutex_unlock(&battery_lock);
+ 
+-	cancel_delayed_work(&info->bat_work);
+-
+-	kfree(info);
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
+
