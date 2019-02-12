@@ -2,139 +2,103 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD66C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D13C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CDA62190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:11:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDMlVK15"
+	by mail.kernel.org (Postfix) with ESMTP id E6A912190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbfBLSLP (ORCPT
+        id S1730791AbfBLSLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:11:15 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46104 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfBLSLP (ORCPT
+        Tue, 12 Feb 2019 13:11:55 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47882 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfBLSLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:11:15 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g6so1647121pfh.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:11:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=H3EZ/k5eiFC2++zTp5N9yx8Otatv/oYuG+NtBDOrENM=;
-        b=NDMlVK15avwTx8RDzfhY98wKBKk/ztrvpzrarPvlz0KpiaJsQv7YEnTCzKEteHy8+B
-         oWPyffDHxFjvgQYKPeWztEeycgdCySUOaEij+5+gt4Prp/ia07vqLXtxDKW7Kh1fXPFa
-         j2IgpHuZ1EqfWmFNtEx49WWHt03zt8e6qdWD93caNzZIzOKnSxuA4dbQYS00NOWffiCA
-         5UPlB+2KfKGeZ4LXlleH8+7ApIueAMAcTKY0JFDMEWV5+EJSJYLF95XCIsTGbJiOYDF5
-         Yh/gCtmWRWyJ3h18v3rQhagy3cY/xTAXnUzETCtjEXorNC+sHS3wCujif0JO99CWFFmH
-         KmjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H3EZ/k5eiFC2++zTp5N9yx8Otatv/oYuG+NtBDOrENM=;
-        b=sP+m3cJENkd2osiIe2cJY5/vD425TKxY+WCEikrh+byujwlc+Fd60/2T5G6GkbXguI
-         LSnkjLCU5IxPatMOkwFNfS/MbpMz5e2rnwv86ibA0/wVu8RQXvU+yLJD2o1vPPLMwzDi
-         nIGVa22GRtMCnkhICPf1QxsPCYzbGIJCuxmCHS5hvOWia6YPGeWysNs+4YlXVmdoxBWX
-         5oFUAk58Z5Hd6iQ7dGmjx7/MRElARe2vwhXQKc9GjnJvBT6X7PHOgKx+l41oz/8YjARo
-         zQg/cAagUus0b65yVmESCUfVqlkVle93PNN1+eJTkk58iPSOvUQdg+s1lnGCaUKP9jB4
-         /bhg==
-X-Gm-Message-State: AHQUAuYLlK9xqoQSfDMK/UY1tl6aDKLQGmx7IJbKeIszSevC86HJmV7A
-        wIy7wPdSeufaeS8+RhBlJKg=
-X-Google-Smtp-Source: AHgI3Ia5tSS2jObDCcKuxh2ToolBYEJnRENAlX3GISMDC8ARkMoD4X5Ho15ylCb5TgoVme3cy6Ve8A==
-X-Received: by 2002:a63:2ad4:: with SMTP id q203mr4860732pgq.43.1549995074739;
-        Tue, 12 Feb 2019 10:11:14 -0800 (PST)
-Received: from localhost.localdomain ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id n11sm908486pff.32.2019.02.12.10.11.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Feb 2019 10:11:14 -0800 (PST)
-From:   Xiang Xiao <xiaoxiang781216@gmail.com>
-X-Google-Original-From: Xiang Xiao <xiaoxiang@xiaomi.com>
-To:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org
-Cc:     Xiang Xiao <xiaoxiang@xiaomi.com>
-Subject: [PATCH] printk: add KERN_NOTIME to skip the timestamp
-Date:   Wed, 13 Feb 2019 02:11:05 +0800
-Message-Id: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 12 Feb 2019 13:11:54 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0502380275; Tue, 12 Feb 2019 19:11:45 +0100 (CET)
+Date:   Tue, 12 Feb 2019 19:11:52 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 4.9 034/137] ARM: mmp/mmp2: dt: enable the clock
+Message-ID: <20190212181151.GB2723@amd>
+References: <20190211141811.964925535@linuxfoundation.org>
+ <20190211141815.120436242@linuxfoundation.org>
+ <20190211205125.GB22473@amd>
+ <20190212165036.GE69686@sasha-vm>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
+Content-Disposition: inline
+In-Reply-To: <20190212165036.GE69686@sasha-vm>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because log may already add the timestamp sometime
 
-Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
----
- include/linux/kern_levels.h | 2 ++
- include/linux/printk.h      | 1 +
- kernel/printk/printk.c      | 7 ++++++-
- 3 files changed, 9 insertions(+), 1 deletion(-)
+--i0/AhcQY5QxfSsSZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/kern_levels.h b/include/linux/kern_levels.h
-index d237fe8..ed2aec6 100644
---- a/include/linux/kern_levels.h
-+++ b/include/linux/kern_levels.h
-@@ -23,6 +23,8 @@
-  */
- #define KERN_CONT	KERN_SOH "c"
- 
-+#define KERN_NOTIME	KERN_SOH "t"	/* don't print the timestamp */
-+
- /* integer equivalents of KERN_<LEVEL> */
- #define LOGLEVEL_SCHED		-2	/* Deferred messages from sched code
- 					 * are set to this special level */
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 77740a5..be12ac4 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -20,6 +20,7 @@ static inline int printk_get_level(const char *buffer)
- 		case '0' ... '7':
- 		case 'd':	/* KERN_DEFAULT */
- 		case 'c':	/* KERN_CONT */
-+		case 't':	/* KERN_NOTIME */
- 			return buffer[1];
- 		}
- 	}
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index d3d1703..0688cf2 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -346,6 +346,7 @@ enum log_flags {
- 	LOG_NEWLINE	= 2,	/* text ended with a newline */
- 	LOG_PREFIX	= 4,	/* text started with a prefix */
- 	LOG_CONT	= 8,	/* text is a fragment of a continuation line */
-+	LOG_NOTIME	= 16,	/* don't print the timestamp */
- };
- 
- struct printk_log {
-@@ -1247,7 +1248,7 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
- 
- 	if (syslog)
- 		len = print_syslog((msg->facility << 3) | msg->level, buf);
--	if (time)
-+	if (time && !(msg->flags & LOG_NOTIME))
- 		len += print_time(msg->ts_nsec, buf + len);
- 	return len;
- }
-@@ -1873,6 +1874,10 @@ int vprintk_store(int facility, int level,
- 				break;
- 			case 'c':	/* KERN_CONT */
- 				lflags |= LOG_CONT;
-+				break;
-+			case 't':	/* KERN_NOTIME */
-+				lflags |= LOG_NOTIME;
-+				break;
- 			}
- 
- 			text_len -= 2;
--- 
-2.7.4
+On Tue 2019-02-12 11:50:36, Sasha Levin wrote:
+> On Mon, Feb 11, 2019 at 09:51:25PM +0100, Pavel Machek wrote:
+> >Hi!
+> >
+> >>4.9-stable review patch.  If anyone has any objections, please let me k=
+now.
+> >>
+> >>------------------
+> >>
+> >>[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
+> >>
+> >>The device-tree booted MMP2 needs to enable the timer clock, otherwise
+> >>it would stop ticking when the boot finishes.
+> >>
+> >>It can also use the clock rate from the clk, the non-DT boards need to
+> >>keep using the hardcoded rates.
+> >>
+> >>Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> >>Acked-by: Pavel Machek <pavel@ucw.cz>
+> >>Signed-off-by: Olof Johansson <olof@lixom.net>
+> >>Signed-off-by: Sasha Levin <sashal@kernel.org>
+> >
+> >While I agree this is good idea for mainline (thus my ack), I don't
+> >think it is suitable for stable, as older kernels will not run on OLPC
+> >in useful way, anyway.
+>=20
+> Interesting, so OLPC doesn't run on 4.20?
 
+These are for OLPC-1.75 (arm based). I'd be surprised if it booted
+there...
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--i0/AhcQY5QxfSsSZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxjDGcACgkQMOfwapXb+vIvgwCff4304IDf33YfjsyTuaYfalQM
+1iMAoLDedgxctV82oIiIoglPcG1kOHYS
+=zlcc
+-----END PGP SIGNATURE-----
+
+--i0/AhcQY5QxfSsSZ--
