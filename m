@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CC8C282CE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F51C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6CD21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5E6F2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfBLC7g (ORCPT
+        id S1728202AbfBLC7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:59:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33854 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 21:59:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59362 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfBLC7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:59:35 -0500
+        id S1726864AbfBLC7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 21:59:47 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8CE4781254;
-        Tue, 12 Feb 2019 02:59:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 413F3C06C9F8;
+        Tue, 12 Feb 2019 02:59:47 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3690600C6;
-        Tue, 12 Feb 2019 02:59:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 10907600C6;
+        Tue, 12 Feb 2019 02:59:35 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -44,68 +44,79 @@ Cc:     David Hildenbrand <david@redhat.com>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH v2 15/26] userfaultfd: wp: drop _PAGE_UFFD_WP properly when fork
-Date:   Tue, 12 Feb 2019 10:56:21 +0800
-Message-Id: <20190212025632.28946-16-peterx@redhat.com>
+Subject: [PATCH v2 16/26] userfaultfd: wp: add pmd_swp_*uffd_wp() helpers
+Date:   Tue, 12 Feb 2019 10:56:22 +0800
+Message-Id: <20190212025632.28946-17-peterx@redhat.com>
 In-Reply-To: <20190212025632.28946-1-peterx@redhat.com>
 References: <20190212025632.28946-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 02:59:35 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 12 Feb 2019 02:59:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UFFD_EVENT_FORK support for uffd-wp should be already there, except
-that we should clean the uffd-wp bit if uffd fork event is not
-enabled.  Detect that to avoid _PAGE_UFFD_WP being set even if the VMA
-is not being tracked by VM_UFFD_WP.  Do this for both small PTEs and
-huge PMDs.
+Adding these missing helpers for uffd-wp operations with pmd
+swap/migration entries.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/huge_memory.c | 8 ++++++++
- mm/memory.c      | 8 ++++++++
- 2 files changed, 16 insertions(+)
+ arch/x86/include/asm/pgtable.h     | 15 +++++++++++++++
+ include/asm-generic/pgtable_uffd.h | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 817335b443c2..fb2234cb595a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -938,6 +938,14 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	ret = -EAGAIN;
- 	pmd = *src_pmd;
- 
-+	/*
-+	 * Make sure the _PAGE_UFFD_WP bit is cleared if the new VMA
-+	 * does not have the VM_UFFD_WP, which means that the uffd
-+	 * fork event is not enabled.
-+	 */
-+	if (!(vma->vm_flags & VM_UFFD_WP))
-+		pmd = pmd_clear_uffd_wp(pmd);
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 6863236e8484..18a815d6f4ea 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1401,6 +1401,21 @@ static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+ {
+ 	return pte_clear_flags(pte, _PAGE_SWP_UFFD_WP);
+ }
 +
- #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
- 	if (unlikely(is_swap_pmd(pmd))) {
- 		swp_entry_t entry = pmd_to_swp_entry(pmd);
-diff --git a/mm/memory.c b/mm/memory.c
-index b5d67bafae35..c2035539e9fd 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -788,6 +788,14 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		pte = pte_mkclean(pte);
- 	pte = pte_mkold(pte);
- 
-+	/*
-+	 * Make sure the _PAGE_UFFD_WP bit is cleared if the new VMA
-+	 * does not have the VM_UFFD_WP, which means that the uffd
-+	 * fork event is not enabled.
-+	 */
-+	if (!(vm_flags & VM_UFFD_WP))
-+		pte = pte_clear_uffd_wp(pte);
++static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
++{
++	return pmd_set_flags(pmd, _PAGE_SWP_UFFD_WP);
++}
 +
- 	page = vm_normal_page(vma, addr, pte);
- 	if (page) {
- 		get_page(page);
++static inline int pmd_swp_uffd_wp(pmd_t pmd)
++{
++	return pmd_flags(pmd) & _PAGE_SWP_UFFD_WP;
++}
++
++static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
++{
++	return pmd_clear_flags(pmd, _PAGE_SWP_UFFD_WP);
++}
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+ 
+ #define PKRU_AD_BIT 0x1
+diff --git a/include/asm-generic/pgtable_uffd.h b/include/asm-generic/pgtable_uffd.h
+index 643d1bf559c2..828966d4c281 100644
+--- a/include/asm-generic/pgtable_uffd.h
++++ b/include/asm-generic/pgtable_uffd.h
+@@ -46,6 +46,21 @@ static __always_inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+ {
+ 	return pte;
+ }
++
++static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
++{
++	return pmd;
++}
++
++static inline int pmd_swp_uffd_wp(pmd_t pmd)
++{
++	return 0;
++}
++
++static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
++{
++	return pmd;
++}
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+ 
+ #endif /* _ASM_GENERIC_PGTABLE_UFFD_H */
 -- 
 2.17.1
 
