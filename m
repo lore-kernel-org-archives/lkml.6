@@ -2,234 +2,375 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D94C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EF6C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADE9218D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 242952077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:18:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ptw0zsLM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ES5DFkgB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbfBLKST (ORCPT
+        id S1728661AbfBLKSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:18:19 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33161 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKSS (ORCPT
+        Tue, 12 Feb 2019 05:18:41 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45108 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLKSk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:18:18 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y10so1100737plp.0;
-        Tue, 12 Feb 2019 02:18:18 -0800 (PST)
+        Tue, 12 Feb 2019 05:18:40 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w17so1978259wrn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 02:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dnvL7O10vtzKSR6S71KX+QJh6IMCcrMrOYEQFjMAKnM=;
-        b=Ptw0zsLMlCJolK6CpGn31rFbiH0eHa+rZ6a5VdSAx8KkOhVkQYLuM8CUDZaRl87KcR
-         haHw21vCx1IxjQHzbmDTFRekF2IWgAqnRssWjx/rNGNSgHJKO81KcCFPHPAIDS0G1bgw
-         bD8GlTqWVFJXr+jZUr1BkE+A+GTdVa7eyD4SkTNnGPI2ZnySd9zutfu8w9lXRu7CDdax
-         1v6GMx11LH8NTkn1AoD9AnxRWoWKA9ib25/Kjo2jWYbMmWtRLdFzSX90m6EGiEpV/aye
-         uaBSnsWSIycozCDrbd8gSrJbvA2m/432MLPu40/OBKG+OvSEJtm+XB86RsfV/BxfQQfz
-         MvQg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VarNXRZhmWk1LiZk3X86VV33rRpJ8lAghNuVOiRy/S0=;
+        b=ES5DFkgBvWUGlUrGv+UFHwID/afwzDgEtfDg/C4CDrgdFtcLBezFtzIGDQeUoR1Evt
+         CWQiZlGBgXCLLrbAIRKTHnkdb6i6NFTh7g3/cu+E4Xza42oiRUHoiezFYA2mLJUgmjbZ
+         Y+q1iLMtIBb3ENbbLGh4NWPx47Q7KGqSRZuKq76xGcVra4rWeSpLw9vwOCHwNWtynKaE
+         Ou9jF6NUpnSvMmwHEGb4CAoybdMX9m33wId7DI9lc8ePfiJrnURrwRggdsS/XYj8OTuA
+         ZiTRJCIZk0J+Es5vjx5QXjQpcOY/8hpkZXWeE2EGnt/lA3MGyjUCqQq5oLAoEaHRrdIM
+         6nSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dnvL7O10vtzKSR6S71KX+QJh6IMCcrMrOYEQFjMAKnM=;
-        b=mHWIHiY2OTsCfoi/MczPU6epXe1LBDlQEe7UgayzT1pgsjBwnrxqtxL8iIYAMvo8NJ
-         Ho02OZGivw+IuFgTRS95VNfx6Awz181OQdeZNtaMalZeVsU16MMeJuDa0y1gH2LjpsdM
-         T1z+qfFU0uAp2WYEvyDovfReOHq3/jpom+Stt2TMzF9ZmpBMBnYh4XRu/gzEL1WqQvQI
-         VOYr0Ol5hMq1F3ouIiJqVlaxcrjZUpeUK4HcwCx+uItTHHaUR9ToUZsqfAUa7hJEt8gW
-         /CDYuPYX9vJO3CTbvQouqcty/rgK94zbENVAiG4fc7+JZJuTFJuYaXK0Jxp1LdG5MtV+
-         UzSA==
-X-Gm-Message-State: AHQUAubG9xOTvQ8HXvOC2zpeJRLeN+0OOFqkFSJTTclU/lWgxbIDmGUz
-        TkOBemzlUNbZHbDmA0TGTyO7x3J9ZoAFmKsDmn8nK3+l
-X-Google-Smtp-Source: AHgI3IaCP+XXWmFHsfVk82hKLq8qwuo4+YnW3uF7rvhkP3oVgcrCem5mrXb6GT/EhKn6pfxyieEa8fJXsQ2wnUwHlLk=
-X-Received: by 2002:a17:902:112c:: with SMTP id d41mr3168182pla.144.1549966697617;
- Tue, 12 Feb 2019 02:18:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
- <20190201073234.13280-9-rajneesh.bhardwaj@linux.intel.com> <20190212094318.GA8062@genxfsim-desktop>
-In-Reply-To: <20190212094318.GA8062@genxfsim-desktop>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Feb 2019 12:18:06 +0200
-Message-ID: <CAHp75Ve+Sxes8Zb0AtZ81nJTjPsrKokDzOZnZxSe=C-k_Oo5MQ@mail.gmail.com>
-Subject: Re: [PATCH 08/10] platform/x86: intel_pmc_core: Add ICL platform support
-To:     Anshuman Gupta <anshuman.gupta@intel.com>
-Cc:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VarNXRZhmWk1LiZk3X86VV33rRpJ8lAghNuVOiRy/S0=;
+        b=eTYpRSfars0JjwQr/YPSQmnCgOpNxMZkvxWxCFcVkcZU5DCgvo1/Py7idUuQ36MPjW
+         Lj5krnCLMvFtn/zWk7BmFJEhzp+liS/Jz3PN9nwLT20dXRUBCp0PYkVjnoIkrib3q9as
+         JbaivPNnZpptDat3oKj8VllZTCdAJogRT8uBjS6LTkBj3FQthQwzW9dHtaojEVa27JUR
+         9zDu6P5caX1lvkS3GfsERJ7fovR/f8Grm/4gaD4kSRiybKc+V1LgYU7f4QoYrmdLoI7k
+         1oGvYwTk/SJihX1AZhRIHPFAmd3w9nAi+m2A5yzSxwaJsBOx+DRrOQsa7z7Et0EulRLt
+         6Q3A==
+X-Gm-Message-State: AHQUAuZSPnTIt43lgnVLydkQOBbpF/yB2/pwRKlUgNWj4emzloH8RH71
+        A3y0LYZOMTvLdsvVe8XKTlX79Q==
+X-Google-Smtp-Source: AHgI3IaCeO8hbI7rfi9lLdGEDVhokUkEp1Zq1m65rt2qg2ee/eqMrYFZS1No/Vi1UBdqctsbVf+6qQ==
+X-Received: by 2002:adf:d18a:: with SMTP id h10mr2445712wri.149.1549966717450;
+        Tue, 12 Feb 2019 02:18:37 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id y24sm5153351wma.0.2019.02.12.02.18.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 02:18:36 -0800 (PST)
+Date:   Tue, 12 Feb 2019 10:18:35 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Message-ID: <20190212101835.GB20638@dell>
+References: <20190205091237.6448-1-brgl@bgdev.pl>
+ <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell>
+ <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+ <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 11:46 AM Anshuman Gupta
-<anshuman.gupta@intel.com> wrote:
-> On Fri, Feb 01, 2019 at 01:02:32PM +0530, Rajneesh Bhardwaj wrote:
-> > Icelake can resue most of the CNL PCH IPs as they are mostly similar.
-> > This patch enables the PMC Core driver for ICL family.
-> >
-> > It also addresses few other minor issues like upper case conversions and
-> > some tab alignments.
-> >
-> > Cc: "David E. Box" <david.e.box@intel.com>
-> > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
 
->   Acked-and-tested-by: <anshuman.gupta@intel.com>
+> wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
+> >
+> > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> >
+> > > wt., 12 lut 2019 o 09:36 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > >
+> > > > On Tue, 05 Feb 2019, Bartosz Golaszewski wrote:
+> > > >
+> > > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > >
+> > > > > Add the core mfd driver for max77650 PMIC. We define five sub-devices
+> > > > > for which the drivers will be added in subsequent patches.
+> > > > >
+> > > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > ---
+> > > > >  drivers/mfd/Kconfig          |  11 ++
+> > > > >  drivers/mfd/Makefile         |   1 +
+> > > > >  drivers/mfd/max77650.c       | 342 +++++++++++++++++++++++++++++++++++
+> > > > >  include/linux/mfd/max77650.h |  59 ++++++
+> > > > >  4 files changed, 413 insertions(+)
+> > > > >  create mode 100644 drivers/mfd/max77650.c
+> > > > >  create mode 100644 include/linux/mfd/max77650.h
+> >
+> > [...]
+> >
+> > > > > +static const struct max77650_irq_mapping max77650_irq_mapping_table[] = {
+> > > > > +     {
+> > > > > +             .cell_num       = MAX77650_CELL_CHARGER,
+> > > > > +             .irqs           = max77650_charger_irqs,
+> > > > > +             .irq_names      = max77650_charger_irq_names,
+> > > > > +             .num_irqs       = ARRAY_SIZE(max77650_charger_irqs),
+> > > > > +     },
+> > > > > +     {
+> > > > > +             .cell_num       = MAX77650_CELL_GPIO,
+> > > > > +             .irqs           = max77650_gpio_irqs,
+> > > > > +             .irq_names      = max77650_gpio_irq_names,
+> > > > > +             .num_irqs       = ARRAY_SIZE(max77650_gpio_irqs),
+> > > > > +     },
+> > > > > +     {
+> > > > > +             .cell_num       = MAX77650_CELL_ONKEY,
+> > > > > +             .irqs           = max77650_onkey_irqs,
+> > > > > +             .irq_names      = max77650_onkey_irq_names,
+> > > > > +             .num_irqs       = ARRAY_SIZE(max77650_onkey_irqs),
+> > > > > +     },
+> > > > > +};
+> > > >
+> > > > This is all a bit convoluted and nasty TBH.
+> > > >
+> > > > > +static const struct mfd_cell max77650_cells[] = {
+> > > > > +     [MAX77650_CELL_REGULATOR] = {
+> > > > > +             .name           = "max77650-regulator",
+> > > > > +             .of_compatible  = "maxim,max77650-regulator",
+> > > > > +     },
+> > > > > +     [MAX77650_CELL_CHARGER] = {
+> > > > > +             .name           = "max77650-charger",
+> > > > > +             .of_compatible  = "maxim,max77650-charger",
+> > > > > +     },
+> > > > > +     [MAX77650_CELL_GPIO] = {
+> > > > > +             .name           = "max77650-gpio",
+> > > > > +             .of_compatible  = "maxim,max77650-gpio",
+> > > > > +     },
+> > > > > +     [MAX77650_CELL_LED] = {
+> > > > > +             .name           = "max77650-led",
+> > > > > +             .of_compatible  = "maxim,max77650-led",
+> > > > > +     },
+> > > > > +     [MAX77650_CELL_ONKEY] = {
+> > > > > +             .name           = "max77650-onkey",
+> > > > > +             .of_compatible  = "maxim,max77650-onkey",
+> > > > > +     },
+> > > > > +};
+> > > >
+> > > > Why are you numbering the cells?  There is no need to do this.
+> > > >
+> > >
+> > > Just for better readability. It makes sense to me coupled with
+> > > MAX77650_NUM_CELLS.
+> >
+> > You have it the wrong way around.  You define the cell data, then
+> > provide the number of them using ARRAY_SIZE().  The enum containing
+> > MAX77650_NUM_CELLS should not exist.
+> >
+> > > > > +static const struct regmap_irq max77650_irqs[] = {
+> > > > > +     [MAX77650_INT_GPI] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_GPI_MSK,
+> > > > > +             .type = {
+> > > > > +                     .type_falling_val       = MAX77650_INT_GPI_F_MSK,
+> > > > > +                     .type_rising_val        = MAX77650_INT_GPI_R_MSK,
+> > > > > +                     .types_supported        = IRQ_TYPE_EDGE_BOTH,
+> > > > > +             },
+> > > > > +     },
+> > > > > +     [MAX77650_INT_nEN_F] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_nEN_F_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_nEN_R] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_nEN_R_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_TJAL1_R] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_TJAL1_R_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_TJAL2_R] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_TJAL2_R_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_DOD_R] = {
+> > > > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_DOD_R_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_THM] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_THM_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_CHG] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_CHG_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_CHGIN] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_CHGIN_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_TJ_REG] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_TJ_REG_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_CHGIN_CTRL] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_CHGIN_CTRL_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_SYS_CTRL] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_SYS_CTRL_MSK,
+> > > > > +     },
+> > > > > +     [MAX77650_INT_SYS_CNFG] = {
+> > > > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > > > +             .mask                   = MAX77650_INT_SYS_CNFG_MSK,
+> > > > > +     },
+> > > > > +};
+> > > >
+> > > > If you get rid of all of the horrible hoop jumping in *_setup_irqs(),
+> > > > you can use REGMAP_IRQ_REG() like everyone else does.
+> > > >
+> > >
+> > > I could even use it now - except for the first interrupt. I decided to
+> > > not use it everywhere as it looks much better that way than having
+> > > REGMAP_IRQ_REG() for all definitions and then the first one sticking
+> > > out like that. It just looks better.
+> >
+> > The way it's done at the moment looks terrible.
+> >
+> > Please use the MACROs to simplify as much of the code as possible.
+> >
+> > > > > +static const struct regmap_irq_chip max77650_irq_chip = {
+> > > > > +     .name                   = "max77650-irq",
+> > > > > +     .irqs                   = max77650_irqs,
+> > > > > +     .num_irqs               = ARRAY_SIZE(max77650_irqs),
+> > > > > +     .num_regs               = 2,
+> > > > > +     .status_base            = MAX77650_REG_INT_GLBL,
+> > > > > +     .mask_base              = MAX77650_REG_INTM_GLBL,
+> > > > > +     .type_in_mask           = true,
+> > > > > +     .type_invert            = true,
+> > > > > +     .init_ack_masked        = true,
+> > > > > +     .clear_on_unmask        = true,
+> > > > > +};
+> > > > > +
+> > > > > +static const struct regmap_config max77650_regmap_config = {
+> > > > > +     .name           = "max77650",
+> > > > > +     .reg_bits       = 8,
+> > > > > +     .val_bits       = 8,
+> > > > > +};
+> > > > > +
+> > > > > +static int max77650_setup_irqs(struct device *dev, struct mfd_cell *cells)
+> > > > > +{
+> > > > > +     const struct max77650_irq_mapping *mapping;
+> > > > > +     struct regmap_irq_chip_data *irq_data;
+> > > > > +     struct i2c_client *i2c;
+> > > > > +     struct mfd_cell *cell;
+> > > > > +     struct resource *res;
+> > > > > +     struct regmap *map;
+> > > > > +     int i, j, irq, rv;
+> > > > > +
+> > > > > +     i2c = to_i2c_client(dev);
+> > > > > +
+> > > > > +     map = dev_get_regmap(dev, NULL);
+> > > > > +     if (!map)
+> > > > > +             return -ENODEV;
+> > > > > +
+> > > > > +     rv = devm_regmap_add_irq_chip(dev, map, i2c->irq,
+> > > > > +                                   IRQF_ONESHOT | IRQF_SHARED, -1,
+> > > >
+> > > > What is -1?  Are you sure this isn't defined somewhere?
+> > > >
+> > >
+> > > I don't see any define for negative irq_base argument. I can add that
+> > > in a separate series and convert the users, but for now I'd stick with
+> > > -1.
+> >
+> > IMO it should be defined.  You can define it locally for now.
+> >
+> > > > > +                                   &max77650_irq_chip, &irq_data);
+> > > > > +     if (rv)
+> > > > > +             return rv;
+> > > > > +
+> > > > > +     for (i = 0; i < ARRAY_SIZE(max77650_irq_mapping_table); i++) {
+> > > > > +             mapping = &max77650_irq_mapping_table[i];
+> > > > > +             cell = &cells[mapping->cell_num];
+> > > > > +
+> > > > > +             res = devm_kcalloc(dev, sizeof(*res),
+> > > > > +                                mapping->num_irqs, GFP_KERNEL);
+> > > > > +             if (!res)
+> > > > > +                     return -ENOMEM;
+> > > > > +
+> > > > > +             cell->resources = res;
+> > > > > +             cell->num_resources = mapping->num_irqs;
+> > > > > +
+> > > > > +             for (j = 0; j < mapping->num_irqs; j++) {
+> > > > > +                     irq = regmap_irq_get_virq(irq_data, mapping->irqs[j]);
+> > > > > +                     if (irq < 0)
+> > > > > +                             return irq;
+> > > > > +
+> > > > > +                     res[j].start = res[j].end = irq;
+> > > > > +                     res[j].flags = IORESOURCE_IRQ;
+> > > > > +                     res[j].name = mapping->irq_names[j];
+> > > > > +             }
+> > > > > +     }
+> > > >
+> > > > This is the first time I've seen it done like this (and I hate it).
+> > > >
+> > > > Why are you storing the virqs in resources?
+> > > >
+> > > > I think this is highly irregular.
+> > > >
+> > >
+> > > I initially just passed the regmap_irq_chip_data over i2c clientdata
+> > > and sub-drivers would look up virq numbers from it but was advised by
+> > > Dmitry Torokhov to use resources instead. After implementing it this
+> > > way I too think it's more elegant in sub-drivers who can simply do
+> > > platform_get_irq_byname(). Do you have a different idea?
+> >
+> > > What exactly don't you like about this?
+> >
+> >  * The declaration of a superfluous struct
+> >  * 100 lines of additional/avoidable code
+> >  * Hacky hoop jumping trying to fudge VIRQs into resources
+> >  * Resources were designed for HWIRQs (unless a domain is present)
+> >  * Loads of additional/avoidable CPU cycles setting all this up
+> 
+> While the above may be right, this one is negligible and you know it. :)
 
-Thanks.
+You have nested for() loops.  You *are* wasting lots of cycles.
 
-Can you clarify what patches had been tested?
-As far as I can understand you can't test this one before applying
-previous seven patches.
+> > Need I go on? :)
+> >
+> > Surely the fact that you are using both sides of an API
+> > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> > set some alarm bells ringing?
+> >
+> > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+> >
+> > And for what?  To avoid passing IRQ data to a child driver?
+> 
+> What do you propose? Should I go back to the approach in v1 and pass
+> the regmap_irq_chip_data to child drivers?
 
-Rajneesh, when you will be about to send the rest, don't forget to
-append the received tags.
+I'm saying you should remove all of this hackery and pass IRQs as they
+are supposed to be passed (like everyone else does).
 
-> > ---
-> >  drivers/platform/x86/intel_pmc_core.c | 59 +++++++++++++++++++++------
-> >  drivers/platform/x86/intel_pmc_core.h |  4 ++
-> >  2 files changed, 50 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-> > index d3752d75075b..400946b7a3b5 100644
-> > --- a/drivers/platform/x86/intel_pmc_core.c
-> > +++ b/drivers/platform/x86/intel_pmc_core.c
-> > @@ -166,25 +166,26 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
-> >       {"SDX",                 BIT(4)},
-> >       {"SPE",                 BIT(5)},
-> >       {"Fuse",                BIT(6)},
-> > -     {"Res_23",              BIT(7)},
-> > +     /* Reserved for Cannonlake but valid for Icelake */
-> > +     {"SBR8",                BIT(7)},
-> >
-> >       {"CSME_FSC",            BIT(0)},
-> >       {"USB3_OTG",            BIT(1)},
-> >       {"EXI",                 BIT(2)},
-> >       {"CSE",                 BIT(3)},
-> > -     {"csme_kvm",            BIT(4)},
-> > -     {"csme_pmt",            BIT(5)},
-> > -     {"csme_clink",          BIT(6)},
-> > -     {"csme_ptio",           BIT(7)},
-> > -
-> > -     {"csme_usbr",           BIT(0)},
-> > -     {"csme_susram",         BIT(1)},
-> > -     {"csme_smt1",           BIT(2)},
-> > +     {"CSME_KVM",            BIT(4)},
-> > +     {"CSME_PMT",            BIT(5)},
-> > +     {"CSME_CLINK",          BIT(6)},
-> > +     {"CSME_PTIO",           BIT(7)},
-> > +
-> > +     {"CSME_USBR",           BIT(0)},
-> > +     {"CSME_SUSRAM",         BIT(1)},
-> > +     {"CSME_SMT1",           BIT(2)},
-> >       {"CSME_SMT4",           BIT(3)},
-> > -     {"csme_sms2",           BIT(4)},
-> > -     {"csme_sms1",           BIT(5)},
-> > -     {"csme_rtc",            BIT(6)},
-> > -     {"csme_psf",            BIT(7)},
-> > +     {"CSME_SMS2",           BIT(4)},
-> > +     {"CSME_SMS1",           BIT(5)},
-> > +     {"CSME_RTC",            BIT(6)},
-> > +     {"CSME_PSF",            BIT(7)},
-> >
-> >       {"SBR0",                BIT(0)},
-> >       {"SBR1",                BIT(1)},
-> > @@ -209,6 +210,20 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
-> >       {"HDA_PGD4",            BIT(2)},
-> >       {"HDA_PGD5",            BIT(3)},
-> >       {"HDA_PGD6",            BIT(4)},
-> > +     /* Reserved for Cannonlake but valid for Icelake */
-> > +     {"PSF6",                BIT(5)},
-> > +     {"PSF7",                BIT(6)},
-> > +     {"PSF8",                BIT(7)},
-> > +
-> > +     /* Icelake generation onwards only */
-> > +     {"RES_65",              BIT(0)},
-> > +     {"RES_66",              BIT(1)},
-> > +     {"RES_67",              BIT(2)},
-> > +     {"TAM",                 BIT(3)},
-> > +     {"GBETSN",              BIT(4)},
-> > +     {"TBTLSX",              BIT(5)},
-> > +     {"RES_71",              BIT(6)},
-> > +     {"RES_72",              BIT(7)},
-> >       {}
-> >  };
-> >
-> > @@ -290,6 +305,8 @@ static const struct pmc_bit_map cnp_ltr_show_map[] = {
-> >       {"ISH",                 CNP_PMC_LTR_ISH},
-> >       {"UFSX2",               CNP_PMC_LTR_UFSX2},
-> >       {"EMMC",                CNP_PMC_LTR_EMMC},
-> > +     /* Reserved for Cannonlake but valid for Icelake */
-> > +     {"WIGIG",               ICL_PMC_LTR_WIGIG},
-> >       /* Below two cannot be used for LTR_IGNORE */
-> >       {"CURRENT_PLATFORM",    CNP_PMC_LTR_CUR_PLT},
-> >       {"AGGREGATED_SYSTEM",   CNP_PMC_LTR_CUR_ASLT},
-> > @@ -311,6 +328,21 @@ static const struct pmc_reg_map cnp_reg_map = {
-> >       .ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
-> >  };
-> >
-> > +static const struct pmc_reg_map icl_reg_map = {
-> > +     .pfear_sts = cnp_pfear_map,
-> > +     .slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
-> > +     .slps0_dbg_maps = cnp_slps0_dbg_maps,
-> > +     .ltr_show_sts = cnp_ltr_show_map,
-> > +     .slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
-> > +     .ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
-> > +     .regmap_length = CNP_PMC_MMIO_REG_LEN,
-> > +     .ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
-> > +     .ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
-> > +     .pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
-> > +     .pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
-> > +     .ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
-> > +};
-> > +
-> >  static inline u8 pmc_core_reg_read_byte(struct pmc_dev *pmcdev, int offset)
-> >  {
-> >       return readb(pmcdev->regbase + offset);
-> > @@ -740,6 +772,7 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
-> >       INTEL_CPU_FAM6(KABYLAKE_MOBILE, spt_reg_map),
-> >       INTEL_CPU_FAM6(KABYLAKE_DESKTOP, spt_reg_map),
-> >       INTEL_CPU_FAM6(CANNONLAKE_MOBILE, cnp_reg_map),
-> > +     INTEL_CPU_FAM6(ICELAKE_MOBILE, icl_reg_map),
-> >       {}
-> >  };
-> >
-> > diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-> > index 0680ca397b57..78dd4229489d 100644
-> > --- a/drivers/platform/x86/intel_pmc_core.h
-> > +++ b/drivers/platform/x86/intel_pmc_core.h
-> > @@ -178,6 +178,10 @@ enum ppfear_regs {
-> >  #define LTR_REQ_SNOOP                                BIT(15)
-> >  #define LTR_REQ_NONSNOOP                     BIT(31)
-> >
-> > +#define ICL_PPFEAR_NUM_ENTRIES                       9
-> > +#define ICL_NUM_IP_IGN_ALLOWED                       20
-> > +#define ICL_PMC_LTR_WIGIG                    0x1BFC
-> > +
-> >  struct pmc_bit_map {
-> >       const char *name;
-> >       u32 bit_mask;
-> > --
-> > 2.17.1
-> >
->
-> --
-
-
+> @Dmitry: what do you think?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
