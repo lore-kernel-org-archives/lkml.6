@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D16C6C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC02AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F4B214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8385E217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbfBLNIk (ORCPT
+        id S1729654AbfBLNIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:08:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41412 "EHLO mx1.redhat.com"
+        Tue, 12 Feb 2019 08:08:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41530 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfBLNIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:08:39 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726748AbfBLNIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:08:47 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C507D8E580;
-        Tue, 12 Feb 2019 13:08:38 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F5B98E584;
+        Tue, 12 Feb 2019 13:08:47 +0000 (UTC)
 Received: from krava (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 386825D9D1;
-        Tue, 12 Feb 2019 13:08:35 +0000 (UTC)
-Date:   Tue, 12 Feb 2019 14:08:34 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id CC3E55C23F;
+        Tue, 12 Feb 2019 13:08:45 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 14:08:44 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -37,75 +37,142 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] perf record: implement -z=<level> and
- --mmap-flush=<thres> options
-Message-ID: <20190212130834.GE775@krava>
+Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
+Message-ID: <20190212130844.GF775@krava>
 References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
+ <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
+In-Reply-To: <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 12 Feb 2019 13:08:38 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 12 Feb 2019 13:08:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:22:38PM +0300, Alexey Budankov wrote:
+On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
 
 SNIP
 
->  static void record__init_features(struct record *rec)
-> @@ -838,6 +881,9 @@ static void record__init_features(struct record *rec)
->  	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
->  		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 18fb9c8cbf9c..5d406eebd058 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -29,6 +29,112 @@
+>  #include "stat.h"
+>  #include "arch/common.h"
 >  
-> +	if (!record__comp_enabled(rec))
-> +		perf_header__clear_feat(&session->header, HEADER_COMPRESSED);
-> +
->  	perf_header__clear_feat(&session->header, HEADER_STAT);
->  }
->  
-> @@ -1147,6 +1193,10 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
->  	fd = perf_data__fd(data);
->  	rec->session = session;
->  
-> +	rec->opts.comp_level = 0;
-> +	session->header.env.comp_level = rec->opts.comp_level;
-> +	session->header.env.comp_type = PERF_COMP_NONE;
 
-hum I think both record and session are zerod from start,
-so this seems superfluous
+I think this should not be in session.c but separated in new object
 
-SNIP
-
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index dec6d218c31c..5ad3a27a042f 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1463,6 +1463,21 @@ static int write_mem_topology(struct feat_fd *ff __maybe_unused,
->  	return ret;
->  }
->  
-> +static int write_compressed(struct feat_fd *ff __maybe_unused,
-> +			    struct perf_evlist *evlist __maybe_unused)
+> +#ifdef HAVE_ZSTD_SUPPORT
+> +int perf_session__zstd_init(struct perf_session *session, int level)
 > +{
-> +	int ret;
-> +	u64 compression_info = ((u64)ff->ph->env.comp_type  << 32) | ff->ph->env.comp_level;
+> +	size_t ret;
 > +
-> +	ret = do_write(ff, &compression_info, sizeof(compression_info));
-> +	if (ret)
-> +		return ret;
+> +	session->header.env.comp_type  = PERF_COMP_NONE;
+> +	session->header.env.comp_level = 0;
 > +
-> +	compression_info = ((u64)ff->ph->env.comp_ratio << 32) | ff->ph->env.comp_mmap_len;
+> +	session->zstd_cstream = ZSTD_createCStream();
+> +	if (session->zstd_cstream == NULL) {
+> +		pr_err("Couldn't create compression stream.\n");
+> +		return -1;
+> +	}
+> +
+> +	ret = ZSTD_initCStream(session->zstd_cstream, level);
+> +	if (ZSTD_isError(ret)) {
+> +		pr_err("Failed to initialize compression stream: %s\n", ZSTD_getErrorName(ret));
+> +		return -1;
+> +	}
+> +
+> +	session->header.env.comp_type  = PERF_COMP_ZSTD;
+> +	session->header.env.comp_level = level;
+> +
+> +	return 0;
+> +}
+> +
+> +int perf_session__zstd_fini(struct perf_session *session)
+> +{
+> +	if (session->zstd_cstream) {
+> +		ZSTD_freeCStream(session->zstd_cstream);
+> +		session->zstd_cstream = NULL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +size_t perf_session__zstd_compress(void *to,  void *dst, size_t dst_size,
+> +				   void *src, size_t src_size)
+> +{
+> +	struct perf_session *session = to;
+> +	size_t ret, size, compressed = 0;
+> +	struct compressed_event *event = NULL;
+> +	/* maximum size of record data size (2^16 - 1 - header) */
+> +	const size_t max_data_size = (1 << 8 * sizeof(event->header.size)) -
+> +				      1 - sizeof(struct compressed_event);
+> +	ZSTD_inBuffer input = { src, src_size, 0 };
+> +	ZSTD_outBuffer output;
+> +
+> +	while (input.pos < input.size) {
+> +		event = dst;
+> +
+> +		event->header.type = PERF_RECORD_COMPRESSED;
+> +		event->header.size = size = sizeof(struct compressed_event);
+> +		compressed += size;
+> +		dst += size;
+> +		dst_size -= size;
+> +
+> +		output = (ZSTD_outBuffer){ dst, (dst_size > max_data_size) ?
+> +						max_data_size : dst_size, 0 };
+> +		ret = ZSTD_compressStream(session->zstd_cstream, &output, &input);
+> +		ZSTD_flushStream(session->zstd_cstream, &output);
+> +		if (ZSTD_isError(ret)) {
+> +			pr_err("failed to compress %ld bytes: %s\n",
+> +				(long)src_size, ZSTD_getErrorName(ret));
+> +			return perf_session__zstd_copy(session, dst, dst_size, src, src_size);
+> +		}
+> +		size = output.pos;
+> +
+> +		event->header.size += size;
+> +		compressed += size;
+> +		dst += size;
+> +		dst_size -= size;
+> +	}
+> +
+> +	session->bytes_transferred += src_size;
+> +	session->bytes_compressed  += compressed;
+> +
+> +	return compressed;
+> +}
+> +#else /* !HAVE_ZSTD_SUPPORT */
+> +int perf_session__zstd_init(struct perf_session *session __maybe_unused, int level __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +int perf_session__zstd_fini(struct perf_session *session __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +size_t perf_session__zstd_compress(void *to __maybe_unused,
+> +				void *dst __maybe_unused, size_t dst_size __maybe_unused,
+> +				void *src __maybe_unused, size_t src_size __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+> +size_t perf_session__zstd_copy(void *to __maybe_unused,
+> +			void *dst, size_t dst_size __maybe_unused,
+> +			void *src, size_t src_size)
+> +{
+> +	memcpy(dst, src, src_size);
+> +	return src_size;
+> +}
+> +
 
-let's not complicate this, if you have two u32 values
-to store, store two u32 values ;-)
-
-also please add version in case we will add new fields in the future,
-so we can stay backward compatible
-
-jirka
+SNIP
