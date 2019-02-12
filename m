@@ -2,120 +2,160 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8187EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC8EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55DEB217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 04:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA49B2184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 05:05:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="Z2qOohkm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="et3YnFo0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfBLEja (ORCPT
+        id S1726108AbfBLFF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 23:39:30 -0500
-Received: from tomli.me ([153.92.126.73]:58900 "EHLO tomli.me"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfBLEja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 23:39:30 -0500
-Received: from tomli.me (localhost [127.0.0.1])
-        by tomli.me (OpenSMTPD) with ESMTP id 39bb23af;
-        Tue, 12 Feb 2019 04:39:26 +0000 (UTC)
-X-HELO: x220
-Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli; iprev=pass
-Received: from politkovskaja.torservers.net (HELO x220) (77.247.181.165)
- by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Tue, 12 Feb 2019 04:39:26 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=1490979754; bh=LV7aL/UP+6Apa6bK0vEi6hBPHk8KLKlfKCvupMGNNG8=; b=Z2qOohkmjoZLJIAfkO8eqfyUJjK1IQYHHf+4PQdmLBsq3M2mhxE1TTpJ5OCCULTqoOWvKI1zUeEzXVEqYwokFrW6Jd2vBsqoFHMqgkW62iJnlNHqG1hYx5iSEbgW2De1s4RUq0XxvoaAUggrfUYBQ+B5IRR0BUeLAYCMCY+wpy1YPy6QfVsRKx7ICGba1Ui45iTcBrMjTWWZMkQmspgXGmFqLfSF+6kbs+7XxurSybgCVymQzzqcEuK/mmVYO5wvB6v9P4Pq1mStomZzrWT62ucNd5ivYp7WxnN+uqk2oaYnDaKPjPIPrIQS1h4l4Ahxw84wOcsaCIGeIyKuw5J4uA==
-Date:   Tue, 12 Feb 2019 12:39:00 +0800
-From:   tomli@tomli.me
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Alexandre Oliva <lxoliva@fsfla.org>, Tom Li <tomli@tomli.me>,
-        James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform
- Drivers
-Message-ID: <20190212043900.GA111884@x220>
-References: <20190208083038.GA1433@localhost.localdomain>
- <orbm3i5xrn.fsf@lxoliva.fsfla.org>
- <20190211125506.GA21280@localhost.localdomain>
- <orimxq3q9j.fsf@lxoliva.fsfla.org>
- <20190211230614.GB22242@darkstar.musicnaut.iki.fi>
+        Tue, 12 Feb 2019 00:05:27 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44462 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfBLFF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 00:05:27 -0500
+Received: by mail-qt1-f195.google.com with SMTP id n32so1526991qte.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 21:05:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SijfIY2qCi5nm0jhI17fdhfAiM3IratR88/I4mIxynI=;
+        b=et3YnFo0vN2c9ocgdK/XBhNZURvkboekVTRBag6WRAA/YON6rhck2mDuTZ/064A3ft
+         eKsv6/zXrlL5K2ltvAYeV0AqE+50zQwNI24As08iSkAFR+NqewDQUASt4dYCrOyFiw8c
+         7mB9qdhxxiHzIDWusgLaRweU4lDWC743OA+64stLl4+kgFkcmGOnNqQdWK2nH0qnSWUP
+         XaTp5IwW+dCY6KcEZ1Yx71hErbs54Li2dZsWeh6Dr3q+ySrB1xGQTMC4mfqurzSmFHKQ
+         ruS6NBUTAlnH/ZnEEWGCFe257uULLcOt+LKuU4V27heONC091ZgPfRzLtju3SQK8DL78
+         xOkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SijfIY2qCi5nm0jhI17fdhfAiM3IratR88/I4mIxynI=;
+        b=CIelmm2OXE5MjdN43mZbiFY56IHuwr7OM4jbgOMqrc25epnEIfRtl6nfg+dFEWii4l
+         zUfroTUWPhzxCCDnxDMrR/PJ8z95rrNLEXqOTzWxnshKLRNg5NnAOlkKwufEXXkkspMf
+         1aJoIbqIPypRF8QRwVuZdwsl5eYiMAS78YpibOYumhILNhkAYDGGzhbjqPOtBZYKY/q2
+         6M7klnkstx9ULcZutaEiM7vIuhJTWEUM7PA/Bf+KwnQ/SOTYenrsqIpvbNqJ2mnvdy2p
+         /f1eDk3noYo1F8WVtHHivjt+3o4nz8fXq8bofqm9zohXIOE5bdayzniaGz4zBPiKjcSv
+         6JAA==
+X-Gm-Message-State: AHQUAuYz6TvAr/gzXhHVnajP79pcjuDzHnOlyI9IO7zE/z6+4YpeVZ5A
+        QXnXgRIg7UXhV4W3CPy99Vat0fUZq8fE9Jsp1Gxtyg==
+X-Google-Smtp-Source: AHgI3IYSju9zRMSCXD6gbltH9+tDskpIiwqMrQ3FN9TYsI2DJywkN4lWGRUy+yfGjgckyQPAynUiVbp/SQggJDhs5O8=
+X-Received: by 2002:aed:2a2f:: with SMTP id c44mr1424946qtd.144.1549947925594;
+ Mon, 11 Feb 2019 21:05:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-In-Reply-To: <20190211230614.GB22242@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190211190019.171583-1-mka@chromium.org>
+In-Reply-To: <20190211190019.171583-1-mka@chromium.org>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 12 Feb 2019 10:35:14 +0530
+Message-ID: <CAP245DWMH44v_E5uqet4Wm_bwpwLL7K_faB4Vq=7H5onxj94qg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add dynamic CPU power coefficients
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 12, 2019 at 12:30 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Add dynamic power coefficients for the Silver and Gold CPU cores of
+> the Qualcomm SDM845.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-> >=20
-> > That doesn't seem to explain even a quiet boot up taking several times
-> > longer than 4.19, and package installation over an ethernet connection
-> > (thus not using the console) also taking several times longer.
->=20
-> Maybe it's a slow disk?
->=20
-> ATA (libata) CS5536 driver is having issues with spurious IRQs and often
-> disables IRQs completely during the boot. You should see a warning
-> in dmesg. This was the reason for slowness on my FuLoong mini-PC. A
-> workaround is to switch to old IDE driver.
->=20
-> Discussion: https://lore.kernel.org/linux-mips/20190106124607.GK27785@dar=
-kstar.musicnaut.iki.fi/
->=20
-> A.
-
-I find that this problem is odd. I've been using libata personally since 20=
-14 and
-never had any IRQ problem at all. How can the problem even occur at all? Pe=
-rhaps
-related to a rarely used kernel option that trigger it, or a bug in the PMO=
-N boot
-firmware? I don't know...
-
-But I think some versions of the PMON boot firmware have odd bugs. I'm curr=
-ently
-using the PMON firmware built by an OpenBSD developer, but I cannot find th=
-e link
-anymore.
-
-Tom Li
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIzBAEBCgAdFiEEJVIRsjlaWj4OSKDx+tPrBeiOjW0FAlxiTd0ACgkQ+tPrBeiO
-jW1CRxAArP/TItesPkeQzDXnVHn9AczQYQX715wyuSvsFoLg8yY0RxmVAuyXF8/l
-0Ow/Wqd7nVGH3l8ejThVr4ifA8TlMLH6Az5TIRQEQK9UuHstYPrUHr+4GQcmU8mZ
-GmiTiNtB9oTfniQXdashN97WN+FYjmLVApSMVBqoyB+wbl8BPCfj2QOUD6W3BFYk
-emDWIaVp50MEiy5QlEq/vTmGWK597UZo2P0mo1bC+7E2sKSLT9OCkXc2rep6LCPH
-gp8XQvfYEl5cN7IO86Qsg5H1kNA7EatnSMl3CrFbW5V0MXrMM7DCs6OYgCnexy8u
-dImjQaW9JVj/M6JnICDv6CHiwxYXYLRNXUt97dTnPzD05SwQidp7gWL4goNVXgP9
-MfsDN/NJESuFxEFOqJ4tuvnPsvZqo8KNFKTeth2+kRiyykXPCcxh64eM+G+ZQ+kT
-FhyiB6QmJmZWlAXrdM7BsiiRA5PCHCk3dkU1g9EwiGlJwlLugXS2fyV7fK3ctWGf
-j9JmrIlglYnw5y0b5fTKREJGponz8NST7z8GBJ5GoQsNvu0HT5Ux3CLKLDfKdtuy
-kpnEcwceT97KrrSmZCIyXxH7sENjYrG1R1+oGEvWqrpeV2YmQTdbMMG/YUXISajY
-wYrcNJ5Yw0c3x0rVtoA4KVtB6OVeoYf/WgPxDwIIV7zVX26UP/c=
-=Rect
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index e4b69c74fe077..6e8a2331176ec 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -120,6 +120,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x0>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <100>;
+>                         qcom,freq-domain = <&cpufreq_hw 0>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_0>;
+> @@ -137,6 +138,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x100>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <100>;
+>                         qcom,freq-domain = <&cpufreq_hw 0>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_100>;
+> @@ -151,6 +153,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x200>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <100>;
+>                         qcom,freq-domain = <&cpufreq_hw 0>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_200>;
+> @@ -165,6 +168,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x300>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <100>;
+>                         qcom,freq-domain = <&cpufreq_hw 0>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_300>;
+> @@ -179,6 +183,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x400>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <396>;
+>                         qcom,freq-domain = <&cpufreq_hw 1>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_400>;
+> @@ -193,6 +198,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x500>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <396>;
+>                         qcom,freq-domain = <&cpufreq_hw 1>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_500>;
+> @@ -207,6 +213,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x600>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <396>;
+>                         qcom,freq-domain = <&cpufreq_hw 1>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_600>;
+> @@ -221,6 +228,7 @@
+>                         compatible = "qcom,kryo385";
+>                         reg = <0x0 0x700>;
+>                         enable-method = "psci";
+> +                       dynamic-power-coefficient = <396>;
+>                         qcom,freq-domain = <&cpufreq_hw 1>;
+>                         #cooling-cells = <2>;
+>                         next-level-cache = <&L2_700>;
+> --
+> 2.20.1.791.gb4d0f1c61a-goog
+>
