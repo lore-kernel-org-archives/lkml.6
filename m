@@ -2,102 +2,107 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E36CC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 583F2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F9E214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3298B217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfBLNFW (ORCPT
+        id S1729634AbfBLNFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:05:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbfBLNFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:05:22 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCF7BA7875;
-        Tue, 12 Feb 2019 13:05:21 +0000 (UTC)
-Received: from localhost (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 55991101E845;
-        Tue, 12 Feb 2019 13:05:17 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 4/4] genirq/affinity: Document .calc_sets as required in case of multiple sets
-Date:   Tue, 12 Feb 2019 21:04:39 +0800
-Message-Id: <20190212130439.14501-5-ming.lei@redhat.com>
-In-Reply-To: <20190212130439.14501-1-ming.lei@redhat.com>
-References: <20190212130439.14501-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 12 Feb 2019 13:05:21 +0000 (UTC)
+        Tue, 12 Feb 2019 08:05:54 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46837 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbfBLNFy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 08:05:54 -0500
+X-Originating-IP: 90.88.30.68
+Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id EF47840007;
+        Tue, 12 Feb 2019 13:05:48 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 14:05:48 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        jernej.skrabec@gmail.com, jonas@kwiboo.se, ezequiel@collabora.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [PATCH v3 1/2] media: uapi: Add H264 low-level decoder API
+ compound controls.
+Message-ID: <20190212130548.tytlxmbu4q6qgzzq@flea>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+ <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
+ <716ae1ff-8e62-c723-5b5a-0b018cf6af6a@xs4all.nl>
+ <db7a762a-8bc3-0391-036b-1fda2e445023@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="clsemqi6dbr7yjrh"
+Content-Disposition: inline
+In-Reply-To: <db7a762a-8bc3-0391-036b-1fda2e445023@xs4all.nl>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now NVMe has implemented the .calc_sets callback for caculating each
-set's vectors.
 
-For other cases of multiple irq sets, it isn't a good way to pre-caculate
-each set's vectors before allocating IRQ vectors because NVMe's same issue
-exists too.
+--clsemqi6dbr7yjrh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Document .calc_sets as required explicitly for multiple sets.
+Hi,
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/pci/msi.c         | 4 ++--
- include/linux/interrupt.h | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+On Mon, Feb 11, 2019 at 04:21:47PM +0100, Hans Verkuil wrote:
+> > I think the API should be designed with 4k video in mind. So if some of
+> > these constants would be too small when dealing with 4k (even if the
+> > current HW doesn't support this yet), then these constants would have to
+> > be increased.
+> >=20
+> > And yes, I know 8k video is starting to appear, but I think it is OK
+> > that additional control(s) would be needed to support 8k.
+>=20
+> Hmm, 4k (and up) is much more likely to use HEVC. So perhaps designing th=
+is
+> for 4k is overkill.
+>=20
+> Does anyone know if H.264 is used for 4k video at all? If not (or if very
+> rare), then just ignore this.
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 4c0b47867258..9f91fa713141 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1039,7 +1039,7 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	 * If the caller is passing in sets, we can't support a range of
- 	 * vectors. The caller needs to handle that.
- 	 */
--	if (affd && affd->nr_sets && minvec != maxvec)
-+	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
- 		return -EINVAL;
- 
- 	if (WARN_ON_ONCE(dev->msi_enabled))
-@@ -1097,7 +1097,7 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	 * If the caller is passing in sets, we can't support a range of
- 	 * supported vectors. The caller needs to handle that.
- 	 */
--	if (affd && affd->nr_sets && minvec != maxvec)
-+	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
- 		return -EINVAL;
- 
- 	if (WARN_ON_ONCE(dev->msix_enabled))
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 7a27f6ba1f2f..a053f7fb0ff1 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -269,7 +269,8 @@ struct irq_affinity_notify {
-  *			the MSI(-X) vector space
-  * @nr_sets:		Length of passed in *sets array
-  * @set_vectors:	Number of affinitized sets
-- * @calc_sets:		Callback for caculating set vectors
-+ * @calc_sets:		Callback for caculating set vectors, required for
-+ * 			multiple irq sets.
-  * @priv:		Private data of @calc_sets
-  */
- struct irq_affinity {
--- 
-2.9.5
+I don't know the state of it right now, but until quite recently
+youtube at least was encoding their 4k videos in both VP9 and
+H264. They might have moved to h265 since, but considering 4k doesn't
+seem unreasonable.
 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--clsemqi6dbr7yjrh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGLErAAKCRDj7w1vZxhR
+xRi+AP0cIus7devJ8uO36+2F7paAjyP641RBIlsIga+cRq4/uAD/THY1UkMAZAlE
+enuxa3pQVkeOdOKYeXuY8p9qrRG8ng8=
+=ZOBQ
+-----END PGP SIGNATURE-----
+
+--clsemqi6dbr7yjrh--
