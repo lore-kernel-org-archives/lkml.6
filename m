@@ -2,222 +2,124 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9E6C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C996FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D44222C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA73222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:02:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="vAXfe5fx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730941AbfBLUBn (ORCPT
+        id S1731103AbfBLUCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:01:43 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39248 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfBLUBm (ORCPT
+        Tue, 12 Feb 2019 15:02:00 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:43768 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729539AbfBLUB7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:01:42 -0500
-Received: by mail-qt1-f193.google.com with SMTP id o6so4478440qtk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:01:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5J3BEVMX8I3R6aDWiylH49L5Eh0Yio3E7KsL+Og9pHE=;
-        b=FTGRj2/zg0aDbncfgeenjJeItqDh2drHs2MkCwjTtHB6Tm2WsFz87Q+SJ3a//sIZCn
-         91ay4Ajum2R85riVca9AA8fFPNG41/LxW/dfsH23UkY+3sHlCrcoUH3eJOEL29asFtr3
-         5D++QCtzIWEh1DKc2clxFgIKXbqZU18p6vBcocLW1TXFm0ns2ztR7UhKU2fzSYJ1quvr
-         a3ru4+yqzk4nZjJgYIxQVlnjmuDU3qv1SRL2m1r5Rz+QgncKS/QRrjcCpqeGOwTzv2S3
-         UlilXcBFxwWxAyVb8hhAVEQm8hixXscYA4pIZQr+2y7DEuIYA4nPAYIOxAlElBvN2qrD
-         z4Ig==
-X-Gm-Message-State: AHQUAua6AvMttL1NxZR6xECbU1gxoXZ0Q6XaYIvwzR5aLNOId41LHri7
-        ywWZorb5NcMh42pjzotWfHycWQ==
-X-Google-Smtp-Source: AHgI3Ibb/fAwJBL5b9xb1ME5M4mJiSWWwndBNvOjwi+A3vbQNEu+Xmy/HhD6sB4kQ8UGZQAnBK23iQ==
-X-Received: by 2002:ac8:21ce:: with SMTP id 14mr4243520qtz.306.1550001701410;
-        Tue, 12 Feb 2019 12:01:41 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::112f? ([2601:602:9800:dae6::112f])
-        by smtp.gmail.com with ESMTPSA id t123sm14960812qkc.6.2019.02.12.12.01.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 12:01:40 -0800 (PST)
-Subject: Re: [RFC PATCH v7 05/16] arm64/mm: Add support for XPFO
-To:     Khalid Aziz <khalid.aziz@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Tycho Andersen <tycho@docker.com>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
- <89f03091af87f5ab27bd6cafb032236d5bd81d65.1547153058.git.khalid.aziz@oracle.com>
- <20190123142410.GC19289@Konrads-MacBook-Pro.local>
- <4dfba458-1bf6-25ff-df4c-b96a1221cd95@oracle.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <7497bd44-1fda-e073-ba7f-18a76577b64a@redhat.com>
-Date:   Tue, 12 Feb 2019 12:01:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 15:01:59 -0500
+Received: from zyt.lan (unknown [IPv6:2a02:169:34b6::564])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id BA80B5C098D;
+        Tue, 12 Feb 2019 21:01:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1550001717;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+otpItkdVINRxREVjIjcvXRSrB+xmjGsSz9hu8CUyGI=;
+        b=vAXfe5fxOMc5XlqC/JDbGJZVPDpiPdCnWX5bnYENAEO0GPQmIdxI+wf5geOlVpsSnsUyAl
+        ok5XW5ceGh1CX8aXt1FhnUAws9jRp1LDNem8JxelDDE82Td7jiMuTuO0LVe/Uunol86v1b
+        +Au9tJEtYE3LmDpX0MIa4k7J3Z8khQ8=
+From:   Stefan Agner <stefan@agner.ch>
+To:     linux@armlinux.org.uk
+Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, nicolas.pitre@linaro.org,
+        thierry.reding@gmail.com, will.deacon@arm.com,
+        julien.thierry@arm.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stefan Agner <stefan@agner.ch>, Nicolas Pitre <nico@linaro.org>
+Subject: [PATCH v3 1/5] ARM: use unified assembler in macros
+Date:   Tue, 12 Feb 2019 21:01:57 +0100
+Message-Id: <a8110c3a4d5053c9fb3963d2eceaec3de0462992.1550001435.git.stefan@agner.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1550001435.git.stefan@agner.ch>
+References: <cover.1550001435.git.stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <4dfba458-1bf6-25ff-df4c-b96a1221cd95@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 7:52 AM, Khalid Aziz wrote:
-> On 1/23/19 7:24 AM, Konrad Rzeszutek Wilk wrote:
->> On Thu, Jan 10, 2019 at 02:09:37PM -0700, Khalid Aziz wrote:
->>> From: Juerg Haefliger <juerg.haefliger@canonical.com>
->>>
->>> Enable support for eXclusive Page Frame Ownership (XPFO) for arm64 and
->>> provide a hook for updating a single kernel page table entry (which is
->>> required by the generic XPFO code).
->>>
->>> v6: use flush_tlb_kernel_range() instead of __flush_tlb_one()
->>>
->>> CC: linux-arm-kernel@lists.infradead.org
->>> Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
->>> Signed-off-by: Tycho Andersen <tycho@docker.com>
->>> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
->>> ---
->>>   arch/arm64/Kconfig     |  1 +
->>>   arch/arm64/mm/Makefile |  2 ++
->>>   arch/arm64/mm/xpfo.c   | 58 ++++++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 61 insertions(+)
->>>   create mode 100644 arch/arm64/mm/xpfo.c
->>>
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index ea2ab0330e3a..f0a9c0007d23 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -171,6 +171,7 @@ config ARM64
->>>   	select SWIOTLB
->>>   	select SYSCTL_EXCEPTION_TRACE
->>>   	select THREAD_INFO_IN_TASK
->>> +	select ARCH_SUPPORTS_XPFO
->>>   	help
->>>   	  ARM 64-bit (AArch64) Linux support.
->>>   
->>> diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
->>> index 849c1df3d214..cca3808d9776 100644
->>> --- a/arch/arm64/mm/Makefile
->>> +++ b/arch/arm64/mm/Makefile
->>> @@ -12,3 +12,5 @@ KASAN_SANITIZE_physaddr.o	+= n
->>>   
->>>   obj-$(CONFIG_KASAN)		+= kasan_init.o
->>>   KASAN_SANITIZE_kasan_init.o	:= n
->>> +
->>> +obj-$(CONFIG_XPFO)		+= xpfo.o
->>> diff --git a/arch/arm64/mm/xpfo.c b/arch/arm64/mm/xpfo.c
->>> new file mode 100644
->>> index 000000000000..678e2be848eb
->>> --- /dev/null
->>> +++ b/arch/arm64/mm/xpfo.c
->>> @@ -0,0 +1,58 @@
->>> +/*
->>> + * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
->>> + * Copyright (C) 2016 Brown University. All rights reserved.
->>> + *
->>> + * Authors:
->>> + *   Juerg Haefliger <juerg.haefliger@hpe.com>
->>> + *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify it
->>> + * under the terms of the GNU General Public License version 2 as published by
->>> + * the Free Software Foundation.
->>> + */
->>> +
->>> +#include <linux/mm.h>
->>> +#include <linux/module.h>
->>> +
->>> +#include <asm/tlbflush.h>
->>> +
->>> +/*
->>> + * Lookup the page table entry for a virtual address and return a pointer to
->>> + * the entry. Based on x86 tree.
->>> + */
->>> +static pte_t *lookup_address(unsigned long addr)
->>> +{
->>> +	pgd_t *pgd;
->>> +	pud_t *pud;
->>> +	pmd_t *pmd;
->>> +
->>> +	pgd = pgd_offset_k(addr);
->>> +	if (pgd_none(*pgd))
->>> +		return NULL;
->>> +
->>> +	pud = pud_offset(pgd, addr);
->>> +	if (pud_none(*pud))
->>> +		return NULL;
->>> +
->>> +	pmd = pmd_offset(pud, addr);
->>> +	if (pmd_none(*pmd))
->>> +		return NULL;
->>> +
->>> +	return pte_offset_kernel(pmd, addr);
->>> +}
->>> +
->>> +/* Update a single kernel page table entry */
->>> +inline void set_kpte(void *kaddr, struct page *page, pgprot_t prot)
->>> +{
->>> +	pte_t *pte = lookup_address((unsigned long)kaddr);
->>> +
->>> +	set_pte(pte, pfn_pte(page_to_pfn(page), prot));
->>
->> Thought on the other hand.. what if the page is PMD? Do you really want
->> to do this?
->>
->> What if 'pte' is NULL?
->>> +}
->>> +
->>> +inline void xpfo_flush_kernel_tlb(struct page *page, int order)
->>> +{
->>> +	unsigned long kaddr = (unsigned long)page_address(page);
->>> +	unsigned long size = PAGE_SIZE;
->>> +
->>> +	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
->>
->> Ditto here. You are assuming it is PTE, but it may be PMD or such.
->> Or worts - the lookup_address could be NULL.
->>
->>> +}
->>> -- 
->>> 2.17.1
->>>
-> 
-> Hi Konrad,
-> 
-> This makes sense. x86 version of set_kpte() checks pte for NULL and also
-> checks if the page is PMD. Now what you said about adding level to
-> lookup_address() for arm makes more sense.
-> 
-> Can someone with knowledge of arm64 mmu make recommendations here?
-> 
-> Thanks,
-> Khalid
-> 
+Use unified assembler syntax (UAL) in macros. Divided syntax is
+considered deprecated. This will also allow to build the kernel
+using LLVM's integrated assembler.
 
-arm64 can't split larger pages and requires everything must be
-mapped as pages (see [RFC PATCH v7 08/16] arm64/mm: disable
-section/contiguous mappings if XPFO is enabled) . Any
-situation where we would get something other than a pte
-would be a bug.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+---
+Changes in v2:
+- Remove excessive null tokens
 
-Thanks,
-Laura
+ arch/arm/lib/copy_from_user.S | 2 +-
+ arch/arm/lib/copy_to_user.S   | 2 +-
+ arch/arm/lib/memcpy.S         | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/lib/copy_from_user.S b/arch/arm/lib/copy_from_user.S
+index 0d4c189c7f4f..6a3419e2c6d8 100644
+--- a/arch/arm/lib/copy_from_user.S
++++ b/arch/arm/lib/copy_from_user.S
+@@ -91,7 +91,7 @@
+ 	.endm
+ 
+ 	.macro str1b ptr reg cond=al abort
+-	str\cond\()b \reg, [\ptr], #1
++	strb\cond \reg, [\ptr], #1
+ 	.endm
+ 
+ 	.macro enter reg1 reg2
+diff --git a/arch/arm/lib/copy_to_user.S b/arch/arm/lib/copy_to_user.S
+index 97a6ff4b7e3c..c7d08096e354 100644
+--- a/arch/arm/lib/copy_to_user.S
++++ b/arch/arm/lib/copy_to_user.S
+@@ -49,7 +49,7 @@
+ 	.endm
+ 
+ 	.macro ldr1b ptr reg cond=al abort
+-	ldr\cond\()b \reg, [\ptr], #1
++	ldrb\cond \reg, [\ptr], #1
+ 	.endm
+ 
+ #ifdef CONFIG_CPU_USE_DOMAINS
+diff --git a/arch/arm/lib/memcpy.S b/arch/arm/lib/memcpy.S
+index 64111bd4440b..4a6997bb4404 100644
+--- a/arch/arm/lib/memcpy.S
++++ b/arch/arm/lib/memcpy.S
+@@ -30,7 +30,7 @@
+ 	.endm
+ 
+ 	.macro ldr1b ptr reg cond=al abort
+-	ldr\cond\()b \reg, [\ptr], #1
++	ldrb\cond \reg, [\ptr], #1
+ 	.endm
+ 
+ 	.macro str1w ptr reg abort
+@@ -42,7 +42,7 @@
+ 	.endm
+ 
+ 	.macro str1b ptr reg cond=al abort
+-	str\cond\()b \reg, [\ptr], #1
++	strb\cond \reg, [\ptr], #1
+ 	.endm
+ 
+ 	.macro enter reg1 reg2
+-- 
+2.20.1
+
