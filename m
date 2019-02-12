@@ -2,185 +2,183 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1D8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EA8C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E262206A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E181206A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 00:38:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPdl+JTk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CF0zNtDG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfBLAhN (ORCPT
+        id S1728053AbfBLAh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:37:13 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39213 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfBLAhM (ORCPT
+        Mon, 11 Feb 2019 19:37:58 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:27651 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbfBLAh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:37:12 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f16so1125370wmh.4;
-        Mon, 11 Feb 2019 16:37:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UYvbv4YryySKlDRppCsjYcorfRb6U7/oOzwS5dfq0Qc=;
-        b=qPdl+JTk8Toj2frEOQfqrNevt6tq9hgDSFZL1sviqBoN9pdvYKYetHASLW7ClE4uJt
-         cTOKGCv5RsOvagu2Wci9XS6iKlKsMSErBcyCzP3wDBPbM3U6F8+ftcQZawcHp504sebV
-         LPjj1jNHBrDcPixk7ygX6gkaZi7tgt/r2sK4KpLF9ByJFRKDNsz1xfNdHJeuLdZ9MaFd
-         qulltJV7M7yZCQIUlTvHiSNeV6w1o/OXpaYnFshV3GFMKUxjLSHZnSgv+nTKqwW8uRkL
-         dxeJSKAZ1EMKQhl+pt5BZhEsvwx/j8hXVvjuDqRBPqLN/n0LVZjOuajB9BVXqf4nHxEJ
-         i9MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UYvbv4YryySKlDRppCsjYcorfRb6U7/oOzwS5dfq0Qc=;
-        b=JZNuuf6tsPSQtf3m5TweCTWiFSrv21S7KTHfvxmz8UFNMX6O98sBU6iePigoBd26MN
-         cJkBqeU1SoOMPMlxWbjNBBlILCqjy+8Y3ST2BDPdenF8BY0nAx3lddSj31Ch6SOT4v+O
-         lVm+dI9QEpOyq1d+UGWMaLBIJBwArqtjneifQ80vPagZeST24n2bSpFunm6J8feDbRkL
-         1sGrMnK7yJJ3AVTdVOyXc7o2O/vnU5S7rBVvGi4Rz2HIahTqYsZBevu6M5mqVm40pNst
-         rFdH2OM8Mg3BRpbffaFS/4Gb52UNINTjD/c0K7PSHBxs9WT92ZO4UTrxPNl4UCfjwMyt
-         RGEw==
-X-Gm-Message-State: AHQUAubNw3IT7wExUQtuTdQdIiHMarr+igUmZHzpIvzplD1y0v0wAV1t
-        Kf7eLQhx7opcYZDG5WyOt/RpMv7Y+7I=
-X-Google-Smtp-Source: AHgI3IagzJXiPV1FFoqDpoUyz3igG3tVJCjdwtXPdbLLTECiHy4brKnj03aSzFJGxzfyRrGapM3OUw==
-X-Received: by 2002:a1c:38c4:: with SMTP id f187mr629238wma.90.1549931829496;
-        Mon, 11 Feb 2019 16:37:09 -0800 (PST)
-Received: from [172.20.11.181] (bba134276.alshamil.net.ae. [217.165.113.164])
-        by smtp.gmail.com with ESMTPSA id v6sm25543197wrd.88.2019.02.11.16.37.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 16:37:08 -0800 (PST)
-Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected
- memory
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <cover.1549927666.git.igor.stoppa@huawei.com>
- <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com>
-Date:   Tue, 12 Feb 2019 02:37:04 +0200
+        Mon, 11 Feb 2019 19:37:58 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190212003753epoutp0424da8af3edd10166633a0ef54177f3b6~CdtPRFTJ12729327293epoutp04B
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:37:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190212003753epoutp0424da8af3edd10166633a0ef54177f3b6~CdtPRFTJ12729327293epoutp04B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549931873;
+        bh=4XyHo45SpGrPV4PNliVSZO2CBEjWJuMP1/jvNTHdPOw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=CF0zNtDGyRCO9mbbo7x1fzpUUfvbcS/wzYLCYE7KaKXfxiVcWTwwGCA70D2KJqp5t
+         In3SioMX73XgtonHd8lbDtXI9nTdyCUkIoYcu8Eh5CRinySSw+bTcEybP1mpKdKr02
+         cKFo2csj1kxzS7S6LDgsOAw2eQ0rDjzGFRojzb6I=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190212003750epcas1p465f654daff14b9020dbfb318c231dfb7~CdtMEXXs61031010310epcas1p4k;
+        Tue, 12 Feb 2019 00:37:50 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        35.82.04288.E55126C5; Tue, 12 Feb 2019 09:37:50 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190212003749epcas1p41338a6c7d612d741a179e9c8ba4351dc~CdtLYd2_W1031110311epcas1p4h;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190212003749epsmtrp2e690cdb78975c9377a33ecaa72f00f28~CdtLXOEu60267402674epsmtrp2N;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+X-AuditID: b6c32a38-bf7ff700000010c0-c8-5c62155ef16e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8D.AA.03601.D55126C5; Tue, 12 Feb 2019 09:37:49 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190212003749epsmtip29ab10159ce3295f6e36e54b567f5c0d2~CdtLLpEoH1392213922epsmtip2X;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch
+ fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <effba950-8fcf-2d96-827d-25d20ae60f1d@samsung.com>
+Date:   Tue, 12 Feb 2019 09:37:49 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190211181531.GA3238@embeddedor>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBJsWRmVeSWpSXmKPExsWy7bCmrm6caFKMwfTdkhZb96hanOnOteh/
+        /JrZ4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyuHjK1eLwm3ZWi3/XNrJYrNr1h9GBx+P9
+        jVZ2j9kNF1k81h1U9dg56y67x6ZVnWwem5fUe/RtWcXo8XmTXABHVLZNRmpiSmqRQmpecn5K
+        Zl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtClSgpliTmlQKGAxOJiJX07m6L8
+        0pJUhYz84hJbpdSClJwCywK94sTc4tK8dL3k/FwrQwMDI1OgwoTsjGtnQgt+CVRs2uPRwPiX
+        t4uRk0NCwETi1Icmli5GLg4hgR2MEocmP2aHcD4xSqw4dpMVwvnGKLFw025GmJZXizYzQST2
+        Mkp8ebwdquU9o8SzZeuAWjg4hAX8JZ4/ZwaJiwjMY5K4MHsx2ChmgdWMEhM23WMHGcUmoCWx
+        /8UNNhCbX0BR4uqPx2AreAXsJHb23GYFsVkEVCU2LPvFDGKLCkRIHO59B1UjKHFy5hMWEJtT
+        QF/iwvp3YPXMAuISt57MZ4Kw5SWat84Gu0JCYBW7xPZPj5ghfnCReHPzBTuELSzx6vgWKFtK
+        4vO7vWwQdrXEypNH2CCaOxgltuy/wAqRMJbYv3QyE8ibzAKaEut36UMs45N497UH7HsJAV6J
+        jjYhiGplicsP7jJB2JISi9s7ocZ7SKz9c4NlAqPiLCTvzELywiwkL8xCWLaAkWUVo1hqQXFu
+        emqxYYEJcmxvYgSnYi2LHYx7zvkcYhTgYFTi4VXITYwRYk0sK67MPcQowcGsJMJrIJwUI8Sb
+        klhZlVqUH19UmpNafIjRFBjaE5mlRJPzgXkiryTe0NTI2NjYwsTQzNTQUEmcd72Dc4yQQHpi
+        SWp2ampBahFMHxMHp1QDY2X21o1fkv1fzJGdfJ7D4boT6+2p5rb3812KMhn38B4WXXNNtNr9
+        sv+VlQ6vtFmqv8wwyRf9sJD9osrK70dV7Jol8tm2mk/2fu+e+T7akt/7dUT717dvOX56K6w9
+        2bbpUdbx4Mxl6nt9goSMz0yI95/ZuEzaymX1VaYXyR4HJOS9N+zUbebhUGIpzkg01GIuKk4E
+        ABF2UJnbAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvG6saFKMwY9XahZb96hanOnOteh/
+        /JrZ4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyuHjK1eLwm3ZWi3/XNrJYrNr1h9GBx+P9
+        jVZ2j9kNF1k81h1U9dg56y67x6ZVnWwem5fUe/RtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfG
+        tTOhBb8EKjbt8Whg/MvbxcjJISFgIvFq0WamLkYuDiGB3YwSWx58ZoJISEpMu3iUuYuRA8gW
+        ljh8uBii5i2jxI7ZDxhBaoQFfCWW3lnCApIQEVjAJLHlRwsziMMssJpRYsPBDywQLU2MEl/e
+        TWMBaWET0JLY/+IGG4jNL6AocfXHY7BRvAJ2Ejt7brOC2CwCqhIblv1iBrFFBSIkPj7dxwRR
+        IyhxcuYTsDmcAvoSF9a/A6tnFlCX+DPvEjOELS5x68l8JghbXqJ562zmCYzCs5C0z0LSMgtJ
+        yywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgRHpZbWDsYTJ+IPMQpwMCrx
+        8CrkJsYIsSaWFVfmHmKU4GBWEuE1EE6KEeJNSaysSi3Kjy8qzUktPsQozcGiJM4rn38sUkgg
+        PbEkNTs1tSC1CCbLxMEp1cDoG2MRuV9S5+PptTs2czFvF09a957jbXK2YdZj45KwK+ahl/59
+        Cvqz+pva6fgysR2ee7aw/dgfUGIUsZQ/IfFpyW0X7sdv4i84PVDx2Myy8/Dhjzm/a1IYLj+1
+        ktbXWfJUiW9nucxaE/67Iq4/l90RuGLet/qHYOCT3R1dRzO6o3eumyB07ct5JZbijERDLeai
+        4kQAztz8GcYCAAA=
+X-CMS-MailID: 20190212003749epcas1p41338a6c7d612d741a179e9c8ba4351dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7
+References: <CGME20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7@epcas4p1.samsung.com>
+        <20190211181531.GA3238@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Gustavo,
 
-
-On 12/02/2019 02:09, Kees Cook wrote:
-> On Mon, Feb 11, 2019 at 3:28 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
-
-[...]
-
->> Patch-set implementing write-rare memory protection for statically
->> allocated data.
+On 19. 2. 12. 오전 3:15, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> It seems like this could be expanded in the future to cover dynamic
-> memory too (i.e. just a separate base range in the mm).
-
-Indeed. And part of the code refactoring is also geared in that 
-direction. I am working on that part, but it was agreed that I would 
-first provide this subset of features covering statically allocated 
-memory. So I'm sticking to the plan. But this is roughly 1/3 of the 
-basic infra I have in mind.
-
->> Its purpose is to keep write protected the kernel data which is seldom
->> modified, especially if altering it can be exploited during an attack.
->>
->> There is no read overhead, however writing requires special operations that
->> are probably unsuitable for often-changing data.
->> The use is opt-in, by applying the modifier __wr_after_init to a variable
->> declaration.
->>
->> As the name implies, the write protection kicks in only after init() is
->> completed; before that moment, the data is modifiable in the usual way.
->>
->> Current Limitations:
->> * supports only data which is allocated statically, at build time.
->> * supports only x86_64 and arm64;other architectures need to provide own
->>    backend
+> This patch fixes the following warnings:
 > 
-> It looked like only the memset() needed architecture support. Is there
-> a reason for not being able to implement memset() in terms of an
-> inefficient put_user() loop instead? That would eliminate the need for
-> per-arch support, yes?
-
-So far, yes, however from previous discussion about power arch, I 
-understood this implementation would not be so easy to adapt.
-Lacking other examples where the extra mapping could be used, I did not 
-want to add code without a use case.
-
-Probably both arm and x86 32 bit could do, but I would like to first get 
-to the bitter end with memory protection (the other 2 thirds).
-
-Mostly, I hated having just one arch and I also really wanted to have arm64.
-
-But eventually, yes, a generic put_user() loop could do, provided that 
-there are other arch where the extra mapping to user space would be a 
-good way to limit write access. This last part is what I'm not sure of.
-
->> - I've added a simple example: the protection of ima_policy_flags
+> drivers/clk/samsung/clk-s3c2443.c: In function ‘s3c2443_common_clk_init’:
+> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    samsung_clk_register_alias(ctx, s3c2450_aliases,
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      ARRAY_SIZE(s3c2450_aliases));
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
+>   case S3C2416:
+>   ^~~~
 > 
-> You'd also looked at SELinux too, yes? What other things could be
-> targeted for protection? (It seems we can't yet protect page tables
-> themselves with this...)
-
-Yes, I have. See the "1/3" explanation above. I'm also trying to get 
-away with as small example as possible, to get the basic infra merged.
-SELinux is not going to be a small patch set. I'd rather move to it once 
-at least some of the framework is merged. It might be a good use case 
-for dynamic allocation, if I do not find something smaller.
-But for static write rare, going after IMA was easier, and it is still a 
-good target for protection, imho, as flipping this variable should be 
-sufficient for turning IMA off.
-
-For the page tables, I have in mind a little bit different approach, 
-that I hope to explain better once I get to do the dynamic allocation.
-
->> - the x86_64 user space address range is double the size of the kernel
->>    address space, so it's possible to randomize the beginning of the
->>    mapping of the kernel address space, but on arm64 they have the same
->>    size, so it's not possible to do the same
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
-> Only the wr_rare section needs mapping, though, yes?
-
-Yup, however, once more, I'm not so keen to do what seems as premature 
-optimization, before I have addressed the framework in its entirety, as 
-the dynamic allocation will need similar treatment.
-
->> - I'm not sure if it's correct, since it doesn't seem to be that common in
->>    kernel sources, but instead of using #defines for overriding default
->>    function calls, I'm using "weak" for the default functions.
+> Notice that, in this particular case,  the code comment is modified
+> in accordance with what GCC is expecting to find.
 > 
-> The tradition is to use #defines for easier readability, but "weak"
-> continues to be a thing. *shrug*
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 
-Yes, I wasn't so sure about it, but I kinda liked the fact that, by 
-using "weak", the arch header becomes optional, unless one has to 
-redefine the struct wr_state.
+Except for level 5 of -Wimplicit-fallthrough,
+level 4 is more strict to show the warnings.
+Why don't you support level 4 for -Wimplicit-fallthrough?
+I think that you want to fix for -Wimplicit-fallthrough warning,
+you better to support level 4. What do you think?
 
-> This will be a nice addition to protect more of the kernel's static
-> data from write-what-where attacks. :)
 
-I hope so :-)
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2443.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 884067e4f1a1..f38f0e24e3b6 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -389,7 +389,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+>  				ARRAY_SIZE(s3c2450_gates));
+>  		samsung_clk_register_alias(ctx, s3c2450_aliases,
+>  				ARRAY_SIZE(s3c2450_aliases));
+> -		/* fall through, as s3c2450 extends the s3c2416 clocks */
+> +		/* fall through - as s3c2450 extends the s3c2416 clocks */
+>  	case S3C2416:
+>  		samsung_clk_register_div(ctx, s3c2416_dividers,
+>  				ARRAY_SIZE(s3c2416_dividers));
+> 
 
---
-thanks, igor
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
