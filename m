@@ -2,99 +2,118 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967E0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DB2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 646A621900
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:21:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzxCJJr9"
+	by mail.kernel.org (Postfix) with ESMTP id CCC7A21900
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfBLKVu (ORCPT
+        id S1728614AbfBLKXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:21:50 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45613 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKVt (ORCPT
+        Tue, 12 Feb 2019 05:23:30 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:49223 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLKXa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:21:49 -0500
-Received: by mail-pl1-f195.google.com with SMTP id r14so1068226pls.12;
-        Tue, 12 Feb 2019 02:21:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nPLvJ1U2J5XGkPuS7FrpA67Dv/Qj/MbV6qZU2I6C6bI=;
-        b=SzxCJJr9cKLoRxfWqTkFmr9+SHpyQYrdGl962aPQtGx9/Gjkt0WcKT8Zd+/05ddSDi
-         lhp4ncn4nNyePAubvUZigSQJFbWplxFUesa0jX/qXuqTHPwh0wuAg/uOkvj9oHhiRY+s
-         UOo3BBrGFsOy6U7uwRUFEyn1xSBG9wLKBLvWoyPbme/7F6aumIqfJ2j3JKPrlhwf5QnP
-         DlwKH+PGcbvESYWZCujWrfR4D8joaa8zlg3F0wyuWzjYxJHiXbumLSblx3r1GmO4u8gD
-         PaE5X/qVH1O7w/BHgOjTX90PptcvAEULu6dpoAzx622rTB6PFncIGNhecOVXXrE/vHHw
-         ya0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nPLvJ1U2J5XGkPuS7FrpA67Dv/Qj/MbV6qZU2I6C6bI=;
-        b=rGooVT0IAnuIgHLe333bDAR3Iu12M+9LVu0+wOl/1gqqVOVORFBcow2d5iUu7BWfsM
-         zpAbntVgIXv9CMGmB4UeTx2O1uTwe6O2T1DSN0uL6WG9havcVxcys7RIOGepPHTce4yi
-         2BL1xkLK6oVm0j0B3qkd7A6iQjximdohT9OWz1s8Y4ERnHWfx31FRym4mvgCIx7H6Jrl
-         MNn93dz6hBQuXTmWqN5ypCZ4YCVc1If7niyZd6DK3HEUHPLn6+C7IKHLVk9/043c708M
-         dHJozPH23Jzv4C20LmcqlKo26VkCyd4aBY8rxAHCG0shPDM9qpUQf5cfWtwXKssuv6KO
-         PKQg==
-X-Gm-Message-State: AHQUAuaR6BJRXUBeQSPuDWqS5Q4LpIwOOZfpaZxRAvX4OCv7YAqPF911
-        Up+UCHY+L/2GyUuI1XJ//Fs08eXi7WGxOuaFrkAcgYEJ
-X-Google-Smtp-Source: AHgI3IYTjtEsS21g1g6BjutEpqAJH9KZww8oF5FWEf4AkX1f+Yqr3NPzHlPenD52VchrpZdvHSo0diKYNKb7fi35mKA=
-X-Received: by 2002:a17:902:112c:: with SMTP id d41mr3181069pla.144.1549966908724;
- Tue, 12 Feb 2019 02:21:48 -0800 (PST)
+        Tue, 12 Feb 2019 05:23:30 -0500
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 40364200004;
+        Tue, 12 Feb 2019 10:23:25 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 11:23:24 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     nicolas.dufresne@collabora.com, tfiga@chromium.org,
+        posciak@chromium.org, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        jenskuske@gmail.com, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [PATCH v3 1/2] media: uapi: Add H264 low-level decoder API
+ compound controls.
+Message-ID: <20190212102324.3tdurso54fumlkwr@flea>
+References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
+ <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
+ <209bafb880bd9410f875f5e6f16923e38ec76df4.camel@collabora.com>
 MIME-Version: 1.0
-References: <20190212100825.9113-1-anders.roxell@linaro.org>
-In-Reply-To: <20190212100825.9113-1-anders.roxell@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Feb 2019 12:21:37 +0200
-Message-ID: <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ima: fix build error redeclaration of enumerator
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="drrdy3tibi4hg6l4"
+Content-Disposition: inline
+In-Reply-To: <209bafb880bd9410f875f5e6f16923e38ec76df4.camel@collabora.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 12:15 PM Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> include/linux/tpm.h") introduced a build error when both ima and efi is
-> enabled. What happens is that both headers (ima.h and efi.h) defines the
-> same 'NONE' constant, and it broke when they started getting included
-> from the same file.
 
-> We only need one of the two patches applied.
+--drrdy3tibi4hg6l4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would argue that we need two patches applied. Namespace is a hidden
-issue in the code.
+On Mon, Feb 11, 2019 at 02:12:25PM -0300, Ezequiel Garcia wrote:
+> On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
+> >=20
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
+ev2.h
+> > index d6eed479c3a6..6fc955926bdb 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -645,6 +645,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 =
+with start codes */
+> >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H26=
+4 without start codes */
+> >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 =
+MVC */
+> > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H26=
+4 parsed slices */
+>=20
+> Nicolas and I have discussed the pixel format, and came up with
+> the following proposal.
+>=20
+> Given this format represents H264 parsed slices, without any start code,
+> perhpaps we name it as:
+>=20
+> V4L2_PIX_FMT_H264_SLICE_RAW
+>=20
+> Then, we'd also add:
+>=20
+> V4L2_PIX_FMT_H264_SLICE_ANNEX_B
+>=20
+> To represent H264 parsed slices with annex B (3- or 4-byte) start code.
+> This one is what the Rockchip VPU driver would expose.
+>=20
+> Ideas?
 
-This patch looks good to me, FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+I think we discussed that idea already, and I'm all for it.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--drrdy3tibi4hg6l4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGKenAAKCRDj7w1vZxhR
+xW+MAP9jbBHZlCQuCB5NsMT18YGAkvbt2059lhnKbRNmfwEwqwD/SafCidHKsDSl
+2sdRRj1tVdOCB3oTJRS3WNE83XwAKgM=
+=cJo3
+-----END PGP SIGNATURE-----
+
+--drrdy3tibi4hg6l4--
