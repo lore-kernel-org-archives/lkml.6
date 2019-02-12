@@ -2,126 +2,175 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC707C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E02C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983DF20821
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549964609;
-	bh=ba7wTDNhZuYSLdg9vq1CV3V4C+h9uM0vcZuPpf4gF1k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0WxInQac2kQPbtoQ+J69ekgcNQZdwOx+pKrLd8TaostWzyxI97JWNzxUqlKvhEj3B
-	 p8kECKiEndqP1U7Wwq8kbt+AOsOCphYp7JKnL1u4tuYqTLFoJbAvc2yA7oB6diEW4H
-	 000tW10gnZYXxkxtn9/3eGzx/PGOF7ITQ0Wv6qHQ=
+	by mail.kernel.org (Postfix) with ESMTP id AA83D20821
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:45:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="Y66Oa5RF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbfBLJn1 (ORCPT
+        id S1728001AbfBLJpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:43:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45354 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfBLJn1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:43:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so3227261ota.12;
-        Tue, 12 Feb 2019 01:43:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WwxW487nPN2myU8ArfIoC4z57AXvnJ8vUQii01xHTks=;
-        b=qqCdKlS31kNuOk96zslMb4wdu3GhqPetuzB9zFoGj3tZCPvWZMfV77joNxozEqio7v
-         TerEl3YG7iYbYByqqprODD6nWWQzfhVApdli8AIG79uClI3zFdFEQvOIZlE8CQ/aINqk
-         3gwf6Ls/DhdkCf2vcuQnQswE1pljvCPS6aE6qvMLkzoioHqFCmQ/RTVvhB69lOgX1KJ6
-         ck9kb0aB7zyR8uhIwa29MaBjz1voxuLI9nJ0bCM5HH+AQ3peWPKjfFdOXyWyO74CxUpc
-         d+mxKNz6huPmvZzP0EyN6bOX+r8dvmYjL94xV/8G3mKpqw4UcErv9UdmS+DrYmGZvWmR
-         U/9A==
-X-Gm-Message-State: AHQUAuZpB3++73QD/tpqc3Idy/BXZQNuM2pPZTP1QS3Yf0bVngD86Ght
-        TSUQpLG7mA4YjRSJceelBGOGM20H4JecqtGbXUM=
-X-Google-Smtp-Source: AHgI3IY5OwzVNPqjV8BhiG8gFLyW7sBqyxk4b1uMtdd8mFwE6fP4OSKneFmiSMLzGfwDAgA3B3O9Om7CxgVM09voQtE=
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr2924634otl.343.1549964606562;
- Tue, 12 Feb 2019 01:43:26 -0800 (PST)
+        Tue, 12 Feb 2019 04:45:50 -0500
+Received: from plaes.org ([188.166.43.21]:49010 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726238AbfBLJpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:45:50 -0500
+Received: from plaes.org (localhost [127.0.0.1])
+        by plaes.org (Postfix) with ESMTPSA id 663D64022E;
+        Tue, 12 Feb 2019 09:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1549964747; bh=W25nCZmEIHwGCTrzOhdBgd7ZEShM1fhel195A9NUUJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y66Oa5RFVOQQLEpwHktWNOQofRWVwvVlE4yIXl0jLqHj+CrSy6KH+C36goAXDu3+H
+         3hDCzZbdv1x+SzKdULFgOOcO+7j8Kd3O+NB1369dHVx4E5Nhd5af1ON2g9hTKCmi0N
+         5Cxc5sWq5pxAoEWdtFIINuXTzTYSH1fWVaFevRV9IgGCPyPoCXnWaDV1XzsrgUn8K3
+         ngBcxdfJnvh0CKSh7P2rSlnae0PYccxX/C9h5KDfbuV3GqYi283omzQECukJLIyGpf
+         oeQ+0pnI5n8pS39PuSNUsDvh0Xxhlqax4PFnR1Inl0ldeOaFfiAOtRUq4+CXfS4xK2
+         qgSmS4YawBs3g==
+Date:   Tue, 12 Feb 2019 09:45:46 +0000
+From:   Priit Laes <plaes@plaes.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190212094546.n2w7pffytzdgpx3e@plaes.org>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+ <20190206092000.f46nsn4fw2n4crub@flea>
+ <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
+ <20190206155227.wbkzvsdgykir4wn5@flea>
+ <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
+ <20190211153402.s5qij5idvhbtsw2y@flea>
 MIME-Version: 1.0
-References: <cover.1549955027.git.viresh.kumar@linaro.org> <8030961ef762018fc286e4d3d3a010638e900e53.1549955027.git.viresh.kumar@linaro.org>
-In-Reply-To: <8030961ef762018fc286e4d3d3a010638e900e53.1549955027.git.viresh.kumar@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 12 Feb 2019 10:43:13 +0100
-Message-ID: <CAJZ5v0hLOD-5XDp7jAwt4EqWYGAU9VZzumNchW9_+bt7F1MdQw@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] cpufreq: dt: Implement online/offline() callbacks
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211153402.s5qij5idvhbtsw2y@flea>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 8:07 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> Implement the light-weight tear down and bring up helpers to reduce the
-> amount of work to do on CPU offline/online operation.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq-dt.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index 7ba392911cd0..1aefaa1b0ca2 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -295,6 +295,21 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->         return ret;
->  }
->
-> +static int cpufreq_online(struct cpufreq_policy *policy)
-> +{
-> +       /* We did light-weight tear down earlier, nothing to do here */
-> +       return 0;
-> +}
+On Mon, Feb 11, 2019 at 04:34:02PM +0100, Maxime Ripard wrote:
+> On Mon, Feb 11, 2019 at 02:35:52PM +0000, Priit Laes wrote:
+> > On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
+> > > Hi,
+> > > 
+> > > On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
+> > > > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> > > > > > all of them, except the HRTIMER, expect the clock rate to stay
+> > > > > > the same and not change underneath them. And SATA expects it to
+> > > > > > be at 600 MHz, as the datasheet says. And while it may not directly
+> > > > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+> > > > > > reduced rate of 50 MHz just fine.
+> > > > > > 
+> > > > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
+> > > > > > should be using the old code (now in the if conditional block),
+> > > > > > i.e. the behavior should not have changed.
+> > > > > > 
+> > > > > > I don't think this actually "fixes" whatever bug was introduced,
+> > > > > > but only papers over the issue, and possible introduces further
+> > > > > > issues for other users.
+> > > > > 
+> > > > > You're right, I've overlooked that it was pll-periph being
+> > > > > affected. I've dropped it for now.
+> > > > 
+> > > > Any ideas what could be done. I currently have no time to debug it,
+> > > > but it affects existing systems.
+> > > 
+> > > I can't find what would change with that commit either if the flag
+> > > isn't set, so looking at the register state before and after that
+> > > commit would help I guess?
+> > 
+> > Register dump without the patch:
+> > 
+> > $ busybox devmem 0x01c20090
+> > 0x0250030E
+> > 
+> > pll-ddr-base     2 2 0   768000000          0     0  50000
+> >    pll-ddr-other 1 1 0   768000000          0     0  50000
+> >       mmc2       3 3 0    51200000          0     0  50000
+> > 
+> > Register dump with patch applied, booted from mmc0 and after mounting emmc:
+> > 
+> > $ busybox devmem 0x01c20090
+> > 0x8140020B
+> > 
+> > pll-periph-base  3 3 0  1200000000          0     0  50000
+> >    pll-periph    6 6 0   600000000          0     0  50000
+> >       mmc2       3 3 0    50000000          0     0  50000
+> 
+> I meant the whole Clock controller, ideally a diff between the two
+> states would be great.
 
-I think you could avoid having to add this empty stub if the core
-checked for both online and offline, that is
+I have uploaded the raw files here:
+https://gist.github.com/plaes/3465386d8aa55fa70fd3997310719828
 
-if (driver->offline || driver->online) {
-    ret = driver->online ? driver->online(policy) : 0;
-} else {
-    ret = driver->init(policy);
-}
+The test scenario is following:
 
-or similar.
+1) Boot via FEL (u-boot + zImage + boot.scr) and load root fs from
+sd-card / mmc0
 
-> +
-> +static int cpufreq_offline(struct cpufreq_policy *policy)
-> +{
-> +       /*
-> +        * Preserve policy->driver_data and don't free resources on light-weight
-> +        * tear down.
-> +        */
-> +       return 0;
-> +}
-> +
->  static int cpufreq_exit(struct cpufreq_policy *policy)
->  {
->         struct private_data *priv = policy->driver_data;
-> @@ -319,6 +334,8 @@ static struct cpufreq_driver dt_cpufreq_driver = {
->         .get = cpufreq_generic_get,
->         .init = cpufreq_init,
->         .exit = cpufreq_exit,
-> +       .online = cpufreq_online,
-> +       .offline = cpufreq_offline,
->         .name = "cpufreq-dt",
->         .attr = cpufreq_dt_attr,
->         .suspend = cpufreq_generic_suspend,
-> --
-> 2.20.1.321.g9e740568ce00
->
+2) ssh into machine and dump register space
+
+- no-patch-before-mount.dump
+- no-patch-post-mount.dump
+
+3) Attempt to mount emmc / mmc2 and dump ccu register space
+- with-patch-before-mount.dump
+- with-patch-post-mount.dump
+
+
+Firstly, I noticed that first 0x200 bits are mirrored:
+0x1c20000 = 0x1c20200
+0x1c20004 = 0x1c20204
+...
+01xc201fc = 0x1c203fc
+
+And here come the diffs:
+
+a) Diff before mount vs patch / reverted patch:
+
+mmc2:
+  -0x1c20090: 0x0250030E
+  +0x1c20090: 0x0140020B
+unk1: (mirrored ahb?, this one's flaky due to mmc runtime suspend)
+  -0x1c20260: 0x1200C17F
+  +0x1c20260: 0x1200C07F
+unk2: (mirrored mmc2?)
+  -0x1c20290: 0x0250030E
+  +0x1c20290: 0x0140020B
+
+b) Diff post-mount vs patch / reverted patch:
+
+ahb (this one's flaky, possibly due to runtime suspend for mmc):
+  -0x1c20060: 0x1200C07F or 0x1200C17F
+  +0x1c20060: 0x1200C47F
+mmc2:
+  -0x1c20090: 0x0250030E
+  +0x1c20090: 0x8140020B
+unk1:
+  -0x1c20260: 0x1200C07F
+  +0x1c20260: 0x1200C47F
+unk3:
+  -0x1c20288: 0x8140030B
+  +0x1c20288: 0x0140030B
+unk2: (mirrored mmc2?)
+  -0x1c20290: 0x0250030E
+  +0x1c20290: 0x8140020B
+
+
