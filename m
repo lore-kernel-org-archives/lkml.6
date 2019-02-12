@@ -2,170 +2,156 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75889C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C856C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4303F21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A79B217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W7V1pm8o"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo9keMXm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfBLQSQ (ORCPT
+        id S1730997AbfBLQUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:18:16 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41572 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729355AbfBLQSQ (ORCPT
+        Tue, 12 Feb 2019 11:20:01 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32975 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729486AbfBLQUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:18:16 -0500
-Received: by mail-ua1-f67.google.com with SMTP id z24so1063561ual.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:18:15 -0800 (PST)
+        Tue, 12 Feb 2019 11:20:01 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so1489194pgu.0;
+        Tue, 12 Feb 2019 08:20:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E6BeYoUof4NqQsXGBR7kWHKIfxXRI0fl6tbuor8qNFs=;
-        b=W7V1pm8oOKlhebGMV2gGKcKJzcwZ1SnZcY4IKn1GB/qTenfos8XWuWeC9tmdQ7IH2F
-         VqqeO6B7W9LqnzJdVsltSyesUY4UjGDJAuLRDGjVP3snipsFwPREFHQHV/g9JGp2fShV
-         Ksu+osUnD3NWLhKhrUxTmsng8JjMgi0n+OgoFfjzLOXqYQy0o6aCjpj4EEshN86+LnPz
-         0YU1lj0q4ApLQBJggP3H61eG4r+IY7IuMwSxhJOe5rlAwfnwa6phdvHpwJY4a1HMbBrx
-         VvuqvmaDWjCk02/1ejOOeb/cmZJqVRAesNehOWvZ4nUKClsoi9tjvFSUa3nfO05k4q/C
-         zSqA==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Fn3V75Mf9/HbiODX89yQ8/MGcSX2G4LNhUE84jpD4lA=;
+        b=lo9keMXmk59/FG3dhA2Vj48XeD82ktuy8tpqtQo8BQ2E/fGgy5m4JJUH2GRxEpkzoc
+         SE00ufigt7aYEJERjMxrepKeWmn663eJXX7QOHpr/2KTUXRXBiYp16440DZFqijSVNzy
+         156bEKZo0Cda6w7nw6q/vDqfCmvonlaKT8VTuRB+ODbNczUbHdsqaJaXOY33dCVZuzfj
+         SGl3fkrjfXJ35vmRcAEutf5BnKNtccvLWTqpWui1uiKl5wbRlgWzF89IpeRibkfEP32L
+         pZWMSypBlFj8yn1Rter5aK1/jLtfea1jQnjCnyxcqCTd10JGr32y97YU0v3P4g9zhMd9
+         yPhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E6BeYoUof4NqQsXGBR7kWHKIfxXRI0fl6tbuor8qNFs=;
-        b=pF/U3tkzdEDx4dMxepW7LCRJ/OfOpt59yrJBhcdQS+O+36T03Rj/ONj6SNv7lI5U+5
-         kh9VtbImm1KO+NMOpkjFab+umJoGeRv+8SmxP4MFCWKU5im6OckoHBsThvpOtPjbPzYV
-         Nk3rIU3oCcQIiCNfKnDf5e/cps9GT8/InH8qK4v+UmUdpw1uQrcFaopsPBZvZ63mwMVs
-         eDiFtVq1EBc4dICAMN3dD8pSlwiS72s6IrsLKpmJMvrdXWNkNemj5w8SzekbiQgdKvxE
-         AsWNBTIa+v2epJcs8tv/u8gvAdOg5rAPT/pgKqStTdIT4vzH78iVMbhXXksSnvtAsfwa
-         xMOw==
-X-Gm-Message-State: AHQUAuZwngWAnPJ7XIEKLQIYeiqw5iFj9QAMV++txF/6FK0tJk9/fDvc
-        SkWW5pfLnCGXaF6iJoKfBdx0kppuxDbiqufLCmlRQ0UVBB4=
-X-Google-Smtp-Source: AHgI3IYh7Aay9pz4AtbO8CAuJwJ8zfzstDUwabBmJX9OrWp5C8krRhsz98R5xhE+2453PjwHbI1kYGrG8hTf4hcB2Fo=
-X-Received: by 2002:ab0:270b:: with SMTP id s11mr1823391uao.25.1549988295160;
- Tue, 12 Feb 2019 08:18:15 -0800 (PST)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Fn3V75Mf9/HbiODX89yQ8/MGcSX2G4LNhUE84jpD4lA=;
+        b=sW9nWlIrf7itEZvpPaNca/hv30kJ5MhJyjXORJ6B6FGYVRZHJ3qbjOuEU9XpxG1won
+         xIZqPZ8hZSBqc1Ycm1+2tYJUT43PjJUKy/GZ4zf1cXH57AT6Kz4K7lNZ2DNF4tzvm8Nu
+         acOrjpp88WPvu3QGh8gv8wr8Usl9Ko5OvMaHI67ylR7RtKMRjK9T3LS+7LlhH3cTebh6
+         1Apr1YhrKUrcH5OHcxpIa/ZNTXlHw8nb3j9KIUOUcQ0lgXL1DrWEQVd6z7bjgVIDpBtz
+         JApdf2i94mcN1V89bWtVBbM7iyQNW7n/x7uhERM4LrhLqJkX9pm85aX8Ib2UUY9VsXjA
+         cytw==
+X-Gm-Message-State: AHQUAubm9wkWJ8YrON++JpYS2/Zgm2Qxa1b6jLpsfvnveHcWE8dEqYFS
+        +gx+SUrEAwYo8e4nc2aU1FCoNIY6
+X-Google-Smtp-Source: AHgI3IZHlonO9RRfLyvkWcxeJJBbDCJeYfalJn/ihv8/NzNDHL53xk65eGF6W1H9XGhba5wJwR9LkA==
+X-Received: by 2002:a63:5b48:: with SMTP id l8mr4380137pgm.80.1549988399494;
+        Tue, 12 Feb 2019 08:19:59 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l19sm23932978pfi.71.2019.02.12.08.19.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 08:19:58 -0800 (PST)
+Subject: Re: [PATCH] usb: typec: tcpm: Export partner Source Capabilities
+To:     Greg KH <gregkh@linuxfoundation.org>, Kyle Tso <kyletso@google.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190131035411.53576-1-kyletso@google.com>
+ <20190131070238.GA4500@kroah.com>
+ <CAGZ6i=07EOHqd3r9y1MpYn_e1nFeYGt_wp9arhMZWWeTBm-udA@mail.gmail.com>
+ <20190212105421.GA23271@kroah.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <c838e214-4888-c708-6a7c-a8de6ecb5282@roeck-us.net>
+Date:   Tue, 12 Feb 2019 08:19:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <1670239.00ZbddH1IV@aspire.rjw.lan>
-In-Reply-To: <1670239.00ZbddH1IV@aspire.rjw.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Feb 2019 17:17:39 +0100
-Message-ID: <CAPDyKFoR+evmvDehgTJvxcZ70ZLTqU5J4To_c=2vYdOk26h92w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM-runtime: Fix __pm_runtime_set_status() race with
- runtime resume
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190212105421.GA23271@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 13:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Commit 4080ab083000 ("PM-runtime: Take suppliers into account in
-> __pm_runtime_set_status()") introduced a race condition that may
-> trigger if __pm_runtime_set_status() is used incorrectly (that is,
-> if it is called when PM-runtime is enabled for the target device
-> and working).
->
-> In that case, if the original PM-runtime status of the device is
-> RPM_SUSPENDED, a runtime resume of the device may occur after
-> __pm_runtime_set_status() has dropped its power.lock spinlock
-> and before deactivating its suppliers, so the suppliers may be
-> deactivated while the device is PM-runtime-active which may lead
-> to functional issues.
->
-> To avoid that, modify __pm_runtime_set_status() to check whether
-> or not PM-runtime is enabled for the device before activating its
-> suppliers (if the new status is RPM_ACTIVE) and either return an
-> error if that's the case or increment the device's disable_depth
-> counter to prevent PM-runtime from being enabled for it while
-> the remaining part of the function is running (disable_depth is
-> then decremented on the way out).
->
-> Fixes: 4080ab083000 ("PM-runtime: Take suppliers into account in __pm_runtime_set_status()")
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/base/power/runtime.c |   24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
->
-> Index: linux-pm/drivers/base/power/runtime.c
-> ===================================================================
-> --- linux-pm.orig/drivers/base/power/runtime.c
-> +++ linux-pm/drivers/base/power/runtime.c
-> @@ -1129,6 +1129,22 @@ int __pm_runtime_set_status(struct devic
->         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
->                 return -EINVAL;
->
-> +       spin_lock_irq(&dev->power.lock);
-> +
-> +       /*
-> +        * Prevent PM-runtime from being enabled for the device or return an
-> +        * error if it is enabled already and working.
-> +        */
-> +       if (dev->power.runtime_error || dev->power.disable_depth)
-> +               dev->power.disable_depth++;
-> +       else
-> +               error = -EAGAIN;
-> +
-> +       spin_unlock_irq(&dev->power.lock);
-> +
-> +       if (error)
-> +               return error;
-> +
->         /*
->          * If the new status is RPM_ACTIVE, the suppliers can be activated
->          * upfront regardless of the current status, because next time
-> @@ -1147,12 +1163,6 @@ int __pm_runtime_set_status(struct devic
->
->         spin_lock_irq(&dev->power.lock);
->
-> -       if (!dev->power.runtime_error && !dev->power.disable_depth) {
-> -               status = dev->power.runtime_status;
-> -               error = -EAGAIN;
-> -               goto out;
-> -       }
-> -
->         if (dev->power.runtime_status == status || !parent)
->                 goto out_set;
->
-> @@ -1205,6 +1215,8 @@ int __pm_runtime_set_status(struct devic
->                 device_links_read_unlock(idx);
->         }
->
-> +       pm_runtime_enable(dev);
+On 2/12/19 2:54 AM, Greg KH wrote:
+> On Tue, Feb 12, 2019 at 06:29:39PM +0800, Kyle Tso wrote:
+>> On Thu, Jan 31, 2019 at 3:02 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>>> On Thu, Jan 31, 2019 at 11:54:11AM +0800, Kyle Tso wrote:
+>>>> Provide a function to get the partner Source Capabilities.
+>>>>
+>>>> Signed-off-by: Kyle Tso <kyletso@google.com>
+>>>> ---
+>>>>   drivers/usb/typec/tcpm/tcpm.c | 23 +++++++++++++++++++++++
+>>>>   include/linux/usb/tcpm.h      |  1 +
+>>>>   2 files changed, 24 insertions(+)
+>>>>
+>>>> diff --git a/drivers/usb/typec/tcpm/tcpm.c
+>>> b/drivers/usb/typec/tcpm/tcpm.c
+>>>> index f1d3e54210df..29cd84ba9960 100644
+>>>> --- a/drivers/usb/typec/tcpm/tcpm.c
+>>>> +++ b/drivers/usb/typec/tcpm/tcpm.c
+>>>> @@ -4494,6 +4494,29 @@ int tcpm_update_sink_capabilities(struct
+>>> tcpm_port *port, const u32 *pdo,
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(tcpm_update_sink_capabilities);
+>>>>
+>>>> +/*
+>>>> + * Don't call this function in interrupt context. Caller needs to free
+>>> the
+>>>> + * memory itself.
+>>>> + */
+>>>> +int tcpm_get_partner_src_caps(struct tcpm_port *port, u32 **src_pdo)
+>>>> +{
+>>>> +     unsigned int nr_pdo;
+>>>> +
+>>>> +     if (port->nr_source_caps == 0)
+>>>> +             return -ENODATA;
+>>>> +
+>>>> +     *src_pdo = kcalloc(port->nr_source_caps, sizeof(u32), GFP_KERNEL);
+>>>> +     if (!src_pdo)
+>>>> +             return -ENOMEM;
+>>>> +
+>>>> +     mutex_lock(&port->lock);
+>>>> +     nr_pdo = tcpm_copy_pdos(*src_pdo, port->source_caps,
+>>>> +                             port->nr_source_caps);
+>>>> +     mutex_unlock(&port->lock);
+>>>> +     return nr_pdo;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(tcpm_get_partner_src_caps);
+>>>
+>>> We don't add new functions that no one uses :(
+>>>
+>>>
+>> This function is useful if the PD Device Policy Manager is implemented
+>> outside of TCPM.
+>> In this situation, Device Policy Manager needs to know the partner
+>> capabilities to optimize
+>> the charging process.
+> 
+> And where is that code?
+> 
 
-pm_runtime_enable() uses spin_lock_irqsave(), rather than
-spin_lock_irq() - is there a reason to why you want to allow that
-here, but not earlier in the function?
+Agreed - that code should be sent upstream as well to let us see the
+entire context.
 
-> +
->         return error;
->  }
->  EXPORT_SYMBOL_GPL(__pm_runtime_set_status);
->
+>> Take existing functions in TCPM for example:
+>> Function "tcpm_update_sink_capabilities" and
+>> "tcpm_update_source_capabilities" are exposed
+>> as well. And no one uses them now.
+> 
+> Great, let's go delete them now, we should not have apis that no one
+> uses.  This isn't a new thing...
+> 
 
-Other than the above comment, this looks good to me.
+I sent a patch to do just that. Quite frankly I don't recal
+why I thought those functions might be needed.
 
-Kind regards
-Uffe
+Guenter
