@@ -2,92 +2,113 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44345C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430C4C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E201222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E6EF222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:19:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByE+ik3G"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO7YHLoK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbfBLTTZ (ORCPT
+        id S1731728AbfBLTTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:19:25 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]:42077 "EHLO
-        mail-qk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbfBLTTZ (ORCPT
+        Tue, 12 Feb 2019 14:19:52 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34657 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728168AbfBLTTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:19:25 -0500
-Received: by mail-qk1-f182.google.com with SMTP id y140so9404314qkb.9;
-        Tue, 12 Feb 2019 11:19:24 -0800 (PST)
+        Tue, 12 Feb 2019 14:19:52 -0500
+Received: by mail-qt1-f194.google.com with SMTP id w4so4364461qtc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 11:19:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5kwXFcR2Bp/e9+qrSDBdBsegMhifi0I1gMYQmjpXrpQ=;
-        b=ByE+ik3GcZLof5aZTA+Ij0cOcY3g2FtL+oP8Jw9llINkY44+C7Ys6FG71zCUN45Q3b
-         vawSf4eC7voH2Umq381v6M0Biba6yTMUVRDjcxJIdJPQpTER2G1/7aFKyowHgLKj7XdY
-         +fHEJtKEZqwzaGQ3oYzHO9Mri1TFHVtRzZF1GTjXXXmyX+79qTik9F6OHVPqKeeSxRKr
-         kGiGQ5mtoaq77zR+Lc18J0cXAM6aKMXoZL1JSNalga8i38vdD8CiHOcA+mLsg+vHweH9
-         TCVKGdnZgNbAtECu5nrtRRo4a9uCPoR3d8I+xIQH3Rv++3dlOrwW7czqecFBaEk9BNQ5
-         BTXg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qnPUxP4wkNN6G5QRmW//oRBq3wLHmYQB3mlfwK4ryDM=;
+        b=HO7YHLoK+xVG1emVvfpXQ9aAJa2GA5YSGTDKXo4qxPF6tK2AJP58pMI2B357U18Kxv
+         yVRPTkQCjFUYaYUGIVNAJOQTt9UqbORXexG35/kgoqrCIQaVF0N8q5IWrFnlQfQCGPIc
+         Z040i6f45h12VQmeNZrD3YwrrViKRdnlOGZxT/6h/6Pui4Vza5ZG1ZCWDUvkSN7TI5YJ
+         poFX9GQRgmkJgwCCLN/VLh2OalwHoN74bMXMKVyAS1BH6/fguMi/tIkyvRQhadig2kPH
+         UfI2WRNNcnluLsm5WXAWsolksbXcbvLCPaVQu2RqnB3CNBJ8s2YqzS3CAk0cgDL8+L4V
+         rOuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5kwXFcR2Bp/e9+qrSDBdBsegMhifi0I1gMYQmjpXrpQ=;
-        b=KgdtwsUW1CLcwCxMpgOnta1YTl7YiRpaIAgL6kZbSRQs58PwN+mJ2bNDWKSwgOMtVl
-         j2+vd1f9Az5UoLmMFSwJX8wZwyPm3MF3pS1APro94C/iRWTnhAy22fUWFiZ3ykHJAZD5
-         20GF9QsH22M7a6cT2OZkXX/EL1JU/DfMp+3br5RN2eihODfy5Nof/ANjrHXI0R8kdY8c
-         49KM+FyWGIKdjALHqWFuLN4Ar4iBePWe7GXbl/i6x/Ul6aV4LgXxYwjsqCA3SrUpdqy2
-         7rPJumVuoK2y62rCRt05ZaxkTGz5FMVpDBYMc3O+95ZaXsLGXy64zJzg+WUyUDUpohyL
-         pdsg==
-X-Gm-Message-State: AHQUAua8bwLyXak4JdncN3+y8UXFwAtMpiScF5pCufcLC0NcI1WT9Ir9
-        VSoaixcjli8K46mACjWuC/0=
-X-Google-Smtp-Source: AHgI3Ib0f15Y8+obEiRu4dCSc/ymnHXXOcJ4ZXd2NtmnLOqyImCW2u+C5dZFras5PbRFqiGfNUSflA==
-X-Received: by 2002:ae9:e8c4:: with SMTP id a187mr3708971qkg.150.1549999163829;
-        Tue, 12 Feb 2019 11:19:23 -0800 (PST)
-Received: from localhost.localdomain ([168.194.160.109])
-        by smtp.gmail.com with ESMTPSA id 81sm931063qkg.75.2019.02.12.11.19.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 11:19:22 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 7FDD0180C61; Tue, 12 Feb 2019 17:19:20 -0200 (-02)
-Date:   Tue, 12 Feb 2019 17:19:20 -0200
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     syzbot <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
-Subject: Re: KASAN: use-after-free Read in sctp_outq_tail
-Message-ID: <20190212191920.GI10665@localhost.localdomain>
-References: <0000000000002015db0581b71858@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qnPUxP4wkNN6G5QRmW//oRBq3wLHmYQB3mlfwK4ryDM=;
+        b=L07jZCF7a4m1PMAoARNqxGAi5SVOU6lYXZN8VQPDg5K0UMqyW2ZCBgORa2HQGAQawZ
+         vixau/4RD1D5+TMifn2BgTadAsfcO4gyras4hjb4LRUWNv+fFHBliuJ4C2Jfm6Ef5W9G
+         ycfWt4hPyVFAC+RbFHIFCB/2vEXoli1kY8SCWqGkzA2wKRDmAGMVqzK9AFs1ZR7QVrgd
+         vMXnQAdbfTXu3OmdMqwtUqqQlya1MKzENjkCrqP/vSIfg4PCzV1uSSoB4YfveRyz37np
+         17IgOrMhoJHToxtAmHPtYc7bu5EkiGSuuMq2Dgtc32/UZG/u5ZSpwXgdO3z4Deol2qWS
+         Fk5A==
+X-Gm-Message-State: AHQUAuaDz41XN6bg3olmrkVmfKrKLDZ/YFYTKtNRkOv0VfZMK5XhLqm2
+        0r92i72WdM7oC5U/FX6SRxjYRkKu1/+RCHe5LPg=
+X-Google-Smtp-Source: AHgI3IY5ntkFhvB8nG/FJ9yzTii7Ic+kvFy6y42se9wV5WNglxBSrAulH3AVhijAzZtzz9YJyjUaJrLAUwh+H05Lz0A=
+X-Received: by 2002:a0c:d124:: with SMTP id a33mr3912345qvh.19.1549999191469;
+ Tue, 12 Feb 2019 11:19:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000002015db0581b71858@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1549994809-27479-1-git-send-email-xiaoxiang@xiaomi.com>
+ <1549997683-27986-1-git-send-email-xiaoxiang@xiaomi.com> <20190212191219.GB22246@kroah.com>
+In-Reply-To: <20190212191219.GB22246@kroah.com>
+From:   xiang xiao <xiaoxiang781216@gmail.com>
+Date:   Wed, 13 Feb 2019 03:19:40 +0800
+Message-ID: <CAH2Cfb-5SkZDcze2Ygv5pCa0g29UbpyczswZJxNsEwYQP0yi2A@mail.gmail.com>
+Subject: Re: [v2] lib/string: add memrchr function
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alexander.shishkin@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
+        Xiang Xiao <xiaoxiang@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 11:04:27AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
-> git tree:       linux-next
+On Wed, Feb 13, 2019 at 3:12 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Feb 13, 2019 at 02:54:43AM +0800, Xiang Xiao wrote:
+> > Here is the detailed description for memrchr:
+> >
+> > void *memrchr(const void *s, int c, size_t n);
+> >
+> > The memrchr() function is like the memchr() function, except
+> > that it searches backward from the end of the n bytes pointed
+> > to by s instead of forward from the beginning.
+> >
+> > The memrchr() functions return a pointer to the matching byte
+> > or NULL if the character does not occur in the given memory
+> > area.
+> >
+> > Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> > ---
+> >  include/linux/string.h |  1 +
+> >  lib/string.c           | 21 +++++++++++++++++++++
+> >  2 files changed, 22 insertions(+)
+> >
+> > diff --git a/include/linux/string.h b/include/linux/string.h
+> > index 7927b87..f380f4b 100644
+> > --- a/include/linux/string.h
+> > +++ b/include/linux/string.h
+> > @@ -167,6 +167,7 @@ static inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
+> >       memcpy(dst, src, cnt);
+> >  }
+> >  #endif
+> > +void *memrchr(const void *s, int c, size_t n);
+> >  void *memchr_inv(const void *s, int c, size_t n);
+> >  char *strreplace(char *s, char old, char new);
+>
+> Also, if you really need this, why not also provide the arch-specific
+> versions as well?
+>
 
-I can't find this commit. How can I know for sure which commits are in?
-Recent patches are involved with this code, but not sure what was
-included on the test.
+Good point, I will make the arch-specific overwrite possible.
 
-  Marcelo
+> thanks,
+>
+> greg k-h
