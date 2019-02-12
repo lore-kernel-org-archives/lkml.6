@@ -2,73 +2,133 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED222C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14D9C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFC3222BE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2B3222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:53:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I0rfuUg/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730599AbfBLUuQ (ORCPT
+        id S1731693AbfBLUxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:50:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:12826 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbfBLUuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:50:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 12:50:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="299229573"
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by orsmga005.jf.intel.com with ESMTP; 12 Feb 2019 12:50:11 -0800
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH] net: stmmac: Add SMC support for EMAC System Manager
- register
-To:     "Ooi, Joyce" <joyce.ooi@intel.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        See Chin Liang <chin.liang.see@intel.com>
-References: <1549988692-4124-1-git-send-email-joyce.ooi@intel.com>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <0c93846a-48ab-5cde-6d27-291606dd8c31@linux.intel.com>
-Date:   Tue, 12 Feb 2019 14:52:34 -0600
+        Tue, 12 Feb 2019 15:53:47 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44308 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730672AbfBLUxq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 15:53:46 -0500
+Received: by mail-pg1-f193.google.com with SMTP id y1so20032pgk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 12:53:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=RKa0vaLRy80JEhZ94QJ0R+r1K4+tymdSzaV0CbMmito=;
+        b=I0rfuUg/aRWA58ZBeJdAyPj/P3U0VGCvFmtUZNoDA8gEFpbHX77HskfEB6IZf3uiAG
+         tyzE9UXVVdXebpIBUm2FTE2Ujt6ccKmY+YrAK1/Et4qr/smWBthcsBGshhuD4sRSJk0R
+         Cy/Y8IdTcS58C5mx3DZoB4e42wNRZaRtPp238=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=RKa0vaLRy80JEhZ94QJ0R+r1K4+tymdSzaV0CbMmito=;
+        b=pS+ZB7uw54IBpgSumBBTrsyKmPFsn41R+qSMCqGCxr1gdrLN4aMTB1qYE/vwETGngx
+         42xmXuXraiq9x+daEopWr2bNfgohJBoCuFP6GeIFIb70WWFxEFUMj44A0QLLauO/FPRG
+         wMDrHI9J3PUBrUa5jtQyfV0l27qe45+j8toC01z79fRBeIgrGhqtdsOFpvMXckbps2m1
+         Oja0EhvKLiZ8uGUTeQhmSDaD1YoC6k1r+Z7fNoPSXS6U+hsgwBVFQFKVUY8Is/Wk3Wph
+         n8fxB7BIDJx1T07ua7LOBYMrCLH6xQ7XxDxCL55WkSw/sVEKjmsyu9nX2/45OfqQtbh3
+         vLwA==
+X-Gm-Message-State: AHQUAuauDjutoQCvSpYYb9xn/na4BtnLp2BA0DTYWvTvLTYvFzeWqctA
+        l8ZnoRZQa1mIwBvNhjYXqYynaA==
+X-Google-Smtp-Source: AHgI3Ibr1us+nXy12eZ01bccUnB9Nx0nRxTA0KEvQ1BedCMiBk0ed7Ukm+3s+7aMSYNZNA+yioeM2Q==
+X-Received: by 2002:a65:608d:: with SMTP id t13mr5460568pgu.129.1550004825589;
+        Tue, 12 Feb 2019 12:53:45 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id x6sm14595179pfb.183.2019.02.12.12.53.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 12:53:44 -0800 (PST)
+Subject: Re: [PATCH 1/3] gpio: bcm-kona: drop
+ ->irq_{request,release}_resources hooks
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20190208115201.7518-1-thomas.petazzoni@bootlin.com>
+ <20190208115201.7518-2-thomas.petazzoni@bootlin.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <b51bb5e5-846e-5982-7a2b-67f6c488f267@broadcom.com>
+Date:   Tue, 12 Feb 2019 12:53:33 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1549988692-4124-1-git-send-email-joyce.ooi@intel.com>
+In-Reply-To: <20190208115201.7518-2-thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joyce,
 
-On 2/12/19 10:24 AM, Ooi, Joyce wrote:
-> As there is restriction to access to EMAC System Manager registers in
-> the kernel for Intel Stratix10, the use of SMC calls are required and
-> added in dwmac-socfpga driver.
-> 
-> Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
-
-<snip>
-
-I have a pending patchset[1] that addresses this but can be used by 
-other drivers as well.
-
-[1] https://patchwork.kernel.org/cover/10612891/
-
+On 2019-02-08 3:51 a.m., Thomas Petazzoni wrote:
+> Those hooks implement the exact same behavior as the default hooks by
+> gpiolib, so there is no point in having a duplicated definition in
+> gpio-bcm-kona.
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Acked-by: Scott Branden <scott.branden@broadcom.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> ---
+> Note: this commit was only build tested.
+> ---
+>   drivers/gpio/gpio-bcm-kona.c | 16 ----------------
+>   1 file changed, 16 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+> index c5536a509b59..0ae806edabc2 100644
+> --- a/drivers/gpio/gpio-bcm-kona.c
+> +++ b/drivers/gpio/gpio-bcm-kona.c
+> @@ -484,28 +484,12 @@ static void bcm_kona_gpio_irq_handler(struct irq_desc *desc)
+>   	chained_irq_exit(chip, desc);
+>   }
+>   
+> -static int bcm_kona_gpio_irq_reqres(struct irq_data *d)
+> -{
+> -	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+> -
+> -	return gpiochip_reqres_irq(&kona_gpio->gpio_chip, d->hwirq);
+> -}
+> -
+> -static void bcm_kona_gpio_irq_relres(struct irq_data *d)
+> -{
+> -	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+> -
+> -	gpiochip_relres_irq(&kona_gpio->gpio_chip, d->hwirq);
+> -}
+> -
+>   static struct irq_chip bcm_gpio_irq_chip = {
+>   	.name = "bcm-kona-gpio",
+>   	.irq_ack = bcm_kona_gpio_irq_ack,
+>   	.irq_mask = bcm_kona_gpio_irq_mask,
+>   	.irq_unmask = bcm_kona_gpio_irq_unmask,
+>   	.irq_set_type = bcm_kona_gpio_irq_set_type,
+> -	.irq_request_resources = bcm_kona_gpio_irq_reqres,
+> -	.irq_release_resources = bcm_kona_gpio_irq_relres,
+>   };
+>   
+>   static struct of_device_id const bcm_kona_gpio_of_match[] = {
