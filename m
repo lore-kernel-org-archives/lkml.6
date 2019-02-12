@@ -2,123 +2,81 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13212C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2E0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE5F222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qgKoLKFm"
+	by mail.kernel.org (Postfix) with ESMTP id ADCC8222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549993608;
+	bh=+aLi1Mj+ukT9miFPUjUt8Rw47GkkDlguW8I6eiJU3bs=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=TLrNHIoX6XTuIZQGV2mIKETC7E84RYti5a3QTeU97LyfJx8dvk3eIGedBYuAc1P5w
+	 ex3heJQ1lghxMwm8cCgbSlkb6KRkz1kxJTo3tORsBG4ognWM4JkPztWRn6RLUvXu+Z
+	 MCO8H+I92LA5BMwf6QbVFPUQRds06qr7HP/lmoUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbfBLRqn (ORCPT
+        id S1731570AbfBLRqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:46:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40152 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfBLRqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:46:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q21so3967877wmc.5;
-        Tue, 12 Feb 2019 09:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=w4gEFxIxyax5TlhbyybnDHgnUurqHD/qF92buHHcIR8=;
-        b=qgKoLKFmkAuxh1Ar6DdvgYrww1WOQersJ5ep5UCiUi0J+9yhwEkFpUCCy8yfQmKs0F
-         O7B2p6q6/iq8xSEYfuJ9SJhl04BwUhPNSCVqmEr314+Ig1yj83cG1TfXkNst80XutOIO
-         n7t9JWJS9XIJ/ZWr3kpfo3/Vv8XuhMUgXopwcOD4Wh9PMgI93mxVtXzZL7DrGjYZtH4+
-         bM0uXg6iSpjZRPDC14l9NsVSZDYB3O/6vyny+N9pGx9VUWCGPrxevcUNZWO/Iqh5C3x2
-         xb1WqgwKxQ7vVRK6zYMmr5wcMsMOhQrKdBYl4VJ6btXG/C9iO7iamMf3Og/asoc4uVUr
-         d+2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=w4gEFxIxyax5TlhbyybnDHgnUurqHD/qF92buHHcIR8=;
-        b=PeQxv5PwrrPsWjnrE2sTXseFb8iGifO3/J1apWoreRwy08iFawfFyf7lxqI63GcVp8
-         LHzXSUMEjVUpN4j1y5LyyRWX+FV2M+2zUf7p5/tq4b0sPSBuwf0IeeVOQ7mHmK/2zAXP
-         b5NE+0fH+rIDuUHFVFVI6JjwvB+coqcg5IUtzNEjspq6Jip0idBwMp5V6NLFwpg/s47L
-         SUPlgusvMnS94r504Uv2OjUaZgWv9wqEA3IUnT8S69/+pA5FSvjP0aLJvj5polYT6ltw
-         PGnLOnMNCMfTiSyX9ysm0VOUMKCwBb420rBpKP/kmZKx4pQ1ZcDPfjOucwu8+IhHnvmP
-         2C7g==
-X-Gm-Message-State: AHQUAuaQr5Kk1Gg/ZRndyv6/z3+ZB53aR/jsiz3DrARC0FGup11yw/+k
-        cEwcdkqYu4PKxO6SDl1Tdzo=
-X-Google-Smtp-Source: AHgI3Iayj8bfyM5tDVPZR2hBc8CMXzT1/nAImWh/xGu6k4WGUoqn2o87bSsiO+4IN7cxta26eUGwTw==
-X-Received: by 2002:a1c:e10a:: with SMTP id y10mr9289wmg.73.1549993601070;
-        Tue, 12 Feb 2019 09:46:41 -0800 (PST)
-Received: from jernej-laptop.localnet (APN-123-243-40-gprs.simobil.net. [46.123.243.40])
-        by smtp.gmail.com with ESMTPSA id q9sm9102303wrv.26.2019.02.12.09.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 09:46:40 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jonas@kwiboo.se, ezequiel@collabora.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH v3 2/2] media: cedrus: Add H264 decoding support
+        Tue, 12 Feb 2019 12:46:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727548AbfBLRqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:46:44 -0500
+Received: from localhost.localdomain (unknown [194.230.155.153])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 806DC20842;
+        Tue, 12 Feb 2019 17:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549993604;
+        bh=+aLi1Mj+ukT9miFPUjUt8Rw47GkkDlguW8I6eiJU3bs=;
+        h=From:To:Subject:Date:From;
+        b=GPU1/5jE/0txxNO/ntk59TWnYzrFJ/ZteIqAAWj8uBZ/KTLC73tn1daq1cIUscoZQ
+         hTwLGbGNCwxPBTWCB53C50ZX0nKurnw26uFZPa66OVyhnUc/trVqRU4mr22Qt2e8tP
+         Ly+4tPimY+geDfNKYhWexaq4KBOJ8Vm805eUiEDk=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos: Document regulator used by ADC on Odroid U3
 Date:   Tue, 12 Feb 2019 18:46:38 +0100
-Message-ID: <3572175.7W1cnfb8sa@jernej-laptop>
-In-Reply-To: <20190212104314.slytpbufwhf5ujv7@flea>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com> <12916702.RFRCeC2GgE@jernej-laptop> <20190212104314.slytpbufwhf5ujv7@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <20190212174638.4582-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne torek, 12. februar 2019 ob 11:43:14 CET je Maxime Ripard napisal(a):
-> Hi,
->=20
-> On Mon, Feb 11, 2019 at 08:21:31PM +0100, Jernej =C5=A0krabec wrote:
-> > > +	reg =3D 0;
-> > > +	/*
-> > > +	 * FIXME: This bit tells the video engine to use the default
-> > > +	 * quantization matrices. This will obviously need to be
-> > > +	 * changed to support the profiles supporting custom
-> > > +	 * quantization matrices.
-> > > +	 */
-> > > +	reg |=3D VE_H264_SHS_QP_SCALING_MATRIX_DEFAULT;
-> >=20
-> > This flag should not be needed anymore. From what I see, you correctly =
-set
-> > scaling matrix every time.
->=20
-> The scaling matrix control is optional, so I guess we should protect
-> that by a check on whether that control has been set or not. What do
-> you think?
+Add ADC node to Odroid U3 with its regulator, purely for documentation
+purposes.  The ADC stays disabled because it is not used (all inputs
+grounded).
 
-Is it? Consider following snippet from your patch:
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos4412-odroidu3.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-<snip>
-{
-	.id	=3D V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX,
-	.elem_size	=3D sizeof(struct v4l2_ctrl_h264_scaling_matrix),
-	.codec	=3D CEDRUS_CODEC_H264,
-	.required	=3D true,
-},
-<snip>
-
-Doesn't "required =3D true" mean that it's mandatory? But yes, if it's opti=
-onal,=20
-then you should add a check.
-
-Best regards,
-Jernej
-
-
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+index 2bdf899df436..88891ff5f238 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+@@ -66,6 +66,11 @@
+ 	};
+ };
+ 
++&adc {
++	vdd-supply = <&ldo10_reg>;
++	/* Nothing connected to ADC inputs, keep it disabled */
++};
++
+ /* Supply for LAN9730/SMSC95xx */
+ &buck8_reg {
+ 	regulator-name = "BUCK8_P3V3";
+-- 
+2.17.1
 
