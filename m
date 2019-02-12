@@ -2,153 +2,83 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E39EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4091FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641B0222C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:02:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="hME3mkaz"
+	by mail.kernel.org (Postfix) with ESMTP id 11991222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732399AbfBLUCZ (ORCPT
+        id S1729165AbfBLUEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:02:25 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:43802 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbfBLUB7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:01:59 -0500
-Received: from zyt.lan (unknown [IPv6:2a02:169:34b6::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id F340E5C0E10;
-        Tue, 12 Feb 2019 21:01:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1550001718;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bun+cvAdHIasxPqS/vNFHAp3EC4NvD/DWIC9oBLQ0+E=;
-        b=hME3mkazxA/uN2rYhG6PjJfFHgpovUyK2UqrrxrEZ+CKhap4wiXYyE2SrMD5kp7qtSHpW5
-        VRuXPcsUg4FrnolQWFcpWT06Pikhi/BeppsKBjPfPHFC9F4jBbJ3YT63dxzuxmuXhexd4z
-        4xik/Z/5bZW3igCUOeJUEXju9IQiZY4=
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk
-Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, nicolas.pitre@linaro.org,
-        thierry.reding@gmail.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stefan Agner <stefan@agner.ch>, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH v3 4/5] ARM: use unified assembler in c files
-Date:   Tue, 12 Feb 2019 21:02:00 +0100
-Message-Id: <a0aa512943024821fae210854b89ac0f430f388a.1550001435.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1550001435.git.stefan@agner.ch>
-References: <cover.1550001435.git.stefan@agner.ch>
+        Tue, 12 Feb 2019 15:04:12 -0500
+Received: from anholt.net ([50.246.234.109]:59482 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbfBLUEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 15:04:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 2A05110A2C5A;
+        Tue, 12 Feb 2019 12:04:11 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id xPJX9CKR5oG1; Tue, 12 Feb 2019 12:04:10 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 2E73B10A2C55;
+        Tue, 12 Feb 2019 12:04:10 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 9EFE92FE464C; Tue, 12 Feb 2019 12:04:09 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Thomas Spurden <thomas.spurden@broadcom.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dave Emett <david.emett@broadcom.com>
+Subject: Re: [PATCH 1/4] drm/v3d: Update top-level kerneldoc for the addition of TFU.
+In-Reply-To: <CANFymN1Hp1a0U8A0MhYe0bL0y+0Bc-FXk8Ra6JFAf5QM7za4rg@mail.gmail.com>
+References: <20190207201001.5730-1-eric@anholt.net> <CANFymN1Hp1a0U8A0MhYe0bL0y+0Bc-FXk8Ra6JFAf5QM7za4rg@mail.gmail.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Tue, 12 Feb 2019 12:04:09 -0800
+Message-ID: <87k1i4srie.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use unified assembler syntax (UAL) in inline assembler. Divided
-syntax is considered deprecated. This will also allow to build
-the kernel using LLVM's integrated assembler.
+--=-=-=
+Content-Type: text/plain
 
-When compiling non-Thumb2 GCC always emits a ".syntax divided"
-at the beginning of the inline assembly which makes the
-assembler fail. Since GCC 5 there is the -masm-syntax-unified
-GCC option which make GCC assume unified syntax asm and hence
-emits ".syntax unified" even in ARM mode. However, the option
-is broken since GCC version 6 (see GCC PR88648 [1]). Work
-around by adding ".syntax unified" as part of the inline
-assembly.
+Thomas Spurden <thomas.spurden@broadcom.com> writes:
 
-[0] https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html#index-masm-syntax-unified
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88648
+> On Thu, 7 Feb 2019 at 20:10, Eric Anholt <eric@anholt.net> wrote:
+>>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>
+> Reviewed-by: Thomas Spurden <thomas.spurden@broadcom.com>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Acked-by: Nicolas Pitre <nico@linaro.org>
----
-Changes in v2:
-- Force unified syntax for inline assembler using .syntax unified
-Changes in v3:
-- Describe reason for adding ".syntax unified"
+Merged this one, will send out respins of the others.
 
- arch/arm/mm/copypage-v4mc.c | 3 ++-
- arch/arm/mm/copypage-v4wb.c | 3 ++-
- arch/arm/mm/copypage-v4wt.c | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm/mm/copypage-v4mc.c b/arch/arm/mm/copypage-v4mc.c
-index b03202cddddb..f74cdce6d4da 100644
---- a/arch/arm/mm/copypage-v4mc.c
-+++ b/arch/arm/mm/copypage-v4mc.c
-@@ -45,6 +45,7 @@ static void mc_copy_user_page(void *from, void *to)
- 	int tmp;
- 
- 	asm volatile ("\
-+	.syntax unified\n\
- 	ldmia	%0!, {r2, r3, ip, lr}		@ 4\n\
- 1:	mcr	p15, 0, %1, c7, c6, 1		@ 1   invalidate D line\n\
- 	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
-@@ -56,7 +57,7 @@ static void mc_copy_user_page(void *from, void *to)
- 	ldmia	%0!, {r2, r3, ip, lr}		@ 4\n\
- 	subs	%2, %2, #1			@ 1\n\
- 	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
--	ldmneia	%0!, {r2, r3, ip, lr}		@ 4\n\
-+	ldmiane	%0!, {r2, r3, ip, lr}		@ 4\n\
- 	bne	1b				@ "
- 	: "+&r" (from), "+&r" (to), "=&r" (tmp)
- 	: "2" (PAGE_SIZE / 64)
-diff --git a/arch/arm/mm/copypage-v4wb.c b/arch/arm/mm/copypage-v4wb.c
-index cd3e165afeed..6d336740aae4 100644
---- a/arch/arm/mm/copypage-v4wb.c
-+++ b/arch/arm/mm/copypage-v4wb.c
-@@ -27,6 +27,7 @@ static void v4wb_copy_user_page(void *kto, const void *kfrom)
- 	int tmp;
- 
- 	asm volatile ("\
-+	.syntax unified\n\
- 	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 1:	mcr	p15, 0, %0, c7, c6, 1		@ 1   invalidate D line\n\
- 	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-@@ -38,7 +39,7 @@ static void v4wb_copy_user_page(void *kto, const void *kfrom)
- 	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	subs	%2, %2, #1			@ 1\n\
- 	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmiane	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	bne	1b				@ 1\n\
- 	mcr	p15, 0, %1, c7, c10, 4		@ 1   drain WB"
- 	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-diff --git a/arch/arm/mm/copypage-v4wt.c b/arch/arm/mm/copypage-v4wt.c
-index 8614572e1296..3851bb396442 100644
---- a/arch/arm/mm/copypage-v4wt.c
-+++ b/arch/arm/mm/copypage-v4wt.c
-@@ -25,6 +25,7 @@ static void v4wt_copy_user_page(void *kto, const void *kfrom)
- 	int tmp;
- 
- 	asm volatile ("\
-+	.syntax unified\n\
- 	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 1:	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
- 	ldmia	%1!, {r3, r4, ip, lr}		@ 4+1\n\
-@@ -34,7 +35,7 @@ static void v4wt_copy_user_page(void *kto, const void *kfrom)
- 	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	subs	%2, %2, #1			@ 1\n\
- 	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
--	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
-+	ldmiane	%1!, {r3, r4, ip, lr}		@ 4\n\
- 	bne	1b				@ 1\n\
- 	mcr	p15, 0, %2, c7, c7, 0		@ flush ID cache"
- 	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
--- 
-2.20.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxjJrkACgkQtdYpNtH8
+nujvGBAAkJzDId+VfNCvf9It7j1lqFcLqkbVwfsb2MzEY/j2gzsA0MM0gHtMCjxY
+IH3ZAdTbiO9xmaXncWUVTff9fsHhKueDxpVXhbGX3483rVznZWEM5W70QnB3ZXvE
+UNaGlqsbwX4MHa+vUVEzYhc1VSH7A7ANPKJhG9bvfugjtBth5oRwROeAyC+A6bN3
+IGyMPb/tGA8EI47wOIy4WNooIUA7bZ5E1Mq+gMvmnmMgYumqw+tDYOXkOI5dVHPd
+T3ABfNLkZvbNoSpoMn3Q0tqHcVL+Crpa42+VxTtgm2y3wQ/YkAIkyRE5Dd9QZU1g
+Y8o2pX96GspFg9OT2356ywp/YVI1raaOrrZ0qAqhMjY+qTKKuoorWe58TEHb/tB1
+f6kuGFgeK0OchK5dvGSJW392pcHWM89a69NGFHHjXKUZzfRGpdglMFyJgVrLpFdp
+1v9oRBM9mWv+XzelHF3In9fCQAz/7UkLILaaL126Hu2VrbL6t2Y1nxxUo9h47odD
+LRng13mM5SQTqgsfEntavbgkmTb9z3Fd/oFSceAzzOdlR2Tka8i89Nke9QGA/EQR
+hKGFHE3D2tf6BFPmz75RM4YX88fmG6Y9qJwk1jFc5DTg7tK/4GXjR2udZN8/oNJK
+Yav7G+SbRC2HihguG2c5V+VDxU+Y9KhYS3JGsVXbTf2URhB7uWg=
+=ZS/B
+-----END PGP SIGNATURE-----
+--=-=-=--
