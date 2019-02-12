@@ -2,95 +2,73 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFDCC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A22C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E614620855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:35:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66D6220855
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ij6cI5fI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731082AbfBLQfh (ORCPT
+        id S1731097AbfBLQgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:35:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40042 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727372AbfBLQfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:35:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3678BA78;
-        Tue, 12 Feb 2019 08:35:36 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB3533F675;
-        Tue, 12 Feb 2019 08:35:33 -0800 (PST)
-Date:   Tue, 12 Feb 2019 16:35:29 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Maya Nakamura <m.maya.nakamura@gmail.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: Re: [PATCH v2 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
-Message-ID: <20190212163529.GB28306@e107981-ln.cambridge.arm.com>
-References: <cover.1548489092.git.m.maya.nakamura@gmail.com>
- <2fa660dc51189316590021c4ee8aeaac79b8270f.1548489092.git.m.maya.nakamura@gmail.com>
- <BL0PR2101MB09148DD8AB57D5CD2C41A797D7950@BL0PR2101MB0914.namprd21.prod.outlook.com>
- <20190129054930.GA1269@m-hyperV>
+        Tue, 12 Feb 2019 11:36:37 -0500
+Received: from a9-33.smtp-out.amazonses.com ([54.240.9.33]:49734 "EHLO
+        a9-33.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728548AbfBLQgh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 11:36:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549989396;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=98BSrrPqdO2vLypKZPM3TMscNVA1xtajyssG0F2CG4A=;
+        b=ij6cI5fIk1W9Uqxy4H/82RA/mSETWX5OjNOJ6+Fe1YaAP8sfIOf7a4Kx6reL6Jae
+        Uz3CSh53BZI3D7nIFYvBFyUyK3A909rmd8oA+f3lMBCIjbdEn/jXPbE/3cr1PAtj++y
+        BtFdzXKLU04EjRLWjSCEUtCrAo/sa65SJir7bjMc=
+Date:   Tue, 12 Feb 2019 16:36:36 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Dan Williams <dan.j.williams@intel.com>
+cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
+ usage by RDMA
+In-Reply-To: <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
+Message-ID: <01000168e2913f2e-56010847-a10b-407e-b4eb-7730164267de-000000@email.amazonses.com>
+References: <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz> <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com> <20190211102402.GF19029@quack2.suse.cz> <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+ <20190211180654.GB24692@ziepe.ca> <20190211181921.GA5526@iweiny-DESK2.sc.intel.com> <20190211182649.GD24692@ziepe.ca> <20190211184040.GF12668@bombadil.infradead.org> <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com> <20190211204945.GF24692@ziepe.ca>
+ <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129054930.GA1269@m-hyperV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.02.12-54.240.9.33
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 09:49:32PM -0800, Maya Nakamura wrote:
-> On Sun, Jan 27, 2019 at 05:11:48AM +0000, Michael Kelley wrote:
-> > From: Maya Nakamura <m.maya.nakamura@gmail.com>  Sent: Saturday, January 26, 2019 12:52 AM
-> > > 
-> > > Remove a duplicate definition of VP set (hv_vp_set) and use the common
-> > > definition (hv_vpset) that is used in other places.
-> > > 
-> > > Change the order of the members in struct hv_pcibus_device so that the
-> > > declaration of retarget_msi_interrupt_params is the last member. Struct
-> > > hv_vpset, which contains a flexible array, is nested two levels deep in
-> > > struct hv_pcibus_device via retarget_msi_interrupt_params.
-> > > 
-> > > Add a comment that retarget_msi_interrupt_params should be the last member
-> > > of struct hv_pcibus_device.
-> > > 
-> > > Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-> > > ---
-> > > Change in v2:
-> > > - None
-> > > 
-> > 
-> > Right -- there was no code change.  But it's customary to note that
-> > you updated the commit message.
-> > 
-> Thank you for your feedback. I will edit the change log in v3.
-> 
-> > Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+On Mon, 11 Feb 2019, Dan Williams wrote:
 
-Are you really sure there is no behavioural change ? What piece of
-code allocates hv_vpset.bank_contents[] memory with this patch applied ?
+> An mmap write after a fault due to a hole punch is free to trigger
+> SIGBUS if the subsequent page allocation fails. So no, I don't see
+> them as the same unless you're allowing for the holder of the MR to
+> receive a re-fault failure.
 
-I suspect the current code does not use hv_vpset for this specific
-reason, ie allocate struct hv_vp_set.masks array memory statically.
+Order 0 page allocation failures are generally not possible in that path.
+System will reclaim and OOM before that happens.
 
-Lorenzo
