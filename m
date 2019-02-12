@@ -2,86 +2,116 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1BBC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5972FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3754E222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549993574;
-	bh=Nz6M9p0Hf+vB9B9GzclwdnE4pHO3RpcI7qWuiVADVvU=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H4U9L/x/aLIfISNpwJT1dg2EpAvMW0KAm6gXJVsN9G9+61ZKlOHTx+/ULLcj68h7k
-	 FLn40yheuyKUHjmvfVOX0cCJLh0fXu0tRy8uwS9Lv5vpTPWTcSarkqbmrj6nNsFRuQ
-	 /2tTl3eLsD1w6f+zsJwxv4SYnJh8ROt1Cs1nS+dY=
+	by mail.kernel.org (Postfix) with ESMTP id 2CC49222C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:46:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XQA659dL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731513AbfBLRqM (ORCPT
+        id S1731539AbfBLRqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:46:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727865AbfBLRqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:46:10 -0500
-Received: from localhost.localdomain (unknown [194.230.155.153])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D27222C5;
-        Tue, 12 Feb 2019 17:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549993569;
-        bh=Nz6M9p0Hf+vB9B9GzclwdnE4pHO3RpcI7qWuiVADVvU=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=OmwsR34SU4MNjCW4gH5jzrihCsMZFwQFG5kRa8xMnLLNtV6C6TVglrXOfdBeRx1mi
-         3eJCBZyTXa8LObk8Q6IQhEtMML2ZsSr681ua5imQH27bWRawDd3N5NbJFq/vM9gTDr
-         9DAimU0mGLoZcfigxBIpC9/FyLXzsBJfAhO3XTNQ=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: exynos: Use ADC for Exynos4x12 on Exyno4412
-Date:   Tue, 12 Feb 2019 18:45:50 +0100
-Message-Id: <20190212174550.4383-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190212174550.4383-1-krzk@kernel.org>
-References: <20190212174550.4383-1-krzk@kernel.org>
+        Tue, 12 Feb 2019 12:46:15 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33793 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731506AbfBLRqN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:46:13 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v14-v6so3024909ljv.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4TPAfWelPCvV4Dy+iauCizZilE4PXUD+0SrDLJh8oMc=;
+        b=XQA659dLudu/jXbkmJNoyHlATFdsZOtXkxitRUH1ejUKg0A0Stm8tjQNdhQ299o/q2
+         rn8MEgkcfpxfRJq7aqdCMq7E4yUtnTvCJ5afIDS9DIHgSSJhOMMusQcLJXds9Lm4e1g3
+         xx+0J0BjUYadIiF6asbiopCNrKP8iJIw0K32c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4TPAfWelPCvV4Dy+iauCizZilE4PXUD+0SrDLJh8oMc=;
+        b=XLkpmqGuIZVI/OaolGwUNqDl4wbL8lSjdBsG3MTuaVQ7WGIR95M1EYgXa3UXJBqinn
+         fPbiKTUugg8q5jfxPRp/GGY6o1bweuJp7PVmmv/tYbQB9JC/8Q0j81m/MtkUFBbSzELI
+         wEQ4hVxjB9abD2ibxpTeeZpufhTe9lbbXT26x6lSSFl8kK8NGEJ4OEBP+pcE3aOtxjQT
+         xcwg5VIRg43MF/Jo+3k+kSZtIMz0H4kxdKX59GRmb3rg3zfluIWMWQewb0/wJuO0bpV+
+         JUwhAoE/3Cd259GCYE8EJVKc+ec8ECWz84IE9VRHVyP2dIRBoxpL5swQGcoPxYWcaolt
+         InBw==
+X-Gm-Message-State: AHQUAuZNvHhxDgU2WH+DnQAyg7KrKJuD9/22JIOrJ+dM5WHpaKD9Q7O8
+        Lx7utjMwOxCKU51kTrWL4BzHOtmlbgc=
+X-Google-Smtp-Source: AHgI3IbAMpSHUUe7+CRjgg521HGaTJyGvK/pfo9KDPjWJa7nWGf3RgvZmaAFEUZX7Z0wzdqZ6JYtMw==
+X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr3053857ljj.95.1549993570617;
+        Tue, 12 Feb 2019 09:46:10 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id h129sm501059lfg.78.2019.02.12.09.46.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 09:46:09 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id t14so2681085lfk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:46:09 -0800 (PST)
+X-Received: by 2002:a19:2794:: with SMTP id n142mr3120798lfn.77.1549993568938;
+ Tue, 12 Feb 2019 09:46:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20190212171423.8308-1-frederic@kernel.org> <20190212171423.8308-6-frederic@kernel.org>
+In-Reply-To: <20190212171423.8308-6-frederic@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 12 Feb 2019 09:45:52 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whhGQuMuuBkLBKGL3kM+8j3+TC_xt+QKFCs1qNySBv3-A@mail.gmail.com>
+Message-ID: <CAHk-=whhGQuMuuBkLBKGL3kM+8j3+TC_xt+QKFCs1qNySBv3-A@mail.gmail.com>
+Subject: Re: [PATCH 05/32] locking/lockdep: Prepare valid_state() to handle
+ plain masks
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exynos4412 should use "samsung,exynos4212-adc" compatible to report
-proper number of (four) channels.
+On Tue, Feb 12, 2019 at 9:14 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+>
+> +
+> +       while (vectors) {
+> +               long fs = __ffs64(vectors) + 1;
+> +
+> +               vectors >>= fs;
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4412.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is wrong.
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 26ad6ab3c6af..e5c041ec0756 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -274,7 +274,7 @@
- 		};
- 
- 		adc: adc@126c0000 {
--			compatible = "samsung,exynos-adc-v1";
-+			compatible = "samsung,exynos4212-adc";
- 			reg = <0x126C0000 0x100>;
- 			interrupt-parent = <&combiner>;
- 			interrupts = <10 3>;
--- 
-2.17.1
+If "vectors" only has the high hit set, you end up with "fs" having
+the value "64".
 
+And then "vectors >>= fs" is undefined and won't actually do anything
+at all on x86.
+
+In general, avoid "ffs()", and the stupid pattern of "__ffs(x)+1".
+
+Bit numbering starts at 0. "ffs()" is wrong. And you never *ever* just
+add one to a bit number in order to shift by one more bit, exactly
+because of overflow issues.
+
+So it may look inefficient, but the correct thing to do is
+
+    long bit = __ffs64(vectors);
+    vectors >>= fs;
+    vectors >>= 1;
+
+because that actually works.
+
+                     Linus
