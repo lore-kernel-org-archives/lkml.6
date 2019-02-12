@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7059C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C93C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BF52075C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F52217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:15:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="P40er/r6"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="u3VzuqbV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730502AbfBLPOe (ORCPT
+        id S1730606AbfBLPO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:14:34 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39371 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730324AbfBLPOa (ORCPT
+        Tue, 12 Feb 2019 10:14:58 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37794 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730297AbfBLPOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:14:30 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t27so3075551wra.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 07:14:29 -0800 (PST)
+        Tue, 12 Feb 2019 10:14:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c8so3090237wrs.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 07:14:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MVuAZg4+nnaFhkjixBpLWEg1hgwoQXD2AQa4Piwf/Kk=;
-        b=P40er/r6P/7FvxPmzAj4Jeqy8C+ftJ64TIv40uLZkY7eLCYXjxZA+ihx+B20EsjfOe
-         d8Hcj4JN0Y1mgW13FXKJdnNsPdIvnn4Xmy4ZC/0fjyc25lButzdg+S3xXRFD3ltPbJiu
-         99Xf6iHMirR01tgRgRITZr/oZQuiHNipmXMt6WSf8sRCHCc+UTR4Oa6rfVvZUsEbvLwZ
-         4w/3opyC0gV6FjVWVbOoPDe86j+cAY6HyoQnzOjnN0XLmO6uib9zk0HFnnM71OjbK1IZ
-         kvPFijmREiVFgfQHmg+wM+P0P4acTS0OfZVyPL+tSQWpxS8SO1WlW+jkzyDF1c638jZv
-         3gpg==
+        bh=GDe4aAi8cWOpUlWHZyGvUtYiH4SuiuWIL60odXAqVwg=;
+        b=u3VzuqbVabAtgyilTvr4DWePjyaC/yqXewpEx7NJTVP0W5XasF7iJZcw/ztVxEQEk4
+         mIMUpuu7Ibb9MHGTmtjrU+UeBeImjLfHoyOnVK/RAKGLCs5z29kgcKiCj/ZimH2D3uUg
+         92+XztIPVFhoUczxj77nvCCpWu0D3EWcw8KS7HHt2h2OFpaaeQn67iy+ewjXov0jaoBt
+         /PHsrA3tiZ535JNF6eMJKobxvO5P1tQ+Are+O6zO3BFMvc2965fYz5pU4tvoIRHBugoA
+         xbevr19WthfxZiXBjQcji0/j8qcaNSezAcaW2jZcNQ5XvLhQFxorGepdNUwST5nThNl8
+         TP9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MVuAZg4+nnaFhkjixBpLWEg1hgwoQXD2AQa4Piwf/Kk=;
-        b=IaiWGSjGKrsaMMfHfRaqOh002+tzKd7l90igUVaeKyHTvTf1mNoUdJQrbP8Lv6YCUR
-         LsvesSiX9RvuilwrfQVEmD2z0na/Ji9kAGSu85XUf2I7td2Dde9oJn6YaZHviCyGwX7u
-         aNYA/cD2yBqAKhx+b4YO8EGQ8Cq6zPOI41dGMUr3s8fy39BDV4WUggMk5lPzwYY3sfN5
-         K1ZavmtebHzRTRXrSSuuLNT21rJp4TXJxHuCEdNZvIoWt739S5iCxkTzGHF0PoRC5TWw
-         ordK22fnizUsuaBo/q7PRTl71MaSzc/GK1XQPIMHB/+MHZuYNbVdBbH0Q0RpxHp6Fi4E
-         q2BA==
-X-Gm-Message-State: AHQUAuakHJzLJD7bLJyqyeHeGHcO572LFC1bDK9pwRBnl8EsBBohskRn
-        uZ45NPE/RbNnbssS9Ty5B6UxYg==
-X-Google-Smtp-Source: AHgI3Ib8qsN5pafZuMij0Y61VcZJP+TdDFNb8ylW8TSsoKfu3Xta3Ek2WjN0TpRQVeMJggKMsWws5A==
-X-Received: by 2002:adf:df08:: with SMTP id y8mr3104780wrl.23.1549984468407;
-        Tue, 12 Feb 2019 07:14:28 -0800 (PST)
+        bh=GDe4aAi8cWOpUlWHZyGvUtYiH4SuiuWIL60odXAqVwg=;
+        b=DayV5RIf+2yYANDYxz53THLfCMxNt9TSLMlnV50K3xk2mKPXuBspa7UOulWPKUAYJ6
+         T+mEWy5VMnfzZAoJwtybjVsDUvSDIgPKrOz5fVAYpzDV4MjDHJfkIWxGUV99BIwMcODz
+         EGmIuXnvxLL6s9urvyp0RWnvklWSD/BUstaMoNc36jKIuckvsXnGeIu5eFIqP07kwSgu
+         3sb952chIwy7xms1b0D81grV2Ay+5oQkIj0TjqwkdYdohx/5cwr23GuD8LlFm8QmAUC5
+         GpImn0R1XV2JOCekMfmZ098MtqYRa/N1dQbZufCkv35eT85OSYp69yX/UU2KOQgrw1vo
+         CVWQ==
+X-Gm-Message-State: AHQUAuZLkIODMc3TRD8S2Ppiyy7BBzCA8UCzez702hPQCju/gzTmuMi4
+        94khp5zHP4mCsJUx8KS8sWs7EQ==
+X-Google-Smtp-Source: AHgI3IZBteN6I1Nx2a1nkXaxlfbF++ZHexZn12R+Py3UOMqKpk1+t72geiC8EpAmXDMz51ovd7eciQ==
+X-Received: by 2002:a05:6000:1107:: with SMTP id z7mr3079320wrw.87.1549984463488;
+        Tue, 12 Feb 2019 07:14:23 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c1sm1589515wmb.14.2019.02.12.07.14.26
+        by smtp.gmail.com with ESMTPSA id c1sm1589515wmb.14.2019.02.12.07.14.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Feb 2019 07:14:27 -0800 (PST)
+        Tue, 12 Feb 2019 07:14:22 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
-        kishon@ti.com
+        kishon@ti.com, devicetree@vger.kernel.org
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] usb: dwc2: Add Amlogic G12A DWC2 Params
-Date:   Tue, 12 Feb 2019 16:14:12 +0100
-Message-Id: <20190212151413.24632-8-narmstrong@baylibre.com>
+Subject: [PATCH 4/8] dt-bindings: usb: dwc3: Add Amlogic G12A DWC3 Glue Bindings
+Date:   Tue, 12 Feb 2019 16:14:09 +0100
+Message-Id: <20190212151413.24632-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212151413.24632-1-narmstrong@baylibre.com>
 References: <20190212151413.24632-1-narmstrong@baylibre.com>
@@ -75,48 +75,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs sets the params for the DWC2 Controller found in the
-Amlogic G12A SoC family.
+Adds the bindings for the Amlogic G12A USB Glue HW.
 
-It mainly sets the settings reported incorrect by the driver,
-leaving the remaining detected automatically by the driver and
-provided by the DT node.
+The Amlogic G12A SoC Family embeds 2 USB Controllers :
+- a DWC3 IP configured as Host for USB2 and USB3
+- a DWC2 IP configured as Peripheral USB2 Only
+
+A glue connects these both controllers to 2 USB2 PHYs,
+and optionnally to an USB3+PCIE Combo PHY shared with the PCIE controller.
+
+The Glue configures the UTMI 8bit interfaces for the USB2 PHYs, including
+routing of the OTG PHY between the DWC3 and DWC2 controllers, and
+setups the on-chip OTG mode selection for this PHY.
+
+The PHYs are children of the Glue node since the Glue controls the interface
+with the PHY, not the DWC3 controller.
+
+The PHY interconnect is handled into ports subnodes, which eases describing
+which PHY is enabled (like the USB3 shared PHY) and futures layouts on
+derivatives of the G12A Family.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/usb/dwc2/params.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../devicetree/bindings/usb/amlogic,dwc3.txt  | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index 24ff5f21cb25..442113246cba 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -121,6 +121,16 @@ static void dwc2_set_amlogic_params(struct dwc2_hsotg *hsotg)
- 	p->power_down = DWC2_POWER_DOWN_PARAM_NONE;
- }
- 
-+static void dwc2_set_amlogic_g12a_params(struct dwc2_hsotg *hsotg)
-+{
-+	struct dwc2_core_params *p = &hsotg->params;
+diff --git a/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt b/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
+index 9a8b631904fd..c7c4726ef10d 100644
+--- a/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
+@@ -40,3 +40,112 @@ Example device nodes:
+ 				phy-names = "usb2-phy", "usb3-phy";
+ 			};
+ 		};
 +
-+	p->lpm = false;
-+	p->lpm_clock_gating = false;
-+	p->besl = false;
-+	p->hird_threshold_en = false;
-+}
++Amlogic Meson G12A DWC3 USB SoC Controller Glue
 +
- static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)
- {
- 	struct dwc2_core_params *p = &hsotg->params;
-@@ -167,6 +177,8 @@ const struct of_device_id dwc2_of_match_table[] = {
- 	  .data = dwc2_set_amlogic_params },
- 	{ .compatible = "amlogic,meson-gxbb-usb",
- 	  .data = dwc2_set_amlogic_params },
-+	{ .compatible = "amlogic,meson-g12a-usb",
-+	  .data = dwc2_set_amlogic_g12a_params },
- 	{ .compatible = "amcc,dwc-otg", .data = dwc2_set_amcc_params },
- 	{ .compatible = "st,stm32f4x9-fsotg",
- 	  .data = dwc2_set_stm32f4x9_fsotg_params },
++The Amlogic G12A embeds a DWC3 USB IP Core configured for USB2 and USB3
++in host-only mode, and a DWC2 IP Core configured for USB2 peripheral mode
++only.
++
++A glue connects the DWC3 core to USB2 PHYs and optionnaly to an USB3 PHY.
++
++One of the USB2 PHY can be re-routed in peripheral mode to a DWC2 USB IP.
++
++The DWC3 Glue controls the PHY routing and power, an interrupt line is
++connected to the Glue to serve as OTG ID change detection.
++
++Required properties:
++- compatible:	Should be "amlogic,meson-g12a-usb-ctrl"
++- clocks:	a handle for the "USB" clock
++- clock-names:	must be "usb"
++- resets:	a handle for the shared "USB" reset line
++- reset-names:	must be "usb"
++- reg:		The base address and length of the registers
++- interrupts:	the interrupt specifier for the OTG detection
++
++Required child nodes:
++
++USB Ports are described as child 'port' nodes grouped under a 'ports' node,
++with #address-cells, #size-cells specified.
++
++Each 'port' sub-node identifies a possible USB Port served by an USB PHY
++identified by the 'phy' property as decribed in ../phy/phy-bindings.txt
++
++Each 'port' is identified by a reg property to number the port.
++
++The following table lists for each supported model the port number
++corresponding to each PHY serving a physical USB Port.
++
++ Family	   Port 0     Port 1    Port 2    Port 3    Port 4
++---------------------------------------------------------------
++ G12A	   USBHOST_A  USBOTG_B  Reserved  Reserved  USB3_0
++
++A child node must exist to represent the core DWC3 IP block. The name of
++the node is not important. The content of the node is defined in dwc3.txt.
++
++A child node must exist to represent the core DWC2 IP block. The name of
++the node is not important. The content of the node is defined in dwc2.txt.
++
++PHY documentation is provided in the following places:
++- Documentation/devicetree/bindings/phy/meson-g12a-usb2-phy.txt
++- Documentation/devicetree/bindings/phy/meson-g12a-usb3-pcie-phy.txt
++
++
++Example device nodes:
++	usb: usb@ffe09000 {
++			compatible = "amlogic,meson-g12a-usb-ctrl";
++			reg = <0x0 0xffe09000 0x0 0xa0>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			clocks = <&clkc CLKID_USB>;
++			clock-names = "usb";
++			resets = <&reset RESET_USB>;
++			reset-names = "usb";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* USB2 Port 0 */
++				usb20: port@0 {
++					reg = <0>;
++					phys = <&usb2_phy0>;
++				};
++
++				/* USB2 Port 1 */
++				usb21: port@1 {
++					reg = <1>;
++					phys = <&usb2_phy1>;
++				};
++
++				/* USB3 Port 0 */
++				usb3: port@4 {
++					reg = <4>;
++					phys = <&usb3_pcie_phy PHY_TYPE_USB3>;
++				};
++			};
++
++			dwc2: usb@ff400000 {
++				compatible = "amlogic,meson-g12a-usb", "snps,dwc2";
++				reg = <0x0 0xff400000 0x0 0x40000>;
++				interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
++				clock-names = "ddr";
++				dr_mode = "peripheral";
++				g-rx-fifo-size = <192>;
++				g-np-tx-fifo-size = <128>;
++				g-tx-fifo-size = <128 128 16 16 16>;
++			};
++
++			dwc3: dwc3@ff500000 {
++				compatible = "snps,dwc3";
++				reg = <0x0 0xff500000 0x0 0x100000>;
++				interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++				dr_mode = "host";
++				snps,dis_u2_susphy_quirk;
++				snps,quirk-frame-length-adjustment;
++			};
++	};
 -- 
 2.20.1
 
