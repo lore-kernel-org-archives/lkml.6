@@ -2,103 +2,121 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08CAC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE7DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717422075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:24:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JUhTPCBi"
+	by mail.kernel.org (Postfix) with ESMTP id 0DCE720811
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbfBLOYd (ORCPT
+        id S1730197AbfBLO2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:24:33 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54847 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729952AbfBLOYd (ORCPT
+        Tue, 12 Feb 2019 09:28:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50713 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729989AbfBLO2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:24:33 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so3161279wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:24:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KAMq1x9B0WCQpzH3RwEBRqWOiCfu+v2gKiAUxijQ3dM=;
-        b=JUhTPCBi+rn+Qm4N/lS+K7QJnRqYZdeODJmLzFN4+rfG9u0Qinh0z3PB59we7oqcB7
-         bWWu5vZYGiSdfGs4CjdxE+kSj8vb8IApnE1QMMw7ox5gI/fTQSgnbo3E4X0NJQyo1rjf
-         B/IYJVeAnD9PVTjToqNJtyaZCMQVVs3RQrCrVai+TzU0ncJLMMkgndfL42juOMm0sVd/
-         1f4lgIVeBQRgzMtRD22ikCXOIM+bAjT5yxLIVUqge6EsQY3S/576mg4rmlEeuaOF07Kc
-         0WLwZkG8BMu3zELoPKKRCXvzrvbLAcJsW1yDtRLVF1tWKWllo+QPdxPKPUtD8Pt1T6f7
-         AZAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KAMq1x9B0WCQpzH3RwEBRqWOiCfu+v2gKiAUxijQ3dM=;
-        b=O5NyUNS9dnbNsoziyc1KWJ219n2HE/StxlBApKBlnMoGPGXhwS2hUTJw3nN2X8s+6w
-         V072cLmWZvw373r4HKaykyUeGQj83tu//bIyI/8sTUl+Y0/BezqxAvTYrhnt4BFUknq6
-         Bi7BuTxrw8FRForr+CCoBza+/fLZLAUXSs1oNvehNhJD2kAEgicPEgFDnSWlHW8Gjo03
-         x/YIsin9gl/r81uhwOWuMt59ZmrJcTuVBxJd8NQI4OIg/Hp0dlDelcmrgzov8+XDaj1p
-         3t1cCYL9fi269XehJLHGhjMaF30b4SY0PcWh2DJvlZsbtj101ligs+eDu1eOBLXydx22
-         uncw==
-X-Gm-Message-State: AHQUAuZNf7NrRQ6SCu25zO0wvFhYSobCch12g1jbuoqCRR7YcR+y77Fx
-        BwBGzXAgR72hNccZamifhE75pg==
-X-Google-Smtp-Source: AHgI3IYpgl47wD6nqFYP7LCl82rQFpzOK10BE4EKQELBLfj0rBM/iBzR4WWSXNhm0jvdtzcJ6sPavg==
-X-Received: by 2002:a1c:2804:: with SMTP id o4mr3273810wmo.150.1549981471553;
-        Tue, 12 Feb 2019 06:24:31 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c139sm4926838wmd.13.2019.02.12.06.24.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Feb 2019 06:24:31 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: meson-g12a: Add AO Secure node
-Date:   Tue, 12 Feb 2019 15:24:27 +0100
-Message-Id: <20190212142427.14478-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190212142344.13634-1-narmstrong@baylibre.com>
-References: <20190212142344.13634-1-narmstrong@baylibre.com>
+        Tue, 12 Feb 2019 09:28:55 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gtZ3K-0000mM-Rr; Tue, 12 Feb 2019 15:28:50 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gtZ3K-00037h-5g; Tue, 12 Feb 2019 15:28:50 +0100
+Date:   Tue, 12 Feb 2019 15:28:50 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Mathieu Othacehe <m.othacehe@gmail.com>
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pwm: hibvt: Add hi3559v100 support
+Message-ID: <20190212142850.iwgi4n6v6oep4oin@pengutronix.de>
+References: <20190212094927.5900-1-m.othacehe@gmail.com>
+ <20190212094927.5900-2-m.othacehe@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212094927.5900-2-m.othacehe@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the Always-On ao-secure system control registers node,
-which is used by the meson-gx-socinfo driver to detect the SoC IDs.
+On Tue, Feb 12, 2019 at 10:49:27AM +0100, Mathieu Othacehe wrote:
+> Add support for hi3559v100-shub-pwm and hisilicon,hi3559v100-pwm
+> platforms. They require a special quirk: pwm has to be enabled again
+> to force duty_cycle refresh.
+> 
+> Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
+> ---
+>  drivers/pwm/pwm-hibvt.c | 26 +++++++++++++++++++++++---
+>  1 file changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
+> index 27c107e78d59..bf33aa24433c 100644
+> --- a/drivers/pwm/pwm-hibvt.c
+> +++ b/drivers/pwm/pwm-hibvt.c
+> @@ -49,6 +49,7 @@ struct hibvt_pwm_chip {
+>  	struct clk *clk;
+>  	void __iomem *base;
+>  	struct reset_control *rstc;
+> +	bool quirk_force_enable;
+>  };
+>  
+>  struct hibvt_pwm_soc {
+> @@ -56,6 +57,7 @@ struct hibvt_pwm_soc {
+>  };
+>  
+>  static const struct hibvt_pwm_soc pwm_soc[2] = {
+> +	{ .num_pwms = 2 },
+>  	{ .num_pwms = 4 },
+>  	{ .num_pwms = 8 },
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+The members of this struct are used as of-data (in struct
+of_device_id::data below). When looking at the usage:
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index 3b82a975c663..e247194da126 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -101,6 +101,12 @@
- 			#size-cells = <2>;
- 			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
- 
-+			sec_AO: ao-secure@140 {
-+				compatible = "amlogic,meson-gx-ao-secure", "syscon";
-+				reg = <0x0 0x140 0x0 0x140>;
-+				amlogic,has-chip-id;
-+			};
-+
- 			uart_AO: serial@3000 {
- 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
- 				reg = <0x0 0x3000 0x0 0x18>;
+	{ .compatible = "hisilicon,hi3516cv300-pwm", .data = &pwm_soc[1] },
+	{ .compatible = "hisilicon,hi3519v100-pwm", .data = &pwm_soc[2] },
+	{ .compatible = "hisilicon,hi3559v100-shub-pwm", .data = &pwm_soc[2] },
+	{ .compatible = "hisilicon,hi3559v100-pwm", .data = &pwm_soc[0] },
+
+this isn't exactly easy to understand. I would prefer to do it as
+follows:
+
+	static const struct hibvt_pwm_soc hi3516cv300_soc_info = {
+		.num_pwms = 2,
+	};
+	...
+
+	static const struct of_device_id hibvt_pwm_of_match[] = {
+		{ .compatible = "hisilicon,hi3516cv300-pwm", .data = &hi3516cv300_soc_info },
+		...
+	};
+
+Then you could also add a member to hibvt_pwm_soc to signal if that
+force_enable quirk is necessary and would not need to use
+of_device_is_compatible() to determine this. The result is that you have
+a description of all relevant differences in a single place.
+
+@Thierry: Also this is yet another driver instance where a num-pwms
+property would simplify the driver because up to before this patch this
+was the only difference between the different variants.
+
+Best regards
+Uwe
+
 -- 
-2.20.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
