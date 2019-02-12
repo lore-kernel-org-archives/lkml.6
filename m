@@ -2,103 +2,107 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070A0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9779EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C864420869
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6673120869
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 23:51:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gitwdxfT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbfBLXt7 (ORCPT
+        id S1732426AbfBLXvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:49:59 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:54484 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbfBLXt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:49:59 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 9DD0DDBCF2CD546476AA;
-        Wed, 13 Feb 2019 07:49:56 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x1CNnpY5002336;
-        Wed, 13 Feb 2019 07:49:51 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019021307501023-25782424 ;
-          Wed, 13 Feb 2019 07:50:10 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     benjamin.gaignard@linaro.org
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        "Hans Verkuil (hansverk)" <hansverk@cisco.com>,
-        Wen Yang <yellowriver2010@hotmail.com>
-Subject: [PATCH v2 4/4] media: platform: sti: fix possible object reference leak
-Date:   Wed, 13 Feb 2019 07:48:49 +0800
-Message-Id: <1550015329-42952-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-02-13 07:50:10,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-02-13 07:49:44,
-        Serialize complete at 2019-02-13 07:49:44
-X-MAIL: mse01.zte.com.cn x1CNnpY5002336
+        Tue, 12 Feb 2019 18:51:11 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54222 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728445AbfBLXvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 18:51:10 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1CNn51k114262;
+        Tue, 12 Feb 2019 23:50:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=jsSXjS6BZQY5Sga8chtBzP5JreLH+wfybF0eHc+UlFs=;
+ b=gitwdxfTDxm/cRpJHgs7ToQG5UmAY6R23YaNPiuvgvAm4dCOp++gdNgRQMDLbQMFgUJz
+ eDZtE5GfwOyhx19bqf7IRln0IRx6+uFYrjQiYY1FAcQ5lA7sZZpgZRbKYFHc5XrDODUC
+ CpAS0mPzYeW1tWE7WzQjvZ+i4kj3tCBN+BcqkAZZGQTTcoRXxEvByzCSyNgY5vot8+y9
+ /QEVsHB6aH8c7B785OnKWJiOUTVqusE8GzOeUolaJP00PJeLwHP/wbYqMleCgRJnc+Ak
+ uFt+MDKUv2u+wvvid6UfnTgafj/aINKuw4j3B5tlNEGxFnfHskWi44s+V3pQVMS8+bH6 0g== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qhredy35r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Feb 2019 23:50:49 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1CNomqI025067
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Feb 2019 23:50:48 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1CNoln3014869;
+        Tue, 12 Feb 2019 23:50:47 GMT
+Received: from localhost.localdomain (/108.49.136.197)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Feb 2019 15:50:47 -0800
+Date:   Tue, 12 Feb 2019 18:50:41 -0500
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] xen: mark expected switch fall-through
+Message-ID: <20190212235041.GA4463@localhost.localdomain>
+References: <20190212203720.GA24175@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212203720.GA24175@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9165 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=828 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902120161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_parse_phandle() returns a node pointer with refcount
-incremented thus it must be explicitly decremented here after the last
-usage.
-The of_find_device_by_node() takes a reference to the underlying device
-structure, we also should release that reference.
+On Tue, Feb 12, 2019 at 02:37:20PM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning:
+> 
+> drivers/xen/xen-pciback/xenbus.c: In function ‘xen_pcibk_frontend_changed’:
+> drivers/xen/xen-pciback/xenbus.c:545:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (xenbus_dev_is_online(xdev))
+>       ^
+> drivers/xen/xen-pciback/xenbus.c:548:2: note: here
+>   case XenbusStateUnknown:
+>   ^~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Hans Verkuil says:
-The cec driver should never take a reference of the hdmi device.
-It never accesses the HDMI device, it only needs the HDMI device pointer as
-a key in the notifier list.
-The real problem is that several CEC drivers take a reference of the HDMI
-device and never release it. So those drivers need to be fixed.
+Applied to for-linus-5.0
 
-This patch fixes those two issues.
+(xen-scsiback patch too)
 
-Fixes: fc4e009c6c98 ("[media] stih-cec: add CEC notifier support")
-Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Wen Yang <yellowriver2010@hotmail.com>
-Cc: linux-media@vger.kernel.org
----
-v2->v1: 
-- move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
-- put_device() can be done before the cec = devm_kzalloc line.
-
- drivers/media/platform/sti/cec/stih-cec.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/platform/sti/cec/stih-cec.c b/drivers/media/platform/sti/cec/stih-cec.c
-index d34099f..721021f 100644
---- a/drivers/media/platform/sti/cec/stih-cec.c
-+++ b/drivers/media/platform/sti/cec/stih-cec.c
-@@ -317,9 +317,11 @@ static int stih_cec_probe(struct platform_device *pdev)
- 	}
- 
- 	hdmi_dev = of_find_device_by_node(np);
-+	of_node_put(np);
- 	if (!hdmi_dev)
- 		return -EPROBE_DEFER;
- 
-+	put_device(&hdmi_dev->dev);
- 	cec->notifier = cec_notifier_get(&hdmi_dev->dev);
- 	if (!cec->notifier)
- 		return -ENOMEM;
--- 
-2.9.5
+-boris
 
