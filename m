@@ -2,101 +2,91 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23552C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E734FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59002186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF66A2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="hvNL87km"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pnw6BM58"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfBLOMR (ORCPT
+        id S1730121AbfBLOOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:12:17 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55605 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728629AbfBLOMQ (ORCPT
+        Tue, 12 Feb 2019 09:14:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40374 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728629AbfBLOOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:12:16 -0500
-Received: by mail-it1-f194.google.com with SMTP id o131so4138139itc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 06:12:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Oaz0kFE3Os1tiLxazqWfsLVT4Rb9wAlEr0UAKK3rcSE=;
-        b=hvNL87kmSjZ7vAILvkHNH1+ZnkecIftVsL7hH3gWY0/n/CLOgjh+18/WnoJusmaCZ3
-         9wgCeb1s0wr/bF7ttdxF5WKPeHLREbY6hlzLkbCpKVBBFWSwdemfcW63GCZ9Eq9DHJDC
-         nWP0d1vAZ1XpRjQNCmGUFSo7RsXSP2NiFrN60eH7yBRCYvwv1frzQMu2ClZ6ZY1i5oSp
-         TmCswKvtdonmBL88G1YF8yU6VdsDlQo60hnlF0sEiAsYQ6SB8ie2WhUseC5MFveXh9zz
-         enOjQ+WIo/soofafSWK0pL6KkC0XTSB9pg2Q8n132mfCIYdO5xF/sbqszV/D65YHZSlR
-         gDpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Oaz0kFE3Os1tiLxazqWfsLVT4Rb9wAlEr0UAKK3rcSE=;
-        b=dirnhgk45S6a7ULAeS8x/TCEfxXeDzXOkt9gXQ7OWYZUjyWCoYi9O28+jd3kHsFjJJ
-         PXUOw2qFWnn6pDtYjjOwc1xp/AxMbI2LdtB+WZIGux6M2hHT/FYIm9GAunvvYvR5SAIP
-         QDwU1hVCsbF2uIWGzjufCuBXLIC1yZI9oM57KiYgm8yCCsNuZXU+Em47hN04+S3ywwkp
-         2b8F9JzZwGaW4hWh1l9h3tOSvG+/9uRHXbOCPWesCLL4Y2xQR7bcuzgXomRO7TLGPzct
-         Cwz7VYbtX8eX9xYqd3rXwZUb7GpY5tTfA0zkRm1MXLSmcTbIq+LRhYIkvY1Y9ks+1le4
-         XyDw==
-X-Gm-Message-State: AHQUAuZRPUonkoZGKtHobK1j2OF0BDK8wagm3UgS+KrT2MMoF1HvfOGD
-        7bU3M/X2zBVCmVRZrYsbSJQSmd09Kyqm2VTmen8KAw==
-X-Google-Smtp-Source: AHgI3IajqxOcEu0M1gCdMLYyupRpt2fIRWt7ael+Zr1UgLQrmRu+n+qOVM7UH1Hu0VaGPp3+xBD5F3ONvfYJc4gr4Ds=
-X-Received: by 2002:a24:9795:: with SMTP id k143mr1786666ite.74.1549980736116;
- Tue, 12 Feb 2019 06:12:16 -0800 (PST)
+        Tue, 12 Feb 2019 09:14:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2Nd8kozV4BV/GafBh+rTz1qGEH7cU811uOSRQdc3z+A=; b=Pnw6BM58jcRxGFb1E+v5ODUr4
+        ck2FVyDH5Guq1KlYCse2PP1Eyjmzc/H6S0WU9djukLTon1zd9bYJ/S48SnJee/BsWSrfXzcqYF0iQ
+        3gVQ5BtQp05Fm8Q+ygk2Ne8t8CxXUaUb1Jguz0MNkaT8tfjXyzK+zT8gAUcJiVIOpMaaM5uQ+GVtH
+        4pIBMZE5IKPem9nJe352NIt9Mp+StcfNEqEoJXRDVJoCtQqeF9CP+PaxxsxYMeFP65t74Uq7lYyH3
+        OHLlwFUeBY3XrhfVnOVqrKI93k8eYOpQ3yJb7ZyTittqVYWRl22iaqm9jd/TZ9HG3XT5hxlvexbbT
+        RmG8VfTvA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtYpG-0007rc-Dc; Tue, 12 Feb 2019 14:14:18 +0000
+Date:   Tue, 12 Feb 2019 06:14:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] parisc: use memblock_alloc() instead of custom
+ get_memblock()
+Message-ID: <20190212141418.GM12668@bombadil.infradead.org>
+References: <1549979990-6642-1-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190205135934.18841-1-brgl@bgdev.pl>
-In-Reply-To: <20190205135934.18841-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 12 Feb 2019 15:12:05 +0100
-Message-ID: <CAMRc=MdRgmOwcaytv83pOHGYGwsskCVx3gRqaatg8sMDShmnLw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] eeprom: at24: new property
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549979990-6642-1-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 5 lut 2019 o 15:00 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a)=
-:
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Microchip 24aa02t EEPROM is compatible with Atmel 24c02 except that
-> it's visible on 8 i2c slave addresses. We already support such a
-> use case with hard-coded config for 'atmel,24c00'. Let's add a more
-> flexible device tree property - 'num-addresses' - to the binding
-> document and support it in the driver.
->
-> Bartosz Golaszewski (2):
->   dt-bindings: at24: add the 'num-addresses' property
->   eeprom: at24: implement support for 'num-addresses' property
->
->  Documentation/devicetree/bindings/eeprom/at24.txt |  3 +++
->  drivers/misc/eeprom/at24.c                        | 13 ++++++++-----
->  2 files changed, 11 insertions(+), 5 deletions(-)
->
-> --
-> 2.20.1
->
+On Tue, Feb 12, 2019 at 03:59:50PM +0200, Mike Rapoport wrote:
+> -static void * __init get_memblock(unsigned long size)
+> -{
+> -	static phys_addr_t search_addr __initdata;
+> -	phys_addr_t phys;
+> -
+> -	if (!search_addr)
+> -		search_addr = PAGE_ALIGN(__pa((unsigned long) &_end));
+> -	search_addr = ALIGN(search_addr, size);
+> -	while (!memblock_is_region_memory(search_addr, size) ||
+> -		memblock_is_region_reserved(search_addr, size)) {
+> -		search_addr += size;
+> -	}
+> -	phys = search_addr;
 
-If there are no objections, I will apply these in 2 days and include
-them in the PR for v5.1.
+This implies to me that the allocation will be 'size' aligned.
 
-Bart
+>  		if (!pmd) {
+> -			pmd = (pmd_t *) get_memblock(PAGE_SIZE << PMD_ORDER);
+> +			pmd = memblock_alloc(PAGE_SIZE << PMD_ORDER,
+> +					     SMP_CACHE_BYTES);
+
+So why would this only need to be cacheline aligned?  It's pretty common
+for hardware to require that pgd/pud/pmd/pte tables be naturally aligned.
+
+> @@ -700,7 +683,10 @@ static void __init pagetable_init(void)
+>  	}
+>  #endif
+>  
+> -	empty_zero_page = get_memblock(PAGE_SIZE);
+> +	empty_zero_page = memblock_alloc(PAGE_SIZE, SMP_CACHE_BYTES);
+
+... and surely the zero page also needs to be page aligned, by definition.
+
