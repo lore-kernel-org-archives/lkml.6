@@ -2,96 +2,137 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD3BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4135EC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20AD6222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9EE222BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:55:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kDkmovGI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyRhdG2M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730915AbfBLSxn (ORCPT
+        id S1730931AbfBLSzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:53:43 -0500
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:41985 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730848AbfBLSxl (ORCPT
+        Tue, 12 Feb 2019 13:55:09 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36562 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbfBLSzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:53:41 -0500
-Received: by mail-qt1-f202.google.com with SMTP id y31so3695862qty.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:53:40 -0800 (PST)
+        Tue, 12 Feb 2019 13:55:08 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g9so1734355plo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:55:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=d989risvbXGddZjllfCNXkTN3mFhC1Eg/EDQAHSJ3yM=;
-        b=kDkmovGIl9ITGv7ivdWo6sywOAFhdbTGdyEs7DzgjIzE9vvPpU2HpJBSqPHo7Ihk8G
-         DM6tAAjJBNf0WSp1wFfCwusMOdADvp/dy8Z4nmrAs22aPU6CwK+3ZJ23BryoqWPWUx26
-         Xr7fR/B2w26/JLPsZzH8TMuHo+oRFD0cwC8z32tY625FLdy8eImJ0PHSbWefZlRXf6Te
-         wFHiRgWi14YYWSSXWBI7mqaV+LurIsXp3ZaSfMfRE7oyrb7Gw6s+HduL6USJSbNzdP3v
-         gfx1T0zAhuYYL+5Nm5fAPRz9ivNJpRNFJrAUDxfgFReDy8TZ0T6PoyFQTByrfJiRj3wg
-         symg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=i3gc5E2H5s0Z0cU1Rtar6FigVqhI90HZ+Cw+llye4LQ=;
+        b=JyRhdG2M++y73EuFdk+qw423DPq0SZe7Zi2/PDKmsnH9A7eaWIK85CJC0eKLQr6nPS
+         LBuGVSzhwg2Ho+xwQIMvxrqZpseMPXz1WxogW65pFWNh3XFyXdPeWRLJPMgxgEL/RBL8
+         IrtTNaIku3F0KI+hkcTSeAf0StsujnhoejyjnUs/BA5GnYJEKxUbXDZKlwVKXtEDRWfn
+         ouMuHpMZnWTmVATRGZ71Cd5l1MVDbBwU/g2nu7JhJHz4reQTGD7Zcg8TRHqwK5LBcExZ
+         Fw2IkW/20g1hWYpxHAsCrKmBvK003LRlw5YRFMfodVthvom4cIlpDNJOGvBsg8sWBhSN
+         Uu0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=d989risvbXGddZjllfCNXkTN3mFhC1Eg/EDQAHSJ3yM=;
-        b=V1JkxYhPMsCD1/zTn1k3ZFJrXDJc0wvfaxo5HagqyAdKDPGbtey6Vk+84MXNqJXqqS
-         Twy2jAMokPDEsaODjPIRZAHWfyDk0/9yyCh+ZNgM7BkSlv/DHG0MsGJqaNHVnlUfLeQF
-         iWXkY30j1cynspK8uOrpdUNG0Ce/LqMLFInv+5CTc4jt8QSTpzgCOFNNS46olBFxX3Pl
-         pl+xv6w/j3fdXjsrkrLbKlYlFNYsaBqg5NUvVBFBKGe9xbnAk4AANHKRygx4Hv9fkKAi
-         UQOSQq3X9BiwB0a8djhJ6x2xdZ3dejFSgheTuyORKaXKRMCOvcxHHgi0zuMusW9DIIJw
-         AIPg==
-X-Gm-Message-State: AHQUAubaAVjQdnWpKbTDDiXra8VM0e1ipNFcEo2oOZqEl6qDZ8v9lfTO
-        VK7MgqN+L9tTox07AwlaXj1RwvIwFxIblfhn8oaAOg==
-X-Google-Smtp-Source: AHgI3IYeSM7KF3zEI5jSt5oH5y3eDLWa+Sf5/o17qlCItee5kuYnNoL44jm1KfkAH8up5aFmwjfVWz25kzca0+h5nFklaA==
-X-Received: by 2002:a37:4351:: with SMTP id q78mr2964333qka.36.1549997620429;
- Tue, 12 Feb 2019 10:53:40 -0800 (PST)
-Date:   Tue, 12 Feb 2019 10:53:05 -0800
-In-Reply-To: <20190212185305.112847-1-brendanhiggins@google.com>
-Message-Id: <20190212185305.112847-2-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190212185305.112847-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when testing
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     robh+dt@kernel.org, frowand.list@gmail.com, mcgrof@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=i3gc5E2H5s0Z0cU1Rtar6FigVqhI90HZ+Cw+llye4LQ=;
+        b=bqkIPVvJytfe2PGd+ZniNa4K3r/jQDvRg6zXeaayUroTMz4ap3S7IaspAz6FKkjTYH
+         LnkDjSk95NlPQlJowLMwOFdAaP798549QKRIjus8d2TN1Rc57QYwAZxamAxH2NC+LYax
+         F/Y1kKH47peZZ0UZD7JJB7VLX8IA175ojr8QWUwWyWv9D/zlyD0+kf8ynqK389MCAgOB
+         ekDKODc00ghp5+7CZim8KZznR4u1K4huBg1RwFLKjJU30ONBH5cJEpn0j7cajZVy2TwQ
+         pYsX49WiU/drN15sWQp5lKGbHgJDr/GoYSYsMvdGAyWaB1z8TCgReEgrP8/9n10Keepq
+         1FYA==
+X-Gm-Message-State: AHQUAuaLDE8yzzzt0JUDKSGLhn3JTtbJZA2VtSGrTR24fkzr6UAG8zok
+        8eNWSs1MIEcKr2zAGRLXjMDljs6cg0vF+A==
+X-Google-Smtp-Source: AHgI3IamXCnkwWu7CG9XLc8IJIvUjcbEPXsnumRzd5xKHjrZ/7702zSOZmlrHo8twVg5cDx72wtIkQ==
+X-Received: by 2002:a17:902:c5:: with SMTP id a63mr5452013pla.267.1549997708301;
+        Tue, 12 Feb 2019 10:55:08 -0800 (PST)
+Received: from localhost.localdomain ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id q187sm601003pfb.128.2019.02.12.10.55.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 12 Feb 2019 10:55:07 -0800 (PST)
+From:   Xiang Xiao <xiaoxiang781216@gmail.com>
+X-Google-Original-From: Xiang Xiao <xiaoxiang@xiaomi.com>
+To:     gregkh@linuxfoundation.org, alexander.shishkin@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org
+Cc:     Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: [v2] lib/string: add memrchr function
+Date:   Wed, 13 Feb 2019 02:54:43 +0800
+Message-Id: <1549997683-27986-1-git-send-email-xiaoxiang@xiaomi.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549994809-27479-1-git-send-email-xiaoxiang@xiaomi.com>
+References: <1549994809-27479-1-git-send-email-xiaoxiang@xiaomi.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UML supports enabling OF, and is useful for running the device tree
-tests, so add support for unflattening device tree blobs so we can
-actually use it.
+Here is the detailed description for memrchr:
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+void *memrchr(const void *s, int c, size_t n);
+
+The memrchr() function is like the memchr() function, except
+that it searches backward from the end of the n bytes pointed
+to by s instead of forward from the beginning.
+
+The memrchr() functions return a pointer to the matching byte
+or NULL if the character does not occur in the given memory
+area.
+
+Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
 ---
- drivers/of/unittest.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/string.h |  1 +
+ lib/string.c           | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 84427384654d5..effa4e2b9d992 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
- 	}
- 	of_node_put(np);
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 7927b87..f380f4b 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -167,6 +167,7 @@ static inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
+ 	memcpy(dst, src, cnt);
+ }
+ #endif
++void *memrchr(const void *s, int c, size_t n);
+ void *memchr_inv(const void *s, int c, size_t n);
+ char *strreplace(char *s, char old, char new);
  
-+	if (IS_ENABLED(CONFIG_UML))
-+		unflatten_device_tree();
+diff --git a/lib/string.c b/lib/string.c
+index 38e4ca0..92914f6 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -964,6 +964,27 @@ void *memchr(const void *s, int c, size_t n)
+ EXPORT_SYMBOL(memchr);
+ #endif
+ 
++/**
++ * memrchr - Find a character in an area of memory.
++ * @s: The memory area
++ * @c: The byte to search for
++ * @n: The size of the area.
++ *
++ * returns the address of the last occurrence of @c, or %NULL
++ * if @c is not found
++ */
++void *memrchr(const void *s, int c, size_t n)
++{
++	const unsigned char *p = s + n;
 +
- 	pr_info("start of unittest - you will see error messages\n");
- 	of_unittest_check_tree_linkage();
- 	of_unittest_check_phandles();
++	while (n-- != 0) {
++		if ((unsigned char)c == *--p)
++			return (void *)p;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL(memrchr);
++
+ static void *check_bytes8(const u8 *start, u8 value, unsigned int bytes)
+ {
+ 	while (bytes) {
 -- 
-2.20.1.791.gb4d0f1c61a-goog
+2.7.4
 
