@@ -2,65 +2,101 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6A0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F97C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3D221773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3161B21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ozRI7LFY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQl5MHsU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbfBLHGc (ORCPT
+        id S1727004AbfBLHGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:06:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59408 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfBLHGc (ORCPT
+        Tue, 12 Feb 2019 02:06:54 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43691 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfBLHGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:06:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=ozRI7LFY99mngdD32m1QBqv8E
-        RZQGO3Ky5L5fdjTitiJJpgFahO6nsJq4jXia3+akDKJBuKu5L7Z8OcDOfklt1jbZfAqLjlBChYriE
-        eYF8hnuYFVpPvd6NL1B6olIUgswzi0QQlbXylKNGSrYr5yP5tixkwfDdQ89uPIemuiyB4dNSN5BC9
-        QJJlFrQ6yheIJ6Hur8DSNELWLLtaaxBXz/EusJpuQ21F4FVOp4JppwhZ8f6+ucgATIYjihn2wVQ80
-        ByQr1oTkHjXulepoCLR6WieDanQ8w7EuKMQjv4TmEwTNPPnCywdi5z4gBBtWyDm19woS/MOC2x0oT
-        VPSIpBhnA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtS9G-0000Fr-S8; Tue, 12 Feb 2019 07:06:30 +0000
-Date:   Mon, 11 Feb 2019 23:06:30 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 5/6] RISC-V: Implement compile-time fixed mappings
-Message-ID: <20190212070630.GC26747@infradead.org>
-References: <20190119132650.9978-1-anup.patel@wdc.com>
- <20190119132650.9978-6-anup.patel@wdc.com>
+        Tue, 12 Feb 2019 02:06:54 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q17so849163pfh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 23:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lvhBXbt0lGYX/dVbL9FsSQn2IWcD8JIicvk9bDMMnZg=;
+        b=CQl5MHsUNP4Ceptu2q6BpBhkIwziIrEmd10/rPSSpsDZf9Gr9carRURUy09uMTr9J0
+         YJusX/Jp1ybUysC5DGVz6BgGznUEYaT8zGyacWJKnYhPoUMheJxm1qv6VltuLYpOk5ZV
+         PGaebHuUBY5ti62yba00/2sCkTvRxrzT35U18LxxHWgYFn36n3+J23plkcVtMftKqCK3
+         1S74JhyZUEBG6/AsvLu7IzPqjoIC88QixUUy/Eo6tseUC1Hl5CTR6gLdF5i063euPZ4S
+         QiACaum0MExwRtaVP1Mu/tuiz38UOL8zZtqWyYURB3JYfTt77ER8OcslTrm4nUq/09T9
+         k25g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lvhBXbt0lGYX/dVbL9FsSQn2IWcD8JIicvk9bDMMnZg=;
+        b=tcDv4gdiqr4CouOpYJCh5/gVRStvsQoJGzDpxLOpfWOyWzRZD1x03pkEwh1yw1l9aW
+         uZClFWldLxmi486I+GHW5REW8aI5hFWsVYskJbhJGuloZMeLK/WScpjMqh8RkPbm9suX
+         hW4ELNWm/cWSw7TAZx2ujRUeGry2BcxgtXSjvBubqjFZXiR6h4Oykw47CeV6mWmpTwMt
+         NfAUg0EEFpNtg0uPmQl2midAk74J3xybF05gP5uDqeBb/EmrdV9GcwjFijA99hMeBWjy
+         9gY/xOD4eQWV6+IpgQjtppdEJPf97aF37An8sESWKtGdIRuThfUZG/aF+2AZxrErsj/4
+         N8bg==
+X-Gm-Message-State: AHQUAub6GbptI8ZpCLWUGOgHk9tyAD+MVyc2xwM5vIh6Dgp70DhXuQv5
+        3rbw3vlMrotBCZ3+F+240xYTQQ==
+X-Google-Smtp-Source: AHgI3IbtBHyBEr6WHr9jwYImY6v4QZNtpajIG0x75moMoBw4XGSH1CsLyDpYrZs3Zbuo0xbmZ73yUA==
+X-Received: by 2002:a63:dc53:: with SMTP id f19mr2271375pgj.406.1549955213146;
+        Mon, 11 Feb 2019 23:06:53 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id n27sm24104171pfb.8.2019.02.11.23.06.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 23:06:52 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/2] cpufreq: Allow light-weight tear down and bring up of CPUs
+Date:   Tue, 12 Feb 2019 12:36:45 +0530
+Message-Id: <cover.1549955027.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190119132650.9978-6-anup.patel@wdc.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+The cpufreq core doesn't remove the cpufreq policy anymore on CPU
+offline operation, rather that happens when the CPU device gets
+unregistered from the kernel. This allows faster recovery when the CPU
+comes back online. This is also very useful during system wide
+suspend/resume where we offline all non-boot CPUs during suspend and
+then bring them back on resume.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This patcset takes the same idea a step ahead to allow drivers to do
+light weight tear-down and bring up during CPU offline/online operations
+and updates the cpufreq-dt driver to implement the new helpers.
+
+V1->V2:
+- s/light_weight_exit()/offline()
+- Also introduce the online() counterpart
+
+Viresh Kumar (2):
+  cpufreq: Allow light-weight tear down and bring up of CPUs
+  cpufreq: dt: Implement online/offline() callbacks
+
+ drivers/cpufreq/cpufreq-dt.c | 17 +++++++++++
+ drivers/cpufreq/cpufreq.c    | 55 +++++++++++++++++++++++-------------
+ include/linux/cpufreq.h      |  2 ++
+ 3 files changed, 55 insertions(+), 19 deletions(-)
+
+-- 
+2.20.1.321.g9e740568ce00
+
