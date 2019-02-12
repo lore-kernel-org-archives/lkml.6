@@ -2,307 +2,180 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9661CC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 912B9C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58621222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5910D222BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jRUqIjAj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dFIUMRPt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731391AbfBLS2X (ORCPT
+        id S1731533AbfBLS23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:28:23 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19195 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731069AbfBLS2V (ORCPT
+        Tue, 12 Feb 2019 13:28:29 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:33887 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728654AbfBLS22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:28:21 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6310200002>; Tue, 12 Feb 2019 10:27:44 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Feb 2019 10:28:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Feb 2019 10:28:18 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 18:28:18 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Feb
- 2019 18:28:18 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Feb 2019 18:28:17 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.70]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c6310420002>; Tue, 12 Feb 2019 10:28:18 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <wsa@the-dreams.de>, <peda@axentia.se>, <digetx@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V19 2/7] i2c: tegra: add bus clear Master Support
-Date:   Tue, 12 Feb 2019 10:28:11 -0800
-Message-ID: <1549996096-6921-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549996096-6921-1-git-send-email-skomatineni@nvidia.com>
-References: <1549996096-6921-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 12 Feb 2019 13:28:28 -0500
+Received: by mail-vs1-f66.google.com with SMTP id e10so2233831vsp.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FZwFDk0xM1aJPTl7CsbyQporOjEvFZ14SRbsKRfZ0us=;
+        b=dFIUMRPtrNeuT0dKFFS/OIVxY2XZ5r09cxmoqb+ZMy36EhZTL1FmU3jn68WCwXAwxb
+         0yYKepvir2lmZ4ig9WReDZwoGY2wn8xndcVQiaKDGMtW7l13n55Gu8NCkHOfZx+HeS+Q
+         16fKM3u7zCrM63jFWoxDS/qU6c+1AW+CWa8PTZCPQC9e1kxJ6ZGfFY8IeDtLawKqCkNr
+         9N7XViouKkiqcvNeZ/1jj1otuyoZRizssrhZ/QTp36FGzKFFfaruJstpwQ1gVmIyAgMo
+         v89ip3RQPq6/ZD1yLowk7qFIkQGDx4QuGEksMW7nK7v1EaMVmk8Anem+79+9sAaV3VGR
+         bBQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FZwFDk0xM1aJPTl7CsbyQporOjEvFZ14SRbsKRfZ0us=;
+        b=hyw/AlXHJxVpH+CoMcFyISUYb/A6nRScOdRUYudebLMpgKYnhYTaLyZoHuJig3qqqw
+         jZAqVifXHRl72YYPrba1KZsFGFaMI14utA1FCIiZgFkew5APEtVBEeNgeb71oxREhqNr
+         17xAAiaVbOBDz19c519YzPYapI1D01hrSMQFLvwwOoSYz5EAHiWvARrQ5vVJTkrpKQ79
+         vG3vkghHrlSW5xoEB3g8G1p99XHiAk01JjxIXlLAon4unWfhS2M6MlTXHP2B97aVRgew
+         ytk8LLboU3r9ZITJuFx1HGY3+ypkczATb9lIZWP6eSIsSAa61At2qIiT3MfIMkW1J7Xz
+         GKnQ==
+X-Gm-Message-State: AHQUAuZ6jxWpcdr/03aceWdEl/2EAZqw35Kf06DOsGa4B3JwHCgRUOTN
+        rPm7MuE7LZNsMtPeDayrm0l17yRs8fj+t5OB10F1KQ==
+X-Google-Smtp-Source: AHgI3IacYKC2qFakMSGQOGooH3Yy5Dj0Y3zhpWdGm9IZ1yIDtj+zqKnEsiab+P3GRA8D1hxpvrl7SCQl3SI5vhheJHg=
+X-Received: by 2002:a67:1a84:: with SMTP id a126mr2109265vsa.165.1549996106632;
+ Tue, 12 Feb 2019 10:28:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549996064; bh=mwy+EUUwfcqbv171MRii6zchE5ZQL/jdZiRn6ZJXD0Q=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=jRUqIjAj2uPhEhDuEkbWkQVbfVC/opqutsW367c/hPE7OWt315/VORkKowrwnG3k5
-         QrGSF1d4jVOoPS5QBvjUEPbvSXcoVHsjLN6bulhVCGLLd9uWnaURmGKDHgKgNNZiDC
-         BZO4ZYn+JhWYmse5QL3JZW9QLRIA0qnPPZ2NeyxvH779sgQjxdIIE/bkHXyglBKPnv
-         jp83UHt10wTxUDwpi1PXUxgQ/eq0+A25a7GoQl3TU5OkAuv+6ZsOYTQf0KcXd88fXz
-         r5aUSXJb/1djdqT7hIn14PX8fmXRruEqJNuZZnvXsSrwPJ2mRe/DIOr9cFaQYihUNb
-         nrb7BXpY+d8Ng==
+References: <5510642.nRbR3bcduN@aspire.rjw.lan> <1670239.00ZbddH1IV@aspire.rjw.lan>
+ <CAPDyKFoR+evmvDehgTJvxcZ70ZLTqU5J4To_c=2vYdOk26h92w@mail.gmail.com> <CAJZ5v0jv6dboQd=iu9pHA_B2HzCEhd2WaN3-732S9px_u6MA-w@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jv6dboQd=iu9pHA_B2HzCEhd2WaN3-732S9px_u6MA-w@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Feb 2019 19:27:50 +0100
+Message-ID: <CAPDyKFpNWrVCW9xwwsWf=vGukEkSj4qYs58terDy0tmmrhyLDw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: Fix __pm_runtime_set_status() race with
+ runtime resume
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bus clear feature of Tegra I2C controller helps to recover from
-bus hang when I2C master loses the bus arbitration due to the
-slave device holding SDA LOW continuously for some unknown reasons.
+On Tue, 12 Feb 2019 at 17:28, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Feb 12, 2019 at 5:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Tue, 12 Feb 2019 at 13:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Commit 4080ab083000 ("PM-runtime: Take suppliers into account in
+> > > __pm_runtime_set_status()") introduced a race condition that may
+> > > trigger if __pm_runtime_set_status() is used incorrectly (that is,
+> > > if it is called when PM-runtime is enabled for the target device
+> > > and working).
+> > >
+> > > In that case, if the original PM-runtime status of the device is
+> > > RPM_SUSPENDED, a runtime resume of the device may occur after
+> > > __pm_runtime_set_status() has dropped its power.lock spinlock
+> > > and before deactivating its suppliers, so the suppliers may be
+> > > deactivated while the device is PM-runtime-active which may lead
+> > > to functional issues.
+> > >
+> > > To avoid that, modify __pm_runtime_set_status() to check whether
+> > > or not PM-runtime is enabled for the device before activating its
+> > > suppliers (if the new status is RPM_ACTIVE) and either return an
+> > > error if that's the case or increment the device's disable_depth
+> > > counter to prevent PM-runtime from being enabled for it while
+> > > the remaining part of the function is running (disable_depth is
+> > > then decremented on the way out).
+> > >
+> > > Fixes: 4080ab083000 ("PM-runtime: Take suppliers into account in __pm_runtime_set_status()")
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/base/power/runtime.c |   24 ++++++++++++++++++------
+> > >  1 file changed, 18 insertions(+), 6 deletions(-)
+> > >
+> > > Index: linux-pm/drivers/base/power/runtime.c
+> > > ===================================================================
+> > > --- linux-pm.orig/drivers/base/power/runtime.c
+> > > +++ linux-pm/drivers/base/power/runtime.c
+> > > @@ -1129,6 +1129,22 @@ int __pm_runtime_set_status(struct devic
+> > >         if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
+> > >                 return -EINVAL;
+> > >
+> > > +       spin_lock_irq(&dev->power.lock);
+> > > +
+> > > +       /*
+> > > +        * Prevent PM-runtime from being enabled for the device or return an
+> > > +        * error if it is enabled already and working.
+> > > +        */
+> > > +       if (dev->power.runtime_error || dev->power.disable_depth)
+> > > +               dev->power.disable_depth++;
+> > > +       else
+> > > +               error = -EAGAIN;
+> > > +
+> > > +       spin_unlock_irq(&dev->power.lock);
+> > > +
+> > > +       if (error)
+> > > +               return error;
+> > > +
+> > >         /*
+> > >          * If the new status is RPM_ACTIVE, the suppliers can be activated
+> > >          * upfront regardless of the current status, because next time
+> > > @@ -1147,12 +1163,6 @@ int __pm_runtime_set_status(struct devic
+> > >
+> > >         spin_lock_irq(&dev->power.lock);
+> > >
+> > > -       if (!dev->power.runtime_error && !dev->power.disable_depth) {
+> > > -               status = dev->power.runtime_status;
+> > > -               error = -EAGAIN;
+> > > -               goto out;
+> > > -       }
+> > > -
+> > >         if (dev->power.runtime_status == status || !parent)
+> > >                 goto out_set;
+> > >
+> > > @@ -1205,6 +1215,8 @@ int __pm_runtime_set_status(struct devic
+> > >                 device_links_read_unlock(idx);
+> > >         }
+> > >
+> > > +       pm_runtime_enable(dev);
+> >
+> > pm_runtime_enable() uses spin_lock_irqsave(), rather than
+> > spin_lock_irq() - is there a reason to why you want to allow that
+> > here, but not earlier in the function?
+>
+> Device links locking cannot be used in interrupt context.
 
-Per I2C specification, the device that held the bus LOW should
-release it within 9 clock pulses.
+I get that, but thanks for clarifying.
 
-During bus clear operation, Tegra I2C controller sends 9 clock
-pulses and terminates the transaction with STOP condition.
-Upon successful bus clear operation, bus goes to idle state and
-driver retries the transaction.
+However, then why did you convert __pm_runtime_set_status() from using
+spin_lock_irqsave() to spin_lock_irq() in commit "PM-runtime: Take
+suppliers into account in __pm_runtime_set_status()"?
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V19] 		  : updated to use i2c bus recovery through i2c core adapter
-		    using i2c_bus_recovery_info
- [V9/V10/V11/V12/V13/V14/V15/V16/V17/V18] : Rebased to 5.0-rc4
- [V5/V6/V7/V8]	  : Same as V4
- [V4]		  : Added I2C Bus Clear support patch to this version of series.
+As far as I can tell, the spin_lock is not being held while we operate
+on the device links anyway. Or is this just to give the caller an
+indication what kind of context the function can be called from?
 
-
- drivers/i2c/busses/i2c-tegra.c | 81 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 79c6aa87499b..a46446dbc48a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -51,6 +51,7 @@
- #define I2C_FIFO_STATUS_RX_SHIFT		0
- #define I2C_INT_MASK				0x064
- #define I2C_INT_STATUS				0x068
-+#define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
- #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
- #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-@@ -93,6 +94,15 @@
- #define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
-+#define I2C_BUS_CLEAR_CNFG			0x084
-+#define I2C_BC_SCLK_THRESHOLD			9
-+#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-+#define I2C_BC_STOP_COND			BIT(2)
-+#define I2C_BC_TERMINATE			BIT(1)
-+#define I2C_BC_ENABLE				BIT(0)
-+#define I2C_BUS_CLEAR_STATUS			0x088
-+#define I2C_BC_STATUS				BIT(0)
-+
- #define I2C_CONFIG_LOAD				0x08C
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
- #define I2C_SLV_CONFIG_LOAD			BIT(1)
-@@ -154,6 +164,8 @@ enum msg_end_type {
-  *		be transferred in one go.
-  * @quirks: i2c adapter quirks for limiting write/read transfer size and not
-  *		allowing 0 length transfers.
-+ * @supports_bus_clear: Bus Clear support to recover from bus hang during
-+ *		SDA stuck low from device for some unknown reasons.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
- 	const struct i2c_adapter_quirks *quirks;
-+	bool supports_bus_clear;
- };
- 
- /**
-@@ -640,6 +653,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		goto err;
- 	}
- 
-+	/*
-+	 * I2C transfer is terminated during the bus clear so skip
-+	 * processing the other interrupts.
-+	 */
-+	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
-+		goto err;
-+
- 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
- 		if (i2c_dev->msg_buf_remaining)
- 			tegra_i2c_empty_rx_fifo(i2c_dev);
-@@ -668,6 +688,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
- 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
- 		I2C_INT_RX_FIFO_DATA_REQ);
-+	if (i2c_dev->hw->supports_bus_clear)
-+		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-@@ -678,6 +700,44 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
-+{
-+	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-+	int err;
-+	unsigned long time_left;
-+	u32 reg;
-+
-+	reinit_completion(&i2c_dev->msg_complete);
-+	reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-+	      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-+	i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+	if (i2c_dev->hw->has_config_load_reg) {
-+		err = tegra_i2c_wait_for_config_load(i2c_dev);
-+		if (err)
-+			return err;
-+	}
-+
-+	reg |= I2C_BC_ENABLE;
-+	i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+	tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-+
-+	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-+						TEGRA_I2C_TIMEOUT);
-+	if (time_left == 0) {
-+		dev_err(i2c_dev->dev, "timed out for bus clear\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+	if (!(reg & I2C_BC_STATUS)) {
-+		dev_err(i2c_dev->dev,
-+			"un-recovered arbitration lost\n");
-+		return -EIO;
-+	}
-+
-+	return -EAGAIN;
-+}
-+
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	struct i2c_msg *msg, enum msg_end_type end_state)
- {
-@@ -759,6 +819,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		return 0;
- 
- 	tegra_i2c_init(i2c_dev);
-+	/* start recovery upon arbitration loss in single master mode */
-+	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-+		if (!i2c_dev->is_multimaster_mode)
-+			return i2c_recover_bus(&i2c_dev->adapter);
-+		return -EAGAIN;
-+	}
-+
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
- 			return 0;
-@@ -841,6 +908,10 @@ static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
- 	.flags = I2C_AQ_NO_ZERO_LEN,
- };
- 
-+static struct i2c_bus_recovery_info tegra_i2c_recovery_info = {
-+	.recover_bus = tegra_i2c_issue_bus_clear,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -853,6 +924,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -867,6 +939,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -881,6 +954,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -895,6 +969,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -909,6 +984,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -923,6 +999,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
- 	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
- };
- 
- /* Match table for of_platform binding */
-@@ -974,6 +1051,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
-+	i2c_dev->adapter.retries = 1;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-@@ -1051,6 +1129,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (i2c_dev->hw->supports_bus_clear)
-+		i2c_dev->adapter.bus_recovery_info = &tegra_i2c_recovery_info;
-+
- 	ret = tegra_i2c_init(i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
--- 
-2.7.4
-
+Kind regards
+Uffe
