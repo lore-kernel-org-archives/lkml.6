@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CB1C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7059C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE79217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72BF52075C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 15:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ic+LF/+R"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="P40er/r6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbfBLPOg (ORCPT
+        id S1730502AbfBLPOe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:14:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43365 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730390AbfBLPOa (ORCPT
+        Tue, 12 Feb 2019 10:14:34 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39371 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730324AbfBLPOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 10:14:30 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r2so3049966wrv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 07:14:27 -0800 (PST)
+Received: by mail-wr1-f68.google.com with SMTP id t27so3075551wra.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 07:14:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KcipALzLGN9ADimv2gmiw8vXQG9zUG5C+CzkQJqZk+o=;
-        b=Ic+LF/+R4pbWCrs8ouXmpodxYVPrTjLi889BrNn550QcxrBBlO67hT/kiuz6KRJxZv
-         IftwQzjLyVPQrVWQ0ptLpBCg0k9436EMdZJ3BVI/+FiGV/7j7RtoteNJDVKAE0kgYIoG
-         ocQVxJxjW6h7lQ2maGVv4V32kkAZBX89/u3HFm4s+MxlyMBpdhgEH5wz1qwI6aaQQ7Qu
-         fU+xjPTdovNWY5BsIQUUrEuR/bgwlG8LvpLGg2QsoOvXWOvz27lteyBu22ooInTRoA2u
-         LmuRFYS1tVd/OSPp7d5WIlYpkm+8fHDVJw5+ddAbPcdD63bIfpxnGcpdtfnssC6mqxV0
-         lw/w==
+        bh=MVuAZg4+nnaFhkjixBpLWEg1hgwoQXD2AQa4Piwf/Kk=;
+        b=P40er/r6P/7FvxPmzAj4Jeqy8C+ftJ64TIv40uLZkY7eLCYXjxZA+ihx+B20EsjfOe
+         d8Hcj4JN0Y1mgW13FXKJdnNsPdIvnn4Xmy4ZC/0fjyc25lButzdg+S3xXRFD3ltPbJiu
+         99Xf6iHMirR01tgRgRITZr/oZQuiHNipmXMt6WSf8sRCHCc+UTR4Oa6rfVvZUsEbvLwZ
+         4w/3opyC0gV6FjVWVbOoPDe86j+cAY6HyoQnzOjnN0XLmO6uib9zk0HFnnM71OjbK1IZ
+         kvPFijmREiVFgfQHmg+wM+P0P4acTS0OfZVyPL+tSQWpxS8SO1WlW+jkzyDF1c638jZv
+         3gpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KcipALzLGN9ADimv2gmiw8vXQG9zUG5C+CzkQJqZk+o=;
-        b=ZC8LmwbHV13luVEFn46YOvgc7gmbxJnTY44vG3mN0esdmDl2By5onCnu2GihF7O3qS
-         e8D9+6Bis0O/IIPyAEGdoJBfF4vj/B86a6leVhtwnNoFLVKGDtsw95Gv+62OiGs5doKF
-         Q2Vxprqb7GuhIAO6qeRRKoyFLPEEOypoLOnzGu19G1FByzC8cTm6sDsd/OhTEylzV5xb
-         ZOHKtypeYZ+Vj4V4DG3fdc8Ey4XNNiVb4TUfBh71L61sKHO/svPA6MbVlQsdUAHaSR8e
-         8Ae+1a4r+oM7qjzpFDrYQt+YypzKMLl5QbHSJwNDy6L9sjLsJ4mW8xBPmvHe5NsEYnOh
-         7k2g==
-X-Gm-Message-State: AHQUAua/7hwWTSoqWBswr9jTkJosH1YvK7kX9lvut0ykIgE1/7pONrql
-        bwKKKwbh0I4MVg+hDWvJfPVwSA==
-X-Google-Smtp-Source: AHgI3IY+mjREMc0CThzuKYYhTKn22zcgXsMNLHGItL6ezLiyy4hcjMulQLGKcwSX+UYwb78naJ500w==
-X-Received: by 2002:adf:8122:: with SMTP id 31mr3337473wrm.48.1549984466884;
-        Tue, 12 Feb 2019 07:14:26 -0800 (PST)
+        bh=MVuAZg4+nnaFhkjixBpLWEg1hgwoQXD2AQa4Piwf/Kk=;
+        b=IaiWGSjGKrsaMMfHfRaqOh002+tzKd7l90igUVaeKyHTvTf1mNoUdJQrbP8Lv6YCUR
+         LsvesSiX9RvuilwrfQVEmD2z0na/Ji9kAGSu85XUf2I7td2Dde9oJn6YaZHviCyGwX7u
+         aNYA/cD2yBqAKhx+b4YO8EGQ8Cq6zPOI41dGMUr3s8fy39BDV4WUggMk5lPzwYY3sfN5
+         K1ZavmtebHzRTRXrSSuuLNT21rJp4TXJxHuCEdNZvIoWt739S5iCxkTzGHF0PoRC5TWw
+         ordK22fnizUsuaBo/q7PRTl71MaSzc/GK1XQPIMHB/+MHZuYNbVdBbH0Q0RpxHp6Fi4E
+         q2BA==
+X-Gm-Message-State: AHQUAuakHJzLJD7bLJyqyeHeGHcO572LFC1bDK9pwRBnl8EsBBohskRn
+        uZ45NPE/RbNnbssS9Ty5B6UxYg==
+X-Google-Smtp-Source: AHgI3Ib8qsN5pafZuMij0Y61VcZJP+TdDFNb8ylW8TSsoKfu3Xta3Ek2WjN0TpRQVeMJggKMsWws5A==
+X-Received: by 2002:adf:df08:: with SMTP id y8mr3104780wrl.23.1549984468407;
+        Tue, 12 Feb 2019 07:14:28 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c1sm1589515wmb.14.2019.02.12.07.14.24
+        by smtp.gmail.com with ESMTPSA id c1sm1589515wmb.14.2019.02.12.07.14.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Feb 2019 07:14:25 -0800 (PST)
+        Tue, 12 Feb 2019 07:14:27 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
         kishon@ti.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] phy: amlogic: Add Amlogic G12A USB3 + PCIE Combo PHY Driver
-Date:   Tue, 12 Feb 2019 16:14:11 +0100
-Message-Id: <20190212151413.24632-7-narmstrong@baylibre.com>
+Subject: [PATCH 7/8] usb: dwc2: Add Amlogic G12A DWC2 Params
+Date:   Tue, 12 Feb 2019 16:14:12 +0100
+Message-Id: <20190212151413.24632-8-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212151413.24632-1-narmstrong@baylibre.com>
 References: <20190212151413.24632-1-narmstrong@baylibre.com>
@@ -75,471 +75,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the shared USB3 + PCIE PHY found in the
-Amlogic G12A SoC Family.
+This patchs sets the params for the DWC2 Controller found in the
+Amlogic G12A SoC family.
 
-It supports USB3 Host mode or PCIE 2.0 mode, depending on the layout of
-the board.
-
-Selection is done by the #phy-cells, making the mode static and exclusive.
+It mainly sets the settings reported incorrect by the driver,
+leaving the remaining detected automatically by the driver and
+provided by the DT node.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/phy/amlogic/Kconfig                   |  12 +
- drivers/phy/amlogic/Makefile                  |   1 +
- .../phy/amlogic/phy-meson-g12a-usb3-pcie.c    | 414 ++++++++++++++++++
- 3 files changed, 427 insertions(+)
- create mode 100644 drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+ drivers/usb/dwc2/params.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-index 78d6e194dce9..7ccb9a756aba 100644
---- a/drivers/phy/amlogic/Kconfig
-+++ b/drivers/phy/amlogic/Kconfig
-@@ -48,3 +48,15 @@ config PHY_MESON_G12A_USB2
- 	  Enable this to support the Meson USB2 PHYs found in Meson
- 	  G12A SoCs.
- 	  If unsure, say N.
-+
-+config PHY_MESON_G12A_USB3_PCIE
-+	tristate "Meson G12A USB3+PCIE Combo PHY drivers"
-+	default ARCH_MESON
-+	depends on OF && (ARCH_MESON || COMPILE_TEST)
-+	depends on USB_SUPPORT
-+	select GENERIC_PHY
-+	select REGMAP_MMIO
-+	help
-+	  Enable this to support the Meson USB3 + PCIE Combi PHY found
-+	  in Meson G12A SoCs.
-+	  If unsure, say N.
-diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-index 7d4d10f5a6b3..fdd008e1b19b 100644
---- a/drivers/phy/amlogic/Makefile
-+++ b/drivers/phy/amlogic/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_PHY_MESON8B_USB2)		+= phy-meson8b-usb2.o
- obj-$(CONFIG_PHY_MESON_GXL_USB2)	+= phy-meson-gxl-usb2.o
- obj-$(CONFIG_PHY_MESON_G12A_USB2)	+= phy-meson-g12a-usb2.o
- obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
-+obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)	+= phy-meson-g12a-usb3-pcie.o
-diff --git a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
-new file mode 100644
-index 000000000000..59eae98928e9
---- /dev/null
-+++ b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
-@@ -0,0 +1,414 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Amlogic G12A USB3 + PCIE Combo PHY driver
-+ *
-+ * Copyright (C) 2017 Amlogic, Inc. All rights reserved
-+ * Copyright (C) 2019 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/phy/phy.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/phy/phy.h>
-+
-+#define PHY_R0							0x00
-+	#define PHY_R0_PCIE_POWER_STATE				GENMASK(4, 0)
-+	#define PHY_R0_PCIE_USB3_SWITCH				GENMASK(6, 5)
-+
-+#define PHY_R1							0x04
-+	#define PHY_R1_PHY_TX1_TERM_OFFSET			GENMASK(4, 0)
-+	#define PHY_R1_PHY_TX0_TERM_OFFSET			GENMASK(9, 5)
-+	#define PHY_R1_PHY_RX1_EQ				GENMASK(12, 10)
-+	#define PHY_R1_PHY_RX0_EQ				GENMASK(15, 13)
-+	#define PHY_R1_PHY_LOS_LEVEL				GENMASK(20, 16)
-+	#define PHY_R1_PHY_LOS_BIAS				GENMASK(23, 21)
-+	#define PHY_R1_PHY_REF_CLKDIV2				BIT(24)
-+	#define PHY_R1_PHY_MPLL_MULTIPLIER			GENMASK(31, 25)
-+
-+#define PHY_R2							0x08
-+	#define PHY_R2_PCS_TX_DEEMPH_GEN2_6DB			GENMASK(5, 0)
-+	#define PHY_R2_PCS_TX_DEEMPH_GEN2_3P5DB			GENMASK(11, 6)
-+	#define PHY_R2_PCS_TX_DEEMPH_GEN1			GENMASK(17, 12)
-+	#define PHY_R2_PHY_TX_VBOOST_LVL			GENMASK(20, 18)
-+
-+#define PHY_R4							0x10
-+	#define PHY_R4_PHY_CR_WRITE				BIT(0)
-+	#define PHY_R4_PHY_CR_READ				BIT(1)
-+	#define PHY_R4_PHY_CR_DATA_IN				GENMASK(17, 2)
-+	#define PHY_R4_PHY_CR_CAP_DATA				BIT(18)
-+	#define PHY_R4_PHY_CR_CAP_ADDR				BIT(19)
-+
-+#define PHY_R5							0x14
-+	#define PHY_R5_PHY_CR_DATA_OUT				GENMASK(15, 0)
-+	#define PHY_R5_PHY_CR_ACK				BIT(16)
-+	#define PHY_R5_PHY_BS_OUT				BIT(17)
-+
-+struct phy_g12a_usb3_pcie_priv {
-+	struct regmap		*regmap;
-+	struct regmap		*regmap_cr;
-+	struct clk		*clk_ref;
-+	struct reset_control	*reset;
-+	struct phy		*phy;
-+	unsigned int		mode;
-+};
-+
-+static const struct regmap_config phy_g12a_usb3_pcie_regmap_conf = {
-+	.reg_bits = 8,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = PHY_R5,
-+};
-+
-+static int phy_g12a_usb3_pcie_cr_bus_addr(struct phy_g12a_usb3_pcie_priv *priv,
-+					  unsigned int addr)
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+index 24ff5f21cb25..442113246cba 100644
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -121,6 +121,16 @@ static void dwc2_set_amlogic_params(struct dwc2_hsotg *hsotg)
+ 	p->power_down = DWC2_POWER_DOWN_PARAM_NONE;
+ }
+ 
++static void dwc2_set_amlogic_g12a_params(struct dwc2_hsotg *hsotg)
 +{
-+	unsigned int val, reg;
-+	int ret;
++	struct dwc2_core_params *p = &hsotg->params;
 +
-+	reg = FIELD_PREP(PHY_R4_PHY_CR_DATA_IN, addr);
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	regmap_write(priv->regmap, PHY_R4, reg | PHY_R4_PHY_CR_CAP_ADDR);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       !(val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
++	p->lpm = false;
++	p->lpm_clock_gating = false;
++	p->besl = false;
++	p->hird_threshold_en = false;
 +}
 +
-+static int phy_g12a_usb3_pcie_cr_bus_read(void *context, unsigned int addr,
-+					  unsigned int *data)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = context;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = phy_g12a_usb3_pcie_cr_bus_addr(priv, addr);
-+	if (ret)
-+		return ret;
-+
-+	regmap_write(priv->regmap, PHY_R4, 0);
-+	regmap_write(priv->regmap, PHY_R4, PHY_R4_PHY_CR_READ);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	*data = FIELD_GET(PHY_R5_PHY_CR_DATA_OUT, val);
-+
-+	regmap_write(priv->regmap, PHY_R4, 0);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       !(val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int phy_g12a_usb3_pcie_cr_bus_write(void *context, unsigned int addr,
-+					   unsigned int data)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = context;
-+	unsigned int val, reg;
-+	int ret;
-+
-+	ret = phy_g12a_usb3_pcie_cr_bus_addr(priv, addr);
-+	if (ret)
-+		return ret;
-+
-+	reg = FIELD_PREP(PHY_R4_PHY_CR_DATA_IN, data);
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	regmap_write(priv->regmap, PHY_R4, reg | PHY_R4_PHY_CR_CAP_DATA);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK) == 0,
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	regmap_write(priv->regmap, PHY_R4, reg | PHY_R4_PHY_CR_WRITE);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK),
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	regmap_write(priv->regmap, PHY_R4, reg);
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, PHY_R5, val,
-+				       (val & PHY_R5_PHY_CR_ACK) == 0,
-+				       5, 1000);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct regmap_config phy_g12a_usb3_pcie_cr_regmap_conf = {
-+	.reg_bits = 16,
-+	.val_bits = 16,
-+	.reg_read = phy_g12a_usb3_pcie_cr_bus_read,
-+	.reg_write = phy_g12a_usb3_pcie_cr_bus_write,
-+	.max_register = 0xffff,
-+	.fast_io = true,
-+};
-+
-+static int phy_g12a_usb3_init(struct phy *phy)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = phy_get_drvdata(phy);
-+	int data, ret;
-+
-+	/* Switch PHY to USB3 */
-+	regmap_update_bits(priv->regmap, PHY_R0,
-+			   PHY_R0_PCIE_USB3_SWITCH,
-+			   PHY_R0_PCIE_USB3_SWITCH);
-+
-+	/*
-+	 * WORKAROUND: There is SSPHY suspend bug due to
-+	 * which USB enumerates
-+	 * in HS mode instead of SS mode. Workaround it by asserting
-+	 * LANE0.TX_ALT_BLOCK.EN_ALT_BUS to enable TX to use alt bus
-+	 * mode
-+	 */
-+	ret = regmap_update_bits(priv->regmap_cr, 0x102d, BIT(7), BIT(7));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(priv->regmap_cr, 0x1010, 0xff0, 20);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Fix RX Equalization setting as follows
-+	 * LANE0.RX_OVRD_IN_HI. RX_EQ_EN set to 0
-+	 * LANE0.RX_OVRD_IN_HI.RX_EQ_EN_OVRD set to 1
-+	 * LANE0.RX_OVRD_IN_HI.RX_EQ set to 3
-+	 * LANE0.RX_OVRD_IN_HI.RX_EQ_OVRD set to 1
-+	 */
-+	ret = regmap_read(priv->regmap_cr, 0x1006, &data);
-+	if (ret)
-+		return ret;
-+
-+	data &= ~BIT(6);
-+	data |= BIT(7);
-+	data &= ~(0x7 << 8);
-+	data |= (0x3 << 8);
-+	data |= (1 << 11);
-+	ret = regmap_write(priv->regmap_cr, 0x1006, data);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Set EQ and TX launch amplitudes as follows
-+	 * LANE0.TX_OVRD_DRV_LO.PREEMPH set to 22
-+	 * LANE0.TX_OVRD_DRV_LO.AMPLITUDE set to 127
-+	 * LANE0.TX_OVRD_DRV_LO.EN set to 1.
-+	 */
-+	ret = regmap_read(priv->regmap_cr, 0x1002, &data);
-+	if (ret)
-+		return ret;
-+
-+	data &= ~0x3f80;
-+	data |= (0x16 << 7);
-+	data &= ~0x7f;
-+	data |= (0x7f | BIT(14));
-+	ret = regmap_write(priv->regmap_cr, 0x1002, data);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * MPLL_LOOP_CTL.PROP_CNTRL = 8
-+	 */
-+	ret = regmap_update_bits(priv->regmap_cr, 0x30, 0xf << 4, 8 << 4);
-+	if (ret)
-+		return ret;
-+
-+	regmap_update_bits(priv->regmap, PHY_R2,
-+			PHY_R2_PHY_TX_VBOOST_LVL,
-+			FIELD_PREP(PHY_R2_PHY_TX_VBOOST_LVL, 0x4));
-+
-+	regmap_update_bits(priv->regmap, PHY_R1,
-+			PHY_R1_PHY_LOS_BIAS | PHY_R1_PHY_LOS_LEVEL,
-+			FIELD_PREP(PHY_R1_PHY_LOS_BIAS, 4) |
-+			FIELD_PREP(PHY_R1_PHY_LOS_LEVEL, 9));
-+
-+	return 0;
-+}
-+
-+static int phy_g12a_usb3_pcie_init(struct phy *phy)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = phy_get_drvdata(phy);
-+	int ret;
-+
-+	ret = reset_control_reset(priv->reset);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->mode == PHY_TYPE_USB3)
-+		return phy_g12a_usb3_init(phy);
-+
-+	/* Power UP PCIE */
-+	regmap_update_bits(priv->regmap, PHY_R0,
-+			   PHY_R0_PCIE_POWER_STATE,
-+			   FIELD_PREP(PHY_R0_PCIE_POWER_STATE, 0x1c));
-+
-+	return 0;
-+}
-+
-+static int phy_g12a_usb3_pcie_exit(struct phy *phy)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = phy_get_drvdata(phy);
-+	int ret;
-+
-+	return reset_control_reset(priv->reset);
-+}
-+
-+static struct phy *phy_g12a_usb3_pcie_xlate(struct device *dev,
-+					    struct of_phandle_args *args)
-+{
-+	struct phy_g12a_usb3_pcie_priv *priv = dev_get_drvdata(dev);
-+	unsigned int mode;
-+
-+	if (args->args_count < 1) {
-+		dev_err(dev, "invalid number of arguments\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	mode = args->args[0];
-+
-+	if (mode != PHY_TYPE_USB3 && mode != PHY_TYPE_PCIE) {
-+		dev_err(dev, "invalid phy mode select argument\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	priv->mode = mode;
-+
-+	return priv->phy;
-+}
-+
-+static const struct phy_ops phy_g12a_usb3_pcie_ops = {
-+	.init		= phy_g12a_usb3_pcie_init,
-+	.exit		= phy_g12a_usb3_pcie_exit,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int phy_g12a_usb3_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct phy_g12a_usb3_pcie_priv *priv;
-+	struct resource *res;
-+	struct phy_provider *phy_provider;
-+	void __iomem *base;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	priv->regmap = devm_regmap_init_mmio(dev, base,
-+					     &phy_g12a_usb3_pcie_regmap_conf);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	priv->regmap_cr = devm_regmap_init(dev, NULL, priv,
-+					   &phy_g12a_usb3_pcie_cr_regmap_conf);
-+	if (IS_ERR(priv->regmap_cr))
-+		return PTR_ERR(priv->regmap_cr);
-+
-+	priv->clk_ref = devm_clk_get(dev, "ref_clk");
-+	if (IS_ERR(priv->clk_ref))
-+		return PTR_ERR(priv->clk_ref);
-+
-+	ret = clk_prepare_enable(priv->clk_ref);
-+	if (ret)
-+		goto err_disable_clk_ref;
-+
-+	priv->reset = devm_reset_control_array_get(dev, false, false);
-+	if (IS_ERR(priv->reset))
-+		return PTR_ERR(priv->reset);
-+
-+	priv->phy = devm_phy_create(dev, np, &phy_g12a_usb3_pcie_ops);
-+	if (IS_ERR(priv->phy)) {
-+		ret = PTR_ERR(priv->phy);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to create PHY\n");
-+
-+		return ret;
-+	}
-+
-+	phy_set_drvdata(priv->phy, priv);
-+	dev_set_drvdata(dev, priv);
-+
-+	phy_provider = devm_of_phy_provider_register(dev,
-+						     phy_g12a_usb3_pcie_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+
-+err_disable_clk_ref:
-+	clk_disable_unprepare(priv->clk_ref);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id phy_g12a_usb3_pcie_of_match[] = {
-+	{ .compatible = "amlogic,g12a-usb3-pcie-phy", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, phy_g12a_usb3_pcie_of_match);
-+
-+static struct platform_driver phy_g12a_usb3_pcie_driver = {
-+	.probe	= phy_g12a_usb3_pcie_probe,
-+	.driver	= {
-+		.name		= "phy-g12a-usb3-pcie",
-+		.of_match_table	= phy_g12a_usb3_pcie_of_match,
-+	},
-+};
-+module_platform_driver(phy_g12a_usb3_pcie_driver);
-+
-+MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
-+MODULE_DESCRIPTION("Amlogic G12A USB3 + PCIE Combo PHY driver");
-+MODULE_LICENSE("GPL v2");
+ static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)
+ {
+ 	struct dwc2_core_params *p = &hsotg->params;
+@@ -167,6 +177,8 @@ const struct of_device_id dwc2_of_match_table[] = {
+ 	  .data = dwc2_set_amlogic_params },
+ 	{ .compatible = "amlogic,meson-gxbb-usb",
+ 	  .data = dwc2_set_amlogic_params },
++	{ .compatible = "amlogic,meson-g12a-usb",
++	  .data = dwc2_set_amlogic_g12a_params },
+ 	{ .compatible = "amcc,dwc-otg", .data = dwc2_set_amcc_params },
+ 	{ .compatible = "st,stm32f4x9-fsotg",
+ 	  .data = dwc2_set_stm32f4x9_fsotg_params },
 -- 
 2.20.1
 
