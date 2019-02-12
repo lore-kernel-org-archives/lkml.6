@@ -2,97 +2,98 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EBAC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA753C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057D32070D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549961828;
-	bh=KCVmAMozwQnM9ScCawLXvQO7W8hd17A+tbqyJagS8r4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=O0afEI1N0hkc/u+9AR5eMdnLsza6JtXVa8jYljaABb0O1uLvdVv0wVefpTQmkM8Rg
-	 rhTbih/JtMor+2te7jKZ7S50dP2TnkfcXgbaLKAoa/WGEqjP0dpc0AryeDCRAtS6Dz
-	 ubJg6aix3tQXAg7Fj2I76kd8K9gOAkYYD5eHudPM=
+	by mail.kernel.org (Postfix) with ESMTP id C28E22070D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbfBLI5G (ORCPT
+        id S1728651AbfBLI5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:57:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbfBLI5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:57:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C82AD2080A;
-        Tue, 12 Feb 2019 08:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549961824;
-        bh=KCVmAMozwQnM9ScCawLXvQO7W8hd17A+tbqyJagS8r4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T0mv0JSFZFIiSpOg6Ypi3L7I14flhqMZ/hi8OqzACnOHbrYiV994+XWKxfS5QIZmZ
-         oIQ0iHya8Jzum6DCR96/V1lXUmiOjR4KNL+VNOb+yW4pTZSPfEORybJVpsRIb48GWl
-         7JOdlEv8yflcvw0HtWrGVmwoCy2cnAuxuJGB2im8=
-Date:   Tue, 12 Feb 2019 09:57:01 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.9 034/137] ARM: mmp/mmp2: dt: enable the clock
-Message-ID: <20190212085701.GC31657@kroah.com>
-References: <20190211141811.964925535@linuxfoundation.org>
- <20190211141815.120436242@linuxfoundation.org>
- <20190211205125.GB22473@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211205125.GB22473@amd>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 12 Feb 2019 03:57:17 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51301 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbfBLI5Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:57:16 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gtTsL-0004zi-Vz; Tue, 12 Feb 2019 09:57:09 +0100
+Message-ID: <1549961829.2546.19.camel@pengutronix.de>
+Subject: Re: [PATCH 1/2] dt-bindings: imx6q-pcie: Add "pcie_aux" clock for
+ imx8mq
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org
+Date:   Tue, 12 Feb 2019 09:57:09 +0100
+In-Reply-To: <20190212015108.16952-2-andrew.smirnov@gmail.com>
+References: <20190212015108.16952-1-andrew.smirnov@gmail.com>
+         <20190212015108.16952-2-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 09:51:25PM +0100, Pavel Machek wrote:
-> Hi!
+Am Montag, den 11.02.2019, 17:51 -0800 schrieb Andrey Smirnov:
+> Add a binding for an extra clock required on i.MX8MQ.
 > 
-> > 4.9-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > [ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
-> > 
-> > The device-tree booted MMP2 needs to enable the timer clock, otherwise
-> > it would stop ticking when the boot finishes.
-> > 
-> > It can also use the clock rate from the clk, the non-DT boards need to
-> > keep using the hardcoded rates.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > Signed-off-by: Olof Johansson <olof@lixom.net>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> While I agree this is good idea for mainline (thus my ack), I don't
-> think it is suitable for stable, as older kernels will not run on OLPC
-> in useful way, anyway.
-> 
-> Not-acked-for-stable-by: Pavel Machek <pavel@ucw.cz>
-> 
-> So I don't think this and ARM: dts: mmp2: fix TWSI2 is good idea for
-> stable kernels.
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
 
-Ok, I'll drop this, and the follow-on patch that fixed this one up, from
-all queues.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-thanks,
-
-greg k-h
+> ---
+>  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt 
+> b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> index 920ca93870a8..933d98328e07 100644
+> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> @@ -55,6 +55,10 @@ Additional required properties for imx7d-pcie and
+> imx8mq-pcie:
+>  	       - "apps"
+>  	       - "turnoff"
+>  
+> +Additional required properties for imx8mq-pcie:
+> +- clock-names: Must include the following additional entries:
+> +	- "pcie_aux"
+> +
+>  Example:
+>  
+>  	pcie@01000000 {
