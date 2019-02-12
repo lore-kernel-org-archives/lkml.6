@@ -2,137 +2,125 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F001C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD8B2084D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3MI8N2y"
+	by mail.kernel.org (Postfix) with ESMTP id 5FE622084D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 02:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfBLC6X (ORCPT
+        id S1728132AbfBLC62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 21:58:23 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38448 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbfBLC6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 21:58:23 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so551492pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 18:58:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ruZ6nZoB212cQk8ZfpnwXmAZDwAfXgtClZLmFa6dIfM=;
-        b=O3MI8N2yj/0qabQgDjWj/Qg9jgQ9sOpOzQPFRhRIEPcnXq817beEOedYGW+lKPBB2T
-         spEzAPcU/BtKYYW9vs6sF7JA+6wt897fo07Nfhfj/YD43mSWMiwTXkIKAcIjirYvGs5G
-         JRjo3RK3OWywmuC5JcTL4+gFSgyfmXhIOsRDYT6rLIeY0rInHTRxvzVExwHdQryziXyU
-         TCr4fhguvhOjgpbLUDaytxOpXv//m2YAhD992pdtlXNTgGQSiWDWGc4gZ/tsDAr+t6/1
-         5QWMozh8yKbAlyMSNZmqOxvXgcuJ4NKtJ7419R0KhRfJqgGG0gx2ZGp75zKFky+vtGTr
-         tXmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ruZ6nZoB212cQk8ZfpnwXmAZDwAfXgtClZLmFa6dIfM=;
-        b=jkCq0GILcxTL3Ra3QsUYEokGIAFaJsdPsPH5mGG415r7tyKn3gh52CbZYECsfpU0Qv
-         3bWvH0K9hFUfZAmz/b1qqozveY5dU2D2lpP+SaPi8swrq6sqbrQK0xD7qVSKlLCrCo7g
-         5g4BGiGV2VNIvnlpUmcX/ip3M+dlgeBYVi01FjtEOPFZJcvFvonec3C75YcOqSkEMdpi
-         sRpsxFNlEULExxmiPVxGIuX/xUWUks+Xkytyf7igVUJ9XpAwPADEY3FcrZ2NsdDxJSsA
-         kH+X/qOJ4XttEO5N2aerlv6rwoSoEoQXPPvAZOh8FoQrOpWdP1zuxKg/j2bfc7P+UwTB
-         dNdA==
-X-Gm-Message-State: AHQUAual+gIm0uYgZmrbvB9Oh9e4ymQ6f154q3fyLUdZTqOQa+f4WKCz
-        Rkjs+0PhkIUv7qsWaxjsjj4=
-X-Google-Smtp-Source: AHgI3IYJ6kyryIf9jruhXLgIMNjfidEYxFeTT38/oVLJbWVJPRY3HHGZIQt9UwXEX9z0BxmMQUwRAw==
-X-Received: by 2002:a63:4d:: with SMTP id 74mr1562050pga.248.1549940302208;
-        Mon, 11 Feb 2019 18:58:22 -0800 (PST)
-Received: from mail.google.com ([104.238.181.70])
-        by smtp.gmail.com with ESMTPSA id u8sm21610218pfl.16.2019.02.11.18.58.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 18:58:21 -0800 (PST)
-Date:   Tue, 12 Feb 2019 02:58:20 +0000
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Changbin Du <changbin.du@gmail.com>, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: print function names instead of just address
-Message-ID: <20190212025819.tremtds3coufd5ga@mail.google.com>
-References: <20190209161919.32350-1-changbin.du@gmail.com>
- <20190211145532.75d82308@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211145532.75d82308@gandalf.local.home>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+        Mon, 11 Feb 2019 21:58:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbfBLC62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 21:58:28 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E1D537F6C8;
+        Tue, 12 Feb 2019 02:58:27 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D8D26600CC;
+        Tue, 12 Feb 2019 02:58:14 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH v2 09/26] userfaultfd: wp: userfaultfd_pte/huge_pmd_wp() helpers
+Date:   Tue, 12 Feb 2019 10:56:15 +0800
+Message-Id: <20190212025632.28946-10-peterx@redhat.com>
+In-Reply-To: <20190212025632.28946-1-peterx@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 12 Feb 2019 02:58:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:55:32PM -0500, Steven Rostedt wrote:
-> On Sun, 10 Feb 2019 00:19:19 +0800
-> Changbin Du <changbin.du@gmail.com> wrote:
-> 
-> > Here is an example for this change.
-> > 
-> > $ sudo perf record -e 'ftrace:function' --filter='ip==schedule'
-> > $ sudo perf report
-> 
-> I took this but changed the subject as it only affects perf (the kernel
-> doesn't use the format field for output, and trace-cmd has an internal
-> plugin that overrides it too).
->
-Thanks. You explained why I can't find the usage for the other entries.
-I was looking for it before... :)
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-> -- Steve
-> 
-> > 
-> > The output of perf before this patch:
-> > 
-> > \# Samples: 100  of event 'ftrace:function'
-> > \# Event count (approx.): 100
-> > \#
-> > \# Overhead  Trace output
-> > \# ........  ......................................
-> > \#
-> >     51.00%   ffffffff81f6aaa0 <-- ffffffff81158e8d
-> >     29.00%   ffffffff81f6aaa0 <-- ffffffff8116ccb2
-> >      8.00%   ffffffff81f6aaa0 <-- ffffffff81f6f2ed
-> >      4.00%   ffffffff81f6aaa0 <-- ffffffff811628db
-> >      4.00%   ffffffff81f6aaa0 <-- ffffffff81f6ec5b
-> >      2.00%   ffffffff81f6aaa0 <-- ffffffff81f6f21a
-> >      1.00%   ffffffff81f6aaa0 <-- ffffffff811b04af
-> >      1.00%   ffffffff81f6aaa0 <-- ffffffff8143ce17
-> > 
-> > After this patch:
-> > 
-> > \# Samples: 36  of event 'ftrace:function'
-> > \# Event count (approx.): 36
-> > \#
-> > \# Overhead  Trace output
-> > \# ........  ............................................
-> > \#
-> >     38.89%   schedule <-- schedule_hrtimeout_range_clock
-> >     27.78%   schedule <-- worker_thread
-> >     13.89%   schedule <-- schedule_timeout
-> >     11.11%   schedule <-- smpboot_thread_fn
-> >      5.56%   schedule <-- rcu_gp_kthread
-> >      2.78%   schedule <-- exit_to_usermode_loop
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > ---
-> >  kernel/trace/trace_entries.h | 41 +++++++++++++++++-------------------
-> >  1 file changed, 19 insertions(+), 22 deletions(-)
-> > 
-> > 
+Implement helpers methods to invoke userfaultfd wp faults more
+selectively: not only when a wp fault triggers on a vma with
+vma->vm_flags VM_UFFD_WP set, but only if the _PAGE_UFFD_WP bit is set
+in the pagetable too.
 
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ include/linux/userfaultfd_k.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 38f748e7186e..c6590c58ce28 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -14,6 +14,8 @@
+ #include <linux/userfaultfd.h> /* linux/include/uapi/linux/userfaultfd.h */
+ 
+ #include <linux/fcntl.h>
++#include <linux/mm.h>
++#include <asm-generic/pgtable_uffd.h>
+ 
+ /*
+  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+@@ -55,6 +57,18 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+ 	return vma->vm_flags & VM_UFFD_WP;
+ }
+ 
++static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
++				      pte_t pte)
++{
++	return userfaultfd_wp(vma) && pte_uffd_wp(pte);
++}
++
++static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
++					   pmd_t pmd)
++{
++	return userfaultfd_wp(vma) && pmd_uffd_wp(pmd);
++}
++
+ static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ {
+ 	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
+@@ -104,6 +118,19 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+ 	return false;
+ }
+ 
++static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
++				      pte_t pte)
++{
++	return false;
++}
++
++static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
++					   pmd_t pmd)
++{
++	return false;
++}
++
++
+ static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ {
+ 	return false;
 -- 
-Cheers,
-Changbin Du
+2.17.1
+
