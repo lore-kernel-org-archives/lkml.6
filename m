@@ -2,116 +2,108 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DBAC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B6FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 596EB21855
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549943079;
-	bh=V+4sz6GuJCGGE8jPyQE9VqmVQ6GL9QhF5Xh07eR5KFE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=d8+0Y42Qi8IuNWm/Uxu0CnxaLPPiK2l7uZcYsMEWKSGcIQY7pWazkpcSgIkfu09Ho
-	 TVxq2gEw/TgUHnjkx/Q3frwkoBt3ZBsxgL0i0PFweYZhISECFmxBkN2hFNnn0328YH
-	 KOXc+LeOk4D7FYPJ4lyqUiJOQdUoXLcFl9rO2qQc=
+	by mail.kernel.org (Postfix) with ESMTP id 3002921773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 03:46:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yqlGqFFc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfBLDoh (ORCPT
+        id S1727391AbfBLDqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:44:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfBLDoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:44:37 -0500
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A24F21773;
-        Tue, 12 Feb 2019 03:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549943076;
-        bh=V+4sz6GuJCGGE8jPyQE9VqmVQ6GL9QhF5Xh07eR5KFE=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=vKc7uY29NkDNfw5V+B7Gqas26TB+Nf3GWR62SCx9T6h+fBSNhkhryeK7eBVOE1K7K
-         5S11y+gpvdt8EZQhYHehrr+tYctkCpe7sumRXbltQ9/N9eFnwn3VBe5qcEayPhFi9l
-         YssmPPJzSynButtCx2xLmRImkE6xMgI3xgHPbTQk=
-Date:   Tue, 12 Feb 2019 04:44:30 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, Josh Snyder <joshs@netflix.com>
-Subject: Re: [PATCH 3/3] mm/mincore: provide mapped status when cached status
- is not allowed
-In-Reply-To: <99ee4d3e-aeb2-0104-22be-b028938e7f88@suse.cz>
-Message-ID: <nycvar.YFH.7.76.1902120440430.11598@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <20190130124420.1834-1-vbabka@suse.cz> <20190130124420.1834-4-vbabka@suse.cz> <20190131100907.GS18811@dhcp22.suse.cz> <99ee4d3e-aeb2-0104-22be-b028938e7f88@suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 11 Feb 2019 22:46:25 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:53954 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfBLDqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 22:46:24 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x1C3j8aH007458;
+        Tue, 12 Feb 2019 12:45:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x1C3j8aH007458
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549943109;
+        bh=qBZd1c9KzcEe6uaLQVppkNCLI29LIZhWS8mr/U0FrbI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yqlGqFFcSlVvnI1KWllZ44LJtZUJtfaw+/CSlz8RvVrIRoQYga3eucc+oz829AF26
+         f5Q18XuL4+m4TtbIPGM6fN9JraQ1j61JtI0uoGfPKbBSkgjDZ58FuJaDkfgb1SP/ag
+         ctr+Oy+9mKsUueoz1bPBiKYzJ63UuH0ts76OEeJZJ0cra0EZKiScf+BZ6s17ORmJPz
+         FaSpoxipfjImLYC94coZhKrvZlZjM6u6ZxdWnuOnDyKe8JDV/D1xHKZROSFgjDKD2Y
+         md37GqkWzwIpxh5VYEzhOKCaV56bPEsqWebN6u3DkSrTLOWjTef1a5O5GwmR0YPgc7
+         +E0F+pTYe+eNw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-efi@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] efi/libstub: refactor cmd_stubcopy
+Date:   Tue, 12 Feb 2019 12:44:55 +0900
+Message-Id: <1549943095-10956-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019, Vlastimil Babka wrote:
+It took me a while to understand what is going on in the nested
+if-blocks.
 
-> >> After "mm/mincore: make mincore() more conservative" we sometimes restrict the
-> >> information about page cache residency, which we have to do without breaking
-> >> existing userspace, if possible. We thus fake the resulting values as 1, which
-> >> should be safer than faking them as 0, as there might theoretically exist code
-> >> that would try to fault in the page(s) until mincore() returns 1.
-> >>
-> >> Faking 1 however means that such code would not fault in a page even if it was
-> >> not in page cache, with unwanted performance implications. We can improve the
-> >> situation by revisting the approach of 574823bfab82 ("Change mincore() to count
-> >> "mapped" pages rather than "cached" pages") but only applying it to cases where
-> >> page cache residency check is restricted. Thus mincore() will return 0 for an
-> >> unmapped page (which may or may not be resident in a pagecache), and 1 after
-> >> the process faults it in.
-> >>
-> >> One potential downside is that mincore() will be again able to recognize when a
-> >> previously mapped page was reclaimed. While that might be useful for some
-> >> attack scenarios, it's not as crucial as recognizing that somebody else faulted
-> >> the page in, and there are also other ways to recognize reclaimed pages anyway.
-> > 
-> > Is this really worth it? Do we know about any specific usecase that
-> > would benefit from this change? TBH I would rather wait for the report
-> > than add a hard to evaluate side channel.
-> 
-> Well it's not that complicated IMHO. Linus said it's worth trying, so
-> let's see how he likes the result. The side channel exists anyway as
-> long as process can e.g. check if its rss shrinked, and I doubt we are
-> going to remove that possibility.
+Simplify it by removing unneeded code.
 
-So, where do we go from here?
+  - if_changed automatically adds 'set -e', so any failure in the
+    series of commands makes it immediately fail as a whole.
+    So, the outer if block is entirely redundant.
 
-Either Linus and Andrew like the mincore() return value tweak, or this 
-could be further discussed (*). But in either of the cases, I think 
-patches 1 and 2 should be at least queued for 5.1.
+  - Since commit 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special
+    target"), GNU Make automatically deletes the target on any failure
+    in its recipe. The explicit 'rm -f $@' is redundant.
 
-(*) I'd personally include it as well, as I don't see how it would break 
-    anything, it's pretty straightforward, and brings back some sanity to
-    mincore() return value.
+  - surrounding commands with ( ) will spawn a subshell to execute them
+    in it, but it is rarely useful to do so.
 
-Thanks,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/firmware/efi/libstub/Makefile | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index d984509..7788e8a 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -86,12 +86,13 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
+ # this time, use objcopy and leave all sections in place.
+ #
+ quiet_cmd_stubcopy = STUBCPY $@
+-      cmd_stubcopy = if $(STRIP) --strip-debug $(STUBCOPY_RM-y) -o $@ $<; \
+-		     then if $(OBJDUMP) -r $@ | grep $(STUBCOPY_RELOC-y); \
+-		     then (echo >&2 "$@: absolute symbol references not allowed in the EFI stub"; \
+-			   rm -f $@; /bin/false); 			  \
+-		     else $(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@; fi	  \
+-		     else /bin/false; fi
++      cmd_stubcopy =							\
++	$(STRIP) --strip-debug $(STUBCOPY_RM-y) -o $@ $<;		\
++	if $(OBJDUMP) -r $@ | grep $(STUBCOPY_RELOC-y); then		\
++		echo "$@: absolute symbol references not allowed in the EFI stub" >&2; \
++		/bin/false;						\
++	fi;								\
++	$(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@
+ 
+ #
+ # ARM discards the .data section because it disallows r/w data in the
 -- 
-Jiri Kosina
-SUSE Labs
+2.7.4
 
