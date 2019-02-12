@@ -2,107 +2,85 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF33C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A8FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0612921773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89AAD21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="h6o7hcoA"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZGboSaB9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfBLIrL (ORCPT
+        id S1728576AbfBLIrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:47:11 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:5637 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbfBLIrL (ORCPT
+        Tue, 12 Feb 2019 03:47:16 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39674 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728413AbfBLIrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:47:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1549961231; x=1581497231;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ENil7zF+PPj1b6qFv3BM0qe4X7ih7B4qbmKtHMoybvA=;
-  b=h6o7hcoA0mzR/jR8cJnaJvGx77eahS2XibZE9Xbhtne+HwxXehZm7fze
-   Tf6HJ0uo+AXAi6u1juQjaW84OMijIxP0TalBpNWbjfvgO6LmcRnwf6WsZ
-   96cpXWz3BDJI/wpNOv8OnNn5LRN0teoM+z+Os6NLBnMhbEqHCgFoHvudj
-   h237Anpmx+QGNxCgQBnsYz9m1g3zpU59UYPBGbq/ZG3+GFjMB8YNPFXuv
-   2idCXoicuCOtNyJV8kIBNha0vkYJD+lqA2KkGg4YEqJC2OmrO5C6Esxhe
-   L5Mgw6h2rBllXzQkYlF9EwHlAxFrZK7XVjnta2asI2Buzr7sFClVHgHzU
-   w==;
-X-IronPort-AV: E=Sophos;i="5.58,361,1544457600"; 
-   d="scan'208";a="102771675"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2019 16:47:11 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 12 Feb 2019 00:27:47 -0800
-Received: from ds141g2.ad.shared (HELO [10.86.48.95]) ([10.86.48.95])
-  by uls-op-cesaip02.wdc.com with ESMTP; 12 Feb 2019 00:47:10 -0800
-Subject: Re: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
-To:     Johan Hovold <johan@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-References: <20190118140308.9599-1-johan@kernel.org>
- <20190118140308.9599-6-johan@kernel.org>
- <20190212071339.GL26747@infradead.org> <20190212082621.GA26912@localhost>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <6518a7ff-0586-be7a-4a43-6c9a35194a05@wdc.com>
-Date:   Tue, 12 Feb 2019 00:47:09 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Tue, 12 Feb 2019 03:47:16 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b14so1458968edt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:47:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wRjdTHx18o/cxI6eHe40jtMc+ZermkwQqWMgUbSpQcI=;
+        b=ZGboSaB9fI/g0V91CAgVyvyV5t6RxcvRtANBCD2erZ3asBaZ///kvwu4WIDyjPEyih
+         ryMB1vHivvYBFSh9TSg58yk63VzY2fM4NLgeoVbJI2RuE7f3F2EUqbKO7juFdlQigv7q
+         HdTqrLvP8vVql97ibM+mTnUGqe+jbCjdvaQAs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wRjdTHx18o/cxI6eHe40jtMc+ZermkwQqWMgUbSpQcI=;
+        b=ZdCmCJyjS61NTXcZANFflMUCX/eCRYYxNEIGj1buCdrdjPOd95vEVoi+PmF07Tbm4d
+         co0HIhmlYRSs70c9YHHD8Mb3R7dGpWdOdV2QCBOTinm7lOEfNz+rOVEX6E3d5ue4Y/iI
+         2ubncD4KRHNBP780aEVJYfwaAqmqXI7vqpEwKLtVbKyicxjoyCLJ9G6rShFdY306m0Sa
+         98+9gNBGUBkv+tUmfawJzIxDD3Y/OypMQiPIE/ppRHXXX5r4ygdxBwJrRUJXF7DSU249
+         Lu9qWZjRJaHEY47HgttAQDNpa8YuYojjHgKgQgXwbDPzSmroynmhisnUxaEz4rqnKcWL
+         PA6Q==
+X-Gm-Message-State: AHQUAub2s8/z9i5iJvo01j7VHCzaQagYAhOiI5TQExJRwKFFRTUnbZmy
+        KLrO8kJrAs1Ryz7Low6CrGV7B4RHnD+mNoLOEm5yIg==
+X-Google-Smtp-Source: AHgI3IbwWqPmYEqjxNjsaYrnzds6V5KH6Jpts6iusGlhXazWcuTvRwClhVAXe7EgUkodXddmRSCmWfwXvqwniswSR2g=
+X-Received: by 2002:a17:906:f87:: with SMTP id q7mr1891715ejj.158.1549961234633;
+ Tue, 12 Feb 2019 00:47:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190212082621.GA26912@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190131095625.261755-1-pihsun@chromium.org> <511a36863af02aec12fd77657b0ca199e023f319.camel@perches.com>
+In-Reply-To: <511a36863af02aec12fd77657b0ca199e023f319.camel@perches.com>
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Date:   Tue, 12 Feb 2019 16:47:03 +0800
+Message-ID: <CANdKZ0dEFr5TAuat16sEKm=B3bRa5nqBvR3OCM=hzKGcBQKbJA@mail.gmail.com>
+Subject: Re: [PATCH] checkpatch: Properly detect /* */ style SPDX header.
+To:     Joe Perches <joe@perches.com>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 12:26 AM, Johan Hovold wrote:
-> On Mon, Feb 11, 2019 at 11:13:39PM -0800, Christoph Hellwig wrote:
->> On Fri, Jan 18, 2019 at 03:03:08PM +0100, Johan Hovold wrote:
->>> Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
->>> instead of open coding. Note that this will allow matching also on the
->>> node name instead of the (for FDT) deprecated device_type property.
->>>
->>> Signed-off-by: Johan Hovold <johan@kernel.org>
->>
->> I think this is going to conflict with the ELF caps changes from
->> Atish.  Maybe the riscv_fill_hwcap hunk should be included in his
->> patch?
-> 
-> Since that patch had some issues (e.g. the node reference underflow) it
-> may be better to rebase it on top of this series. The changes are
-> otherwise distinct after all.
-> 
+On Fri, Feb 1, 2019 at 12:54 AM Joe Perches <joe@perches.com> wrote:
+>
+> On Thu, 2019-01-31 at 17:56 +0800, Pi-Hsun Shih wrote:
+> > Currently for a header line "/* SPDX-License-Identifier: GPL-2.0 */",
+> > only the part starting from "SPDX-" is passed to spdxcheck.py, and cause
+> > false warning. Fix this by passing the whole line to spdxcheck.py
+> > instead.
+>
+> Thanks but I submitted a different patch:
+>
+> https://lore.kernel.org/lkml/8b02899853247a2c67669561761f354dd3bd110e.camel@perches.com/
+>
 
-I have fixed the node reference underflow issue and made some more 
-changes based on comments.
+I tried your patch, but when running checkpatch.pl on
+https://patchwork.kernel.org/patch/10790203/, I still get:
+WARNING: 'SPDX-License-Identifier: GPL-2.0 */' is not supported in LICENSES/...
+#75: FILE: drivers/remoteproc/mtk_common.h:1:
++/* SPDX-License-Identifier: GPL-2.0 */
 
-Some other patches(1,3,4,5) in this series may conflict with my series 
-as well. I can rebase my series on top of yours and send it as one 
-series if that's okay with you and Palmer.
-
-Regards,
-Atish
->> Otherwise looks good:
->>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Thanks for reviewing!
-> 
-> Johan
-> 
-
+Feels that these two patches fix different issues.
