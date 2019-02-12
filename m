@@ -2,657 +2,227 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1507FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20105C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF92222C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE5762229F
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jUKZMflc"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BvOcpNFD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbfBLSGs (ORCPT
+        id S1730944AbfBLSGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:06:48 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33825 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730888AbfBLSEw (ORCPT
+        Tue, 12 Feb 2019 13:06:47 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:59155 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731336AbfBLSE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:04:52 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so1676785plz.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:04:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c8Z/E+kxgD+z0/cifwI/un2AHISqXU3hmVOVyhbq5Wc=;
-        b=jUKZMflc+75GZ3JYD2DqhqrO5LqlqKMrOaR34yGzfG+QqGbmLCBc2ai/tYtl6VEjbA
-         U1irwlUD82/b77hC0ZRxrdEZkBx1tg4ao5SvuAYcpy7DZgMUp4Iy9Pcl8+AEgfZ01vVR
-         tVn33A+O70EnPFGkO5IN5thNO9a+9KF2pYkps=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=c8Z/E+kxgD+z0/cifwI/un2AHISqXU3hmVOVyhbq5Wc=;
-        b=PaM9Rb1qTdgD8eZDmNop96v/luJ6yS2Ihc0eoE6RLfGy+lZRRNkz1X/pfRfdEtVaFi
-         +gyH+GjNy0ldT5I2WbAQ3r/eUPCvAD4fmMGZN0Vx1oc4eJHZ1AGm0As9H1zbT37He/0P
-         S1iDzVjMaNNC4t3kG7rXhhJ6Tz4YuinHYmIsu0J4DAJ4lt6/3jla7XD4FzVoWGvOP8hc
-         z6YdMVWcNah4CZ/77xkFOHtPxEWkexQ/i9aetXyIDeYI9C/z2IXmdJik+XRhw0hrJ2BS
-         8IgtbxbZvGprGKJhUBVi9qbVu80C0ndedmUkp9xL5bdXdqElq8d7WwDsw3nBdwdM22s2
-         P68g==
-X-Gm-Message-State: AHQUAuYpWd4bpc/+O8UF3Sb7/mRWTKNjdZftOAhSjOsb+IO/eLEyZ1t2
-        F/5s7vdtWYF7WeQDOGLmbp/DMQ==
-X-Google-Smtp-Source: AHgI3IYI2XvZc28dhhsy9KZQtTc5bNfdQJZ1SllZ0uPWjMEGCtYeYK4ec6/ylIPzWJ/1S8baUjPisQ==
-X-Received: by 2002:a17:902:3f81:: with SMTP id a1mr5195154pld.258.1549994691193;
-        Tue, 12 Feb 2019 10:04:51 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b29sm19364046pff.34.2019.02.12.10.04.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 10:04:49 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH 2/2] lib: Introduce test_stackinit module
-Date:   Tue, 12 Feb 2019 10:04:41 -0800
-Message-Id: <20190212180441.15340-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190212180441.15340-1-keescook@chromium.org>
-References: <20190212180441.15340-1-keescook@chromium.org>
+        Tue, 12 Feb 2019 13:04:56 -0500
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190212180453epoutp0329e053f933681489a382eb301d098490~Cr-Yhs3Fu2783327833epoutp03b;
+        Tue, 12 Feb 2019 18:04:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190212180453epoutp0329e053f933681489a382eb301d098490~Cr-Yhs3Fu2783327833epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549994693;
+        bh=TtQx0G720ISMtzrhrffDlH6r+gc+72B0lf9feRyYaAs=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=BvOcpNFDVnOmvbBY7RTDQqZ824Svh3JrXr86sEH1Uw4IwCZO76Uz+sgweEhEf+MyA
+         zZM43uKg0syIj/mE1m/QO7lAPJm0VLll35rQMwUFn98pRqrmhUuETqXp/Tdgip9yaU
+         w/Gn35tUYwrY0KvpECHagbILxapnEqnZQ3cofPKo=
+Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20190212180452epcas2p205583b1d6554d72f891e3bf7e512ac73~Cr-YA-_6T2848628486epcas2p2J;
+        Tue, 12 Feb 2019 18:04:52 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BE.29.04134.4CA036C5; Wed, 13 Feb 2019 03:04:52 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20190212180452epcas2p2f162435a99743c654320219dd25f880b~Cr-XqWIZo1862418624epcas2p2E;
+        Tue, 12 Feb 2019 18:04:52 +0000 (GMT)
+X-AuditID: b6c32a47-8abff70000001026-46-5c630ac4d149
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 87.30.03689.4CA036C5; Wed, 13 Feb
+        2019 03:04:52 +0900 (KST)
+Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PMT0024XRJ2FB10@mmp2.samsung.com>; Wed, 13 Feb 2019
+        03:04:52 +0900 (KST)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 04/21] ASoC: samsung: i2s: Move core clk to the driver
+ common data structure
+Date:   Tue, 12 Feb 2019 19:03:25 +0100
+Message-id: <20190212180342.32040-5-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.20.1
+In-reply-to: <20190212180342.32040-1-s.nawrocki@samsung.com>
+MIME-version: 1.0
+Content-transfer-encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7bCmue4RruQYg0cHjSyuXDzEZLFxxnpW
+        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
+        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZWxbMYynolq9Y/vUQUwPjBckuRg4O
+        CQETiaYbWV2MXBxCAjsYJTa9+cIC4XxnlLgw5xZjFyMnWFHrsnlsEIkNjBKz/vxhh3B+MUoc
+        WvWVGaSKTcBQovdoH1iHiICYxO05ncwgRcwCLUwSc+YuBSsSFkiU+Lb6DiPIbhYBVYnGOW4g
+        YV4Ba4k1ve+htslLnO9dxw5icwrYSDxb+I0FokZQ4sfke2A2M1DNwSvPwU6VEDjCJtE37ygL
+        RLOLxNamx0wQtrTEs1UboYZWS+za3s0M0dDBKNFyYTszRMJa4vDxi6wQU/kkOg7/ZYcEDK9E
+        R5sQRImHxL5FX6De72eU+HH/KssERqlZSI6aheSoBYxMqxjFUguKc9NTi40KjPWKE3OLS/PS
+        9ZLzczcxgqNcy30H47ZzPocYBTgYlXh4VxxNihFiTSwrrsw9xCjBwawkwpvGnBwjxJuSWFmV
+        WpQfX1Sak1p8iFGag0VJnPeh9NxoIYH0xJLU7NTUgtQimCwTB6dUA+O0F84MjK7dtyvTtScW
+        Ol2Z/ENoeebMDfkxnPwpcZ6hKheMtz+8vXrrlRUrghLyG1SWrbd+9rdlnvfe+D5HJn6ttZeV
+        txTMyMu/5r3m1V4LsQfhgt+KajiOL5x5jMen7aXV4pIjywqUp/dGVimtWnLgeuIBO6N2tU1N
+        x0NjAh8Zvyv8t2m1/y4lluKMREMt5qLiRAD1UHxZ7gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t9jQd0jXMkxBvu7ZC2uXDzEZLFxxnpW
+        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
+        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZWxbMYynolq9Y/vUQUwPjBckuRk4O
+        CQETidZl89hAbCGBdYwSzYuTuhi5gOxfjBILPs9mBkmwCRhK9B7tYwSxRQTEJG7P6WQGKWIW
+        aGKS2HX7IjtIQlggUeLb6jtARRwcLAKqEo1z3EDCvALWEmt63zNCLJOXON+7DqycU8BG4tnC
+        bywg5UJANVc22UKUC0r8mHyPBcRmBio/eOU5ywRGvllIUrOQpBYwMq1ilEwtKM5Nzy02KjDK
+        Sy3XK07MLS7NS9dLzs/dxAgM4G2Htfp3MD5eEn+IUYCDUYmHd8XRpBgh1sSy4srcQ4wSHMxK
+        IrxpzMkxQrwpiZVVqUX58UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODilGhiz
+        szI75rXYfn8nvV99YyyDltyGw9OXuj9/2ly9w+3Yv4Cjx8Wu3u+8W+mwrNk4Qqj5te6XsHVT
+        a459lc9NXbosjW2tvvWfXu15jdpRz+aYfVjmeGtn16SGmy3TghafmniEp63Y7YRS/nzfSgMN
+        uQWz/DflefYpuW9s52+YVRfuollacnOzXKoSS3FGoqEWc1FxIgCvNKfIXAIAAA==
+X-CMS-MailID: 20190212180452epcas2p2f162435a99743c654320219dd25f880b
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20190212180452epcas2p2f162435a99743c654320219dd25f880b
+References: <20190212180342.32040-1-s.nawrocki@samsung.com>
+        <CGME20190212180452epcas2p2f162435a99743c654320219dd25f880b@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds test for stack initialization coverage. We have several build options
-that control the level of stack variable initialization. This test lets us
-visualize which options cover which cases, and provide tests for some of
-the pathological padding conditions the compiler will sometimes fail to
-initialize.
+The core clock is also common for both CPU DAIs so move it to
+the driver's private data structure.
 
-All options pass the explicit initialization cases and the partial
-initializers (even with padding):
-
-test_stackinit: u8_zero ok
-test_stackinit: u16_zero ok
-test_stackinit: u32_zero ok
-test_stackinit: u64_zero ok
-test_stackinit: char_array_zero ok
-test_stackinit: small_hole_zero ok
-test_stackinit: big_hole_zero ok
-test_stackinit: trailing_hole_zero ok
-test_stackinit: packed_zero ok
-test_stackinit: small_hole_dynamic_partial ok
-test_stackinit: big_hole_dynamic_partial ok
-test_stackinit: trailing_hole_dynamic_partial ok
-test_stackinit: packed_dynamic_partial ok
-test_stackinit: small_hole_static_partial ok
-test_stackinit: big_hole_static_partial ok
-test_stackinit: trailing_hole_static_partial ok
-test_stackinit: packed_static_partial ok
-test_stackinit: packed_static_all ok
-test_stackinit: packed_dynamic_all ok
-test_stackinit: packed_runtime_all ok
-
-The results of the other tests (which contain no explicit initialization),
-change based on the build's configured compiler instrumentation.
-
-No options:
-
-test_stackinit: small_hole_static_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_static_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_static_all FAIL (uninit bytes: 7)
-test_stackinit: small_hole_dynamic_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_dynamic_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_dynamic_all FAIL (uninit bytes: 7)
-test_stackinit: small_hole_runtime_partial FAIL (uninit bytes: 23)
-test_stackinit: big_hole_runtime_partial FAIL (uninit bytes: 127)
-test_stackinit: trailing_hole_runtime_partial FAIL (uninit bytes: 24)
-test_stackinit: packed_runtime_partial FAIL (uninit bytes: 24)
-test_stackinit: small_hole_runtime_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_runtime_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_runtime_all FAIL (uninit bytes: 7)
-test_stackinit: u8_none FAIL (uninit bytes: 1)
-test_stackinit: u16_none FAIL (uninit bytes: 2)
-test_stackinit: u32_none FAIL (uninit bytes: 4)
-test_stackinit: u64_none FAIL (uninit bytes: 8)
-test_stackinit: char_array_none FAIL (uninit bytes: 16)
-test_stackinit: switch_1_none FAIL (uninit bytes: 8)
-test_stackinit: switch_2_none FAIL (uninit bytes: 8)
-test_stackinit: small_hole_none FAIL (uninit bytes: 24)
-test_stackinit: big_hole_none FAIL (uninit bytes: 128)
-test_stackinit: trailing_hole_none FAIL (uninit bytes: 32)
-test_stackinit: packed_none FAIL (uninit bytes: 32)
-test_stackinit: user FAIL (uninit bytes: 32)
-test_stackinit: failures: 25
-
-CONFIG_GCC_PLUGIN_STRUCTLEAK_USER=y
-This only tries to initialize structs with __user markings, so
-only the difference from above is now the "user" test passes:
-
-test_stackinit: small_hole_static_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_static_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_static_all FAIL (uninit bytes: 7)
-test_stackinit: small_hole_dynamic_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_dynamic_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_dynamic_all FAIL (uninit bytes: 7)
-test_stackinit: small_hole_runtime_partial FAIL (uninit bytes: 23)
-test_stackinit: big_hole_runtime_partial FAIL (uninit bytes: 127)
-test_stackinit: trailing_hole_runtime_partial FAIL (uninit bytes: 24)
-test_stackinit: packed_runtime_partial FAIL (uninit bytes: 24)
-test_stackinit: small_hole_runtime_all FAIL (uninit bytes: 3)
-test_stackinit: big_hole_runtime_all FAIL (uninit bytes: 61)
-test_stackinit: trailing_hole_runtime_all FAIL (uninit bytes: 7)
-test_stackinit: u8_none FAIL (uninit bytes: 1)
-test_stackinit: u16_none FAIL (uninit bytes: 2)
-test_stackinit: u32_none FAIL (uninit bytes: 4)
-test_stackinit: u64_none FAIL (uninit bytes: 8)
-test_stackinit: char_array_none FAIL (uninit bytes: 16)
-test_stackinit: switch_1_none FAIL (uninit bytes: 8)
-test_stackinit: switch_2_none FAIL (uninit bytes: 8)
-test_stackinit: small_hole_none FAIL (uninit bytes: 24)
-test_stackinit: big_hole_none FAIL (uninit bytes: 128)
-test_stackinit: trailing_hole_none FAIL (uninit bytes: 32)
-test_stackinit: packed_none FAIL (uninit bytes: 32)
-test_stackinit: user ok
-test_stackinit: failures: 24
-
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF=y
-This initializes all structures passed by reference (scalars and strings
-remain uninitialized):
-
-test_stackinit: small_hole_static_all ok
-test_stackinit: big_hole_static_all ok
-test_stackinit: trailing_hole_static_all ok
-test_stackinit: small_hole_dynamic_all ok
-test_stackinit: big_hole_dynamic_all ok
-test_stackinit: trailing_hole_dynamic_all ok
-test_stackinit: small_hole_runtime_partial ok
-test_stackinit: big_hole_runtime_partial ok
-test_stackinit: trailing_hole_runtime_partial ok
-test_stackinit: packed_runtime_partial ok
-test_stackinit: small_hole_runtime_all ok
-test_stackinit: big_hole_runtime_all ok
-test_stackinit: trailing_hole_runtime_all ok
-test_stackinit: u8_none FAIL (uninit bytes: 1)
-test_stackinit: u16_none FAIL (uninit bytes: 2)
-test_stackinit: u32_none FAIL (uninit bytes: 4)
-test_stackinit: u64_none FAIL (uninit bytes: 8)
-test_stackinit: char_array_none FAIL (uninit bytes: 16)
-test_stackinit: switch_1_none FAIL (uninit bytes: 8)
-test_stackinit: switch_2_none FAIL (uninit bytes: 8)
-test_stackinit: small_hole_none ok
-test_stackinit: big_hole_none ok
-test_stackinit: trailing_hole_none ok
-test_stackinit: packed_none ok
-test_stackinit: user ok
-test_stackinit: failures: 7
-
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=y
-This initializes all variables, so it matches above with the scalars
-and arrays included:
-
-test_stackinit: small_hole_static_all ok
-test_stackinit: big_hole_static_all ok
-test_stackinit: trailing_hole_static_all ok
-test_stackinit: small_hole_dynamic_all ok
-test_stackinit: big_hole_dynamic_all ok
-test_stackinit: trailing_hole_dynamic_all ok
-test_stackinit: small_hole_runtime_partial ok
-test_stackinit: big_hole_runtime_partial ok
-test_stackinit: trailing_hole_runtime_partial ok
-test_stackinit: packed_runtime_partial ok
-test_stackinit: small_hole_runtime_all ok
-test_stackinit: big_hole_runtime_all ok
-test_stackinit: trailing_hole_runtime_all ok
-test_stackinit: u8_none ok
-test_stackinit: u16_none ok
-test_stackinit: u32_none ok
-test_stackinit: u64_none ok
-test_stackinit: char_array_none ok
-test_stackinit: switch_1_none ok
-test_stackinit: switch_2_none ok
-test_stackinit: small_hole_none ok
-test_stackinit: big_hole_none ok
-test_stackinit: trailing_hole_none ok
-test_stackinit: packed_none ok
-test_stackinit: user ok
-test_stackinit: all tests passed!
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- lib/Kconfig.debug    |  10 ++
- lib/Makefile         |   1 +
- lib/test_stackinit.c | 378 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 389 insertions(+)
- create mode 100644 lib/test_stackinit.c
+ sound/soc/samsung/i2s.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d4df5b24d75e..6f543a4bc704 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2001,6 +2001,16 @@ config TEST_OBJAGG
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 29bcfca20572..159c19fdb662 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -71,8 +71,6 @@ struct i2s_dai {
+ 	 * 0 indicates CPU driver is free to choose any value.
+ 	 */
+ 	unsigned rfs, bfs;
+-	/* I2S Controller's core clock */
+-	struct clk *clk;
+ 	/* Clock for generating I2S signals */
+ 	struct clk *op_clk;
+ 	/* Pointer to the Primary_Fifo if this is Sec_Fifo, NULL otherwise */
+@@ -117,6 +115,9 @@ struct samsung_i2s_priv {
+ 	struct snd_soc_dai_driver *dai_drv;
+ 	int num_dais;
  
- 	  If unsure, say N.
++	/* The I2S controller's core clock */
++	struct clk *clk;
++
+ 	/* The clock provider's data */
+ 	struct clk *clk_table[3];
+ 	struct clk_onecell_data clk_data;
+@@ -1205,6 +1206,7 @@ static int i2s_alloc_dais(struct samsung_i2s_priv *priv,
+ #ifdef CONFIG_PM
+ static int i2s_runtime_suspend(struct device *dev)
+ {
++	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
+ 	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
  
-+config TEST_STACKINIT
-+	tristate "Test level of stack variable initialization"
-+	help
-+	  Test if the kernel is zero-initializing stack variables and
-+	  padding. Coverage is controlled by compiler flags,
-+	  CONFIG_GCC_PLUGIN_STRUCTLEAK, CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF,
-+	  or CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-+
-+	  If unsure, say N.
-+
- endif # RUNTIME_TESTING_MENU
+ 	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
+@@ -1213,24 +1215,25 @@ static int i2s_runtime_suspend(struct device *dev)
  
- config MEMTEST
-diff --git a/lib/Makefile b/lib/Makefile
-index e1b59da71418..c81a66d4d00d 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_TEST_KMOD) += test_kmod.o
- obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
- obj-$(CONFIG_TEST_MEMCAT_P) += test_memcat_p.o
- obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
-+obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
+ 	if (i2s->op_clk)
+ 		clk_disable_unprepare(i2s->op_clk);
+-	clk_disable_unprepare(i2s->clk);
++	clk_disable_unprepare(priv->clk);
  
- ifeq ($(CONFIG_DEBUG_KOBJECT),y)
- CFLAGS_kobject.o += -DDEBUG
-diff --git a/lib/test_stackinit.c b/lib/test_stackinit.c
-new file mode 100644
-index 000000000000..13115b6f2b88
---- /dev/null
-+++ b/lib/test_stackinit.c
-@@ -0,0 +1,378 @@
-+// SPDX-Licenses: GPLv2
-+/*
-+ * Test cases for compiler-based stack variable zeroing via future
-+ * compiler flags or CONFIG_GCC_PLUGIN_STRUCTLEAK*.
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/string.h>
-+
-+/* Exfiltration buffer. */
-+#define MAX_VAR_SIZE	128
-+static char check_buf[MAX_VAR_SIZE];
-+
-+/* Character array to trigger stack protector in all functions. */
-+#define VAR_BUFFER	 32
-+
-+/* Volatile mask to convince compiler to copy memory with 0xff. */
-+static volatile u8 forced_mask = 0xff;
-+
-+/* Location and size tracking to validate fill and test are colocated. */
-+static void *fill_start, *target_start;
-+static size_t fill_size, target_size;
-+
-+static bool range_contains(char *haystack_start, size_t haystack_size,
-+			   char *needle_start, size_t needle_size)
-+{
-+	if (needle_start >= haystack_start &&
-+	    needle_start + needle_size <= haystack_start + haystack_size)
-+		return true;
-+	return false;
-+}
-+
-+#define DO_NOTHING_TYPE_SCALAR(var_type)	var_type
-+#define DO_NOTHING_TYPE_STRING(var_type)	void
-+#define DO_NOTHING_TYPE_STRUCT(var_type)	void
-+
-+#define DO_NOTHING_RETURN_SCALAR(ptr)		*(ptr)
-+#define DO_NOTHING_RETURN_STRING(ptr)		/**/
-+#define DO_NOTHING_RETURN_STRUCT(ptr)		/**/
-+
-+#define DO_NOTHING_CALL_SCALAR(var, name)			\
-+		(var) = do_nothing_ ## name(&(var))
-+#define DO_NOTHING_CALL_STRING(var, name)			\
-+		do_nothing_ ## name(var)
-+#define DO_NOTHING_CALL_STRUCT(var, name)			\
-+		do_nothing_ ## name(&(var))
-+
-+#define FETCH_ARG_SCALAR(var)		&var
-+#define FETCH_ARG_STRING(var)		var
-+#define FETCH_ARG_STRUCT(var)		&var
-+
-+#define FILL_SIZE_STRING		16
-+
-+#define INIT_CLONE_SCALAR		/**/
-+#define INIT_CLONE_STRING		[FILL_SIZE_STRING]
-+#define INIT_CLONE_STRUCT		/**/
-+
-+#define INIT_SCALAR_none		/**/
-+#define INIT_SCALAR_zero		= 0
-+
-+#define INIT_STRING_none		[FILL_SIZE_STRING] /**/
-+#define INIT_STRING_zero		[FILL_SIZE_STRING] = { }
-+
-+#define INIT_STRUCT_none		/**/
-+#define INIT_STRUCT_zero		= { }
-+#define INIT_STRUCT_static_partial	= { .two = 0, }
-+#define INIT_STRUCT_static_all		= { .one = arg->one,		\
-+					    .two = arg->two,		\
-+					    .three = arg->three,	\
-+					    .four = arg->four,		\
-+					}
-+#define INIT_STRUCT_dynamic_partial	= { .two = arg->two, }
-+#define INIT_STRUCT_dynamic_all		= { .one = arg->one,		\
-+					    .two = arg->two,		\
-+					    .three = arg->three,	\
-+					    .four = arg->four,		\
-+					}
-+#define INIT_STRUCT_runtime_partial	;				\
-+					var.two = 0
-+#define INIT_STRUCT_runtime_all		;				\
-+					var.one = 0;			\
-+					var.two = 0;			\
-+					var.three = 0;			\
-+					memset(&var.four, 0,		\
-+					       sizeof(var.four))
-+
-+/*
-+ * @name: unique string name for the test
-+ * @var_type: type to be tested for zeroing initialization
-+ * @which: is this a SCALAR, STRING, or STRUCT type?
-+ * @init_level: what kind of initialization is performed
-+ */
-+#define DEFINE_TEST_DRIVER(name, var_type, which)		\
-+/* Returns 0 on success, 1 on failure. */			\
-+static noinline __init int test_ ## name (void)			\
-+{								\
-+	var_type zero INIT_CLONE_ ## which;			\
-+	int ignored;						\
-+	u8 sum = 0, i;						\
-+								\
-+	/* Notice when a new test is larger than expected. */	\
-+	BUILD_BUG_ON(sizeof(zero) > MAX_VAR_SIZE);		\
-+								\
-+	/* Fill clone type with zero for per-field init. */	\
-+	memset(&zero, 0x00, sizeof(zero));			\
-+	/* Fill stack with 0xFF. */				\
-+	ignored = leaf_ ##name((unsigned long)&ignored, 1,	\
-+				FETCH_ARG_ ## which(zero));	\
-+	/* Clear entire check buffer for later bit tests. */	\
-+	memset(check_buf, 0x00, sizeof(check_buf));		\
-+	/* Extract stack-defined variable contents. */		\
-+	ignored = leaf_ ##name((unsigned long)&ignored, 0,	\
-+				FETCH_ARG_ ## which(zero));	\
-+								\
-+	/* Validate that compiler lined up fill and target. */	\
-+	if (!range_contains(fill_start, fill_size,		\
-+			    target_start, target_size)) {	\
-+		pr_err(#name ": stack fill missed target!?\n");	\
-+		pr_err(#name ": fill %zu wide\n", fill_size);	\
-+		pr_err(#name ": target offset by %d\n",	\
-+			(int)((ssize_t)(uintptr_t)fill_start -	\
-+			(ssize_t)(uintptr_t)target_start));	\
-+		return 1;					\
-+	}							\
-+								\
-+	/* Look for any set bits in the check region. */	\
-+	for (i = 0; i < sizeof(check_buf); i++)			\
-+		sum += (check_buf[i] != 0);			\
-+								\
-+	if (sum == 0)						\
-+		pr_info(#name " ok\n");				\
-+	else							\
-+		pr_warn(#name " FAIL (uninit bytes: %d)\n",	\
-+			sum);					\
-+								\
-+	return (sum != 0);					\
-+}
-+#define DEFINE_TEST(name, var_type, which, init_level)		\
-+/* no-op to force compiler into ignoring "uninitialized" vars */\
-+static noinline __init DO_NOTHING_TYPE_ ## which(var_type)	\
-+do_nothing_ ## name(var_type *ptr)				\
-+{								\
-+	/* Will always be true, but compiler doesn't know. */	\
-+	if ((unsigned long)ptr > 0x2)				\
-+		return DO_NOTHING_RETURN_ ## which(ptr);	\
-+	else							\
-+		return DO_NOTHING_RETURN_ ## which(ptr + 1);	\
-+}								\
-+static noinline __init int leaf_ ## name(unsigned long sp,	\
-+					 bool fill,		\
-+					 var_type *arg)		\
-+{								\
-+	char buf[VAR_BUFFER];					\
-+	var_type var INIT_ ## which ## _ ## init_level;		\
-+								\
-+	target_start = &var;					\
-+	target_size = sizeof(var);				\
-+	/*							\
-+	 * Keep this buffer around to make sure we've got a	\
-+	 * stack frame of SOME kind...				\
-+	 */							\
-+	memset(buf, (char)(sp && 0xff), sizeof(buf));		\
-+	/* Fill variable with 0xFF. */				\
-+	if (fill) {						\
-+		fill_start = &var;				\
-+		fill_size = sizeof(var);			\
-+		memset(fill_start,				\
-+		       (char)((sp && 0xff) | forced_mask),	\
-+		       fill_size);				\
-+	}							\
-+								\
-+	/* Silence "never initialized" warnings. */		\
-+	DO_NOTHING_CALL_ ## which(var, name);			\
-+								\
-+	/* Exfiltrate "var". */					\
-+	memcpy(check_buf, target_start, target_size);		\
-+								\
-+	return (int)buf[0] | (int)buf[sizeof(buf) - 1];		\
-+}								\
-+DEFINE_TEST_DRIVER(name, var_type, which)
-+
-+/* Structure with no padding. */
-+struct test_packed {
-+	unsigned long one;
-+	unsigned long two;
-+	unsigned long three;
-+	unsigned long four;
-+};
-+
-+/* Simple structure with padding likely to be covered by compiler. */
-+struct test_small_hole {
-+	size_t one;
-+	char two;
-+	/* 3 byte padding hole here. */
-+	int three;
-+	unsigned long four;
-+};
-+
-+/* Try to trigger unhandled padding in a structure. */
-+struct test_aligned {
-+	u32 internal1;
-+	u64 internal2;
-+} __aligned(64);
-+
-+struct test_big_hole {
-+	u8 one;
-+	u8 two;
-+	u8 three;
-+	/* 61 byte padding hole here. */
-+	struct test_aligned four;
-+} __aligned(64);
-+
-+struct test_trailing_hole {
-+	char *one;
-+	char *two;
-+	char *three;
-+	char four;
-+	/* "sizeof(unsigned long) - 1" byte padding hole here. */
-+};
-+
-+/* Test if STRUCTLEAK is clearing structs with __user fields. */
-+struct test_user {
-+	u8 one;
-+	unsigned long two;
-+	char __user *three;
-+	unsigned long four;
-+};
-+
-+#define DEFINE_SCALAR_TEST(name, init)				\
-+		DEFINE_TEST(name ## _ ## init, name, SCALAR, init)
-+
-+#define DEFINE_SCALAR_TESTS(init)				\
-+		DEFINE_SCALAR_TEST(u8, init);			\
-+		DEFINE_SCALAR_TEST(u16, init);			\
-+		DEFINE_SCALAR_TEST(u32, init);			\
-+		DEFINE_SCALAR_TEST(u64, init);			\
-+		DEFINE_TEST(char_array_ ## init, unsigned char, STRING, init)
-+
-+#define DEFINE_STRUCT_TEST(name, init)				\
-+		DEFINE_TEST(name ## _ ## init,			\
-+			    struct test_ ## name, STRUCT, init)
-+
-+#define DEFINE_STRUCT_TESTS(init)				\
-+		DEFINE_STRUCT_TEST(small_hole, init);		\
-+		DEFINE_STRUCT_TEST(big_hole, init);		\
-+		DEFINE_STRUCT_TEST(trailing_hole, init);	\
-+		DEFINE_STRUCT_TEST(packed, init)
-+
-+/* These should be fully initialized all the time! */
-+DEFINE_SCALAR_TESTS(zero);
-+DEFINE_STRUCT_TESTS(zero);
-+/* Static initialization: padding may be left uninitialized. */
-+DEFINE_STRUCT_TESTS(static_partial);
-+DEFINE_STRUCT_TESTS(static_all);
-+/* Dynamic initialization: padding may be left uninitialized. */
-+DEFINE_STRUCT_TESTS(dynamic_partial);
-+DEFINE_STRUCT_TESTS(dynamic_all);
-+/* Runtime initialization: padding may be left uninitialized. */
-+DEFINE_STRUCT_TESTS(runtime_partial);
-+DEFINE_STRUCT_TESTS(runtime_all);
-+/* No initialization without compiler instrumentation. */
-+DEFINE_SCALAR_TESTS(none);
-+DEFINE_STRUCT_TESTS(none);
-+DEFINE_TEST(user, struct test_user, STRUCT, none);
-+
-+/*
-+ * Check two uses through a variable declaration outside either path,
-+ * which was noticed as a special case in porting earlier stack init
-+ * compiler logic.
-+ */
-+static int noinline __leaf_switch_none(int path, bool fill)
-+{
-+	switch (path) {
-+		uint64_t var;
-+
-+	case 1:
-+		target_start = &var;
-+		target_size = sizeof(var);
-+		if (fill) {
-+			fill_start = &var;
-+			fill_size = sizeof(var);
-+
-+			memset(fill_start, forced_mask | 0x55, fill_size);
-+		}
-+		memcpy(check_buf, target_start, target_size);
-+		break;
-+	case 2:
-+		target_start = &var;
-+		target_size = sizeof(var);
-+		if (fill) {
-+			fill_start = &var;
-+			fill_size = sizeof(var);
-+
-+			memset(fill_start, forced_mask | 0xaa, fill_size);
-+		}
-+		memcpy(check_buf, target_start, target_size);
-+		break;
-+	default:
-+		var = 5;
-+		return var & forced_mask;
-+	}
-+	return 0;
-+}
-+
-+static noinline __init int leaf_switch_1_none(unsigned long sp, bool fill,
-+					      uint64_t *arg)
-+{
-+	return __leaf_switch_none(1, fill);
-+}
-+
-+static noinline __init int leaf_switch_2_none(unsigned long sp, bool fill,
-+					      uint64_t *arg)
-+{
-+	return __leaf_switch_none(2, fill);
-+}
-+
-+DEFINE_TEST_DRIVER(switch_1_none, uint64_t, SCALAR);
-+DEFINE_TEST_DRIVER(switch_2_none, uint64_t, SCALAR);
-+
-+static int __init test_stackinit_init(void)
-+{
-+	unsigned int failures = 0;
-+
-+#define test_scalars(init)	do {				\
-+		failures += test_u8_ ## init ();		\
-+		failures += test_u16_ ## init ();		\
-+		failures += test_u32_ ## init ();		\
-+		failures += test_u64_ ## init ();		\
-+		failures += test_char_array_ ## init ();	\
-+	} while (0)
-+
-+#define test_structs(init)	do {				\
-+		failures += test_small_hole_ ## init ();	\
-+		failures += test_big_hole_ ## init ();		\
-+		failures += test_trailing_hole_ ## init ();	\
-+		failures += test_packed_ ## init ();		\
-+	} while (0)
-+
-+	/* These are explicitly initialized and should always pass. */
-+	test_scalars(zero);
-+	test_structs(zero);
-+	/* Padding here appears to be accidentally always initialized? */
-+	test_structs(dynamic_partial);
-+	/* Padding initialization depends on compiler behaviors. */
-+	test_structs(static_partial);
-+	test_structs(static_all);
-+	test_structs(dynamic_all);
-+	test_structs(runtime_partial);
-+	test_structs(runtime_all);
-+
-+	/* STRUCTLEAK_BYREF_ALL should cover everything from here down. */
-+	test_scalars(none);
-+	failures += test_switch_1_none();
-+	failures += test_switch_2_none();
-+
-+	/* STRUCTLEAK_BYREF should cover from here down. */
-+	test_structs(none);
-+
-+	/* STRUCTLEAK will only cover this. */
-+	failures += test_user();
-+
-+	if (failures == 0)
-+		pr_info("all tests passed!\n");
-+	else
-+		pr_err("failures: %u\n", failures);
-+
-+	return failures ? -EINVAL : 0;
-+}
-+module_init(test_stackinit_init);
-+
-+static void __exit test_stackinit_exit(void)
-+{ }
-+module_exit(test_stackinit_exit);
-+
-+MODULE_LICENSE("GPL");
+ 	return 0;
+ }
+ 
+ static int i2s_runtime_resume(struct device *dev)
+ {
++	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
+ 	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
+ 	int ret;
+ 
+-	ret = clk_prepare_enable(i2s->clk);
++	ret = clk_prepare_enable(priv->clk);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (i2s->op_clk) {
+ 		ret = clk_prepare_enable(i2s->op_clk);
+ 		if (ret) {
+-			clk_disable_unprepare(i2s->clk);
++			clk_disable_unprepare(priv->clk);
+ 			return ret;
+ 		}
+ 	}
+@@ -1428,13 +1431,13 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 	regs_base = res->start;
+ 
+-	pri_dai->clk = devm_clk_get(&pdev->dev, "iis");
+-	if (IS_ERR(pri_dai->clk)) {
++	priv->clk = devm_clk_get(&pdev->dev, "iis");
++	if (IS_ERR(priv->clk)) {
+ 		dev_err(&pdev->dev, "Failed to get iis clock\n");
+-		return PTR_ERR(pri_dai->clk);
++		return PTR_ERR(priv->clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(pri_dai->clk);
++	ret = clk_prepare_enable(priv->clk);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
+ 		return ret;
+@@ -1472,7 +1475,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 		sec_dai->dma_playback.addr_width = 4;
+ 		sec_dai->addr = pri_dai->addr;
+-		sec_dai->clk = pri_dai->clk;
+ 		sec_dai->quirks = quirks;
+ 		sec_dai->idma_playback.addr = idma_addr;
+ 		sec_dai->pri_dai = pri_dai;
+@@ -1519,7 +1521,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ err_disable_pm:
+ 	pm_runtime_disable(&pdev->dev);
+ err_disable_clk:
+-	clk_disable_unprepare(pri_dai->clk);
++	clk_disable_unprepare(priv->clk);
+ 	i2s_delete_secondary_device(priv);
+ 	return ret;
+ }
+@@ -1527,7 +1529,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ static int samsung_i2s_remove(struct platform_device *pdev)
+ {
+ 	struct samsung_i2s_priv *priv = dev_get_drvdata(&pdev->dev);
+-	struct i2s_dai *pri_dai = samsung_i2s_get_pri_dai(&pdev->dev);
+ 
+ 	/* The secondary device has no driver data assigned */
+ 	if (!priv)
+@@ -1537,7 +1538,7 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	i2s_unregister_clock_provider(priv);
+-	clk_disable_unprepare(pri_dai->clk);
++	clk_disable_unprepare(priv->clk);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	i2s_delete_secondary_device(priv);
+ 
 -- 
-2.17.1
+2.20.1
 
