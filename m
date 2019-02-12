@@ -2,119 +2,133 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229FEC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E862C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99112190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:22:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gydpjnZI"
+	by mail.kernel.org (Postfix) with ESMTP id D5E372190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732302AbfBLTWn (ORCPT
+        id S1732325AbfBLTYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:22:43 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42544 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729466AbfBLTWn (ORCPT
+        Tue, 12 Feb 2019 14:24:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59372 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729466AbfBLTYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:22:43 -0500
-Received: by mail-qk1-f194.google.com with SMTP id y140so9411360qkb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 11:22:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w6NbVwVV0hkwRdFYav8uoF6qnn2Ao3HzyjUBGy8N3DI=;
-        b=gydpjnZI5XJ2eZxLejlvYNHnLrZ3ztVp13CdRmWC/TQtEOTVi5kHRc+7LZ3qTmCarL
-         WwglT9FJr0LsHW7z3kWfvc+e/6wKkcoytuBZhB5k4jBvt7aOw8y1H9aFDPHnA+G1w9KT
-         R6dFboVg3EF60aROtZ/tkw9HwKe9P5vimusoJZyVvIMwk+28W7x9/phH+nSnF2IubOfB
-         /txkfRYoHvvDxXsFIoto48//XmNFSR0deoxGYjt9LQiGQ0IeixBSrCRcVFPk33mPLsHv
-         aKyWsCvJaVnsQ3pUMNuSY9+LDYIUvKBWgjS07T8bENY/VW7OQQ7XyNuc2rWZk0rrSKFi
-         mMRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w6NbVwVV0hkwRdFYav8uoF6qnn2Ao3HzyjUBGy8N3DI=;
-        b=MeyO/RamQ2Mo3HFoMujgCovqVJddjyc2nhOhItJ3LHPqCG9h4kNXlqd1/OZX1UOW0x
-         5x4CvXMm2mdSez6UNsTB++38dSs9+XUtiEPoCseIpNi7SM2WMKD79wciAO55zrgHePsI
-         PydjlD3j7dGB5To/YWMT5PBtIT1T/ohQ021pF0HWKOpmuvU7GT9a8jY4Co4fin7RPdIr
-         A9Uc9W9BcnGJmbnew3muuzpGuO0PQzrSOX+mhDQ1OW0E8XRu4Jwwz8VuOQ8gnaT2dw7B
-         Kr268nm7iFTiufAQPjItlAj1tfa4m5MJBJvluCnXipYRbQQHfCnPQC9ZhJzYTBcQpoN4
-         RMqw==
-X-Gm-Message-State: AHQUAuYUXjtTCnk5iNDEshR0NvZXey8S14odq0ykc0Q4XkXdLdqn0wjx
-        uJwChH6nCWk4J3gNFd4/jovWNQ7iTavq5+z0r1y5+RolvAg=
-X-Google-Smtp-Source: AHgI3IZZKmvKC7mMsGfS4OziFRO6M5yCDzxMMV+gug2TM2wi/BGyqEtA0DTFcIsc+42Cygd/tEuIiDdEfynH4eY4Pg0=
-X-Received: by 2002:ae9:c106:: with SMTP id z6mr3808367qki.197.1549999361819;
- Tue, 12 Feb 2019 11:22:41 -0800 (PST)
+        Tue, 12 Feb 2019 14:24:12 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CJEHRq023246
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:24:11 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qm3bfac94-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:24:10 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 12 Feb 2019 19:24:10 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Feb 2019 19:24:06 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CJO56p14024856
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Feb 2019 19:24:05 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EC52B2066;
+        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4006BB2064;
+        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8C2B816C63F0; Tue, 12 Feb 2019 11:24:05 -0800 (PST)
+Date:   Tue, 12 Feb 2019 11:24:05 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Reply-To: paulmck@linux.ibm.com
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <20190211202218.GQ4240@linux.ibm.com>
+ <20190212184354.GC20961@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
-References: <1549994809-27479-1-git-send-email-xiaoxiang@xiaomi.com>
- <20190212183408.GA14892@kroah.com> <CAH2Cfb_ZQiHiL2pGCB4j2a3U60=78w6a9if_Z+pgk2qEi+8pZQ@mail.gmail.com>
- <20190212191535.GA22741@kroah.com>
-In-Reply-To: <20190212191535.GA22741@kroah.com>
-From:   xiang xiao <xiaoxiang781216@gmail.com>
-Date:   Wed, 13 Feb 2019 03:22:30 +0800
-Message-ID: <CAH2Cfb-4yJ0CO-Q3SWqpeiiLBFO+V8z7d-vffuXYSU6N=LLfjw@mail.gmail.com>
-Subject: Re: [PATCH] lib/string: add memrchr function
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alexander.shishkin@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
-        Xiang Xiao <xiaoxiang@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212184354.GC20961@fuggles.cambridge.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19021219-0072-0000-0000-000003F8F097
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010584; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01160107; UDB=6.00605458; IPR=6.00940657;
+ MB=3.00025549; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-12 19:24:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021219-0073-0000-0000-00004B28F309
+Message-Id: <20190212192405.GU4240@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902120135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 3:15 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Feb 13, 2019 at 03:09:19AM +0800, xiang xiao wrote:
-> > On Wed, Feb 13, 2019 at 2:34 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Wed, Feb 13, 2019 at 02:06:49AM +0800, Xiang Xiao wrote:
-> > > > Here is the detailed description for memrchr:
-> > > > https://linux.die.net/man/3/memrchr
-> > >
-> > > Please put it in the changelog, as web pages move and go away :(
-> >
-> > Sure.
-> >
-> > >
-> > > >
-> > > > Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
-> > > > ---
-> > > >  include/linux/string.h |  1 +
-> > > >  lib/string.c           | 21 +++++++++++++++++++++
-> > > >  2 files changed, 22 insertions(+)
-> > > >
-> > > > diff --git a/include/linux/string.h b/include/linux/string.h
-> > > > index 7927b87..f380f4b 100644
-> > > > --- a/include/linux/string.h
-> > > > +++ b/include/linux/string.h
-> > > > @@ -167,6 +167,7 @@ static inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
-> > > >       memcpy(dst, src, cnt);
-> > > >  }
-> > > >  #endif
-> > > > +void *memrchr(const void *s, int c, size_t n);
-> > >
-> > > Who is going to use this?
-> >
-> > This patch will use memrchr:
-> > https://github.com/thesofproject/linux/pull/177/commits/a0b7009fede5552dc98733f2996a8140bff62455
-> > I am preparing to upstream it.
->
-> Great, make it part of the patch series for your driver, no need to
-> submit it separately.
->
+On Tue, Feb 12, 2019 at 06:43:54PM +0000, Will Deacon wrote:
+> On Mon, Feb 11, 2019 at 12:22:18PM -0800, Paul E. McKenney wrote:
+> > On Mon, Feb 11, 2019 at 05:29:48PM +0000, Will Deacon wrote:
+> > > The "KERNEL I/O BARRIER EFFECTS" section of memory-barriers.txt is vague,
+> > > x86-centric, out-of-date, incomplete and demonstrably incorrect in places.
+> > > This is largely because I/O ordering is a horrible can of worms, but also
+> > > because the document has stagnated as our understanding has evolved.
+> > > 
+> > > Attempt to address some of that, by rewriting the section based on
+> > > recent(-ish) discussions with Arnd, BenH and others. Maybe one day we'll
+> > > find a way to formalise this stuff, but for now let's at least try to
+> > > make the English easier to understand.
+> > > 
+> > > Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> > > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > > Cc: Daniel Lustig <dlustig@nvidia.com>
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Alan Stern <stern@rowland.harvard.edu>
+> > > cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > Hello, Will,
+> > 
+> > The intent is to replace commit 3f305018dcf3 ("docs/memory-barriers.txt:
+> > Enforce heavy ordering for port I/O accesses"), correct?  Either way is
+> > fine, just guessing based on the conflicts when applying this one.  ;-)
+> 
+> Yup, I decided to abandon the old patch:
+> 
+> http://lkml.kernel.org/r/20190211153043.GC32385@fuggles.cambridge.arm.com
 
-Ok, I will merge the depend patch into one series.
+Got it, and thank you for the reminder!
 
-> thanks,
->
-> greg k-h
+							Thanx, Paul
+
