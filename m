@@ -2,122 +2,214 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C17C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B138C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F72222C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550009352;
-	bh=5bvvegJafxltFA1LIFNUkl7OxlFlUNL/T1mMBDHtmKU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JsVZ0BbmtkxsjYsCOzSr/Hgblwq1Vy9G2Tr2ZDoby95sh4S9dkL5H4kj5Hy2U0c4x
-	 6pLgfqOCg4U8+SfnbTVqvg4a/aaX/A0Qf64JFEB5y50g0683z0Y57sd2zq6y0GDfQV
-	 EoqfZHEwe6mbTWeufndunbJIbVsf0JwlME6fEUl0=
+	by mail.kernel.org (Postfix) with ESMTP id CB5D8222C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 22:10:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LLaMH6EK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732548AbfBLWJE (ORCPT
+        id S1732621AbfBLWKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:09:04 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33108 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732135AbfBLWJD (ORCPT
+        Tue, 12 Feb 2019 17:10:23 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42804 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbfBLWKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:09:03 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i20so564285otl.0;
-        Tue, 12 Feb 2019 14:09:02 -0800 (PST)
+        Tue, 12 Feb 2019 17:10:23 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i5so474406oto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:10:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9O2/IkWyIfgJRGgQaZRRzXiWeHa5Jq+fWzEMjBFagns=;
+        b=LLaMH6EKK8IqTY6MIsKK1Gzh2Oltxex09z0iIEmJvPpBG6B05cRACzIK3Xi1Xy2bFl
+         WSFRxCAgWoSTlHsItukVXBWRXL3jdi3M5T/XnNiI2Ep6PiAyO5QObLMEw6mLMekXSE6u
+         4tmy9gbS5qUfHx73fWqKC4vKRTiKtQE5nAkJqj8UHhUcYwhqDE4sk+I/g42TjZQ7th93
+         wS10IQ1Ylw4OBh/xlkGJlCevhipDjc/r0cBcfqbl5b0Yy8F8z6Bwg+OFBG9AA8uGZBxF
+         8AJNRJDMS5jjk5VtNeFagtbew5lz3w17B5oN5k3S6JUlbeTHuUOLJ2B9kyvOKmFS8mmz
+         uiMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jDaMSUbMNhVugdtyN/BMqr5213ZsUOAvkEukBy+CMpw=;
-        b=qRfKF2mxXcJF9jvSqIwuSftqA8LSM+kl/c4nf0vodKAO6k5PJgJN9M8mTshHwwp8/h
-         XHTe4jdMnPavkuEpM5/jX6f/WchOZOMeJRxc7Ls6Utesbcad2phFliYYoK/kRVWvKTGA
-         55YbN4scwghN/CtxJeYZyDZvKh4Oc+YHQKqXtahULoZjzeriCGu3n/jxFafR+jzkufo3
-         ARiTzN+VlhU12ec/NuPdOFGcN6PGc6HrjkyUOn7FGI4taYlDNo/TMin66Ue+K9T/0G+d
-         2feJRsRgR5HXfOP8G/dckEOi/7hQDBd7kLngyk6tkaNgo2NnuYwUJj0e3gLyVuWueyIC
-         YpVw==
-X-Gm-Message-State: AHQUAuZYl9A4AulnX0+p4FOxmk+Da+kYjs6lO96WSjuABHihWdYdxiDD
-        yZrdJa0VJiCb+PbAlalePW8dGMC1/p+U6tcMbz4=
-X-Google-Smtp-Source: AHgI3IbVFix43KXiK7d9DnTNArmRycNOQ+G0/dDdlWZ12+sdUqixqPO6b/ffeGRes0t7U0YYuOycZPw+m0QURLpn5NU=
-X-Received: by 2002:a9d:4c0f:: with SMTP id l15mr6289898otf.139.1550009342512;
- Tue, 12 Feb 2019 14:09:02 -0800 (PST)
+        bh=9O2/IkWyIfgJRGgQaZRRzXiWeHa5Jq+fWzEMjBFagns=;
+        b=AiVeBH0486vXURIP18SGI2eW7PXdXhbpne55DOmrtfQl1WBolL54avisZ08JCh7Uo3
+         Ttg57xZwyxum7GZ1MRqz2Qj+lIdM/HNrmmMEI5o9RjmRgCQAxcsfmq7iJuO3CpCzBHLy
+         4Ar9efEWH58eIsQ8D+7PG+tAjU7SPq2HtJb8MKHp5LSWT4QjpmJDeL8lzU27vrKA6P+r
+         DQfeq1xGe7l9TPzj/YFEvK8nIyZ3/WaGcUpiqS229R6ha/KQC0dDvo+0t0swTGcdZ/NM
+         Ovp5YqVhgvB9H7UK8s+SjUUuYuD2HTVtfPPawvrNpYvYld+tgGi1Q68R6CA81kBRF1C9
+         ZcuA==
+X-Gm-Message-State: AHQUAuYHmV+GpiFc3DJg8L//6QOpYMSRT5J6cI/zg/R0LkEsQYix2uLl
+        KLWgoIFPwTBHnXZUCRf8mThvXKG1hYScLXdrecltLg==
+X-Google-Smtp-Source: AHgI3IYBBmG3TCH4XkT+5DZwsuKBNFRN8kKQXFRKC31Zeug6iGjfLsc6/s/zPjPxAq6NF3z6g2/i6bzHeYH0al60TD8=
+X-Received: by 2002:a9d:58cd:: with SMTP id s13mr5964252oth.25.1550009421323;
+ Tue, 12 Feb 2019 14:10:21 -0800 (PST)
 MIME-Version: 1.0
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <9351473.C2nPJoyFsE@aspire.rjw.lan>
- <CAPDyKFpVygMvKAVRd4bCkS6v5MotDRO6sb-VCHK+YEQvbLbc4Q@mail.gmail.com>
-In-Reply-To: <CAPDyKFpVygMvKAVRd4bCkS6v5MotDRO6sb-VCHK+YEQvbLbc4Q@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 12 Feb 2019 23:08:50 +0100
-Message-ID: <CAJZ5v0iQiks4e4te3eoafD5=27zKSK3DRMZxsnjEvaBBPyt2ww@mail.gmail.com>
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-15-brendanhiggins@google.com> <b4c72234-8c56-6efa-8003-f89d99a9779e@ideasonboard.com>
+ <20181130034525.GP18410@garbanzo.do-not-panic.com> <CAFd5g47Cew6pmebsopjzmkd4RpnnC3zLAUfxCybjdhrO35OBpQ@mail.gmail.com>
+ <0927c42a-8e65-f410-e6ed-27576572577f@ideasonboard.com> <CAFd5g44fKzriEs_pGyANxe7GuC9Ji2SD7EEz76__h8q9jjg8yA@mail.gmail.com>
+ <57c3dc86-236f-e981-249a-8bbfe5c19f0e@ideasonboard.com>
+In-Reply-To: <57c3dc86-236f-e981-249a-8bbfe5c19f0e@ideasonboard.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 12 Feb 2019 14:10:09 -0800
+Message-ID: <CAFd5g46AEquMKzfrjLDVi+PP5-7aGs6C6pCunGAXDn3VRkJP+g@mail.gmail.com>
+Subject: Re: [RFC v3 14/19] Documentation: kunit: add documentation for KUnit
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>, Tim.Bird@sony.com,
+        khilman@baylibre.com, Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
         Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:03 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Mon, Feb 11, 2019 at 4:16 AM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
 >
-> On Tue, 12 Feb 2019 at 13:10, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > If a stateless device link to a certain supplier with
-> > DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
-> > consumer driver's probe callback, the supplier's PM-runtime usage
-> > counter will be nonzero after that which effectively causes the
-> > supplier to remain "always on" going forward.
-> >
-> > Namely, device_link_add() called to add the link invokes
-> > device_link_rpm_prepare() which notices that the consumer driver is
-> > probing, so it increments the supplier's PM-runtime usage counter
-> > with the assumption that the link will stay around until
-> > pm_runtime_put_suppliers() is called by driver_probe_device(),
-> > but if the link goes away before that point, the supplier's
-> > PM-runtime usage counter will remain nonzero.
-> >
-> > To prevent that from happening, first rework pm_runtime_get_suppliers()
-> > and pm_runtime_put_suppliers() to use the rpm_active refounts of device
-> > links and make the latter only drop rpm_active and the supplier's
-> > PM-runtime usage counter for each link by one, unless rpm_active is
-> > one already for it.  Next, modify device_link_add() to bump up the
-> > new link's rpm_active refcount and the suppliers PM-runtime usage
-> > counter by two, to prevent pm_runtime_put_suppliers(), if it is
-> > called subsequently, from suspending the supplier prematurely (in
-> > case its PM-runtime usage counter goes down to 0 in there).
-> >
-> > Due to the way rpm_put_suppliers() works, this change does not
-> > affect runtime suspend of the consumer ends of new device links (or,
-> > generally, device links for which DL_FLAG_PM_RUNTIME has just been
-> > set).
-> >
-> > Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
-> > Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Hi Brendan,
 >
-> I have tested a several various common probe sequences (including
-> error paths) by using my RPM test driver, no issues found. Of course
-> it also fixes the problem that occurred while deleting the device link
-> during ->probe(). Thanks a lot!
+> On 09/02/2019 00:56, Brendan Higgins wrote:
+> > On Thu, Dec 6, 2018 at 4:16 AM Kieran Bingham
+> > <kieran.bingham@ideasonboard.com> wrote:
+> >>
+> >> Hi Brendan,
+> >>
+> >> On 03/12/2018 23:53, Brendan Higgins wrote:
+> >>> On Thu, Nov 29, 2018 at 7:45 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >>>>
+> >>>> On Thu, Nov 29, 2018 at 01:56:37PM +0000, Kieran Bingham wrote:
+> >>>>> Hi Brendan,
+> >>>>>
+> >>>>> Please excuse the top posting, but I'm replying here as I'm following
+> >>>>> the section "Creating a kunitconfig" in Documentation/kunit/start.rst.
+> >>>>>
+> >>>>> Could the three line kunitconfig file live under say
+> >>>>>        arch/um/configs/kunit_defconfig?
+> >>
+> >>
+> >> Further consideration to this topic - I mentioned putting it in
+> >>   arch/um/configs
+> >>
+> >> - but I think this is wrong.
+> >>
+> >> We now have a location for config-fragments, which is essentially what
+> >> this is, under kernel/configs
+> >>
+> >> So perhaps an addition as :
+> >>
+> >>  kernel/configs/kunit.config
+> >>
+> >> Would be more appropriate - and less (UM) architecture specific.
+> >
+> > Sorry for the long radio silence.
+> >
+> > I just got around to doing this and I found that there are some
+> > configs that are desirable to have when running KUnit under x86 in a
+> > VM, but not UML.
 >
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Should this behaviour you mention be handled by the KCONFIG depends flags?
+>
+> depends on (KUMIT & UML)
+> or
+> depends on (KUNIT & !UML)
+>
+> or such?
 
-Thank you!
+Not really. Anything that is strictly necessary to run KUnit on an
+architectures should of course be turned on as a dependency like you
+suggest, but I am talking about stuff that you would probably want to
+get yourself going, but is by no means necessary.
+
+>
+> An example of which configs you are referring to would help to
+> understand the issue perhaps.
+>
+
+For example, you might want to enable a serial console that is known
+to work with a fairly generic qemu setup when building for x86:
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+
+Obviously not a dependency, and not even particularly useful to people
+who know what they are doing, but to someone who is new or just wants
+something to work out of the box would probably want that.
+
+>
+> > So should we have one that goes in with
+> > config-fragments and others that go into architectures? Another idea,
+> > it would be nice to have a KUnit config that runs all known tests
+>
+> This might also be a config option added to the tests directly like
+> COMPILE_TEST perhaps?
+
+That just allows a bunch of drivers to be compiled, it does not
+actually go through and turn the configs on, right? I mean, there is
+no a priori way to know that there is a configuration which spans all
+possible options available under COMPILE_TEST, right? Maybe I
+misunderstand what you are suggesting...
+
+>
+> (Not sure what that would be called though ... KUNIT_RUNTIME_TEST?)
+>
+> I think that might be more maintainable as otherwise each new test would
+> have to modify the {min,def}{config,fragment} ...
+>
+
+Looking at kselftest-merge, they just start out with a set of
+fragments in which the union should contain all tests and then merge
+it with a base .config (probably intended to be $(ARCH)_defconfig).
+However, I don't know if that is the state of the art.
+
+>
+> > (this probably won't work in practice once we start testing mutually
+> > exclusive things or things with lots of ifdeffery, but it probably
+> > something we should try to maintain as best as we can?); this probably
+> > shouldn't go in with the fragments, right?
+>
+> Sounds like we agree there :)
+
+Totally. Long term we will need something a lot more sophisticated
+than anything under discussion here. I was talking about this with
+Luis on another thread:
+https://groups.google.com/forum/#!topic/kunit-dev/EQ1x0SzrUus (feel
+free to chime in!). Nevertheless, that's a really hard problem and I
+figure some variant of defconfigs and config fragments will work well
+enough until we reach that point.
+
+>
+> >
+> > I will be sending another revision out soon, but I figured I might be
+> > able to catch you before I did so.
+>
+> Thanks for thinking of me.
+
+How can I forget? You have been super helpful!
+
+> I hope I managed to reply in time to help and not hinder your progress.
+
+Yep, no trouble at all. You are the one helping me :-)
+
+Thanks!
