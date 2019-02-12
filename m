@@ -2,127 +2,212 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE75BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D261C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADCA721905
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEFD520869
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="FujlZtKy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RT2Fq6Vw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729995AbfBLTHg (ORCPT
+        id S1731250AbfBLTJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:07:36 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:42944 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbfBLTHf (ORCPT
+        Tue, 12 Feb 2019 14:09:09 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37686 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727677AbfBLTJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:07:35 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 07A055C026A;
-        Tue, 12 Feb 2019 20:07:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1549998453;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RlWBYt/s+9V0QpZCLG+zjbxSYF/nR3fEJEG7YnknZbM=;
-        b=FujlZtKyTZDcZACzadu4K+pY0YMakG2X562sMstwC4cxxzImEWOwuccvhkuLLwRGV4FN7g
-        uuC7kCbjAifkBaCmd7uExCJFHyFKA0q+/FQ6mokXWADZAU7Bj3JBgPzAqL+YfEYjUyDqB9
-        ClqLMHr6eP3Y3aXUC0ct07xzVP47CUs=
+        Tue, 12 Feb 2019 14:09:08 -0500
+Received: by mail-it1-f195.google.com with SMTP id b5so10435895iti.2;
+        Tue, 12 Feb 2019 11:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cnqr2wXipCxgDB3fFdGxUE67iCptpYk32YabGjqXilY=;
+        b=RT2Fq6Vwj96574gFRSFJBCaEru8kvFDXF0AGVSe3ycoyK8BV9L3kqX6qkUw0XtITq0
+         4Xv8fyKlBoWXISpATw3b5qpZ4C2lKKH3Cb9IK2FqApeALAR+TAH0DC9wWV53VWeK8YXf
+         ZEHTPNoKJ4WcMBlR3DTqdwo5dyeqtSRGtX8UnKTuJ6WJpDQvDiE7TWHz0gSkeoyxuOUk
+         3vuQd36veXEn1775p9QyJqxfBM63s9dnD+0i1c6L837nebwlDSfuVDvvPIfHpIIhbp5V
+         oyAMRDRE1vsWoG08ScV9Y+P/TVP6rMoTjEqZ9E7ZzcfGDVtt/btCxuNaM+dt41hFrqZ2
+         Yupw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cnqr2wXipCxgDB3fFdGxUE67iCptpYk32YabGjqXilY=;
+        b=E/xUV1c56uLdYfsVEnj0NyqirlCGnK2VN06lM2zmuTFQeZtWRKFNrd2aYXurhh1j5m
+         VspL2xeaGS3E1bc7PIcE2S+UfTL+G5G/ZT+FVyA/dhL1LpZgXwESwFnK555dcUq2AS9w
+         ktCIfaJKD+CIdBypYbAjB4Jr/EjU34T6MkUM2ULdo4lDnCUVlEfST5bXNyJp7IfJBnCr
+         cxDDsXaQIEOVUQ6RTZykA2tA5TwKKGwidpcXFpKR5P+ckPQ66yQFzyfX/TCnHATHSdZZ
+         bpP+UVc7rn5gOmLezgpKW4CMFATLqPHqUjqB72HjVexkXE/3YQ405CQkY/vMeYWOK2hR
+         n6Ww==
+X-Gm-Message-State: AHQUAubn4LF+ib3P8egfxxZUQJcP1WeheMYMQlR4swEyVcvuEYiE/vwx
+        te0OHIksYc0VowoeGERvuXOBC2C/R1EKi9af5n8=
+X-Google-Smtp-Source: AHgI3Ibg4wCNsMahNXO3PrbxJOvs/xNvt2h3NWzUDK40KnQgK+SW4cS3qYLsFmMh5P4h0XrvOxsTwmro4INfYwCE4YA=
+X-Received: by 2002:a02:451d:: with SMTP id y29mr2974010jaa.85.1549998546555;
+ Tue, 12 Feb 2019 11:09:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 12 Feb 2019 20:07:32 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, tpiepho@impinj.com,
-        leonard.crestez@nxp.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
-In-Reply-To: <20190212113257.GA23658@red-moon>
-References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
- <119211b4f2e9ada55b86041d009656e49c2b5281.1549446867.git.stefan@agner.ch>
- <20190211213900.GA247873@google.com>
- <1549961694.2546.18.camel@pengutronix.de> <20190212113257.GA23658@red-moon>
-Message-ID: <fcb87e85b72680b274667cc843055150@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+References: <20190202153454.7121-1-deepa.kernel@gmail.com> <20190202153454.7121-10-deepa.kernel@gmail.com>
+ <AM4PR0501MB2769C4BE6CF1C5B051068D0BC56B0@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+ <CABeXuvqMR7T=3ORvXPihkz-WbTN+oFeHkCu9uvebEq9wTLpJuQ@mail.gmail.com>
+In-Reply-To: <CABeXuvqMR7T=3ORvXPihkz-WbTN+oFeHkCu9uvebEq9wTLpJuQ@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Tue, 12 Feb 2019 11:08:52 -0800
+Message-ID: <CABeXuvomXSgYQaFQgv71xQu837J_HUYR4NvMqXPyh4Z3Btnprg@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 09/12] socket: Add SO_TIMESTAMPING_NEW
+To:     Ran Rozenstein <ranro@mellanox.com>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
+        "chris@zankel.net" <chris@zankel.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "rth@twiddle.net" <rth@twiddle.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "ubraun@linux.ibm.com" <ubraun@linux.ibm.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.02.2019 12:33, Lorenzo Pieralisi wrote:
-> On Tue, Feb 12, 2019 at 09:54:54AM +0100, Lucas Stach wrote:
->> Hi Bjorn,
->>
->> Am Montag, den 11.02.2019, 15:39 -0600 schrieb Bjorn Helgaas:
->> > On Wed, Feb 06, 2019 at 10:57:32AM +0100, Stefan Agner wrote:
->> > > Define the length of the DBI registers. This makes sure that
->> > > the kernel does not access registers beyond that point, avoiding
->> > > the following abort on a i.MX 6Quad:
->> > >   # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
->> > >   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
->> > >   ...
->> > >   [  100.056423] PC is at dw_pcie_read+0x50/0x84
->> > >   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
->> > >   ...
->> >
->> > I assume this problem happens when using the pci_read_config() path or
->> > something similar?
->> >
->> > Could this be solved using pci_dev.cfg_size instead of building a new
->> > dwc-specific mechanism?  There are some quirks that set dev->cfg_size
->> > to keep from reading past certain points in config space, e.g.,
->> > quirk_citrine(), quirk_nfp6000().
->> >
->> > I'm not necessarily opposed to doing it in dwc, but maybe there's some
->> > advantage in reducing the number of ways of doing the same thing.
->>
->> This actually started out as a quirk changing the cfg size. But the
->> valid config space size seems to be different between root ports that
->> share the same (broken) device ID (Synopsys abcd), so I doubt that this
->> would be easier and/or any cleaner to implement as a quirk.
+On Sun, Feb 10, 2019 at 7:21 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> On Feb 10, 2019, at 7:43 AM, Ran Rozenstein <ranro@mellanox.com> wrote:
+>
+> >> Subject: [PATCH net-next v5 09/12] socket: Add SO_TIMESTAMPING_NEW
+> >>
+> >> Add SO_TIMESTAMPING_NEW variant of socket timestamp options.
+> >> This is the y2038 safe versions of the SO_TIMESTAMPING_OLD for all
+> >> architectures.
+> >>
+> >> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> >> Acked-by: Willem de Bruijn <willemb@google.com>
+> >
+> >
+> > Hi,
+> >
+> > I have app that include:
+> >    #include <linux/errqueue.h>
+> >
+> > It now fail with this error:
+> >    In file included from timestamping.c:6:0:
+> >    /usr/include/linux/errqueue.h:46:27: error: array type has incomplete element type 'struct __kernel_timespec'
+> >      struct __kernel_timespec ts[3];
+> >                                       ^~
+> > I tried to do the trivial fix, to include time.h:
+> > In include/uapi/linux/errqueue.h
+> >    #include <linux/time.h>
+> >    #include <linux/types.h>
+> >
+> > But it just add some other noises:
+> >                In file included from /usr/include/linux/errqueue.h:5:0,
+> >                                 from timestamping.c:6:
+> >                /usr/include/linux/time.h:10:8: error: redefinition of ?struct timespec?
+> >                 struct timespec {
+> >                        ^~~~~~~~
+> >                In file included from /usr/include/sys/select.h:39:0,
+> >                                 from /usr/include/sys/types.h:197,
+> >                                 from /usr/include/stdlib.h:279,
+> >                                 from timestamping.c:2:
+> >                /usr/include/bits/types/struct_timespec.h:8:8: note: originally defined here
+> >                 struct timespec
+> >                        ^~~~~~~~
+> >                In file included from /usr/include/linux/errqueue.h:5:0,
+> >                                 from timestamping.c:6:
+> >                /usr/include/linux/time.h:16:8: error: redefinition of ?struct timeval?
+> >                 struct timeval {
+> >                        ^~~~~~~
+> >                In file included from /usr/include/sys/select.h:37:0,
+> >                                 from /usr/include/sys/types.h:197,
+> >                                 from /usr/include/stdlib.h:279,
+> >                                 from timestamping.c:2:
+> >                /usr/include/bits/types/struct_timeval.h:8:8: note: originally defined here
+> >                 struct timeval
+> >                        ^~~~~~~
+> >
+> >
+> > Can you please advise how to solve it?
+> >
+> > Thanks,
+> > Ran
+>
+> The errqueue.h already had the same issue reported previously:
+> https://lore.kernel.org/netdev/CAF=yD-L2ntuH54J_SwN9WcpBMgkV_v0e-Q2Pu2mrQ3+1RozGFQ@mail.gmail.com/
+>
+> Earlier when I tested this with kernel selftests such as
+> tools/testing/selftests/networking/timestamping/rxtimestamp(the test
+> was broken to begin with because of  missing include of unistd.h), I
+> was using make.cross to build.
+> This does not put the headers in the right place
+> (obj-$ARCH/usr/include instead of usr/include). Hence, I did not
+> realize that this breaks the inclusion of errqueue.h due to the
+> missing __kernel_timespec definition.
+> I forgot that nobody seems to be using linux/time.h.
+>
+> But, if I include guards( #ifndef __KERNEL__) for struct timespec,
+> struct timeval etc for linux/time.h, then we can include it from
+> userspace/ errqueue.h for __kernel_timespec:
+>
+> --- a/include/uapi/linux/errqueue.h
+> +++ b/include/uapi/linux/errqueue.h
+> @@ -2,7 +2,7 @@
+>  #ifndef _UAPI_LINUX_ERRQUEUE_H
+>  #define _UAPI_LINUX_ERRQUEUE_H
+>
+> -#include <linux/types.h>
+> +#include <linux/time.h>
+>
+>  struct sock_extended_err {
+>         __u32   ee_errno;
+> diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+> index a6aca9aaab80..40913d9a5bc8 100644
+> --- a/include/uapi/linux/time.h
+> +++ b/include/uapi/linux/time.h
+> @@ -5,6 +5,8 @@
+>  #include <linux/types.h>
+>
+>
+> +#ifdef __KERNEL__
+> +
+>  #ifndef _STRUCT_TIMESPEC
+>  #define _STRUCT_TIMESPEC
+>  struct timespec {
+> @@ -42,6 +44,8 @@ struct itimerval {
+>         struct timeval it_value;        /* current value */
+>  };
+>
+> +#endif /* __KERNEL__ */
+>
+> Arnd,
+>
+> I forgot how we plan to include the definition for __kernel_timespec
+> for libc or userspace. Does this seem right to you?
+> Also these changes to errqueue.h needs to be reverted probably as this
+> breaks userspace.
 
-For reference, this was the initial patch using
-DECLARE_PCI_FIXUP_HEADER:
-https://lore.kernel.org/lkml/20181019111350.6170-1-stefan@agner.ch/T/#u
+Arnd and I talked about this today morning.
+We agreed that we could introduce a new time_types.h along the lines
+of posix_types.h. We will move all the time definitions that we plan
+to keep in the kernel uapi headers to this header. This header will
+also not have any overlap with the sys/time.h and can be included
+along with it from userspace.
+I will post this patch shortly.
 
-> 
-> There are two things here: matching the root port and setting
-> the cfg size limit.
-> 
-> I agree with Bjorn that the cfg size limit, given that it is
-> implemented in core code should be leveraged instead of reinventing
-> the wheel to solve the same problem in driver specific code.
+This should fix Ran's issue.
 
-Seems sensible yes.
-
-> 
-> In the quirk code I do not think it is that complicated to retrieve
-> the IMX variant to apply the quirk accordingly on the pci_dev.
-
-It seems that drivers/pci/controller/pcie-iproc.c uses FIXUP functions
-which access driver specific structs. I think we can get from (struct
-pci_host_bridge *)->sysdata to struct pcie_port * and from there to
-struct dw_pci.
-
-I will give this a try next week.
-
-> 
-> Please let me know if that's feasible so that I can drop the
-> patches from the branch and update it with a new version.
-> 
-
-Fine for me.
-
---
-Stefan
+-Deepa
