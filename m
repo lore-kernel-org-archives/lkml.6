@@ -2,154 +2,100 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D166C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2908C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB1B222C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550005030;
-	bh=98rjWiStFkBn6SS6Uevu+Z3ZheXFAbV83L6MrRwEkEU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=kT45JPzRb6aV1bYE2y/mXjY7gnHnLrkeGwL9h85zry38b6HnllhktIng5XpeC8VJd
-	 JS7rUdKf1sXnpgr8Wh0SGUTJcLkhpMp6ab0uz/Sy0JCsSlw86BNPjNBO+wvhxRSivX
-	 Nzei/KYbu8QZdVLSKZ1mxheHf/70nIPgAB3jlcDs=
+	by mail.kernel.org (Postfix) with ESMTP id 9D6AC222C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 20:59:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDz9wr2r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732256AbfBLU5I (ORCPT
+        id S1732286AbfBLU7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 15:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbfBLU5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 15:57:08 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1CA222C0;
-        Tue, 12 Feb 2019 20:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550005027;
-        bh=98rjWiStFkBn6SS6Uevu+Z3ZheXFAbV83L6MrRwEkEU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PdXACQ23/cNTpis18t5R7I0ewz21izMr4S3znikocQp7cLXeklxqkasXtjxOi+nkk
-         +ny/KVyuBcZ6TjGFX10uTgruzBBMNEmWPeUx6GyI23GQNe16t7MIf5LLn+key9mvg5
-         5wZd0SVGYMn5PXBZ3l/qhxdzV5Z6vAxBMdzbxlJ0=
-Date:   Tue, 12 Feb 2019 20:57:01 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: adc: exynos-adc: Use proper number of channels
- for Exynos4x12
-Message-ID: <20190212205701.4cf66d68@archlinux>
-In-Reply-To: <20190212174550.4383-2-krzk@kernel.org>
-References: <20190212174550.4383-1-krzk@kernel.org>
-        <20190212174550.4383-2-krzk@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 12 Feb 2019 15:59:25 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55312 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730629AbfBLU7Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 15:59:24 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r17so99462wmh.5;
+        Tue, 12 Feb 2019 12:59:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DWTF1SES5GRIXXlitUdnPP06DsCUYUrOBCWQQ/pJq/k=;
+        b=PDz9wr2rxAXcw2dmw0xsyOCdwb3SQ3nVI1sDoaPNoXCdx7TREPPkCKe96S7mrNasA+
+         sCQ97flHPbfjX1NnM/EaatGuRc0MTQmDGgUHieDLbevS7N8ZjKMbfemrZSiCMFTFIppn
+         mEwcpg+zNJn31zlu6rLU+HI3xjWrgmYGn2BsGeokOXRC89pkJgTjRTnwmpQ2RrS79DtC
+         SU/6l6oDwhB3VxTs3shzmWpESLE7YdmYzyVfuyrP+kPNwQQ2KFYavsw4XJzH7PoJ772W
+         BCFW48QofTo0/pEPm6V1KP4Dr88no7V5z7lTNyhkH38e+XIPAwXWUFqyrd7B/BSj+u65
+         0NuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DWTF1SES5GRIXXlitUdnPP06DsCUYUrOBCWQQ/pJq/k=;
+        b=K959gb1lROtzfhU5T+Bz0rFZEa0plo/uuDoFDEthqhbPSDKQi89lPBMc7AqbUINmYW
+         3GA3YwRYL+7vyV293plztRmTSiU+SQics9oP2GI/w3s0Z1x1j6MLNZfXDVmBh+HCZ/ph
+         f3gVPtlakF0xnXpb1SZZMoZ0t8Dk07S5wyTkEW5Ls+7cQCSM/512lUry9Wm5fmtYSVC4
+         ujXLeIu+fmvsaz/UGe3UnGAS1JnSbTHuarRtLxWzw5wheU5BS7kMCB8jyNK8jBHJvm8q
+         Gw8/2jQWIr6eA7jdq/9VyfZ0APZcb5CwtUZIl2Ms4qVnt7C+Km1Kp0o86/sk/sqjV6Eu
+         MoKQ==
+X-Gm-Message-State: AHQUAua3tTCZKCHXjLeoCCMpWiK82Gboh4vwNssRIgWkFe/QBk7hOdJn
+        +SeMSe4DIP2nsECaa9KR7lu/eeZH
+X-Google-Smtp-Source: AHgI3IalTm6xrbghuck8dqaV6JjYNL5T22H27R/wSTR8AaMAaausQIff9Gx6nXRS4Kc1WT/Nv9SWlA==
+X-Received: by 2002:a1c:c303:: with SMTP id t3mr577096wmf.94.1550005162297;
+        Tue, 12 Feb 2019 12:59:22 -0800 (PST)
+Received: from localhost.localdomain ([46.216.128.70])
+        by smtp.gmail.com with ESMTPSA id z14sm10355940wrm.48.2019.02.12.12.59.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 12:59:20 -0800 (PST)
+Received: from jek by localhost.localdomain with local (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1gtf9D-0003PI-7S; Tue, 12 Feb 2019 23:59:19 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: [PATCH v2 2/2] mfd: Add leds MFD cell for intel_soc_pmic_chtwc
+Date:   Tue, 12 Feb 2019 23:59:01 +0300
+Message-Id: <20190212205901.13037-3-jekhor@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190212205901.13037-1-jekhor@gmail.com>
+References: <20190212205901.13037-1-jekhor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 18:45:49 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Add MFD cell for LEDs driver to the Intel Cherry Trail Whiskey Cove PMIC
+mfd device driver.
 
-> Exynos4212 and Exynos4412 have only four ADC channels so using
-> "samsung,exynos-adc-v1" compatible (for eight channels ADCv1) on them is
-> wrong.  Add a new compatible for Exynos4x12.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-I'll sneak this in as my last patch for this cycle (lucky timing ;).
-It could have done with a fixes tag. I'll mark it for stable as sounds
-and looks safe and simple.
+Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
+---
+ drivers/mfd/intel_soc_pmic_chtwc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Looks like it goes all the way back so I'll leave it without one.
-
-Applied to the togreg branch of iio.git. This will be queued for the
-next merge window given how late we are in the cycle.
-
-Thanks,
-
-Jonathan
-
-
-> ---
->  .../bindings/iio/adc/samsung,exynos-adc.txt     |  4 +++-
->  drivers/iio/adc/exynos_adc.c                    | 17 +++++++++++++++++
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> index a10c1f89037d..e1fe02f3e3e9 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> @@ -11,11 +11,13 @@ New driver handles the following
->  
->  Required properties:
->  - compatible:		Must be "samsung,exynos-adc-v1"
-> -				for exynos4412/5250 controllers.
-> +				for Exynos5250 controllers.
->  			Must be "samsung,exynos-adc-v2" for
->  				future controllers.
->  			Must be "samsung,exynos3250-adc" for
->  				controllers compatible with ADC of Exynos3250.
-> +			Must be "samsung,exynos4212-adc" for
-> +				controllers compatible with ADC of Exynos4212 and Exynos4412.
->  			Must be "samsung,exynos7-adc" for
->  				the ADC in Exynos7 and compatibles
->  			Must be "samsung,s3c2410-adc" for
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index fa2d2b5767f3..01f7c2570a1e 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -115,6 +115,7 @@
->  #define MAX_ADC_V2_CHANNELS		10
->  #define MAX_ADC_V1_CHANNELS		8
->  #define MAX_EXYNOS3250_ADC_CHANNELS	2
-> +#define MAX_EXYNOS4212_ADC_CHANNELS	4
->  #define MAX_S5PV210_ADC_CHANNELS	10
->  
->  /* Bit definitions common for ADC_V1 and ADC_V2 */
-> @@ -271,6 +272,19 @@ static void exynos_adc_v1_start_conv(struct exynos_adc *info,
->  	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
->  }
->  
-> +/* Exynos4212 and 4412 is like ADCv1 but with four channels only */
-> +static const struct exynos_adc_data exynos4212_adc_data = {
-> +	.num_channels	= MAX_EXYNOS4212_ADC_CHANNELS,
-> +	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-> +	.needs_adc_phy	= true,
-> +	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
-> +
-> +	.init_hw	= exynos_adc_v1_init_hw,
-> +	.exit_hw	= exynos_adc_v1_exit_hw,
-> +	.clear_irq	= exynos_adc_v1_clear_irq,
-> +	.start_conv	= exynos_adc_v1_start_conv,
-> +};
-> +
->  static const struct exynos_adc_data exynos_adc_v1_data = {
->  	.num_channels	= MAX_ADC_V1_CHANNELS,
->  	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-> @@ -492,6 +506,9 @@ static const struct of_device_id exynos_adc_match[] = {
->  	}, {
->  		.compatible = "samsung,s5pv210-adc",
->  		.data = &exynos_adc_s5pv210_data,
-> +	}, {
-> +		.compatible = "samsung,exynos4212-adc",
-> +		.data = &exynos4212_adc_data,
->  	}, {
->  		.compatible = "samsung,exynos-adc-v1",
->  		.data = &exynos_adc_v1_data,
+diff --git a/drivers/mfd/intel_soc_pmic_chtwc.c b/drivers/mfd/intel_soc_pmic_chtwc.c
+index 64a3aece9c5e..be84bb2aa837 100644
+--- a/drivers/mfd/intel_soc_pmic_chtwc.c
++++ b/drivers/mfd/intel_soc_pmic_chtwc.c
+@@ -60,6 +60,7 @@ static struct mfd_cell cht_wc_dev[] = {
+ 		.resources = cht_wc_ext_charger_resources,
+ 	},
+ 	{	.name = "cht_wcove_region", },
++	{	.name = "cht_wcove_leds", },
+ };
+ 
+ /*
+-- 
+2.20.1
 
