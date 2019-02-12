@@ -2,122 +2,99 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E941C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC5C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFDD20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD30620675
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:49:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHsY48d0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfBLItY (ORCPT
+        id S1728640AbfBLItz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:49:24 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35962 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728410AbfBLItY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:49:24 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 088157E31536FC437CC1;
-        Tue, 12 Feb 2019 16:49:19 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Tue, 12 Feb 2019
- 16:49:13 +0800
-Date:   Tue, 12 Feb 2019 08:49:03 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Keith Busch <keith.busch@intel.com>
-CC:     Brice Goglin <Brice.Goglin@inria.fr>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [PATCHv4 10/13] node: Add memory caching attributes
-Message-ID: <20190212084903.00003ff5@huawei.com>
-In-Reply-To: <20190211152303.GA4525@localhost.localdomain>
-References: <20190116175804.30196-1-keith.busch@intel.com>
-        <20190116175804.30196-11-keith.busch@intel.com>
-        <4a7d1c0c-c269-d7b2-11cb-88ad62b70a06@inria.fr>
-        <20190210171958.00003ab2@huawei.com>
-        <20190211152303.GA4525@localhost.localdomain>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        Tue, 12 Feb 2019 03:49:55 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55245 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbfBLItz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 03:49:55 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so1984582wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:49:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZaqGFsP2Fj4gI246V5TlxB5rbyGGcaN1FumYNNQbU+0=;
+        b=KHsY48d0wBerQ0dgDf21YVvqe6bp493PFwz6KbxXmLQGNGgTohDhWM/2XImDEbMOnL
+         W5juOrt8VqX4N6btQ3cGvVADa86nmq5KyyxYdh+YQgdR4/Yl9+VA5+Te7XP9BtfpnpBT
+         vWlEjuShCdZYP6bWca7TDG6wiywk2K3/SniYFYc998qULF51vyy36U74WwZPl168or79
+         Z36+ldmlllTp7MOu7VvRAgY5Nn2LUnJb0DROZ6/5ng+ujxOnXsLIr2rc7kkk3pG+FJkF
+         y3SpTgTB+lOXlWzOgvgOyrQ4tYfI+0GU+iXVhFZED0itBDnWRW87M3t1mgI9QvDtr3XX
+         pm1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZaqGFsP2Fj4gI246V5TlxB5rbyGGcaN1FumYNNQbU+0=;
+        b=cSkVN5sQXbwxIm8Oey+ae2ek9CXrfK7lmzJcdFbermqEZHmDOf2278ja4M5dnEeh3n
+         UnFPKEjTzFvub4ZK3lyTDqPyG5ASZnCIMizHBUNxrVhFLnVx2hqkMffKQgvlnyo3q9pu
+         plFOhwBDNApKxlbv3ByZKKxZqtGGx4M1nbYWI+vokHuMIKM2zp7cYZmS0K7ChMyvQHU9
+         XpjuCkCgZlYu1RsfQa1oamb0UAaDuQy10P2bYRyxb90Smuas+11Ux/sAc5F46D3LmlO7
+         HNe3UNcjJsFtCZ2cSn7T9oXmM0awrRS5V7kDcskSRRXLiBM0IWrl5fd2CS33+tgaTjyt
+         TeGg==
+X-Gm-Message-State: AHQUAuax8Ly3yG28+Ffc4+Gkya0KW35+WTgvIrbkFUu70WxEPilrSJNX
+        cYn5fC+oet12GXQV8BG4KGO0+5Q3Lxc=
+X-Google-Smtp-Source: AHgI3IYid/MUJe90jLpMKwc+Spv1+LAWZrznQr/PUGWU27cqH4cZoV5DVt9MzN6w/0n9dKiC7OZ+3A==
+X-Received: by 2002:a1c:47:: with SMTP id 68mr1832188wma.89.1549961393780;
+        Tue, 12 Feb 2019 00:49:53 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id t63sm1582309wmt.8.2019.02.12.00.49.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 00:49:53 -0800 (PST)
+Date:   Tue, 12 Feb 2019 08:49:51 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: intel-lpss: Move linux/pm.h to the local header
+Message-ID: <20190212084951.GY20638@dell>
+References: <20190124180328.76533-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190124180328.76533-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 08:23:04 -0700
-Keith Busch <keith.busch@intel.com> wrote:
+On Thu, 24 Jan 2019, Andy Shevchenko wrote:
 
-> On Sun, Feb 10, 2019 at 09:19:58AM -0800, Jonathan Cameron wrote:
-> > On Sat, 9 Feb 2019 09:20:53 +0100
-> > Brice Goglin <Brice.Goglin@inria.fr> wrote:
-> >   
-> > > Hello Keith
-> > > 
-> > > Could we ever have a single side cache in front of two NUMA nodes ? I
-> > > don't see a way to find that out in the current implementation. Would we
-> > > have an "id" and/or "nodemap" bitmask in the sidecache structure ?  
-> > 
-> > This is certainly a possible thing for hardware to do.
-> >
-> > ACPI IIRC doesn't provide any means of representing that - your best
-> > option is to represent it as two different entries, one for each of the
-> > memory nodes.  Interesting question of whether you would then claim
-> > they were half as big each, or the full size.  Of course, there are
-> > other possible ways to get this info beyond HMAT, so perhaps the interface
-> > should allow it to be exposed if available?  
+> We now using a common macro for PM operations in Intel LPSS driver,
+> and, since that macro relies on the definition and macro from linux/pm.h
+> header file, it's logical to include it directly in intel-lpss.h.
+> Otherwise it's a bit fragile and requires a proper ordering
+> of header inclusion in C files.
 > 
-> HMAT doesn't do this, but I want this interface abstracted enough from
-> HMAT to express whatever is necessary.
-> 
-> The CPU cache is the closest existing exported attributes to this,
-> and they provide "shared_cpu_list". To that end, I can export a
-> "shared_node_list", though previous reviews strongly disliked multi-value
-> sysfs entries. :(
-> 
-> Would shared-node symlinks capture the need, and more acceptable?
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel-lpss-acpi.c | 1 -
+>  drivers/mfd/intel-lpss-pci.c  | 1 -
+>  drivers/mfd/intel-lpss.h      | 2 ++
+>  3 files changed, 2 insertions(+), 2 deletions(-)
 
-My inclination is that it's better to follow an existing pattern than
-invent a new one that breaks people's expectations.
+Applied, thanks.
 
-However, don't feel that strongly about it as long as the interface
-is functional and intuitive.
-
-
->  
-> > Also, don't know if it's just me, but calling these sidecaches is
-> > downright confusing.  In ACPI at least they are always
-> > specifically referred to as Memory Side Caches.
-> > I'd argue there should even by a hyphen Memory-Side Caches, the point
-> > being that that they are on the memory side of the interconnected
-> > rather than the processor side.  Of course an implementation
-> > choice might be to put them off to the side (as implied by sidecaches)
-> > in some sense, but it's not the only one.
-> > 
-> > </terminology rant> :)  
-> 
-> Now that you mention it, I agree "side" is ambiguous.  Maybe call it
-> "numa_cache" or "node_cache"?
-I'm not sure any of the options work well.  My inclination would be to
-use the full name and keep the somewhat redundant memory there.
-
-The other two feel like they could just as easily be coherent caches
-at accelerators for example...
-
-memory_side_cache?
-
-The fun of naming ;)
-
-Jonathan
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
