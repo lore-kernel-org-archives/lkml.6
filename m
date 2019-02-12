@@ -2,129 +2,109 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEBDC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716B7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABB4218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EEAB2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 08:21:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="viFIGc2X"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G8woGgtw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfBLIUj (ORCPT
+        id S1728441AbfBLIVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:20:39 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45748 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfBLIUj (ORCPT
+        Tue, 12 Feb 2019 03:21:08 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47012 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbfBLIVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:20:39 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w17so1577575wrn.12
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 00:20:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BUxHh2rdaTfguXFkRs8NHl4QIWJXp8EQE23alHMZDOA=;
-        b=viFIGc2XbXyJRI24ClcGL77Ik9/Qw/E1t+Qgi1pcROdXq9V/tSLsZ9emyIc04mRb7r
-         gjMc/mzbQEbSSTcNeMmgTo1bsrvTNPQDw5KIjFi93zShBZQubTM6XCCuiWLUFZZRdYhp
-         G1HZIL4HPCAX34JX7/hgtwcbk/bXFFHqVdoi8o7MSnOrTsgh7mLSlUl0OtGe0TSsvJYW
-         FbaQCfgTKCgz2XSJTRsJPs0Gz0U+8tV08jZuFVDCT5ldUPaMZEGIq488Mm8835wjX9kj
-         dhbxjbNm07uK9Qj28P3IJrlsN/9Vry8MGuydCn/rSZd6OzvMcPXi+LlBZybrfg8zv6/a
-         XFmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=BUxHh2rdaTfguXFkRs8NHl4QIWJXp8EQE23alHMZDOA=;
-        b=jAEPddhvZJhwdXyorwdAwrX2Z5AErFEIxAd55sRGpVRY8qXwAcuAPevOYfHj1gM0Vq
-         is3NOk2yUMJ9iUpjR34b/d2tKHn4V2C/HbHqa5LErAh4GjaKdzQFQ2/WypcvQbJH0RsO
-         C1dxaUO204AtYIMQocGHxa9xueRpS0pmDInxtIK+8oloFpvq69sTufjttlSATNr0sN+I
-         tSYecqWJhCmNE8hy1Umr32XSYoFMrL4Ym6cJq/aBJZQolmBDgk1n2NZkC/q6hcdOfIFE
-         ZJsmzyrxnoyadI+F652GWohUk+JdJCG/dBHEAQ+gzPlgXp4nS9u1tEiQELwSH1wWFedv
-         aMoQ==
-X-Gm-Message-State: AHQUAuYGP9r5tbDH3y0tZ4gF9KsgRoPLfYfeMuszXUl1fQwl7y7Hye5Z
-        lM8HEynZsteQpWvZXJNQiYrWZw==
-X-Google-Smtp-Source: AHgI3IZ9RvMaJL2Do16Mi+fq98NyGTaSPtQs7+4XOsz/1czjablrUwq4BXgcizjRAwjVbldG86l0hA==
-X-Received: by 2002:a5d:5585:: with SMTP id i5mr1929070wrv.239.1549959637522;
-        Tue, 12 Feb 2019 00:20:37 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id m4sm2423908wmi.3.2019.02.12.00.20.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 00:20:36 -0800 (PST)
-Date:   Tue, 12 Feb 2019 08:20:35 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        marc.zyngier@arm.com, tglx@linutronix.de, shawnguo@kernel.org,
-        dianders@chromium.org, linux-gpio@vger.kernel.org,
-        nicolas.dechesne@linaro.org, niklas.cassel@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] mfd: pm8xxx: revert "disassociate old virq if
- hwirq mapping already exists"
-Message-ID: <20190212082035.GQ20638@dell>
-References: <20190208021631.30252-1-masneyb@onstation.org>
- <20190208021631.30252-12-masneyb@onstation.org>
+        Tue, 12 Feb 2019 03:21:07 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1C8L0uK017793;
+        Tue, 12 Feb 2019 02:21:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549959660;
+        bh=h6nS8KEQuvXeKjc1JlLi0g/d54xykSlMo2wQ9Y5khW8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=G8woGgtwnBgQJHWLUihd0zPqGXIvr9SWe1bcsMxAOIp+HkcIKbruECEQk96pOL0Xg
+         DP+XUgnHtARTSgNjioexGfpmpJrhiwT2+e29nYqXcdjNMKyxa1d+Al83cnU7k+03nI
+         WCYMFb8rnHszLjN3ZM7h8s12yR59oPiRfOa3G+Lk=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1C8L0Kb103259
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Feb 2019 02:21:00 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
+ Feb 2019 02:21:00 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 12 Feb 2019 02:21:00 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1C8KtGQ015182;
+        Tue, 12 Feb 2019 02:20:56 -0600
+Subject: Re: [PATCH v2 5/8] usb: ohci-da8xx: add vbus and overcurrent gpios
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190211103702.4277-1-brgl@bgdev.pl>
+ <20190211103702.4277-6-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <39ef1cac-85d3-9307-7d17-faf0ac196bf3@ti.com>
+Date:   Tue, 12 Feb 2019 13:50:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190208021631.30252-12-masneyb@onstation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190211103702.4277-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 07 Feb 2019, Brian Masney wrote:
-
-> Now that ssbi-gpio is a proper hierarchical IRQ chip, and all in-tree
-> users of device tree have been updated, we can now drop the hack that
-> was introduced to disassociate the old Linux virq if a hwirq mapping
-> already exists. That patch was introduced to not break git bisect for
-> any existing boards.
+On 11/02/19 4:06 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> This change was tested on an APQ8060 DragonBoard.
+> There are two users upstream which register external callbacks for
+> switching the port power on/off and overcurrent protection. Both
+> users only use two GPIOs for that. Instead of having that functionality
+> in the board files, move the logic into the OHCI driver - including
+> the interrupt handler for overcurrent detection.
 > 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Tested-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
 > ---
-> Changes since v1:
-> - None
+>  drivers/usb/host/ohci-da8xx.c | 99 ++++++++++++++++++-----------------
+>  1 file changed, 50 insertions(+), 49 deletions(-)
 > 
->  drivers/mfd/qcom-pm8xxx.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-> index 2f99a98ccee5..8eb2528793f9 100644
-> --- a/drivers/mfd/qcom-pm8xxx.c
-> +++ b/drivers/mfd/qcom-pm8xxx.c
-> @@ -380,12 +380,6 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip *chip,
->  				  struct irq_domain *domain, unsigned int irq,
->  				  irq_hw_number_t hwirq, unsigned int type)
->  {
-> -	unsigned int old_virq;
-> -
-> -	old_virq = irq_find_mapping(domain, hwirq);
-> -	if (old_virq)
-> -		irq_domain_disassociate(domain, old_virq);
-> -
+> diff --git a/drivers/usb/host/ohci-da8xx.c b/drivers/usb/host/ohci-da8xx.c
+> index e8ede0b5e3f0..80c23307fbfe 100644
+> --- a/drivers/usb/host/ohci-da8xx.c
+> +++ b/drivers/usb/host/ohci-da8xx.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/io.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/jiffies.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
 
-For Linus:
-  
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+Added the new include in alphabetical order. With that minor fix, series
+is applied to my v5.1/soc branch.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Sekhar
