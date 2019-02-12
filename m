@@ -2,133 +2,110 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E862C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 992B8C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E372190B
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64F202190B
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbfBLTYN (ORCPT
+        id S1732328AbfBLT0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:24:13 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59372 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729466AbfBLTYM (ORCPT
+        Tue, 12 Feb 2019 14:26:23 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.175]:25459 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729500AbfBLT0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:24:12 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CJEHRq023246
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:24:11 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qm3bfac94-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 14:24:10 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 12 Feb 2019 19:24:10 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Feb 2019 19:24:06 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CJO56p14024856
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Feb 2019 19:24:05 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EC52B2066;
-        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4006BB2064;
-        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Feb 2019 19:24:05 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8C2B816C63F0; Tue, 12 Feb 2019 11:24:05 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:24:05 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
- BARRIER EFFECTS" section
-Reply-To: paulmck@linux.ibm.com
-References: <20190211172948.3322-1-will.deacon@arm.com>
- <20190211202218.GQ4240@linux.ibm.com>
- <20190212184354.GC20961@fuggles.cambridge.arm.com>
+        Tue, 12 Feb 2019 14:26:23 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id D80E8400D7417
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 13:26:22 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tdhGg1yWW4FKptdhGgMgyb; Tue, 12 Feb 2019 13:26:22 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=51644 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtdew-002dlX-0l; Tue, 12 Feb 2019 13:26:22 -0600
+Date:   Tue, 12 Feb 2019 13:23:57 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] USB: musb: mark expected switch fall-through
+Message-ID: <20190212192357.GA15275@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190212184354.GC20961@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19021219-0072-0000-0000-000003F8F097
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010584; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01160107; UDB=6.00605458; IPR=6.00940657;
- MB=3.00025549; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-12 19:24:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021219-0073-0000-0000-00004B28F309
-Message-Id: <20190212192405.GU4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120135
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtdew-002dlX-0l
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:51644
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 06:43:54PM +0000, Will Deacon wrote:
-> On Mon, Feb 11, 2019 at 12:22:18PM -0800, Paul E. McKenney wrote:
-> > On Mon, Feb 11, 2019 at 05:29:48PM +0000, Will Deacon wrote:
-> > > The "KERNEL I/O BARRIER EFFECTS" section of memory-barriers.txt is vague,
-> > > x86-centric, out-of-date, incomplete and demonstrably incorrect in places.
-> > > This is largely because I/O ordering is a horrible can of worms, but also
-> > > because the document has stagnated as our understanding has evolved.
-> > > 
-> > > Attempt to address some of that, by rewriting the section based on
-> > > recent(-ish) discussions with Arnd, BenH and others. Maybe one day we'll
-> > > find a way to formalise this stuff, but for now let's at least try to
-> > > make the English easier to understand.
-> > > 
-> > > Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> > > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > > Cc: Arnd Bergmann <arnd@arndb.de>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > > Cc: Daniel Lustig <dlustig@nvidia.com>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > > cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > > Signed-off-by: Will Deacon <will.deacon@arm.com>
-> > 
-> > Hello, Will,
-> > 
-> > The intent is to replace commit 3f305018dcf3 ("docs/memory-barriers.txt:
-> > Enforce heavy ordering for port I/O accesses"), correct?  Either way is
-> > fine, just guessing based on the conflicts when applying this one.  ;-)
-> 
-> Yup, I decided to abandon the old patch:
-> 
-> http://lkml.kernel.org/r/20190211153043.GC32385@fuggles.cambridge.arm.com
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Got it, and thank you for the reminder!
+This patch fixes the following warning:
 
-							Thanx, Paul
+drivers/usb/musb/musb_host.c: In function ‘musb_advance_schedule’:
+drivers/usb/musb/musb_host.c:374:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (qh->mux == 1) {
+       ^
+drivers/usb/musb/musb_host.c:383:3: note: here
+   case USB_ENDPOINT_XFER_ISOC:
+   ^~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+Notice that, in this particular case, the code comment is modified
+in accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/musb/musb_host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index b59ce9ad14ce..0566d5b6252e 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -378,7 +378,7 @@ static void musb_advance_schedule(struct musb *musb, struct urb *urb,
+ 				qh = first_qh(head);
+ 				break;
+ 			}
+-			/* else: fall through */
++			/* fall through */
+ 
+ 		case USB_ENDPOINT_XFER_ISOC:
+ 		case USB_ENDPOINT_XFER_INT:
+-- 
+2.20.1
 
