@@ -2,161 +2,124 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F5FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FBBC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DA4222C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D23222C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cObDZdMv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hydkx+Du"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbfBLRQ3 (ORCPT
+        id S1731802AbfBLRQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:16:29 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40365 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731767AbfBLRQ1 (ORCPT
+        Tue, 12 Feb 2019 12:16:32 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40374 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731772AbfBLRQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:16:27 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h1so1589538pfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:16:26 -0800 (PST)
+        Tue, 12 Feb 2019 12:16:28 -0500
+Received: by mail-ed1-f68.google.com with SMTP id 10so2861001eds.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 09:16:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V0vDEzF3Mc5eeutz94nbRQZ6xPyugJQXobqfjuLKiSM=;
-        b=cObDZdMvnlT9QoWFKtK5J0NH3yLnZBykk0W6O6czUdQ/wYALlhy+/89BGrRGgozWdD
-         M9OBesQ2ZbzZmMEKzL3X5eFzKAfw5RToYyZFRGIjd7UT8ljdT3ekmZ0Up6mcbVozjiEL
-         DRIx4WCIZNObHIFFf1/umNJU1yic69+R5q6hOLr5lBKjoZbkhQRA/D5TOqyaHIGld3P0
-         8GHrzUVTDPRgUxbcQ1vy63emJiAy7J9y22QOVf8fiOd/y9RtvBtd4uP88uwaPSFIQjzZ
-         +IOKPHt++r1IAu+P5vmeWCbjTOrYh7HW/LAof8xPoCWlwi7DRfpbGyGAjn1nMIBgh2Md
-         TFGA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PWKxQooIvE5dHLOz2OtceRXcOqy7jac9KKsFTONstGg=;
+        b=hydkx+DuavtsR7Uwdo9TB0qjO1hjFxg2YKoTbBHU0X5zM8pDUwhiI7CoAvl/TLGYar
+         ZvdxgZrHPwGZqJrJJtIB1HnqS0oJUUBLZ6RE167fPHKo23lEa5HIJk5Our9rrQlXj3ro
+         oYLI5wf6Of3+wmpY1ljQwxYNsfvdNo+LJo2EN5GdmiXi5kZoBpHakIACoeMTaDuQM0Y7
+         k7azg6qIIGgJhQatb9HyjYRMbgtxPBBCrXmYz3tlPEYV0jLRDo37vLCDyl0NXBp6I4Dv
+         BNz4g3agnRTojuYO13iLtrawGXG1z49J/gwwfz/8AZWSMM2vM7XiAOERIcTbaTH3wBhJ
+         rElQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=V0vDEzF3Mc5eeutz94nbRQZ6xPyugJQXobqfjuLKiSM=;
-        b=ZYXMxD35uy1peE/1EFJOj01XBPWhD+f07fKQ1JUydo9kyFzPm78sP/yUGbdpPpffw3
-         onWjVmILE8nG5IZWTOXACPM3OAlQBsGILbUZ+OvIgnO6ifX+TKVBI8wuzPEZHIVKbKQc
-         9dcwmbq6RVYu12fty4YDpCRnsXHUxu0mXqEyP9LBUeT1ToMxewet6FKZW72LgiTQO3yR
-         LUflvfV2R1OgTROXUHYU70sl+D2EyhZdlrktc38ugW31IKc/YiZkQCy7m1x6GbLO07uc
-         tC3nxHZItV56GwZ6oNVK2uNo/kZPSKzw0f/kLWHWg/boooOuaoJIJKYz2MeyPPqvN0JT
-         I1VA==
-X-Gm-Message-State: AHQUAuZ1zg5UItwFsaCRV7pMy3KaLEuqqRVlscWEDwQ/9XgRiVeYKBFI
-        hYzVCqcW1o6tEDZ7RzTfwgsHxoshASI=
-X-Google-Smtp-Source: AHgI3IYKR0kXyO4xGvlkymDUvl4GyOnjKTSy8Wr+bhwCgfEF5lwn2EwlWC9Wtp1KVNdkwoOwPklo7Q==
-X-Received: by 2002:a63:c345:: with SMTP id e5mr4571313pgd.103.1549991786088;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PWKxQooIvE5dHLOz2OtceRXcOqy7jac9KKsFTONstGg=;
+        b=X0vfc+7hGZVgpVLifObFospeqJJsS/sdC2aH6PFNFYloI2jwXDAbBu+NH4KMy+EWkT
+         jaSN+PFpRfkzFoJlDT5EDrMBdz3YVFSqmBEAHtR16SVZOH2B8Yxh4Q2/b0XUUipAtQYk
+         BsDZ5aHpEkEJke+7w2uwaVBlt6StxZlSqkg+xdZyvIOUF7h5U9vqtYhxQeUp1zhyQWsY
+         klrAtIAFgr2Ehg/A8rBpjsyWMmR+3E4YCSVvBgK9+XTsEo/t5Kp4tR2QNOXG++NEPw7V
+         fd55ROoMmvXVAeU1mIjOd8vYo/YMs0//8oQe1BcmHn5zXlZmduL4TljX7mp27gnx/+1R
+         uaFQ==
+X-Gm-Message-State: AHQUAubP22PY4bqQ02DWiLpjB1Avom8uBKUVtujc+MU2reaJEpjf8c6W
+        whNC6IhQI+5945vLUeIgesmu+6l3gI6fkw==
+X-Google-Smtp-Source: AHgI3IZ1oceoufUlqVsrCkTPQKFiq2gc43iJxcA+Vw4eADxYGjcQcStc1WuE9hbgQnLSTotUZqdR0A==
+X-Received: by 2002:a17:906:381:: with SMTP id b1mr3482708eja.67.1549991786273;
         Tue, 12 Feb 2019 09:16:26 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id z4sm8659231pgu.10.2019.02.12.09.16.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+Received: from dumbo ([83.137.1.208])
+        by smtp.gmail.com with ESMTPSA id h1sm3123074ejx.41.2019.02.12.09.16.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 12 Feb 2019 09:16:25 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     acme@kernel.org
-Cc:     suzuki.poulose@arm.com, mingo@redhat.com, peterz@infradead.org,
-        jolsa@redhat.com, leo.yan@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/13] perf tools: Fix memory leak in error path
-Date:   Tue, 12 Feb 2019 10:16:10 -0700
-Message-Id: <20190212171618.25355-6-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190212171618.25355-1-mathieu.poirier@linaro.org>
-References: <20190212171618.25355-1-mathieu.poirier@linaro.org>
+Date:   Tue, 12 Feb 2019 18:16:16 +0100
+From:   Domenico Andreoli <domenico.andreoli@linux.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Daniel Borkmann <dborkman@redhat.com>,
+        Francesco Fusco <ffusco@redhat.com>,
+        George Spelvin <linux@sciencehorizons.net>,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        Ian Campbell <ian.campbell@citrix.com>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        Pavel Emelyanov <xemul@parallels.com>
+Subject: [PATCH] Add the SPDX header to include/linux/hash.h
+Message-ID: <20190212171616.nlfz45mtr3zcyv7p@dumbo>
+References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
+ <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
+ <20190211072259.GA19224@nouveau>
+ <20190115083241.6c6ftrw73xuv26j6@dumbo>
+ <2977287.v5rPGuGa1n@merkaba>
+ <86va1p7c7z.fsf@benfinney.id.au>
+ <8a87da85-3aef-a113-f93f-c96ab465c96f@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a87da85-3aef-a113-f93f-c96ab465c96f@kernel.dk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory allocated for variable 't_params' isn't released properly in the
-error path of function cs_etm_queue *cs_etm__alloc_queue() and
-cs_etm__dump_event(), something this patch addresses.
+From: Domenico Andreoli <domenico.andreoli@linux.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+It is unlikely that who contributes to this file is unaware of the kernel
+licensing but bringing the license statement into the file itself makes
+it properly reusable in different contexts.
+
+CC: Daniel Borkmann <dborkman@redhat.com>
+CC: Francesco Fusco <ffusco@redhat.com>
+CC: George Spelvin <linux@sciencehorizons.net>
+CC: Hannes Frederic Sowa <hannes@stressinduktion.org>
+CC: Ian Campbell <ian.campbell@citrix.com>
+CC: Jay Vosburgh <jay.vosburgh@canonical.com>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+CC: Matthew Wilcox <matthew@wil.cx>
+CC: Nadia Yvette Chambers <nyc@holomorphy.com>
+CC: Pavel Emelyanov <xemul@parallels.com>
+Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
+
 ---
- tools/perf/util/cs-etm.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ include/linux/hash.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 3011c6cae531..aac07f950074 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -175,6 +175,10 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
- 
- 	/* Use metadata to fill in trace parameters for trace decoder */
- 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
+Index: b/include/linux/hash.h
+===================================================================
+--- a/include/linux/hash.h
++++ b/include/linux/hash.h
+@@ -1,3 +1,5 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
-+	if (!t_params)
-+		return;
-+
- 	for (i = 0; i < etm->num_cpu; i++) {
- 		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
- 			u32 etmidr = etm->metadata[i][CS_ETM_ETMIDR];
-@@ -206,14 +210,12 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
- 	/* Set decoder parameters to simply print the trace packets */
- 	if (cs_etm__init_decoder_params(&d_params, NULL,
- 					CS_ETM_OPERATION_PRINT))
--		return;
-+		goto out_free;
- 
- 	decoder = cs_etm_decoder__new(etm->num_cpu, &d_params, t_params);
- 
--	zfree(&t_params);
--
- 	if (!decoder)
--		return;
-+		goto out_free;
- 	do {
- 		size_t consumed;
- 
-@@ -228,6 +230,9 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
- 	} while (buffer_used < buffer->size);
- 
- 	cs_etm_decoder__free(decoder);
-+
-+out_free:
-+	zfree(&t_params);
- }
- 
- static int cs_etm__flush_events(struct perf_session *session,
-@@ -379,7 +384,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
- {
- 	int i;
- 	struct cs_etm_decoder_params d_params;
--	struct cs_etm_trace_params  *t_params;
-+	struct cs_etm_trace_params  *t_params = NULL;
- 	struct cs_etm_queue *etmq;
- 	size_t szp = sizeof(struct cs_etm_packet);
- 
-@@ -461,8 +466,6 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
- 
- 	etmq->decoder = cs_etm_decoder__new(etm->num_cpu, &d_params, t_params);
- 
--	zfree(&t_params);
--
- 	if (!etmq->decoder)
- 		goto out_free;
- 
-@@ -475,6 +478,8 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
- 					      cs_etm__mem_access))
- 		goto out_free_decoder;
- 
-+	zfree(&t_params);
-+
- 	etmq->offset = 0;
- 	etmq->period_instructions = 0;
- 
-@@ -483,6 +488,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
- out_free_decoder:
- 	cs_etm_decoder__free(etmq->decoder);
- out_free:
-+	zfree(&t_params);
- 	zfree(&etmq->event_buf);
- 	zfree(&etmq->last_branch);
- 	zfree(&etmq->last_branch_rb);
--- 
-2.17.1
-
+ #ifndef _LINUX_HASH_H
+ #define _LINUX_HASH_H
+ /* Fast hashing routine for ints,  longs and pointers.
