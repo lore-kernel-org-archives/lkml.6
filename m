@@ -2,143 +2,115 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452F2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B54C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14784217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4F5721773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:17:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="A/xtyrIf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipt9SgAf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731044AbfBLQQF (ORCPT
+        id S1730940AbfBLQRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:16:05 -0500
-Received: from mail-it1-f182.google.com ([209.85.166.182]:35595 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbfBLQQE (ORCPT
+        Tue, 12 Feb 2019 11:17:11 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42682 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfBLQRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:16:04 -0500
-Received: by mail-it1-f182.google.com with SMTP id v72so8928131itc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 08:16:04 -0800 (PST)
+        Tue, 12 Feb 2019 11:17:10 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i5so5300410oto.9;
+        Tue, 12 Feb 2019 08:17:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BcbiwYoeQ5EFhhDuBwroyRQ+sI20g7wH4KgP+AYudGY=;
-        b=A/xtyrIfUNy9SE+lMTaGWod/Ahk16uh9S1uJRG8I/Yeogq/6FKslvnPNZ1Y4POeiIE
-         qxNbewnGi6nRAbi3CJbaFc+O9teeJF8i1MsTi+wXwBF+Sv9fi4Sf66jVNLXFxRVW4FHJ
-         9q5ytJeZiDg5wd6TwOj33M1rMNB7nOohAwuo05BuNGfSVE+KV/h4omh1llNfJqomrzbT
-         YJYWst6MKzVEm66IOXwk3ZUE9xOvWheY3AwbUvEC8yOAnHsn21aNk6WINi9/7nCXX8sz
-         Lr2iP0rjt9FPJZdu3aqC8Mfo+FyxfSlj16K8BM/XxBte2qUDA1OXeUg1L/MvN2p8CxFL
-         6XPA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hUjVbFTvRaFD0nlwVLDWky32ZcoWdJruLY07EK4hgtQ=;
+        b=ipt9SgAfPZoCZ/5vc4+43b1JpM/vO+BtHfDcs7KF9SjQCkvDifqMZP0jr23I89wfVX
+         L4iWXYpVhp9Ou2jU2IpmdwXT2WTTAKbSs3qzRqpGwbK2QARwxnVsFspK2LLA3uAc6OHO
+         FIyIabs2MEGfLpW98gz144gVQa6PbaTtcyqPhR9ijytTw3bQIbM+SmZnNO4g+heFA2Ko
+         tgYvEAyo3T8k6A0NsNRtDQHpwYVM3wM1XzxdiEShHr++jCMkEyhmIh6o/FBpsASJvWMD
+         gKgPo8ny3iAOmnygBl96q1YsqAyLdaJrUjxeab7o+8Pcg7IT4QH9rpObpwKMwuFoHLua
+         FQtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BcbiwYoeQ5EFhhDuBwroyRQ+sI20g7wH4KgP+AYudGY=;
-        b=JbsckwF4qK5QiRqll6s/w4wiGXZUWM8xSStm6/I1uRxZkguJRXxWlcp/8JXbXs3S4l
-         R4pDX/1K4LsBI/gDuTyeyIWk/65/GfuZR3hr4oK1vzXmt6lcLY/ysRiLjkKQ5SzIqXN9
-         iAC2HFTp6hiilNHFfHTxY9FXmDZfcp+5kcTxSep2NccLSlGbqgcdkR/aziC0oJ/6t6VE
-         L27WWgJYosm9kDyial8DXmdgt6SoFt2OVaz3IBiJuyNgvp4kUq9CSEM6mOOYEqGqadrt
-         pRPKS098r2A1h38Q7lHp9jaXjYES3GYaVn0f0h26q0vQVlD6BlQwl049u6/PyUkiuihb
-         zbcQ==
-X-Gm-Message-State: AHQUAuZbg4vJfzIQWsfF87iFuIbjWcGhda6U9tVa7VMSkECHx6qq+zuI
-        TPVbGGXpzoB3KCXwAqQuSsrdhQ==
-X-Google-Smtp-Source: AHgI3IbdLxICyFu6EDFSuhU8UQ3XIDrIwnK96R1Uk/Vg5H1zWGMNafFt22QCYjCdOUONpj/pqcz/qQ==
-X-Received: by 2002:a02:97ee:: with SMTP id v43mr2353260jaj.67.1549988163583;
-        Tue, 12 Feb 2019 08:16:03 -0800 (PST)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id v6sm5960745ioh.37.2019.02.12.08.16.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 08:16:02 -0800 (PST)
-Subject: Re: Bug#919356: Licensing of include/linux/hash.h
-To:     Ben Finney <bignose@debian.org>,
-        Martin Steigerwald <Martin.Steigerwald@proact.de>
-Cc:     Domenico Andreoli <cavok@debian.org>, 919356@bugs.debian.org,
-        Kristian Fiskerstrand <k_f@gentoo.org>,
-        Nadia Yvette Chambers <nyc@holomorphy.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "debian-legal@lists.debian.org" <debian-legal@lists.debian.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jens Axboe <jens.axboe@oracle.com>
-References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
- <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
- <20190211072259.GA19224@nouveau> <20190115083241.6c6ftrw73xuv26j6@dumbo>
- <2977287.v5rPGuGa1n@merkaba> <86va1p7c7z.fsf@benfinney.id.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8a87da85-3aef-a113-f93f-c96ab465c96f@kernel.dk>
-Date:   Tue, 12 Feb 2019 09:16:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hUjVbFTvRaFD0nlwVLDWky32ZcoWdJruLY07EK4hgtQ=;
+        b=Q1lXfqQWE9kD37IbhWRc1x+hKLH4yXVeXJhcwGzdSNnzr5U8MQQlWUfGL7lEP/hBbe
+         kOo1t4xQ0t2YXvngrQ7VImPQhi4ZdaxtXeet73AY/9x2UD11MP3jtQaU037OfYqzFsz0
+         7U4XEdsllmY3qi/6wS9buoe1E+Q9NJp5cHrWPejSzGN7SPYf87adAjy/rlAkYF/1NswY
+         0Ie5uWF7FMJiCIoC32RjGk0bq4i0sTHd8k0viM5LQBtR6+hVz1ceIaFoaqKNiarysHbH
+         LYpS+f+DxWxmoRobsmBpgcmeoBP/+beu6ugb7asFB3ZqLs5AbwN1O5NIlpydhptwVxyG
+         hzNA==
+X-Gm-Message-State: AHQUAuaTR/wKu5mETmTtO3wo2YzVP+LLp1hOLJkPXySyBrgQE6mzTQQZ
+        wZwlNIUci0q0+AuTGjP+dexvgKuNuhqke64T73kzGA==
+X-Google-Smtp-Source: AHgI3IZZm+cawXjS4J3sllA33iHJ1nOifHLNojPMh/1PXxbYHqCumsDVVfOFm4pVR+EVCEH1vlTAuo3JBXFL6SEOVkY=
+X-Received: by 2002:a9d:7e87:: with SMTP id m7mr4876625otp.225.1549988229921;
+ Tue, 12 Feb 2019 08:17:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <86va1p7c7z.fsf@benfinney.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190212161450.17167-1-TheSven73@gmail.com>
+In-Reply-To: <20190212161450.17167-1-TheSven73@gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 12 Feb 2019 11:16:58 -0500
+Message-ID: <CAGngYiXOfL1MpTcpki-=h=bm0RMKBg0+65p2tCRmBSucnG5mVg@mail.gmail.com>
+Subject: Re: [PATCH] power: supply: ds2782: fix possible use-after-free on remove
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 11:27 PM, Ben Finney wrote:
-> Martin Steigerwald <Martin.Steigerwald@proact.de> writes:
-> 
->> Well the file has in its header:
->>
->> /* Fast hashing routine for a long.
->>    (C) 2002 William Lee Irwin III, IBM */
->>
->> /*
->>  * Knuth recommends primes in approximately golden ratio to the maximum
->>  * integer representable by a machine word for multiplicative hashing.
->>  * Chuck Lever verified the effectiveness of this technique:
->>  * http://www.citi.umich.edu/techreports/reports/citi-tr-00-1.pdf
->>  *
->>  * These primes are chosen to be bit-sparse, that is operations on
->>  * them can use shifts and additions instead of multiplications for
->>  * machines where multiplications are slow.
->>  */
->>
->> It has been quite a while ago. I bet back then I did not regard this
->> as license information since it does not specify a license. Thus I
->> assumed it to be GPL-2 as the other files which have no license boiler
->> plate. I.e.: Check file is it has different license, if not, then
->> assume it has license as specified in COPYING.
->>
->> Not specifying a license can however also mean in this context that it
->> has no license as the file contains copyright information from another
->> author.
-> 
-> If a work (even one file) “has no license”, that means no special
-> permissions are granted and normal copyright applies: All rights
-> reserved, i.e. not redistributable. So, no license is grounds to
-> consider a work non-free and non-redistributable.
-> 
-> If, on the other hand, the file is to be free software, there would need
-> to be a clear grant of some free software license to that work.
-> 
-> Given the confusion over this file, I would consider it a significant
-> risk to just assume we have GPLv2 permissions without being told that
-> explicitly by the copyright holder. Rather, the reason we are seeking a
-> clearly-granted free license for this one file, is because we are trying
-> to replace a probably non-free file with the same code in it.
-> 
-> It seems we need to keep looking, and in the meantime assume we have no
-> free license in this file.
+On Tue, Feb 12, 2019 at 11:14 AM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+>
+> In remove(), use cancel_delayed_work_sync() to cancel the
+> delayed work. Otherwise there's a chance that this work
+> will continue to run until after the device has been removed.
+>
+> While we're here, fix the deallocation order in remove(),
+> to correspond to the inverse of the probe() allocation
+> order. This guarantees that any remaining work can run
+> to completion with all driver structures still intact.
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+> ---
+>  drivers/power/supply/ds2782_battery.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply/ds2782_battery.c
+> index 019c58493e3d..5853a66ff246 100644
+> --- a/drivers/power/supply/ds2782_battery.c
+> +++ b/drivers/power/supply/ds2782_battery.c
+> @@ -321,15 +321,14 @@ static int ds278x_battery_remove(struct i2c_client *client)
+>         struct ds278x_info *info = i2c_get_clientdata(client);
+>
+>         power_supply_unregister(info->battery);
+> +       cancel_delayed_work_sync(&info->bat_work);
+>         kfree(info->battery_desc.name);
+> +       kfree(info);
+>
+>         mutex_lock(&battery_lock);
+>         idr_remove(&battery_id, info->id);
 
-FWIW, fio.c includes the following mention:
+argh, just a minute !
 
- * The license below covers all files distributed with fio unless otherwise
- * noted in the file itself.
-
-followed by the GPL v2 license. I'll go through and add SPDX headers to
-everything to avoid wasting anymore time on this nonsense.
- 
--- 
-Jens Axboe
-
+>         mutex_unlock(&battery_lock);
+>
+> -       cancel_delayed_work(&info->bat_work);
+> -
+> -       kfree(info);
+>         return 0;
+>  }
+>
+> --
+> 2.17.1
+>
