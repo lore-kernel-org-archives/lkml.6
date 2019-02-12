@@ -2,83 +2,122 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203FCC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39D5C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE05E2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB8C214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 12:53:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="YTfimmhx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbfBLMva (ORCPT
+        id S1729189AbfBLMxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 07:51:30 -0500
-Received: from mga06.intel.com ([134.134.136.31]:9890 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbfBLMv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 07:51:29 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 04:51:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="274418848"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga004.jf.intel.com with SMTP; 12 Feb 2019 04:51:25 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 12 Feb 2019 14:51:25 +0200
-Date:   Tue, 12 Feb 2019 14:51:25 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 12/28] thunderbolt: Add functions for allocating and
- releasing hop IDs
-Message-ID: <20190212125125.GG7875@lahna.fi.intel.com>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-13-mika.westerberg@linux.intel.com>
- <20190210121353.fw7gj4pm7ce3flvf@wunner.de>
- <20190211083043.GT7875@lahna.fi.intel.com>
- <20190212124333.hgrnm6owtuqzp4iu@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212124333.hgrnm6owtuqzp4iu@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 12 Feb 2019 07:53:00 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38879 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbfBLMxA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 07:53:00 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so1264286plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 04:53:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=gudcleFdCAiHH9g+9VtM4J6qJ0j7S0V6CHy56B+EYRc=;
+        b=YTfimmhx4jpOCAbeeaUifO8WlUnRge+kE9030Pf7O/nvyg5BAPn51eeBPxdrAgNYK2
+         FSJk//xJeKoU6MIR5qhswHQVXA+e3ZAUVllnh4FQHjNiaBpyRKo2nLPXXkKHeJBaT2CD
+         yS6MoM2d2bnzC0F0ZWWJ14sDbEfIMiBSG5cBhw9MG6XaT+HyYcGFpH+IwxSVMZ3gkcAh
+         z0lWnjWnHwfQuV8+sEAfcrNcw8UHIXGbp0HjHheKuMLUXHXtnn2X4kmqliuN42bLKfyC
+         lnT8KdIKIhiTiQmDD+B0KGgOzpnQeLqnCvSG1fGN+Bt+AHbAhwQEOT3tm+XFqjzDL/tb
+         PQkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gudcleFdCAiHH9g+9VtM4J6qJ0j7S0V6CHy56B+EYRc=;
+        b=Lp+cJxlKn2lGQf0o0SOk2cSrrBS8yzjj/Dx0qkVSMhxUXW9Ag/ldFMNbv1SRm4e79k
+         bYtaawVzgDM965u3b11VNh5j60hZP8UYmpoIKpt8JXP4L00TrE/Lfghfm5yaYtSca9Af
+         ZYnYvVcs2QSvz/QZhYcvi0LEYBadYHr7Jojb2viY6tybIYcLvXD5iHAIpEHYxgSlFGN+
+         MpcnBSFgqq0QfoYzVhtnGmWW1SXwgFzduWijCzWXN6/H+hV0nVCiGVhMm9okgqPnx2f+
+         dQ4FGvQGGeAjh8E7zMhrzXkEEGfeOOaOtMDrwUdRSJN/CMVPjiYD8zeGFm4wEAXfA1v2
+         3a/Q==
+X-Gm-Message-State: AHQUAuZtnIBRG90Pj9vZ2/lvOcFNuNRE8gvGEekRbUc18hSaiNGLukGg
+        yZW46H89Td3P13JykvxZBvSUgA==
+X-Google-Smtp-Source: AHgI3IZsso0hWlaIOFVRBJoXBZvqmsEO+YefkciCgmtmkZ0+j6xKZih3/WqHfAJXN9AWAYiRWGvPSA==
+X-Received: by 2002:a17:902:be10:: with SMTP id r16mr3915636pls.304.1549975979427;
+        Tue, 12 Feb 2019 04:52:59 -0800 (PST)
+Received: from localhost.localdomain ([49.207.48.205])
+        by smtp.gmail.com with ESMTPSA id z67sm27894828pfd.188.2019.02.12.04.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 04:52:58 -0800 (PST)
+From:   Anup Patel <anup@brainfault.org>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anup Patel <anup@brainfault.org>
+Subject: [PATCH v6 0/4] IRQ affinity support in PLIC driver
+Date:   Tue, 12 Feb 2019 18:22:42 +0530
+Message-Id: <20190212125246.69239-1-anup@brainfault.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 01:43:33PM +0100, Lukas Wunner wrote:
-> On Mon, Feb 11, 2019 at 10:30:43AM +0200, Mika Westerberg wrote:
-> > On Sun, Feb 10, 2019 at 01:13:53PM +0100, Lukas Wunner wrote:
-> > > If there are two Macs at the ends of the daisy-chain with Thunderbolt
-> > > devices in-between, the other Mac may already have established tunnels
-> > > to some of the devices and therefore has occupied hop entries in the
-> > > devices' path config space.  How do you ensure that you don't allocate
-> > > the same entries and overwrite the other Mac's hop entries, thereby
-> > > breaking its tunnels?
-> > 
-> > If the other Mac has enumerated the device (set the upstream port,
-> > route, depth) then the other Mac cannot access the device. You get an
-> > error (we deal with that in the later patch in the series when we
-> > identify XDomain connections). The Hop ID allocation is only relevant in
-> > a single domain.  Crossing one needs to have protocol such as we have in
-> > case of ThunderboltIP to negotiate Hop IDs used in the link between two
-> > domains.
-> 
-> Understood now, thanks.  (Well, in part at least.)
-> 
-> It looks like there's a race condition currently in tb_switch_configure()
-> wherein two machines on the daisy chain may write the config simultaneously
-> and overwrite each other's changes.  Isn't there some kind of synchonization
-> mechanism available to prevent such an outcome?
+This patchset primarily adds IRQ affinity support in PLIC driver and
+other improvements.
 
-AFAICT that's expected. The host that first enumerated the device wins.
+It gives mechanism for explicitly route external interrupts to particular
+CPUs using smp_affinity attribute of each Linux IRQs. Also, we can now
+use IRQ balancer from kernel-space or user-space.
+
+The patchset is tested on QEMU virt machine. It is based on Linux-5.0-rc6
+and can be found at riscv_plic_irq_affinity_v6 branch of:
+https://github.com/avpatel/linux.git
+
+Changes since v5:
+ - Dropped PATCH2 based on discussion with Christoph
+
+Changes since v4:
+ - Use "if (force)" instead of "if (!force)" in PATCH5
+
+Changes since v3:
+ - Dropped PATCH2
+ - Added PATCH to not inline plic_toggle() and plic_irq_toggle()
+ - Moved PATCH3 changes to PATCH6
+ - Used WARN_ON_ONCE() instead of WARN_ON() in PATCH5
+
+Changes since v2:
+ - Fixed incorrect address of enable registers using sizeof(u32) in PATCH1
+ - Retained comment about need for locking in PATCH1
+ - Split PATCH2 into two patches
+ - Split PATCH3 into two patches
+ - Minor fix in commit description of PATCH4
+
+Changes since v1:
+ - Removed few whitspace changes from PATCH1
+ - Keep use of DEFINE_PER_CPU() as it is
+
+Anup Patel (4):
+  irqchip: sifive-plic: Pre-compute context hart base and enable base
+  irqchip: sifive-plic: Add warning in plic_init() if handler already
+    present
+  irqchip: sifive-plic: Differentiate between PLIC handler and context
+  irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
+
+ drivers/irqchip/irq-sifive-plic.c | 111 +++++++++++++++++++-----------
+ 1 file changed, 72 insertions(+), 39 deletions(-)
+
+-- 
+2.17.1
+
