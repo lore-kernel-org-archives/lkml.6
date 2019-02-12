@@ -2,147 +2,111 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC6BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21B3C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFCD82070C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0065218AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 07:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549956623;
-	bh=VkjIGW1ndGK0G6h3re8+lD4IW+9MML32Do/g8pRJ+X0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=jQUICMY9iDTXMn3RRXRhNytPGjLSrqscV/pC9ndXIaen8uCTNmsXXkEOn49FsfloF
-	 yQjU036ifnm1Bh2YDqv/EdBJ1yeKT1uN2vVnOtmJwhLeETZB+PgkuJNuJQeJsfixzR
-	 OrQJuyFgtUJoDAP5U0k6I2LuThgh6fgVc3BHEWlw=
+	s=default; t=1549957260;
+	bh=22c6w0mM8SX1qrkqCwOkIr6+XXGxbLmpsxYY+44otTM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ULpPu2DSGeu1GLaH0D0vp5BkAMB7D4z3lwenzG+0HgECddkRBbY3KKKRje0rnCmUJ
+	 sRBY7kisT5XqiU2plCR1YKOIrdSAt8kDYEQocJ+Cajqj7Y0bfGoSaCcTtN+HIe+GAP
+	 6an71dzXzhSbKan6+KipnJs3j9RkOP588ujNjNj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfBLHaW (ORCPT
+        id S1727592AbfBLHlA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:30:22 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:58007 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726040AbfBLHaV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:30:21 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7538E231BB;
-        Tue, 12 Feb 2019 02:30:20 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 12 Feb 2019 02:30:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=wrJoYBO97LlCKkoip
-        juoC/+8a4eB+DEm6P5r7lEfh4k=; b=C+nUTRMs5xJcTWDTuihsSpFY2/U9x+D/F
-        bRQk86XyodKJg84SECJSaWxNnPvSeDsxa7JIvCxMj7QBoIFhxl/28zxmP1zL0k1P
-        kJKUDNQkdPeorLVNUWGHkyCbL2y0CYzi3JGpQHLcDF1aWHXzcDeKBxvFJcrpNHZC
-        COc678TvnVkYaeby/7IkQ1/wP1EhyoN4rZcUMF35PAZlsyGA37/SPqhgPZN5iXDt
-        yoeesvha4wGqLUZltAB58SEjCDMigw6CyiLUatzmjlKTnfemPi3hr8tDZC0FTkpk
-        nBnLTWpU4Y6eYJic1NkFmxStr6EyMeZrXjynvrlspGMRinJxcutXQ==
-X-ME-Sender: <xms:C3ZiXEu8CRAv8tXqKOY60TUJ79fGSXZ05V9SFGVkOhFEe8cE9lCAWQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddttddguddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
-    fedttdenucenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepfd
-    fvohgsihhnucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhg
-    qeenucfkphepuddvgedrudejuddrvdefrdduheenucfrrghrrghmpehmrghilhhfrhhomh
-    epthhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:C3ZiXPEYKk9fioYjs1EQjO6G-a9OoYq562vpz-3iK6N1UYznYCQoVw>
-    <xmx:C3ZiXFXq99olg93aRXWeATYMamt8Aok7wFkTePAHOD532n7vyM0AaQ>
-    <xmx:C3ZiXK03UGtjcgEdRBfM5ZuBWNoEcmixtCb4cG8t40rQA0I1Xy1zgg>
-    <xmx:DHZiXC7pVmjjDnSQRjbGCEHi81wEOHTOIOib9IQ_qkJvrbSPRuE1Yg>
-Received: from eros.localdomain (124-171-23-15.dyn.iinet.net.au [124.171.23.15])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0137CE4597;
-        Tue, 12 Feb 2019 02:30:17 -0500 (EST)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xarray: Document erasing entries during iteration
-Date:   Tue, 12 Feb 2019 18:29:58 +1100
-Message-Id: <20190212072958.17373-1-tobin@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Feb 2019 02:41:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbfBLHk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 02:40:59 -0500
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BFDF218DE;
+        Tue, 12 Feb 2019 07:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549957258;
+        bh=22c6w0mM8SX1qrkqCwOkIr6+XXGxbLmpsxYY+44otTM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=y58azOvoWqElTWDvVmuiRoJh4KwcPcT4uFU0+1yQNDN4wRKy/7VHeARcESubKdFcW
+         uH1avxPyyAo6X4QqIlAWgUxw/HvEhxusBktsUJ9q+uURFMU3br3uUhJT8RHhjXFbCa
+         a9ZzmNlV8XFIW6/etx3O92dZxC8tZEftz2kW0WGk=
+Received: by mail-lj1-f170.google.com with SMTP id z25-v6so1329918ljk.7;
+        Mon, 11 Feb 2019 23:40:58 -0800 (PST)
+X-Gm-Message-State: AHQUAubPMH/zoj5qObdSjG+mFWAEBiJPyHJy1CocIz3oMzlTLEqNoeTC
+        qQYQ/MK8UjfH4V+BWzy5clJ3TAiwW/OYzufD2rM=
+X-Google-Smtp-Source: AHgI3IYwJedyNAOZQ2WU2J994ecuC/FkCcLV/qm178dahnUgp/BRGPZisdHjKBuzxAX5sTIwF3t9wO0Nwtilj7QiSgc=
+X-Received: by 2002:a2e:890b:: with SMTP id d11-v6mr1531161lji.113.1549957256391;
+ Mon, 11 Feb 2019 23:40:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190211181531.GA3238@embeddedor>
+In-Reply-To: <20190211181531.GA3238@embeddedor>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 12 Feb 2019 08:40:45 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+Message-ID: <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The XArray is, in a way, a replacement data structure for linked lists,
-as such, on first use developers may wonder if it is safe to remove
-items while iterating over the array.
+On Mon, 11 Feb 2019 at 19:40, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+>
+> This patch fixes the following warnings:
+>
+> drivers/clk/samsung/clk-s3c2443.c: In function =E2=80=98s3c2443_common_cl=
+k_init=E2=80=99:
+> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall=
+ through [-Wimplicit-fallthrough=3D]
+>    samsung_clk_register_alias(ctx, s3c2450_aliases,
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      ARRAY_SIZE(s3c2450_aliases));
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
+>   case S3C2416:
+>   ^~~~
+>
+> Warning level 3 was used: -Wimplicit-fallthrough=3D3
+>
+> Notice that, in this particular case,  the code comment is modified
+> in accordance with what GCC is expecting to find.
+>
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 
-For example, this is fine:
+I saw this in multiple places already and I think fix is wrong. The
+point is that the code is correct - the fall through is marked
+properly.
 
-	DEFINE_XARRAY(things);
+It is just the GCC which has to be fixed not the code. You want to
+adjust the code for specific version of GCC and what if GCC changes
+its warning? For example GCC might require "fall through: "... or any
+other syntax. Another point - what about clang's syntax?
 
-	void cleanup()
-	{
-		struct thing *thing;
-		unsigned long index;
-
-		xa_for_each(&things, index, thing)
-			xa_erase(&things, index);
-	}
-
-Document this feature explicitly in the docs and also for the macro
-definition.
-
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
-
-Hi Willy,
-
-I had my first go using the XArray today and during that I wondered if
-it was safe to remove items during iteration.  Conceptually it seems
-fine and it seemed to work just fine in code - is this something people
-should not be doing for any reason?  Is this the best way to traverse
-the tree and get every thing just to erase it?  Are we even supposed to
-be thinking this is a tree or should we just be thinking it is an array?
-
-(As you might have guessed I _still_ don't know exactly how a radix tree
-works :)
-
-Oh, and FTR the XArray is hot - good effort man.
-
-thanks,
-Tobin.
-
-
- Documentation/core-api/xarray.rst | 3 ++-
- include/linux/xarray.h            | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-index 5d54b27c6eba..2578e0bdaa17 100644
---- a/Documentation/core-api/xarray.rst
-+++ b/Documentation/core-api/xarray.rst
-@@ -97,7 +97,8 @@ You can copy entries out of the XArray into a plain array by calling
- :c:func:`xa_extract`.  Or you can iterate over the present entries in
- the XArray by calling :c:func:`xa_for_each`.  You may prefer to use
- :c:func:`xa_find` or :c:func:`xa_find_after` to move to the next present
--entry in the XArray.
-+entry in the XArray.  It is safe to call :c:func:`xa_release` on entries
-+as you iterate over the array using :c:func:`xa_for_each`.
- 
- Calling :c:func:`xa_store_range` stores the same entry in a range
- of indices.  If you do this, some of the other operations will behave
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 5d9d318bcf7a..1f8974281a0a 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -407,6 +407,8 @@ static inline bool xa_marked(const struct xarray *xa, xa_mark_t mark)
-  * you should use the xas_for_each() iterator instead.  The xas_for_each()
-  * iterator will expand into more inline code than xa_for_each().
-  *
-+ * It is safe to erase entries from the XArray as you iterate over it.
-+ *
-  * Context: Any context.  Takes and releases the RCU lock.
-  */
- #define xa_for_each(xa, index, entry) \
--- 
-2.20.1
-
+Best regards,
+Krzysztof
