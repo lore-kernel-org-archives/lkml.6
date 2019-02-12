@@ -2,51 +2,51 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64566C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5E1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2197321905
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1564D222C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 19:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549998698;
-	bh=IPJOsrQhcYA9nEJxppfXW5ekczl11u2uR+0+JhMOq7k=;
+	s=default; t=1549998745;
+	bh=ApG+XFbVUeB9kRK7kR/51mjNC0Eay2PRw/AGiZJw+w4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EovsClA+b5DIYLuPZe3mjvzXml7xEoT3xZWVIheWxauEUl13Ft+7VvIS4tJ/XJbkV
-	 Q7XEJ2PtJyX+eAsOImXohf8lW0DAmlAf6G4uZot+L4iRUAFh0AO4kpgX84h4IQ3ZYZ
-	 PVgy8rp+tkRMNYG+hZdin+Wh48yalQFwhj0t/j34=
+	b=iRPxAH7rs8qUAt0Xkh6Cs/v0rfS6XdL2/T9wX1v5jp4KvHbqjvsfO7YgiiAlP7WGz
+	 5BjAJgEc/sGNw6vIoLsPtyBw0TP/oF6p0scYcnhv3L5PH6hu2voef+6m+azmYoGYOw
+	 b7/T88Y5KS6OhAswuD5FOds5cuTBBcLo8YxA0tlU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbfBLTLg (ORCPT
+        id S1730930AbfBLTMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 14:11:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57056 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 14:12:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfBLTLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 14:11:36 -0500
+        id S1726748AbfBLTMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 14:12:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E5E521905;
-        Tue, 12 Feb 2019 19:11:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27DAB21905;
+        Tue, 12 Feb 2019 19:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549998695;
-        bh=IPJOsrQhcYA9nEJxppfXW5ekczl11u2uR+0+JhMOq7k=;
+        s=default; t=1549998742;
+        bh=ApG+XFbVUeB9kRK7kR/51mjNC0Eay2PRw/AGiZJw+w4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FMxTGlGvWh1C/nWUipnKtxd4uk0N6BkVyiPROheeO/ZEip0fRO9rL3/rPL1B6s/zW
-         OVD033l0bbo6O7WtWzhz9tSQuVeGdRchj5giIbNlT/u5hKRXuSUvXmdJh/+R+zsoe7
-         jPWNzQGiX+KgeGWqdrVmUZFwE8Ns/LW2zD9glioY=
-Date:   Tue, 12 Feb 2019 20:11:33 +0100
+        b=srcDGxNS31/YWGMYqK8nr7pN8mrTEZaPHSGedyaCLAydD/IkJuGIZx3jaekE8c9IR
+         T6+5iNcPQtCjFxyfr5gnGQmYqnV5FRMdAUJl0koWvF/tc7UHtEzCXxIQNBJPe0Ko/e
+         opjNTIjUVn+p1kIABAXp23G2Npxen9V39/ql49yQ=
+Date:   Tue, 12 Feb 2019 20:12:19 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Xiang Xiao <xiaoxiang781216@gmail.com>
 Cc:     alexander.shishkin@linux.intel.com,
         andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
         Xiang Xiao <xiaoxiang@xiaomi.com>
 Subject: Re: [v2] lib/string: add memrchr function
-Message-ID: <20190212191133.GA22246@kroah.com>
+Message-ID: <20190212191219.GB22246@kroah.com>
 References: <1549994809-27479-1-git-send-email-xiaoxiang@xiaomi.com>
  <1549997683-27986-1-git-send-email-xiaoxiang@xiaomi.com>
 MIME-Version: 1.0
@@ -77,8 +77,21 @@ On Wed, Feb 13, 2019 at 02:54:43AM +0800, Xiang Xiao wrote:
 >  include/linux/string.h |  1 +
 >  lib/string.c           | 21 +++++++++++++++++++++
 >  2 files changed, 22 insertions(+)
+> 
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 7927b87..f380f4b 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -167,6 +167,7 @@ static inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
+>  	memcpy(dst, src, cnt);
+>  }
+>  #endif
+> +void *memrchr(const void *s, int c, size_t n);
+>  void *memchr_inv(const void *s, int c, size_t n);
+>  char *strreplace(char *s, char old, char new);
 
-Don't add new apis without any users.
+Also, if you really need this, why not also provide the arch-specific
+versions as well?
 
 thanks,
 
