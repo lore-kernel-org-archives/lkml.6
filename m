@@ -2,239 +2,76 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCF2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787E1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7374D222BE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AA8F222BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 18:53:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UMnLqt3y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbfBLSxG (ORCPT
+        id S1730837AbfBLSxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:53:06 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:37691 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbfBLSxF (ORCPT
+        Tue, 12 Feb 2019 13:53:38 -0500
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:49423 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbfBLSxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:53:05 -0500
-Received: by mail-it1-f199.google.com with SMTP id t18so6290932itk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:53:04 -0800 (PST)
+        Tue, 12 Feb 2019 13:53:38 -0500
+Received: by mail-pl1-f202.google.com with SMTP id w20so2828977ply.16
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 10:53:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=HJwoHH5upbv2k0JUlQRVkigDDTF/W2TuTsyV+nURors=;
+        b=UMnLqt3yWYpqF9G1mhnJKpE9rpwQWYhpwrug9kt6e3nbE+srY0w+8Tb7e5gIpoJHJ4
+         6G4fP/ezEL8bAEVuxssgc+tIQWviWGj0UZKlV9HvCDXJWmTheVc18OzlQW3ks1ENRBiW
+         l6wyEJuvszteGAF8+VK60doB9p8xDAODJdAsk9oxAJIZNS82btQsGQyo/ufRpV5jZzwy
+         1ZoCcsmXU/Noqgdx6qhuI5QaFDWF6o5JcPkm52gp5v2kZDbPvRLemkv7yCk8wzCbCTZB
+         tGGmVy+InzfZ/LX/ye97jjPjmvlhUAL9jm/b9MyJ6RDqXhvz2dgB3nP5prad9eC+gIIG
+         Vszg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ImCQTuFBewZOp25d5spuYB3HPJdIM+9X1htAC9pHj3I=;
-        b=PWm5j/ghuwrF4osTlN5g2Ul6Kf1ifTbdqJx8PA8N3mcVNp7GNLwEwrm9IBjSfSJLoF
-         +zhPhuKzgEBarYLRs4O4Zv/JIyM1Fqy+16FXHPqg3Db+mTm43G2J3lSz2JDbsqu7Ev6J
-         OzfpN9o7/jpEg0/QArVs44IEn8N30t7ev7CXmM87fsq8OzzxUao96sMLQN8cXkDkzfXa
-         DhvnZ+/gwoVR2TG3PeorxJcTIk1/EvgFgLIPhoGha6ynkIi5SqUwK6AdPUCRa/gqBWA6
-         7wcaNDndC9hH+J+PpFkTVPkl9Dtffn0JQPgnXYOZuCu6axOo3apwH8YKggzQCqwP3+5O
-         MuqA==
-X-Gm-Message-State: AHQUAubtR5/gtvw5tUKE55O6AeAL1UVdNF17M4nGe4m1cRPHoS0lpPlD
-        qW4mKqdQbNCoY3x8jCqHhmb36EQOwl8gQDvf+uf4hMDspa13
-X-Google-Smtp-Source: AHgI3IaH27TEPP9l/lg4cO+rWR4OSNbs1+TiH15lY8AklbeHJeSLT0obrtPL6qh8xTHMvAZ7lSOH2hDE/cwcwpE7rSGuCDXRtHkT
-MIME-Version: 1.0
-X-Received: by 2002:a02:347:: with SMTP id y68mr3110162jad.9.1549997584060;
- Tue, 12 Feb 2019 10:53:04 -0800 (PST)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=HJwoHH5upbv2k0JUlQRVkigDDTF/W2TuTsyV+nURors=;
+        b=B3WihPc6l/CTzN356rKOgQ4ujhv0uOKLbtMg0nsYFPoN0X2BZ68BFT2vajAsrwSHsF
+         cNv/BWtq2BxaW6CVRXfwwN5APZvhJRDouOynK1KzdfO/KbEhxLsjW155rEH7O6FLQv86
+         IUsmM45tWdiN8JCGgbd1XN1VRFEat3WnWKiEl+NlntNMiGcIv1P6ovI94Csljtspzx4p
+         lbOKKIfoQziWP/JWa5/TcgTpr2DFFILddFFq+pGd+5Hmzsb7CjCD4neuzfY7xqNodtck
+         7QUqQQy6ptu+eiXaRKrn0y0O6GDxOQj6hDrYHmfpZupDUEPSb1MqNyg51hLWlh+PymPS
+         pMTg==
+X-Gm-Message-State: AHQUAubkyPjffNAoeDm5IB2ZD3aBh9/j9tGZ22bnfMAegdYeWgfffMeN
+        SnbVdPmYeanZ+tWkC6wRociogAM6acIIhTGWgd5bgw==
+X-Google-Smtp-Source: AHgI3IaiKXGbWYcmyoW9dSJ6dsLDxiyC4e7C6xLCZK69nCXS3ZspHLzPqNANqNu9SCyhSXeR8f6EzmmtoutXKTC6Pnwyiw==
+X-Received: by 2002:aa7:8d54:: with SMTP id s20mr1881454pfe.78.1549997617696;
+ Tue, 12 Feb 2019 10:53:37 -0800 (PST)
 Date:   Tue, 12 Feb 2019 10:53:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000066aa5f0581b6effe@google.com>
-Subject: KASAN: use-after-free Read in rt_cache_valid
-From:   syzbot <syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Message-Id: <20190212185305.112847-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+Subject: [PATCH v1 0/1] of: unittest: unflatten device tree on UML when testing
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     robh+dt@kernel.org, frowand.list@gmail.com, mcgrof@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This patch set unflattens device trees when running DT's unittest. It is
+a follow up to
+https://www.spinics.net/lists/linux-kselftest/msg05454.html part of the
+KUnit RFC v3 thread
+(https://www.spinics.net/lists/linux-kselftest/msg05431.html). Rob asked
+me to submit this patch separately along with some modifications.
 
-syzbot found the following crash on:
+-- 
+2.20.1.791.gb4d0f1c61a-goog
 
-HEAD commit:    aa0c38cf39de Merge branch 'fixes' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1460eca7400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=c4c4b2bb358bb936ad7e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1197cb88c00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com
-
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-==================================================================
-BUG: KASAN: use-after-free in rt_cache_valid+0x158/0x190  
-net/ipv4/route.c:1510
-Read of size 2 at addr ffff88809bfce836 by task udevd/7435
-
-CPU: 1 PID: 7435 Comm: udevd Not tainted 5.0.0-rc6+ #69
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load2_noabort+0x14/0x20 mm/kasan/generic_report.c:133
-  rt_cache_valid+0x158/0x190 net/ipv4/route.c:1510
-  __mkroute_output net/ipv4/route.c:2260 [inline]
-  ip_route_output_key_hash_rcu+0x89d/0x30e0 net/ipv4/route.c:2492
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_route_output_key_hash+0x212/0x380 net/ipv4/route.c:2321
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __ip_route_output_key include/net/route.h:124 [inline]
-  ip_route_output_flow+0x28/0xc0 net/ipv4/route.c:2576
-  ip_route_output_key include/net/route.h:134 [inline]
-  tipc_udp_xmit.isra.0+0x55d/0xcc0 net/tipc/udp_media.c:173
-Enabling of bearer <udp:syz1> rejected, already enabled
-  tipc_udp_send_msg+0x295/0x4a0 net/tipc/udp_media.c:247
-  tipc_bearer_xmit_skb+0x172/0x360 net/tipc/bearer.c:503
-Enabling of bearer <udp:syz1> rejected, already enabled
-  tipc_disc_timeout+0x933/0xd60 net/tipc/discover.c:332
-  call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
-Enabling of bearer <udp:syz1> rejected, already enabled
-  expire_timers kernel/time/timer.c:1362 [inline]
-  __run_timers kernel/time/timer.c:1681 [inline]
-  __run_timers kernel/time/timer.c:1649 [inline]
-  run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __do_softirq+0x266/0x95a kernel/softirq.c:292
-Enabling of bearer <udp:syz1> rejected, already enabled
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-Enabling of bearer <udp:syz1> rejected, already enabled
-RIP: 0010:generic_fillattr+0x54c/0x6e0 fs/stat.c:51
-Code: 7c 24 0c 48 89 fa 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03  
-38 d0 7c 08 84 d2 0f 85 ee 00 00 00 45 8b 64 24 0c 31 ff <41> 81 e4 00 08  
-00 00 44 89 e6 e8 15 21 bf ff 45 85 e4 74 2c e8 8b
-RSP: 0018:ffff88809894fc58 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: ffff88809894fde8 RCX: ffffffff81b0c113
-RDX: 0000000000000000 RSI: ffffffff81b0c146 RDI: 0000000000000000
-RBP: ffff88809894fc78 R08: ffff8880925de340 R09: ffff88809894fde8
-R10: ffffed1013129fcd R11: ffff88809894fe6f R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000800 R15: ffff888098d4d100
-  vfs_getattr_nosec+0x140/0x180 fs/stat.c:82
-  vfs_getattr+0x4b/0x70 fs/stat.c:116
-Enabling of bearer <udp:syz1> rejected, already enabled
-  vfs_statx+0x157/0x200 fs/stat.c:189
-Enabling of bearer <udp:syz1> rejected, already enabled
-  vfs_stat include/linux/fs.h:3171 [inline]
-  __do_sys_newstat+0xa4/0x130 fs/stat.c:339
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-kobject: 'loop0' (000000003275aa21): kobject_uevent_env
-  __se_sys_newstat fs/stat.c:335 [inline]
-  __x64_sys_newstat+0x54/0x80 fs/stat.c:335
-kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fda7f482c65
-Code: 00 00 00 e8 5d 01 00 00 48 83 c4 18 c3 90 90 90 90 90 90 90 90 83 ff  
-01 48 89 f0 77 18 48 89 c7 48 89 d6 b8 04 00 00 00 0f 05 <48> 3d 00 f0 ff  
-ff 77 17 f3 c3 90 48 8b 05 a1 51 2b 00 64 c7 00 16
-RSP: 002b:00007ffefd39a338 EFLAGS: 00000246 ORIG_RAX: 0000000000000004
-Enabling of bearer <udp:syz1> rejected, already enabled
-RAX: ffffffffffffffda RBX: 00007ffefd39a3d0 RCX: 00007fda7f482c65
-RDX: 00007ffefd39a340 RSI: 00007ffefd39a340 RDI: 00007ffefd39a3d0
-RBP: 0000000001125980 R08: 00007ffefd39a3e0 R09: 00007fda7f4d9790
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000001114250
-R13: 0000000000000000 R14: 00007ffefd39a840 R15: 0000000000000001
-Enabling of bearer <udp:syz1> rejected, already enabled
-
-Allocated by task 7724:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-kobject: 'loop0' (000000003275aa21): kobject_uevent_env
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_kmalloc mm/kasan/common.c:496 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
-kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-  kasan_kmalloc mm/kasan/common.c:504 [inline]
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
-Enabling of bearer <udp:syz1> rejected, already enabled
-  kmem_cache_alloc+0x12d/0x710 mm/slab.c:3543
-  dst_alloc+0x10e/0x1d0 net/core/dst.c:105
-  rt_dst_alloc+0x83/0x3f0 net/ipv4/route.c:1566
-  __mkroute_output net/ipv4/route.c:2265 [inline]
-  ip_route_output_key_hash_rcu+0x97d/0x30e0 net/ipv4/route.c:2492
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_route_output_key_hash+0x212/0x380 net/ipv4/route.c:2321
-  __ip_route_output_key include/net/route.h:124 [inline]
-  ip_route_connect include/net/route.h:302 [inline]
-  __ip4_datagram_connect+0x6fb/0x1330 net/ipv4/datagram.c:51
-  __ip6_datagram_connect+0xa6a/0x1390 net/ipv6/datagram.c:152
-kobject: 'loop0' (000000003275aa21): kobject_uevent_env
-  ip6_datagram_connect+0x30/0x50 net/ipv6/datagram.c:273
-  inet_dgram_connect+0x150/0x2e0 net/ipv4/af_inet.c:571
-  __sys_connect+0x266/0x330 net/socket.c:1662
-  __do_sys_connect net/socket.c:1673 [inline]
-  __se_sys_connect net/socket.c:1670 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1670
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-kobject: 'loop0' (000000003275aa21): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-
-Freed by task 0:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
-  __cache_free mm/slab.c:3487 [inline]
-  kmem_cache_free+0x86/0x260 mm/slab.c:3749
-  dst_destroy+0x2a0/0x3c0 net/core/dst.c:141
-  dst_destroy_rcu+0x16/0x19 net/core/dst.c:154
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2452 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
-  rcu_process_callbacks+0x928/0x1390 kernel/rcu/tree.c:2754
-cgroup: fork rejected by pids controller in /syz0
-  __do_softirq+0x266/0x95a kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff88809bfce800
-  which belongs to the cache ip_dst_cache of size 160
-The buggy address is located 54 bytes inside of
-  160-byte region [ffff88809bfce800, ffff88809bfce8a0)
-The buggy address belongs to the page:
-page:ffffea00026ff380 count:1 mapcount:0 mapping:ffff88821af8d1c0 index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea000297e848 ffff8880a68abd48 ffff88821af8d1c0
-raw: 0000000000000000 ffff88809bfce000 0000000100000010 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88809bfce700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88809bfce780: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff88809bfce800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                      ^
-  ffff88809bfce880: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff88809bfce900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
