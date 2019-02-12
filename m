@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE83C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33EBC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0317222B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74421222B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 17:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549991746;
-	bh=7PxGbo3ThfFvVxxmdhESNQFl20XJ1rVOL8kAmHr7fyI=;
+	s=default; t=1549991752;
+	bh=3gjAtMtyTIQpoF1VYJpJ3AwZQ9n5+VpScVt5FF0m5ac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jgUYEWNnUU7hFM2tyKjc2vW+oGzi4k2VOIBlgyPXGfdeC5CcqZTnpjbrW3Iti3wdW
-	 /EWm8u+US1mdrEsjD8DstjNA/s4urZMx1ZOV2mNoJqNuavtpAC1cHJNEKGjU6IZA6D
-	 sYV5xmsYpmwXN9eQ98fgmpD75xsvjwmiB8BliJ3k=
+	b=Pylv4OI6c6JxHz71zk52nI+3sLbA4V+YTnEIIH8dA4e3SGF3klWj0G9kO0nSY2eGo
+	 3iDcRAsect4OS07wuq0HPxS86s+fLnGlWCCHjddvJiB0ZZNM0sCZ6zdSNORopjMNSd
+	 nc0xzv+m9Bt/tHJnYeifeHrEfYPxR6j5vRa1XCg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfBLRPp (ORCPT
+        id S1731634AbfBLRPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:15:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 12:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731614AbfBLRPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:15:43 -0500
+        id S1730287AbfBLRPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:15:48 -0500
 Received: from lerouge.home (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6A50222AD;
-        Tue, 12 Feb 2019 17:15:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41FD5222AF;
+        Tue, 12 Feb 2019 17:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549991741;
-        bh=7PxGbo3ThfFvVxxmdhESNQFl20XJ1rVOL8kAmHr7fyI=;
+        s=default; t=1549991747;
+        bh=3gjAtMtyTIQpoF1VYJpJ3AwZQ9n5+VpScVt5FF0m5ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nr7TdTLsx7nnKguo/712NX5WVCjyr8OVPtOsidi9uHW5LXFM9s0gqhwGSaTahGopi
-         A/FAnXJ9qKdxxxOyD7cdebpq3RXWztNpkjdV3afLomWCVaoDSgJklLsNab4SXt0MUP
-         7XRw6kqF5S5i96EKU3FFYcMZe53/0ASRoZmRtu9E=
+        b=yXgWu2kGAh6LFBY9z1XDN+F3ZophtMkoNSK4EPZpTH83G/oKQ1scX95ZYB88amGeh
+         157oAnZArLhT8YFxExrXM7P6hi21E4Wm8iotmqJ0MdBQyLRa0gPVtskxNmBrZ9ji5m
+         OjP7sgz+JzTjVQpQHLzjXdIDUTWVYjFOnsnUPTiE=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Pavan Kondeti <pkondeti@codeaurora.org>,
         Ingo Molnar <mingo@kernel.org>,
         Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH 22/32] softirq: Check enabled vectors before processing
-Date:   Tue, 12 Feb 2019 18:14:13 +0100
-Message-Id: <20190212171423.8308-23-frederic@kernel.org>
+Subject: [PATCH 24/32] softirq: Uninline !CONFIG_TRACE_IRQFLAGS __local_bh_disable_ip()
+Date:   Tue, 12 Feb 2019 18:14:15 +0100
+Message-Id: <20190212171423.8308-25-frederic@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212171423.8308-1-frederic@kernel.org>
 References: <20190212171423.8308-1-frederic@kernel.org>
@@ -64,8 +64,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to process softirqs if none of those pending are
-enabled. Check about that early to avoid unnecessary overhead.
+The common code between both versions of __local_bh_disable_ip(), whether
+CONFIG_TRACE_IRQFLAGS is on or off, is going to grow up in order to
+support vector masking granularity.
+
+Merge these versions together to prepare for that.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
@@ -79,119 +82,73 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- include/linux/interrupt.h |  5 +++++
- kernel/softirq.c          | 21 +++++++++++----------
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ include/linux/bottom_half.h | 10 ----------
+ kernel/softirq.c            | 10 ++++++----
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 346fb1e8e55b..161babfc1a0d 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -508,6 +508,11 @@ static inline void softirq_pending_set_mask(unsigned int pending)
- {
- 	__this_cpu_or(local_softirq_data_ref, pending);
- }
-+
-+static inline int softirq_pending_enabled(void)
-+{
-+	return local_softirq_pending() & local_softirq_enabled();
-+}
- #endif /* local_softirq_pending */
+diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
+index 240419382978..ef9e4c752f56 100644
+--- a/include/linux/bottom_half.h
++++ b/include/linux/bottom_half.h
+@@ -28,17 +28,7 @@ enum
  
- /* map softirq index to softirq name. update 'softirq_to_name' in
+ #define SOFTIRQ_DATA_INIT (SOFTIRQ_ALL_MASK << SOFTIRQ_ENABLED_SHIFT)
+ 
+-
+-
+-#ifdef CONFIG_TRACE_IRQFLAGS
+ extern void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+-#else
+-static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+-{
+-	preempt_count_add(cnt);
+-	barrier();
+-}
+-#endif
+ 
+ static inline void local_bh_disable(void)
+ {
 diff --git a/kernel/softirq.c b/kernel/softirq.c
-index d305b4c8d1a7..a2257a5aaa0b 100644
+index 5fea9e299caf..91dee716e139 100644
 --- a/kernel/softirq.c
 +++ b/kernel/softirq.c
-@@ -181,7 +181,7 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
- 	 */
- 	preempt_count_sub(cnt - 1);
+@@ -102,14 +102,14 @@ static bool ksoftirqd_running(unsigned long pending)
+  * softirq and whether we just have bh disabled.
+  */
  
--	if (unlikely(!in_interrupt() && local_softirq_pending())) {
-+	if (unlikely(!in_interrupt() && softirq_pending_enabled())) {
- 		/*
- 		 * Run softirq if any pending. And do it in its own stack
- 		 * as we may be calling this deep in a task call stack already.
-@@ -250,7 +250,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 	int max_restart = MAX_SOFTIRQ_RESTART;
- 	struct softirq_action *h;
- 	bool in_hardirq;
--	__u32 pending;
-+	__u32 pending, enabled;
- 	int softirq_bit;
+-#ifdef CONFIG_TRACE_IRQFLAGS
+ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+ {
++#ifdef CONFIG_TRACE_IRQFLAGS
+ 	unsigned long flags;
  
+-	WARN_ON_ONCE(in_irq());
+-
+ 	raw_local_irq_save(flags);
++#endif
++	WARN_ON_ONCE(in_irq());
  	/*
-@@ -260,7 +260,8 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 	 * The preempt tracer hooks into preempt_count_add and will break
+ 	 * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
+@@ -123,7 +123,10 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
  	 */
- 	current->flags &= ~PF_MEMALLOC;
+ 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+ 		trace_softirqs_off(ip);
++
++#ifdef CONFIG_TRACE_IRQFLAGS
+ 	raw_local_irq_restore(flags);
++#endif
  
--	pending = local_softirq_pending();
-+	enabled = local_softirq_enabled();
-+	pending = local_softirq_pending() & enabled;
- 	account_irq_enter_time(current);
- 
- 	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_OFFSET);
-@@ -268,7 +269,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 
- restart:
- 	/* Reset the pending bitmask before enabling irqs */
--	softirq_pending_clear_mask(SOFTIRQ_ALL_MASK);
-+	softirq_pending_clear_mask(pending);
- 
- 	local_irq_enable();
- 
-@@ -305,7 +306,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 		rcu_softirq_qs();
- 	local_irq_disable();
- 
--	pending = local_softirq_pending();
-+	pending = local_softirq_pending() & enabled;
- 	if (pending) {
- 		if (time_before(jiffies, end) && !need_resched() &&
- 		    --max_restart)
-@@ -331,7 +332,7 @@ asmlinkage __visible void do_softirq(void)
- 
- 	local_irq_save(flags);
- 
--	pending = local_softirq_pending();
-+	pending = softirq_pending_enabled();
- 
- 	if (pending && !ksoftirqd_running(pending))
- 		do_softirq_own_stack();
-@@ -360,7 +361,7 @@ void irq_enter(void)
- 
- static inline void invoke_softirq(void)
- {
--	if (ksoftirqd_running(local_softirq_pending()))
-+	if (ksoftirqd_running(softirq_pending_enabled()))
- 		return;
- 
- 	if (!force_irqthreads) {
-@@ -409,7 +410,7 @@ void irq_exit(void)
- #endif
- 	account_irq_exit_time(current);
- 	preempt_count_sub(HARDIRQ_OFFSET);
--	if (!in_interrupt() && local_softirq_pending())
-+	if (!in_interrupt() && softirq_pending_enabled())
- 		invoke_softirq();
- 
- 	tick_irq_exit();
-@@ -640,13 +641,13 @@ void __init softirq_init(void)
- 
- static int ksoftirqd_should_run(unsigned int cpu)
- {
--	return local_softirq_pending();
-+	return softirq_pending_enabled();
+ 	if (preempt_count() == cnt) {
+ #ifdef CONFIG_DEBUG_PREEMPT
+@@ -133,7 +136,6 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+ 	}
  }
+ EXPORT_SYMBOL(__local_bh_disable_ip);
+-#endif /* CONFIG_TRACE_IRQFLAGS */
  
- static void run_ksoftirqd(unsigned int cpu)
+ static void __local_bh_enable_no_softirq(unsigned int cnt)
  {
- 	local_irq_disable();
--	if (local_softirq_pending()) {
-+	if (softirq_pending_enabled()) {
- 		/*
- 		 * We can safely run softirq on inline stack, as we are not deep
- 		 * in the task stack here.
 -- 
 2.17.1
 
