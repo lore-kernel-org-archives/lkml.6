@@ -2,147 +2,173 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F8C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7380C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA2D222C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:50:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LKU1HmOI"
+	by mail.kernel.org (Postfix) with ESMTP id 7E5C5222C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 21:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732266AbfBLVuf (ORCPT
+        id S1732353AbfBLVvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 16:50:35 -0500
-Received: from ozlabs.org ([203.11.71.1]:52839 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729056AbfBLVuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 16:50:35 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zbtb1KDbz9s4Z;
-        Wed, 13 Feb 2019 08:50:31 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550008232;
-        bh=49hqv4p3pVPvTZL4Xk70DRB9LX3EPPgatZq97oW67dc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LKU1HmOIO3epGaXa5BAbzIZu8EAwOfV1QHeshXRwkW0JS1+AKMsx8CBPPDBAzgtsa
-         0MOtHYWH+f9R2ecOR1THjx1SpU51riHhA7xoOOXtcQ5MMT3JuBlgiswt2RNxh4gsqa
-         lyBiuxOTxGfviQbL+taiOYZvoQf/trlqgLDySqvpwLEZPPWrCxJ8/+iFrRbCHi1cZw
-         XrKCLeNORMRy6V2LwTd6c3yvMlYTP6gJAoTqB9VBIlk/PxxASF+e2snJGiZ3hGss8A
-         S0Ys8e0/IX4p4TJDiKLeWru/Vglc26P4+dDwtajR3aG3mIM4W8C8LZaxTRxIyJbgLu
-         4+7IaxXXuoehg==
-Date:   Wed, 13 Feb 2019 08:50:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Prateek Patel <prpatel@nvidia.com>,
-        DT <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RESEND PATCH v2] of: fix kmemleak crash caused by imbalance in
- early memory reservation
-Message-ID: <20190213085028.6199594b@canb.auug.org.au>
-In-Reply-To: <CAL_JsqKbCg-rGmLoA3mPv54=LMuQBfevfzL8f2QPVyjN-sNk8w@mail.gmail.com>
-References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
-        <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
-        <20190121143704.GE29504@arrakis.emea.arm.com>
-        <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-        <20190121174234.GC26461@rapoport-lnx>
-        <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
-        <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
-        <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
-        <20190123055414.GA4747@rapoport-lnx>
-        <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
-        <20190123123143.GE4747@rapoport-lnx>
-        <4b8f82c4-7f8f-b814-c1ec-9902e43963f6@free.fr>
-        <617e0d57-342d-4162-bd21-ece18e481d87@free.fr>
-        <CAL_JsqKbCg-rGmLoA3mPv54=LMuQBfevfzL8f2QPVyjN-sNk8w@mail.gmail.com>
+        Tue, 12 Feb 2019 16:51:02 -0500
+Received: from gateway20.websitewelcome.com ([192.185.67.41]:34425 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730224AbfBLVvB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 16:51:01 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 787D3400CDDF6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 15:51:00 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tfxEgnh1D2PzOtfxEgIQVD; Tue, 12 Feb 2019 15:51:00 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=54054 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtfxD-003uD8-U4; Tue, 12 Feb 2019 15:51:00 -0600
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Mark expected switch
+ fall-throughs
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Thierry Escande <thierry.escande@collabora.com>
+References: <20181008172332.GA29816@embeddedor.com>
+ <20181008213004.033e2b29@archlinux>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <5d501344-6c7b-ba27-c72f-250e6d54fef6@embeddedor.com>
+Date:   Tue, 12 Feb 2019 15:50:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JPO/7kBVJB2lzUw1s4ONsFn"; protocol="application/pgp-signature"
+In-Reply-To: <20181008213004.033e2b29@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtfxD-003uD8-U4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:54054
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 46
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JPO/7kBVJB2lzUw1s4ONsFn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi guys,
 
-Hi all,
+I was about to submit this patch again, then I realized I had
+sent it before.
 
-On Tue, 12 Feb 2019 10:03:09 -0600 Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Mon, Feb 11, 2019 at 10:47 AM Marc Gonzalez <marc.w.gonzalez@free.fr> =
-wrote:
-> >
-> > On 04/02/2019 15:37, Marc Gonzalez wrote:
-> > =20
-> > > Cc: stable@vger.kernel.org # 3.15+
-> > > Fixes: 3f0c820664483 ("drivers: of: add initialization code for dynam=
-ic reserved memory")
-> > > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Acked-by: Prateek Patel <prpatel@nvidia.com>
-> > > Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> > > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > > ---
-> > > Resend with DT CCed to reach robh's patch queue
-> > > I added CC: stable, Fixes, and Prateek's ack
-> > > Trim recipients list to minimize inconvenience =20
-> >
-> > I'm confused over commit 3532b3b554a216f30edb841d29eef48521bdc592 in li=
-nux-next
-> > "memblock: drop __memblock_alloc_base()"
-> >
-> > It's definitely going to conflict with the proposed patch
-> > over drivers/of/of_reserved_mem.c
-> >
-> > Rob, what's the next step then? =20
->=20
-> Rebase it on top of what's in linux-next and apply it to the tree
-> which has the above dependency. I'm guessing that is Andrew Morton's
-> tree.
+So, this is a friendly ping.
 
-Yeah, that is in Andrew's "post linux-next" patch series, so if you
-rebase it on top of linux-next and then send it to Andrew with some
-explanation.
+Thanks
+--
+Gustavo
 
-...
-
-Actually, if it is intended for the stable trees, then presumably it is
-intended to go to Linus for the current release?  In which case, the
-patch in Andrew's tree will have to be changed to cope after your patch
-appears in Linus' tree (and therefore, linux-next).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JPO/7kBVJB2lzUw1s4ONsFn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjP6UACgkQAVBC80lX
-0Gxd1Af/X/POcD2JFjdULDi4gafDQGdD7vHNAwxHv1cEsZya9qxI4jaizyGaa8ro
-H302lo5ePJ+agKJg6ioTT1S5627lS/WDvkV2yXViIbhnyGaVHgXjGUzWViqk5vHL
-jMh+fzPeo4y+3mC6Uxr7K63KtETWx5/v8vOpJqkyFi0fec9y40AcdEnJL9rjwk5X
-HojKsTkCYuLVsexYnvKtxQUuS41yOQcImG95dTfXnkcSEQt7BVMnW8O9x9Dsxt9G
-O6on/yAOFOfaXbkFMpUj73diBAonJDgzUH0KJHqPfzP1vTYDsVLVvTRG6FRqT0z+
-K0lciMgb6B0+VFztin/cNle9sPz58A==
-=/0Ru
------END PGP SIGNATURE-----
-
---Sig_/JPO/7kBVJB2lzUw1s4ONsFn--
+On 10/8/18 3:30 PM, Jonathan Cameron wrote:
+> On Mon, 8 Oct 2018 19:23:32 +0200
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> 
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1397962 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Hi,
+> 
+> I'll be honest I'm lost on what the intent of this code actually is...
+> 
+> Gwendal - why do we have a loop with this odd switch statement
+> in it.  Superficially I think we might as well drop the switch
+> and pull those assignments out of the loop.   However, perhaps
+> I'm missing something!
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+>> ---
+>>  drivers/iio/accel/cros_ec_accel_legacy.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
+>> index 063e89e..d609654 100644
+>> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
+>> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+>> @@ -385,8 +385,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
+>>  		switch (i) {
+>>  		case X:
+>>  			ec_accel_channels[X].scan_index = Y;
+>> +			/* fall through */
+>>  		case Y:
+>>  			ec_accel_channels[Y].scan_index = X;
+>> +			/* fall through */
+>>  		case Z:
+>>  			ec_accel_channels[Z].scan_index = Z;
+>>  		}
+> 
