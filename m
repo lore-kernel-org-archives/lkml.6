@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79408C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31B1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483BB21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6955D214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 13:16:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N9TwKyfx"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N28W6ROK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbfBLNQl (ORCPT
+        id S1729824AbfBLNQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 08:16:41 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55284 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729776AbfBLNQe (ORCPT
+        Tue, 12 Feb 2019 08:16:40 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55285 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729794AbfBLNQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 08:16:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so2909038wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 05:16:32 -0800 (PST)
+        Tue, 12 Feb 2019 08:16:36 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so2909097wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 05:16:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2P/9cB+jmoaw2Dnwldpp3xOYGEGj2ZimLHwmer8wLno=;
-        b=N9TwKyfxR4kWTjYcgCqmgbbSUXyvW9k8NyGdGjt5L1rnZzRGcHCA8H7ReNjYztGMkC
-         DS3tm71gbANaJofKpJXeL32aeXjNQxu/6FsDrTznFXobTRUaeywX1Lh5hmzDfYrVPSPn
-         11GWpfDOTy/IXjMOn1TppmzVecx5JTGMxs8zKKJTE543wyRRJB7kf20khvOhCh9ROjrL
-         dY4zs1s/NaKZ6toTD/dRALa+FddeV9M1bsGyrztptLV+ObJ/v7Oq4b8eAhLM7IAcO+yY
-         +xYxQx/1ZMya32Q7kN6gw0478Afg9QVmQspDxa8OUvLIdCOd5cW9m7LZj9PmKllGLWal
-         i1yg==
+        bh=TR8fN5gyVX89LMryH+pTW41FkSfSn7wKIjkzZ06DSdM=;
+        b=N28W6ROKxyftPph12R1t88YbjhjOBrlMgcPrG0FvMKCtBPC6Atv663h47CWzBQZSGb
+         eRZlcduFp1rfLLGTQu1xyMazq4fhrvwjHZ96LwMTWqKab/CcrkLWfnKmI+L+jQpmcCnw
+         o8p12MaRfdy0Q/Ew1a+q7FLC+Fm5soeFU0jxJBlhZqouvHZMYFBP414etfnBPWrcGKe6
+         KvOd7cBy5nWNn/zDWTwQ8GOt9X0YeeXMSPcOzvxgF7fLsrfDMn8teSRkYh7ezgghPfiS
+         mLY+Rxnea9WEcYSMfv5VI5LLBUpGthvQRzTkYg0ToLFw8zM34ZBg02c+Zs7kEnlEKyjj
+         ZWHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2P/9cB+jmoaw2Dnwldpp3xOYGEGj2ZimLHwmer8wLno=;
-        b=UFxHvBmbNlHdcYrZix0k/fsr6PYyBjcyQwFZLLgrwgp5AU1sZljlfAEni5kudIZHVh
-         7EnopaWiX/AdyMK7sRC/pF+LsnrOiUvYEku9gGju1+X9igs0e0Il/57EoHpwyKnGVunO
-         YpOnhq/tWVacWw+kn+IpEekyw7xW1ZD+hthkMl/QcGS/NMLTEOer6Wqh2S+TmwN7itHs
-         A1Y1GtHK671ClUMblz9WakqRqekC7UeA6goQ1SIWGlncLbuXyrnwsMeeWkioOSgoLx3Y
-         iyzUjWN5DKtYkgVhFmnd3tLvI322+a+S2zKowW9uwjFhlmzRibYWuKtnsnD4hQ/v6oBa
-         l5bw==
-X-Gm-Message-State: AHQUAuayi2KO014SmlDOiRVnG6R2Yua1HaPtdK5RLlNc3YsEBxCiG4kw
-        AMN0sFebha69U+cKaZjBeKn8hA==
-X-Google-Smtp-Source: AHgI3IbKcaAuGkqVqhdurCQDKWqdhEPZeudupZK7lofuateHP8vq9Sb7lUGbH3JDa1l9A8K3r7NRdg==
-X-Received: by 2002:a1c:2c6:: with SMTP id 189mr2817107wmc.21.1549977392171;
-        Tue, 12 Feb 2019 05:16:32 -0800 (PST)
+        bh=TR8fN5gyVX89LMryH+pTW41FkSfSn7wKIjkzZ06DSdM=;
+        b=SDKsyLB5r2WQhWCoHY4SL95vb5VmNmDlSgSBKMKtust0shY1rQ35F/vgmzHLJQ46+3
+         O94dt3oMBeDU7rgAcO1lgpeiE0CObN9M7cfdNLyHNxWVHFoBXpBxl8sUJEpdPJYXb/7r
+         mKjO/rDhuOLVmdiqpOvZYcGmL8RP6xlWFl7Y/HVaD0GJEC5QSoCK6tb1zahuKqNjQEFu
+         izVXjhsSkHfXbV6f+mDycpMHwZ2xWVYPGxU7gl2t56hb0Ah61ytKhIJQkp4sfXriwaZc
+         40J3nMGkhDHRaFnFYJ0UnNjOXV+yByN4cOujOuUj/HhCFNmgBAkmqLx63VO6qfcWLxQI
+         M+Vw==
+X-Gm-Message-State: AHQUAuYzjaDtHYQPELIpCoj65WCQrN7pnHraWS9Kr0Wf2YtVzv+e/4y/
+        QOFhBqDyDk50PLc40BACsWhm7Q==
+X-Google-Smtp-Source: AHgI3Ia5vFk+UnINmcrjOvhY3bm2GltlwWF7EI/KakoEYxQqWQlz2OKY2B9KGT8v49/Go9GiDm01UA==
+X-Received: by 2002:a1c:23c4:: with SMTP id j187mr2879130wmj.13.1549977393240;
+        Tue, 12 Feb 2019 05:16:33 -0800 (PST)
 Received: from localhost.localdomain (aputeaux-684-1-38-32.w90-86.abo.wanadoo.fr. [90.86.93.32])
-        by smtp.gmail.com with ESMTPSA id p6sm5478517wre.63.2019.02.12.05.16.30
+        by smtp.gmail.com with ESMTPSA id p6sm5478517wre.63.2019.02.12.05.16.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 05:16:31 -0800 (PST)
+        Tue, 12 Feb 2019 05:16:32 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 6/7] gpio: mockup: change the signature of unlocked get/set helpers
-Date:   Tue, 12 Feb 2019 14:15:59 +0100
-Message-Id: <20190212131600.18960-7-brgl@bgdev.pl>
+Subject: [PATCH v3 7/7] gpio: mockup: rework debugfs interface
+Date:   Tue, 12 Feb 2019 14:16:00 +0100
+Message-Id: <20190212131600.18960-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190212131600.18960-1-brgl@bgdev.pl>
 References: <20190212131600.18960-1-brgl@bgdev.pl>
@@ -79,90 +79,203 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The unlocked variants only get called from places where we already have
-the pointer to the underlying gpio_mockup_chip structure, so take it
-as parameter instead of struct gpio_chip.
+Modify the way the debugfs interface works in gpio-mockup. Introduce
+the concept of dummy pull config which will keep the mockup lines in
+known state. The pull values can be modified by writing to the debugfs
+files corresponding to lines. Lines in input mode always report the
+current pull value, lines in output mode change the line value but
+it will revert back to the one specified by current pull when released.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-mockup.c | 116 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 102 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 433adb3b4617..c498b0fbbec8 100644
+index c498b0fbbec8..6424bd710de5 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -83,10 +83,9 @@ static int gpio_mockup_range_ngpio(unsigned int index)
- 	return gpio_mockup_ranges[index * 2 + 1];
+@@ -47,6 +47,7 @@ enum {
+ struct gpio_mockup_line_status {
+ 	int dir;
+ 	int value;
++	int pull;
+ };
+ 
+ struct gpio_mockup_chip {
+@@ -188,15 +189,57 @@ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+ 	return irq_sim_irqnum(&chip->irqsim, offset);
  }
  
--static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+static int __gpio_mockup_get(struct gpio_mockup_chip *chip,
-+			     unsigned int offset)
+-static ssize_t gpio_mockup_event_write(struct file *file,
+-				       const char __user *usr_buf,
+-				       size_t size, loff_t *ppos)
++static void gpio_mockup_free(struct gpio_chip *gc, unsigned int offset)
++{
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++
++	__gpio_mockup_set(chip, offset, chip->lines[offset].pull);
++}
++
++static ssize_t gpio_mockup_debugfs_read(struct file *file,
++					char __user *usr_buf,
++					size_t size, loff_t *ppos)
++{
++	struct gpio_mockup_dbgfs_private *priv;
++	struct gpio_mockup_chip *chip;
++	struct seq_file *sfile;
++	struct gpio_chip *gc;
++	char buf[3];
++	int val, rv;
++
++	if (*ppos != 0)
++		return 0;
++
++	sfile = file->private_data;
++	priv = sfile->private;
++	chip = priv->chip;
++	gc = &chip->gc;
++
++	val = gpio_mockup_get(gc, priv->offset);
++	snprintf(buf, sizeof(buf), "%d\n", val);
++
++	rv = copy_to_user(usr_buf, buf, sizeof(buf));
++	if (rv)
++		return rv;
++
++	return sizeof(buf) - 1;
++}
++
++static ssize_t gpio_mockup_debugfs_write(struct file *file,
++					 const char __user *usr_buf,
++					 size_t size, loff_t *ppos)
  {
--	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
--
- 	return chip->lines[offset].value;
+ 	struct gpio_mockup_dbgfs_private *priv;
+ 	struct gpio_mockup_chip *chip;
+ 	struct seq_file *sfile;
+ 	struct gpio_desc *desc;
+-	int rv, val;
++	unsigned int irq_type;
++	struct gpio_chip *gc;
++	struct irq_sim *sim;
++	int rv, val, curr;
++
++	if (*ppos != 0)
++		return -EINVAL;
+ 
+ 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
+ 	if (rv)
+@@ -206,24 +249,68 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 
+ 	sfile = file->private_data;
+ 	priv = sfile->private;
+-	desc = priv->desc;
+ 	chip = priv->chip;
++	gc = &chip->gc;
++	desc = &gc->gpiodev->descs[priv->offset];
++	sim = &chip->irqsim;
++
++	mutex_lock(&chip->lock);
+ 
+-	gpiod_set_value_cansleep(desc, val);
+-	irq_sim_fire(&chip->irqsim, priv->offset);
++	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
++	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
++		curr = __gpio_mockup_get(chip, priv->offset);
++		if (curr == val)
++			goto out;
++
++		irq_type = irq_sim_get_type(sim, priv->offset);
++		if ((val == 1 && (irq_type & IRQ_TYPE_EDGE_RISING)) ||
++		    (val == 0 && (irq_type & IRQ_TYPE_EDGE_FALLING)))
++			irq_sim_fire(&chip->irqsim, priv->offset);
++	}
++
++	/* Change the value unless we're actively driving the line. */
++	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
++	    !test_bit(FLAG_IS_OUT, &desc->flags))
++		__gpio_mockup_set(chip, priv->offset, val);
++
++out:
++	chip->lines[priv->offset].pull = val;
++	mutex_unlock(&chip->lock);
+ 
+ 	return size;
  }
  
-@@ -96,7 +95,7 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- 	int val;
+-static int gpio_mockup_event_open(struct inode *inode, struct file *file)
++static int gpio_mockup_debugfs_open(struct inode *inode, struct file *file)
+ {
+ 	return single_open(file, NULL, inode->i_private);
+ }
  
- 	mutex_lock(&chip->lock);
--	val = __gpio_mockup_get(gc, offset);
-+	val = __gpio_mockup_get(chip, offset);
- 	mutex_unlock(&chip->lock);
+-static const struct file_operations gpio_mockup_event_ops = {
++/*
++ * Each mockup chip is represented by a directory named after the chip's device
++ * name under /sys/kernel/debug/gpio-mockup/. Each line is represented by
++ * a file using the line's offset as the name under the chip's directory.
++ *
++ * Reading from the line's file yields the current *value*, writing to the
++ * line's file changes the current *pull*. Default pull for mockup lines is
++ * down.
++ *
++ * Examples:
++ * - when a line pulled down is requested in output mode and driven high, its
++ *   value will return to 0 once it's released
++ * - when the line is requested in output mode and driven high, writing 0 to
++ *   the corresponding debugfs file will change the pull to down but the
++ *   reported value will still be 1 until the line is released
++ * - line requested in input mode always reports the same value as its pull
++ *   configuration
++ * - when the line is requested in input mode and monitored for events, writing
++ *   the same value to the debugfs file will be a noop, while writing the
++ *   opposite value will generate a dummy interrupt with an appropriate edge
++ */
++static const struct file_operations gpio_mockup_debugfs_ops = {
+ 	.owner = THIS_MODULE,
+-	.open = gpio_mockup_event_open,
+-	.write = gpio_mockup_event_write,
++	.open = gpio_mockup_debugfs_open,
++	.read = gpio_mockup_debugfs_read,
++	.write = gpio_mockup_debugfs_write,
+ 	.llseek = no_llseek,
+ };
  
- 	return val;
-@@ -110,7 +109,7 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+@@ -258,7 +345,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 		priv->desc = &gc->gpiodev->descs[i];
  
- 	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio) {
--		val = __gpio_mockup_get(gc, bit);
-+		val = __gpio_mockup_get(chip, bit);
- 		__assign_bit(bit, bits, val);
+ 		evfile = debugfs_create_file(name, 0200, chip->dbg_dir, priv,
+-					     &gpio_mockup_event_ops);
++					     &gpio_mockup_debugfs_ops);
+ 		if (IS_ERR_OR_NULL(evfile))
+ 			goto err;
  	}
- 	mutex_unlock(&chip->lock);
-@@ -118,11 +117,9 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
- 	return 0;
+@@ -266,7 +353,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 	return;
+ 
+ err:
+-	dev_err(dev, "error creating debugfs event files\n");
++	dev_err(dev, "error creating debugfs files\n");
  }
  
--static void __gpio_mockup_set(struct gpio_chip *gc,
-+static void __gpio_mockup_set(struct gpio_mockup_chip *chip,
- 			      unsigned int offset, int value)
- {
--	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
--
- 	chip->lines[offset].value = !!value;
- }
+ static int gpio_mockup_name_lines(struct device *dev,
+@@ -342,6 +429,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->direction_input = gpio_mockup_dirin;
+ 	gc->get_direction = gpio_mockup_get_direction;
+ 	gc->to_irq = gpio_mockup_to_irq;
++	gc->free = gpio_mockup_free;
  
-@@ -132,7 +129,7 @@ static void gpio_mockup_set(struct gpio_chip *gc,
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	chip->lines = devm_kcalloc(dev, gc->ngpio,
+ 				   sizeof(*chip->lines), GFP_KERNEL);
+@@ -415,7 +503,7 @@ static int __init gpio_mockup_init(void)
+ 			return -EINVAL;
+ 	}
  
- 	mutex_lock(&chip->lock);
--	__gpio_mockup_set(gc, offset, value);
-+	__gpio_mockup_set(chip, offset, value);
- 	mutex_unlock(&chip->lock);
- }
+-	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup-event", NULL);
++	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup", NULL);
+ 	if (IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
+ 		gpio_mockup_err("error creating debugfs directory\n");
  
-@@ -144,7 +141,7 @@ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
- 
- 	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio)
--		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
-+		__gpio_mockup_set(chip, bit, test_bit(bit, bits));
- 	mutex_unlock(&chip->lock);
- }
- 
-@@ -155,7 +152,7 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
- 
- 	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
--	__gpio_mockup_set(gc, offset, value);
-+	__gpio_mockup_set(chip, offset, value);
- 	mutex_unlock(&chip->lock);
- 
- 	return 0;
 -- 
 2.20.1
 
