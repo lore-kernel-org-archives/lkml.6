@@ -2,93 +2,76 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 737F4C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64124C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF1E2184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2806B217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 11:47:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="OKW9kT3J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfBLLmM (ORCPT
+        id S1728446AbfBLLrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 06:42:12 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35706 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726480AbfBLLmM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 06:42:12 -0500
-X-UUID: e282b5ff1914481abc10a8993419a65d-20190212
-X-UUID: e282b5ff1914481abc10a8993419a65d-20190212
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 136087710; Tue, 12 Feb 2019 19:42:02 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 12 Feb 2019 19:42:00 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Feb 2019 19:42:00 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-CC:     CC Hwang <cc.hwang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Andress Kuo <andress.kuo@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH 1/1] tracing: Fix event_trace_printk loss on printk_format.
-Date:   Tue, 12 Feb 2019 19:41:57 +0800
-Message-ID: <1549971717-4693-1-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Tue, 12 Feb 2019 06:47:01 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43178 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbfBLLrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 06:47:01 -0500
+Received: from zn.tnic (p200300EC2BCF3C006825EAC4F825127B.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3c00:6825:eac4:f825:127b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B30101EC01AF;
+        Tue, 12 Feb 2019 12:46:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549972019;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=EyM4wXSoPcha1lGEFl8ES8wrGLZQeY9ccyaBIWIlxDs=;
+        b=OKW9kT3JoU9QMTulwsX24XNFkHYVE1RQHhTlISS/pUb6hC6mKjpC055S2bKjCqUxgNw7/i
+        xnKRyJ3k9KzGpmKsDt6hAFk399/lvww4atoEqMXPrpxHx28/jBBTe3H+nGE8FOvL+iJBPX
+        +AKIyo3zN5X1m/FzSA+y264iyU+nESQ=
+Date:   Tue, 12 Feb 2019 12:46:54 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH v7 05/28] x86/asm/entry: annotate THUNKs
+Message-ID: <20190212114654.GC30028@zn.tnic>
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-6-jslaby@suse.cz>
+ <20190209112551.GA5089@zn.tnic>
+ <b75f2a0d-974a-c63b-64f8-8f333991e826@suse.cz>
+ <20190212110501.GB30028@zn.tnic>
+ <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 06594692839B4E64C47D721B1963D00E961641334FFE7C874C63EAD4120692B22000:8
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andress Kuo <andress.kuo@mediatek.com>
+On Tue, Feb 12, 2019 at 12:38:09PM +0100, Jiri Slaby wrote:
+> OK, so I will switch all the *LOCAL* to .L prefix (perhaps as a separate
+> patch prior the series/post the series)?
 
-If fmt on event_trace_printk is not a constant, It means that something not
-guaranteed, so the compiler optimizes the fmt out, and then the
-__trace_printk_fmt section is not filled. if __trace_printk_fmt is not
-filled, the kernel will not allocate the special buffers needed for the
-event_trace_printk() and then not shown in the file output
-sys/kernel/debug/tracing/print_formats.
+Sure.
 
-Adding a "__used" to the variable in the __trace_printk_fmt section on
-event_trace_printk() will keep it around, even though it is set to NULL.
-This will keep the string from being printed in the
-sys/kernel/debug/tracing/printk_formats section.
+I have been doing that off and on but apparently this undertaking
+resembles the whack-a-mole game. :-)
 
-We can also refer to commit 3debb0a9ddb1 ("tracing: Fix trace_printk()
-to print when not using bprintk()")that it had similar issue on path of
-trace_printk().
+Thx.
 
-Signed-off-by: Andress Kuo <andress.kuo@mediatek.com>
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- include/linux/trace_events.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 8a62731..26bd7c4 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -551,7 +551,7 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
- 	__trace_printk_check_format(fmt, ##args);			\
- 	tracing_record_cmdline(current);				\
- 	if (__builtin_constant_p(fmt)) {				\
--		static const char *trace_printk_fmt			\
-+		static const char *trace_printk_fmt __used		\
- 		  __attribute__((section("__trace_printk_fmt"))) =	\
- 			__builtin_constant_p(fmt) ? fmt : NULL;		\
- 									\
 -- 
-1.7.9.5
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
