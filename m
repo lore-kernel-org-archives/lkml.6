@@ -2,161 +2,191 @@ Return-Path: <SRS0=NGUq=QT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8C0C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 241A6C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFB62082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:46:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UteXABVN"
+	by mail.kernel.org (Postfix) with ESMTP id F09C620821
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 09:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfBLJqQ (ORCPT
+        id S1728264AbfBLJqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:46:16 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52099 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfBLJqP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 04:46:15 -0500
-Received: by mail-it1-f195.google.com with SMTP id y184so5720444itc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 01:46:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=05CniVm9PLCTpTi84DDJvIByzSMkdbNsdq0wM1zg6bs=;
-        b=UteXABVNaGCBS/tHUabW/5SZKWfm+IpAFT5pyBZRq/ZiRG4z17DBZB03wEQzqc5pfy
-         bVm76uuUEU84rxjjoAfzt1woJOILw6K2LXLUT+aemcTu1cFeGVAFrxFqfnPkoG9MzXPg
-         +5d4yT8e/rI3UK4IbBIFIm5+2UOvfOdaoT5ls=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=05CniVm9PLCTpTi84DDJvIByzSMkdbNsdq0wM1zg6bs=;
-        b=pxZxhXA7XlySPfKqCzRYfdek5FeZr7ZGLVqeT0wpGqAjtjhM9l8fdZwXz9tRmQn9Vq
-         kSFlSYq3XKVSpaUPyDdyRtrEdWVyXWPVoaC1I7hi9+FuaHNH5REEOBHE8x2BIcGBgJZf
-         xHVNia48siZuNVHjh6NkZ+N5/VM7tkeDw6LGR2gP6AC0CeaXKc5angy4ErnZWpVtT1ix
-         fhDlwFFoHTTiAeROAAQBGkz73eH0PETIEHL7TXhyThojXiDujPIYkoXYObXdWafwytk7
-         liXIbdwJ2tSg2zB4kpjFlU/UW1jVtNp0qUCbl+K4K71Bupef5ObzjvfLDQ1TlgSr8vT+
-         tKRw==
-X-Gm-Message-State: AHQUAubZc/3Zl8BXbwDLh9CzrDDK6LTNh3+iv1Ppo49kVc2jblLtivWq
-        Y9B3OPLtCbixDNaC5XcWblcOC3nZAzkI5RGoh63x7g==
-X-Google-Smtp-Source: AHgI3Ib86k93mfKNJvQH3NjDKtEduAkqTTLeuPW1AiUV7u0STgkVVNdjzLiATWXLCSJoswBvz/LQ91xYDDU8/ZfhBiE=
-X-Received: by 2002:a24:385:: with SMTP id e127mr1350371ite.32.1549964774244;
- Tue, 12 Feb 2019 01:46:14 -0800 (PST)
+        Tue, 12 Feb 2019 04:46:24 -0500
+Received: from mga18.intel.com ([134.134.136.126]:50240 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728059AbfBLJqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:46:24 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 01:46:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,361,1544515200"; 
+   d="scan'208";a="142713593"
+Received: from genxfsim-desktop.iind.intel.com (HELO genxfsim-desktop) ([10.223.26.105])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Feb 2019 01:46:20 -0800
+Date:   Tue, 12 Feb 2019 15:13:19 +0530
+From:   Anshuman Gupta <anshuman.gupta@intel.com>
+To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
+        andy@infradead.org, linux-kernel@vger.kernel.org,
+        "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH 08/10] platform/x86: intel_pmc_core: Add ICL platform
+ support
+Message-ID: <20190212094318.GA8062@genxfsim-desktop>
+References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+ <20190201073234.13280-9-rajneesh.bhardwaj@linux.intel.com>
 MIME-Version: 1.0
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
-In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 12 Feb 2019 15:16:02 +0530
-Message-ID: <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com>
-Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201073234.13280-9-rajneesh.bhardwaj@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Here is next version changes for Allwinner A64 MIPI-DSI support
->
-> This series grouped the changes like previous version[1] with different
-> sets to support three different panels types that can fit into the DSI
-> controller.
->
-> set:1, for 4-lane, burst mode support
-> - patch 0001: 0009, DSI controller changes that support burst mode.
->
-> set:2, for A64 DSI support
-> - patch 0010: tcon dclk divider computation based on A64 BSP.
-> - patch 0011: 0017, Allwinner A64 DSI controller changes.
->
-> set:3, enable 4-lane burst mode panel:
-> - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
->   burst mode panel on Pine64-LTS
->
-> set:4, enable 4-lane video mode panel:
-> - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
-> - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
->   panel on Bananapi M64
->
-> set:5, enable 2-lane video mode panel:
-> - patch 0021, 0022: DSI hfp and hbp timings fixes
-> - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
->
-> Changes for v7:
-> - moved vcc-dsi binding to required filed.
-> - drop quotes on fallback dphy bindings.
-> - drop min_rate clock pll-mipi patches.
-> - introduce dclk divider computation as like A64 BSP.
-> - add A64 DSI quark patches.
-> - fixed A64 DSI pipeline.
-> - add proper commit messages.
-> - collect Merlijn Wajer Tested-by credits.
-> Changes for v6:
-> - dropped unneeded changes, patches
-> - fixed all burst mode patches as per previous version comments
-> - rebase on master
-> - update proper commit message
-> - dropped unneeded comments
-> - order the patches that make review easy
-> Changes for v5:
-> - collect Rob, Acked-by
-> - droped "Fix VBP size calculation" patch
-> - updated vblk timing calculation.
-> - droped techstar, bananapi dsi panel drivers which may require
->   bridge or other setup. it's under discussion.
-> Changes for v4:
-> - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
->   nkm min, max rate patches
-> - create two patches for "Add Allwinner A64 MIPI DSI support"
->   one for has_mod_clk quirk and other one for A64 support
-> - use existing driver code construct for hblk computation
-> - dropped "Increase hfp packet overhead" patch [2], though BSP added
->   this but we have no issues as of now.
->   (no issues on panel side w/o this change)
-> - create separate function for vblk computation
-> - enable vcc-dsi regulator in dsi_runtime_resume
-> - collect Rob, Acked-by
-> - update MAINTAINERS file for panel drivers
-> - cleanup commit messages
-> - fixed checkpatch warnings/errors
->
-> [1] https://patchwork.kernel.org/cover/10779893/
->
-> Any inputs?
-> Jagan.
->
-> Jagan Teki (23):
->   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
->     delay
->   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
->   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
->   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
->   drm/sun4i: tcon: Export get tcon0 routine
->   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
->   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
->   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
->   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
+On Fri, Feb 01, 2019 at 01:02:32PM +0530, Rajneesh Bhardwaj wrote:
+> Icelake can resue most of the CNL PCH IPs as they are mostly similar.
+> This patch enables the PMC Core driver for ICL family.
+> 
+> It also addresses few other minor issues like upper case conversions and
+> some tab alignments.
+> 
+> Cc: "David E. Box" <david.e.box@intel.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+  Acked-and-tested-by: <anshuman.gupta@intel.com> 
+> ---
+>  drivers/platform/x86/intel_pmc_core.c | 59 +++++++++++++++++++++------
+>  drivers/platform/x86/intel_pmc_core.h |  4 ++
+>  2 files changed, 50 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index d3752d75075b..400946b7a3b5 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -166,25 +166,26 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
+>  	{"SDX",                 BIT(4)},
+>  	{"SPE",                 BIT(5)},
+>  	{"Fuse",                BIT(6)},
+> -	{"Res_23",              BIT(7)},
+> +	/* Reserved for Cannonlake but valid for Icelake */
+> +	{"SBR8",		BIT(7)},
+>  
+>  	{"CSME_FSC",            BIT(0)},
+>  	{"USB3_OTG",            BIT(1)},
+>  	{"EXI",                 BIT(2)},
+>  	{"CSE",                 BIT(3)},
+> -	{"csme_kvm",            BIT(4)},
+> -	{"csme_pmt",            BIT(5)},
+> -	{"csme_clink",          BIT(6)},
+> -	{"csme_ptio",           BIT(7)},
+> -
+> -	{"csme_usbr",           BIT(0)},
+> -	{"csme_susram",         BIT(1)},
+> -	{"csme_smt1",           BIT(2)},
+> +	{"CSME_KVM",            BIT(4)},
+> +	{"CSME_PMT",            BIT(5)},
+> +	{"CSME_CLINK",          BIT(6)},
+> +	{"CSME_PTIO",           BIT(7)},
+> +
+> +	{"CSME_USBR",           BIT(0)},
+> +	{"CSME_SUSRAM",         BIT(1)},
+> +	{"CSME_SMT1",           BIT(2)},
+>  	{"CSME_SMT4",           BIT(3)},
+> -	{"csme_sms2",           BIT(4)},
+> -	{"csme_sms1",           BIT(5)},
+> -	{"csme_rtc",            BIT(6)},
+> -	{"csme_psf",            BIT(7)},
+> +	{"CSME_SMS2",           BIT(4)},
+> +	{"CSME_SMS1",           BIT(5)},
+> +	{"CSME_RTC",            BIT(6)},
+> +	{"CSME_PSF",            BIT(7)},
+>  
+>  	{"SBR0",                BIT(0)},
+>  	{"SBR1",                BIT(1)},
+> @@ -209,6 +210,20 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
+>  	{"HDA_PGD4",            BIT(2)},
+>  	{"HDA_PGD5",            BIT(3)},
+>  	{"HDA_PGD6",            BIT(4)},
+> +	/* Reserved for Cannonlake but valid for Icelake */
+> +	{"PSF6",		BIT(5)},
+> +	{"PSF7",		BIT(6)},
+> +	{"PSF8",		BIT(7)},
+> +
+> +	/* Icelake generation onwards only */
+> +	{"RES_65",		BIT(0)},
+> +	{"RES_66",		BIT(1)},
+> +	{"RES_67",		BIT(2)},
+> +	{"TAM",			BIT(3)},
+> +	{"GBETSN",		BIT(4)},
+> +	{"TBTLSX",		BIT(5)},
+> +	{"RES_71",		BIT(6)},
+> +	{"RES_72",		BIT(7)},
+>  	{}
+>  };
+>  
+> @@ -290,6 +305,8 @@ static const struct pmc_bit_map cnp_ltr_show_map[] = {
+>  	{"ISH",			CNP_PMC_LTR_ISH},
+>  	{"UFSX2",		CNP_PMC_LTR_UFSX2},
+>  	{"EMMC",		CNP_PMC_LTR_EMMC},
+> +	/* Reserved for Cannonlake but valid for Icelake */
+> +	{"WIGIG",		ICL_PMC_LTR_WIGIG},
+>  	/* Below two cannot be used for LTR_IGNORE */
+>  	{"CURRENT_PLATFORM",	CNP_PMC_LTR_CUR_PLT},
+>  	{"AGGREGATED_SYSTEM",	CNP_PMC_LTR_CUR_ASLT},
+> @@ -311,6 +328,21 @@ static const struct pmc_reg_map cnp_reg_map = {
+>  	.ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+>  };
+>  
+> +static const struct pmc_reg_map icl_reg_map = {
+> +	.pfear_sts = cnp_pfear_map,
+> +	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+> +	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+> +	.ltr_show_sts = cnp_ltr_show_map,
+> +	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+> +	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+> +	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+> +	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
+> +	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+> +	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+> +	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
+> +};
+> +
+>  static inline u8 pmc_core_reg_read_byte(struct pmc_dev *pmcdev, int offset)
+>  {
+>  	return readb(pmcdev->regbase + offset);
+> @@ -740,6 +772,7 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
+>  	INTEL_CPU_FAM6(KABYLAKE_MOBILE, spt_reg_map),
+>  	INTEL_CPU_FAM6(KABYLAKE_DESKTOP, spt_reg_map),
+>  	INTEL_CPU_FAM6(CANNONLAKE_MOBILE, cnp_reg_map),
+> +	INTEL_CPU_FAM6(ICELAKE_MOBILE, icl_reg_map),
+>  	{}
+>  };
+>  
+> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+> index 0680ca397b57..78dd4229489d 100644
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -178,6 +178,10 @@ enum ppfear_regs {
+>  #define LTR_REQ_SNOOP				BIT(15)
+>  #define LTR_REQ_NONSNOOP			BIT(31)
+>  
+> +#define ICL_PPFEAR_NUM_ENTRIES			9
+> +#define ICL_NUM_IP_IGN_ALLOWED			20
+> +#define ICL_PMC_LTR_WIGIG			0x1BFC
+> +
+>  struct pmc_bit_map {
+>  	const char *name;
+>  	u32 bit_mask;
+> -- 
+> 2.17.1
+> 
 
-Can you pick these burst changes which are generic to all SoCs. and
-reset will send once we decide the tcon clock.
+-- 
