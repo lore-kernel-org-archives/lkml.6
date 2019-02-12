@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A95BC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44653C282CA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC7172084D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1510E21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 16:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549990749;
-	bh=hVL9c2Eo3AlcNmQ6XcYephBWp0udL7Kh53ZZYqkQ0zs=;
+	s=default; t=1549990755;
+	bh=f6Htd//0IpTj9kzKprwRvYCkOW3kyD+gXSvySKikaE0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=1lUE49VTCczLo6+Jl7q/V/kgo9CESQDCpFaRHOocSwIaIihRHmN1eXNE/IGqRQMT9
-	 Ey60FwK53SGn3X+C2ameyTrhxXuXokNM0QcustwwHhOJzF8g7VepvRHmW0bbv6nGUV
-	 froTKdDghvPK2uZDUZ+eDqJvRFVxawlyRuDkt/rM=
+	b=oeTL4swgsxbcNywd4UaAzA4CfVudmFICNuvA3o6rXNiJ1oD4OW087sPGA6w+0iI8T
+	 4LCyKQXVC9CUzcala53ACEtdWGhJa5alXkIEu8YM6BuTGUaId5S/AQQo6FaUx6nCSF
+	 00G1EHs/Bi5+h/3Uet4scHmA9kSFB2CODSOtt7N8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731256AbfBLQ7D (ORCPT
+        id S1731293AbfBLQ7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:59:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36388 "EHLO
+        Tue, 12 Feb 2019 11:59:13 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36482 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731213AbfBLQ7A (ORCPT
+        with ESMTP id S1728037AbfBLQ7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:59:00 -0500
+        Tue, 12 Feb 2019 11:59:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/y/poufru+40CcH06WsT0Cl8GQJ1FURdQ8lxmHNUyNY=; b=UALfcLFGaw6z
-        LRHuafG/xEZshMuR+recLe4EWSZgAFZ3yBNwBhyYdfMaTtzFNeaQbO/a+haUi3MdkRTsD8kBOOT2p
-        +pe6dPVkiz+R0MECo3awHKYui+J9J2m1aMW0x1/3zq8Kfjcka4iYDsAhRnhRLWhp1xQqDC2izT7Rt
-        b3Q04=;
+        List-Archive; bh=sCggGjmi8IGuFGOWFoWw2UheU29D/VPX3XaJAakmA0Y=; b=J28rhkdouzq0
+        LQDehdjDqjjBwSocrcUDueRepgegF4seTCEUaasxStcgdSgxGRpKFRcxXk+qqszZn+O6KMwCRCeg+
+        reZMErdE0rC4Qr8vJnE+3a2ibZkDe6vujp/Cu89bwjmUO1rTtuaOEhoE/scx4+/GWrA0A1lEgLGwj
+        sES7U=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gtbOa-0005iN-2f; Tue, 12 Feb 2019 16:58:56 +0000
+        id 1gtbOc-0005iY-5K; Tue, 12 Feb 2019 16:58:58 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 957C61128113; Tue, 12 Feb 2019 16:58:55 +0000 (GMT)
+        id B56751128113; Tue, 12 Feb 2019 16:58:57 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,11 +52,11 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com,
         krzk@kernel.org, linux-kernel@vger.kernel.org,
         m.szyprowski@samsung.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dmaengine: Improve of_node test in dmaengine_pcm_request_chan_of()" to the asoc tree
-In-Reply-To:  <20190207170028.720-2-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI" to the asoc tree
+In-Reply-To:  <20190207170028.720-5-s.nawrocki@samsung.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190212165855.957C61128113@debutante.sirena.org.uk>
-Date:   Tue, 12 Feb 2019 16:58:55 +0000 (GMT)
+Message-Id: <20190212165857.B56751128113@debutante.sirena.org.uk>
+Date:   Tue, 12 Feb 2019 16:58:57 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,7 +64,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: dmaengine: Improve of_node test in dmaengine_pcm_request_chan_of()
+   ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
 
 has been applied to the asoc tree at
 
@@ -89,39 +89,62 @@ to this mail.
 Thanks,
 Mark
 
-From 51256d348c9af1bf544a4432abc1d5f2fd3ef34b Mon Sep 17 00:00:00 2001
+From 323fb7b947b265753de34703dbbf8acc8ea3a4de Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 7 Feb 2019 18:00:09 +0100
-Subject: [PATCH] ASoC: dmaengine: Improve of_node test in
- dmaengine_pcm_request_chan_of()
+Date: Thu, 7 Feb 2019 18:00:12 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Fix prescaler setting for the secondary
+ DAI
 
-Currently when of_node of the "PCM" device is null
-dmaengine_pcm_request_chan_of() function will bail out, including cases
-when custom DMA device is intended to be used.  To have the channels
-properly requested when custom DMA device is provided extend the of_node
-test to also consider dma_dev->of_node.
+Make sure i2s->rclk_srcrate is properly initialized also during
+playback through the secondary DAI.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/samsung/i2s.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 30e791a53352..6d7638c1233d 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -415,7 +415,8 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ce00fe2f6aae..d4bde4834ce5 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -604,6 +604,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	unsigned int fmt)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow, mod_slave;
+ 	u32 mod, tmp = 0;
+ 	unsigned long flags;
+@@ -661,7 +662,8 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
+ 		 * clock configuration assigned in DT is not overwritten.
+ 		 */
+-		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL &&
++		    other->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -699,6 +701,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	u32 mod, mask = 0, val = 0;
+ 	struct clk *rclksrc;
+ 	unsigned long flags;
+@@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	i2s->frmclk = params_rate(params);
  
- 	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
- 			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
--	    !dev->of_node)
-+	     (!dev->of_node && !(config && config->dma_dev &&
-+				config->dma_dev->of_node)))
- 		return 0;
+ 	rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++	if (!rclksrc || IS_ERR(rclksrc))
++		rclksrc = other->clk_table[CLK_I2S_RCLK_SRC];
++
+ 	if (rclksrc && !IS_ERR(rclksrc))
+ 		i2s->rclk_srcrate = clk_get_rate(rclksrc);
  
- 	if (config && config->dma_dev) {
 -- 
 2.20.1
 
