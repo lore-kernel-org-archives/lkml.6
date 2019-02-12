@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640BBC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21306C282CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1728D214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE604214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Feb 2019 14:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729640AbfBLOcw (ORCPT
+        id S1729415AbfBLOcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:32:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43745 "EHLO
+        Tue, 12 Feb 2019 09:32:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43742 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729988AbfBLOab (ORCPT
+        with ESMTP id S1729497AbfBLOab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 09:30:31 -0500
 Received: from [5.158.153.53] (helo=linux.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1gtZ4k-0005Af-Rp; Tue, 12 Feb 2019 15:30:19 +0100
+        id 1gtZ4l-0005Af-SJ; Tue, 12 Feb 2019 15:30:20 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -40,9 +40,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Peter Feiner <pfeiner@google.com>,
         linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v1 12/25] printk: minimize console locking implementation
-Date:   Tue, 12 Feb 2019 15:29:50 +0100
-Message-Id: <20190212143003.48446-13-john.ogness@linutronix.de>
+Subject: [RFC PATCH v1 13/25] printk: track seq per console
+Date:   Tue, 12 Feb 2019 15:29:51 +0100
+Message-Id: <20190212143003.48446-14-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
 References: <20190212143003.48446-1-john.ogness@linutronix.de>
@@ -54,332 +54,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since printing of the printk buffer is now handled by the printk
-kthread, minimize the console locking functions to just handle
-locking of the console.
-
-NOTE: With this console_flush_on_panic will no longer flush.
+Allow each console to track which seq record was last printed. This
+simplifies identifying dropped records.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- kernel/printk/printk.c | 255 +------------------------------------------------
- 1 file changed, 1 insertion(+), 254 deletions(-)
+ include/linux/console.h |  1 +
+ kernel/printk/printk.c  | 30 +++++++++++++++++++++++++++---
+ 2 files changed, 28 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/console.h b/include/linux/console.h
+index ec9bdb3d7bab..7fa06a058339 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -153,6 +153,7 @@ struct console {
+ 	short	flags;
+ 	short	index;
+ 	int	cflag;
++	unsigned long printk_seq;
+ 	void	*data;
+ 	struct	 console *next;
+ };
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 073ff9fd6872..ece54c24ea0d 100644
+index ece54c24ea0d..ebd9aac06323 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -209,19 +209,7 @@ static int nr_ext_console_drivers;
- 
- static int __down_trylock_console_sem(unsigned long ip)
- {
--	int lock_failed;
--	unsigned long flags;
--
--	/*
--	 * Here and in __up_console_sem() we need to be in safe mode,
--	 * because spindump/WARN/etc from under console ->lock will
--	 * deadlock in printk()->down_trylock_console_sem() otherwise.
--	 */
--	printk_safe_enter_irqsave(flags);
--	lock_failed = down_trylock(&console_sem);
--	printk_safe_exit_irqrestore(flags);
--
--	if (lock_failed)
-+	if (down_trylock(&console_sem))
- 		return 1;
- 	mutex_acquire(&console_lock_dep_map, 0, 1, ip);
- 	return 0;
-@@ -230,13 +218,9 @@ static int __down_trylock_console_sem(unsigned long ip)
- 
- static void __up_console_sem(unsigned long ip)
- {
--	unsigned long flags;
--
- 	mutex_release(&console_lock_dep_map, 1, ip);
- 
--	printk_safe_enter_irqsave(flags);
- 	up(&console_sem);
--	printk_safe_exit_irqrestore(flags);
- }
- #define up_console_sem() __up_console_sem(_RET_IP_)
- 
-@@ -1498,82 +1482,6 @@ static void format_text(struct printk_log *msg, u64 seq,
+@@ -1453,6 +1453,16 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
+ 	return do_syslog(type, buf, len, SYSLOG_FROM_READER);
  }
  
- /*
-- * Special console_lock variants that help to reduce the risk of soft-lockups.
-- * They allow to pass console_lock to another printk() call using a busy wait.
-- */
--
--#ifdef CONFIG_LOCKDEP
--static struct lockdep_map console_owner_dep_map = {
--	.name = "console_owner"
--};
--#endif
--
--static DEFINE_RAW_SPINLOCK(console_owner_lock);
--static struct task_struct *console_owner;
--static bool console_waiter;
--
--/**
-- * console_lock_spinning_enable - mark beginning of code where another
-- *	thread might safely busy wait
-- *
-- * This basically converts console_lock into a spinlock. This marks
-- * the section where the console_lock owner can not sleep, because
-- * there may be a waiter spinning (like a spinlock). Also it must be
-- * ready to hand over the lock at the end of the section.
-- */
--static void console_lock_spinning_enable(void)
--{
--	raw_spin_lock(&console_owner_lock);
--	console_owner = current;
--	raw_spin_unlock(&console_owner_lock);
--
--	/* The waiter may spin on us after setting console_owner */
--	spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
--}
--
--/**
-- * console_lock_spinning_disable_and_check - mark end of code where another
-- *	thread was able to busy wait and check if there is a waiter
-- *
-- * This is called at the end of the section where spinning is allowed.
-- * It has two functions. First, it is a signal that it is no longer
-- * safe to start busy waiting for the lock. Second, it checks if
-- * there is a busy waiter and passes the lock rights to her.
-- *
-- * Important: Callers lose the lock if there was a busy waiter.
-- *	They must not touch items synchronized by console_lock
-- *	in this case.
-- *
-- * Return: 1 if the lock rights were passed, 0 otherwise.
-- */
--static int console_lock_spinning_disable_and_check(void)
--{
--	int waiter;
--
--	raw_spin_lock(&console_owner_lock);
--	waiter = READ_ONCE(console_waiter);
--	console_owner = NULL;
--	raw_spin_unlock(&console_owner_lock);
--
--	if (!waiter) {
--		spin_release(&console_owner_dep_map, 1, _THIS_IP_);
--		return 0;
--	}
--
--	/* The waiter is now free to continue */
--	WRITE_ONCE(console_waiter, false);
--
--	spin_release(&console_owner_dep_map, 1, _THIS_IP_);
--
--	/*
--	 * Hand off console_lock to waiter. The waiter will perform
--	 * the up(). After this, the waiter is the console_lock owner.
--	 */
--	mutex_release(&console_lock_dep_map, 1, _THIS_IP_);
--	return 1;
--}
--
--/*
-  * Call the console drivers, asking them to write out
++static void print_console_dropped(struct console *con, u64 count)
++{
++	char text[64];
++	int len;
++
++	len = sprintf(text, "** %llu printk message%s dropped **\n",
++		      count, count > 1 ? "s" : "");
++	con->write(con, text, len);
++}
++
+ static void format_text(struct printk_log *msg, u64 seq,
+ 			char *ext_text, size_t *ext_len,
+ 			char *text, size_t *len, bool time)
+@@ -1486,7 +1496,7 @@ static void format_text(struct printk_log *msg, u64 seq,
   * log_buf[start] to log_buf[end - 1].
   * The console_lock must be held.
-@@ -1830,8 +1738,6 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+  */
+-static void call_console_drivers(const char *ext_text, size_t ext_len,
++static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
+ 				 const char *text, size_t len)
+ {
+ 	struct console *con;
+@@ -1504,6 +1514,19 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
+ 		if (!cpu_online(raw_smp_processor_id()) &&
+ 		    !(con->flags & CON_ANYTIME))
+ 			continue;
++		if (con->printk_seq >= seq)
++			continue;
++
++		con->printk_seq++;
++		if (con->printk_seq < seq) {
++			print_console_dropped(con, seq - con->printk_seq);
++			con->printk_seq = seq;
++		}
++
++		/* for supressed messages, only seq is updated */
++		if (len == 0 && ext_len == 0)
++			continue;
++
+ 		if (con->flags & CON_EXTENDED)
+ 			con->write(con, ext_text, ext_len);
+ 		else
+@@ -1738,7 +1761,7 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
  static ssize_t msg_print_ext_body(char *buf, size_t size,
  				  char *dict, size_t dict_len,
  				  char *text, size_t text_len) { return 0; }
--static void console_lock_spinning_enable(void) { }
--static int console_lock_spinning_disable_and_check(void) { return 0; }
- static void call_console_drivers(const char *ext_text, size_t ext_len,
+-static void call_console_drivers(const char *ext_text, size_t ext_len,
++static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
  				 const char *text, size_t len) {}
  static size_t msg_print_text(const struct printk_log *msg, bool syslog,
-@@ -2066,35 +1972,6 @@ int is_console_locked(void)
- {
- 	return console_locked;
- }
--EXPORT_SYMBOL(is_console_locked);
--
--/*
-- * Check if we have any console that is capable of printing while cpu is
-- * booting or shutting down. Requires console_sem.
-- */
--static int have_callable_console(void)
--{
--	struct console *con;
--
--	for_each_console(con)
--		if ((con->flags & CON_ENABLED) &&
--				(con->flags & CON_ANYTIME))
--			return 1;
--
--	return 0;
--}
--
--/*
-- * Can we actually use the console at this time on this cpu?
-- *
-- * Console drivers may assume that per-cpu resources have been allocated. So
-- * unless they're explicitly marked as being able to cope (CON_ANYTIME) don't
-- * call them until this CPU is officially up.
-- */
--static inline int can_use_console(void)
--{
--	return cpu_online(raw_smp_processor_id()) || have_callable_console();
--}
+ 			     bool time, char *buf, size_t size) { return 0; }
+@@ -2481,8 +2504,9 @@ static int printk_kthread_func(void *data)
+ 			    &len, printk_time);
  
- /**
-  * console_unlock - unlock the console system
-@@ -2102,147 +1979,17 @@ static inline int can_use_console(void)
-  * Releases the console_lock which the caller holds on the console system
-  * and the console driver list.
-  *
-- * While the console_lock was held, console output may have been buffered
-- * by printk().  If this is the case, console_unlock(); emits
-- * the output prior to releasing the lock.
-- *
-- * If there is output waiting, we wake /dev/kmsg and syslog() users.
-- *
-  * console_unlock(); may be called from any context.
-  */
- void console_unlock(void)
- {
--	static char ext_text[CONSOLE_EXT_LOG_MAX];
--	static char text[LOG_LINE_MAX + PREFIX_MAX];
--	unsigned long flags;
--	bool do_cond_resched, retry;
--
- 	if (console_suspended) {
- 		up_console_sem();
- 		return;
- 	}
- 
--	/*
--	 * Console drivers are called with interrupts disabled, so
--	 * @console_may_schedule should be cleared before; however, we may
--	 * end up dumping a lot of lines, for example, if called from
--	 * console registration path, and should invoke cond_resched()
--	 * between lines if allowable.  Not doing so can cause a very long
--	 * scheduling stall on a slow console leading to RCU stall and
--	 * softlockup warnings which exacerbate the issue with more
--	 * messages practically incapacitating the system.
--	 *
--	 * console_trylock() is not able to detect the preemptive
--	 * context reliably. Therefore the value must be stored before
--	 * and cleared after the the "again" goto label.
--	 */
--	do_cond_resched = console_may_schedule;
--again:
--	console_may_schedule = 0;
--
--	/*
--	 * We released the console_sem lock, so we need to recheck if
--	 * cpu is online and (if not) is there at least one CON_ANYTIME
--	 * console.
--	 */
--	if (!can_use_console()) {
--		console_locked = 0;
--		up_console_sem();
--		return;
--	}
--
--	for (;;) {
--		struct printk_log *msg;
--		size_t ext_len = 0;
--		size_t len;
--
--		printk_safe_enter_irqsave(flags);
--		raw_spin_lock(&logbuf_lock);
--		if (console_seq < log_first_seq) {
--			len = sprintf(text,
--				      "** %llu printk messages dropped **\n",
--				      log_first_seq - console_seq);
--
--			/* messages are gone, move to first one */
--			console_seq = log_first_seq;
--			console_idx = log_first_idx;
--		} else {
--			len = 0;
--		}
--skip:
--		if (console_seq == log_next_seq)
--			break;
--
--		msg = log_from_idx(console_idx);
--		if (suppress_message_printing(msg->level)) {
--			/*
--			 * Skip record we have buffered and already printed
--			 * directly to the console when we received it, and
--			 * record that has level above the console loglevel.
--			 */
--			console_idx = log_next(console_idx);
--			console_seq++;
--			goto skip;
--		}
--
--		len += msg_print_text(msg,
--				console_msg_format & MSG_FORMAT_SYSLOG,
--				printk_time, text + len, sizeof(text) - len);
--		if (nr_ext_console_drivers) {
--			ext_len = msg_print_ext_header(ext_text,
--						sizeof(ext_text),
--						msg, console_seq);
--			ext_len += msg_print_ext_body(ext_text + ext_len,
--						sizeof(ext_text) - ext_len,
--						log_dict(msg), msg->dict_len,
--						log_text(msg), msg->text_len);
--		}
--		console_idx = log_next(console_idx);
--		console_seq++;
--		raw_spin_unlock(&logbuf_lock);
--
--		/*
--		 * While actively printing out messages, if another printk()
--		 * were to occur on another CPU, it may wait for this one to
--		 * finish. This task can not be preempted if there is a
--		 * waiter waiting to take over.
--		 */
--		console_lock_spinning_enable();
--
--		stop_critical_timings();	/* don't trace print latency */
--		//call_console_drivers(ext_text, ext_len, text, len);
--		start_critical_timings();
--
--		if (console_lock_spinning_disable_and_check()) {
--			printk_safe_exit_irqrestore(flags);
--			return;
--		}
--
--		printk_safe_exit_irqrestore(flags);
--
--		if (do_cond_resched)
--			cond_resched();
--	}
--
- 	console_locked = 0;
--
--	raw_spin_unlock(&logbuf_lock);
--
- 	up_console_sem();
--
--	/*
--	 * Someone could have filled up the buffer again, so re-check if there's
--	 * something to flush. In case we cannot trylock the console_sem again,
--	 * there's a new owner and the console_unlock() from them will do the
--	 * flush, no worries.
--	 */
--	raw_spin_lock(&logbuf_lock);
--	retry = console_seq != log_next_seq;
--	raw_spin_unlock(&logbuf_lock);
--	printk_safe_exit_irqrestore(flags);
--
--	if (retry && console_trylock())
--		goto again;
- }
- EXPORT_SYMBOL(console_unlock);
- 
+ 		console_lock();
++		call_console_drivers(master_seq, ext_text,
++				     ext_len, text, len);
+ 		if (len > 0 || ext_len > 0) {
+-			call_console_drivers(ext_text, ext_len, text, len);
+ 			boot_delay_msec(msg->level);
+ 			printk_delay();
+ 		}
 -- 
 2.11.0
 
