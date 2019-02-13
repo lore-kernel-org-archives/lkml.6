@@ -2,116 +2,213 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D996C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0B9C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4512A222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ADCF222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403978AbfBMO6h (ORCPT
+        id S2404030AbfBMO6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:58:37 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:34834 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbfBMO6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:58:37 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtvzf-0000fv-Iu; Wed, 13 Feb 2019 07:58:35 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gtvze-00022y-Lc; Wed, 13 Feb 2019 07:58:35 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Wed, 13 Feb 2019 09:58:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:55676 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728298AbfBMO6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:58:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDAAD80D;
+        Wed, 13 Feb 2019 06:58:44 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 145323F589;
+        Wed, 13 Feb 2019 06:58:39 -0800 (PST)
+Date:   Wed, 13 Feb 2019 14:58:37 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Evgenii Stepanov <eugenis@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Ivan Delalande <colona@arista.com>
-References: <87o97q1cky.fsf_-_@xmission.com>
-        <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com>
-        <875ztwt7yy.fsf_-_@xmission.com> <87zhr8rtd6.fsf_-_@xmission.com>
-        <20190211141340.GA21430@redhat.com> <87zhr1g7ls.fsf@xmission.com>
-        <871s4dctci.fsf@xmission.com> <20190212165022.GA29263@redhat.com>
-        <87ef8c5nyt.fsf_-_@xmission.com> <20190213143852.GC9356@redhat.com>
-Date:   Wed, 13 Feb 2019 08:58:28 -0600
-In-Reply-To: <20190213143852.GC9356@redhat.com> (Oleg Nesterov's message of
-        "Wed, 13 Feb 2019 15:38:52 +0100")
-Message-ID: <87d0nv4twr.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
+Message-ID: <20190213145834.GJ3567@e103592.cambridge.arm.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
+ <20181210143044.12714-1-vincenzo.frascino@arm.com>
+ <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+ <20181212150230.GH65138@arrakis.emea.arm.com>
+ <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
+ <20181218175938.GD20197@arrakis.emea.arm.com>
+ <20181219125249.GB22067@e103592.cambridge.arm.com>
+ <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
+ <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
+ <20190212180223.GD199333@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gtvze-00022y-Lc;;;mid=<87d0nv4twr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+3wHEZ/vgF8/T8GizPXKTvENyUYpM1UYE=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] signal: Restore the stop PTRACE_EVENT_EXIT
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212180223.GD199333@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+On Tue, Feb 12, 2019 at 06:02:24PM +0000, Catalin Marinas wrote:
+> On Mon, Feb 11, 2019 at 12:32:55PM -0800, Evgenii Stepanov wrote:
+> > On Mon, Feb 11, 2019 at 9:28 AM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+> > > On 19/12/2018 12:52, Dave Martin wrote:
 
-> sorry for noise, but after I read the changelog I have a minor nit,
-> feel free to ignore...
+[...]
+
+> > > >   * A single C object should be accessed using a single, fixed
+> > > >     pointer tag throughout its entire lifetime.
+> > >
+> > > Agreed.  Allocators themselves may need to be excluded though,
+> > > depending on how they represent their managed memory.
+> > >
+> > > >   * Tags can be changed only when there are no outstanding pointers to
+> > > >     the affected object or region that may be used to access the object
+> > > >     or region (i.e., if the object were allocated from the C heap and
+> > > >     is it safe to realloc() it, then it is safe to change the tag; for
+> > > >     other types of allocation, analogous arguments can be applied).
+> > >
+> > > Tags can only be changed at the point of deallocation/
+> > > reallocation.  Pointers to the object become invalid and cannot
+> > > be used after it has been deallocated; memory tagging allows to
+> > > catch such invalid usage.
 >
-> On 02/12, Eric W. Biederman wrote:
->>
->> Skipping past dequeue_signal when we know a fatal signal has already
->> been delivered resulted in SIGKILL remaining pending and
->> TIF_SIGPENDING remaining set.  This in turn caused the
->> scheduler to not sleep in PTACE_EVENT_EXIT as it figured
->> a fatal signal was pending.
->
-> Yes, but the status of TIF_SIGPENDING doesn't matter. However I agree
-> with recalc_sigpending() added by this patch, simply because this is what
-> the "normal" dequeue_signal() paths do.
->
->> This also caused ptrace_freeze_traced
->> in ptrace_check_attach to fail because it left a per thread
->> SIGKILL pending which is what fatal_signal_pending tests for.
->
-> this is possible too, but in the likely case ptrace_check_attach() won't
-> be even called exactly because the tracee won't stop and thus waitpid()
-> won't report WIFSTOPPED. And even if waitpid() "wins" the race and debugger
-> calls ptrace(), most probably ptrace_freeze_traced() will fail because
-> task_is_traced() will be false.
->
-> I think this part of the changelog looks a bit confusing. It doesn't matter
-> why ptrace_check_attach() fails, it must fail if the tracee didn't stop.
->
-> PTACE_EVENT_EXIT won't stop and thus this event won't be reported, that is all.
+> All the above sound well but that's mostly a guideline on what a C
+> library can do. It doesn't help much with defining the kernel ABI.
+> Anyway, it's good to clarify the use-cases.
 
-There might be a better way to say it.  What I meant to convey is that
-in my testing I could get PTRACE_EVENT_EXIT to stop by clearing
-TIF_SIGPENDING (and leaving SIGKILL in pending).  That was insufficient
-to fix the bug.  Without SIGKILL in pending ptrace_check_attach would
-fail when the process was stopped in PTRACE_EVENT_EXIT.
+My aim was to clarify the use case in userspace, since I wasn't directly
+involved in that.  The kernel ABI needs to be compatible with the the
+use case, but doesn't need to specify must of it.
 
+I'm wondering whether we can piggy-back on existing concepts.
 
+We could say that recolouring memory is safe when and only when
+unmapping of the page or removing permissions on the page (via
+munmap/mremap/mprotect) would be safe.  Otherwise, the resulting
+behaviour of the process is undefined.
 
-Or in short it really bugs me that we have to have signal_group_exit
-and fatal_signal_pending not in agreement after in do_exit to make the code
-work.  It bothers me because fatal_signal_pending and signal_group_exit
-are in all other cases just different ways to ask the same question.
+Hopefully there are friendly fuzzers testing this kind of thing.
 
-Eric
+[...]
 
+> > It would also be valuable to narrow down the set of "relaxed" (i.e.
+> > not tag-checking) syscalls as reasonably possible. We would want to
+> > provide tag-checking userspace wrappers for any important calls that
+> > are not checked in the kernel. Is it correct to assume that anything
+> > that goes through copy_from_user  / copy_to_user is checked?
+> 
+> I lost track of the context of this thread but if it's just about
+> relaxing the ABI for hwasan, the kernel has no idea of the compiler
+> generated structures in user space, so nothing is checked.
+> 
+> If we talk about tags in the context of MTE, than yes, with the current
+> proposal the tag would be checked by copy_*_user() functions.
 
+Also put_user() and friends?
+
+It might be reasonable to do the check in access_ok() and skip it in
+__put_user() etc.
+
+(I seem to remember some separate discussion about abolishing
+__put_user() and friends though, due to the accident risk they pose.)
+
+> > For aio* operations it would be nice if the tag was checked at the
+> > time of the actual userspace read/write, either instead of or in
+> > addition to at the time of the system call.
+> 
+> With aio* (and synchronous iovec-based syscalls), the kernel may access
+> the memory while the corresponding user process is scheduled out. Given
+> that such access is not done in the context of the user process (and
+> using the user VA like copy_*_user), the kernel cannot handle potential
+> tag faults. Moreover, the transfer may be done by DMA and the device
+> does not understand tags.
+> 
+> I'd like to keep tags as a property of the pointer in a specific virtual
+> address space. The moment you convert it to a different address space
+> (e.g. kernel linear map, physical address), the tag property is stripped
+> and I don't think we should re-build it (and have it checked).
+
+This is probably reasonable.
+
+Ideally we would check the tag at the point of stripping it off, but
+most likely it's going to be rather best-effort.
+
+If memory tagging is essential a debugging feature then this seems
+an acceptable compromise.
+
+> > > >   * For purposes other than dereference, the kernel shall accept any
+> > > >     legitimately tagged pointer (according to the above rules) as
+> > > >     identifying the associated memory location.
+> > > >
+> > > >     So, mprotect(some_page_aligned_object, ...); is valid irrespective
+> > > >     of where page_aligned_object() came from.  There is no implicit
+> > > >     derefence by the kernel here, hence no tag check.
+> > > >
+> > > >     The kernel does not guarantee to work correctly if the wrong tag
+> > > >     is used, but there is not always a well-defined "right" tag, so
+> > > >     we can't really guarantee to check it.  So a pointer derived by
+> > > >     any reasonable means by userspace has to be treated as equally
+> > > >     valid.
+> > >
+> > > This is a disputed point :) In my opinion, this is the the most
+> > > reasonable approach.
+> > 
+> > Yes, it would be nice if the kernel explicitly promised, ex.
+> > mprotect() over a range of differently tagged pages to be allowed
+> > (i.e. address tag should be unchecked).
+> 
+> I don't think mprotect() over differently tagged pages was ever a
+> problem. I originally asked that mprotect() and friends do not accept
+> tagged pointers since these functions deal with memory ranges rather
+> than dereferencing such pointer (the reason being minimal kernel
+> changes). However, given how complicated it is to specify an ABI, I came
+> to the conclusion that a pointer passed to such function should be
+> allowed to have non-zero top byte. It would be the kernel's
+> responsibility to strip it out as appropriate.
+
+I think that if the page range is all the same colour then it should be
+legitimate to pass a matching tag.
+
+But it doesn't seem reasonable for the kernel to require this.  If
+free() calls munmap(), the page(s) will contain possibly randomly-
+coloured garbage.  There's no correct tag to pass in such a case.
+
+The most obvious solution is just to ignore the tags passed by userspace
+to such syscalls.  This would imply that the kernel must explicitly
+strip it out, as you suggest.
+
+The number of affected syscalls is relatively small though.
+
+Cheers
+---Dave
