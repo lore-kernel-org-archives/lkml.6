@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB955C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AC0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C6D222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D9D222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083195;
-	bh=ilMB5TJZhX9G+i9K5xfbVo5o8xwxfmD1yF1zJZqUcwQ=;
+	s=default; t=1550083199;
+	bh=OBXob9E1le+atK3fC3FjhF6X6K0IhXVElwZw7si7i/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xyfeq8sbHETnW2nC9H2iyasH8ZqzUei4t5bkQ/nWGA0EDdi7XyNPbNBvQv4UZDxRz
-	 Z7y9cXEvw1oKSHQoHcN5prtndfBSIKqmGk6/Ob5fOGo2beNGDOyjrugF7aKl3ErxCj
-	 sRggImAk+GIy67NHnV61Zby0NvU0VKMxb6ajShJs=
+	b=AI1WVS3Aur3ckYlOHwnQfRqKeKHO7oNrG9PyDVUs4mgbPLxF5Z4bx9sIs2xwGXNit
+	 BUKEyUWNgOR6dSqjVUa7qY0XkG3hlJ+g/UqaB2aa76kIjW+JeivViwMzAPzkzRzVqS
+	 bNtO/IKQSn5p0+WLSWsdfTkNJ+L9CvOsFLnilm7o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfBMSjy (ORCPT
+        id S2405318AbfBMSj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:39:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37874 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:39:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405293AbfBMSjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:39:51 -0500
+        id S2405302AbfBMSjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:39:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BB99222D5;
-        Wed, 13 Feb 2019 18:39:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7891222D6;
+        Wed, 13 Feb 2019 18:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083190;
-        bh=ilMB5TJZhX9G+i9K5xfbVo5o8xwxfmD1yF1zJZqUcwQ=;
+        s=default; t=1550083193;
+        bh=OBXob9E1le+atK3fC3FjhF6X6K0IhXVElwZw7si7i/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQK6K8uZ3absuKJndypiXFLN65kqQl2NAfhvKNot94HEUo+FzAhsunOvAw8om9CD3
-         qek+kuLOrhu+h2X5SC4WpOY7/rM7Mv8KTLSA2mPsuzmTmbHxHTRdmudGkKx5ZEsOzf
-         hMwlPrlHX1bFio2nqbj0qKYMjx19xEdLtDkv908M=
+        b=ZponWgQ72/AFuj/ZEOgiMqVUiFlalHwUvGzTkyzJz80S7CLtc3DIZlNhogfjT1B+2
+         eQ4RNCFdGZ6f/u25++uTaK59QlNymwYPsxDXe3UwLlk/MALnUrrz5ES4Pwdu/91O4y
+         7ugl6lphS7+Rnr79+GXnCvVlddGKc1oCqO2HRuLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>,
         "J. Bruce Fields" <bfields@redhat.com>,
         Salvatore Bonaccorso <carnil@debian.org>
-Subject: [PATCH 4.9 17/24] nfsd4: fix cached replies to solo SEQUENCE compounds
-Date:   Wed, 13 Feb 2019 19:38:14 +0100
-Message-Id: <20190213183648.825258358@linuxfoundation.org>
+Subject: [PATCH 4.9 18/24] nfsd4: catch some false session retries
+Date:   Wed, 13 Feb 2019 19:38:15 +0100
+Message-Id: <20190213183648.924916825@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183647.333441569@linuxfoundation.org>
 References: <20190213183647.333441569@linuxfoundation.org>
@@ -68,123 +68,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: J. Bruce Fields <bfields@redhat.com>
 
-commit 085def3ade52f2ffe3e31f42e98c27dcc222dd37 upstream.
+commit 53da6a53e1d414e05759fa59b7032ee08f4e22d7 upstream.
 
-Currently our handling of 4.1+ requests without "cachethis" set is
-confusing and not quite correct.
+The spec allows us to return NFS4ERR_SEQ_FALSE_RETRY if we notice that
+the client is making a call that matches a previous (slot, seqid) pair
+but that *isn't* actually a replay, because some detail of the call
+doesn't actually match the previous one.
 
-Suppose a client sends a compound consisting of only a single SEQUENCE
-op, and it matches the seqid in a session slot (so it's a retry), but
-the previous request with that seqid did not have "cachethis" set.
+Catching every such case is difficult, but we may as well catch a few
+easy ones.  This also handles the case described in the previous patch,
+in a different way.
 
-The obvious thing to do might be to return NFS4ERR_RETRY_UNCACHED_REP,
-but the protocol only allows that to be returned on the op following the
-SEQUENCE, and there is no such op in this case.
+The spec does however require us to catch the case where the difference
+is in the rpc credentials.  This prevents somebody from snooping another
+user's replies by fabricating retries.
 
-The protocol permits us to cache replies even if the client didn't ask
-us to.  And it's easy to do so in the case of solo SEQUENCE compounds.
-
-So, when we get a solo SEQUENCE, we can either return the previously
-cached reply or NFSERR_SEQ_FALSE_RETRY if we notice it differs in some
-way from the original call.
-
-Currently, we're returning a corrupt reply in the case a solo SEQUENCE
-matches a previous compound with more ops.  This actually matters
-because the Linux client recently started doing this as a way to recover
-from lost replies to idempotent operations in the case the process doing
-the original reply was killed: in that case it's difficult to keep the
-original arguments around to do a real retry, and the client no longer
-cares what the result is anyway, but it would like to make sure that the
-slot's sequence id has been incremented, and the solo SEQUENCE assures
-that: if the server never got the original reply, it will increment the
-sequence id.  If it did get the original reply, it won't increment, and
-nothing else that about the reply really matters much.  But we can at
-least attempt to return valid xdr!
+(But the practical value of the attack is limited by the fact that the
+replies with the most sensitive data are READ replies, which are not
+normally cached.)
 
 Tested-by: Olga Kornievskaia <aglo@umich.edu>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Cc: Salvatore Bonaccorso <carnil@debian.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+
 ---
- fs/nfsd/nfs4state.c |   20 +++++++++++++++-----
+ fs/nfsd/nfs4state.c |   37 ++++++++++++++++++++++++++++++++++++-
  fs/nfsd/state.h     |    1 +
- fs/nfsd/xdr4.h      |   13 +++++++++++--
- 3 files changed, 27 insertions(+), 7 deletions(-)
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -2344,14 +2344,16 @@ nfsd4_store_cache_entry(struct nfsd4_com
+@@ -1472,8 +1472,10 @@ free_session_slots(struct nfsd4_session
+ {
+ 	int i;
  
- 	dprintk("--> %s slot %p\n", __func__, slot);
+-	for (i = 0; i < ses->se_fchannel.maxreqs; i++)
++	for (i = 0; i < ses->se_fchannel.maxreqs; i++) {
++		free_svc_cred(&ses->se_slots[i]->sl_cred);
+ 		kfree(ses->se_slots[i]);
++	}
+ }
  
-+	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
+ /*
+@@ -2347,6 +2349,8 @@ nfsd4_store_cache_entry(struct nfsd4_com
+ 	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
  	slot->sl_opcnt = resp->opcnt;
  	slot->sl_status = resp->cstate.status;
++	free_svc_cred(&slot->sl_cred);
++	copy_cred(&slot->sl_cred, &resp->rqstp->rq_cred);
  
--	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
--	if (nfsd4_not_cached(resp)) {
--		slot->sl_datalen = 0;
-+	if (!nfsd4_cache_this(resp)) {
-+		slot->sl_flags &= ~NFSD4_SLOT_CACHED;
- 		return;
- 	}
-+	slot->sl_flags |= NFSD4_SLOT_CACHED;
+ 	if (!nfsd4_cache_this(resp)) {
+ 		slot->sl_flags &= ~NFSD4_SLOT_CACHED;
+@@ -3049,6 +3053,34 @@ static bool nfsd4_request_too_big(struct
+ 	return xb->len > session->se_fchannel.maxreq_sz;
+ }
+ 
++static bool replay_matches_cache(struct svc_rqst *rqstp,
++		 struct nfsd4_sequence *seq, struct nfsd4_slot *slot)
++{
++	struct nfsd4_compoundargs *argp = rqstp->rq_argp;
 +
- 	base = resp->cstate.data_offset;
- 	slot->sl_datalen = buf->len - base;
- 	if (read_bytes_from_xdr_buf(buf, base, slot->sl_data, slot->sl_datalen))
-@@ -2378,8 +2380,16 @@ nfsd4_enc_sequence_replay(struct nfsd4_c
- 	op = &args->ops[resp->opcnt - 1];
- 	nfsd4_encode_operation(resp, op);
- 
--	/* Return nfserr_retry_uncached_rep in next operation. */
--	if (args->opcnt > 1 && !(slot->sl_flags & NFSD4_SLOT_CACHETHIS)) {
-+	if (slot->sl_flags & NFSD4_SLOT_CACHED)
-+		return op->status;
-+	if (args->opcnt == 1) {
-+		/*
-+		 * The original operation wasn't a solo sequence--we
-+		 * always cache those--so this retry must not match the
-+		 * original:
-+		 */
-+		op->status = nfserr_seq_false_retry;
-+	} else {
- 		op = &args->ops[resp->opcnt++];
- 		op->status = nfserr_retry_uncached_rep;
- 		nfsd4_encode_operation(resp, op);
++	if ((bool)(slot->sl_flags & NFSD4_SLOT_CACHETHIS) !=
++	    (bool)seq->cachethis)
++		return false;
++	/*
++	 * If there's an error than the reply can have fewer ops than
++	 * the call.  But if we cached a reply with *more* ops than the
++	 * call you're sending us now, then this new call is clearly not
++	 * really a replay of the old one:
++	 */
++	if (slot->sl_opcnt < argp->opcnt)
++		return false;
++	/* This is the only check explicitly called by spec: */
++	if (!same_creds(&rqstp->rq_cred, &slot->sl_cred))
++		return false;
++	/*
++	 * There may be more comparisons we could actually do, but the
++	 * spec doesn't require us to catch every case where the calls
++	 * don't match (that would require caching the call as well as
++	 * the reply), so we don't bother.
++	 */
++	return true;
++}
++
+ __be32
+ nfsd4_sequence(struct svc_rqst *rqstp,
+ 	       struct nfsd4_compound_state *cstate,
+@@ -3108,6 +3140,9 @@ nfsd4_sequence(struct svc_rqst *rqstp,
+ 		status = nfserr_seq_misordered;
+ 		if (!(slot->sl_flags & NFSD4_SLOT_INITIALIZED))
+ 			goto out_put_session;
++		status = nfserr_seq_false_retry;
++		if (!replay_matches_cache(rqstp, seq, slot))
++			goto out_put_session;
+ 		cstate->slot = slot;
+ 		cstate->session = session;
+ 		cstate->clp = clp;
 --- a/fs/nfsd/state.h
 +++ b/fs/nfsd/state.h
-@@ -174,6 +174,7 @@ struct nfsd4_slot {
+@@ -169,6 +169,7 @@ static inline struct nfs4_delegation *de
+ struct nfsd4_slot {
+ 	u32	sl_seqid;
+ 	__be32	sl_status;
++	struct svc_cred sl_cred;
+ 	u32	sl_datalen;
+ 	u16	sl_opcnt;
  #define NFSD4_SLOT_INUSE	(1 << 0)
- #define NFSD4_SLOT_CACHETHIS	(1 << 1)
- #define NFSD4_SLOT_INITIALIZED	(1 << 2)
-+#define NFSD4_SLOT_CACHED	(1 << 3)
- 	u8	sl_flags;
- 	char	sl_data[];
- };
---- a/fs/nfsd/xdr4.h
-+++ b/fs/nfsd/xdr4.h
-@@ -645,9 +645,18 @@ static inline bool nfsd4_is_solo_sequenc
- 	return resp->opcnt == 1 && args->ops[0].opnum == OP_SEQUENCE;
- }
- 
--static inline bool nfsd4_not_cached(struct nfsd4_compoundres *resp)
-+/*
-+ * The session reply cache only needs to cache replies that the client
-+ * actually asked us to.  But it's almost free for us to cache compounds
-+ * consisting of only a SEQUENCE op, so we may as well cache those too.
-+ * Also, the protocol doesn't give us a convenient response in the case
-+ * of a replay of a solo SEQUENCE op that wasn't cached
-+ * (RETRY_UNCACHED_REP can only be returned in the second op of a
-+ * compound).
-+ */
-+static inline bool nfsd4_cache_this(struct nfsd4_compoundres *resp)
- {
--	return !(resp->cstate.slot->sl_flags & NFSD4_SLOT_CACHETHIS)
-+	return (resp->cstate.slot->sl_flags & NFSD4_SLOT_CACHETHIS)
- 		|| nfsd4_is_solo_sequence(resp);
- }
- 
 
 
