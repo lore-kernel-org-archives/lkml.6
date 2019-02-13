@@ -2,382 +2,133 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D07EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C140C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA1C222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC36C222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:51:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DbeJkqB8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Lk0Cf7eE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391380AbfBMJvJ (ORCPT
+        id S2387513AbfBMJvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:51:09 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37626 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfBMJvJ (ORCPT
+        Wed, 13 Feb 2019 04:51:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37586 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfBMJvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:51:09 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n23so1284576lfl.4;
-        Wed, 13 Feb 2019 01:51:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S8QODV3Zo5G0UHaKkkvM2YYWjf9XcnqkfiS8iSWquqk=;
-        b=Q3etmhis6R+rpnv4TSEucuEgq7Jjy7FQqUA7m1WBNIv7aLx8N/L7mlsz0n9x5IB4ME
-         vo3LtyDEUX5EGF+1oHtsIOWl52U8PKeYH7rGiN7OzzhfrdRRwD7VRRJIZsS4TsC15/SX
-         Zes9JLCFmsgkObY9JaczSVuOqurs0QcHqzy+RV3QJuCQDEDsWd09b0+uzjo413vw8uqD
-         gi1i4PgP+QdUB1if34bFb82SivQiAnUbZqEzCASdeexZtN5xvxkTpHH9PYlL8mDR/xM9
-         5IB2IBW53v+Yr6qad1j1Ihcf+ixzXOcnNRzVRsLk/b3KkLCkU9OIyZhNUdqiAr1TODuw
-         rF6w==
-X-Gm-Message-State: AHQUAuYJdjamES2iK5hvS3K6Z52x8RkSd01lULkfqmiOUynj0JU8yubc
-        uFLUPpjALdfAynrjr3bqeb1M5ixm
-X-Google-Smtp-Source: AHgI3IbMNPVCGTOszwCAiofVNkOru4Qt5+POKQsnKyrY5H/WUXVnLWypog99OE0/iZXHUifZj+Fzeg==
-X-Received: by 2002:a19:9508:: with SMTP id x8mr5242354lfd.112.1550051466261;
-        Wed, 13 Feb 2019 01:51:06 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm3333996ljc.31.2019.02.13.01.51.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 01:51:05 -0800 (PST)
-Date:   Wed, 13 Feb 2019 11:50:49 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com,
-        Robin Gong =?utf-8?B?4oCO?= <yibin.gong@nxp.com>,
-        Elven Wang =?utf-8?B?4oCO?= <elven.wang@nxp.com>,
-        Anson Huang =?utf-8?B?4oCO?= <anson.huang@nxp.com>
-Subject: [PATCH v2 3/3] regulator: bd718x7: Support SNVS low power state
-Message-ID: <f8955e8d9a1ae10e369f24e02fc80a7f9ddc6f68.1550050645.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550050645.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 13 Feb 2019 04:51:43 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 008616087F; Wed, 13 Feb 2019 09:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550051501;
+        bh=Vs+50u4QSysEwvPfccTmoCqeFX05ffDTaj3MJz0B670=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=DbeJkqB8CWvtXbT/uiWeOO2OGvim56PFn/yFWnQdTg3pLYMEID8CSPEhOBaM+/Qod
+         PakfJVzDlrbOdz40za6Ai4tAUnchk/DdSZEq0yUpO3i0U/cqIkJGHLlTdKqdStxmuR
+         4ZivRsfCMaIm89/d5aDYo4DoMCZmC8hagJfd1aAk=
+Received: from [10.79.128.39] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9CDC26087F;
+        Wed, 13 Feb 2019 09:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550051498;
+        bh=Vs+50u4QSysEwvPfccTmoCqeFX05ffDTaj3MJz0B670=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=Lk0Cf7eE02GVh2/hv2jM4yg7+BAET8jRgyBDoHlgNTzh/153Uc7pmhY5uRJ0Q9mvu
+         FKuFpUYBecuDyepAqDygn+goftI6OKmxRfjqcqMl07dJlyxem1PeGoZpbFMlTC2IHx
+         KRvs0sqn9+Bw679Hz1JK4nqAFFpOXRbgP0J6AGGE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9CDC26087F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: BUG: sleeping function called from invalid context at
+ kernel/locking/rwsem.c:65
+To:     Pintu Agarwal <pintu.ping@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rt-users@vger.kernel.org, linux-mm@kvack.org,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        "Xenomai@xenomai.org" <xenomai@xenomai.org>
+References: <CAOuPNLgaDJm27nECxq1jtny=+ixt=GPf2C7zyDsVgbsLvtDarA@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <6183c865-2e90-5fb9-9e10-1339ae491b71@codeaurora.org>
+Date:   Wed, 13 Feb 2019 15:21:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1550050645.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAOuPNLgaDJm27nECxq1jtny=+ixt=GPf2C7zyDsVgbsLvtDarA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-read ROHM BD71837 / BD71847 specific device tree bindings for
-controlling the PMIC shutdown/reset states and voltages for
-different HW states. The PMIC was designed to be used with NXP
-i.MX8 SoC and it supports SNVS low power state which seems to
-be typical for NXP i.MX SoCs. However, when SNVS is used we must
-not allow SW to control enabling/disabling those regulators which
-are crucial for system to boot as there is a HW limitation which
-causes SW controlled regulators to be kept shut down after SNVS
-reset.
+Hi Pintu,
 
-Allow setting the SNVS to be used as reset target state and allow
-marking those regulators which are critical for boot.
+On 2/13/2019 2:04 PM, Pintu Agarwal wrote:
+> 
+> This is the complete logs at the time of crash:
+> 
+> [   21.681020] VFS: Mounted root (ext4 filesystem) readonly on device 8:6.
+> [   21.690441] devtmpfs: mounted
+> [   21.702517] Freeing unused kernel memory: 6528K
+> [   21.766665] BUG: sleeping function called from invalid context at
+> kernel/locking/rwsem.c:65
+> [   21.775108] in_atomic(): 0, irqs_disabled(): 128, pid: 1, name: init
+> [   21.781532] ------------[ cut here ]------------
+> [   21.786209] kernel BUG at kernel/sched/core.c:8490!
+> [   21.791157] ------------[ cut here ]------------
+> [   21.795831] kernel BUG at kernel/sched/core.c:8490!
+> [   21.800763] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+> [   21.806319] Modules linked in:
+> [   21.809474] CPU: 0 PID: 1 Comm: init Not tainted 4.9.103+ #115
+> [   21.815375] Hardware name: Qualcomm Technologies, Inc. MSM XXXX
+> [   21.822584] task: ffffffe330440080 task.stack: ffffffe330448000
+> [   21.828584] PC is at ___might_sleep+0x140/0x188
+> [   21.833175] LR is at ___might_sleep+0x128/0x188
+> [   21.837759] pc : [<ffffff88b8ce65a8>] lr : [<ffffff88b8ce6590>]
+> pstate: 604001c5
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/bd718x7-regulator.c | 201 +++++++++++++++++++++++++++++-----
- 1 file changed, 176 insertions(+), 25 deletions(-)
+<snip...>
 
-diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-index ccea133778c8..e6f98fceded7 100644
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@ -350,6 +350,135 @@ static const struct reg_init bd71837_ldo6_inits[] = {
- 	},
- };
- 
-+#define NUM_DVS_BUCKS 4
-+
-+struct of_dvs_setting {
-+	const char *prop;
-+	unsigned int reg;
-+};
-+
-+static int set_dvs_levels(const struct of_dvs_setting *dvs,
-+			  struct device_node *np,
-+			  const struct regulator_desc *desc,
-+			  struct regmap *regmap)
-+{
-+	int ret, i;
-+	unsigned int uv;
-+
-+	ret = of_property_read_u32(np, dvs->prop, &uv);
-+	if (ret) {
-+		if (ret != -EINVAL)
-+			return ret;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < desc->n_voltages; i++) {
-+		ret = regulator_desc_list_voltage_linear_range(desc, i);
-+		if (ret < 0)
-+			continue;
-+		if (ret == uv) {
-+			i <<= ffs(desc->vsel_mask) - 1;
-+			ret = regmap_update_bits(regmap, dvs->reg,
-+						 DVS_BUCK_RUN_MASK, i);
-+			break;
-+		}
-+	}
-+	return ret;
-+}
-+
-+static int buck4_set_hw_dvs_levels(struct device_node *np,
-+			    const struct regulator_desc *desc,
-+			    struct regulator_config *cfg)
-+{
-+	int ret, i;
-+	const struct of_dvs_setting dvs[] = {
-+		{
-+			.prop = "rohm,dvs-run-voltage",
-+			.reg = BD71837_REG_BUCK4_VOLT_RUN,
-+		},
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
-+		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+static int buck3_set_hw_dvs_levels(struct device_node *np,
-+			    const struct regulator_desc *desc,
-+			    struct regulator_config *cfg)
-+{
-+	int ret, i;
-+	const struct of_dvs_setting dvs[] = {
-+		{
-+			.prop = "rohm,dvs-run-voltage",
-+			.reg = BD71837_REG_BUCK3_VOLT_RUN,
-+		},
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
-+		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
-+static int buck2_set_hw_dvs_levels(struct device_node *np,
-+			    const struct regulator_desc *desc,
-+			    struct regulator_config *cfg)
-+{
-+	int ret, i;
-+	const struct of_dvs_setting dvs[] = {
-+		{
-+			.prop = "rohm,dvs-run-voltage",
-+			.reg = BD718XX_REG_BUCK2_VOLT_RUN,
-+		},
-+		{
-+			.prop = "rohm,dvs-idle-voltage",
-+			.reg = BD718XX_REG_BUCK2_VOLT_IDLE,
-+		},
-+	};
-+
-+
-+
-+	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
-+		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
-+static int buck1_set_hw_dvs_levels(struct device_node *np,
-+			    const struct regulator_desc *desc,
-+			    struct regulator_config *cfg)
-+{
-+	int ret, i;
-+	const struct of_dvs_setting dvs[] = {
-+		{
-+			.prop = "rohm,dvs-run-voltage",
-+			.reg = BD718XX_REG_BUCK1_VOLT_RUN,
-+		},
-+		{
-+			.prop = "rohm,dvs-idle-voltage",
-+			.reg = BD718XX_REG_BUCK1_VOLT_IDLE,
-+		},
-+		{
-+			.prop = "rohm,dvs-suspend-voltage",
-+			.reg = BD718XX_REG_BUCK1_VOLT_SUSP,
-+		},
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
-+		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
- static const struct bd718xx_regulator_data bd71847_regulators[] = {
- 	{
- 		.desc = {
-@@ -368,6 +497,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
- 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck1_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD718XX_REG_BUCK1_CTRL,
-@@ -391,6 +521,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
- 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck2_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD718XX_REG_BUCK2_CTRL,
-@@ -662,6 +793,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
- 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck1_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD718XX_REG_BUCK1_CTRL,
-@@ -685,6 +817,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
- 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck1_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD718XX_REG_BUCK2_CTRL,
-@@ -708,6 +841,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
- 			.enable_reg = BD71837_REG_BUCK3_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck3_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD71837_REG_BUCK3_CTRL,
-@@ -731,6 +865,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
- 			.enable_reg = BD71837_REG_BUCK4_CTRL,
- 			.enable_mask = BD718XX_BUCK_EN,
- 			.owner = THIS_MODULE,
-+			.of_parse_cb = buck4_set_hw_dvs_levels,
- 		},
- 		.init = {
- 			.reg = BD71837_REG_BUCK4_CTRL,
-@@ -1029,6 +1164,7 @@ static int bd718xx_probe(struct platform_device *pdev)
- 	};
- 
- 	int i, j, err;
-+	bool use_snvs;
- 
- 	mfd = dev_get_drvdata(pdev->dev.parent);
- 	if (!mfd) {
-@@ -1055,27 +1191,28 @@ static int bd718xx_probe(struct platform_device *pdev)
- 			BD718XX_REG_REGLOCK);
- 	}
- 
--	/* At poweroff transition PMIC HW disables EN bit for regulators but
--	 * leaves SEL bit untouched. So if state transition from POWEROFF
--	 * is done to SNVS - then all power rails controlled by SW (having
--	 * SEL bit set) stay disabled as EN is cleared. This may result boot
--	 * failure if any crucial systems are powered by these rails.
--	 *
-+	use_snvs = of_property_read_bool(pdev->dev.parent->of_node,
-+					 "rohm,reset-snvs-powered");
-+
-+	/*
- 	 * Change the next stage from poweroff to be READY instead of SNVS
- 	 * for all reset types because OTP loading at READY will clear SEL
- 	 * bit allowing HW defaults for power rails to be used
- 	 */
--	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
--				 BD718XX_ON_REQ_POWEROFF_MASK |
--				 BD718XX_SWRESET_POWEROFF_MASK |
--				 BD718XX_WDOG_POWEROFF_MASK |
--				 BD718XX_KEY_L_POWEROFF_MASK,
--				 BD718XX_POWOFF_TO_RDY);
--	if (err) {
--		dev_err(&pdev->dev, "Failed to change reset target\n");
--		goto err;
--	} else {
--		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
-+	if (!use_snvs) {
-+		err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
-+					 BD718XX_ON_REQ_POWEROFF_MASK |
-+					 BD718XX_SWRESET_POWEROFF_MASK |
-+					 BD718XX_WDOG_POWEROFF_MASK |
-+					 BD718XX_KEY_L_POWEROFF_MASK,
-+					 BD718XX_POWOFF_TO_RDY);
-+		if (err) {
-+			dev_err(&pdev->dev, "Failed to change reset target\n");
-+			goto err;
-+		} else {
-+			dev_dbg(&pdev->dev,
-+				"Changed all resets from SVNS to READY\n");
-+		}
- 	}
- 
- 	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
-@@ -1098,19 +1235,33 @@ static int bd718xx_probe(struct platform_device *pdev)
- 			err = PTR_ERR(rdev);
- 			goto err;
- 		}
--		/* Regulator register gets the regulator constraints and
-+
-+		/*
-+		 * Regulator register gets the regulator constraints and
- 		 * applies them (set_machine_constraints). This should have
- 		 * turned the control register(s) to correct values and we
- 		 * can now switch the control from PMIC state machine to the
- 		 * register interface
-+		 *
-+		 * At poweroff transition PMIC HW disables EN bit for
-+		 * regulators but leaves SEL bit untouched. So if state
-+		 * transition from POWEROFF is done to SNVS - then all power
-+		 * rails controlled by SW (having SEL bit set) stay disabled
-+		 * as EN is cleared. This will result boot failure if any
-+		 * crucial systems are powered by these rails. We don't
-+		 * enable SW control for crucial regulators if snvs state is
-+		 * used
- 		 */
--		err = regmap_update_bits(mfd->regmap, r->init.reg,
--					 r->init.mask, r->init.val);
--		if (err) {
--			dev_err(&pdev->dev,
--				"Failed to write BUCK/LDO SEL bit for (%s)\n",
--				desc->name);
--			goto err;
-+		if (!use_snvs || !rdev->constraints->always_on ||
-+		    !rdev->constraints->boot_on) {
-+			err = regmap_update_bits(mfd->regmap, r->init.reg,
-+						 r->init.mask, r->init.val);
-+			if (err) {
-+				dev_err(&pdev->dev,
-+					"Failed to take control for (%s)\n",
-+					desc->name);
-+				goto err;
-+			}
- 		}
- 		for (j = 0; j < r->additional_init_amnt; j++) {
- 			err = regmap_update_bits(mfd->regmap,
--- 
-2.14.3
+> 0000000000000000 ffffffe33044b8d0
+> [   22.135279] bac0: 0000000000000462 0000000000000006
+> [   22.140224] [<ffffff88b8ce65a8>] ___might_sleep+0x140/0x188
+> [   22.145862] [<ffffff88b8ce6648>] __might_sleep+0x58/0x90
+> [   22.151249] [<ffffff88b9d43f84>] down_write_killable+0x2c/0x80
+> [   22.157155] [<ffffff88b8e53cd8>] setup_arg_pages+0xb8/0x208
+> [   22.162792] [<ffffff88b8eb7534>] load_elf_binary+0x434/0x1298
+> [   22.168600] [<ffffff88b8e55674>] search_binary_handler+0xac/0x1f0
+> [   22.174763] [<ffffff88b8e560ec>] do_execveat_common.isra.15+0x504/0x6c8
+> [   22.181452] [<ffffff88b8e562f4>] do_execve+0x44/0x58
+> [   22.186481] [<ffffff88b8c84030>] run_init_process+0x38/0x48
+> [   22.192122] [<ffffff88b9d3db1c>] kernel_init+0x8c/0x108
+> [   22.197411] [<ffffff88b8c83f00>] ret_from_fork+0x10/0x50
+> [   22.202790] Code: b9453800 0b000020 6b00027f 540000c1 (d4210000)
+> [   22.208965] ---[ end trace d775a851176a61ec ]---
+> [   22.220051] Kernel panic - not syncing: Attempted to kill init!
+> exitcode=0x0000000b
+> 
 
+This might be the work of CONFIG_PANIC_ON_SCHED_BUG which is extra debug 
+option enabled in *sdm845_defconfig*. You can disable it or better
+I would suggest to use *sdm845-perf_defconfig* instead of
+sdm845_defconfig since there are a lot of debug options enabled
+in the latter which may be not compatible when IPIPE patches
+are applied.
+
+Thanks,
+Sai
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
