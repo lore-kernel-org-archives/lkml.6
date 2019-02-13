@@ -2,316 +2,178 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7C2C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98301C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE6921934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FE721934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:57:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SUe2qxye"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DmyEk0sG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732411AbfBMD5c (ORCPT
+        id S2387470AbfBMD5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:57:32 -0500
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:54372 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726573AbfBMD5c (ORCPT
+        Tue, 12 Feb 2019 22:57:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:32850 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731048AbfBMD5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 22:57:32 -0500
-Received: from nis-sj1-27.broadcom.com (nis-sj1-27.lvn.broadcom.net [10.75.144.136])
-        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 1111830C219;
-        Tue, 12 Feb 2019 19:57:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 1111830C219
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1550030250;
-        bh=ndc2opdmc7J5S3RsO4Mq/uZYojT0rVb9svdmYoQAAR4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SUe2qxyeeDcU8dw3b6xYm45FM2AOw3vm9Pw0a9NMHN6+T1AffJk7wDB+gynnkXxcX
-         Mu2rgQ8ty9jugMnZgx89jnmwR9f1m9GK4pDkzrFlW2VdPK0FIGC+Flhhvvp5K9hO38
-         jAEAklBSFkG4fZoyf52dT1+l1juMkYSKBlFSuW1c=
-Received: from stbirv-lnx-2.igp.broadcom.net (stbirv-lnx-2.igp.broadcom.net [10.67.48.34])
-        by nis-sj1-27.broadcom.com (Postfix) with ESMTP id 5237EAC0783;
-        Tue, 12 Feb 2019 19:57:30 -0800 (PST)
-Received: by stbirv-lnx-2.igp.broadcom.net (Postfix, from userid 47169)
-        id 42FAE27ECF1; Tue, 12 Feb 2019 19:57:30 -0800 (PST)
-From:   justinpopo6@gmail.com
-To:     linux-iio@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        f.fainelli@gmail.com, bgolaszewski@baylibre.com,
-        linus.walleij@linaro.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, david@lechnology.com,
-        linux-kernel@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>
-Subject: [PATCH v3] iio: adc: ti-ads7950: add GPIO support
-Date:   Tue, 12 Feb 2019 19:57:22 -0800
-Message-Id: <1550030242-5241-1-git-send-email-justinpopo6@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 12 Feb 2019 22:57:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id h22so868717wmb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 19:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jfUvnKqx0/LCU+eBTQY2ytjcTCXtaG67jN7oy6DeBZA=;
+        b=DmyEk0sGurpgvmp4zIbLlSavXJkeT8OZWWI0bFMWGU1Iy8YxY1BbMtrTb7GDOEID99
+         60/WqKQYCvwBGERow7H8/Tk8/doa+iZLN76e+5S4DULYQqFWsFFp3wfaBnrWnmqfGhqJ
+         1NdsTi5MoIcYn9dGdfh1mNULZBORZiWeJRADw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jfUvnKqx0/LCU+eBTQY2ytjcTCXtaG67jN7oy6DeBZA=;
+        b=QRpPkP3tM9J+lCH+saPn18sVhnEK4kroBT1VzCNDoxPvBn9LDu18GF4YWUwIq+h587
+         n6UCuqXsqiGVDPEbVosaWnkgKLUI55uMogY4sL9v/LYMRpyHgSw65f7zvZ+GyZki/jsU
+         B2YQ5tgyEybCcjd9k9Xhg0UiluN9um7TrihzENTBV+i3ovPK8e6oH8I4vVBg1B1xNGpt
+         K5WBc9lon693sWxJtK8hQMiT5oH6nPYnAqIHbIiBQLOZ4hOvNgvsCuQ+16ITHqhKnYSf
+         JtvhG8VAvkqeJ/utwcXX0CS9mX7lhzm5MM9FcjyG+qXY5tLSquWCz5bjN+dNBk7A7VoT
+         bXog==
+X-Gm-Message-State: AHQUAuYZi7Kp3L1gdtXXUajgt00o/a9d2sigwT7eD2h5vm8TE1D8z0IF
+        Oy99bdbApKtNKsSF5zgPVLVB2QAM1Q2WrJ21ZU0stA==
+X-Google-Smtp-Source: AHgI3Ia+Ybgq1NcDCke4TcYxmJzsqF0zyJuDauqjrhCCq+tYDyGb+ztr4H22Bc/QI/RYhgnZsh63YTkQ2pkmLP8AF4I=
+X-Received: by 2002:a1c:c44c:: with SMTP id u73mr1504168wmf.45.1550030251533;
+ Tue, 12 Feb 2019 19:57:31 -0800 (PST)
+MIME-Version: 1.0
+References: <1549342622-9929-1-git-send-email-srinath.mannam@broadcom.com>
+ <1549342622-9929-2-git-send-email-srinath.mannam@broadcom.com> <20190212181208.GA918@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20190212181208.GA918@e107981-ln.cambridge.arm.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Wed, 13 Feb 2019 09:27:20 +0530
+Message-ID: <CABe79T7prLa-hPWOfESPYabA_HNvdcc52ztkNJfyLoLv+w7i0A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PCI: iproc: Add CRS check in config read
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Justin Chen <justinpopo6@gmail.com>
+Hi Lorenzo,
 
-The ADS79XX has GPIO pins that can be used. Add support for the GPIO
-pins using the GPIO chip framework.
+Thanks for review, please see my comments below inline.
 
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
----
- drivers/iio/adc/ti-ads7950.c | 169 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 166 insertions(+), 3 deletions(-)
+On Tue, Feb 12, 2019 at 11:42 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Tue, Feb 05, 2019 at 10:27:00AM +0530, Srinath Mannam wrote:
+> > In the current implementation, config read output data 0xffff0001 is
+> > assumed as CRS completion. But sometimes 0xffff0001 can be a valid data.
+> >
+> > IPROC PCIe host controller has a register to show config read request
+> > status flags like SC, UR, CRS and CA. So that extra check is added to
+> > confirm the CRS using status flags before reissue config read.
+> >
+> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-iproc.c | 23 +++++++++++++++++++++--
+> >  1 file changed, 21 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> > index c20fd6b..b882255 100644
+> > --- a/drivers/pci/controller/pcie-iproc.c
+> > +++ b/drivers/pci/controller/pcie-iproc.c
+> > @@ -60,6 +60,10 @@
+> >  #define APB_ERR_EN_SHIFT             0
+> >  #define APB_ERR_EN                   BIT(APB_ERR_EN_SHIFT)
+> >
+> > +#define CFG_RD_SUCCESS                       0
+> > +#define CFG_RD_UR                    1
+> > +#define CFG_RD_CRS                   2
+> > +#define CFG_RD_CA                    3
+> >  #define CFG_RETRY_STATUS             0xffff0001
+> >  #define CFG_RETRY_STATUS_TIMEOUT_US  500000 /* 500 milliseconds */
+> >
+> > @@ -289,6 +293,9 @@ enum iproc_pcie_reg {
+> >       IPROC_PCIE_IARR4,
+> >       IPROC_PCIE_IMAP4,
+> >
+> > +     /* config read status */
+> > +     IPROC_PCIE_CFG_RD_STATUS,
+> > +
+> >       /* link status */
+> >       IPROC_PCIE_LINK_STATUS,
+> >
+> > @@ -350,6 +357,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
+> >       [IPROC_PCIE_IMAP3]              = 0xe08,
+> >       [IPROC_PCIE_IARR4]              = 0xe68,
+> >       [IPROC_PCIE_IMAP4]              = 0xe70,
+> > +     [IPROC_PCIE_CFG_RD_STATUS]      = 0xee0,
+>
+> So, with the *current* code, on controllers that does not support this
+> register you won't be able to get any HW whose config space register
+> value reads 0xffff0001 to work, is that correct ?
+>
+Yes, this feature(register) is available only in "iProc PCIe PAXB v2"
+controller for other controllers it will not applicable.
 
-diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
-index 0ad6359..9723d66 100644
---- a/drivers/iio/adc/ti-ads7950.c
-+++ b/drivers/iio/adc/ti-ads7950.c
-@@ -17,6 +17,7 @@
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/gpio/driver.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -36,10 +37,14 @@
-  */
- #define TI_ADS7950_VA_MV_ACPI_DEFAULT	5000
- 
-+#define TI_ADS7950_CR_GPIO	BIT(14)
- #define TI_ADS7950_CR_MANUAL	BIT(12)
- #define TI_ADS7950_CR_WRITE	BIT(11)
- #define TI_ADS7950_CR_CHAN(ch)	((ch) << 7)
- #define TI_ADS7950_CR_RANGE_5V	BIT(6)
-+#define TI_ADS7950_CR_GPIO_DATA	BIT(5)
-+#define TI_ADS7950_NUM_GPIOS	4
-+#define TI_ADS7950_GPIO_MASK	GENMASK(TI_ADS7950_NUM_GPIOS - 1, 0)
- 
- #define TI_ADS7950_MAX_CHAN	16
- 
-@@ -56,11 +61,17 @@ struct ti_ads7950_state {
- 	struct spi_message	ring_msg;
- 	struct spi_message	scan_single_msg;
- 
-+	struct gpio_chip	chip;
-+	struct mutex		slock;
-+
- 	struct regulator	*reg;
- 	unsigned int		vref_mv;
- 
- 	unsigned int		settings;
- 
-+	unsigned int		gpio_direction_bitmask;
-+	unsigned int		gpio_signal_bitmask;
-+
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
- 	 * transfer buffers to live in their own cache lines.
-@@ -248,7 +259,8 @@ static int ti_ads7950_update_scan_mode(struct iio_dev *indio_dev,
- 
- 	len = 0;
- 	for_each_set_bit(i, active_scan_mask, indio_dev->num_channels) {
--		cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(i) | st->settings;
-+		cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(i) | st->settings
-+		      | (st->gpio_signal_bitmask & TI_ADS7950_GPIO_MASK);
- 		st->tx_buf[len++] = cmd;
- 	}
- 
-@@ -287,8 +299,9 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
- 	int ret, cmd;
- 
- 	mutex_lock(&indio_dev->mlock);
--
--	cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(ch) | st->settings;
-+	mutex_lock(&st->slock);
-+	cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(ch) | st->settings
-+	      | (st->gpio_signal_bitmask & TI_ADS7950_GPIO_MASK);
- 	st->single_tx = cmd;
- 
- 	ret = spi_sync(st->spi, &st->scan_single_msg);
-@@ -298,6 +311,7 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
- 	ret = st->single_rx;
- 
- out:
-+	mutex_unlock(&st->slock);
- 	mutex_unlock(&indio_dev->mlock);
- 
- 	return ret;
-@@ -362,6 +376,145 @@ static const struct iio_info ti_ads7950_info = {
- 	.update_scan_mode	= ti_ads7950_update_scan_mode,
- };
- 
-+static void ti_ads7950_set(struct gpio_chip *chip, unsigned int offset,
-+			   int value)
-+{
-+	struct ti_ads7950_state *st = gpiochip_get_data(chip);
-+
-+	mutex_lock(&st->slock);
-+
-+	if (value)
-+		st->gpio_signal_bitmask |= BIT(offset);
-+	else
-+		st->gpio_signal_bitmask &= ~BIT(offset);
-+
-+	st->single_tx = cpu_to_be16(TI_ADS7950_CR_MANUAL | TI_ADS7950_CR_WRITE |
-+			(st->gpio_signal_bitmask & TI_ADS7950_GPIO_MASK));
-+	spi_sync(st->spi, &st->scan_single_msg);
-+
-+	mutex_unlock(&st->slock);
-+}
-+
-+static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ti_ads7950_state *st = gpiochip_get_data(chip);
-+	int ret;
-+
-+	mutex_lock(&st->slock);
-+
-+	/* If set as output, return the output */
-+	if (st->gpio_direction_bitmask & BIT(offset)) {
-+		ret = st->gpio_signal_bitmask & BIT(offset);
-+		goto out;
-+	}
-+
-+	st->single_tx = cpu_to_be16(TI_ADS7950_CR_MANUAL | TI_ADS7950_CR_WRITE |
-+				    TI_ADS7950_CR_GPIO_DATA);
-+	ret = spi_sync(st->spi, &st->scan_single_msg);
-+	if (ret)
-+		goto out;
-+
-+	ret = ((st->single_rx >> 12) & BIT(offset)) ? 1 : 0;
-+
-+out:
-+	mutex_unlock(&st->slock);
-+
-+	return ret;
-+}
-+
-+static int ti_ads7950_get_direction(struct gpio_chip *chip,
-+				    unsigned int offset)
-+{
-+	struct ti_ads7950_state *st = gpiochip_get_data(chip);
-+
-+	return !(st->gpio_direction_bitmask & BIT(offset));
-+}
-+
-+static int _ti_ads7950_set_direction(struct gpio_chip *chip, int offset,
-+				     int input)
-+{
-+	struct ti_ads7950_state *st = gpiochip_get_data(chip);
-+	int ret = 0;
-+
-+	mutex_lock(&st->slock);
-+
-+	if (input && (st->gpio_direction_bitmask & BIT(offset)))
-+		st->gpio_direction_bitmask &= ~BIT(offset);
-+	else if (!input && !(st->gpio_direction_bitmask & BIT(offset)))
-+		st->gpio_direction_bitmask |= BIT(offset);
-+	else
-+		goto out;
-+
-+
-+	st->single_tx = cpu_to_be16(TI_ADS7950_CR_GPIO |
-+				    (st->gpio_direction_bitmask &
-+				    TI_ADS7950_GPIO_MASK));
-+	ret = spi_sync(st->spi, &st->scan_single_msg);
-+
-+out:
-+	mutex_unlock(&st->slock);
-+
-+	return ret;
-+}
-+
-+static int ti_ads7950_direction_input(struct gpio_chip *chip,
-+				      unsigned int offset)
-+{
-+	return _ti_ads7950_set_direction(chip, offset, 1);
-+}
-+
-+static int ti_ads7950_direction_output(struct gpio_chip *chip,
-+				       unsigned int offset, int value)
-+{
-+	ti_ads7950_set(chip, offset, value);
-+
-+	return _ti_ads7950_set_direction(chip, offset, 0);
-+}
-+
-+static int ti_ads7950_init_gpio(struct ti_ads7950_state *st)
-+{
-+	int ret;
-+
-+	/* Initialize GPIO */
-+	mutex_lock(&st->slock);
-+
-+	/* Default to GPIO input */
-+	st->gpio_direction_bitmask = 0x0;
-+	st->single_tx = cpu_to_be16(TI_ADS7950_CR_GPIO |
-+				    (st->gpio_direction_bitmask &
-+				    TI_ADS7950_GPIO_MASK));
-+	ret = spi_sync(st->spi, &st->scan_single_msg);
-+	if (ret) {
-+		mutex_unlock(&st->slock);
-+		return ret;
-+	}
-+
-+	/* Default to signal low */
-+	st->gpio_signal_bitmask = 0x0;
-+	st->single_tx = cpu_to_be16(TI_ADS7950_CR_MANUAL |
-+				    TI_ADS7950_CR_WRITE |
-+				    (st->gpio_signal_bitmask &
-+				    TI_ADS7950_GPIO_MASK));
-+	ret = spi_sync(st->spi, &st->scan_single_msg);
-+	mutex_unlock(&st->slock);
-+	if (ret)
-+		return ret;
-+
-+	/* Add GPIO chip */
-+	st->chip.label = dev_name(&st->spi->dev);
-+	st->chip.parent = &st->spi->dev;
-+	st->chip.owner = THIS_MODULE;
-+	st->chip.base = -1;
-+	st->chip.ngpio = TI_ADS7950_NUM_GPIOS;
-+	st->chip.get_direction = ti_ads7950_get_direction;
-+	st->chip.direction_input = ti_ads7950_direction_input;
-+	st->chip.direction_output = ti_ads7950_direction_output;
-+	st->chip.get = ti_ads7950_get;
-+	st->chip.set = ti_ads7950_set;
-+
-+	return gpiochip_add_data(&st->chip, st);
-+}
-+
- static int ti_ads7950_probe(struct spi_device *spi)
- {
- 	struct ti_ads7950_state *st;
-@@ -457,8 +610,17 @@ static int ti_ads7950_probe(struct spi_device *spi)
- 		goto error_cleanup_ring;
- 	}
- 
-+	mutex_init(&st->slock);
-+	ret = ti_ads7950_init_gpio(st);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to initialize GPIOs\n");
-+		goto error_destroy_mutex;
-+	}
-+
- 	return 0;
- 
-+error_destroy_mutex:
-+	mutex_destroy(&st->slock);
- error_cleanup_ring:
- 	iio_triggered_buffer_cleanup(indio_dev);
- error_disable_reg:
-@@ -475,6 +637,7 @@ static int ti_ads7950_remove(struct spi_device *spi)
- 	iio_device_unregister(indio_dev);
- 	iio_triggered_buffer_cleanup(indio_dev);
- 	regulator_disable(st->reg);
-+	mutex_destroy(&st->slock);
- 
- 	return 0;
- }
--- 
-2.7.4
-
+Regards,
+Srinath.
+> Lorenzo
+>
+> >       [IPROC_PCIE_LINK_STATUS]        = 0xf0c,
+> >       [IPROC_PCIE_APB_ERR_EN]         = 0xf40,
+> >  };
+> > @@ -474,10 +482,12 @@ static void __iomem *iproc_pcie_map_ep_cfg_reg(struct iproc_pcie *pcie,
+> >       return (pcie->base + offset);
+> >  }
+> >
+> > -static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
+> > +static unsigned int iproc_pcie_cfg_retry(struct iproc_pcie *pcie,
+> > +                                      void __iomem *cfg_data_p)
+> >  {
+> >       int timeout = CFG_RETRY_STATUS_TIMEOUT_US;
+> >       unsigned int data;
+> > +     u32 status;
+> >
+> >       /*
+> >        * As per PCIe spec r3.1, sec 2.3.2, CRS Software Visibility only
+> > @@ -498,6 +508,15 @@ static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
+> >        */
+> >       data = readl(cfg_data_p);
+> >       while (data == CFG_RETRY_STATUS && timeout--) {
+> > +             /*
+> > +              * CRS state is set in CFG_RD status register
+> > +              * This will handle the case where CFG_RETRY_STATUS is
+> > +              * valid config data.
+> > +              */
+> > +             status = iproc_pcie_read_reg(pcie, IPROC_PCIE_CFG_RD_STATUS);
+> > +             if (status != CFG_RD_CRS)
+> > +                     return data;
+> > +
+> >               udelay(1);
+> >               data = readl(cfg_data_p);
+> >       }
+> > @@ -576,7 +595,7 @@ static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
+> >       if (!cfg_data_p)
+> >               return PCIBIOS_DEVICE_NOT_FOUND;
+> >
+> > -     data = iproc_pcie_cfg_retry(cfg_data_p);
+> > +     data = iproc_pcie_cfg_retry(pcie, cfg_data_p);
+> >
+> >       *val = data;
+> >       if (size <= 2)
+> > --
+> > 2.7.4
+> >
