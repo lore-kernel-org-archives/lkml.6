@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61485C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C61C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31704222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3DEF222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025584;
-	bh=rhUvPPBNANly9SLzat6WICnDg7ZlhnGAs2h+tLtIBiQ=;
+	s=default; t=1550025588;
+	bh=Qy4n4eGBuSPz1fEplyi85cCJW9ROOYTDUMUNTBNQl5g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UdC7ka3iVQKIoAq68WGTtY1uxKua2TIyEz0OU9pCLzyoGRHXAD7BPJRBuYPZUVCAs
-	 Sd+ayIg2ydVAbXyE5d6WiJXUy14Sz9ArEnISOqZI4HbRxQRAeZ4NtMhNkVUmpOcL8e
-	 c+r83fI9puGdTHoGKI0Zy7nBP+aqGt2YEEaoJVBM=
+	b=aONGCPG1CF4Fc300PW2bwz5MEDEQrkPzbtc75mAZIYU/5FHrW8mRKstUA+fKYsOUe
+	 1MyjABlA+3rmKxSl3Qrke8obDdlF0/YAUvO4Sj63ocShc/IHoSpBW2IbKqP4V9QbHn
+	 BXbJYD4BVFpwkCiyBi+HGIaG2pWfui6CjRhjKcGs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388803AbfBMCjh (ORCPT
+        id S2388819AbfBMCjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43198 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729256AbfBMCjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:35 -0500
+        id S2388763AbfBMCjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 797FF222CF;
-        Wed, 13 Feb 2019 02:39:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE7AB222CD;
+        Wed, 13 Feb 2019 02:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025574;
-        bh=rhUvPPBNANly9SLzat6WICnDg7ZlhnGAs2h+tLtIBiQ=;
+        s=default; t=1550025575;
+        bh=Qy4n4eGBuSPz1fEplyi85cCJW9ROOYTDUMUNTBNQl5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ijD1KiaWVlhqFtaulhGoTZgjJNvTUTPfAeSj0clRP/x0ghLCDsTJJ3hY/grGAj4kI
-         1rYTUe9c97edLG/yWiJ8RAQo2zZ6Ao6NdL9Td9Gv8bDByDPpeP/OnvS+X2kLw4DUC/
-         cIpnbxhRDg3GS7w9l4LqcdiygQYT7nT5KdPpb2qo=
+        b=J6Q1qjIxkGujB1EyuiZO4k6q1WQPbUkvPjostvVtYK37c8mKvymUn6ET1A9UdzVrI
+         f8YLHZQ7qHScb17btu2/qpO609bCaLQuLJGqdbTjV6wVHpJoqgHBzyyZqa9obLNFJ/
+         +epWddaIsMOnfL7dEBoRrtrfQGEr7ZOXAmhY4hAE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ido Schimmel <idosch@mellanox.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        bridge@lists.linux-foundation.org,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 79/83] net: bridge: Mark FDB entries that were added by user as such
-Date:   Tue, 12 Feb 2019 21:36:57 -0500
-Message-Id: <20190213023701.20286-79-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 80/83] mlxsw: spectrum_switchdev: Do not treat static FDB entries as sticky
+Date:   Tue, 12 Feb 2019 21:36:58 -0500
+Message-Id: <20190213023701.20286-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -63,56 +60,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 710ae72877378e7cde611efd30fe90502a6e5b30 ]
+[ Upstream commit 64254a2054611205798e6bde634639bc704573ac ]
 
-Externally learned entries can be added by a user or by a switch driver
-that is notifying the bridge driver about entries that were learned in
-hardware.
+The driver currently treats static FDB entries as both static and
+sticky. This is incorrect and prevents such entries from being roamed to
+a different port via learning.
 
-In the first case, the entries are not marked with the 'added_by_user'
-flag, which causes switch drivers to ignore them and not offload them.
+Fix this by configuring static entries with ageing disabled and roaming
+enabled.
 
-The 'added_by_user' flag can be set on externally learned FDB entries
-based on the 'swdev_notify' parameter in br_fdb_external_learn_add(),
-which effectively means if the created / updated FDB entry was added by
-a user or not.
+In net-next we can add proper support for the newly introduced 'sticky'
+flag.
 
-Fixes: 816a3bed9549 ("switchdev: Add fdb.added_by_user to switchdev notifications")
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
 Reviewed-by: Petr Machata <petrm@mellanox.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: bridge@lists.linux-foundation.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_fdb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index 502f66349530..4d4b9b5ea1c1 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -1088,6 +1088,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
- 			err = -ENOMEM;
- 			goto err_unlock;
- 		}
-+		if (swdev_notify)
-+			fdb->added_by_user = 1;
- 		fdb->added_by_external_learn = 1;
- 		fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
- 	} else {
-@@ -1107,6 +1109,9 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
- 			modified = true;
- 		}
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 0d9ea37c5d21..ed8421144d5f 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1234,7 +1234,7 @@ mlxsw_sp_bridge_port_fdb_flush(struct mlxsw_sp *mlxsw_sp,
+ static enum mlxsw_reg_sfd_rec_policy mlxsw_sp_sfd_rec_policy(bool dynamic)
+ {
+ 	return dynamic ? MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_INGRESS :
+-			 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY;
++			 MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_MLAG;
+ }
  
-+		if (swdev_notify)
-+			fdb->added_by_user = 1;
-+
- 		if (modified)
- 			fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
- 	}
+ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+@@ -1246,7 +1246,7 @@ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				     const char *mac, u16 fid, bool adding,
+ 				     enum mlxsw_reg_sfd_rec_action action,
+-				     bool dynamic)
++				     enum mlxsw_reg_sfd_rec_policy policy)
+ {
+ 	char *sfd_pl;
+ 	u8 num_rec;
+@@ -1257,8 +1257,7 @@ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 		return -ENOMEM;
+ 
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+-	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+-			      mac, fid, action, local_port);
++	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, policy, mac, fid, action, local_port);
+ 	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+ 	if (err)
+@@ -1277,7 +1276,8 @@ static int mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				   bool dynamic)
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, local_port, mac, fid, adding,
+-					 MLXSW_REG_SFD_REC_ACTION_NOP, dynamic);
++					 MLXSW_REG_SFD_REC_ACTION_NOP,
++					 mlxsw_sp_sfd_rec_policy(dynamic));
+ }
+ 
+ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+@@ -1285,7 +1285,7 @@ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, 0, mac, fid, adding,
+ 					 MLXSW_REG_SFD_REC_ACTION_FORWARD_IP_ROUTER,
+-					 false);
++					 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY);
+ }
+ 
+ static int mlxsw_sp_port_fdb_uc_lag_op(struct mlxsw_sp *mlxsw_sp, u16 lag_id,
 -- 
 2.19.1
 
