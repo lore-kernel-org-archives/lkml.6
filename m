@@ -2,213 +2,142 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0B9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AA6C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADCF222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D44DC222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:59:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eu+FGcwa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404030AbfBMO6p (ORCPT
+        id S2392400AbfBMO7P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:58:45 -0500
-Received: from foss.arm.com ([217.140.101.70]:55676 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbfBMO6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:58:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDAAD80D;
-        Wed, 13 Feb 2019 06:58:44 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 145323F589;
-        Wed, 13 Feb 2019 06:58:39 -0800 (PST)
-Date:   Wed, 13 Feb 2019 14:58:37 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Evgenii Stepanov <eugenis@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Message-ID: <20190213145834.GJ3567@e103592.cambridge.arm.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
- <20181219125249.GB22067@e103592.cambridge.arm.com>
- <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
- <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
- <20190212180223.GD199333@arrakis.emea.arm.com>
+        Wed, 13 Feb 2019 09:59:15 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:30709 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733098AbfBMO7M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:59:12 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x1DEwsJn031082;
+        Wed, 13 Feb 2019 23:58:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x1DEwsJn031082
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550069935;
+        bh=55DKZHzUs6VExYmThMy1H+99yndAtO1BycyXZJDqIIo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eu+FGcwaUhMzJATvuYEtL/+ajMCkQXCjWgkEnYFJv/csZeHxklzFcmVLvlfmdWX4b
+         0W0EA9GH8NMwu4x9jwrgZo2ZOF24jZQVdW9V/D+IV4emYNQ/u2yV22M/kN2A5WrDV3
+         9ZgMa93NPqe+njKiKVHnw9D87OXjKuFbV4nqd9pZjBgKLC6/qCfW2cXrnbZrX4wbBC
+         5O4bKl7pUjjKQEebpK1QeluNmO6G5m0sJW0tg1aVIRyRjtiIQXkmErdAi6CJ1ZcudS
+         OArts3bMV70DOJo3rEjcBwC3PTj3ZVW4O8pZtAalK1VIT+SeD5WXWAM1OWofixRe/m
+         CgoGhRyZ7IezQ==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id z18so1543318vso.7;
+        Wed, 13 Feb 2019 06:58:55 -0800 (PST)
+X-Gm-Message-State: AHQUAuaFP4RRbSdWs0i47uUbZw6jmkNgPijQjihhDhd4TWxyE43Wtt3g
+        nf/aFOuLMvLIoZ6zHDjxTjPMmE5HW0LMsz2hXIU=
+X-Google-Smtp-Source: AHgI3IYhmOBf5M2y4iuyl7FNJv6k8ZUwjsXuLt/fDpeKD+7JRFaGhTGfIWe2/xlM+ccBLzPbCqaiyM2F1/tGO83APTQ=
+X-Received: by 2002:a67:485:: with SMTP id 127mr378590vse.54.1550069934466;
+ Wed, 13 Feb 2019 06:58:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212180223.GD199333@arrakis.emea.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190211193008.24101-1-ndesaulniers@google.com> <20190211193008.24101-3-ndesaulniers@google.com>
+In-Reply-To: <20190211193008.24101-3-ndesaulniers@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 13 Feb 2019 23:58:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATZY-K4g81LLvXpjp=+oMSY8L0wQoVXgHt-Bjrb2WXnNg@mail.gmail.com>
+Message-ID: <CAK7LNATZY-K4g81LLvXpjp=+oMSY8L0wQoVXgHt-Bjrb2WXnNg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] Makefile: lld: tell clang to use lld
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 06:02:24PM +0000, Catalin Marinas wrote:
-> On Mon, Feb 11, 2019 at 12:32:55PM -0800, Evgenii Stepanov wrote:
-> > On Mon, Feb 11, 2019 at 9:28 AM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
-> > > On 19/12/2018 12:52, Dave Martin wrote:
-
-[...]
-
-> > > >   * A single C object should be accessed using a single, fixed
-> > > >     pointer tag throughout its entire lifetime.
-> > >
-> > > Agreed.  Allocators themselves may need to be excluded though,
-> > > depending on how they represent their managed memory.
-> > >
-> > > >   * Tags can be changed only when there are no outstanding pointers to
-> > > >     the affected object or region that may be used to access the object
-> > > >     or region (i.e., if the object were allocated from the C heap and
-> > > >     is it safe to realloc() it, then it is safe to change the tag; for
-> > > >     other types of allocation, analogous arguments can be applied).
-> > >
-> > > Tags can only be changed at the point of deallocation/
-> > > reallocation.  Pointers to the object become invalid and cannot
-> > > be used after it has been deallocated; memory tagging allows to
-> > > catch such invalid usage.
+On Tue, Feb 12, 2019 at 5:42 AM <ndesaulniers@google.com> wrote:
 >
-> All the above sound well but that's mostly a guideline on what a C
-> library can do. It doesn't help much with defining the kernel ABI.
-> Anyway, it's good to clarify the use-cases.
+> This is needed because clang doesn't select which linker to use based on
+> $LD but rather -fuse-ld=lld. This is problematic especially for
+> cc-ldoption, which checks for linker flag support via invoking the
+> compiler, rather than the linker.
 
-My aim was to clarify the use case in userspace, since I wasn't directly
-involved in that.  The kernel ABI needs to be compatible with the the
-use case, but doesn't need to specify must of it.
 
-I'm wondering whether we can piggy-back on existing concepts.
+Sorry, please explain what kind of problem
+this patch solves.
 
-We could say that recolouring memory is safe when and only when
-unmapping of the page or removing permissions on the page (via
-munmap/mremap/mprotect) would be safe.  Otherwise, the resulting
-behaviour of the process is undefined.
 
-Hopefully there are friendly fuzzers testing this kind of thing.
 
-[...]
+[1] $(LD) is used to link vmlinux, modules, etc.
 
-> > It would also be valuable to narrow down the set of "relaxed" (i.e.
-> > not tag-checking) syscalls as reasonably possible. We would want to
-> > provide tag-checking userspace wrappers for any important calls that
-> > are not checked in the kernel. Is it correct to assume that anything
-> > that goes through copy_from_user  / copy_to_user is checked?
-> 
-> I lost track of the context of this thread but if it's just about
-> relaxing the ABI for hwasan, the kernel has no idea of the compiler
-> generated structures in user space, so nothing is checked.
-> 
-> If we talk about tags in the context of MTE, than yes, with the current
-> proposal the tag would be checked by copy_*_user() functions.
+[2] $(CC) is used to link vdso, etc.
+    and -fuse-ld= selects which linker is invoked from $(CC)
 
-Also put_user() and friends?
 
-It might be reasonable to do the check in access_ok() and skip it in
-__put_user() etc.
+Is it a problem to use a different
+type of linker for [1] and [2] ?
 
-(I seem to remember some separate discussion about abolishing
-__put_user() and friends though, due to the accident risk they pose.)
 
-> > For aio* operations it would be nice if the tag was checked at the
-> > time of the actual userspace read/write, either instead of or in
-> > addition to at the time of the system call.
-> 
-> With aio* (and synchronous iovec-based syscalls), the kernel may access
-> the memory while the corresponding user process is scheduled out. Given
-> that such access is not done in the context of the user process (and
-> using the user VA like copy_*_user), the kernel cannot handle potential
-> tag faults. Moreover, the transfer may be done by DMA and the device
-> does not understand tags.
-> 
-> I'd like to keep tags as a property of the pointer in a specific virtual
-> address space. The moment you convert it to a different address space
-> (e.g. kernel linear map, physical address), the tag property is stripped
-> and I don't think we should re-build it (and have it checked).
+Thanks.
 
-This is probably reasonable.
 
-Ideally we would check the tag at the point of stripping it off, but
-most likely it's going to be rather best-effort.
 
-If memory tagging is essential a debugging feature then this seems
-an acceptable compromise.
 
-> > > >   * For purposes other than dereference, the kernel shall accept any
-> > > >     legitimately tagged pointer (according to the above rules) as
-> > > >     identifying the associated memory location.
-> > > >
-> > > >     So, mprotect(some_page_aligned_object, ...); is valid irrespective
-> > > >     of where page_aligned_object() came from.  There is no implicit
-> > > >     derefence by the kernel here, hence no tag check.
-> > > >
-> > > >     The kernel does not guarantee to work correctly if the wrong tag
-> > > >     is used, but there is not always a well-defined "right" tag, so
-> > > >     we can't really guarantee to check it.  So a pointer derived by
-> > > >     any reasonable means by userspace has to be treated as equally
-> > > >     valid.
-> > >
-> > > This is a disputed point :) In my opinion, this is the the most
-> > > reasonable approach.
-> > 
-> > Yes, it would be nice if the kernel explicitly promised, ex.
-> > mprotect() over a range of differently tagged pages to be allowed
-> > (i.e. address tag should be unchecked).
-> 
-> I don't think mprotect() over differently tagged pages was ever a
-> problem. I originally asked that mprotect() and friends do not accept
-> tagged pointers since these functions deal with memory ranges rather
-> than dereferencing such pointer (the reason being minimal kernel
-> changes). However, given how complicated it is to specify an ABI, I came
-> to the conclusion that a pointer passed to such function should be
-> allowed to have non-zero top byte. It would be the kernel's
-> responsibility to strip it out as appropriate.
 
-I think that if the page range is all the same colour then it should be
-legitimate to pass a matching tag.
+> Link: https://github.com/ClangBuiltLinux/linux/issues/342
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+> Changes V1->V2:
+> * add reviewed and tested by tags.
+> * move this addition up 2 statments so that it's properly added to
+>   KBUILD_*FLAGS as per Nathan.
+>
+>  Makefile | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Makefile b/Makefile
+> index d3b65e96d183..00e8e01d23fc 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -500,6 +500,9 @@ ifneq ($(GCC_TOOLCHAIN),)
+>  CLANG_FLAGS    += --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+>  CLANG_FLAGS    += -no-integrated-as
+> +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
+> +CLANG_FLAGS    += -fuse-ld=lld
+> +endif
+>  KBUILD_CFLAGS  += $(CLANG_FLAGS)
+>  KBUILD_AFLAGS  += $(CLANG_FLAGS)
+>  export CLANG_FLAGS
+> --
+> 2.20.1.791.gb4d0f1c61a-goog
+>
 
-But it doesn't seem reasonable for the kernel to require this.  If
-free() calls munmap(), the page(s) will contain possibly randomly-
-coloured garbage.  There's no correct tag to pass in such a case.
 
-The most obvious solution is just to ignore the tags passed by userspace
-to such syscalls.  This would imply that the kernel must explicitly
-strip it out, as you suggest.
-
-The number of affected syscalls is relatively small though.
-
-Cheers
----Dave
+--
+Best Regards
+Masahiro Yamada
