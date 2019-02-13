@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0630FC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197B0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47CC222D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4258222D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083252;
-	bh=xTRnONJ99nOxtOWbTgDgZPAppR9pBN2DokYZdHs0VgU=;
+	s=default; t=1550083256;
+	bh=BxM82JvfbyuveFQmmAkG2Bcx3ebP/gxFPSqPcvBNMA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iFllAsN3nMc11591KtvmTRI+eGDWbeQQJwK1jm1tRDFZB0S57oG+CAwmJvGRmKBco
-	 D+P135ykbkMnD7oYoawzX2boCKayCpVKWKAV/YgkzABRSUtctslbuL+RFZdokZ6VV0
-	 6mDlACJtCC7ZFa+lf4TUOdCnWAwGgyWX4x2iU2J4=
+	b=iDmj8ofOpF3E+0ggSoum2/qVt47Jq4GPL9wdG0JCeALXgLPlCd2k6LNuvnxIRsqze
+	 d/i8h//TuVVtlovdFW9viRBoEY9WYFpWxKLbBeCzzTzbJpoZXaUxKshkGlSIbpVfP5
+	 U27YSDgzxb8+EH1NHWNjZVxXN1wWUjJAhoaeRBBY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405480AbfBMSkv (ORCPT
+        id S2405492AbfBMSky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39028 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:40:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405465AbfBMSkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:40:49 -0500
+        id S2405465AbfBMSkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:40:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F20EA222DB;
-        Wed, 13 Feb 2019 18:40:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6415E222D6;
+        Wed, 13 Feb 2019 18:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083248;
-        bh=xTRnONJ99nOxtOWbTgDgZPAppR9pBN2DokYZdHs0VgU=;
+        s=default; t=1550083251;
+        bh=BxM82JvfbyuveFQmmAkG2Bcx3ebP/gxFPSqPcvBNMA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOVcprs9+t/lXMRkWjGWc20BVfNdy/gVJ7Fyz6dJfRFwHhNubGKYjPKiVdBGM+V8o
-         2fmzgoPM1cvrgKqevlDnUzzBPeON3Fu8IVYTKfelzNGzlHNtnixfzNyqtwZrnFXDjY
-         SKAzlDZKn+UWyr14xQYygLMzxJawvJyhKgGCXlJA=
+        b=MRS9EFeaUopu2yP+T7Vk+brqymOcghgggsg0xsuDq3wfGgYQ/sa6xWvhaQ5Nf8bDX
+         iDxmlQUvuoHFnYYt1e1ZEdvVFddvI0eJr2af9l6NLpiWtOIVJzeSbo8ICDNQtcyKnP
+         wUtqDpqhPfhlEMKPNv2V5FkLNdjpUZ6CBLKs/kyI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.14 11/35] MIPS: OCTEON: dont set octeon_dma_bar_type if PCI is disabled
-Date:   Wed, 13 Feb 2019 19:38:06 +0100
-Message-Id: <20190213183706.704778969@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        linux-mips@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Maciej W . Rozycki" <macro@linux-mips.org>
+Subject: [PATCH 4.14 12/35] MIPS: VDSO: Include $(ccflags-vdso) in o32,n32 .lds builds
+Date:   Wed, 13 Feb 2019 19:38:07 +0100
+Message-Id: <20190213183706.746307762@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -65,49 +67,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Paul Burton <paul.burton@mips.com>
 
-commit dcf300a69ac307053dfb35c2e33972e754a98bce upstream.
+commit 67fc5dc8a541e8f458d7f08bf88ff55933bf9f9d upstream.
 
-Don't set octeon_dma_bar_type if PCI is disabled. This avoids creation
-of the MSI irqchip later on, and saves a bit of memory.
+When generating vdso-o32.lds & vdso-n32.lds for use with programs
+running as compat ABIs under 64b kernels, we previously haven't included
+the compiler flags that are supposedly common to all ABIs - ie. those in
+the ccflags-vdso variable.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+This is problematic in cases where we need to provide the -m%-float flag
+in order to ensure that we don't attempt to use a floating point ABI
+that's incompatible with the target CPU & ABI. For example a toolchain
+using current gcc trunk configured --with-fp-32=xx fails to build a
+64r6el_defconfig kernel with the following error:
+
+  cc1: error: '-march=mips1' requires '-mfp32'
+  make[2]: *** [arch/mips/vdso/Makefile:135: arch/mips/vdso/vdso-o32.lds] Error 1
+
+Include $(ccflags-vdso) for the compat VDSO .lds builds, just as it is
+included for the native VDSO .lds & when compiling objects for the
+compat VDSOs. This ensures we consistently provide the -msoft-float flag
+amongst others, avoiding the problem by ensuring we're agnostic to the
+toolchain defaults.
+
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: a214720cbf50 ("Disable MSI also when pcie-octeon.pcie_disable on")
-Cc: stable@vger.kernel.org # v3.3+
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
 Cc: linux-mips@vger.kernel.org
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Maciej W . Rozycki <macro@linux-mips.org>
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pci/pci-octeon.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/mips/vdso/Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mips/pci/pci-octeon.c
-+++ b/arch/mips/pci/pci-octeon.c
-@@ -572,6 +572,11 @@ static int __init octeon_pci_setup(void)
- 	if (octeon_has_feature(OCTEON_FEATURE_PCIE))
- 		return 0;
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -121,7 +121,7 @@ $(obj)/%-o32.o: $(src)/%.c FORCE
+ 	$(call cmd,force_checksrc)
+ 	$(call if_changed_rule,cc_o_c)
  
-+	if (!octeon_is_pci_host()) {
-+		pr_notice("Not in host mode, PCI Controller not initialized\n");
-+		return 0;
-+	}
-+
- 	/* Point pcibios_map_irq() to the PCI version of it */
- 	octeon_pcibios_map_irq = octeon_pci_pcibios_map_irq;
+-$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := -mabi=32
++$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=32
+ $(obj)/vdso-o32.lds: $(src)/vdso.lds.S FORCE
+ 	$(call if_changed_dep,cpp_lds_S)
  
-@@ -583,11 +588,6 @@ static int __init octeon_pci_setup(void)
- 	else
- 		octeon_dma_bar_type = OCTEON_DMA_BAR_TYPE_BIG;
+@@ -161,7 +161,7 @@ $(obj)/%-n32.o: $(src)/%.c FORCE
+ 	$(call cmd,force_checksrc)
+ 	$(call if_changed_rule,cc_o_c)
  
--	if (!octeon_is_pci_host()) {
--		pr_notice("Not in host mode, PCI Controller not initialized\n");
--		return 0;
--	}
--
- 	/* PCI I/O and PCI MEM values */
- 	set_io_port_base(OCTEON_PCI_IOSPACE_BASE);
- 	ioport_resource.start = 0;
+-$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := -mabi=n32
++$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=n32
+ $(obj)/vdso-n32.lds: $(src)/vdso.lds.S FORCE
+ 	$(call if_changed_dep,cpp_lds_S)
+ 
 
 
