@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A1C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A48C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C9D222CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C00CF206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025274;
-	bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
+	s=default; t=1550025277;
+	bh=EMoSIh9FMivD+yni4s2yVWdfvGG39sgEAEWg7BeZPLA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dz6c5/sM9gv3aJ7bZTr9g5x3gfbtaQoGP/+m8OkfKOiUHJmCtSUn44KFbEss5j8jr
-	 i7gT1NaJUKiraisvBOaXIiVcjA847vx3L0DiQVvILL5aRiZe23JS0ZHlJ7M2ZzjKyv
-	 kStfQ3ekeYM4+mgbNRD+u9TrJ1zmltDWrrXdTmc4=
+	b=B1OI/XGz2jjqI9FxkgNH5wchAd1fKaJxceqpf5Br99pwZb5PyaKuEJOvvS8j5abS4
+	 e+41lxokD5sdVdj1dol5ck/rYC4c7CeGsHhRFPtzsGva+egmDU9nFOWSlzex8weVh1
+	 e2uAHooXQf6jfjS76Z01EAYh7XrIDfrD2HwWwcaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387740AbfBMCeb (ORCPT
+        id S2387777AbfBMCeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:34:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38018 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:34:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387675AbfBMCea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:30 -0500
+        id S2387738AbfBMCeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84CF3222C2;
-        Wed, 13 Feb 2019 02:34:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39717222C7;
+        Wed, 13 Feb 2019 02:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025269;
-        bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
+        s=default; t=1550025271;
+        bh=EMoSIh9FMivD+yni4s2yVWdfvGG39sgEAEWg7BeZPLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E7+VlF8hkQp8B/SOYo2QmsdvxAetObmi96wf7Iz5fnyRUMLmkmBQlZYYx8SmIMJAz
-         PUvvy2VoRdu5dL/OmpcnI7sqiudRTsoDGA9h3funTkwPhVuIPvPaDvezwuC/zYjl/H
-         DmryMTe0n6AgIN/gzE4Oc71XbAWsspcXUlwh7CSo=
+        b=gkwcDBGaw4eOHyvWWwnKmXXWhOds0rL6S3P6arnVnZkG9IUPATE2ohwF9H8WzMLUK
+         8B9JzleEzYWUU/fqVHrXNaNjktbSIhlH/AwxrrWUJQCcDL3CopJw7SPUa8I+ARGR1S
+         6m9xtTZ8NumQdaG6nSBgIv5s5tKSAFnckkr3tkAA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 037/105] selftests: forwarding: Add a test for VLAN deletion
-Date:   Tue, 12 Feb 2019 21:32:28 -0500
-Message-Id: <20190213023336.19019-37-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 038/105] netfilter: nf_tables: fix leaking object reference count
+Date:   Tue, 12 Feb 2019 21:32:29 -0500
+Message-Id: <20190213023336.19019-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -59,53 +60,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 4fabf3bf93a194c7fa5288da3e0af37e4b943cf3 ]
+[ Upstream commit b91d9036883793122cf6575ca4dfbfbdd201a83d ]
 
-Add a VLAN on a bridge port, delete it and make sure the PVID VLAN is
-not affected.
+There is no code that decreases the reference count of stateful objects
+in error path of the nft_add_set_elem(). this causes a leak of reference
+count of stateful objects.
 
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Test commands:
+   $nft add table ip filter
+   $nft add counter ip filter c1
+   $nft add map ip filter m1 { type ipv4_addr : counter \;}
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft delete element ip filter m1 { 1 }
+   $nft delete counter ip filter c1
+
+Result:
+   Error: Could not process rule: Device or resource busy
+   delete counter ip filter c1
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+At the second 'nft add element ip filter m1 { 1 : c1 }', the reference
+count of the 'c1' is increased then it tries to insert into the 'm1'. but
+the 'm1' already has same element so it returns -EEXIST.
+But it doesn't decrease the reference count of the 'c1' in the error path.
+Due to a leak of the reference count of the 'c1', the 'c1' can't be
+removed by 'nft delete counter ip filter c1'.
+
+Fixes: 8aeff920dcc9 ("netfilter: nf_tables: add stateful object reference to set elements")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/net/forwarding/bridge_vlan_aware.sh | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-index d8313d0438b7..04c6431b2bd8 100755
---- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-@@ -1,7 +1,7 @@
- #!/bin/bash
- # SPDX-License-Identifier: GPL-2.0
- 
--ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding"
-+ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
- NUM_NETIFS=4
- CHECK_TC="yes"
- source lib.sh
-@@ -96,6 +96,19 @@ flooding()
- 	flood_test $swp2 $h1 $h2
- }
- 
-+vlan_deletion()
-+{
-+	# Test that the deletion of a VLAN on a bridge port does not affect
-+	# the PVID VLAN
-+	log_info "Add and delete a VLAN on bridge port $swp1"
-+
-+	bridge vlan add vid 10 dev $swp1
-+	bridge vlan del vid 10 dev $swp1
-+
-+	ping_ipv4
-+	ping_ipv6
-+}
-+
- trap cleanup EXIT
- 
- setup_prepare
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 6e548d7c9f67..aba6ec4a14ce 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4474,6 +4474,8 @@ err6:
+ err5:
+ 	kfree(trans);
+ err4:
++	if (obj)
++		obj->use--;
+ 	kfree(elem.priv);
+ err3:
+ 	if (nla[NFTA_SET_ELEM_DATA] != NULL)
 -- 
 2.19.1
 
