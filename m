@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AB5C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03142C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6552175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C0221934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026007;
-	bh=0tmh0wvFxTd4k9xWE03YRdq7RrAQZeA4/z7qCwVhCUU=;
+	s=default; t=1550026010;
+	bh=5UQm+zEySr2J5WaEkdzlKgfQoUylPynoBWkTY97uZ0g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J5QlcQhLisdkWAk2jHecJyi92XeWC9202cwVsWZ6aG7x3AGgaJvqvJCxVLed+cra6
-	 w59cXr8MnO/nCorn0R3OSmRtogWWPnjEOHf4Q8qLzPqpKS16Q0BMrKsOjkcweiTHpS
-	 tZrojNwHhjycIHTq6/iAYSQZf85jZvn0m2oy2v0s=
+	b=yZOU0R8njFV0hsCFmMKPTD4UpQ56+Bb7KpVOQ3FO1zKxw64bqAP52hzgiNjvs6/V/
+	 M2sUmhkFEkFOujxPHPtpTtMFM09ozsqzxYiOqF7lQvdYIKtslnFVntQmHnkv5myX3s
+	 VnM8qIslCpFoQD/YqyVHWppY+fmhmPPIRLfexhU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389720AbfBMCqp (ORCPT
+        id S2387590AbfBMCqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:46:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44344 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389046AbfBMCkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389010AbfBMCkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 21:40:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62C50222CC;
-        Wed, 13 Feb 2019 02:40:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 479F0222CA;
+        Wed, 13 Feb 2019 02:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025637;
-        bh=0tmh0wvFxTd4k9xWE03YRdq7RrAQZeA4/z7qCwVhCUU=;
+        s=default; t=1550025636;
+        bh=5UQm+zEySr2J5WaEkdzlKgfQoUylPynoBWkTY97uZ0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CzcKRiI6RTTMZuxdK2z9dCJEGgt6GdOlewPl6O3N7YZC6HKwNfO//1svB2ouOEgcE
-         l5QMeHDrfg1IN1UCcg/UKFoBZHGdCxNZLpxcagoPUvCLuTcm7THeKjvpb4r+Nz0Rd9
-         dGbENStHMJ9KyqcKHNy8mMtsbSwFeT5TwmwwmabY=
+        b=DzNwdkfqDDPXo+SxlxLmokmT3dkhSwkB3Ni5zYgD2tIoOXTUz39t6Is81Oarx5GUt
+         xpAkmEMZB/jcb2XOnO2yB3HaLa7jrHBM5IevNQ6UHXNuvfAptHR4cqDn0xv8qPR5sT
+         fqCKRykjvqSBusdEFzgZ4d1etiSFH3Yxi3G7XDqg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 33/34] net/mlx5e: Fix wrong (zero) TX drop counter indication for representor
-Date:   Tue, 12 Feb 2019 21:39:51 -0500
-Message-Id: <20190213023952.21311-33-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 32/34] mlxsw: spectrum_switchdev: Do not treat static FDB entries as sticky
+Date:   Tue, 12 Feb 2019 21:39:50 -0500
+Message-Id: <20190213023952.21311-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
 References: <20190213023952.21311-1-sashal@kernel.org>
@@ -59,32 +58,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 7fdc1adc52d3975740547a78c2df329bb207f15d ]
+[ Upstream commit 64254a2054611205798e6bde634639bc704573ac ]
 
-For representors, the TX dropped counter is not folded from the
-per-ring counters. Fix it.
+The driver currently treats static FDB entries as both static and
+sticky. This is incorrect and prevents such entries from being roamed to
+a different port via learning.
 
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fix this by configuring static entries with ageing disabled and roaming
+enabled.
+
+In net-next we can add proper support for the newly introduced 'sticky'
+flag.
+
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-index 281911698f72..e69674d38f16 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -125,6 +125,7 @@ static void mlx5e_rep_update_sw_counters(struct mlx5e_priv *priv)
- 
- 			s->tx_packets		+= sq_stats->packets;
- 			s->tx_bytes		+= sq_stats->bytes;
-+			s->tx_queue_dropped	+= sq_stats->dropped;
- 		}
- 	}
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 9052e93e1925..ad1bf39c7e19 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1111,7 +1111,7 @@ mlxsw_sp_bridge_port_fdb_flush(struct mlxsw_sp *mlxsw_sp,
+ static enum mlxsw_reg_sfd_rec_policy mlxsw_sp_sfd_rec_policy(bool dynamic)
+ {
+ 	return dynamic ? MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_INGRESS :
+-			 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY;
++			 MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_MLAG;
  }
+ 
+ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+@@ -1123,7 +1123,7 @@ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				     const char *mac, u16 fid, bool adding,
+ 				     enum mlxsw_reg_sfd_rec_action action,
+-				     bool dynamic)
++				     enum mlxsw_reg_sfd_rec_policy policy)
+ {
+ 	char *sfd_pl;
+ 	u8 num_rec;
+@@ -1134,8 +1134,7 @@ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 		return -ENOMEM;
+ 
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+-	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+-			      mac, fid, action, local_port);
++	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, policy, mac, fid, action, local_port);
+ 	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+ 	if (err)
+@@ -1154,7 +1153,8 @@ static int mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				   bool dynamic)
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, local_port, mac, fid, adding,
+-					 MLXSW_REG_SFD_REC_ACTION_NOP, dynamic);
++					 MLXSW_REG_SFD_REC_ACTION_NOP,
++					 mlxsw_sp_sfd_rec_policy(dynamic));
+ }
+ 
+ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+@@ -1162,7 +1162,7 @@ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, 0, mac, fid, adding,
+ 					 MLXSW_REG_SFD_REC_ACTION_FORWARD_IP_ROUTER,
+-					 false);
++					 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY);
+ }
+ 
+ static int mlxsw_sp_port_fdb_uc_lag_op(struct mlxsw_sp *mlxsw_sp, u16 lag_id,
 -- 
 2.19.1
 
