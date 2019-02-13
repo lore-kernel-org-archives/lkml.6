@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2489C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C7C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B84D0222CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8EAA222CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025304;
-	bh=EHKHFXrbKdK8wAs5O22yOtWYD1HLyR02FuxiFdINdw4=;
+	s=default; t=1550025306;
+	bh=PJStRqFwQDSdWlRUOtrZ86loznMuwW2dEb5eX/d3HB0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bM7yE/TSBgdNyL/OByhMz9UhpHlJVKLctIJ6HjbL4UWpW/vAkjwjATejU7m6Eakwe
-	 f8mpde6FkFhID29jjBnn0UfMVeVf2bKJ94vrEJ0jQ9aRX4XRdUqiOM5zy4I1jMW1Gy
-	 g3XfbjTluHxxT2r43RHJObIy27EJOaxso1JNoYWI=
+	b=EO7vxAds8O058TYBFcQZv3pKereWpHQgTGXQ1RzAIvLMDwEYzlPRsxCxQzRDvTGE7
+	 cSc/H6eeHMXmdBbUtGG0SPxyowHoH5M1ZfiedWZhp1ps7VSWuXWYhhsMsJ2DSD0Nwv
+	 4MXXqaH7XzqaOTXdq5cVk3wT3D34vtOQnBWPTMKI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387888AbfBMCfC (ORCPT
+        id S1731637AbfBMCfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38540 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387855AbfBMCe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:57 -0500
+        id S2387855AbfBMCfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2906F222CE;
-        Wed, 13 Feb 2019 02:34:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D58F6222C7;
+        Wed, 13 Feb 2019 02:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025297;
-        bh=EHKHFXrbKdK8wAs5O22yOtWYD1HLyR02FuxiFdINdw4=;
+        s=default; t=1550025303;
+        bh=PJStRqFwQDSdWlRUOtrZ86loznMuwW2dEb5eX/d3HB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6CDgMYAvkPtbcmCQa3t6QLboqf66V3Vv4pHuZAybX2zi9tU+tqbCOaycBYiVUYPM
-         oA9qQMJMDPjvzJzuXesRCCDx5MyzMtDgooip4G0KRIDyZ4PALAec7MySLaJ/o1WufZ
-         vyIyCer0W6zFupnyvNeD1fFSNoyk/9QBtw2jYNiI=
+        b=1faeXTRS9NvLZ29hdRstTvsLiC8cs9/xQpAULa6aTMdhG248U6BHyNDhNziRed2jg
+         yq6/Ad3rHIRoOTIm1ZOjaSCx1ueGW02eBlgm/79PYhbWc3wOsMNK/gIpXSadtVz1v8
+         V7aMiSNJ5Ec09oef9C+Gy+R2oo6gTuBFPDQKC4KQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nvdimm@lists.01.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 052/105] acpi/nfit: Fix race accessing memdev in nfit_get_smbios_id()
-Date:   Tue, 12 Feb 2019 21:32:43 -0500
-Message-Id: <20190213023336.19019-52-sashal@kernel.org>
+Cc:     Jose Abreu <jose.abreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 056/105] net: stmmac: Fix the logic of checking if RX Watchdog must be enabled
+Date:   Tue, 12 Feb 2019 21:32:47 -0500
+Message-Id: <20190213023336.19019-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -59,51 +62,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Luck <tony.luck@intel.com>
+From: Jose Abreu <jose.abreu@synopsys.com>
 
-[ Upstream commit 0919871ac37fdcf46c7657da0f1742efe096b399 ]
+[ Upstream commit 3b5094665e273c4a2a99f7f5f16977c0f1e19095 ]
 
-Possible race accessing memdev structures after dropping the
-mutex. Dan Williams says this could race against another thread
-that is doing:
+RX Watchdog can be disabled by platform definitions but currently we are
+initializing the descriptors before checking if Watchdog must be
+disabled or not.
 
- # echo "ACPI0012:00" > /sys/bus/acpi/drivers/nfit/unbind
+Fix this by checking earlier if user wants Watchdog disabled or not.
 
-Reported-by: Jane Chu <jane.chu@oracle.com>
-Fixes: 23222f8f8dce ("acpi, nfit: Add function to look up nvdimm...")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/nfit/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 8535e7999769..2a2d7ec77252 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -724,6 +724,7 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 	struct acpi_nfit_memory_map *memdev;
- 	struct acpi_nfit_desc *acpi_desc;
- 	struct nfit_mem *nfit_mem;
-+	u16 physical_id;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index c4a35e932f05..fe9240e15aea 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4194,6 +4194,18 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
+ 			return ret;
+ 	}
  
- 	mutex_lock(&acpi_desc_lock);
- 	list_for_each_entry(acpi_desc, &acpi_descs, list) {
-@@ -731,10 +732,11 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 		list_for_each_entry(nfit_mem, &acpi_desc->dimms, list) {
- 			memdev = __to_nfit_memdev(nfit_mem);
- 			if (memdev->device_handle == device_handle) {
-+				*flags = memdev->flags;
-+				physical_id = memdev->physical_id;
- 				mutex_unlock(&acpi_desc->init_mutex);
- 				mutex_unlock(&acpi_desc_lock);
--				*flags = memdev->flags;
--				return memdev->physical_id;
-+				return physical_id;
- 			}
- 		}
- 		mutex_unlock(&acpi_desc->init_mutex);
++	/* Rx Watchdog is available in the COREs newer than the 3.40.
++	 * In some case, for example on bugged HW this feature
++	 * has to be disable and this can be done by passing the
++	 * riwt_off field from the platform.
++	 */
++	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
++	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
++		priv->use_riwt = 1;
++		dev_info(priv->device,
++			 "Enable RX Mitigation via HW Watchdog Timer\n");
++	}
++
+ 	return 0;
+ }
+ 
+@@ -4326,18 +4338,6 @@ int stmmac_dvr_probe(struct device *device,
+ 	if (flow_ctrl)
+ 		priv->flow_ctrl = FLOW_AUTO;	/* RX/TX pause on */
+ 
+-	/* Rx Watchdog is available in the COREs newer than the 3.40.
+-	 * In some case, for example on bugged HW this feature
+-	 * has to be disable and this can be done by passing the
+-	 * riwt_off field from the platform.
+-	 */
+-	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
+-	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
+-		priv->use_riwt = 1;
+-		dev_info(priv->device,
+-			 "Enable RX Mitigation via HW Watchdog Timer\n");
+-	}
+-
+ 	/* Setup channels NAPI */
+ 	maxq = max(priv->plat->rx_queues_to_use, priv->plat->tx_queues_to_use);
+ 
 -- 
 2.19.1
 
