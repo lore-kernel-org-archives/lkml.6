@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B7DC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496FEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2754E222CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B0DC222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIR5bn/f"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qXZ2Vu+P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395225AbfBMWme (ORCPT
+        id S2395240AbfBMWmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:42:34 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33284 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395202AbfBMWm3 (ORCPT
+        Wed, 13 Feb 2019 17:42:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33956 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395185AbfBMWmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:42:29 -0500
-Received: by mail-wm1-f65.google.com with SMTP id h22so2934471wmb.0;
-        Wed, 13 Feb 2019 14:42:27 -0800 (PST)
+        Wed, 13 Feb 2019 17:42:32 -0500
+Received: by mail-wr1-f65.google.com with SMTP id f14so4414094wrg.1;
+        Wed, 13 Feb 2019 14:42:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
-        b=MIR5bn/fwd0D9N8Om1k7o8c/GCTN6LB0C3GeABYZt+IdgyaeK88/xnCr2afThsQtba
-         OdrxjaKohAGefxP47UJqddJuo1wL6QROIgYS0nqcNKVXavRx0k4ynvja67Sso2VpdoLb
-         z9j+1xtt6Ba4iqVJyiEtsV6kVv2f6na8AIvyf5kQBP+bHJANL/fMnSMajCnjT+s2x5We
-         S0NgnOqmddtMsILaxMaOff7AK5WqJx2F8sVI6dC5yeP3exfq/e0MKp75IrcRWN3PIgcX
-         a55clojZ32DlpLA7ve3dKZwubnysbhMO49f7OxiSBhfj+QUGvfT6whA+F8zobwRBMXHz
-         Re+w==
+        bh=hKpBmvKhY62YcE+qk2JyFeoOHJdEVTVCpq3mJ7wKHeo=;
+        b=qXZ2Vu+P6kthMEkjo4iNmgotT7rvJqsgrxxwiFIZl81jupiKBpLSUH2abdTiMlSLJs
+         YahkFPUw4qFNOTutD7eS0RkUg8/4x71BFfYo03YVardx8EzGJKYPhLTp7k9S+a53JLMv
+         M0pdfY2WiUJrH05PCxiQNB/qHgXxlZuJ3TU+QrEu0FcGIo457jatHpc7OPuJqaa9AZl6
+         RGP/Zel8+olUZCL6uwyRtRpnAnITyKhXcOeL8t64zoh8KvFaWjZqdhMCNOoDamFRVbxm
+         WFsxWPvhhEzgW6QvSW1k6TbPE36aOAgqq9OpmuIO5LEScw602S7o8oXyO3Tc0d4i2nNa
+         pjag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
-        b=Yal/o9RwUYvmMC2Gic5Y1QK0qLW48FAnlZzwKGPxl2O6krtDh0MdCkx9HdPtgZoWXl
-         yruHb4KyooGQdXAwPw/jCUcG3r9VljE3VFMmzCxi3CBpJRzkzKxsTBVA18jHQbdgr9ou
-         /zxiYK5+zvUDPYUWrVqiIlyV3IToqHwsMse2RTNwwW18R7X2VucbAHUHKYRjtx23NLQC
-         tcQ43T+1C1wjcERhF6kcYUDYnguJLipeTNkJAULfhIR/waGKk1XJL3HzrWRGW6Uqm4c3
-         CTBc0QPXK3iNqao/n7EgR2iR8TrSwCUu0qfpyzBXCa0lszij57brOyCAqIUsraDsxpjv
-         /uYw==
-X-Gm-Message-State: AHQUAubHFFTvsnNwxws4LB+qi/NWx3YOJGmTIwMfRhQ5w3OrwZ+a+ISY
-        M5aW3cUCNH5rjSOeV3ADH7U=
-X-Google-Smtp-Source: AHgI3IY/qpx9bIN8m/MToJYg7+VC1FFLoWbQiBQL48Q2ZmiFFaSGSIEBHj0CtX918v3oqTB9pREW7w==
-X-Received: by 2002:a1c:14:: with SMTP id 20mr259551wma.91.1550097747249;
-        Wed, 13 Feb 2019 14:42:27 -0800 (PST)
+        bh=hKpBmvKhY62YcE+qk2JyFeoOHJdEVTVCpq3mJ7wKHeo=;
+        b=AdeS86nrwvnGRsPWHCm6nevP1UA/TuwDy7BJ8NYP9yhi/o0e8KudH6WS91jQeuN1u8
+         hsMHKWzVVHwB76L90Vf1I9Umz3EqQox+anIeGK/SSlzI32o3CY+uh/t+5enIE9Lb7Kr0
+         7U0cZpUPVIXwQS8vxTMDlEDKWah+2t/5EF88fp5byXnW4yG5xjV5wGQZFKoTO6+MrRSs
+         6lY9cd8ppnV3eUlfMxbTqzpuAQkVB4NNQpGVkbnUpMMQJbXIttS8+OCMs5/OEx4WQG3c
+         CPZg0D3FHhpuHvh72WX7wcmXNfUVmjCXQHYVNSGc/4MaB0XIJCW6JAUhSh4uwh3NP8EB
+         O0aQ==
+X-Gm-Message-State: AHQUAubH1BTYgkuTh0QnDvSXKbMWOWF9yGDU9ZOehDQyCfk8BMUKdSv2
+        1Mi4hGhyayO7l0icVwFSZMI=
+X-Google-Smtp-Source: AHgI3IawnVj1KBrwvlzP2l4yYPQzxhp3IgPK38fpbbnsPGtbn+e/GwYjxoGB2EAAlzWjGvPfKesd0w==
+X-Received: by 2002:a5d:538a:: with SMTP id d10mr283768wrv.121.1550097750621;
+        Wed, 13 Feb 2019 14:42:30 -0800 (PST)
 Received: from localhost.localdomain ([91.75.74.250])
-        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.23
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:42:26 -0800 (PST)
+        Wed, 13 Feb 2019 14:42:30 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 09/12] __wr_after_init: rodata_test: refactor tests
-Date:   Thu, 14 Feb 2019 00:41:38 +0200
-Message-Id: <826811306c45f5735b83b169017b40f563f21fba.1550097697.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v5 10/12] __wr_after_init: rodata_test: test __wr_after_init
+Date:   Thu, 14 Feb 2019 00:41:39 +0200
+Message-Id: <c46757d8e40a2c4269c2a5376f7d96b17b81f250.1550097697.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550097697.git.igor.stoppa@huawei.com>
 References: <cover.1550097697.git.igor.stoppa@huawei.com>
@@ -87,8 +87,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor the test cases, in preparation for using them also for testing
-__wr_after_init memory, when available.
+The write protection of the __wr_after_init data can be verified with the
+same methodology used for const data.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -106,85 +106,53 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- mm/rodata_test.c | 48 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ mm/rodata_test.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
 diff --git a/mm/rodata_test.c b/mm/rodata_test.c
-index d908c8769b48..e1349520b436 100644
+index e1349520b436..a669cf9f5a61 100644
 --- a/mm/rodata_test.c
 +++ b/mm/rodata_test.c
-@@ -14,44 +14,52 @@
- #include <linux/uaccess.h>
- #include <asm/sections.h>
+@@ -16,8 +16,23 @@
  
--static const int rodata_test_data = 0xC3;
-+#define INIT_TEST_VAL 0xC3
+ #define INIT_TEST_VAL 0xC3
  
--void rodata_test(void)
-+static const int rodata_test_data = INIT_TEST_VAL;
++/*
++ * Note: __ro_after_init data is, for every practical effect, equivalent to
++ * const data, since they are even write protected at the same time; there
++ * is no need for separate testing.
++ * __wr_after_init data, otoh, is altered also after the write protection
++ * takes place and it cannot be exploitable for altering more permanent
++ * data.
++ */
 +
-+static bool test_data(char *data_type, const int *data,
-+		      unsigned long start, unsigned long end)
+ static const int rodata_test_data = INIT_TEST_VAL;
+ 
++#ifdef CONFIG_PRMEM
++static int wr_after_init_test_data __wr_after_init = INIT_TEST_VAL;
++extern long __start_wr_after_init;
++extern long __end_wr_after_init;
++#endif
++
+ static bool test_data(char *data_type, const int *data,
+ 		      unsigned long start, unsigned long end)
  {
--	unsigned long start, end;
- 	int zero = 0;
+@@ -59,7 +74,13 @@ static bool test_data(char *data_type, const int *data,
  
- 	/* test 1: read the value */
- 	/* If this test fails, some previous testrun has clobbered the state */
--	if (!rodata_test_data) {
--		pr_err("test 1 fails (start data)\n");
--		return;
-+	if (*data != INIT_TEST_VAL) {
-+		pr_err("%s: test 1 fails (init data value)\n", data_type);
-+		return false;
- 	}
- 
- 	/* test 2: write to the variable; this should fault */
--	if (!probe_kernel_write((void *)&rodata_test_data,
--				(void *)&zero, sizeof(zero))) {
--		pr_err("test data was not read only\n");
--		return;
-+	if (!probe_kernel_write((void *)data, (void *)&zero, sizeof(zero))) {
-+		pr_err("%s: test data was not read only\n", data_type);
-+		return false;
- 	}
- 
- 	/* test 3: check the value hasn't changed */
--	if (rodata_test_data == zero) {
--		pr_err("test data was changed\n");
--		return;
-+	if (*data != INIT_TEST_VAL) {
-+		pr_err("%s: test data was changed\n", data_type);
-+		return false;
- 	}
- 
- 	/* test 4: check if the rodata section is PAGE_SIZE aligned */
--	start = (unsigned long)__start_rodata;
--	end = (unsigned long)__end_rodata;
- 	if (start & (PAGE_SIZE - 1)) {
--		pr_err("start of .rodata is not page size aligned\n");
--		return;
-+		pr_err("%s: start of data is not page size aligned\n",
-+		       data_type);
-+		return false;
- 	}
- 	if (end & (PAGE_SIZE - 1)) {
--		pr_err("end of .rodata is not page size aligned\n");
--		return;
-+		pr_err("%s: end of data is not page size aligned\n",
-+		       data_type);
-+		return false;
- 	}
-+	pr_info("%s tests were successful", data_type);
-+	return true;
-+}
- 
--	pr_info("all tests were successful\n");
-+void rodata_test(void)
-+{
-+	test_data("rodata", &rodata_test_data,
-+		  (unsigned long)&__start_rodata,
-+		  (unsigned long)&__end_rodata);
+ void rodata_test(void)
+ {
+-	test_data("rodata", &rodata_test_data,
+-		  (unsigned long)&__start_rodata,
+-		  (unsigned long)&__end_rodata);
++	if (!test_data("rodata", &rodata_test_data,
++		       (unsigned long)&__start_rodata,
++		       (unsigned long)&__end_rodata))
++		return;
++#ifdef CONFIG_PRMEM
++	    test_data("wr after init data", &wr_after_init_test_data,
++		      (unsigned long)&__start_wr_after_init,
++		      (unsigned long)&__end_wr_after_init);
++#endif
  }
 -- 
 2.19.1
