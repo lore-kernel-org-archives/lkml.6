@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD86C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C05C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152B320835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D103120835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026446;
-	bh=uU69lLjoAjMIUv1Q3ZUFQW2q6gybMPFya6IMz1LsPDE=;
+	s=default; t=1550026461;
+	bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wK7s8JxcPr21KRekhMBE+zYJ6Bv+dA393zCwl2EpGRyUGUIsQd+Ey/z6OlTIWk0Nm
-	 SLNLTOO4gVSMA3kHCxPbpA1QnrqxQBWs+twAh6hXBPoOdECGgQsPFXItQfEDuxsG+6
-	 HafpwshQbY5BArIzTL5A7hx7ojlakJp3exq1gqJg=
+	b=ao1eU0EUBv2rXefZjcYXLC2Lyv0RI4gmmC8mTEC/hxSfVy16ZsNQHjT65WsNsLgqx
+	 JO/VdbW604ncnJGXYChBzGRgHzSe9KJjxfsQ3xcsqejy2hH3qy7Nm+V+ZtMiiYJjZf
+	 7keKS1GEhPLSyVma7c5EoqECG+Y2r7XtN0Z7FJoE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389983AbfBMCyE (ORCPT
+        id S2388414AbfBMChz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:54:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41620 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:37:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388440AbfBMCiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:06 -0500
+        id S1728442AbfBMChv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EA40222C2;
-        Wed, 13 Feb 2019 02:38:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37C9F206B6;
+        Wed, 13 Feb 2019 02:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025485;
-        bh=uU69lLjoAjMIUv1Q3ZUFQW2q6gybMPFya6IMz1LsPDE=;
+        s=default; t=1550025471;
+        bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IunZP/+bA7BnubwNNyLXKXThzCJB2iVFo1JIK67zYLJQHINTKw7jSa1Nh8FZMEHl1
-         4iYire707KWJtqqjoS8VgUBKU5FaDa8Dwma3kRVfc/WZSz2jSX/ZAkZX8uHuejnupB
-         bUMym5+rYqaxO2dUHw7Y9J2ywayz1ykNWpWIOpXc=
+        b=wldk1ZNO+nTNSbELl9ntTo+C6L79m5TMsWgcG2+vvbiQvaZm7E4sFVx/hH5v7sJc2
+         j28YY5B8aB49GU58CWMSvOTAcpec54XV2Mj6F4lDLM5xxFpBMTOUQsNT6i1MY11YuB
+         0YhlkUA+EpWI2z3bvWVHOj5cQOcYX+tzz6Q55nHE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     wenxu <wenxu@ucloud.cn>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 37/83] netfilter: nft_flow_offload: Fix reverse route lookup
-Date:   Tue, 12 Feb 2019 21:36:15 -0500
-Message-Id: <20190213023701.20286-37-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 31/83] selftests: forwarding: Add a test for VLAN deletion
+Date:   Tue, 12 Feb 2019 21:36:09 -0500
+Message-Id: <20190213023701.20286-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,50 +59,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wenxu <wenxu@ucloud.cn>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit a799aea0988ea0d1b1f263e996fdad2f6133c680 ]
+[ Upstream commit 4fabf3bf93a194c7fa5288da3e0af37e4b943cf3 ]
 
-Using the following example:
+Add a VLAN on a bridge port, delete it and make sure the PVID VLAN is
+not affected.
 
-	client 1.1.1.7 ---> 2.2.2.7 which dnat to 10.0.0.7 server
-
-The first reply packet (ie. syn+ack) uses an incorrect destination
-address for the reverse route lookup since it uses:
-
-	daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
-
-which is 2.2.2.7 in the scenario that is described above, while this
-should be:
-
-	daddr = ct->tuplehash[dir].tuple.src.u3.ip;
-
-that is 10.0.0.7.
-
-Signed-off-by: wenxu <wenxu@ucloud.cn>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../selftests/net/forwarding/bridge_vlan_aware.sh | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 5fd4c57c79cc..e0c04851a349 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -29,10 +29,10 @@ static int nft_flow_route(const struct nft_pktinfo *pkt,
- 	memset(&fl, 0, sizeof(fl));
- 	switch (nft_pf(pkt)) {
- 	case NFPROTO_IPV4:
--		fl.u.ip4.daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
-+		fl.u.ip4.daddr = ct->tuplehash[dir].tuple.src.u3.ip;
- 		break;
- 	case NFPROTO_IPV6:
--		fl.u.ip6.daddr = ct->tuplehash[!dir].tuple.dst.u3.in6;
-+		fl.u.ip6.daddr = ct->tuplehash[dir].tuple.src.u3.in6;
- 		break;
- 	}
+diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+index d8313d0438b7..04c6431b2bd8 100755
+--- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
++++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
  
+-ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding"
++ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
+ NUM_NETIFS=4
+ CHECK_TC="yes"
+ source lib.sh
+@@ -96,6 +96,19 @@ flooding()
+ 	flood_test $swp2 $h1 $h2
+ }
+ 
++vlan_deletion()
++{
++	# Test that the deletion of a VLAN on a bridge port does not affect
++	# the PVID VLAN
++	log_info "Add and delete a VLAN on bridge port $swp1"
++
++	bridge vlan add vid 10 dev $swp1
++	bridge vlan del vid 10 dev $swp1
++
++	ping_ipv4
++	ping_ipv6
++}
++
+ trap cleanup EXIT
+ 
+ setup_prepare
 -- 
 2.19.1
 
