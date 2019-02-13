@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1DC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FA2C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E40207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3A3C207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550027076;
-	bh=egKMWKjR+JmDgrIX258k59HTkB+Pv/O7tISaEu32ATE=;
+	s=default; t=1550027080;
+	bh=fV3+dRH5Ju9kj++KcRTXgB6OVsd4HkUCK5/+AfFd8NY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jR2Sv7Apo42UyaH9DLJuTV72F/zLfTZrsLzK4YBoUU/ub4VI/QAPstUvjwjEyuX9c
-	 GFZFMB6ZctVHDLyRzBztHbWAATfyLXXZoT+E/NZj5ar/TMMJkiRgL2EJEIM3NptFx/
-	 Gn+A0ZThi+LQ7Xl6C7OaOj77q2kb1Ztjg0bmE4+A=
+	b=iHPiwe0aGnxPtseswFL5KnKJpijwcYfMDTCEkefoVhvSMzXgjSyQ7dI8jUaaQzVcS
+	 RA3Imket5Pm+eYrUy1hyfnFZQNm4wltGqjRFFyTmo6IPIDieTgONcn77wi2Q0fu+Yf
+	 sp3cGdiZMr3VhnjwXb+IAPSKMjdQSKDtLRJ6CqrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390341AbfBMDE2 (ORCPT
+        id S2387583AbfBMCeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:04:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387504AbfBMCeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 21:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387504AbfBMCdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:33:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72573222C2;
-        Wed, 13 Feb 2019 02:34:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1AB1222C2;
+        Wed, 13 Feb 2019 02:33:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025245;
-        bh=egKMWKjR+JmDgrIX258k59HTkB+Pv/O7tISaEu32ATE=;
+        s=default; t=1550025234;
+        bh=fV3+dRH5Ju9kj++KcRTXgB6OVsd4HkUCK5/+AfFd8NY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GU9FvojdqL3AWKfWFTNhxgPWNr2uXhknm5Y/A6ceLFyziRGx0tWLy2wW+xdr9CpjQ
-         Z55laAZPzC5feOMxK5vfcbuHm3o1Gsg5rM+KE0ccvRXhv7Qkn7qmlClv1mUrzBpcOE
-         YQW+/4c9nGHbw37E+ySL02qpWOyTTi6RO3vysV+I=
+        b=L5bWBig6RbeLKrIHTw/hynSOHnGZZkM8EZqq8/SIeJ7JWJvE6HwuU12H3ZheDnuQl
+         5Ys6kVJExMvcFhzDPp7KOAjvia9FI0D+WeQT/ivzU5YsrG7FAby4V09B88Y4C6uoRx
+         wqjIk3zLin148qrDAmE96CAtOHQ2EiUknOg67K5M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+Cc:     Oskari Lemmela <oskari@lemmela.net>, Chen-Yu Tsai <wens@csie.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 027/105] bpf: Fix [::] -> [::1] rewrite in sys_sendmsg
-Date:   Tue, 12 Feb 2019 21:32:18 -0500
-Message-Id: <20190213023336.19019-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 017/105] mfd: axp20x: Add supported cells for AXP803
+Date:   Tue, 12 Feb 2019 21:32:08 -0500
+Message-Id: <20190213023336.19019-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -57,64 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ignatov <rdna@fb.com>
+From: Oskari Lemmela <oskari@lemmela.net>
 
-[ Upstream commit e8e36984080b55ac5e57bdb09a5b570f2fc8e963 ]
+[ Upstream commit ea90e7b47f0a8bd2fe14e9a88f523de7c67db90a ]
 
-sys_sendmsg has supported unspecified destination IPv6 (wildcard) for
-unconnected UDP sockets since 876c7f41. When [::] is passed by user as
-destination, sys_sendmsg rewrites it with [::1] to be consistent with
-BSD (see "BSD'ism" comment in the code).
+Parts of the AXP803 are compatible with their counterparts on the AXP813.
+These include the GPIO, ADC, AC and battery power supplies.
 
-This didn't work when cgroup-bpf was enabled though since the rewrite
-[::] -> [::1] happened before passing control to cgroup-bpf block where
-fl6.daddr was updated with passed by user sockaddr_in6.sin6_addr (that
-might or might not be changed by BPF program). That way if user passed
-[::] as dst IPv6 it was first rewritten with [::1] by original code from
-876c7f41, but then rewritten back with [::] by cgroup-bpf block.
-
-It happened even when BPF_CGROUP_UDP6_SENDMSG program was not present
-(CONFIG_CGROUP_BPF=y was enough).
-
-The fix is to apply BSD'ism after cgroup-bpf block so that [::] is
-replaced with [::1] no matter where it came from: passed by user to
-sys_sendmsg or set by BPF_CGROUP_UDP6_SENDMSG program.
-
-Fixes: 1cedee13d25a ("bpf: Hooks for sys_sendmsg")
-Reported-by: Nitin Rawat <nitin.rawat@intel.com>
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/udp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mfd/axp20x.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index d01ec252cb81..848dd38a907a 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -1322,10 +1322,7 @@ do_udp_sendmsg:
- 	ipc6.opt = opt;
- 
- 	fl6.flowi6_proto = sk->sk_protocol;
--	if (!ipv6_addr_any(daddr))
--		fl6.daddr = *daddr;
--	else
--		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
-+	fl6.daddr = *daddr;
- 	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
- 		fl6.saddr = np->saddr;
- 	fl6.fl6_sport = inet->inet_sport;
-@@ -1353,6 +1350,9 @@ do_udp_sendmsg:
- 		}
- 	}
- 
-+	if (ipv6_addr_any(&fl6.daddr))
-+		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
-+
- 	final_p = fl6_update_dst(&fl6, opt, &final);
- 	if (final_p)
- 		connected = false;
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index 8037b4e01ed6..f8e0fa97bb31 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -726,6 +726,20 @@ static const struct mfd_cell axp803_cells[] = {
+ 		.name		= "axp221-pek",
+ 		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
+ 		.resources	= axp803_pek_resources,
++	}, {
++		.name		= "axp20x-gpio",
++		.of_compatible	= "x-powers,axp813-gpio",
++	}, {
++		.name		= "axp813-adc",
++		.of_compatible	= "x-powers,axp813-adc",
++	}, {
++		.name		= "axp20x-battery-power-supply",
++		.of_compatible	= "x-powers,axp813-battery-power-supply",
++	}, {
++		.name		= "axp20x-ac-power-supply",
++		.of_compatible	= "x-powers,axp813-ac-power-supply",
++		.num_resources	= ARRAY_SIZE(axp20x_ac_power_supply_resources),
++		.resources	= axp20x_ac_power_supply_resources,
+ 	},
+ 	{	.name		= "axp20x-regulator" },
+ };
 -- 
 2.19.1
 
