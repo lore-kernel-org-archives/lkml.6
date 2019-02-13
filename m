@@ -3,88 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9F0C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC5C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F9F2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702202147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387791AbfBMKH6 (ORCPT
+        id S2388286AbfBMKJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:07:58 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:3722 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727580AbfBMKH6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:07:58 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DA74FY032062;
-        Wed, 13 Feb 2019 11:07:47 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qhv0m6ef4-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 13 Feb 2019 11:07:47 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6FDE838;
-        Wed, 13 Feb 2019 10:07:46 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag4node2.st.com [10.75.127.11])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3E26A2CFC;
-        Wed, 13 Feb 2019 10:07:46 +0000 (GMT)
-Received: from localhost (10.75.127.51) by SFHDAG4NODE2.st.com (10.75.127.11)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 13 Feb 2019 11:07:45
- +0100
-From:   <gabriel.fernandez@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dt-bindings: clock: remove unused definition for stm32mp1
-Date:   Wed, 13 Feb 2019 11:07:14 +0100
-Message-ID: <20190213100714.15622-1-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_07:,,
- signatures=0
+        Wed, 13 Feb 2019 05:09:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50732 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727580AbfBMKJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 05:09:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2193A78;
+        Wed, 13 Feb 2019 02:09:25 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7205A3F575;
+        Wed, 13 Feb 2019 02:09:24 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     liwei391@huawei.com, Julien Thierry <julien.thierry@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH] genirq: Fix wrong name in request_percpu_nmi() description
+Date:   Wed, 13 Feb 2019 10:09:19 +0000
+Message-Id: <1550052559-41250-1-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+ready_percpu_nmi() was the previous name of prepare_percpu_nmi(). Update
+request_percpu_nmi() comment with the correct function name.
 
-LTDC_K and ETHMAC_K are not used.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Reported-by: Li Wei <liwei391@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- include/dt-bindings/clock/stm32mp1-clks.h | 3 ---
- 1 file changed, 3 deletions(-)
+ kernel/irq/manage.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/clock/stm32mp1-clks.h b/include/dt-bindings/clock/stm32mp1-clks.h
-index 90ec780bfc68..4cdaf135829c 100644
---- a/include/dt-bindings/clock/stm32mp1-clks.h
-+++ b/include/dt-bindings/clock/stm32mp1-clks.h
-@@ -248,7 +248,4 @@
- 
- #define STM32MP1_LAST_CLK 232
- 
--#define LTDC_K		LTDC_PX
--#define ETHMAC_K	ETHCK_K
--
- #endif /* _DT_BINDINGS_STM32MP1_CLKS_H_ */
--- 
-2.17.0
+Note: This issue is in next, not yet in mainline. Should apply cleanly
+on top of next.
 
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index aea87ec..9ec34a2 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -2431,8 +2431,8 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
+  *	@dev_id: A percpu cookie passed back to the handler function
+  *
+  *	This call allocates interrupt resources for a per CPU NMI. Per CPU NMIs
+- *	have to be setup on each CPU by calling ready_percpu_nmi() before being
+- *	enabled on the same CPU by using enable_percpu_nmi().
++ *	have to be setup on each CPU by calling prepare_percpu_nmi() before
++ *	being enabled on the same CPU by using enable_percpu_nmi().
+  *
+  *	Dev_id must be globally unique. It is a per-cpu variable, and
+  *	the handler gets called with the interrupted CPU's instance of
+--
+1.9.1
