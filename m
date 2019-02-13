@@ -2,196 +2,96 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297D6C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEFBC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB58620835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026523;
-	bh=d7vLAixYlTA+NMqA1Lu2VXyFTsIBUAZf5tQBqgLf5Xo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0TCCrsW9BXcNz6klOgvDSKt5zTNiAVIxD0VdB5Z+7enxEmH2pSREt7JAFTtWKMdcd
-	 J41+TDw5/8xmkSnZdDUQ2RiQSQxBSTbwXw73TYQnVhR4SpYmPhYtpJgLrfKUHh1XlK
-	 +n2cPAhcRvlyZJpoLrRspEh672gmdLXMg8d0Tr5s=
+	by mail.kernel.org (Postfix) with ESMTP id A4CA32190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rWCYSGu7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390027AbfBMCzV (ORCPT
+        id S2390065AbfBMCz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:55:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732781AbfBMChd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:33 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D9AE222C7;
-        Wed, 13 Feb 2019 02:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025452;
-        bh=d7vLAixYlTA+NMqA1Lu2VXyFTsIBUAZf5tQBqgLf5Xo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WYKidOhpLep9IiwryM8z9rKv0OddVd5b3/gu3FhIp0A30x2tVt7Mr6cA/JWEbeBMh
-         RuamogDUY9300o2w8gidhdFgNGLWs9Sv2at41XhsKw+L+5l2/gayTisWpA3KIn4vCH
-         759LYXgZpoVyCbweXjJAUp1KXmWuKiy4ZOJE4HSQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 25/83] selftests/bpf: Test [::] -> [::1] rewrite in sys_sendmsg in test_sock_addr
-Date:   Tue, 12 Feb 2019 21:36:03 -0500
-Message-Id: <20190213023701.20286-25-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
-References: <20190213023701.20286-1-sashal@kernel.org>
+        Tue, 12 Feb 2019 21:55:28 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33934 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732781AbfBMCzZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:55:25 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w4so462826plz.1;
+        Tue, 12 Feb 2019 18:55:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ArRQuu63wfSGm9vQ4Wjr9p0mZMu12amiLX7g9jOUEg=;
+        b=rWCYSGu7p6Vj4bjiuNz0hl+Yjd5OhoADxM21vIIdTyo8hbG/Q3lP/2sJ9JYchAKxlK
+         c7ffV9lkZjeeJpz2oRc29I+a4ka5kvdEPq3GeEK/M4DhxdDhfavn/UyLsPWBgClIFkKJ
+         mdMFNsSjWiDfJypLQQCCW7XT8mMJplA/gZt4HH52+2JmDOm4uECWGA+yigNaH1xM6plw
+         rq4njzWynP0UBqi/mfG4CmpX17ALsMePAuYq23LEJr0z1kHbjIgXUIIoRhlS7cheMJk+
+         +03NNxHaMfqy6b/g5BYq9kQeFsisFL0REE2BJzhYoR12El+cBbaJWB9Ghkegf2RwK4OU
+         36TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ArRQuu63wfSGm9vQ4Wjr9p0mZMu12amiLX7g9jOUEg=;
+        b=bhsRAzOJrVpBxlJSPX4OpvHFDPOSQHuAbnj+lm5fnNQV/rIXu1NyrEW0fUclT7m761
+         zVLT0n+UBATTY7ASoKMw1vgd2zm97Ge6WoMQIao7nVwJxjVOEYhUa8hY6b407AdmaBrN
+         0BWuUvjiVG0eUC02y2A/mc4ByghnipeuHdXbBeNBoSiarM5/Ai1PucYrcRzxWc4tQx+V
+         LCXMNdhW1pCNllkvsV7D05HAviRI2WXKcte0Y8JwHu3MgFlsASt2fUbah7FUHkLC9O6B
+         OuSWiGSKP83Rc7XTyza5V3d/b3cE5yVUQIVi6hUaUnY2cRvuhoSqWfAYXltHeBzfA8cr
+         1cmw==
+X-Gm-Message-State: AHQUAuZhzaqsyjrIb2oHxU3H7p9D6R7dZh3K66UPmWv5Y4va8YGPNaxk
+        DvD7Em8AIYa0rwCtUG7DJTQ=
+X-Google-Smtp-Source: AHgI3IYhtCUBTS14Ll5e3mHhgjPMOL3q7UobsmNfSDukxVHLVyNJiKh2ACH/hWhIhBo/gKBcj1U2Cg==
+X-Received: by 2002:a17:902:7882:: with SMTP id q2mr7498828pll.305.1550026524823;
+        Tue, 12 Feb 2019 18:55:24 -0800 (PST)
+Received: from localhost ([39.7.15.189])
+        by smtp.gmail.com with ESMTPSA id c4sm37662303pfm.151.2019.02.12.18.55.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 18:55:23 -0800 (PST)
+Date:   Wed, 13 Feb 2019 11:55:20 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 00/25] printk: new implementation
+Message-ID: <20190213025520.GA5803@jagdpanzerIV>
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212143003.48446-1-john.ogness@linutronix.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ignatov <rdna@fb.com>
+On (02/12/19 15:29), John Ogness wrote:
+> 
+> - A dedicated kernel thread is created for printing to all consoles in
+>   a fully preemptible context.
 
-[ Upstream commit 976b4f3a4646fbf0d189caca25f91f82e4be4b5a ]
+How do you handle sysrq-<foo> printouts on systems which can't
+schedule printk-kthread?
 
-Test that sys_sendmsg BPF hook doesn't break sys_sendmsg behaviour to
-rewrite destination IPv6 = [::] with [::1] (BSD'ism).
-
-Two test cases are added:
-
-1) User passes dst IPv6 = [::] and BPF_CGROUP_UDP6_SENDMSG program
-   doesn't touch it.
-
-2) User passes dst IPv6 != [::], but BPF_CGROUP_UDP6_SENDMSG program
-   rewrites it with [::].
-
-In both cases [::1] is used by sys_sendmsg code eventually and datagram
-is sent successfully for unconnected UDP socket.
-
-Example of relevant output:
-  Test case: sendmsg6: set dst IP = [::] (BSD'ism) .. [PASS]
-  Test case: sendmsg6: preserve dst IP = [::] (BSD'ism) .. [PASS]
-
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/testing/selftests/bpf/test_sock_addr.c | 53 ++++++++++++++++++--
- 1 file changed, 50 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/test_sock_addr.c b/tools/testing/selftests/bpf/test_sock_addr.c
-index aeeb76a54d63..e38f1cb7089d 100644
---- a/tools/testing/selftests/bpf/test_sock_addr.c
-+++ b/tools/testing/selftests/bpf/test_sock_addr.c
-@@ -44,6 +44,7 @@
- #define SERV6_V4MAPPED_IP	"::ffff:192.168.0.4"
- #define SRC6_IP			"::1"
- #define SRC6_REWRITE_IP		"::6"
-+#define WILDCARD6_IP		"::"
- #define SERV6_PORT		6060
- #define SERV6_REWRITE_PORT	6666
- 
-@@ -85,12 +86,14 @@ static int bind4_prog_load(const struct sock_addr_test *test);
- static int bind6_prog_load(const struct sock_addr_test *test);
- static int connect4_prog_load(const struct sock_addr_test *test);
- static int connect6_prog_load(const struct sock_addr_test *test);
-+static int sendmsg_allow_prog_load(const struct sock_addr_test *test);
- static int sendmsg_deny_prog_load(const struct sock_addr_test *test);
- static int sendmsg4_rw_asm_prog_load(const struct sock_addr_test *test);
- static int sendmsg4_rw_c_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_asm_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_c_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_v4mapped_prog_load(const struct sock_addr_test *test);
-+static int sendmsg6_rw_wildcard_prog_load(const struct sock_addr_test *test);
- 
- static struct sock_addr_test tests[] = {
- 	/* bind */
-@@ -462,6 +465,34 @@ static struct sock_addr_test tests[] = {
- 		SRC6_REWRITE_IP,
- 		SYSCALL_ENOTSUPP,
- 	},
-+	{
-+		"sendmsg6: set dst IP = [::] (BSD'ism)",
-+		sendmsg6_rw_wildcard_prog_load,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		AF_INET6,
-+		SOCK_DGRAM,
-+		SERV6_IP,
-+		SERV6_PORT,
-+		SERV6_REWRITE_IP,
-+		SERV6_REWRITE_PORT,
-+		SRC6_REWRITE_IP,
-+		SUCCESS,
-+	},
-+	{
-+		"sendmsg6: preserve dst IP = [::] (BSD'ism)",
-+		sendmsg_allow_prog_load,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		AF_INET6,
-+		SOCK_DGRAM,
-+		WILDCARD6_IP,
-+		SERV6_PORT,
-+		SERV6_REWRITE_IP,
-+		SERV6_PORT,
-+		SRC6_IP,
-+		SUCCESS,
-+	},
- 	{
- 		"sendmsg6: deny call",
- 		sendmsg_deny_prog_load,
-@@ -714,16 +745,27 @@ static int connect6_prog_load(const struct sock_addr_test *test)
- 	return load_path(test, CONNECT6_PROG_PATH);
- }
- 
--static int sendmsg_deny_prog_load(const struct sock_addr_test *test)
-+static int sendmsg_ret_only_prog_load(const struct sock_addr_test *test,
-+				      int32_t rc)
- {
- 	struct bpf_insn insns[] = {
--		/* return 0 */
--		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		/* return rc */
-+		BPF_MOV64_IMM(BPF_REG_0, rc),
- 		BPF_EXIT_INSN(),
- 	};
- 	return load_insns(test, insns, sizeof(insns) / sizeof(struct bpf_insn));
- }
- 
-+static int sendmsg_allow_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg_ret_only_prog_load(test, /*rc*/ 1);
-+}
-+
-+static int sendmsg_deny_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg_ret_only_prog_load(test, /*rc*/ 0);
-+}
-+
- static int sendmsg4_rw_asm_prog_load(const struct sock_addr_test *test)
- {
- 	struct sockaddr_in dst4_rw_addr;
-@@ -844,6 +886,11 @@ static int sendmsg6_rw_v4mapped_prog_load(const struct sock_addr_test *test)
- 	return sendmsg6_rw_dst_asm_prog_load(test, SERV6_V4MAPPED_IP);
- }
- 
-+static int sendmsg6_rw_wildcard_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg6_rw_dst_asm_prog_load(test, WILDCARD6_IP);
-+}
-+
- static int sendmsg6_rw_c_prog_load(const struct sock_addr_test *test)
- {
- 	return load_path(test, SENDMSG6_PROG_PATH);
--- 
-2.19.1
-
+	-ss
