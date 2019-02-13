@@ -2,130 +2,92 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DC9C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94632C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB702175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5763121934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550026141;
+	bh=dqnW6HJM498CLD0WQCw6U3xN4zsh4/bNOLvmgBVfKs4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=YchFy57AO3/nwZOYytQZlMkuECXJHr8SCAOlDRD/ZsNnVAPHjFYgzyn6jFL3A4TNF
+	 izVbtNOCXtPbcCqDV+2JL8DPT3C7GRBPr+jOBLU8DCd3ahHKXeMtrehLztEyeTx0+B
+	 YwodEaMQYT6Es2aI3nZnNHeLg383YS0K5GdD3z34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389768AbfBMCsr (ORCPT
+        id S2389774AbfBMCtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:48:47 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.133]:22456 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733035AbfBMCsp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:48:45 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 322C2402C3B63
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 20:48:44 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tkbMgr8WI2PzOtkbMgLobP; Tue, 12 Feb 2019 20:48:44 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=38828 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtkbL-001ogo-Bm; Tue, 12 Feb 2019 20:48:43 -0600
-Date:   Tue, 12 Feb 2019 20:48:42 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] iio: chemical: sps30: mark expected switch fall-throughs
-Message-ID: <20190213024842.GA25131@embeddedor>
+        Tue, 12 Feb 2019 21:49:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388910AbfBMCkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:09 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB43222C7;
+        Wed, 13 Feb 2019 02:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550025608;
+        bh=dqnW6HJM498CLD0WQCw6U3xN4zsh4/bNOLvmgBVfKs4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1W0ndiTa0FMA9EkrdMenSzV8jg6v2JlHmGyukW8XqFTfmYFxNbSI9/hk1AtxhSMIA
+         HY1MVlOWMGyeCGe1X34DF6YaBYfJVEEp9Tl6hhPyfR7c5fou7GmZG9YPpnzAq35X/d
+         ivwx7i4q1JI1Dp9QdZao317ih63f4BfC6F85jvj0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Denis Bolotin <dbolotin@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 14/34] qed: Fix qed_ll2_post_rx_buffer_notify_fw() by adding a write memory barrier
+Date:   Tue, 12 Feb 2019 21:39:32 -0500
+Message-Id: <20190213023952.21311-14-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
+References: <20190213023952.21311-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtkbL-001ogo-Bm
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:38828
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+From: Denis Bolotin <dbolotin@marvell.com>
 
-This patch fixes the following warnings:
+[ Upstream commit 46721c3d9e273aea880e9ff835b0e1271e1cd2fb ]
 
-drivers/iio/chemical/sps30.c: In function ‘sps30_read_raw’:
-drivers/iio/chemical/sps30.c:289:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    switch (chan->channel2) {
-    ^~~~~~
-drivers/iio/chemical/sps30.c:299:3: note: here
-   default:
-   ^~~~~~~
-drivers/iio/chemical/sps30.c: In function ‘sps30_do_cmd’:
-drivers/iio/chemical/sps30.c:120:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
-          ^
-drivers/iio/chemical/sps30.c:121:2: note: here
-  case SPS30_READ_DATA_READY_FLAG:
-  ^~~~
-drivers/gpio/gpio-eic-sprd.c: In function ‘sprd_eic_irq_set_type’:
-drivers/gpio/gpio-eic-sprd.c:403:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   switch (flow_type) {
-   ^~~~~~
-drivers/gpio/gpio-eic-sprd.c:435:2: note: here
-  default:
-  ^~~~~~~
+Make sure chain element is updated before ringing the doorbell.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/chemical/sps30.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-index e03a28a67146..f308d8ddceec 100644
---- a/drivers/iio/chemical/sps30.c
-+++ b/drivers/iio/chemical/sps30.c
-@@ -118,6 +118,7 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 	case SPS30_READ_AUTO_CLEANING_PERIOD:
- 		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
- 		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
-+		/* fall through */
- 	case SPS30_READ_DATA_READY_FLAG:
- 	case SPS30_READ_DATA:
- 	case SPS30_READ_SERIAL:
-@@ -296,6 +297,7 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index b73bcbeb5f27..cef619f0ce10 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -1487,6 +1487,10 @@ static void qed_ll2_post_rx_buffer_notify_fw(struct qed_hwfn *p_hwfn,
+ 	cq_prod = qed_chain_get_prod_idx(&p_rx->rcq_chain);
+ 	rx_prod.bd_prod = cpu_to_le16(bd_prod);
+ 	rx_prod.cqe_prod = cpu_to_le16(cq_prod);
++
++	/* Make sure chain element is updated before ringing the doorbell */
++	dma_wmb();
++
+ 	DIRECT_REG_WR(p_rx->set_prod_addr, *((u32 *)&rx_prod));
+ }
  
- 				return IIO_VAL_INT_PLUS_MICRO;
- 			}
-+			/* fall through */
- 		default:
- 			return -EINVAL;
- 		}
 -- 
-2.20.1
+2.19.1
 
