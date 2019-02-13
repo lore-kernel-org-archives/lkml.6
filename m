@@ -2,105 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4019BC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E9DC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC38222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE06222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:15:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="o522v5SS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DePMWSY4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733288AbfBMCPb (ORCPT
+        id S1733305AbfBMCPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:15:31 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38654 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733202AbfBMCPb (ORCPT
+        Tue, 12 Feb 2019 21:15:53 -0500
+Received: from mail-yw1-f42.google.com ([209.85.161.42]:42045 "EHLO
+        mail-yw1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730367AbfBMCPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:15:31 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 2so924747qtb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 18:15:30 -0800 (PST)
+        Tue, 12 Feb 2019 21:15:52 -0500
+Received: by mail-yw1-f42.google.com with SMTP id v201so312144ywa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 18:15:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SC33iLOSs9PqXp2KbtE2YvTh5FiHaUeY1DXX8o+1gSw=;
-        b=o522v5SSRw7eM1Hu/o03lkjHZPVpMpjFeQCfoQPNu1iPoia2Ybq9JnK5a0P9jSSOUm
-         WJmdGqDCi2PtF5Mi5Xm2aTq4uGXEOggOpl4jFkPT7XMivx84yDYHKI8ugABOIC8uHiI7
-         lxHF2x3xA/A48g0UxU60f0SPBqpd/MFeei+H9YLBvx2G28vZWN1HyairJyzh435nIYiL
-         ZLvWp7JlCg7ZFalSQGMp6AWyYiRNl38MQe/Bzm25UBfAuQX3gzI07pbY15Dw8voN62G3
-         FLUsgaHtLiUGooQW+zrNRfpBxi/mG1PXFUizhgrlHtkyKATZUD9y/SReApFFtDpimAXk
-         oBzg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v1jt/s8Bj78A5TMIMiOaGw6Nt1+jxLifdL2JPy3lllg=;
+        b=DePMWSY4A7ehg4e8oD2o1ijg66oy8QTxs7bcmOuxTkQ3X9giEok72a5xm0l+C4NOLY
+         kV76BE0OOQuh5bHtDGre0rwrU52Vvp/XWHgMmEUd+klPx/u5pdKnyzgDW4eIpuWAKbQ/
+         odAIwdo8iBUUu8M3o6H0+Q9F4+e6uyO9rYcMlwwIPBfVKkD9wr4xqIJQyRqDyz9or+yq
+         4/4pJSct3sMHJuP0PS1LttIS6FUEJSume6P3hnynustwZQm3EuB5sRTPKWoEj8nco9ee
+         W3sFQvWI7egpRLMk7mydV6KlKqJa3Obo4MtRJWsicWsI50VQJ9MdiR3PBH7SeLzl1lIX
+         NM8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SC33iLOSs9PqXp2KbtE2YvTh5FiHaUeY1DXX8o+1gSw=;
-        b=SjRmaq0wUzSeMS1ot8XWj0kyx/gJjAb9lSpIuO3BmFb917IUAF7eDYD2Lp9u5HuHtV
-         D9CLL6HFLNMSop7OUnNb3KjHRQWhGQaf/HbXolJYQYXOtQjij9FlAH8iMxaf2Vs23qmJ
-         xryLfP3fBTblw4MtksSdQGlDY5RVZEEkBT5DjP+0/cwj3yYCnxMLpTCKNvdW1/X2KeQK
-         waZWHijwZS5RUhuOmyzHqV6sv2oa9i1uj/mCxFxd4mxFP0lblIwlUtDWPrj0CoBMWbEc
-         +3sERXRubFrmg+lQX2I6MlWmYHsLzuduYP9q/UTsKUQe+oRceaKMHqna8EBOxvwXd2RO
-         fg2A==
-X-Gm-Message-State: AHQUAuZohYd1SKm4XFEGDh/kYP4y1v6KG79IgsQJ49+w4/b8tZGRrB48
-        luN0msRicpQveI/eEmT4x/uqFg==
-X-Google-Smtp-Source: AHgI3IZ54oqz1LKhCjGSXiloYfAOeDShGCL7wagWggVrRp6mWyIKK/3KWQ/NEaWrs5vCdBRkasE+uQ==
-X-Received: by 2002:ac8:2c82:: with SMTP id 2mr2808437qtw.347.1550024130166;
-        Tue, 12 Feb 2019 18:15:30 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id z207sm15686303qka.57.2019.02.12.18.15.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 18:15:29 -0800 (PST)
-Subject: Re: [PATCH 5/5] kasan, slub: fix conflicts with
- CONFIG_SLAB_FREELIST_HARDENED
-From:   Qian Cai <cai@lca.pw>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-References: <cover.1549921721.git.andreyknvl@google.com>
- <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
- <4bc08cee-cb49-885d-ef8a-84b188d3b5b3@lca.pw>
- <CAAeHK+zv5=oHJQg-bx7-tiD9197J7wdMeeRSgaxAfJjXEs3EyA@mail.gmail.com>
- <c92d6890-a718-a968-9937-13bdfeda773c@lca.pw>
- <CAAeHK+xDYvjMxrkczTQaDbMSu5u3GsxW_mFi1=9OAjCi2Q-6iQ@mail.gmail.com>
- <a9d73c21-744c-84f2-78db-a32773b83ddc@lca.pw>
-Message-ID: <493db265-01f6-3901-3416-1ac5bbdd1194@lca.pw>
-Date:   Tue, 12 Feb 2019 21:15:27 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v1jt/s8Bj78A5TMIMiOaGw6Nt1+jxLifdL2JPy3lllg=;
+        b=ZCxCPZKt3TNgPE+ht0a/TlhW23Jn+kIDnKaYWKPo3BQ3PdqjDZAOQBPMR3zrww/t2d
+         RZbQ8SMiIPlle94kobKCL9Bp8MWO8VxuecKl1n6YWDWd0FPhUOItGsnX54uBxqLheb9N
+         1PH+ACPoX+sLflNR5c3v8WSL346VLKIOOPqOjubGoD7N/Knq8XE9w+dJ/YuTRhze84O/
+         ox1gseNNWv+C/IITbJmbUKJvDOXoTs2peOWs2EA7vShUQ2Pgocmqn6HWCUsvreuRyq1U
+         bgLdMKUbt2JT1WDnmOCX0bM85CV1pQoEUDocUleQRFMP27Wi0UgVhU6w339XzZN04UaU
+         uFPQ==
+X-Gm-Message-State: AHQUAuZ14SW/M3NECPUHwMdvK3cNwo6YqSn56gqRgDnqCdYMWOy5tRAe
+        UpDPfCZSdosABTHJ/LsnwmMBrLywWRXMMrzmPV8J1A==
+X-Google-Smtp-Source: AHgI3IZoBivKEmPL3Bhk4KyHtE3zAwIct9AzbS4ZTfSUcxcTmyJo9Pv1Egsssi9PbsI1RYfYQbTNM46ZA2dLW73/ENY=
+X-Received: by 2002:a81:b189:: with SMTP id p131mr2673215ywh.92.1550024151249;
+ Tue, 12 Feb 2019 18:15:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <a9d73c21-744c-84f2-78db-a32773b83ddc@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1549971097-12627-1-git-send-email-laoar.shao@gmail.com>
+ <1549971097-12627-2-git-send-email-laoar.shao@gmail.com> <38d07cb3-b767-bfc4-9ae5-48367971d839@gmail.com>
+ <CALOAHbAskuYhs3KQTJtT0Y7hjFcOyab-JpG4GCPENUxOk34-eA@mail.gmail.com>
+In-Reply-To: <CALOAHbAskuYhs3KQTJtT0Y7hjFcOyab-JpG4GCPENUxOk34-eA@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 12 Feb 2019 18:15:39 -0800
+Message-ID: <CANn89i+2JB1UfdTmVMPMP-fEeYm9safcO49ygKn6fccEP1rpYA@mail.gmail.com>
+Subject: Re: [bpf-next 1/2] tcp: replace SOCK_DEBUG() with tcp_stats()
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>, Lawrence Brakmo <brakmo@fb.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, shaoyafang@didiglobal.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 12, 2019 at 6:07 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+
+> Let me explain the background for you.
+> I want to track some TCP abnormal  behavior in TCP/IP stack. But I
+> find there's no good way to do it.
+> The current MIBs are per net, other than per socket, that makes it not
+> very powerful.
+> And the ancient SOCK_DEBUG is not good as well.
+> So we think why not cleanup this ancient SOCK_DEBUG() and introduce a
+> more powerful method.
 
 
-On 2/12/19 11:07 AM, Qian Cai wrote:
-> https://git.sr.ht/~cai/linux-debug/tree/master/dmesg
-> 
+I am all for it, but this more powerful method does nothing at all in
+the current patches.
 
-FYI, I just send a patch to take care of this.
-https://marc.info/?l=linux-mm&m=155002356527913&w=2
+I can not accept patches just because they seem to be harmless,
+knowing that  the next patches
+will be pushed later changing more stuff, just because the new
+infrastructure is there "and can be used"
+
+Just remove all SOCK_DEBUG() calls, there are leftovers of very ancient times.
+
+Do not add more debugging stuff unless you can demonstrate
+they actually allowed you to find a real bug and that you sent a
+public fix for it.
+
+Just adding "cool stuff" in TCP stack does not please me, it is only
+more complexity for unproven gain.
+
+Otherwise, I am tempted to think that these BPF hooks are there only
+so that a company can more
+easily build a private variant of TCP, yet letting the community
+maintaining the hard part of TCP stack.
+
+Thank you.
