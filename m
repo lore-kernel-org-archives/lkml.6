@@ -2,84 +2,106 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	SUBJ_ALL_CAPS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3403DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9F0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE4AF222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550067215;
-	bh=3pIcwDJy+87hJBEW09SCXKst6dnuZy8rBHxoi31BiiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iqIAXr1f5NR1jfp0nwDdZdXlu2KbXvuOpnJL5efxw6oGEzkGjgK71iFIZwVjKKo3C
-	 t4lUuZiIac32CKNkziMTLDTr8Ayhlhljm+Qt4beOHJF4fgmh1HWmEupkz4nbw/dO4t
-	 2Gys0PibU0tH6BUOUAT5racejTtH3aFJNHsTw0mQ=
+	by mail.kernel.org (Postfix) with ESMTP id DBF4D222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391962AbfBMONe (ORCPT
+        id S2391920AbfBMONd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:13:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729141AbfBMONc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:13:33 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56373 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728416AbfBMONc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 09:13:32 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DBB8222B5;
-        Wed, 13 Feb 2019 14:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550067211;
-        bh=3pIcwDJy+87hJBEW09SCXKst6dnuZy8rBHxoi31BiiU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eQxHGr0iNjm0qyovUIwrL65FxTZk0ARN0w92XePcXeS0O5Y+nW/mSKnI09ya5bEoz
-         mn+G8KCp3TmgZldZNXhqEn0R5pofNJEl7Y+dOWV3xMUyDC4aH7dJDUOyaKICmiDllb
-         OfKpLxOaptmg7/sA1CocxmIEHOpaG5uzPuPOP3n4=
-Date:   Wed, 13 Feb 2019 15:13:29 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-110-WxTaH3GeMhar7JZtKQUZtw-1; Wed, 13 Feb 2019 14:12:56 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 13 Feb 2019 14:13:08 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 13 Feb 2019 14:13:08 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+CC:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: PATCHES MERGE MISSING FROM PATCHSET
-Message-ID: <20190213141329.GA10202@kroah.com>
-References: <VI1PR04MB480016AF3EC4813AA16B366DF3660@VI1PR04MB4800.eurprd04.prod.outlook.com>
- <VI1PR04MB4800E4DAD4729CBA3A146E36F3660@VI1PR04MB4800.eurprd04.prod.outlook.com>
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Index: AQHUwvc8KjF6Xlwy10OvbYFx5kwo16XcaZhggAFH5CCAABKpkA==
+Date:   Wed, 13 Feb 2019 14:13:08 +0000
+Message-ID: <536eb8d0112b44dc90b9b9a7f670e96d@AcuMS.aculab.com>
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB4800E4DAD4729CBA3A146E36F3660@VI1PR04MB4800.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-MC-Unique: WxTaH3GeMhar7JZtKQUZtw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:05:13PM +0000, Vabhav Sharma wrote:
-> ++ Kernel Mailing list
+From: Peter Zijlstra 
+> Sent: 13 February 2019 12:57
+...
+...
+> In the past I've proposed a GCC plugin / checker that would verify the
+> alignment requirements against the various allocators.
 > 
-> From: Vabhav Sharma
-> Sent: Wednesday, February 13, 2019 7:30 PM
-> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Stephen Boyd <sboyd@kernel.org>; Viresh Kumar <viresh.kumar@linaro.org>
-> Subject: PATCHES MERGE MISSING FROM PATCHSET
-> Importance: High
+> For instance:
 > 
-> Hello Maintainers,
-> I had sent patch series with subject "arm64: dts: NXP: add basic dts file for LX2160A SoC" in 2018.
-> *        This is to update you that all the dts and SoC/Board support patches are merged but below two patches are not yet merged from this patchset series.
-> *        clk: qoriq: increase array size of cmux_to_group<https://patchwork.kernel.org/patch/10658885/>
-> *        clk: qoriq: Add clockgen support for lx2160a<https://patchwork.kernel.org/patch/10658871/>
-> Kindly help to merge the patches.
+> struct foo {
+> 	spinlock_t a;
+> 	int b;
+> } __cacheline_aligned;
+> 
+> struct foo *my_foo = kmalloc(sizeof(struct foo), GFP_KERNEL);
+> 
+> would result in a warning; because obviously kmalloc (as per
+> ARCH_SLAB_MINALIGN) doesn't respect the cacheline alignment of the type.
+> 
+> Of course; it appears our kmalloc() function definition doesn't even
+> have a __malloc attribute, so there's plenty work to be done here.
 
-If patches somehow get dropped, just resend them and be sure to cc: the
-proper developers/maintainers/lists as shown by
-scripts/get_maintainer.pl.
+We could pass the alignment to the allocator by defining something like:
 
-thanks,
+#define do_malloc(x) ((x) = (typeof(*(x)))_do_malloc(sizeof *(x), __alignof__(*(x))))
 
-greg k-h
+Although you probably want to compile-time detect alignments that are smaller
+than the normal minimal alignment.
+
+If the allocator needs to add a header it would need to use the byte before
+the allocated item to find the header.
+OTOH adding a header is horrid for page-sized items.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
