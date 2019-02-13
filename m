@@ -2,221 +2,160 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A36C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEACC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C663222B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550058840;
-	bh=RAx9Gi4KFquPgq3+f/CloMPXy3liERcmft9rLuwBv3Q=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=xct4DHw+o5kVDrr/i5i6WhJivqnxaooCBZ044kj9VpSzFCEApS0DIIwo5kPFg2vXj
-	 /f0fp0Cy/8dAJxOZztXeTRf9u7+1L7ct8E41EK4ISp86AvZw3WJ5qm5IcQ1K0pUHe8
-	 xlmyjmbRMY58YaQ0VN7TBZNTrvlexqNFn0Ucvaww=
+	by mail.kernel.org (Postfix) with ESMTP id 1F0CC222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:54:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="iXNJjKsc";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="mwIr/vyP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391997AbfBMLx7 (ORCPT
+        id S2403914AbfBMLyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:53:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50074 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391943AbfBMLxy (ORCPT
+        Wed, 13 Feb 2019 06:54:05 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:35255 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391971AbfBMLxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 06:53:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=KmAP7JamyS8tQP5b89jhWHfM3QWy+3eI20nM0eH/fV4=; b=vhZwKqVJGIq3
-        oXSUP4Q4f8oBAnYvVDLV3e3vyTTEgI/wxZGVEkODJ46LU3AmqycsKm8g8uaBYfseXZOa/NqKIQGkU
-        SGNacU5rOfBdxzxAy+V9zi9REWFpDRQP3x+vYCTNRDifIeIQYW/l7WaPL2xryPl31xWNDfO3K8/e6
-        vW1A0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gtt6j-00046M-2N; Wed, 13 Feb 2019 11:53:41 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 454001128158; Wed, 13 Feb 2019 11:53:40 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org,
-        b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com,
-        krzk@kernel.org, linux-kernel@vger.kernel.org,
-        m.szyprowski@samsung.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: samsung: i2s: Move core clk to the driver common data structure" to the asoc tree
-In-Reply-To:  <20190212180342.32040-5-s.nawrocki@samsung.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190213115340.454001128158@debutante.sirena.org.uk>
-Date:   Wed, 13 Feb 2019 11:53:40 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1550058834; x=1581594834;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=hdynpLsXwVKwcClFb4N8UkG4HyfxmZo8SJfWqKU4gbc=;
+  b=iXNJjKscDwybg7MQGln8PHDO7SAWB88qJdSZsCYPFbQsPfS6pozFKE3x
+   L1sdu4IXBelcJGzKEHGtJ0lXyd2GFd6AJhsSCN8mtSVLQ9kriRWLlUzWK
+   apN2752a6HK9DtQspROBPVvUoMOhQwkJi99SujpiALXmx9z9vDFw/trij
+   8GixEmYxaO95LWsxIQ0B+se6BOYp9MxTQRCxJMs/58J7F/sIIJnb4V4cX
+   lCyTpnLfPitGn4ntd8ffUvE3Wb775YxrLNtJzcuaTw1SgBCJzgWz8dj7s
+   fLIxDuwfin3oNoeDX9vpgyeqDgq6fkzgII8BBJ4yxxIDEj5p5s1Cz7+nz
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.58,365,1544457600"; 
+   d="scan'208";a="101095245"
+Received: from mail-by2nam01lp2050.outbound.protection.outlook.com (HELO NAM01-BY2-obe.outbound.protection.outlook.com) ([104.47.34.50])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Feb 2019 19:53:53 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bZN5zUH1x1xZWl7BtTWHLtybsd33DX9UC1Eh7RejOP0=;
+ b=mwIr/vyPbuT2ZifYFDqKWipjDgC5/GFrsLCBLKeb/BHwsqM2UlloEw95hM+1bu4lo6jnTbJ8RRgdL6iF6ozuY2dkrCVsNPCXA1AR/R9ubCMXUi+Gmoyi6M0RoJNk7la7/u5c69NunMxOAMhX8Zr/swzqS1n5WAiN3MKkoxVeCkA=
+Received: from DM6PR04MB6059.namprd04.prod.outlook.com (20.178.226.89) by
+ DM6PR04MB4458.namprd04.prod.outlook.com (20.176.104.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Wed, 13 Feb 2019 11:53:52 +0000
+Received: from DM6PR04MB6059.namprd04.prod.outlook.com
+ ([fe80::d006:5be7:c3f:ba6c]) by DM6PR04MB6059.namprd04.prod.outlook.com
+ ([fe80::d006:5be7:c3f:ba6c%2]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
+ 11:53:52 +0000
+From:   Anup Patel <Anup.Patel@wdc.com>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+CC:     Atish Patra <Atish.Patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anup Patel <Anup.Patel@wdc.com>
+Subject: [PATCH v6 5/5] RISC-V: Free-up initrd in free_initrd_mem()
+Thread-Topic: [PATCH v6 5/5] RISC-V: Free-up initrd in free_initrd_mem()
+Thread-Index: AQHUw5LJNBZjt056iESEmmv3JNu8Cw==
+Date:   Wed, 13 Feb 2019 11:53:51 +0000
+Message-ID: <20190213115301.103989-6-anup.patel@wdc.com>
+References: <20190213115301.103989-1-anup.patel@wdc.com>
+In-Reply-To: <20190213115301.103989-1-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR0101CA0007.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:21::17) To DM6PR04MB6059.namprd04.prod.outlook.com
+ (2603:10b6:5:129::25)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anup.Patel@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [49.207.52.22]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 535f05c4-daa7-4d09-c1fb-08d691a9ec07
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR04MB4458;
+x-ms-traffictypediagnostic: DM6PR04MB4458:
+wdcipoutbound: EOP-TRUE
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DM6PR04MB4458;23:3HjocLzHNbh/M6pXTkTBAZ4Xc5VNOaBoTX/RdSO?=
+ =?iso-8859-1?Q?Mxxu8Ftzvqv006hMN2M323tfywA9UhAAnkx/hjlAmJ/6mJa+wacg96e3Qs?=
+ =?iso-8859-1?Q?rye+SunHovmD99NmUwuT/aXsr6i0xRQ2FIyoeVxJ8C9Y7SMMSn9y+VlL07?=
+ =?iso-8859-1?Q?i9bskONLt9yWItENHDKYGCHPkkmcbhq7YnyZRDiK38c42ozsMhmGJRRCQI?=
+ =?iso-8859-1?Q?PMbYA/dHooIloJcb5cXVJMHwxhS9MSzwlqFPYk4QPbPEZjTxfh7zTK4I6w?=
+ =?iso-8859-1?Q?Uzd3Bkq9McKpZovUnIVQ7DVlC+ltwRYLKovOb927uRlyW1tHpywT05MJVq?=
+ =?iso-8859-1?Q?KaNlcf7ShL/8jHnlZQ4dlFWnjJzZWjBknl8vNICCoN7C2QavHxj37dHlEy?=
+ =?iso-8859-1?Q?VT9R51o6IQefrgnfx0e1CIGEG2Noq+XODvbcUqY1LO3TaE7iufiawYu7Hq?=
+ =?iso-8859-1?Q?He9N27RNh3BfaRjMK4QnIxpqt4Fj6qCtib2U79Y7eRsbNBzP7xc7cdjxI0?=
+ =?iso-8859-1?Q?+xegVQqsUrGy0PqobE1JniZvoPwTXzobPSG5eotDhATroTr2XTsZTfn2U/?=
+ =?iso-8859-1?Q?SZSW7ImJH5pkjFxmJU9HqDTPYieOfBhkL6QmP/m/5elGndPEaE8roJfLMg?=
+ =?iso-8859-1?Q?hbVU08onU3ux7jr/leJl7H8Tz8Dbe07/SqiCR8poQolX8puyjCr8grlipO?=
+ =?iso-8859-1?Q?7qFPjY87pkRwsavS5CCIIvwEgq6rKxm/Fy9Nz1TP+1dLMcWg4TmPYdOb4t?=
+ =?iso-8859-1?Q?mJeQZTbZz/aj4bsIcTC3rj7yHAKIYX1c3YXLM7f9iafgs252PRc6JKEFQh?=
+ =?iso-8859-1?Q?Mc889gsIh0oEYjamEnYtQY0RuByV8ZYMKryuGuLLXSI2uk7Lgw5uD/ACXg?=
+ =?iso-8859-1?Q?/EHrfAmJMNeQDjZhYjBzmYPUwNacAmU1eZCHJha+C5a38dKfajTX4gphun?=
+ =?iso-8859-1?Q?HOXY4bPeMY9AVl0usYT87gFJvHeAs344d59PDVzlyZQs5BEDLh4mDjhb3u?=
+ =?iso-8859-1?Q?egIXgh6dkIVAzN2yd6TkuKlGGqZrofngYhjQ8NVYoFYK5JVuHXsUp71bWX?=
+ =?iso-8859-1?Q?S7cGvpf/dHBN0jgHMcCZZt2I3b5kZRUE5Z17U9jAmBrB/mWKPFdt7jXIlM?=
+ =?iso-8859-1?Q?qPW5YYkRJtO40xcygyG5qDlPISdnj5XlCnqqL2Z8HzO48PFYPrxP/7MvfF?=
+ =?iso-8859-1?Q?YiOfGR0A1ZCtAR64yQEDPCsdVFKSxes1cqqWr7Sdk8ZgPXgX6GaZ5VNeRY?=
+ =?iso-8859-1?Q?TcPOsKsK/NIACI+y+xP5y4WTHRf/xAd7zHIikSBEfnJKwI5nsLk14t2XwO?=
+ =?iso-8859-1?Q?K6ECANTNvf8E3NKjiGHoOdAQdhmP29HUbezfP/jHC2ilg=3D=3D?=
+x-microsoft-antispam-prvs: <DM6PR04MB44585D8CCD1EBF47D0643EE18D660@DM6PR04MB4458.namprd04.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(136003)(396003)(199004)(189003)(53936002)(25786009)(6436002)(71200400001)(6116002)(3846002)(6486002)(86362001)(99286004)(71190400001)(72206003)(76176011)(2906002)(54906003)(52116002)(476003)(106356001)(305945005)(110136005)(44832011)(14454004)(316002)(2616005)(68736007)(7736002)(486006)(97736004)(66066001)(50226002)(4326008)(14444005)(26005)(11346002)(446003)(186003)(478600001)(256004)(6506007)(81166006)(6512007)(36756003)(102836004)(8676002)(8936002)(1076003)(4744005)(2171002)(105586002)(81156014)(386003)(55236004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB4458;H:DM6PR04MB6059.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ym4sZ/BQNXxOf94Sz+dndBzNFZWfld/M7is8WBI7zGE/8qYh7tl+N5uazXrh2fkOQEau554eHiPw1F/SQ66UIwHvEopedFAo7iYJkwjE60x/lQty896zFqdkAMclhBQyMncl7rHtSjZ4r22f95+lT5YDDDyp8Pxd4+Qlqo4p45rrU+4D3MgPfS4hHHrvh+dWuly4oEphEpfakTqd//l0QqbUYXEFm+YUEhJyhKh2PhjeJLGdHyyywdk5ctNXr/RkSBM35vAqymvf/qmQTXQELiufOGjzNBocG14aP3Pqjh1DdbfM2aC8VqYRznMe24zqCXJv1DLUlUF77wJG5WsRbVefYLp1X3LXUXjAOJQfNWl8P0frpIaEqGhSKUoqgIpHL44MWMZtXTWQpP3dWGDW2wvU3JzV2LtGpuhx9t+CaQo=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 535f05c4-daa7-4d09-c1fb-08d691a9ec07
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 11:53:48.5595
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB4458
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+We should free-up initrd memory in free_initrd_mem() instead
+of doing nothing.
 
-   ASoC: samsung: i2s: Move core clk to the driver common data structure
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b5d015e68e6ce36e0373cda3537009aaa96b5902 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Tue, 12 Feb 2019 19:03:25 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Move core clk to the driver common data
- structure
-
-The core clock is also common for both CPU DAIs so move it to
-the driver's private data structure.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Anup Patel <anup.patel@wdc.com>
 ---
- sound/soc/samsung/i2s.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ arch/riscv/mm/init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 29bcfca20572..159c19fdb662 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -71,8 +71,6 @@ struct i2s_dai {
- 	 * 0 indicates CPU driver is free to choose any value.
- 	 */
- 	unsigned rfs, bfs;
--	/* I2S Controller's core clock */
--	struct clk *clk;
- 	/* Clock for generating I2S signals */
- 	struct clk *op_clk;
- 	/* Pointer to the Primary_Fifo if this is Sec_Fifo, NULL otherwise */
-@@ -117,6 +115,9 @@ struct samsung_i2s_priv {
- 	struct snd_soc_dai_driver *dai_drv;
- 	int num_dais;
- 
-+	/* The I2S controller's core clock */
-+	struct clk *clk;
-+
- 	/* The clock provider's data */
- 	struct clk *clk_table[3];
- 	struct clk_onecell_data clk_data;
-@@ -1205,6 +1206,7 @@ static int i2s_alloc_dais(struct samsung_i2s_priv *priv,
- #ifdef CONFIG_PM
- static int i2s_runtime_suspend(struct device *dev)
- {
-+	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
- 	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
- 
- 	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
-@@ -1213,24 +1215,25 @@ static int i2s_runtime_suspend(struct device *dev)
- 
- 	if (i2s->op_clk)
- 		clk_disable_unprepare(i2s->op_clk);
--	clk_disable_unprepare(i2s->clk);
-+	clk_disable_unprepare(priv->clk);
- 
- 	return 0;
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index b1167a6f5a92..aabf1869c54b 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -94,8 +94,9 @@ static void __init setup_initrd(void)
+ 	initrd_end =3D 0;
  }
- 
- static int i2s_runtime_resume(struct device *dev)
+=20
+-void free_initrd_mem(unsigned long start, unsigned long end)
++void __init free_initrd_mem(unsigned long start, unsigned long end)
  {
-+	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
- 	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
- 	int ret;
- 
--	ret = clk_prepare_enable(i2s->clk);
-+	ret = clk_prepare_enable(priv->clk);
- 	if (ret)
- 		return ret;
- 
- 	if (i2s->op_clk) {
- 		ret = clk_prepare_enable(i2s->op_clk);
- 		if (ret) {
--			clk_disable_unprepare(i2s->clk);
-+			clk_disable_unprepare(priv->clk);
- 			return ret;
- 		}
- 	}
-@@ -1428,13 +1431,13 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 
- 	regs_base = res->start;
- 
--	pri_dai->clk = devm_clk_get(&pdev->dev, "iis");
--	if (IS_ERR(pri_dai->clk)) {
-+	priv->clk = devm_clk_get(&pdev->dev, "iis");
-+	if (IS_ERR(priv->clk)) {
- 		dev_err(&pdev->dev, "Failed to get iis clock\n");
--		return PTR_ERR(pri_dai->clk);
-+		return PTR_ERR(priv->clk);
- 	}
- 
--	ret = clk_prepare_enable(pri_dai->clk);
-+	ret = clk_prepare_enable(priv->clk);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
- 		return ret;
-@@ -1472,7 +1475,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 
- 		sec_dai->dma_playback.addr_width = 4;
- 		sec_dai->addr = pri_dai->addr;
--		sec_dai->clk = pri_dai->clk;
- 		sec_dai->quirks = quirks;
- 		sec_dai->idma_playback.addr = idma_addr;
- 		sec_dai->pri_dai = pri_dai;
-@@ -1519,7 +1521,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- err_disable_pm:
- 	pm_runtime_disable(&pdev->dev);
- err_disable_clk:
--	clk_disable_unprepare(pri_dai->clk);
-+	clk_disable_unprepare(priv->clk);
- 	i2s_delete_secondary_device(priv);
- 	return ret;
++	free_reserved_area((void *)start, (void *)end, -1, "initrd");
  }
-@@ -1527,7 +1529,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- static int samsung_i2s_remove(struct platform_device *pdev)
- {
- 	struct samsung_i2s_priv *priv = dev_get_drvdata(&pdev->dev);
--	struct i2s_dai *pri_dai = samsung_i2s_get_pri_dai(&pdev->dev);
- 
- 	/* The secondary device has no driver data assigned */
- 	if (!priv)
-@@ -1537,7 +1538,7 @@ static int samsung_i2s_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 
- 	i2s_unregister_clock_provider(priv);
--	clk_disable_unprepare(pri_dai->clk);
-+	clk_disable_unprepare(priv->clk);
- 	pm_runtime_put_noidle(&pdev->dev);
- 	i2s_delete_secondary_device(priv);
- 
--- 
-2.20.1
+ #endif /* CONFIG_BLK_DEV_INITRD */
+=20
+--=20
+2.17.1
 
