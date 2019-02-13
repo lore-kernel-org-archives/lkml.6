@@ -2,53 +2,52 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3B6C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8F8C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A95222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280CF222D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083312;
-	bh=NZ8wR8IEZLoSGiiua8lrl/F58rzds5gNVj4rknRTysw=;
+	s=default; t=1550083316;
+	bh=Q/rp6iW3ubVP3wJ/shDYAkVt91wZyUCt4tczSnWSspg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J7LBcwug0XQ1siounMG9jDH/fp33npkR/EsTAhE67dufx1JWpyL54/qV94nVXVcpZ
-	 MyaL6p7TGHLLnd5UnNrwGyVYErypZSORdA/mH3ppjmgJ2D1i4xHVj3zO0jdNHWyQG/
-	 o1AJEDv/TG2FKT4sUKvtMz78VEMwblNw9XaIR8ls=
+	b=jdnOcR4eDHj1r59aUcmYZRdheEg6Qfb8dOSl4eovm3s++py3iR4KVIosTWWDPDtVK
+	 8teXFRV2TR2ujGdurny5eZGhGy/c51VO2Wmy8lrG0DzBbOj2VP1W2JNGyI240Yj9dU
+	 sGtXn74RtiQiYiZ6GHid+9bnbPnWEP9Sb1Xj8Kew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405537AbfBMSlv (ORCPT
+        id S2405553AbfBMSly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:41:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40200 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393898AbfBMSlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:49 -0500
+        id S2403859AbfBMSlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE4A3222D5;
-        Wed, 13 Feb 2019 18:41:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF92A222D5;
+        Wed, 13 Feb 2019 18:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083307;
-        bh=NZ8wR8IEZLoSGiiua8lrl/F58rzds5gNVj4rknRTysw=;
+        s=default; t=1550083313;
+        bh=Q/rp6iW3ubVP3wJ/shDYAkVt91wZyUCt4tczSnWSspg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oyokwKR15djD+hulnqGXFoqQdwhVzhpeV2vmLNVjIhQCZyzJ+oEDBF0K6lGfO/y+g
-         BiXNtTvFk410F3vVv21NLahcdNyMHhjHNGu0b4aAMtIBbOE6jvr6gqfuXz5j1+akVS
-         bAAxWQ9ZAD7v5gnzU14KE/X4tWmwdR8e9QFTX82Y=
+        b=uKhE6XlHL3ILVCXIHa6rqaxmVaSxKIRM8NsceuKEjYLUPSkPD8WAWDHf4if4Ij8BY
+         uzHvWgEomOXlFrwxJkThFf24fzdVsfGzrRDJ3oKUvQFSb/7Hrbgg2Neh3eFKXqBo3l
+         xi+4I9P6Re1su+9tba7zujlfoXfb6YfYTq6cXgy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Xiubo Li <xiubli@redhat.com>,
         Tommi Rantala <tommi.t.rantala@nokia.com>
-Subject: [PATCH 4.14 29/35] uio: Prevent device destruction while fds are open
-Date:   Wed, 13 Feb 2019 19:38:24 +0100
-Message-Id: <20190213183707.393419167@linuxfoundation.org>
+Subject: [PATCH 4.14 30/35] uio: use request_threaded_irq instead
+Date:   Wed, 13 Feb 2019 19:38:25 +0100
+Message-Id: <20190213183707.428286627@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -67,303 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+From: Xiubo Li <xiubli@redhat.com>
 
-commit a93e7b331568227500186a465fee3c2cb5dffd1f upstream.
+commit 9421e45f5ff3d558cf8b75a8cc0824530caf3453 upstream.
 
-Prevent destruction of a uio_device while user space apps hold open
-file descriptors to that device. Further, access to the 'info' member
-of the struct uio_device is protected by spinlock. This is to ensure
-stale pointers to data not under control of the UIO subsystem are not
-dereferenced.
+Prepraing for changing to use mutex lock.
 
-Signed-off-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[4.14 change __poll_t to unsigned int]
 Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/uio/uio.c          |   98 +++++++++++++++++++++++++++++++++------------
- include/linux/uio_driver.h |    4 +
- 2 files changed, 75 insertions(+), 27 deletions(-)
+ drivers/uio/uio.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/drivers/uio/uio.c
 +++ b/drivers/uio/uio.c
-@@ -272,7 +272,7 @@ static int uio_dev_add_attributes(struct
- 		if (!map_found) {
- 			map_found = 1;
- 			idev->map_dir = kobject_create_and_add("maps",
--							&idev->dev->kobj);
-+							&idev->dev.kobj);
- 			if (!idev->map_dir) {
- 				ret = -ENOMEM;
- 				goto err_map;
-@@ -301,7 +301,7 @@ static int uio_dev_add_attributes(struct
- 		if (!portio_found) {
- 			portio_found = 1;
- 			idev->portio_dir = kobject_create_and_add("portio",
--							&idev->dev->kobj);
-+							&idev->dev.kobj);
- 			if (!idev->portio_dir) {
- 				ret = -ENOMEM;
- 				goto err_portio;
-@@ -344,7 +344,7 @@ err_map_kobj:
- 		kobject_put(&map->kobj);
- 	}
- 	kobject_put(idev->map_dir);
--	dev_err(idev->dev, "error creating sysfs files (%d)\n", ret);
-+	dev_err(&idev->dev, "error creating sysfs files (%d)\n", ret);
- 	return ret;
- }
- 
-@@ -381,7 +381,7 @@ static int uio_get_minor(struct uio_devi
- 		idev->minor = retval;
- 		retval = 0;
- 	} else if (retval == -ENOSPC) {
--		dev_err(idev->dev, "too many uio devices\n");
-+		dev_err(&idev->dev, "too many uio devices\n");
- 		retval = -EINVAL;
- 	}
- 	mutex_unlock(&minor_lock);
-@@ -435,6 +435,7 @@ static int uio_open(struct inode *inode,
- 	struct uio_device *idev;
- 	struct uio_listener *listener;
- 	int ret = 0;
-+	unsigned long flags;
- 
- 	mutex_lock(&minor_lock);
- 	idev = idr_find(&uio_idr, iminor(inode));
-@@ -444,9 +445,11 @@ static int uio_open(struct inode *inode,
- 		goto out;
- 	}
- 
-+	get_device(&idev->dev);
+@@ -911,8 +911,9 @@ int __uio_register_device(struct module
+ 		 * FDs at the time of unregister and therefore may not be
+ 		 * freed until they are released.
+ 		 */
+-		ret = request_irq(info->irq, uio_interrupt,
+-				  info->irq_flags, info->name, idev);
++		ret = request_threaded_irq(info->irq, NULL, uio_interrupt,
++					   info->irq_flags, info->name, idev);
 +
- 	if (!try_module_get(idev->owner)) {
- 		ret = -ENODEV;
--		goto out;
-+		goto err_module_get;
- 	}
- 
- 	listener = kmalloc(sizeof(*listener), GFP_KERNEL);
-@@ -459,11 +462,13 @@ static int uio_open(struct inode *inode,
- 	listener->event_count = atomic_read(&idev->event);
- 	filep->private_data = listener;
- 
--	if (idev->info->open) {
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
--		if (ret)
--			goto err_infoopen;
--	}
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	if (ret)
-+		goto err_infoopen;
-+
- 	return 0;
- 
- err_infoopen:
-@@ -472,6 +477,9 @@ err_infoopen:
- err_alloc_listener:
- 	module_put(idev->owner);
- 
-+err_module_get:
-+	put_device(&idev->dev);
-+
- out:
- 	return ret;
- }
-@@ -489,12 +497,16 @@ static int uio_release(struct inode *ino
- 	int ret = 0;
- 	struct uio_listener *listener = filep->private_data;
- 	struct uio_device *idev = listener->dev;
-+	unsigned long flags;
- 
--	if (idev->info->release)
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	if (idev->info && idev->info->release)
- 		ret = idev->info->release(idev->info, inode);
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
- 
- 	module_put(idev->owner);
- 	kfree(listener);
-+	put_device(&idev->dev);
- 	return ret;
- }
- 
-@@ -502,9 +514,16 @@ static unsigned int uio_poll(struct file
- {
- 	struct uio_listener *listener = filep->private_data;
- 	struct uio_device *idev = listener->dev;
-+	unsigned int ret = 0;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	if (!idev->info || !idev->info->irq)
-+		ret = -EIO;
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
- 
--	if (!idev->info->irq)
--		return -EIO;
-+	if (ret)
-+		return ret;
- 
- 	poll_wait(filep, &idev->wait, wait);
- 	if (listener->event_count != atomic_read(&idev->event))
-@@ -518,11 +537,17 @@ static ssize_t uio_read(struct file *fil
- 	struct uio_listener *listener = filep->private_data;
- 	struct uio_device *idev = listener->dev;
- 	DECLARE_WAITQUEUE(wait, current);
--	ssize_t retval;
-+	ssize_t retval = 0;
- 	s32 event_count;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	if (!idev->info || !idev->info->irq)
-+		retval = -EIO;
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
- 
--	if (!idev->info->irq)
--		return -EIO;
-+	if (retval)
-+		return retval;
- 
- 	if (count != sizeof(s32))
- 		return -EINVAL;
-@@ -569,8 +594,10 @@ static ssize_t uio_write(struct file *fi
- 	struct uio_device *idev = listener->dev;
- 	ssize_t retval;
- 	s32 irq_on;
-+	unsigned long flags;
- 
--	if (!idev->info->irq) {
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	if (!idev->info || !idev->info->irq) {
- 		retval = -EIO;
- 		goto out;
- 	}
-@@ -593,6 +620,7 @@ static ssize_t uio_write(struct file *fi
- 	retval = idev->info->irqcontrol(idev->info, irq_on);
- 
- out:
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
- 	return retval ? retval : sizeof(s32);
- }
- 
-@@ -809,6 +837,13 @@ static void release_uio_class(void)
- 	uio_major_cleanup();
- }
- 
-+static void uio_device_release(struct device *dev)
-+{
-+	struct uio_device *idev = dev_get_drvdata(dev);
-+
-+	kfree(idev);
-+}
-+
- /**
-  * uio_register_device - register a new userspace IO device
-  * @owner:	module that creates the new device
-@@ -832,13 +867,14 @@ int __uio_register_device(struct module
- 
- 	info->uio_dev = NULL;
- 
--	idev = devm_kzalloc(parent, sizeof(*idev), GFP_KERNEL);
-+	idev = kzalloc(sizeof(*idev), GFP_KERNEL);
- 	if (!idev) {
- 		return -ENOMEM;
- 	}
- 
- 	idev->owner = owner;
- 	idev->info = info;
-+	spin_lock_init(&idev->info_lock);
- 	init_waitqueue_head(&idev->wait);
- 	atomic_set(&idev->event, 0);
- 
-@@ -846,14 +882,19 @@ int __uio_register_device(struct module
- 	if (ret)
- 		return ret;
- 
--	idev->dev = device_create(&uio_class, parent,
--				  MKDEV(uio_major, idev->minor), idev,
--				  "uio%d", idev->minor);
--	if (IS_ERR(idev->dev)) {
--		printk(KERN_ERR "UIO: device register failed\n");
--		ret = PTR_ERR(idev->dev);
-+	idev->dev.devt = MKDEV(uio_major, idev->minor);
-+	idev->dev.class = &uio_class;
-+	idev->dev.parent = parent;
-+	idev->dev.release = uio_device_release;
-+	dev_set_drvdata(&idev->dev, idev);
-+
-+	ret = dev_set_name(&idev->dev, "uio%d", idev->minor);
-+	if (ret)
-+		goto err_device_create;
-+
-+	ret = device_register(&idev->dev);
-+	if (ret)
- 		goto err_device_create;
--	}
- 
- 	ret = uio_dev_add_attributes(idev);
- 	if (ret)
-@@ -883,7 +924,7 @@ int __uio_register_device(struct module
- err_request_irq:
- 	uio_dev_del_attributes(idev);
- err_uio_dev_add_attributes:
--	device_destroy(&uio_class, MKDEV(uio_major, idev->minor));
-+	device_unregister(&idev->dev);
- err_device_create:
- 	uio_free_minor(idev);
- 	return ret;
-@@ -898,6 +939,7 @@ EXPORT_SYMBOL_GPL(__uio_register_device)
- void uio_unregister_device(struct uio_info *info)
- {
- 	struct uio_device *idev;
-+	unsigned long flags;
- 
- 	if (!info || !info->uio_dev)
- 		return;
-@@ -911,7 +953,11 @@ void uio_unregister_device(struct uio_in
- 	if (info->irq && info->irq != UIO_IRQ_CUSTOM)
- 		free_irq(info->irq, idev);
- 
--	device_destroy(&uio_class, MKDEV(uio_major, idev->minor));
-+	spin_lock_irqsave(&idev->info_lock, flags);
-+	idev->info = NULL;
-+	spin_unlock_irqrestore(&idev->info_lock, flags);
-+
-+	device_unregister(&idev->dev);
- 
- 	return;
- }
---- a/include/linux/uio_driver.h
-+++ b/include/linux/uio_driver.h
-@@ -14,6 +14,7 @@
- #ifndef _UIO_DRIVER_H_
- #define _UIO_DRIVER_H_
- 
-+#include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/interrupt.h>
- 
-@@ -68,12 +69,13 @@ struct uio_port {
- 
- struct uio_device {
-         struct module           *owner;
--        struct device           *dev;
-+	struct device		dev;
-         int                     minor;
-         atomic_t                event;
-         struct fasync_struct    *async_queue;
-         wait_queue_head_t       wait;
-         struct uio_info         *info;
-+	spinlock_t		info_lock;
-         struct kobject          *map_dir;
-         struct kobject          *portio_dir;
- };
+ 		if (ret) {
+ 			info->uio_dev = NULL;
+ 			goto err_request_irq;
 
 
