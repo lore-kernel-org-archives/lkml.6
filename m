@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870DEC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E76FC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53EFC222C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F025222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025512;
-	bh=7OZR+Bc0SwMAlhu4115yXj/DAPT0IKMwW/5ObjDAvp4=;
+	s=default; t=1550025517;
+	bh=yvP+iZRZSakHDaDXQMknfSWwr5hUxPvQPJha0lDIZD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HTP6qZ85dasqfsElrIvNG47qVaZ9VPxKCAWLvslP/olDBh4ctJ7tU6EM6Ro6N6gbg
-	 t8RT3IQfPx9sKxx/va/62iLRC4nP7k3GhyOO6X/0NjUJwq9UnWaTV369JZtUMXUYPB
-	 moy113aH+PcT/JOvJWB/KFLIe5xtR463OKzC3tvs=
+	b=Oh9X1BXWqtFfak6uhVdVzb35U7911yGGZo/y00N0doX3mv8U2wnLpLofja10nlM5n
+	 9t329Y5vU9DGlNpTRiMFa1iU3GaI6WSFHItOWVDOB8o7YlsAQYgPVbO9ouHVXppGf2
+	 vePez0RyJ2pVoDLEHk7DANfd7N+G5aly8gzeAb8w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388546AbfBMCia (ORCPT
+        id S2388562AbfBMCif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:38:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41956 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388511AbfBMCiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:25 -0500
+        id S2388548AbfBMCib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4857B206B6;
-        Wed, 13 Feb 2019 02:38:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E5DA222C9;
+        Wed, 13 Feb 2019 02:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025504;
-        bh=7OZR+Bc0SwMAlhu4115yXj/DAPT0IKMwW/5ObjDAvp4=;
+        s=default; t=1550025510;
+        bh=yvP+iZRZSakHDaDXQMknfSWwr5hUxPvQPJha0lDIZD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NM/Q9BQSKUTTEL4OLPYc3svgCd6ZTdjaR/uZDqd/Ctu4en0hdg6bERMXHx3IkLBMe
-         LCw4lZ5fsQGQmzWGdxZF85SelsYarDjRMO8Uy5Cy/ZM4bmw7+lvrqt0heEsx1xee2C
-         5gRpRhf/1KH3BVSlddik8b/OGwoL9i8gQXY2Jwbs=
+        b=M/ewB29KmLEVCIU+Nd6JViSC3ja07WRaJqt7GunQ8ymOloQMMfN16YpXmSNDnGJr8
+         jIqoZiscctyTTxizFHpM31BllX4IEAD2kZdqd05HXzMp65Ih/RK4GRqarMr/jwKgJi
+         Go2j5EzRIaw0Wa+2A3nKaootNLYWoq5+OzvNppEo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 49/83] net: stmmac: Prevent RX starvation in stmmac_napi_poll()
-Date:   Tue, 12 Feb 2019 21:36:27 -0500
-Message-Id: <20190213023701.20286-49-sashal@kernel.org>
+Cc:     Manish Rangankar <mrangankar@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 53/83] scsi: qedi: Add ep_state for login completion on un-reachable targets
+Date:   Tue, 12 Feb 2019 21:36:31 -0500
+Message-Id: <20190213023701.20286-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -62,78 +58,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <jose.abreu@synopsys.com>
+From: Manish Rangankar <mrangankar@marvell.com>
 
-[ Upstream commit fa0be0a43f101888ac677dba31b590963eafeaa1 ]
+[ Upstream commit 34a2ce887668db9dda4b56e6f155c49ac13f3e54 ]
 
-Currently, TX is given a budget which is consumed by stmmac_tx_clean()
-and stmmac_rx() is given the remaining non-consumed budget.
+When the driver finds invalid destination MAC for the first un-reachable
+target, and before completes the PATH_REQ operation, set new ep_state to
+OFFLDCONN_NONE so that as part of driver ep_poll mechanism, the upper
+open-iscsi layer is notified to complete the login process on the first
+un-reachable target and thus proceed login to other reachable targets.
 
-This is wrong and in case we are sending a large number of packets this
-can starve RX because remaining budget will be low.
-
-Let's give always the same budget for RX and TX clean.
-
-While at it, check if we missed any interrupts while we were in NAPI
-callback by looking at DMA interrupt status.
-
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 27 ++++++++++---------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ drivers/scsi/qedi/qedi_iscsi.c | 3 +++
+ drivers/scsi/qedi/qedi_iscsi.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 24ae244c2ee3..123b74e25ed8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3522,27 +3522,28 @@ static int stmmac_napi_poll(struct napi_struct *napi, int budget)
- 	struct stmmac_channel *ch =
- 		container_of(napi, struct stmmac_channel, napi);
- 	struct stmmac_priv *priv = ch->priv_data;
--	int work_done = 0, work_rem = budget;
-+	int work_done, rx_done = 0, tx_done = 0;
- 	u32 chan = ch->index;
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index 2f0a4f2c5ff8..d4821b9dea45 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -954,6 +954,7 @@ static int qedi_ep_poll(struct iscsi_endpoint *ep, int timeout_ms)
  
- 	priv->xstats.napi_poll++;
+ 	qedi_ep = ep->dd_data;
+ 	if (qedi_ep->state == EP_STATE_IDLE ||
++	    qedi_ep->state == EP_STATE_OFLDCONN_NONE ||
+ 	    qedi_ep->state == EP_STATE_OFLDCONN_FAILED)
+ 		return -1;
  
--	if (ch->has_tx) {
--		int done = stmmac_tx_clean(priv, work_rem, chan);
-+	if (ch->has_tx)
-+		tx_done = stmmac_tx_clean(priv, budget, chan);
-+	if (ch->has_rx)
-+		rx_done = stmmac_rx(priv, budget, chan);
+@@ -1036,6 +1037,7 @@ static void qedi_ep_disconnect(struct iscsi_endpoint *ep)
  
--		work_done += done;
--		work_rem -= done;
--	}
--
--	if (ch->has_rx) {
--		int done = stmmac_rx(priv, work_rem, chan);
-+	work_done = max(rx_done, tx_done);
-+	work_done = min(work_done, budget);
+ 	switch (qedi_ep->state) {
+ 	case EP_STATE_OFLDCONN_START:
++	case EP_STATE_OFLDCONN_NONE:
+ 		goto ep_release_conn;
+ 	case EP_STATE_OFLDCONN_FAILED:
+ 			break;
+@@ -1226,6 +1228,7 @@ static int qedi_set_path(struct Scsi_Host *shost, struct iscsi_path *path_data)
  
--		work_done += done;
--		work_rem -= done;
--	}
-+	if (work_done < budget && napi_complete_done(napi, work_done)) {
-+		int stat;
+ 	if (!is_valid_ether_addr(&path_data->mac_addr[0])) {
+ 		QEDI_NOTICE(&qedi->dbg_ctx, "dst mac NOT VALID\n");
++		qedi_ep->state = EP_STATE_OFLDCONN_NONE;
+ 		ret = -EIO;
+ 		goto set_path_exit;
+ 	}
+diff --git a/drivers/scsi/qedi/qedi_iscsi.h b/drivers/scsi/qedi/qedi_iscsi.h
+index 11260776212f..892d70d54553 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.h
++++ b/drivers/scsi/qedi/qedi_iscsi.h
+@@ -59,6 +59,7 @@ enum {
+ 	EP_STATE_OFLDCONN_FAILED        = 0x2000,
+ 	EP_STATE_CONNECT_FAILED         = 0x4000,
+ 	EP_STATE_DISCONN_TIMEDOUT       = 0x8000,
++	EP_STATE_OFLDCONN_NONE          = 0x10000,
+ };
  
--	if (work_done < budget && napi_complete_done(napi, work_done))
- 		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
-+		stat = stmmac_dma_interrupt_status(priv, priv->ioaddr,
-+						   &priv->xstats, chan);
-+		if (stat && napi_reschedule(napi))
-+			stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
-+	}
- 
- 	return work_done;
- }
+ struct qedi_conn;
 -- 
 2.19.1
 
