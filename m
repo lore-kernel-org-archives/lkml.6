@@ -4,54 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A8BC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FC9C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0999E2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF70E206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550027013;
-	bh=2+ElqeV+nIunlzrCHfSoDCQl8YyInhtsu8IqX/ZPXSQ=;
+	s=default; t=1550027038;
+	bh=9fff7Y53ByZc4GPGUy1uC7VXdvhIdzzONFMNSuxFStU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QFG4wUruMjapq7/4u/fgX7zlpEmMpmror74CPUozBLGLXHCXl3JinaXOJ37NU8mpo
-	 U5AQNSB60frJHmq74C59tUw/Yah9mKkF0Vr0MeKInDuQ7LiY7LP7C7HbYO7DK9VkzC
-	 M4mKsm5iKniMMakeKWDndR/tel1PB/+dBAHQRNZg=
+	b=IZAtVtKKIMmqCxP5zR5xbHKSBH6tFa/jgL2+9s6qY5sr1ykslyRbgc3/ecEDyfBo8
+	 GPoTQrf5q5UwhO2enhJV47353bAGsiJvly4TVf2Mbq+rO9JOAnY81PHKV7vpdZSR6Q
+	 otLZA61fVy6W6i7iJ+/672lBoRI5oI0hGiZq4NdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387801AbfBMDDc (ORCPT
+        id S2390151AbfBMDD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:03:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38104 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 22:03:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387746AbfBMCee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:34 -0500
+        id S2387652AbfBMCeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3E1B222C2;
-        Wed, 13 Feb 2019 02:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D1E4222CA;
+        Wed, 13 Feb 2019 02:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025273;
-        bh=2+ElqeV+nIunlzrCHfSoDCQl8YyInhtsu8IqX/ZPXSQ=;
+        s=default; t=1550025254;
+        bh=9fff7Y53ByZc4GPGUy1uC7VXdvhIdzzONFMNSuxFStU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j+tWSqEMS1Fx6l+bGxkbgREwCI08vQ4a5jk+NqJexviBkJIdoIWMNTEN0mird8TbJ
-         5GDctxpr9Oo0w7HCE8Hw2trLFmVrNHJ6cDdWcFv6QRRHU5FgXse9JfQ8jNR7/P9Hqi
-         vGJEVIjZBSoHzvCnh3r+HVOFl0D4+6mkYsl0lHNc=
+        b=E6MEsKQzQT2w49vwBD6UKHKjL9DsxeDmTCzWG0JOycgnNF9RwirP+eieNfFk2Rz8b
+         K9MuXnlI/jD5/E9z6Obmq/LJknQFnDAZOx2V3nCdjQTYsMcjvydC7TyMGLpnZ6fw2q
+         U2WMJauBxdb/DgURxxnpuj2MvMVFSl/cEpGpZCYA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 040/105] scsi: isci: initialize shost fully before calling scsi_add_host()
-Date:   Tue, 12 Feb 2019 21:32:31 -0500
-Message-Id: <20190213023336.19019-40-sashal@kernel.org>
+Cc:     Alban Bedel <albeu@free.fr>, Paul Burton <paul.burton@mips.com>,
+        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 033/105] MIPS: ath79: Enable OF serial ports in the default config
+Date:   Tue, 12 Feb 2019 21:32:24 -0500
+Message-Id: <20190213023336.19019-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -63,97 +59,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Alban Bedel <albeu@free.fr>
 
-[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
+[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
 
-scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
-command size to allocate based on the prot_capabilities. In the isci
-driver, scsi_host_set_prot() is called after scsi_add_host() so the command
-size gets calculated to be smaller than it needs to be.  Eventually,
-scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
-was sized correctly and a buffer overrun may occur.
+CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
+boards, enable it in the default config to get a working setup out of
+the box.
 
-However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
-size, the mistake can go unnoticed.
-
-The bug was noticed after the struct request size was reduced by commit
-9d037ad707ed ("block: remove req->timeout_list")
-
-Which likely reduced the allocated space for the request by an entire cache
-line, enough that the overflow could be hit and it caused a panic, on boot,
-at:
-
-  RIP: 0010:t10_pi_complete+0x77/0x1c0
-  Call Trace:
-    <IRQ>
-    sd_done+0xf5/0x340
-    scsi_finish_command+0xc3/0x120
-    blk_done_softirq+0x83/0xb0
-    __do_softirq+0xa1/0x2e6
-    irq_exit+0xbc/0xd0
-    call_function_single_interrupt+0xf/0x20
-    </IRQ>
-
-sd_done() would call scsi_prot_sg_count() which reads the number of
-entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
-the allocated space it reads a garbage number and erroneously calls
-t10_pi_complete().
-
-To prevent this, the calls to scsi_host_set_prot() are moved into
-isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
-move the similar call to scsi_host_set_guard().
-
-Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
-Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/init.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/mips/configs/ath79_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 08c7b1e25fe4..dde84f744313 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -588,6 +588,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
- 	shost->max_lun = ~0;
- 	shost->max_cmd_len = MAX_COMMAND_SIZE;
- 
-+	/* turn on DIF support */
-+	scsi_host_set_prot(shost,
-+			   SHOST_DIF_TYPE1_PROTECTION |
-+			   SHOST_DIF_TYPE2_PROTECTION |
-+			   SHOST_DIF_TYPE3_PROTECTION);
-+	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
-+
- 	err = scsi_add_host(shost, &pdev->dev);
- 	if (err)
- 		goto err_shost;
-@@ -675,13 +682,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			goto err_host_alloc;
- 		}
- 		pci_info->hosts[i] = h;
--
--		/* turn on DIF support */
--		scsi_host_set_prot(to_shost(h),
--				   SHOST_DIF_TYPE1_PROTECTION |
--				   SHOST_DIF_TYPE2_PROTECTION |
--				   SHOST_DIF_TYPE3_PROTECTION);
--		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
- 	}
- 
- 	err = isci_setup_interrupts(pdev);
+diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
+index 951c4231bdb8..4c47b3fd958b 100644
+--- a/arch/mips/configs/ath79_defconfig
++++ b/arch/mips/configs/ath79_defconfig
+@@ -71,6 +71,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ # CONFIG_SERIAL_8250_PCI is not set
+ CONFIG_SERIAL_8250_NR_UARTS=1
+ CONFIG_SERIAL_8250_RUNTIME_UARTS=1
++CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_AR933X=y
+ CONFIG_SERIAL_AR933X_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
 -- 
 2.19.1
 
