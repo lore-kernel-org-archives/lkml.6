@@ -2,130 +2,120 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB89DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EFAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A87A222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550049615;
-	bh=brUapftCa140wSMsnWrE2JPLWZ6vMFVMAwmpsIS9dik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=m/NbvkAku2DJojZd2C8fLobEUmPcKlRVGBliiEWDdm1nXB97Pwljo0JB2s1eR99RD
-	 10OQ1EyQ4ldno/QN2hAJlz8fWGbEaouPHe8dJCZyoyCZ+4BrDSJxTLlQZlqZ762du4
-	 HIMlEUqoaj8hlXYmuhOd8ea3h/lZTQGsLxQGgowE=
+	by mail.kernel.org (Postfix) with ESMTP id D251D222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391318AbfBMJUO (ORCPT
+        id S2391320AbfBMJUk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:20:14 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42738 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbfBMJUN (ORCPT
+        Wed, 13 Feb 2019 04:20:40 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:34629 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbfBMJUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:20:13 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l10so1192911lfh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:20:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yV3tHrb36nm7qguc30iL89qUkzz5TfCHBJryEVaPhcI=;
-        b=OkhGouxne9IzJwQyOnOf5bHH8yf2UeM4M0zROTzpW+ThMyPLHM7h4tacKOCHdI/qhe
-         DNyShXTBSUUI+G07qksyFC2/PLFveXDP3fjs1tlsaz/VY1A13CHWiGwrkwXyDmRh6UN+
-         K13DwrQgzqHPautkUspn/9Qfru85+kFPVsKkbUBhvQoF3GOT/RPxOtX34vsPANNbazT6
-         8yrtAogn2hFySH75B6hjxIhkfagM8uydL6w6UoIIWc4j31SXg+sVVC+5KcAbKRYNDEz0
-         V43B1t7uxT3apAJxKGHgRKQxB6NZRy1W+YXZpa4zNciNVH6c332YlOW/HPBdkHkR3pJm
-         Q4Ug==
-X-Gm-Message-State: AHQUAuYB4t6tlW2JQAl5KvNQXEz8S0tL4FagdLiAkH8Jv06KTcD4uc6G
-        nhxiIvmg3+QlqT7MR9O5Ghw=
-X-Google-Smtp-Source: AHgI3IbnucUO9uKFA3Qc3Zzc/Gj1xrQpGuOkq3oZefH7xWneDAvgdVL26JtR4wyuMJIWBKMb6kgMVA==
-X-Received: by 2002:a19:ec0e:: with SMTP id b14mr1551184lfa.151.1550049611358;
-        Wed, 13 Feb 2019 01:20:11 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id t18sm129617ljc.54.2019.02.13.01.20.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 01:20:10 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gtqi3-0007eO-DY; Wed, 13 Feb 2019 10:20:04 +0100
-Date:   Wed, 13 Feb 2019 10:20:03 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/6] Fixmap support and MM cleanups
-Message-ID: <20190213092003.GF28278@localhost>
-References: <20190119132650.9978-1-anup.patel@wdc.com>
- <mhng-3acc6cf0-4c86-4929-a653-11e87d0c6b48@palmer-si-x1c4>
- <CAAhSdy25GUFWfkQHBDy6HysVCVFOpv-ZLY6vr+oH34XbqScYFQ@mail.gmail.com>
+        Wed, 13 Feb 2019 04:20:39 -0500
+Received: from aptenodytes (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id C6245200013;
+        Wed, 13 Feb 2019 09:20:35 +0000 (UTC)
+Message-ID: <3de0825971b91ea0b8fd349f4ecf8164de14254a.camel@bootlin.com>
+Subject: Re: [PATCH v3] media: docs-rst: Document m2m stateless video
+ decoder interface
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 13 Feb 2019 10:20:35 +0100
+In-Reply-To: <b24e3e67-9fb3-3602-8a90-826f8c51eadf@xs4all.nl>
+References: <20190213055317.192029-1-acourbot@chromium.org>
+         <CAPBb6MUDK0s665wjSjvo3ZePtmFXFrs2WqpaywOSjnRxp08Ong@mail.gmail.com>
+         <b24e3e67-9fb3-3602-8a90-826f8c51eadf@xs4all.nl>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAhSdy25GUFWfkQHBDy6HysVCVFOpv-ZLY6vr+oH34XbqScYFQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 01:51:43PM +0530, Anup Patel wrote:
-> On Wed, Feb 13, 2019 at 4:45 AM Palmer Dabbelt <palmer@sifive.com> wrote:
-> >
-> > On Sat, 19 Jan 2019 05:27:53 PST (-0800), Anup Patel wrote:
-> > > This patchset does:
-> > > 1. Moves MM related code from kernel/setup.c to mm/init.c
-> > > 2. Implements compile-time fixed mappings
+Hi,
 
-> > >  arch/riscv/Kconfig               |   3 +
-> > >  arch/riscv/include/asm/fixmap.h  |  44 +++++++++++
-> > >  arch/riscv/include/asm/pgtable.h |   1 +
-> > >  arch/riscv/kernel/setup.c        | 114 ++++++----------------------
-> > >  arch/riscv/mm/init.c             | 124 ++++++++++++++++++++++++++++++-
-> > >  5 files changed, 189 insertions(+), 97 deletions(-)
-> > >  create mode 100644 arch/riscv/include/asm/fixmap.h
-> >
-> > I'm getting some git issue when trying to merge the third patch via email
-> >
-> >     $ mhng-pipe-show_stdout 4 | git am -s
-> >     Applying: RISC-V: Move setup_bootmem() to mm/init.c
-> >     error: patch failed: arch/riscv/kernel/setup.c:163
-> >     error: arch/riscv/kernel/setup.c: patch does not apply
-> >     Patch failed at 0001 RISC-V: Move setup_bootmem() to mm/init.c
-> >     Use 'git am --show-current-patch' to see the failed patch
-> >     When you have resolved this problem, run "git am --continue".
-> >     If you prefer to skip this patch, run "git am --skip" instead.
-> >     To restore the original branch and stop patching, run "git am --abort".
-> >
-> > can you send a PR with a signed tag?  I'll include this as part of the next
-> > merge window.
-> >
-> > Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+On Wed, 2019-02-13 at 09:59 +0100, Hans Verkuil wrote:
+> On 2/13/19 6:58 AM, Alexandre Courbot wrote:
+> > On Wed, Feb 13, 2019 at 2:53 PM Alexandre Courbot <acourbot@chromium.org> wrote:
+> > > [snip]
+> > > +Buffers used as reference frames can be queued back to the ``CAPTURE`` queue as
+> > > +soon as all the frames they are affecting have been queued to the ``OUTPUT``
+> > > +queue. The driver will refrain from using the reference buffer as a decoding
+> > > +target until all the frames depending on it are decoded.
+> > 
+> > Just want to highlight this part in order to make sure that this is
+> > indeed what we agreed on. The recent changes to vb2_find_timestamp()
+> > suggest this, but maybe I misunderstood the intent. It makes the
+> > kernel responsible for tracking referenced buffers and not using them
+> > until all the dependent frames are decoded, something the client could
+> > also do.
 > 
-> Okay, I will prepare a PR with following patchsets:
-> 1. Fixmap support and MM cleanups (Author: Anup Patel)
-> 2. riscv: minor fixes and cleanups (Author: Johan Hovold)
-> 3. RISC-V related changes from "Various SMP related fixes" (Author: Atish Patra)
+> I don't think this is quite right. Once this patch https://patchwork.linuxtv.org/patch/54275/
+> is in the vb2 core will track when a buffer can no longer be used as a
+> reference buffer because the underlying memory might have disappeared.
 > 
-> All above patchsets touch same source files so this will
-> help you.
+> The core does not check if it makes sense to use a buffer as a reference
+> frame, just that it is valid memory.
+> 
+> So the driver has to check that the timestamp refers to an existing
+> buffer, but userspace has to check that it queues everything in the
+> right order and that the reference buffer won't be overwritten
+> before the last output buffer using that reference buffer has been
+> decoded.
+> 
+> So I would say that the second sentence in your paragraph is wrong.
+> 
+> The first sentence isn't quite right either, but I am not really sure how
+> to phrase it. It is possible to queue a reference buffer even if
+> not all output buffers referring to it have been decoded, provided
+> that by the time the driver starts to use this buffer this actually
+> has happened.
 
-I'd suggest keeping these separate. Your series failed to apply, and it
-looks like you've now posted a v4 to address that.
+Is there a way we can guarantee this? Looking at the rest of the spec,
+it says that capture buffers "are returned in decode order" but that
+doesn't imply that they are picked up in the order they are queued.
 
-If your series is merged before mine, I'm sure any conflicts are
-trivial, or I can always respin.
+It seems quite troublesome for the core to check whether each queued
+capture buffer is used as a reference for one of the queued requests to
+decide whether to pick it up or not.
 
-Atish's series might need another revision, so that one should not be
-included either.
+> But this is an optimization and theoretically it can depend on the
+> driver behavior. It is always safe to only queue a reference frame
+> when all frames depending on it have been decoded. So I am leaning
+> towards not complicating matters and keeping your first sentence
+> as-is.
 
-Johan
+Yes, I believe it would be much simpler to require userspace to only
+queue capture buffers once they are no longer needed as references.
+
+This also means that the dmabuf fd can't be changed so we are
+guaranteed that memory will still be there.
+
+Cheers,
+
+Paul
+
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
