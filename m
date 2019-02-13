@@ -2,145 +2,91 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023D7C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C489C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD67D20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F7C820835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550026639;
+	bh=rDlo/3pAdLrZJEolFFOc21Q/7vYS70coxRa/Yk4At0Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UrS4Us9UHbIDK6MbzImP6Ma1j51iJ7OwYulFLOMfvv7u4WOmDFtUxVLxwEnmZrmq8
+	 3F/Knia3CqCH9GOsxo8iRcFowF2gluLOeMa5fvZRNEgPvrlMC29psA9Sf/M7eHKGgS
+	 zNZSkCjWam3hSkYD1Bk41wUOrxlOr5PDw0UpzDrM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390148AbfBMC5M (ORCPT
+        id S1731826AbfBMChJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:57:12 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.130]:42549 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388244AbfBMC5K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:57:10 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 28DE6303E2AC
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 20:57:09 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tkjVg7tRY4FKptkjVgSYK0; Tue, 12 Feb 2019 20:57:09 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=38868 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtkjU-001tLj-Eq; Tue, 12 Feb 2019 20:57:08 -0600
-Date:   Tue, 12 Feb 2019 20:57:07 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alex Dubov <oakad@yahoo.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] memstick: mark expected switch fall-throughs
-Message-ID: <20190213025707.GA16307@embeddedor>
+        Tue, 12 Feb 2019 21:37:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40622 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388226AbfBMChF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:05 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49D8C222C2;
+        Wed, 13 Feb 2019 02:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550025424;
+        bh=rDlo/3pAdLrZJEolFFOc21Q/7vYS70coxRa/Yk4At0Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oKvUT/zcXKSRALpUerHeRJ7hIQ4Q8wEuTMb5AfzzkcmVzMTtzrXIQssLZ8ZaHGVQr
+         XrBIRRy3Kn16VKmwJuTgv8gmVrv/6fCBQkPsR42kTXjVS8TJjyw5JBrU/GkAkyYSXm
+         rRDFQxFoZ/xtsuPSzLfVkN3/XdchG7xpHJTYBCe8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vignesh R <vigneshr@ti.com>, Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 02/83] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
+Date:   Tue, 12 Feb 2019 21:35:40 -0500
+Message-Id: <20190213023701.20286-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
+References: <20190213023701.20286-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gtkjU-001tLj-Eq
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:38868
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+From: Vignesh R <vigneshr@ti.com>
 
-This patch fixes the following warnings:
+[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
 
-drivers/memstick/host/jmb38x_ms.c: In function ‘jmb38x_ms_write_data’:
-drivers/memstick/host/jmb38x_ms.c:261:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   host->io_pos++;
-   ~~~~~~~~~~~~^~
-drivers/memstick/host/jmb38x_ms.c:262:2: note: here
-  case 2:
-  ^~~~
-drivers/memstick/host/jmb38x_ms.c:264:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   host->io_pos++;
-   ~~~~~~~~~~~~^~
-drivers/memstick/host/jmb38x_ms.c:265:2: note: here
-  case 1:
-  ^~~~
-drivers/memstick/host/tifm_ms.c: In function ‘tifm_ms_write_data’:
-drivers/memstick/host/tifm_ms.c:168:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   host->io_pos++;
-   ~~~~~~~~~~~~^~
-drivers/memstick/host/tifm_ms.c:169:2: note: here
-  case 2:
-  ^~~~
-drivers/memstick/host/tifm_ms.c:171:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   host->io_pos++;
-   ~~~~~~~~~~~~^~
-drivers/memstick/host/tifm_ms.c:172:2: note: here
-  case 1:
-  ^~~~
+Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
+different instances are uniquely identified. This is required in order
+to support registering of multiple instances of same ti_am335x_tscadc IP.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/host/jmb38x_ms.c | 2 ++
- drivers/memstick/host/tifm_ms.c   | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/mfd/ti_am335x_tscadc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
-index bcdca9fbef51..49c71f55489f 100644
---- a/drivers/memstick/host/jmb38x_ms.c
-+++ b/drivers/memstick/host/jmb38x_ms.c
-@@ -259,9 +259,11 @@ static unsigned int jmb38x_ms_write_data(struct jmb38x_ms_host *host,
- 	case 3:
- 		host->io_word[0] |= buf[off + 2] << 16;
- 		host->io_pos++;
-+		/* fall through */
- 	case 2:
- 		host->io_word[0] |= buf[off + 1] << 8;
- 		host->io_pos++;
-+		/* fall through */
- 	case 1:
- 		host->io_word[0] |= buf[off];
- 		host->io_pos++;
-diff --git a/drivers/memstick/host/tifm_ms.c b/drivers/memstick/host/tifm_ms.c
-index bed205849d02..1bbb2ead9556 100644
---- a/drivers/memstick/host/tifm_ms.c
-+++ b/drivers/memstick/host/tifm_ms.c
-@@ -166,9 +166,11 @@ static unsigned int tifm_ms_write_data(struct tifm_ms *host,
- 	case 3:
- 		host->io_word |= buf[off + 2] << 16;
- 		host->io_pos++;
-+		/* fall through */
- 	case 2:
- 		host->io_word |= buf[off + 1] << 8;
- 		host->io_pos++;
-+		/* fall through */
- 	case 1:
- 		host->io_word |= buf[off];
- 		host->io_pos++;
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 7a30546880a4..fe8d335a4d74 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -264,8 +264,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 		cell->pdata_size = sizeof(tscadc);
+ 	}
+ 
+-	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
+-			tscadc->used_cells, NULL, 0, NULL);
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++			      tscadc->cells, tscadc->used_cells, NULL,
++			      0, NULL);
+ 	if (err < 0)
+ 		goto err_disable_clk;
+ 
 -- 
-2.20.1
+2.19.1
 
