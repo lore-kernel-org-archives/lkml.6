@@ -2,67 +2,91 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD75C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8B6C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A31D2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C8FC2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392885AbfBMRTb (ORCPT
+        id S2392889AbfBMRUy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:19:31 -0500
-Received: from mga17.intel.com ([192.55.52.151]:9388 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730684AbfBMRTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:19:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 09:19:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="146560853"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by fmsmga001.fm.intel.com with ESMTP; 13 Feb 2019 09:19:26 -0800
-Date:   Wed, 13 Feb 2019 19:19:28 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Subject: Re: [PATCH  v3] selftests/tpm2: Extend tests to cover partial reads
-Message-ID: <20190213171928.GB23351@linux.intel.com>
-References: <155007596864.18677.9373151400257566077.stgit@tstruk-mobl1.jf.intel.com>
- <155007601798.18778.10490966270922534995.stgit@tstruk-mobl1.jf.intel.com>
+        Wed, 13 Feb 2019 12:20:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57678 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732218AbfBMRUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:20:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FD951596;
+        Wed, 13 Feb 2019 09:20:54 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 236643F675;
+        Wed, 13 Feb 2019 09:20:50 -0800 (PST)
+Date:   Wed, 13 Feb 2019 17:20:47 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>, tony.luck@intel.com
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Message-ID: <20190213172047.GH6346@brain-police>
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155007601798.18778.10490966270922534995.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 08:40:18AM -0800, Tadeusz Struk wrote:
-> Three new tests added:
-> 1. Send get random cmd, read header in 1st read, read the rest in second
->    read - expect success
-> 2. Send get random cmd, read only part of the response, send another
->    get random command, read the response - expect success
-> 3. Send get random cmd followed by another get random cmd, without
->    reading the first response - expect the second cmd to fail with -EBUSY
+[+Tony]
+
+On Mon, Feb 11, 2019 at 02:34:31PM -0800, Linus Torvalds wrote:
+> On Mon, Feb 11, 2019 at 9:30 AM Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > +
+> > +     1. All readX() and writeX() accesses to the same peripheral are ordered
+> > +        with respect to each other. For example, this ensures that MMIO register
+> > +       writes by the CPU to a particular device will arrive in program order.
 > 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-OK, great, thank you.
+> Hmm. I'd like more people look at strengthening this one wrt across
+> CPUs and locking.
+> 
+> Right now we document mmiowb(), but that "documentation" is really
+> just a fairy tale. Very *very* few drivers actually do mmiowb() on
+> their own.
+> 
+> IOW, we should seriously just consider making the rule be that locking
+> will order mmio too. Because that's practically the rule anyway.
 
-They are in my master branch now.
+I would /love/ to get rid of mmiowb() because I think it's both extremely
+difficult to use and also pretty much never needed. It reminds me a lot of
+smp_read_barrier_depends(), which we finally pushed into READ_ONCE for
+Alpha.
 
-/Jarkko
+> Powerpc already does it. IO within a locked region will serialize with the
+> lock.
+
+I thought ia64 was the hold out here? Did they actually have machines that
+needed this in practice? If so, I think we can either:
+
+  (a) Add an mmiowb() to their spin_unlock() code, or
+  (b) Remove ia64 altogether if nobody complains
+
+I know that Peter has been in favour of (b) for a while...
+
+Will
