@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25C0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2316C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6E5222C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87E18222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025555;
-	bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
+	s=default; t=1550025560;
+	bh=3seTNSGhbmXA8FzndJ8C6urnmjrHlXL6anPUNcOv4sI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PbnJtET62UwHkLrK+KIDszSRjYB+b3sdTbz3tOTkfW4nJft0aaVp8NW7ojfmdCAM5
-	 pWGQrqdc/8IwbObk1AQlYeh4/onndVqhiPxMhLzjJ7EbCkJD9zntNUCrQnwNBunEyI
-	 HzFV0HUiZQ/cWJpkd/b7wNka53DsHH6q9IfhHWjM=
+	b=s0nzJrfgYNJaNehqI1ZhsL4y6hx0qiLPUVuMn0FTI9HEacx8hcbvb573pN2JSyVqe
+	 Ay9168Z4EuoyXhCJS6LmJAKrl54ygiWMbxxT+jHGNUb0pqbY+lycBZ4ak067Sj5TtF
+	 YHadSxhL/K8//uKlLhjPDmXVq+WVATy3nFiHImac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388643AbfBMCjN (ORCPT
+        id S2388657AbfBMCjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42380 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388616AbfBMCis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:48 -0500
+        id S1732877AbfBMCjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 327EB222C9;
-        Wed, 13 Feb 2019 02:38:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F17B02175B;
+        Wed, 13 Feb 2019 02:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025527;
-        bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
+        s=default; t=1550025555;
+        bh=3seTNSGhbmXA8FzndJ8C6urnmjrHlXL6anPUNcOv4sI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcQ7DzDvgs59WMtyDoh75xGvRy60vaL715kJgVtdSrEGZhk4B7G35hjzxQtXAgWRF
-         Ul4K0P5z/HSqcDTvIGgB4Ds7F6Leu78x1OBTcnRY2tGXEP4zdXgRM8jWsaxDutgSZA
-         /Y+/VOC0QpE+skSGnjtira2gX+EULtl/LCwA6Grg=
+        b=M80kFxjzOqdt6aZkC0Dg/pSozGl6Nr/JYrjnHz+HMXWQRt19Pvok3g1ve4bZgw6FK
+         2oy01qtyfuemXJPW2ahnhkrszZWmpCZAkLbeKALg4vKrcPGUBsiCOvUWSS+4+jS5P9
+         MVQJZi87MPJ2uaM/HcRkI15Dm4RVzacWoVaDYXzw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 63/83] pvcalls-front: fix potential null dereference
-Date:   Tue, 12 Feb 2019 21:36:41 -0500
-Message-Id: <20190213023701.20286-63-sashal@kernel.org>
+Cc:     Davide Caratti <dcaratti@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 65/83] selftests: tc-testing: fix tunnel_key failure if dst_port is unspecified
+Date:   Tue, 12 Feb 2019 21:36:43 -0500
+Message-Id: <20190213023701.20286-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -61,77 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit b4711098066f1cf808d4dc11a1a842860a3292fe ]
+[ Upstream commit 5216bd77798e2ed773ecd45f3f368dcaec63e5dd ]
 
- static checker warning:
-    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
-    error: we previously assumed 'map->active.ring' could be null
-           (see line 357)
+After commit 1c25324caf82 ("net/sched: act_tunnel_key: Don't dump dst port
+if it wasn't set"), act_tunnel_key doesn't dump anymore the destination
+port, unless it was explicitly configured. This caused systematic failures
+in the following TDC test case:
 
-drivers/xen/pvcalls-front.c
-    351 static int alloc_active_ring(struct sock_mapping *map)
-    352 {
-    353     void *bytes;
-    354
-    355     map->active.ring = (struct pvcalls_data_intf *)
-    356         get_zeroed_page(GFP_KERNEL);
-    357     if (!map->active.ring)
-                    ^^^^^^^^^^^^^^^^^
-Check
+ 7a88 - Add tunnel_key action with cookie parameter
 
-    358         goto out;
-    359
-    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
-    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-    362                     PVCALLS_RING_ORDER);
-    363     if (!bytes)
-    364         goto out;
-    365
-    366     map->active.data.in = bytes;
-    367     map->active.data.out = bytes +
-    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-    369
-    370     return 0;
-    371
-    372 out:
---> 373     free_active_ring(map);
-                                 ^^^
-Add null check on map->active.ring before dereferencing it to avoid
-any NULL pointer dereferences.
+Avoid matching zero values of TCA_TUNNEL_KEY_ENC_DST_PORT to let the test
+pass again.
 
-Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/pvcalls-front.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../selftests/tc-testing/tc-tests/actions/tunnel_key.json       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 6357160d466a..91da7e44d5d4 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -343,6 +343,9 @@ int pvcalls_front_socket(struct socket *sock)
- 
- static void free_active_ring(struct sock_mapping *map)
- {
-+	if (!map->active.ring)
-+		return;
-+
- 	free_pages((unsigned long)map->active.data.in,
- 			map->active.ring->ring_order);
- 	free_page((unsigned long)map->active.ring);
+diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
+index af5e99d27229..e7e15a7336b6 100644
+--- a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
+@@ -605,7 +605,7 @@
+         "cmdUnderTest": "$TC actions add action tunnel_key set src_ip 10.10.10.1 dst_ip 10.10.10.2 id 7 index 4 cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action tunnel_key index 4",
+-        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*dst_port 0.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
++        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action tunnel_key"
 -- 
 2.19.1
 
