@@ -2,85 +2,79 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696BEC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73531C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EBB4217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550064991;
-	bh=T71FDtFZoBA1eCh9qUuHolpuH0DcG5LdOn3nqWumweo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=I+jfBkJf4k1Es76jw8KwW2fb8Skd4RNhhzS1Ota9tmqHBNqh04pd1ZmB7EBPwhAM+
-	 +ZgEetSIAJNYAZskHuDe3taVprBBsuCCOxfEr8O307pqVFJ7euG0/oQZGZlgQWS9Rp
-	 gPdQA4ZGUtQVq7MPVN5chIZEgdyPGpJKocPp1K6Q=
+	by mail.kernel.org (Postfix) with ESMTP id 4B3C921904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:36:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbfBMNga (ORCPT
+        id S1732376AbfBMNgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:36:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52700 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 08:36:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbfBMNg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:36:28 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1732064AbfBMNgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:36:37 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F2512075D;
-        Wed, 13 Feb 2019 13:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550064987;
-        bh=T71FDtFZoBA1eCh9qUuHolpuH0DcG5LdOn3nqWumweo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BpSrj02y9BKNILk+2f3ko7JVpnvWFSgs4gqM/4fmCLpUR27/0tEwMF6aLnjs9Tj4n
-         uplvVy+x9WuB/K00lKPQrEZoObhujELgbagbPiswtculZc4uZZYQkaKn6AvenlMqvo
-         WxWHS0TNYVdBWuJHOHJ1DgEIoHDrXOfITpi+HHE8=
-Date:   Wed, 13 Feb 2019 14:36:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: Fix the pgtable leak
-Message-ID: <20190213133624.GB9460@kroah.com>
-References: <20190213112900.33963-1-minchan@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C1B217F5;
+        Wed, 13 Feb 2019 13:36:36 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 08:36:35 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <miaoxie@huawei.com>
+Subject: Re: [PATCH] tracing: fix incorrect tracer freeing when opening
+ tracing pipe
+Message-ID: <20190213083635.36f4762e@gandalf.local.home>
+In-Reply-To: <1550060946-45984-1-git-send-email-yi.zhang@huawei.com>
+References: <1550060946-45984-1-git-send-email-yi.zhang@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213112900.33963-1-minchan@kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 08:29:00PM +0900, Minchan Kim wrote:
-> [1] was backported to v4.9 stable tree but it introduces pgtable
-> memory leak because with fault retrial, preallocated pagetable
-> could be leaked in second iteration.
-> To fix the problem, this patch backport [2].
+On Wed, 13 Feb 2019 20:29:06 +0800
+"zhangyi (F)" <yi.zhang@huawei.com> wrote:
+
+> Commit d716ff71dd12 ("tracing: Remove taking of trace_types_lock in
+> pipe files") use the current tracer instead of the copy in
+> tracing_open_pipe(), but it forget to remove the freeing sentence in
+> the error path.
 > 
-> [1] 5cf3e5ff95876, mm, memcg: fix reclaim deadlock with writeback
+> Fixes: d716ff71dd12 ("tracing: Remove taking of trace_types_lock in pipe files")
 
-This is really commit 63f3655f9501 ("mm, memcg: fix reclaim deadlock
-with writeback") which was in 4.9.152, 4.14.94, 4.19.16, and 4.20.3 as
-well as 5.0-rc2.
+Thanks.
 
-> [2] b0b9b3df27d10, mm: stop leaking PageTables
+As this is harmless (frees to NULL is ok, and iter is allocated with
+kzalloc()), I'm going to just add this for the next merge window.
 
-This commit was in 4.10, so I am guessing that this really is just a
-backport of that commit?
+-- Steve
 
-If so, it's not the full backport, why not take the whole thing?  Why
-only cherry-pick one chunk of it?  Why do we not need the other parts?
+> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+> ---
+>  kernel/trace/trace.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index c521b73..b583ff7 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5624,7 +5624,6 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
+>  	return ret;
+>  
+>  fail:
+> -	kfree(iter->trace);
+>  	kfree(iter);
+>  	__trace_array_put(tr);
+>  	mutex_unlock(&trace_types_lock);
 
-thanks,
-
-greg k-h
