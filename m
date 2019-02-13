@@ -2,183 +2,211 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC7C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F99222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 450F5222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tRbUAa8p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZRJ5oiD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390792AbfBMIqz (ORCPT
+        id S2390809AbfBMIrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:46:55 -0500
-Received: from mail-eopbgr50049.outbound.protection.outlook.com ([40.107.5.49]:21205
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730377AbfBMIqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:46:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dsm+Kur/qvJ+W8QN6O+dArGhod0R4HG0rTH4y+u21U4=;
- b=tRbUAa8pDs1OvQ/95LYlsNcljXUxRLPu9hW7FNVDwBU+65ShpTTtFdd6EuS8sDfTGn81SeMKdEWWFb3YhzbM6TCcB22WgAy4apVG1DOPSiZu5vsOAbchV5C8KWKTABAl/hWE0NpCNKc2kAZtAmkM5GUaJVCvGpR9pUgtQcUCslg=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3754.eurprd04.prod.outlook.com (52.134.67.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Wed, 13 Feb 2019 08:46:45 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5%3]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
- 08:46:45 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 3/3] cpufreq: imx-sc: add i.mx system controller cpufreq
- support
-Thread-Topic: [PATCH 3/3] cpufreq: imx-sc: add i.mx system controller cpufreq
- support
-Thread-Index: AQHUw0mAk7D4InMTwEi38x/B8uOIA6XdT24AgAAaBPA=
-Date:   Wed, 13 Feb 2019 08:46:45 +0000
-Message-ID: <DB3PR0402MB3916203C35D82A7667DA3A16F5660@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1550027011-7884-1-git-send-email-Anson.Huang@nxp.com>
- <1550027011-7884-3-git-send-email-Anson.Huang@nxp.com>
- <20190213070904.3oswrjafy6cqedsr@vireshk-i7>
-In-Reply-To: <20190213070904.3oswrjafy6cqedsr@vireshk-i7>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 12f15dc0-2f65-42be-f16c-08d6918fc8ec
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3754;
-x-ms-traffictypediagnostic: DB3PR0402MB3754:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjNQUjA0MDJNQjM3NTQ7MjM6MS9RMUU1c05nSWhQV29Qc0V6eW5ydzA3?=
- =?gb2312?B?cmQ1THNwZWFUMjR1OHl0b1RUQUVQV1BQb2t0YjJiamRCQlFwNHlYb1o5WkRq?=
- =?gb2312?B?MWd3d0ZyaXM1QnJzSGszZDRJRkdjS1ZEeE1oT1A1bmswMmFETXRpUElyY244?=
- =?gb2312?B?VVg1dERBUk9vb3U1YmxNTWYxL0tQZ08ya3Z4UUo1Q21xODY0QjRNSHNhYXlI?=
- =?gb2312?B?T2ZMVWw5RzFWbEZjWGd1cEZZQnNIbFJmV3pkWnpXUllDam00UFprSkpraDJu?=
- =?gb2312?B?b3l6SS9WYUtPQVlYbWlUMEV5TDRLVk8wajRsRUJMV2hMOHBOQWZrNWVzdGwy?=
- =?gb2312?B?UUlsaHVNakNmQ1BSMnZXMVEvU2thNzZUYWlkT1B2MHFjSUFtdWZXd1JLQnd6?=
- =?gb2312?B?dmtGMlBNdEE0Vjk0L1RGSVNmZWUvaFpKK0EwcTNJeVBoVEo5QkdseXZ4d2Rv?=
- =?gb2312?B?QlJYSjExeXBEUGYzd1N4VEdEUFYzWFJDTzRnZ251NTlwUWsySy9Mc3pCUmMv?=
- =?gb2312?B?ZmpSQXkxYWJFaXNCelZ6NFUvV0E3UG1wTmZmSlRxQTNwNENCWHZScFE4RndY?=
- =?gb2312?B?QTRmbGJ1S0o1NjdKYmEwenpZSnlNa0ozN2NWZWtTMU1PNG1oZUJ1UmgydHh2?=
- =?gb2312?B?THRFUTVXV1Urazd4L0g1Nm93dldzYzY5M0tkdXpEc1lUK0kvUHpQRHd6WWFT?=
- =?gb2312?B?L3lyT09PUlFsTU5vVjU5WnA0OHBGdTd0ZFdTaDJTaCtBT1Z3WUl5VGw1aXRo?=
- =?gb2312?B?V3lSSnFMYkpndEpYZzBoLzBrL0xrWWJUdHFNS3JhelBkZlBRU0JoVk9XUzVX?=
- =?gb2312?B?NnlYWFd5dWg2c2tId0N6Nnc2cjhVUlM2UGVHYzNzbHE1OTBwU1ZoYitTWWp2?=
- =?gb2312?B?RnlhTlJaYnZQUDY0UlRTNHdROWZyUVhFZG10RHpnSWRMbFcwM0Y2T0s1K0pB?=
- =?gb2312?B?TFpiUnczQVpCQXQyTVRBVDFzWEpKa20vREV0TzR0VFhBSmt1T3hZRlJDQis1?=
- =?gb2312?B?cmJIakwxOGowbnh1Wlh0Kzc3aFNRTS82dWh6NUZZdlNUQU5VVS92N3BXR3Ar?=
- =?gb2312?B?L1J0M3UzSWJPcHg1Tml3VCtQVGFoQllXalBqeS9HM1lHdTliN1FXUGd1VHdS?=
- =?gb2312?B?WElCY2lWbkV0d0JaNEJTUmVic3ZGL2UxWm1xa0NIMS9mYnB2bnp0NEhOTndG?=
- =?gb2312?B?aU0yb1c4dDcxR3RwSGl2TmZ2UGMrU3Rrb1NoK0JVdGhWemZEVUwzeExIRHY3?=
- =?gb2312?B?OFh0TDNKR3RwamtWRldXUDJWSDI2ZG81b0xRa3VpSXpKMit5Ym9SMmdqOWh5?=
- =?gb2312?B?QUsyTExheGZsVkpZWXowblgwQlJvOHFXWnVvWm94TVBERGpoMlJVUG9STXJn?=
- =?gb2312?B?OHF5U29xVDNjU05XQlkwRnlvTGt6VVNHVFZtZXJYK1QxNjRhTlB4N0ViRHRH?=
- =?gb2312?B?ekROZFlLS0dLWGhMR1JCdU1haTNtSVFnUXJLck5OZWtSeUpjZ3pPcGtlbExX?=
- =?gb2312?B?cmZ2eTR6OFJtbGEzZGhrckozeWtjUlBlMis1em9ScTZhVHNRb3JpUW5QdFZP?=
- =?gb2312?B?R0RvbnBTVUZGWFBmUEN1QTI0aVprZURwUStzelp3MWFOL0V3YUNVdVBsb0c2?=
- =?gb2312?B?K091c1UrTUFUMEZkTW1MU0d2N2J0dHhvMkFMbk9DY05tUkdTcWt0OEU2RUtv?=
- =?gb2312?B?YzFPZndWTmRUSVF1RzRscHBmeHZHUGpMQmpHeHltRm8wSlhzbS9kckEybkl2?=
- =?gb2312?Q?18TUVUnzgEqjQlpK0WxSiJS2YmPhL/yEMClLKLI=3D?=
-x-microsoft-antispam-prvs: <DB3PR0402MB3754A3E4EF4FADE2541CD510F5660@DB3PR0402MB3754.eurprd04.prod.outlook.com>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(13464003)(199004)(189003)(9686003)(316002)(478600001)(55016002)(14454004)(71200400001)(71190400001)(68736007)(33656002)(6436002)(86362001)(229853002)(74316002)(6916009)(81166006)(7736002)(305945005)(8676002)(81156014)(8936002)(66066001)(105586002)(53936002)(3846002)(76176011)(6116002)(4326008)(486006)(44832011)(2906002)(7696005)(25786009)(97736004)(102836004)(11346002)(53546011)(186003)(476003)(6346003)(6246003)(446003)(6506007)(106356001)(26005)(54906003)(99286004)(14444005)(256004)(7416002)(15866825006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3754;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6aGvHZq1H0n+WXVRxPinUrko40wvF2JAu4/4le4ykrFJEmFXE2BNpMtoUxHAx9SExew3H58FmPWt9P88sp4HrMNNRBJtbCoc1g+JgNVtsFxjU+Jw4TH/uDxy/Qju2igc+oKmslsnS/7QEdxhsdJMai9yrdxBA0yZPSWTlFswF5BCrJ//ZmyBcuaoxQsttupus3zCueSTiKY9S7l278/4Y/JIzZx+8HH8ONcHcrNT55vso+smSrqLLSjC/cK5p40J4VL+PKWv/8VGwfKSRoEA4fq2NiO6gt2Hkj9am86OvbT+a7SiYsjL9LOU1jwaJyl1MG/SkD9oZpUt49/nr/gDGhewcDWlt5L/kMgC+3oEB/pisc7Ecj+rnSsY+58yoBGqCDqkqzRQiKNgBG2yklxnVSk8i4fQ9qxLkrpNezG89ZU=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12f15dc0-2f65-42be-f16c-08d6918fc8ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 08:46:45.4684
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3754
+        Wed, 13 Feb 2019 03:47:12 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37106 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730377AbfBMIrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:47:11 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c8so1506434wrs.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=SYKHrrKARz+Cr4tfpNwFsT80ECJj5aS0+BF4T2lIKBE=;
+        b=oZRJ5oiD4imBz/p/n/41GOb2WEp2UIH4WYY4MmUSJehshd2HQwjDTaorWEQW0fLygK
+         dDiMf89Urg4NzYOEcc/E/wsHkh/bz3+0pdTHo1ID9DT352KG6hFbGxCBSAtViFgA5fDu
+         KdNl5NWJJUHDBicrzdWRKpfGihhHl43e0RuDNbFBHWPr2wy2lmMHLmeRDO3KyFtsk52v
+         tLaxA1wumGTHLhA5S0rh1jvCw8GffhFQxAswK3dpL7bJVrdmUwvoAjELHRQxezsKDSDA
+         C8KXn5QkK1sH5cJImIf8IzL17MWrFE/VRGeoGcrsJip2JGK9IDNdzzv3cZ47Je+AYgkA
+         ILwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SYKHrrKARz+Cr4tfpNwFsT80ECJj5aS0+BF4T2lIKBE=;
+        b=OLg8Rrlz88/kJ2vGlRKEy2KsV8YmJmuP9Y6LRyvsyReOp3fMc6fWJppEd1FeIU8ND0
+         bcJCkldc0W0JsVJ1f5jZIEostXTw3SguHaF2feC118PKo39VusxYFCTMgIsmrAYtbsXG
+         9A0/mlgIY9b3PJe4gQ2bCxrHODcQoALzaG7oHzC8Y5/HldpGf7As283vBtVBbMMW4FQo
+         8TPvNDFYENAHLh5WZQNAxOeJ6eertDiy3wgru8i6D3TQyURPuSJuqtTH9n9ktUGFzEzd
+         0ow5dpaMM9wdob4QbMGTVLAN9F4hIVakUC9MLU633OJ5SJ4ZQ56K9+7hYN8cckxbTUdy
+         TBKg==
+X-Gm-Message-State: AHQUAuYZxKwmAWKJAIbdrfutZMnwAvV3f8WX0A7gRY/tXoi+he6piGML
+        VU6ysR8NGtJyHE4aAh2BjNM=
+X-Google-Smtp-Source: AHgI3IbN1ZbCyJCGkBA993nroBfgBGhAhmY5OxHQ0sBGdZYV16oJSUpdOIwjMWA6mo10FhZqgxKfDw==
+X-Received: by 2002:adf:e30f:: with SMTP id b15mr6018661wrj.0.1550047629951;
+        Wed, 13 Feb 2019 00:47:09 -0800 (PST)
+Received: from debian.lan ([212.161.95.162])
+        by smtp.gmail.com with ESMTPSA id d9sm20792347wrn.72.2019.02.13.00.47.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 00:47:09 -0800 (PST)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v2] parport: daisy: use new parport device model
+Date:   Wed, 13 Feb 2019 08:47:06 +0000
+Message-Id: <20190213084706.2886-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFZpcmVzaA0KDQpCZXN0IFJlZ2FyZHMhDQpBbnNvbiBIdWFuZw0KDQo+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpcmVzaCBLdW1hciBbbWFpbHRvOnZpcmVzaC5rdW1h
-ckBsaW5hcm8ub3JnXQ0KPiBTZW50OiAyMDE5xOoy1MIxM8jVIDE1OjA5DQo+IFRvOiBBbnNvbiBI
-dWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFy
-ay5ydXRsYW5kQGFybS5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7DQo+IHMuaGF1ZXJAcGVuZ3V0
-cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgZmVzdGV2YW1AZ21haWwuY29tOw0KPiBj
-YXRhbGluLm1hcmluYXNAYXJtLmNvbTsgd2lsbC5kZWFjb25AYXJtLmNvbTsgcmp3QHJqd3lzb2Nr
-aS5uZXQ7DQo+IEFpc2hlbmcgRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBEYW5pZWwgQmFs
-dXRhDQo+IDxkYW5pZWwuYmFsdXRhQG54cC5jb20+OyBBbmR5IEdyb3NzIDxhbmR5Lmdyb3NzQGxp
-bmFyby5vcmc+Ow0KPiBob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdTsgaGVpa29Ac250ZWNoLmRl
-OyBhcm5kQGFybmRiLmRlOw0KPiBiam9ybi5hbmRlcnNzb25AbGluYXJvLm9yZzsgamFnYW5AYW1h
-cnVsYXNvbHV0aW9ucy5jb207DQo+IGVucmljLmJhbGxldGJvQGNvbGxhYm9yYS5jb207IG1hcmMu
-dy5nb256YWxlekBmcmVlLmZyOyBvbG9mQGxpeG9tLm5ldDsNCj4gZGV2aWNldHJlZUB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtDQo+
-IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXBtQHZnZXIua2VybmVsLm9yZzsgZGwtbGlu
-dXgtaW14IDxsaW51eC0NCj4gaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMy8z
-XSBjcHVmcmVxOiBpbXgtc2M6IGFkZCBpLm14IHN5c3RlbSBjb250cm9sbGVyIGNwdWZyZXENCj4g
-c3VwcG9ydA0KPiANCj4gT24gMTMtMDItMTksIDAzOjA5LCBBbnNvbiBIdWFuZyB3cm90ZToNCj4g
-PiBPbiBOWFAncyBpLk1YIFNvQ3Mgd2l0aCBzeXN0ZW0gY29udHJvbGxlciBpbnNpZGUsIENQVSBm
-cmVxdWVuY3kNCj4gPiBzY2FsaW5nIGNhbiBPTkxZIGJlIGRvbmUgYnkgc3lzdGVtIGNvbnRyb2xs
-ZXIgZmlybXdhcmUsIGFuZCBpdCBjYW4NCj4gPiBPTkxZIGJlIHJlcXVlc3RlZCBmcm9tIHNlY3Vy
-ZSBtb2RlLCBzbyBMaW51eCBjcHVmcmVxIGRyaXZlciBoYXMgdG8NCj4gPiBjYWxsIEFSTSBTTUMg
-dG8gdHJhcCB0byBBUk0tVHJ1c3RlZC1GaXJtd2FyZSB0byByZXF1ZXN0IHN5c3RlbQ0KPiA+IGNv
-bnRyb2xsZXIgZmlybXdhcmUgdG8gZG8gQ1BVIGZyZXF1ZW5jeSBzY2FsaW5nLg0KPiA+DQo+ID4g
-VGhpcyBwYXRjaCBhZGRzIGkuTVggc3lzdGVtIGNvbnRyb2xsZXIgY3B1ZnJlcSBkcml2ZXIgc3Vw
-cG9ydCwgd2hlbg0KPiA+IGRvaW5nIENQVSBmcmVxdWVuY3kgc2NhbGluZywgY3B1ZnJlcSBkcml2
-ZXIgd2lsbCBkbyBBUk0gU01DIGNhbGwgYW5kDQo+ID4gdHJhcCB0byBBUk0tVHJ1c3RlZC1GaXJt
-d2FyZSwgdGhlbiBTSVAoc2lsaWNvbiBwcm92aWRlcikgc2VydmljZSB3aWxsDQo+ID4gY29tbXVu
-aWNhdGUgd2l0aCBzeXN0ZW0gY29udHJvbGxlciBmb3IgQ1BVIGZyZXF1ZW5jdCBzY2FsaW5nLg0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+
-DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY3B1ZnJlcS9LY29uZmlnLmFybSAgICAgIHwgICA5ICsr
-DQo+ID4gIGRyaXZlcnMvY3B1ZnJlcS9NYWtlZmlsZSAgICAgICAgIHwgICAxICsNCj4gPiAgZHJp
-dmVycy9jcHVmcmVxL2lteC1zYy1jcHVmcmVxLmMgfCAxODMNCj4gPiArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAxOTMgaW5zZXJ0
-aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jcHVmcmVxL2lteC1zYy1j
-cHVmcmVxLmMNCj4gDQo+IFdoeSBjYW4ndCB5b3UgdXNlIGNwdWZyZXEtZHQgZHJpdmVyIGxpa2Ug
-ZXZlcnlvbmUgZWxzZSA/DQoNCkp1c3Qgbm90aWNlIHRoYXQgd2UgY2FuIG92ZXJ3cml0ZSB0aGUg
-c2V0X3RhcmdldCBpZiB1c2luZyBjcHVmcmVxLWR0LCB0aGVuIHdlIHN0aWxsDQpuZWVkIGEgcGxh
-dGZvcm0gY3B1ZnJlcSBmaWxlIHRvIGltcGxlbWVudCBhcmNoX3NldF9mcmVxX3NjYWxlKCksIEkg
-Y2FuIHVzZSBpdCB0byBzYXZlDQp0aGUgY29kZSBvZiBpbXggc3lzdGVtIGNvbnRyb2xsZXIgY3B1
-ZnJlcSBkcml2ZXIsIGFuZCBCVFcsIGNhbiBjcHVmcmVxLWR0IHN1cHBvcnQNCm11bHRpIGNsdXN0
-ZXJzIGNwdWZyZXE/IEFzIGkuTVg4UU0gaGFzIDIgY2x1c3RlcnMgcnVubmluZyB3aXRoIGRpZmZl
-cmVudCBPUFBzLg0KDQpUaGFua3MsDQpBbnNvbi4NCg0KPiANCj4gLS0NCj4gdmlyZXNoDQo=
+Modify parport daisy driver to use the new parallel port device model.
+
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+
+v2: hide ifdef in the header file
+
+ drivers/parport/daisy.c | 32 +++++++++++++++++++++++++++++++-
+ drivers/parport/probe.c |  2 +-
+ drivers/parport/share.c | 10 +++++++++-
+ include/linux/parport.h | 13 +++++++++++++
+ 4 files changed, 54 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/parport/daisy.c b/drivers/parport/daisy.c
+index 5484a46dafda..56dd83a45e55 100644
+--- a/drivers/parport/daisy.c
++++ b/drivers/parport/daisy.c
+@@ -213,10 +213,12 @@ void parport_daisy_fini(struct parport *port)
+ struct pardevice *parport_open(int devnum, const char *name)
+ {
+ 	struct daisydev *p = topology;
++	struct pardev_cb par_cb;
+ 	struct parport *port;
+ 	struct pardevice *dev;
+ 	int daisy;
+ 
++	memset(&par_cb, 0, sizeof(par_cb));
+ 	spin_lock(&topology_lock);
+ 	while (p && p->devnum != devnum)
+ 		p = p->next;
+@@ -230,7 +232,7 @@ struct pardevice *parport_open(int devnum, const char *name)
+ 	port = parport_get_port(p->port);
+ 	spin_unlock(&topology_lock);
+ 
+-	dev = parport_register_device(port, name, NULL, NULL, NULL, 0, NULL);
++	dev = parport_register_dev_model(port, name, &par_cb, devnum);
+ 	parport_put_port(port);
+ 	if (!dev)
+ 		return NULL;
+@@ -480,3 +482,31 @@ static int assign_addrs(struct parport *port)
+ 	kfree(deviceid);
+ 	return detected;
+ }
++
++static int daisy_drv_probe(struct pardevice *par_dev)
++{
++	struct device_driver *drv = par_dev->dev.driver;
++
++	if (strcmp(drv->name, "daisy_drv"))
++		return -ENODEV;
++	if (strcmp(par_dev->name, daisy_dev_name))
++		return -ENODEV;
++
++	return 0;
++}
++
++static struct parport_driver daisy_driver = {
++	.name = "daisy_drv",
++	.probe = daisy_drv_probe,
++	.devmodel = true,
++};
++
++int daisy_drv_init(void)
++{
++	return parport_register_driver(&daisy_driver);
++}
++
++void daisy_drv_exit(void)
++{
++	parport_unregister_driver(&daisy_driver);
++}
+diff --git a/drivers/parport/probe.c b/drivers/parport/probe.c
+index e035174ba205..e5e6a463a941 100644
+--- a/drivers/parport/probe.c
++++ b/drivers/parport/probe.c
+@@ -257,7 +257,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ ssize_t parport_device_id (int devnum, char *buffer, size_t count)
+ {
+ 	ssize_t retval = -ENXIO;
+-	struct pardevice *dev = parport_open (devnum, "Device ID probe");
++	struct pardevice *dev = parport_open(devnum, daisy_dev_name);
+ 	if (!dev)
+ 		return -ENXIO;
+ 
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index 5dc53d420ca8..0171b8dbcdcd 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -137,11 +137,19 @@ static struct bus_type parport_bus_type = {
+ 
+ int parport_bus_init(void)
+ {
+-	return bus_register(&parport_bus_type);
++	int retval;
++
++	retval = bus_register(&parport_bus_type);
++	if (retval)
++		return retval;
++	daisy_drv_init();
++
++	return 0;
+ }
+ 
+ void parport_bus_exit(void)
+ {
++	daisy_drv_exit();
+ 	bus_unregister(&parport_bus_type);
+ }
+ 
+diff --git a/include/linux/parport.h b/include/linux/parport.h
+index 397607a0c0eb..f41f1d041e2c 100644
+--- a/include/linux/parport.h
++++ b/include/linux/parport.h
+@@ -460,6 +460,7 @@ extern size_t parport_ieee1284_epp_read_addr (struct parport *,
+ 					      void *, size_t, int);
+ 
+ /* IEEE1284.3 functions */
++#define daisy_dev_name "Device ID probe"
+ extern int parport_daisy_init (struct parport *port);
+ extern void parport_daisy_fini (struct parport *port);
+ extern struct pardevice *parport_open (int devnum, const char *name);
+@@ -468,6 +469,18 @@ extern ssize_t parport_device_id (int devnum, char *buffer, size_t len);
+ extern void parport_daisy_deselect_all (struct parport *port);
+ extern int parport_daisy_select (struct parport *port, int daisy, int mode);
+ 
++#ifdef CONFIG_PARPORT_1284
++extern int daisy_drv_init(void);
++extern void daisy_drv_exit(void);
++#else
++static inline int daisy_drv_init(void)
++{
++	return 0;
++}
++
++static inline void daisy_drv_exit(void) {}
++#endif
++
+ /* Lowlevel drivers _can_ call this support function to handle irqs.  */
+ static inline void parport_generic_irq(struct parport *port)
+ {
+-- 
+2.11.0
+
