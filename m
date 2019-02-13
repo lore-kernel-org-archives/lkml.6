@@ -2,132 +2,115 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8BFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C30FCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCE620842
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BE57222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f50/eK6a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAMYPy44"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388280AbfBMWGo (ORCPT
+        id S2389858AbfBMWHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:06:44 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37657 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730582AbfBMWGo (ORCPT
+        Wed, 13 Feb 2019 17:07:13 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46197 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729139AbfBMWHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:06:44 -0500
-Received: by mail-yw1-f67.google.com with SMTP id k14so1538224ywe.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:06:43 -0800 (PST)
+        Wed, 13 Feb 2019 17:07:12 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g6so1826874pfh.13;
+        Wed, 13 Feb 2019 14:07:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u6wAtHf633+1b21qJHTj2XIY7UMZA9Tc9wGB3tQtIL0=;
-        b=f50/eK6ap/0A0DEKg9r4vUamHcuETcc4wdkTPpA/avW84GZ78cWqIaE06oTh4Pj5S7
-         FyHveOfdXAwWoehd1KeJFm453WEQ4P/6VudysCZfZ772xRlETy8V8/pCVMlnzHGlluFP
-         gXdf2CN6cIXh+Kv3fzlo0uIGAzrtVuVZBRqtM=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yH0+HAx5nlwub69336QwKNCKOG2nZFkQBO4sLZZiCxQ=;
+        b=DAMYPy44Dh8jB5zXG7Vw6j3qR/lSAeS1xx+A74NqsGs98Os0bCd+SFSmc6prkHZpWy
+         g4Kh5cPkLSde4mc4L4iX5GVlWps2mjyh7LPidLNtzAU3l9j/L6gt3AFdYmg6LDRk+hRL
+         PChCcKaewiwYkPglASE+h+hIsGFfIjudGjtquvDZlpSu6Weg4gBW5cotwLXKt1G0T3hw
+         mUr1i7+qNeaXStCFGUfCPK8mAufmzN/bklcifhcO/7NTYmCpT13dbeQdEUK8hWpWVskj
+         R8NVbEnbwPCa/a/BtoESHXExviQ4lmkKPbl0OUCIn2BvAKIDPIoj/O+vUTRiaSWPU7Ys
+         JKdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u6wAtHf633+1b21qJHTj2XIY7UMZA9Tc9wGB3tQtIL0=;
-        b=R0er3woxWRiedL6F+WbMdD+VrftDCyswMSI/7y3NOqt+hwyyYuDeO0dQXoBokzcY9B
-         H4uq89WC7EiqghHHV0EAP/SzREksbxWM0RkwR8IgdTm1ojlUefE4HJ94MXAsMu5n7uiI
-         YRk9Ad9xl026K7KEs+roubGkM1NrLJqdx9h3/l+Uam76lz3/3MUL038a/vo9oop6WeXa
-         3fvAYZAn6o+PhPBUPu5yLZfVA8n16/gqK+XrRDaVM/AL0gKwveglZUJn+ME6GCpnr+bF
-         8L1yX5MJXkXKRv0fNFWU5OYJiCpgvMvDTq95fbmH9Eg9JYuKQ5Q7xVL1JSrn9JYuoQqF
-         wYUw==
-X-Gm-Message-State: AHQUAuakPBaj/u0SewSToolCEKeKYiPvM6v6X2q2AFENTKlDw9KB7AIW
-        DKmRXWtYbaGukdbh8kkA0MFDZw==
-X-Google-Smtp-Source: AHgI3Ibp06o8aSa9CppmplGOGwJjf7IUwfBw4SrSNmuULA6zqp6WiNNZRJBOFpESEZQr+nK1nW+xnw==
-X-Received: by 2002:a0d:f8c6:: with SMTP id i189mr348312ywf.286.1550095603260;
-        Wed, 13 Feb 2019 14:06:43 -0800 (PST)
-Received: from [10.136.8.252] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id w2sm184144ywe.62.2019.02.13.14.06.40
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yH0+HAx5nlwub69336QwKNCKOG2nZFkQBO4sLZZiCxQ=;
+        b=h3F/F16f1WfKyvijNl+xlvxRA8uWjRdvceNUC4qgu9bctjH04pU/IRpmh3tgfEgaRG
+         gR2GkowuExIsqxemMp8gecHdrUOcbqSigyi3uxDkqDbmLIe6v3pli3HqCabBm+yiLgaQ
+         Lv3547gROw/X2kvGZ3qs5boQgEibOOoFPFIjoYSY8O4FvDwGg1UH8zUE8mebSvO/F/UE
+         njgAvopHlc0SXgsNsvcMcyAL6batlkeDqxCB/2Fc7IQoaz60tr8o7pknotl9hZ4OaYdV
+         wuQDj4x/a7WZU9DNuw6fFZmk23F1W8eC0pL9Ho2ItaWf0oHB2PxZ+09N2NZATE+g4whC
+         w4ew==
+X-Gm-Message-State: AHQUAuZrU2qHiCM8e5vzeMjpomZjbANhea5Fv0bBV0HRLP8jyCSzXkti
+        HGRLsAIH5DFBgcp7u+HRIobhrW/8
+X-Google-Smtp-Source: AHgI3Iaayku/iu20xdr03gkLkSmdcYoK1y7QpqUGSFLeX/KiwWmlGXiGFNtG9HGYBJAJXykNu/k5/Q==
+X-Received: by 2002:a62:2ad6:: with SMTP id q205mr367455pfq.243.1550095631111;
+        Wed, 13 Feb 2019 14:07:11 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id o1sm383735pgn.63.2019.02.13.14.07.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:06:42 -0800 (PST)
-Subject: Re: [PATCH v4 3/8] dt-bindings: i2c: iproc: make 'interrupts'
- optional
-To:     Rob Herring <robh@kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-References: <20190204231554.87666-1-ray.jui@broadcom.com>
- <20190204231554.87666-4-ray.jui@broadcom.com> <20190213211651.GA10705@bogus>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <796d9a96-f3f9-cb9a-faa3-4baf0e72da65@broadcom.com>
-Date:   Wed, 13 Feb 2019 14:06:38 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190213211651.GA10705@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Feb 2019 14:07:10 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: [PATCH net-next 0/9] net: Get rid of switchdev_port_attr_get()
+Date:   Wed, 13 Feb 2019 14:06:29 -0800
+Message-Id: <20190213220638.1552-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi all,
 
-On 2/13/2019 1:16 PM, Rob Herring wrote:
-> On Mon, Feb 04, 2019 at 03:15:49PM -0800, Ray Jui wrote:
->> In prep for the introduction of polling mode into the driver, update the
->> binding document to make the 'interrupts' property optional
->>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
->> ---
->>  .../devicetree/bindings/i2c/brcm,iproc-i2c.txt         | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->> index 81f982ccca31..d3a3620b1f06 100644
->> --- a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->> +++ b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->> @@ -9,9 +9,6 @@ Required properties:
->>      Define the base and range of the I/O address space that contain the iProc
->>      I2C controller registers
->>  
->> -- interrupts:
->> -    Should contain the I2C interrupt
->> -
->>  - clock-frequency:
->>      This is the I2C bus clock. Need to be either 100000 or 400000
->>  
->> @@ -21,6 +18,13 @@ Required properties:
->>  - #size-cells:
->>      Always 0
->>  
->> +Optional properties:
->> +
->> +- interrupts:
->> +    Should contain the I2C interrupt. If unspecified, driver will fall back to
->> +    polling mode
-> 
-> What determines when you want to use polling mode? I'm not sure DT 
-> is the best way to control this unless it's really a property of 
-> the h/w. Driver behavior is really outside the scope of the DT. u-boot 
-> would use polling even if an interrupt is specified, for example.
-> 
-It's tied to the particular revision of the I2C controller, i.e., the
-iProc NIC i2c controller does not have interrupt line wired. In this
-case, the behavior is determined by the DT compatible string of the
-iProc I2C device. I thought that it makes sense to now move the
-'interrupts' property to be under "Optional" than "Required" which is
-basically what this change is.
+This patch series splits the removal of the switchdev_ops that was
+proposed a few times before and first tackles the easy part which is the
+removal of the single call to switchdev_port_attr_get() within the
+bridge code.
 
-> Rob
-> 
+As suggestd by Ido, this patch series adds a
+SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS which is used in the same
+context as the caller of switchdev_port_attr_set(), so not deferred, and
+then the operation is carried out in deferred context with setting a
+support bridge port flag.
+
+Follow-up patches will do the switchdev_ops removal after introducing
+the proper helpers for the switchdev blocking notifier to work across
+stacked devices (unlike the previous submissions).
+
+Florian Fainelli (9):
+  Documentation: networking: switchdev: Update port parent ID section
+  net: switchdev: Add PORT_PRE_BRIDGE_FLAGS
+  mlxsw: spectrum: Check bridge flags during prepare phase
+  staging: fsl-dpaa2: ethsw: Check bridge port flags during prepare
+  net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
+  rocker: Check bridge flags during prepare phase
+  net: bridge: Stop calling switchdev_port_attr_get()
+  net: Remove SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT
+  net: Get rid of switchdev_port_attr_get()
+
+ Documentation/networking/switchdev.txt        | 15 ++---
+ .../mellanox/mlxsw/spectrum_switchdev.c       | 30 +++------
+ drivers/net/ethernet/rocker/rocker_main.c     | 67 +++++++++----------
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c       | 27 +++-----
+ include/net/switchdev.h                       | 13 +---
+ net/bridge/br_switchdev.c                     | 16 ++---
+ net/dsa/dsa_priv.h                            |  3 +
+ net/dsa/port.c                                | 11 +++
+ net/dsa/slave.c                               | 22 ++----
+ 9 files changed, 88 insertions(+), 116 deletions(-)
+
+-- 
+2.17.1
+
