@@ -3,278 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229DEC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EAEC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8269218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A162621934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:13:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390409AbfBMDKO (ORCPT
+        id S1732258AbfBMDNE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:10:14 -0500
-Received: from mx2.mailbox.org ([80.241.60.215]:33940 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390275AbfBMDKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 22:10:10 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 86746A1306;
-        Wed, 13 Feb 2019 04:10:07 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id McBZr_2msOSM; Wed, 13 Feb 2019 04:10:01 +0100 (CET)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH v5 5/5] binfmt_*: scope path resolution of interpreters
-Date:   Wed, 13 Feb 2019 14:08:51 +1100
-Message-Id: <20190213030851.1881-6-cyphar@cyphar.com>
-In-Reply-To: <20190213030851.1881-1-cyphar@cyphar.com>
-References: <20190213030851.1881-1-cyphar@cyphar.com>
+        Tue, 12 Feb 2019 22:13:04 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6449 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728098AbfBMDNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 22:13:04 -0500
+X-IronPort-AV: E=Sophos;i="5.58,364,1544457600"; 
+   d="scan'208";a="54212734"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 13 Feb 2019 11:13:02 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 4C4984C4BCDC;
+        Wed, 13 Feb 2019 11:13:03 +0800 (CST)
+Received: from [10.167.226.60] (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 13 Feb 2019 11:13:05 +0800
+Subject: Re: [PATCH] x86/boot: minor improvement in kaslr
+To:     Kees Cook <keescook@chromium.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>
+References: <20190201054853.28541-1-caoj.fnst@cn.fujitsu.com>
+ <CAGXu5jJ+1==nCOCOwL=-UPfZ8rBA_u_Y82dpD75gxzdBOTK+Gw@mail.gmail.com>
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+Message-ID: <f2278379-07cf-6ad4-aff8-2473b7545e80@cn.fujitsu.com>
+Date:   Wed, 13 Feb 2019 11:10:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5jJ+1==nCOCOwL=-UPfZ8rBA_u_Y82dpD75gxzdBOTK+Gw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 4C4984C4BCDC.A8EF6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The need to be able to scope path resolution of interpreters became
-clear with one of the possible vectors used in CVE-2019-5736 (which
-most major container runtimes were vulnerable to).
+On 2/1/19 4:20 PM, Kees Cook wrote:
+> On Fri, Feb 1, 2019 at 6:51 PM Cao jin <caoj.fnst@cn.fujitsu.com> wrote:
+>>
+>> comments fix: input_size is ZO image size which just don't count .bss
+>> in, but has .text, .data, etc;
+>> drop unecessary alignment: minimum is either 512M or output, both are
+>> CONFIG_PHYSICAL_ALIGN aligned(output is aligned in head_32/64.S). But
+>> mention it in earlier comments.
+>>
+>> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/kaslr.c | 9 +++------
+>>  1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+>> index 9ed9709d9947..a947c5aba34e 100644
+>> --- a/arch/x86/boot/compressed/kaslr.c
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -360,7 +360,7 @@ static void handle_mem_options(void)
+>>   * (i.e. it does not include its run size). This range must be avoided
+>>   * because it contains the data used for decompression.
+>>   *
+>> - * [input+input_size, output+init_size) is [_text, _end) for ZO. This
+>> + * [input+input_size, output+init_size) is [_bss, _end) for ZO. This
+> 
+> This isn't right. The comment was correct before. See
+> arch/x86/boot/compressed/vmlinux.lds.S for the layout of the ZO image:
+> after the compressed image is _text, _rodata, _got, _data, _bss,
+> _pgtable, and _end. "[_text, _end)" correctly identifies the span
+> used.
+> 
 
-Naively, it might seem that openat(2) -- which supports path scoping --
-can be combined with execveat(AT_EMPTY_PATH) to trivially scope the
-binary being executed. Unfortunately, a "bad binary" (usually a symlink)
-could be written as a #!-style script with the symlink target as the
-interpreter -- which would be completely missed by just scoping the
-openat(2). An example of this being exploitable is CVE-2019-5736.
+Finally see why I am wrong here, I mixed up with the input_size & ZO
+image file size. Sorry for the noise, and thanks very much for your
+hint, Kees!
 
-In order to get around this, we need to pass down to each binfmt_*
-implementation the scoping flags requested in execveat(2). In order to
-maintain backwards-compatibility we only pass the scoping AT_* flags.
-
-To avoid breaking userspace (in the exceptionally rare cases where you
-have #!-scripts with a relative path being execveat(2)-ed with dfd !=
-AT_FDCWD), we only pass dfd down to binfmt_* if any of our new flags are
-set in execveat(2).
-
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/binfmt_elf.c            |  2 +-
- fs/binfmt_elf_fdpic.c      |  2 +-
- fs/binfmt_em86.c           |  4 ++--
- fs/binfmt_misc.c           |  2 +-
- fs/binfmt_script.c         |  2 +-
- fs/exec.c                  | 26 ++++++++++++++++++++++----
- include/linux/binfmts.h    |  1 +
- include/linux/fs.h         |  9 +++++++--
- include/uapi/linux/fcntl.h |  6 ++++++
- 9 files changed, 42 insertions(+), 12 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 54207327f98f..eef86ffa38c8 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -777,7 +777,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			if (elf_interpreter[elf_ppnt->p_filesz - 1] != '\0')
- 				goto out_free_interp;
- 
--			interpreter = open_exec(elf_interpreter);
-+			interpreter = openat_exec(bprm->dfd, elf_interpreter, bprm->flags);
- 			retval = PTR_ERR(interpreter);
- 			if (IS_ERR(interpreter))
- 				goto out_free_interp;
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index b53bb3729ac1..c463c6428f77 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -263,7 +263,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
- 			kdebug("Using ELF interpreter %s", interpreter_name);
- 
- 			/* replace the program with the interpreter */
--			interpreter = open_exec(interpreter_name);
-+			interpreter = openat_exec(bprm->dfd, interpreter_name, bprm->flags);
- 			retval = PTR_ERR(interpreter);
- 			if (IS_ERR(interpreter)) {
- 				interpreter = NULL;
-diff --git a/fs/binfmt_em86.c b/fs/binfmt_em86.c
-index dd2d3f0cd55d..3ee46b0dc0d4 100644
---- a/fs/binfmt_em86.c
-+++ b/fs/binfmt_em86.c
-@@ -81,10 +81,10 @@ static int load_em86(struct linux_binprm *bprm)
- 
- 	/*
- 	 * OK, now restart the process with the interpreter's inode.
--	 * Note that we use open_exec() as the name is now in kernel
-+	 * Note that we use openat_exec() as the name is now in kernel
- 	 * space, and we don't need to copy it.
- 	 */
--	file = open_exec(interp);
-+	file = openat_exec(binprm->dfd, interp, binprm->flags);
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index aa4a7a23ff99..573ef06ff5a1 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -209,7 +209,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		if (!IS_ERR(interp_file))
- 			deny_write_access(interp_file);
- 	} else {
--		interp_file = open_exec(fmt->interpreter);
-+		interp_file = openat_exec(bprm->dfd, fmt->interpreter, bprm->flags);
- 	}
- 	retval = PTR_ERR(interp_file);
- 	if (IS_ERR(interp_file))
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index d0078cbb718b..340f63635aac 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -102,7 +102,7 @@ static int load_script(struct linux_binprm *bprm)
- 	/*
- 	 * OK, now restart the process with the interpreter's dentry.
- 	 */
--	file = open_exec(i_name);
-+	file = openat_exec(bprm->dfd, i_name, bprm->flags);
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
-diff --git a/fs/exec.c b/fs/exec.c
-index fb72d36f7823..244f57c3286d 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -846,12 +846,24 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 		.lookup_flags = LOOKUP_FOLLOW,
- 	};
- 
--	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-+	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_BENEATH |
-+		       AT_XDEV | AT_NO_MAGICLINKS | AT_NO_SYMLINKS |
-+		       AT_THIS_ROOT)) != 0)
- 		return ERR_PTR(-EINVAL);
- 	if (flags & AT_SYMLINK_NOFOLLOW)
- 		open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
- 	if (flags & AT_EMPTY_PATH)
- 		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
-+	if (flags & AT_BENEATH)
-+		open_exec_flags.lookup_flags |= LOOKUP_BENEATH;
-+	if (flags & AT_XDEV)
-+		open_exec_flags.lookup_flags |= LOOKUP_XDEV;
-+	if (flags & AT_NO_MAGICLINKS)
-+		open_exec_flags.lookup_flags |= LOOKUP_NO_MAGICLINKS;
-+	if (flags & AT_NO_SYMLINKS)
-+		open_exec_flags.lookup_flags |= LOOKUP_NO_SYMLINKS;
-+	if (flags & AT_THIS_ROOT)
-+		open_exec_flags.lookup_flags |= LOOKUP_IN_ROOT;
- 
- 	file = do_filp_open(fd, name, &open_exec_flags);
- 	if (IS_ERR(file))
-@@ -879,18 +891,18 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 	return ERR_PTR(err);
- }
- 
--struct file *open_exec(const char *name)
-+struct file *openat_exec(int dfd, const char *name, int flags)
- {
- 	struct filename *filename = getname_kernel(name);
- 	struct file *f = ERR_CAST(filename);
- 
- 	if (!IS_ERR(filename)) {
--		f = do_open_execat(AT_FDCWD, filename, 0);
-+		f = do_open_execat(dfd, filename, flags);
- 		putname(filename);
- 	}
- 	return f;
- }
--EXPORT_SYMBOL(open_exec);
-+EXPORT_SYMBOL(openat_exec);
- 
- int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 		     loff_t max_size, enum kernel_read_file_id id)
-@@ -1762,6 +1774,12 @@ static int __do_execve_file(int fd, struct filename *filename,
- 
- 	sched_exec();
- 
-+	bprm->flags = flags & (AT_XDEV | AT_NO_MAGICLINKS | AT_NO_SYMLINKS |
-+			       AT_THIS_ROOT);
-+	bprm->dfd = AT_FDCWD;
-+	if (bprm->flags)
-+		bprm->dfd = fd;
-+
- 	bprm->file = file;
- 	if (!filename) {
- 		bprm->filename = "none";
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 688ab0de7810..e4da2d36e97f 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -50,6 +50,7 @@ struct linux_binprm {
- 	unsigned int taso:1;
- #endif
- 	unsigned int recursion_depth; /* only for search_binary_handler() */
-+	int dfd, flags;		/* passed down to execat_open() */
- 	struct file * file;
- 	struct cred *cred;	/* new credentials */
- 	int unsafe;		/* how unsafe this exec is (mask of LSM_UNSAFE_*) */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3e85cb8e8c20..a82c8dd44ad9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2937,8 +2937,13 @@ extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
- extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
- extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
- extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
--extern struct file * open_exec(const char *);
-- 
-+
-+extern struct file *openat_exec(int, const char *, int);
-+static inline struct file *open_exec(const char *name)
-+{
-+	return openat_exec(AT_FDCWD, name, 0);
-+}
-+
- /* fs/dcache.c -- generic fs support functions */
- extern bool is_subdir(struct dentry *, struct dentry *);
- extern bool path_is_under(const struct path *, const struct path *);
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 6448cdd9a350..607bc98813e3 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -90,5 +90,11 @@
- #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
- #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
- 
-+#define AT_RESOLUTION_TYPE	0xF8000 /* Type of path-resolution scoping we are applying. */
-+#define AT_BENEATH		0x08000 /* - Block "lexical" trickery like "..", symlinks, absolute paths, etc. */
-+#define AT_XDEV			0x10000 /* - Block mount-point crossings (includes bind-mounts). */
-+#define AT_NO_MAGICLINKS	0x20000 /* - Block procfs-style "magic" symlinks. */
-+#define AT_NO_SYMLINKS		0x40000 /* - Block all symlinks (implies AT_NO_MAGICLINKS). */
-+#define AT_THIS_ROOT		0x80000 /* - Scope ".." resolution to dirfd (like chroot(2)). */
- 
- #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
-2.20.1
+Sincerely,
+Cao jin
+
 
