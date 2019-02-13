@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807FAC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78083C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460AA2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9172175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025793;
-	bh=UsGF12F564bqp0Y4d2pmK6B6YLjWbuA/1pja0I4uhFQ=;
+	s=default; t=1550025800;
+	bh=KWDwDgOi4Ov+hZA0IEO7QkdAcKf54XRocrsM/UkHUh8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O3PQ+sTXIiKfdpmvh6Ok5uQSi0FJiQ4wwPruQ64dPFcGcbMiskuZ+kJK2AUHg6yxO
-	 KnbFHCOFqLxdF07oZHmC1GUEE4X7lRZkzF3fb3HqELc//yoB/n8YO3GafEdN3GLQdm
-	 KCHPSLTBxvje7P0qUio8tW5LUVAygIkbmTQS/d84=
+	b=xEYV+xnycxLIo58u1om++DY1mj3KNuYDBz81903o+GPvQWThcYde7RUUzGKA3iFFq
+	 jXW2MHMaLQ2DOL6isLCnGAUTDaG2DuCWQ1KbeFfhtijfj9DbYTxrhFKxX6hIcoZLqE
+	 pZHjomFEwODQtUulaD79miXSlT3H0cTUcmLuzjaQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389517AbfBMCnG (ORCPT
+        id S2389536AbfBMCnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:43:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45430 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389354AbfBMClp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:45 -0500
+        id S2389343AbfBMClm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E7A8222C7;
-        Wed, 13 Feb 2019 02:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3094F222C9;
+        Wed, 13 Feb 2019 02:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025705;
-        bh=UsGF12F564bqp0Y4d2pmK6B6YLjWbuA/1pja0I4uhFQ=;
+        s=default; t=1550025701;
+        bh=KWDwDgOi4Ov+hZA0IEO7QkdAcKf54XRocrsM/UkHUh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nsas/ypL0eyALd1Zv2VKBli4K+WV+1Of5EcjoX6YPYe/vyFHxmWzs1yrzpXi9Cayo
-         RfXaYUUl81RLrz/PifqsMjrU/6XOdRwFbBt5+/TvvmsiKtD4f81031p0kZB3j6MLn1
-         cFYk1+tcXydJpmEuTNjOJKjyj0TfNxzzda0gb4qQ=
+        b=EdJv+QGif9UQD2kl8B+xMgHzS7pjJHCwPWJz/quT7uHTM3jgWvN/xgl9s5vLzB0j8
+         614qFSBIj7uIZ7XfmUBi+1G+yTvhbcgIM0j2PrNOh12jywBhS8rP0N16ZVC+l+MoJE
+         39wxD8powA7o4gJ8WMWtwLYe05AuTneCxgtrGvag=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 3.18 05/14] mfd: wm5110: Add missing ASRC rate register
-Date:   Tue, 12 Feb 2019 21:41:29 -0500
-Message-Id: <20190213024139.22268-5-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 02/14] mfd: twl-core: Fix section annotations on {,un}protect_pm_master
+Date:   Tue, 12 Feb 2019 21:41:26 -0500
+Message-Id: <20190213024139.22268-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024139.22268-1-sashal@kernel.org>
 References: <20190213024139.22268-1-sashal@kernel.org>
@@ -58,37 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
+[ Upstream commit 8838555089f0345b87f4277fe5a8dd647dc65589 ]
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+When building the kernel with Clang, the following section mismatch
+warning appears:
+
+WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
+the function twl_probe() to the function
+.init.text:unprotect_pm_master()
+The function twl_probe() references
+the function __init unprotect_pm_master().
+This is often because twl_probe lacks a __init
+annotation or the annotation of unprotect_pm_master is wrong.
+
+Remove the __init annotation on the *protect_pm_master functions so
+there is no more mismatch.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/wm5110-tables.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mfd/twl-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
-index 6ccc0fdab767..85eccd796a85 100644
---- a/drivers/mfd/wm5110-tables.c
-+++ b/drivers/mfd/wm5110-tables.c
-@@ -1617,6 +1617,7 @@ static const struct reg_default wm5110_reg_default[] = {
- 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
- 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
- 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
-+	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
- 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
- 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
- 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
-@@ -2684,6 +2685,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
- 	case ARIZONA_ASRC_ENABLE:
- 	case ARIZONA_ASRC_STATUS:
- 	case ARIZONA_ASRC_RATE1:
-+	case ARIZONA_ASRC_RATE2:
- 	case ARIZONA_ISRC_1_CTRL_1:
- 	case ARIZONA_ISRC_1_CTRL_2:
- 	case ARIZONA_ISRC_1_CTRL_3:
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index db11b4f40611..2608c1d86585 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -983,7 +983,7 @@ add_children(struct twl4030_platform_data *pdata, unsigned irq_base,
+  * letting it generate the right frequencies for USB, MADC, and
+  * other purposes.
+  */
+-static inline int __init protect_pm_master(void)
++static inline int protect_pm_master(void)
+ {
+ 	int e = 0;
+ 
+@@ -992,7 +992,7 @@ static inline int __init protect_pm_master(void)
+ 	return e;
+ }
+ 
+-static inline int __init unprotect_pm_master(void)
++static inline int unprotect_pm_master(void)
+ {
+ 	int e = 0;
+ 
 -- 
 2.19.1
 
