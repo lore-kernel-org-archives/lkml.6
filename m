@@ -2,112 +2,163 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC6EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE97CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAB9222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="bIC1B4Tx"
+	by mail.kernel.org (Postfix) with ESMTP id C84A5222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390746AbfBMIjL (ORCPT
+        id S2390756AbfBMIjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:39:11 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38789 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390731AbfBMIjJ (ORCPT
+        Wed, 13 Feb 2019 03:39:31 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38617 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733177AbfBMIja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:39:09 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n15so1125195lfe.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:39:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iOifMK0uBt7VTyazd6LE6XG5PgJEOOOxaUYoLYDd+0c=;
-        b=bIC1B4Tx59QTCm1j4b5+dNqPVezqd2Hauwax9QKOqr8z7vY5PW/9UpvbSWwqQJIAGA
-         PQUoPB0XhVVLl23zGORNtyyrMaSGUiFGWAEcMHsViQN5VaqWWVAAYYpl8mvjZR9kXu6D
-         QRw7m/e+J91purVSYZb1oadNxG7RO71iyEfGzKkaPZn3V7s7ra9en0khucvoP6dAzmmM
-         vAzkCJzwEfU8IagmG/5f7uvov0Ynq8qttj5TPW+rnKec3PGGmvjU6dFOlYMR8dhUv2PA
-         bXgWQinDeLkhJla1zCojZYtqPkst9YeI05/+ufyeTAFuwgiIrdOUWA0xXClElSQWXrlh
-         v6VQ==
+        Wed, 13 Feb 2019 03:39:30 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so1476985wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:39:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iOifMK0uBt7VTyazd6LE6XG5PgJEOOOxaUYoLYDd+0c=;
-        b=Sy187V/n76ACBN/Asd/00f1NUg+P2zW9NaVamo8e5/PGlLePaP7KIVzkF8Dv1NxK1j
-         WXxSdkHIZTje/KE9O0OSM/zrI9yyRF5yNDAaqhUWeJrNJ9ao43nrbqZ4HNSh5W/9hA+N
-         43HzD/MaQh0qmbJ0jkhQ5CsAtzyXFLBWk7SfGh7nKSEM1N40nDDWAFzwxFFYeAkTeDte
-         ZWWZlFV+LaHj+j8KU3GlHUbYvF4dQz43/QVdhutxhJPib0Gwv6M2DED1m+M9escIGu1E
-         bPpocUTsG2nBObRp+A3QK9PmKDs7N5b9alc00qFd6e7hnUdyo0ZhliNs09U/EuaKuQnV
-         k4CQ==
-X-Gm-Message-State: AHQUAub17stU0aiR/moyAWxkc6N0/Cqhk3iPfy2YM8PtAePLowJiUelS
-        225vwTMn3wySMSbL4tqFbSF0WTZCqSc=
-X-Google-Smtp-Source: AHgI3IYsnuTbxHqB5YuPCLIhSNo6vgI44z/hRb1M5ueKJhFWinNLVJhB9u+5UC5UGZ25VRYyPxFKmQ==
-X-Received: by 2002:a19:7507:: with SMTP id y7mr5454087lfe.140.1550047146721;
-        Wed, 13 Feb 2019 00:39:06 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.84.178])
-        by smtp.gmail.com with ESMTPSA id x26sm2733103lfe.45.2019.02.13.00.39.05
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=OGr+fCOFipPuw4kPO6dQILVEWKC6WOl1B75bsywnpeU=;
+        b=DNpdmV0hBGL6L8oaec9eYThzFEWNKpb7K0UCPePotjl1bkoTEV5Y2Rfh0coti3f8Yw
+         lTg1VVdQfPysIak4p3N8BXs+JhaElGW5KSHIuDtb4OfKDq5LPWSvXdwJMte2ywSRmHkw
+         ItpYBnBXJ7hhwn0xBVOKR9r1cuOXqKa8gUOTnRYSf8JXDIUKcKbQlSU0mKiY06797DiI
+         48k1OUhvUUOtFZGV4JuV+MStjh+RueAmf11N0k8q0oftK9YhCxRHDuhSL7CL3IADYkrm
+         DY4oy55YuoRzArEIdU3QvHnn9GsiO+C/0a5CmX+04tIBgZsV9b1g4TV3girUy7QPeZzc
+         D78w==
+X-Gm-Message-State: AHQUAuZ/LYFO0GULV0/mt3O4o+yx/RbMX7XFcMapoiDbuaIMZQW9s9eL
+        ltZK0xP41FgBt+sfAbNP+vglS4Uq
+X-Google-Smtp-Source: AHgI3Ib+KuietEY/dETJuMzwmxGEQ58nHvLqF+J2Xqy5VxllPKUdckRNPZtCCoH7v93n9PXOK1HiLA==
+X-Received: by 2002:adf:dd4d:: with SMTP id u13mr6608467wrm.284.1550047167682;
+        Wed, 13 Feb 2019 00:39:27 -0800 (PST)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id h9sm1557650wrv.11.2019.02.13.00.39.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 00:39:05 -0800 (PST)
-Subject: Re: [PATCH v3 7/9] usb: typec: Find the ports by also matching
- against the device node
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wed, 13 Feb 2019 00:39:26 -0800 (PST)
+Subject: Re: [PATCH] tty/n_hdlc: mark expected switch fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
- <20190213074557.66028-8-heikki.krogerus@linux.intel.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <4df6b497-6abb-c680-165b-6d17d72c93e7@cogentembedded.com>
-Date:   Wed, 13 Feb 2019 11:38:56 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+References: <20190212191948.GA23588@embeddedor>
+From:   Jiri Slaby <jslaby@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e8f4e279-9e45-65f4-8c54-6d7b4fe99ddb@suse.cz>
+Date:   Wed, 13 Feb 2019 09:39:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190213074557.66028-8-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190212191948.GA23588@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.02.2019 10:45, Heikki Krogerus wrote:
-
-> When the connections are defined in firmware, struct
-> device_connection will have the fwnode member pointing to
-> the device node (struct fwnode_handle) of the requested
-> device, and the endpoint will not be used at all in that
-> case.
+On 12. 02. 19, 20:19,  Gustavo A. R. Silva  wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Jun Li <jun.li@nxp.com>
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> This patch fixes the following warning:
+> 
+> drivers/tty/n_hdlc.c: In function ‘n_hdlc_tty_ioctl’:
+> drivers/tty/n_hdlc.c:775:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    switch (arg) {
+>    ^~~~~~
+> drivers/tty/n_hdlc.c:782:2: note: here
+>   default:
+>   ^~~~~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+
+Oh well, and that is:
+> [ \t.!]*([Ee]lse,? |[Ii]ntentional(ly)? )?fall(s | |-)?thr(ough|u)[
+\t.!]*(-[^\n\r]*)?
+
+for implicit-fallthrough > 2.
+
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+
+But will we ever enable warning > 2? Does it even make sense?
+
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->   drivers/usb/typec/class.c | 24 +++++++++++++++++++++---
->   1 file changed, 21 insertions(+), 3 deletions(-)
+>  drivers/tty/n_hdlc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 45abe2c7e9f3..2eb623841847 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-[...]
-> +	/*
-> +	 * FIXME: Check does the fwnode supports the requested SVID. If it does
+> diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+> index 8bdf42bc8fc8..e55c79eb6430 100644
+> --- a/drivers/tty/n_hdlc.c
+> +++ b/drivers/tty/n_hdlc.c
+> @@ -777,7 +777,7 @@ static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
+>  		case TCOFLUSH:
+>  			flush_tx_queue(tty);
+>  		}
+> -		/* fall through to default */
+> +		/* fall through - to default */
 
-    Perhaps "check if the fwnode supports"? Or at least s/supports/support/...
+As the former makes more sense than the latter here.
 
-[...]
+>  	default:
+>  		error = n_tty_ioctl_helper(tty, file, cmd, arg);
+> 
 
-MBR, Sergei
+thanks,
+-- 
+js
+suse labs
