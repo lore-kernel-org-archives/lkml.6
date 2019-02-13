@@ -2,98 +2,102 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6062C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E69C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83502222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qDl3g3gM"
+	by mail.kernel.org (Postfix) with ESMTP id 2D071222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392273AbfBMOcC (ORCPT
+        id S2392285AbfBMOcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 13 Feb 2019 09:32:02 -0500
-Received: from mail-wm1-f43.google.com ([209.85.128.43]:55032 "EHLO
-        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392259AbfBMOcB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:32:01 -0500
-Received: by mail-wm1-f43.google.com with SMTP id a62so2695943wmh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 06:31:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NL8DMCre6zPrYD5lW3S3ip6+IqaqFEyc5ytD6RLmCdk=;
-        b=qDl3g3gM+IcKYXdPBBzhJSux8JTsc8ndlMQrRrMfLIF1UauvSJupI8hQWHq8BkIrD3
-         oq0237Q6SuzaHPaVQa0UPzDNQZBzLHTfPQyhDHs23omWnv5XpMl1USbyZc1/CqNoOCik
-         BuFEjRvbGnaJvNl0CDO7emLSlEcgQWGx3HXueeYdbsIkfTcmfM83lfjXfviHNSN6z2tg
-         67UxAfISlc9oWj4gC6sefeeg9efcl2AqXemSVkhfX8S3u/ivYmPcn8XRRaJliu0UAPf3
-         t4i7bK+4TYcb95rAiKYHQ/8amuQclzb+7+aWQsrgvyLqMKdPI0z9Rb2soGAGV7SGTYCS
-         5xUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NL8DMCre6zPrYD5lW3S3ip6+IqaqFEyc5ytD6RLmCdk=;
-        b=EQ9nIeI1SYhG4p1ORRssmwXSW2/ajkpoEprnuTUp1eSQTQFb6wDXKp7QI0qvf21G9s
-         krmzqtID1xpGpKdaG3NvDp2qdKLO9twljOJpVwkNNZn/ls6IAUqjK/mtaM4DJHcVH3he
-         ntjpjTaR4VcDzA2WVnCI1YIvcTcZ1BxWwL2gD1abBbC758pZtJX33eBzWgayYCw6NTC+
-         SAGMYRKrwgxi/f5LXmaf2o13AvpDwjSntwMrRP6ZI5xkyVOYyax0U3HrpPx4xDDKVKPB
-         89DmRanC7mzCzz2Wx+gCw4usSjZMYiCZpY7P8qJqMKX/lTcz9WBEmbe3OewPDYFqZCWv
-         QKYQ==
-X-Gm-Message-State: AHQUAua2AMEzRYyf+tzzuqvroiFN5iaSGjlyTkbwNJKC02rrkPhFuZ3V
-        l5lObqbUl0wrAazFFrxxcuk6h+4dh5tUvfIkuDJ3
-X-Google-Smtp-Source: AHgI3Ib4lHqvpLgbR0Vt7i1KYtRXOlNrsFDBZCfec1pwpqbJA/2T8j/cjWObJG0cSIv+auMxA21GplCO25mFzbVqu0s=
-X-Received: by 2002:a1c:ed0b:: with SMTP id l11mr530233wmh.43.1550068318559;
- Wed, 13 Feb 2019 06:31:58 -0800 (PST)
+Received: from mx2.suse.de ([195.135.220.15]:54594 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392265AbfBMOcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:32:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EDC5AAF27;
+        Wed, 13 Feb 2019 14:32:00 +0000 (UTC)
+Subject: Re: [PATCH] mm, page_alloc: Fix a division by zero error when
+ boosting watermarks v2
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Yury Norov <yury.norov@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mm@kvack.org
+References: <20190213131923.GQ9565@techsingularity.net>
+ <20190213143012.GT9565@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <7c0d323f-cad8-205b-5a8a-60da180a4ed0@suse.cz>
+Date:   Wed, 13 Feb 2019 15:31:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190213100309.03b5ea58@canb.auug.org.au>
-In-Reply-To: <20190213100309.03b5ea58@canb.auug.org.au>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Wed, 13 Feb 2019 08:31:46 -0600
-Message-ID: <CAErSpo5vmvx8QcQoEGzvN+5sWbL1syr2c5hD9AJwW3FGJ=8Hyw@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190213143012.GT9565@techsingularity.net>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 5:03 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> In commit
->
->   593425276b94 ("PCI: endpoint: functions: Use memcpy_fromio()/memcpy_toio()")
->
-> Fixes tag
->
->   Fixes: 349e7a85b25f ("PCI: endpoint: functions: Add an EP function to
->
-> has these problem(s):
->
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
->
-> Please do not split Fixes tags over more than 1 line.
+On 2/13/19 3:30 PM, Mel Gorman wrote:
+> Yury Norov reported that an arm64 KVM instance could not boot since after
+> v5.0-rc1 and could addressed by reverting the patches
+> 
+> 1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
+> 73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
+> 
+> The problem is that a division by zero error is possible if boosting
+> occurs very early in boot if the system has very little memory. This
+> patch avoids the division by zero error.
+> 
+> Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external fragmentation event occurs")
+> Reported-and-tested-by: Yury Norov <yury.norov@gmail.com>
+> Tested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-Hi Stephen,
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Are these and similar warnings generated by commit hooks or similar
-scripts?  If so, do you publish them somewhere?  I'd like to be able
-to set up commit hooks to catch things like this before they get to
-you.
+Thanks, sorry for the noise before.
 
-Bjorn
+> ---
+>  mm/page_alloc.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index d295c9bc01a8..bb1c7d843ebf 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2170,6 +2170,18 @@ static inline void boost_watermark(struct zone *zone)
+>  
+>  	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
+>  			watermark_boost_factor, 10000);
+> +
+> +	/*
+> +	 * high watermark may be uninitialised if fragmentation occurs
+> +	 * very early in boot so do not boost. We do not fall
+> +	 * through and boost by pageblock_nr_pages as failing
+> +	 * allocations that early means that reclaim is not going
+> +	 * to help and it may even be impossible to reclaim the
+> +	 * boosted watermark resulting in a hang.
+> +	 */
+> +	if (!max_boost)
+> +		return;
+> +
+>  	max_boost = max(pageblock_nr_pages, max_boost);
+>  
+>  	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
+> 
+
