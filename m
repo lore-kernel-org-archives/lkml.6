@@ -2,72 +2,242 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A30BC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FB8C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2C59222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550030745;
-	bh=1ISBSWGHHJm0iWeiYsdOya1tCWNb3ADGGlEBFKUYjoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=U3bSirRi5Gm3GjXyMBawIdFBrcWFqlfVWJmBpKh+QWXC3TBtqRp9ZE1TxFSYq9QNM
-	 erXqDuLg3TqLcVArOjeW2hP08bXeMTpexk+sOPO6P5qNQcYG4KfrmoQ7v06VJy1OR/
-	 YedC8s0jr4a3lifjQS9exF2dkh3bngp0bfRDLy4s=
+	by mail.kernel.org (Postfix) with ESMTP id CADF6222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbfBMEFo (ORCPT
+        id S2387640AbfBMEI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 23:05:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57180 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 23:08:28 -0500
+Received: from mga14.intel.com ([192.55.52.115]:5365 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfBMEFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 23:05:44 -0500
-Received: from localhost (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34969222BB;
-        Wed, 13 Feb 2019 04:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550030743;
-        bh=1ISBSWGHHJm0iWeiYsdOya1tCWNb3ADGGlEBFKUYjoo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xr/4WP3GE7oxlO31RJEYZ4Tlyv2P1Gcr9PPdLTdSUhaEMdDTslDZJEYUjr5T/dwQV
-         oVAJoaAsMBMJuSshWOb8eBnkGTHcXVEjRfpmlvSsxUMv+jPUXFvJ4ncsechngjNEJ2
-         qqEeLGIlKE2SXES6LyHgZKtIbAuX/PvytMluOvww=
-Date:   Wed, 13 Feb 2019 05:05:40 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Denys Vlasenko <vda.linux@googlemail.com>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: preempt.h: some SOFTIRQ_OFFSET should be SOFTIRQ_MASK?
-Message-ID: <20190213040539.GA8524@lenoir>
-References: <CAK1hOcN8_0MNEFfoHg0sAuu09SPhXHvXfXkeHONtoFXOArjumg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK1hOcN8_0MNEFfoHg0sAuu09SPhXHvXfXkeHONtoFXOArjumg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728827AbfBMEI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 23:08:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 20:08:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,364,1544515200"; 
+   d="scan'208";a="117475785"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga008.jf.intel.com with ESMTP; 12 Feb 2019 20:08:20 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, xin.zeng@intel.com,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v6 0/9] vfio/mdev: IOMMU aware mediated device
+Date:   Wed, 13 Feb 2019 12:02:52 +0800
+Message-Id: <20190213040301.23021-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 07:34:31PM +0100, Denys Vlasenko wrote:
-> SOFTIRQ is a counter.
-> Why here:
-> 
-> #define in_serving_softirq()    (softirq_count() & SOFTIRQ_OFFSET)
-> #define in_task()               (!(preempt_count() & \
->                                    (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
-> 
-> we check only lowest bit?
+Hi,
 
-So we have SOFTIRQ_OFFSET that is used when serving softirqs.
-And we have SOFTIRQ_DISABLE_OFFSET that is used when we disable
-softirqs.
+The Mediate Device is a framework for fine-grained physical device
+sharing across the isolated domains. Currently the mdev framework
+is designed to be independent of the platform IOMMU support. As the
+result, the DMA isolation relies on the mdev parent device in a
+vendor specific way.
 
-I think the choice is right on both tests above, or am I missing something?
+There are several cases where a mediated device could be protected
+and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+[1] introduces a new translation mode called 'scalable mode', which
+enables PASID-granular translations. The vt-d scalable mode is the
+key ingredient for Scalable I/O Virtualization [2] [3] which allows
+sharing a device in minimal possible granularity (ADI - Assignable
+Device Interface).
+
+A mediated device backed by an ADI could be protected and isolated
+by the IOMMU since 1) the parent device supports tagging an unique
+PASID to all DMA traffic out of the mediated device; and 2) the DMA
+translation unit (IOMMU) supports the PASID granular translation.
+We can apply IOMMU protection and isolation to this kind of devices
+just as what we are doing with an assignable PCI device.
+
+In order to distinguish the IOMMU-capable mediated devices from those
+which still need to rely on parent devices, this patch set adds one
+new member in struct mdev_device.
+
+* iommu_device
+  - This, if set, indicates that the mediated device could
+    be fully isolated and protected by IOMMU via attaching
+    an iommu domain to this device. If empty, it indicates
+    using vendor defined isolation.
+
+Below helpers are added to set and get above iommu device in mdev core
+implementation.
+
+* mdev_set/get_iommu_device(dev, iommu_device)
+  - Set or get the iommu device which represents this mdev
+    in IOMMU's device scope. Drivers don't need to set the
+    iommu device if it uses vendor defined isolation.
+
+The mdev parent device driver could opt-in that the mdev could be
+fully isolated and protected by the IOMMU when the mdev is being
+created by invoking mdev_set_iommu_device() in its @create().
+
+In the vfio_iommu_type1_attach_group(), a domain allocated through
+iommu_domain_alloc() will be attached to the mdev iommu device if
+an iommu device has been set. Otherwise, the dummy external domain
+will be used and all the DMA isolation and protection are routed to
+parent driver as the result.
+
+On IOMMU side, a basic requirement is allowing to attach multiple
+domains to a PCI device if the device advertises the capability
+and the IOMMU hardware supports finer granularity translations than
+the normal PCI Source ID based translation.
+
+As the result, a PCI device could work in two modes: normal mode
+and auxiliary mode. In the normal mode, a pci device could be
+isolated in the Source ID granularity; the pci device itself could
+be assigned to a user application by attaching a single domain
+to it. In the auxiliary mode, a pci device could be isolated in
+finer granularity, hence subsets of the device could be assigned
+to different user level application by attaching a different domain
+to each subset.
+
+Below APIs are introduced in iommu generic layer for aux-domain
+purpose:
+
+* iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
+  - Check whether both IOMMU and device support IOMMU aux
+    domain feature. Below aux-domain specific interfaces
+    are available only after this returns true.
+
+* iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
+  - Enable/disable device specific aux-domain feature.
+
+* iommu_dev_feature_enabled(dev, IOMMU_DEV_FEAT_AUX)
+  - Check whether the aux domain specific feature enabled or
+    not.
+
+* iommu_aux_attach_device(domain, dev)
+  - Attaches @domain to @dev in the auxiliary mode. Multiple
+    domains could be attached to a single device in the
+    auxiliary mode with each domain representing an isolated
+    address space for an assignable subset of the device.
+
+* iommu_aux_detach_device(domain, dev)
+  - Detach @domain which has been attached to @dev in the
+    auxiliary mode.
+
+* iommu_aux_get_pasid(domain, dev)
+  - Return ID used for finer-granularity DMA translation.
+    For the Intel Scalable IOV usage model, this will be
+    a PASID. The device which supports Scalable IOV needs
+    to write this ID to the device register so that DMA
+    requests could be tagged with a right PASID prefix.
+
+In order for the ease of discussion, sometimes we call "a domain in
+auxiliary mode' or simply 'an auxiliary domain' when a domain is
+attached to a device for finer granularity translations. But we need
+to keep in mind that this doesn't mean there is a differnt domain
+type. A same domain could be bound to a device for Source ID based
+translation, and bound to another device for finer granularity
+translation at the same time.
+
+This patch series extends both IOMMU and vfio components to support
+mdev device passing through when it could be isolated and protected
+by the IOMMU units. The first part of this series (PATCH 1/09~6/09)
+adds the interfaces and implementation of the multiple domains per
+device. The second part (PATCH 7/09~9/09) adds the iommu device
+attribute to each mdev, determines isolation type according to the
+existence of an iommu device when attaching group in vfio type1 iommu
+module, and attaches the domain to iommu aware mediated devices.
+
+References:
+[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+
+Best regards,
+Lu Baolu
+
+Change log:
+  v5->v6:
+  - Add a new API iommu_dev_feature_enabled() to check whether
+    an IOMMU specific feature is enabled.
+  - Rework the vt-d specific per device feature ops according
+    to Joerg's comments. [https://lkml.org/lkml/2019/1/11/302].
+  - PATCH 2/9 is added to move intel_iommu_enable_pasid() out
+    of the scope of CONFIG_INTEL_IOMMU_SVM without functional
+    changes.
+  - All patches are rebased on top of vt-d branch of Joerg's
+    iommu tree.
+
+  v4->v5:
+  - The iommu APIs have been updated with Joerg's proposal posted
+    here https://www.spinics.net/lists/iommu/msg31874.html.
+  - Some typos in commit message and comments have been fixed.
+  - PATCH 3/8 was split from 4/8 to ease code review.
+  - mdev->domain was removed and could bring back when there's a
+    real consumer.
+  - Other code review comments I received during v4 review period
+    except the EXPORT_SYMBOL vs. EXPORT_SYMBOL_GPL in PATCH 6/8.
+  - Rebase all patches to 5.0-rc1.
+
+  v3->v4:
+  - Use aux domain specific interfaces for domain attach and detach.
+  - Rebase all patches to 4.20-rc1.
+
+  v2->v3:
+  - Remove domain type enum and use a pointer on mdev_device instead.
+  - Add a generic interface for getting/setting per device iommu
+    attributions. And use it for query aux domain capability, enable
+    aux domain and disable aux domain purpose.
+  - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
+  - We discussed the impact of the default domain implementation
+    on reusing iommu_at(de)tach_device() interfaces. We agreed
+    that reusing iommu_at(de)tach_device() interfaces is the right
+    direction and we could tweak the code to remove the impact.
+    https://www.spinics.net/lists/kvm/msg175285.html  
+  - Removed the RFC tag since no objections received.
+  - This patch has been submitted separately.
+    https://www.spinics.net/lists/kvm/msg173936.html
+
+  v1->v2:
+  - Rewrite the patches with the concept of auxiliary domains.
+
+Lu Baolu (9):
+  iommu: Add APIs for multiple domains per device
+  iommu/vt-d: Move enable pasid out of CONFIG_INTEL_IOMMU_SVM
+  iommu/vt-d: Add per-device IOMMU feature ops entries
+  iommu/vt-d: Move common code out of iommu_attch_device()
+  iommu/vt-d: Aux-domain specific domain attach/detach
+  iommu/vt-d: Return ID associated with an auxiliary domain
+  vfio/mdev: Add iommu related member in mdev_device
+  vfio/type1: Add domain at(de)taching group helpers
+  vfio/type1: Handle different mdev isolation type
+
+ drivers/iommu/intel-iommu.c      | 399 ++++++++++++++++++++++++++++---
+ drivers/iommu/intel-svm.c        |  19 +-
+ drivers/iommu/iommu.c            |  91 +++++++
+ drivers/vfio/mdev/mdev_core.c    |  18 ++
+ drivers/vfio/mdev/mdev_private.h |   1 +
+ drivers/vfio/vfio_iommu_type1.c  | 132 ++++++++--
+ include/linux/intel-iommu.h      |  13 +-
+ include/linux/iommu.h            |  70 ++++++
+ include/linux/mdev.h             |  14 ++
+ 9 files changed, 704 insertions(+), 53 deletions(-)
+
+-- 
+2.17.1
+
