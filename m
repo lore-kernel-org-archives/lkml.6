@@ -2,95 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD85CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1731CC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8114D2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026799;
-	bh=zZQvyiDsVvku/cEWXAx8VLbxHBxBjUr7vtvCfi7jwZ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=naEWsEJCNIsf6MrRz4Ay+DuEwlfutfdgxM8/qf9VwJ4WQFe+GA0/sR8BIBYrLOtqw
-	 1UeWq7lDC8lNdAnI7iezLhMBhCqxlLP4L9m2/l2PZ6QZ1aMlGrEgLA599x/jKx4iIT
-	 tofkjaF8FmW5AYfq/CO5QSU4rovCEmvUzHjDe3U8=
+	by mail.kernel.org (Postfix) with ESMTP id DA7E82190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FM515L3t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390242AbfBMC76 (ORCPT
+        id S2390253AbfBMDAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:59:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388058AbfBMCfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:41 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D40222C9;
-        Wed, 13 Feb 2019 02:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025340;
-        bh=zZQvyiDsVvku/cEWXAx8VLbxHBxBjUr7vtvCfi7jwZ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KspK4VMsF7TISTUTfBIaDTFABxEcp/QqsCwChsPw3lBSt5TopQRo5OqzS3nQHm4Cy
-         CiardPnIDz9c08n6beJpMscNBI097oXonFqj6NsFvJHUN75XV/QYRspexS7fCFrCCF
-         NbwNiF0Szv1EtdEfMViqU0J4TO6sy2WQzLfzchdk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 080/105] net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ9031
-Date:   Tue, 12 Feb 2019 21:33:11 -0500
-Message-Id: <20190213023336.19019-80-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
-References: <20190213023336.19019-1-sashal@kernel.org>
+        Tue, 12 Feb 2019 22:00:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:36792 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390243AbfBMC77 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:59:59 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1D2xUtB048656;
+        Wed, 13 Feb 2019 02:59:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DGeFANtyGzc66dMUkUoBWt6GC+vzVlM18gqe6DtGsQI=;
+ b=FM515L3tyhnJmzHA30kgGawGvnFOBRpGiHLHB71TPiBuIA1IuK+6NvVTh8ugLnLCJnH6
+ zIy4csHfPu8nAHDFCFuJuDc66bO93VDNjaZol/MqOYy7j1xWcu4Vhw82o5Ittc4pA4ic
+ qyxlNPDvikEHoZWbtGXeYSOO5NZ8lTQQlwlxTmhNQL8gL0w8+Zl9NpvO3EQKE7xQfkdb
+ a8KdCraQlBcrWjtF3/ywZR7xGg1eQqgOeiLT9Okb7DW44O1iMu3rFVLUdBQwjvREXW9G
+ 7UrLEE+choabhHuUYNlSlY45fYJiEwzlQKRfevsEnNoXyeSE0YPVRwhAsJTLh6vEWGbK Ig== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qhre5ffg8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 02:59:47 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1D2xktf005096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 02:59:46 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1D2xksu022427;
+        Wed, 13 Feb 2019 02:59:46 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Feb 2019 18:59:45 -0800
+Subject: Re: Gang scheduling
+To:     Tim Chen <tim.c.chen@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>
+References: <44347e72-d595-5c2d-3983-7237526c71c6@oracle.com>
+ <c08136ad-3e68-ce1c-af03-b591acc582fc@linux.intel.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <890bd498-93b2-5d9d-8066-21278540727f@oracle.com>
+Date:   Tue, 12 Feb 2019 18:57:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c08136ad-3e68-ce1c-af03-b591acc582fc@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9165 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902130018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+Hi Tim,
 
-[ Upstream commit 1d16073a326891c2a964e4cb95bc18fbcafb5f74 ]
+On 10/12/18 11:01 AM, Tim Chen wrote:
+> On 10/10/2018 05:09 PM, Subhra Mazumdar wrote:
+>> Hi,
+>>
+>> I was following the Coscheduling patch discussion on lkml and Peter mentioned he had a patch series. I found the following on github.
+>>
+>> https://github.com/pdxChen/gang/commits/sched_1.23-loadbal
+>>
+>> I would like to test this with KVMs. Are the commits from 38d5acb to f019876 sufficient? Also is there any documentaion on how to use it (any knobs I need to turn on for gang scheduling to happen?) or is it enabled by default for KVMs?
+>>
+>> Thanks,
+>> Subhra
+>>
+> I would suggest you try
+> https://github.com/pdxChen/gang/tree/sched_1.23-base
+> without the load balancing part of gang scheduling.
+> It is enabled by default for KVMs.
+I applied the following 3 patches on 4.19 and tried to install a KVM (with
+virt-install). But the kernel hangs with following error:
 
-So far genphy_soft_reset was used automatically if the PHY driver
-didn't implement the soft_reset callback. This changed with the
-mentioned commit and broke KSZ9031. To fix this configure the
-KSZ9031 PHY driver to use genphy_soft_reset.
+kernel:watchdog: BUG: soft lockup - CPU#21 stuck for 23s! [kworker/21:1:573]
 
-Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Sekhar Nori <nsekhar@ti.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/phy/micrel.c | 1 +
- 1 file changed, 1 insertion(+)
+kvm,sched: Track VCPU threads
+x86/kvm,sched: Add fast path for reschedule interrupt
+sched: Optimize scheduler_ipi()
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 51611c7a23d1..22dfbd4c6aaf 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -1076,6 +1076,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.driver_data	= &ksz9021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz9031_config_init,
-+	.soft_reset	= genphy_soft_reset,
- 	.read_status	= ksz9031_read_status,
- 	.ack_interrupt	= kszphy_ack_interrupt,
- 	.config_intr	= kszphy_config_intr,
--- 
-2.19.1
+The track VCPU patch seems to be the culprit.
 
+Thanks,
+Subhra
+>
+> Due to the constant change in gang scheduling status of the QEMU thread
+> depending on whether vcpu is loaded or unloaded,
+> the load balancing part of the code doesn't work very well.
+>
+> The current version of the code need to be optimized further.  Right now
+> the QEMU thread constantly does vcpu load and unload during VM enter and exit.
+> We gang schedule only after vcpu load and register the thread to be gang
+> scheduled.  When we do vcpu unload, the thread is removed from the set
+> to be gang scheduled.  Each time there's a synchronization with the
+> sibling thread that's expensive.
+>
+> However, for QEMU, there's a one to one correspondence between the QEMU
+> thread and vcpu.  So we don't have to change the gang scheduling status
+> for such thread to avoid the church and sync with the sibling. That should
+> be helpful for VM with lots of I/O causing constant VM exits.  We're
+> still working on this optimization.  And the load balancing should be
+> better after this change.
+>
+> Tim
