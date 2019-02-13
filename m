@@ -2,180 +2,88 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A20C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F79EC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11070222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16FE2222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:02:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uZggyscE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733192AbfBMBys (ORCPT
+        id S1733226AbfBMCCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 20:54:48 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:36273 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729322AbfBMBys (ORCPT
+        Tue, 12 Feb 2019 21:02:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54640 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728534AbfBMCCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 20:54:48 -0500
-X-IronPort-AV: E=Sophos;i="5.58,364,1544457600"; 
-   d="scan'208";a="54206572"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 13 Feb 2019 09:54:44 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 427B94B4030E;
-        Wed, 13 Feb 2019 09:54:41 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 13 Feb 2019 09:54:49 +0800
-Date:   Wed, 13 Feb 2019 09:54:29 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <caoj.fnst@cn.fujitsu.com>, Juergen Gross <jgross@suse.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        <linux-tip-commits@vger.kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
- boot_params
-Message-ID: <20190213015429.GA12592@localhost.localdomain>
-References: <20190211002220.GD14948@zn.tnic>
- <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
- <20190211095547.GB1651@localhost.localdomain>
- <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
- <20190211101011.GA5333@localhost.localdomain>
- <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
- <20190211102426.GA19618@zn.tnic>
- <20190211104254.GB19618@zn.tnic>
- <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
- <20190211112009.GE19618@zn.tnic>
+        Tue, 12 Feb 2019 21:02:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kcz9f5+50zys83eIS0vRL1OcfBPDJmdMaWMyZpyOHus=; b=uZggyscEOmGW2cRDl4iELgDwU
+        jsZBYwDC5pLHznEunpsZJLejO0VXbrhDRF7iKjLYB4cZMk4D7Ts6SXCxNlFdDxvCqzb5FiiP069pC
+        g9yh//Kgq5mADcCBNL4qepOZHrGXiR6DrdJ8iiUBkGp4/lfLh40ZaQWQKdi0UoatfFX7Fkf8x4ifH
+        geu19osA9cgSGR/8RXX5NgTE5Cyry7m5LoHqeR6XBorpVBZGLMvcgl4x5Zk/fuCuoV/uo+TP2+ARX
+        d5u8AVwWLFk09JKrniXGUSvX75MbFix2sboEzNBmJmowF7uwhR9oj70Shf1xLF4R4Z7YDfsEs++OR
+        wBV1QeDgw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtjsl-0007tE-Bs; Wed, 13 Feb 2019 02:02:39 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Mahesh Bandewar <maheshb@google.com>,
+        David Miller <davem@davemloft.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] net: ipvlan_l3s: fix kconfig unmet dependency warning
+Message-ID: <c2d5e413-01c8-8da4-aa67-9517a9518a68@infradead.org>
+Date:   Tue, 12 Feb 2019 18:02:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190211112009.GE19618@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 427B94B4030E.A8A63
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:20:09PM +0100, Borislav Petkov wrote:
->On Mon, Feb 11, 2019 at 10:46:18AM +0000, Ard Biesheuvel wrote:
->> As I pointed out in my previous reply, systab will be the wrong type
->> on 32-bit firmware, it needs to be efi_system_table_32_t
->
->This seems to work. Chao, please run it too.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Yes, your PATCH really works well. I tried both efi32 OVMF and efi64
-OVMF, all boot.
+Fix the kconfig warning in IPVLAN_L3S when neither INET nor IPV6
+is enabled:
 
-Thanks,
-Chao Fan
+WARNING: unmet direct dependencies detected for NET_L3_MASTER_DEV
+  Depends on [n]: NET [=y] && (INET [=n] || IPV6 [=n])
+  Selected by [y]:
+  - IPVLAN_L3S [=y] && NETDEVICES [=y] && NET_CORE [=y] && NETFILTER [=y]
 
->
->Thx.
->
->---
->diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
->index c5a949335d8b..0d97aa8bd01f 100644
->--- a/arch/x86/boot/compressed/acpi.c
->+++ b/arch/x86/boot/compressed/acpi.c
->@@ -50,7 +50,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
-> 	acpi_physical_address rsdp_addr = 0;
-> 
-> #ifdef CONFIG_EFI
->-	efi_system_table_t *systab;
->+	unsigned long systab, systab_tables, config_tables;
->+	unsigned int nr_tables;
-> 	struct efi_info *ei;
-> 	bool efi_64;
-> 	int size, i;
->@@ -70,13 +71,13 @@ static acpi_physical_address efi_get_rsdp_addr(void)
-> 
-> 	/* Get systab from boot params. */
-> #ifdef CONFIG_X86_64
->-	systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
->+	systab = ei->efi_systab | ((__u64)ei->efi_systab_hi << 32);
-> #else
-> 	if (ei->efi_systab_hi || ei->efi_memmap_hi) {
-> 		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-> 		return 0;
-> 	}
->-	systab = (efi_system_table_t *)ei->efi_systab;
->+	systab = ei->efi_systab;
-> #endif
-> 	if (!systab)
-> 		error("EFI system table not found.");
->@@ -87,16 +88,30 @@ static acpi_physical_address efi_get_rsdp_addr(void)
-> 	size = efi_64 ? sizeof(efi_config_table_64_t) :
-> 			sizeof(efi_config_table_32_t);
-> 
->-	for (i = 0; i < systab->nr_tables; i++) {
->+	if (efi_64) {
->+		efi_system_table_64_t *st_tbl = (efi_system_table_64_t *)systab;
->+
->+		config_tables	= st_tbl->tables;
->+		nr_tables	= st_tbl->nr_tables;
->+	} else {
->+		efi_system_table_32_t *st_tbl = (efi_system_table_32_t *)systab;
->+
->+		config_tables	= st_tbl->tables;
->+		nr_tables	= st_tbl->nr_tables;
->+	}
->+
->+	if (!config_tables)
->+		error("EFI config tables not found.");
->+
->+	for (i = 0; i < nr_tables; i++) {
-> 		acpi_physical_address table;
->-		void *config_tables;
-> 		efi_guid_t guid;
-> 
->-		config_tables = (void *)(systab->tables + size * i);
->+		config_tables += size * i;
->+
-> 		if (efi_64) {
->-			efi_config_table_64_t *tmp_table;
->+			efi_config_table_64_t *tmp_table = (efi_config_table_64_t *)config_tables;
-> 
->-			tmp_table = config_tables;
-> 			guid = tmp_table->guid;
-> 			table = tmp_table->table;
-> 
->@@ -105,9 +120,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
-> 				return 0;
-> 			}
-> 		} else {
->-			efi_config_table_32_t *tmp_table;
->+			efi_config_table_32_t *tmp_table = (efi_config_table_32_t *)config_tables;
-> 
->-			tmp_table = config_tables;
-> 			guid = tmp_table->guid;
-> 			table = tmp_table->table;
-> 		}
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mahesh Bandewar <maheshb@google.com>
+---
+Seen in mmotm but applies to linux-next.
+
+ drivers/net/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- mmotm-2019-0212-1537.orig/drivers/net/Kconfig
++++ mmotm-2019-0212-1537/drivers/net/Kconfig
+@@ -147,6 +147,7 @@ config MACVTAP
+ 
+ config IPVLAN_L3S
+ 	depends on NETFILTER
++	depends on INET || IPV6 # same as NET_L3_MASTER_DEV
+ 	def_bool y
+ 	select NET_L3_MASTER_DEV
+ 
 
 
