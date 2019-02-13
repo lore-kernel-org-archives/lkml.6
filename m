@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95006C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D512DC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65C4B207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C48207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550027164;
-	bh=hmsH/XMWy/rZomudERQamvEfiZwqRdu6uZwMn5eP3rQ=;
+	s=default; t=1550027171;
+	bh=Lt1+69nmdEZAXEvrcmqZJ8nB/oNvhF9tB2778vCUFgs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rbbYUT3v2QlfNCA8Q/ZxbP2DcfJ/dKaR97p7Cn6E+xr6jCY9pjr76kocgJerE9ZLn
-	 Lc4LC2Kzzl64ZvGgwVHOMHX4L/inDvjcGKJO/Hp6yk7GhSvm6k2ZpWdBlUT39yCnDh
-	 Hprrry2xTP0clryQ+itRNvkmg+14udV/k92tej4o=
+	b=CKJ9mYmagap/0C7wO+55PM08SWUaNuIM8sERrajq14FPzlU7b8hMC3ET40JhSeXEv
+	 G6Zzk257U0MQtvzTwgB+yC9js0ETRuu1DU4Rz/39NveAFZgZ8OKOg4fs/zL1Gkujub
+	 +HsyhPjUyHeVz0eZcHV8pWauD+acAl4jnOhyKbo4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390522AbfBMDGC (ORCPT
+        id S2387462AbfBMCdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:06:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37418 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:33:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387480AbfBMCds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:33:48 -0500
+        id S1731487AbfBMCdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:33:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56FF9222C2;
-        Wed, 13 Feb 2019 02:33:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D818222C2;
+        Wed, 13 Feb 2019 02:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025228;
-        bh=hmsH/XMWy/rZomudERQamvEfiZwqRdu6uZwMn5eP3rQ=;
+        s=default; t=1550025223;
+        bh=Lt1+69nmdEZAXEvrcmqZJ8nB/oNvhF9tB2778vCUFgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OVWfHeUfUO46t0Fek6jyxaAp+izpOg6X45+205u+LE5i3LQYIqRBL8SVcwsWfoMHC
-         9C6WHyL4z4yiOd6DJFYkufLOh9yOeLyojH6ULJJz05Z+MiQSfcEopfl8dvlJIhjEht
-         Lab1AtZsgwAhyOPofzcuFg6koxZeuXkR9kL3C/ok=
+        b=ozNxsRuUdrHIsSGIeIBSfe2FAR40xagN8BCUvT62keVqJS7j7WwX2j0SfBC95XYd7
+         /4V86D5A4qytpJ57Zh9SFc8/BH490H+oPy1kaN8ZcRaDCGZsKt/lUFMdqo34nQGz7I
+         tvSEq4n2dX/vTbH0EkRN6swzheP6cNYGgeeSLZKE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dien Pham <dien.pham.ry@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lee Jones <lee.jones@linaro.org>,
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 011/105] mfd: bd9571mwv: Add volatile register to make DVFS work
-Date:   Tue, 12 Feb 2019 21:32:02 -0500
-Message-Id: <20190213023336.19019-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 006/105] pvcalls-back: set -ENOTCONN in pvcalls_conn_back_read
+Date:   Tue, 12 Feb 2019 21:31:57 -0500
+Message-Id: <20190213023336.19019-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -59,37 +58,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dien Pham <dien.pham.ry@renesas.com>
+From: Stefano Stabellini <sstabellini@kernel.org>
 
-[ Upstream commit b0aff01e7aa6ad2d6998ef1323843212d1db8b04 ]
+[ Upstream commit e6587cdbd732eacb4c7ce592ed46f7bbcefb655f ]
 
-Because BD9571MWV_DVFS_MONIVDAC is not defined in the volatile table,
-the physical register value is not updated by regmap and DVFS doesn't
-work as expected. Fix it!
+When a connection is closing we receive on pvcalls_sk_state_change
+notification. Instead of setting the connection as closed immediately
+(-ENOTCONN), let's read one more time from it: pvcalls_conn_back_read
+will set the connection as closed when necessary.
 
-Fixes: d3ea21272094 ("mfd: Add ROHM BD9571MWV-M MFD PMIC driver")
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-[wsa: rebase, add 'Fixes', reword commit message]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+That way, we avoid races between pvcalls_sk_state_change and
+pvcalls_back_ioworker.
+
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/bd9571mwv.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/pvcalls-back.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index 503979c81dae..fab3cdc27ed6 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -59,6 +59,7 @@ static const struct regmap_access_table bd9571mwv_writable_table = {
- };
+diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
+index 2e5d845b5091..71b628774c6f 100644
+--- a/drivers/xen/pvcalls-back.c
++++ b/drivers/xen/pvcalls-back.c
+@@ -160,9 +160,10 @@ static void pvcalls_conn_back_read(void *opaque)
  
- static const struct regmap_range bd9571mwv_volatile_yes_ranges[] = {
-+	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
- 	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
- 	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
- 	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
+ 	/* write the data, then modify the indexes */
+ 	virt_wmb();
+-	if (ret < 0)
++	if (ret < 0) {
++		atomic_set(&map->read, 0);
+ 		intf->in_error = ret;
+-	else
++	} else
+ 		intf->in_prod = prod + ret;
+ 	/* update the indexes, then notify the other end */
+ 	virt_wmb();
+@@ -288,7 +289,7 @@ static void pvcalls_sk_state_change(struct sock *sock)
+ 		return;
+ 
+ 	intf = map->ring;
+-	intf->in_error = -ENOTCONN;
++	atomic_inc(&map->read);
+ 	notify_remote_via_irq(map->irq);
+ }
+ 
 -- 
 2.19.1
 
