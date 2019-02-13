@@ -2,84 +2,105 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AD7C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69113C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B31222C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40C53222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbfBMNTM (ORCPT
+        id S2390380AbfBMNTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:19:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:53430 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730377AbfBMNTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:19:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A24F680D;
-        Wed, 13 Feb 2019 05:19:11 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EEE393F557;
-        Wed, 13 Feb 2019 05:19:09 -0800 (PST)
-Date:   Wed, 13 Feb 2019 13:19:06 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Cc:     'Mark Rutland' <mark.rutland@arm.com>,
-        'Catalin Marinas' <catalin.marinas@arm.com>,
-        'James Morse' <james.morse@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Message-ID: <20190213131906.GB5875@brain-police>
-References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
- <cb7544e2-bd85-df4c-1f48-0afeedefc962@arm.com>
- <8898674D84E3B24BA3A2D289B872026A6A3090AC@G01JPEXMBKW03>
- <20190201105144.GA27140@fuggles.cambridge.arm.com>
- <8898674D84E3B24BA3A2D289B872026A6A30C3CB@G01JPEXMBKW03>
+        Wed, 13 Feb 2019 08:19:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39010 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730377AbfBMNTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:19:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0319B03B;
+        Wed, 13 Feb 2019 13:19:12 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 14:19:12 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     xiang xiao <xiaoxiang781216@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+Message-ID: <20190213131912.4w3fonbgwjathpyp@pathway.suse.cz>
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+ <20190212144606.4b7cf0f8@gandalf.local.home>
+ <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8898674D84E3B24BA3A2D289B872026A6A30C3CB@G01JPEXMBKW03>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:32:07PM +0000, Zhang, Lei wrote:
-> > -----Original Message-----
-> > From: linux-arm-kernel
-> > [mailto:linux-arm-kernel-bounces@lists.infradead.org] On Behalf Of
-> > Will Deacon
-> > Sent: Friday, February 01, 2019 7:52 PM
-> > To: Zhang, Lei 
-> > Cc: 'Mark Rutland'; 'Catalin Marinas'; 'James Morse';
-> > 'linux-kernel@vger.kernel.org';
-> > 'linux-arm-kernel@lists.infradead.org'
-> > Subject: Re: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX
-> > erratum 010001
+On Wed 2019-02-13 14:19:01, xiang xiao wrote:
+> On Wed, Feb 13, 2019 at 3:46 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Wed, 13 Feb 2019 02:11:05 +0800
+> > Xiang Xiao <xiaoxiang781216@gmail.com> wrote:
+> >
+> > > Because log may already add the timestamp sometime
+> >
+> > Can you be a bit more detailed on this. When and where does this
+> > happen?
 > 
-> > So I guess we should boot with NFD1 clear, and then set it only when we
-> > realise we're not on an A64FX?
-> 
-> In my patch, I do similar things at __cpu_setup which we 
-> set NFD1=1 on all processors except A64FX.
-> 
-> Do you mean we would better to change the place where we 
-> set/clear NFD1?
+> Here is my case:
+> 1.A small MCU(Cortex M4) in SoC run RTOS
+> 2.RTOS append timestamp to log for the accurate timing
+> 3.RTOS send log to Linux kernel when buffer exceed the threshold
 
-Yes, I think we should keep the code as simple as we can:
+What do you exactly mean by the threshold, please? Does it mean
+that you use the kernel buffer when there are too many messages
+and they do not fit into the MCU local buffer?
 
-  - Don't set NFDx=1 in proc.S for any CPU
-  - Later, in C code, we can set the bit for any CPU that is not an affected
-    A64FX (this can be a simple MIDR check).
+How exactly the kernel gets the messages, please?
+Via a kernel driver or from userspace (via /dev/kmsg)?
 
-Does that work?
 
-Will
+> 4.Kernel call printk to dump the received buffer
+> So I want that printk skip the timestamp here.
+
+If the messages are printed by a kernel driver then
+a better solution would be to create a printk() API
+where you could pass the time stamp as a parameter.
+
+The aim is to store the precise time stamp in ts_nsec, struct
+printk_log. Then it will get handled correctly by any
+output, e.g. consoles, syslog, /dev/kmsg.
+
+
+There are several problems with your approach:
+
+1. The time stamp is still duplicated in the output via /dev/kmsg,
+   see msg_print_ext_header(). We could not change this
+   because the time stamp is part of the format.
+   Any change could break userspace (systemd).
+
+
+2. The time stamp stays part of the message:
+
+     + It might have different format than the normal
+       time stamp. Therefore it might be hard to filter
+
+     + dmesg might be unable to parse it and show in
+       the other formats.
+
+     + Kernel-5.1 will allow to print information
+       about the caller. It is supposed to be between
+       the time stamp and the message text, see
+       http://lkml.kernel.org/r/93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp
+
+
+Best Regards,
+Petr
