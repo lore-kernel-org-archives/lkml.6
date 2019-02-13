@@ -2,154 +2,141 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63A3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE13C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B03222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083414;
-	bh=2YabMXV4ceJRzppDwbgiLtGeErdR94GluQbq2l9KwqQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zsQjFIx2XuTvgtAvD4LTw5U/mu7JXKglkW1kBs6sawJYRWzZRI2OmyLciKT2Uq3/N
-	 PCIR5jYqlFiZM0LI7KJwVdNlhn/RoLtRTaUUvHO8OaYKyCGxZNgNtg8p/1DP3zsqag
-	 Xhhl0BDofdSRRNF8zHJQpR3S6dazahqKKdjhtmXY=
+	by mail.kernel.org (Postfix) with ESMTP id 61289222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WJS17Jk6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405907AbfBMSnc (ORCPT
+        id S2405921AbfBMSng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:43:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405841AbfBMSn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:43:28 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4019E222D6;
-        Wed, 13 Feb 2019 18:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083407;
-        bh=2YabMXV4ceJRzppDwbgiLtGeErdR94GluQbq2l9KwqQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+XoXx08gSgB2gigdciG9Xo1v6c+m8OAefsKW6+fh6U1RSjwsuz/qFkXYNFTPMJxr
-         28mD3DWPtUORUp7Ls/hPVsgRv6hFpG6sifgCL+yq4p34SlJRFa41lMsIwMPRw2xcaL
-         9DSq0TK9X2SijirFf3nBrjJQqOhz658FGxD8T9IM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.19 27/44] firmware: arm_scmi: provide the mandatory device release callback
-Date:   Wed, 13 Feb 2019 19:38:28 +0100
-Message-Id: <20190213183654.060687353@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
-References: <20190213183651.648060257@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Feb 2019 13:43:36 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:47008 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfBMSnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:43:33 -0500
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190213184330epoutp013b8040aa7edfe7989c4eafd887e9a541~DAKY-9p3z3268832688epoutp01G;
+        Wed, 13 Feb 2019 18:43:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190213184330epoutp013b8040aa7edfe7989c4eafd887e9a541~DAKY-9p3z3268832688epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550083410;
+        bh=wJrfDh99xY9IGMJ/GVWwXV3RyQHDulVmWrQX44qRpvo=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=WJS17Jk6+xs4CNAkdd9knPyju6TnStw9AV9/J9Wye9q+RpJoBJHGs6Ujgjt4PjcZx
+         /18TC09Ty6DY0I2IRpW67Y8xjI3ZAXFsQYNjHFqYh+7t0xeBDYzD8lxwuC6KgUt1AT
+         7fdNNWP57fX9g9YjX+4OMDsMWTBYX8W0k/61KU0c=
+Received: from epsmges2p4.samsung.com (unknown [182.195.42.72]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20190213184329epcas2p27cc8752a9089930af7b57e5f9866b8eb~DAKYP9GOT2251322513epcas2p2i;
+        Wed, 13 Feb 2019 18:43:29 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.3E.04093.155646C5; Thu, 14 Feb 2019 03:43:29 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20190213184328epcas2p3c89ed5fa3e58baf4b5af9b56418fb0d9~DAKWpSig22577225772epcas2p3l;
+        Wed, 13 Feb 2019 18:43:28 +0000 (GMT)
+X-AuditID: b6c32a48-173ff70000000ffd-66-5c646551a17b
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id C8.ED.03689.055646C5; Thu, 14 Feb
+        2019 03:43:28 +0900 (KST)
+Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PMV00HOONZ3WX60@mmp2.samsung.com>; Thu, 14 Feb 2019
+        03:43:28 +0900 (KST)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 10/13] ASoC: samsung: i2s: Simplify pri_dai, sec_dai
+ pointers usage
+Date:   Wed, 13 Feb 2019 19:42:09 +0100
+Message-id: <20190213184212.5473-11-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-reply-to: <20190213184212.5473-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsWy7bCmhW5gakqMwf6ZlhZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MC+vYCtZyVSw8cIGtgXEDRxcjJ4eE
+        gInE8s/PWLsYuTiEBHYwShw+t5sRJCEk8J1R4vSaWpiiV6vvQxVtYJT4t2k1C4Tzi1Hi55+z
+        TCBVbAKGEr1H+8C6RQTEJG7P6WQGKWIWaGGSmDN3KTNIQlggQqL9wyp2EJtFQFXiz877YHFe
+        AWuJtSt3skCsk5dYveEAWJwTKP5v7XN2kEESAgvYJPpudQDdwQHkuEjsm2cIUS8t8WzVRkYI
+        u1pi1/ZuZoj6DkaJlgvbmSES1hKHj19kBbGZBfgkOg7/ZYeYwyvR0SYEUeIhce/7E2aIz/oY
+        JVaf2c46gVFiASPDKkax1ILi3PTUYqMCE73ixNzi0rx0veT83E2M4BjU8tjBeOCczyFGAQ5G
+        JR7eCqGUGCHWxLLiytxDjBIczEoivHpRQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8D6XnRgsJ
+        pCeWpGanphakFsFkmTg4pRoY17p0Pz8gKNYrupJJ6iobWzm33qLetv8s527WSCxXbWz6ts/b
+        SM/GQeLrFoXV60uPierfKKyNLpZ553vYsvQpT/Grr59tDQ5tbLornHCwXHh5asmtU8w7Nxw3
+        cJdqL5Rq/Gp1oFP/eNYVgay5m77LRatYRR+4c9kjapfXMdmJDF550e5fU0qVWIozEg21mIuK
+        EwG8DNoHvQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsVy+t9jQd2A1JQYg5XdfBZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MC+vYCtZyVSw8cIGtgXEDRxcjJ4eE
+        gInEq9X3WbsYuTiEBNYxSnw4dIkFwvnFKLH/agMTSBWbgKFE79E+RhBbREBM4vacTmaQImaB
+        JiaJXbcvsoMkhAUiJNq3PGEGsVkEVCX+7LwPZvMKWEusXbmTBWKdvMTqDQfA4pxA8X9rn4P1
+        CglYSUz8cIl5AiPPAkaGVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsYgUG27bBW/w7G
+        x0viDzEKcDAq8fBWCKXECLEmlhVX5h5ilOBgVhLh1YsCCvGmJFZWpRblxxeV5qQWH2KU5mBR
+        Euflzz8WKSSQnliSmp2aWpBaBJNl4uCUamBcpi+z7rth5FSfo89CzrrPX7Iy4vtpzuuL01V+
+        Lvu6e+EG3r8aO1lOadyS6JBJFiy7zlj91Xgrm9/8l+ZbC11mirZwXmU4LKf6UzfNOHfTk9qa
+        6OkK4cnbGaSKG9PLtuofcPrZKy/F8b7iILNW9bU5z5JEVPmCX+k+3LLgrMA9S9NbC5oY52sp
+        sRRnJBpqMRcVJwIAfgQsvS4CAAA=
+X-CMS-MailID: 20190213184328epcas2p3c89ed5fa3e58baf4b5af9b56418fb0d9
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20190213184328epcas2p3c89ed5fa3e58baf4b5af9b56418fb0d9
+References: <20190213184212.5473-1-s.nawrocki@samsung.com>
+        <CGME20190213184328epcas2p3c89ed5fa3e58baf4b5af9b56418fb0d9@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+If the probe call is on the primary DAI we can use 'other' in place of
+i2s->sec_dai, if the probe call is on the secondary DAI we can use 'i2s'
+in place of other->sec_dai.
 
-------------------
+While at it fix one whitespace issue.
 
-From: Sudeep Holla <sudeep.holla@arm.com>
-
-commit 46edb8d1322c1763dd04e179992f8e9996085047 upstream.
-
-The device/driver model clearly mandates that bus driver that discover
-and allocate the device must set the release callback. This callback
-will be used to free the device after all references have gone away.
-
-scmi bus driver is missing the obvious callback which will result in
-the following warning if the device is unregistered:
-
-Device 'scmi_dev.1' does not have a release() function, it is broken and
-must be fixed. See Documentation/kobject.txt.
-WARNING at drivers/base/core.c:922 device_release+0x8c/0xa0
-Hardware name: ARM LTD Juno Development Platform BIOS EDK II Jan 21 2019
-Workqueue: events deferred_probe_work_func
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : device_release+0x8c/0xa0
-lr : device_release+0x8c/0xa0
-Call trace:
- device_release+0x8c/0xa0
- kobject_put+0x8c/0x208
- device_unregister+0x30/0x78
- scmi_device_destroy+0x28/0x50
- scmi_probe+0x354/0x5b0
- platform_drv_probe+0x58/0xa8
- really_probe+0x2c4/0x3e8
- driver_probe_device+0x12c/0x148
- __device_attach_driver+0xac/0x150
- bus_for_each_drv+0x78/0xd8
- __device_attach+0xe0/0x168
- device_initial_probe+0x24/0x30
- bus_probe_device+0xa0/0xa8
- deferred_probe_work_func+0x8c/0xe0
- process_one_work+0x1f0/0x478
- worker_thread+0x22c/0x450
- kthread+0x134/0x138
- ret_from_fork+0x10/0x1c
----[ end trace 420bdb7f6af50937 ]---
-
-Fix the issue by providing scmi_device_release callback. We have
-everything required for device release already in scmi_device_destroy,
-so we just need to move freeing of the device to scmi_device_release.
-
-Fixes: 933c504424a2 ("firmware: arm_scmi: add scmi protocol bus to enumerate protocol devices")
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: stable@vger.kernel.org # 4.17+
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/firmware/arm_scmi/bus.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/samsung/i2s.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -119,6 +119,11 @@ void scmi_driver_unregister(struct scmi_
- }
- EXPORT_SYMBOL_GPL(scmi_driver_unregister);
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 16e6868376f6..4f15b6af8268 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1057,18 +1057,17 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	pm_runtime_get_sync(dai->dev);
  
-+static void scmi_device_release(struct device *dev)
-+{
-+	kfree(to_scmi_dev(dev));
-+}
-+
- struct scmi_device *
- scmi_device_create(struct device_node *np, struct device *parent, int protocol)
- {
-@@ -138,6 +143,7 @@ scmi_device_create(struct device_node *n
- 	scmi_dev->dev.parent = parent;
- 	scmi_dev->dev.of_node = np;
- 	scmi_dev->dev.bus = &scmi_bus_type;
-+	scmi_dev->dev.release = scmi_device_release;
- 	dev_set_name(&scmi_dev->dev, "scmi_dev.%d", id);
+ 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
+-		snd_soc_dai_init_dma_data(dai, &other->sec_dai->dma_playback,
+-					   NULL);
++		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, NULL);
+ 	} else {
+ 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
+-					   &i2s->dma_capture);
++					  &i2s->dma_capture);
  
- 	retval = device_register(&scmi_dev->dev);
-@@ -156,9 +162,8 @@ free_mem:
- void scmi_device_destroy(struct scmi_device *scmi_dev)
- {
- 	scmi_handle_put(scmi_dev->handle);
--	device_unregister(&scmi_dev->dev);
- 	ida_simple_remove(&scmi_bus_id, scmi_dev->id);
--	kfree(scmi_dev);
-+	device_unregister(&scmi_dev->dev);
- }
+ 		if (priv->quirks & QUIRK_NEED_RSTCLR)
+ 			writel(CON_RSTCLR, priv->addr + I2SCON);
  
- void scmi_set_handle(struct scmi_device *scmi_dev)
-
+ 		if (priv->quirks & QUIRK_SUPPORTS_IDMA)
+ 			idma_reg_addr_init(priv->addr,
+-					i2s->sec_dai->idma_playback.addr);
++					   other->idma_playback.addr);
+ 	}
+ 
+ 	/* Reset any constraint on RFS and BFS */
+-- 
+2.17.1
 
