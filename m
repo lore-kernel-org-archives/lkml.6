@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDC0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889ADC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DF52175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CC7B2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025957;
-	bh=zVM5TYnhVQuVmWTff6iNhQtK0AZpj+0yhJWM90uHM8U=;
+	s=default; t=1550025973;
+	bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=glYLHmo6vV3n55isZWMz8swfxhsKXefu3qUcdNYfCTtisVU3BpbXu2SIVdf8Qlc+u
-	 E9T28JAl86ZDUQ+IJ+yfW+dVNBL2Nfy0T1QuAzFGax5U5CjswZYprdz4eC/YaxK4j+
-	 8CefMDMK+gaUFz/SK+yan9iuKAuYOF3TKqZXH/8w=
+	b=SUlEqKThiP4YqfYs1mvpSAovLSolS5TvnXZG+TCkjV3vCsxySZ/tobyhE0b1S4Ioa
+	 v/2YT1UBO+enlZpdQzKILAczkxXTn9WVOCWl7I8snf5BGNUHIoWNHl9yPofhrHrjaS
+	 cUUeezY6ZOHhQoQ5XZ4tlphroaL1D48fuZnnF3Sg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389674AbfBMCpz (ORCPT
+        id S2389682AbfBMCqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:45:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44628 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:46:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389101AbfBMCkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:51 -0500
+        id S2389092AbfBMCkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09F722175B;
-        Wed, 13 Feb 2019 02:40:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6114222CA;
+        Wed, 13 Feb 2019 02:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025650;
-        bh=zVM5TYnhVQuVmWTff6iNhQtK0AZpj+0yhJWM90uHM8U=;
+        s=default; t=1550025648;
+        bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i9KVrmzmihF9qL0SLxqkA7/Zk/0F43Emp9Fr+DB57Zm8we1XqXghGSYwuR2wIMlKL
-         H4xz5+1bH6Ij6ZV7W3JwJBqsGsZUSfj0lGZZiEpyEL1Vk7jTQLvjY3IWgehQffPvZn
-         Gk+iWJ/+M8OGFKfCRmm+5zD8gegbdP3w9WSVYRAc=
+        b=TWv8qVdNuQwGg/IQ5fCzsG9bGJNJGMAivOjD4XgLDat+Jep5WiYjwVBVOIy2tX7vs
+         FQayCsvIk3IVvNdKSkCLM2fsoaNVpBC1U6Nst0hzuIRJgbQi7lH++le9eAv7ZQcOe+
+         /GCO/xTrvP9ZpHbxw9qVI6ptv4SKlovvqxUqwBb0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Denis Bolotin <dbolotin@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 09/21] qed: Fix qed_ll2_post_rx_buffer_notify_fw() by adding a write memory barrier
-Date:   Tue, 12 Feb 2019 21:40:28 -0500
-Message-Id: <20190213024040.21740-9-sashal@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.9 07/21] mfd: wm5110: Add missing ASRC rate register
+Date:   Tue, 12 Feb 2019 21:40:26 -0500
+Message-Id: <20190213024040.21740-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
 References: <20190213024040.21740-1-sashal@kernel.org>
@@ -59,35 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <dbolotin@marvell.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit 46721c3d9e273aea880e9ff835b0e1271e1cd2fb ]
+[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
 
-Make sure chain element is updated before ringing the doorbell.
-
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mfd/wm5110-tables.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index a3360cbdb30b..5b968e6a0a7f 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -1013,6 +1013,10 @@ static void qed_ll2_post_rx_buffer_notify_fw(struct qed_hwfn *p_hwfn,
- 	cq_prod = qed_chain_get_prod_idx(&p_rx->rcq_chain);
- 	rx_prod.bd_prod = cpu_to_le16(bd_prod);
- 	rx_prod.cqe_prod = cpu_to_le16(cq_prod);
-+
-+	/* Make sure chain element is updated before ringing the doorbell */
-+	dma_wmb();
-+
- 	DIRECT_REG_WR(p_rx->set_prod_addr, *((u32 *)&rx_prod));
- }
- 
+diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
+index 1ee68bd440fb..16c6e2accfaa 100644
+--- a/drivers/mfd/wm5110-tables.c
++++ b/drivers/mfd/wm5110-tables.c
+@@ -1618,6 +1618,7 @@ static const struct reg_default wm5110_reg_default[] = {
+ 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
+ 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
+ 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
++	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
+ 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
+ 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
+ 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
+@@ -2869,6 +2870,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
+ 	case ARIZONA_ASRC_ENABLE:
+ 	case ARIZONA_ASRC_STATUS:
+ 	case ARIZONA_ASRC_RATE1:
++	case ARIZONA_ASRC_RATE2:
+ 	case ARIZONA_ISRC_1_CTRL_1:
+ 	case ARIZONA_ISRC_1_CTRL_2:
+ 	case ARIZONA_ISRC_1_CTRL_3:
 -- 
 2.19.1
 
