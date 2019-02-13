@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B932C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999CBC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71883222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F032222D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083504;
-	bh=k0jPjLEfnQvddTk74pOKX11kCdYeFj3tidwHDUvTKtc=;
+	s=default; t=1550083511;
+	bh=yK1jJ3AlcXZuxSxDjpMD1WJDFLUcILu6u+5s54Ub8cU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OjMsYeYVY0U56s0lOBqDOvwHm3WCwGi0k04ZPLszG1SOiZHrG8tliBSXJAxnDZwyB
-	 OvsYgaK05NcK075Xx8sSjgz+m0mI8mnLQUZO6DDo7W25zz8DKi5FCGARKkKZILNkiG
-	 yPbsVekq5GK9FmUDzHZngPeM8GRd2DiLJ7O7aFjc=
+	b=BEdpGg+iiP4jppbWqUwZ+dtmy19AU6u++hFdXUICWlj+RertG4YWHuMgc4wo3OcvS
+	 WWspwl7fEZlZ91OvnePoC17VhyE6OVOm+A6PU2u12pwrPmBi+tcAJ+y9pusR+x7Vzs
+	 qKDoY6+Zn3ADh+btbCWl4OEqWjT4v8ypQ2NDBpjI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394040AbfBMSpC (ORCPT
+        id S2406179AbfBMSpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43622 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:45:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394028AbfBMSo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:58 -0500
+        id S2394050AbfBMSpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:45:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEFDC20811;
-        Wed, 13 Feb 2019 18:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 981AE222D2;
+        Wed, 13 Feb 2019 18:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083497;
-        bh=k0jPjLEfnQvddTk74pOKX11kCdYeFj3tidwHDUvTKtc=;
+        s=default; t=1550083506;
+        bh=yK1jJ3AlcXZuxSxDjpMD1WJDFLUcILu6u+5s54Ub8cU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2Q7ZYtSuUmv/6Z3DwDOnYIwhOz60sIBJmZEWQFrNcgsp9TuBqPhvlI9GHWZwS/sb
-         ZmhSJeppFMHn8L7+PJCsm6orkVsVNXhf3oqV5s3wiGXvy2iXDuyEBoIXTY7b0dttiU
-         j4HkXsDurPl7UZvIIqz5o26LJOVhqeUozACVKcKs=
+        b=Qd9nJsq3/UX5d89Gog6l1JftHtuugwkn9OgpUV5HJOjtckMIgZYKtmJNq+EjZ3xaD
+         Na8cYo1KNvshzQn8zdU7uq8FWVbxlJuPYfH64D1CSDGrhv3+9/IYt043ArDruhMvIi
+         IYdPK80w2AvMqCFpvxqJ9RuM4M0XgycfPSrBgNlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.20 12/50] signal: Better detection of synchronous signals
-Date:   Wed, 13 Feb 2019 19:38:17 +0100
-Message-Id: <20190213183656.812880626@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH 4.20 04/50] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+Date:   Wed, 13 Feb 2019 19:38:09 +0100
+Message-Id: <20190213183656.139258050@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -65,116 +69,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-commit 7146db3317c67b517258cb5e1b08af387da0618b upstream.
+commit d5d27fd9826b59979b184ec288e4812abac0e988 upstream.
 
-Recently syzkaller was able to create unkillablle processes by
-creating a timer that is delivered as a thread local signal on SIGHUP,
-and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop failing
-to deliver SIGHUP but always trying.
+Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+reset may cause bus master lock up") for MX28 too. It has the same
+problem.
 
-When the stack overflows delivery of SIGHUP fails and force_sigsegv is
-called.  Unfortunately because SIGSEGV is numerically higher than
-SIGHUP next_signal tries again to deliver a SIGHUP.
+Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+DMA timeout errors:
+[    1.770823] UBI: attaching mtd3 to ubi0
+[    2.768088] gpmi_nand: DMA timeout, last DMA :1
+[    3.958087] gpmi_nand: BCH timeout, last DMA :1
+[    4.156033] gpmi_nand: Error in ECC-based read: -110
+[    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+bytes from PEB 0:0, read only 0 bytes, retry
+[    4.171283] step 1 error
+[    4.173846] gpmi_nand: Chip: 0, Error -1
 
->From a quality of implementation standpoint attempting to deliver the
-timer SIGHUP signal is wrong.  We should attempt to deliver the
-synchronous SIGSEGV signal we just forced.
+Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
 
-We can make that happening in a fairly straight forward manner by
-instead of just looking at the signal number we also look at the
-si_code.  In particular for exceptions (aka synchronous signals) the
-si_code is always greater than 0.
+I have a quote from NXP regarding this problem, from July 18th 2016:
 
-That still has the potential to pick up a number of asynchronous
-signals as in a few cases the same si_codes that are used
-for synchronous signals are also used for asynchronous signals,
-and SI_KERNEL is also included in the list of possible si_codes.
+"As the i.MX23 and i.MX28 are of the same generation, they share many
+characteristics. Unfortunately, also the erratas may be shared.
+In case of the documented erratas and the workarounds, you can also
+apply the workaround solution of one device on the other one. This have
+been reported, but I’m afraid that there are not an estimated date for
+updating the Errata documents.
+Please accept our apologies for any inconveniences this may cause."
 
-Still the heuristic is much better and timer signals are definitely
-excluded.  Which is enough to prevent all known ways for someone
-sending a process signals fast enough to cause unexpected and
-arguably incorrect behavior.
-
+Fixes: 6f2a6a52560a ("mtd: nand: gpmi: reset BCH earlier, too, to avoid NAND startup problems")
 Cc: stable@vger.kernel.org
-Fixes: a27341cd5fcb ("Prioritize synchronous signals over 'normal' signals")
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/signal.c |   52 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -688,6 +688,48 @@ int dequeue_signal(struct task_struct *t
- }
- EXPORT_SYMBOL_GPL(dequeue_signal);
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+@@ -155,9 +155,10 @@ int gpmi_init(struct gpmi_nand_data *thi
  
-+static int dequeue_synchronous_signal(kernel_siginfo_t *info)
-+{
-+	struct task_struct *tsk = current;
-+	struct sigpending *pending = &tsk->pending;
-+	struct sigqueue *q, *sync = NULL;
-+
-+	/*
-+	 * Might a synchronous signal be in the queue?
-+	 */
-+	if (!((pending->signal.sig[0] & ~tsk->blocked.sig[0]) & SYNCHRONOUS_MASK))
-+		return 0;
-+
-+	/*
-+	 * Return the first synchronous signal in the queue.
-+	 */
-+	list_for_each_entry(q, &pending->list, list) {
-+		/* Synchronous signals have a postive si_code */
-+		if ((q->info.si_code > SI_USER) &&
-+		    (sigmask(q->info.si_signo) & SYNCHRONOUS_MASK)) {
-+			sync = q;
-+			goto next;
-+		}
-+	}
-+	return 0;
-+next:
-+	/*
-+	 * Check if there is another siginfo for the same signal.
-+	 */
-+	list_for_each_entry_continue(q, &pending->list, list) {
-+		if (q->info.si_signo == sync->info.si_signo)
-+			goto still_pending;
-+	}
-+
-+	sigdelset(&pending->signal, sync->info.si_signo);
-+	recalc_sigpending();
-+still_pending:
-+	list_del_init(&sync->list);
-+	copy_siginfo(info, &sync->info);
-+	__sigqueue_free(sync);
-+	return info->si_signo;
-+}
-+
- /*
-  * Tell a process that it has a new active signal..
-  *
-@@ -2411,7 +2453,15 @@ relock:
- 			goto relock;
- 		}
+ 	/*
+ 	 * Reset BCH here, too. We got failures otherwise :(
+-	 * See later BCH reset for explanation of MX23 handling
++	 * See later BCH reset for explanation of MX23 and MX28 handling
+ 	 */
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
  
--		signr = dequeue_signal(current, &current->blocked, &ksig->info);
-+		/*
-+		 * Signals generated by the execution of an instruction
-+		 * need to be delivered before any other pending signals
-+		 * so that the instruction pointer in the signal stack
-+		 * frame points to the faulting instruction.
-+		 */
-+		signr = dequeue_synchronous_signal(&ksig->info);
-+		if (!signr)
-+			signr = dequeue_signal(current, &current->blocked, &ksig->info);
+@@ -263,12 +264,10 @@ int bch_set_geometry(struct gpmi_nand_da
+ 	/*
+ 	* Due to erratum #2847 of the MX23, the BCH cannot be soft reset on this
+ 	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23.
+-	* On the other hand, the MX28 needs the reset, because one case has been
+-	* seen where the BCH produced ECC errors constantly after 10000
+-	* consecutive reboots. The latter case has not been seen on the MX23
+-	* yet, still we don't know if it could happen there as well.
++	* and MX28.
+ 	*/
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
  
- 		if (!signr)
- 			break; /* will return 0 */
 
 
