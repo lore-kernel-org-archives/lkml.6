@@ -2,109 +2,101 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F62C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B013C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C791222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33851222E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403969AbfBMPuF (ORCPT
+        id S2404284AbfBMPy2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:50:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:53160 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfBMPuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:50:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:50:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="126168330"
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.68.82]) ([10.252.68.82])
-  by orsmga003.jf.intel.com with ESMTP; 13 Feb 2019 07:49:59 -0800
-Subject: Re: [PATCH v2 00/10] ICL support and other enhancements for PMC Core
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
- <CAHp75VeTwjbdjAXPZfB5B7oataarjG0epV1SzokdYnCj8xcPhA@mail.gmail.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <63bb8cc7-4feb-f69c-33be-ba5308c441d1@linux.intel.com>
-Date:   Wed, 13 Feb 2019 21:19:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VeTwjbdjAXPZfB5B7oataarjG0epV1SzokdYnCj8xcPhA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Feb 2019 10:54:28 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:27580 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404234AbfBMPy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:54:28 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-166-k1oQZLavOXaSAW7rNrgRPg-1; Wed, 13 Feb 2019 15:54:24 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 13 Feb 2019 15:55:07 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 13 Feb 2019 15:55:07 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Matthew Wilcox' <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Miklos Szeredi" <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Marc Zyngier" <marc.zyngier@arm.com>
+Subject: RE: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
+Thread-Topic: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
+Thread-Index: AQHUwClvyqUPjiZOrkij6vFj5+YdfaXd56QA
+Date:   Wed, 13 Feb 2019 15:55:07 +0000
+Message-ID: <3460540b50784dca813a57ddbbd41656@AcuMS.aculab.com>
+References: <20190208134802.218483159@linutronix.de>
+ <20190208135020.925487496@linutronix.de>
+ <20190208143255.9dec696b15f03bf00f4c60c2@linux-foundation.org>
+ <c40b7b94-00e3-9b59-fd66-904b54fc69b4@redhat.com>
+ <20190208152151.ed4cf0c52e5970fc7a7911f1@linux-foundation.org>
+ <20190209034117.GC21860@bombadil.infradead.org>
+In-Reply-To: <20190209034117.GC21860@bombadil.infradead.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: k1oQZLavOXaSAW7rNrgRPg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthew Wilcox
+> Sent: 09 February 2019 03:41
+> 
+> On Fri, Feb 08, 2019 at 03:21:51PM -0800, Andrew Morton wrote:
+> > It sounds like it.  A 10khz interrupt will overflow in 4 days...
+> 
+> If you've got a 10kHz interrupt, you have a bigger problem.  Anything
+> happening 10,000 times a second is going to need interrupt mitigation
+> to perform acceptably.
 
-On 13-Feb-19 9:03 PM, Andy Shevchenko wrote:
-> On Wed, Feb 13, 2019 at 5:08 PM Rajneesh Bhardwaj
-> <rajneesh.bhardwaj@linux.intel.com> wrote:
->> This patch series provides Icelake support for PMC Core driver and while
->> doing so it introduces the Icelake Mobile to intel-family.h as per the
->> CPUID from below Coreboot link
->> https://github.com/coreboot/coreboot/blob/5ebcea3aaaa3cd358bc5bccaa156b13a6ef25df6/src/soc/intel/common/block/include/intelblocks/mp_init.h
->> and provides some fixes and enhancements to the driver.
-> It's not applicable to my tree.
+Not necessarily - you may want the immediate interrupt for each
+received ethernet packet.
 
-Hi Andy,  I could apply and test in on latest upstream so i think its 
-probably because you have applied 5 patches from v1 on your tree. 
-https://github.com/dvhart/linux-pdx86/commits/for-next
+> More importantly, userspace can (and must) cope with wrapping.  This isn't
+> anything new from Thomas' patch.  As long as userspace is polling more
+> often than once a day, it's going to see a wrapped value before it wraps
+> again, so it won't miss 4 billion interrupts.
 
-I sent the whole series again since 
-https://patchwork.kernel.org/patch/10791893 referred to a wrong commit 
-for Fixes:. If you want to address that by rebasing then can you please 
-just consider patches 6-10.
+If userspace is expected to detect wraps, making the sum 64bit is
+pointless, confusing and stupid.
+The code would have to mask off the high bits before determining
+that the value has decreased and then adding in 2^32.
 
-Please let me know if there is any other issue?
+	David
 
->> Changes in v2:
->>   * Addressed review comments from Thomas
->>   * Added tags revieved
->>   * Folded in SHA1 suggestions from Stephen Rothwell, though Andy might want to
->>     fix it via rebasing
->>   * Rebased and tested with Linux v5.0.0-rc6
->>
->> This series:
->>   - Adds ICL U/Y CPUID to intel-family.h
->>   - Enables PMC driver for ICL
->>   - Introduces a new "package cstate show" feature
->>   - Fixes a customer issue related to S0ix on latest HP laptops
->>   - Fixes some minor bugs
->>
->> Rajneesh Bhardwaj (10):
->>    platform/x86: intel_pmc_core: Handle CFL regmap properly
->>    platform/x86: intel_pmc_core: Fix PCH IP sts reading
->>    platform/x86: intel_pmc_core: Fix PCH IP name
->>    platform/x86: intel_pmc_core: Fix file permissions for ltr_show
->>    platform/x86: intel_pmc_core: Include Reserved IP for LTR
->>    x86/cpu: Add Icelake to Intel family
->>    platform/x86: intel_pmc_core: Convert to INTEL_CPU_FAM6 macro
->>    platform/x86: intel_pmc_core: Add ICL platform support
->>    platform/x86: intel_pmc_core: Add Package cstates residency info
->>    platform/x86: intel_pmc_core: Quirk to ignore XTAL shutdown
->>
->>   arch/x86/include/asm/intel-family.h   |   2 +
->>   drivers/platform/x86/intel_pmc_core.c | 155 +++++++++++++++++++++-----
->>   drivers/platform/x86/intel_pmc_core.h |  14 ++-
->>   3 files changed, 145 insertions(+), 26 deletions(-)
->>
->> --
->> 2.17.1
->>
->
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
