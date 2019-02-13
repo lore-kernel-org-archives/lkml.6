@@ -2,119 +2,138 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AE3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F610C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9DE21902
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3A6D222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rDEj2z8i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392709AbfBMQdh (ORCPT
+        id S2404365AbfBMQdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:33:37 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392610AbfBMQdg (ORCPT
+        Wed, 13 Feb 2019 11:33:47 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3600 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404309AbfBMQdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:33:36 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DGUaSG036346
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 11:33:34 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmpeg1kas-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 11:33:34 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 13 Feb 2019 16:33:31 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Feb 2019 16:33:28 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DGXSA256557586
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Feb 2019 16:33:28 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8E2DA4054;
-        Wed, 13 Feb 2019 16:33:27 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 51D8BA405B;
-        Wed, 13 Feb 2019 16:33:27 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 13 Feb 2019 16:33:27 +0000 (GMT)
-Date:   Wed, 13 Feb 2019 18:33:25 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 5/5] RISC-V: Free-up initrd in free_initrd_mem()
-References: <20190213115301.103989-1-anup.patel@wdc.com>
- <20190213115301.103989-6-anup.patel@wdc.com>
+        Wed, 13 Feb 2019 11:33:46 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6446ed0000>; Wed, 13 Feb 2019 08:33:49 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 13 Feb 2019 08:33:46 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 13 Feb 2019 08:33:46 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 13 Feb
+ 2019 16:33:45 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 13 Feb 2019 16:33:45 +0000
+Received: from byan-linux.NVIDIA.COM (Not Verified[172.17.136.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c6446e90000>; Wed, 13 Feb 2019 08:33:45 -0800
+From:   Bo Yan <byan@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bo Yan <byan@nvidia.com>
+Subject: [PATCH V3] arm64: tegra: add topology data for Tegra194 cpu
+Date:   Wed, 13 Feb 2019 08:33:42 -0800
+Message-ID: <1550075622-1072-1-git-send-email-byan@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20190213081252.GA647@ulmo>
+References: <20190213081252.GA647@ulmo>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213115301.103989-6-anup.patel@wdc.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19021316-0016-0000-0000-000002560CA4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021316-0017-0000-0000-000032B034DC
-Message-Id: <20190213163325.GC6110@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=908 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902130118
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550075629; bh=Hk1GzH1q13DWR88RQq0ZOwpS7kHyY3R/0frlX19/ReA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=rDEj2z8iddLo/+zvkTgsCUTLSkrwbv24KIQsPfoPqGIs7wc7GmxKtHV/01PP2bhv5
+         5YadqfCaTN72Tcl0ce24tiZ7siVGJoAbxOcHyorbiA90VGs9usgpZ21JOcinI00B+y
+         D0fTMZuFBBim++eeRMAuXWfF/zPrhKb5SGUElUHOfaWkUGcT8F5N56rT1YIp/9Cbiu
+         cxEA5cAAp+lArX8wsa0tH20zNEwJJiF4StmznMFf9Q+eT6mrIKY/XXSB1LX6035X6v
+         sar1NYXJSvemG4Qkh5L8Axtt8wdMOma4iwxI1RRDkEO+dyWqeMfu5alx5hJEybQuAk
+         Uh1HCNvj7ip5A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 11:53:51AM +0000, Anup Patel wrote:
-> We should free-up initrd memory in free_initrd_mem() instead
-> of doing nothing.
-> 
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+The xavier CPU architecture includes 8 CPU cores organized in
+4 clusters. Add cpu-map data for topology initialization, this
+fixes the topology information in
+/sys/devices/system/cpu/cpu[n]/topology
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Bo Yan <byan@nvidia.com>
+---
+V3: Replaced phandles with full path to CPU node
+V2: remove cache nodes, add topology data only
 
-> ---
->  arch/riscv/mm/init.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index b1167a6f5a92..aabf1869c54b 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -94,8 +94,9 @@ static void __init setup_initrd(void)
->  	initrd_end = 0;
->  }
->  
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> +void __init free_initrd_mem(unsigned long start, unsigned long end)
->  {
-> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
->  }
->  #endif /* CONFIG_BLK_DEV_INITRD */
->  
-> -- 
-> 2.17.1
-> 
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 42 ++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca..708d20c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -870,6 +870,48 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&{/cpus/cpu@0}>;
++				};
++
++				core1 {
++					cpu = <&{/cpus/cpu@1}>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&{/cpus/cpu@2}>;
++				};
++
++				core1 {
++					cpu = <&{/cpus/cpu@3}>;
++				};
++			};
++
++			cluster2 {
++				core0 {
++					cpu = <&{/cpus/cpu@4}>;
++				};
++
++				core1 {
++					cpu = <&{/cpus/cpu@5}>;
++				};
++			};
++
++			cluster3 {
++				core0 {
++					cpu = <&{/cpus/cpu@6}>;
++				};
++
++				core1 {
++					cpu = <&{/cpus/cpu@7}>;
++				};
++			};
++		};
++
+ 		cpu@0 {
+ 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+ 			device_type = "cpu";
 -- 
-Sincerely yours,
-Mike.
+2.7.4
 
