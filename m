@@ -2,171 +2,118 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8278C282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9EEC0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AAC721872
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:17:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cdm2VheA"
+	by mail.kernel.org (Postfix) with ESMTP id AB431218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550092692;
+	bh=Fni606/RlPFND3rm4e0Ihk57F8h4Tia4x+idE0DnIV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=t5kARH103LWlWrntX7yJARMWEsBkj59xxX7W7EhT2PGsYoq+36DV4YQZmadVQrrug
+	 fL4UqpY00fZPONnfFYRC3PEv0YGxLm7yfs2G3XSoxGEwSiXxmDMLXwlw2H5oOfSOoy
+	 +l4ZHjhwkKab2RaLLbF7lZp/4VK8WHEvtwNU4FeA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392209AbfBMVR1 (ORCPT
+        id S2394760AbfBMVSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:17:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:53627 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727580AbfBMVR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:17:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 440C5r4gnnz9sMp;
-        Thu, 14 Feb 2019 08:17:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550092642;
-        bh=usZD1EHBiWCYhzRpVGMb6jzegoQs6kDHeIOc47qPbdQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Cdm2VheArDNKYky10oqqe1JnTxaEux1KjBZzry81HiR7z96c8QqmIn8ZE05uzDDLl
-         uiq2P7aVhxe8pG+6hpcd8AJV4SKgLuMkNPM3drX8C7nwEFQ3C4BshFc2DhQ+84KX6f
-         MEjdj5ecERJlDWI1ENNf1+ngQlSl8MU3rHGwtgKFCl1N8JxjDZYr13orRAYcVS6J09
-         rL6Z8QGQUDfhLgPOU3Eo/XI+FsjhHtZ7U3GgCjU3W4mSr/66tZY+WAZNMfZj1ZDRfa
-         ryrxvUKY5f7x8uRjbthUQSn45jAXOYxpxKokjNqviLB/A7m6G1Ac/PvrHY9xUSgzAu
-         3P96utEf/EGLg==
-Date:   Thu, 14 Feb 2019 08:17:16 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-Message-ID: <20190214081716.1367f024@canb.auug.org.au>
-In-Reply-To: <CAErSpo41bDxfajDJFH1AQK0ZwX=fC2jnay8Y5CyaS0f=+9LOHA@mail.gmail.com>
-References: <20190213100309.03b5ea58@canb.auug.org.au>
-        <CAErSpo5vmvx8QcQoEGzvN+5sWbL1syr2c5hD9AJwW3FGJ=8Hyw@mail.gmail.com>
-        <20190214070958.058aaf32@canb.auug.org.au>
-        <CAErSpo41bDxfajDJFH1AQK0ZwX=fC2jnay8Y5CyaS0f=+9LOHA@mail.gmail.com>
+        Wed, 13 Feb 2019 16:18:11 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43153 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbfBMVSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 16:18:10 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n71so6811868ota.10;
+        Wed, 13 Feb 2019 13:18:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jQrVYHsBR1uaKP5KKxxDUsandP0CwxMnW0PWdLyJsDs=;
+        b=FjoZsokx6LkMR8x3BCZZpIebosqvwLoUVpisZNXDb2aN3XsCv57JgS12vqlz9c3ApN
+         bxKvm7v1iH0uGp7Kd7cO9Ij3dS/K/7mU7th7Mtd+hBF9g4tXXEljcO//KHbu+vtQWz1w
+         YDpYn+BLf3pmBVAo4hjS7/SoXuq23zh3+yBDRPV/YepvKPBIwnqjij5PnXod9uUcnBJB
+         9hAgBVlE7yuT7pKUPUNQIjsswlUtfvEOxNwLYw+01HwNhsCrqC9A5VnLcU7W0HkOCKRI
+         AG7lblKatmtQ/kC48hNUY+l+aVrauButrU8p+ArEr0Yxso/KsaW3PmJUx/0ZdAP/zgq7
+         Oybw==
+X-Gm-Message-State: AHQUAubQiifJO4UdFdJpIcX/Um4z3d49abuY+U/szG9HKvtjKHLDIgJM
+        xYgRzLTFv79flH81xPCiLA==
+X-Google-Smtp-Source: AHgI3Iacg9lirau8paMoz/IhHP1zO45ukS41Z/dLIGCv1CQKNrlz+lsqYwlXnI/nLxLNKAUVWg78YQ==
+X-Received: by 2002:a54:459a:: with SMTP id z26mr134495oib.69.1550092689607;
+        Wed, 13 Feb 2019 13:18:09 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 21sm320929otj.6.2019.02.13.13.18.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 13:18:08 -0800 (PST)
+Date:   Wed, 13 Feb 2019 15:18:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: Re: [PATCH v4 6/8] dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c"
+ compatible string
+Message-ID: <20190213211807.GA20560@bogus>
+References: <20190204231554.87666-1-ray.jui@broadcom.com>
+ <20190204231554.87666-7-ray.jui@broadcom.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PH76b2KzPsXn/xXl=LbMreg"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204231554.87666-7-ray.jui@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/PH76b2KzPsXn/xXl=LbMreg
-Content-Type: multipart/mixed; boundary="MP_/Ckag9eUwX/k/LeRKcpE3w7."
+On Mon, Feb 04, 2019 at 03:15:52PM -0800, Ray Jui wrote:
+> From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> 
+> Update iProc I2C binding document to add new compatible string
+> "brcm,iproc-nic-i2c". Optional property "brcm,ape-hsls-addr-mask" is
+> also added that allows configuration of the host view into the APE's
+> address for "brcm,iproc-nic-i2c"
+> 
+> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> index d3a3620b1f06..02e82d20239e 100644
+> --- a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> +++ b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> @@ -3,7 +3,7 @@ Broadcom iProc I2C controller
+>  Required properties:
+>  
+>  - compatible:
+> -    Must be "brcm,iproc-i2c"
+> +    Must be "brcm,iproc-i2c" or "brcm,iproc-nic-i2c"
+>  
+>  - reg:
+>      Define the base and range of the I/O address space that contain the iProc
+> @@ -24,6 +24,9 @@ Optional properties:
+>      Should contain the I2C interrupt. If unspecified, driver will fall back to
+>      polling mode
+>  
+> +- brcm,ape-hsls-addr-mask:
+> +    Required for "brcm,iproc-nic-i2c". Host view of address mask into the
+> +    'APE' co-processor
 
---MP_/Ckag9eUwX/k/LeRKcpE3w7.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+What's the data type and size? What are valid values?
 
-Hi Bjorn,
-
-On Wed, 13 Feb 2019 14:19:32 -0600 Bjorn Helgaas <bhelgaas@google.com> wrot=
-e:
->
-> Thanks, I guess now I have no more excuse :)
-
-:-)
-
-> Is the "missing a Signed-off-by from their committer" thing that I
-> regularly trip over a manual check?
-
-Ah, attached is the other script I run (maybe I should combine them).
---=20
-Cheers,
-Stephen Rothwell
-
---MP_/Ckag9eUwX/k/LeRKcpE3w7.
-Content-Type: application/x-shellscript
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment; filename=check_commits
-
-#!/bin/bash
-
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
-
-commits=3D$(git rev-list --no-merges "$@")
-if [ -z "$commits" ]; then
-	printf "No commits\n"
-	exit 0
-fi
-
-author_missing=3D
-committer_missing=3D
-
-print_commits()
-{
-	local t=3D"$1"
-
-	shift
-
-	s=3D
-	is=3D'is'
-	its=3D'its'
-	[ "$#" -gt 1 ] && {
-		s=3D's'
-		is=3D'are'
-		its=3D'their'
-	}
-	printf "Commit%s\n\n" "$s"
-	git log --no-walk --pretty=3D'format:  %h ("%s")' "$@"
-	printf "\n%s missing a Signed-off-by from %s %s%s.\n" "$is" "$its" "$t" "$=
-s"
-	printf "\n"
-}
-
-for c in $commits; do
-	ae=3D$(git log -1 --format=3D'<%ae>%n<%aE>%n %an %n %aN ' "$c" | sort -u)
-	ce=3D$(git log -1 --format=3D'<%ce>%n<%cE>%n %cn %n %cN ' "$c" | sort -u)
-	msg=3D$(git log -1 --format=3D'%b' "$c")
-	sob=3D$(echo "$msg" | sed -En 's/^\s*Signed-off-by:?\s*/ /ip')
-
-	am=3Dfalse
-	cm=3Dfalse
-	grep -i -F -q "$ae" <<<"$sob" ||
-		am=3Dtrue
-	grep -i -F -q "$ce" <<<"$sob" ||
-		cm=3Dtrue
-	"$am" && author_missing+=3D" $c"
-	"$cm" && committer_missing+=3D" $c"
-done
-
-if [ "$author_missing" ]; then
-	print_commits "author" $author_missing
-fi
-if [ "$committer_missing" ]; then
-	print_commits "committer" $committer_missing
-fi
-
-exec gitk "$@"
-
---MP_/Ckag9eUwX/k/LeRKcpE3w7.--
-
---Sig_/PH76b2KzPsXn/xXl=LbMreg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxkiVwACgkQAVBC80lX
-0GxHnAgAn0wqCQDaZTTAKXS0uh4RKt4K+8EFvWHTku2hhvUXsbP2ZKTBcWWj71T+
-sdu4+Gb5AgNXCUagRL3ujNwQKXosfQ0XhKVr9PlC0mh9zzodX/p5Wl63ECQRrJkI
-0wiT1gyQMVgmSIpge1Q3iC24fCUbAaL+bQslxYk1Lkg+ka20sFax4ji2+7yn4Cks
-sJHAm+SrfsamfhK3plTivebLHZe7Ifw6RpCUykRVn7WoilP1khBHl7MXzzo0bS59
-5/opDSbEDf8MWYuWn49BgMO2GLy2Jy44DfRP5TqtrZxUDMu6GZvTerd7uAUqUtKq
-p9v9r3lHVNUyhSpLLXVfkFvHkcfdTw==
-=10xJ
------END PGP SIGNATURE-----
-
---Sig_/PH76b2KzPsXn/xXl=LbMreg--
+>  
+>  Example:
+>  	i2c0: i2c@18008000 {
+> -- 
+> 2.17.1
+> 
