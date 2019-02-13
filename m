@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BCEC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FD9C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942AF218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB66222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="s876fdQM"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="UvyOVHH6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbfBMNpC (ORCPT
+        id S2389023AbfBMNpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:45:02 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37683 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390651AbfBMNn4 (ORCPT
+        Wed, 13 Feb 2019 08:45:14 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54539 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390700AbfBMNnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:43:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c8so2553054wrs.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:43:55 -0800 (PST)
+        Wed, 13 Feb 2019 08:43:52 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so2505942wmh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:43:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uJmiNfRo8EeI+C3VRiIxh9DmBCp1GcHRXWm7GuC7DQs=;
-        b=s876fdQMJA7nX/v6RjR5Kj0rdfFIb8ZZUOifVmGZY5H/iAw2jlnz0LmtHelDhfNVwn
-         ccyyB7rx5Xnl823ZeHWr1yQicd1BWchBpvpWBG5oHdNlepWNVQDnkGjRZb8xDK9eeuTs
-         hjU7aUFhP7CiRTglo3l3NE2dnhNks66blqkmsvmhJJOpEuVWKcpWTRYrR6v9vrkGjbjz
-         LgW8KCrXLLBJyfgAKA/uI2fSLKEFmr7pPIwb3m/UmphiuC3vxUjf/A6wd87crFKEnV0d
-         2943kQkbkhyZxRDe1r9JncONlKaADzPe+OifoOhAr4BPrLLD5izD12oFI8OS+Ksl8a4s
-         OeMw==
+        bh=fHjGX90PhzkO2zCPEWu+WmU7YdHgBvwkN4duLM8BeyU=;
+        b=UvyOVHH6XZA5nKIFrxKAEJCRdIR3VvozWK1VikwT3gVvyArYBz5UZFkvE3mQrZXlXg
+         wV6XfXtwCb4rLeWA4QgmtRJsCCErzbFqYQ7DUglQQS8mTv0euAKGdjqAkfb/3no7KtaW
+         PrV+mCKHxynJZg3OvGfDptF995cVMXPF+jchGuHWQtQ/lG7Iz029dp0DweloQPQYCMxO
+         t9Uq6SyYWuLgeGneRlJyskFQGdlK1Rvsua6je0ocZzanSQn/Pl74Lzo25pHV3EkbGaNB
+         wL+PDt11LFAglZ7osvsgU7x9pkTYcmpjoB5tqaqj6e0lZz33Yndid3GWNRqm/u1Y+Td/
+         hLgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uJmiNfRo8EeI+C3VRiIxh9DmBCp1GcHRXWm7GuC7DQs=;
-        b=BdPJ9q7O45JyDa01YAPkW5tZlWHG5BN5PjthLiy+ubGyWKfZNXliwhT4GWk5qoAZuz
-         cs/6oBvf4hQAS5gn026rbpMJCrRqe5y6CTBOtbkC42V5AKvjhLPloGW0qvsbdc57kmPD
-         EvUx10Fls03YKVf1j9j2uPwhchzVO/3BrJkaMRTYJNEYZMEkDG1QOTA1nOKJTjCCeavv
-         eJMQbN2I7fEDp1ye6ffwwqOYGOEH1/BW77xaktER8TL17FTeINTBEbjXSBem3AyU2Yy3
-         ni+uYHPJORCABR53U1fVyfChuZtnmIx0I3ixoJyv3qDKE7nOqZjGbXSO4t7tXkzoPlav
-         rGew==
-X-Gm-Message-State: AHQUAua5dKzI8BzzD1OdOxIwfqe4WD1gdlecpyTlgb5NBEz/9kc/W1R7
-        HXuZvOsbmN/T+w5vHXMWYzBEAg==
-X-Google-Smtp-Source: AHgI3IYqce5u7rqSks1vpbKzgmPPcBgvMpmT8wtMhYYrkGC9s9NGzguxV+MFJv2MrW/5QVDcOyGpVQ==
-X-Received: by 2002:adf:f845:: with SMTP id d5mr494170wrq.113.1550065434678;
-        Wed, 13 Feb 2019 05:43:54 -0800 (PST)
+        bh=fHjGX90PhzkO2zCPEWu+WmU7YdHgBvwkN4duLM8BeyU=;
+        b=gHKYGRNj2xGV70ya+J+KGpHCKsqpWF6rqR6Do/Bkb2j6he52pRkRmFJ/a5/iPQhCiB
+         EF5A3UQtLEEdJkg2BmE6U4Kfw8Vk0TVIDo4y+7BgfK49WgayMBPrO9BFJ6Vc4KtaGhCH
+         lW+F2HmcPTph6HlSyOkn3Fcn78Z2HV7bPpIy4MSYX457y/2holUuQMFj9zBURkKkCQho
+         M4BHKH0bthaVA84a+duW0wfYoJP1Px3R/Dw529l08EMg6L1rKfZLF5aDCqhFYPZ7wCwx
+         TTDGINNC91K3l5/y2sw+4/GF8a16xzyOYU2BFSlz2lxaDArdnJfUglp+JjVL/NNLN7zF
+         Txlg==
+X-Gm-Message-State: AHQUAuYwvm+asRN+RXGE277YdD2MHLZaXlh5+j9OOhKwaJzDmjsoWzo7
+        N+FTgJ3o7rLx5fgdwDqqkTbplA==
+X-Google-Smtp-Source: AHgI3Ibwu+jFcZzOVRtX+31o+c2713At08tHLqC86VEjBV/58awy09PMGE/Jh+fgpXaKyPYdcgwXkg==
+X-Received: by 2002:a1c:2547:: with SMTP id l68mr376169wml.11.1550065430363;
+        Wed, 13 Feb 2019 05:43:50 -0800 (PST)
 Received: from debian-brgl.home (amontpellier-652-1-54-116.w109-210.abo.wanadoo.fr. [109.210.45.116])
-        by smtp.gmail.com with ESMTPSA id e7sm2046720wrw.35.2019.02.13.05.43.53
+        by smtp.gmail.com with ESMTPSA id e7sm2046720wrw.35.2019.02.13.05.43.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 05:43:53 -0800 (PST)
+        Wed, 13 Feb 2019 05:43:49 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,9 +70,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 04/11] dt-bindings: input: add DT bindings for max77650
-Date:   Wed, 13 Feb 2019 14:43:28 +0100
-Message-Id: <20190213134335.10838-5-brgl@bgdev.pl>
+Subject: [PATCH v5 01/11] dt-bindings: mfd: add DT bindings for max77650
+Date:   Wed, 13 Feb 2019 14:43:25 +0100
+Message-Id: <20190213134335.10838-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213134335.10838-1-brgl@bgdev.pl>
 References: <20190213134335.10838-1-brgl@bgdev.pl>
@@ -85,45 +85,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the DT binding document for the onkey module of max77650.
+Add a DT binding document for max77650 ultra-low power PMIC. This
+describes the core mfd device and the GPIO module.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../bindings/input/max77650-onkey.txt         | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ .../devicetree/bindings/mfd/max77650.txt      | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
 
-diff --git a/Documentation/devicetree/bindings/input/max77650-onkey.txt b/Documentation/devicetree/bindings/input/max77650-onkey.txt
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
 new file mode 100644
-index 000000000000..37c80898be4d
+index 000000000000..0a40e9c6aab8
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/input/max77650-onkey.txt
-@@ -0,0 +1,26 @@
-+Onkey driver for MAX77650 PMIC from Maxim Integrated.
-+
-+This module is part of the MAX77650 MFD device. For more details
-+see Documentation/devicetree/bindings/mfd/max77650.txt.
-+
-+The onkey controller is represented as a sub-node of the PMIC node on
-+the device tree.
++++ b/Documentation/devicetree/bindings/mfd/max77650.txt
+@@ -0,0 +1,47 @@
++MAX77650 ultra low-power PMIC from Maxim Integrated.
 +
 +Required properties:
-+--------------------
-+- compatible:		Must be "maxim,max77650-onkey".
++-------------------
++- compatible:		Must be "maxim,max77650"
++- reg:			I2C device address.
++- interrupts:		The interrupt on the parent the controller is
++			connected to.
++- interrupt-parent:	phandle of the parent interrupt controller.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells:	Must be <2>.
++
++- gpio-controller : 	Marks the device node as a gpio controller.
++- #gpio-cells : 	Must be <2>. The first cell is the pin number and
++			the second cell is used to specify the gpio active
++			state.
 +
 +Optional properties:
-+- linux,code:		The key-code to be reported when the key is pressed.
-+			Defaults to KEY_POWER.
-+- maxim,onkey-mode:	Must be "push" or "slide" depending on the type of
-+			button used by the system. Defaults to "push".
++--------------------
++gpio-line-names:	Single string containing the name of the GPIO line.
++
++The GPIO-controller module is represented as part of the top-level PMIC
++node. The device exposes a single GPIO line.
++
++For device-tree bindings of other sub-modules (regulator, power supply,
++LEDs and onkey) refer to the binding documents under the respective
++sub-system directories.
++
++For more details on GPIO bindings, please refer to the generic GPIO DT
++binding document <devicetree/bindings/gpio/gpio.txt>.
 +
 +Example:
 +--------
 +
-+	onkey {
-+		compatible = "maxim,max77650-onkey";
-+		linux,code = <KEY_END>;
-+		maxim,onkey-mode = "slide";
++	pmic: max77650@48 {
++		compatible = "maxim,max77650";
++		reg = <0x48>;
++
++		interrupt-controller;
++		interrupt-parent = <&gpio2>;
++		#interrupt-cells = <2>;
++		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-line-names = "max77650-charger";
 +	};
 -- 
 2.20.1
