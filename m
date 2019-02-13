@@ -2,108 +2,81 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED466C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03798C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3B421902
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:18:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6UyDq3f"
+	by mail.kernel.org (Postfix) with ESMTP id BA84D21902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550074717;
+	bh=+dsVqmrHA7YqMuFtOO9liuuXg7WvYJ/pQRPw864c2mI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ufOPaeVthibSIJxA6dX7XnzXGA7CP+SzoAeoBbmbRabkMJC509xP3LN6+LPWBgKsl
+	 rckqG+mMZd5K/LS8gDAbbc4NLUuv3eKf/7urJFRQaIX3xnJuDJFTDABIznIHxWytjR
+	 adz42nkNQDHbGqruxE4R2KoUhnwx/gtTFADGnKjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392617AbfBMQSU (ORCPT
+        id S2392628AbfBMQSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:18:20 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45121 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730572AbfBMQST (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:18:19 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so1328545pgc.12;
-        Wed, 13 Feb 2019 08:18:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DGeUIfUMVdr08GITqwml0mXav78h0kyx3gOzu58IgWc=;
-        b=P6UyDq3fH0qRJP1yezniTvtu8Xxw5o/6S0nKmS1ELxFb+CRSAiNZz3P/ebskF3Ixaq
-         JBrZCO/tMa4Z/PfpddSjGjVqe3cVo7BqC+Nwvwyc9QiosoPcxLX6+Et9nzT/hH77+d1k
-         Go+PhRfiZNEg+abWUYaQzr8JHCFp2AlgN6V1ztoQxnW8S1PBGHFhRnHNrC9Vt9yV3cPU
-         4U+PdRZrDxctmGGuNcD1KOEqxPv/0RnC6KrO6MRr7uL7Bm5RfZng2FmoK5zHJs94TPP8
-         seNUtRi//lRYTP39n0MvXiRa+0qSzOGVg8ed2RdjlSyxCkWwQqI9S7vriXls6HEMDqbW
-         SX7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DGeUIfUMVdr08GITqwml0mXav78h0kyx3gOzu58IgWc=;
-        b=OGC8d+D+LIyapMff/JwN6+AGRmz2fQfE29kqEYbLgpeyJ8gwSPPOSfuCHPsqNP5gxl
-         lmkY7z6Tv5lRNfT2559TXUmFXHIIrlZd1OHK6u6vRFq0ZHdTJwLlmfgGLfAE68UKvnsP
-         5n2IdkA/y5HJWoGPOUzLoiQ1mig3YIG0Eepg4ZYtrNZ6XXIHmgdTN8WGx1s8CLW44aXE
-         HGECpk5WCM2Pje6NsQ3GAAQ14IOtSno9jQjcx1uoe/tAVU01hNSvZRsefizsi9+wcO1e
-         JnIBZl7BCy6jNLf0r/28emNFEd/fAv9nQa+TUIo0wjP4CRf/c5mMEzCau4XyP2zbtAwO
-         YQYA==
-X-Gm-Message-State: AHQUAubuMX2axNlCupM4wX6xMjq29hmM5bkTWV1j3XISLdMnTAYS0ESQ
-        MyagRUCJ+vH4DZK3dg3L7XvV1L+VXbw05l/QuxDdrgMi
-X-Google-Smtp-Source: AHgI3IbFM2+cqLqhcPXbCc6s0W9UYv/XHpxMDE1jRU0OLpAQe2VpaWSgayWBx2I0x+VFA6UyfuXoasFQBSwulZ+Yigc=
-X-Received: by 2002:a63:730c:: with SMTP id o12mr1175996pgc.270.1550074699045;
- Wed, 13 Feb 2019 08:18:19 -0800 (PST)
+        Wed, 13 Feb 2019 11:18:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730572AbfBMQSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:18:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 85ED4AD74;
+        Wed, 13 Feb 2019 16:18:34 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 17:18:32 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-mm@kvack.org, Pingfan Liu <kernelfans@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH v3 2/2] mm: be more verbose about zonelist initialization
+Message-ID: <20190213161832.GT4525@dhcp22.suse.cz>
+References: <20190212095343.23315-3-mhocko@kernel.org>
+ <20190213094315.3504-1-mhocko@kernel.org>
+ <1433a7e9-87b2-7e8d-a87d-dcffe486635c@intel.com>
 MIME-Version: 1.0
-References: <5c40acf3.1c69fb81.5b02f.880c@mx.google.com> <CAFqt6zaHuWfVWS1Aa4MQm-qE9Wjj68Bq5ioEWbk+hrg32VNRCw@mail.gmail.com>
- <CAJr6mf1j+nyYDanjX7pCvSjVjdqy9Y0WG5sJHtR42_E6U9_LbA@mail.gmail.com>
-In-Reply-To: <CAJr6mf1j+nyYDanjX7pCvSjVjdqy9Y0WG5sJHtR42_E6U9_LbA@mail.gmail.com>
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Date:   Wed, 13 Feb 2019 21:48:07 +0530
-Message-ID: <CAJr6mf3fqC2EjxfeM5iU_uAibAj4008UfYkXVmLPoSonPD4-2A@mail.gmail.com>
-Subject: Re: [PATCH] sh: Remove duplicate header
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1433a7e9-87b2-7e8d-a87d-dcffe486635c@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 8:04 AM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
->
-> On Thu, Jan 17, 2019 at 11:11 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > On Thu, Jan 17, 2019 at 9:57 PM Sabyasachi Gupta
-> > <sabyasachi.linux@gmail.com> wrote:
-> > >
-> > > Remove linux/irq.h which is included more than once.
-> > >
-> > > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> >
-> > Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >
-> If no further comment, can we get this patch in queue for 5.1 ?
+On Wed 13-02-19 08:14:50, Dave Hansen wrote:
+> On 2/13/19 1:43 AM, Michal Hocko wrote:
+> > 
+> > We have seen several bugs where zonelists have not been initialized
+> > properly and it is not really straightforward to track those bugs down.
+> > One way to help a bit at least is to dump zonelists of each node when
+> > they are (re)initialized.
+> 
+> Were you thinking of boot-time bugs and crashes, or just stuff going
+> wonky after boot?
 
-If no further comment, can we get this patch in queue for 5.1 ?
+Mostly boot time. I haven't seen hotplug related bugs in this direction.
+All the issues I have seen so far is that we forget a node altogether
+and it ends up with no zonelists at all. But who knows maybe we have
+some hidden bugs where zonelists is initialized only partially for some
+reason and there is no real way to find out.
 
-> > > ---
-> > >  arch/sh/boards/mach-dreamcast/irq.c | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > >
-> > > diff --git a/arch/sh/boards/mach-dreamcast/irq.c b/arch/sh/boards/mach-dreamcast/irq.c
-> > > index 2789647..69fa91c 100644
-> > > --- a/arch/sh/boards/mach-dreamcast/irq.c
-> > > +++ b/arch/sh/boards/mach-dreamcast/irq.c
-> > > @@ -10,7 +10,6 @@
-> > >   */
-> > >  #include <linux/irq.h>
-> > >  #include <linux/io.h>
-> > > -#include <linux/irq.h>
-> > >  #include <linux/export.h>
-> > >  #include <linux/err.h>
-> > >  #include <mach/sysasic.h>
-> > > --
-> > > 2.7.4
-> > >
+> We don't have the zonelists dumped in /proc anywhere, do we?  Would that
+> help?
+
+I would prefer to not export such an implementation detail into proc
+
+-- 
+Michal Hocko
+SUSE Labs
