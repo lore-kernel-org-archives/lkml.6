@@ -2,76 +2,90 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278FFC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3D6C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0271222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 043DF222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+SAXfjH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733202AbfBMGeS (ORCPT
+        id S1733209AbfBMGiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 01:34:18 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:50216 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfBMGeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 01:34:17 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id DD67150848972F7E1E0C;
-        Wed, 13 Feb 2019 14:34:10 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x1D6Y5mP041722;
-        Wed, 13 Feb 2019 14:34:05 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019021314342732-25844473 ;
-          Wed, 13 Feb 2019 14:34:27 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  arm/mach-at91/pm : fix possible object reference leak
-Date:   Wed, 13 Feb 2019 22:55:46 +0800
-Message-Id: <1550069746-85671-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-02-13 14:34:27,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-02-13 14:33:58,
-        Serialize complete at 2019-02-13 14:33:58
-X-MAIL: mse01.zte.com.cn x1D6Y5mP041722
+        Wed, 13 Feb 2019 01:38:20 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43905 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfBMGiU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 01:38:20 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f90so707680plb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:38:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8hd0bchLPW831lBEDOivAggG0dO8jJpUK8mpvf0pvoI=;
+        b=i+SAXfjHhfUKokyCBh/5BEfW93EuoM9HXAuNKk+Z5TOtWf1sDpp8QwCT++IgeWLAXy
+         ETnLsCogYxGTsaCMcGhetmbz8F6Ild/Yf9/iBsqFE79vKzpQOyMIjocmgbqKgZuE8Olk
+         gED1zG4tkBQTTQiRrSMLDZfAuVHHIKDlBrsyyOlUYhITQe8lQH4IxOn4VwF0KcGooT2h
+         yI9/6CB/3i2443UoSmL/IUzbkorEZw9tXn0K+5DG8YnFj1T7M1WtLgT3bW4DtUj6sQBv
+         GfajJRNumbiAIN0LAAJn8YcydQlXOiZ72UY19+esrTjGzDa2PoGydiBSggl+A3JP7/0x
+         R2lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8hd0bchLPW831lBEDOivAggG0dO8jJpUK8mpvf0pvoI=;
+        b=ucSHXs3RMpYAAwK2ngNUGRPuIknEhm4uT6/7GxkhsCVtiVcW+XhukNnfX1+YKR6zsb
+         OB00ux8VrcIYljwi26pMhntIn02b/iNotDC3rqoul354VV1qxWyApgZkGRCt82CrXCSJ
+         Y7ntmpaU4Th3bgXz03Qa+M4V8oQjce0Oq5nAcwYQFeShjaiL9rpsL+Dy191C1GfXy950
+         w44s1jU+5m9YTLSWnYYwWkFQlBNxTEUQyi/IwgMao8NK6MzUmd8dXtB9V35MT8szDrUO
+         ChndtyWz7r8OgKXFNEWa+CYUxBs69zEb6S5Xl9j39tz2Om4OZww42i/S954vQiOVIQhk
+         FMZA==
+X-Gm-Message-State: AHQUAuanLZjvP2Sv6b7mwa8EEvjRbcD1X1G/n9RH65Vh+cUoanBM8F//
+        z0Cl73L0ZquK6YraRo1463g=
+X-Google-Smtp-Source: AHgI3Iaa4WKpU7xAW6/6qpii9y7YiFgIXVHuQkQf9uSVm8ggt0HrprVxIKP12wuqOTvw5YrmGZcRuw==
+X-Received: by 2002:a17:902:2a66:: with SMTP id i93mr7882402plb.128.1550039899190;
+        Tue, 12 Feb 2019 22:38:19 -0800 (PST)
+Received: from localhost ([39.7.15.189])
+        by smtp.gmail.com with ESMTPSA id v15sm19250563pgf.75.2019.02.12.22.38.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 22:38:18 -0800 (PST)
+Date:   Wed, 13 Feb 2019 15:38:15 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     xiang xiao <xiaoxiang781216@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+Message-ID: <20190213063815.GA32272@jagdpanzerIV>
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+ <20190212144606.4b7cf0f8@gandalf.local.home>
+ <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+ <20190213062912.GA23233@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213062912.GA23233@jagdpanzerIV>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_device_by_node() takes a reference to the struct device
-when it finds a match via get_device. When returning error we should
-call put_device.
+On (02/13/19 15:29), Sergey Senozhatsky wrote:
+>
+> cat /sys/module/printk/parameters/time ?
+ ^^^^^
+cat / echo
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- arch/arm/mach-at91/pm.c | 1 +
- 1 file changed, 1 insertion(+)
+Works both ways.
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 51e808a..70fadb7 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -621,6 +621,7 @@ static int __init at91_pm_backup_init(void)
- 
- securam_fail:
- 	iounmap(pm_data.sfrbu);
-+	put_device(&pdev->dev);
- 	pm_data.sfrbu = NULL;
- 	return ret;
- }
--- 
-1.8.3.1
-
+	-ss
