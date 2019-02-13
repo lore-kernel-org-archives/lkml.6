@@ -2,115 +2,185 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 651F3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AED9C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA7521872
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:49:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="lVOadcU0"
+	by mail.kernel.org (Postfix) with ESMTP id 3E7EA218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550087401;
+	bh=AQo6cThWCUn6eMRweS8Ymo+HmjUKCtHVa+MCXqJ03EA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KA/Sj0i1Xr5D+6EGgIyt2NWdME7Lha+5L6AA1XcPj1fUWYM8SXT2bTFYzmvQ5V0as
+	 Dm+9v0Mt5A8LKrX+EVgLpy3UhQJkcLh8bmlGnO2zAngWrx/Vb9Y8lwVmKDS6KVbbA7
+	 a+r+cJ0USvHhmziEX8nLy9peDAUdY27khSLJg5I4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394346AbfBMTtH (ORCPT
+        id S2394498AbfBMTt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 14:49:07 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40282 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733137AbfBMTtH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 14:49:07 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h1so1667126pfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 11:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mypbCqQv96xEnaOn1SOItCUfj0eOMDOPhX5eddQM5J8=;
-        b=lVOadcU0qHeZzxsusfoq2QP6mV65pIiNmJ9vwGxuToCtnbSjcd24vukDb9kBGXsuPJ
-         7daR0+orAEEqbC0ajjXvyCnPEUUHz4hXDpmwlwE2PQsDHmZR0cXrMwte6ibaDKAQZUfq
-         fW/bcPGMVgEYDXXuHmHYHQnHMw6MNLkPgI10FA1GkEx1UZkxdd+o9+eGeKse1XkVAWN1
-         Q7mwWAkUTftrLlTAQPHfL2v3u03o1nS92giCAAqYn5fE1wjj+gZ6i8IO1ke3kRnmAfND
-         huyMut6KlLCyhPr/gOwoqrTUtrbZ21hnCTO6aMjFMNZl3vTpNqDmftBWMAWBEHgWbN88
-         Ky5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mypbCqQv96xEnaOn1SOItCUfj0eOMDOPhX5eddQM5J8=;
-        b=OhejZ6wC/AvxSVZrMwlnKCFQi8XqUfmpMoY3KxV1BDsnSasp4Lkdqk6V0253r7oYSR
-         rMpNGM1ow/qg17e3ChdQtLLnKYYiIwOf8YleZyKxojAmdCsndt5i+lwSI0Gy2u+TXLJ1
-         aiLm7VDND66lQUzH8Xrz4+2t9dSrdUC1Ba8Vn0YRgV/wLFEeS2CFu72f7F5CGioWwPJP
-         WtLQ/UrNyFd/UlhX/ATIIWIUPpHutiYsGPT9Bs1bRTp//xl4hYQFR7j0kuCVklUUf3i1
-         ZH599k/batv+Zu3jMDaz1VEcqXfRIbwflfMcXSm+rpFp4pT83udlYsDmoQSgyZ1mRwj2
-         UV2Q==
-X-Gm-Message-State: AHQUAuam0szj+z6XXofamB2UVZGrx4wsY3Vy6w3vfiH1nyN0eVaPAAsd
-        EIryZlR8BhdI2Wwhwk+/Csi9ig==
-X-Google-Smtp-Source: AHgI3IZPrKXbuv52F/2Yzv4AhFgGgU9XVLJp1Yrkmiv66xXHNFs/cnEv1iBjB1GIgVchyohwrll8GA==
-X-Received: by 2002:a65:6684:: with SMTP id b4mr1964880pgw.55.1550087346469;
-        Wed, 13 Feb 2019 11:49:06 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id b12sm187019pfb.30.2019.02.13.11.49.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 11:49:05 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com
-Cc:     joel@joelfernandes.org, kernel-team@android.com,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH] binder: fix sparse issue in binder_alloc_selftest.c
-Date:   Wed, 13 Feb 2019 11:48:53 -0800
-Message-Id: <20190213194853.14952-1-tkjos@google.com>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+        Wed, 13 Feb 2019 14:49:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733137AbfBMTt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 14:49:59 -0500
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25E3121872;
+        Wed, 13 Feb 2019 19:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550087398;
+        bh=AQo6cThWCUn6eMRweS8Ymo+HmjUKCtHVa+MCXqJ03EA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=duLn/1JAPBDvfnfieJxcuKEMx65BpZXWjReAF5FFehBi5kHq+FsX94y4KZ4UCzTC2
+         pvkaSz9fo4eKw+jZTa9cC3lJZwYfm6iVuCNzGdTMMasOgOvDAm07K0D98nVq/3QwU3
+         SOg+fcXCm7PdhG6/ep6xk5471aknZLURcoYZsAig=
+Date:   Wed, 13 Feb 2019 13:49:57 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     sathyanarayanan.kuppuswamy@linux.intel.com
+Cc:     joro@8bytes.org, dwmw2@infradead.org, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, jacob.jun.pan@intel.com,
+        keith.busch@intel.com, Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] PCI/ATS: Add pci_prg_resp_pasid_required()
+ interface.
+Message-ID: <20190213194957.GK96272@google.com>
+References: <cover.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <e7dddc4f4092764bb5762e8b46c847278a8923ac.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7dddc4f4092764bb5762e8b46c847278a8923ac.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes sparse issues reported by the kbuild test robot running
-on https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
-char-misc-testing: bde4a19fc04f5 ("binder: use userspace pointer as base
-of buffer space")
+On Mon, Feb 11, 2019 at 01:50:31PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> Return the PRG Response PASID Required bit in the Page Request
+> Status Register.
+> 
+> As per PCIe spec r4.0, sec 10.5.2.3, if this bit is Set then the device
+> expects a PASID TLP Prefix on PRG Response Messages when the
+> corresponding Page Requests had a PASID TLP Prefix. If Clear, the device
+> does not expect PASID TLP Prefixes on any PRG Response Message, and the
+> device behavior is undefined if this bit is Clear and the device
+> receives a PRG Response Message with a PASID TLP Prefix. Also the device
+> behavior is undefined in the this bit is Set and the device receives a
+> PRG Response Message with no PASID TLP Prefix when the corresponding
+> Page Requests had a PASID TLP Prefix.
 
-Error output (drivers/android/binder_alloc_selftest.c):
-sparse: warning: incorrect type in assignment (different address spaces)
-sparse:    expected void *page_addr
-sparse:    got void [noderef] <asn:1> *user_data
-sparse: error: subtraction of different types can't work
+s/Set then the device/Set, the device/
+s/undefined if this bit is Clear and the device/undefined if the device/
+s/is undefined in the this/is undefined if this/
 
-Fixed by adding necessary "__user" tags.
+> This function will be used by drivers like IOMMU, if it is required to
+> check the status of the PRG Response PASID Required bit before enabling
+> the PASID support of the device.
+> 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Suggested-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
- drivers/android/binder_alloc_selftest.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+With typos (also below) addressed,
 
-diff --git a/drivers/android/binder_alloc_selftest.c b/drivers/android/binder_alloc_selftest.c
-index f0f4d7d026351..b72708918b06b 100644
---- a/drivers/android/binder_alloc_selftest.c
-+++ b/drivers/android/binder_alloc_selftest.c
-@@ -102,10 +102,11 @@ static bool check_buffer_pages_allocated(struct binder_alloc *alloc,
- 					 struct binder_buffer *buffer,
- 					 size_t size)
- {
--	void *page_addr, *end;
-+	void __user *page_addr;
-+	void __user *end;
- 	int page_index;
- 
--	end = (void *)PAGE_ALIGN((uintptr_t)buffer->user_data + size);
-+	end = (void __user *)PAGE_ALIGN((uintptr_t)buffer->user_data + size);
- 	page_addr = buffer->user_data;
- 	for (; page_addr < end; page_addr += PAGE_SIZE) {
- 		page_index = (page_addr - alloc->buffer) / PAGE_SIZE;
--- 
-2.20.1.791.gb4d0f1c61a-goog
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
+> ---
+>  drivers/pci/ats.c             | 31 +++++++++++++++++++++++++++++++
+>  include/linux/pci-ats.h       |  5 +++++
+>  include/uapi/linux/pci_regs.h |  1 +
+>  3 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+> index 5b78f3b1b918..f843cd846dff 100644
+> --- a/drivers/pci/ats.c
+> +++ b/drivers/pci/ats.c
+> @@ -368,6 +368,37 @@ int pci_pasid_features(struct pci_dev *pdev)
+>  }
+>  EXPORT_SYMBOL_GPL(pci_pasid_features);
+>  
+> +/**
+> + * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
+> + *				 status.
+> + * @pdev: PCI device structure
+> + *
+> + * Returns 1 if PASID is required in PRG Response message, 0 otherwise.
+> + *
+> + * Even though the PRG response PASID status is read from PRI status
+> + * register, since this API will mainly be used by PASID users, this
+> + * function is defined within #ifdef CONFIG_PCI_PASID instead of
+> + * CONFIG_PCI_PRI.
+> + *
+
+Remove blank comment line.
+
+> + */
+> +int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+> +{
+> +	u16 status;
+> +	int pos;
+> +
+> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+> +	if (!pos)
+> +		return 0;
+> +
+> +	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
+> +
+> +	if (status & PCI_PRI_STATUS_PASID)
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
+> +
+>  #define PASID_NUMBER_SHIFT	8
+>  #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
+>  /**
+> diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+> index 7c4b8e27268c..facfd6a18fe1 100644
+> --- a/include/linux/pci-ats.h
+> +++ b/include/linux/pci-ats.h
+> @@ -40,6 +40,7 @@ void pci_disable_pasid(struct pci_dev *pdev);
+>  void pci_restore_pasid_state(struct pci_dev *pdev);
+>  int pci_pasid_features(struct pci_dev *pdev);
+>  int pci_max_pasids(struct pci_dev *pdev);
+> +int pci_prg_resp_pasid_required(struct pci_dev *pdev);
+>  
+>  #else  /* CONFIG_PCI_PASID */
+>  
+> @@ -66,6 +67,10 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
+>  	return -EINVAL;
+>  }
+>  
+> +static int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_PCI_PASID */
+>  
+>  
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index e1e9888c85e6..898be572b010 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -880,6 +880,7 @@
+>  #define  PCI_PRI_STATUS_RF	0x001	/* Response Failure */
+>  #define  PCI_PRI_STATUS_UPRGI	0x002	/* Unexpected PRG index */
+>  #define  PCI_PRI_STATUS_STOPPED	0x100	/* PRI Stopped */
+> +#define  PCI_PRI_STATUS_PASID	0x8000	/* PRG Response PASID Required */
+>  #define PCI_PRI_MAX_REQ		0x08	/* PRI max reqs supported */
+>  #define PCI_PRI_ALLOC_REQ	0x0c	/* PRI max reqs allowed */
+>  #define PCI_EXT_CAP_PRI_SIZEOF	16
+> -- 
+> 2.20.1
+> 
