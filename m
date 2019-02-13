@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FB2C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DB1C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945C12175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D24B82175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025869;
-	bh=PVyiVVaYri/uacpHx1t8oI4En96JQHzVyYOndz+9HdI=;
+	s=default; t=1550025873;
+	bh=Qk6r4cidJtrzdJxAYHsYGdBvh2MODIRws3ikBCsMuvA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J2T2qLIja0OVQOs2okwxerju6SD0sYlvDctCsmLziryZtXZBrFkhqMpiFwb4aukTz
-	 /LbKvEPnIxgCeewK0oVdGl1AUSwYZAC7yGh1JinTAvWDUbe1Hp2nGVLBwU4+I/qra9
-	 PkebHmrSjJcSug9dmhYalzoRZuNpGQPpHlhZl1oU=
+	b=UXxRPEmtb/9tebnDy5oO4KL2X/Btu9DY/ZmWqMAeze+5HrswdJPSbIqXv0zfZk9Pu
+	 PCbPWd/+T/v4zrvP8t9FE64ShSdzUv9SUgezIorJbaB0K0GblBZv4PG3z6t0GPjL67
+	 BPjFrDrldOTR/e8saTOGH3Hkb7L6C/WmsyOfjKow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389230AbfBMClS (ORCPT
+        id S2389604AbfBMCoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44874 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389161AbfBMClJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:09 -0500
+        id S2389223AbfBMClS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEA94222CC;
-        Wed, 13 Feb 2019 02:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 505A4222C7;
+        Wed, 13 Feb 2019 02:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025668;
-        bh=PVyiVVaYri/uacpHx1t8oI4En96JQHzVyYOndz+9HdI=;
+        s=default; t=1550025677;
+        bh=Qk6r4cidJtrzdJxAYHsYGdBvh2MODIRws3ikBCsMuvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lnkfbZYe9Fxq7V8fxbZ4wJVOIRO7iHfBCgx8NbN3ttwwW39tgBHOD9aJk5wVICngX
-         //BD1fim349ItVZOY8i5TUdtP8TLIM5QQ9L8gwkZWYHu2IiXndeIu9cWDvtVvPLHIf
-         UEan+ZfzopyjfqZ7JujvYiTwDyzXwRgoGl/ytESo=
+        b=jdjONkb0tnxRzCbVGW+4C6HJVgttFa3zOZFxzEirK8BdIWaYrO9C333Kiz69n29re
+         0Pa40B2kG5Bh+xaJZWvoh+/8u14+8xdRIOcIiDFDWbNC4JuYr3skP+0zirdmpmzRuL
+         7tVjN5BP0bctWzHJnSaoy4okIpfxlPk6YQUP2Qs0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 19/21] mlxsw: spectrum_switchdev: Do not treat static FDB entries as sticky
-Date:   Tue, 12 Feb 2019 21:40:38 -0500
-Message-Id: <20190213024040.21740-19-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 04/16] mfd: ab8500-core: Return zero in get_register_interruptible()
+Date:   Tue, 12 Feb 2019 21:41:00 -0500
+Message-Id: <20190213024112.22038-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
-References: <20190213024040.21740-1-sashal@kernel.org>
+In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
+References: <20190213024112.22038-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,81 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 64254a2054611205798e6bde634639bc704573ac ]
+[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
 
-The driver currently treats static FDB entries as both static and
-sticky. This is incorrect and prevents such entries from being roamed to
-a different port via learning.
+This function is supposed to return zero on success or negative error
+codes on error.  Unfortunately, there is a bug so it sometimes returns
+non-zero, positive numbers on success.
 
-Fix this by configuring static entries with ageing disabled and roaming
-enabled.
+I noticed this bug during review and I can't test it.  It does appear
+that the return is sometimes propogated back to _regmap_read() where all
+non-zero returns are treated as failure so this may affect run time.
 
-In net-next we can add proper support for the newly introduced 'sticky'
-flag.
-
-Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
-Reviewed-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/mfd/ab8500-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index 60e1edcbe573..7ca1ab5c1936 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -794,7 +794,7 @@ static int mlxsw_sp_port_vlans_add(struct mlxsw_sp_port *mlxsw_sp_port,
- static enum mlxsw_reg_sfd_rec_policy mlxsw_sp_sfd_rec_policy(bool dynamic)
- {
- 	return dynamic ? MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_INGRESS :
--			 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY;
-+			 MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_MLAG;
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index fefbe4cfa61d..1263cfd8b4d2 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -259,7 +259,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
+ 	mutex_unlock(&ab8500->lock);
+ 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+ 
+-	return ret;
++	return (ret < 0) ? ret : 0;
  }
  
- static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
-@@ -806,7 +806,7 @@ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
- static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
- 				     const char *mac, u16 fid, bool adding,
- 				     enum mlxsw_reg_sfd_rec_action action,
--				     bool dynamic)
-+				     enum mlxsw_reg_sfd_rec_policy policy)
- {
- 	char *sfd_pl;
- 	u8 num_rec;
-@@ -817,8 +817,7 @@ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
- 		return -ENOMEM;
- 
- 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
--	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
--			      mac, fid, action, local_port);
-+	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, policy, mac, fid, action, local_port);
- 	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
- 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
- 	if (err)
-@@ -837,7 +836,8 @@ static int mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
- 				   bool dynamic)
- {
- 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, local_port, mac, fid, adding,
--					 MLXSW_REG_SFD_REC_ACTION_NOP, dynamic);
-+					 MLXSW_REG_SFD_REC_ACTION_NOP,
-+					 mlxsw_sp_sfd_rec_policy(dynamic));
- }
- 
- int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
-@@ -845,7 +845,7 @@ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
- {
- 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, 0, mac, fid, adding,
- 					 MLXSW_REG_SFD_REC_ACTION_FORWARD_IP_ROUTER,
--					 false);
-+					 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY);
- }
- 
- static int mlxsw_sp_port_fdb_uc_lag_op(struct mlxsw_sp *mlxsw_sp, u16 lag_id,
+ static int ab8500_get_register(struct device *dev, u8 bank,
 -- 
 2.19.1
 
