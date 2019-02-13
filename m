@@ -2,117 +2,145 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860D0C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 023D7C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A00520835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026627;
-	bh=LsK7omSp9/B3EHP4Se8H0UsHklqvEVYTkx+mJSL0+wo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CcFZTULip0Wp1ChIPODzhvvlBCJYsMcKu47BLuteko9Rj7U+I+ze9aiVHH4fnQbth
-	 CegQO+o49wIsMFch0ApXIvHGfzcT6wCCfGXk6pyxeDhEdN/hoRXkUlVvG3faJ0ECFE
-	 JBOzgkNVykGgCml4YoclT8C3LbBxDevNHEgqt7u8=
+	by mail.kernel.org (Postfix) with ESMTP id CD67D20835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390136AbfBMC5F (ORCPT
+        id S2390148AbfBMC5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388244AbfBMChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:12 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A8A1222C2;
-        Wed, 13 Feb 2019 02:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025431;
-        bh=LsK7omSp9/B3EHP4Se8H0UsHklqvEVYTkx+mJSL0+wo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nc42F2TciOmgoQlVAAKMJ7fl3TWjsQurYtBcFvSwNvz26o3KPDsIrd/15KovPqxJ3
-         AbOPXVYfFhGT5aPeZAWjqjG3WAQH5cyVcGJUxiUv6iMb4zLVCZwsF/+FE3ulJbLTeL
-         zFoRv9NMsgARfpxxXce0eN5bmgnr+Jxgr1U+yp0w=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 08/83] mfd: db8500-prcmu: Fix some section annotations
-Date:   Tue, 12 Feb 2019 21:35:46 -0500
-Message-Id: <20190213023701.20286-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
-References: <20190213023701.20286-1-sashal@kernel.org>
+        Tue, 12 Feb 2019 21:57:12 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.130]:42549 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388244AbfBMC5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:57:10 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 28DE6303E2AC
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 20:57:09 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tkjVg7tRY4FKptkjVgSYK0; Tue, 12 Feb 2019 20:57:09 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=38868 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtkjU-001tLj-Eq; Tue, 12 Feb 2019 20:57:08 -0600
+Date:   Tue, 12 Feb 2019 20:57:07 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alex Dubov <oakad@yahoo.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] memstick: mark expected switch fall-throughs
+Message-ID: <20190213025707.GA16307@embeddedor>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtkjU-001tLj-Eq
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:38868
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-[ Upstream commit a3888f62fe66429fad3be7f2ba962e1e08c26fd6 ]
+This patch fixes the following warnings:
 
-When building the kernel with Clang, the following section mismatch
-warnings appear:
+drivers/memstick/host/jmb38x_ms.c: In function ‘jmb38x_ms_write_data’:
+drivers/memstick/host/jmb38x_ms.c:261:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   host->io_pos++;
+   ~~~~~~~~~~~~^~
+drivers/memstick/host/jmb38x_ms.c:262:2: note: here
+  case 2:
+  ^~~~
+drivers/memstick/host/jmb38x_ms.c:264:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   host->io_pos++;
+   ~~~~~~~~~~~~^~
+drivers/memstick/host/jmb38x_ms.c:265:2: note: here
+  case 1:
+  ^~~~
+drivers/memstick/host/tifm_ms.c: In function ‘tifm_ms_write_data’:
+drivers/memstick/host/tifm_ms.c:168:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   host->io_pos++;
+   ~~~~~~~~~~~~^~
+drivers/memstick/host/tifm_ms.c:169:2: note: here
+  case 2:
+  ^~~~
+drivers/memstick/host/tifm_ms.c:171:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   host->io_pos++;
+   ~~~~~~~~~~~~^~
+drivers/memstick/host/tifm_ms.c:172:2: note: here
+  case 1:
+  ^~~~
 
-WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
-the function db8500_prcmu_probe() to the function
-.init.text:init_prcm_registers()
-The function db8500_prcmu_probe() references
-the function __init init_prcm_registers().
-This is often because db8500_prcmu_probe lacks a __init
-annotation or the annotation of init_prcm_registers is wrong.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
-the function db8500_prcmu_probe() to the function
-.init.text:fw_project_name()
-The function db8500_prcmu_probe() references
-the function __init fw_project_name().
-This is often because db8500_prcmu_probe lacks a __init
-annotation or the annotation of fw_project_name is wrong.
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-db8500_prcmu_probe should not be marked as __init so remove the __init
-annotation from fw_project_name and init_prcm_registers.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/mfd/db8500-prcmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/memstick/host/jmb38x_ms.c | 2 ++
+ drivers/memstick/host/tifm_ms.c   | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
-index 5970b8def548..aec20e1c7d3d 100644
---- a/drivers/mfd/db8500-prcmu.c
-+++ b/drivers/mfd/db8500-prcmu.c
-@@ -2584,7 +2584,7 @@ static struct irq_chip prcmu_irq_chip = {
- 	.irq_unmask	= prcmu_irq_unmask,
- };
- 
--static __init char *fw_project_name(u32 project)
-+static char *fw_project_name(u32 project)
- {
- 	switch (project) {
- 	case PRCMU_FW_PROJECT_U8500:
-@@ -2732,7 +2732,7 @@ void __init db8500_prcmu_early_init(u32 phy_base, u32 size)
- 	INIT_WORK(&mb0_transfer.mask_work, prcmu_mask_work);
- }
- 
--static void __init init_prcm_registers(void)
-+static void init_prcm_registers(void)
- {
- 	u32 val;
- 
+diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
+index bcdca9fbef51..49c71f55489f 100644
+--- a/drivers/memstick/host/jmb38x_ms.c
++++ b/drivers/memstick/host/jmb38x_ms.c
+@@ -259,9 +259,11 @@ static unsigned int jmb38x_ms_write_data(struct jmb38x_ms_host *host,
+ 	case 3:
+ 		host->io_word[0] |= buf[off + 2] << 16;
+ 		host->io_pos++;
++		/* fall through */
+ 	case 2:
+ 		host->io_word[0] |= buf[off + 1] << 8;
+ 		host->io_pos++;
++		/* fall through */
+ 	case 1:
+ 		host->io_word[0] |= buf[off];
+ 		host->io_pos++;
+diff --git a/drivers/memstick/host/tifm_ms.c b/drivers/memstick/host/tifm_ms.c
+index bed205849d02..1bbb2ead9556 100644
+--- a/drivers/memstick/host/tifm_ms.c
++++ b/drivers/memstick/host/tifm_ms.c
+@@ -166,9 +166,11 @@ static unsigned int tifm_ms_write_data(struct tifm_ms *host,
+ 	case 3:
+ 		host->io_word |= buf[off + 2] << 16;
+ 		host->io_pos++;
++		/* fall through */
+ 	case 2:
+ 		host->io_word |= buf[off + 1] << 8;
+ 		host->io_pos++;
++		/* fall through */
+ 	case 1:
+ 		host->io_word |= buf[off];
+ 		host->io_pos++;
 -- 
-2.19.1
+2.20.1
 
