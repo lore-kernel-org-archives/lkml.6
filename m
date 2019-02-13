@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C209C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9BAC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F16222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ACB9222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083341;
-	bh=PH1yMMZkL2OvNNUxwFXqQURZ2kohHkqAQE84NPyXoZM=;
+	s=default; t=1550083344;
+	bh=PITCl3HssLuX8C8OltNOCp1/oZgQK6SExtyq9jw2R/o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cyBNYmX9IGtz9P/KqLt0aEYEna4Qd1ZLMdhXJkndZkeV2k7AwMzycwjVRlK7p9bx2
-	 dAY6Olt79g0m0fNm+0biOoCIxsf9tFhx6EWykLzvLQmR5yxSfOWvsahka1TTROk7VP
-	 CXyg7vJsE8rIwVf2p9cmSEidjMdi0iost83ysSQk=
+	b=uuTHw2REmTpaexc2GyEGyusaLn3BJ28yVBszMULs2wqriCVfqbduYb6LCE1sqPL9k
+	 A1WiN3Bp7IP1QcMBN+9BICsAYbRmOovkICP5j4nj/497PreJWL+l2zMNHdbKV9Z4F4
+	 zrFCbrfU5Pqdp5tlJdXqp0xFwh9pMcUIzj36tw1o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405632AbfBMSmT (ORCPT
+        id S2405647AbfBMSmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40796 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:42:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403891AbfBMSmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:42:18 -0500
+        id S2403891AbfBMSmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:42:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ABA8222D5;
-        Wed, 13 Feb 2019 18:42:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7345222D8;
+        Wed, 13 Feb 2019 18:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083337;
-        bh=PH1yMMZkL2OvNNUxwFXqQURZ2kohHkqAQE84NPyXoZM=;
+        s=default; t=1550083340;
+        bh=PITCl3HssLuX8C8OltNOCp1/oZgQK6SExtyq9jw2R/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2PKL45AJw/kMJLpRmnMJtQLMlyrixQl6AlUOrdwFe7jTa2IHuU1zfZY29bfB09PjV
-         rqEUFllcfPTGn2kLQ+a/DY981xLy9pdDeJeuocAj3zEeqDWO2kLssf1V+I8Q7KVvmC
-         GlfeuvS1hct56J3Ok1Ub2a/kviYhJFz8Nj8X6fpU=
+        b=NfgBTaHOR9qcU1+ZOTZawTxzqDt33fga5qX17b0pza3Mu2cgvFuLlC/nAN+EMpLBw
+         SQWy74sIihtJr+WHIJZGLWlU5i3yC5de55Jz2CkBbgq9z76pNH5TztzTPT5sr63kSD
+         xH6XFh7jjdAFBwGPkEh6n9wkuL+wb4MF5EN+7isM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 4.14 06/35] misc: vexpress: Off by one in vexpress_syscfg_exec()
-Date:   Wed, 13 Feb 2019 19:38:01 +0100
-Message-Id: <20190213183706.475349477@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.14 07/35] samples: mei: use /dev/mei0 instead of /dev/mei
+Date:   Wed, 13 Feb 2019 19:38:02 +0100
+Message-Id: <20190213183706.528340331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -65,35 +63,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit f8a70d8b889f180e6860cb1f85fed43d37844c5a upstream.
+commit c4a46acf1db3ce547d290c29e55b3476c78dd76c upstream.
 
-The > comparison should be >= to prevent reading beyond the end of the
-func->template[] array.
+The device was moved from misc device to character devices
+to support multiple mei devices.
 
-(The func->template array is allocated in vexpress_syscfg_regmap_init()
-and it has func->num_templates elements.)
-
-Fixes: 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: <stable@vger.kernel.org> #v4.9+
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vexpress-syscfg.c |    2 +-
+ samples/mei/mei-amt-version.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/vexpress-syscfg.c
-+++ b/drivers/misc/vexpress-syscfg.c
-@@ -61,7 +61,7 @@ static int vexpress_syscfg_exec(struct v
- 	int tries;
- 	long timeout;
+--- a/samples/mei/mei-amt-version.c
++++ b/samples/mei/mei-amt-version.c
+@@ -117,7 +117,7 @@ static bool mei_init(struct mei *me, con
  
--	if (WARN_ON(index > func->num_templates))
-+	if (WARN_ON(index >= func->num_templates))
- 		return -EINVAL;
+ 	me->verbose = verbose;
  
- 	command = readl(syscfg->base + SYS_CFGCTRL);
+-	me->fd = open("/dev/mei", O_RDWR);
++	me->fd = open("/dev/mei0", O_RDWR);
+ 	if (me->fd == -1) {
+ 		mei_err(me, "Cannot establish a handle to the Intel MEI driver\n");
+ 		goto err;
 
 
