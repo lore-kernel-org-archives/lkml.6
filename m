@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C53C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1DC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC86207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30E40207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:04:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550027071;
-	bh=bbVAj204s/UIRqVN/xNXuZHt4DeXPnmiFNHGybQBrO8=;
+	s=default; t=1550027076;
+	bh=egKMWKjR+JmDgrIX258k59HTkB+Pv/O7tISaEu32ATE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O66oIyGK6e803rCUQ3owV9cXvVmR+MbrdldBGbfxJjcuqY+Ps/0YozLFX/WgP/0qh
-	 dkVsh5lVxQ2oZrJ3pHDVts+19IBRwWmb5rfZdit+lJeCK5QsOU4NgmHjlAr1cCuLTj
-	 gFTc54Fei4MboaIB9kaTEu814FK34IP37LcY6klQ=
+	b=jR2Sv7Apo42UyaH9DLJuTV72F/zLfTZrsLzK4YBoUU/ub4VI/QAPstUvjwjEyuX9c
+	 GFZFMB6ZctVHDLyRzBztHbWAATfyLXXZoT+E/NZj5ar/TMMJkiRgL2EJEIM3NptFx/
+	 Gn+A0ZThi+LQ7Xl6C7OaOj77q2kb1Ztjg0bmE4+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390432AbfBMDE3 (ORCPT
+        id S2390341AbfBMDE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:04:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37692 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 22:04:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387573AbfBMCeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387504AbfBMCeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 21:34:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 724FD222C9;
-        Wed, 13 Feb 2019 02:34:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72573222C2;
+        Wed, 13 Feb 2019 02:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025244;
-        bh=bbVAj204s/UIRqVN/xNXuZHt4DeXPnmiFNHGybQBrO8=;
+        s=default; t=1550025245;
+        bh=egKMWKjR+JmDgrIX258k59HTkB+Pv/O7tISaEu32ATE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Var83kaJBEYq69eqgatyRB1M0YHrfh5y48RjhkwifNvbnMyZBikwZlusy4fChCPnH
-         9MBwBSV3CC5ObsHFwBJsXS/OhptXGe1oTzH2kcePeSxIK/iAOxUCm8mMmKmBJKsTTX
-         wok8Emhmp+um6iP+0oh81E/+p+L4mVYzrECOq83g=
+        b=GU9FvojdqL3AWKfWFTNhxgPWNr2uXhknm5Y/A6ceLFyziRGx0tWLy2wW+xdr9CpjQ
+         Z55laAZPzC5feOMxK5vfcbuHm3o1Gsg5rM+KE0ccvRXhv7Qkn7qmlClv1mUrzBpcOE
+         YQW+/4c9nGHbw37E+ySL02qpWOyTTi6RO3vysV+I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Oskolkov <posk@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 026/105] selftests: net: fix/improve ip_defrag selftest
-Date:   Tue, 12 Feb 2019 21:32:17 -0500
-Message-Id: <20190213023336.19019-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 027/105] bpf: Fix [::] -> [::1] rewrite in sys_sendmsg
+Date:   Tue, 12 Feb 2019 21:32:18 -0500
+Message-Id: <20190213023336.19019-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -57,226 +57,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Oskolkov <posk@google.com>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit 3271a4821882a64214acc1bd7b173900ec70c9bf ]
+[ Upstream commit e8e36984080b55ac5e57bdb09a5b570f2fc8e963 ]
 
-Commit ade446403bfb ("net: ipv4: do not handle duplicate fragments as
-overlapping") changed IPv4 defragmentation so that duplicate fragments,
-as well as _some_ fragments completely covered by previously delivered
-fragments, do not lead to the whole frag queue being discarded. This
-makes the existing ip_defrag selftest flaky.
+sys_sendmsg has supported unspecified destination IPv6 (wildcard) for
+unconnected UDP sockets since 876c7f41. When [::] is passed by user as
+destination, sys_sendmsg rewrites it with [::1] to be consistent with
+BSD (see "BSD'ism" comment in the code).
 
-This patch
-* makes sure that negative IPv4 defrag tests generate truly overlapping
-  fragments that trigger defrag queue drops;
-* tests that duplicate IPv4 fragments do not trigger defrag queue drops;
-* makes a couple of minor tweaks to the test aimed at increasing its code
-  coverage and reduce flakiness.
+This didn't work when cgroup-bpf was enabled though since the rewrite
+[::] -> [::1] happened before passing control to cgroup-bpf block where
+fl6.daddr was updated with passed by user sockaddr_in6.sin6_addr (that
+might or might not be changed by BPF program). That way if user passed
+[::] as dst IPv6 it was first rewritten with [::1] by original code from
+876c7f41, but then rewritten back with [::] by cgroup-bpf block.
 
-Signed-off-by: Peter Oskolkov <posk@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+It happened even when BPF_CGROUP_UDP6_SENDMSG program was not present
+(CONFIG_CGROUP_BPF=y was enough).
+
+The fix is to apply BSD'ism after cgroup-bpf block so that [::] is
+replaced with [::1] no matter where it came from: passed by user to
+sys_sendmsg or set by BPF_CGROUP_UDP6_SENDMSG program.
+
+Fixes: 1cedee13d25a ("bpf: Hooks for sys_sendmsg")
+Reported-by: Nitin Rawat <nitin.rawat@intel.com>
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/ip_defrag.c  | 96 +++++++++++++++++++++---
- tools/testing/selftests/net/ip_defrag.sh |  9 ++-
- 2 files changed, 95 insertions(+), 10 deletions(-)
+ net/ipv6/udp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/net/ip_defrag.c b/tools/testing/selftests/net/ip_defrag.c
-index 61ae2782388e..5d56cc0838f6 100644
---- a/tools/testing/selftests/net/ip_defrag.c
-+++ b/tools/testing/selftests/net/ip_defrag.c
-@@ -203,6 +203,7 @@ static void send_udp_frags(int fd_raw, struct sockaddr *addr,
- {
- 	struct ip *iphdr = (struct ip *)ip_frame;
- 	struct ip6_hdr *ip6hdr = (struct ip6_hdr *)ip_frame;
-+	const bool ipv4 = !ipv6;
- 	int res;
- 	int offset;
- 	int frag_len;
-@@ -239,19 +240,53 @@ static void send_udp_frags(int fd_raw, struct sockaddr *addr,
- 		iphdr->ip_sum = 0;
- 	}
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index d01ec252cb81..848dd38a907a 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1322,10 +1322,7 @@ do_udp_sendmsg:
+ 	ipc6.opt = opt;
  
-+	/* Occasionally test in-order fragments. */
-+	if (!cfg_overlap && (rand() % 100 < 15)) {
-+		offset = 0;
-+		while (offset < (UDP_HLEN + payload_len)) {
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
-+			offset += max_frag_len;
-+		}
-+		return;
-+	}
-+
-+	/* Occasionally test IPv4 "runs" (see net/ipv4/ip_fragment.c) */
-+	if (ipv4 && !cfg_overlap && (rand() % 100 < 20) &&
-+			(payload_len > 9 * max_frag_len)) {
-+		offset = 6 * max_frag_len;
-+		while (offset < (UDP_HLEN + payload_len)) {
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
-+			offset += max_frag_len;
-+		}
-+		offset = 3 * max_frag_len;
-+		while (offset < 6 * max_frag_len) {
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
-+			offset += max_frag_len;
-+		}
-+		offset = 0;
-+		while (offset < 3 * max_frag_len) {
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
-+			offset += max_frag_len;
-+		}
-+		return;
-+	}
-+
- 	/* Odd fragments. */
- 	offset = max_frag_len;
- 	while (offset < (UDP_HLEN + payload_len)) {
- 		send_fragment(fd_raw, addr, alen, offset, ipv6);
-+		/* IPv4 ignores duplicates, so randomly send a duplicate. */
-+		if (ipv4 && (1 == rand() % 100))
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
- 		offset += 2 * max_frag_len;
- 	}
- 
- 	if (cfg_overlap) {
- 		/* Send an extra random fragment. */
--		offset = rand() % (UDP_HLEN + payload_len - 1);
--		/* sendto() returns EINVAL if offset + frag_len is too small. */
- 		if (ipv6) {
- 			struct ip6_frag *fraghdr = (struct ip6_frag *)(ip_frame + IP6_HLEN);
-+			/* sendto() returns EINVAL if offset + frag_len is too small. */
-+			offset = rand() % (UDP_HLEN + payload_len - 1);
- 			frag_len = max_frag_len + rand() % 256;
- 			/* In IPv6 if !!(frag_len % 8), the fragment is dropped. */
- 			frag_len &= ~0x7;
-@@ -259,13 +294,29 @@ static void send_udp_frags(int fd_raw, struct sockaddr *addr,
- 			ip6hdr->ip6_plen = htons(frag_len);
- 			frag_len += IP6_HLEN;
- 		} else {
--			frag_len = IP4_HLEN + UDP_HLEN + rand() % 256;
-+			/* In IPv4, duplicates and some fragments completely inside
-+			 * previously sent fragments are dropped/ignored. So
-+			 * random offset and frag_len can result in a dropped
-+			 * fragment instead of a dropped queue/packet. So we
-+			 * hard-code offset and frag_len.
-+			 *
-+			 * See ade446403bfb ("net: ipv4: do not handle duplicate
-+			 * fragments as overlapping").
-+			 */
-+			if (max_frag_len * 4 < payload_len || max_frag_len < 16) {
-+				/* not enough payload to play with random offset and frag_len. */
-+				offset = 8;
-+				frag_len = IP4_HLEN + UDP_HLEN + max_frag_len;
-+			} else {
-+				offset = rand() % (payload_len / 2);
-+				frag_len = 2 * max_frag_len + 1 + rand() % 256;
-+			}
- 			iphdr->ip_off = htons(offset / 8 | IP4_MF);
- 			iphdr->ip_len = htons(frag_len);
+ 	fl6.flowi6_proto = sk->sk_protocol;
+-	if (!ipv6_addr_any(daddr))
+-		fl6.daddr = *daddr;
+-	else
+-		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
++	fl6.daddr = *daddr;
+ 	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
+ 		fl6.saddr = np->saddr;
+ 	fl6.fl6_sport = inet->inet_sport;
+@@ -1353,6 +1350,9 @@ do_udp_sendmsg:
  		}
- 		res = sendto(fd_raw, ip_frame, frag_len, 0, addr, alen);
- 		if (res < 0)
--			error(1, errno, "sendto overlap");
-+			error(1, errno, "sendto overlap: %d", frag_len);
- 		if (res != frag_len)
- 			error(1, 0, "sendto overlap: %d vs %d", (int)res, frag_len);
- 		frag_counter++;
-@@ -275,6 +326,9 @@ static void send_udp_frags(int fd_raw, struct sockaddr *addr,
- 	offset = 0;
- 	while (offset < (UDP_HLEN + payload_len)) {
- 		send_fragment(fd_raw, addr, alen, offset, ipv6);
-+		/* IPv4 ignores duplicates, so randomly send a duplicate. */
-+		if (ipv4 && (1 == rand() % 100))
-+			send_fragment(fd_raw, addr, alen, offset, ipv6);
- 		offset += 2 * max_frag_len;
- 	}
- }
-@@ -282,7 +336,11 @@ static void send_udp_frags(int fd_raw, struct sockaddr *addr,
- static void run_test(struct sockaddr *addr, socklen_t alen, bool ipv6)
- {
- 	int fd_tx_raw, fd_rx_udp;
--	struct timeval tv = { .tv_sec = 0, .tv_usec = 10 * 1000 };
-+	/* Frag queue timeout is set to one second in the calling script;
-+	 * socket timeout should be just a bit longer to avoid tests interfering
-+	 * with each other.
-+	 */
-+	struct timeval tv = { .tv_sec = 1, .tv_usec = 10 };
- 	int idx;
- 	int min_frag_len = ipv6 ? 1280 : 8;
- 
-@@ -308,12 +366,32 @@ static void run_test(struct sockaddr *addr, socklen_t alen, bool ipv6)
- 			payload_len += (rand() % 4096)) {
- 		if (cfg_verbose)
- 			printf("payload_len: %d\n", payload_len);
--		max_frag_len = min_frag_len;
--		do {
-+
-+		if (cfg_overlap) {
-+			/* With overlaps, one send/receive pair below takes
-+			 * at least one second (== timeout) to run, so there
-+			 * is not enough test time to run a nested loop:
-+			 * the full overlap test takes 20-30 seconds.
-+			 */
-+			max_frag_len = min_frag_len +
-+				rand() % (1500 - FRAG_HLEN - min_frag_len);
- 			send_udp_frags(fd_tx_raw, addr, alen, ipv6);
- 			recv_validate_udp(fd_rx_udp);
--			max_frag_len += 8 * (rand() % 8);
--		} while (max_frag_len < (1500 - FRAG_HLEN) && max_frag_len <= payload_len);
-+		} else {
-+			/* Without overlaps, each packet reassembly (== one
-+			 * send/receive pair below) takes very little time to
-+			 * run, so we can easily afford more thourough testing
-+			 * with a nested loop: the full non-overlap test takes
-+			 * less than one second).
-+			 */
-+			max_frag_len = min_frag_len;
-+			do {
-+				send_udp_frags(fd_tx_raw, addr, alen, ipv6);
-+				recv_validate_udp(fd_rx_udp);
-+				max_frag_len += 8 * (rand() % 8);
-+			} while (max_frag_len < (1500 - FRAG_HLEN) &&
-+				 max_frag_len <= payload_len);
-+		}
  	}
  
- 	/* Cleanup. */
-diff --git a/tools/testing/selftests/net/ip_defrag.sh b/tools/testing/selftests/net/ip_defrag.sh
-index f34672796044..7dd79a9efb17 100755
---- a/tools/testing/selftests/net/ip_defrag.sh
-+++ b/tools/testing/selftests/net/ip_defrag.sh
-@@ -11,10 +11,17 @@ readonly NETNS="ns-$(mktemp -u XXXXXX)"
- setup() {
- 	ip netns add "${NETNS}"
- 	ip -netns "${NETNS}" link set lo up
++	if (ipv6_addr_any(&fl6.daddr))
++		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
 +
- 	ip netns exec "${NETNS}" sysctl -w net.ipv4.ipfrag_high_thresh=9000000 >/dev/null 2>&1
- 	ip netns exec "${NETNS}" sysctl -w net.ipv4.ipfrag_low_thresh=7000000 >/dev/null 2>&1
-+	ip netns exec "${NETNS}" sysctl -w net.ipv4.ipfrag_time=1 >/dev/null 2>&1
-+
- 	ip netns exec "${NETNS}" sysctl -w net.ipv6.ip6frag_high_thresh=9000000 >/dev/null 2>&1
- 	ip netns exec "${NETNS}" sysctl -w net.ipv6.ip6frag_low_thresh=7000000 >/dev/null 2>&1
-+	ip netns exec "${NETNS}" sysctl -w net.ipv6.ip6frag_time=1 >/dev/null 2>&1
-+
-+	# DST cache can get full with a lot of frags, with GC not keeping up with the test.
-+	ip netns exec "${NETNS}" sysctl -w net.ipv6.route.max_size=65536 >/dev/null 2>&1
- }
- 
- cleanup() {
-@@ -27,7 +34,6 @@ setup
- echo "ipv4 defrag"
- ip netns exec "${NETNS}" ./ip_defrag -4
- 
--
- echo "ipv4 defrag with overlaps"
- ip netns exec "${NETNS}" ./ip_defrag -4o
- 
-@@ -37,3 +43,4 @@ ip netns exec "${NETNS}" ./ip_defrag -6
- echo "ipv6 defrag with overlaps"
- ip netns exec "${NETNS}" ./ip_defrag -6o
- 
-+echo "all tests done"
+ 	final_p = fl6_update_dst(&fl6, opt, &final);
+ 	if (final_p)
+ 		connected = false;
 -- 
 2.19.1
 
