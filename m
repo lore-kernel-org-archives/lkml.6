@@ -2,202 +2,133 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C36C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0527EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03881222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C82A2222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:26:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MF9o1fqX"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZqUogImA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfBMJ0A (ORCPT
+        id S1730355AbfBMJ0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:26:00 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33123 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728977AbfBMJZ7 (ORCPT
+        Wed, 13 Feb 2019 04:26:32 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:47053 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728977AbfBMJ0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:25:59 -0500
-Received: by mail-wm1-f66.google.com with SMTP id h22so1403539wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:25:57 -0800 (PST)
+        Wed, 13 Feb 2019 04:26:32 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g6so864952pfh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:26:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=N/24VafAe3SbghCeTmnYviQLVXiAQGmM8THLiXIbj28=;
-        b=MF9o1fqXqDMnX8uDQo5tq6toCuEqUHnshHwlMFXoeEgkxWTHhh02AAmKCq7dC+VVp4
-         U0qAcMyJlrw5VORFEDk6DqgaJ5aA5V8fzgfykdvW8uLCvvwZd7AdFOHu2snxMYznUiJ+
-         Oqn/U/s5WP1NXZihrNDdn0jI3cABn8h2F7NbInJgciiZtVE30qNqaTQYmU2qx4OV4SfF
-         qLjSIE+zkhBCfPwdOk/zvyamW+FJMUurqMYrdev5WDn5jcnJt06R+/QE+z8JzqY8ADRv
-         dFU8tPMKAnW11JCMl60Z6eSA18akYZUrOCry3LGaWyEt401hJh0XIqoN8Lzwt6VWBcWU
-         /lgQ==
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=zUr8SWKldEF6gVUMQuEkEMpWrr/VC2B6XExLDaAwFwU=;
+        b=ZqUogImAXCzLKe4cs58noWJkKNaGdzd/69cpyY4r9RHJthIsBQIfouss8IF+Xn3hre
+         0hyQnrWP1Tk5imN2x+bZBzjxLaCd1Ut/gkbp/36YkfpJOzklj4rfNhQO5/0yo+Zq65Xo
+         77Rt/VCEpj3p8iGGHaM7YqfK5rggn/sSwCz6vNIgBwiaffZ6Kar9djzuIEaN5wWubxda
+         df15Iv55eAhvjnFX86zqhWAPg4ZGejEU2T0TuLn3vIZ6qkwuKQQACLPOgXdaAi8i8Wp5
+         wOGUtHhFDXFxiMgnr1fonQwt8urdaC7BqNN0RUZ21Jktf/TEwAPA3jzatwW4Z+eo2ViV
+         LZEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=N/24VafAe3SbghCeTmnYviQLVXiAQGmM8THLiXIbj28=;
-        b=ot9dgtkGDEMwfzsU8rcGcAU7p1zZHuMvfs6TeUZOjnIzBISUQvzrqmexfQ/sg2ddO7
-         +uFYSu0nTgIRuCsU0SMoh6XMeXlF+ufqUp9ijNwk8K0Beglc/DNArbN7LkK0axQOjA+2
-         ZrMRSroCkG4RewaeMyMnE+lQBElWrs7gLvbHcJlsguJE5vNfrzn98Bh93+g37VpLT+61
-         x9jIfiNNVIltwP/3sPpAL3FNHqd44FWqzP9UdwgjIveZvSAUUXRFwTh3L9bIWuhzEFYj
-         A9EgcGIFF9UO/jcsRq3sHthSUgl04sBPKsC4iWDI0ZNM8F0zdXWTRL3kPLMTu8RTvnvN
-         xnmQ==
-X-Gm-Message-State: AHQUAuYSc26Tpwu+yJoXUuH4een2+uWaoJNrnnz6DypORerBw4EmSuQF
-        djfGe+8x1B7ddKQ2kgci8QuW3Q==
-X-Google-Smtp-Source: AHgI3Ia5bMOqYSj7v0YFFuRwBwyRQ542WRb7Awxxpv+T8+p+1Yxd4HQI2D2it+hUFBcNZlcE2NDp0g==
-X-Received: by 2002:a1c:e910:: with SMTP id q16mr2535037wmc.68.1550049956751;
-        Wed, 13 Feb 2019 01:25:56 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id y18sm2881256wmi.5.2019.02.13.01.25.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 01:25:55 -0800 (PST)
-Date:   Wed, 13 Feb 2019 09:25:53 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>, broonie@kernel.org
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-Message-ID: <20190213092553.GE1863@dell>
-References: <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell>
- <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
- <20190212095457.GA20638@dell>
- <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
- <20190212101835.GB20638@dell>
- <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
- <20190212111403.GC20638@dell>
- <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
- <20190212132016.GA4781@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212132016.GA4781@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zUr8SWKldEF6gVUMQuEkEMpWrr/VC2B6XExLDaAwFwU=;
+        b=J03O26n01jBR813HaAaAte8lILBOP4PQPb7UT3grVr5aahu2JpYvyINBtOaac0bEW0
+         I+KFxdHJ/xZ4Irm/oVJr6uvfnx+efExBY53238rsu32cRRSNmwkNjYI+/QFfPYVy8MOS
+         bXrnHZKN+DCzDXSgXPb8wG3yMvkOI+QONGPIbONTPcYmtjM8weKuP50S0nK23m+gARgq
+         +6IwooC250Z4ZfQr/l9mrPUqmMtHaL/WXwmvfnyvK/11V1wiL6qvNDZIhoe1grSgFNQ+
+         MPKVUsG7xH7/rJBqEAzR9mSuiSpshB84P5MIvZcUYz6ZrXtzZfPBdENct97Cr1KPTjct
+         l1hg==
+X-Gm-Message-State: AHQUAuZScX1Y37gJOenW4RJFQccbctyGr1n+Ar/xs3+akXabYJJJTzll
+        qioXlnrycq7E2VIL/adwys+33A==
+X-Google-Smtp-Source: AHgI3IYtqFQlc45qRacptA2GmN/OvEGXDFwKydbdzUjqhBVbu8YCMriSH9gNJ7NvsLkmLOBDd/IHeA==
+X-Received: by 2002:a63:3541:: with SMTP id c62mr8016429pga.191.1550049991254;
+        Wed, 13 Feb 2019 01:26:31 -0800 (PST)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id v75sm188875pfa.164.2019.02.13.01.26.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Feb 2019 01:26:30 -0800 (PST)
+From:   Yash Shah <yash.shah@sifive.com>
+To:     palmer@sifive.com, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sachin.ghadi@sifive.com, paul.walmsley@sifive.com,
+        Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH v6 0/2] PWM support for HiFive Unleashed
+Date:   Wed, 13 Feb 2019 14:56:16 +0530
+Message-Id: <1550049978-20705-1-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019, Lee Jones wrote:
+This patch series adds a PWM driver and DT documentation
+for HiFive Unleashed board. The patches are mostly based on
+Wesley's patch.
 
-> On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-> 
-> > wt., 12 lut 2019 o 12:14 Lee Jones <lee.jones@linaro.org> napisał(a):
-> > >
-> > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-> > >
-> > > > wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
-> > > > >
-> > > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-> > > > >
-> > > > > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
-> > > > > > >
-> > > > > > >  * The declaration of a superfluous struct
-> > > > > > >  * 100 lines of additional/avoidable code
-> > > > > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
-> > > > > > >  * Resources were designed for HWIRQs (unless a domain is present)
-> > > > > > >  * Loads of additional/avoidable CPU cycles setting all this up
-> > > > > >
-> > > > > > While the above may be right, this one is negligible and you know it. :)
-> > > > >
-> > > > > You have nested for() loops.  You *are* wasting lots of cycles.
-> > > > >
-> > > > > > > Need I go on? :)
-> > > > > > >
-> > > > > > > Surely the fact that you are using both sides of an API
-> > > > > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
-> > > > > > > set some alarm bells ringing?
-> > > > > > >
-> > > > > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
-> > > > > > >
-> > > > > > > And for what?  To avoid passing IRQ data to a child driver?
-> > > > > >
-> > > > > > What do you propose? Should I go back to the approach in v1 and pass
-> > > > > > the regmap_irq_chip_data to child drivers?
-> > > > >
-> > > > > I'm saying you should remove all of this hackery and pass IRQs as they
-> > > > > are supposed to be passed (like everyone else does).
-> > > >
-> > > > I'm not sure what you mean by "like everyone else does" - different
-> > > > mfd drivers seem to be doing different things. Is a simple struct
-> > > > containing virtual irq numbers passed to sub-drivers fine?
-> > >
-> > > How do you plan on deriving the VIRQs to place into the struct?
-> > 
-> > Exampe:
-> > 
-> > struct max77650_gpio_pdata {
-> >     int gpi_irq;
-> > };
-> > 
-> > In MFD driver:
-> > 
-> > struct max77650_gpio_pdata *gpio_data = devm_kmalloc(dev, sizeof(*gpio_data));
-> > 
-> > gpio_data->gpi_irq = regmap_irq_get_virq(irqchip_data, GPI_NUM);
-> > 
-> > gpio_cell.platform_data = gpio_data;
-> > 
-> > In GPIO driver:
-> > 
-> > struct max77650_gpio_pdata *gpio_data = pdev->dev.platform_data;
-> > 
-> > int irq = gpio_data->gpi_irq;
-> 
-> Definitely not.  What you're trying to do is a hack.
-> 
-> If you're using Regmap to handle your IRQs, then you should use Regmap
-> in the client to pull them out.  Setting them via Regmap, then pulling
-> them out again in the *same driver*, only to store them in platform
-> data to be passed to a child device is bonkers.
-> 
-> *Either* use the MFD provided platform-data helpers *or* pass and
-> handle them via the Regmap APIs, *not* both.
+v6
+- Remove the global property 'sifive,period-ns'
+- Implement free and request callbacks to maintain user counts.
+- Add user_count member to struct pwm_sifive_ddata
+- Allow period change only if user_count is one
+- Add pwm_sifive_enable function to enable/disable PWM
+- Change calculation logic of frac (in pwm_sifive_apply)
+- Remove state correction
+- Remove pwm_sifive_xlate function
+- Clock to be enabled only when PWM is enabled
+- Other minor fixes
 
-Right, a plan has been formed.
+v5
+- Correct the order of compatible string properties
+- PWM state correction to be done always
+- Other minor fixes based upon feedback on v4
 
-Hopefully this works and you can avoid all this dancing around.
+v4
+- Rename the property sifive,approx-period-ns to sifive,period-ns
+- Rename macros with appropriate names
+- Remove unused macros
+- Rename struct sifive_pwm_device to struct pwm_sifive_ddata
+- Rename function prefix as per driver name
+- Set deglitch bit before changing output waveform.
+- Other minor fixes based upon feedback on v3
 
-Firstly, you need to make a small change to:
+v3
+- Add a link to the reference manaul
+- Use appropriate apis for division operation
+- Add check for polarity
+- Enable clk before calling clk_get_rate
+- Other minor fixes based upon feedback on v2
 
-  drivers/base/regmap/regmap-irq.c
+V2 changed from V1:
+- Remove inclusion of dt-bindings/pwm/pwm.h
+- Remove artificial alignments
+- Replace ioread32/iowrite32 with readl/writel
+- Remove camelcase
+- Change dev_info to dev_dbg for unnecessary log
+- Correct typo in driver name
+- Remove use of of_match_ptr macro
+- Update the DT compatible strings and Add reference to a common
+  versioning document
 
-Add the following function:
+Yash Shah (2):
+  pwm: sifive: Add DT documentation for SiFive PWM Controller
+  pwm: sifive: Add a driver for SiFive SoC PWM
 
-  struct irq_domain *regmap_irq_get_domain(struct regmap *map)
-
-As you can see, it will return the IRQ Domain for the chip.
-
-You can then pass this IRQ domain to mfd_add_devices() and it will do
-the HWIRQ => VIRQ mapping for you on the fly.  Meaning that you can
-remove all the nastiness in max77650_setup_irqs() and have the Input
-device use the standard (e.g. platform_get_irq()) APIs.
-
-How does that Sound?
+ .../devicetree/bindings/pwm/pwm-sifive.txt         |  30 ++
+ drivers/pwm/Kconfig                                |  11 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-sifive.c                           | 311 +++++++++++++++++++++
+ 4 files changed, 353 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+ create mode 100644 drivers/pwm/pwm-sifive.c
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
+
