@@ -2,157 +2,117 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE83EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E404BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7146222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4E94222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390516AbfBMIMS (ORCPT
+        id S2390548AbfBMIMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:12:18 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:53818 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730382AbfBMIMR (ORCPT
+        Wed, 13 Feb 2019 03:12:39 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:45590 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730382AbfBMIMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:12:17 -0500
-X-IronPort-AV: E=Sophos;i="5.58,365,1544482800"; 
-   d="scan'208";a="369202876"
-Received: from unknown (HELO [193.50.110.185]) ([193.50.110.185])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA; 13 Feb 2019 09:12:15 +0100
-Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal
- RAM
-Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Wed, 13 Feb 2019 03:12:38 -0500
+X-IronPort-AV: E=Sophos;i="5.58,365,1544457600"; 
+   d="scan'208";a="54234134"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 13 Feb 2019 16:12:34 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 0DB444C4A88F;
+        Wed, 13 Feb 2019 16:12:33 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 13 Feb 2019 16:12:41 +0800
+Date:   Wed, 13 Feb 2019 16:12:21 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     Boris Petkov <bp@alien8.de>, Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>
-References: <20190124231441.37A4A305@viggo.jf.intel.com>
- <20190124231448.E102D18E@viggo.jf.intel.com>
- <c4c6aca8-6ee8-be10-65ae-4cbe0aa03bfb@inria.fr>
- <26ac36f4-7391-5321-217b-50d67e2119d7@intel.com>
- <453f13cd-a7fe-33eb-9a27-8490825ca29c@inria.fr>
- <CAPcyv4jF7ZyKaFDw7nb04UvWkVWGJdLGkZDQ1g=X7i+kdu7JRg@mail.gmail.com>
-From:   Brice Goglin <Brice.Goglin@inria.fr>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
- 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
-To:     Dave Hansen <dave.hansen@intel.com>
-Message-ID: <a3bfe739-228e-26fe-90f7-4a4f8ceb3a9a@inria.fr>
-Date:   Wed, 13 Feb 2019 09:12:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <caoj.fnst@cn.fujitsu.com>, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <linux-tip-commits@vger.kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190213081221.GB1624@localhost.localdomain>
+References: <20190211101011.GA5333@localhost.localdomain>
+ <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
+ <20190211102426.GA19618@zn.tnic>
+ <20190211104254.GB19618@zn.tnic>
+ <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
+ <20190211112009.GE19618@zn.tnic>
+ <20190213015429.GA12592@localhost.localdomain>
+ <CFAC8B79-54C1-4E74-8660-31B0B88BF749@alien8.de>
+ <20190213075825.GA1624@localhost.localdomain>
+ <CAKv+Gu9WWKZtgtdwv0y8giieiwzuKHdZ0Qaa2UA7WXZRkcEJNg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jF7ZyKaFDw7nb04UvWkVWGJdLGkZDQ1g=X7i+kdu7JRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9WWKZtgtdwv0y8giieiwzuKHdZ0Qaa2UA7WXZRkcEJNg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 0DB444C4A88F.AC433
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 13/02/2019 à 01:30, Dan Williams a écrit :
-> On Tue, Feb 12, 2019 at 11:59 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
->> # ndctl disable-region all
->> # ndctl zero-labels all
->> # ndctl enable-region region0
->> # ndctl create-namespace -r region0 -t pmem -m devdax
->> {
->>   "dev":"namespace0.0",
->>   "mode":"devdax",
->>   "map":"dev",
->>   "size":"1488.37 GiB (1598.13 GB)",
->>   "uuid":"ad0096d7-3fe7-4402-b529-ad64ed0bf789",
->>   "daxregion":{
->>     "id":0,
->>     "size":"1488.37 GiB (1598.13 GB)",
->>     "align":2097152,
->>     "devices":[
->>       {
->>         "chardev":"dax0.0",
->>         "size":"1488.37 GiB (1598.13 GB)"
->>       }
->>     ]
->>   },
->>   "align":2097152
->> }
->> # ndctl enable-namespace namespace0.0
->> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
->> <hang>
+On Wed, Feb 13, 2019 at 09:01:27AM +0100, Ard Biesheuvel wrote:
+>On Wed, 13 Feb 2019 at 08:59, Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
 >>
->> I tried with and without dax_pmem_compat loaded, but it doesn't help.
-> I think this is due to:
+>> On Wed, Feb 13, 2019 at 08:36:12AM +0100, Boris Petkov wrote:
+>> >On February 13, 2019 2:54:29 AM GMT+01:00, Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>> >>Yes, your PATCH really works well. I tried both efi32 OVMF and efi64
+>> >>OVMF, all boot.
+>> >
+>> >What about the real hardware you are normally testing on? Boots there too?
+>>
+>> I testet it in a real EFI machine, it booted, but from command:
+>> > cat /sys/firmware/efi/fw_platform_size
+>> 64
+>>
+>> We can see it's a 64-bit EFI firmware, and there is no 32-bit EFI firmware available.
+>>
 >
->   a9f1ffdb6a20 device-dax: Auto-bind device after successful new_id
+>Did you try booting 32-bit OVMF from 64-bit QEMU?
+
+Yes, I tried the 32-bit OVMF and rootfs from Guenter.
+Used as suggested by Boris:
+
+qemu-system-x86_64 -kernel /home/cfan/code/tip/arch/x86/boot/bzImage -M q35 -cpu SandyBridge \
+-no-reboot -snapshot -smp 1 \
+-bios OVMF-pure-efi-32.fd \
+-net nic,model=rtl8139,macaddr=12:34:56:78:12:34 \
+-usb -device usb-storage,drive=d0 \
+-m 1G \
+-drive file=rootfs.squashfs,if=none,id=d0,format=raw \
+--append 'earlycon=uart8250,io,0x3f8,9600n8 root=/dev/sda rootwait panic=-1 earlyprintk=ttyS0,115200,keep console=ttyS0,115200' \
+-monitor pty \
+-serial stdio
+
+Since I used to watch the log, so I just change the "serial file:log" to
+"serial stdio".
+
+Thanks,
+Chao Fan
 >
-> I missed that this path is also called in the remove_id path. Thanks
-> for the bug report! I'll get this fixed up.
-
-
-Now that remove_id is fixed, things fails later in Dave's procedure:
-
-# echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
-# echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
-# echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
-# echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
--bash: echo: write error: No such device
-
-(And nothing seems to have changed in /sys/devices/system/memory/*/state)
-
-Brice
+>
 
 
