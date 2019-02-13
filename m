@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E5FC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C34C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA0B20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F7242190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026550;
-	bh=TnEGSoTVVCn7tMIT4f4oBmz+dWl2DI0Q7yJ0fJTxL3o=;
+	s=default; t=1550026557;
+	bh=mXs3VpGKisMeOjWUsx7te6PvEpSfxm7cG64xLhWBYpQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wsKcYEb2BuzbBtVW1rX5A366+OhEeZ19ppQslrTDqNzttT4MbF60Waf810E03vzFI
-	 vBWxj2Oalx4r5iQB4fTNAfc+0sbn4TVH4K33Lrcd4hfxe1b6PfUvH+ClmT7PKrBDou
-	 d/hjMhvtU3LyFF/qbAT9WKmpBMaImKaTucswI7/o=
+	b=1oKJeLNq/tbbw2XqjO6dVa5KvllMXcCJ7chJolHT58hAzWMnn+UQSmvS1xPDEaT54
+	 G9wi4ZM6vj/m4BvslWZ/8JpDrGNQ5ckNvFUh6t1GuFQeGvwXSLPKyZNHw4iYUrRYtj
+	 0razyWWj7jXO7M8hPPlBEl8VyqCLGAZ5r/uaNW9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389973AbfBMCzs (ORCPT
+        id S2388293AbfBMChZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:55:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:37:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbfBMCh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:26 -0500
+        id S2388248AbfBMChN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DD65222C9;
-        Wed, 13 Feb 2019 02:37:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23744222C7;
+        Wed, 13 Feb 2019 02:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025446;
-        bh=TnEGSoTVVCn7tMIT4f4oBmz+dWl2DI0Q7yJ0fJTxL3o=;
+        s=default; t=1550025432;
+        bh=mXs3VpGKisMeOjWUsx7te6PvEpSfxm7cG64xLhWBYpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n81kV09zTi60T3k1EAlgjNALJfI8C1Y5SVana1t3CgMZAdlMjhbdgFgP3JA/Ry6JR
-         4BkYhtZ2o4Ip/fhTa5M81CNunoxe2mZvsE+nOc3buLKnjZLure/4z2LuGKdVlfRVVh
-         FrhRDzuLFXhvpdS7BGo9FDw4XicQmRyk959YqD+U=
+        b=VXyOhOPtrG2ghSvWOG9uGa/YTN/oECslYbq3zY2vM1Z2bdya3Eo+x4UKjS7JIclNw
+         FsuHMd0ZnLZhj3UxATf4iOhwL/2Mq2L3GGBcCYlUKfQ4m6tAdRkDEwDcRmHJxYAQCX
+         RO/ag4inlJfHaIbMS+Ee/CWLOLn1hcl4FuZVdflA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Denis Bolotin <dbolotin@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 21/83] qed: Fix qed_chain_set_prod() for PBL chains with non power of 2 page count
-Date:   Tue, 12 Feb 2019 21:35:59 -0500
-Message-Id: <20190213023701.20286-21-sashal@kernel.org>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 09/83] mfd: mt6397: Do not call irq_domain_remove if PMIC unsupported
+Date:   Tue, 12 Feb 2019 21:35:47 -0500
+Message-Id: <20190213023701.20286-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,64 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <dbolotin@marvell.com>
+From: Nicolas Boichat <drinkcat@chromium.org>
 
-[ Upstream commit 2d533a9287f2011632977e87ce2783f4c689c984 ]
+[ Upstream commit a177276aa098aa47a100d51a13eaaef029604b6d ]
 
-In PBL chains with non power of 2 page count, the producer is not at the
-beginning of the chain when index is 0 after a wrap. Therefore, after the
-producer index wrap around, page index should be calculated more carefully.
+If the PMIC ID is unknown, the current code would call
+irq_domain_remove and panic, as pmic->irq_domain is only
+initialized by mt6397_irq_init.
 
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Return immediately with an error, if the chip ID is unsupported.
+
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/qed/qed_chain.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/mfd/mt6397-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/qed/qed_chain.h b/include/linux/qed/qed_chain.h
-index 59ddf9af909e..2dd0a9ed5b36 100644
---- a/include/linux/qed/qed_chain.h
-+++ b/include/linux/qed/qed_chain.h
-@@ -663,6 +663,37 @@ static inline void *qed_chain_get_last_elem(struct qed_chain *p_chain)
- static inline void qed_chain_set_prod(struct qed_chain *p_chain,
- 				      u32 prod_idx, void *p_prod_elem)
- {
-+	if (p_chain->mode == QED_CHAIN_MODE_PBL) {
-+		u32 cur_prod, page_mask, page_cnt, page_diff;
-+
-+		cur_prod = is_chain_u16(p_chain) ? p_chain->u.chain16.prod_idx :
-+			   p_chain->u.chain32.prod_idx;
-+
-+		/* Assume that number of elements in a page is power of 2 */
-+		page_mask = ~p_chain->elem_per_page_mask;
-+
-+		/* Use "cur_prod - 1" and "prod_idx - 1" since producer index
-+		 * reaches the first element of next page before the page index
-+		 * is incremented. See qed_chain_produce().
-+		 * Index wrap around is not a problem because the difference
-+		 * between current and given producer indices is always
-+		 * positive and lower than the chain's capacity.
-+		 */
-+		page_diff = (((cur_prod - 1) & page_mask) -
-+			     ((prod_idx - 1) & page_mask)) /
-+			    p_chain->elem_per_page;
-+
-+		page_cnt = qed_chain_get_page_cnt(p_chain);
-+		if (is_chain_u16(p_chain))
-+			p_chain->pbl.c.u16.prod_page_idx =
-+				(p_chain->pbl.c.u16.prod_page_idx -
-+				 page_diff + page_cnt) % page_cnt;
-+		else
-+			p_chain->pbl.c.u32.prod_page_idx =
-+				(p_chain->pbl.c.u32.prod_page_idx -
-+				 page_diff + page_cnt) % page_cnt;
-+	}
-+
- 	if (is_chain_u16(p_chain))
- 		p_chain->u.chain16.prod_idx = (u16) prod_idx;
- 	else
+diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+index 77b64bd64df3..ab24e176ef44 100644
+--- a/drivers/mfd/mt6397-core.c
++++ b/drivers/mfd/mt6397-core.c
+@@ -329,8 +329,7 @@ static int mt6397_probe(struct platform_device *pdev)
+ 
+ 	default:
+ 		dev_err(&pdev->dev, "unsupported chip: %d\n", id);
+-		ret = -ENODEV;
+-		break;
++		return -ENODEV;
+ 	}
+ 
+ 	if (ret) {
 -- 
 2.19.1
 
