@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4B9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9980CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 444FA222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDDE222D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083732;
-	bh=i9RPEOaBnAnS0wO5pb7AMApP4zMj5RK5u00kKQZDTv8=;
+	s=default; t=1550083740;
+	bh=G8Xz/bRJBcTKWRmbv2mKjnyl6xW3Y7D8WOe1hMS+rBA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cDq2ul8pC6CZp3QmtpdxwV18clXJQ3sUAe4sj8yWLhlttqPiB6aBIeH309ZF5Y4wc
-	 0UX7i9YN+1PqRmGTr+PjlViltuGmH9BArIdTVRM+GWafwj432Msk8/WpGdCoUhBaIh
-	 YMoTku3CDYjlD9PFjrPDDe0QSIOQJVAAK5J472E4=
+	b=vLKOmu3a4lxv8xOwggMRzvB4SGGEmWtCqPrmk2QNDv5xT6ZN/o10ovBiTsf0sz3h0
+	 m+0cwUnULz0xQYysujqc5DBxkOQfKeXkR+7jd4q7ICRNAiLekVnryENVGN+r7Y9u8z
+	 w1tw2dUlxe+3r8qriwwI4uMYU+7d4VjifiskUVbo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394118AbfBMSsv (ORCPT
+        id S2406251AbfBMSs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:48:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44548 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:48:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730819AbfBMSp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:45:56 -0500
+        id S2394089AbfBMSpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:45:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E073B20811;
-        Wed, 13 Feb 2019 18:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1A5520835;
+        Wed, 13 Feb 2019 18:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083555;
-        bh=i9RPEOaBnAnS0wO5pb7AMApP4zMj5RK5u00kKQZDTv8=;
+        s=default; t=1550083544;
+        bh=G8Xz/bRJBcTKWRmbv2mKjnyl6xW3Y7D8WOe1hMS+rBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4nWsfaNj183e6F6hCseCgHG7Tc+uNAMLJluapjACqa/tO7fi9kCAMws23yk0liBF
-         4I2RksZKKz4ars2p2hWDopPiqiieD2n52DN/pxEtOViAo+4MHpPttb9dikUu8Qz6uI
-         ds9JTJtoZMrDimVuHp7MTl7HG5IbmseaukQA/6gg=
+        b=wskwdAf/r2Fxmyz2HEG61AOJ3DjAPJYb/3TBrVsF5AB7ZSwfCD3vz6WSGRBuQsVk/
+         AdOEH48XxxHLu3HWbzZX+uzovLkDFmWFdxiear1+iQmouka8FxVd/CfTWY0pM5ohq4
+         KUE8F1XinE7rBFI2C6TUnKhmxPt/t6AquyY3NT24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.20 32/50] firmware: arm_scmi: provide the mandatory device release callback
-Date:   Wed, 13 Feb 2019 19:38:37 +0100
-Message-Id: <20190213183658.291475193@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        linux-mips@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Maciej W . Rozycki" <macro@linux-mips.org>
+Subject: [PATCH 4.20 28/50] MIPS: VDSO: Include $(ccflags-vdso) in o32,n32 .lds builds
+Date:   Wed, 13 Feb 2019 19:38:33 +0100
+Message-Id: <20190213183657.995261189@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -64,92 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 46edb8d1322c1763dd04e179992f8e9996085047 upstream.
+commit 67fc5dc8a541e8f458d7f08bf88ff55933bf9f9d upstream.
 
-The device/driver model clearly mandates that bus driver that discover
-and allocate the device must set the release callback. This callback
-will be used to free the device after all references have gone away.
+When generating vdso-o32.lds & vdso-n32.lds for use with programs
+running as compat ABIs under 64b kernels, we previously haven't included
+the compiler flags that are supposedly common to all ABIs - ie. those in
+the ccflags-vdso variable.
 
-scmi bus driver is missing the obvious callback which will result in
-the following warning if the device is unregistered:
+This is problematic in cases where we need to provide the -m%-float flag
+in order to ensure that we don't attempt to use a floating point ABI
+that's incompatible with the target CPU & ABI. For example a toolchain
+using current gcc trunk configured --with-fp-32=xx fails to build a
+64r6el_defconfig kernel with the following error:
 
-Device 'scmi_dev.1' does not have a release() function, it is broken and
-must be fixed. See Documentation/kobject.txt.
-WARNING at drivers/base/core.c:922 device_release+0x8c/0xa0
-Hardware name: ARM LTD Juno Development Platform BIOS EDK II Jan 21 2019
-Workqueue: events deferred_probe_work_func
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : device_release+0x8c/0xa0
-lr : device_release+0x8c/0xa0
-Call trace:
- device_release+0x8c/0xa0
- kobject_put+0x8c/0x208
- device_unregister+0x30/0x78
- scmi_device_destroy+0x28/0x50
- scmi_probe+0x354/0x5b0
- platform_drv_probe+0x58/0xa8
- really_probe+0x2c4/0x3e8
- driver_probe_device+0x12c/0x148
- __device_attach_driver+0xac/0x150
- bus_for_each_drv+0x78/0xd8
- __device_attach+0xe0/0x168
- device_initial_probe+0x24/0x30
- bus_probe_device+0xa0/0xa8
- deferred_probe_work_func+0x8c/0xe0
- process_one_work+0x1f0/0x478
- worker_thread+0x22c/0x450
- kthread+0x134/0x138
- ret_from_fork+0x10/0x1c
----[ end trace 420bdb7f6af50937 ]---
+  cc1: error: '-march=mips1' requires '-mfp32'
+  make[2]: *** [arch/mips/vdso/Makefile:135: arch/mips/vdso/vdso-o32.lds] Error 1
 
-Fix the issue by providing scmi_device_release callback. We have
-everything required for device release already in scmi_device_destroy,
-so we just need to move freeing of the device to scmi_device_release.
+Include $(ccflags-vdso) for the compat VDSO .lds builds, just as it is
+included for the native VDSO .lds & when compiling objects for the
+compat VDSOs. This ensures we consistently provide the -msoft-float flag
+amongst others, avoiding the problem by ensuring we're agnostic to the
+toolchain defaults.
 
-Fixes: 933c504424a2 ("firmware: arm_scmi: add scmi protocol bus to enumerate protocol devices")
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: stable@vger.kernel.org # 4.17+
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Cc: linux-mips@vger.kernel.org
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Maciej W . Rozycki <macro@linux-mips.org>
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/arm_scmi/bus.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/mips/vdso/Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -119,6 +119,11 @@ void scmi_driver_unregister(struct scmi_
- }
- EXPORT_SYMBOL_GPL(scmi_driver_unregister);
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -129,7 +129,7 @@ $(obj)/%-o32.o: $(src)/%.c FORCE
+ 	$(call cmd,force_checksrc)
+ 	$(call if_changed_rule,cc_o_c)
  
-+static void scmi_device_release(struct device *dev)
-+{
-+	kfree(to_scmi_dev(dev));
-+}
-+
- struct scmi_device *
- scmi_device_create(struct device_node *np, struct device *parent, int protocol)
- {
-@@ -138,6 +143,7 @@ scmi_device_create(struct device_node *n
- 	scmi_dev->dev.parent = parent;
- 	scmi_dev->dev.of_node = np;
- 	scmi_dev->dev.bus = &scmi_bus_type;
-+	scmi_dev->dev.release = scmi_device_release;
- 	dev_set_name(&scmi_dev->dev, "scmi_dev.%d", id);
+-$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := -mabi=32
++$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=32
+ $(obj)/vdso-o32.lds: $(src)/vdso.lds.S FORCE
+ 	$(call if_changed_dep,cpp_lds_S)
  
- 	retval = device_register(&scmi_dev->dev);
-@@ -156,9 +162,8 @@ free_mem:
- void scmi_device_destroy(struct scmi_device *scmi_dev)
- {
- 	scmi_handle_put(scmi_dev->handle);
--	device_unregister(&scmi_dev->dev);
- 	ida_simple_remove(&scmi_bus_id, scmi_dev->id);
--	kfree(scmi_dev);
-+	device_unregister(&scmi_dev->dev);
- }
+@@ -169,7 +169,7 @@ $(obj)/%-n32.o: $(src)/%.c FORCE
+ 	$(call cmd,force_checksrc)
+ 	$(call if_changed_rule,cc_o_c)
  
- void scmi_set_handle(struct scmi_device *scmi_dev)
+-$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := -mabi=n32
++$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=n32
+ $(obj)/vdso-n32.lds: $(src)/vdso.lds.S FORCE
+ 	$(call if_changed_dep,cpp_lds_S)
+ 
 
 
