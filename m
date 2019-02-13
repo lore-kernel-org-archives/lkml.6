@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E63C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD218C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0449D206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ADE6222CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025282;
-	bh=SCMBc4pqrVuiCcUje70bEKk1QAS4AB84ZsGnJTDAh1E=;
+	s=default; t=1550025286;
+	bh=czenjSTG1ljAv4LkUvnKRQP/4xeHqoDp06x9vE3F3hg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=splHsKUCbq0OvbW+Sefr2M8BrMhtb3DgLvpwgVS9NQ8USQaIMqhFucg4k2xjNqO0r
-	 eIArE7RxrVoiyBOANXWYvkyfJ5fSDSHDd49U1yrgwUgXlUto52e2iUeMiS3WRPlAmR
-	 /Q7ilu+AcM5nNR53rMZ++OTpeIyaPQW1QDUTQn/4=
+	b=Xm3RFhhmKw9U7tSjxVGIMnafYdI6/3kUIYbHJ27YXejYCxunlFoSHV76qnPUeja6h
+	 ekJfi+6pH2zQF86uMvsFWhRc5nTngJFr37DNvyYmqTHyujm2/DUTLRCcxcP2oUelwS
+	 nB9YRyrsEPI2GdNgWscQRuxPf1u0cB7+XZZEQmS8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387764AbfBMCeg (ORCPT
+        id S2387797AbfBMCeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:34:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38064 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:34:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387741AbfBMCec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:32 -0500
+        id S1730485AbfBMCek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 827D3206B6;
-        Wed, 13 Feb 2019 02:34:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5D19206B6;
+        Wed, 13 Feb 2019 02:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025272;
-        bh=SCMBc4pqrVuiCcUje70bEKk1QAS4AB84ZsGnJTDAh1E=;
+        s=default; t=1550025279;
+        bh=czenjSTG1ljAv4LkUvnKRQP/4xeHqoDp06x9vE3F3hg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KrTtKSM71jUinNWua/j6ajYhTQZV/UI7auxpwvvlsOZNp72PKNucYd/bevNJ4ijLl
-         UOD/yzcf2biyS0Uz4+FdhBGBnQaGGtRFVykbQ8WyNu5N1dbD6ectOfeefetn2SFMmk
-         2dUTVX0RQhJvo7+Bl45BZAG9Uc7UCnwbgFGIpE54=
+        b=pGhTuLoBSn4opZMiLninxw5DndfMMOqYncjKCa75d3aeLreg7D8SnZsPKEk0K/Ouj
+         k4X6PdJ5fjaSRHCWN3nC5MKII+yk3fdWGgOflRIwfPXxKsvFw+m+10spxQ2+f7LHqe
+         KLeQbksumaKP0YWsXpJBeksWJdCeFPqr+jTRmWqE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 039/105] scsi: qla4xxx: check return code of qla4xxx_copy_from_fwddb_param
-Date:   Tue, 12 Feb 2019 21:32:30 -0500
-Message-Id: <20190213023336.19019-39-sashal@kernel.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-sparse@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 041/105] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
+Date:   Tue, 12 Feb 2019 21:32:32 -0500
+Message-Id: <20190213023336.19019-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,33 +61,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
-[ Upstream commit 72b4a0465f995175a2e22cf4a636bf781f1f28a7 ]
+[ Upstream commit 3e2ffd655cc6a694608d997738989ff5572a8266 ]
 
-The return code should be check while qla4xxx_copy_from_fwddb_param fails.
+Since commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
+mutually exclusive") clang no longer reuses the OPTIMIZER_HIDE_VAR macro
+from compiler-gcc - instead it gets the version in
+include/linux/compiler.h.  Unfortunately that version doesn't actually
+prevent compiler from optimizing out the variable.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fix up by moving the macro out from compiler-gcc.h to compiler.h.
+Compilers without incline asm support will keep working
+since it's protected by an ifdef.
+
+Also fix up comments to match reality since we are no longer overriding
+any macros.
+
+Build-tested with gcc and clang.
+
+Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
+Cc: Eli Friedman <efriedma@codeaurora.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla4xxx/ql4_os.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/compiler-clang.h | 5 ++---
+ include/linux/compiler-gcc.h   | 4 ----
+ include/linux/compiler-intel.h | 4 +---
+ include/linux/compiler.h       | 4 +++-
+ 4 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 051164f755a4..a13396c56a6a 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -7237,6 +7237,8 @@ static int qla4xxx_sysfs_ddb_tgt_create(struct scsi_qla_host *ha,
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index 3e7dafb3ea80..7ddaeb5182e3 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -3,9 +3,8 @@
+ #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
+ #endif
  
- 	rc = qla4xxx_copy_from_fwddb_param(fnode_sess, fnode_conn,
- 					   fw_ddb_entry);
-+	if (rc)
-+		goto free_sess;
+-/* Some compiler specific definitions are overwritten here
+- * for Clang compiler
+- */
++/* Compiler specific definitions for Clang compiler */
++
+ #define uninitialized_var(x) x = *(&(x))
  
- 	ql4_printk(KERN_INFO, ha, "%s: sysfs entry %s created\n",
- 		   __func__, fnode_sess->dev.kobj.name);
+ /* same as gcc, this was present in clang-2.6 so we can assume it works
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index 977ddf2774f9..c61c4bb2bd15 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -58,10 +58,6 @@
+ 	(typeof(ptr)) (__ptr + (off));					\
+ })
+ 
+-/* Make the optimizer believe the variable can be manipulated arbitrarily. */
+-#define OPTIMIZER_HIDE_VAR(var)						\
+-	__asm__ ("" : "=r" (var) : "0" (var))
+-
+ /*
+  * A trick to suppress uninitialized variable warning without generating any
+  * code
+diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
+index 517bd14e1222..b17f3cd18334 100644
+--- a/include/linux/compiler-intel.h
++++ b/include/linux/compiler-intel.h
+@@ -5,9 +5,7 @@
+ 
+ #ifdef __ECC
+ 
+-/* Some compiler specific definitions are overwritten here
+- * for Intel ECC compiler
+- */
++/* Compiler specific definitions for Intel ECC compiler */
+ 
+ #include <asm/intrinsics.h>
+ 
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index fc5004a4b07d..445348facea9 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -161,7 +161,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #endif
+ 
+ #ifndef OPTIMIZER_HIDE_VAR
+-#define OPTIMIZER_HIDE_VAR(var) barrier()
++/* Make the optimizer believe the variable can be manipulated arbitrarily. */
++#define OPTIMIZER_HIDE_VAR(var)						\
++	__asm__ ("" : "=r" (var) : "0" (var))
+ #endif
+ 
+ /* Not-quite-unique ID. */
 -- 
 2.19.1
 
