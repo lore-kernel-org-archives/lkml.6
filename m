@@ -2,72 +2,141 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B9AC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D196DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0AEF2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550077785;
-	bh=zLgtUmUW10DVXZeanZL8BHYBbRtGzPuWhu+4tmVWzaM=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=So61E3kY/xh+QrxJ4SUItgfpwQgP7hl+mPMzScd79q1lM1jQFp0+1Y8OF6/paMe6E
-	 8P36ezOdi4ReBuPNOIs6rpDYeommwx93CZlf3sz25GD4xVieCGic3jbURwOMOBB7WT
-	 obdhRS9CSDL7pEV49cB5etlB5BqPEDvi40JYTgD4=
+	by mail.kernel.org (Postfix) with ESMTP id AD9CE2070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391973AbfBMRJo (ORCPT
+        id S2388815AbfBMRMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:09:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 12:12:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54672 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391657AbfBMRJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:09:41 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729760AbfBMRL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:11:59 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F7A32070B;
-        Wed, 13 Feb 2019 17:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550077780;
-        bh=zLgtUmUW10DVXZeanZL8BHYBbRtGzPuWhu+4tmVWzaM=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=dsQXE6Gb7jeH54YIpX6GG9p/W3Z/RhnFDG0jMHhD4La//sj4Ci86/9bABiiLm6BYM
-         RPRjvACu2JxmY0u5FZo3m5i1zjzWdmPlwppe1oC1xb9aRiAj1lqbF7/uP5IsWJmGnM
-         Rw4C+Wt69mYsrle7nnFQxDqYijwF2f7u0rL3MZ/w=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C8DF300ADE;
+        Wed, 13 Feb 2019 17:11:59 +0000 (UTC)
+Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9811D19C7B;
+        Wed, 13 Feb 2019 17:11:58 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 10:11:58 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] vfio_pci: Enable memory accesses before calling
+ pci_map_rom
+Message-ID: <20190213101158.707d963d@w520.home>
+In-Reply-To: <20190213162821.GC22883@char.us.oracle.com>
+References: <20190213101406.3934-1-eric.auger@redhat.com>
+        <20190213162821.GC22883@char.us.oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
-        matthias.bgg@kernel.org, mturquette@baylibre.com
-In-Reply-To: <9db1f94f-7edd-73a1-fb09-9499c5f8cfcb@gmail.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v3 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
-Message-ID: <155007777974.115909.3599235649247866271@swboyd.mtv.corp.google.com>
-References: <20190108121208.2473-1-matthias.bgg@kernel.org> <20190108121208.2473-4-matthias.bgg@kernel.org> <9db1f94f-7edd-73a1-fb09-9499c5f8cfcb@gmail.com>
-Cc:     sean.wang@mediatek.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:09:39 -0800
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 13 Feb 2019 17:11:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Brugger (2019-02-08 05:39:02)
-> Steven, Mike, any comments on that?
+On Wed, 13 Feb 2019 11:28:21 -0500
+Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
 
-I was waiting for Mediatek to review. I thought I said that last time?
-I suppose if they're not going to review it I'll just throw it into
-clk-next and people can fix problems if they see them.
+> On Wed, Feb 13, 2019 at 11:14:06AM +0100, Eric Auger wrote:
+> > pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+> > In case the Memory Space accesses were disabled, readw() is likely to
+> > crash the host with a synchronous external abort (aarch64).  
+> 
+> Ouch. Is there an CVE for this?
+> 
+> Also I think this can cause x86 machines to blow up.
+> 
+> See https://xenbits.xen.org/xsa/advisory-120.html
 
-Would you mind resending one more time with a comment in the code where
-CLK_IS_CRITICAL is used indicating why it's critical so that we know
-what's going on without having to dig into the git history?
+The far more common response to a target abort on x86 is simply a -1
+return.  Device assignment quickly becomes unfeasible in the general
+case, as outlined in the above link by restricting only to SR-IOV VFs,
+if we try to claim there is no possible way that the device cannot
+trigger a fatal error on the host.  Systems implementing APEI pretty
+much guarantee that by escalating device specific faults to fatal
+errors and removing the host OS from the error handling path.  Some
+platforms will even trigger a fatal error for a DMA outside of the
+range mapped for the device by the IOMMU.  We can't probe for this
+behavior to restrict the devices, we cannot know how DMA is programmed
+for every device in order to babysit it, nor can we guarantee that the
+PCI config space command register is the only way a device manages
+access to I/O resources hosted on the device.  Restricting user access
+to the command register therefore seems like a false sense of security,
+potentially with behavioral issues to the user.
+
+It would be great if we always had a hook into the error handling path
+such that we could declare this as a user generated fault, kill the
+user process, and keep running, but we're limited by the error handling
+capabilities of the hardware and the degree to which the
+platform/firmware allows OS control of that error handling.  Thanks,
+
+Alex
+
+> > 
+> > In case memory accesses were disabled, re-enable them before the call
+> > and disable them back again just after.
+> > 
+> > Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> > ---
+> >  drivers/vfio/pci/vfio_pci.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> > index ff60bd1ea587..96b8bbd909d7 100644
+> > --- a/drivers/vfio/pci/vfio_pci.c
+> > +++ b/drivers/vfio/pci/vfio_pci.c
+> > @@ -706,8 +706,10 @@ static long vfio_pci_ioctl(void *device_data,
+> >  			break;
+> >  		case VFIO_PCI_ROM_REGION_INDEX:
+> >  		{
+> > +			bool mem_access_disabled;
+> >  			void __iomem *io;
+> >  			size_t size;
+> > +			u16 cmd;
+> >  
+> >  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+> >  			info.flags = 0;
+> > @@ -723,6 +725,13 @@ static long vfio_pci_ioctl(void *device_data,
+> >  					break;
+> >  			}
+> >  
+> > +			pci_read_config_word(pdev, PCI_COMMAND, &cmd);
+> > +			mem_access_disabled = !(cmd & PCI_COMMAND_MEMORY);
+> > +			if (mem_access_disabled) {
+> > +				cmd |= PCI_COMMAND_MEMORY;
+> > +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
+> > +			}
+> > +
+> >  			/* Is it really there? */
+> >  			io = pci_map_rom(pdev, &size);
+> >  			if (!io || !size) {
+> > @@ -731,6 +740,11 @@ static long vfio_pci_ioctl(void *device_data,
+> >  			}
+> >  			pci_unmap_rom(pdev, io);
+> >  
+> > +			if (mem_access_disabled) {
+> > +				cmd &= ~PCI_COMMAND_MEMORY;
+> > +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
+> > +			}
+> > +
+> >  			info.flags = VFIO_REGION_INFO_FLAG_READ;
+> >  			break;
+> >  		}
+> > -- 
+> > 2.20.1
+> >   
 
