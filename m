@@ -2,123 +2,165 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7312BC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1308C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42572222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89765222D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:48:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="huPTkm7Y"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cKjafkJT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390820AbfBMIr3 (ORCPT
+        id S2390779AbfBMIs3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:47:29 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43198 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389589AbfBMIr2 (ORCPT
+        Wed, 13 Feb 2019 03:48:29 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42203 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728933AbfBMIs3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:47:28 -0500
-Received: by mail-lj1-f194.google.com with SMTP id z20so263505ljj.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:47:27 -0800 (PST)
+        Wed, 13 Feb 2019 03:48:29 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so1482441wrx.9
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:48:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bQKwEsId6JLgTtjw3Rjr7HrL/WSfNzzQCt6QFtE+6CE=;
-        b=huPTkm7YuTfgMiO3pS+jCGn8NhUCcSn8F3KQWlpn+sfAWdE03+0xZExbkXBqTQQ4Ms
-         wSC5XGBYQ7n/wYVCJZxHRgNxIs0hdbjkEbiIaoincu8wJFzdVEshpaJd84a9VZnaoASY
-         Wa6ExZJisdmciQHpsAk7/zKJeXa2gjhMLdH+QUhaJbDwDTUyBIj0opR/VRuerdRwNGyj
-         N9X+1nLZ5zI6Zxcmf7tfsnG2iWQ7k4zFcRbQzQek1to6poNy/Pr3We/zzhbBAGbYO6Ro
-         oA0YEz8XGmiBrSNZMRNtvdxS/XYybCvhCWzfnOj3l2QKu4NtZYQ5GbMXRXw8JVXFYSWv
-         NaXw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cEpWGg1h+mnrJufQh7Ng7TE3wjG5O41fk+jfrTVIKNw=;
+        b=cKjafkJTYOLTG4ho2NBdRPJuHJRUCROn4QQLCiVbiDKGab2p54QMizO3CM961ycXJZ
+         6ukqMH1AnlS8ifhPgvvl/2NuL3ExnBDBtdcHB2BdmbEOxvLNdsLaL9z2JtvdIVOyOUJW
+         lRPcc1gKVg1rwxPUDZUb8tXECWg9feqt5L6YKKJrNVfuk+qAvRaLvQijCUAURYOlow7Y
+         tm3HrdXcy5sDscxbsT0WFLJ2MyoZaDmouiXCLqTvSqu/i0OWudWvbe80G5dsw7qP7GsW
+         9OfNgpdmACEAB9Sx7Auhupq0lE6wheTuJtY/TfllBM3gLTKOSptHAQlymzS0Xt6O6ET/
+         HfIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=bQKwEsId6JLgTtjw3Rjr7HrL/WSfNzzQCt6QFtE+6CE=;
-        b=jMrOt0Aj9YyDti00Tp/KcDKG9nY8GEYvwE4A28YyzcuO8c3IQ2ciqozRimTlyC2B/X
-         JLyjtC8hCUA5H+/Zk5mWpDkRD/WQ55kip8t+QY42Jq6x+/8t/VtjbeamkThEQCr5aZ+e
-         AkHsOeyF8BL/egXDEcXcRc1TvTApbN3xTK4f13xcoV9UZqGwAVGp8djyY83ClMG+1y5B
-         7U9ejzDU2URutJrRqXF9HJh5BBXC3gvdxYup5tvXNF7ifMlJtymDWYlKxjHS1qXy1GuG
-         ZO/4FooIpxsFM/W/u3HyWpWW4sUx7HeNt4d4PO88aS65T5vk0EWU8hLvO1J+PQZDqjsr
-         9q0g==
-X-Gm-Message-State: AHQUAubMdz3yjs+7P/5odwYmx+/WYiLY2ovETrxy6Ys9h2no2LCFGELv
-        2LQkdYhcNgBnuA+d8LbAC+pG7g==
-X-Google-Smtp-Source: AHgI3IZws0QWK8imzOTRnZT9SCN+xIH6k+c+7yeJ5437xHEWz8ntkEZzVxRVx+i1Hhp2RtIhJyh02w==
-X-Received: by 2002:a2e:81c1:: with SMTP id s1mr202136ljg.29.1550047646117;
-        Wed, 13 Feb 2019 00:47:26 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id g85-v6sm3325972lji.17.2019.02.13.00.47.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 00:47:25 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     b.zolnierkie@samsung.com
-Cc:     linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] fbdev: omap2: fix warnings in dss core
-Date:   Wed, 13 Feb 2019 09:47:21 +0100
-Message-Id: <20190213084721.29624-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
+        bh=cEpWGg1h+mnrJufQh7Ng7TE3wjG5O41fk+jfrTVIKNw=;
+        b=M9T0QpfUcFr64A22twknjZr7e39cbSPlXY8M8pribbuqOeAjqwEC0MkbAVbRg3nAxJ
+         sRoVgC235isGusj5aMHQ5R+otMFQ+RwbCQc88zFiapcgp5ZxvnH/AI60VU3M144vBSoS
+         3fz+xRBrrLNuYpvCwEwaOuX0/GQqEmNSzcGJoc7ipEPbAWDGUGE4kRzJduHWWvoz67GX
+         9bzWfwHT33fE/P3gU86VAY8OVu/TFuZGoPz/ppfOpJtsipYqjG7TqO1m8rbjwfHzDGkB
+         z3nBy4rW2kJ9ZdNl39/buSp28O+TnHl+FyGR9uRlyaG8BYWkWA0djgnr5cSac3FcKwLQ
+         fJTw==
+X-Gm-Message-State: AHQUAub4Wgm54U6WG1T06VRcK5PM1WGEEcUEp/G0Zz4QzSFH2Z34tUNo
+        XeHzYoylGgf+QSFj/QyQE9AtIg==
+X-Google-Smtp-Source: AHgI3IZxSryTmgOpTAXNToofH1y31OBOFXU/hKGdkp6Qr9p5XiWEADAeifWveE9JMRRTS+EDLC3SMA==
+X-Received: by 2002:adf:9f48:: with SMTP id f8mr6314943wrg.151.1550047707235;
+        Wed, 13 Feb 2019 00:48:27 -0800 (PST)
+Received: from [192.168.27.65] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id w16sm11901697wrp.1.2019.02.13.00.48.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 00:48:26 -0800 (PST)
+Subject: Re: [v4 PATCH 6/8] clocksource/drivers/riscv: Add required checks
+ during clock source init
+To:     Atish Patra <atish.patra@wdc.com>, linux-riscv@lists.infradead.org
+Cc:     Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>,
+        Anup Patel <anup@brainfault.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1549969812-22502-1-git-send-email-atish.patra@wdc.com>
+ <1549969812-22502-7-git-send-email-atish.patra@wdc.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7bd250fb-c896-64e1-d73b-6f3dd284e2d6@linaro.org>
+Date:   Wed, 13 Feb 2019 09:48:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1549969812-22502-7-git-send-email-atish.patra@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 60d2fa0dad06 ("fbdev: omap2: no need to check return value of
-debugfs_create functions") changed the declaration of the return value
-of function dss_debugfs_create_file() and the following two warnings
-appeared:
+On 12/02/2019 12:10, Atish Patra wrote:
+> Currently, clocksource registration happens for an invalid cpu for
+> non-smp kernels. This lead to kernel panic as cpu hotplug registration
+> will fail for those cpus. Moreover, riscv_hartid_to_cpuid can return
+> errors now.
+> 
+> Do not proceed if hartid or cpuid is invalid. Take this opprtunity to
+> print appropriate error strings for different failure cases.
+> 
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
 
-drivers/video/fbdev/omap2/omapfb/dss/core.c: In function ‘dss_debugfs_create_file’:
-drivers/video/fbdev/omap2/omapfb/dss/core.c:139:9: warning: ‘return’ with a value,
- in function returning void
-  return 0;
-         ^
-drivers/video/fbdev/omap2/omapfb/dss/core.c: In function ‘omap_dss_probe’:
-drivers/video/fbdev/omap2/omapfb/dss/core.c:172:6: warning: unused variable ‘r’
- [-Wunused-variable]
-  int r;
-      ^
+Do you want me to take it through my tree ?
 
-Rework so function dss_debugfs_create_file() that is declared to return
-void don't 'return 0' and remove the declaration of the unused variable
-'r'.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/video/fbdev/omap2/omapfb/dss/core.c | 3 ---
- 1 file changed, 3 deletions(-)
+> ---
+>  drivers/clocksource/timer-riscv.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+> index 43189220..e8163693 100644
+> --- a/drivers/clocksource/timer-riscv.c
+> +++ b/drivers/clocksource/timer-riscv.c
+> @@ -95,13 +95,30 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+>  	struct clocksource *cs;
+>  
+>  	hartid = riscv_of_processor_hartid(n);
+> +	if (hartid < 0) {
+> +		pr_warn("Not valid hartid for node [%pOF] error = [%d]\n",
+> +			n, hartid);
+> +		return hartid;
+> +	}
+> +
+>  	cpuid = riscv_hartid_to_cpuid(hartid);
+> +	if (cpuid < 0) {
+> +		pr_warn("Invalid cpuid for hartid [%d]\n", hartid);
+> +		return cpuid;
+> +	}
+>  
+>  	if (cpuid != smp_processor_id())
+>  		return 0;
+>  
+> +	pr_info("%s: Registering clocksource cpuid [%d] hartid [%d]\n",
+> +	       __func__, cpuid, hartid);
+>  	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
+> -	clocksource_register_hz(cs, riscv_timebase);
+> +	error = clocksource_register_hz(cs, riscv_timebase);
+> +	if (error) {
+> +		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+> +		       error, cpuid);
+> +		return error;
+> +	}
+>  
+>  	sched_clock_register(riscv_sched_clock,
+>  			BITS_PER_LONG, riscv_timebase);
+> @@ -110,8 +127,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+>  			 "clockevents/riscv/timer:starting",
+>  			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
+>  	if (error)
+> -		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+> -		       error, cpuid);
+> +		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
+> +		       error);
+>  	return error;
+>  }
+>  
+> 
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/core.c b/drivers/video/fbdev/omap2/omapfb/dss/core.c
-index 7e6a3eb266d0..b5956a1a30d4 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/core.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/core.c
-@@ -136,7 +136,6 @@ static inline void dss_uninitialize_debugfs(void)
- }
- void dss_debugfs_create_file(const char *name, void (*write)(struct seq_file *))
- {
--	return 0;
- }
- #endif /* CONFIG_FB_OMAP2_DSS_DEBUGFS */
- 
-@@ -169,8 +168,6 @@ static struct notifier_block omap_dss_pm_notif_block = {
- 
- static int __init omap_dss_probe(struct platform_device *pdev)
- {
--	int r;
--
- 	core.pdev = pdev;
- 
- 	dss_features_init(omapdss_get_version());
+
 -- 
-2.19.2
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
