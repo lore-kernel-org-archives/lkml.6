@@ -2,90 +2,102 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C0AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F17DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75B9222B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DCE222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbfBMOPW (ORCPT
+        id S1732842AbfBMOP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:15:22 -0500
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:58513 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726654AbfBMOPW (ORCPT
+        Wed, 13 Feb 2019 09:15:57 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46615 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfBMOP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:15:22 -0500
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 24E41B8924
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:15:20 +0000 (GMT)
-Received: (qmail 20426 invoked from network); 13 Feb 2019 14:15:20 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 13 Feb 2019 14:15:20 -0000
-Date:   Wed, 13 Feb 2019 14:15:18 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm, page_alloc: Fix a division by zero error when
- boosting watermarks
-Message-ID: <20190213141518.GS9565@techsingularity.net>
-References: <20190213131923.GQ9565@techsingularity.net>
- <295be99c-d09a-5572-fa49-2673a62c295b@suse.cz>
+        Wed, 13 Feb 2019 09:15:56 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1gtvKC-000314-OO; Wed, 13 Feb 2019 15:15:44 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 00/25] printk: new implementation
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+        <20190213014141.GB8097@jagdpanzerIV>
+Date:   Wed, 13 Feb 2019 15:15:42 +0100
+In-Reply-To: <20190213014141.GB8097@jagdpanzerIV> (Sergey Senozhatsky's
+        message of "Wed, 13 Feb 2019 10:41:41 +0900")
+Message-ID: <878syj22r5.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <295be99c-d09a-5572-fa49-2673a62c295b@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:42:36PM +0100, Vlastimil Babka wrote:
-> On 2/13/19 2:19 PM, Mel Gorman wrote:
-> > Yury Norov reported that an arm64 KVM instance could not boot since after
-> > v5.0-rc1 and could addressed by reverting the patches
-> > 
-> > 1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
-> > 73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
-> > 
-> > The problem is that a division by zero error is possible if boosting occurs
-> > either very early in boot or if the high watermark is very small. This
-> > patch checks for the conditions and avoids boosting in those cases.
-> 
-> Hmm is it really a division by zero? The following line sets max_boost to
-> pageblock_nr_pages if it's zero. And where would the division happen anyway?
-> 
-> So I wonder what's going on, your patch should AFAICS only take effect when
-> zone->_watermark[WMARK_HIGH] is 0 or 1 to begin with, otherwise max_boost is at
-> least 2?
-> 
+On 2019-02-13, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>> - console_flush_on_panic() currently is a NOP. It is pretty clear how
+>>   this could be implemented if atomic_write was available. But if no
+>>   such console is registered, it is not clear what should be done. Is
+>>   this function really even needed?
+>
+> If you now rely on a fully preemptible printk kthread to flush
+> pending logbuf messages, then console_flush_on_panic() is your
+> only chance to see those pending logbuf messages on the serial
+> console when the system dies.
 
-The issue can occur if pageblock_nr_pages is also zero or not yet
-initialised. It means the changelog is misleading because it  has to
-trigger very early in boot as happened with Yury.
+Anything critical would have already been immediately print to the
+emergency consoles. And if an emergency console was available,
+console_flush_on_panic() could be a special case where _all_ unseen
+messages (regardless of importance) are printed to the emergency
+console.
 
-> Also upon closer look, I think that (prior to the patch), boost_watermark()
-> could be reduced (thanks to the max+min capping) to
-> 
-> zone->watermark_boost = pageblock_nr_pages
-> 
+> Non-atomic consoles should become atomic once you call bust_spinlocks(1),
+> this is what we currently have:
+>
+> 	panic()
+> 	bust_spinlocks(1)                       // sets oops_in_progress
+> 	console_flush_on_panic()
+> 	 call_console_drivers()
+> 	  -> serial_driver_write()
+> 	      if (oops_in_progress)
+> 	        locked = spin_trylock_irqsave(&port->lock);
+> 	      uart_console_write();
+> 	      if (locked)
+> 	        spin_unlock_irqrestore(&port->lock);
 
-I don't think it's worth being fancy about it if we're hitting
-fragmentation issues that early in boot.
+I don't like bust_spinlocks() because drivers end up implementing
+oops_in_progress with exactly that... ignoring their own locks. I prefer
+consoles are provided with a locking mechanism that they can use to
+support a separate NMI-safe write function. My series introduces
+console_atomic_lock() for exactly this purpose.
 
--- 
-Mel Gorman
-SUSE Labs
+But this doesn't help here. Here we are talking about a crashing system
+that does _not_ have an emergency console. And in this case I would say
+messages would be lost (just like they are now if all you have is a vt
+console and it was busy).
+
+I suppose we could keep the current bust_spinlocks() stuff for the
+special case that there are no emergency consoles available. It's better
+than nothing, but also not really reliable. Preferrably we figure out
+how to implement write_atomic for all console drivers.
+
+John Ogness
