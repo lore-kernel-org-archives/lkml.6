@@ -2,116 +2,117 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73529C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C91C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46CB820842
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D4EC222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391710AbfBMLCo (ORCPT
+        id S2403862AbfBMLCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 13 Feb 2019 06:02:44 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:39246 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729210AbfBMLC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:02:29 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 28DC11A00FD;
-        Wed, 13 Feb 2019 12:02:26 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C9A81A0018;
-        Wed, 13 Feb 2019 12:02:26 +0100 (CET)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B621F2060A;
-        Wed, 13 Feb 2019 12:02:25 +0100 (CET)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     alexandru.marginean@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/3] arm64: dts: fsl: ls1028a: Add PCI IERC node and ENETC endpoints
-Date:   Wed, 13 Feb 2019 13:02:21 +0200
-Message-Id: <1550055743-15542-2-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550055743-15542-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1550055743-15542-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49438 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391692AbfBMLCm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 06:02:42 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 666FC802FA; Wed, 13 Feb 2019 12:02:32 +0100 (CET)
+Date:   Wed, 13 Feb 2019 12:02:38 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Message-ID: <20190213110238.GA30507@amd>
+References: <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+ <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell>
+ <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+ <20190212111403.GC20638@dell>
+ <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
+ <20190212132016.GA4781@dell>
+ <20190213092553.GE1863@dell>
+ <CAMRc=MeTMq_GWzQB6LBvts1csMftj=On5sB22jsJZzQzONxbNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeTMq_GWzQB6LBvts1csMftj=On5sB22jsJZzQzONxbNg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A SoC features a PCI Integrated Endpoint Root Complex
-(IERC) defining several integrated PCI devices, including the ENETC
-ethernet controller integrated endpoints (IEPs). The IERC implements
-ECAM (Enhanced Configuration Access Mechanism) to provide access
-to the PCIe config space of the IEPs. This means the the IEPs
-(including ENETC) do not support the standard PCIe BARs, instead
-the Enhanced Allocation (EA) capability structures in the ECAM space
-are used to fix the base addresses in the system, and the PCI
-subsystem uses these structures for device enumeration and discovery.
-The "ranges" entries contain basic information from these EA capabily
-structures required by the kernel for device enumeration.
 
-The current patch also enables the first 2 ENETC PFs (Physiscal
-Functions) and the associated VFs (Virtual Functions), 2 VFs for
-each PF.  Each of these ENETC PFs has an external ethernet port
-on the LS1028A SoC.
+--WIyZ46R2i8wDzkSu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Hi!
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index a8cf92a..7f5a8e6 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -335,5 +335,38 @@
- 				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
- 		};
-+
-+		pcie@1f0000000 { /* Integrated Endpoint Root Complex */
-+			compatible = "pci-host-ecam-generic";
-+			reg = <0x01 0xf0000000 0x0 0x100000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			msi-parent = <&its>;
-+			device_type = "pci";
-+			bus-range = <0x0 0x0>;
-+			dma-coherent;
-+			msi-map = <0 &its 0x17 0xe>;
-+			iommu-map = <0 &smmu 0x17 0xe>;
-+				  /* PF0-6 BAR0 - non-prefetchable memory */
-+			ranges = <0x82000000 0x0 0x00000000  0x1 0xf8000000  0x0 0x160000
-+				  /* PF0-6 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf8160000  0x0 0x070000
-+				  /* PF0: VF0-1 BAR0 - non-prefetchable memory */
-+				  0x82000000 0x0 0x00000000  0x1 0xf81d0000  0x0 0x020000
-+				  /* PF0: VF0-1 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf81f0000  0x0 0x020000
-+				  /* PF1: VF0-1 BAR0 - non-prefetchable memory */
-+				  0x82000000 0x0 0x00000000  0x1 0xf8210000  0x0 0x020000
-+				  /* PF1: VF0-1 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf8230000  0x0 0x020000>;
-+
-+			enetc_port0: pci@0,0 {
-+				reg = <0x000000 0 0 0 0>;
-+			};
-+			enetc_port1: pci@0,1 {
-+				reg = <0x000100 0 0 0 0>;
-+			};
-+		};
- 	};
- };
--- 
-2.7.4
+> > As you can see, it will return the IRQ Domain for the chip.
+> >
+> > You can then pass this IRQ domain to mfd_add_devices() and it will do
+> > the HWIRQ =3D> VIRQ mapping for you on the fly.  Meaning that you can
+> > remove all the nastiness in max77650_setup_irqs() and have the Input
+> > device use the standard (e.g. platform_get_irq()) APIs.
+> >
+> > How does that Sound?
+>=20
+> This does sound better! Why didn't you lead with that in the first
+>place?
 
+TBH, this can be considered rude and I'm not surprised Lee reacted the
+way he did.
+
+> It's a pity it's not documented, I had to look at the code to find out
+> irq resources would get translated in mfd_add_devices() if a domain is
+> present.
+
+I guess documentation patch would be welcome.
+
+Best regards,
+									Pavel
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--WIyZ46R2i8wDzkSu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxj+U4ACgkQMOfwapXb+vL/BQCdEGkaJPfLbI+tEuJVF0ANhxsc
+5acAn2oCVZb7slwa63nJgPYYkBk4vrzA
+=8OAJ
+-----END PGP SIGNATURE-----
+
+--WIyZ46R2i8wDzkSu--
