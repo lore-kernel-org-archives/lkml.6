@@ -2,110 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85ADCC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4C7C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604A32070C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B597520842
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:58:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="J04ALZMK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390401AbfBMKyQ (ORCPT
+        id S1732318AbfBMK6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:54:16 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:36241 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbfBMKyQ (ORCPT
+        Wed, 13 Feb 2019 05:58:38 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54600 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729522AbfBMK6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:54:16 -0500
-X-Originating-IP: 90.53.137.203
-Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id DC4591C0011;
-        Wed, 13 Feb 2019 10:54:10 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 11:54:10 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Tudor.Ambarus@microchip.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        Nicolas.Ferre@microchip.com, Ludovic.Desroches@microchip.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        bbrezillon@kernel.org, marek.vasut@gmail.com, richard@nod.at,
-        miquel.raynal@bootlin.com, lee.jones@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 04/11] memory: atmel-ebi: add sam9x60 EBI support
-Message-ID: <20190213105410.GL10129@piout.net>
-References: <20190213085930.31578-1-tudor.ambarus@microchip.com>
- <20190213085930.31578-5-tudor.ambarus@microchip.com>
+        Wed, 13 Feb 2019 05:58:37 -0500
+Received: by mail-it1-f193.google.com with SMTP id z9so3009195itc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 02:58:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0W6Q9SfqR8KsuOuRSWCMyZ1zIwyFEMKMRw07twav4j4=;
+        b=J04ALZMKqA4I20RGv7cJ6bzD7OEAll6AlCzXZi20Z5FN+BZSUjuaQEJvHq/BnhrStt
+         OcNmbTvKdmG7uPZPx/DsJThqPTbBrkbo1w13f89FaHia7/B0XhbFm8Ojuteuo6qhlsP5
+         FgRBWiUXQaSeGeN+wPf45LZg4XLo993lOTxiRhQai+5TFZrV61ANlZFri5DFjZhDePqc
+         paBYZX8vUG43vyyOlRmmXobcVBmSFT9bFjs8syb36+WG54d4gGNSZ3Ps2EIw7FP79GD+
+         K9aTWj8lG629CYzm0BWFvaCHidDfzBnHoZ4oVs7/l+F8kQSo9/oBGxPt2yV+R3lFVccr
+         itzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0W6Q9SfqR8KsuOuRSWCMyZ1zIwyFEMKMRw07twav4j4=;
+        b=UMgE35E9uYuadUcR6nzVqk1ToWXLTDDB3JvZHIqEhZ2ESCRBASBU6KAkMWn8Fj+cEo
+         +Qxm1D61RibU/nY97WJCqt9xPVYCEOEHyR3CsTJny+YkIcG7qRUUn0uFZCqJuqwOFnr/
+         qmB+ODOjlHt7jTBBYcZar7D6N7dcTb3i7EWr2v9u00somKrAHiiGeyfhJpRWT9jlluzQ
+         gYfbwTtKP6XH//1P6KfrimZIJR9NQF+2VAq+5KAWkYrJGurOwNtOQNZ50c7iGxyD7NWW
+         4jXqiRmtihlTfqS1VmnnbDaKBcV3HNx7BoSvXAXlNWq6GaTE43fAsaD4svnSkTXuo3Ww
+         3u8A==
+X-Gm-Message-State: AHQUAuZSH4WWIjBTntDFcv7Ic2aTeoELY0KpW6clDvBM2IFgAvZ1Gpo4
+        WaTA3x1+h959QsPOi6XwXBm2HtJDAMkfbSsLp1J3mg==
+X-Google-Smtp-Source: AHgI3IYS74n3xlLGwLzRtJiPda1ytTZSzXXFn641T7eF/Jv0ykQff3/+Oj67SyNCS+iLus3YKwXb40DaxYzTtHS4oZ4=
+X-Received: by 2002:a24:7284:: with SMTP id x126mr2084192itc.96.1550055516743;
+ Wed, 13 Feb 2019 02:58:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213085930.31578-5-tudor.ambarus@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190201094736.32057-1-brgl@bgdev.pl> <20190201094736.32057-10-brgl@bgdev.pl>
+ <20190212121236.GD25613@amd>
+In-Reply-To: <20190212121236.GD25613@amd>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 13 Feb 2019 11:58:26 +0100
+Message-ID: <CAMRc=MfpCU0fRGrQb5CncaHu2Yfdv=NbuZc9Oujb7FUWdn93Pg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] leds: max77650: add LEDs support
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2019 08:59:55+0000, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> The sam9x60 board defines the CCFG_EBICSA register under SFR,
-> and not as a MATRIX register, as previous boards do.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+wt., 12 lut 2019 o 13:12 Pavel Machek <pavel@ucw.cz> napisa=C5=82(a):
+>
+>
+> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> > index a72f97fca57b..6e7a8f51eccc 100644
+> > --- a/drivers/leds/Kconfig
+> > +++ b/drivers/leds/Kconfig
+> > @@ -608,6 +608,12 @@ config LEDS_TLC591XX
+> >         This option enables support for Texas Instruments TLC59108
+> >         and TLC59116 LED controllers.
+> >
+> > +config LEDS_MAX77650
+> > +     tristate "LED support for Maxim MAX77650 PMIC"
+> > +     depends on MFD_MAX77650
+> > +     help
+> > +       LEDs driver for MAX77650 family of PMICs from Maxim Integrated.=
+"
+> > +
+>
+> List the chips? Remove extra "?
+>                                                                         P=
+avel
 
-> ---
->  drivers/memory/atmel-ebi.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
-> index b45914cfa212..0322df9dc249 100644
-> --- a/drivers/memory/atmel-ebi.c
-> +++ b/drivers/memory/atmel-ebi.c
-> @@ -17,6 +17,7 @@
->  #include <linux/init.h>
->  #include <linux/of_device.h>
->  #include <linux/regmap.h>
-> +#include <soc/at91/atmel-sfr.h>
->  
->  struct atmel_ebi_dev_config {
->  	int cs;
-> @@ -440,6 +441,15 @@ static const struct atmel_ebi_caps sama5d3_ebi_caps = {
->  	.apply_config = sama5_ebi_apply_config,
->  };
->  
-> +static const struct atmel_ebi_caps sam9x60_ebi_caps = {
-> +	.available_cs = 0x3f,
-> +	.ebi_csa_offs = AT91_SFR_CCFG_EBICSA,
-> +	.regmap_name = "microchip,sfr",
-> +	.get_config = at91sam9_ebi_get_config,
-> +	.xlate_config = atmel_ebi_xslate_smc_config,
-> +	.apply_config = at91sam9_ebi_apply_config,
-> +};
-> +
->  static const struct of_device_id atmel_ebi_id_table[] = {
->  	{
->  		.compatible = "atmel,at91sam9260-ebi",
-> @@ -473,6 +483,10 @@ static const struct of_device_id atmel_ebi_id_table[] = {
->  		.compatible = "atmel,sama5d3-ebi",
->  		.data = &sama5d3_ebi_caps,
->  	},
-> +	{
-> +		.compatible = "microchip,sam9x60-ebi",
-> +		.data = &sam9x60_ebi_caps,
-> +	},
->  	{ /* sentinel */ }
->  };
->  
-> -- 
-> 2.9.5
-> 
+They are already listed in the core mfd Kconfig, but thanks for
+spotting that stray ".
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Bart
