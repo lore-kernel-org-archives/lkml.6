@@ -2,88 +2,105 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2DAC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F95C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300D9222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD80222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:46:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qw7ortlk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a/qbU+Go"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733265AbfBMGoX (ORCPT
+        id S1733279AbfBMGqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 01:44:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47240 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfBMGoX (ORCPT
+        Wed, 13 Feb 2019 01:46:06 -0500
+Received: from mail-vs1-f47.google.com ([209.85.217.47]:33234 "EHLO
+        mail-vs1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfBMGqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 01:44:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PWbL/4SM/FCpa2kpx0HFkhtSLmcFMEfuKZ+eKMOIyw0=; b=Qw7ortlk+26yXlOSEFiN8o6oG
-        ptj2G6yzSeaWW5H3csqikFRZ61vK5L0ddsPgErQvuyuouQZnUsCdeMt6SIchawf057qU/7QaqyfEh
-        SRURhFe5DuVSukM3WnIc9cxyFieTNrD0CZ4tQ2lFquq3HoW2arPazu+L/1MKKkJwcWq7uwhPQlTjv
-        uNOgtN/PsvkUP3L5vi/RX8hfOhwuas0uYuIkzdi5xScXdJqFUvl2V9mkRwYNSJDDhXQtC9Zw98FSd
-        QhkQZDvjHw0HGRo424isfSUN6lhIS+hpdeFZKY5FgMemuoEAGVf2xv1xiXynGKBhB4WCJWrzumBro
-        bq5XBnhzw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtoHL-0001uh-Ak; Wed, 13 Feb 2019 06:44:19 +0000
-Date:   Tue, 12 Feb 2019 22:44:19 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 6/6] RISC-V: Free-up initrd in free_initrd_mem()
-Message-ID: <20190213064419.GA27012@infradead.org>
-References: <20190213063127.28703-1-anup.patel@wdc.com>
- <20190213063127.28703-7-anup.patel@wdc.com>
+        Wed, 13 Feb 2019 01:46:06 -0500
+Received: by mail-vs1-f47.google.com with SMTP id k11so792366vsm.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:46:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LaaxK45HV6J0S+JnMGC2Qo7gtVUUN33pe4tyM79VtP4=;
+        b=a/qbU+GognQORXcmvesxZJBaXDZICAGSXmNCJ6HWOl05sI413tTu/ckYQDGD2oHXsu
+         rHMpxPo5sWU8UZUOJvncdThZFQZ+o7+OVwcx8/e9FxVBuDMrEjRuNbZsl/oS0Ktw+huC
+         TVIlyX7JAwfNJZKD28OfMotpeDnLBQxA01l9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LaaxK45HV6J0S+JnMGC2Qo7gtVUUN33pe4tyM79VtP4=;
+        b=E+mIXt9go2/UwBuZNi6As7wVB4GIZRzweEBEjmg8fgNzEIvs4zowuGqnxRaZhdlqkG
+         H8Tgy2t9iQIuBhzMxTwZI+8UOAnsqrEsxoNGlrd7Psrv9xaHuiQzaluoqkL5O4vgygSU
+         vs6YIIULRjLgj4hwo10CcTkOsI/2Q99HRk/gyr0WQgyNU+xyoWDf1+mJJQtjEyNoFTSS
+         fzmXZAUyQ2CWaBN8yvQHXdkwjOvQsB2DFWMoTUIfC0OZgJOidQrOr+ZRM6ilP3UTmAHX
+         A5RYS/zKswQFLuuYRGB4DXc8UP28S6eY5ZTYmP4tcjmbNU8DXDGzRliFlg5QRVCpObga
+         hcUg==
+X-Gm-Message-State: AHQUAuapXaltvx8USjDE4LvPNOH/KrMiwk+k8dLUbUHitXm8N8s6VG62
+        pES9WN+fG64Bvy1sUrkf/7TszaEQTPzP8vc2Z+ejRQ==
+X-Google-Smtp-Source: AHgI3IbPdXQjUC7jJlo1ltGJL6RmmODEqk3mNjiz70/VwD6au4fXC9a7QW2mGxH/NfBAmEYSHKzn8gvyO7Cukx85Gl0=
+X-Received: by 2002:a67:d20d:: with SMTP id y13mr3198767vsi.163.1550040365072;
+ Tue, 12 Feb 2019 22:46:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213063127.28703-7-anup.patel@wdc.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190213062956.146536-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190213062956.146536-1-weiyongjun1@huawei.com>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Wed, 13 Feb 2019 14:45:38 +0800
+Message-ID: <CAFv8NwLSGmKEYeGgo_DQFJAWV8rJrgxR2Rv-f9gv3SkrT8eKMg@mail.gmail.com>
+Subject: Re: [PATCH -next] ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Benson Leung <bleung@chromium.org>,
+        alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 06:32:24AM +0000, Anup Patel wrote:
-> index 9cd583b6d1cd..c22b873de856 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -97,8 +97,9 @@ static void __init setup_initrd(void)
->  	initrd_end = 0;
->  }
->  
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> +void __init free_initrd_mem(unsigned long start, unsigned long end)
->  {
-> +	memblock_free(__pa(start), end - start);
-
-I'm pretty sure this should be a call to free_reserved_area instead.
-
-All regions reserved using memblock_reserved and not freed before
-initializing the MM are marked reserved and don't have valid page
-counts, etc.
-
-So we need the actions in free_reserved_area to actually make the
-memory useful.  Now every other architecture except for arm64
-seems to do fine without a memblock_free.  I'm not an expert on
-memblock (but I've CCed one), but I guess the reason is that once
-the kernel has booted we don't really care about freeing memblock
-area.
+On Wed, Feb 13, 2019 at 2:16 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> Fixes the following sparse warning:
+>
+> sound/soc/codecs/cros_ec_codec.c:209:27: warning:
+>  symbol 'cros_ec_dai' was not declared. Should it be static?
+>
+> Fixes: b291f42a3718 ("ASoC: cros_ec_codec: Add codec driver for Cros EC")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  sound/soc/codecs/cros_ec_codec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
+> index b14100b6a939..99a3af8a15ff 100644
+> --- a/sound/soc/codecs/cros_ec_codec.c
+> +++ b/sound/soc/codecs/cros_ec_codec.c
+> @@ -206,7 +206,7 @@ static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
+>         .set_fmt = cros_ec_i2s_set_dai_fmt,
+>  };
+>
+> -struct snd_soc_dai_driver cros_ec_dai[] = {
+> +static struct snd_soc_dai_driver cros_ec_dai[] = {
+>         {
+>                 .name = "cros_ec_codec I2S",
+>                 .id = 0,
+>
+>
+>
+Hi Wei,
+  Yes you are right. Thanks for the fix!
