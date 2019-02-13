@@ -2,136 +2,158 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CDFC0044B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9B5C0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CFE222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:42:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vk+9afpc"
+	by mail.kernel.org (Postfix) with ESMTP id B567E222B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550090612;
+	bh=G5ALqc5roA2rw+38f64kWpi9yReZYaDnrPZizI/E4UE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qRlDWzTWLfHCa+GTIM7+F6HHpIRqQkXmK/pqQ1QbxC5imQvT8J/h7+3Ca1gTypNVU
+	 /5ECfQ2n+8mKmE4yADGoPCsBQxgbl5Zna6FcBfhnnhjhIlEj3o8Wm3JJei9jQKlzgh
+	 f0eV0g/TDbjHYwW52EUgpjhKTEBZia6mMzVDvqWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436686AbfBMUmg (ORCPT
+        id S2394629AbfBMUnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 15:42:36 -0500
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:35267 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387655AbfBMUmg (ORCPT
+        Wed, 13 Feb 2019 15:43:31 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33212 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfBMUnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 15:42:36 -0500
-Received: by mail-yw1-f74.google.com with SMTP id d18so2236191ywb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=qNCR0xN3839y7VMAmcBdO2qZgWS8pHFZK1yfc/zYXzk=;
-        b=vk+9afpcYaiUM95aJA3YpkniHaAPKIKCIB0/xfPAYsnuF7/YNMPbNb4k5yafb8q/hg
-         dVvuTWNKWxUYfWb8F6n2t+L5vbcXbDUy3v0W2SR65b+SIBSo/aW1YG0v4KZnPP49Yw8i
-         4RdXH8htDGSG2dUmswH0gKObCDVSIPoaKTXzxGC2+quA8rx4wmm1VU1/SPLn6lViG2bR
-         YnuQuZSJVMNhR4T6L/wKH9RF32kEWhfaJ6A0OACNv8zBV3ni012T46sxjKfCeLhRCLy3
-         B9ecidL7VHAcArqfULSdG2dD3UjWr73rgCyOjB4szjIgotWbzRazwSg1rn3un1gjiHA8
-         R3Vg==
+        Wed, 13 Feb 2019 15:43:31 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so6738345otl.0;
+        Wed, 13 Feb 2019 12:43:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=qNCR0xN3839y7VMAmcBdO2qZgWS8pHFZK1yfc/zYXzk=;
-        b=MZwmaSoZ+L1/XZl9BuOvYL8lQIRJ/xCMQif0gFJaF4OfZ9vRAZYdllKZEWyo4TQne8
-         WoLrLRyuJiWJdUeRRVBucX2qQVsh4+ujUYEXY9LZgIVmzZK+uLj6sKQ+LR+FhcpIqNby
-         cayE3ftsK4jdFTyYm5iZRml33VkyY7CcLKIRCaNkfPilbvWHtW5E90zE0GaqJ4v/Rcnx
-         DWsJ8mOkFuW/dgCvaaDk/6SKWY/tWa6DF1yCYSMQj3/ncBFG/GT2jzOe/b/9nn41X/Gu
-         jeEC28II7ryDCPG/AjWTuiQo5UofNbKYZkBaPz1IANyXWndNaLZwG4drCs3S6tWCWJoa
-         iTKw==
-X-Gm-Message-State: AHQUAuYCmoC470eGSFFwtYPt3dmLy5FE9xiO5Va4ZRgLN1qrnWzfvtoD
-        gOAKAjRcPPkSBFRIzgdiXWRrRwQRUQ==
-X-Google-Smtp-Source: AHgI3IYGHa4+7qE44erSpdyH7XPkwQLF/QTlE5/7wNbNcq+pC/rZo8F6iVN+yBzCSGsts8+B5GUGhLRnOw==
-X-Received: by 2002:a81:e50:: with SMTP id 77mr19924ywo.20.1550090555029; Wed,
- 13 Feb 2019 12:42:35 -0800 (PST)
-Date:   Wed, 13 Feb 2019 21:41:57 +0100
-Message-Id: <20190213204157.12570-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH] mm: page_alloc: fix ref bias in page_frag_alloc() for 1-byte allocs
-From:   Jann Horn <jannh@google.com>
-To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        jannh@google.com
-Cc:     linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Aaron Lu <aaron.lu@intel.com>, netdev@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aM456OQ5KH4UoJUTxRr5fsQjYGDLTT+2dhzlWlaElJo=;
+        b=F2aMRkn58vYvA+DaSVlPkg4DsAvH3iWwWWT3WvH8HFu89+hXVvLYEPqbe0u7vvZU5i
+         ELLJpI5UZeRlcAj8SI6yxdkBN+JKybiRioMptPn+Id+pHMBUlvhy3Y7kXJOPpjJz7Zme
+         +WjVwvvuSk+6CqlBwyv93yBkKNmryzyTjSXGejPQvrTp7ej79kDq2EKt5C9J+iOF1xIy
+         7I87/V+/iDlOFAXqEw6gEbpeqgZVl2vop9nOFPUDow+3PFv5VPI9X68kfeXgy4ffXINk
+         V4dxcxUua6wkfXA+4SwGlNDel1XHzwlupwk3eoKiWQVXA/OOerVegpwyBzIhocHrQBr2
+         yWZA==
+X-Gm-Message-State: AHQUAubF3Te84d0QTC6/7RdsKu0WpAqspTRY9eVJgU2l2ochLGyAMbWS
+        Le5BYg8E44qN/Y7pCaCBKw==
+X-Google-Smtp-Source: AHgI3IYXk5BNsuI0itl0HuS4FLOO1l3E2AmElQkuJkCsrDQNVD3zjKP8sC4HAFn4iydiE4OP+llTyg==
+X-Received: by 2002:aca:2803:: with SMTP id 3mr23579oix.85.1550090609726;
+        Wed, 13 Feb 2019 12:43:29 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w17sm174060otk.12.2019.02.13.12.43.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 12:43:29 -0800 (PST)
+Date:   Wed, 13 Feb 2019 14:43:28 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v5 01/11] dt-bindings: mfd: add DT bindings for max77650
+Message-ID: <20190213204328.GA26408@bogus>
+References: <20190213134335.10838-1-brgl@bgdev.pl>
+ <20190213134335.10838-2-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213134335.10838-2-brgl@bgdev.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The basic idea behind ->pagecnt_bias is: If we pre-allocate the maximum
-number of references that we might need to create in the fastpath later,
-the bump-allocation fastpath only has to modify the non-atomic bias value
-that tracks the number of extra references we hold instead of the atomic
-refcount. The maximum number of allocations we can serve (under the
-assumption that no allocation is made with size 0) is nc->size, so that's
-the bias used.
+On Wed, Feb 13, 2019 at 02:43:25PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add a DT binding document for max77650 ultra-low power PMIC. This
+> describes the core mfd device and the GPIO module.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  .../devicetree/bindings/mfd/max77650.txt      | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
+> new file mode 100644
+> index 000000000000..0a40e9c6aab8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/max77650.txt
+> @@ -0,0 +1,47 @@
+> +MAX77650 ultra low-power PMIC from Maxim Integrated.
+> +
+> +Required properties:
+> +-------------------
+> +- compatible:		Must be "maxim,max77650"
+> +- reg:			I2C device address.
+> +- interrupts:		The interrupt on the parent the controller is
+> +			connected to.
+> +- interrupt-parent:	phandle of the parent interrupt controller.
 
-However, even when all memory in the allocation has been given away, a
-reference to the page is still held; and in the `offset < 0` slowpath, the
-page may be reused if everyone else has dropped their references.
-This means that the necessary number of references is actually
-`nc->size+1`.
+This is implied (and may be in a parent node), so remove it.
 
-Luckily, from a quick grep, it looks like the only path that can call
-page_frag_alloc(fragsz=1) is TAP with the IFF_NAPI_FRAGS flag, which
-requires CAP_NET_ADMIN in the init namespace and is only intended to be
-used for kernel testing and fuzzing.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells:	Must be <2>.
+> +
+> +- gpio-controller : 	Marks the device node as a gpio controller.
+> +- #gpio-cells : 	Must be <2>. The first cell is the pin number and
 
-To test for this issue, put a `WARN_ON(page_ref_count(page) == 0)` in the
-`offset < 0` path, below the virt_to_page() call, and then repeatedly call
-writev() on a TAP device with IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI,
-with a vector consisting of 15 elements containing 1 byte each.
+Some space before tabs here.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
- mm/page_alloc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> +			the second cell is used to specify the gpio active
+> +			state.
+> +
+> +Optional properties:
+> +--------------------
+> +gpio-line-names:	Single string containing the name of the GPIO line.
+> +
+> +The GPIO-controller module is represented as part of the top-level PMIC
+> +node. The device exposes a single GPIO line.
+> +
+> +For device-tree bindings of other sub-modules (regulator, power supply,
+> +LEDs and onkey) refer to the binding documents under the respective
+> +sub-system directories.
+> +
+> +For more details on GPIO bindings, please refer to the generic GPIO DT
+> +binding document <devicetree/bindings/gpio/gpio.txt>.
+> +
+> +Example:
+> +--------
+> +
+> +	pmic: max77650@48 {
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 35fdde041f5c..46285d28e43b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4675,11 +4675,11 @@ void *page_frag_alloc(struct page_frag_cache *nc,
- 		/* Even if we own the page, we do not use atomic_set().
- 		 * This would break get_page_unless_zero() users.
- 		 */
--		page_ref_add(page, size - 1);
-+		page_ref_add(page, size);
- 
- 		/* reset page count bias and offset to start of new frag */
- 		nc->pfmemalloc = page_is_pfmemalloc(page);
--		nc->pagecnt_bias = size;
-+		nc->pagecnt_bias = size + 1;
- 		nc->offset = size;
- 	}
- 
-@@ -4695,10 +4695,10 @@ void *page_frag_alloc(struct page_frag_cache *nc,
- 		size = nc->size;
- #endif
- 		/* OK, page count is 0, we can safely set it */
--		set_page_count(page, size);
-+		set_page_count(page, size + 1);
- 
- 		/* reset page count bias and offset to start of new frag */
--		nc->pagecnt_bias = size;
-+		nc->pagecnt_bias = size + 1;
- 		offset = size - fragsz;
- 	}
- 
--- 
-2.20.1.791.gb4d0f1c61a-goog
+Hopefully some day this will stop.
 
+pmic@48
+
+> +		compatible = "maxim,max77650";
+> +		reg = <0x48>;
+> +
+> +		interrupt-controller;
+> +		interrupt-parent = <&gpio2>;
+> +		#interrupt-cells = <2>;
+> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		gpio-line-names = "max77650-charger";
+> +	};
+> -- 
+> 2.20.1
+> 
