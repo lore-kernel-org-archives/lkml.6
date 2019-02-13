@@ -2,188 +2,74 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A8EC0044B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A39C0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8754821872
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C942085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:26:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qGrkOHz8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731803AbfBMUXf (ORCPT
+        id S2392041AbfBMU0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 15:23:35 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58722 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfBMUXe (ORCPT
+        Wed, 13 Feb 2019 15:26:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45092 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730402AbfBMU0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 15:23:34 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C875F118E;
-        Wed, 13 Feb 2019 20:23:32 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 12:23:31 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     syzbot <syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com>
-Cc:     dan.j.williams@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com, nborisov@suse.com,
-        rppt@linux.vnet.ibm.com, shakeelb@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        willy@infradead.org, joel@joelfernandes.org,
-        Mike Kravetz <kravetz@us.ibm.com>
-Subject: Re: BUG: Bad page state (5)
-Message-Id: <20190213122331.632a4eb1a12b738ef9633855@linux-foundation.org>
-In-Reply-To: <0000000000006a12bd0581ca4145@google.com>
-References: <0000000000006a12bd0581ca4145@google.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Feb 2019 15:26:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fuyNjv+gA9Cpq0mS7d0DHpZNnRQ2StHPyhGiej79BQg=; b=qGrkOHz8qJCrWPVjL5jQPDQgS
+        USOcI7mUSjEYxD36Eb4n+vEdFCMwhKc4EJKz1DDMC41pa7aa1qsVPetZT1FFYL7dxi59Zx8XHVeC7
+        KBVChej3yiTi1dXFRaSPrWwsAH0ArhoXNVBYOuMpLzecL25EQ8+dXWQ16KQgwmAghhqaCImMA4giT
+        brascUu2N5+MOPcWY+D4CHjsyvEV39+djsXMMlU3wct/HNkpiV8Nm0xZNzy76PcTGdXKbLDF3oC5P
+        oiLhBL6ZAwgqRj0Fd+WyTLfvmLwgAOPtc+PezbKIGXD92zr0GnfTwRqGcndeHl5GoBs0kp7SzGBl6
+        VnjE3xRgQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gu16l-0007Kp-LX; Wed, 13 Feb 2019 20:26:16 +0000
+Date:   Wed, 13 Feb 2019 12:26:15 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guroan@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] vmalloc enhancements
+Message-ID: <20190213202614.GV12668@bombadil.infradead.org>
+References: <20190212175648.28738-1-guro@fb.com>
+ <20190212184724.GA18339@cmpxchg.org>
+ <20190212123409.7ed5c34d68466dbd8b7013a3@linux-foundation.org>
+ <20190212223605.GA15979@tower.DHCP.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212223605.GA15979@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019 09:56:04 -0800 syzbot <syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com> wrote:
+On Tue, Feb 12, 2019 at 10:36:12PM +0000, Roman Gushchin wrote:
+> On Tue, Feb 12, 2019 at 12:34:09PM -0800, Andrew Morton wrote:
+> > On Tue, 12 Feb 2019 13:47:24 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > I don't understand what prompted this change to percpu counters.
+> 
+> I *think*, I see some performance difference, but it's barely measurable
+> in my setup. Also as I remember, Matthew was asking why not percpu here.
+> So if everybody prefers a global atomic, I'm fine with either.
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    c4f3ef3eb53f Add linux-next specific files for 20190213
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1130a124c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9ec67976eb2df882
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2cd2887ea471ed6e6995
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ecdaa8c00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ebe178c00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com
+I was asking why you were using an accessor instead of a direct reference
+to the atomic_long_t.
 
-It looks like a a memfd page was freed with a non-NULL ->mapping.
-
-Joel touched the memfd code with "mm/memfd: add an F_SEAL_FUTURE_WRITE
-seal to memfd" but it would be surprising if syzbot tickled that code?
-
-
-> BUG: Bad page state in process udevd  pfn:472f0
-> name:"memfd:"
-> page:ffffea00011cbc00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xf
-> shmem_aops
-> flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-> raw: 01fffc000008000c ffffea0000ac4f08 ffff8880a85af890 ffff88800df2ad40
-> raw: 000000000000000f 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: non-NULL mapping
-> Modules linked in:
-> CPU: 1 PID: 7586 Comm: udevd Not tainted 5.0.0-rc6-next-20190213 #34
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   bad_page.cold+0xda/0xff mm/page_alloc.c:586
->   free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
->   free_pages_check mm/page_alloc.c:1023 [inline]
->   free_pages_prepare mm/page_alloc.c:1113 [inline]
->   free_pcp_prepare mm/page_alloc.c:1138 [inline]
->   free_unref_page_prepare mm/page_alloc.c:2991 [inline]
->   free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
-> name:"memfd:"
->   release_pages+0x60d/0x1940 mm/swap.c:791
->   pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
->   __pagevec_lru_add mm/swap.c:917 [inline]
->   lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
->   lru_add_drain+0x20/0x60 mm/swap.c:652
->   exit_mmap+0x290/0x530 mm/mmap.c:3134
->   __mmput kernel/fork.c:1047 [inline]
->   mmput+0x15f/0x4c0 kernel/fork.c:1068
->   exec_mmap fs/exec.c:1046 [inline]
->   flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
->   load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
->   search_binary_handler fs/exec.c:1656 [inline]
->   search_binary_handler+0x17f/0x570 fs/exec.c:1634
->   exec_binprm fs/exec.c:1698 [inline]
->   __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
->   do_execveat_common fs/exec.c:1865 [inline]
->   do_execve fs/exec.c:1882 [inline]
->   __do_sys_execve fs/exec.c:1958 [inline]
->   __se_sys_execve fs/exec.c:1953 [inline]
->   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
->   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x7fc7001ba207
-> Code: Bad RIP value.
-> RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-> RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-> RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-> RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-> R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
-> BUG: Bad page state in process udevd  pfn:2b13c
-> page:ffffea0000ac4f00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xe
-> shmem_aops
-> flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-> raw: 01fffc000008000c ffff8880a85af890 ffff8880a85af890 ffff88800df2ad40
-> raw: 000000000000000e 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: non-NULL mapping
-> Modules linked in:
-> CPU: 1 PID: 7586 Comm: udevd Tainted: G    B              
-> 5.0.0-rc6-next-20190213 #34
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   bad_page.cold+0xda/0xff mm/page_alloc.c:586
-> name:"memfd:"
->   free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
->   free_pages_check mm/page_alloc.c:1023 [inline]
->   free_pages_prepare mm/page_alloc.c:1113 [inline]
->   free_pcp_prepare mm/page_alloc.c:1138 [inline]
->   free_unref_page_prepare mm/page_alloc.c:2991 [inline]
->   free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
->   release_pages+0x60d/0x1940 mm/swap.c:791
->   pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
->   __pagevec_lru_add mm/swap.c:917 [inline]
->   lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
->   lru_add_drain+0x20/0x60 mm/swap.c:652
->   exit_mmap+0x290/0x530 mm/mmap.c:3134
->   __mmput kernel/fork.c:1047 [inline]
->   mmput+0x15f/0x4c0 kernel/fork.c:1068
->   exec_mmap fs/exec.c:1046 [inline]
->   flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
->   load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
->   search_binary_handler fs/exec.c:1656 [inline]
->   search_binary_handler+0x17f/0x570 fs/exec.c:1634
->   exec_binprm fs/exec.c:1698 [inline]
->   __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
->   do_execveat_common fs/exec.c:1865 [inline]
->   do_execve fs/exec.c:1882 [inline]
->   __do_sys_execve fs/exec.c:1958 [inline]
->   __se_sys_execve fs/exec.c:1953 [inline]
->   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
->   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x7fc7001ba207
-> Code: Bad RIP value.
-> RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-> RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-> RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-> RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-> R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
