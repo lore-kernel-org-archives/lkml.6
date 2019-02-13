@@ -7,46 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899FAC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E8AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DFA2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 138572175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026096;
-	bh=uVuE2H/hRlXdoJY9hDPQKdLcOjU9Wg7w2c1OfGL7Gp8=;
+	s=default; t=1550026108;
+	bh=uBPCz2uIb7DlS4jtshd289NLtK7Bu/gpP12j2BMCNz0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S8BJwcgCZuf0/iVcJx41xsogaJEnbchqneexp09RGj8vzuuzJIMSPUkN3XHDXYcf6
-	 8Izy10Zpw9oFxXCDTSBBGFXuA5duzK9cp8Mvda52Dfz5HbQBpx2jtSUitV4/juotKn
-	 zk7XklM8hMc2pJ0HlOrqsoDYLG+yI66lDtjyy//E=
+	b=oxvRzjoJAGRhzLAGKi90XGVfU0irpBi/KTLrBDZHRJjdcTP80ONhSk5qkdfw8h+bb
+	 0J9t+aIK8JbSUM/rTUPZKkKRtlsu938hanMKVx+STkLuOWWR5y/Ikb9A17OOGHLggA
+	 UJX/2dUytzTyx/1qdihiH3rDC3HIg/nR+/Su4aF8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389308AbfBMCsP (ORCPT
+        id S2389669AbfBMCs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:48:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:48:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388936AbfBMCkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:22 -0500
+        id S2388952AbfBMCkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27BF9222C2;
-        Wed, 13 Feb 2019 02:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25CEA222C9;
+        Wed, 13 Feb 2019 02:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025621;
-        bh=uVuE2H/hRlXdoJY9hDPQKdLcOjU9Wg7w2c1OfGL7Gp8=;
+        s=default; t=1550025618;
+        bh=uBPCz2uIb7DlS4jtshd289NLtK7Bu/gpP12j2BMCNz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iG9dp3uIhBrifhaLB8aAwjHl3G5vYzNN73m9MaU0DJrwi4cD/fs6789eEhCbpoVjU
-         914JjQwFYfMxopLdsrtCLfD7S6d9gdqiQkB5RW2s3BbIGdQixokFNeWPudlZsgtDbO
-         qzAMtFRZ8WLDD5R7rJzjw8Ushva4hYAo5vtexhx4=
+        b=c8KHPmhZDWYESJtQoCIKj4/X31T5+Z3k62J7VP5iCSLr79xYx2WgD8MZzgN6Zfh5b
+         PcaWb9WG+Qg3oHtpE1wKIbik2KYL++kdo82DR1lIY56rSBkCWFOiaOg9AVHcT7e90I
+         Mk5rYIlAEnuUmqmBvMf9XkMaHil7LPVNIDoyu/1I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yuchung Cheng <ycheng@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 21/34] bpf: correctly set initial window on active Fast Open sender
-Date:   Tue, 12 Feb 2019 21:39:39 -0500
-Message-Id: <20190213023952.21311-21-sashal@kernel.org>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 19/34] scsi: isci: initialize shost fully before calling scsi_add_host()
+Date:   Tue, 12 Feb 2019 21:39:37 -0500
+Message-Id: <20190213023952.21311-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
 References: <20190213023952.21311-1-sashal@kernel.org>
@@ -58,39 +63,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit 31aa6503a15ba00182ea6dbbf51afb63bf9e851d ]
+[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
 
-The existing BPF TCP initial congestion window (TCP_BPF_IW) does not
-to work on (active) Fast Open sender. This is because it changes the
-(initial) window only if data_segs_out is zero -- but data_segs_out
-is also incremented on SYN-data.  This patch fixes the issue by
-proerly accounting for SYN-data additionally.
+scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
+command size to allocate based on the prot_capabilities. In the isci
+driver, scsi_host_set_prot() is called after scsi_add_host() so the command
+size gets calculated to be smaller than it needs to be.  Eventually,
+scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
+was sized correctly and a buffer overrun may occur.
 
-Fixes: fc7478103c84 ("bpf: Adds support for setting initial cwnd")
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Reviewed-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Lawrence Brakmo <brakmo@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
+size, the mistake can go unnoticed.
+
+The bug was noticed after the struct request size was reduced by commit
+9d037ad707ed ("block: remove req->timeout_list")
+
+Which likely reduced the allocated space for the request by an entire cache
+line, enough that the overflow could be hit and it caused a panic, on boot,
+at:
+
+  RIP: 0010:t10_pi_complete+0x77/0x1c0
+  Call Trace:
+    <IRQ>
+    sd_done+0xf5/0x340
+    scsi_finish_command+0xc3/0x120
+    blk_done_softirq+0x83/0xb0
+    __do_softirq+0xa1/0x2e6
+    irq_exit+0xbc/0xd0
+    call_function_single_interrupt+0xf/0x20
+    </IRQ>
+
+sd_done() would call scsi_prot_sg_count() which reads the number of
+entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
+the allocated space it reads a garbage number and erroneously calls
+t10_pi_complete().
+
+To prevent this, the calls to scsi_host_set_prot() are moved into
+isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
+move the similar call to scsi_host_set_guard().
+
+Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
+Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/isci/init.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 542fd04bc44d..a8a9ff0568b9 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3128,7 +3128,7 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
- 			/* Only some options are supported */
- 			switch (optname) {
- 			case TCP_BPF_IW:
--				if (val <= 0 || tp->data_segs_out > 0)
-+				if (val <= 0 || tp->data_segs_out > tp->syn_data)
- 					ret = -EINVAL;
- 				else
- 					tp->snd_cwnd = val;
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 922e3e56c90d..c71e0f3b146a 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -591,6 +591,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
+ 	shost->max_lun = ~0;
+ 	shost->max_cmd_len = MAX_COMMAND_SIZE;
+ 
++	/* turn on DIF support */
++	scsi_host_set_prot(shost,
++			   SHOST_DIF_TYPE1_PROTECTION |
++			   SHOST_DIF_TYPE2_PROTECTION |
++			   SHOST_DIF_TYPE3_PROTECTION);
++	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
++
+ 	err = scsi_add_host(shost, &pdev->dev);
+ 	if (err)
+ 		goto err_shost;
+@@ -678,13 +685,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 			goto err_host_alloc;
+ 		}
+ 		pci_info->hosts[i] = h;
+-
+-		/* turn on DIF support */
+-		scsi_host_set_prot(to_shost(h),
+-				   SHOST_DIF_TYPE1_PROTECTION |
+-				   SHOST_DIF_TYPE2_PROTECTION |
+-				   SHOST_DIF_TYPE3_PROTECTION);
+-		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
+ 	}
+ 
+ 	err = isci_setup_interrupts(pdev);
 -- 
 2.19.1
 
