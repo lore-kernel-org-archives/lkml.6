@@ -2,97 +2,88 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048FCC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2DAC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C227A222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300D9222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:44:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="LSoGx5Om"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qw7ortlk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733234AbfBMGnn (ORCPT
+        id S1733265AbfBMGoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 01:43:43 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55352 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfBMGnn (ORCPT
+        Wed, 13 Feb 2019 01:44:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47240 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfBMGoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 01:43:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r17so1113435wmh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:43:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8dmR0NFGNyhmtovA2tdJzy6bkO95KBp/gI439HNKvIY=;
-        b=LSoGx5OmmNj09LZqF4KwNJ5BxWG5Xt6c1MYKq1Bt9KlBgOEOVnfJK9fpL6FxiXTbFe
-         4caOr7tl+aFd4CEmI4eyHb6WzBEw2gofvawEUIdDRLEetnTPOx8LfKcyLDfqxQQ8/t3V
-         b/i+ZnsYKsaZa5/5yJO51i5s36UfI0QBK/hp42Z5+shyjTU9dld0m3EUxZ5iIFmv4RGn
-         FMkrvQruRA3JMWO7m3kYMQSu/8ADSB1Rx2QByv3FVDPVv2/WYOX3s8VNjydIq+EiE4xE
-         bnJgEmR0suDrZMj0qvLzBizN/YfaSc2m0cLvSiVm5bHscTAeRMyXhmKZyJYwz0X9diaN
-         IMRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8dmR0NFGNyhmtovA2tdJzy6bkO95KBp/gI439HNKvIY=;
-        b=FCu/IjCQrWAFAMfKq3r++BXOxb9WJ58EdW9A6+Ey3qLSLo/AGTAAnPl8z5Il8jpF7S
-         smb6sRRvZx0Q/7VIWajPA6Z+Dl9Mae3g2PeaXwbR9rY3Hm3GrYughoiBTUu5ihp5SYSj
-         NU1ibt+zmYApECLLuDehX9HlwxFwolwg63UsE/vuXKSunLewR8Cllzhjti3jy9VIEXQc
-         +Pr+5FK+IychC3bwHLkzw6dQZWEVQfpZOh3cQVQ1F7wg9BWAjcQ7NxSE1F8EFHklm6M4
-         iEf1ZfGpyj2DRBDuJjpePBJz7+vL8ly1KE1AERHvNmUeNLM5hXZ9zcFuvfrz8G5D+AY6
-         W5hA==
-X-Gm-Message-State: AHQUAuZ/GkkFZI+tsw6cHx+L4OGQgvMoMvJA/QuFAzMCOIxAwZBLJ7ay
-        yBR5CzP0O3XUKHVtk54nApaX80LRXNqE7EfMLvJOPA==
-X-Google-Smtp-Source: AHgI3IY3wh0fAJ3pkBOSWL9QIIrC56NnkSdRlyBop6m4MPvrou4wIzbSQ/cYiwvqU2LGody3UpZZrkFGNemeeLsl/s8=
-X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr1906321wme.16.1550040220679;
- Tue, 12 Feb 2019 22:43:40 -0800 (PST)
-MIME-Version: 1.0
-References: <1549969812-22502-1-git-send-email-atish.patra@wdc.com> <1549969812-22502-7-git-send-email-atish.patra@wdc.com>
-In-Reply-To: <1549969812-22502-7-git-send-email-atish.patra@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 13 Feb 2019 12:13:29 +0530
-Message-ID: <CAAhSdy3fs58TyiNTxD2NNz-MQuND6gyyg6hrKScN-iYmstXfnA@mail.gmail.com>
-Subject: Re: [v4 PATCH 6/8] clocksource/drivers/riscv: Add required checks
- during clock source init
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-riscv@lists.infradead.org, Alan Kao <alankao@andestech.com>,
+        Wed, 13 Feb 2019 01:44:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PWbL/4SM/FCpa2kpx0HFkhtSLmcFMEfuKZ+eKMOIyw0=; b=Qw7ortlk+26yXlOSEFiN8o6oG
+        ptj2G6yzSeaWW5H3csqikFRZ61vK5L0ddsPgErQvuyuouQZnUsCdeMt6SIchawf057qU/7QaqyfEh
+        SRURhFe5DuVSukM3WnIc9cxyFieTNrD0CZ4tQ2lFquq3HoW2arPazu+L/1MKKkJwcWq7uwhPQlTjv
+        uNOgtN/PsvkUP3L5vi/RX8hfOhwuas0uYuIkzdi5xScXdJqFUvl2V9mkRwYNSJDDhXQtC9Zw98FSd
+        QhkQZDvjHw0HGRo424isfSUN6lhIS+hpdeFZKY5FgMemuoEAGVf2xv1xiXynGKBhB4WCJWrzumBro
+        bq5XBnhzw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtoHL-0001uh-Ak; Wed, 13 Feb 2019 06:44:19 +0000
+Date:   Tue, 12 Feb 2019 22:44:19 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <Anup.Patel@wdc.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Johan Hovold <johan@kernel.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Christoph Hellwig <hch@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] RISC-V: Free-up initrd in free_initrd_mem()
+Message-ID: <20190213064419.GA27012@infradead.org>
+References: <20190213063127.28703-1-anup.patel@wdc.com>
+ <20190213063127.28703-7-anup.patel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213063127.28703-7-anup.patel@wdc.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 4:40 PM Atish Patra <atish.patra@wdc.com> wrote:
->
-> Currently, clocksource registration happens for an invalid cpu for
-> non-smp kernels. This lead to kernel panic as cpu hotplug registration
-> will fail for those cpus. Moreover, riscv_hartid_to_cpuid can return
-> errors now.
->
-> Do not proceed if hartid or cpuid is invalid. Take this opprtunity to
+On Wed, Feb 13, 2019 at 06:32:24AM +0000, Anup Patel wrote:
+> index 9cd583b6d1cd..c22b873de856 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -97,8 +97,9 @@ static void __init setup_initrd(void)
+>  	initrd_end = 0;
+>  }
+>  
+> -void free_initrd_mem(unsigned long start, unsigned long end)
+> +void __init free_initrd_mem(unsigned long start, unsigned long end)
+>  {
+> +	memblock_free(__pa(start), end - start);
 
-s/opprtunity/opportunity
+I'm pretty sure this should be a call to free_reserved_area instead.
 
-Otherwise, looks good to me.
+All regions reserved using memblock_reserved and not freed before
+initializing the MM are marked reserved and don't have valid page
+counts, etc.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
+So we need the actions in free_reserved_area to actually make the
+memory useful.  Now every other architecture except for arm64
+seems to do fine without a memblock_free.  I'm not an expert on
+memblock (but I've CCed one), but I guess the reason is that once
+the kernel has booted we don't really care about freeing memblock
+area.
