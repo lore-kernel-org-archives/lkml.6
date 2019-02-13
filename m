@@ -2,110 +2,101 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA9CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC55EC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA9120835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AC8222D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550083667;
+	bh=+1/MFJHeA2HhHw1Bn+CYPlgpD8GYRgho2J3Bc5et1Lk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=e/Qi0PtYhr3S3Pr27QxaD2i3PUGaF66vB+dQI47ry9qq6dLNkenSpLHu524DsyUrN
+	 GXZfzZ8haLzs0CJLDSYLuX+Txu3rGNzEeh0avtn6fpyBjNmNycOrSi+SyU3K/BI52u
+	 otalBLB8FohfiZPOgLY0jOFpxGZgAW+VYBLsHXTQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405493AbfBMSrj convert rfc822-to-8bit (ORCPT
+        id S2406585AbfBMSrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:47:39 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16333 "EHLO mga17.intel.com"
+        Wed, 13 Feb 2019 13:47:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406599AbfBMSrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:47:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 10:47:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="320123164"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Feb 2019 10:47:02 -0800
-Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 10:47:02 -0800
-Received: from crsmsx152.amr.corp.intel.com (172.18.7.35) by
- fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 10:47:02 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
- CRSMSX152.amr.corp.intel.com ([169.254.5.81]) with mapi id 14.03.0415.000;
- Wed, 13 Feb 2019 12:46:59 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v5 08/13] x86/fsgsbase/64: Introduce the
- FIND_PERCPU_BASE macro
-Thread-Topic: [PATCH v5 08/13] x86/fsgsbase/64: Introduce the
- FIND_PERCPU_BASE macro
-Thread-Index: AQHUunBnyK8xBeMjrkOJBZxNaNROKKXNJgUAgBFirgA=
-Date:   Wed, 13 Feb 2019 18:46:59 +0000
-Message-ID: <5474F9B1-6E8F-4677-976B-C10103175B05@intel.com>
-References: <20190201205319.15995-1-chang.seok.bae@intel.com>
- <20190201205319.15995-10-chang.seok.bae@intel.com>
- <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
-In-Reply-To: <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.156.136]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <53F8A4509FBB3D48B090E20927100E14@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1728442AbfBMSq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:46:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18135222D2;
+        Wed, 13 Feb 2019 18:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550083616;
+        bh=+1/MFJHeA2HhHw1Bn+CYPlgpD8GYRgho2J3Bc5et1Lk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NnCcuUQST9tvzJ83C/6p26a65EsmSQi3wraweklmrcCxYB2v3ty9iRhoCgazcpNCp
+         P0ttsQpA08AVlLwxYkGBwRyOgaFF5UL77CUc/R2DUqEg2mP2RZNEkqI5yClPdO9XjX
+         pTfAeYNKaTE1gkVO4Vm8DRuc/Ux83/0CqkLmS7vw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH 4.20 17/50] debugfs: fix debugfs_rename parameter checking
+Date:   Wed, 13 Feb 2019 19:38:22 +0100
+Message-Id: <20190213183657.182785194@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
+References: <20190213183655.747168774@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-> On Feb 2, 2019, at 09:17, Andy Lutomirski <luto@kernel.org> wrote:
-> 
-> On Fri, Feb 1, 2019 at 12:55 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->> 
->> +
->> +/*
->> + * CPU/node NR is loaded from the limit (size) field of a special segment
->> + * descriptor entry in GDT.
->> + */
->> +.macro LOAD_CPU_AND_NODE_SEG_LIMIT reg:req
->> +       movq    $__CPUNODE_SEG, \reg
->> +       lsl     \reg, \reg
->> +.endm
->> +
-> 
-> Please put the alternative in here instead of in FIND_PERCPU_BASE.
+------------------
 
-I would like to apply your comment though, build errors will come up due to the
-__CPUNODE_SEG. So, still hoping the alternative line below is straightforward enough.
-Will send out a revision, that reflects all other comments, shortly.
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Chang
+commit d88c93f090f708c18195553b352b9f205e65418f upstream.
 
-> 
->> +/*
->> + * Fetch the per-CPU GSBASE value for this processor and put it in @reg.
->> + * We normally use %gs for accessing per-CPU data, but we are setting up
->> + * %gs here and obviously can not use %gs itself to access per-CPU data.
->> + */
->> +.macro FIND_PERCPU_BASE reg:req
->> 
->> +       ALTERNATIVE \
->> +               "LOAD_CPU_AND_NODE_SEG_LIMIT \reg", \
->> +               "RDPID  \reg", \
->> +               X86_FEATURE_RDPID
->> +       andq    $VDSO_CPUNODE_MASK, \reg
->> +       movq    __per_cpu_offset(, \reg, 8), \reg
->> +.endm
+debugfs_rename() needs to check that the dentries passed into it really
+are valid, as sometimes they are not (i.e. if the return value of
+another debugfs call is passed into this one.)  So fix this up by
+properly checking if the two parent directories are errors (they are
+allowed to be NULL), and if the dentry to rename is not NULL or an
+error.
+
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/debugfs/inode.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -787,6 +787,13 @@ struct dentry *debugfs_rename(struct den
+ 	struct dentry *dentry = NULL, *trap;
+ 	struct name_snapshot old_name;
+ 
++	if (IS_ERR(old_dir))
++		return old_dir;
++	if (IS_ERR(new_dir))
++		return new_dir;
++	if (IS_ERR_OR_NULL(old_dentry))
++		return old_dentry;
++
+ 	trap = lock_rename(new_dir, old_dir);
+ 	/* Source or destination directories don't exist? */
+ 	if (d_really_is_negative(old_dir) || d_really_is_negative(new_dir))
+
+
