@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5EC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1EC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE9B2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A568920835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026467;
-	bh=t/jdnR/b73dM2MNUSlGO3paOW+Swt3OsdAkfoNAxEgk=;
+	s=default; t=1550026485;
+	bh=G7MTzy0m5hG45uXyJmC9WAK9s0M8b+tp2Q+dKiEwK78=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HF1JwMbCS0BEqZKu5Z0D6PXl/mups0nKBWqAs6eYzuXJk3l1F8fFvJaNO+hJtZ+Cs
-	 SEqsopUnjRCazCFoIr3KXz8P7bJRq9U1nR1L9hbrmUyyPZ7EbJswhB+l7S0C50F4h+
-	 b6dp/fhdu0eegE/HhkOgJFkksAG6kqVWUPbIEoN8=
+	b=VbQSiDcsz9L4O84Uc7/usSO0pe++pL9/mfwEw18tlHiik2o8LtRp4ig3KWkIKREoO
+	 UgQlkGZPkVZYE4hdQesX20BStMyi/Daq1Xg40mT0OYHz4x3nbZqkb4z8pKMEZHbRao
+	 cpjdzR8NyUy8ERz8jTPeRUFNDmTFZCYXX+rvtUzM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387530AbfBMCyZ (ORCPT
+        id S2389992AbfBMCyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:54:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41404 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:54:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388403AbfBMChy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:54 -0500
+        id S2388359AbfBMChk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45CF8222C7;
-        Wed, 13 Feb 2019 02:37:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FAE4206B6;
+        Wed, 13 Feb 2019 02:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025474;
-        bh=t/jdnR/b73dM2MNUSlGO3paOW+Swt3OsdAkfoNAxEgk=;
+        s=default; t=1550025459;
+        bh=G7MTzy0m5hG45uXyJmC9WAK9s0M8b+tp2Q+dKiEwK78=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2gcVuo3+SS6lsxsaAVVTA0NzsxDqGG2X5v06OO0NEXWTJm4QasiOS6wKlb1rZtZf
-         kJcOHm+RN2NfIUUTaIfEJ+QvBG2gxIx5yX8blEaDAdyEuy1aS7OG/8C/79Jxviit5I
-         NH4DsAF7JMONymbqtqradg3pEgTt2PtxJDjKAcRE=
+        b=dstSdJyO7rvewFRhocycG8/uxrtPzDm9eFcPwEwXXy6bfA/FBgZA4NvtH2pHNhcxD
+         +BNwDEQBj+Wqr/JyH9e4+1GwWXwPdUzp0iY1B+H8uROoEMsYsQO4g2T8BLyyblx0m2
+         4JqRtOxYpnNEYA5sqYJQHgYXIvbBTv0SBEkpJ4m8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 33/83] scsi: qla4xxx: check return code of qla4xxx_copy_from_fwddb_param
-Date:   Tue, 12 Feb 2019 21:36:11 -0500
-Message-Id: <20190213023701.20286-33-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 29/83] xprtrdma: Double free in rpcrdma_sendctxs_create()
+Date:   Tue, 12 Feb 2019 21:36:07 -0500
+Message-Id: <20190213023701.20286-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,33 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 72b4a0465f995175a2e22cf4a636bf781f1f28a7 ]
+[ Upstream commit 6e17f58c486d9554341f70aa5b63b8fbed07b3fa ]
 
-The return code should be check while qla4xxx_copy_from_fwddb_param fails.
+The clean up is handled by the caller, rpcrdma_buffer_create(), so this
+call to rpcrdma_sendctxs_destroy() leads to a double free.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: ae72950abf99 ("xprtrdma: Add data structure to manage RDMA Send arguments")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla4xxx/ql4_os.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/sunrpc/xprtrdma/verbs.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 0e13349dce57..575445c761b4 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -7237,6 +7237,8 @@ static int qla4xxx_sysfs_ddb_tgt_create(struct scsi_qla_host *ha,
+diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
+index 956a5ea47b58..3d6bf790cf1f 100644
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -872,7 +872,7 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
+ 	for (i = 0; i <= buf->rb_sc_last; i++) {
+ 		sc = rpcrdma_sendctx_create(&r_xprt->rx_ia);
+ 		if (!sc)
+-			goto out_destroy;
++			return -ENOMEM;
  
- 	rc = qla4xxx_copy_from_fwddb_param(fnode_sess, fnode_conn,
- 					   fw_ddb_entry);
-+	if (rc)
-+		goto free_sess;
+ 		sc->sc_xprt = r_xprt;
+ 		buf->rb_sc_ctxs[i] = sc;
+@@ -880,10 +880,6 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
+ 	buf->rb_flags = 0;
  
- 	ql4_printk(KERN_INFO, ha, "%s: sysfs entry %s created\n",
- 		   __func__, fnode_sess->dev.kobj.name);
+ 	return 0;
+-
+-out_destroy:
+-	rpcrdma_sendctxs_destroy(buf);
+-	return -ENOMEM;
+ }
+ 
+ /* The sendctx queue is not guaranteed to have a size that is a
 -- 
 2.19.1
 
