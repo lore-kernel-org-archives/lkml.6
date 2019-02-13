@@ -2,100 +2,86 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E880C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7087C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6E9222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:42:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F46218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:48:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNQC9hIx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732937AbfBMAmN (ORCPT
+        id S1732574AbfBMAsJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 19:42:13 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37033 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727871AbfBMAmM (ORCPT
+        Tue, 12 Feb 2019 19:48:09 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44276 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727871AbfBMAsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 19:42:12 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so299139plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 16:42:12 -0800 (PST)
+        Tue, 12 Feb 2019 19:48:08 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p4so288098plq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 16:48:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=54iEXpIIINx6ekpNfXFod7edpsR3F9pxXBIcNtz4yC0=;
+        b=LNQC9hIxf14HO75u+gwTUs4DSFQAKw+fUBKBOs47JEFYx1i0uPhh3plyWfCuqdqWeJ
+         +zOg+CuxChA3bRkrYZwu7sXh7ZY1PmVKIh7Gov6BTxIukVJgSHcMuv3QuNsfFvbrcYvP
+         gw/lHa0HklwltBAckoG8UdmB7bJg8Fe6+6rBIZ+X5eIEQ0lEzAUNPozHnhAzIxfXqDJ7
+         Tzf4TdiG1baUO7b0QFvUZFFpjL36JkIUjfL8j0IxyGeR5C0pbELbgYH9i0rckacj17Np
+         nbluc/Usuy30cJWhyk+ffEPKbCZReC4LsLzCvNRsvgV6yVDU/onz9ytINZi9XRDxiTmE
+         zNMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nUkT8JDi8uCvqGDVTdXMWuA0QjMDOfamEfJ5EcIGqkw=;
-        b=XmFwxB3rBi0XhlrsA2zv7p8J53ihqvjMYk56r2bZTj/YyvjwS1zOV6o5gwlZXJcjr4
-         q0JX7CZkyrR9PFn55s65gHaY6bu/iyhtuyuuGe0QnjjrOLBFwzjd5F4rBirV5fuVrvwU
-         uZ9AIHw7A+Sf0WqQuCsjSgPdQiEebhvdhN4lX2G1S//JPOY6cN1ccTSoRIRQNTTc6me6
-         vX/0p1nQYNHCHEq83j1DlXATe6MIP1+/ai2E68w8Qx3TZtQJZpYvoIkPgGmI0yFfutZ8
-         pUi7kPKVSo0At/Gb2t36SHRUBvhd+ta7pAXJOIIx5CV2+m7U+bJGLUhF9AfC6nd0xKdH
-         8QPg==
-X-Gm-Message-State: AHQUAuYeu02l0KS1PITzxDy3mdEt5Hb5dgEKxVWu5fIkaC1BsUVWYcqs
-        0zOGZiBrKN7jn0gFyxK2AbreyfAa/zg=
-X-Google-Smtp-Source: AHgI3IYPjBQkUpKXzQsxNves1/e9KI7YxiJSxcpM4kyAv7unKsFKT8gSGZQfEDZerN3GaSZcGH/afQ==
-X-Received: by 2002:a17:902:2966:: with SMTP id g93mr6646171plb.11.1550018531215;
-        Tue, 12 Feb 2019 16:42:11 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id n1sm31709119pfi.123.2019.02.12.16.42.08
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=54iEXpIIINx6ekpNfXFod7edpsR3F9pxXBIcNtz4yC0=;
+        b=LxTqQ6Hxv3pamWF9cTxshO+nx54doEgFV0VrmPkY+/0SnWRR+eCxDQImN35O3GPaga
+         nqAScjera67K2yUhxY4/fIrIaAGs70tKWRiGK/XyCDn4zJOaE1da+rrgs1JFlThe9YUG
+         nS5eEw03xnPUPSFnWGSiIkbR/4p7QkcU9RdCQOLWfyOwl9bE9QRK2GGoBYZ7FYWwS5es
+         iyNZs2uFs5T+fwKNpSt/REd8xjR2liUc03913MDqSwcI+l7fWhgZ4b82RAN8DR+4TqlN
+         97T3h04/k+zN3JyxhAGdrXabsP0MTtEd8oIjboPPEE/aUcmFjslnIP+cM9rNbcRaE/B3
+         ksmA==
+X-Gm-Message-State: AHQUAua3W8X0FQfkbBrXWPmBNx+YRGNHnoCfgHosD9gElOMdJoZ16q35
+        YAE0WwwEfFLF7+FHBRg8kKo=
+X-Google-Smtp-Source: AHgI3IbADUqCB731eEJXxcYiyYM0o2Dk96Ao672x5A6l/VnU1UqPLatIhdya9+fGWFXUMWZS1mlk2g==
+X-Received: by 2002:a17:902:b402:: with SMTP id x2mr6814216plr.53.1550018888233;
+        Tue, 12 Feb 2019 16:48:08 -0800 (PST)
+Received: from localhost ([39.7.15.189])
+        by smtp.gmail.com with ESMTPSA id o25sm20786047pfk.185.2019.02.12.16.48.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 16:42:09 -0800 (PST)
-Message-ID: <1550018527.19311.43.camel@acm.org>
-Subject: Re: [PATCH v5 07/15] locking/lockdep: Free lock classes that are no
- longer in use
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-Date:   Tue, 12 Feb 2019 16:42:07 -0800
-In-Reply-To: <20190110152412.GG30894@hirez.programming.kicks-ass.net>
-References: <20181217213002.73776-1-bvanassche@acm.org>
-         <20181217213002.73776-8-bvanassche@acm.org>
-         <20190110152412.GG30894@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Feb 2019 16:48:07 -0800 (PST)
+Date:   Wed, 13 Feb 2019 09:48:04 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Xiang Xiao <xiaoxiang781216@gmail.com>
+Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+Message-ID: <20190213004804.GA2992@jagdpanzerIV>
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-10 at 16:24 +-0100, Peter Zijlstra wrote:
-+AD4 +AFs ... +AF0
-+AD4 +AEAAQA -4579,17 +-4559,19 +AEAAQA static void lockdep+AF8-reset+AF8-lock+AF8-reg(struc
-+AD4   +ACo-/
-+AD4  static void lockdep+AF8-reset+AF8-lock+AF8-imm(struct lockdep+AF8-map +ACo-lock)
-+AD4  +AHs
-+AD4 -	struct pending+AF8-free +ACo-pf+ADs
-+AD4  	unsigned long flags+ADs
-+AD4 +-	LIST+AF8-HEAD(zapped)+ADs
-+AD4  
-+AD4 -	pf +AD0 get+AF8-pending+AF8-free+AF8-lock+AF8-imm(+ACY-flags)+ADs
-+AD4 -	if (+ACE-pf)
-+AD4 -		return+ADs
-+AD4 -	+AF8AXw-lockdep+AF8-reset+AF8-lock(pf, lock)+ADs
-+AD4 -	arch+AF8-spin+AF8-unlock(+ACY-lockdep+AF8-lock)+ADs
-+AD4 -	raw+AF8-local+AF8-irq+AF8-restore(flags)+ADs
-+AD4 +-	raw+AF8-local+AF8-irq+AF8-save(flags)+ADs
-+AD4 +-	if (+ACE-graph+AF8-lock())
-+AD4 +-		goto out+AF8-irq+ADs
-+AD4 +-
-+AD4 +-	+AF8AXw-lockdep+AF8-reset+AF8-lock(+ACY-zapped, lock)+ADs
-+AD4 +-	+AF8AXw-free+AF8-zapped+AF8-classes(+ACY-zapped)+ADs
-+AD4  
-+AD4 -	free+AF8-zapped+AF8-classes(+ACY-pf-+AD4-rcu+AF8-head)+ADs
-+AD4 +-	graph+AF8-unlock()+ADs
-+AD4 +-out+AF8-irq:
-+AD4 +-	raw+AF8-local+AF8-irq+AF8-restore(flags)+ADs
-+AD4  +AH0
+On (02/13/19 02:11), Xiang Xiao wrote:
+>
+> Because log may already add the timestamp sometime
+>
 
-If graph+AF8-lock() is used inside lockdep+AF8-free+AF8-key+AF8-range+AF8-imm() and/or
-lockdep+AF8-reset+AF8-lock+AF8-imm() instead of arch+AF8-spin+AF8-lock() then the self-tests fail.
-Anyway, I will integrate this patch in my patch series.
+We have module_param(printk_time) which enables/disables
+timestamps. And a .config option. And a kernel boot param.
+Why would you want KERN_NOTIME?
 
-Thanks,
-
-Bart.
+	-ss
