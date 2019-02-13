@@ -2,88 +2,62 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC5AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E29A8C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17694222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8239222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390476AbfBMNT2 (ORCPT
+        id S2390518AbfBMNTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:19:28 -0500
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:44862 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730377AbfBMNT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:19:27 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id A5B90B890C
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:19:25 +0000 (GMT)
-Received: (qmail 25019 invoked from network); 13 Feb 2019 13:19:25 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 13 Feb 2019 13:19:25 -0000
-Date:   Wed, 13 Feb 2019 13:19:23 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yury Norov <yury.norov@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mm@kvack.org
-Subject: [PATCH] mm, page_alloc: Fix a division by zero error when boosting
- watermarks
-Message-ID: <20190213131923.GQ9565@techsingularity.net>
+        Wed, 13 Feb 2019 08:19:33 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53482 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390491AbfBMNTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:19:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C669A1596;
+        Wed, 13 Feb 2019 05:19:30 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B3D13F557;
+        Wed, 13 Feb 2019 05:19:28 -0800 (PST)
+Date:   Wed, 13 Feb 2019 13:19:25 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH 1/1] arm64: Use _rcuidle for smp_cross_call() tracepoints
+Message-ID: <20190213131924.GD5875@brain-police>
+References: <1549969765-3707-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1549969765-3707-1-git-send-email-mars.cheng@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yury Norov reported that an arm64 KVM instance could not boot since after
-v5.0-rc1 and could addressed by reverting the patches
+On Tue, Feb 12, 2019 at 07:09:25PM +0800, Mars Cheng wrote:
+> fix similar issue for aarch64 as the commit 7c64cc0531fa
+> ("arm: Use _rcuidle for smp_cross_call() tracepoints") fixed
+> in aarch32
 
-1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
-73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
+I'm not convinced about this justification. As far as I can tell, the commit
+mentioned above fixed a cross-call from the idle path as a result of
+ARCH_NEEDS_CPU_IDLE_COUPLED, but this never appears to be selected on arm64
+afaict.
 
-The problem is that a division by zero error is possible if boosting occurs
-either very early in boot or if the high watermark is very small. This
-patch checks for the conditions and avoids boosting in those cases.
+Are you actually seeing a problem on arm64 in practice?
 
-Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external fragmentation event occurs")
-Reported-and-tested-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/page_alloc.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d295c9bc01a8..ae7e4ba5b9f5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2170,6 +2170,11 @@ static inline void boost_watermark(struct zone *zone)
- 
- 	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
- 			watermark_boost_factor, 10000);
-+
-+	/* high watermark be be uninitialised or very small */
-+	if (!max_boost)
-+		return;
-+
- 	max_boost = max(pageblock_nr_pages, max_boost);
- 
- 	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
-
--- 
-Mel Gorman
-SUSE Labs
+Will
