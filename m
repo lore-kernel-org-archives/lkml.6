@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C7C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E64C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8EAA222CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07526222CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025306;
-	bh=PJStRqFwQDSdWlRUOtrZ86loznMuwW2dEb5eX/d3HB0=;
+	s=default; t=1550025310;
+	bh=TODPY5ZMFTP/fxSsWDDPdX60IJxYtgCDhedP/dUL6i8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EO7vxAds8O058TYBFcQZv3pKereWpHQgTGXQ1RzAIvLMDwEYzlPRsxCxQzRDvTGE7
-	 cSc/H6eeHMXmdBbUtGG0SPxyowHoH5M1ZfiedWZhp1ps7VSWuXWYhhsMsJ2DSD0Nwv
-	 4MXXqaH7XzqaOTXdq5cVk3wT3D34vtOQnBWPTMKI=
+	b=ax0IT4DtupjHJPkbt5Z8LJ4C0o1EgDdAiJ+m8NbygIqXhPl8cIwFKoo47kNg6K5eD
+	 iJQcktF/SfOpOW7HVifVDbVpqMIhNDfGDkGkGlhtOMBr5adtEFzSTuFXvjPx+yJ4vF
+	 XtEOO1PnyXOd4W+YpKd0IBYFvAY0orbi3mNzN090=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731637AbfBMCfF (ORCPT
+        id S2387921AbfBMCfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387855AbfBMCfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:03 -0500
+        id S2387900AbfBMCfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D58F6222C7;
-        Wed, 13 Feb 2019 02:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BAE7222C2;
+        Wed, 13 Feb 2019 02:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025303;
-        bh=PJStRqFwQDSdWlRUOtrZ86loznMuwW2dEb5eX/d3HB0=;
+        s=default; t=1550025304;
+        bh=TODPY5ZMFTP/fxSsWDDPdX60IJxYtgCDhedP/dUL6i8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1faeXTRS9NvLZ29hdRstTvsLiC8cs9/xQpAULa6aTMdhG248U6BHyNDhNziRed2jg
-         yq6/Ad3rHIRoOTIm1ZOjaSCx1ueGW02eBlgm/79PYhbWc3wOsMNK/gIpXSadtVz1v8
-         V7aMiSNJ5Ec09oef9C+Gy+R2oo6gTuBFPDQKC4KQ=
+        b=LGzqPohWxSQndSJS6RwS0Xa1F0dVAFwDvhynRFaZ4Je9M1KjUhhUQ8BAYczcPkJXA
+         b9+NbEhL90QP4iEoVYdseVpou+Ci5/AQJq8DRhIu9HEQ2CuVA9ZiU5HqPXbXlekVGc
+         4CatHFjZNA7akE9DTGKqv48ZoHMXL7rj9F9gGl4U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jose Abreu <jose.abreu@synopsys.com>,
@@ -48,9 +48,9 @@ Cc:     Jose Abreu <jose.abreu@synopsys.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Jose Abreu <joabreu@synopsys.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 056/105] net: stmmac: Fix the logic of checking if RX Watchdog must be enabled
-Date:   Tue, 12 Feb 2019 21:32:47 -0500
-Message-Id: <20190213023336.19019-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 057/105] net: stmmac: Prevent RX starvation in stmmac_napi_poll()
+Date:   Tue, 12 Feb 2019 21:32:48 -0500
+Message-Id: <20190213023336.19019-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -64,13 +64,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jose Abreu <jose.abreu@synopsys.com>
 
-[ Upstream commit 3b5094665e273c4a2a99f7f5f16977c0f1e19095 ]
+[ Upstream commit fa0be0a43f101888ac677dba31b590963eafeaa1 ]
 
-RX Watchdog can be disabled by platform definitions but currently we are
-initializing the descriptors before checking if Watchdog must be
-disabled or not.
+Currently, TX is given a budget which is consumed by stmmac_tx_clean()
+and stmmac_rx() is given the remaining non-consumed budget.
 
-Fix this by checking earlier if user wants Watchdog disabled or not.
+This is wrong and in case we are sending a large number of packets this
+can starve RX because remaining budget will be low.
+
+Let's give always the same budget for RX and TX clean.
+
+While at it, check if we missed any interrupts while we were in NAPI
+callback by looking at DMA interrupt status.
 
 Cc: Joao Pinto <jpinto@synopsys.com>
 Cc: David S. Miller <davem@davemloft.net>
@@ -80,51 +85,55 @@ Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 27 ++++++++++---------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index c4a35e932f05..fe9240e15aea 100644
+index fe9240e15aea..5d83d6a7694b 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4194,6 +4194,18 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
- 			return ret;
- 	}
+@@ -3525,27 +3525,28 @@ static int stmmac_napi_poll(struct napi_struct *napi, int budget)
+ 	struct stmmac_channel *ch =
+ 		container_of(napi, struct stmmac_channel, napi);
+ 	struct stmmac_priv *priv = ch->priv_data;
+-	int work_done = 0, work_rem = budget;
++	int work_done, rx_done = 0, tx_done = 0;
+ 	u32 chan = ch->index;
  
-+	/* Rx Watchdog is available in the COREs newer than the 3.40.
-+	 * In some case, for example on bugged HW this feature
-+	 * has to be disable and this can be done by passing the
-+	 * riwt_off field from the platform.
-+	 */
-+	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
-+	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
-+		priv->use_riwt = 1;
-+		dev_info(priv->device,
-+			 "Enable RX Mitigation via HW Watchdog Timer\n");
-+	}
-+
- 	return 0;
- }
+ 	priv->xstats.napi_poll++;
  
-@@ -4326,18 +4338,6 @@ int stmmac_dvr_probe(struct device *device,
- 	if (flow_ctrl)
- 		priv->flow_ctrl = FLOW_AUTO;	/* RX/TX pause on */
+-	if (ch->has_tx) {
+-		int done = stmmac_tx_clean(priv, work_rem, chan);
++	if (ch->has_tx)
++		tx_done = stmmac_tx_clean(priv, budget, chan);
++	if (ch->has_rx)
++		rx_done = stmmac_rx(priv, budget, chan);
  
--	/* Rx Watchdog is available in the COREs newer than the 3.40.
--	 * In some case, for example on bugged HW this feature
--	 * has to be disable and this can be done by passing the
--	 * riwt_off field from the platform.
--	 */
--	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
--	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
--		priv->use_riwt = 1;
--		dev_info(priv->device,
--			 "Enable RX Mitigation via HW Watchdog Timer\n");
+-		work_done += done;
+-		work_rem -= done;
 -	}
 -
- 	/* Setup channels NAPI */
- 	maxq = max(priv->plat->rx_queues_to_use, priv->plat->tx_queues_to_use);
+-	if (ch->has_rx) {
+-		int done = stmmac_rx(priv, work_rem, chan);
++	work_done = max(rx_done, tx_done);
++	work_done = min(work_done, budget);
  
+-		work_done += done;
+-		work_rem -= done;
+-	}
++	if (work_done < budget && napi_complete_done(napi, work_done)) {
++		int stat;
+ 
+-	if (work_done < budget && napi_complete_done(napi, work_done))
+ 		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
++		stat = stmmac_dma_interrupt_status(priv, priv->ioaddr,
++						   &priv->xstats, chan);
++		if (stat && napi_reschedule(napi))
++			stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
++	}
+ 
+ 	return work_done;
+ }
 -- 
 2.19.1
 
