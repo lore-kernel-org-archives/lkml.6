@@ -2,131 +2,153 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B2BC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83002C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD76222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:17:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffw98skW"
+	by mail.kernel.org (Postfix) with ESMTP id 54777222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731125AbfBMCRz (ORCPT
+        id S2387407AbfBMCTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:17:55 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37782 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729117AbfBMCRy (ORCPT
+        Tue, 12 Feb 2019 21:19:46 -0500
+Received: from gateway36.websitewelcome.com ([192.185.185.36]:13486 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729117AbfBMCTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:17:54 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s22so403475pfh.4;
-        Tue, 12 Feb 2019 18:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vnz5kzABQYt2zuTvXNxw6aywAdp4yjjXOdzhLQ2Y/60=;
-        b=ffw98skWAAwrBvrqacLBFPEYjOaLHW0HqfKUxurjkTKF9efgjf1uwHbTuVL3IFGxn3
-         W9dzJUJ9+5jQOlrNlx4MCA65A7qHsXu2b8J3BBv6XfYu0NBIUBMG3OQbAHcz2Q27PO7Y
-         q6TGdiWpL3mRAoFTQOJ+SundWwrwbh12r91ZYLisEQkKNUg46HIOBCZ1pUhLZObORaWR
-         WLuKSOLsHkgFbklzMvdsO05pMRDqv+viO3YNZSkQrq0+OYR/FZQAp86czn3byO/D8L8u
-         ZG/1NwuKxDdEDYW366KENnR/57jzyU0VpWMWZ7HqA2d+gvev6jitJNLvFuZIEmpQGO8T
-         Ca7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vnz5kzABQYt2zuTvXNxw6aywAdp4yjjXOdzhLQ2Y/60=;
-        b=co9q9YjVDCsKf/E+kHay0DnD//LGOiFmXqeRUI5eNZ8gfy6XJy5qotobYOjaDaRK+K
-         DAu78V4stmA3qhL9WATpeZNWvaSOS3CIDDyQhStVIQBFp+fBIVu6ZZPFXqa5x21ReAF0
-         2L1iM9Pz9SAS0r1JS4dta2yLB2fHphuB2tl5HYiw4B1PT5KmZ0M8W7pyuwyOCMAffKRE
-         oqtVbi5TKblZoacLqKT8pRpiWbRrF8DMlc8aAY2C4p3Ouc6PAu5Ac8D9qggVewFFK67v
-         U1poa17B9JJILhfo2MtZk2cXSieSNGnC9ALdnI2dbLWgg//a7fAg496sdgjlPhDFh+pb
-         eI0Q==
-X-Gm-Message-State: AHQUAuY5m3F6AKy7xZIacEWNeK6xZpDSVb+mj5WrRXZNJ83DgunhsFKC
-        Ld3WNxFe/dKpiCCgcoJ+jIM=
-X-Google-Smtp-Source: AHgI3Ianr/k1MEUCfMlVY+1tBZn21L5jD6ZUM7GHT5N6gLOgmvUXcry7/7WE4Tl6pVq4glLIuwuS6g==
-X-Received: by 2002:a63:ea56:: with SMTP id l22mr6615008pgk.391.1550024273694;
-        Tue, 12 Feb 2019 18:17:53 -0800 (PST)
-Received: from bobby.localdomain ([2601:1c0:5501:37e2::72a1])
-        by smtp.gmail.com with ESMTPSA id h8sm17027993pgv.27.2019.02.12.18.17.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 18:17:52 -0800 (PST)
-Date:   Tue, 12 Feb 2019 18:17:53 -0800
-From:   Robert Eshleman <bobbyeshleman@gmail.com>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
-Message-ID: <20190213021753.GA19621@bobby.localdomain>
-References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
- <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com>
+        Tue, 12 Feb 2019 21:19:46 -0500
+X-Greylist: delayed 1497 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Feb 2019 21:19:45 EST
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6803640122D45
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 19:08:57 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tjl9gqigl2PzOtjl9gLPOX; Tue, 12 Feb 2019 19:54:47 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=59200 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtjl4-001NrR-Tq; Tue, 12 Feb 2019 19:54:47 -0600
+Subject: Re: [PATCH] audit: mark expected switch fall-through
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Eric Paris <eparis@redhat.com>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20190212204600.GA24049@embeddedor>
+ <CAHC9VhQfru298ZbEDwEqj0+YRAYoAGhAVHEtSo3KBW1kKLputw@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <efa3bc7f-8316-dd39-6ef6-8e8ea6189feb@embeddedor.com>
+Date:   Tue, 12 Feb 2019 19:54:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <CAHC9VhQfru298ZbEDwEqj0+YRAYoAGhAVHEtSo3KBW1kKLputw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtjl4-001NrR-Tq
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:59200
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:29:58PM -0500, Sven Van Asbroeck wrote:
-> On Sun, Feb 10, 2019 at 3:39 PM Robert Eshleman <bobbyeshleman@gmail.com> wrote:
-> >
-> > This patch adds support for the ap3216c ambient light and proximity
-> > sensor.
+
+On 2/12/19 7:19 PM, Paul Moore wrote:
+> On Tue, Feb 12, 2019 at 3:46 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> kernel/auditfilter.c: In function ‘audit_krule_to_data’:
+>> kernel/auditfilter.c:668:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>     if (krule->pflags & AUDIT_LOGINUID_LEGACY && !f->val) {
+>>        ^
+>> kernel/auditfilter.c:674:3: note: here
+>>    default:
+>>    ^~~~~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> Notice that, in this particular case, the code comment is modified
+>> in accordance with what GCC is expecting to find.
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  kernel/auditfilter.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> PS
+> Merged into audit/next, thanks.
 > 
-> Why not use the chip in the mode where the interrupt is automatically cleared by
-> reading the data? This could work if you read the data in the
-> interrupt routine, store
-> it in a buffer, then send the event to iio. Then when userspace wants
-> to read out the
-> value, don't actually touch the hardware, but return the buffered value.
-> 
-> I don't think you then need any synchronization primitives to
-> accomplish this, such as
-> mutexes, spin locks, etc. Because the interrupt routine is single-threaded.
-> 
-> You don't even need a memory barrier for the buffered value,
-> because the iio core uses a waitqueue internally, which automatically issues
-> an mb(). As far as I know.
 
-Hey Sven,
+Thanks, Paul.
 
-First, thank you for the feedback.
-
-I had initially went with a similar design, but there is
-the case in which the interrupt fires and then before the status
-register is read by the handler a user process reads the data and
-clears the interrupt.  When the handler continues execution it will
-read a zero status and return IRQ_NONE.  My understanding of how
-Linux handles IRQ_NONE is pretty poor, but I felt that this behavior
-is incorrect even if inconsequential.  This could be avoided by
-doing a status register read with every data read, and buffering
-that as well, but then we lose the benefit altogether by increasing
-I2C reads.
-
-In the approach you describe here, it seems like that would
-work if this driver wasn't supporting shared interrupts.  In the
-case that a user-space read happens to clear the interrupt before
-the handler reads the status register, I think we would end up
-falsely returning IRQ_NONE.
-
-Is my understanding of this correct?  It's very possible I'm
-misunderstanding IRQ_NONE and shared interrupts.
-
-Again, thank you for the feedback.
-
--Bobby
-
+--
+Gustavo
