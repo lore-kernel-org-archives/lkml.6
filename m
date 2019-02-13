@@ -2,134 +2,141 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 507F1C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B83CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2721121934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53CB721934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:00:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="MTQOFDUh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392808AbfBMQ5o (ORCPT
+        id S2392828AbfBMRAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:57:44 -0500
-Received: from foss.arm.com ([217.140.101.70]:57264 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391839AbfBMQ5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:57:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD8921596;
-        Wed, 13 Feb 2019 08:57:43 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 541233F675;
-        Wed, 13 Feb 2019 08:57:42 -0800 (PST)
-Date:   Wed, 13 Feb 2019 16:57:39 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] PCI: keystone: Use hwirq to get the legacy IRQ
- number offset
-Message-ID: <20190213165739.GE2280@e107981-ln.cambridge.arm.com>
-References: <20190213132629.24790-1-kishon@ti.com>
- <20190213132629.24790-4-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213132629.24790-4-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 13 Feb 2019 12:00:52 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:33308 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733155AbfBMRAv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:00:51 -0500
+Received: from mailhost1.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 690C210C080C;
+        Wed, 13 Feb 2019 09:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550077251; bh=d8q5MR3izpl8VwXVtXGseZpfeWaHvQ+qPzz7A/lSimI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MTQOFDUhC23jRwqgVguy7CR/aWE5TuSFbOhwnaPgLh5lhiaQBPDyAN/dApL14dEU3
+         RLRb+ZLb/LxKDPn5iPc/gHL4IcCXowlE6qW4P9vIhlqhvOhufmnC95jz33APcIQ2nw
+         TLZ3p6Do5RuNdiK9xJmy9WUiguuRAkn20wHfn8CzKM/M2aeEZEgW+OGSwJb2E1OuoK
+         xkSKZB0pU5EfIVIPa4w6a9ZbscTY+sMQKhnvnTh+YkPY6LZE50ikZ6vCTip4IDmesf
+         pJePcXgT4gK0r1oFI5sbP6S0m1pw+riJx6CqNpFCSpRJd+m+vJGl8C7bnRO8ecKBBm
+         /QNqlChVUbhnA==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost1.synopsys.com (Postfix) with ESMTP id 8A18D5637;
+        Wed, 13 Feb 2019 09:00:49 -0800 (PST)
+From:   Jose Abreu <jose.abreu@synopsys.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jose Abreu <jose.abreu@synopsys.com>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH net] net: stmmac: Fix NAPI poll in TX path when in multi-queue
+Date:   Wed, 13 Feb 2019 18:00:43 +0100
+Message-Id: <a264c48823687434e4d18aeb5830707e00c64250.1550077162.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 06:56:23PM +0530, Kishon Vijay Abraham I wrote:
-> ks_pcie_legacy_irq_handler() uses 'virq' to get the IRQ number offset.
-> This offset is used to get the correct IRQ_STATUS register
-> corresponding to the IRQ line that raised the interrupt.
-> There is no guarantee that 'virq' assigned for consecutive hardware
-> IRQ will be contiguous. And this might get us an incorrect IRQ number
-> offset.
-> 
-> Fix it here by using 'hwirq' to get the IRQ number offset.
-> 
-> Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pci-keystone.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index e8b1d8eca78e..d35ac712a9f8 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -87,7 +87,7 @@ struct keystone_pcie {
->  	struct dw_pcie		*pci;
->  	/* PCI Device ID */
->  	u32			device_id;
-> -	int			legacy_host_irqs[PCI_NUM_INTX];
-> +	int			legacy_host_irq;
->  	struct			device_node *legacy_intc_np;
->  
->  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
-> @@ -582,11 +582,11 @@ static void ks_pcie_msi_irq_handler(struct irq_desc *desc)
->   */
->  static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
->  {
-> -	unsigned int irq = irq_desc_get_irq(desc);
-> +	unsigned int irq = desc->irq_data.hwirq;
->  	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
->  	struct dw_pcie *pci = ks_pcie->pci;
->  	struct device *dev = pci->dev;
-> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
-> +	u32 irq_offset = irq - ks_pcie->legacy_host_irq;
+Commit 8fce33317023 introduced the concept of NAPI per-channel and
+independent cleaning of TX path.
 
-I think you should use the plain hwirq number (that if I understand
-correctly range in [0,3]) and drop legacy_host_irq.
+This is currently breaking performance in some cases. The scenario
+happens when all packets are being received in Queue 0 but the TX is
+performed in Queue != 0.
 
-See below.
+I didn't look very deep but it seems that NAPI for Queue 0 will clean
+the RX path but as TX is in different NAPI, this last one is called at a
+slower rate which kills performance in TX. I suspect this is due to TX
+cleaning takes much longer than RX and because NAPI will get canceled
+once we return with 0 budget consumed (e.g. when TX is still not done it
+will return 0 budget).
 
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
->  
->  	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
-> @@ -657,6 +657,7 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
->  	struct device_node *np = ks_pcie->np;
->  	struct device_node *intc_np;
->  	int irq_count, irq, ret, i;
-> +	struct irq_data *irq_data;
->  
->  	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
->  	if (!intc_np) {
-> @@ -677,7 +678,15 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
->  			ret = -EINVAL;
->  			goto err;
->  		}
-> -		ks_pcie->legacy_host_irqs[i] = irq;
-> +
-> +		if (!ks_pcie->legacy_host_irq) {
-> +			irq_data = irq_get_irq_data(irq);
-> +			if (!irq_data) {
-> +				ret = -EINVAL;
-> +				goto err;
-> +			}
-> +			ks_pcie->legacy_host_irq = irq_data->hwirq;
+Fix this by looking at all TX channels in NAPI poll function.
 
-This depends on DT property ordering and may well be wrong. On top
-of that as I said above I do not think it is even needed.
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-queue races")
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 11 +++++------
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-Thanks,
-Lorenzo
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index 63e1064b27a2..8f6741a626d8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -82,7 +82,6 @@ struct stmmac_channel {
+ 	struct stmmac_priv *priv_data;
+ 	u32 index;
+ 	int has_rx;
+-	int has_tx;
+ };
+ 
+ struct stmmac_tc_entry {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 685d20472358..5bf5f8ebb4b6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2031,13 +2031,13 @@ static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
+ 	struct stmmac_channel *ch = &priv->channel[chan];
+ 	bool needs_work = false;
+ 
+-	if ((status & handle_rx) && ch->has_rx) {
++	if (status & handle_rx) {
+ 		needs_work = true;
+ 	} else {
+ 		status &= ~handle_rx;
+ 	}
+ 
+-	if ((status & handle_tx) && ch->has_tx) {
++	if (status & handle_tx) {
+ 		needs_work = true;
+ 	} else {
+ 		status &= ~handle_tx;
+@@ -3528,11 +3528,12 @@ static int stmmac_napi_poll(struct napi_struct *napi, int budget)
+ 	struct stmmac_priv *priv = ch->priv_data;
+ 	int work_done, rx_done = 0, tx_done = 0;
+ 	u32 chan = ch->index;
++	int i;
+ 
+ 	priv->xstats.napi_poll++;
+ 
+-	if (ch->has_tx)
+-		tx_done = stmmac_tx_clean(priv, budget, chan);
++	for (i = 0; i < priv->plat->tx_queues_to_use; i++)
++		tx_done += stmmac_tx_clean(priv, budget, i);
+ 	if (ch->has_rx)
+ 		rx_done = stmmac_rx(priv, budget, chan);
+ 
+@@ -4325,8 +4326,6 @@ int stmmac_dvr_probe(struct device *device,
+ 
+ 		if (queue < priv->plat->rx_queues_to_use)
+ 			ch->has_rx = true;
+-		if (queue < priv->plat->tx_queues_to_use)
+-			ch->has_tx = true;
+ 
+ 		netif_napi_add(ndev, &ch->napi, stmmac_napi_poll,
+ 			       NAPI_POLL_WEIGHT);
+-- 
+2.7.4
 
-> +		}
->  
->  		irq_set_chained_handler_and_data(irq,
->  						 ks_pcie_legacy_irq_handler,
-> -- 
-> 2.17.1
-> 
