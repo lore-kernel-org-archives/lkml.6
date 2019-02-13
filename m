@@ -2,113 +2,135 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07754C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42073C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB90021934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:25:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="wR4EEsRl"
+	by mail.kernel.org (Postfix) with ESMTP id 07FB821934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550096825;
+	bh=FecSmF1qy0nkJRUKTfzS2BFVkV036a08XLhtomNVamE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=G3Wg4a16Z6AA76af9NAha9TZvyDXFNdIqok+bsot+kdMOTtHk3MAux+0U8VR4UxQv
+	 bT3vh7nnJJXCuILg1aBw/6BZLLTGucEY6QAkrIaQ5RF5qwG7naEfJGQd3BQ8gtmM9o
+	 HeojaW8nqyKoEzv8pup/Ql/Wx+0zfKRISlGxHDdE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404289AbfBMWZG (ORCPT
+        id S2391536AbfBMW1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:25:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34963 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404265AbfBMWZD (ORCPT
+        Wed, 13 Feb 2019 17:27:03 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35203 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbfBMW1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:25:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t18so4373319wrx.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:25:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FEWpcrAzfnrCaSQuYe7fm49TUBEKGhf/xqry+uLQyng=;
-        b=wR4EEsRlXSmqKa1MPOaBx78S3klJIcl3XtmzAdKfYqBpSeVfaQyxbKi2a9bibiIeoK
-         qW6tEvQcO1HflLHMig3R2+gb3Hfl47rk9aP+5xKrZEUPjd4w6tTl16Wy92pwR+zVHVgS
-         Z9/aXGtUCcWbt+6eGS5em+I7QweDMwPBNl/n5VMNbk+r+O/IYYxZLFvdBu7wBJUaNMlD
-         x78OmUWaVhTBdd20DX0Zc2XCRU6u4CxgOfypCbpzr8c5F3RiKaeTXcH6fmR4vPy4CWXs
-         qqGRBrJQ1Zj3u82ToeNXVYdz3GB8B+Clvo/T4AuLo25jykzjOKxNX9koUH3ETOs7WGq8
-         BTbQ==
+        Wed, 13 Feb 2019 17:27:03 -0500
+Received: by mail-ot1-f65.google.com with SMTP id z19so7209798otm.2;
+        Wed, 13 Feb 2019 14:27:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FEWpcrAzfnrCaSQuYe7fm49TUBEKGhf/xqry+uLQyng=;
-        b=MKtnYP8v1RdnN5NErxaS3AUR9xUEidrL4zjH2rGu/Di8OXJHK0Sk8nXoebrymVN6pE
-         MWepo0zTVFLKaqmkLMgPXZOUZqcu6t+ggF6chk/yifkDabz3Y39RGlcTm3Vs8qpumLg7
-         oEUh4vKT5SyYeq+QTBAoXyv4Sr/7r+eWgTi0a4IJREuShA4rLsdZH82/wzie4AK1bZqO
-         Fu32MEfctG1fXnMXYutRkOt7Y7Kp2Ga8wliSckFMR2jtg9QoDn1bzEuRlqbrBckcAOcD
-         Jrs5g9/8NPu0xNIkP38tkvt1pQOqLqiX0oYj6UJQmTf4RDGVzj9u8w7GCrHrEmAy2S2D
-         zNXg==
-X-Gm-Message-State: AHQUAuZ/G7BRBo0JIWlYMh1jJW5gQbjL567Sx0RwLLjZT2gFjzT7UAF0
-        xA4Pec6D/EHLX83YheWi9DP5iA==
-X-Google-Smtp-Source: AHgI3IYgPMDeFKq9B0jF4bIuhkXOPdI5t5MQanvGHeIAHYWsVAg5FW0nq+RWXMXFLEfw/903RWFsiA==
-X-Received: by 2002:adf:dc10:: with SMTP id t16mr288086wri.40.1550096701900;
-        Wed, 13 Feb 2019 14:25:01 -0800 (PST)
-Received: from diamond.mathembedded.com (host86-176-243-198.range86-176.btcentralplus.com. [86.176.243.198])
-        by smtp.gmail.com with ESMTPSA id h71sm788330wme.20.2019.02.13.14.25.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zAn8RFeQYoLA8lxdBOQ25WWJzWNjXK8/90SeqULz5do=;
+        b=msnqbJUFyzh3HLvsNk8WxKGtRXJLmPwBiaJ/9alvqTiA0GDyR5t3A88WM3kz4KDOVU
+         Ueh2a15+URlOK5Oa3L2cSZIEHA4WwKIMc4M34Wt3VYaakRTOVNL+TixQVEwVTrpfBUjI
+         U5QVgFTWsRmav1zrh7PBioGEyfPj9Q4dDMsEMGHxo0P2aV67JmJCjRiA3MB1f2N/sRdr
+         0wPWv7OyS5iAXMdYnAyBSBcuL9kdtOtd960UuCDRLFjSrTf7DAy2RlCwbnXCZ7KVWI+u
+         eO9Wo2BqOTDKu69f/wQ1erhoj/yWzHZpmOOghqH4tRLPSqLg/KLqPyp/kbxeNM3vEa3u
+         Ibyg==
+X-Gm-Message-State: AHQUAub6Dz2D320DVIXi4wwlCnEjfeGwzNVk6y6tdNB+5sy0A2zdwE1W
+        Dgh7ZR9txJae9QW6PjC3lg==
+X-Google-Smtp-Source: AHgI3IY1w0jGZPfw9gk40cpNCv0rluNp25L/EsIfQHhfwG7lBjisOVZ5fKSIdWO0x6Ix13pVtGjftQ==
+X-Received: by 2002:a9d:6954:: with SMTP id p20mr267567oto.261.1550096821987;
+        Wed, 13 Feb 2019 14:27:01 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d7sm215956otq.27.2019.02.13.14.27.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:25:01 -0800 (PST)
-From:   Stuart Menefy <stuart.menefy@mathembedded.com>
-To:     Sangbeom Kim <sbkim73@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Stuart Menefy <stuart.menefy@mathembedded.com>
-Subject: [PATCH v3 2/2] mfd: sec: Add support for the RTC on S2MPA01
-Date:   Wed, 13 Feb 2019 22:24:02 +0000
-Message-Id: <20190213222402.20541-3-stuart.menefy@mathembedded.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20190213222402.20541-1-stuart.menefy@mathembedded.com>
-References: <20190213222402.20541-1-stuart.menefy@mathembedded.com>
+        Wed, 13 Feb 2019 14:27:01 -0800 (PST)
+Date:   Wed, 13 Feb 2019 16:27:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: [PATCH V3 1/4] dt-binding: irq: imx-irqsteer: use irq number
+ instead of group number
+Message-ID: <20190213222700.GA31052@bogus>
+References: <1548921464-28917-1-git-send-email-aisheng.dong@nxp.com>
+ <1548921464-28917-2-git-send-email-aisheng.dong@nxp.com>
+ <8db40cd7-7695-0267-c626-26ebe086b2b8@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8db40cd7-7695-0267-c626-26ebe086b2b8@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RTC portion of the S2MPA01 appears to have the same
-register layout as the S2MPS14.
+On Mon, Feb 11, 2019 at 03:35:40PM +0000, Marc Zyngier wrote:
+> On 31/01/2019 08:03, Aisheng Dong wrote:
+> > Not all 64 interrupts may be used in one group. e.g. most irqsteer in
+> > imx8qxp and imx8qm subsystems supports only 32 interrupts.
+> > 
+> > As the IP integration parameters are Channel number and interrupts number,
+> > let's use fsl,irqs-num to represents how many interrupts supported
+> > by this irqsteer channel.
+> > 
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: devicetree@vger.kernel.org
+> > Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> > ChangeLog:
+> >  v1->v2:
+> >   * change property name fsl,irqs-per-chan to fsl,num-irqs.
+> > ---
+> >  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.txt       | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > index 45790ce..6d0a41b 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > @@ -16,8 +16,8 @@ Required properties:
+> >  - #interrupt-cells: Specifies the number of cells needed to encode an
+> >    interrupt source. The value must be 1.
+> >  - fsl,channel: The output channel that all input IRQs should be steered into.
+> > -- fsl,irq-groups: Number of IRQ groups managed by this controller instance.
+> > -  Each group manages 64 input interrupts.
+> > +- fsl,num-irqs: Number of input interrupts of this channel.
+> > +  Should be multiple of 32 input interrupts and up to 512 interrupts.
+> >  
+> >  Example:
+> >  
+> > @@ -28,7 +28,7 @@ Example:
+> >  		clocks = <&clk IMX8MQ_CLK_DISP_APB_ROOT>;
+> >  		clock-names = "ipg";
+> >  		fsl,channel = <0>;
+> > -		fsl,irq-groups = <1>;
+> > +		fsl,num-irqs = <64>;
+> >  		interrupt-controller;
+> >  		#interrupt-cells = <1>;
+> >  	};
+> > 
+> 
+> This is a change to an existing binding, so I'd need the Ack from a DT
+> maintainer before I can queue this.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
----
- drivers/mfd/sec-core.c | 1 +
- drivers/mfd/sec-irq.c  | 3 +++
- 2 files changed, 4 insertions(+)
+The DT maintainer doesn't care as long as there's an explanation that 
+says it's breaking compatibility and why it is okay to do so. This one 
+doesn't do that.
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 5ff3fd726f9e..8a299080cb55 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -86,6 +86,7 @@ static const struct mfd_cell s2mps15_devs[] = {
- 
- static const struct mfd_cell s2mpa01_devs[] = {
- 	{ .name = "s2mpa01-pmic", },
-+	{ .name = "s2mps14-rtc", },
- };
- 
- static const struct mfd_cell s2mpu02_devs[] = {
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index ad0099077e7e..a98c5d165039 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -455,6 +455,9 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
- 	case S5M8767X:
- 		sec_irq_chip = &s5m8767_irq_chip;
- 		break;
-+	case S2MPA01:
-+		sec_irq_chip = &s2mps14_irq_chip;
-+		break;
- 	case S2MPS11X:
- 		sec_irq_chip = &s2mps11_irq_chip;
- 		break;
--- 
-2.13.6
-
+Rob
