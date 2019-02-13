@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F33EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDBAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75787222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 769FA222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391085AbfBMJFH (ORCPT
+        id S2391044AbfBMJFn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:05:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41019 "EHLO
+        Wed, 13 Feb 2019 04:05:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57675 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731659AbfBMJFG (ORCPT
+        with ESMTP id S1729595AbfBMJFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:05:06 -0500
+        Wed, 13 Feb 2019 04:05:42 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1D94VKV198198
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1D959ws198310
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 13 Feb 2019 01:04:31 -0800
+        Wed, 13 Feb 2019 01:05:09 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1D94U1V198195;
-        Wed, 13 Feb 2019 01:04:30 -0800
-Date:   Wed, 13 Feb 2019 01:04:30 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1D957tZ198305;
+        Wed, 13 Feb 2019 01:05:07 -0800
+Date:   Wed, 13 Feb 2019 01:05:07 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrea Righi <tipbot@zytor.com>
-Message-ID: <tip-02106f883cd745523f7766d90a739f983f19e650@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        righi.andrea@gmail.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mhiramat@kernel.org,
-        torvalds@linux-foundation.org, jolsa@redhat.com,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        tglx@linutronix.de, acme@redhat.com, hpa@zytor.com
-Reply-To: hpa@zytor.com, acme@redhat.com, rostedt@goodmis.org,
-          tglx@linutronix.de, mathieu.desnoyers@efficios.com,
-          mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, jolsa@redhat.com,
-          torvalds@linux-foundation.org,
-          alexander.shishkin@linux.intel.com, righi.andrea@gmail.com,
-          peterz@infradead.org
-In-Reply-To: <154998813406.31052.8791425358974650922.stgit@devbox>
-References: <154998813406.31052.8791425358974650922.stgit@devbox>
+From:   tip-bot for Waiman Long <tipbot@zytor.com>
+Message-ID: <tip-030fc443aef663df71cd834331fd8f1ec10c30c0@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, longman@redhat.com,
+        keescook@chromium.org, peterz@infradead.org, adobriyan@gmail.com,
+        dave@stgolabs.net, tglx@linutronix.de, hpa@zytor.com,
+        miklos@szeredi.hu, marc.zyngier@arm.com, david@fromorbit.com,
+        akpm@linux-foundation.org, willy@infradead.org,
+        rdunlap@infradead.org, mingo@kernel.org, dancol@google.com,
+        torvalds@linux-foundation.org
+Reply-To: marc.zyngier@arm.com, david@fromorbit.com,
+          akpm@linux-foundation.org, willy@infradead.org,
+          rdunlap@infradead.org, mingo@kernel.org, dancol@google.com,
+          torvalds@linux-foundation.org, dave@stgolabs.net,
+          tglx@linutronix.de, hpa@zytor.com, miklos@szeredi.hu,
+          keescook@chromium.org, peterz@infradead.org, adobriyan@gmail.com,
+          linux-kernel@vger.kernel.org, longman@redhat.com
+In-Reply-To: <1549983253-19107-1-git-send-email-longman@redhat.com>
+References: <1549983253-19107-1-git-send-email-longman@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] kprobes: Prohibit probing on bsearch()
-Git-Commit-ID: 02106f883cd745523f7766d90a739f983f19e650
+Subject: [tip:irq/core] genirq: Add missing documentation for tot_count
+Git-Commit-ID: 030fc443aef663df71cd834331fd8f1ec10c30c0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,57 +64,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02106f883cd745523f7766d90a739f983f19e650
-Gitweb:     https://git.kernel.org/tip/02106f883cd745523f7766d90a739f983f19e650
-Author:     Andrea Righi <righi.andrea@gmail.com>
-AuthorDate: Wed, 13 Feb 2019 01:15:34 +0900
+Commit-ID:  030fc443aef663df71cd834331fd8f1ec10c30c0
+Gitweb:     https://git.kernel.org/tip/030fc443aef663df71cd834331fd8f1ec10c30c0
+Author:     Waiman Long <longman@redhat.com>
+AuthorDate: Tue, 12 Feb 2019 09:54:13 -0500
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 13 Feb 2019 08:16:41 +0100
+CommitDate: Wed, 13 Feb 2019 08:33:03 +0100
 
-kprobes: Prohibit probing on bsearch()
+genirq: Add missing documentation for tot_count
 
-Since kprobe breakpoing handler is using bsearch(), probing on this
-routine can cause recursive breakpoint problem.
+Commit:
 
-int3
- ->do_int3()
-   ->ftrace_int3_handler()
-     ->ftrace_location()
-       ->ftrace_location_range()
-         ->bsearch() -> int3
+  1136b0728969 ("genirq: Avoid summation loops for /proc/stat")
 
-Prohibit probing on bsearch().
+adds a new irq_desc::tot_count field, without documenting it.
+Add the missing piece of documentation.
 
-Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Daniel Colascione <dancol@google.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/154998813406.31052.8791425358974650922.stgit@devbox
+Link: http://lkml.kernel.org/r/1549983253-19107-1-git-send-email-longman@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- lib/bsearch.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/irqdesc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/bsearch.c b/lib/bsearch.c
-index 18b445b010c3..82512fe7b33c 100644
---- a/lib/bsearch.c
-+++ b/lib/bsearch.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/export.h>
- #include <linux/bsearch.h>
-+#include <linux/kprobes.h>
- 
- /*
-  * bsearch - binary search an array of elements
-@@ -53,3 +54,4 @@ void *bsearch(const void *key, const void *base, size_t num, size_t size,
- 	return NULL;
- }
- EXPORT_SYMBOL(bsearch);
-+NOKPROBE_SYMBOL(bsearch);
+diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
+index 875c41b23f20..1d679feff3f6 100644
+--- a/include/linux/irqdesc.h
++++ b/include/linux/irqdesc.h
+@@ -28,6 +28,7 @@ struct pt_regs;
+  * @core_internal_state__do_not_mess_with_it: core internal status information
+  * @depth:		disable-depth, for nested irq_disable() calls
+  * @wake_depth:		enable depth, for multiple irq_set_irq_wake() callers
++ * @tot_count:		stats field for non-percpu irqs
+  * @irq_count:		stats field to detect stalled irqs
+  * @last_unhandled:	aging timer for unhandled count
+  * @irqs_unhandled:	stats field for spurious unhandled interrupts
