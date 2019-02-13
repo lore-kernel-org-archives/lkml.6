@@ -2,108 +2,134 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE08C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE336C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B27B222D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083481;
-	bh=bb2VCuuEUi8HziRhangAfNt9ZTCt7ZZUqHW6VexNC3g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m8p7dW9BDPr2wgCu8heAKd5jo2imGSH1Bw5rHJvkrsWtltrSHtlxqLWJHFcjfZTAk
-	 6FxQHUvrsPNhQeF/vNhdbMqLMuHGcNp/1oe9BsWys/Xn0uj72Pnt5I1Vfy6tJc4srn
-	 2w5X97TBEoZHeiU2Wmm+xV/K0DNrK2TzN5nlhHS0=
+	by mail.kernel.org (Postfix) with ESMTP id A4196222D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xn0DUXg5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HbbSoRZ5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393977AbfBMSoj (ORCPT
+        id S2393992AbfBMSom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:44:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406148AbfBMSof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 13 Feb 2019 13:44:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58730 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388097AbfBMSok (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:44:40 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 086F860C3D; Wed, 13 Feb 2019 18:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550083478;
+        bh=F87YOsPP9BTuLaqkEIDa5weDH2iiqGmOdN1YadkeJNE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Xn0DUXg5j3TnR2fEBhsWyuhv7TZ4UHxKyZAY2tZyAl47GBC3MNOKzkvfi9j2YJRnS
+         NAowuQnKL10Nb/JlOWd7nEFU4xKxpLQxcwqpcVNVbRISteb2hqboMI+fFFBH8EElTF
+         /3dQdjHWwMwBXBiuiCtAfGkVyh6wxKEeUrZjlO6U=
+Received: from [192.168.1.101] (unknown [157.45.221.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8DAB222D1;
-        Wed, 13 Feb 2019 18:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083475;
-        bh=bb2VCuuEUi8HziRhangAfNt9ZTCt7ZZUqHW6VexNC3g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vXEdwqZXzhSi9zf86jXt8uArtn19zhP9x1MrZcRezMK9aKgHYgFxGbYM7qNDo/bR+
-         qR6l5rJR6+S/BALBl7WX/so89BVS0vkCzDrgUtljxdqCQ2pyT6Au81+FBwb+k/OZmH
-         Sonp3OzdtalqUIb7LhDleEKQ29dsLCHiuJb5I7E0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9d7405c7faa390e60b4e@syzkaller.appspotmail.com,
-        syzbot+7d20bc3f1ddddc0f9079@syzkaller.appspotmail.com,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.19 42/44] batman-adv: Force mac header to start of data on xmit
-Date:   Wed, 13 Feb 2019 19:38:43 +0100
-Message-Id: <20190213183655.311077315@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
-References: <20190213183651.648060257@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D09CE60C3D;
+        Wed, 13 Feb 2019 18:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550083476;
+        bh=F87YOsPP9BTuLaqkEIDa5weDH2iiqGmOdN1YadkeJNE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HbbSoRZ5E3D57TggqaplIL+7LSjb29zLnCED9DNxSum0WaWnR7UFps049LRVuzIxO
+         0/g57YacSkEb3vZzDguBsT2lVOq2Q1X2snOSqR/VPc1HoLb18wV+R4nhDVxcx3czm5
+         XRF6NSeHQpW19w4XS0XWYsWnqge6xdSegmMHkJxM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D09CE60C3D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: BUG: sleeping function called from invalid context at
+ kernel/locking/rwsem.c:65
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rt-users@vger.kernel.org, linux-mm@kvack.org,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        "Xenomai@xenomai.org" <xenomai@xenomai.org>
+References: <CAOuPNLgaDJm27nECxq1jtny=+ixt=GPf2C7zyDsVgbsLvtDarA@mail.gmail.com>
+ <6183c865-2e90-5fb9-9e10-1339ae491b71@codeaurora.org>
+ <CAOuPNLgUvECE6XBjszFggY3efmEBKywzKNWupjfQ2svsCMqd7w@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <2c91af7d-4580-cedc-70ea-d38c2587c7bf@codeaurora.org>
+Date:   Thu, 14 Feb 2019 00:14:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOuPNLgUvECE6XBjszFggY3efmEBKywzKNWupjfQ2svsCMqd7w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+On 2/13/2019 8:10 PM, Pintu Agarwal wrote:
+> OK thanks for your suggestions. sdm845-perf_defconfig did not work for
+> me. The target did not boot.
 
-From: Sven Eckelmann <sven@narfation.org>
+Perf defconfig works fine. You need to enable serial console with below
+config added to perf defconfig.
 
-commit 9114daa825fc3f335f9bea3313ce667090187280 upstream.
+CONFIG_SERIAL_MSM_GENI_CONSOLE=y
 
-The caller of ndo_start_xmit may not already have called
-skb_reset_mac_header. The returned value of skb_mac_header/eth_hdr
-therefore can be in the wrong position and even outside the current skbuff.
-This for example happens when the user binds to the device using a
-PF_PACKET-SOCK_RAW with enabled qdisc-bypass:
+> However, disabling CONFIG_PANIC_ON_SCHED_BUG works, and I got a root
+> shell at least.
 
-  int opt = 4;
-  setsockopt(sock, SOL_PACKET, PACKET_QDISC_BYPASS, &opt, sizeof(opt));
+> 
+> But this seems to be a work around.
+> I still get a back trace in kernel logs from many different places.
+> So, it looks like there is some code in qualcomm specific drivers that
+> is calling a sleeping method from invalid context.
+> How to find that...
+> If this fix is already available in latest version, please let me know.
+> 
 
-Since eth_hdr is used all over the codebase, the batadv_interface_tx
-function must always take care of resetting it.
+Seems like interrupts are disabled when down_write_killable() is called.
+It's not the drivers that is calling the sleeping method which can  be
+seen from the log.
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Reported-by: syzbot+9d7405c7faa390e60b4e@syzkaller.appspotmail.com
-Reported-by: syzbot+7d20bc3f1ddddc0f9079@syzkaller.appspotmail.com
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[   22.140224] [<ffffff88b8ce65a8>] ___might_sleep+0x140/0x188
+[   22.145862] [<ffffff88b8ce6648>] __might_sleep+0x58/0x90         <---
+[   22.151249] [<ffffff88b9d43f84>] down_write_killable+0x2c/0x80   <---
+[   22.157155] [<ffffff88b8e53cd8>] setup_arg_pages+0xb8/0x208      <---
+[   22.162792] [<ffffff88b8eb7534>] load_elf_binary+0x434/0x1298
+[   22.168600] [<ffffff88b8e55674>] search_binary_handler+0xac/0x1f0
+[   22.174763] [<ffffff88b8e560ec>]
+do_execveat_common.isra.15+0x504/0x6c8
+[   22.181452] [<ffffff88b8e562f4>] do_execve+0x44/0x58
+[   22.186481] [<ffffff88b8c84030>] run_init_process+0x38/0x48      <---
+[   22.192122] [<ffffff88b9d3db1c>] kernel_init+0x8c/0x108
+[   22.197411] [<ffffff88b8c83f00>] ret_from_fork+0x10/0x50
 
----
- net/batman-adv/soft-interface.c |    2 ++
- 1 file changed, 2 insertions(+)
+ >
+ > This at least proves that there is no issue in core ipipe patches, and
+ > I can proceed.
 
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -221,6 +221,8 @@ static netdev_tx_t batadv_interface_tx(s
- 
- 	netif_trans_update(soft_iface);
- 	vid = batadv_get_vid(skb, 0);
-+
-+	skb_reset_mac_header(skb);
- 	ethhdr = eth_hdr(skb);
- 
- 	switch (ntohs(ethhdr->h_proto)) {
+I doubt the *IPIPE patches*. You said you removed the configs, but all
+code are not under IPIPE configs and as I see there are lots of
+changes to interrupt code in general with ipipe.
 
+So to actually confirm whether the issue is with qcom drivers or ipipe,
+please *remove ipipe patches (not just configs)* and boot.
+Also paste the full dmesg logs for these 2 cases(with and without
+ipipe).
 
+Thanks,
+Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
