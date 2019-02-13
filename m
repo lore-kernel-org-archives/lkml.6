@@ -2,266 +2,106 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA912C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EFAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7174820811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 725FE20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:28:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qa238AOf"
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="uGndb9Pr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391061AbfBMN16 (ORCPT
+        id S2392099AbfBMN2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:27:58 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38070 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731043AbfBMN1z (ORCPT
+        Wed, 13 Feb 2019 08:28:08 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33895 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388310AbfBMN2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:27:55 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1DDRe9p061147;
-        Wed, 13 Feb 2019 07:27:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550064460;
-        bh=cx4oxS914RuUO0CO7lGDQckQG7yHL3YxAND33bl+2/k=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Qa238AOfzI8tIwIvkCBxzJBkrEtpPWqRQwMh/jgfi9nMMKbJAplSsQGVsStEPy0gZ
-         btQ0QGbiYozSTAmEDKYgCke8e+xwK4PTVg7X8KlvboQmHLzlSdgSDAbTCJBdwxoL5e
-         GV41XwedJWafTKUikTU0WKfDaj36qDD6KqBfLIpo=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1DDReqb096737
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 07:27:40 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 13
- Feb 2019 07:27:40 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 13 Feb 2019 07:27:40 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1DDRGZh016688;
-        Wed, 13 Feb 2019 07:27:37 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 7/9] PCI: keystone: Use Keystone specific msi_irq_chip
-Date:   Wed, 13 Feb 2019 18:56:27 +0530
-Message-ID: <20190213132629.24790-8-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190213132629.24790-1-kishon@ti.com>
-References: <20190213132629.24790-1-kishon@ti.com>
+        Wed, 13 Feb 2019 08:28:05 -0500
+Received: by mail-pg1-f196.google.com with SMTP id i130so1150103pgd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lmiH+RHVhxB+obP/+7+ZvQfxCISotDUjH4WduRSJgp4=;
+        b=uGndb9PrlFKPp128sjUuhzeQyXtHaBhX0QhQf99IU33dON5iEdRbB9ViezpinCL2VJ
+         /6I8J7auazuseYQKJDf/qCA0DkL9uvW6RQB2p/y7iTJw2GpVRL3UsPfsY4IrHrjBo9Yn
+         4XoqHSEWtPOUgMSi1Suvq3pVQGfzdHFogA3paVkc23twhG1Rq9X0CrsUlN7pyL401YpT
+         v+x9n6HfqPifh2XCOGm3ZFtr/9g3voB3r62Czp+eS5UN/RZFwkFtWA3pl5YAXiJU8GUf
+         rS2OQJVLVNmHVrUzFiNZerpcAHKMFMyu9NivttsJDqxFkVes58+YmzHUgEaPP5WOIVk5
+         DMgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lmiH+RHVhxB+obP/+7+ZvQfxCISotDUjH4WduRSJgp4=;
+        b=CTE5gMBF8LJD8bPGn/v+7R5ay/dzCJmt378Abk0UEBp3ZJBnqCax9R4Jy+4Vb24Nge
+         vZEpgClyZ5UwarLEkRZkF/b6HS0OBu5l8sBEnPOgVpVn0BCVndfrigT8jOiJIGV3LDwu
+         I/lt+aChl0Mm3YM8w9+P+v9lL9df8zlpqaM0ADcOukHk0DF9gD6muGwa9YP8RqdYH+WB
+         zpDFOloNBOaxSuMfP47u98kgil47/ssTmtJgl+TNwqdmdKeqFbbzgVBQII5CiRRBpUAR
+         K7Xx6G2+p25gm2lL3JL/E4yPMKibQIiPRn62DmeR9YssSeA3yk7KG+G+pcKYysWlVlOQ
+         HuUQ==
+X-Gm-Message-State: AHQUAuYR5TiKBe4Brgtj6oHNgsrOSBZ5wjLEFzT6xIDSASw2/l4ExQGY
+        EeMtcd8OKVPQuaXVKSSesvA2OA==
+X-Google-Smtp-Source: AHgI3IYYNPzlTxNjPzRht3OcT4ya72upkHab0DSJv1opzlibqWdDm5S4f71312mBCIr9J+FN5YDErQ==
+X-Received: by 2002:a62:5003:: with SMTP id e3mr536528pfb.23.1550064484753;
+        Wed, 13 Feb 2019 05:28:04 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
+        by smtp.gmail.com with ESMTPSA id 10sm32945751pfq.146.2019.02.13.05.28.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 05:28:03 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 4790B3002B2; Wed, 13 Feb 2019 16:28:00 +0300 (+03)
+Date:   Wed, 13 Feb 2019 16:28:00 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        lsf-pc@lists.linux-foundation.org,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [LSF/MM TOPIC] Non standard size THP
+Message-ID: <20190213132800.dekg525rhrjn3cmj@kshutemo-mobl1>
+References: <dcb0b2cf-ba5c-e6ef-0b05-c6006227b6a9@arm.com>
+ <20190212083331.dtch7xubjxlmz5tf@kshutemo-mobl1>
+ <20190213130647.GQ12668@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213130647.GQ12668@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use Keystone specific msi_irq_chip to configure the MSI controller
-logic in the PCIe keystone wrapper instead of using the default
-Designware msi_irq chip (dw_pci_msi_bottom_irq_chip) with
-callback functions for configuring the Keystone MSI controller.
-This will help to remove Keystone specific callback functions
-added in dw_pcie_host_ops.
+On Wed, Feb 13, 2019 at 05:06:47AM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 12, 2019 at 11:33:31AM +0300, Kirill A. Shutemov wrote:
+> > To consider it seriously we need to understand what it means for
+> > split_huge_p?d()/split_huge_page()? How khugepaged will deal with this?
+> > 
+> > In particular, I'm worry to expose (to user or CPU) page table state in
+> > the middle of conversion (huge->small or small->huge). Handling this on
+> > page table level provides a level atomicity that you will not have.
+> 
+> We could do an RCU-style trick where (eg) for merging 16 consecutive
+> entries together, we allocate a new PTE leaf, take the mmap_sem for write,
+> copy the page table over, update the new entries, then put the new leaf
+> into the PMD level.  Then iterate over the old PTE leaf again, and set
+> any dirty bits in the new leaf which were set during the race window.
+> 
+> Does that cover all the problems?
 
-Move the default msi_irq_chip assignment to dw_pcie_host_init() since
-platforms that doesn't use the default msi_irq_chip will assign
-msi_irq_chip in msi_host_init() callback.
+Probably, but it will kill scalability. Taking mmap_sem for write to
+handle page fault or MADV_DONTNEED will not make anybody happy.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/controller/dwc/pci-keystone.c     | 96 ++++++++++++++-----
- .../pci/controller/dwc/pcie-designware-host.c |  5 +-
- 2 files changed, 74 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 88bd029c2f03..e3a9b4bde19e 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -105,14 +105,6 @@ struct keystone_pcie {
- 	struct resource		app;
- };
- 
--static phys_addr_t ks_pcie_get_msi_addr(struct pcie_port *pp)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
--
--	return ks_pcie->app.start + MSI_IRQ;
--}
--
- static u32 ks_pcie_app_readl(struct keystone_pcie *ks_pcie, u32 offset)
- {
- 	return readl(ks_pcie->va_app_base + offset);
-@@ -124,11 +116,14 @@ static void ks_pcie_app_writel(struct keystone_pcie *ks_pcie, u32 offset,
- 	writel(val, ks_pcie->va_app_base + offset);
- }
- 
--static void ks_pcie_msi_irq_ack(int irq, struct pcie_port *pp)
-+static void ks_pcie_msi_irq_ack(struct irq_data *data)
- {
--	u32 reg_offset, bit_pos;
-+	struct pcie_port *pp  = irq_data_get_irq_chip_data(data);
- 	struct keystone_pcie *ks_pcie;
-+	u32 irq = data->hwirq;
- 	struct dw_pcie *pci;
-+	u32 reg_offset;
-+	u32 bit_pos;
- 
- 	pci = to_dw_pcie_from_pp(pp);
- 	ks_pcie = to_keystone_pcie(pci);
-@@ -141,34 +136,91 @@ static void ks_pcie_msi_irq_ack(int irq, struct pcie_port *pp)
- 	ks_pcie_app_writel(ks_pcie, IRQ_EOI, reg_offset + MSI_IRQ_OFFSET);
- }
- 
--static void ks_pcie_msi_set_irq(struct pcie_port *pp, int irq)
-+static void ks_pcie_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
- {
--	u32 reg_offset, bit_pos;
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
-+	struct pcie_port *pp = irq_data_get_irq_chip_data(data);
-+	struct keystone_pcie *ks_pcie;
-+	struct dw_pcie *pci;
-+	u64 msi_target;
-+
-+	pci = to_dw_pcie_from_pp(pp);
-+	ks_pcie = to_keystone_pcie(pci);
-+
-+	msi_target = ks_pcie->app.start + MSI_IRQ;
-+	msg->address_lo = lower_32_bits(msi_target);
-+	msg->address_hi = upper_32_bits(msi_target);
-+	msg->data = data->hwirq;
-+
-+	dev_dbg(pci->dev, "msi#%d address_hi %#x address_lo %#x\n",
-+		(int)data->hwirq, msg->address_hi, msg->address_lo);
-+}
-+
-+static int ks_pcie_msi_set_affinity(struct irq_data *irq_data,
-+				    const struct cpumask *mask, bool force)
-+{
-+	return -EINVAL;
-+}
-+
-+static void ks_pcie_msi_mask(struct irq_data *data)
-+{
-+	struct pcie_port *pp = irq_data_get_irq_chip_data(data);
-+	struct keystone_pcie *ks_pcie;
-+	u32 irq = data->hwirq;
-+	struct dw_pcie *pci;
-+	unsigned long flags;
-+	u32 reg_offset;
-+	u32 bit_pos;
-+
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
-+	pci = to_dw_pcie_from_pp(pp);
-+	ks_pcie = to_keystone_pcie(pci);
- 
- 	reg_offset = irq % 8;
- 	bit_pos = irq >> 3;
- 
--	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_SET(reg_offset),
-+	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_CLR(reg_offset),
- 			   BIT(bit_pos));
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
- }
- 
--static void ks_pcie_msi_clear_irq(struct pcie_port *pp, int irq)
-+static void ks_pcie_msi_unmask(struct irq_data *data)
- {
--	u32 reg_offset, bit_pos;
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
-+	struct pcie_port *pp = irq_data_get_irq_chip_data(data);
-+	struct keystone_pcie *ks_pcie;
-+	u32 irq = data->hwirq;
-+	struct dw_pcie *pci;
-+	unsigned long flags;
-+	u32 reg_offset;
-+	u32 bit_pos;
-+
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
-+	pci = to_dw_pcie_from_pp(pp);
-+	ks_pcie = to_keystone_pcie(pci);
- 
- 	reg_offset = irq % 8;
- 	bit_pos = irq >> 3;
- 
--	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_CLR(reg_offset),
-+	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_SET(reg_offset),
- 			   BIT(bit_pos));
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
- }
- 
-+static struct irq_chip ks_pcie_msi_irq_chip = {
-+	.name = "KEYSTONE-PCI-MSI",
-+	.irq_ack = ks_pcie_msi_irq_ack,
-+	.irq_compose_msi_msg = ks_pcie_compose_msi_msg,
-+	.irq_set_affinity = ks_pcie_msi_set_affinity,
-+	.irq_mask = ks_pcie_msi_mask,
-+	.irq_unmask = ks_pcie_msi_unmask,
-+};
-+
- static int ks_pcie_msi_host_init(struct pcie_port *pp)
- {
-+	pp->msi_irq_chip = &ks_pcie_msi_irq_chip;
- 	return dw_pcie_allocate_domains(pp);
- }
- 
-@@ -790,11 +842,7 @@ static const struct dw_pcie_host_ops ks_pcie_host_ops = {
- 	.rd_other_conf = ks_pcie_rd_other_conf,
- 	.wr_other_conf = ks_pcie_wr_other_conf,
- 	.host_init = ks_pcie_host_init,
--	.msi_set_irq = ks_pcie_msi_set_irq,
--	.msi_clear_irq = ks_pcie_msi_clear_irq,
--	.get_msi_addr = ks_pcie_get_msi_addr,
- 	.msi_host_init = ks_pcie_msi_host_init,
--	.msi_irq_ack = ks_pcie_msi_irq_ack,
- 	.scan_bus = ks_pcie_v3_65_scan_bus,
- };
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 042de09b0451..72cfedce5af1 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -277,9 +277,6 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
- 
--	if (!pp->msi_irq_chip)
--		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
--
- 	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
- 					       &dw_pcie_msi_domain_ops, pp);
- 	if (!pp->irq_domain) {
-@@ -462,6 +459,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		}
- 
- 		if (!pp->ops->msi_host_init) {
-+			pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
-+
- 			ret = dw_pcie_allocate_domains(pp);
- 			if (ret)
- 				goto error;
 -- 
-2.17.1
-
+ Kirill A. Shutemov
