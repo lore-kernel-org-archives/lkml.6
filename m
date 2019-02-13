@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC074C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5119CC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F45A222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10FA4222C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025253;
-	bh=3no22EYmO/OKYwLuELznf5xGue0RcVmh4wtJQU+P8Cc=;
+	s=default; t=1550025259;
+	bh=cxvm/BCHf7B3M8gasS4wAx+I8PYtRNtj7GjxhauxsAs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OFKX5X11FbGPdEMwkSyT8m6U9q+eYn+xjQzvLdn2tb11HUE7JI086yFHlREZKR20x
-	 K7UgKLUV9h7c8kweT9cDOGnagx7hbRsErwVtClRQz6tKPTmAopXiNOGty1mXjVb5AN
-	 JcpfVuBFEvuWDDF+cqNJBHXM4bVpEBb95FTSqZNM=
+	b=DXMlh+ewHuh8XREHpiimhhWzbP1jmXRIfXQusnn8iEXVbKjkGcat/lpTYkDZBiX9M
+	 D8c/0Zc7VLLXdhL2JaE5fdnCj9ipeZuqNIwkweh+xtrcjWuv7osR1PKHUWFkLtST6l
+	 QyFvy1UoxfJdgFOIS1lFFco9OK0QFcmKaCOOz5X0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387643AbfBMCeL (ORCPT
+        id S2387665AbfBMCeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:34:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:34:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbfBMCeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:07 -0500
+        id S2387640AbfBMCeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC74222CE;
-        Wed, 13 Feb 2019 02:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0470222C7;
+        Wed, 13 Feb 2019 02:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025246;
-        bh=3no22EYmO/OKYwLuELznf5xGue0RcVmh4wtJQU+P8Cc=;
+        s=default; t=1550025251;
+        bh=cxvm/BCHf7B3M8gasS4wAx+I8PYtRNtj7GjxhauxsAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H4D/h32LtTGMnvVXA8Xcl+PHp3mvDMZeG3xNpd0BYUOrftZAazH3X6TSJQaUeWtXD
-         /GRZTe6Zchw0U4AjS+BVB0haZG95JU9hJuI8RVXvc8j2/xwVERTOL3yXPwYUN6nhZN
-         CHDIglrH+FBuZcYjC1UtL5q6x7MMya+epYopdvNY=
+        b=iYKSlF32LEkY283T5OPNlkCQc5LdTj4BfmiUgnswAjN5j9Y9ut3NatAn2cum6K95J
+         1fiFwJQmr5OM014qwu6X9c7Ovr4vR09hZc1GM4wn/tx72TfAvLU1vzTbApdk+Pter7
+         O/zNG7bdyw8ddC+WpH4DxywMDi6PUeDnWLaCsURo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Michael Cook <mcook@mackal.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 029/105] hwmon: (nct6775) Fix chip ID for NCT6798D
-Date:   Tue, 12 Feb 2019 21:32:20 -0500
-Message-Id: <20190213023336.19019-29-sashal@kernel.org>
+Cc:     Stephen Warren <swarren@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 032/105] net/mlx4: Get rid of page operation after dma_alloc_coherent
+Date:   Tue, 12 Feb 2019 21:32:23 -0500
+Message-Id: <20190213023336.19019-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -57,45 +59,273 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Stephen Warren <swarren@nvidia.com>
 
-[ Upstream commit 264142bc70ec039e26d8f3b46a717e8037f59ca0 ]
+[ Upstream commit f65e192af35058e5c82da9e90871b472d24912bc ]
 
-The chip ID is 0xd42[8-f], not 0xd45[8-f].
+This patch solves a crash at the time of mlx4 driver unload or system
+shutdown. The crash occurs because dma_alloc_coherent() returns one
+value in mlx4_alloc_icm_coherent(), but a different value is passed to
+dma_free_coherent() in mlx4_free_icm_coherent(). In turn this is because
+when allocated, that pointer is passed to sg_set_buf() to record it,
+then when freed it is re-calculated by calling
+lowmem_page_address(sg_page()) which returns a different value. Solve
+this by recording the value that dma_alloc_coherent() returns, and
+passing this to dma_free_coherent().
 
-Fixes: 0599682b826f ("hwmon: (nct6775) Add support for NCT6798D")
-Reported-by: Michael Cook <mcook@mackal.net>
-Cc: Michael Cook <mcook@mackal.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+This patch is roughly equivalent to commit 378efe798ecf ("RDMA/hns: Get
+rid of page operation after dma_alloc_coherent").
+
+Based-on-code-from: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/nct6775.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/icm.c | 92 ++++++++++++++----------
+ drivers/net/ethernet/mellanox/mlx4/icm.h | 22 +++++-
+ 2 files changed, 75 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
-index c3040079b1cb..8f91e366866f 100644
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -44,8 +44,8 @@
-  * nct6796d    14      7       7       2+6    0xd420 0xc1    0x5ca3
-  * nct6797d    14      7       7       2+6    0xd450 0xc1    0x5ca3
-  *                                           (0xd451)
-- * nct6798d    14      7       7       2+6    0xd458 0xc1    0x5ca3
-- *                                           (0xd459)
-+ * nct6798d    14      7       7       2+6    0xd428 0xc1    0x5ca3
-+ *                                           (0xd429)
-  *
-  * #temp lists the number of monitored temperature sources (first value) plus
-  * the number of directly connectable temperature sensors (second value).
-@@ -138,7 +138,7 @@ MODULE_PARM_DESC(fan_debounce, "Enable debouncing for fan RPM signal");
- #define SIO_NCT6795_ID		0xd350
- #define SIO_NCT6796_ID		0xd420
- #define SIO_NCT6797_ID		0xd450
--#define SIO_NCT6798_ID		0xd458
-+#define SIO_NCT6798_ID		0xd428
- #define SIO_ID_MASK		0xFFF8
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
+index 4b4351141b94..76b84d08a058 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.c
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+@@ -57,12 +57,12 @@ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chu
+ 	int i;
  
- enum pwm_enable { off, manual, thermal_cruise, speed_cruise, sf3, sf4 };
+ 	if (chunk->nsg > 0)
+-		pci_unmap_sg(dev->persist->pdev, chunk->mem, chunk->npages,
++		pci_unmap_sg(dev->persist->pdev, chunk->sg, chunk->npages,
+ 			     PCI_DMA_BIDIRECTIONAL);
+ 
+ 	for (i = 0; i < chunk->npages; ++i)
+-		__free_pages(sg_page(&chunk->mem[i]),
+-			     get_order(chunk->mem[i].length));
++		__free_pages(sg_page(&chunk->sg[i]),
++			     get_order(chunk->sg[i].length));
+ }
+ 
+ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
+@@ -71,9 +71,9 @@ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *
+ 
+ 	for (i = 0; i < chunk->npages; ++i)
+ 		dma_free_coherent(&dev->persist->pdev->dev,
+-				  chunk->mem[i].length,
+-				  lowmem_page_address(sg_page(&chunk->mem[i])),
+-				  sg_dma_address(&chunk->mem[i]));
++				  chunk->buf[i].size,
++				  chunk->buf[i].addr,
++				  chunk->buf[i].dma_addr);
+ }
+ 
+ void mlx4_free_icm(struct mlx4_dev *dev, struct mlx4_icm *icm, int coherent)
+@@ -111,22 +111,21 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
+ 	return 0;
+ }
+ 
+-static int mlx4_alloc_icm_coherent(struct device *dev, struct scatterlist *mem,
+-				    int order, gfp_t gfp_mask)
++static int mlx4_alloc_icm_coherent(struct device *dev, struct mlx4_icm_buf *buf,
++				   int order, gfp_t gfp_mask)
+ {
+-	void *buf = dma_alloc_coherent(dev, PAGE_SIZE << order,
+-				       &sg_dma_address(mem), gfp_mask);
+-	if (!buf)
++	buf->addr = dma_alloc_coherent(dev, PAGE_SIZE << order,
++				       &buf->dma_addr, gfp_mask);
++	if (!buf->addr)
+ 		return -ENOMEM;
+ 
+-	if (offset_in_page(buf)) {
+-		dma_free_coherent(dev, PAGE_SIZE << order,
+-				  buf, sg_dma_address(mem));
++	if (offset_in_page(buf->addr)) {
++		dma_free_coherent(dev, PAGE_SIZE << order, buf->addr,
++				  buf->dma_addr);
+ 		return -ENOMEM;
+ 	}
+ 
+-	sg_set_buf(mem, buf, PAGE_SIZE << order);
+-	sg_dma_len(mem) = PAGE_SIZE << order;
++	buf->size = PAGE_SIZE << order;
+ 	return 0;
+ }
+ 
+@@ -159,21 +158,21 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 
+ 	while (npages > 0) {
+ 		if (!chunk) {
+-			chunk = kmalloc_node(sizeof(*chunk),
++			chunk = kzalloc_node(sizeof(*chunk),
+ 					     gfp_mask & ~(__GFP_HIGHMEM |
+ 							  __GFP_NOWARN),
+ 					     dev->numa_node);
+ 			if (!chunk) {
+-				chunk = kmalloc(sizeof(*chunk),
++				chunk = kzalloc(sizeof(*chunk),
+ 						gfp_mask & ~(__GFP_HIGHMEM |
+ 							     __GFP_NOWARN));
+ 				if (!chunk)
+ 					goto fail;
+ 			}
++			chunk->coherent = coherent;
+ 
+-			sg_init_table(chunk->mem, MLX4_ICM_CHUNK_LEN);
+-			chunk->npages = 0;
+-			chunk->nsg    = 0;
++			if (!coherent)
++				sg_init_table(chunk->sg, MLX4_ICM_CHUNK_LEN);
+ 			list_add_tail(&chunk->list, &icm->chunk_list);
+ 		}
+ 
+@@ -186,10 +185,10 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 
+ 		if (coherent)
+ 			ret = mlx4_alloc_icm_coherent(&dev->persist->pdev->dev,
+-						      &chunk->mem[chunk->npages],
+-						      cur_order, mask);
++						&chunk->buf[chunk->npages],
++						cur_order, mask);
+ 		else
+-			ret = mlx4_alloc_icm_pages(&chunk->mem[chunk->npages],
++			ret = mlx4_alloc_icm_pages(&chunk->sg[chunk->npages],
+ 						   cur_order, mask,
+ 						   dev->numa_node);
+ 
+@@ -205,7 +204,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 		if (coherent)
+ 			++chunk->nsg;
+ 		else if (chunk->npages == MLX4_ICM_CHUNK_LEN) {
+-			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
++			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
+ 						chunk->npages,
+ 						PCI_DMA_BIDIRECTIONAL);
+ 
+@@ -220,7 +219,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 	}
+ 
+ 	if (!coherent && chunk) {
+-		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
++		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
+ 					chunk->npages,
+ 					PCI_DMA_BIDIRECTIONAL);
+ 
+@@ -320,7 +319,7 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
+ 	u64 idx;
+ 	struct mlx4_icm_chunk *chunk;
+ 	struct mlx4_icm *icm;
+-	struct page *page = NULL;
++	void *addr = NULL;
+ 
+ 	if (!table->lowmem)
+ 		return NULL;
+@@ -336,28 +335,49 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
+ 
+ 	list_for_each_entry(chunk, &icm->chunk_list, list) {
+ 		for (i = 0; i < chunk->npages; ++i) {
++			dma_addr_t dma_addr;
++			size_t len;
++
++			if (table->coherent) {
++				len = chunk->buf[i].size;
++				dma_addr = chunk->buf[i].dma_addr;
++				addr = chunk->buf[i].addr;
++			} else {
++				struct page *page;
++
++				len = sg_dma_len(&chunk->sg[i]);
++				dma_addr = sg_dma_address(&chunk->sg[i]);
++
++				/* XXX: we should never do this for highmem
++				 * allocation.  This function either needs
++				 * to be split, or the kernel virtual address
++				 * return needs to be made optional.
++				 */
++				page = sg_page(&chunk->sg[i]);
++				addr = lowmem_page_address(page);
++			}
++
+ 			if (dma_handle && dma_offset >= 0) {
+-				if (sg_dma_len(&chunk->mem[i]) > dma_offset)
+-					*dma_handle = sg_dma_address(&chunk->mem[i]) +
+-						dma_offset;
+-				dma_offset -= sg_dma_len(&chunk->mem[i]);
++				if (len > dma_offset)
++					*dma_handle = dma_addr + dma_offset;
++				dma_offset -= len;
+ 			}
++
+ 			/*
+ 			 * DMA mapping can merge pages but not split them,
+ 			 * so if we found the page, dma_handle has already
+ 			 * been assigned to.
+ 			 */
+-			if (chunk->mem[i].length > offset) {
+-				page = sg_page(&chunk->mem[i]);
++			if (len > offset)
+ 				goto out;
+-			}
+-			offset -= chunk->mem[i].length;
++			offset -= len;
+ 		}
+ 	}
+ 
++	addr = NULL;
+ out:
+ 	mutex_unlock(&table->mutex);
+-	return page ? lowmem_page_address(page) + offset : NULL;
++	return addr ? addr + offset : NULL;
+ }
+ 
+ int mlx4_table_get_range(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.h b/drivers/net/ethernet/mellanox/mlx4/icm.h
+index c9169a490557..d199874b1c07 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.h
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.h
+@@ -47,11 +47,21 @@ enum {
+ 	MLX4_ICM_PAGE_SIZE	= 1 << MLX4_ICM_PAGE_SHIFT,
+ };
+ 
++struct mlx4_icm_buf {
++	void			*addr;
++	size_t			size;
++	dma_addr_t		dma_addr;
++};
++
+ struct mlx4_icm_chunk {
+ 	struct list_head	list;
+ 	int			npages;
+ 	int			nsg;
+-	struct scatterlist	mem[MLX4_ICM_CHUNK_LEN];
++	bool			coherent;
++	union {
++		struct scatterlist	sg[MLX4_ICM_CHUNK_LEN];
++		struct mlx4_icm_buf	buf[MLX4_ICM_CHUNK_LEN];
++	};
+ };
+ 
+ struct mlx4_icm {
+@@ -114,12 +124,18 @@ static inline void mlx4_icm_next(struct mlx4_icm_iter *iter)
+ 
+ static inline dma_addr_t mlx4_icm_addr(struct mlx4_icm_iter *iter)
+ {
+-	return sg_dma_address(&iter->chunk->mem[iter->page_idx]);
++	if (iter->chunk->coherent)
++		return iter->chunk->buf[iter->page_idx].dma_addr;
++	else
++		return sg_dma_address(&iter->chunk->sg[iter->page_idx]);
+ }
+ 
+ static inline unsigned long mlx4_icm_size(struct mlx4_icm_iter *iter)
+ {
+-	return sg_dma_len(&iter->chunk->mem[iter->page_idx]);
++	if (iter->chunk->coherent)
++		return iter->chunk->buf[iter->page_idx].size;
++	else
++		return sg_dma_len(&iter->chunk->sg[iter->page_idx]);
+ }
+ 
+ int mlx4_MAP_ICM_AUX(struct mlx4_dev *dev, struct mlx4_icm *icm);
 -- 
 2.19.1
 
