@@ -2,102 +2,105 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69121C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F245C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38EAA20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:31:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxVJPSj6"
+	by mail.kernel.org (Postfix) with ESMTP id D2BD120838
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393052AbfBMRa6 (ORCPT
+        id S2393073AbfBMRcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:30:58 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39707 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388566AbfBMRa6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:30:58 -0500
-Received: by mail-lf1-f67.google.com with SMTP id m11so2414679lfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:30:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IX5fc9GiseTVOqj3NSbxo+dq4Rg06FdkulNe7qorIFM=;
-        b=kxVJPSj60TPBNiwanaFQPKZ7neCCSGNYMdj37WHxUAJ8ananQWcwp2yB3Djl2GoUOr
-         35+SSqsfen+hGi513v62v73x9CSzwfjGgCGWvS/DY6hF6Vh1UC17lVzY+2UXP8GdOTqR
-         B5kJz7Xcjc4Q04ncL4Ysp2/LrtPdOeTqxGXBP8x1B9XUsxYCc+V+eUMfM0oLOJdsQpBn
-         h67oUVgaABAVYC0aVZ2GuUAbikpWSFXbTYDLRGNfOmSw1ua1iY8z1cn8di6XrmubOx+V
-         twNiveEwX7VWyOXuD/WVec2KJVXozQz+KiEJ2UpN/NjJ83ka1u/uPOYkLrTJ5ku4fpZN
-         8s5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IX5fc9GiseTVOqj3NSbxo+dq4Rg06FdkulNe7qorIFM=;
-        b=GNQX6IBg9mKftw5L2rlG5sKGUMI/gqVuTPOYHlkQNjnX2IqQJkcJY3h8K0XZrruuQA
-         MUXVfW9s+6olUN+b8EH+Rl8249GUmlL6xF5lpBEIh2V8xPlmMx9tmaye3bmYaDsplYyb
-         lNCBfVcMPpzJRj4jZjVIg9aPnwfnR9Ogc3ldhQX4mfXddhbPXTw+5rw/eVlC3cMK8KHt
-         8VZyNB51hEf++2iTu0Vzjwjo5NI2PQVWgiz3MVx7uMdHIJ6/lMWn47o5CZGBGuZsGY9L
-         Ifs+YBEhW9/+47HD5X/2PCjPVVmcr3UumumW6C8cqkMtmcHOyDrEufUYjmRPJWABhBZa
-         oNBQ==
-X-Gm-Message-State: AHQUAuZGzyAgkey2fEFGVwMX64TCc0ERXTLc/uOatsLHMDw9A56NrqVZ
-        ZN1zUjBlpR4fiPHJGe50bpZEicQDIsCwN/gS7ag=
-X-Google-Smtp-Source: AHgI3IZTExM9zN2cSP04M34VNLFkLkPWCR4j2HRBx6wMSH3vQdF4MHc+qOFj/3RCrn4Yg2OSpfHRGTDZqUwazZ7zQ0A=
-X-Received: by 2002:a19:d619:: with SMTP id n25mr901014lfg.91.1550079056314;
- Wed, 13 Feb 2019 09:30:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com> <45be0d68-8382-64bc-dcd0-0e86462e6e66@redhat.com>
-In-Reply-To: <45be0d68-8382-64bc-dcd0-0e86462e6e66@redhat.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 13 Feb 2019 18:30:45 +0100
-Message-ID: <CANiq72kEupj5FeNHhgLnZv9esiexiWMc1DmZ-eZt9K26NS1Qbg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Clean the new GCC 9 -Wmissing-attributes warnings
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wed, 13 Feb 2019 12:32:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57814 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390079AbfBMRcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:32:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E10DA78;
+        Wed, 13 Feb 2019 09:32:40 -0800 (PST)
+Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D81F63F675;
+        Wed, 13 Feb 2019 09:32:38 -0800 (PST)
+From:   Kristina Martsenko <kristina.martsenko@arm.com>
+Subject: Re: [PATCH v5 1/5] arm64: Add utilities to save restore pointer
+ authentication keys
+To:     James Morse <james.morse@arm.com>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <james.morris@microsoft.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Borislav Petkov <bp@suse.de>, Matt Mullins <mmullins@fb.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        WANG Chao <chao.wang@ucloud.cn>
-Content-Type: text/plain; charset="UTF-8"
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
+ <1548658727-14271-2-git-send-email-amit.kachhap@arm.com>
+ <88ccd568-f027-6cdf-b4f1-6709d76102c1@arm.com>
+Message-ID: <adbeb25c-fa88-41fd-7819-5f412a762b64@arm.com>
+Date:   Wed, 13 Feb 2019 17:32:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <88ccd568-f027-6cdf-b4f1-6709d76102c1@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 9, 2019 at 9:33 PM Laura Abbott <labbott@redhat.com> wrote:
->
-> Tested-by: Laura Abbott <labbott@redhat.com>
->
-> You can look at the full build logs at
-> https://koji.fedoraproject.org/koji/taskinfo?taskID=326911 .
->
-> Thanks,
-> Laura
+On 31/01/2019 16:20, James Morse wrote:
+> Hi Amit,
+> 
+> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
+>> The keys can be switched either inside an assembly or such
+>> functions which do not have pointer authentication checks, so a GCC
+>> attribute is added to enable it.
+>>
+>> A function ptrauth_keys_store is added which is similar to existing
+>> function ptrauth_keys_switch but saves the key values in memory.
+>> This may be useful for save/restore scenarios when CPU changes
+>> privilege levels, suspend/resume etc.
+> 
+> 
+>> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+>> index 15d4951..98441ce 100644
+>> --- a/arch/arm64/include/asm/pointer_auth.h
+>> +++ b/arch/arm64/include/asm/pointer_auth.h
+>> @@ -11,6 +11,13 @@
+>>  
+>>  #ifdef CONFIG_ARM64_PTR_AUTH
+>>  /*
+>> + * Compile the function without pointer authentication instructions. This
+>> + * allows pointer authentication to be enabled/disabled within the function
+>> + * (but leaves the function unprotected by pointer authentication).
+>> + */
+>> +#define __no_ptrauth	__attribute__((target("sign-return-address=none")))
+> 
+> The documentation[0] for this says 'none' is the default. Will this only
+> take-effect once the kernel supports pointer-auth for the host? (Is this just
+> documentation until then?)
 
-Thanks a lot for the tests, Laura!
+Yes, I don't think this should be in this series, since we're not
+building the kernel with pointer auth yet.
 
-I will send this for -rc7.
+> 
+> ('noptrauth' would fit with 'notrace' slightly better)
 
-Cheers,
-Miguel
+(But worse with e.g. __noreturn, __notrace_funcgraph, __init,
+__always_inline, __exception. Not sure what the pattern is. Would
+__noptrauth be better?)
+
+Thanks,
+Kristina
+
+> 
+> [0]
+> https://gcc.gnu.org/onlinedocs/gcc/AArch64-Function-Attributes.html#AArch64-Function-Attributes
+> 
+
