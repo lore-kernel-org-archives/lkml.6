@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0678C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B36C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2D421934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B11621934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026192;
-	bh=MFeAnHiJ4r6YGufQ8LsUH1G9t/JAmsxD/hPI1z5JOmQ=;
+	s=default; t=1550026202;
+	bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xtjogxt+U5yrWDLAN3ymcfyOyXAqRx3h3hkbT0SdssEQlBBKJqMhlrV/MGzb4eoYv
-	 7+/ETLIH+PQW+oDSd9LQua9P4w1kW3ze2kPcebVQA4Ej66Q6jMfgEyxGev5LD7PXW2
-	 XHLCYHY9rTI/0qrfFQbrjyUKprneFRy9nEFJhrv4=
+	b=z0hD4JQ7xAd0++P+VwdO7AxaBFkWj46t0WkWYdUewVK9Z3UlMB9esRoGwat0cwU1m
+	 gUlPCIvnUl0+k29bwsXpsZzBIOdtU8vqGd85/LoJpd1Y1gBzpKLUvHWuNfkwqdW1hE
+	 jAqvUv+pQeDY1gS5bQm6vrGbNUZ9PN0k39DtQHro=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389805AbfBMCtp (ORCPT
+        id S2389721AbfBMCuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43688 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388875AbfBMCkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:02 -0500
+        id S2388862AbfBMCkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96057222C7;
-        Wed, 13 Feb 2019 02:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 671B02175B;
+        Wed, 13 Feb 2019 02:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025602;
-        bh=MFeAnHiJ4r6YGufQ8LsUH1G9t/JAmsxD/hPI1z5JOmQ=;
+        s=default; t=1550025600;
+        bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bWIk4yvoRHtBG/lKToUxdT3ysJrAcN4TEaHJpHbUQz7NHLEY/tCRbr2THrEqS2WE9
-         fjY/PIAAVtYKHxlcb98bNMyqusflDInKasmhiILPp1e9xwKbMVZ6EGiPBAa8DoieZT
-         Luu/x8ihi0ZgvJQ/NVa/Naqn7TD/WGPu1nVnjejE=
+        b=O70yjzWILmR5WNgW3QmBFaSIbHkIFkqzvfZzd4cvMNho3kYZ7F1nQ50Yl3ZEVi+/3
+         bJAvuGSxSGWrZykXYAVqwBroWpjidj5bZpeezfbu2Yw5t87PJSSImrIwUI1ri4UQE3
+         Mc0XIiW75sJr8YhY9DG1kxhjFJzyHjoVopQoXXhs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonathan Marek <jonathan@marek.ca>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 08/34] mfd: qcom_rpm: write fw_version to CTRL_REG
-Date:   Tue, 12 Feb 2019 21:39:26 -0500
-Message-Id: <20190213023952.21311-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 06/34] mfd: ab8500-core: Return zero in get_register_interruptible()
+Date:   Tue, 12 Feb 2019 21:39:24 -0500
+Message-Id: <20190213023952.21311-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
 References: <20190213023952.21311-1-sashal@kernel.org>
@@ -58,37 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 504e4175829c44328773b96ad9c538e4783a8d22 ]
+[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
 
-This is required as part of the initialization sequence on certain SoCs.
+This function is supposed to return zero on success or negative error
+codes on error.  Unfortunately, there is a bug so it sometimes returns
+non-zero, positive numbers on success.
 
-If these registers are not initialized, the hardware can be unresponsive.
-This fixes the driver on apq8060 (HP TouchPad device).
+I noticed this bug during review and I can't test it.  It does appear
+that the return is sometimes propogated back to _regmap_read() where all
+non-zero returns are treated as failure so this may affect run time.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/qcom_rpm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mfd/ab8500-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/qcom_rpm.c b/drivers/mfd/qcom_rpm.c
-index 52fafea06067..8d420c37b2a6 100644
---- a/drivers/mfd/qcom_rpm.c
-+++ b/drivers/mfd/qcom_rpm.c
-@@ -638,6 +638,10 @@ static int qcom_rpm_probe(struct platform_device *pdev)
- 		return -EFAULT;
- 	}
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index 30d09d177171..11ab17f64c64 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -261,7 +261,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
+ 	mutex_unlock(&ab8500->lock);
+ 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
  
-+	writel(fw_version[0], RPM_CTRL_REG(rpm, 0));
-+	writel(fw_version[1], RPM_CTRL_REG(rpm, 1));
-+	writel(fw_version[2], RPM_CTRL_REG(rpm, 2));
-+
- 	dev_info(&pdev->dev, "RPM firmware %u.%u.%u\n", fw_version[0],
- 							fw_version[1],
- 							fw_version[2]);
+-	return ret;
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ static int ab8500_get_register(struct device *dev, u8 bank,
 -- 
 2.19.1
 
