@@ -3,111 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA29C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA8BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3E12190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671902190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:38:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jKlc9d27"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Gx8ZSqaT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390177AbfBMKgw (ORCPT
+        id S2391471AbfBMKh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:36:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:45325 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729719AbfBMKgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:36:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zwtk6ykBz9s5c;
-        Wed, 13 Feb 2019 21:36:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550054209;
-        bh=qu1j7e+/XfN3r68QnpuKQtvFIrsJBgpxOzTKl/EVpJ4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jKlc9d27Tj9sPQtXXLiKUJa6lqIvEnrgYe2HBudq60DrM6tHmLOp3hM0cBluOGy4b
-         z+Cnj0Lwdax9LcHr/bd3XpQ2yz5FPLFGnDBSYnkxVS43gwiVzwTB8yaxbDl+luBz3g
-         s6BwoL5ZLtn6cY4NzVcxqCEDImwTmkKTM/kEYIZ9sWX2Fw1h1+8ZE02ec8Xkkwr3k/
-         8THuy6jguvjNJccpW2zvVOQamcTohVJUCdBOgZBy3BPm5yFXaJ/c/EQmP8QSYnUDPR
-         j+FAc1D4N+VQ90nbzslhQnOWRkd7AY627lvekv8WxX8wYFGZr11scZmOUzdmQekLGq
-         EpFgmccJs5Qbw==
-Date:   Wed, 13 Feb 2019 21:36:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: linux-next: Fixes tags need some work in the drm-fixes tree
-Message-ID: <20190213213642.2d980994@canb.auug.org.au>
+        Wed, 13 Feb 2019 05:37:59 -0500
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:33088 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729719AbfBMKh7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 05:37:59 -0500
+Received: by mail-ed1-f47.google.com with SMTP id a2so1515354edi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 02:37:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XP18OxAsyDG9thqLI7xRdP1nD8wNi/YDU03X91JyCyg=;
+        b=Gx8ZSqaTFK3JZOzzXaGnGRk5RU2l6JeEguvwOF4E2JWAFC17aApB/P/EXHcNe40fnb
+         OXeLQp850GfeVAkAoGu3MAKkI9vCJRZi00kL50CIfdZdF5yGc5KQTno5G51n/ZrdRFnX
+         fZBfQo4uUfAf8Bs0/fehOOD3iuoqtb4T897+c7btrHn6+mQk5nvba/AKM5fMVEVbR52W
+         yhdKYCQGxfFGpfou9XLtP/SC/cJYwmmUVkd4n+a+X5Y1lcNolyZBTj5jUen3YpG618B/
+         lX2DED6YVR9zn7OxZtlMhMt6dtV7hSyc+J900JvRi6phVgdGiw/1vcKrxF/6AlY4q4Es
+         8VOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XP18OxAsyDG9thqLI7xRdP1nD8wNi/YDU03X91JyCyg=;
+        b=HMgQKvogw8dOW2c+fSWsCP+4DC74O+SEGRejIj20VsucGfAR+aSPT4eDk8XY0GYOS2
+         9U29NwKIBcZd9k/Qyv+ZiIGwq4EvbLTaHoEoZYPfNBP5VJg67mpDoqpWXBMFuPQDB6O7
+         b2WQXS0GmZBF3PBpGP5ZBbDR7/yzkXb1IxtRmtBb/pA1+keCzRI/XhMJt/5gwuAGyNlZ
+         bDfWWGa7RtLTZ93qkTvdhLKc6IYa75nPJS71ZckvA9kxwqy6+8A/bQFXDzia0meliusU
+         9xPIN4SGAt32u9df5n5TSg+rWNysR/V90KaGXnA4tEzMsNl9v9Kq9VweWvIqiYOH+jSS
+         CKSw==
+X-Gm-Message-State: AHQUAuZpiL2/oJ9S796csX58GOqIga2SoM/RhgZiF3PqoXirCZ709lug
+        Yi2CPu4rOS3G49zECq0dl1b9wVv4YHktpQ+C8NU=
+X-Google-Smtp-Source: AHgI3IbbTxIQ0fFHJzfqbGEX8KQmkn+KZxxWEPg0/jZkHmsF0HpbpiyUAdB6I4Pe3daQRkbMK/19duCiFsHeeZ3Zgyw=
+X-Received: by 2002:a50:a4ce:: with SMTP id x14mr6757518edb.229.1550054277496;
+ Wed, 13 Feb 2019 02:37:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F7mdYu/8dbNmNNZxbk8NiyX"; protocol="application/pgp-signature"
+References: <CAK1hOcN8_0MNEFfoHg0sAuu09SPhXHvXfXkeHONtoFXOArjumg@mail.gmail.com>
+ <20190213040539.GA8524@lenoir>
+In-Reply-To: <20190213040539.GA8524@lenoir>
+From:   Denys Vlasenko <vda.linux@googlemail.com>
+Date:   Wed, 13 Feb 2019 11:37:45 +0100
+Message-ID: <CAK1hOcNETR+J6nYqidQKyybHmbHgiPvrm604vK=rLqRVOd6XTg@mail.gmail.com>
+Subject: Re: preempt.h: some SOFTIRQ_OFFSET should be SOFTIRQ_MASK?
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 13, 2019 at 5:05 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+> On Tue, Feb 05, 2019 at 07:34:31PM +0100, Denys Vlasenko wrote:
+> > SOFTIRQ is a counter.
+> > Why here:
+> >
+> > #define in_serving_softirq()    (softirq_count() & SOFTIRQ_OFFSET)
+> > #define in_task()               (!(preempt_count() & \
+> >                                    (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
+> >
+> > we check only lowest bit?
+>
+> So we have SOFTIRQ_OFFSET that is used when serving softirqs.
+> And we have SOFTIRQ_DISABLE_OFFSET that is used when we disable
+> softirqs.
+>
+> I think the choice is right on both tests above, or am I missing something?
 
-Hi all,
+From my reading of the following:
 
-In commit
+ * We put the hardirq and softirq counter into the preemption
+ * counter. The bitmask has the following meaning:
+ * - bits 0-7 are the preemption count (max preemption depth: 256)
+ * - bits 8-15 are the softirq count (max # of softirqs: 256)
+ * The hardirq count could in theory be the same as the number of
+ * interrupts in the system, but we run all interrupt handlers with
+ * interrupts disabled, so we cannot have nesting interrupts. Though
+ * there are a few palaeontologic drivers which reenable interrupts in
+ * the handler, so we need more than one bit here.
+ *         PREEMPT_MASK:        0x000000ff
+ *         SOFTIRQ_MASK:        0x0000ff00
+ *         HARDIRQ_MASK:        0x000f0000
+ *             NMI_MASK:        0x00100000
+ * PREEMPT_NEED_RESCHED:        0x80000000
+ */
+#define PREEMPT_BITS    8
+#define SOFTIRQ_BITS    8
+#define HARDIRQ_BITS    4
+#define NMI_BITS        1
 
-  bb867d219fda ("gpu: ipu-v3: Fix CSI offsets for imx53")
+it seems that 8-bit SOFTIRQ_MASK contains depth count of nested softirqs.
+Therefore, to test whether we are in softirq, you need:
 
-Fixes tag
+define in_serving_softirq()    (softirq_count() & SOFTIRQ_MASK)
 
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-In commit
-
-  2c0408dd0d89 ("gpu: ipu-v3: Fix i.MX51 CSI control registers offset")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxj8zoACgkQAVBC80lX
-0GzRVAf7Bs+SIUV1xY2TI78/YhLT38xA+p4+nm8tSDcNnsjAI80+J8PkcRaSUktR
-pe8Och0obcwgc5JZL4/JGCSkuD4fNk1ap0mUfaRTjHeDJQQ9ODe0AbDI7HeZvZsE
-x+hAT3J+DWlue6/23Oo/fAPGpBq7b7STNv8dedpxWJXnuu6kzMX4zh8bH/BvnwSa
-efvPZH3FfaDwzumH4DUhJjqcmfPY3mFjlG+0R8KzT0QjjGn2FjruAo4MBP52BSKm
-97Mw+Ne1P0RODX9zxnkzF+aaSNo6AGEAacSTHvihLMyCNoKxVBndTvg5/hIz+bMs
-CZUlauU3M5X2+1TMPveBGOw9XRX9TQ==
-=9MM2
------END PGP SIGNATURE-----
-
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX--
+But existing code uses SOFTIRQ_OFFSET, not SOFTIRQ_MASK, for the mask.
+This means that if nest count is e.g. 2, in_serving_softirq() will return
+"false".
