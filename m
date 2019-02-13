@@ -2,161 +2,223 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856AEC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CFDC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54287222AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:05:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="TNwPDy4S"
+	by mail.kernel.org (Postfix) with ESMTP id 54093222AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388326AbfBMMFj (ORCPT
+        id S2389163AbfBMMG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:05:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:39535 "EHLO pegase1.c-s.fr"
+        Wed, 13 Feb 2019 07:06:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54130 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbfBMMFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:05:38 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43zys93WrJzB09ZX;
-        Wed, 13 Feb 2019 13:05:33 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TNwPDy4S; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ZbLmOWCOCZra; Wed, 13 Feb 2019 13:05:33 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43zys9259fzB09ZW;
-        Wed, 13 Feb 2019 13:05:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550059533; bh=grvD19QaJWyGmbCdlmHOR5r0KmCNxQi1h8MV/TdbXDY=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=TNwPDy4S1ZVq+wEMgiE3kEyD2XWQu0az5qXx86caaXNC/OAWprVvTsu3gZvfP2BGW
-         R0KibYz14rau7dIHrhbUs+B3omqdRdT6Fdi3+Jfer8Aa/d1dMh6s1J7X3rhARbPtYd
-         1Zalznu7omKVoYJUWjHc+bazEzrr6a1J626+8Adk=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 861CE8B85B;
-        Wed, 13 Feb 2019 13:05:34 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id RIWoOjI91Dwm; Wed, 13 Feb 2019 13:05:34 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5D10C8B756;
-        Wed, 13 Feb 2019 13:05:34 +0100 (CET)
-Subject: Re: [PATCH v2 2/2] powerpc/8xx: Map a second 8M text page at startup
- when needed.
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <6658dcb02424fbd5e19be3c3c9abb1a20253db46.1547801451.git.christophe.leroy@c-s.fr>
- <c53f0e44ea783306e72e51e1f33a2bb5aea6f800.1547801451.git.christophe.leroy@c-s.fr>
-Message-ID: <7fb43bee-7926-35be-f54f-601b8b05b066@c-s.fr>
-Date:   Wed, 13 Feb 2019 13:05:34 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1726324AbfBMMG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 07:06:56 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 648AC420A6;
+        Wed, 13 Feb 2019 12:06:54 +0000 (UTC)
+Received: from [10.40.205.148] (unknown [10.40.205.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E64B05C226;
+        Wed, 13 Feb 2019 12:06:36 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+Date:   Wed, 13 Feb 2019 07:06:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <c53f0e44ea783306e72e51e1f33a2bb5aea6f800.1547801451.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="wJpfxsrk2Gr0YRZLQdbt08sQsMIednBHY"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 13 Feb 2019 12:06:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wJpfxsrk2Gr0YRZLQdbt08sQsMIednBHY
+Content-Type: multipart/mixed; boundary="PLnnUTd4vEqoEphvcp8R9SJ7Y1kub4KsV";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: "Wang, Wei W" <wei.w.wang@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+ "pagupta@redhat.com" <pagupta@redhat.com>,
+ "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+ "riel@surriel.com" <riel@surriel.com>, "david@redhat.com"
+ <david@redhat.com>, "mst@redhat.com" <mst@redhat.com>,
+ "dodgen@google.com" <dodgen@google.com>,
+ "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+ "dhildenb@redhat.com" <dhildenb@redhat.com>,
+ "aarcange@redhat.com" <aarcange@redhat.com>
+Message-ID: <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
 
-Le 21/01/2019 à 12:34, Christophe Leroy a écrit :
-> Some debug setup like CONFIG_KASAN generate huge
-> kernels with text size over the 8M limit.
-> 
-> This patch maps a second 8M page when _einittext is over 8M.
-
-This is not enough for CONFIG_KASAN_INLINE. I'll send a v3 which maps up 
-to 32M based on _einittext.
+--PLnnUTd4vEqoEphvcp8R9SJ7Y1kub4KsV
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
 
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   v2: Using IS_ENABLED() instead of #ifdef in 8xx_mmu.c
-> 
->   arch/powerpc/kernel/head_8xx.S | 27 +++++++++++++++++++++++++--
->   arch/powerpc/mm/8xx_mmu.c      |  3 +++
->   2 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-> index 20cc816b3508..3b3b7846247f 100644
-> --- a/arch/powerpc/kernel/head_8xx.S
-> +++ b/arch/powerpc/kernel/head_8xx.S
-> @@ -337,8 +337,8 @@ InstructionTLBMiss:
->   	rlwinm	r10, r10, 16, 0xfff8
->   	cmpli	cr0, r10, PAGE_OFFSET@h
->   #ifndef CONFIG_PIN_TLB_TEXT
-> -	/* It is assumed that kernel code fits into the first 8M page */
-> -0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x0800000)@h
-> +	/* It is assumed that kernel code fits into the two first 8M pages */
-> +0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x1000000)@h
->   	patch_site	0b, patch__itlbmiss_linmem_top
->   #endif
->   #endif
-> @@ -908,6 +908,29 @@ initial_mmu:
->   	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
->   	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
->   
-> +	/* Map a second 8M page if needed */
-> +	lis	r9, _einittext@h
-> +	oris	r9, r9, _einittext@l
-> +	cmpli	cr0, r9, (PAGE_OFFSET + 0x8000000)@h
+On 2/13/19 4:00 AM, Wang, Wei W wrote:
+> On Tuesday, February 5, 2019 4:19 AM, Nitesh Narayan Lal wrote:
+>> The following patch-set proposes an efficient mechanism for handing fr=
+eed
+>> memory between the guest and the host. It enables the guests with no p=
+age
+>> cache to rapidly free and reclaims memory to and from the host respect=
+ively.
+>>
+>> Benefit:
+>> With this patch-series, in our test-case, executed on a single system =
+and
+>> single NUMA node with 15GB memory, we were able to successfully launch=
 
-Should be 0x800000 here
+>> atleast 5 guests when page hinting was enabled and 3 without it. (Deta=
+iled
+>> explanation of the test procedure is provided at the bottom).
+>>
+>> Changelog in V8:
+>> In this patch-series, the earlier approach [1] which was used to captu=
+re and
+>> scan the pages freed by the guest has been changed. The new approach i=
+s
+>> briefly described below:
+>>
+>> The patch-set still leverages the existing arch_free_page() to add thi=
+s
+>> functionality. It maintains a per CPU array which is used to store the=
+ pages
+>> freed by the guest. The maximum number of entries which it can hold is=
 
-Christophe
+>> defined by MAX_FGPT_ENTRIES(1000). When the array is completely filled=
+, it
+>> is scanned and only the pages which are available in the buddy are sto=
+red.
+>> This process continues until the array is filled with pages which are =
+part of
+>> the buddy free list. After which it wakes up a kernel per-cpu-thread.
+>> This kernel per-cpu-thread rescans the per-cpu-array for any re-alloca=
+tion
+>> and if the page is not reallocated and present in the buddy, the kerne=
+l
+>> thread attempts to isolate it from the buddy. If it is successfully is=
+olated, the
+>> page is added to another per-cpu array. Once the entire scanning proce=
+ss is
+>> complete, all the isolated pages are reported to the host through an e=
+xisting
+>> virtio-balloon driver.
+> The free page is removed from the buddy list here. When will they get r=
+eturned to the buddy list so that the guest threads can use them normally=
+?
+Once the host free the pages. All the isolated pages are returned back
+to the buddy. (This is implemented in hyperlist_ready())
+>
+> Best,
+> Wei
+--=20
+Regards
+Nitesh
 
-> +	blt	1f
-> +
-> +#ifdef CONFIG_PIN_TLB_TEXT
-> +	lis	r8, MI_RSV4I@h
-> +	ori	r8, r8, 0x1d00
-> +
-> +	mtspr	SPRN_MI_CTR, r8	/* Set instruction MMU control */
-> +#endif
-> +
-> +	lis	r8, (KERNELBASE + 0x800000)@h	/* Create vaddr for TLB */
-> +	ori	r8, r8, MI_EVALID	/* Mark it valid */
-> +	mtspr	SPRN_MI_EPN, r8
-> +	li	r8, MI_PS8MEG /* Set 8M byte page */
-> +	ori	r8, r8, MI_SVALID	/* Make it valid */
-> +	mtspr	SPRN_MI_TWC, r8
-> +	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
-> +	addis	r8, r8, 0x80
-> +	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
-> +1:
->   	lis	r8, MI_APG_INIT@h	/* Set protection modes */
->   	ori	r8, r8, MI_APG_INIT@l
->   	mtspr	SPRN_MI_AP, r8
-> diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
-> index 92b677faea8c..b5f6d794281d 100644
-> --- a/arch/powerpc/mm/8xx_mmu.c
-> +++ b/arch/powerpc/mm/8xx_mmu.c
-> @@ -112,6 +112,9 @@ unsigned long __init mmu_mapin_ram(unsigned long top)
->   			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
->   	} else {
->   		mapped = top & ~(LARGE_PAGE_SIZE_8M - 1);
-> +		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
-> +			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
-> +					    _ALIGN(__pa(_einittext), 8 << 20));
->   	}
->   
->   	mmu_patch_cmp_limit(&patch__dtlbmiss_linmem_top, mapped);
-> 
+
+--PLnnUTd4vEqoEphvcp8R9SJ7Y1kub4KsV--
+
+--wJpfxsrk2Gr0YRZLQdbt08sQsMIednBHY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxkCEkACgkQo4ZA3AYy
+oznBvw/+NpAiojgFLOk9fG0ZODJzn93xztizMxiSRXuQAMRkpAmC8h4Ld2X2ZWtd
+DTMHQg2FLNDDY20pPV1DFsJcVHnWk69V49mCLcsZ4KXjrVi8n7Wncr0ZXOsSoJB+
+0z1lRXHwhLwF/XZQLlV2uJtwgMUE1BnkVrlDRUpt9eZ4DYinPJwR0TD2fuSfoeaD
+fXVQavXp29XVDKP9Wk8pBvSa8ErYj4iR5zFVMtdOmC5Z/MkegIl8SaNHMoxGRVJX
+4zroO7HxtFG70wSxyAg2p9i+S+jU/2Wcpcv8iHOq7FLzgoo8pYaKo4naIRl4JBl2
+YnufdS4iSLAzdsA2a6iRzU0MKfmcDmxxiea3mma57YT9Qms8KM/v5LUyevXZ9S20
+l6TX4utQCQXTHpG4OTxDp9UN5+lY2Is4DNilo5qrd37LQC1oQjbEkrJ0iHVdHY8x
+EzE0nOJNfw1bqAk6qzawUtUuQrJiU6e59ggiMzPN+98nlTP+ShcmQ9GVnSIzmz3A
+hM3Q4t2MSFfjYsgTwAo1YOAuxhHbKPIxEtxpEtjkkOnwrpq8wTY6mZA73WSAUsn5
+gYIhulyNnc2ddJWqdPk9b0dRoBEPwNqqLCkp+RsETxzyWKMsYlaSGygmq/hIl8OO
+BcYTJLAvIa7xikYqbVndySFNQeCNEfAdKFwGb49tckFkR4oh2z0=
+=jfjl
+-----END PGP SIGNATURE-----
+
+--wJpfxsrk2Gr0YRZLQdbt08sQsMIednBHY--
