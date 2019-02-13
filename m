@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12D0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9008AC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAF221934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B94B21934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026290;
-	bh=GQAXvw6KG/MbUQKVUkJyUMA2iGV2/OLdQ/9/ZE1cO98=;
+	s=default; t=1550026309;
+	bh=auGgXHbjXrRvxQnGp7euDhrpMalhxDYBK82cR69gHpM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=03wsDlsK8MFQOF1Keyeblh/e6sGJvuFS726+4Gi7l45tUYNtjj6QC8Vl0Fu9xYyVP
-	 hiaCwOb4VG5Ep0dMhAx8uBZhAw3s+SrqNFCZZvoFDIAb6P5PW7HcVJGxh5YjBSaPkn
-	 kuB9sK5BHZ7A0vUFP+qoclOsthphqVuE/JFNTZhw=
+	b=raLa3n24s57F8C5BbyLELXcRfL/is8F/FuCLpeBDh8C5sdPel/6hih+KE+f33HMZR
+	 7PBpge6q7Em0QmRWKXueJXG0HbIBYbP9n3FFlAXns+uJPrNt2P/Uf6rHRXGnTwQ9Rw
+	 v+M7F7a+eWS60D2sATj3XPNuTQDxIy+rftXl+HaA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389851AbfBMCv3 (ORCPT
+        id S2389862AbfBMCvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:51:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388681AbfBMCjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:24 -0500
+        id S2388600AbfBMCiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CDBD222C7;
-        Wed, 13 Feb 2019 02:39:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F414206B6;
+        Wed, 13 Feb 2019 02:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025563;
-        bh=GQAXvw6KG/MbUQKVUkJyUMA2iGV2/OLdQ/9/ZE1cO98=;
+        s=default; t=1550025525;
+        bh=auGgXHbjXrRvxQnGp7euDhrpMalhxDYBK82cR69gHpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bKp/Z0PRNKZA3MXt3x7ZQHd6EcazAgatkGFdobgAwhl7eYgdgoA08CNFdhxuhnlmN
-         nSrp5kbLWGDf875bDx0RFDtWAv870++FRZnfKsUFti5sdRQ1eSqV8nwwgtP0vP+tmP
-         c+SdM4cHt9MItCDYR1tjO42/mfteTnaUU1BlV4vY=
+        b=zWAIZCT90pnSAoJVoFGGWiqDjzRPOJfRs0NS1tZO9Bz62lE/Mo96yt2tZ9yAnVUmf
+         qLK5vGjNIp5IiQ2NrThjISHchMdpcowmytRFISkovcETP145LHiKYWXm5QhUEzZPTH
+         UIXlfOohY8e+UButF0oyXBjrZ/nBrnALF4+tfYVY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 70/83] bpf: don't assume build-id length is always 20 bytes
-Date:   Tue, 12 Feb 2019 21:36:48 -0500
-Message-Id: <20190213023701.20286-70-sashal@kernel.org>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 62/83] drm/sun4i: backend: add missing of_node_puts
+Date:   Tue, 12 Feb 2019 21:36:40 -0500
+Message-Id: <20190213023701.20286-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,54 +59,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 0b698005a9d11c0e91141ec11a2c4918a129f703 ]
+[ Upstream commit 4bb0e6d7258213d4893c2c876712fbba40e712fe ]
 
-Build-id length is not fixed to 20, it can be (`man ld` /--build-id):
-  * 128-bit (uuid)
-  * 160-bit (sha1)
-  * any length specified in ld --build-id=0xhexstring
+The device node iterators perform an of_node_get on each
+iteration, so a jump out of the loop requires an of_node_put.
 
-To fix the issue of missing BPF_STACK_BUILD_ID_VALID for shorter build-ids,
-assume that build-id is somewhere in the range of 1 .. 20.
-Set the remaining bytes to zero.
+Remote and port also have augmented reference counts, so drop them
+on each iteration and at the end of the function, respectively.
+Remote is only used for the address it contains, not for the
+contents of that address, so the reference count can be dropped
+immediately.
 
-v2:
-* don't introduce new "len = min(BPF_BUILD_ID_SIZE, nhdr->n_descsz)",
-  we already know that nhdr->n_descsz <= BPF_BUILD_ID_SIZE if we enter
-  this 'if' condition
+The semantic patch that fixes the first part of this problem is
+as follows (http://coccinelle.lip6.fr):
 
-Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index e50ef5bca421..98ad9dc3587a 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -180,11 +180,14 @@ static inline int stack_map_parse_build_id(void *page_addr,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index d7950b52a1fd..e30b1f5b9d91 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -717,17 +717,18 @@ static struct sun4i_frontend *sun4i_backend_find_frontend(struct sun4i_drv *drv,
+ 		remote = of_graph_get_remote_port_parent(ep);
+ 		if (!remote)
+ 			continue;
++		of_node_put(remote);
  
- 		if (nhdr->n_type == BPF_BUILD_ID &&
- 		    nhdr->n_namesz == sizeof("GNU") &&
--		    nhdr->n_descsz == BPF_BUILD_ID_SIZE) {
-+		    nhdr->n_descsz > 0 &&
-+		    nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
- 			memcpy(build_id,
- 			       note_start + note_offs +
- 			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
--			       BPF_BUILD_ID_SIZE);
-+			       nhdr->n_descsz);
-+			memset(build_id + nhdr->n_descsz, 0,
-+			       BPF_BUILD_ID_SIZE - nhdr->n_descsz);
- 			return 0;
+ 		/* does this node match any registered engines? */
+ 		list_for_each_entry(frontend, &drv->frontend_list, list) {
+ 			if (remote == frontend->node) {
+-				of_node_put(remote);
+ 				of_node_put(port);
++				of_node_put(ep);
+ 				return frontend;
+ 			}
  		}
- 		new_offs = note_offs + sizeof(Elf32_Nhdr) +
+ 	}
+-
++	of_node_put(port);
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
 -- 
 2.19.1
 
