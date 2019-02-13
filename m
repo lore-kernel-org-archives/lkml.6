@@ -2,176 +2,125 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDB8C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEF7C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9512C222C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:06:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="AX9yHuMZ"
+	by mail.kernel.org (Postfix) with ESMTP id 9A215222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733251AbfBMCGE (ORCPT
+        id S1733264AbfBMCHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:06:04 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43039 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727346AbfBMCGD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:06:03 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y4so869362qtc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 18:06:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Hzqp/2bM8Ln/7TkhTNsRULjqW8T2TSZbSZrGbanUT7U=;
-        b=AX9yHuMZrU88mfRrZB+kXyI/eDjSdmrvx9Gx8HRkcX2OGNeTUW29/XMx1oBGTSvO99
-         +ACOQkHH7VT3sgskBBk06L1/JZLUaShZTSKC6hgRxZ9C/41R3DqKcNL+kAZMRQVZ7AaS
-         aEpNql+YKebvFL5aAQUz0lfHtlNNdBZtAndaklHcNmvMEwTOBcoAe2F8zOGKpSwoz6oa
-         GM2S7mPHQsqgULmMNyKGXQSn4G8qHIg8+DWOdDBbCgv7pF0TjuEkekrb6iZ5ztBUjIXK
-         U+uVIzPvaMCJ06whnYLOGZYIXA1ZcQrcst/S88BPdmI7hoDjy1U5nk2tA9vKYZUUIHxv
-         z4cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Hzqp/2bM8Ln/7TkhTNsRULjqW8T2TSZbSZrGbanUT7U=;
-        b=JlycV1mKO1CXCEzBjtX7KQNIfElJUmH1J+2rWw89TqPpnyavHMk1C7NNwu7EqyD7XE
-         2gXgSDvsu6UlvTnGhN+tlbyl6DmDHCNY5c2STi3yrO/TUNdYNG+XxO7wp0aIooQOyTkf
-         FW1uHZlEZ1IT3/2naBOS3kqwkx1vSfdjD3QEp+bocdgv2qAtjOHwLZbalL3vWFQAj/sr
-         t0ALpBDsW9i2U7n1Z4xJAeyeVGnyn85s3CSnvbagJiQs1UbRUL7os0nizyPGaB0x87oi
-         9XswIlOl+qyK1m52rPcbAm/Km2Ld+uUz4SZm4kiYM/G3/VpaP+VCE77NPCDKzOVgIzdu
-         geuw==
-X-Gm-Message-State: AHQUAuZ/RnCdLiFy61+uq+ofDtDT5ipeVG4AnhXcD/F7KFwdJRW/AcEI
-        4gm8XrmBeKeyzxUxRJQmV471qw==
-X-Google-Smtp-Source: AHgI3IZcRcbgHIbMtfTqBEwKGEYeameIk54dQrq7XP23nFPd4AlL9pskb3vbFrk/PplY/l+f9b9Dkw==
-X-Received: by 2002:ac8:26b9:: with SMTP id 54mr5269401qto.301.1550023562237;
-        Tue, 12 Feb 2019 18:06:02 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id k55sm19900153qtc.53.2019.02.12.18.06.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 18:06:01 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com
-Cc:     andreyknvl@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] slub: untag object before slab end
-Date:   Tue, 12 Feb 2019 21:05:50 -0500
-Message-Id: <20190213020550.82453-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Tue, 12 Feb 2019 21:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727346AbfBMCHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:07:47 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F9F8222C1;
+        Wed, 13 Feb 2019 02:07:46 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 21:07:45 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andreas Ziegler <andreas.ziegler@fau.de>
+Subject: [GIT PULL] tracing: probeevent: Correctly update remaining space in
+ dynamic area
+Message-ID: <20190212210745.50878316@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_freepointer() could return NULL if there is no more free objects in
-the slab. However, it could return a tagged pointer (like
-0x2200000000000000) with KASAN_SW_TAGS which would escape the NULL
-object checking in check_valid_pointer() and trigger errors below, so
-untag the object before checking for a NULL object there.
 
-[   35.797667] BUG kmalloc-256 (Not tainted): Freepointer corrupt
-[   35.803584] -----------------------------------------------------------------------------
-[   35.803584]
-[   35.813368] Disabling lock debugging due to kernel taint
-[   35.818766] INFO: Allocated in build_sched_domains+0x28c/0x495c age=92 cpu=0 pid=1
-[   35.826443] 	__kmalloc_node+0x4ac/0x508
-[   35.830343] 	build_sched_domains+0x28c/0x495c
-[   35.834764] 	sched_init_domains+0x184/0x1d8
-[   35.839012] 	sched_init_smp+0x38/0xd4
-[   35.842732] 	kernel_init_freeable+0x67c/0x1104
-[   35.847243] 	kernel_init+0x18/0x2a4
-[   35.850790] 	ret_from_fork+0x10/0x18
-[   35.854423] INFO: Freed in destroy_sched_domain+0xa0/0xcc age=11 cpu=0 pid=1
-[   35.861569] 	destroy_sched_domain+0xa0/0xcc
-[   35.865814] 	cpu_attach_domain+0x304/0xb34
-[   35.869971] 	build_sched_domains+0x4654/0x495c
-[   35.874480] 	sched_init_domains+0x184/0x1d8
-[   35.878724] 	sched_init_smp+0x38/0xd4
-[   35.882443] 	kernel_init_freeable+0x67c/0x1104
-[   35.886953] 	kernel_init+0x18/0x2a4
-[   35.890495] 	ret_from_fork+0x10/0x18
-[   35.894128] INFO: Slab 0x(____ptrval____) objects=85 used=0 fp=0x(____ptrval____) flags=0x7ffffffc000200
-[   35.903733] INFO: Object 0x(____ptrval____) @offset=38528 fp=0x(____ptrval____)
-[   35.903733]
-[   35.912637] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.922155] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.931672] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.941190] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.950707] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.960224] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.969741] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.979258] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[   35.988776] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   35.998206] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.007636] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.017065] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.026494] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.035923] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.045353] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.054783] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.064212] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.073642] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.083071] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.092501] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.101930] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.111359] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.120788] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-[   36.130218] Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
-[   36.139647] Redzone (____ptrval____): bb bb bb bb bb bb bb bb                          ........
-[   36.148462] Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[   36.157979] Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[   36.167496] Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[   36.177021] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G    B             5.0.0-rc6+ #41
-[   36.184854] Call trace:
-[   36.187328]  dump_backtrace+0x0/0x450
-[   36.191032]  show_stack+0x20/0x2c
-[   36.194385]  __dump_stack+0x20/0x28
-[   36.197911]  dump_stack+0xa0/0xfc
-[   36.201265]  print_trailer+0x1a8/0x1bc
-[   36.205057]  object_err+0x40/0x50
-[   36.208408]  check_object+0x214/0x2b8
-[   36.212111]  __free_slab+0x9c/0x31c
-[   36.215638]  discard_slab+0x78/0xa8
-[   36.219165]  kfree+0x918/0x980
-[   36.222259]  destroy_sched_domain+0xa0/0xcc
-[   36.226489]  cpu_attach_domain+0x304/0xb34
-[   36.230631]  build_sched_domains+0x4654/0x495c
-[   36.235125]  sched_init_domains+0x184/0x1d8
-[   36.239357]  sched_init_smp+0x38/0xd4
-[   36.243060]  kernel_init_freeable+0x67c/0x1104
-[   36.247555]  kernel_init+0x18/0x2a4
-[   36.251083]  ret_from_fork+0x10/0x18
+Linus,
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
+This fixes kprobes/uprobes dynamic processing of strings, where
+it processes the args but does not update the remaining length
+of the buffer that the string arguments will be placed in. It
+constantly passes in the total size of buffer used instead of
+passing in the remaining size of the buffer used. This could cause
+issues if the strings are larger than the max size of an event
+which could cause the strings to be written beyond what was reserved
+on the buffer.
 
-Depends on slub-fix-slab_consistency_checks-kasan_sw_tags.patch.
 
- mm/slub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please pull the latest trace-v5.0-rc4 tree, which can be found at:
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 4a61959e1887..2fd1cf39914c 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -503,11 +503,11 @@ static inline int check_valid_pointer(struct kmem_cache *s,
- {
- 	void *base;
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v5.0-rc4
+
+Tag SHA1: 2ed4d789cd16de14657339cec2bbeb5ce3cc192f
+Head SHA1: f6675872db57305fa957021efc788f9983ed3b67
+
+
+Andreas Ziegler (1):
+      tracing: probeevent: Correctly update remaining space in dynamic area
+
+----
+ kernel/trace/trace_probe_tmpl.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+---------------------------
+commit f6675872db57305fa957021efc788f9983ed3b67
+Author: Andreas Ziegler <andreas.ziegler@fau.de>
+Date:   Wed Feb 6 20:00:13 2019 +0100
+
+    tracing: probeevent: Correctly update remaining space in dynamic area
+    
+    Commit 9178412ddf5a ("tracing: probeevent: Return consumed
+    bytes of dynamic area") improved the string fetching
+    mechanism by returning the number of required bytes after
+    copying the argument to the dynamic area. However, this
+    return value is now only used to increment the pointer
+    inside the dynamic area but misses updating the 'maxlen'
+    variable which indicates the remaining space in the dynamic
+    area.
+    
+    This means that fetch_store_string() always reads the *total*
+    size of the dynamic area from the data_loc pointer instead of
+    the *remaining* size (and passes it along to
+    strncpy_from_{user,unsafe}) even if we're already about to
+    copy data into the middle of the dynamic area.
+    
+    Link: http://lkml.kernel.org/r/20190206190013.16405-1-andreas.ziegler@fau.de
+    
+    Cc: Ingo Molnar <mingo@redhat.com>
+    Cc: stable@vger.kernel.org
+    Fixes: 9178412ddf5a ("tracing: probeevent: Return consumed bytes of dynamic area")
+    Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+    Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
+index 5c56afc17cf8..4737bb8c07a3 100644
+--- a/kernel/trace/trace_probe_tmpl.h
++++ b/kernel/trace/trace_probe_tmpl.h
+@@ -180,10 +180,12 @@ store_trace_args(void *data, struct trace_probe *tp, struct pt_regs *regs,
+ 		if (unlikely(arg->dynamic))
+ 			*dl = make_data_loc(maxlen, dyndata - base);
+ 		ret = process_fetch_insn(arg->code, regs, dl, base);
+-		if (unlikely(ret < 0 && arg->dynamic))
++		if (unlikely(ret < 0 && arg->dynamic)) {
+ 			*dl = make_data_loc(0, dyndata - base);
+-		else
++		} else {
+ 			dyndata += ret;
++			maxlen -= ret;
++		}
+ 	}
+ }
  
-+	object = kasan_reset_tag(object);
- 	if (!object)
- 		return 1;
- 
- 	base = page_address(page);
--	object = kasan_reset_tag(object);
- 	object = restore_red_left(s, object);
- 	if (object < base || object >= base + page->objects * s->size ||
- 		(object - base) % s->size) {
--- 
-2.17.2 (Apple Git-113)
-
