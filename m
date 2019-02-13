@@ -2,160 +2,311 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE4EC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933E4C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE810222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C818222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:34:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GmnSyPkB"
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="oB6g38EZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732906AbfBMAdg (ORCPT
+        id S1732910AbfBMAej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 19:33:36 -0500
-Received: from ozlabs.org ([203.11.71.1]:52311 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732880AbfBMAde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 19:33:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zgVf3sKyz9sDr;
-        Wed, 13 Feb 2019 11:33:29 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550018010;
-        bh=23iUg4XCeuy8WCWE2wMs2zNYjBEKCjs0bGGlX9oE1Kk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GmnSyPkB+qEt9lrn3gzBVPAIewOT5RXWf+bXRrF0cB5VGaFo/Jae9tMHPhAsCSL81
-         2ybI7U5h539JbHrAquENzEjIfmHoYS1G3ANQVeeSOlaURqH9vSYlgjFX4dR67M1AgM
-         3RnjsWvmOU9hWL5Cyarmaq1+Xg1qtK11EjcuFFxlc8TP20/PnFwuJc5joKgweXRiU1
-         KuDWYBGscpnXAuMxWxmt3D01T4FNTVTYMYPD2PqME/qMx3+tJKSdMS0LJ/pyiSUY/W
-         RH1uWtpTtRsljy1MSgXgU3tj691WwE4azhvsCqSyRnimgWnPPFQCM0Ilob6QKx1q/h
-         m8+4CEiBqm81w==
-Date:   Wed, 13 Feb 2019 11:33:27 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Vlad Buslov <vladbu@mellanox.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190213113327.78a7ceac@canb.auug.org.au>
-In-Reply-To: <20190213111325.30cfc931@canb.auug.org.au>
-References: <20190213111325.30cfc931@canb.auug.org.au>
+        Tue, 12 Feb 2019 19:34:39 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38442 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728677AbfBMAej (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 19:34:39 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so287846plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 16:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y7soHirDIxJzFUwQJpcgzxlvKe2FQs1FDN0wHWCHK3k=;
+        b=oB6g38EZU2d7cL7oss7W1n2/HbtMMRe3ua88W4xCbhDHHoZuBzPCRCS6RoXSYCGdyc
+         AEneiZUfmZUIlw6kdAmu+bEGtw9jqzeYqXfsiGPqSptM0ErHXydatt7ynmSO44HyU8zD
+         Pxpsht/pARmU1BdZaYwJO6bjisS+hUCDTljZLIfEvF15SX2+Yg9dI4AYY9tEbJeFoj7f
+         qy1FzPVXbOLJKZNOI4NqFJyijIffV8GHiDzsYc3tyF8P+k+Xf06sLRjNio2ysr0/G3fK
+         hVaUGmitDjNjkDK1WDEQ4DCC5tJRvpRGTSVHtGTKZW/IRYX52WIeoVttWCAkupH5AYgw
+         X74A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Y7soHirDIxJzFUwQJpcgzxlvKe2FQs1FDN0wHWCHK3k=;
+        b=RjFpOJbya9rKdX9iYnreka25Pfx4T0XQsGuKXc07TGSA5As3YLubOWSFa434pqVLiE
+         Cz9sPxXuL7Tz0LNawaZCAEmZjRRB2ibm+wXFLiU2GdYdPLSoR5EiIVnrfTSWmqNTti1Y
+         bqEvvPDaU1SQvB3kHPmI9yT4G+rUPpNkGTAe7ivp6PhR/Jaqb4GBu6AWRcU8faRzZOJR
+         3+801bkKjR0exyWtu50ZgT9YVFUE0fIwi7aWbg+HVIOz1vGGM9cPHpXv2Ih3eyJD5Fx9
+         cFmbCwpXDxAnjNVujl6qnEgnOjcL5VQBSdxiPPAcIMh7vVGuouiFdA+dNe/97Jd6MZrC
+         bk2A==
+X-Gm-Message-State: AHQUAuamPUdyqB/0T7lZUekKlyM12/O63sZwxQrmdkMk4mDpLdwmVmgL
+        /4rj6uwsoQk21CRTSEuBC9b+Kg==
+X-Google-Smtp-Source: AHgI3IZRXfZvVsKAozcEImmEcLoKJrECcL3CZDyV/bGzlgnvh+eqOI4O0Vpl9kGos9lLojWXmFfGrw==
+X-Received: by 2002:a17:902:4025:: with SMTP id b34mr6863042pld.181.1550018078090;
+        Tue, 12 Feb 2019 16:34:38 -0800 (PST)
+Received: from [10.61.2.175] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id f67sm19836025pff.29.2019.02.12.16.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 16:34:37 -0800 (PST)
+Subject: Re: [PATCH 2/5] vfio/spapr_tce: use pinned_vm instead of locked_vm to
+ account pinned pages
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, jgg@ziepe.ca,
+        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
+        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        hao.wu@intel.com, atull@kernel.org, mdf@kernel.org
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211224437.25267-3-daniel.m.jordan@oracle.com>
+ <ee4d14db-05c3-6208-503c-16e287fa78eb@ozlabs.ru>
+ <20190212115652.6cf9a20b@w520.home>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aik@ozlabs.ru; keydata=
+ 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
+Message-ID: <5e478ac6-814d-d599-e44f-5e90232d30b3@ozlabs.ru>
+Date:   Wed, 13 Feb 2019 11:34:28 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6ZgmXHY6zflD8dOhO0L_Ve_"; protocol="application/pgp-signature"
+In-Reply-To: <20190212115652.6cf9a20b@w520.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6ZgmXHY6zflD8dOhO0L_Ve_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Wed, 13 Feb 2019 11:13:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   net/sched/cls_tcindex.c
->=20
-> between commits:
->=20
->   8015d93ebd27 ("net_sched: fix a race condition in tcindex_destroy()")
->   033b228e7f26 ("net_sched: fix a memory leak in cls_tcindex")
->=20
-> from the net tree and commit:
->=20
->   12db03b65c2b ("net: sched: extend proto ops to support unlocked classif=
-iers")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see the final resolution when linux-next is published)
-> and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
+On 13/02/2019 05:56, Alex Williamson wrote:
+> On Tue, 12 Feb 2019 17:56:18 +1100
+> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+> 
+>> On 12/02/2019 09:44, Daniel Jordan wrote:
+>>> Beginning with bc3e53f682d9 ("mm: distinguish between mlocked and pinned
+>>> pages"), locked and pinned pages are accounted separately.  The SPAPR
+>>> TCE VFIO IOMMU driver accounts pinned pages to locked_vm; use pinned_vm
+>>> instead.
+>>>
+>>> pinned_vm recently became atomic and so no longer relies on mmap_sem
+>>> held as writer: delete.
+>>>
+>>> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+>>> ---
+>>>  Documentation/vfio.txt              |  6 +--
+>>>  drivers/vfio/vfio_iommu_spapr_tce.c | 64 ++++++++++++++---------------
+>>>  2 files changed, 33 insertions(+), 37 deletions(-)
+>>>
+>>> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
+>>> index f1a4d3c3ba0b..fa37d65363f9 100644
+>>> --- a/Documentation/vfio.txt
+>>> +++ b/Documentation/vfio.txt
+>>> @@ -308,7 +308,7 @@ This implementation has some specifics:
+>>>     currently there is no way to reduce the number of calls. In order to make
+>>>     things faster, the map/unmap handling has been implemented in real mode
+>>>     which provides an excellent performance which has limitations such as
+>>> -   inability to do locked pages accounting in real time.
+>>> +   inability to do pinned pages accounting in real time.
+>>>  
+>>>  4) According to sPAPR specification, A Partitionable Endpoint (PE) is an I/O
+>>>     subtree that can be treated as a unit for the purposes of partitioning and
+>>> @@ -324,7 +324,7 @@ This implementation has some specifics:
+>>>  		returns the size and the start of the DMA window on the PCI bus.
+>>>  
+>>>  	VFIO_IOMMU_ENABLE
+>>> -		enables the container. The locked pages accounting
+>>> +		enables the container. The pinned pages accounting
+>>>  		is done at this point. This lets user first to know what
+>>>  		the DMA window is and adjust rlimit before doing any real job.
+> 
+> I don't know of a ulimit only covering pinned pages, so for
+> documentation it seems more correct to continue referring to this as
+> locked page accounting.
+> 
+>>> @@ -454,7 +454,7 @@ This implementation has some specifics:
+>>>  
+>>>     PPC64 paravirtualized guests generate a lot of map/unmap requests,
+>>>     and the handling of those includes pinning/unpinning pages and updating
+>>> -   mm::locked_vm counter to make sure we do not exceed the rlimit.
+>>> +   mm::pinned_vm counter to make sure we do not exceed the rlimit.
+>>>     The v2 IOMMU splits accounting and pinning into separate operations:
+>>>  
+>>>     - VFIO_IOMMU_SPAPR_REGISTER_MEMORY/VFIO_IOMMU_SPAPR_UNREGISTER_MEMORY ioctls
+>>> diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
+>>> index c424913324e3..f47e020dc5e4 100644
+>>> --- a/drivers/vfio/vfio_iommu_spapr_tce.c
+>>> +++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+>>> @@ -34,9 +34,11 @@
+>>>  static void tce_iommu_detach_group(void *iommu_data,
+>>>  		struct iommu_group *iommu_group);
+>>>  
+>>> -static long try_increment_locked_vm(struct mm_struct *mm, long npages)
+>>> +static long try_increment_pinned_vm(struct mm_struct *mm, long npages)
+>>>  {
+>>> -	long ret = 0, locked, lock_limit;
+>>> +	long ret = 0;
+>>> +	s64 pinned;
+>>> +	unsigned long lock_limit;
+>>>  
+>>>  	if (WARN_ON_ONCE(!mm))
+>>>  		return -EPERM;
+>>> @@ -44,39 +46,33 @@ static long try_increment_locked_vm(struct mm_struct *mm, long npages)
+>>>  	if (!npages)
+>>>  		return 0;
+>>>  
+>>> -	down_write(&mm->mmap_sem);
+>>> -	locked = mm->locked_vm + npages;
+>>> +	pinned = atomic64_add_return(npages, &mm->pinned_vm);
+>>>  	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+>>> -	if (locked > lock_limit && !capable(CAP_IPC_LOCK))
+>>> +	if (pinned > lock_limit && !capable(CAP_IPC_LOCK)) {
+>>>  		ret = -ENOMEM;
+>>> -	else
+>>> -		mm->locked_vm += npages;
+>>> +		atomic64_sub(npages, &mm->pinned_vm);
+>>> +	}
+>>>  
+>>> -	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %ld/%ld%s\n", current->pid,
+>>> +	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %ld/%lu%s\n", current->pid,
+>>>  			npages << PAGE_SHIFT,
+>>> -			mm->locked_vm << PAGE_SHIFT,
+>>> -			rlimit(RLIMIT_MEMLOCK),
+>>> -			ret ? " - exceeded" : "");
+>>> -
+>>> -	up_write(&mm->mmap_sem);
+>>> +			atomic64_read(&mm->pinned_vm) << PAGE_SHIFT,
+>>> +			rlimit(RLIMIT_MEMLOCK), ret ? " - exceeded" : "");
+>>>  
+>>>  	return ret;
+>>>  }
+>>>  
+>>> -static void decrement_locked_vm(struct mm_struct *mm, long npages)
+>>> +static void decrement_pinned_vm(struct mm_struct *mm, long npages)
+>>>  {
+>>>  	if (!mm || !npages)
+>>>  		return;
+>>>  
+>>> -	down_write(&mm->mmap_sem);
+>>> -	if (WARN_ON_ONCE(npages > mm->locked_vm))
+>>> -		npages = mm->locked_vm;
+>>> -	mm->locked_vm -= npages;
+>>> -	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %ld/%ld\n", current->pid,
+>>> +	if (WARN_ON_ONCE(npages > atomic64_read(&mm->pinned_vm)))
+>>> +		npages = atomic64_read(&mm->pinned_vm);
+>>> +	atomic64_sub(npages, &mm->pinned_vm);
+>>> +	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %ld/%lu\n", current->pid,
+>>>  			npages << PAGE_SHIFT,
+>>> -			mm->locked_vm << PAGE_SHIFT,
+>>> +			atomic64_read(&mm->pinned_vm) << PAGE_SHIFT,
+>>>  			rlimit(RLIMIT_MEMLOCK));
+>>> -	up_write(&mm->mmap_sem);  
+>>
+>>
+>> So it used to be down_write+up_write and stuff in between.
+>>
+>> Now it is 3 independent accesses (actually 4 but the last one is
+>> diagnostic) with no locking around them. Why do not we need a lock
+>> anymore precisely? Thanks,
+> 
+> The first 2 look pretty sketchy to me, is there a case where you don't
+> know how many pages you've pinned to unpin them?
 
-Actually, see the below resolution.
+No case like this, this is why WARN_ON_ONCE(). At the time I could have
+been under impression that pinned_vm is system-global, hence that
+adjustment but we do not really need it there.
 
---=20
-Cheers,
-Stephen Rothwell
+>  And can it ever
+> really be correct to just unpin whatever remains?  The last access is
+> diagnostic, which leaves 1.  Daniel's rework to warn on a negative
+> result looks more sane. Thanks,
 
-diff --cc net/sched/cls_tcindex.c
-index 38bb882bb958,14d6b4058045..e6cf20bc8e80
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@@ -559,34 -563,15 +560,34 @@@ static void tcindex_destroy(struct tcf_
-  			    struct netlink_ext_ack *extack)
-  {
-  	struct tcindex_data *p =3D rtnl_dereference(tp->root);
- -	struct tcf_walker walker;
- +	int i;
- =20
-  	pr_debug("tcindex_destroy(tp %p),p %p\n", tp, p);
- -	walker.count =3D 0;
- -	walker.skip =3D 0;
- -	walker.fn =3D tcindex_destroy_element;
- -	tcindex_walk(tp, &walker, true);
- =20
- -	call_rcu(&p->rcu, __tcindex_destroy);
- +	if (p->perfect) {
- +		for (i =3D 0; i < p->hash; i++) {
- +			struct tcindex_filter_result *r =3D p->perfect + i;
- +
- +			tcf_unbind_filter(tp, &r->res);
- +			if (tcf_exts_get_net(&r->exts))
- +				tcf_queue_work(&r->rwork,
- +					       tcindex_destroy_rexts_work);
- +			else
- +				__tcindex_destroy_rexts(r);
- +		}
- +	}
- +
- +	for (i =3D 0; p->h && i < p->hash; i++) {
- +		struct tcindex_filter *f, *next;
- +		bool last;
- +
- +		for (f =3D rtnl_dereference(p->h[i]); f; f =3D next) {
- +			next =3D rtnl_dereference(f->next);
-- 			tcindex_delete(tp, &f->result, &last, NULL);
-++			tcindex_delete(tp, &f->result, &last, false, NULL);
- +		}
- +	}
- +
- +	tcf_queue_work(&p->rwork, tcindex_destroy_work);
-  }
- =20
- =20
+Yes it does look sane.
 
---Sig_/6ZgmXHY6zflD8dOhO0L_Ve_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjZdcACgkQAVBC80lX
-0GzwXwf+P/P0Pvg5DWt7UC+QZRPFZyQHcozuS3V7I0ubGDP+KUp6vR4QWGmTE8PK
-NC0tm4ZE4z9tfjtnHFP3SRDOQpn26KbwCVHgZlKU7/Ws28ep89lgOmTt1/fa8iLg
-DsVKmhfj+DcZ4VPIocXYKNFn+no0/6wjOuMJOHWnFD498a4l3ZQ3asbWqQ/6uBS+
-BCVRxa6TRBLA3DM+Djy2PpEqI13wB3MAQp+JvCkOBztdBR4UOQnVy4pNDpF4OmOs
-ujG22TNcq+km/2zmjuZap0gn779F8D8Y8aprbhHY9A+AWWH1S95Sdp0U5AxRQKW3
-N6R+qcUBCpyrIvNBV4+MjuFDEE8jJQ==
-=+ZAS
------END PGP SIGNATURE-----
-
---Sig_/6ZgmXHY6zflD8dOhO0L_Ve_--
+-- 
+Alexey
