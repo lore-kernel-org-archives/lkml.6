@@ -2,188 +2,74 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC520C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334C0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 970F4222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550070824;
-	bh=6jRo9xVu8JdFnU+zOlf9IBsSFSRq1sbM9Zq4v0wDlds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kKnWj80xv1aE5dpW+9bTDd+sVxCoGJAl8etDbmRfb8SWpFbbuOjSdUhtIKxvq5Jjv
-	 zua5O+CvZbNRxEMKhkxL6xQUdcJr2EPgbH4fR/3zaXEk7DkPFgHUu1gMdXfaVynljg
-	 vx893zxW5kgojiQmzZ3m23+5C9P1ifL3kdmnWU0Y=
+	by mail.kernel.org (Postfix) with ESMTP id 0CFC6222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389080AbfBMPNn (ORCPT
+        id S1732825AbfBMPPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:13:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbfBMPNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:13:42 -0500
-Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B8C220835;
-        Wed, 13 Feb 2019 15:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550070820;
-        bh=6jRo9xVu8JdFnU+zOlf9IBsSFSRq1sbM9Zq4v0wDlds=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WIUfn27q9rHwln/4hnA4c0Hy1RJPbTQoSD7YmwUF2uY4pVmEHO1SLzNfgIBxOQMUo
-         5qP/PyrN90QvJg3U/mWrho2Bk22v49dKl6RrbnSv/FlXh7skkCrteX5JQ2SO/CSxhW
-         nUMM6RFNLD8qWwVqwoc1iLJqNx1VddmoVxcVkegk=
-Date:   Wed, 13 Feb 2019 09:13:39 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
-Subject: Re: [PATCH V3 4/5] nvme-pci: avoid irq allocation retrying via
- .calc_sets
-Message-ID: <20190213151339.GE96272@google.com>
-References: <20190213105041.13537-1-ming.lei@redhat.com>
- <20190213105041.13537-5-ming.lei@redhat.com>
+        Wed, 13 Feb 2019 10:15:52 -0500
+Received: from nat.nue.novell.com ([195.135.221.2]:1639 "EHLO suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729139AbfBMPPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:15:52 -0500
+Received: by suse.de (Postfix, from userid 1000)
+        id A041F4278; Wed, 13 Feb 2019 16:15:50 +0100 (CET)
+Date:   Wed, 13 Feb 2019 16:15:50 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>, akpm@linux-foundation.org,
+        david@redhat.com, anthony.yznaga@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,memory_hotplug: Explicitly pass the head to
+ isolate_huge_page
+Message-ID: <20190213151547.cwaqptreai43s65j@d104.suse.de>
+References: <20190208090604.975-1-osalvador@suse.de>
+ <20190212083329.GN15609@dhcp22.suse.cz>
+ <20190212134546.gubfir6zzwrvmunr@d104.suse.de>
+ <20190212144026.GY15609@dhcp22.suse.cz>
+ <52f7a47c-4a8b-c06d-04c0-48d9bb43823b@oracle.com>
+ <20190213081310.zfxwb3svoqsxnuyc@d104.suse.de>
+ <20190213123339.GG4525@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190213105041.13537-5-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190213123339.GG4525@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 06:50:40PM +0800, Ming Lei wrote:
-> Currently pre-caculate each set vectors, and this way requires same
-> 'max_vecs' and 'min_vecs' passed to pci_alloc_irq_vectors_affinity(),
-> then nvme_setup_irqs() has to retry in case of allocation failure.
+On Wed, Feb 13, 2019 at 01:33:39PM +0100, Michal Hocko wrote:
+> Why isn't our check in has_unmovable_pages sufficient?
 
-s/pre-caculate/precalculate/
-My usual "set vectors" question as on other patches.
+Taking a closer look, it should be enough.
+I was mainly confused by the fact that if the zone is ZONE_MOVABLE,
+we do not keep checking in has_unmovable_pages():
 
-> This usage & interface is a bit awkward because the retry should have
-> been avoided by providing one reasonable 'min_vecs'.
-> 
-> Implement the callback of .calc_sets, so that pci_alloc_irq_vectors_affinity()
-> can calculate each set's vector after IRQ vectors is allocated and
-> before spread IRQ, then NVMe's retry in case of irq allocation failure
-> can be removed.
+if (zone_idx(zone) == ZONE_MOVABLE)
+	continue;
 
-s/irq/IRQ/
+But I overlooked that htlb_alloc_mask() checks whether the allocation
+cand end up in a movable zone.
+hugepage_movable_supported() checks that and if the hstate does not
+support migration at all, we skip __GFP_MOVABLE.
 
-> Reviewed-by: Keith Busch <keith.busch@intel.com>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  drivers/nvme/host/pci.c | 62 +++++++++++++------------------------------------
->  1 file changed, 16 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 0086bdf80ea1..8c51252a897e 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2078,14 +2078,25 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
->  	}
->  }
->  
-> +static void nvme_calc_irq_sets(struct irq_affinity *affd, int nvecs)
-> +{
-> +	struct nvme_dev *dev = affd->priv;
-> +
-> +	nvme_calc_io_queues(dev, nvecs);
-> +
-> +	affd->set_vectors[HCTX_TYPE_DEFAULT] = dev->io_queues[HCTX_TYPE_DEFAULT];
-> +	affd->set_vectors[HCTX_TYPE_READ] = dev->io_queues[HCTX_TYPE_READ];
-> +	affd->nr_sets = 2;
-> +}
-> +
->  static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
->  {
->  	struct pci_dev *pdev = to_pci_dev(dev->dev);
->  	struct irq_affinity affd = {
->  		.pre_vectors = 1,
-> -		.nr_sets = 2,
-> +		.calc_sets = nvme_calc_irq_sets,
-> +		.priv = dev,
->  	};
-> -	int *irq_sets = affd.set_vectors;
->  	int result = 0;
->  	unsigned int irq_queues, this_p_queues;
->  
-> @@ -2102,50 +2113,8 @@ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
->  	}
->  	dev->io_queues[HCTX_TYPE_POLL] = this_p_queues;
->  
-> -	/*
-> -	 * For irq sets, we have to ask for minvec == maxvec. This passes
-> -	 * any reduction back to us, so we can adjust our queue counts and
-> -	 * IRQ vector needs.
-> -	 */
-> -	do {
-> -		nvme_calc_io_queues(dev, irq_queues);
-> -		irq_sets[0] = dev->io_queues[HCTX_TYPE_DEFAULT];
-> -		irq_sets[1] = dev->io_queues[HCTX_TYPE_READ];
-> -		if (!irq_sets[1])
-> -			affd.nr_sets = 1;
-> -
-> -		/*
-> -		 * If we got a failure and we're down to asking for just
-> -		 * 1 + 1 queues, just ask for a single vector. We'll share
-> -		 * that between the single IO queue and the admin queue.
-> -		 * Otherwise, we assign one independent vector to admin queue.
-> -		 */
-> -		if (irq_queues > 1)
-> -			irq_queues = irq_sets[0] + irq_sets[1] + 1;
-> -
-> -		result = pci_alloc_irq_vectors_affinity(pdev, irq_queues,
-> -				irq_queues,
-> -				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
-> -
-> -		/*
-> -		 * Need to reduce our vec counts. If we get ENOSPC, the
-> -		 * platform should support mulitple vecs, we just need
-> -		 * to decrease our ask. If we get EINVAL, the platform
-> -		 * likely does not. Back down to ask for just one vector.
-> -		 */
-> -		if (result == -ENOSPC) {
-> -			irq_queues--;
-> -			if (!irq_queues)
-> -				return result;
-> -			continue;
-> -		} else if (result == -EINVAL) {
-> -			irq_queues = 1;
-> -			continue;
-> -		} else if (result <= 0)
-> -			return -EIO;
-> -		break;
-> -	} while (1);
-> -
-> +	result = pci_alloc_irq_vectors_affinity(pdev, 1, irq_queues,
-> +			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
->  	return result;
->  }
->  
-> @@ -3021,6 +2990,7 @@ static struct pci_driver nvme_driver = {
->  
->  static int __init nvme_init(void)
->  {
-> +	BUILD_BUG_ON(2 > IRQ_MAX_SETS);
+So I think that the check in has_unmovable_pages() should be more than enough,
+so we could strip the checks from do_migrate_ranges() and
+scan_movable_pages() regarding hugepage migratability.
 
-"IRQ_MAX_SETS < 2" would read more naturally; is there a reason to have it
-reversed?
+I will run some tests just to make sure this holds and then
+I will send a patch.
 
->  	return pci_register_driver(&nvme_driver);
->  }
->  
-> -- 
-> 2.9.5
-> 
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
