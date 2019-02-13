@@ -6,94 +6,83 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF2BC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03F1C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63E62086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57422086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="JHDiYecu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HUaXNF7P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393755AbfBMSbm (ORCPT
+        id S2387577AbfBMSd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:31:42 -0500
-Received: from onstation.org ([52.200.56.107]:36190 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387678AbfBMSbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:31:42 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id E678B15F;
-        Wed, 13 Feb 2019 18:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1550082701;
-        bh=ucMw8eFInA1zowVnTNPmnx8YMwsmQzE8Ehm8DJBVAOw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JHDiYecuKeoupulfSHKiITYQCt7yutMnj0xNt8qAnAQFBakv9/mNmJjGWTjXOwM1D
-         UQusgX8iIbIQHBe8Q+TaqZt1b7l6meCXZ+oLa5dzx9WnL6n8bUjk9AUYNxkFnfnOUZ
-         d7SPBdOXjEnH8HA/6Q43p/0fDff2cSLcwPIIKWEk=
-Date:   Wed, 13 Feb 2019 13:31:40 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Feb 13 (drivers/spmi/spmi-pmic-arb.c)
-Message-ID: <20190213183140.GA4178@basecamp>
-References: <20190213183900.2f68474f@canb.auug.org.au>
- <fb0508f1-131d-ff17-9b5d-123ec75275dd@infradead.org>
- <8f25ce2b-968f-423a-08c3-35c824b369f8@free.fr>
+        Wed, 13 Feb 2019 13:33:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54218 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbfBMSd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:33:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2+DpYQ1RgGmMz3i+2Oak2qboDEh+xxduT0QJZ3VtomY=; b=HUaXNF7P0vNTbCRTBTt4MZvWi
+        oaNnNwx1FlJT43/Jt+uZJOe+ATtf9fqO8yw5rN6azk1+k6CKAPLGk423nL+bQOmXXEFYuQvGojxhE
+        e+PRZsoU+NagWzm51En666YIEo4Pk5qMW7Y47AzOHOVpdTi34TUSJaFxjkXsvPlyuuJR123i3KVc8
+        +itdTS5Qza6pOBQcKCSwPPyXnhLXnnbHLDPaOpTq8EzPAdnnFcEVUiGgGkdSxNeK9RUTgaUrpEkt/
+        0EHm4w6kYGEwCL+J7Dmw/jnERj+THqTC6t1AzE996p2bvPWVb0Pd842XXDmAo2fk+6WtsvTkgrizZ
+        KiKVIj7/A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtzLR-0005jN-1w; Wed, 13 Feb 2019 18:33:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 45EF0202CEF76; Wed, 13 Feb 2019 19:33:14 +0100 (CET)
+Date:   Wed, 13 Feb 2019 19:33:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Message-ID: <20190213183314.GB32494@hirez.programming.kicks-ass.net>
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+ <20190213172047.GH6346@brain-police>
+ <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f25ce2b-968f-423a-08c3-35c824b369f8@free.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 06:18:17PM +0100, Marc Gonzalez wrote:
-> On 13/02/2019 17:47, Randy Dunlap wrote:
+On Wed, Feb 13, 2019 at 10:27:09AM -0800, Linus Torvalds wrote:
+> Yeah, yeah, there's the SGI "SN" platform that apparently has a bug,
+> so because of that platform problem maybe it needs the more complex
+> "use a flag" model.  But even the complex model isn't _hugely_
+> complex.
 > 
-> > seen on i386:
-> > 
-> > when CONFIG_IRQ_DOMAIN_HIERARCHY is not enabled:
-> > 
-> > ../drivers/spmi/spmi-pmic-arb.c:1154:2: error: unknown field ‘activate’ specified in initializer
-> >   .activate = qpnpint_irq_domain_activate,
-> >   ^
-> > ../drivers/spmi/spmi-pmic-arb.c:1154:2: warning: initialization from incompatible pointer type [enabled by default]
-> > ../drivers/spmi/spmi-pmic-arb.c:1154:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.match’) [enabled by default]
-> > ../drivers/spmi/spmi-pmic-arb.c:1155:2: error: unknown field ‘alloc’ specified in initializer
-> >   .alloc = qpnpint_irq_domain_alloc,
-> >   ^
-> > ../drivers/spmi/spmi-pmic-arb.c:1155:2: warning: initialization from incompatible pointer type [enabled by default]
-> > ../drivers/spmi/spmi-pmic-arb.c:1155:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.select’) [enabled by default]
-> > ../drivers/spmi/spmi-pmic-arb.c:1156:2: error: unknown field ‘free’ specified in initializer
-> >   .free = irq_domain_free_irqs_common,
-> >   ^
-> > ../drivers/spmi/spmi-pmic-arb.c:1156:10: error: ‘irq_domain_free_irqs_common’ undeclared here (not in a function)
-> >   .free = irq_domain_free_irqs_common,
-> >           ^
-> > ../drivers/spmi/spmi-pmic-arb.c:1157:2: error: unknown field ‘translate’ specified in initializer
-> >   .translate = qpnpint_irq_domain_translate,
-> >   ^
-> > ../drivers/spmi/spmi-pmic-arb.c:1157:2: warning: initialization from incompatible pointer type [enabled by default]
-> > ../drivers/spmi/spmi-pmic-arb.c:1157:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.unmap’) [enabled by default]
+> But we *could* first just do the mmiowb() unconditionally in the ia64
+> unlocking code, and then see if anybody notices?
+> 
+> Tony, comments? Are there any SGI SN machines around any more?
 
-drivers/pinctrl/qcom/Kconfig already has this in linux-next:
+I think the last time this came up, it was said that those people still
+running Linux on Itanium were running old disto kernels, not upstream.
 
-config PINCTRL_QCOM_SPMI_PMIC
-       tristate "Qualcomm SPMI PMIC pin controller driver"
-       ...
-       select IRQ_DOMAIN_HIERARCHY
-
-Am I missing something else?
-
-Brian
+So yeah, we could probably do whatever and nobody would ever notice,
+except maybe Al, who is rumoured to still have an ia64 :-)
