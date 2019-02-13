@@ -6,116 +6,77 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EFAC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FB2C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D251D222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F083222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391320AbfBMJUk (ORCPT
+        id S2391334AbfBMJUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:20:40 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:34629 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfBMJUj (ORCPT
+        Wed, 13 Feb 2019 04:20:44 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45920 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbfBMJUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:20:39 -0500
-Received: from aptenodytes (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id C6245200013;
-        Wed, 13 Feb 2019 09:20:35 +0000 (UTC)
-Message-ID: <3de0825971b91ea0b8fd349f4ecf8164de14254a.camel@bootlin.com>
-Subject: Re: [PATCH v3] media: docs-rst: Document m2m stateless video
- decoder interface
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 13 Feb 2019 10:20:35 +0100
-In-Reply-To: <b24e3e67-9fb3-3602-8a90-826f8c51eadf@xs4all.nl>
-References: <20190213055317.192029-1-acourbot@chromium.org>
-         <CAPBb6MUDK0s665wjSjvo3ZePtmFXFrs2WqpaywOSjnRxp08Ong@mail.gmail.com>
-         <b24e3e67-9fb3-3602-8a90-826f8c51eadf@xs4all.nl>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 
+        Wed, 13 Feb 2019 04:20:43 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1gtqi9-0004QL-Be; Wed, 13 Feb 2019 10:20:09 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 07/25] printk-rb: add functionality required by printk
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+        <20190212143003.48446-8-john.ogness@linutronix.de>
+        <CAHk-=whToBNHN_X_BQkO4zSyhSBaGqTH8XEtxg2_AxoBdDnEdg@mail.gmail.com>
+Date:   Wed, 13 Feb 2019 10:20:07 +0100
+In-Reply-To: <CAHk-=whToBNHN_X_BQkO4zSyhSBaGqTH8XEtxg2_AxoBdDnEdg@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 12 Feb 2019 09:15:36 -0800")
+Message-ID: <87k1i411vc.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019-02-12, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Tue, Feb 12, 2019 at 6:30 AM John Ogness <john.ogness@linutronix.de> wrote:
+>>
+>> +                       while (atomic_long_read(&rb->lost)) {
+>> +                               atomic_long_dec(&rb->lost);
+>> +                               rb->seq++;
+>> +                       }
+>
+> This looks like crazy garbage. It's neither atomic nor sane.
 
-On Wed, 2019-02-13 at 09:59 +0100, Hans Verkuil wrote:
-> On 2/13/19 6:58 AM, Alexandre Courbot wrote:
-> > On Wed, Feb 13, 2019 at 2:53 PM Alexandre Courbot <acourbot@chromium.org> wrote:
-> > > [snip]
-> > > +Buffers used as reference frames can be queued back to the ``CAPTURE`` queue as
-> > > +soon as all the frames they are affecting have been queued to the ``OUTPUT``
-> > > +queue. The driver will refrain from using the reference buffer as a decoding
-> > > +target until all the frames depending on it are decoded.
-> > 
-> > Just want to highlight this part in order to make sure that this is
-> > indeed what we agreed on. The recent changes to vb2_find_timestamp()
-> > suggest this, but maybe I misunderstood the intent. It makes the
-> > kernel responsible for tracking referenced buffers and not using them
-> > until all the dependent frames are decoded, something the client could
-> > also do.
-> 
-> I don't think this is quite right. Once this patch https://patchwork.linuxtv.org/patch/54275/
-> is in the vb2 core will track when a buffer can no longer be used as a
-> reference buffer because the underlying memory might have disappeared.
-> 
-> The core does not check if it makes sense to use a buffer as a reference
-> frame, just that it is valid memory.
-> 
-> So the driver has to check that the timestamp refers to an existing
-> buffer, but userspace has to check that it queues everything in the
-> right order and that the reference buffer won't be overwritten
-> before the last output buffer using that reference buffer has been
-> decoded.
-> 
-> So I would say that the second sentence in your paragraph is wrong.
-> 
-> The first sentence isn't quite right either, but I am not really sure how
-> to phrase it. It is possible to queue a reference buffer even if
-> not all output buffers referring to it have been decoded, provided
-> that by the time the driver starts to use this buffer this actually
-> has happened.
+It works because because only 1 context on a single CPU can hit that
+loop. But yes, it is crazy.
 
-Is there a way we can guarantee this? Looking at the rest of the spec,
-it says that capture buffers "are returned in decode order" but that
-doesn't imply that they are picked up in the order they are queued.
+> Why isn't it something like
+>
+>     if (atomic_long_read(&rb->lost)) {
+>         long lost = atomic_xchg(&rb->lost, 0);
+>         rb->seq += lost;
+>     }
+>
+> instead?
 
-It seems quite troublesome for the core to check whether each queued
-capture buffer is used as a reference for one of the queued requests to
-decide whether to pick it up or not.
+Yes, it should be like you suggest. Thanks.
 
-> But this is an optimization and theoretically it can depend on the
-> driver behavior. It is always safe to only queue a reference frame
-> when all frames depending on it have been decoded. So I am leaning
-> towards not complicating matters and keeping your first sentence
-> as-is.
-
-Yes, I believe it would be much simpler to require userspace to only
-queue capture buffers once they are no longer needed as references.
-
-This also means that the dmabuf fd can't be changed so we are
-guaranteed that memory will still be there.
-
-Cheers,
-
-Paul
-
--- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+John Ogness
