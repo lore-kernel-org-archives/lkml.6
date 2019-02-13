@@ -1,84 +1,99 @@
 Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA08C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CAFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E654F222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:19:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LujUUfzy"
+	by mail.kernel.org (Postfix) with ESMTP id 3EA8B222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550046117;
+	bh=ucpUIGLfvZudHfak4ac2wjOCoDPxELcKGWuGNLDkVV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2nAuJj+LowtAc7TehAyqLBxQUeGkI7aSF6he4LXG1dVj61HkOxsQn0bqJpsop0Jue
+	 c9NcPMZ8icsOLAp2llygvJsiYzErRA1OtaT+UXbmR+aInsR8Cqts+5VG1ZPpH9jkBw
+	 g4Pa/VyuuuRaFf7pWycYTmfsJ9GuW8TfFdECUUvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390584AbfBMITp (ORCPT
+        id S2390595AbfBMIVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:19:45 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35849 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387986AbfBMITo (ORCPT
+        Wed, 13 Feb 2019 03:21:55 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37745 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387986AbfBMIVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:19:44 -0500
-Received: by mail-lf1-f67.google.com with SMTP id q11so1094308lfd.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:19:43 -0800 (PST)
+        Wed, 13 Feb 2019 03:21:55 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c8so1426350wrs.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:21:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k5HL1AU4IwF5lyOey8vUv2mnDrmflsOM52BqSGf8rJ8=;
-        b=LujUUfzymPOgao18J6GeFYBxv2dwtYa3m9al28EOrh+rbqaJEj1y5PaT/EC2RrfghZ
-         /3hTs5TCWmu/Ecm7J7IV9T4riyc8Y5qhn+cDa3DPxZHDHrsQfzROQWN1cPwWgPCQ5ytT
-         y5L1NiDXJot85wyNlji6p+r/5lOh35djfKMcm+RnR0b7QYJD8MotIkNR9DjRvYWLKtXq
-         FBCVAWGV+AdNnFi4uTIycvgjjQjzsYXy0KfYH5ES7AHb+WbsiyatqXxHbtZH7NF2Y1rQ
-         2FM3Snz1xvOcocpqAUelsjmtvkARgrTUdve+H56xe8h61kVaZnMZFFBY4xws1TfW8niq
-         Z/eA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OP1OccV571tuh3QSGB4f69ZRaeS/Vq+cIRqqhx3Knhw=;
+        b=C+RTdKtVwJW4ufQjVmHZ5hACH3WjYlv8ZEJ3kGThVSgx+bQMCls+gLCCKQXGzW+GZH
+         ZJF/FPkHLiwlNVx0MFxF/tpoZcHxcYxkJ+IsGEzZ1KSJlDvK37KIq28q4H0wlrTakH97
+         /2gnj65LEO8975uU22MmlOlCKR9xgGsVtXIJKA0YxyjL9d8senBOPpvj671y0eZBVlOq
+         1hsyE0CbDWhsnexGmiXGaqASJHph3Y+pdYSVEw9K3P9b+wKrsgkYQUW9IwU3UBeNqHFN
+         AlCL1Zc2i9CZCG13tpaTv2K2+/jCNrwgk/6C0OBchboI5cOnUxVlAJTRMTANXhAYLEdP
+         NGdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k5HL1AU4IwF5lyOey8vUv2mnDrmflsOM52BqSGf8rJ8=;
-        b=k0g3PPHIo0iL+YDK/wDOqhqp4X8DAi0Pb9sUrij6jWoHD97DxkK1P7aIb/8DaF2Byr
-         p9blFtu03URrmZ9WED5u6y8TTed7FHx7dOZ9e+wvt/4WmcnQeZ1IFPZ7AyOzX9wLWk6h
-         8t5INJsWBoZRwfiRGXiqNyclK7mdFRW2LRoRv7HYVZnY6y+kn/4RdedeP1qITRbVk4Pa
-         bd8SGOohgDtx85pk78t8f8ttpNq3V2LJl2xbPRAzV4Xep58aAvc+uwvu/A5F8A+o8CV+
-         AGxdECDm1PV2VCxpNuuD9VDuc6S727fmxqqXryNP5lOSguhXZjJuknrQVWToVeEoDVec
-         /ICw==
-X-Gm-Message-State: AHQUAuaqDuIoPhuLlP57lZv6FC/AJ7jJpzgkD929ZxTEgO0rRYpcACJd
-        npCfxdOtDzRfsjjraOrxUFGNUhzr8JC18F/pvPnQXw==
-X-Google-Smtp-Source: AHgI3IaqF5De1BQ35vaR0tDR8Z4QlY7NZoLGgjX/qzcaVnhc/F81JRUPrmJZ01YN5cecln0oRqdw5cPxs9zdVoGU9OU=
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr4561649lfl.129.1550045982673;
- Wed, 13 Feb 2019 00:19:42 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OP1OccV571tuh3QSGB4f69ZRaeS/Vq+cIRqqhx3Knhw=;
+        b=AAde9/KUBB45QDLx46PMfnAeD0tA+UuDmwT8JEUfgGwBltmbxbQDEPQL6ZJ6d1gnur
+         EhOGAj4luuFNkm6QGrkGfBDv6sxTaSuSd2Df1VB3UvG/EU/8DnKkmrYQll230bFp32qU
+         ejjnBN2JzVreRzKhYV2/baBE/Id0AKwOajHyW9n2UKEC2WB2q3Xc2t4tEng8Mw+t9Muw
+         1DVKgUFOZAn1j+O7JGHA+8dZDQ2qQu7D1Dq+dPi+XRTehh787/9MxvAm5LbmjPeDgrNy
+         z+C/isjJYpBDNmEE0qZSMJsG9GTi1ccDsWAIE2fKu6icLIIAlb8QSvWTSGaJJE4B2rj3
+         1iYA==
+X-Gm-Message-State: AHQUAuZl6L/ZrdRxffmzgKGob1bjovOdp4UjTsPxahz1lraulMoQNIBM
+        etscgzg3xhfWzGF0LSFEKbA=
+X-Google-Smtp-Source: AHgI3IYXEgkxWzm0pHd6UslqLXP0PacBc7qfraB4ipE7T2v2FPgavLd+ZmYzew/bsu1YYAVUVjXpPg==
+X-Received: by 2002:adf:f4c8:: with SMTP id h8mr6458431wrp.6.1550046113810;
+        Wed, 13 Feb 2019 00:21:53 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x18sm11372256wrw.61.2019.02.13.00.21.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 00:21:53 -0800 (PST)
+Date:   Wed, 13 Feb 2019 09:21:50 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@redhat.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        james.morse@arm.com, hpa@zytor.com, valentin.schneider@arm.com
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+Message-ID: <20190213082150.GA57916@gmail.com>
+References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+ <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
+ <20190211134527.GA121589@gmail.com>
+ <20190211135159.GC32511@hirez.programming.kicks-ass.net>
+ <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
 MIME-Version: 1.0
-References: <20190212035205.23477-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20190212035205.23477-1-bjorn.andersson@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 13 Feb 2019 09:19:30 +0100
-Message-ID: <CACRpkdYOeQh5LZS1U_Wa+1uSLr4EU9+tY4KY4MFW1yvZLA3zOg@mail.gmail.com>
-Subject: Re: [PATCH] qcom: spmi-gpio: Fix boundary conditions IRQ domain translate
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Brian Masney <masneyb@onstation.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 4:52 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
 
-> GPIOs on the SPMI PMIC are numbered 1..ngpio, so the boundary check in
-> pmic_gpio_domain_translate() is off by one, correct this.
->
-> Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+* Julien Thierry <julien.thierry@arm.com> wrote:
 
-Good catch! Patch applied with Brian's review tag.
+> I guess I'll drop the might_resched() part of this patch if that sounds
+> alright.
 
-Yours,
-Linus Walleij
+That sounds perfect - that bit was pretty much the only problem I had 
+with the series.
+
+Thanks,
+
+	Ingo
