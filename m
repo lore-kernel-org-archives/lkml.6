@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53881C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC2AC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EDFA222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE96222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025496;
-	bh=TNkmIcypAoyoP3+FNg/zLJ4g6tuh4egK7HK+8TMCHKo=;
+	s=default; t=1550025503;
+	bh=7Qn52lDhFtC4ht1RdIfsmQq91TQOejHD2t9S2LFhO1Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZdXcZ8L8pwfs+ZSwdv+IqcwRMl1HqETdbNDHMgB8GxxT8ebrp5vu9RNDnYB9jYqoQ
-	 4aI0xmmTk0VhwoHYVh2XQocBErwtwPlUgKpXDUvL1y/sHcRL+W+GKKNVDzZ8tgykwd
-	 LLidEf4/vw9I6Y+ETLYx2Rq9Pe952IBrI7QdFZSw=
+	b=gTFwAK7lcXVBbBfPPtui+K5x/9R2KjwrXq29GiAkrynfPOMUVW3PzxVUT26/JBlft
+	 xtc9Qam57svsRjkWDXFkzP5Cbb/3ERVUoye9YvQ/VVUYQVQLZzbaPKZSsvrjixi3cD
+	 2fgEOKu1Ne4Lv600qAsJmcTMcVLX9AxCRD91tfqo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388479AbfBMCiP (ORCPT
+        id S2388505AbfBMCiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:38:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730629AbfBMCiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:10 -0500
+        id S1728362AbfBMCiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F252222C2;
-        Wed, 13 Feb 2019 02:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3F7E222C7;
+        Wed, 13 Feb 2019 02:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025489;
-        bh=TNkmIcypAoyoP3+FNg/zLJ4g6tuh4egK7HK+8TMCHKo=;
+        s=default; t=1550025496;
+        bh=7Qn52lDhFtC4ht1RdIfsmQq91TQOejHD2t9S2LFhO1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2iEretVhtsX587++DjSTlpqdOcIEQp/wI67834OipKQ4t/og7a7kKHIUTFqIUdoCK
-         2VxIqzpswpq1dV0u+w8NHXAYPFOjfHqpcZjwi2YT3lznv7K5herFIUS5UqTY+YU4dA
-         GhPa+pzyATRJv3dQNTmckl4gxubJWV9aZFPlWxIQ=
+        b=GEP5NT1Aa6gb56ThTT302DqNTzSGToU4bZbCT2rJwwNkgScjRwgA4T89WBYDosOLv
+         +L/WPl8i8iseSQQP3snyooYvnmm7z+3ZLdscRcbEOEHessz89vNiioaVd+bsik/TPB
+         T6Obt14hEyAvZ31ojuFHQXZac2RXBZjQdoknMyTI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 40/83] bpf: fix panic in stack_map_get_build_id() on i386 and arm32
-Date:   Tue, 12 Feb 2019 21:36:18 -0500
-Message-Id: <20190213023701.20286-40-sashal@kernel.org>
+Cc:     Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nvdimm@lists.01.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 44/83] acpi/nfit: Fix race accessing memdev in nfit_get_smbios_id()
+Date:   Tue, 12 Feb 2019 21:36:22 -0500
+Message-Id: <20190213023701.20286-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,47 +59,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+From: Tony Luck <tony.luck@intel.com>
 
-[ Upstream commit beaf3d1901f4ea46fbd5c9d857227d99751de469 ]
+[ Upstream commit 0919871ac37fdcf46c7657da0f1742efe096b399 ]
 
-As Naresh reported, test_stacktrace_build_id() causes panic on i386 and
-arm32 systems. This is caused by page_address() returns NULL in certain
-cases.
+Possible race accessing memdev structures after dropping the
+mutex. Dan Williams says this could race against another thread
+that is doing:
 
-This patch fixes this error by using kmap_atomic/kunmap_atomic instead
-of page_address.
+ # echo "ACPI0012:00" > /sys/bus/acpi/drivers/nfit/unbind
 
-Fixes: 615755a77b24 (" bpf: extend stackmap to save binary_build_id+offset instead of address")
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reported-by: Jane Chu <jane.chu@oracle.com>
+Fixes: 23222f8f8dce ("acpi, nfit: Add function to look up nvdimm...")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/nfit/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 8061a439ef18..e50ef5bca421 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -260,7 +260,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
- 		return -EFAULT;	/* page not mapped */
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index ea59c01ce8db..f530d3541242 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -719,6 +719,7 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
+ 	struct acpi_nfit_memory_map *memdev;
+ 	struct acpi_nfit_desc *acpi_desc;
+ 	struct nfit_mem *nfit_mem;
++	u16 physical_id;
  
- 	ret = -EINVAL;
--	page_addr = page_address(page);
-+	page_addr = kmap_atomic(page);
- 	ehdr = (Elf32_Ehdr *)page_addr;
- 
- 	/* compare magic x7f "ELF" */
-@@ -276,6 +276,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
- 	else if (ehdr->e_ident[EI_CLASS] == ELFCLASS64)
- 		ret = stack_map_get_build_id_64(page_addr, build_id);
- out:
-+	kunmap_atomic(page_addr);
- 	put_page(page);
- 	return ret;
- }
+ 	mutex_lock(&acpi_desc_lock);
+ 	list_for_each_entry(acpi_desc, &acpi_descs, list) {
+@@ -726,10 +727,11 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
+ 		list_for_each_entry(nfit_mem, &acpi_desc->dimms, list) {
+ 			memdev = __to_nfit_memdev(nfit_mem);
+ 			if (memdev->device_handle == device_handle) {
++				*flags = memdev->flags;
++				physical_id = memdev->physical_id;
+ 				mutex_unlock(&acpi_desc->init_mutex);
+ 				mutex_unlock(&acpi_desc_lock);
+-				*flags = memdev->flags;
+-				return memdev->physical_id;
++				return physical_id;
+ 			}
+ 		}
+ 		mutex_unlock(&acpi_desc->init_mutex);
 -- 
 2.19.1
 
