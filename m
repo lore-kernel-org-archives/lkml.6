@@ -2,129 +2,98 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9008AC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C4DC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B94B21934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026309;
-	bh=auGgXHbjXrRvxQnGp7euDhrpMalhxDYBK82cR69gHpM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=raLa3n24s57F8C5BbyLELXcRfL/is8F/FuCLpeBDh8C5sdPel/6hih+KE+f33HMZR
-	 7PBpge6q7Em0QmRWKXueJXG0HbIBYbP9n3FFlAXns+uJPrNt2P/Uf6rHRXGnTwQ9Rw
-	 v+M7F7a+eWS60D2sATj3XPNuTQDxIy+rftXl+HaA=
+	by mail.kernel.org (Postfix) with ESMTP id CF7D321934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389862AbfBMCvs (ORCPT
+        id S2389677AbfBMCvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:51:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:51:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:11923 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388600AbfBMCiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732981AbfBMCiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 21:38:46 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F414206B6;
-        Wed, 13 Feb 2019 02:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025525;
-        bh=auGgXHbjXrRvxQnGp7euDhrpMalhxDYBK82cR69gHpM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zWAIZCT90pnSAoJVoFGGWiqDjzRPOJfRs0NS1tZO9Bz62lE/Mo96yt2tZ9yAnVUmf
-         qLK5vGjNIp5IiQ2NrThjISHchMdpcowmytRFISkovcETP145LHiKYWXm5QhUEzZPTH
-         UIXlfOohY8e+UButF0oyXBjrZ/nBrnALF4+tfYVY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 62/83] drm/sun4i: backend: add missing of_node_puts
-Date:   Tue, 12 Feb 2019 21:36:40 -0500
-Message-Id: <20190213023701.20286-62-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
-References: <20190213023701.20286-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 18:38:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,364,1544515200"; 
+   d="scan'208";a="138153554"
+Received: from aubrey-skl.sh.intel.com ([10.239.53.19])
+  by orsmga001.jf.intel.com with ESMTP; 12 Feb 2019 18:38:42 -0800
+From:   Aubrey Li <aubrey.li@linux.intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
+Subject: [PATCH v11 1/3] /proc/pid/status: Add support for architecture specific output
+Date:   Wed, 13 Feb 2019 10:37:46 +0800
+Message-Id: <20190213023748.6614-1-aubrey.li@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The architecture specific information of the running processes could
+be useful to the userland. Add support to examine process architecture
+specific information externally.
 
-[ Upstream commit 4bb0e6d7258213d4893c2c876712fbba40e712fe ]
-
-The device node iterators perform an of_node_get on each
-iteration, so a jump out of the loop requires an of_node_put.
-
-Remote and port also have augmented reference counts, so drop them
-on each iteration and at the end of the function, respectively.
-Remote is only used for the address it contains, not for the
-contents of that address, so the reference count can be dropped
-immediately.
-
-The semantic patch that fixes the first part of this problem is
-as follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_available_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/proc/array.c         | 5 +++++
+ include/linux/proc_fs.h | 2 ++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index d7950b52a1fd..e30b1f5b9d91 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -717,17 +717,18 @@ static struct sun4i_frontend *sun4i_backend_find_frontend(struct sun4i_drv *drv,
- 		remote = of_graph_get_remote_port_parent(ep);
- 		if (!remote)
- 			continue;
-+		of_node_put(remote);
- 
- 		/* does this node match any registered engines? */
- 		list_for_each_entry(frontend, &drv->frontend_list, list) {
- 			if (remote == frontend->node) {
--				of_node_put(remote);
- 				of_node_put(port);
-+				of_node_put(ep);
- 				return frontend;
- 			}
- 		}
- 	}
--
-+	of_node_put(port);
- 	return ERR_PTR(-EINVAL);
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 9d428d5a0ac8..ea7a981f289c 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -401,6 +401,10 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
+ 	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
  }
  
++void __weak arch_proc_pid_status(struct seq_file *m, struct task_struct *task)
++{
++}
++
+ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 			struct pid *pid, struct task_struct *task)
+ {
+@@ -424,6 +428,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 	task_cpus_allowed(m, task);
+ 	cpuset_task_status_allowed(m, task);
+ 	task_context_switch_counts(m, task);
++	arch_proc_pid_status(m, task);
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index d0e1f1522a78..1de9ba1b064f 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -73,6 +73,8 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 						    int (*show)(struct seq_file *, void *),
+ 						    proc_write_t write,
+ 						    void *data);
++/* Add support for architecture specific output in /proc/pid/status */
++extern void arch_proc_pid_status(struct seq_file *m, struct task_struct *task);
+ 
+ #else /* CONFIG_PROC_FS */
+ 
 -- 
-2.19.1
+2.17.1
 
