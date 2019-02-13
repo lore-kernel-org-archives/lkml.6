@@ -2,151 +2,82 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03007C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32026C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B801F222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F04CC222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:55:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BKnvBE8U"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ETWGqc2M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbfBMFy0 (ORCPT
+        id S1731561AbfBMFzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 00:54:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:47015 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730072AbfBMFy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 00:54:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zpcp5H3lz9sML;
-        Wed, 13 Feb 2019 16:54:18 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550037261;
-        bh=Ep6x3INC03RHBg8Nc8NqVb3MWYHD6EKeMtLDHfgO1No=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BKnvBE8Uz5370QaDQFQLbzUSFFKV5sxAkSbOivujjwoZMCHHEaz+6TOw5W7lVS+Z1
-         WHrFgFZUWmlfe8fBv7TmthayPWfJqBIKjbMP85mh/nNNK3ekVYNbx3bZJZCVSJpP/y
-         uP09gPVdF2EkW7pRWCWdg7GywGNzB/ro1Pi5vlvaXduV43y0OGJYOwF3frWyDXyElb
-         UGi9X3DyHbRRFkx2jfoVrSVT+V493MD8ffZ64CksOhnuwJW3u7LML1c+ckr0M9UsE3
-         TZGREKNQFsG/DGJM/LidZH71rqaobuAmBx5K7qCgL84Byx2+lJMTc8z5gN7zKj0n1x
-         tHydZ+WOYyAiA==
-Date:   Wed, 13 Feb 2019 16:54:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alin Nastac <alin.nastac@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>
-Subject: linux-next: build failure after merge of the netfilter-next tree
-Message-ID: <20190213165415.5a992838@canb.auug.org.au>
+        Wed, 13 Feb 2019 00:55:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37934 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730072AbfBMFzO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 00:55:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sjarOO1fM7fl0IqS8UEWhDa9GK/T3fwQucCxiPQdsug=; b=ETWGqc2Mz6K29m6ztE7p4C7Hx
+        v3WtDxQVbKYoFwFAws/oKdUtRcjJc4jq8YAW3NUxtgJ+0vQEJjvjlL7VEumfkgFGckh3Aa3/LNVTd
+        pSH0uese0c4ZONMd9KrGCPJkMAAiL63aRdFe21yuUnBsIpz3fkUToc9ulQLXDzKTVaVYC2Si7kyPg
+        THehrx0wIAaLOslYqSBXNydOPh9SuxiNSLLmkCfzO2GxKuBjxAXX52ZbcHl0sIzAMpI1BWU9tBJNj
+        VNbwDHIIz6+VsVAD5V6LG9swtMhxiuochHT69j8a8JAbmjkXxTak8YEw/D5P89EfDiQi/JsLERPMH
+        5mBkY/KlQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtnVm-0002mt-6O; Wed, 13 Feb 2019 05:55:10 +0000
+Date:   Tue, 12 Feb 2019 21:55:10 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <Anup.Patel@wdc.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+Message-ID: <20190213055510.GA5725@infradead.org>
+References: <20190119132650.9978-1-anup.patel@wdc.com>
+ <20190119132650.9978-7-anup.patel@wdc.com>
+ <20190212070807.GD26747@infradead.org>
+ <CAAhSdy1NED22YyYrAJDqPkDqT1c2ms2QC9OjHP0qLwHT+o2zvg@mail.gmail.com>
+ <20190212184505.GA10984@infradead.org>
+ <MN2PR04MB60615E8737B56B1B213B5FA58D660@MN2PR04MB6061.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H8=D_/BOxF_SwYAG=cgyHrp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MN2PR04MB60615E8737B56B1B213B5FA58D660@MN2PR04MB6061.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/H8=D_/BOxF_SwYAG=cgyHrp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 13, 2019 at 03:43:06AM +0000, Anup Patel wrote:
+> Sure, the keepinitrd=0 by default so it will always free-up initrd by default.
+> Please look at v3 patchset.
+> 
+> Of course, we need separate patch to update documentation of keepinitrd.
 
-Hi all,
+No, we need to not just blindly copy what arm did for historic reasons
+unless we have a very good reason of our own.
 
-After merging the netfilter-next tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+In addition to not having a real need for any of this in a new setup,
+it also is duplicated by the retain_initrd parameter which is
+implemented in generic code - and for that the commit message at least
+has a rationale related to kexec:
 
-ld: net/ipv4/netfilter/nf_reject_ipv4.o:(.opd+0x78): multiple definition of=
- `nf_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): firs=
-t defined here
-ld: net/ipv4/netfilter/nf_reject_ipv4.o: in function `.nf_reject_verify_csu=
-m':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/ipv4/netfilter/nft_reject_ipv4.o:(.opd+0x48): multiple definition o=
-f `nf_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): fir=
-st defined here
-ld: net/ipv4/netfilter/nft_reject_ipv4.o: in function `.nf_reject_verify_cs=
-um':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/ipv4/netfilter/ipt_REJECT.o:(.opd+0x60): multiple definition of `nf=
-_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): first de=
-fined here
-ld: net/ipv4/netfilter/ipt_REJECT.o: in function `.nf_reject_verify_csum':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/ipv6/netfilter/nf_reject_ipv6.o:(.opd+0x78): multiple definition of=
- `nf_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): firs=
-t defined here
-ld: net/ipv6/netfilter/nf_reject_ipv6.o: in function `.nf_reject_verify_csu=
-m':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/ipv6/netfilter/nft_reject_ipv6.o:(.opd+0x48): multiple definition o=
-f `nf_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): fir=
-st defined here
-ld: net/ipv6/netfilter/nft_reject_ipv6.o: in function `.nf_reject_verify_cs=
-um':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/ipv6/netfilter/ip6t_REJECT.o:(.opd+0x60): multiple definition of `n=
-f_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78): first d=
-efined here
-ld: net/ipv6/netfilter/ip6t_REJECT.o: in function `.nf_reject_verify_csum':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-ld: net/bridge/netfilter/nft_reject_bridge.o:(.opd+0x108): multiple definit=
-ion of `nf_reject_verify_csum'; net/netfilter/nft_reject_inet.o:(.opd+0x78)=
-: first defined here
-ld: net/bridge/netfilter/nft_reject_bridge.o: in function `.nf_reject_verif=
-y_csum':
-(.text.nf_reject_verify_csum+0x0): multiple definition of `.nf_reject_verif=
-y_csum'; net/netfilter/nft_reject_inet.o:(.text.nf_reject_verify_csum+0x0):=
- first defined here
-
-Caused by commit
-
-  bfcf40da7559 ("netfilter: reject: skip csum verification for protocols th=
-at don't support it")
-
-I have reverted that commit for today.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/H8=D_/BOxF_SwYAG=cgyHrp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjsQcACgkQAVBC80lX
-0GxC8wf+MmMGIH9mmr0wQOs8NTy3WJcrktXmDoZjBkv8gAwNOen7TkzmfjddeDT9
-Z6jYcPQ6pnBSZyCif0UORURYJMGPQMCtvIwKGnHMno5d4rAR5fkbwDsNdbFwBs+S
-ldZ/8nm7/UrS6N7E4l1jLgyhnukTn3DKYqBlDK2tLHP+hRFHW9E8P4bEVjW55R65
-e2E7Nt2791qeRQu46aO+BCiKsP8D5L10qkcvSDu3q5p4gsGAj0+P8dsT3UHlLPjO
-yiIVgLc9sMHWu0Q//EL/XEd/z7I62tYNOZ1n9Rx1UGSEH75tCFn95/XeuT+GfEP0
-t/8w9w5iWM6kfXBSBRepaBns4C91bg==
-=FgFO
------END PGP SIGNATURE-----
-
---Sig_/H8=D_/BOxF_SwYAG=cgyHrp--
+https://lkml.org/lkml/2006/12/7/15
