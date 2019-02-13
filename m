@@ -2,161 +2,186 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B87C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F074C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8396222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBC31222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/K+qi+p"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qkU9dFir";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="disqatNf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387903AbfBMLvV (ORCPT
+        id S2389240AbfBMLxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:51:21 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41614 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfBMLvU (ORCPT
+        Wed, 13 Feb 2019 06:53:40 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:65219 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfBMLxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:51:20 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e17-v6so1733276lja.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 03:51:19 -0800 (PST)
+        Wed, 13 Feb 2019 06:53:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1550058819; x=1581594819;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=n4HsWbY6PtWEOqNkL+lbNCKI+vn6uFaeg9En2ez1jGc=;
+  b=qkU9dFirclCGIIrvfhHhcQLc9QRHlnHcMEOGtfx7imIcil3L2L5tyfdp
+   U7T4fQmsKAUQM7Tt/SAFvOm98+IxbD6rNKX1dHYCEW050DWrKxj/NxeO7
+   sqm7URmRVQtBjdWCNNwYWdwt6Am04VRBdfjIVEl/XYwvIrw70ik/tA7tx
+   F+DEvsxubG6S6VfIruDs2JWPGzLwU3h+MqMxIP2XGVBAn8+7thyqEbxwa
+   aJ2CdZd26ZUZqs4iF2Qq0uoivxIiiFigRChrKAPiJR1MKIOZ6L2VEmkB2
+   9bw6IPyD6b4lAHhngvQy76x2Pz6a2QpQcJrSEakJAzCKvElxAex7bpMXq
+   w==;
+X-IronPort-AV: E=Sophos;i="5.58,365,1544457600"; 
+   d="scan'208";a="102883416"
+Received: from mail-dm3nam03lp2052.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.52])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Feb 2019 19:53:30 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y2TfdZ0yfTGpis63yNWrafK+XaRU06nb4gEkHH7COEE=;
-        b=U/K+qi+paWdkDRULPZbGIICjBcrRkimFGR7TkTH7w1oYvIF+e93YHSXDaVWj/b37VA
-         UjRTbvEJJ0AToAAHAXAAfJRUCk5rkcnk3F/3SkTbXsdUWx28m7Z7+T2F8lFNQJFo9xmQ
-         yAW1oi+5yOG33GEY1qo0lC0ODM7AyCXT0G0/WZEBJzXVm0/A0ebx4dd2dHwXOeqJYWMy
-         Sz127F3lpDdjqv8SXg3XcsONDZNgNDVVYfQMm4Xx2/mZa6VEzxn2c3mEgyLX9m8C3WJP
-         Ckq+SEd8WJ6Y3CpcLUXcGWyvwI+o0jpqckspDNLT9Kh5W0mRvo2iAi2UwycVxQYkvABN
-         oOFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y2TfdZ0yfTGpis63yNWrafK+XaRU06nb4gEkHH7COEE=;
-        b=LXn7eVFKoToOUL3nOwpNE4nlPoiBWi2U+utegPwOmaMG705jTAp9VH9/UsLtaVlM0/
-         2OVs/vX91Epn8NplaQEwFiB7S+Om8cRKnb/QDfimEeePAKdNW6pWjtAmZ/1VbuABrmdi
-         KwEIQI8rEmSCZz0Wghdkabq1vrn+iluXFkESpMEp24sNkTHy2JiyaeJlTrIkEgwjMuJk
-         /d6kHt9Bv+ZNgPox/AmMBA8Ed+FnRfVEzMPuHdiYIjWXQAXljkfELMGiTbf+HRwLbX7D
-         p7B4diZSKLKkUUy5qbgxXOGpJ6i6Puz2jYOskm9K2iLWsTVP+Lw8scFEqTYIsHrg454v
-         FlKA==
-X-Gm-Message-State: AHQUAuZmuSDq9wqOxfwCk8aPeE+yh8KAxPR+Szf8L7I8x3g9l2THDoxY
-        VB/Qhf02MfnJEiNkvu6+Kr0=
-X-Google-Smtp-Source: AHgI3IbKXU2LyicoJFoNlpLhj27pcZqbW7yAjx3ylCb7UMoTN9ouTk+wlHVAd8f1Fftp/hJv13bKLA==
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr73769ljk.80.1550058678351;
-        Wed, 13 Feb 2019 03:51:18 -0800 (PST)
-Received: from localhost (pat-31-128-146-191.pool.powernet.com.ru. [31.128.146.191])
-        by smtp.gmail.com with ESMTPSA id q128-v6sm3374469ljq.14.2019.02.13.03.51.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 03:51:17 -0800 (PST)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-Date:   Wed, 13 Feb 2019 14:51:15 +0300
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Yury Norov <yury.norov@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: 5.0-rc kernel hangs on early boot
-Message-ID: <20190213115115.GA8928@yury-thinkpad>
-References: <20190213082134.GA21834@yury-thinkpad>
- <20190213111409.GN9565@techsingularity.net>
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ORjdPgfjjiHahYQCWRdYiHhyvcQfC6xEio27FLv5DQM=;
+ b=disqatNfLygF/hqbIljSnhHcvlecBa5QLQ/fSN/nUxEt/+a9O3MbcCU0w5Bxg1LIMSiuoJqQmrhpVewEe/jv2rshXb3M4KKakJhWE8OTb692ugpJi2XGwRYwM5eFNSs4sHUcPHWJ4BrrCQIKQgnvxor6nmCq2yFZqgaJQpPKC38=
+Received: from DM6PR04MB6059.namprd04.prod.outlook.com (20.178.226.89) by
+ DM6PR04MB6171.namprd04.prod.outlook.com (20.178.227.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Wed, 13 Feb 2019 11:53:28 +0000
+Received: from DM6PR04MB6059.namprd04.prod.outlook.com
+ ([fe80::d006:5be7:c3f:ba6c]) by DM6PR04MB6059.namprd04.prod.outlook.com
+ ([fe80::d006:5be7:c3f:ba6c%2]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
+ 11:53:28 +0000
+From:   Anup Patel <Anup.Patel@wdc.com>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+CC:     Atish Patra <Atish.Patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anup Patel <Anup.Patel@wdc.com>
+Subject: [PATCH v6 0/5] Fixmap support and MM cleanups
+Thread-Topic: [PATCH v6 0/5] Fixmap support and MM cleanups
+Thread-Index: AQHUw5K7Sd9cwkKSdkeSEs3Lm+eGsA==
+Date:   Wed, 13 Feb 2019 11:53:28 +0000
+Message-ID: <20190213115301.103989-1-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR0101CA0007.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:21::17) To DM6PR04MB6059.namprd04.prod.outlook.com
+ (2603:10b6:5:129::25)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anup.Patel@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [49.207.52.22]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f46e3c01-e6d3-4c6c-00ac-08d691a9de05
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR04MB6171;
+x-ms-traffictypediagnostic: DM6PR04MB6171:
+x-ms-exchange-purlcount: 1
+wdcipoutbound: EOP-TRUE
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DM6PR04MB6171;23:8uCJuyNc8AhRPLAyZ9hq17lKBfhbduqI6ejON/m?=
+ =?iso-8859-1?Q?3yYNqYtOdtzSmcpX2exq5rMu86YvsK0JSbKaufsuXQxYCqVIZdezP1k2Kg?=
+ =?iso-8859-1?Q?6fGh7KHPzMKWVOV0913gZsXnE4gSa0uofFNy6hZq85IAZvkokGyl2E256l?=
+ =?iso-8859-1?Q?lmbGYLdUd4XHVpcK0iBBS7ceiIlHuZUMUy5M2JadMMiAPt8aQpdL/43R4q?=
+ =?iso-8859-1?Q?7v8zhAcnGNqt4MiGsvmWvuf8cGA2+6Y1tXhX+TaCJ7gKL/CeVINne9IFDw?=
+ =?iso-8859-1?Q?wzW5QVA+bqd1WythZtZbA5C3Q3hXssIl+oNEhIy3qET6e8FyadjP+/EB+K?=
+ =?iso-8859-1?Q?1RQCfzvBhoHCHK63sZjLzkGlspKgXVoJequg2qVRES9bWBDwWPXyovs0wh?=
+ =?iso-8859-1?Q?4/SCUjaXf9UjgfiXgrLb1PC7pEYVlNziKO/UZIXdTh9Xy6qKBDvRuXweIk?=
+ =?iso-8859-1?Q?Wdra79KFyO8iAQNwoV1IQa7IiOKf0n9hfYcUgAjR54E9gw0XAJ+K1vVhHw?=
+ =?iso-8859-1?Q?fghUBSNmhjqjitEQrtlqbIEEH2Y5CqG5kVpSGqz0ob8tevLrmYdlNXmb0B?=
+ =?iso-8859-1?Q?r7uRaeTPAYaNvo0hkSVY+tp27YheDAuBTYG44VqcITMYRETZETU/Mx6v6F?=
+ =?iso-8859-1?Q?WVaY3i4hH8qwhsE+SYhB10OcxsA1T2bMAK/culHkJIzZsFmhFA+CFPMAuI?=
+ =?iso-8859-1?Q?MBsqs0zYpwT6o7AnuuYPKO7VaO/wZ6NTsF3le/+XfZAoRvHr+5Leh7b9sL?=
+ =?iso-8859-1?Q?5dN/yemIPQ8VtCM/QAuVrtbVnIPhs2VB7rjgcxAKEj+4mXWYp1bLyWKX+n?=
+ =?iso-8859-1?Q?2J+ppi6ymQZ8ZWpJOFpAskXWu/1ecbbEn8XVY61/u7SezerWUlqviZzd0q?=
+ =?iso-8859-1?Q?ACDMiOp8ZsEukRsqsaMLd6BTv17H7g7NPYDa5cAPPh7bgJ+7pQ3yOCrRPE?=
+ =?iso-8859-1?Q?5n4QYirsQSW9OzWSeqaIykiZasbR1G7uC929cGK75u3i3kyLRSeclUC4AR?=
+ =?iso-8859-1?Q?TkEX6cZNeNXgnwz5aBVaOfEdUztzKettLYGWhQYI99sfTxE4ZfYdzrsM8U?=
+ =?iso-8859-1?Q?IOtc0mMc8HMiORZZf+PBQT0SAuNodI9t9uT56gSCy8CckwKxdSyuH1OYqD?=
+ =?iso-8859-1?Q?6pP9jZIigOR2b7E3ggmNeuPNdFf3P8ENob/ZETjsTsr/zo29qKSmfVFfJM?=
+ =?iso-8859-1?Q?gqyuY7emX8YazOmaHPMVZVBgeIwFoC3ml+/0EU8U/prFV14Gt8yDGjm3xI?=
+ =?iso-8859-1?Q?6PXO4Cs8y+K75ML7ySHJHvpkWs+zTmk3P+4PLECOygGEhvR0HXFOYFGFS9?=
+ =?iso-8859-1?Q?hwRTa1ClURaJWXGtSheuYiC?=
+x-microsoft-antispam-prvs: <DM6PR04MB6171BB1CE1B2E39B40ACBD228D660@DM6PR04MB6171.namprd04.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(39860400002)(136003)(396003)(199004)(189003)(54534003)(52116002)(6306002)(4326008)(66066001)(71190400001)(316002)(8676002)(6436002)(106356001)(6486002)(6116002)(71200400001)(105586002)(3846002)(53936002)(386003)(44832011)(6506007)(6512007)(256004)(55236004)(97736004)(8936002)(54906003)(478600001)(72206003)(305945005)(26005)(102836004)(966005)(186003)(68736007)(1076003)(14454004)(81156014)(81166006)(7736002)(25786009)(99286004)(36756003)(2171002)(486006)(86362001)(2616005)(50226002)(110136005)(476003)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB6171;H:DM6PR04MB6059.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 05kL4ZpM3b5nDWY6JlaFz+n6HDAsi+GFM+4GrsdW4weZpwuMVAz8XJR5DM7MHJecgKqBcXjA88KB47BWRpoGD9s+Fdbr+LVhSkccTcpNg6F8WoMLe3yrHPfVW7YhP3Gm0/yYEdmQdGJ+voESBmQ3LslhQeWGhuBXYaRvyct0TBPjzH3CotgbOXz+Ss53pLkA4Oq2gH3EUY6up1NNLVZIb4t/QOiOxh/nnYQv/CfiMD/yG6F167hOXCyU8Xn2grgVLzdBK42+CPRLIBZC00OcCUMxIKEEe3pG28Dq4jCtnMQI9mMyKnHTpn6CtlFReCh2PDS1ss/6gQaIA9gqx6D7tosS5A1/wxEllEVDodqEWu6A14Iuq2Cf+BG+FjO0A4WmLb2fPhErm30NPPGTfq9V1VhEcspk0osZ2GPkTzmeFYM=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213111409.GN9565@techsingularity.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f46e3c01-e6d3-4c6c-00ac-08d691a9de05
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 11:53:25.0824
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 11:14:09AM +0000, Mel Gorman wrote:
-> On Wed, Feb 13, 2019 at 11:25:40AM +0300, Yury Norov wrote:
-> > Hi Mel, all,
-> > 
-> > My kernel on qemu/arm64 setup hangs at early boot since v5.0-rc1.
-> > Backtrace is not too verbose:
-> > (gdb) i threads
-> >   Id   Target Id         Frame
-> > * 1    Thread 1 (CPU#0 [running]) 0xffff000010a49b74 in __delay (cycles=4096)
-> >     at arch/arm64/lib/delay.c:49
-> >   2    Thread 2 (CPU#1 [halted ]) 0x0000000000000000 in ?? ()
-> >   3    Thread 3 (CPU#2 [halted ]) 0x0000000000000000 in ?? ()
-> >   4    Thread 4 (CPU#3 [halted ]) 0x0000000000000000 in ?? ()
-> > (gdb) bt
-> > #0  0xffff000010a49b74 in __delay (cycles=4096) at arch/arm64/lib/delay.c:49
-> > Backtrace stopped: previous frame identical to this frame (corrupt stack?)
-> > 
-> > Reverting the patch
-> > 1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
-> > fragmentation event occurs") together with following patch
-> > 73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
-> > helps me to boot normally. 
-> > 
-> 
-> Well, that's a bad start to any day. Thanks for tracking it down. Does
-> the following patch help? I can't test it properly as I didn't recreate
-> your boot image or initrd but this appears to get past the initial boot
-> phase at least.
+This patchset does:
+1. Moves MM related code from kernel/setup.c to mm/init.c
+2. Implements compile-time fixed mappings
 
-Hi Mel,
+Using fixed mappings, we get earlyprints even without SBI calls.
 
-The patch works for me. The day gets better indeed. :-)
+For example, we can now use kernel parameter
+"earlycon=3Duart8250,mmio,0x10000000"
+to get early prints on QEMU virt machine without using SBI calls.
 
-Tested-by: Yury Norov <yury.norov@gmail.com>
+The patchset is tested on QEMU virt machine. It is based on
+Linux-5.0-rc6 and can be found at riscv_fixmap_v6 branch of:
+https://github.com/avpatel/linux.git.
 
-Yury
+Changes since v5:
+ - Drop PATCH1. Instead move setup_initrd() to mm/init.c along
+   with setup_bootmem()
 
-> ---8<---
-> mm, page_alloc: Fix a division by zero error when boosting watermarks
-> 
-> Yury Norov reported that an arm64 KVM instance could not boot since after
-> v5.0-rc1 and could addressed by reverting the patches
-> 
-> 1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
-> 73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
-> 
-> The problem is that a division by zero error is possible if boosting occurs
-> either very early in boot or if the high watermark is very small. This
-> patch checks for the conditions and avoids boosting in those cases.
-> 
-> Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external fragmentation event occurs")
-> Reported-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> 
-> ---
->  mm/page_alloc.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d295c9bc01a8..ae7e4ba5b9f5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2170,6 +2170,11 @@ static inline void boost_watermark(struct zone *zone)
->  
->  	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
->  			watermark_boost_factor, 10000);
-> +
-> +	/* high watermark be be uninitialised or very small */
-> +	if (!max_boost)
-> +		return;
-> +
->  	max_boost = max(pageblock_nr_pages, max_boost);
->  
->  	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
-> 
+Changes since v4:
+ - Use free_reserved_area() instead of memblock_free() in PATCH6
+
+Changes since v3:
+ - Re-worked and simplified PATCH6
+
+Changes since v2:
+ - Fixed commit description of PATCH6
+ - Ensured commit description of all PATCH use upto 72
+   characters per line
+
+Changes since v1:
+ - Use more characters per line in changelog of PATCH3
+ - Removed #ifndef __ASSEMBLY__ from PATCH5
+ - Use more characters per line in commets of PATCH5
+ - Added PATCH6 to implement keepinitrd kernel parameter
+
+Anup Patel (5):
+  RISC-V: Setup init_mm before parse_early_param()
+  RISC-V: Move setup_bootmem() to mm/init.c
+  RISC-V: Move setup_vm() to mm/init.c
+  RISC-V: Implement compile-time fixed mappings
+  RISC-V: Free-up initrd in free_initrd_mem()
+
+ arch/riscv/Kconfig               |   3 +
+ arch/riscv/include/asm/fixmap.h  |  44 +++++++++
+ arch/riscv/include/asm/pgtable.h |   1 +
+ arch/riscv/kernel/setup.c        | 130 +-------------------------
+ arch/riscv/mm/init.c             | 156 ++++++++++++++++++++++++++++++-
+ 5 files changed, 207 insertions(+), 127 deletions(-)
+ create mode 100644 arch/riscv/include/asm/fixmap.h
+
+--=20
+2.17.1
+
