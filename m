@@ -2,95 +2,103 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76179C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B32BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42908222C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550065281;
-	bh=/hDT1oPkFJAP7Quif9+FmjFeD/kUmJkwlMs7VxFv3/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=I+d/yLUoeZKNj5r6ku3HifiXF8q1GmpAElvAXwYjUl0gPxHeBPQA7OC9aQVJ4A80z
-	 qqGSM0VHghxHpVdjEEBeJtblyKGGbzJM+emncizwEXWPcLsP8sygS8yodQCvhms+Oy
-	 Z2+9GKB1JdMw2Gyw/8HUdDq1j6a3+jnKImXfcf48=
+	by mail.kernel.org (Postfix) with ESMTP id CF62F222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:42:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388427AbfBMNlU (ORCPT
+        id S2388911AbfBMNmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:41:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44132 "EHLO mx1.suse.de"
+        Wed, 13 Feb 2019 08:42:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44650 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731945AbfBMNlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:41:19 -0500
+        id S1731945AbfBMNmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:42:38 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AA8E0AEBC;
-        Wed, 13 Feb 2019 13:41:17 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 14:41:15 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-mm@kvack.org, Pingfan Liu <kernelfans@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH v3 2/2] mm: be more verbose about zonelist initialization
-Message-ID: <20190213134115.GO4525@dhcp22.suse.cz>
-References: <20190212095343.23315-3-mhocko@kernel.org>
- <20190213094315.3504-1-mhocko@kernel.org>
- <20190213103231.GN32494@hirez.programming.kicks-ass.net>
- <20190213115014.GC4525@dhcp22.suse.cz>
- <20190213131131.GS32494@hirez.programming.kicks-ass.net>
+        by mx1.suse.de (Postfix) with ESMTP id F33BAAEBC;
+        Wed, 13 Feb 2019 13:42:36 +0000 (UTC)
+Subject: Re: [PATCH] mm, page_alloc: Fix a division by zero error when
+ boosting watermarks
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Yury Norov <yury.norov@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mm@kvack.org
+References: <20190213131923.GQ9565@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <295be99c-d09a-5572-fa49-2673a62c295b@suse.cz>
+Date:   Wed, 13 Feb 2019 14:42:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213131131.GS32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190213131923.GQ9565@techsingularity.net>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 13-02-19 14:11:31, Peter Zijlstra wrote:
-> On Wed, Feb 13, 2019 at 12:50:14PM +0100, Michal Hocko wrote:
-> > On Wed 13-02-19 11:32:31, Peter Zijlstra wrote:
-> > > On Wed, Feb 13, 2019 at 10:43:15AM +0100, Michal Hocko wrote:
-> > > > @@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
-> > > >  
-> > > >  	build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
-> > > >  	build_thisnode_zonelists(pgdat);
-> > > > +
-> > > > +	pr_info("node[%d] zonelist: ", pgdat->node_id);
-> > > > +	for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
-> > > > +		pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
-> > > > +	pr_cont("\n");
-> > > >  }
-> > > 
-> > > Have you ran this by the SGI and other stupid large machine vendors?
-> > 
-> > I do not have such a large machine handy. The biggest I have has
-> > handfull (say dozen) of NUMA nodes.
-> > 
-> > > Traditionally they tend to want to remove such things instead of adding
-> > > them.
-> > 
-> > I do not insist on this patch but I find it handy. If there is an
-> > opposition I will not miss it much.
+On 2/13/19 2:19 PM, Mel Gorman wrote:
+> Yury Norov reported that an arm64 KVM instance could not boot since after
+> v5.0-rc1 and could addressed by reverting the patches
 > 
-> Well, I don't have machines like that either and don't mind the patch.
-> Just raising the issue; I've had the big iron boys complain about
-> similar things (typically printing something for every CPU, which gets
-> out of hand much faster than zones, but still).
+> 1c30844d2dfe272d58c ("mm: reclaim small amounts of memory when an external
+> 73444bc4d8f92e46a20 ("mm, page_alloc: do not wake kswapd with zone lock held")
+> 
+> The problem is that a division by zero error is possible if boosting occurs
+> either very early in boot or if the high watermark is very small. This
+> patch checks for the conditions and avoids boosting in those cases.
 
-Maybe we can try to push this through and revert if somebody complains
-about an excessive output.
+Hmm is it really a division by zero? The following line sets max_boost to
+pageblock_nr_pages if it's zero. And where would the division happen anyway?
 
--- 
-Michal Hocko
-SUSE Labs
+So I wonder what's going on, your patch should AFAICS only take effect when
+zone->_watermark[WMARK_HIGH] is 0 or 1 to begin with, otherwise max_boost is at
+least 2?
+
+Also upon closer look, I think that (prior to the patch), boost_watermark()
+could be reduced (thanks to the max+min capping) to
+
+zone->watermark_boost = pageblock_nr_pages
+
+?
+
+> 
+> Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external fragmentation event occurs")
+> Reported-and-tested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> ---
+>  mm/page_alloc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index d295c9bc01a8..ae7e4ba5b9f5 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2170,6 +2170,11 @@ static inline void boost_watermark(struct zone *zone)
+>  
+>  	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
+>  			watermark_boost_factor, 10000);
+> +
+> +	/* high watermark be be uninitialised or very small */
+> +	if (!max_boost)
+> +		return;
+> +
+>  	max_boost = max(pageblock_nr_pages, max_boost);
+>  
+>  	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
+> 
+
