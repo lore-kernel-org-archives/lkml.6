@@ -4,53 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3F9C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F47AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17677222C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41B7A222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025701;
-	bh=HhfeI02FY879I50VDl/lfr7IhK28gjiRDV5xNDBzrGk=;
+	s=default; t=1550025705;
+	bh=DzEbZFWVZCB8E1iDuRIi0R/Hsa3LSHnFSHJkS0OhfjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZwpLB7M/zBr3xMs4Q/DsBVyQcP5vG4PYeZ1c81ea1gVh3S/vyb/FDHO3ETCQnAs3d
-	 OychcoSAnKa/X1d0WAdLwxCogTDzvGECiy9kjNZt72gDrqsb7t5hzbzOiBDLhMl7oT
-	 7ls5wAFXcJTYEXi5s2mfY/Sp2/DSce9bqbGa+Wck=
+	b=sMG3KADLXiqljTBHHb8R1SMf6F2KPWbnazt2G7HLAb6+fgVaVr19bfKxM5K40oD/J
+	 JxclF5fmjHJBmbFGvr17yZn3wDuBy/FFx6pt9I+CNfhU16JKw+nCnOpMcqJbrm8WM0
+	 Z4Dl5xflDiQf91nGxIOdNhPswj0C/+Y4YhYTds+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389335AbfBMClj (ORCPT
+        id S2389350AbfBMCln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389297AbfBMCla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:30 -0500
+        id S2389314AbfBMCle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7ACA2175B;
-        Wed, 13 Feb 2019 02:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A99F2175B;
+        Wed, 13 Feb 2019 02:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025689;
-        bh=HhfeI02FY879I50VDl/lfr7IhK28gjiRDV5xNDBzrGk=;
+        s=default; t=1550025693;
+        bh=DzEbZFWVZCB8E1iDuRIi0R/Hsa3LSHnFSHJkS0OhfjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VvYRi5E5uL5gMt1ZOlraI5S7YrwPLLAhEalsYTn0CGD7A8U1v0K/AhTwkRHUBr7Bi
-         5erPWaNrI3kJ5xx8bqbncITd4wajOAccdnoWbcuAfxbuW0bqxO9btMKv3rcpS1pRpU
-         sqj1hjrP1QyduDT1IOY7zTD3P7n1QC4M773R7spw=
+        b=2DKVW1ec9mq36khQEHg7GLRlonU2Q6vaN5ilahrVcvLSeVjABxk/+D2QmwadI200Y
+         j04iQU5DFleGau6/iUUF+WT4Wu2HjRrTris4QRk6KQPEMpbf4EdWTy22uAWKIY8G4x
+         bbWgO2AFn6FH4pd0zj9F+719RwBzTo5xEPvgkQ3A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 11/16] scsi: isci: initialize shost fully before calling scsi_add_host()
-Date:   Tue, 12 Feb 2019 21:41:07 -0500
-Message-Id: <20190213024112.22038-11-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 13/16] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
+Date:   Tue, 12 Feb 2019 21:41:09 -0500
+Message-Id: <20190213024112.22038-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
 References: <20190213024112.22038-1-sashal@kernel.org>
@@ -62,97 +57,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
+[ Upstream commit 2ff33d6637393fe9348357285931811b76e1402f ]
 
-scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
-command size to allocate based on the prot_capabilities. In the isci
-driver, scsi_host_set_prot() is called after scsi_add_host() so the command
-size gets calculated to be smaller than it needs to be.  Eventually,
-scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
-was sized correctly and a buffer overrun may occur.
+The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
+concurrently executed.
 
-However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
-size, the mistake can go unnoticed.
+isdn_tty_tiocmset
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
 
-The bug was noticed after the struct request size was reduced by commit
-9d037ad707ed ("block: remove req->timeout_list")
+isdn_tty_set_termios
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
 
-Which likely reduced the allocated space for the request by an entire cache
-line, enough that the overflow could be hit and it caused a panic, on boot,
-at:
+Thus, some concurrency double-free bugs may occur.
 
-  RIP: 0010:t10_pi_complete+0x77/0x1c0
-  Call Trace:
-    <IRQ>
-    sd_done+0xf5/0x340
-    scsi_finish_command+0xc3/0x120
-    blk_done_softirq+0x83/0xb0
-    __do_softirq+0xa1/0x2e6
-    irq_exit+0xbc/0xd0
-    call_function_single_interrupt+0xf/0x20
-    </IRQ>
+These possible bugs are found by a static tool written by myself and
+my manual code review.
 
-sd_done() would call scsi_prot_sg_count() which reads the number of
-entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
-the allocated space it reads a garbage number and erroneously calls
-t10_pi_complete().
+To fix these possible bugs, the mutex lock "modem_info_mutex" used in
+isdn_tty_tiocmset() is added in isdn_tty_set_termios().
 
-To prevent this, the calls to scsi_host_set_prot() are moved into
-isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
-move the similar call to scsi_host_set_guard().
-
-Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
-Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/init.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/isdn/i4l/isdn_tty.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 77128d680e3b..6f38fa1f468a 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -595,6 +595,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
- 	shost->max_lun = ~0;
- 	shost->max_cmd_len = MAX_COMMAND_SIZE;
+diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
+index 2175225af742..8291e9cc949a 100644
+--- a/drivers/isdn/i4l/isdn_tty.c
++++ b/drivers/isdn/i4l/isdn_tty.c
+@@ -1459,15 +1459,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
+ {
+ 	modem_info *info = (modem_info *) tty->driver_data;
  
-+	/* turn on DIF support */
-+	scsi_host_set_prot(shost,
-+			   SHOST_DIF_TYPE1_PROTECTION |
-+			   SHOST_DIF_TYPE2_PROTECTION |
-+			   SHOST_DIF_TYPE3_PROTECTION);
-+	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
-+
- 	err = scsi_add_host(shost, &pdev->dev);
- 	if (err)
- 		goto err_shost;
-@@ -682,13 +689,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			goto err_host_alloc;
- 		}
- 		pci_info->hosts[i] = h;
--
--		/* turn on DIF support */
--		scsi_host_set_prot(to_shost(h),
--				   SHOST_DIF_TYPE1_PROTECTION |
--				   SHOST_DIF_TYPE2_PROTECTION |
--				   SHOST_DIF_TYPE3_PROTECTION);
--		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
++	mutex_lock(&modem_info_mutex);
+ 	if (!old_termios)
+ 		isdn_tty_change_speed(info);
+ 	else {
+ 		if (tty->termios.c_cflag == old_termios->c_cflag &&
+ 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
+-		    tty->termios.c_ospeed == old_termios->c_ospeed)
++		    tty->termios.c_ospeed == old_termios->c_ospeed) {
++			mutex_unlock(&modem_info_mutex);
+ 			return;
++		}
+ 		isdn_tty_change_speed(info);
  	}
++	mutex_unlock(&modem_info_mutex);
+ }
  
- 	err = isci_setup_interrupts(pdev);
+ /*
 -- 
 2.19.1
 
