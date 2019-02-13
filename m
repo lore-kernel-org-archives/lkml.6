@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15529C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F64C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9AE222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1BE222D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025573;
-	bh=ltQIdRxkoKxmZXJUB5JgI7taR9YjS1zR0ySJSUCT8gE=;
+	s=default; t=1550025575;
+	bh=4AiQB7el7iZGdfdCGcMw9eu4ndrOIxh5lFb/h1tPzGg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vb+hnnSdjF7Yh9yUCcndfc2Vg/HJ3v2pN4FxHyypd6sU2Um6nDyjyBLj0TPnftpkM
-	 +OEVQBE5lQGk2vK+W8KIqZ21I0NLifEOpFkb2Om4n8O3no7GHpnnBjKeAjfZMI0Uf9
-	 k96hchUuATzxRS/St3g8EodPydoLXaNMmbNx9/0M=
+	b=hTjhsOML8MAH6c7+mk0xS6QGKwXu8h0SnrjgW8Jg/Ge54231muyzpbYqpYMmQoDMT
+	 x3v0PVTXJmtTmbQ5YqyjCpCP/cIVJGBSK+hek7jMuWYr5CPxRaWYZlHGpF+wUeNhJO
+	 Mdm+lYI/AL2NLCv0nQhttE8GoNutfh7j4+2NfYuU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388764AbfBMCjc (ORCPT
+        id S2388780AbfBMCjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43096 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388741AbfBMCja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:30 -0500
+        id S2388763AbfBMCjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDED8222CD;
-        Wed, 13 Feb 2019 02:39:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25102222CD;
+        Wed, 13 Feb 2019 02:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025569;
-        bh=ltQIdRxkoKxmZXJUB5JgI7taR9YjS1zR0ySJSUCT8gE=;
+        s=default; t=1550025571;
+        bh=4AiQB7el7iZGdfdCGcMw9eu4ndrOIxh5lFb/h1tPzGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+i0FMFz9SszqrXkc/v+ZS3UvSBvdoRbIgcEC8ffHqS5R28ZBXAPMn9QLZTX1UCh9
-         tcSsfk0Y5U6LErm9x1O49wFHSwWl1r8uInsiolMVOz3eK1s66pUgxR/TKtAfQub4on
-         ku3xHhA7XKblrhluGRC0J8GPl9zRt1+1kgQyfIVU=
+        b=eMPUmkGTghtS8OGZ/LsfVcd8gPWcpU0wZyIJHZiXxqIs5Y9T/lMOGioyhU52oSI0/
+         IRw5fFLetbrw8XtYgWnz9BScbrr30Mum9daY3v/B7TASG77GVlCwmIUS9jtCKioK8A
+         T8r8tXk+xcIrWhnShmaWQWz9O6atfxlo4kfOV1pc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 75/83] leds: lp5523: fix a missing check of return value of lp55xx_read
-Date:   Tue, 12 Feb 2019 21:36:53 -0500
-Message-Id: <20190213023701.20286-75-sashal@kernel.org>
+Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 77/83] dpaa_eth: NETIF_F_LLTX requires to do our own update of trans_start
+Date:   Tue, 12 Feb 2019 21:36:55 -0500
+Message-Id: <20190213023701.20286-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,38 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Madalin Bucur <madalin.bucur@nxp.com>
 
-[ Upstream commit 248b57015f35c94d4eae2fdd8c6febf5cd703900 ]
+[ Upstream commit c6ddfb9a963f0cac0f7365acfc87f3f3b33a3b69 ]
 
-When lp55xx_read() fails, "status" is an uninitialized variable and thus
-may contain random value; using it leads to undefined behaviors.
+As txq_trans_update() only updates trans_start when the lock is held,
+trans_start does not get updated if NETIF_F_LLTX is declared.
 
-The fix inserts a check for the return value of lp55xx_read: if it
-fails, returns with its error code.
-
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-lp5523.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index a2e74feee2b2..fd64df5a57a5 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index 65a22cd9aef2..029730bbe7db 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2052,6 +2052,7 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	bool nonlinear = skb_is_nonlinear(skb);
+ 	struct rtnl_link_stats64 *percpu_stats;
+ 	struct dpaa_percpu_priv *percpu_priv;
++	struct netdev_queue *txq;
+ 	struct dpaa_priv *priv;
+ 	struct qm_fd fd;
+ 	int offset = 0;
+@@ -2101,6 +2102,11 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	if (unlikely(err < 0))
+ 		goto skb_to_fd_failed;
  
- 	/* Let the programs run for couple of ms and check the engine status */
- 	usleep_range(3000, 6000);
--	lp55xx_read(chip, LP5523_REG_STATUS, &status);
-+	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
-+	if (ret)
-+		return ret;
- 	status &= LP5523_ENG_STATUS_MASK;
- 
- 	if (status != LP5523_ENG_STATUS_MASK) {
++	txq = netdev_get_tx_queue(net_dev, queue_mapping);
++
++	/* LLTX requires to do our own update of trans_start */
++	txq->trans_start = jiffies;
++
+ 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+ 		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
 -- 
 2.19.1
 
