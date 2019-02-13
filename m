@@ -2,86 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D84C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95B6C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7396B2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DD57222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733133AbfBMBkL (ORCPT
+        id S1733136AbfBMBlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 20:40:11 -0500
-Received: from mga05.intel.com ([192.55.52.43]:17068 "EHLO mga05.intel.com"
+        Tue, 12 Feb 2019 20:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727458AbfBMBkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 20:40:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 17:40:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,364,1544515200"; 
-   d="scan'208";a="124043653"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.159.76]) ([10.239.159.76])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 17:40:06 -0800
-Subject: Re: [PATCH] perf/core: don't WARN for impossible rb sizes
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        julien.thierry@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Jin, Yao" <yao.jin@intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <20190110142745.25495-1-mark.rutland@arm.com>
- <1f71da66-4783-0108-668c-cdffca499719@linux.intel.com>
- <20190212130756.GH32494@hirez.programming.kicks-ass.net>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <023208e9-4aec-3401-8ec1-6368a01df8f7@linux.intel.com>
-Date:   Wed, 13 Feb 2019 09:40:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727458AbfBMBlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 20:41:16 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C4402190A;
+        Wed, 13 Feb 2019 01:41:14 +0000 (UTC)
+Date:   Tue, 12 Feb 2019 20:41:13 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     CC Hwang <cc.hwang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Andress Kuo <andress.kuo@mediatek.com>
+Subject: Re: [PATCH 1/1] tracing: Fix event_trace_printk loss on
+ printk_format.
+Message-ID: <20190212204113.5ecaa2a1@gandalf.local.home>
+In-Reply-To: <1549971717-4693-1-git-send-email-mars.cheng@mediatek.com>
+References: <1549971717-4693-1-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190212130756.GH32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 12 Feb 2019 19:41:57 +0800
+Mars Cheng <mars.cheng@mediatek.com> wrote:
 
+> From: Andress Kuo <andress.kuo@mediatek.com>
+> 
+> If fmt on event_trace_printk is not a constant, It means that something not
+> guaranteed, so the compiler optimizes the fmt out, and then the
+> __trace_printk_fmt section is not filled. if __trace_printk_fmt is not
+> filled, the kernel will not allocate the special buffers needed for the
+> event_trace_printk() and then not shown in the file output
+> sys/kernel/debug/tracing/print_formats.
+> 
+> Adding a "__used" to the variable in the __trace_printk_fmt section on
+> event_trace_printk() will keep it around, even though it is set to NULL.
+> This will keep the string from being printed in the
+> sys/kernel/debug/tracing/printk_formats section.
+> 
+> We can also refer to commit 3debb0a9ddb1 ("tracing: Fix trace_printk()
+> to print when not using bprintk()")that it had similar issue on path of
+> trace_printk().
 
-On 2/12/2019 9:07 PM, Peter Zijlstra wrote:
-> On Tue, Feb 12, 2019 at 10:42:38AM +0800, Jin, Yao wrote:
->>> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
->>> index 4a9937076331..309ef5a64af5 100644
->>> --- a/kernel/events/ring_buffer.c
->>> +++ b/kernel/events/ring_buffer.c
->>> @@ -734,6 +734,9 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
->>>    	size = sizeof(struct ring_buffer);
->>>    	size += nr_pages * sizeof(void *);
->>> +	if (order_base_2(size) >= MAX_ORDER)
->>> +		goto fail;
->>> +
->>>    	rb = kzalloc(size, GFP_KERNEL);
-> 
-> Yes, Boris also send the entire morning bisecting this.
-> 
-> The problem is that @size is in bytes and MAX_ORDER is in pages.
-> 
-> That should be:
-> 
->    if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
-> 
-> 
+Honestly, I don't even remember why that macro was created. I think
+it's a remnant from the creation of the trace events. I think the best
+solution is just to nuke it. It shouldn't be used anymore.
 
-Thanks Peter! This fix works!
+I'll dig a bit deeper into the history of that macro, but I'm thinking
+it shouldn't exist anymore.
 
-Thanks
-Jin Yao
+[ /me returns from walking down memory lane ]
+
+Wow, that brings back some wild memories. Yes, that macro must die, and
+I wish the history of it could die along with it ;-) The horror of the
+old ways I tell you. The event_trace_printk() was the original way we
+displayed events! No real formatting, no parsing my userspace tools. It
+was just a glamorized printk. It was called TRACE_FORMAT() which was
+deprecated by today's TRACE_EVENT().
+
+That macro should have been removed by commit b8e65554d80b4.
+
+Please just send a patch to delete that macro. Let's not be maintaining
+it. It gives me nightmares.
+
+-- Steve
+
+> 
+> Signed-off-by: Andress Kuo <andress.kuo@mediatek.com>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> ---
+>  include/linux/trace_events.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 8a62731..26bd7c4 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -551,7 +551,7 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
+>  	__trace_printk_check_format(fmt, ##args);			\
+>  	tracing_record_cmdline(current);				\
+>  	if (__builtin_constant_p(fmt)) {				\
+> -		static const char *trace_printk_fmt			\
+> +		static const char *trace_printk_fmt __used		\
+>  		  __attribute__((section("__trace_printk_fmt"))) =	\
+>  			__builtin_constant_p(fmt) ? fmt : NULL;		\
+>  									\
+
