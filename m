@@ -2,32 +2,32 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D3CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CA7C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE1312086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E60B4222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389633AbfBMVgy (ORCPT
+        id S2390189AbfBMVg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:36:54 -0500
+        Wed, 13 Feb 2019 16:36:57 -0500
 Received: from mga02.intel.com ([134.134.136.20]:41474 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbfBMVgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:36:54 -0500
+        id S1729767AbfBMVg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 16:36:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 13:36:53 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 13:36:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="274859798"
+   d="scan'208";a="274859808"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by orsmga004.jf.intel.com with ESMTP; 13 Feb 2019 13:36:53 -0800
+  by orsmga004.jf.intel.com with ESMTP; 13 Feb 2019 13:36:54 -0800
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -35,11 +35,15 @@ To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 00/12] x86: Enable FSGSBASE instructions
-Date:   Wed, 13 Feb 2019 13:36:12 -0800
-Message-Id: <20190213213624.14354-1-chang.seok.bae@intel.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v6 01/12] x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
+Date:   Wed, 13 Feb 2019 13:36:13 -0800
+Message-Id: <20190213213624.14354-2-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190213213624.14354-1-chang.seok.bae@intel.com>
+References: <20190213213624.14354-1-chang.seok.bae@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,75 +51,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updates from v5 [5]:
-* Drop the new tain flag (TAINT_INSECURE)
-* Cleanup copy_thread_tls(), some changelog, and unnecessary comments on
-  assembly macros
-* Rearrange some helper updates appropriately (from patch 4 to 6)
+From: Andy Lutomirski <luto@kernel.org>
 
-Updates from v4 [4]:
-* Remove the FSGSBASE assembly macros
+This is temporary.  It will allow the next few patches to be tested
+incrementally.
 
-Updates from v3 [3]:
-* Raise minimum binutils requirement to use the new instructions directly
-* Optimize FIND_PERCPU_BASE macro
-* Rename some helper functions, __{rd,wr}gsbase_inactive()
-* Use NOKPROBE_SYMBOL instead of __kprobes
-* Rebase on top of the helper function fix [7]
+Setting unsafe_fsgsbase is a root hole.  Don't do it.
 
-Update from v2 [2]:
-* Separate out the preparatory patches [6] (merged as of now)
-* Bisect the paranoid_entry update patch
-* Edit minor nits
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+---
+ .../admin-guide/kernel-parameters.txt         |  3 +++
+ arch/x86/kernel/cpu/common.c                  | 24 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-Updates from v1 [1]:
-* Update the GSBASE update mechanism on the paranoid entry/exit.
-* Exclude ptracer backward compatibility patches.
-* Include FSGSBASE documentation and enumerating capability
-  for user space
-* Add the TAINT_INSECURE flag.
-
-[1] Version 1: https://lore.kernel.org/patchwork/cover/934843
-[2] Version 2: https://lore.kernel.org/patchwork/cover/912063
-[3] Version 3: https://lore.kernel.org/patchwork/cover/1002725
-[4] Version 4: https://lore.kernel.org/patchwork/cover/1032799
-[5] Version 5: https://lore.kernel.org/patchwork/cover/1038035
-[5] https://lore.kernel.org/patchwork/cover/988180
-[6] https://lore.kernel.org/patchwork/patch/1017513
-
-Andi Kleen (3):
-  x86/fsgsbase/64: Add intrinsics for FSGSBASE instructions
-  x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
-  x86/fsgsbase/64: Add documentation for FSGSBASE
-
-Andy Lutomirski (4):
-  x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
-  x86/fsgsbase/64: Preserve FS/GS state in __switch_to() if FSGSBASE is
-    on
-  selftests/x86/fsgsbase: Test WRGSBASE
-  x86/fsgsbase/64: Enable FSGSBASE by default and add a chicken bit
-
-Chang S. Bae (5):
-  kbuild: Raise the minimum required binutils version to 2.21
-  x86/fsgsbase/64: Enable FSGSBASE instructions in the helper functions
-  x86/fsgsbase/64: When copying a thread, use the FSGSBASE instructions
-    if available
-  x86/fsgsbase/64: Introduce the FIND_PERCPU_BASE macro
-  x86/fsgsbase/64: Use the per-CPU base as GSBASE at the paranoid_entry
-
- .../admin-guide/kernel-parameters.txt         |   2 +
- Documentation/process/changes.rst             |   6 +-
- Documentation/x86/fsgs.txt                    | 104 +++++++++++++++++
- arch/x86/entry/entry_64.S                     |  71 +++++++++---
- arch/x86/include/asm/fsgsbase.h               |  95 ++++++++++++++--
- arch/x86/include/asm/inst.h                   |  15 +++
- arch/x86/include/uapi/asm/hwcap2.h            |   3 +
- arch/x86/kernel/cpu/common.c                  |  22 ++++
- arch/x86/kernel/process_64.c                  | 105 ++++++++++++++++--
- tools/testing/selftests/x86/fsgsbase.c        | 102 ++++++++++++++++-
- 10 files changed, 484 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/x86/fsgs.txt
-
---
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index cf8f5877d85f..b6ed956a78ab 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2765,6 +2765,9 @@
+ 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
+ 			kernel to use 4-level paging instead.
+ 
++	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
++			replaced with a nofsgsbase flag.
++
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index cb28e98a0659..40a2f60e7251 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -365,6 +365,22 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
+ 	cr4_clear_bits(X86_CR4_UMIP);
+ }
+ 
++/*
++ * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
++ * updated. This allows us to get the kernel ready incrementally.
++ *
++ * Once all the pieces are in place, these will go away and be replaced with
++ * a nofsgsbase chicken flag.
++ */
++static bool unsafe_fsgsbase;
++
++static __init int setup_unsafe_fsgsbase(char *arg)
++{
++	unsafe_fsgsbase = true;
++	return 1;
++}
++__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
++
+ /*
+  * Protection Keys are not available in 32-bit mode.
+  */
+@@ -1352,6 +1368,14 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_smap(c);
+ 	setup_umip(c);
+ 
++	/* Enable FSGSBASE instructions if available. */
++	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
++		if (unsafe_fsgsbase)
++			cr4_set_bits(X86_CR4_FSGSBASE);
++		else
++			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
++	}
++
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
+ 	 * Now we do "generic changes."
+-- 
 2.19.1
 
