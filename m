@@ -2,107 +2,104 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB359C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E476C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C25222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FA121901
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:35:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nv02ZIJM"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="X50LubJu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731668AbfBMJf1 (ORCPT
+        id S1732036AbfBMJf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:35:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46131 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730772AbfBMJf0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:35:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v16so1369711ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:35:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6W125vmE79Uw+6Mv8wXGpTfxHccsp8RuPWiHXRGfpm8=;
-        b=nv02ZIJMVJAq5hWxOGv5wFspy7OZW8zBjuyKr4ZegVgmogdK7y31PNzprj3hyDJu1W
-         uhzED+U4HMuk3nS5oWA0fyngfQhqo3GYPdvVdAs+97XNWXRWpArtt7YodYI5gX/rgGeb
-         qE5y8LVMOtjassqgyH/aLXrK6ZnJ1aasZDOR/yFOuG0ZHQgLLtNiudgJwxzj/XEtoaAI
-         vVjcJMMUOOWtmQS4HgeDpC1nEyh8gNEFcjuDIKxNCj6WeXr5tawpOnt0SFwJwZQ4vkr7
-         hL7gPkk6KziX8gO6Jksd05P3lA5qI7sBtQOF3O829vjE6Fo82XeBDcdhFjnmi/XwwTEt
-         +hwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6W125vmE79Uw+6Mv8wXGpTfxHccsp8RuPWiHXRGfpm8=;
-        b=LsCqOrCbAdv2xRMnC66jjwYI2P9J2hYa0pVgAfBK/TVnf3CjXijGkwIR4gtepTN5aW
-         F1zeg4AcspAk/5Hfnn+VFzf2WYrrabk3Y2ReJd2QLPfL8myCPGiTnSJYzOMKa2vkTiRt
-         a0undL6pFi9xk0mDFGyiNP8QOuUQaULvFomNuJ19cvnZ4pzci7F4PGWqOmIFSBjjlys6
-         Xd4IhXjFHGy+zbOIHIv8/i1eRn2wuu+kAqIYDou8Qq2Ecgof5kRnkTJTbMIUw50nzVNR
-         7ONb6Ey1GqjJfDLHZY4xyH3GH7HbRVJ8FNqwqqCs867VK+hZGvtz94Sn+e0kfUzb6ACP
-         vWxw==
-X-Gm-Message-State: AHQUAubLPb6xh+yWSIW8ntKgLoTwbD8z2vu6RbPQ8M7JP7pZQH/Kp7pB
-        kvNrosnR6lZv/zr8rwMhnIsfX/U07ofzLSjIMOeWhwBTuv0=
-X-Google-Smtp-Source: AHgI3IYlyXY5m0cjkW4aVSyGhpa26fTJG5cLmR6Mv244t4ZqIXLhDl0wx+E4iqToMVbOtVtr+fItOYuzY4AMq/s8Ryw=
-X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr5006317ljb.126.1550050524202;
- Wed, 13 Feb 2019 01:35:24 -0800 (PST)
+        Wed, 13 Feb 2019 04:35:56 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:39374 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729130AbfBMJf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 04:35:56 -0500
+Received: from zn.tnic (p200300EC2BCDE800B80E9BCAB03A01F8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e800:b80e:9bca:b03a:1f8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 345C41EC023E;
+        Wed, 13 Feb 2019 10:35:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550050554;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=N5/toTELGAqlZtYf4FeiaGSNLAzH4vpz7vTIi12M5Ao=;
+        b=X50LubJu5vnYaSAmILCiUO4ilOhTxJ2fLBRG202VLw2v7g0v5yBRV6TXAYypxpgae6b+F6
+        HU/p+a2TxPOcV6qQU8K1qRwZqanSy34+63lW2qJCuauUvnISsL5LGosEXg5s1nwrNIQE/K
+        MdN/RJnIixwTi97mA+2ibHBklVdOrcM=
+Date:   Wed, 13 Feb 2019 10:35:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 15/22] x86/entry: Add TIF_NEED_FPU_LOAD
+Message-ID: <20190213093553.GC9683@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-16-bigeasy@linutronix.de>
+ <20190130115507.GE18383@zn.tnic>
+ <20190207114941.jzydrry5xpjngyiv@linutronix.de>
 MIME-Version: 1.0
-References: <1549588593-4856-1-git-send-email-lkml@metux.net>
- <1549588593-4856-2-git-send-email-lkml@metux.net> <CACRpkdaFJyGYeDZ83LQBG4pr3tgtYPkDQ3RGrrGPM==Sw1vE2w@mail.gmail.com>
- <39fe843d-feba-c871-7b2d-407ab3a35082@metux.net>
-In-Reply-To: <39fe843d-feba-c871-7b2d-407ab3a35082@metux.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 13 Feb 2019 10:35:11 +0100
-Message-ID: <CACRpkdajLnMY3w40xx6jNEPqr-DYg2FjNgipt6tNBPgRoTx__w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86 <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190207114941.jzydrry5xpjngyiv@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:39 AM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
+On Thu, Feb 07, 2019 at 12:49:42PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-01-30 12:55:07 [+0100], Borislav Petkov wrote:
+> > This definitely needs to be written somewhere in
+> > 
+> > arch/x86/include/asm/fpu/internal.h
+> > 
+> > or where we decide to put the FPU handling rules.
+> 
+> Added:
+> 
+> Index: staging/arch/x86/include/asm/fpu/internal.h
+> ===================================================================
+> --- staging.orig/arch/x86/include/asm/fpu/internal.h
+> +++ staging/arch/x86/include/asm/fpu/internal.h
+> @@ -537,6 +537,12 @@ static inline void __fpregs_load_activat
+>   *
+>   * The FPU context is only stored/restore for user task and ->mm is used to
+>   * distinguish between kernel and user threads.
+> + *
+> + * If TIF_NEED_FPU_LOAD is cleared then CPU's FPU registers are holding the
+> + * current content of current()'s FPU register state.
 
-> struct gpiod_lookup_table gpios_led_table[] = {
->     .dev_id = "leds-gpio.0",
->     .table = {
->         GPIO_LOOKUP_IDX("gpio.0", 0, "led", 0, GPIO_ACTIVE_LOW),
->         GPIO_LOOKUP_IDX("gpio.0", 1, "led", 1, GPIO_ACTIVE_LOW),
->         GPIO_LOOKUP_IDX("gpio.0", 2, "led", 2, GPIO_ACTIVE_LOW),
->     }
-> };
->
-> But unsure now to determine the correct names for dev_id (the
-> leds-gpio instance ?) and the gpio chip. In the example, these
-> seem to be autogenerated - how can I retrieve them from my
-> actual devices ?
+"current content of current" - that's a lot of c...
 
-It is a bit tricky.
+Make that
 
-For the dev_id you need to be aware of the following from
-<linux/platform_device.h>:
-#define PLATFORM_DEVID_NONE     (-1)
-#define PLATFORM_DEVID_AUTO     (-2)
+"... then the CPU's FPU registers are mirrored in the current thread's
+FPU registers state."
 
-If the platform device has .id set to -1 it will be just "leds-gpio",
-if it is -2 it will be whatever, take a chance on .0 or ideally fix
-it up. Any positive number like .id = 4 becomes "leds-gpio.4".
+> + * If TIF_NEED_FPU_LOAD is set then CPU's FPU registers may not hold current()'s
+> + * FPU registers. It is required to load the register before returning to
+						^^^^^^^^
 
-So figure out the .id field on the platform device.
+s/register/registers/ - plural.
 
-Yours,
-Linus Walleij
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
