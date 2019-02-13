@@ -2,142 +2,130 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2276C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39E6C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948AD218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 775F0218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ImtpWPij"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yLwNqsg0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389442AbfBMNpZ (ORCPT
+        id S2388590AbfBMNpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:45:25 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38258 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732629AbfBMNpY (ORCPT
+        Wed, 13 Feb 2019 08:45:12 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40024 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391012AbfBMNnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:45:24 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1DDj5N8064476;
-        Wed, 13 Feb 2019 07:45:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550065505;
-        bh=A8Uk9Ow8WV66Xu29GZ7RXEbi+FTpl5lwZKZ+E0PdRIs=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=ImtpWPijkMJtL20oiodNPBspA9yNxbn6Vmo5n8tX+z6elaQN4x1UqLDek/b4jATGb
-         IRoSt+ODlifceMIzuomh+rnClmSq2+egcWF96VpMpvvKqRYfK4wb6fItXE19RJK01f
-         eE6llId7laicniw3Lu5iujkqHjRiKv1gV4BphdWU=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1DDj4Fb036882
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 07:45:04 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 13
- Feb 2019 07:45:03 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 13 Feb 2019 07:45:03 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1DDixdq024064;
-        Wed, 13 Feb 2019 07:45:00 -0600
-Subject: Re: [PATCH 11/15] PCI: pci-epf-test: Use pci_epc_get_features to get
- EPC features
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190107064148.10152-1-kishon@ti.com>
- <20190107064148.10152-12-kishon@ti.com>
- <20190212150718.GA28306@e107981-ln.cambridge.arm.com>
- <6d72cfdf-97a7-4aab-f746-d0e545431ea2@ti.com>
-Message-ID: <fcfba221-5e68-1e70-8044-de8390d05559@ti.com>
-Date:   Wed, 13 Feb 2019 19:14:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 08:43:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q21so2456933wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:43:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=l4b9AHscYwHc4AK+X4761NE8PqFk+QkjrMOkHjgIcbc=;
+        b=yLwNqsg0RZWMjaf7xvR7gdoH7WAt1qd3NZAPvdNWCc/v8qGemCvXSW4ClKZLMMXs/w
+         ++TExscX046KdVzvmZdRj1TSGf3h6JiP+yvxz6XMg3gIlWfeCcNUJT9fdxVD6YbbOPEm
+         vkujhqB1yi0y1ce5bJWN24Ii7XiTGIxDNuYipZJXLHv2fonCrMA0BD+LcWLq82UQUn61
+         Uxfgl8U2odOKTFloiHr9vpygSfsr7M8KRm7ASqxSf0Q70FxuIg66oHqtnOA9xKzpaTu7
+         XFcphjmXqBmdF4Xyqazge6cXaV3twknJh6ZEhzsSe7viOPSyHeZCNfwPbyTKvaYzTtPV
+         J8Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=l4b9AHscYwHc4AK+X4761NE8PqFk+QkjrMOkHjgIcbc=;
+        b=PuZ8ppHCzoiRNzsWDV3VVNdv3gIHbObE+ICMN7ZFtJsaX9/ybE9poRtqshLLZDM0zm
+         AwprGB3DM7MjznoP1St/sC9tbWsJwQv24E9Sd4P23a67atN7rbfQLX/7ZC5TvCpttIPO
+         s6WhmwyWu7LdtXHFCE3ZsL+PxJ4vM3c16hl8c6AQyEVu7D/SMnUAMaljmZYXkw1+mfTd
+         glEdG8/OuwYP4T5jXv9+8OW6my5J8gx7Lc+HahPP/QpYIJ0drg+DpRmtUzyrHlf4JHk7
+         FEOZsHwuWrSKCEKXYkqM6wAfWhE1Z9DDrakjMVidhzVhsXtWUqJSTy1woHWK24eiKvHH
+         QYaw==
+X-Gm-Message-State: AHQUAuZwONGL8kVDl9AnfnrM74nB7ayBvmJkaSNqL/n5F34Njt5RHn2M
+        AMk9v3sW04noX8NXdVhDFTh/qA==
+X-Google-Smtp-Source: AHgI3IY6HBskRoYDWoYvrYczkpFcgHLUGZkGVX1N0eWAk0J/2GOt5GdKqDbSR0lFn9qiMXURt8yg+A==
+X-Received: by 2002:a1c:47:: with SMTP id 68mr347390wma.89.1550065431794;
+        Wed, 13 Feb 2019 05:43:51 -0800 (PST)
+Received: from debian-brgl.home (amontpellier-652-1-54-116.w109-210.abo.wanadoo.fr. [109.210.45.116])
+        by smtp.gmail.com with ESMTPSA id e7sm2046720wrw.35.2019.02.13.05.43.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 05:43:51 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 02/11] dt-bindings: power: supply: add DT bindings for max77650
+Date:   Wed, 13 Feb 2019 14:43:26 +0100
+Message-Id: <20190213134335.10838-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190213134335.10838-1-brgl@bgdev.pl>
+References: <20190213134335.10838-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <6d72cfdf-97a7-4aab-f746-d0e545431ea2@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On 13/02/19 7:08 PM, Kishon Vijay Abraham I wrote:
-> Hi Lorenzo,
-> 
-> On 12/02/19 8:37 PM, Lorenzo Pieralisi wrote:
->> On Mon, Jan 07, 2019 at 12:11:44PM +0530, Kishon Vijay Abraham I wrote:
->>
->> [...]
->>
->>>  static int pci_epf_test_bind(struct pci_epf *epf)
->>>  {
->>>  	int ret;
->>>  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>>  	struct pci_epf_header *header = epf->header;
->>> +	const struct pci_epc_features *epc_features;
->>> +	enum pci_barno test_reg_bar = BAR_0;
->>>  	struct pci_epc *epc = epf->epc;
->>>  	struct device *dev = &epf->dev;
->>> +	bool linkup_notifier = false;
->>> +	bool msix_capable = false;
->>> +	bool msi_capable = true;
->>>  
->>>  	if (WARN_ON_ONCE(!epc))
->>>  		return -EINVAL;
->>>  
->>> -	if (epc->features & EPC_FEATURE_NO_LINKUP_NOTIFIER)
->>> -		epf_test->linkup_notifier = false;
->>> -	else
->>> -		epf_test->linkup_notifier = true;
->>> -
->>> -	epf_test->msix_available = epc->features & EPC_FEATURE_MSIX_AVAILABLE;
->>> +	epc_features = pci_epc_get_features(epc, epf->func_no);
->>
->> I think it would work out better if struct pci_epc_features was
->> allocated in the caller (stack) and pci_epc_get_features() take a
->> pointer parameter to it rather than the callee and the callee would just
->> have to fill it out, this also removes data in the driver that is not
->> really useful.
->>
->> Is there any other reason behind the current design choice ?
-> 
-> Some drivers are used by multiple platforms each with different features. In
-> such cases it's cleaner to have separate epc_feature table for each platform.
-> 
-> I think the driver should maintain some sort of data to even populate
-> pci_epc_features allocated by EP function driver.
+Add the DT binding document for the battery charger module of max77650.
 
-Btw I found some issues in the v1 of this series, so I posted v2 [1]. Please
-review that.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
 
-Thanks
-Kishon
+diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+new file mode 100644
+index 000000000000..16e24173c80e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+@@ -0,0 +1,27 @@
++Battery charger driver for MAX77650 PMIC from Maxim Integrated.
++
++This module is part of the MAX77650 MFD device. For more details
++see Documentation/devicetree/bindings/mfd/max77650.txt.
++
++The charger is represented as a sub-node of the PMIC node on the device tree.
++
++Required properties:
++--------------------
++- compatible:		Must be "maxim,max77650-charger"
++
++Optional properties:
++--------------------
++- min-input-voltage:	Minimum CHGIN regulation voltage (in microvolts). Must be
++			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
++			4500000, 4600000, 4700000.
++- current-limit:	CHGIN input current limit (in microamps). Must be one of:
++			95000, 190000, 285000, 380000, 475000.
++
++Example:
++--------
++
++	charger {
++		compatible = "maxim,max77650-charger";
++		maxim,vchgin-min = <4200000>;
++		maxim,ichgin-lim = <285000>;
++	};
+-- 
+2.20.1
 
-[1] -> https://lkml.org/lkml/2019/1/14/288
-> 
-> Thanks
-> Kishon
-> 
