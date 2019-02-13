@@ -3,210 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC7C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7312BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450F5222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42572222B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZRJ5oiD"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="huPTkm7Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390809AbfBMIrM (ORCPT
+        id S2390820AbfBMIr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:47:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37106 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730377AbfBMIrL (ORCPT
+        Wed, 13 Feb 2019 03:47:29 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43198 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389589AbfBMIr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:47:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c8so1506434wrs.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:47:10 -0800 (PST)
+        Wed, 13 Feb 2019 03:47:28 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z20so263505ljj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:47:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=SYKHrrKARz+Cr4tfpNwFsT80ECJj5aS0+BF4T2lIKBE=;
-        b=oZRJ5oiD4imBz/p/n/41GOb2WEp2UIH4WYY4MmUSJehshd2HQwjDTaorWEQW0fLygK
-         dDiMf89Urg4NzYOEcc/E/wsHkh/bz3+0pdTHo1ID9DT352KG6hFbGxCBSAtViFgA5fDu
-         KdNl5NWJJUHDBicrzdWRKpfGihhHl43e0RuDNbFBHWPr2wy2lmMHLmeRDO3KyFtsk52v
-         tLaxA1wumGTHLhA5S0rh1jvCw8GffhFQxAswK3dpL7bJVrdmUwvoAjELHRQxezsKDSDA
-         C8KXn5QkK1sH5cJImIf8IzL17MWrFE/VRGeoGcrsJip2JGK9IDNdzzv3cZ47Je+AYgkA
-         ILwA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bQKwEsId6JLgTtjw3Rjr7HrL/WSfNzzQCt6QFtE+6CE=;
+        b=huPTkm7YuTfgMiO3pS+jCGn8NhUCcSn8F3KQWlpn+sfAWdE03+0xZExbkXBqTQQ4Ms
+         wSC5XGBYQ7n/wYVCJZxHRgNxIs0hdbjkEbiIaoincu8wJFzdVEshpaJd84a9VZnaoASY
+         Wa6ExZJisdmciQHpsAk7/zKJeXa2gjhMLdH+QUhaJbDwDTUyBIj0opR/VRuerdRwNGyj
+         N9X+1nLZ5zI6Zxcmf7tfsnG2iWQ7k4zFcRbQzQek1to6poNy/Pr3We/zzhbBAGbYO6Ro
+         oA0YEz8XGmiBrSNZMRNtvdxS/XYybCvhCWzfnOj3l2QKu4NtZYQ5GbMXRXw8JVXFYSWv
+         NaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SYKHrrKARz+Cr4tfpNwFsT80ECJj5aS0+BF4T2lIKBE=;
-        b=OLg8Rrlz88/kJ2vGlRKEy2KsV8YmJmuP9Y6LRyvsyReOp3fMc6fWJppEd1FeIU8ND0
-         bcJCkldc0W0JsVJ1f5jZIEostXTw3SguHaF2feC118PKo39VusxYFCTMgIsmrAYtbsXG
-         9A0/mlgIY9b3PJe4gQ2bCxrHODcQoALzaG7oHzC8Y5/HldpGf7As283vBtVBbMMW4FQo
-         8TPvNDFYENAHLh5WZQNAxOeJ6eertDiy3wgru8i6D3TQyURPuSJuqtTH9n9ktUGFzEzd
-         0ow5dpaMM9wdob4QbMGTVLAN9F4hIVakUC9MLU633OJ5SJ4ZQ56K9+7hYN8cckxbTUdy
-         TBKg==
-X-Gm-Message-State: AHQUAuYZxKwmAWKJAIbdrfutZMnwAvV3f8WX0A7gRY/tXoi+he6piGML
-        VU6ysR8NGtJyHE4aAh2BjNM=
-X-Google-Smtp-Source: AHgI3IbN1ZbCyJCGkBA993nroBfgBGhAhmY5OxHQ0sBGdZYV16oJSUpdOIwjMWA6mo10FhZqgxKfDw==
-X-Received: by 2002:adf:e30f:: with SMTP id b15mr6018661wrj.0.1550047629951;
-        Wed, 13 Feb 2019 00:47:09 -0800 (PST)
-Received: from debian.lan ([212.161.95.162])
-        by smtp.gmail.com with ESMTPSA id d9sm20792347wrn.72.2019.02.13.00.47.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 00:47:09 -0800 (PST)
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH v2] parport: daisy: use new parport device model
-Date:   Wed, 13 Feb 2019 08:47:06 +0000
-Message-Id: <20190213084706.2886-1-sudipm.mukherjee@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bQKwEsId6JLgTtjw3Rjr7HrL/WSfNzzQCt6QFtE+6CE=;
+        b=jMrOt0Aj9YyDti00Tp/KcDKG9nY8GEYvwE4A28YyzcuO8c3IQ2ciqozRimTlyC2B/X
+         JLyjtC8hCUA5H+/Zk5mWpDkRD/WQ55kip8t+QY42Jq6x+/8t/VtjbeamkThEQCr5aZ+e
+         AkHsOeyF8BL/egXDEcXcRc1TvTApbN3xTK4f13xcoV9UZqGwAVGp8djyY83ClMG+1y5B
+         7U9ejzDU2URutJrRqXF9HJh5BBXC3gvdxYup5tvXNF7ifMlJtymDWYlKxjHS1qXy1GuG
+         ZO/4FooIpxsFM/W/u3HyWpWW4sUx7HeNt4d4PO88aS65T5vk0EWU8hLvO1J+PQZDqjsr
+         9q0g==
+X-Gm-Message-State: AHQUAubMdz3yjs+7P/5odwYmx+/WYiLY2ovETrxy6Ys9h2no2LCFGELv
+        2LQkdYhcNgBnuA+d8LbAC+pG7g==
+X-Google-Smtp-Source: AHgI3IZws0QWK8imzOTRnZT9SCN+xIH6k+c+7yeJ5437xHEWz8ntkEZzVxRVx+i1Hhp2RtIhJyh02w==
+X-Received: by 2002:a2e:81c1:: with SMTP id s1mr202136ljg.29.1550047646117;
+        Wed, 13 Feb 2019 00:47:26 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id g85-v6sm3325972lji.17.2019.02.13.00.47.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 00:47:25 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     b.zolnierkie@samsung.com
+Cc:     linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] fbdev: omap2: fix warnings in dss core
+Date:   Wed, 13 Feb 2019 09:47:21 +0100
+Message-Id: <20190213084721.29624-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify parport daisy driver to use the new parallel port device model.
+Commit 60d2fa0dad06 ("fbdev: omap2: no need to check return value of
+debugfs_create functions") changed the declaration of the return value
+of function dss_debugfs_create_file() and the following two warnings
+appeared:
 
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+drivers/video/fbdev/omap2/omapfb/dss/core.c: In function ‘dss_debugfs_create_file’:
+drivers/video/fbdev/omap2/omapfb/dss/core.c:139:9: warning: ‘return’ with a value,
+ in function returning void
+  return 0;
+         ^
+drivers/video/fbdev/omap2/omapfb/dss/core.c: In function ‘omap_dss_probe’:
+drivers/video/fbdev/omap2/omapfb/dss/core.c:172:6: warning: unused variable ‘r’
+ [-Wunused-variable]
+  int r;
+      ^
+
+Rework so function dss_debugfs_create_file() that is declared to return
+void don't 'return 0' and remove the declaration of the unused variable
+'r'.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
+ drivers/video/fbdev/omap2/omapfb/dss/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-v2: hide ifdef in the header file
-
- drivers/parport/daisy.c | 32 +++++++++++++++++++++++++++++++-
- drivers/parport/probe.c |  2 +-
- drivers/parport/share.c | 10 +++++++++-
- include/linux/parport.h | 13 +++++++++++++
- 4 files changed, 54 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/parport/daisy.c b/drivers/parport/daisy.c
-index 5484a46dafda..56dd83a45e55 100644
---- a/drivers/parport/daisy.c
-+++ b/drivers/parport/daisy.c
-@@ -213,10 +213,12 @@ void parport_daisy_fini(struct parport *port)
- struct pardevice *parport_open(int devnum, const char *name)
- {
- 	struct daisydev *p = topology;
-+	struct pardev_cb par_cb;
- 	struct parport *port;
- 	struct pardevice *dev;
- 	int daisy;
- 
-+	memset(&par_cb, 0, sizeof(par_cb));
- 	spin_lock(&topology_lock);
- 	while (p && p->devnum != devnum)
- 		p = p->next;
-@@ -230,7 +232,7 @@ struct pardevice *parport_open(int devnum, const char *name)
- 	port = parport_get_port(p->port);
- 	spin_unlock(&topology_lock);
- 
--	dev = parport_register_device(port, name, NULL, NULL, NULL, 0, NULL);
-+	dev = parport_register_dev_model(port, name, &par_cb, devnum);
- 	parport_put_port(port);
- 	if (!dev)
- 		return NULL;
-@@ -480,3 +482,31 @@ static int assign_addrs(struct parport *port)
- 	kfree(deviceid);
- 	return detected;
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/core.c b/drivers/video/fbdev/omap2/omapfb/dss/core.c
+index 7e6a3eb266d0..b5956a1a30d4 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/core.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/core.c
+@@ -136,7 +136,6 @@ static inline void dss_uninitialize_debugfs(void)
  }
-+
-+static int daisy_drv_probe(struct pardevice *par_dev)
-+{
-+	struct device_driver *drv = par_dev->dev.driver;
-+
-+	if (strcmp(drv->name, "daisy_drv"))
-+		return -ENODEV;
-+	if (strcmp(par_dev->name, daisy_dev_name))
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static struct parport_driver daisy_driver = {
-+	.name = "daisy_drv",
-+	.probe = daisy_drv_probe,
-+	.devmodel = true,
-+};
-+
-+int daisy_drv_init(void)
-+{
-+	return parport_register_driver(&daisy_driver);
-+}
-+
-+void daisy_drv_exit(void)
-+{
-+	parport_unregister_driver(&daisy_driver);
-+}
-diff --git a/drivers/parport/probe.c b/drivers/parport/probe.c
-index e035174ba205..e5e6a463a941 100644
---- a/drivers/parport/probe.c
-+++ b/drivers/parport/probe.c
-@@ -257,7 +257,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
- ssize_t parport_device_id (int devnum, char *buffer, size_t count)
+ void dss_debugfs_create_file(const char *name, void (*write)(struct seq_file *))
  {
- 	ssize_t retval = -ENXIO;
--	struct pardevice *dev = parport_open (devnum, "Device ID probe");
-+	struct pardevice *dev = parport_open(devnum, daisy_dev_name);
- 	if (!dev)
- 		return -ENXIO;
- 
-diff --git a/drivers/parport/share.c b/drivers/parport/share.c
-index 5dc53d420ca8..0171b8dbcdcd 100644
---- a/drivers/parport/share.c
-+++ b/drivers/parport/share.c
-@@ -137,11 +137,19 @@ static struct bus_type parport_bus_type = {
- 
- int parport_bus_init(void)
- {
--	return bus_register(&parport_bus_type);
-+	int retval;
-+
-+	retval = bus_register(&parport_bus_type);
-+	if (retval)
-+		return retval;
-+	daisy_drv_init();
-+
-+	return 0;
+-	return 0;
  }
+ #endif /* CONFIG_FB_OMAP2_DSS_DEBUGFS */
  
- void parport_bus_exit(void)
+@@ -169,8 +168,6 @@ static struct notifier_block omap_dss_pm_notif_block = {
+ 
+ static int __init omap_dss_probe(struct platform_device *pdev)
  {
-+	daisy_drv_exit();
- 	bus_unregister(&parport_bus_type);
- }
+-	int r;
+-
+ 	core.pdev = pdev;
  
-diff --git a/include/linux/parport.h b/include/linux/parport.h
-index 397607a0c0eb..f41f1d041e2c 100644
---- a/include/linux/parport.h
-+++ b/include/linux/parport.h
-@@ -460,6 +460,7 @@ extern size_t parport_ieee1284_epp_read_addr (struct parport *,
- 					      void *, size_t, int);
- 
- /* IEEE1284.3 functions */
-+#define daisy_dev_name "Device ID probe"
- extern int parport_daisy_init (struct parport *port);
- extern void parport_daisy_fini (struct parport *port);
- extern struct pardevice *parport_open (int devnum, const char *name);
-@@ -468,6 +469,18 @@ extern ssize_t parport_device_id (int devnum, char *buffer, size_t len);
- extern void parport_daisy_deselect_all (struct parport *port);
- extern int parport_daisy_select (struct parport *port, int daisy, int mode);
- 
-+#ifdef CONFIG_PARPORT_1284
-+extern int daisy_drv_init(void);
-+extern void daisy_drv_exit(void);
-+#else
-+static inline int daisy_drv_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void daisy_drv_exit(void) {}
-+#endif
-+
- /* Lowlevel drivers _can_ call this support function to handle irqs.  */
- static inline void parport_generic_irq(struct parport *port)
- {
+ 	dss_features_init(omapdss_get_version());
 -- 
-2.11.0
+2.19.2
 
