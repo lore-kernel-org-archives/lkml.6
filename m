@@ -2,89 +2,174 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39DDC282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B3DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4D320663
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3163B20663
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:24:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kLei3CGV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391821AbfBMPX6 (ORCPT
+        id S2391840AbfBMPYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:23:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56056 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbfBMPX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:23:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1756580D;
-        Wed, 13 Feb 2019 07:23:57 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D60F3F575;
-        Wed, 13 Feb 2019 07:23:55 -0800 (PST)
-Date:   Wed, 13 Feb 2019 15:23:52 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom: Don't deassert reset GPIO during probe
-Message-ID: <20190213152352.GB417@e107981-ln.cambridge.arm.com>
-References: <20190125232616.25714-1-bjorn.andersson@linaro.org>
+        Wed, 13 Feb 2019 10:24:14 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42217 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfBMPYO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:24:14 -0500
+Received: by mail-ua1-f68.google.com with SMTP id d21so890174uap.9
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 07:24:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iepFje/MEMhk/3E4cnIjUK1NAURKmM59l2Ai+HFgl3Q=;
+        b=kLei3CGVOLhHwdFp1cFntXYHYuZ7JDpvOc97rUFvIW4okfi7bSlE+J1u5TNs0A99Vq
+         fJApk6VcQdqiToVxuzeZEunO5jlSdcikTUEc/aixA4IUjtSB0tb7HQMT47wHtJ+u582g
+         iFeJctncDS2ZpIdUgwxsJqZ61pye1jL6q3cnBTAqFs8p4zuaWj3GiVmW+PWz6oActyCQ
+         S/2dOc7XrKh7cZ78Q3V/BEtLluvmJLJouta4AkRhEpH5R+dcJwBRSWUmCqzAMewVzCFC
+         OIsgFXBtW+ANZVs0p4n7n9Mwi1FhUbbbD5ySEaUTMQ8mPu6z5sMFp2/bAPI+pdOfesgx
+         2I1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iepFje/MEMhk/3E4cnIjUK1NAURKmM59l2Ai+HFgl3Q=;
+        b=j+9IAcNc9GsAdo5LftlbKm/BEoaaDbZbxvXCwHL2dyoWW2lEhoFDrFocfuob9rAL3H
+         IzrDwdMwiffaYCb0jZFvE2UvYuEyakPCBf6LfclcJ18IXg1O6om3lBT6FVNvkktiAqOB
+         l5ZABzW++x5ZdkWEjJxcqrhAg1G5hIdBNM4bfCnnaE/wDjJ9qavKDggsGI+ht08vRlkt
+         z65sARlojkHLD1Gpe7WjihmCHUgVUrXRIpGqSZ433aE9dw0deK/8AZUUEmCV5tLP64pq
+         khf2lN3NoTmXtqOH0L3vsVCeaFbD77QVmz3XY1OFiLjuN0uboBWbUSdwIa+RMOuCv7eg
+         WnSQ==
+X-Gm-Message-State: AHQUAuYt7jodw8wuwl4LGIdpCb9ZxS2Q+F3TA4a4DMvgBfwps5sdAya8
+        o0Lp5d+6vHnI7A1MGPMMwzRzYWIBaMmixftNicH0Lg==
+X-Google-Smtp-Source: AHgI3IaFe/NYA9tBN4Y21pnU9ZVr/OXvkJenpt1XaNeKjFdFt2/TxkkTnQrYZqdO2ACGL7o+i01j2wOp/oNYdeVv8g0=
+X-Received: by 2002:ab0:2b93:: with SMTP id q19mr388945uar.130.1550071451959;
+ Wed, 13 Feb 2019 07:24:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125232616.25714-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+ <1547744074-28308-3-git-send-email-lollivier@baylibre.com>
+ <20190125090755.GB3691@localhost> <867eeo7pjm.fsf@baylibre.com>
+ <20190211083349.GU4686@localhost> <86mun2v27r.fsf@baylibre.com>
+In-Reply-To: <86mun2v27r.fsf@baylibre.com>
+From:   Loys Ollivier <lollivier@baylibre.com>
+Date:   Wed, 13 Feb 2019 16:24:00 +0100
+Message-ID: <CALZWD59e356Of+R4H2ZNHJyQcPCQNNdS+1DTc8qNDYp9ZnUpXA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 03:26:16PM -0800, Bjorn Andersson wrote:
-> Acquiring the reset GPIO low means that reset is being deasserted, this
-> is followed almost immediately with qcom_pcie_host_init() asserting it,
-> initializing it and then finally deasserting it again, for the link to
-> come up.
-> 
-> Some PCIe devices requires a minimum time between the initial deassert
-> and subsequent reset cycles. In a platform that boots with the reset
-> GPIO asserted this requirement is being violated by this deassert/assert
-> pulse.
-> 
-> Acquiring the reset GPIO high will prevent this by matching the state to
-> the subsequent asserted state.
-> 
-> Cc: stable@vger.kernel.org
+On Mon 11 Feb 2019 at 14:17, Loys Ollivier <lollivier@baylibre.com> wrote:
 
-Missing Fixes: tag, please provide me one so that I can proceed.
+> On Mon 11 Feb 2019 at 08:33, Johan Hovold <johan@kernel.org> wrote:
+>
+>> On Mon, Jan 28, 2019 at 04:46:53PM +0100, Loys Ollivier wrote:
+>>>
+>>> On Fri 25 Jan 2019 at 09:07, Johan Hovold wrote:
+>>>
+>>> > On Thu, Jan 17, 2019 at 05:54:32PM +0100, Loys Ollivier wrote:
+>>> >> Add binding for Mediatek-based GNSS receivers.
+>>> >>
+>>> >> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+>>> >> ---
+>>> >>
+>>> >> v2:
+>>> >> Renamed bindings from Globaltop/gtop to Mediatek/mtk.
+>>> >> Moved current-speed as an optional propertie.
+>>> >> Removed the status line in the example.
+>>> >> Added "mediatek,mt3339" compatible.
+>>
+>>> >> +++ b/Documentation/devicetree/bindings/gnss/mediatek.txt
+>>> >> @@ -0,0 +1,39 @@
+>>> >> +Mediatek-based GNSS Receiver DT binding
+>>> >> +
+>>> >> +Mediatek chipsets are used in GNSS-receiver modules produced by several
+>>> >> +vendors and can use UART, SPI or I2C interfaces.
+>>> >> +
+>>> >> +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
+>>> >> +properties.
+>>> >> +
+>>> >> +Required properties:
+>>> >> +
+>>> >> +- compatible    : Must be one of
+>>> >> +
+>>> >> +                        "globaltop,pa6h"
+>>> >> +                        "mediatek,mt3339"
+>>> >
+>>> > I'm not sure it makes sense to add the GPS chip itself as it cannot be
+>>> > used stand-alone AFAIU, and either not way would require a lot more
+>>> > resources to be defined than what you add to this binding.
+>>>
+>>> OK, I find it a bit confusing to have Mediatek bindings but no
+>>> compatible Mediatek SoCs.
+>>> But it is true that it can't be used stand-alone. I will remove this
+>>> reference and also remove it from the mtk.c driver code from this patch
+>>> serie.
+>>
+>>> >> +Required properties (I2C):
+>>> >> +- reg           : I2C slave address
+>>> >> +
+>>> >> +Required properties (SPI):
+>>> >> +- reg           : SPI chip select address
+>>> >
+>>> > While the mt3339 appears to support these interfaces, the globaltop one
+>>> > does not.
+>>> >
+>>> > Have you looked around for a small sample of mt3339-based receivers, to
+>>> > see whether anyone actually provides these?
+>>>
+>>> Again I'm confused by the fact that it is the Mediatek bindings.
+>>> Hence why I have added it and why it was not present in the v1 that was
+>>> only for Globaltop.
+>>
+>> This is no different from the sirfstar driver for receivers based on
+>> those chipsets but manufactured by various other vendors.
+>>
+> Indeed.
+>
+>>> I find it odd mentionning the chipset but not all its interfaces.
+>>> I will remove these sections and only list supported interfaces (i.e.
+>>> UART). Other interfaces can be added afterward if one finds a board that
+>>> provides them.
+>>
+>> Right, but please do look around for other receivers using this chipset
+>> so that we can make the binding generic enough to cover those as well
+>> (e.g. by choosing representative resource names).
+>>
+> OK will have a look.
 
-Lorenzo
+The only mt3339-based receivers I have found are:
+- [0] Globaltop
+- [1] Locosys / Pololu
+They both only provide the UART interface and do not list the I2C/SPI
+interfaces.
 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index d185ea5fe996..a7f703556790 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1228,7 +1228,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  
->  	pcie->ops = of_device_get_match_data(dev);
->  
-> -	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
-> +	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
->  	if (IS_ERR(pcie->reset)) {
->  		ret = PTR_ERR(pcie->reset);
->  		goto err_pm_runtime_put;
-> -- 
-> 2.18.0
-> 
+[0] https://cdn-shop.adafruit.com/datasheets/GlobalTop-FGPMMOPA6H-Datasheet-V0A.pdf
+[1] https://www.pololu.com/file/0J641/LS20030~3_datasheet_v1.3.pdf
+
+>
+>> Johan
+
+
+
+--
+-L
