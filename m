@@ -3,58 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE140C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB1C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4D2222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D751C222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550044738;
-	bh=hDVJkJQCmtsGGjhiE0aWgXA8oGY3zK+mp3t2DTTl3gE=;
+	s=default; t=1550044766;
+	bh=j6aE3xibwAHXu5zXBZZQ5MIHZuG1ECzmOC/YkcJ3vjY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=HapZMFDSRTOrHzGSD+RzGHZ8HScheAYSg10FC59VKNnStTmXrS+p4IKeBYSOV6Z3k
-	 t7wNPMTwniu3uK6/vR1AlPf3ZhmyZHWsmCGFy4O0E2ploXpSBH2hC79LE9nrQl6dQq
-	 p5aqGUTINDIEEyzYWhOgWx37UXphOhnAkndAwKjQ=
+	b=RsrEmJDBAlgUNCUvufeQVVcU4p5tybq9CEAnaLi9Il4EG90BSJnQnn86nKbm76Ksg
+	 dIJJcZy3dvldxtl36gdbbfLs2MMKsel/hkEeo5sfT3ot/WnZSYEbp9tXCyZFLPO7nf
+	 3iSumJ51FcIJGSBRLv06m5mR4JiZHC0x8CPZaHY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389706AbfBMH65 (ORCPT
+        id S2390160AbfBMH7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:58:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38118 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 02:59:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731829AbfBMH64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:58:56 -0500
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        id S1728101AbfBMH7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:59:25 -0500
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39860222C7;
-        Wed, 13 Feb 2019 07:58:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50D22222C2;
+        Wed, 13 Feb 2019 07:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550044735;
-        bh=hDVJkJQCmtsGGjhiE0aWgXA8oGY3zK+mp3t2DTTl3gE=;
+        s=default; t=1550044764;
+        bh=j6aE3xibwAHXu5zXBZZQ5MIHZuG1ECzmOC/YkcJ3vjY=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m1nWmM/c0Bbi1GibIek8bLDYbMG1h3pnjzZlFC547sO6Al3xDC0/mlWLYJJ/qu6/n
-         PjYZPDp9+va6tOWz8PZdahgiTNThv2FjC9jqtFaN/Z+2L4WivGbpEROi99zsJC6dFJ
-         jn29kzr/VrS5Ag9wRf4mfF1aq3DDX7XkcVg2xH48=
-Received: by mail-lj1-f175.google.com with SMTP id e17-v6so1162854lja.8;
-        Tue, 12 Feb 2019 23:58:55 -0800 (PST)
-X-Gm-Message-State: AHQUAuYNy9i3IeQ1PnfbtfrgDtciHmyHhK+IGi/yBAjKKTKb4Hbm/vKW
-        m0NIj0qYkZr13l5lI49EU8L6W/lK+iQRvLOF85o=
-X-Google-Smtp-Source: AHgI3IYuiezkauhSRJ83PC+tR4+Q1BK+VHgZ9j6cNBAcImI5FQkpTzTVdS3Cyh2eTxdumiORCtbtiiedVQfhZW1x70E=
-X-Received: by 2002:a2e:999a:: with SMTP id w26-v6mr4739683lji.169.1550044733312;
- Tue, 12 Feb 2019 23:58:53 -0800 (PST)
+        b=cfd91XlXqtKixleIqy1UPVpqRJupGlSa78TpJHxh7Itu6pWI2b3aL0uWuvwVvra66
+         LDcCI07N9ufYysCqoam12nmpZTaKowRD7nN1eMWPCiiGKMb6AawiZMhMt3VQ3iRl9K
+         b9g2j8qQI/yX99JnlAU1nto4YyTg2el6/G+NlHLc=
+Received: by mail-lf1-f53.google.com with SMTP id f5so1005936lfc.13;
+        Tue, 12 Feb 2019 23:59:24 -0800 (PST)
+X-Gm-Message-State: AHQUAubXCsXCXoNe/9+QaQ5b6+Bxmw6iZna0tIFtcr+eJrdvSveykJLq
+        AXlVbPEyKqtL8UZauQawHwdhoR7X0jVkX12PrY8=
+X-Google-Smtp-Source: AHgI3IbU/vdQjWRAJ6PeqAvB4WxyjJdGHmw6VxsR/uzMUGxVPFx9wfGTlIrohlGfnYYfpl+gR/BMJPA54ht1OIbXkfY=
+X-Received: by 2002:a19:f013:: with SMTP id p19mr5026204lfc.154.1550044762500;
+ Tue, 12 Feb 2019 23:59:22 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20190212180535epcas2p3aaa1c3d8fd9fcfb5a30bc6d132aba70a@epcas2p3.samsung.com>
- <20190212180342.32040-1-s.nawrocki@samsung.com> <20190212180342.32040-17-s.nawrocki@samsung.com>
-In-Reply-To: <20190212180342.32040-17-s.nawrocki@samsung.com>
+References: <CGME20190212180539epcas1p457a5c91f2c2cef0d1b92ff8bf804beee@epcas1p4.samsung.com>
+ <20190212180342.32040-1-s.nawrocki@samsung.com> <20190212180342.32040-18-s.nawrocki@samsung.com>
+In-Reply-To: <20190212180342.32040-18-s.nawrocki@samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 13 Feb 2019 08:58:41 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPe8wpP8ky8P4CPq4t51P+fjZ+7kecg2Vsq_9s=4Xa0VrA@mail.gmail.com>
-Message-ID: <CAJKOXPe8wpP8ky8P4CPq4t51P+fjZ+7kecg2Vsq_9s=4Xa0VrA@mail.gmail.com>
-Subject: Re: [PATCH v2 16/21] ASoC: samsung: i2s: Simplify pri_dai, sec_dai
- pointers usage
+Date:   Wed, 13 Feb 2019 08:59:11 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeJBXmCWZnitRSHmzjVNqnz-LAgLiAXG_4nES1fa4KcqQ@mail.gmail.com>
+Message-ID: <CAJKOXPeJBXmCWZnitRSHmzjVNqnz-LAgLiAXG_4nES1fa4KcqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 17/21] ASoC: samsung: i2s: Change indentation in
+ SAMSUNG_I2S_FMTS definition
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -71,16 +71,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 12 Feb 2019 at 19:05, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
 >
-> If the probe call is on the primary DAI we can use 'other' in place of
-> i2s->sec_dai, if the probe call is on the secondary DAI we can use 'i2s'
-> in place of other->sec_dai.
->
-> While at it fix one whitespace issue.
+> Change indentation so this macro definition spans 2 rows and looks
+> more consistent with surrounding code.
 >
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  sound/soc/samsung/i2s.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  sound/soc/samsung/i2s.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
 
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
