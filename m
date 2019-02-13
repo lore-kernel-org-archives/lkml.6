@@ -2,122 +2,106 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842E5C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE7C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF36222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B937F222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIMY0KrK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389918AbfBMJBL (ORCPT
+        id S2391087AbfBMJBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:01:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48977 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfBMJBL (ORCPT
+        Wed, 13 Feb 2019 04:01:39 -0500
+Received: from mail-yb1-f180.google.com ([209.85.219.180]:35220 "EHLO
+        mail-yb1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbfBMJBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:01:11 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1D8xWw1195711
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 13 Feb 2019 00:59:32 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1D8xVZi195708;
-        Wed, 13 Feb 2019 00:59:31 -0800
-Date:   Wed, 13 Feb 2019 00:59:31 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
-Message-ID: <tip-877b145f0f4723133f934be402b8dfc769eb971f@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-        rostedt@goodmis.org, peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, acme@redhat.com,
-        torvalds@linux-foundation.org, righi.andrea@gmail.com
-Reply-To: mathieu.desnoyers@efficios.com, rostedt@goodmis.org,
-          jolsa@redhat.com, mhiramat@kernel.org,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org,
-          hpa@zytor.com, righi.andrea@gmail.com,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          acme@redhat.com, tglx@linutronix.de, peterz@infradead.org
-In-Reply-To: <154998790744.31052.3016106262944915510.stgit@devbox>
-References: <154998790744.31052.3016106262944915510.stgit@devbox>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] x86/kprobes: Move trampoline code into RODATA
-Git-Commit-ID: 877b145f0f4723133f934be402b8dfc769eb971f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 13 Feb 2019 04:01:38 -0500
+Received: by mail-yb1-f180.google.com with SMTP id v2so634958ybm.2;
+        Wed, 13 Feb 2019 01:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nOxAq2jgYrMbNTBlWFr73Rc+ViApmre//M8IaWoP5S0=;
+        b=VIMY0KrK4iSNyI1HGmm4jPV9TrQ8QlHaQh+ToWWJjoo8CPj15twvFmLLdUrKhTAEuC
+         biSzvOM4rUQMNMRSLiF8FC5/cdnQm8YeFA83kwKe9KrxnJpJ/H1JqWy0QIeMiUnEFmOH
+         AoGIq6s8Hf8lnYLG+tbwxlDl3CX3zGKbHSkAvuelpni4+TJUfm3tTR/sEgAK5F7qCN7J
+         X+B+k2wB5QutnnTROe8xnwDeO0DIPSvEa3LTswwjR/YISSO4/IgEqSio+8bUdv5vFCCy
+         KuM/DtIYgwC5ImjMq7rtXguacejHqDPZc+bsS2Te3hQ0t9AREltbQK1D8ba7bAqaH85v
+         k4YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nOxAq2jgYrMbNTBlWFr73Rc+ViApmre//M8IaWoP5S0=;
+        b=CUkdbqv50GTUcxGmRjdNST62SVIA45LNwRQYASxfLyuYZJXX+Fm2d/mqoh6AybvDgB
+         62Bfl+v86TR5kVDfJVGPLbtW4pfgfCD69tLIhnYA4gJrsGWUdnxpk1DzVXfQGwU8B+ZQ
+         m0o/ZZx1D6VTMF6MYxads+7+DTUaCRJFh0mSAPTZvtR1PTW5SxDY0m5y983D4PbffsR6
+         241YSpEnvrdGjE87nwy07MRn0yT/Rb2a+UV2ZK9RrzxDz3xg5NQFuhQ1fXZ4m6tC3vD1
+         j9QLHV4+HIW2UjLtkVRj7DFB51iDFspH8PkL74IStAow4SzEoYsGh8gMli8HnwsArENj
+         4mlA==
+X-Gm-Message-State: AHQUAuZcEJTbtktCqkmBMdawBaZ0fWCI2VZboQdyFN+/dLqns0pxuEjm
+        hjikQzlo1VkyS/RZfRJW/vHQ5LwFN6rGFh89dVQ=
+X-Google-Smtp-Source: AHgI3IZIW2qaSfMP7UCdKZdSY60xgXrV4aT4hPX+oDKBJgV5JMHXw6PQsG1u07u6EgbYCN/CakP8YSOXqaenfqEulHM=
+X-Received: by 2002:a25:9c09:: with SMTP id c9mr6796704ybo.462.1550048497909;
+ Wed, 13 Feb 2019 01:01:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190212170012.GF69686@sasha-vm> <CAH2r5mviqHxaXg5mtVe30s2OTiPW2ZYa9+wPajjzz3VOarAUfw@mail.gmail.com>
+ <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com> <20190213073707.GA2875@kroah.com>
+In-Reply-To: <20190213073707.GA2875@kroah.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 13 Feb 2019 11:01:25 +0200
+Message-ID: <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Steve French <smfrench@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  877b145f0f4723133f934be402b8dfc769eb971f
-Gitweb:     https://git.kernel.org/tip/877b145f0f4723133f934be402b8dfc769eb971f
-Author:     Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate: Wed, 13 Feb 2019 01:11:47 +0900
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 13 Feb 2019 08:16:39 +0100
+On Wed, Feb 13, 2019 at 9:37 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Feb 13, 2019 at 09:20:00AM +0200, Amir Goldstein wrote:
+> > I never saw an email from you or Greg saying, the branch "stable-xxx" is
+> > in review. Please run your tests.
+>
+> That is what my "Subject: [PATCH 4.9 000/137] 4.9.156-stable review"
+> type emails are supposed to kick off.  They are sent both to the stable
+> mailing list and lkml.
+>
+> This message already starts the testing systems going for a number of
+> different groups out there, do you want to be added to the cc: list so
+> you get them directly?
+>
 
-x86/kprobes: Move trampoline code into RODATA
+No thanks, I'll fix my email filters ;-)
 
-Move optprobe trampoline code into RODATA since it is
-not executed, but copied and modified to be used on
-a trampoline buffer.
+I think the main difference between these review announcements
+and true CI is what kind of guaranty you get for a release candidate
+from NOT getting a test failure response, which is one of the main
+reasons that where holding back xfs stable fixes for so long.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrea Righi <righi.andrea@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/154998790744.31052.3016106262944915510.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/kprobes/opt.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Best effort testing in timely manner is good, but a good way to
+improve confidence in stable kernel releases is a publicly
+available list of tests that the release went through.
 
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 544bd41a514c..f14262952015 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -97,6 +97,7 @@ static void synthesize_set_arg1(kprobe_opcode_t *addr, unsigned long val)
- }
- 
- asm (
-+			".pushsection .rodata\n"
- 			"optprobe_template_func:\n"
- 			".global optprobe_template_entry\n"
- 			"optprobe_template_entry:\n"
-@@ -136,16 +137,10 @@ asm (
- #endif
- 			".global optprobe_template_end\n"
- 			"optprobe_template_end:\n"
--			".type optprobe_template_func, @function\n"
--			".size optprobe_template_func, .-optprobe_template_func\n");
-+			".popsection\n");
- 
- void optprobe_template_func(void);
- STACK_FRAME_NON_STANDARD(optprobe_template_func);
--NOKPROBE_SYMBOL(optprobe_template_func);
--NOKPROBE_SYMBOL(optprobe_template_entry);
--NOKPROBE_SYMBOL(optprobe_template_val);
--NOKPROBE_SYMBOL(optprobe_template_call);
--NOKPROBE_SYMBOL(optprobe_template_end);
- 
- #define TMPL_MOVE_IDX \
- 	((long)optprobe_template_val - (long)optprobe_template_entry)
+Do you have any such list of tests that you *know* are being run,
+that you (or Sasha) run yourself or that you actively wait on an
+ACK from a group before a release?
+
+Thanks,
+Amir.
