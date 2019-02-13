@@ -2,136 +2,100 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F70C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC08C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622B4222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC141222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xj2JPIQB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oXSp1c4t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390087AbfBMNRZ (ORCPT
+        id S2390237AbfBMNR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:17:25 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:42690 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730377AbfBMNRZ (ORCPT
+        Wed, 13 Feb 2019 08:17:59 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43508 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730377AbfBMNR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:17:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sSbenEiJhYX0l2EY5xkUhH56SlPk5uQLJ95FY6Mjt1Y=; b=Xj2JPIQBOloxhQw3JujUmGJIq
-        DFUBrKC+gfMyibtvX1xhuP6U5b6tDKKXEfK+cJojo6IjEyeLF91bsRPk+YOlJ+kpegYeb2ZFXdhAq
-        OSZrldohNa09OEJgutlw0oex04SKKqk7maSCd4Nlkhiy5T8uRAB92kbhvi73QFea/81qqeWmdpHeP
-        JAvOL4HNW+DTdMpbGM0k+zFFvKRACTDr22Equv682FZWcYaivmgMPXMsBPKGk0gW0ZcTqeFfZW2kg
-        84BvlBxo08nJ1Ql2V06hNEjJNphxNXCTHtpn2/majCFoSv5cnqTmjDYldsye7FzBmNeBUDHKHi7rZ
-        qBvBdEqHA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtuPh-00084g-BQ; Wed, 13 Feb 2019 13:17:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 207E325D07E27; Wed, 13 Feb 2019 14:17:20 +0100 (CET)
-Date:   Wed, 13 Feb 2019 14:17:20 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        hpa@zytor.com, valentin.schneider@arm.com
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-Message-ID: <20190213131720.GU32494@hirez.programming.kicks-ass.net>
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
- <20190211134527.GA121589@gmail.com>
- <20190211135159.GC32511@hirez.programming.kicks-ass.net>
- <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
- <20190213103553.GO32494@hirez.programming.kicks-ass.net>
- <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 13 Feb 2019 08:17:59 -0500
+Received: by mail-wr1-f66.google.com with SMTP id r2so2422279wrv.10;
+        Wed, 13 Feb 2019 05:17:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kOiiFrA5j18jRpqBTDSiiLI1IM+ozLJzbXOSghDje+c=;
+        b=oXSp1c4tKFCLPyDGrQcBh0Tg5/irFTUdK+wiZaJyM77FfK4sFCDI+ssXMJdWcMgJAX
+         xrnWJ/4rufx2ry+tXUAgNwjUHl1aeOmwIIYNQPRfeWNEcJsQTB/wd6FBe/VkMCISMgun
+         sqGYNAMLJLgxEWIyKY42cRJMF8p4OugR7rTfo8vIjmrhQ7VKdYM9bYBNTFiZOUrjTzKI
+         OsNY2Rr0YQdBLbKrdsRLLUMx8oWM9MPhKK+XPi8VxbDm/s+dMbyC8YEGr5bLGG778Mcc
+         l+wj7KqfzaWGpEag7pizScR99rxQfi1lHNWjZQRimjqCV/w3m0Xx/HJIQl5Omdv3/MLd
+         riaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kOiiFrA5j18jRpqBTDSiiLI1IM+ozLJzbXOSghDje+c=;
+        b=DXWcV6PmZjkDN8hhdy6gRHVqcRMuxgN46itNfykoFrzTPL46usuv5UQ1MUAxHi1B9K
+         sADZeDoa5WRzkCkhZKJuYMZq+K9UjhEhfTySuTkzjIyrKRFQmkHPGfb7PXXm4sGJDIHg
+         AEYVaKVwzAL3RskCx1cxCIP5gjuTGiMNSiOJsrWF5gJJVEU1nBYYXVbaoQs7i8d5u4Ou
+         6MwB3/vaAx4KOWRUONbBaK8b7RCH6hKDOCyCdvMf4Ky9c2Xn1lcDPC/7tL36e3PJNGGS
+         yvp/QkbnS4KALFzldy97lrReAGfpvBXd3JtLefho/8fY0FBPCKyKQuKuuJfR45RUkEZV
+         qHqQ==
+X-Gm-Message-State: AHQUAuaw5q9QOKm6uUxwJM8DjUCcnBGK4wbw5HDQOtF1gCuPGNQ3m0Dk
+        4Tf7AsQy3f+roIE/c8xlj9w=
+X-Google-Smtp-Source: AHgI3IZqiIYEf/8NIVYRZQpj6flv2zDOh4RinEmYMMHQapYFG8l9aVT2f2Bs/nzWOX9um1ZuP2HnWA==
+X-Received: by 2002:a5d:55c5:: with SMTP id i5mr382460wrw.245.1550063876817;
+        Wed, 13 Feb 2019 05:17:56 -0800 (PST)
+Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
+        by smtp.gmail.com with ESMTPSA id y24sm12765937wma.0.2019.02.13.05.17.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 05:17:56 -0800 (PST)
+From:   Mathieu Othacehe <m.othacehe@gmail.com>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Othacehe <m.othacehe@gmail.com>
+Subject: [PATCH] iio: trigger: Print an error if there is no available irq
+Date:   Wed, 13 Feb 2019 14:17:52 +0100
+Message-Id: <20190213131752.646-1-m.othacehe@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:50:21AM +0000, Julien Thierry wrote:
-> On 13/02/2019 10:35, Peter Zijlstra wrote:
-> > On Tue, Feb 12, 2019 at 09:15:13AM +0000, Julien Thierry wrote:
-> > 
-> >>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >>>>> index a674c7db..b1bb7e9 100644
-> >>>>> --- a/kernel/sched/core.c
-> >>>>> +++ b/kernel/sched/core.c
-> >>>>> @@ -3289,6 +3289,14 @@ static inline void schedule_debug(struct task_struct *prev)
-> >>>>>  		__schedule_bug(prev);
-> >>>>>  		preempt_count_set(PREEMPT_DISABLED);
-> >>>>>  	}
-> >>>>> +
-> >>>>> +	if (IS_ENABLED(CONFIG_DEBUG_UACCESS_SLEEP) &&
-> >>>>> +	    unlikely(unsafe_user_region_active())) {
-> >>>>> +		printk(KERN_ERR "BUG: scheduling while user_access enabled: %s/%d/0x%08x\n",
-> >>>>> +		       prev->comm, prev->pid, preempt_count());
-> >>>>> +		dump_stack();
-> >>>>> +	}
-> >>>>> +
-> >>>>>  	rcu_sleep_check();
-> >>>>>
-> >>>>>  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
-> > 
-> >> I guess I'll drop the might_resched() part of this patch if that sounds
-> >> alright.
-> > 
-> > I'm still confused by the schedule_debug() part. How is that not broken?
-> 
-> Hmmm, I am not exactly sure which part you expect to be broken, I guess
-> it's because of the nature of the uaccess unsafe accessor usage.
-> 
-> Basically, the following is a definite no:
-> 	if (user_access_begin(ptr, size)) {
-> 
-> 		[...]
-> 
-> 		//something that calls schedule
-> 
-> 		[...]
-> 
-> 		user_access_end();
-> 	}
-> 	
-> 
-> However the following is fine:
-> 
-> - user_access_begin(ptr, size)
-> - taking irq/exception
-> - get preempted
+If there are more trigger consumers than
+CONFIG_IIO_CONSUMERS_PER_TRIGGER, iio_trigger_attach_poll_func will
+silently fail. Add an error message to inform the user that
+CONFIG_IIO_CONSUMERS_PER_TRIGGER limit might be exceeded.
 
-This; how is getting preempted fundamentally different from scheduling
-ourselves?
+Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
+---
+ drivers/iio/industrialio-trigger.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> - get resumed at some point in time
-> - restore state + eret
-> - user_access_end()
-> 
-> That's because exceptions/irq implicitly "suspend" the user access
-> region. (That's what I'm trying to clarify with the comment)
-> So, unsafe_user_region_active() should return false in a irq/exception
-> context.
-> 
-> Is this what you were concerned about? Or there still something that
-> might be broken?
+diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+index ce66699c7fcc..801986c21467 100644
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@ -254,8 +254,12 @@ static int iio_trigger_attach_poll_func(struct iio_trigger *trig,
+ 
+ 	/* Get irq number */
+ 	pf->irq = iio_trigger_get_irq(trig);
+-	if (pf->irq < 0)
++	if (pf->irq < 0) {
++		pr_err("Could not find an available irq for trigger %s, "
++			"CONFIG_IIO_CONSUMERS_PER_TRIGGER limit "
++			"might be exceeded\n", trig->name);
+ 		goto out_put_module;
++	}
+ 
+ 	/* Request irq */
+ 	ret = request_threaded_irq(pf->irq, pf->h, pf->thread,
+-- 
+2.17.1
 
-I really hate the asymetry introduced between preemptible and being able
-to schedule. Both end up calling __schedule() and there really should
-not be a difference.
