@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71204C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D994C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9512190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20602190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026782;
-	bh=MGQHZtkt+QAOVM/NcWJx4rguVDOQp4la1Q+auPcfvCo=;
+	s=default; t=1550026790;
+	bh=7H1SuANf+FOD1J1TmCN2mSpoS0LLIz9UPWYuuGlOidk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S7VcHSCqp4PDsLQjNBW2CHPVqFrlnYFxdiOGkksfoKtPaLE9VKXIxNA/SgLMAYJlD
-	 6x3248VQtDArcmBT1uGbGBL717tTy0qI/5vO74vC2Az68gCa2fpFooiJ7pZM3t5MVe
-	 1+xGw7+Gmerp9Y40Yf4b26jc7T7S0TP1iwsYgrM4=
+	b=a6yQjJsoM13BA5K1yyCD+6qYD3oQR5+WZSBbMo4cRcmMLv2omi7gwcekUdKDXamri
+	 c8M0WPvjwGFr6pvks5w1ZCq7v77etBgg/RIQ6/AzH02NN4HTPmp814dBqbN0U3sSjE
+	 sTHMudsdKa3dVm8mQ7oGvejMj0o7r9sjAP97ki+U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390225AbfBMC7k (ORCPT
+        id S2390232AbfBMC7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39882 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:59:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732128AbfBMCgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:16 -0500
+        id S1731764AbfBMCgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:36:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95E53206B6;
-        Wed, 13 Feb 2019 02:36:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CD4C222CD;
+        Wed, 13 Feb 2019 02:36:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025376;
-        bh=MGQHZtkt+QAOVM/NcWJx4rguVDOQp4la1Q+auPcfvCo=;
+        s=default; t=1550025375;
+        bh=7H1SuANf+FOD1J1TmCN2mSpoS0LLIz9UPWYuuGlOidk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Av9PzEQ2UD1wSdJfZ9+aqKtoZSRiWjXXeH6bLEkULtzMF8r1zMvejL6bkPXgm257e
-         Lk4kcjyZjgAIiyDLZY4kV2c0seLdNYAbG5MmNe9r5NxgToJaXka4j1gv8dsx7RxJYW
-         J3Uk34+RRo7mHSbhfBNNtehztdw+ZoXK1PRqLaPw=
+        b=XkeJG2ahV/bfDG5sUGMEN4hgR2SYltfkagH5WUIkmmNWfcw7cRzUFgriOaeAKJwM3
+         ftcNc53mn8ISKCiKxpjoTLsRUij/GXZjzLiUced/7lUhTsRc++dUfpAiZx4t5mWq9p
+         /a6pVvfJCjx3f49kQf5yd1fswbeVMVGm/wVPlm98=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
+Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 086/105] afs: Fix key refcounting in file locking code
-Date:   Tue, 12 Feb 2019 21:33:17 -0500
-Message-Id: <20190213023336.19019-86-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 085/105] afs: Don't set vnode->cb_s_break in afs_validate()
+Date:   Tue, 12 Feb 2019 21:33:16 -0500
+Message-Id: <20190213023336.19019-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -56,57 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Marc Dionne <marc.dionne@auristor.com>
 
-[ Upstream commit 59d49076ae3e6912e6d7df2fd68e2337f3d02036 ]
+[ Upstream commit 4882a27cec24319d10f95e978ecc80050e3e3e15 ]
 
-Fix the refcounting of the authentication keys in the file locking code.
-The vnode->lock_key member points to a key on which it expects to be
-holding a ref, but it isn't always given an extra ref, however.
+A cb_interest record is not necessarily attached to the vnode on entry to
+afs_validate(), which can cause an oops when we try to bring the vnode's
+cb_s_break up to date in the default case (ie. no current callback promise
+and the vnode has not been deleted).
 
-Fixes: 0fafdc9f888b ("afs: Fix file locking")
+Fix this by simply removing the line, as vnode->cb_s_break will be set when
+needed by afs_register_server_cb_interest() when we next get a callback
+promise from RPC call.
+
+The oops looks something like:
+
+    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+    ...
+    RIP: 0010:afs_validate+0x66/0x250 [kafs]
+    ...
+    Call Trace:
+     afs_d_revalidate+0x8d/0x340 [kafs]
+     ? __d_lookup+0x61/0x150
+     lookup_dcache+0x44/0x70
+     ? lookup_dcache+0x44/0x70
+     __lookup_hash+0x24/0xa0
+     do_unlinkat+0x11d/0x2c0
+     __x64_sys_unlink+0x23/0x30
+     do_syscall_64+0x4d/0xf0
+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/flock.c | 4 ++--
- fs/afs/inode.c | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/afs/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/afs/flock.c b/fs/afs/flock.c
-index 0568fd986821..e432bd27a2e7 100644
---- a/fs/afs/flock.c
-+++ b/fs/afs/flock.c
-@@ -208,7 +208,7 @@ again:
- 		/* The new front of the queue now owns the state variables. */
- 		next = list_entry(vnode->pending_locks.next,
- 				  struct file_lock, fl_u.afs.link);
--		vnode->lock_key = afs_file_key(next->fl_file);
-+		vnode->lock_key = key_get(afs_file_key(next->fl_file));
- 		vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
- 		vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
- 		goto again;
-@@ -413,7 +413,7 @@ static void afs_dequeue_lock(struct afs_vnode *vnode, struct file_lock *fl)
- 	/* The new front of the queue now owns the state variables. */
- 	next = list_entry(vnode->pending_locks.next,
- 			  struct file_lock, fl_u.afs.link);
--	vnode->lock_key = afs_file_key(next->fl_file);
-+	vnode->lock_key = key_get(afs_file_key(next->fl_file));
- 	vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
- 	vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
- 	afs_lock_may_be_available(vnode);
 diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 211343831c30..1a4ce07fb406 100644
+index 6b17d3620414..211343831c30 100644
 --- a/fs/afs/inode.c
 +++ b/fs/afs/inode.c
-@@ -545,6 +545,8 @@ void afs_evict_inode(struct inode *inode)
- #endif
- 
- 	afs_put_permits(rcu_access_pointer(vnode->permit_cache));
-+	key_put(vnode->lock_key);
-+	vnode->lock_key = NULL;
- 	_leave("");
- }
- 
+@@ -414,7 +414,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
+ 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
+ 		valid = true;
+ 	} else {
+-		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
+ 		vnode->cb_v_break = vnode->volume->cb_v_break;
+ 		valid = false;
+ 	}
 -- 
 2.19.1
 
