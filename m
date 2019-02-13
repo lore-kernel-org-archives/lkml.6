@@ -2,102 +2,170 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D640C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8DFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B63E20700
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550079780;
-	bh=8/a6GqEt6IT+kCPU/DD4c6vSzGl+dSgpHTaX8RXnqr4=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=1LDMuM6n6G2vrWPal6sSEVv6rueQaCv4k/1QY7aJjGt0k2XzUpgTq1Yx3VrMaVhK+
-	 IDaGrfqi6jQKtrKxEu8Qek+9A8xC0S5o2Hyn1O1KmHO18C/R0PIaiQ243KtFBHjk2Y
-	 KKfan3AdnM+Ro1ZrHE0dqkmObzA5C4Fk0Y9EEFZE=
+	by mail.kernel.org (Postfix) with ESMTP id 3E61320700
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390870AbfBMRm6 (ORCPT
+        id S2390998AbfBMRn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:42:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37294 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 12:43:28 -0500
+Received: from foss.arm.com ([217.140.101.70]:58118 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730494AbfBMRm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:42:58 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A34D20700;
-        Wed, 13 Feb 2019 17:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550079777;
-        bh=8/a6GqEt6IT+kCPU/DD4c6vSzGl+dSgpHTaX8RXnqr4=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=oxJpZinKS2N45QtSrCM9rsIGt2314DzJ/uiBNjioVEzC7Ndm2NZxLbyQiaZHOAxIY
-         3SNsKq49ZQXqcjZUe4HcmiE085f2ytnPehwdBtc5ZpD/uO6yjMRJfVYSV+n9wRb+u3
-         ZEDxworNAcBcZ/x170y1BbLh1LjykvNTmDKeYpdo=
-Content-Type: text/plain; charset="utf-8"
+        id S1730494AbfBMRn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:43:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 098A6A78;
+        Wed, 13 Feb 2019 09:43:27 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F30E3F675;
+        Wed, 13 Feb 2019 09:43:22 -0800 (PST)
+Date:   Wed, 13 Feb 2019 17:43:19 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Kevin Brodsky <kevin.brodsky@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Branislav Rankov <Branislav.Rankov@arm.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
+Message-ID: <20190213174318.GM3567@e103592.cambridge.arm.com>
+References: <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+ <20181212150230.GH65138@arrakis.emea.arm.com>
+ <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
+ <20181218175938.GD20197@arrakis.emea.arm.com>
+ <20181219125249.GB22067@e103592.cambridge.arm.com>
+ <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
+ <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
+ <20190212180223.GD199333@arrakis.emea.arm.com>
+ <20190213145834.GJ3567@e103592.cambridge.arm.com>
+ <90c54249-00dd-f8dd-6873-6bb8615c2c8a@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-In-Reply-To: <1550073243-11242-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH V3 2/2] clk: imx: scu: add cpu frequency scaling support
-Message-ID: <155007977634.115909.4465011219844819801@swboyd.mtv.corp.google.com>
-References: <1550073243-11242-1-git-send-email-Anson.Huang@nxp.com> <1550073243-11242-2-git-send-email-Anson.Huang@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:42:56 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90c54249-00dd-f8dd-6873-6bb8615c2c8a@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2019-02-13 07:59:32)
-> @@ -145,6 +161,39 @@ static long clk_scu_round_rate(struct clk_hw *hw, un=
-signed long rate,
->         return rate;
->  }
-> =20
-> +static bool clk_scu_atf_set_cpu_rate(struct clk_hw *hw, unsigned long ra=
-te)
-> +{
-> +       struct clk_scu *clk =3D to_clk_scu(hw);
-> +       struct arm_smccc_res res;
-> +       unsigned int cluster_id;
-> +       int i;
-> +
-> +       /* CPU frequency scaling can ONLY be done by ARM-Trusted-Firmware=
- */
-> +       if (clk->clk_type =3D=3D IMX_SC_PM_CLK_CPU) {
-> +               for (i =3D 0; i < ARRAY_SIZE(imx_sc_cpufreq_data); i++) {
-> +                       if (!strcmp(clk_hw_get_name(hw),
-> +                               imx_sc_cpufreq_data[i].clk_name)) {
-> +                               cluster_id =3D imx_sc_cpufreq_data[i].clu=
-ster_id;
-> +                               break;
-> +                       }
-> +               }
+On Wed, Feb 13, 2019 at 04:42:11PM +0000, Kevin Brodsky wrote:
+> (+Cc other people with MTE experience: Branislav, Ruben)
 
-Is there some reason why these clks can't be determined once at boot
-time? It would be a good idea to avoid doing any sort of string
-comparison here, instead just calling the right arm_smccc_smc with the
-right arguments based on code that registers those types of clks.
+[...]
 
+> >I'm wondering whether we can piggy-back on existing concepts.
+> >
+> >We could say that recolouring memory is safe when and only when
+> >unmapping of the page or removing permissions on the page (via
+> >munmap/mremap/mprotect) would be safe.  Otherwise, the resulting
+> >behaviour of the process is undefined.
+> 
+> Is that a sufficient requirement? I don't think that anything prevents you
+> from using mprotect() on say [vvar], but we don't necessarily want to map
+> [vvar] as tagged. I'm not sure it's easy to define what "safe" would mean
+> here.
+
+I think the origin rules have to apply too: [vvar] is not a regular,
+private page but a weird, shared thing mapped for you by the kernel.
+
+Presumably userspace _cannot_ do mprotect(PROT_WRITE) on it.
+
+I'm also assuming that userspace cannot recolour memory in read-only
+pages.  That sounds bad if there's no way to prevent it.
+
+[...]
+
+> >It might be reasonable to do the check in access_ok() and skip it in
+> >__put_user() etc.
+> >
+> >(I seem to remember some separate discussion about abolishing
+> >__put_user() and friends though, due to the accident risk they pose.)
+> 
+> Keep in mind that with MTE, there is no need to do any explicit check when
+> accessing user memory via a user-provided pointer. The tagged user pointer
+> is directly passed to copy_*_user() or put_user(). If the load/store causes
+> a tag fault, then it is handled just like a page fault (i.e. invoking the
+> fixup handler). As far as I can tell, there's no need to do anything special
+> in access_ok() in that case.
+> 
+> [The above applies to precise mode. In imprecise mode, some more work will
+> be needed after the load/store to check whether a tag fault happened.]
+
+Fair enough, I'm a bit hazy on the details as of right now..
+
+[...]
+
+> There are many possible ways to deploy MTE, and debugging is just one of
+> them. For instance, you may want to turn on heap colouring for some
+> processes in the system, including in production.
+
+To implement enforceable protection, or as a diagnostic tool for when
+something goes wrong?
+
+In the latter case it's still OK for the kernel's tag checking not to be
+exhaustive.
+
+> Regarding those cases where it is impossible to check tags at the point of
+> accessing user memory, it is indeed possible to check the memory tags at the
+> point of stripping the tag from the user pointer. Given that some MTE
+> use-cases favour performance over tag check coverage, the ideal approach
+> would be to make these checks configurable (e.g. check one granule, check
+> all of them, or check none). I don't know how feasible this is in practice.
+
+Check all granules of a massive DMA buffer?
+
+That doesn't sounds feasible without explicit support in the hardware to
+have the DMA check tags itself as the memory is accessed.  MTE by itself
+doesn't provide for this IIUC (at least, it would require support in the
+platform, not just the CPU).
+
+We do not want to bake any assumptions into the ABI about whether a
+given data transfer may or may not be offloaded to DMA.  That feels
+like a slippery slope.
+
+Providing we get the checks for free in put_user/get_user/
+copy_{to,from}_user(), those will cover a lot of cases though, for
+non-bulk-IO cases.
+
+
+My assumption has been that at this point in time we are mainly aiming
+to support the debug/diagnostic use cases today.
+
+At least, those are the low(ish)-hanging fruit.
+
+Others are better placed than me to comment on the goals here.
+
+Cheers
+---Dave
