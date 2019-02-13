@@ -2,126 +2,99 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 031B8C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ECBC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0177222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBDCB2070D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:34:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="iqz0kqK3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403830AbfBMIdt (ORCPT
+        id S2390714AbfBMIeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:33:49 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35425 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389660AbfBMIds (ORCPT
+        Wed, 13 Feb 2019 03:34:14 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38857 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388558AbfBMIeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:33:48 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v7so1131830lfd.2;
-        Wed, 13 Feb 2019 00:33:47 -0800 (PST)
+        Wed, 13 Feb 2019 03:34:13 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j19so456101ljg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:34:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=teet6uMCYi/whroYHOOAdDx2GYqeMBTlZmN9wdbKNnw=;
+        b=iqz0kqK3vOUrd3fJbspLIXKbGQelWI+lL9N4IUhxT6yRt7uePeqWQ++QhToZPG/zGj
+         uSOY/uH4kj3NEfUSg8pM5xe5fqWSZYt9xCPZv/Ukt9YKkbVOF5xwgHjmigcJa6HwaIPu
+         obO9OPC5RUvan7EOODOkMT35fNCwV5YnsvAbRU4a7J8EWA9BJCRxbQvHyw/khI2sbiM+
+         IeGVhTa4hTkiJcSlsyN9CQimbMg4kLF6l2Jmy/4FixStxCVzFQ5Q2TY8qvcNYwT+sgsH
+         RK06MyGuN1gdKotF4EoZYwBhVvkDLiWIgBZEphqBnCYGrE/ypydLCiRtZXmqulONzCg5
+         PKJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f7xCLK1ihUYI0iGbd9cf+kebEPgIOMYD+iYb0Qebmy0=;
-        b=s6Mi1MVTSNnU+FzhugaddsM13omH5XIdZVW/WR1cEw+Lxcndxs5wU8Q8WX7EFoPFjB
-         /VGLLGEkBiSIIb3l/XB9X+b08JxUz3p3V3OrVC0ntmNcTStrjWWA/8wRgB0C9FVFXXUN
-         5FSulJWka8X+SwwdiXRaNCV+Ns67nIRrczFpU9z2g3GuyMPRMtzUNNWCP/xS1CLihXPm
-         a8rQbSJsgVi7+kSJUapdoet2lY66uOtH9gs1WdvUqKx+MSkpeDX+Ey0jcupYOHJJeZZr
-         /NL0CsXULfIVJIhr66U8NzrDn/NGOnio24uWmllNGiXQNBqMA+NtLkIlShtBMdXTfa38
-         VBGw==
-X-Gm-Message-State: AHQUAua0p7xg6MDOpHmAIlBVGizL49QwK2bIbmzwJA45MAqRT1r2kqwB
-        dkudTuZaSxvKBEXcSvKZnrU=
-X-Google-Smtp-Source: AHgI3IYF1kB7gi7nnhXEkvVF1V/8Q5YKouBTAJ2RVqYo0cUBUkuJCMALLe35eaIAmydXb6fnnYs/rw==
-X-Received: by 2002:ac2:5489:: with SMTP id t9mr4926848lfk.49.1550046826372;
-        Wed, 13 Feb 2019 00:33:46 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p15sm2178875lfc.88.2019.02.13.00.33.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 00:33:45 -0800 (PST)
-Date:   Wed, 13 Feb 2019 10:33:43 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        Robin Gong <yibin.gong@nxp.com>,
-        Elven Wang <elven.wang@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Subject: Re: [RFC PATCH v1 3/3] regulator: bd718x7: Support SNVS low power
- state
-Message-ID: <20190213083343.GC12247@localhost.localdomain>
-References: <cover.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
- <06c2f2f730b07caeb1f2fb86be60c02b21d7bea9.1549980347.git.matti.vaittinen@fi.rohmeurope.com>
- <20190212160831.GF20635@sirena.org.uk>
- <20190213073827.GB12247@localhost.localdomain>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=teet6uMCYi/whroYHOOAdDx2GYqeMBTlZmN9wdbKNnw=;
+        b=qPEWn/WY8VVO3yJHFjNlmvqDBbtPURkGJKJAOCak2cBXehkCuwYbmcTISkV+9yKSRt
+         X8D+24hKKz/cpfOub6o3y3mVYl62D6cbeVja4p+Te7TF1E7dSE5PP/nTNMjWMmQ1oqpd
+         zTkK5vDap7jv3z0grl2QkqTT/8U1hNYN6WBhmKzecLcBda5MZTigZXNHG9R1wQUe78QL
+         Wb/UMzKWZVcZQ6Dk87RCJ7yJ0nIVQaDozKQxL/NPDV2lXzNyvosIF4wB9CAUti28XW2M
+         vxJPCpvDdlNgPg0w1nc54dQSdagxMQ6rDFlKn52zucQFHF1VmDgKcFYdQxFTNiIVtBDw
+         Hh2w==
+X-Gm-Message-State: AHQUAuawpzUxT65PEUxr/XWrcptvVKpTb2UMaK0yss30hfwTaROHWbUc
+        1YSEy7u/vQjv2vaxqwL+lX8pORJZPv8=
+X-Google-Smtp-Source: AHgI3IYIHBlRilX2w3h8ClWfWIKNuIqDBU0nP4zsSO7y4OLEK19LWqYsZFz7EUSQApyh4PedxQyWcg==
+X-Received: by 2002:a2e:9f56:: with SMTP id v22-v6mr5190413ljk.114.1550046851512;
+        Wed, 13 Feb 2019 00:34:11 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.84.178])
+        by smtp.gmail.com with ESMTPSA id z8sm2033753lfg.77.2019.02.13.00.34.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 00:34:10 -0800 (PST)
+Subject: Re: [PATCH v3 1/9] platform/x86: intel_cht_int33fe: Prepare for
+ better mux naming scheme
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
+ <20190213074557.66028-2-heikki.krogerus@linux.intel.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <95dc6948-8fba-97cc-77f9-7c105a946dbf@cogentembedded.com>
+Date:   Wed, 13 Feb 2019 11:34:01 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213073827.GB12247@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190213074557.66028-2-heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello peeps,
+Hello!
 
-And my apologies! I was in a hurry yesterday. I had to pick up kid kid
-from kindegarden and I wanted to send the RFC before that - bad mistake.
-Should've learnd by now.
+On 13.02.2019 10:45, Heikki Krogerus wrote:
 
-Today I decided to continue work and use combination of
-regulator-always-on and regulator-boot-on instead of
-rohm,regulator-crucial-for-boot. I was ashtonished by the fact that I
-didn't find my latest work from my git. After a while I found unsaved
-buffer from another editor instance with changes concerning handling of
-"rohm,regulator-crucial-for-boot"...
+> Adding new connections with for the muxes with new
+                          ^^^^^^^^
+    I can't parse this. :-)
 
-On Wed, Feb 13, 2019 at 09:38:27AM +0200, Matti Vaittinen wrote:
-> Hello Mark,
+> identifiers. The old connection are left in for now.
 > 
-> On Tue, Feb 12, 2019 at 04:08:31PM +0000, Mark Brown wrote:
-> 
-> So with current driver design, even if constrains prevented the
-> regulator core from touching the regulators, the driver still changes
-> the control to SW. So we need to parse some attribute in the BD718x7
-> driver side. Besides, I did not spot a 'do not touch me' property from
-> the bindings :)
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Jun Li <jun.li@nxp.com>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+[...]
 
-So no wonder it was not clear that the core constrains were not enough.
-Previous patch did not contain the part of change that skipped turning
-the regulator control to SW if regulator was marked crucial.
-
-> But after writing all this - I think you are correct. We do not need the
-> rohm,regulator-crucial-for-boot. I guess we can check for the
-> combination of:
-> 
-> regulator-always-on and regulator-boot-on
-> 
-> and interpret this as "rohm,regulator-crucial-for-boot".
-> 
-> I just think I need to document that those flags are required
-> for critical regulators if SNVS is used as reset target even if there
-> should be no one touching those regulators.
-
-Anyways, this is still valid - I'll prepare next version with all
-intended changes included... :/
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+MBR, Sergei
