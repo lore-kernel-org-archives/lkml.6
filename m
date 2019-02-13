@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AC0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEA3C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D9D222D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07403222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083199;
-	bh=OBXob9E1le+atK3fC3FjhF6X6K0IhXVElwZw7si7i/A=;
+	s=default; t=1550083202;
+	bh=R7V2DY9s8Dvpewsc9iuCv90pVzXkeU3vbKJg1kDYe50=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AI1WVS3Aur3ckYlOHwnQfRqKeKHO7oNrG9PyDVUs4mgbPLxF5Z4bx9sIs2xwGXNit
-	 BUKEyUWNgOR6dSqjVUa7qY0XkG3hlJ+g/UqaB2aa76kIjW+JeivViwMzAPzkzRzVqS
-	 bNtO/IKQSn5p0+WLSWsdfTkNJ+L9CvOsFLnilm7o=
+	b=f4FErQMyDUxBM6uALkK+vZ8lntAQBiCIjnWt4qIq5ef+rY+Lxezrl8ebz+fTFxtU7
+	 e1w9vLWHxiudjEvgy5jIGawzESFJXGdFyA0q46BvDWqI3X/X+YHKc1dlzdLurmJMEZ
+	 PF8wbHajyvtzYZk2TWzH8t7/g1juAho7eOgiM3a0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405318AbfBMSj5 (ORCPT
+        id S2405333AbfBMSkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37946 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:40:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405302AbfBMSjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:39:54 -0500
+        id S2405310AbfBMSj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:39:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7891222D6;
-        Wed, 13 Feb 2019 18:39:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55940222D5;
+        Wed, 13 Feb 2019 18:39:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083193;
-        bh=OBXob9E1le+atK3fC3FjhF6X6K0IhXVElwZw7si7i/A=;
+        s=default; t=1550083196;
+        bh=R7V2DY9s8Dvpewsc9iuCv90pVzXkeU3vbKJg1kDYe50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZponWgQ72/AFuj/ZEOgiMqVUiFlalHwUvGzTkyzJz80S7CLtc3DIZlNhogfjT1B+2
-         eQ4RNCFdGZ6f/u25++uTaK59QlNymwYPsxDXe3UwLlk/MALnUrrz5ES4Pwdu/91O4y
-         7ugl6lphS7+Rnr79+GXnCvVlddGKc1oCqO2HRuLA=
+        b=QeL+qxifv/FQtMDY7RPgxDXgT+r+8Hu5G/d5B2BdpnNCzMn8/AQNkrek7Ldaatm0S
+         w06ZC8DzF/xDHQh2fw7jL02rMy9L4PPcnvOvn/1a2BxtOA9rczIZA69YNnIH/joZ7e
+         9Xv89KXN3grTaQYMxybvG19iOUDFNsbMMM3YMmYc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Salvatore Bonaccorso <carnil@debian.org>
-Subject: [PATCH 4.9 18/24] nfsd4: catch some false session retries
-Date:   Wed, 13 Feb 2019 19:38:15 +0100
-Message-Id: <20190213183648.924916825@linuxfoundation.org>
+        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 4.9 19/24] HID: debug: fix the ring buffer implementation
+Date:   Wed, 13 Feb 2019 19:38:16 +0100
+Message-Id: <20190213183649.051407712@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183647.333441569@linuxfoundation.org>
 References: <20190213183647.333441569@linuxfoundation.org>
@@ -66,115 +66,273 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Vladis Dronov <vdronov@redhat.com>
 
-commit 53da6a53e1d414e05759fa59b7032ee08f4e22d7 upstream.
+commit 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035 upstream.
 
-The spec allows us to return NFS4ERR_SEQ_FALSE_RETRY if we notice that
-the client is making a call that matches a previous (slot, seqid) pair
-but that *isn't* actually a replay, because some detail of the call
-doesn't actually match the previous one.
+Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
+is strange allowing lost or corrupted data. After commit 717adfdaf147
+("HID: debug: check length before copy_to_user()") it is possible to enter
+an infinite loop in hid_debug_events_read() by providing 0 as count, this
+locks up a system. Fix this by rewriting the ring buffer implementation
+with kfifo and simplify the code.
 
-Catching every such case is difficult, but we may as well catch a few
-easy ones.  This also handles the case described in the previous patch,
-in a different way.
+This fixes CVE-2019-3819.
 
-The spec does however require us to catch the case where the difference
-is in the rpc credentials.  This prevents somebody from snooping another
-user's replies by fabricating retries.
+v2: fix an execution logic and add a comment
+v3: use __set_current_state() instead of set_current_state()
 
-(But the practical value of the attack is limited by the fact that the
-replies with the most sensitive data are READ replies, which are not
-normally cached.)
+Backport to v4.9: some tree-wide patches are missing in v4.9 so
+cherry-pick relevant pieces from:
+ * 6396bb22151 ("treewide: kzalloc() -> kcalloc()")
+ * a9a08845e9ac ("vfs: do bulk POLL* -> EPOLL* replacement")
+ * 174cd4b1e5fb ("sched/headers: Prepare to move signal wakeup & sigpending
+   methods from <linux/sched.h> into <linux/sched/signal.h>")
 
-Tested-by: Olga Kornievskaia <aglo@umich.edu>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Cc: Salvatore Bonaccorso <carnil@debian.org>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
+Cc: stable@vger.kernel.org # v4.18+
+Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
+Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- fs/nfsd/nfs4state.c |   37 ++++++++++++++++++++++++++++++++++++-
- fs/nfsd/state.h     |    1 +
- 2 files changed, 37 insertions(+), 1 deletion(-)
+ drivers/hid/hid-debug.c   |  122 ++++++++++++++++++----------------------------
+ include/linux/hid-debug.h |    9 +--
+ 2 files changed, 52 insertions(+), 79 deletions(-)
 
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -1472,8 +1472,10 @@ free_session_slots(struct nfsd4_session
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -30,6 +30,7 @@
+ 
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
++#include <linux/kfifo.h>
+ #include <linux/sched.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
+@@ -455,7 +456,7 @@ static char *resolv_usage_page(unsigned
+ 	char *buf = NULL;
+ 
+ 	if (!f) {
+-		buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_ATOMIC);
++		buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_ATOMIC);
+ 		if (!buf)
+ 			return ERR_PTR(-ENOMEM);
+ 	}
+@@ -659,17 +660,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
+ /* enqueue string to 'events' ring buffer */
+ void hid_debug_event(struct hid_device *hdev, char *buf)
  {
- 	int i;
+-	unsigned i;
+ 	struct hid_debug_list *list;
+ 	unsigned long flags;
  
--	for (i = 0; i < ses->se_fchannel.maxreqs; i++)
-+	for (i = 0; i < ses->se_fchannel.maxreqs; i++) {
-+		free_svc_cred(&ses->se_slots[i]->sl_cred);
- 		kfree(ses->se_slots[i]);
-+	}
+ 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
+-	list_for_each_entry(list, &hdev->debug_list, node) {
+-		for (i = 0; buf[i]; i++)
+-			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
+-				buf[i];
+-		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
+-        }
++	list_for_each_entry(list, &hdev->debug_list, node)
++		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
+ 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
+ 
+ 	wake_up_interruptible(&hdev->debug_wait);
+@@ -720,8 +716,7 @@ void hid_dump_input(struct hid_device *h
+ 	hid_debug_event(hdev, buf);
+ 
+ 	kfree(buf);
+-        wake_up_interruptible(&hdev->debug_wait);
+-
++	wake_up_interruptible(&hdev->debug_wait);
  }
+ EXPORT_SYMBOL_GPL(hid_dump_input);
  
- /*
-@@ -2347,6 +2349,8 @@ nfsd4_store_cache_entry(struct nfsd4_com
- 	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
- 	slot->sl_opcnt = resp->opcnt;
- 	slot->sl_status = resp->cstate.status;
-+	free_svc_cred(&slot->sl_cred);
-+	copy_cred(&slot->sl_cred, &resp->rqstp->rq_cred);
+@@ -1086,8 +1081,8 @@ static int hid_debug_events_open(struct
+ 		goto out;
+ 	}
  
- 	if (!nfsd4_cache_this(resp)) {
- 		slot->sl_flags &= ~NFSD4_SLOT_CACHED;
-@@ -3049,6 +3053,34 @@ static bool nfsd4_request_too_big(struct
- 	return xb->len > session->se_fchannel.maxreq_sz;
+-	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
+-		err = -ENOMEM;
++	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
++	if (err) {
+ 		kfree(list);
+ 		goto out;
+ 	}
+@@ -1107,77 +1102,57 @@ static ssize_t hid_debug_events_read(str
+ 		size_t count, loff_t *ppos)
+ {
+ 	struct hid_debug_list *list = file->private_data;
+-	int ret = 0, len;
++	int ret = 0, copied;
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	mutex_lock(&list->read_mutex);
+-	while (ret == 0) {
+-		if (list->head == list->tail) {
+-			add_wait_queue(&list->hdev->debug_wait, &wait);
+-			set_current_state(TASK_INTERRUPTIBLE);
+-
+-			while (list->head == list->tail) {
+-				if (file->f_flags & O_NONBLOCK) {
+-					ret = -EAGAIN;
+-					break;
+-				}
+-				if (signal_pending(current)) {
+-					ret = -ERESTARTSYS;
+-					break;
+-				}
+-
+-				if (!list->hdev || !list->hdev->debug) {
+-					ret = -EIO;
+-					set_current_state(TASK_RUNNING);
+-					goto out;
+-				}
+-
+-				/* allow O_NONBLOCK from other threads */
+-				mutex_unlock(&list->read_mutex);
+-				schedule();
+-				mutex_lock(&list->read_mutex);
+-				set_current_state(TASK_INTERRUPTIBLE);
++	if (kfifo_is_empty(&list->hid_debug_fifo)) {
++		add_wait_queue(&list->hdev->debug_wait, &wait);
++		set_current_state(TASK_INTERRUPTIBLE);
++
++		while (kfifo_is_empty(&list->hid_debug_fifo)) {
++			if (file->f_flags & O_NONBLOCK) {
++				ret = -EAGAIN;
++				break;
+ 			}
+ 
+-			set_current_state(TASK_RUNNING);
+-			remove_wait_queue(&list->hdev->debug_wait, &wait);
+-		}
+-
+-		if (ret)
+-			goto out;
+-
+-		/* pass the ringbuffer contents to userspace */
+-copy_rest:
+-		if (list->tail == list->head)
+-			goto out;
+-		if (list->tail > list->head) {
+-			len = list->tail - list->head;
+-			if (len > count)
+-				len = count;
+-
+-			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
+-				goto out;
++			if (signal_pending(current)) {
++				ret = -ERESTARTSYS;
++				break;
+ 			}
+-			ret += len;
+-			list->head += len;
+-		} else {
+-			len = HID_DEBUG_BUFSIZE - list->head;
+-			if (len > count)
+-				len = count;
+ 
+-			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
++			/* if list->hdev is NULL we cannot remove_wait_queue().
++			 * if list->hdev->debug is 0 then hid_debug_unregister()
++			 * was already called and list->hdev is being destroyed.
++			 * if we add remove_wait_queue() here we can hit a race.
++			 */
++			if (!list->hdev || !list->hdev->debug) {
++				ret = -EIO;
++				set_current_state(TASK_RUNNING);
+ 				goto out;
+ 			}
+-			list->head = 0;
+-			ret += len;
+-			count -= len;
+-			if (count > 0)
+-				goto copy_rest;
++
++			/* allow O_NONBLOCK from other threads */
++			mutex_unlock(&list->read_mutex);
++			schedule();
++			mutex_lock(&list->read_mutex);
++			set_current_state(TASK_INTERRUPTIBLE);
+ 		}
+ 
++		__set_current_state(TASK_RUNNING);
++		remove_wait_queue(&list->hdev->debug_wait, &wait);
++
++		if (ret)
++			goto out;
+ 	}
++
++	/* pass the fifo content to userspace, locking is not needed with only
++	 * one concurrent reader and one concurrent writer
++	 */
++	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
++	if (ret)
++		goto out;
++	ret = copied;
+ out:
+ 	mutex_unlock(&list->read_mutex);
+ 	return ret;
+@@ -1188,7 +1163,7 @@ static unsigned int hid_debug_events_pol
+ 	struct hid_debug_list *list = file->private_data;
+ 
+ 	poll_wait(file, &list->hdev->debug_wait, wait);
+-	if (list->head != list->tail)
++	if (!kfifo_is_empty(&list->hid_debug_fifo))
+ 		return POLLIN | POLLRDNORM;
+ 	if (!list->hdev->debug)
+ 		return POLLERR | POLLHUP;
+@@ -1203,7 +1178,7 @@ static int hid_debug_events_release(stru
+ 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
+ 	list_del(&list->node);
+ 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
+-	kfree(list->hid_debug_buf);
++	kfifo_free(&list->hid_debug_fifo);
+ 	kfree(list);
+ 
+ 	return 0;
+@@ -1254,4 +1229,3 @@ void hid_debug_exit(void)
+ {
+ 	debugfs_remove_recursive(hid_debug_root);
  }
+-
+--- a/include/linux/hid-debug.h
++++ b/include/linux/hid-debug.h
+@@ -24,7 +24,10 @@
  
-+static bool replay_matches_cache(struct svc_rqst *rqstp,
-+		 struct nfsd4_sequence *seq, struct nfsd4_slot *slot)
-+{
-+	struct nfsd4_compoundargs *argp = rqstp->rq_argp;
+ #ifdef CONFIG_DEBUG_FS
+ 
++#include <linux/kfifo.h>
 +
-+	if ((bool)(slot->sl_flags & NFSD4_SLOT_CACHETHIS) !=
-+	    (bool)seq->cachethis)
-+		return false;
-+	/*
-+	 * If there's an error than the reply can have fewer ops than
-+	 * the call.  But if we cached a reply with *more* ops than the
-+	 * call you're sending us now, then this new call is clearly not
-+	 * really a replay of the old one:
-+	 */
-+	if (slot->sl_opcnt < argp->opcnt)
-+		return false;
-+	/* This is the only check explicitly called by spec: */
-+	if (!same_creds(&rqstp->rq_cred, &slot->sl_cred))
-+		return false;
-+	/*
-+	 * There may be more comparisons we could actually do, but the
-+	 * spec doesn't require us to catch every case where the calls
-+	 * don't match (that would require caching the call as well as
-+	 * the reply), so we don't bother.
-+	 */
-+	return true;
-+}
-+
- __be32
- nfsd4_sequence(struct svc_rqst *rqstp,
- 	       struct nfsd4_compound_state *cstate,
-@@ -3108,6 +3140,9 @@ nfsd4_sequence(struct svc_rqst *rqstp,
- 		status = nfserr_seq_misordered;
- 		if (!(slot->sl_flags & NFSD4_SLOT_INITIALIZED))
- 			goto out_put_session;
-+		status = nfserr_seq_false_retry;
-+		if (!replay_matches_cache(rqstp, seq, slot))
-+			goto out_put_session;
- 		cstate->slot = slot;
- 		cstate->session = session;
- 		cstate->clp = clp;
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -169,6 +169,7 @@ static inline struct nfs4_delegation *de
- struct nfsd4_slot {
- 	u32	sl_seqid;
- 	__be32	sl_status;
-+	struct svc_cred sl_cred;
- 	u32	sl_datalen;
- 	u16	sl_opcnt;
- #define NFSD4_SLOT_INUSE	(1 << 0)
+ #define HID_DEBUG_BUFSIZE 512
++#define HID_DEBUG_FIFOSIZE 512
+ 
+ void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
+ void hid_dump_report(struct hid_device *, int , u8 *, int);
+@@ -37,11 +40,8 @@ void hid_debug_init(void);
+ void hid_debug_exit(void);
+ void hid_debug_event(struct hid_device *, char *);
+ 
+-
+ struct hid_debug_list {
+-	char *hid_debug_buf;
+-	int head;
+-	int tail;
++	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
+ 	struct fasync_struct *fasync;
+ 	struct hid_device *hdev;
+ 	struct list_head node;
+@@ -64,4 +64,3 @@ struct hid_debug_list {
+ #endif
+ 
+ #endif
+-
 
 
