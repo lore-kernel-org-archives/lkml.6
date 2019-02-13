@@ -2,101 +2,197 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735E6C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BA6C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F23C222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHjbVsFA"
+	by mail.kernel.org (Postfix) with ESMTP id ABAEE222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390657AbfBMI2K (ORCPT
+        id S2390674AbfBMI2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:28:10 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33952 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389393AbfBMI2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:28:09 -0500
-Received: by mail-it1-f195.google.com with SMTP id j17so1015406ita.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:28:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oUOESfCs2JKUr06HFwqaqcZEgGAvtw6Ga9RJAY0/XVE=;
-        b=KHjbVsFAGe5kL0whgNUj4yJGoi7INyUg6kBDyLeHO84YWt6mjXcl2Ua6UdwpF0ImDa
-         TmO6TCrS2cet7UmS/bIjmjKe++9vRqniwRMvZiEM1fbWweydJRgITpQxZCzsLeEIFEAi
-         QLi77/9h38BHmZgME7i6nWwUIOOvPKCX/znOnra5zZ8vh5S02jamn9mxRVGyG73R4n1E
-         zAArHuHuywkIzJJGNRaxEutnIE40TYP8PaojudQfD5HxsJQu4RmVRBIXYHe695TwNfRS
-         hPeYeIUAzREvvdkm/7KBPC+T+Z810e3sqFR7Y2plB8wZ/knvolewANmm2cEC7J1MSF5Y
-         f9Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oUOESfCs2JKUr06HFwqaqcZEgGAvtw6Ga9RJAY0/XVE=;
-        b=T6T6IikWctMwh/pGK72mJn1KsIDPABD5wVD4Uh0e9lvJ4X6LKFXKUqg7TfJXblzSww
-         dIvCixYDPmdKliHpl4oOS7iUuXo9Q6PM1fPgqZO1ryDNRDF2vC557DEVRoCAgBtmHRLn
-         Fwrpu5NboVFen1VDm5lUSPhGEKv21mx4nqhmV+xgKwOxtNmUCO9DxuAukdwum5SOLaEQ
-         /Sw73T+7xFhXuCEQuCPfxoT0tbBaICF8SzLds/Uv5JepKGSMUG7k6dIFd2wrIhe4JVvi
-         fl5iPrla3NyvhmIAXk0BgVLkK080NjSQyqPhr3cALS5y1LJ/hs5XMcIAasmWXPkSva1j
-         PCMA==
-X-Gm-Message-State: AHQUAuYn9QxuMlQ/W24M7Qn9WCRWsJHz6JsMR84msOe9IQqjzomx0TzC
-        Ytcnf5Hu6dQq17Bp4ZyvymsV/fLKozhGcWu1/kLyHA==
-X-Google-Smtp-Source: AHgI3IaxpYbHG2FxCIUkjtqeJfxg92cycDUtEq1CI8jWo2tSKkz7wFzY+UdA7+FyS/cgzNKsjBZKFPV6kbMC1EUtBBA=
-X-Received: by 2002:a24:5052:: with SMTP id m79mr1408387itb.166.1550046488924;
- Wed, 13 Feb 2019 00:28:08 -0800 (PST)
+        Wed, 13 Feb 2019 03:28:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732200AbfBMI2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:28:39 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E8418535C;
+        Wed, 13 Feb 2019 08:28:39 +0000 (UTC)
+Received: from kasong-laptop-rh.pek2.redhat.com (wlc-trust-50.pek2.redhat.com [10.72.3.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AAE1C5C225;
+        Wed, 13 Feb 2019 08:28:30 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Omar Sandoval <osandov@fb.com>, Jiri Bohac <jbohac@suse.cz>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Kairui Song <kasong@redhat.com>
+Subject: [PATCH v3] x86/gart/kcore: Exclude GART aperture from kcore
+Date:   Wed, 13 Feb 2019 16:28:00 +0800
+Message-Id: <20190213082800.4400-1-kasong@redhat.com>
 MIME-Version: 1.0
-References: <0000000000002015db0581b71858@google.com> <20190212191920.GI10665@localhost.localdomain>
-In-Reply-To: <20190212191920.GI10665@localhost.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 13 Feb 2019 09:27:56 +0100
-Message-ID: <CACT4Y+ZLEPummCf==B30ucY8cdoOx8FWohnUn_UMoWmwwTL87g@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_outq_tail
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     syzbot <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 13 Feb 2019 08:28:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 8:19 PM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
->
-> On Tue, Feb 12, 2019 at 11:04:27AM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
-> > git tree:       linux-next
->
-> I can't find this commit. How can I know for sure which commits are in?
-> Recent patches are involved with this code, but not sure what was
-> included on the test.
+On machines where the GART aperture is mapped over physical RAM,
+/proc/kcore contains the GART aperture range and reading it may lead
+to kernel panic.
 
-Hi Marcelo,
+In 'commit 2a3e83c6f96c ("x86/gart: Exclude GART aperture from vmcore")',
+a workaround is applied for vmcore to let /proc/vmcore return zeroes
+when attempting to read the GART region, as vmcore have the same issue,
+and after 'commit 707d4eefbdb3 ("Revert "[PATCH] Insert GART region
+into resource map"")', userspace tools won't be able to detect GART
+region so have to avoid it from being reading in kernel.
 
-linux-next is weird. Not sure why a so recent commit is not in
-linux-next, maybe one needs to fetch tags or something. Fetching
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next-history.git
-helped me to get this commit:
+This patch applies a similar workaround for kcore. Let /proc/kcore
+return zeroes for GART aperture.
 
-$ git show d4104460aec1
-commit d4104460aec152e23cf80ab1f950f414bf94f4ea (HEAD, tag: next-20190211)
-Author: Stephen Rothwell
-Date:   Mon Feb 11 18:37:26 2019 +1100
-    Add linux-next specific files for 20190211
+Both vmcore and kcore maintain a memory mapping list, in the vmcore
+workaround we exclude the GART region by registering a hook for checking
+if PFN is valid before reading, because vmcore's memory mapping could
+be generated by userspace which doesn't know about GART. But for kcore
+it will be simpler to just alter the memory area list, kcore's area list
+is always generated by kernel on init.
+
+Kcore's memory area list is generated very late so can't exclude the
+overlapped area when GART is initialized, instead simply introduce a
+new area enum type KCORE_NORAM, register GART aperture as KCORE_NORAM
+and let kcore return zeros for all KCORE_NORAM area. This fixes the
+problem well with minor code changes.
+
+---
+Update from V2:
+Instead of repeating the same hook infrastructure for kcore, introduce
+a new kcore area type to avoid reading from, and let kcore always bypass
+this kind of area.
+
+Update from V1:
+Fix a complie error when CONFIG_PROC_KCORE is not set
+
+ arch/x86/kernel/aperture_64.c | 14 ++++++++++++++
+ fs/proc/kcore.c               | 13 +++++++++++++
+ include/linux/kcore.h         |  1 +
+ 3 files changed, 28 insertions(+)
+
+diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
+index 58176b56354e..5fb04bdd3221 100644
+--- a/arch/x86/kernel/aperture_64.c
++++ b/arch/x86/kernel/aperture_64.c
+@@ -31,6 +31,7 @@
+ #include <asm/amd_nb.h>
+ #include <asm/x86_init.h>
+ #include <linux/crash_dump.h>
++#include <linux/kcore.h>
+ 
+ /*
+  * Using 512M as goal, in case kexec will load kernel_big
+@@ -84,6 +85,17 @@ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
+ }
+ #endif
+ 
++#ifdef CONFIG_PROC_KCORE
++static struct kcore_list kcore_gart;
++
++static void __init exclude_from_kcore(u64 aper_base, u32 aper_order) {
++	u32 aper_size = (32 * 1024 * 1024) << aper_order;
++	kclist_add(&kcore_gart, __va(aper_base), aper_size, KCORE_NORAM);
++}
++#else
++static inline void __init exclude_from_kcore(u64 aper_base, u32 aper_order) { }
++#endif
++
+ /* This code runs before the PCI subsystem is initialized, so just
+    access the northbridge directly. */
+ 
+@@ -475,6 +487,7 @@ int __init gart_iommu_hole_init(void)
+ 			 * and fixed up the northbridge
+ 			 */
+ 			exclude_from_vmcore(last_aper_base, last_aper_order);
++			exclude_from_kcore(last_aper_base, last_aper_order);
+ 
+ 			return 1;
+ 		}
+@@ -521,6 +534,7 @@ int __init gart_iommu_hole_init(void)
+ 	 * range through vmcore even though it should be part of the dump.
+ 	 */
+ 	exclude_from_vmcore(aper_alloc, aper_order);
++	exclude_from_kcore(aper_alloc, aper_order);
+ 
+ 	/* Fix up the north bridges */
+ 	for (i = 0; i < amd_nb_bus_dev_ranges[i].dev_limit; i++) {
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index bbcc185062bb..15e0d74d7c56 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -75,6 +75,8 @@ static size_t get_kcore_size(int *nphdr, size_t *phdrs_len, size_t *notes_len,
+ 	size = 0;
+ 
+ 	list_for_each_entry(m, &kclist_head, list) {
++		if (m->type == KCORE_NORAM)
++			continue;
+ 		try = kc_vaddr_to_offset((size_t)m->addr + m->size);
+ 		if (try > size)
+ 			size = try;
+@@ -256,6 +258,9 @@ static int kcore_update_ram(void)
+ 	list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
+ 		if (pos->type == KCORE_RAM || pos->type == KCORE_VMEMMAP)
+ 			list_move(&pos->list, &garbage);
++		/* Move NORAM area to head of the new list */
++		if (pos->type == KCORE_NORAM)
++			list_move(&pos->list, &list);
+ 	}
+ 	list_splice_tail(&list, &kclist_head);
+ 
+@@ -356,6 +361,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 
+ 		phdr = &phdrs[1];
+ 		list_for_each_entry(m, &kclist_head, list) {
++			if (m->type == KCORE_NORAM)
++				continue;
+ 			phdr->p_type = PT_LOAD;
+ 			phdr->p_flags = PF_R | PF_W | PF_X;
+ 			phdr->p_offset = kc_vaddr_to_offset(m->addr) + data_offset;
+@@ -465,6 +472,12 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 				goto out;
+ 			}
+ 			m = NULL;	/* skip the list anchor */
++		} else if (m->type == KCORE_NORAM) {
++			/* for NORAM area just fill zero */
++			if (clear_user(buffer, tsz)) {
++				ret = -EFAULT;
++				goto out;
++			}
+ 		} else if (m->type == KCORE_VMALLOC) {
+ 			vread(buf, (char *)start, tsz);
+ 			/* we have to zero-fill user buffer even if no read */
+diff --git a/include/linux/kcore.h b/include/linux/kcore.h
+index 8c3f8c14eeaa..372a4093f794 100644
+--- a/include/linux/kcore.h
++++ b/include/linux/kcore.h
+@@ -13,6 +13,7 @@ enum kcore_type {
+ 	KCORE_USER,
+ 	KCORE_OTHER,
+ 	KCORE_REMAP,
++	KCORE_NORAM,
+ };
+ 
+ struct kcore_list {
+-- 
+2.20.1
+
