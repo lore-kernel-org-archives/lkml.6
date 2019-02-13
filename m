@@ -2,264 +2,120 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FF0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA37C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934CD222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083524;
-	bh=bOfjkS540hVu8Ua+fahNnjDeFRxIFAw1v3m2TTzRPy4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OxKyjbKH+cB/CKT8DGvNKnM6cBexbKGgi+tDZzgx6OeKoOKfn9g13z8+nezlYVUqm
-	 PtFdaMEiA7lzv5jfnHOWuvI8tTxDIGGvoYq6z/lcT0oetyGYwuerZ3gSieD1B8WI6+
-	 UEjnTLgLsHd2kxgORMhVvhmCp8xBIxxprN26DnO0=
+	by mail.kernel.org (Postfix) with ESMTP id 5CBF320811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:45:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gb/shXhX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406220AbfBMSpT (ORCPT
+        id S2406329AbfBMSp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:45:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406203AbfBMSpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:45:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BEEF20835;
-        Wed, 13 Feb 2019 18:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083515;
-        bh=bOfjkS540hVu8Ua+fahNnjDeFRxIFAw1v3m2TTzRPy4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F49RWp6kHdST2v2OGNRxl1teHUw8Kx9NdK5oy5LPRMGLqydA6U02oMnhjvVIcbWDU
-         JuFJmIr+xz+xPIKecvuxXa5gaLQ10mv03nwYmRofUYJGQ7gEGxJJ1hwjLG+JHBCkRB
-         HJZUf2u5cLjK8Ok8q1TCPhRWRODbqkGB3piRxZeE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.20 07/50] iio: adc: axp288: Fix TS-pin handling
-Date:   Wed, 13 Feb 2019 19:38:12 +0100
-Message-Id: <20190213183656.370670564@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
-References: <20190213183655.747168774@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Wed, 13 Feb 2019 13:45:28 -0500
+Received: from mail-eopbgr130083.outbound.protection.outlook.com ([40.107.13.83]:50352
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406234AbfBMSpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:45:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gTf65DmJMr6wm+2ZNFhNaaUdcrARfpB6Lr3vnNQTAag=;
+ b=gb/shXhXTx64dNCJju/caF9A6FsCYFfJbUxkwDpDirc/KXws933FLVC9dzOLnL4XWpquK5ce8olwDKrmJoXD6CZIiQXBrSAjlYQ53jBe1gEHy+1nK3pbnjfSzb0xiETIvIttwePwtOtouXve8YHfwQffrObIlNsLupyYXC83WE0=
+Received: from HE1PR0402MB3484.eurprd04.prod.outlook.com (10.167.126.13) by
+ HE1PR0402MB3531.eurprd04.prod.outlook.com (10.167.126.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.22; Wed, 13 Feb 2019 18:45:16 +0000
+Received: from HE1PR0402MB3484.eurprd04.prod.outlook.com
+ ([fe80::7d94:a064:b55b:b28a]) by HE1PR0402MB3484.eurprd04.prod.outlook.com
+ ([fe80::7d94:a064:b55b:b28a%5]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
+ 18:45:16 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 0/4] crypto: caam - add ecb mode support
+Thread-Topic: [PATCH 0/4] crypto: caam - add ecb mode support
+Thread-Index: AQHUv7VcNE62/1rs10eCj4efK3X83A==
+Date:   Wed, 13 Feb 2019 18:45:16 +0000
+Message-ID: <HE1PR0402MB3484556884375681E3E81BE998660@HE1PR0402MB3484.eurprd04.prod.outlook.com>
+References: <1549633810-10380-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190209215219.GA688@sol.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d05aabdd-dbec-4057-58e9-08d691e36552
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0402MB3531;
+x-ms-traffictypediagnostic: HE1PR0402MB3531:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;HE1PR0402MB3531;23:UI1GUdy6554e+n4l4Kcn9MlYERdg0mDX2sLUFkC?=
+ =?us-ascii?Q?jCB/MvnZjdA/gzWLz4lfLUqO3CoswRxNHnD2+yk6E3qS0+TTn9b9RuEGTMG5?=
+ =?us-ascii?Q?vAdYMGSkZfgWeaG9CAMoNAwBOMV3lAffDyVD0ZQweLM9dRpVZXZ+P+1kpoWJ?=
+ =?us-ascii?Q?YrsyHZZlBVRaEKwhumGP72ARh2s11gHOtn6sQQB9IWHhJv1kURN2SXCEbt+M?=
+ =?us-ascii?Q?Sxxltuj6rDggiXnW8W4XvEHDQF45tLK3e7Dbjf4CZkGmOI7lXARMS7FRiNcn?=
+ =?us-ascii?Q?GqlzKtBfJqFxA0SJMcrXNRvHSoC2znCWP+IqfnBJN4YMVwn+/9LieYqsUTF3?=
+ =?us-ascii?Q?wWLD7RbIFTQgF008vRLIR2A7KOWTk8nSQ89KsFxWc07xZaj1y1AJxvkrLsGp?=
+ =?us-ascii?Q?jfWyDQ8r9NQjiuP5ePNuy7Y3M5tSHJCyKioSFFkbPA9u9EkDII8Vsm4OacjT?=
+ =?us-ascii?Q?E2i52bCHH2mmN7u9gIWqWtzCGQMgfo19SEHt376KXj8wftzBntorkR7yuccF?=
+ =?us-ascii?Q?ZYwIlGztKrdBJ52UcQ1kSJn8ZWVkOP5Vs1CzJ0vqSTGMXorHBbLukYuVpttO?=
+ =?us-ascii?Q?kdu55Yj0ysWWNKs1PpbJgrou6P7wrvjX1j5PRebDKCs2ZlFBrqtgpu9Z268N?=
+ =?us-ascii?Q?LM60v5AQKCqA4uDFnRmy1pgPf0eStVPSwPVT7S8DdCxPqn4+4HOvFAEnHUHm?=
+ =?us-ascii?Q?qdvTOGprT9Lt3w8f1nmz3jsyux2snSOpU/0o6XNwXVDrc852pwmu0Ykc88Hj?=
+ =?us-ascii?Q?qsQdkM86cu+bwTFvxJHBpUtUJ0RU21KXrkVapWYjEJ3MIVP8U5p+jL2c+/xe?=
+ =?us-ascii?Q?5e2yyk/hkG8Flz0LTnoE1hw2mmJBkeSjOKC4yqlgm/DGnN46MyyrVz4XTMxL?=
+ =?us-ascii?Q?h+GJ+u9SGY1AafGuM8naxpikyQffDfZqOoUxb0fzaG1OclWVl6ywssC85lsx?=
+ =?us-ascii?Q?rDaD/OMtAM47Edu01LbS912+d97OY1TVwwhsyLB9WzrP1esdrLNExWdL7+lR?=
+ =?us-ascii?Q?eAX1Z+ExbeNEzp8B7UkOL9PwoK8gqSNMNiTfSKlUHI5xUELXUYrJMdHF+31n?=
+ =?us-ascii?Q?HJ8K7nrS1ceB43soX3B696ehINhSSjzM+RrNIq7oBh4qxzzEBeImf8tpkvhk?=
+ =?us-ascii?Q?TKUGWm1tH9WDBbPw53N05UBBvDTFqDMgfwI7Yunz1zPN7jIONPz67DUWEDk+?=
+ =?us-ascii?Q?BxuUJoKj8iF19+1vG3BdvTUF6vpQvSTcQHniDJUbtWZThHFYc1AaXWhdXcA?=
+ =?us-ascii?Q?=3D=3D?=
+x-microsoft-antispam-prvs: <HE1PR0402MB353123CAED225C98FFF2923A98660@HE1PR0402MB3531.eurprd04.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(366004)(396003)(39860400002)(346002)(189003)(199004)(446003)(4744005)(186003)(6636002)(6436002)(26005)(476003)(54906003)(316002)(478600001)(110136005)(33656002)(68736007)(97736004)(256004)(53546011)(66066001)(229853002)(44832011)(2906002)(53936002)(71190400001)(486006)(6506007)(71200400001)(102836004)(9686003)(86362001)(55016002)(6246003)(74316002)(76176011)(81166006)(4326008)(6116002)(105586002)(305945005)(8676002)(106356001)(25786009)(81156014)(8936002)(7736002)(14454004)(99286004)(7696005)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0402MB3531;H:HE1PR0402MB3484.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: iH9idUxusNJnMB6g5vNdNF34lHKv6LzCCQn8xSt1r92O1XdWU4uPUUJNlVsI/yrHtCcJuAirC/LDaXXfC1CPcc6LDSlgHthkwpdcrbeUI9fJAgqBh96C1v5n8ifojCnlQ4aAH6SU38agsWoTDzo8Iue7AShI4VlvGsmgH48IQzUUhyNcqBRPi6sfmyjGxcHOrI4QnBTGM40imbCB5c293UD+Z+POdtfjqjW67qLGocEQv9D1B5A9WOp3y0oTHqQESNj/nadATiwQRSR9fdXjzjutiT3TD7g6sxBVcfkD4pli6GhDhF+GKh8UmrDG5FAapcGSVI+4mh+agtBkT27XMGZ2D6wvUr3U7nh9WrCkTlviYIfocw7540rXX1J2QCK75df1/Wxs66ViPED46YnmAPjPl4RQ8MrUHNd7tUGULWM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d05aabdd-dbec-4057-58e9-08d691e36552
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 18:45:16.1742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0402MB3531
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Hans de Goede <hdegoede@redhat.com>
-
-commit 9bcf15f75cac3c6a00d8f8083a635de9c8537799 upstream.
-
-Prior to this commit there were 3 issues with our handling of the TS-pin:
-
-1) There are 2 ways how the firmware can disable monitoring of the TS-pin
-for designs which do not have a temperature-sensor for the battery:
-a) Clearing bit 0 of the AXP20X_ADC_EN1 register
-b) Setting bit 2 of the AXP288_ADC_TS_PIN_CTRL monitoring
-
-Prior to this commit we were unconditionally setting both bits to the
-value used on devices with a TS. This causes the temperature protection to
-kick in on devices without a TS, such as the Jumper ezbook v2, causing
-them to not charge under Linux.
-
-This commit fixes this by using regmap_update_bits when updating these 2
-registers, leaving the 2 mentioned bits alone.
-
-The next 2 problems are related to our handling of the current-source
-for the TS-pin. The current-source used for the battery temp-sensor (TS)
-is shared with the GPADC. For proper fuel-gauge and charger operation the
-TS current-source needs to be permanently on. But to read the GPADC we
-need to temporary switch the TS current-source to ondemand, so that the
-GPADC can use it, otherwise we will always read an all 0 value.
-
-2) Problem 2 is we were writing hardcoded values to the ADC TS pin-ctrl
-register, overwriting various other unrelated bits. Specifically we were
-overwriting the current-source setting for the TS and GPIO0 pins, forcing
-it to 80ųA independent of its original setting. On a Chuwi Vi10 tablet
-this was causing us to get a too high adc value (due to a too high
-current-source) resulting in the following errors being logged:
-
-ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
-ACPI Error: Method parse/execution failed \_SB.SXP1._TMP, AE_ERROR
-
-This commit fixes this by using regmap_update_bits to change only the
-relevant bits.
-
-3) After reading the GPADC channel we were unconditionally enabling the
-TS current-source even on devices where the TS-pin is not used and the
-current-source thus was off before axp288_adc_read_raw call.
-
-This commit fixes this by making axp288_adc_set_ts a nop on devices where
-the ADC is not enabled for the TS-pin.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1610545
-Fixes: 3091141d7803 ("iio: adc: axp288: Fix the GPADC pin ...")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/iio/adc/axp288_adc.c |   76 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 60 insertions(+), 16 deletions(-)
-
---- a/drivers/iio/adc/axp288_adc.c
-+++ b/drivers/iio/adc/axp288_adc.c
-@@ -27,9 +27,18 @@
- #include <linux/iio/machine.h>
- #include <linux/iio/driver.h>
- 
--#define AXP288_ADC_EN_MASK		0xF1
--#define AXP288_ADC_TS_PIN_GPADC		0xF2
--#define AXP288_ADC_TS_PIN_ON		0xF3
-+/*
-+ * This mask enables all ADCs except for the battery temp-sensor (TS), that is
-+ * left as-is to avoid breaking charging on devices without a temp-sensor.
-+ */
-+#define AXP288_ADC_EN_MASK				0xF0
-+#define AXP288_ADC_TS_ENABLE				0x01
-+
-+#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
-+#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
- 
- enum axp288_adc_id {
- 	AXP288_ADC_TS,
-@@ -44,6 +53,7 @@ enum axp288_adc_id {
- struct axp288_adc_info {
- 	int irq;
- 	struct regmap *regmap;
-+	bool ts_enabled;
- };
- 
- static const struct iio_chan_spec axp288_adc_channels[] = {
-@@ -115,21 +125,33 @@ static int axp288_adc_read_channel(int *
- 	return IIO_VAL_INT;
- }
- 
--static int axp288_adc_set_ts(struct regmap *regmap, unsigned int mode,
--				unsigned long address)
-+/*
-+ * The current-source used for the battery temp-sensor (TS) is shared
-+ * with the GPADC. For proper fuel-gauge and charger operation the TS
-+ * current-source needs to be permanently on. But to read the GPADC we
-+ * need to temporary switch the TS current-source to ondemand, so that
-+ * the GPADC can use it, otherwise we will always read an all 0 value.
-+ */
-+static int axp288_adc_set_ts(struct axp288_adc_info *info,
-+			     unsigned int mode, unsigned long address)
- {
- 	int ret;
- 
--	/* channels other than GPADC do not need to switch TS pin */
-+	/* No need to switch the current-source if the TS pin is disabled */
-+	if (!info->ts_enabled)
-+		return 0;
-+
-+	/* Channels other than GPADC do not need the current source */
- 	if (address != AXP288_GP_ADC_H)
- 		return 0;
- 
--	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, mode);
-+	ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+				 AXP288_ADC_TS_CURRENT_ON_OFF_MASK, mode);
- 	if (ret)
- 		return ret;
- 
- 	/* When switching to the GPADC pin give things some time to settle */
--	if (mode == AXP288_ADC_TS_PIN_GPADC)
-+	if (mode == AXP288_ADC_TS_CURRENT_ON_ONDEMAND)
- 		usleep_range(6000, 10000);
- 
- 	return 0;
-@@ -145,14 +167,14 @@ static int axp288_adc_read_raw(struct ii
- 	mutex_lock(&indio_dev->mlock);
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
--		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_GPADC,
-+		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON_ONDEMAND,
- 					chan->address)) {
- 			dev_err(&indio_dev->dev, "GPADC mode\n");
- 			ret = -EINVAL;
- 			break;
- 		}
- 		ret = axp288_adc_read_channel(val, chan->address, info->regmap);
--		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_ON,
-+		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON,
- 						chan->address))
- 			dev_err(&indio_dev->dev, "TS pin restore\n");
- 		break;
-@@ -164,13 +186,35 @@ static int axp288_adc_read_raw(struct ii
- 	return ret;
- }
- 
--static int axp288_adc_set_state(struct regmap *regmap)
-+static int axp288_adc_initialize(struct axp288_adc_info *info)
- {
--	/* ADC should be always enabled for internal FG to function */
--	if (regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON))
--		return -EIO;
-+	int ret, adc_enable_val;
-+
-+	/*
-+	 * Determine if the TS pin is enabled and set the TS current-source
-+	 * accordingly.
-+	 */
-+	ret = regmap_read(info->regmap, AXP20X_ADC_EN1, &adc_enable_val);
-+	if (ret)
-+		return ret;
-+
-+	if (adc_enable_val & AXP288_ADC_TS_ENABLE) {
-+		info->ts_enabled = true;
-+		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+					 AXP288_ADC_TS_CURRENT_ON);
-+	} else {
-+		info->ts_enabled = false;
-+		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+					 AXP288_ADC_TS_CURRENT_OFF);
-+	}
-+	if (ret)
-+		return ret;
- 
--	return regmap_write(regmap, AXP20X_ADC_EN1, AXP288_ADC_EN_MASK);
-+	/* Turn on the ADC for all channels except TS, leave TS as is */
-+	return regmap_update_bits(info->regmap, AXP20X_ADC_EN1,
-+				  AXP288_ADC_EN_MASK, AXP288_ADC_EN_MASK);
- }
- 
- static const struct iio_info axp288_adc_iio_info = {
-@@ -200,7 +244,7 @@ static int axp288_adc_probe(struct platf
- 	 * Set ADC to enabled state at all time, including system suspend.
- 	 * otherwise internal fuel gauge functionality may be affected.
- 	 */
--	ret = axp288_adc_set_state(axp20x->regmap);
-+	ret = axp288_adc_initialize(info);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to enable ADC device\n");
- 		return ret;
-
-
+On 2/9/2019 11:52 PM, Eric Biggers wrote:=0A=
+> Do you have an actual use case for adding more DES, 3DES, and ARC4=0A=
+> implementations, or are you simply adding them because the hardware happe=
+ns to=0A=
+> supports it?  These old ciphers are insecure, so IMO more implementations=
+ should=0A=
+> only be added if there is a real use case where they're absolutely needed=
+.=0A=
+> =0A=
+One legit use case is PIN encryption in Point of Sale solution.=0A=
+=0A=
+Horia=0A=
