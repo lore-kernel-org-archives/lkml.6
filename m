@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9C7C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDE4C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F754222CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42A53222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025320;
-	bh=0OyBFdYCbZlKYGJzw7GAX0kFJZsdo0KflbSji7/c694=;
+	s=default; t=1550025322;
+	bh=1dQoRmg3qvblQMYmi0w1qcWDjYlPlWx0UO4a5gwAaBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nDhVUi1MehLs+Vhl1v1uWe2qBpPGYHJzevhQNQffhJp7h0Z2HuVTxYeKnzS3hyFhU
-	 /3L6RPaZIjCNlvkWHx+XKzWpdhg8mnbfOLLLSc744R5ZJjw9LoDMVsni/Z+o2/S1d2
-	 orS2pHfUlR6uGFx/am8EpNoy6nR6FWB+RBUsn8So=
+	b=LTMtqWccbMvyC5Aj9VJhUDvM/83+8QRXExg7uPC+B2Sy2zg8aonyt2gVUevV8yx51
+	 EBw7kX6Gu/2gArEhEpJIPyaQwtRARsGsxuxzpgkWme4/eNbwFbCo4ly8XgOKPrtHaP
+	 8P2Vm48YffwsU8zvoVMSciRYLqTa6k+xOXs/Pi2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387961AbfBMCfS (ORCPT
+        id S2387977AbfBMCfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38864 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731769AbfBMCfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:13 -0500
+        id S2387956AbfBMCfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00BB2222CD;
-        Wed, 13 Feb 2019 02:35:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C37E206B6;
+        Wed, 13 Feb 2019 02:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025312;
-        bh=0OyBFdYCbZlKYGJzw7GAX0kFJZsdo0KflbSji7/c694=;
+        s=default; t=1550025317;
+        bh=1dQoRmg3qvblQMYmi0w1qcWDjYlPlWx0UO4a5gwAaBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGb3BoffR9agLouKztcEV61/1RhxOKL460AMb7EqpBbGhwSMIw6rx8Ahpj/GyPnkm
-         GBh5ZlUfIRgM24wFVpPxmb/ZE0Q4gT1ZUYzBsOj/uZfk3LLg9ZSj1C26gcgOCefj40
-         dkAhTLUWeUttQgFHRH0h/XyYSJT4C6H444LZEeKs=
+        b=BE7ChiuQpIVSW/+xAGTKs6dHDd37RJIbtBHgrwsWdZE3qUbTHB5TD/Q9aIR2ivDag
+         Jr162vH7RKcln6QEvYrRxERdSu7ATyNLyPaPabXdQi0jmyePPL2QYnGzLFnHLPo9c2
+         3CcZQQyrjMq/5t49SLYq9wEXxEa3Qd6tOohTPdvc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+Cc:     Varun Prakash <varun@chelsio.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 063/105] scsi: qla1280: set 64bit coherent mask
-Date:   Tue, 12 Feb 2019 21:32:54 -0500
-Message-Id: <20190213023336.19019-63-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 064/105] scsi: cxgb4i: add wait_for_completion()
+Date:   Tue, 12 Feb 2019 21:32:55 -0500
+Message-Id: <20190213023336.19019-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -57,43 +58,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 4a01ab60f55041b1ccc760e43258a5b3aeeca1bc ]
+[ Upstream commit 9e8f1c79831424d30c0e3df068be7f4a244157c9 ]
 
-After Commit 54aed4dd3526 ("MIPS: IP27: use dma_direct_ops") qla1280 driver
-failed on SGI IP27 machines with
+In case of ->set_param() and ->bind_conn() cxgb4i driver does not wait for
+cmd completion, this can create race conditions, to avoid this add
+wait_for_completion().
 
-qla1280: QLA1040 found on PCI bus 0, dev 0
-qla1280 0000:00:00.0: enabling device (0006 -> 0007)
-qla1280: Failed to get request memory
-qla1280: probe of 0000:00:00.0 failed with error -12
-
-Reason is that SGI IP27 always generates 64bit DMA addresses and has no
-fallback mode for 32bit DMA addresses implemented. QLA1280 supports 64bit
-addressing for all DMA accesses so setting coherent mask to 64bit fixes the
-issue.
-
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla1280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c |  9 ++++-----
+ drivers/scsi/cxgbi/cxgb4i/cxgb4i.c | 28 ++++++++++++++++++++--------
+ drivers/scsi/cxgbi/libcxgbi.c      |  7 ++++---
+ drivers/scsi/cxgbi/libcxgbi.h      |  5 +++--
+ 4 files changed, 31 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-index 15a50cc7e4b3..c8589926014d 100644
---- a/drivers/scsi/qla1280.c
-+++ b/drivers/scsi/qla1280.c
-@@ -4259,7 +4259,7 @@ qla1280_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	ha->devnum = devnum;	/* specifies microcode load address */
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index bf07735275a4..0fc382cb977b 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -1144,7 +1144,7 @@ static void ddp_clear_map(struct cxgbi_device *cdev, struct cxgbi_ppm *ppm,
+ }
  
- #ifdef QLA_64BIT_PTR
--	if (dma_set_mask(&ha->pdev->dev, DMA_BIT_MASK(64))) {
-+	if (dma_set_mask_and_coherent(&ha->pdev->dev, DMA_BIT_MASK(64))) {
- 		if (dma_set_mask(&ha->pdev->dev, DMA_BIT_MASK(32))) {
- 			printk(KERN_WARNING "scsi(%li): Unable to set a "
- 			       "suitable DMA mask - aborting\n", ha->host_no);
+ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
+-				       unsigned int tid, int pg_idx, bool reply)
++				unsigned int tid, int pg_idx)
+ {
+ 	struct sk_buff *skb = alloc_wr(sizeof(struct cpl_set_tcb_field), 0,
+ 					GFP_KERNEL);
+@@ -1160,7 +1160,7 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
+ 	req = (struct cpl_set_tcb_field *)skb->head;
+ 	req->wr.wr_hi = htonl(V_WR_OP(FW_WROPCODE_FORWARD));
+ 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
+-	req->reply = V_NO_REPLY(reply ? 0 : 1);
++	req->reply = V_NO_REPLY(1);
+ 	req->cpu_idx = 0;
+ 	req->word = htons(31);
+ 	req->mask = cpu_to_be64(0xF0000000);
+@@ -1177,11 +1177,10 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
+  * @tid: connection id
+  * @hcrc: header digest enabled
+  * @dcrc: data digest enabled
+- * @reply: request reply from h/w
+  * set up the iscsi digest settings for a connection identified by tid
+  */
+ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
+-			     int hcrc, int dcrc, int reply)
++				 int hcrc, int dcrc)
+ {
+ 	struct sk_buff *skb = alloc_wr(sizeof(struct cpl_set_tcb_field), 0,
+ 					GFP_KERNEL);
+@@ -1197,7 +1196,7 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
+ 	req = (struct cpl_set_tcb_field *)skb->head;
+ 	req->wr.wr_hi = htonl(V_WR_OP(FW_WROPCODE_FORWARD));
+ 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
+-	req->reply = V_NO_REPLY(reply ? 0 : 1);
++	req->reply = V_NO_REPLY(1);
+ 	req->cpu_idx = 0;
+ 	req->word = htons(31);
+ 	req->mask = cpu_to_be64(0x0F000000);
+diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+index 064ef5735182..bd6cc014cab0 100644
+--- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
++++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+@@ -1548,16 +1548,22 @@ static void do_set_tcb_rpl(struct cxgbi_device *cdev, struct sk_buff *skb)
+ 	struct cxgbi_sock *csk;
+ 
+ 	csk = lookup_tid(t, tid);
+-	if (!csk)
++	if (!csk) {
+ 		pr_err("can't find conn. for tid %u.\n", tid);
++		return;
++	}
+ 
+ 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
+ 		"csk 0x%p,%u,%lx,%u, status 0x%x.\n",
+ 		csk, csk->state, csk->flags, csk->tid, rpl->status);
+ 
+-	if (rpl->status != CPL_ERR_NONE)
++	if (rpl->status != CPL_ERR_NONE) {
+ 		pr_err("csk 0x%p,%u, SET_TCB_RPL status %u.\n",
+ 			csk, tid, rpl->status);
++		csk->err = -EINVAL;
++	}
++
++	complete(&csk->cmpl);
+ 
+ 	__kfree_skb(skb);
+ }
+@@ -1984,7 +1990,7 @@ static int ddp_set_map(struct cxgbi_ppm *ppm, struct cxgbi_sock *csk,
+ }
+ 
+ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
+-				int pg_idx, bool reply)
++				int pg_idx)
+ {
+ 	struct sk_buff *skb;
+ 	struct cpl_set_tcb_field *req;
+@@ -2000,7 +2006,7 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
+ 	req = (struct cpl_set_tcb_field *)skb->head;
+ 	INIT_TP_WR(req, csk->tid);
+ 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, csk->tid));
+-	req->reply_ctrl = htons(NO_REPLY_V(reply) | QUEUENO_V(csk->rss_qid));
++	req->reply_ctrl = htons(NO_REPLY_V(0) | QUEUENO_V(csk->rss_qid));
+ 	req->word_cookie = htons(0);
+ 	req->mask = cpu_to_be64(0x3 << 8);
+ 	req->val = cpu_to_be64(pg_idx << 8);
+@@ -2009,12 +2015,15 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
+ 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
+ 		"csk 0x%p, tid 0x%x, pg_idx %u.\n", csk, csk->tid, pg_idx);
+ 
++	reinit_completion(&csk->cmpl);
+ 	cxgb4_ofld_send(csk->cdev->ports[csk->port_id], skb);
+-	return 0;
++	wait_for_completion(&csk->cmpl);
++
++	return csk->err;
+ }
+ 
+ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
+-				 int hcrc, int dcrc, int reply)
++				 int hcrc, int dcrc)
+ {
+ 	struct sk_buff *skb;
+ 	struct cpl_set_tcb_field *req;
+@@ -2032,7 +2041,7 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
+ 	req = (struct cpl_set_tcb_field *)skb->head;
+ 	INIT_TP_WR(req, tid);
+ 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
+-	req->reply_ctrl = htons(NO_REPLY_V(reply) | QUEUENO_V(csk->rss_qid));
++	req->reply_ctrl = htons(NO_REPLY_V(0) | QUEUENO_V(csk->rss_qid));
+ 	req->word_cookie = htons(0);
+ 	req->mask = cpu_to_be64(0x3 << 4);
+ 	req->val = cpu_to_be64(((hcrc ? ULP_CRC_HEADER : 0) |
+@@ -2042,8 +2051,11 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
+ 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
+ 		"csk 0x%p, tid 0x%x, crc %d,%d.\n", csk, csk->tid, hcrc, dcrc);
+ 
++	reinit_completion(&csk->cmpl);
+ 	cxgb4_ofld_send(csk->cdev->ports[csk->port_id], skb);
+-	return 0;
++	wait_for_completion(&csk->cmpl);
++
++	return csk->err;
+ }
+ 
+ static struct cxgbi_ppm *cdev2ppm(struct cxgbi_device *cdev)
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index 75f876409fb9..245742557c03 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -573,6 +573,7 @@ static struct cxgbi_sock *cxgbi_sock_create(struct cxgbi_device *cdev)
+ 	skb_queue_head_init(&csk->receive_queue);
+ 	skb_queue_head_init(&csk->write_queue);
+ 	timer_setup(&csk->retry_timer, NULL, 0);
++	init_completion(&csk->cmpl);
+ 	rwlock_init(&csk->callback_lock);
+ 	csk->cdev = cdev;
+ 	csk->flags = 0;
+@@ -2251,14 +2252,14 @@ int cxgbi_set_conn_param(struct iscsi_cls_conn *cls_conn,
+ 		if (!err && conn->hdrdgst_en)
+ 			err = csk->cdev->csk_ddp_setup_digest(csk, csk->tid,
+ 							conn->hdrdgst_en,
+-							conn->datadgst_en, 0);
++							conn->datadgst_en);
+ 		break;
+ 	case ISCSI_PARAM_DATADGST_EN:
+ 		err = iscsi_set_param(cls_conn, param, buf, buflen);
+ 		if (!err && conn->datadgst_en)
+ 			err = csk->cdev->csk_ddp_setup_digest(csk, csk->tid,
+ 							conn->hdrdgst_en,
+-							conn->datadgst_en, 0);
++							conn->datadgst_en);
+ 		break;
+ 	case ISCSI_PARAM_MAX_R2T:
+ 		return iscsi_tcp_set_max_r2t(conn, buf);
+@@ -2384,7 +2385,7 @@ int cxgbi_bind_conn(struct iscsi_cls_session *cls_session,
+ 
+ 	ppm = csk->cdev->cdev2ppm(csk->cdev);
+ 	err = csk->cdev->csk_ddp_setup_pgidx(csk, csk->tid,
+-					     ppm->tformat.pgsz_idx_dflt, 0);
++					     ppm->tformat.pgsz_idx_dflt);
+ 	if (err < 0)
+ 		return err;
+ 
+diff --git a/drivers/scsi/cxgbi/libcxgbi.h b/drivers/scsi/cxgbi/libcxgbi.h
+index 5d5d8b50d842..1917ff57651d 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.h
++++ b/drivers/scsi/cxgbi/libcxgbi.h
+@@ -149,6 +149,7 @@ struct cxgbi_sock {
+ 	struct sk_buff_head receive_queue;
+ 	struct sk_buff_head write_queue;
+ 	struct timer_list retry_timer;
++	struct completion cmpl;
+ 	int err;
+ 	rwlock_t callback_lock;
+ 	void *user_data;
+@@ -490,9 +491,9 @@ struct cxgbi_device {
+ 				  struct cxgbi_ppm *,
+ 				  struct cxgbi_task_tag_info *);
+ 	int (*csk_ddp_setup_digest)(struct cxgbi_sock *,
+-				unsigned int, int, int, int);
++				    unsigned int, int, int);
+ 	int (*csk_ddp_setup_pgidx)(struct cxgbi_sock *,
+-				unsigned int, int, bool);
++				   unsigned int, int);
+ 
+ 	void (*csk_release_offload_resources)(struct cxgbi_sock *);
+ 	int (*csk_rx_pdu_ready)(struct cxgbi_sock *, struct sk_buff *);
 -- 
 2.19.1
 
