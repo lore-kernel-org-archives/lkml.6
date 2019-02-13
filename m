@@ -2,84 +2,80 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B620C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CA1C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363F2222C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB1B222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:36:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yj9LduyX"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ezJ1X9DZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387898AbfBMHcl (ORCPT
+        id S2388104AbfBMHgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:32:41 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:42017 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729911AbfBMHcl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:32:41 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id B3AEF21B55;
-        Wed, 13 Feb 2019 02:32:40 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 13 Feb 2019 02:32:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=+/C6EaNfq8gXsgMCYQEEr71KXJaPBdUxGSd0IfnMF
-        lg=; b=Yj9LduyXHslYA/Z15hx4F+BD9rpMYQe0GyOUczRGa0oq4CiMjFVoxHNeR
-        iRBfQ+PkL085aBsS5OQA6H7iWl+Hf3WNeV3HYtIyefbIsrFhF1cjCoNIwLTOOf91
-        V+N7wTMT2jJpy3vMqYEJM4FOX0t5u2reM4tUSqpizWoTLLLhZxcYIT5gY7ESWnp7
-        hYgUFaqSzokVqZMHSrD6YfTLukZl53sl5aOwHaXS8qSj2xNKYz2oAq9EFRttLRHO
-        MNpo5drdyFeDvRm64RnR7GxvpmzT1KVtQuwKIDxgq7im7oYvW41uniiH8pdnrSAx
-        aWp65UCyad2yJC9zrLOK5ejloPScg==
-X-ME-Sender: <xms:F8hjXJE1YfvwsBLDsCIcm8h3CsRZBFToz8djiyugQUWt0ov4QBjTYg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtvddgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
-    fedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhroh
-    hmpefrvghkkhgrucfgnhgsvghrghcuoehpvghnsggvrhhgsehikhhirdhfiheqnecukfhp
-    peekledrvdejrdeffedrudejfeenucfrrghrrghmpehmrghilhhfrhhomhepphgvnhgsvg
-    hrghesihhkihdrfhhinecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:F8hjXDCY4J0KLplMsgbReh1ul9H7rh2QsBr8v-8QvME3L9v3em1g7A>
-    <xmx:F8hjXLZUilAPAMEFyP3qvI8cmDOyzpSWosbtbJnKWrDDOQuG26PvWg>
-    <xmx:F8hjXDPSiYl7tKrgZgKflPCeUVhDaQC-5Mh0bh9PSLKBlb42PEcL5w>
-    <xmx:GMhjXKWLRqKKSKgsQEXUAQaZd0uaXfHLh3j2TrwoNQfxWHB-X1n7mw>
-Received: from Pekka-MacBook.local (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 91A47E412E;
-        Wed, 13 Feb 2019 02:32:37 -0500 (EST)
-Subject: Re: [PATCH] slub: untag object before slab end
-To:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com
-Cc:     andreyknvl@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190213020550.82453-1-cai@lca.pw>
-From:   Pekka Enberg <penberg@iki.fi>
-Message-ID: <eeac3e54-c31a-a583-b185-b2d36d7debed@iki.fi>
-Date:   Wed, 13 Feb 2019 09:32:32 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Wed, 13 Feb 2019 02:36:17 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48082 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726882AbfBMHgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:36:17 -0500
+Received: from [IPv6:2003:ec:2bcd:e800:6998:1e1e:4912:ac0f] (p200300EC2BCDE80069981E1E4912AC0F.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e800:6998:1e1e:4912:ac0f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 46D051EC02FF;
+        Wed, 13 Feb 2019 08:36:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550043375;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZrdCindAhT2300QSoYwTdRu+nH65dkTkoW67oq+TokQ=;
+        b=ezJ1X9DZcaG3ugNE5tKqTZ76e9FbH5IqXHLNfhSwNXqDJGxJnTZklmCnTV3purq/JXbQWi
+        sVeIKGZ6LjtEzrtNHvsFgSJA/QNoc3nkmfQiQemaIDOKmxZfccdaAXO7NyjQfXc/rcsEy3
+        fFfgZVltCGHLslKNHGnSXdjzoM4vbR4=
+Date:   Wed, 13 Feb 2019 08:36:12 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190213015429.GA12592@localhost.localdomain>
+References: <20190211002220.GD14948@zn.tnic> <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com> <20190211095547.GB1651@localhost.localdomain> <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com> <20190211101011.GA5333@localhost.localdomain> <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com> <20190211102426.GA19618@zn.tnic> <20190211104254.GB19618@zn.tnic> <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com> <20190211112009.GE19618@zn.tnic> <20190213015429.GA12592@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20190213020550.82453-1-cai@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in boot_params
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>
+From:   Boris Petkov <bp@alien8.de>
+Message-ID: <CFAC8B79-54C1-4E74-8660-31B0B88BF749@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On February 13, 2019 2:54:29 AM GMT+01:00, Chao Fan <fanc=2Efnst@cn=2Efujit=
+su=2Ecom> wrote:
+>Yes, your PATCH really works well=2E I tried both efi32 OVMF and efi64
+>OVMF, all boot=2E
 
+What about the real hardware you are normally testing on? Boots there too?
 
-On 13/02/2019 4.05, Qian Cai wrote:
-> get_freepointer() could return NULL if there is no more free objects in
-> the slab. However, it could return a tagged pointer (like
-> 0x2200000000000000) with KASAN_SW_TAGS which would escape the NULL
-> object checking in check_valid_pointer() and trigger errors below, so
-> untag the object before checking for a NULL object there.
+Thx=2E
 
-Reviewed-by: Pekka Enberg <penberg@kernel.org>
+--=20
+Sent from a small device: formatting sux and brevity is inevitable=2E 
