@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C31BC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D983C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A700222D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 632632190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026744;
-	bh=X49ohnDIm5wUUx8INhd0YOnPIGraaH2fNuB2nlyoh0o=;
+	s=default; t=1550026757;
+	bh=nZcgSmia24wu9Q80jRP840NvbOLFC/cyoC8/ezPbI+I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rfjvVyw4Xp2HDb2W3FdtgoYO3dJPgCrBJLK2YiuWqSwGQc3KN7XbutjkMavwxbEa8
-	 FP2FEmRQAv5IrDBuYFREbpGl2GzDOTml+bMnOnhyT5fcpmBezAuKY+6mIt5teJwlqt
-	 um1wk9UilbK5DQgILC4mvpzTucCrW9Z3dYW1ruZI=
+	b=ywmVj9A3NfNK9Gm498U9mxKNwKDuYeyVCXLPGD8O+pvJVs2jA5IF2ApyCRHQgYpXi
+	 Sficf4h5MWbWwAgPA4xHyaejVez5jBurqr0VZF/PZB0bPn6CawkGJ12HLzO/EUQJGo
+	 0iaiiIE44mulhJUqgNy2lwxHxlsQiA+//JFj6iNI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390212AbfBMC7D (ORCPT
+        id S2390219AbfBMC7P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:59:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:59:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388122AbfBMCgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:24 -0500
+        id S1728093AbfBMCgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:36:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BBEB222CA;
-        Wed, 13 Feb 2019 02:36:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE303222C7;
+        Wed, 13 Feb 2019 02:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025384;
-        bh=X49ohnDIm5wUUx8INhd0YOnPIGraaH2fNuB2nlyoh0o=;
+        s=default; t=1550025380;
+        bh=nZcgSmia24wu9Q80jRP840NvbOLFC/cyoC8/ezPbI+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CtA8vtNeF2P5SYLXGlE8YwYKkH31LFenI23uxBsSYkEg4lxS0fkejscqK+wzS25sz
-         6DvMffuUzL6AuCZYpCmvN/+1s2gx7C4ROsSRP8NB/vl7LJ2RHkFO63+jqfTlg+bOll
-         8KL8XKHIHMzf/crRcrZ5w2wFi2v8BfZr+P6U8RqQ=
+        b=FESZGShumoR4LeQnv0aA/6t1+DIQUL5dtkQl5EiA4vQ5XkP4LeXVhIdMUrQrJtP01
+         lU/peOpahrBohGpndNvWK12/0d63jitG0Ml5PJM93TRBKuD2W2R9Liofnu/xMDr2W3
+         /9uMpU9EmU6RHUDfDXytMk9oXXP4pEuV9ksYm92I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cheng-Min Ao <tony_ao@wiwynn.com>,
-        Yu-Hsiang Chen <matt_chen@wiwynn.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 093/105] hwmon: (tmp421) Correct the misspelling of the tmp442 compatible attribute in OF device ID table
-Date:   Tue, 12 Feb 2019 21:33:24 -0500
-Message-Id: <20190213023336.19019-93-sashal@kernel.org>
+Cc:     Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 090/105] bpf: zero out build_id for BPF_STACK_BUILD_ID_IP
+Date:   Tue, 12 Feb 2019 21:33:21 -0500
+Message-Id: <20190213023336.19019-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -59,34 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng-Min Ao <tony_ao@wiwynn.com>
+From: Stanislav Fomichev <sdf@google.com>
 
-[ Upstream commit f422449b58548a41e98fc97b259a283718e527db ]
+[ Upstream commit 4af396ae4836c4ecab61e975b8e61270c551894d ]
 
-Correct a typo in OF device ID table
-The last one should be 'ti,tmp442'
+When returning BPF_STACK_BUILD_ID_IP from stack_map_get_build_id_offset,
+make sure that build_id field is empty. Since we are using percpu
+free list, there is a possibility that we might reuse some previous
+bpf_stack_build_id with non-zero build_id.
 
-Signed-off-by: Cheng-Min Ao <tony_ao@wiwynn.com>
-Signed-off-by: Yu-Hsiang Chen <matt_chen@wiwynn.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/tmp421.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/stackmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
-index 8844c9565d2a..7053be59ad2e 100644
---- a/drivers/hwmon/tmp421.c
-+++ b/drivers/hwmon/tmp421.c
-@@ -88,7 +88,7 @@ static const struct of_device_id tmp421_of_match[] = {
- 		.data = (void *)2
- 	},
- 	{
--		.compatible = "ti,tmp422",
-+		.compatible = "ti,tmp442",
- 		.data = (void *)3
- 	},
- 	{ },
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index f9df545e92f6..d43b14535827 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -314,6 +314,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 		for (i = 0; i < trace_nr; i++) {
+ 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
+ 			id_offs[i].ip = ips[i];
++			memset(id_offs[i].build_id, 0, BPF_BUILD_ID_SIZE);
+ 		}
+ 		return;
+ 	}
+@@ -324,6 +325,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 			/* per entry fall back to ips */
+ 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
+ 			id_offs[i].ip = ips[i];
++			memset(id_offs[i].build_id, 0, BPF_BUILD_ID_SIZE);
+ 			continue;
+ 		}
+ 		id_offs[i].offset = (vma->vm_pgoff << PAGE_SHIFT) + ips[i]
 -- 
 2.19.1
 
