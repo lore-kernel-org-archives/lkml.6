@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89ABDC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F2BC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A04B2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CFD2222C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025547;
-	bh=6nZuPPO5ytx0fTbdNX8Ap/TnKK41sWKsS1+Co7NdiwU=;
+	s=default; t=1550025553;
+	bh=eWsSZbjbDrVArJOI3n83hPN+X+JWLwk21l7xUq0V/98=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dKKPIn6xVAopxf7IWm8Bs168X/e7o8rheHpoOSVoFY8xuX+ItVmaB8x/byn30Ygh7
-	 foD3K9ZGxnhPeawBhvhD71AtUSRQtA3eC5yyJZywGsbkHS0B0ozQOedn0uLEKg1Gkn
-	 H1ezpxSeCZDlW/rGOqhnWgu3zC13rQaWOKQIycsA=
+	b=tMg25eKmAtpoqvgdT0BifIT/M3T0SJQu5espEP0XZ71nX9AvvTVkBWw6HS6lC5ZdL
+	 WiAKVRiDRwJscehzUA62v46+wTB7J0LCznh21PGTm74XA6L6XamnQ8Ab7VQ1tSt08F
+	 jAbD9PX4q1+Z1gj7ID/ZfPwi4IXvrWF7ooo+fKsY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733106AbfBMCjF (ORCPT
+        id S2388619AbfBMCir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42570 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732480AbfBMCjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:01 -0500
+        id S1732636AbfBMCip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FBD32175B;
-        Wed, 13 Feb 2019 02:39:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF13C222C7;
+        Wed, 13 Feb 2019 02:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025541;
-        bh=6nZuPPO5ytx0fTbdNX8Ap/TnKK41sWKsS1+Co7NdiwU=;
+        s=default; t=1550025524;
+        bh=eWsSZbjbDrVArJOI3n83hPN+X+JWLwk21l7xUq0V/98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B1z7/QDSc8hcYs/Pe10zn6qqyIW7lpItzwlHRBKp7Ds2e9lK63/pvh13RmqUDJvFE
-         HX7KkpfdbDuuOXZm0a0X/RK6MWhHVV2i191/HoZi2DaufNRN2A5fa4REFgaISQPlzn
-         S8SlSb8DjcdNoh7EWjGbPp7PkVWqrKRGJnUvstic=
+        b=GK9FgDw1g2hcdRXUqDvzeecQtL08On3faXdY/iy5KOXWMQXOdx8/MoX/RL0v48Bkk
+         8OUux9ONQ5FzKsCmxH8GYjmVS4Cq7YtWNMuhhOerbcgcxfA7NGS7DZqAmXuzXgX9Gp
+         mrZYKvSMeTOOwR4xEAJ54wVOdl3vkHAVhFxDnhVg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Davide Caratti <dcaratti@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 64/83] selftests: tc-testing: drop test on missing tunnel key id
-Date:   Tue, 12 Feb 2019 21:36:42 -0500
-Message-Id: <20190213023701.20286-64-sashal@kernel.org>
+Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 61/83] vhost: return EINVAL if iovecs size does not match the message size
+Date:   Tue, 12 Feb 2019 21:36:39 -0500
+Message-Id: <20190213023701.20286-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,67 +59,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
-[ Upstream commit e413615502a3324daba038f529932ba9a5248af0 ]
+[ Upstream commit 74ad7419489ddade8044e3c9ab064ad656520306 ]
 
-After merge of commit 80ef0f22ceda ("net/sched: act_tunnel_key: Allow
-key-less tunnels"), act_tunnel_key does not reject anymore requests to
-install 'set' rules where the key id is missing. Therefore, drop the
-following TDC testcase:
+We've failed to copy and process vhost_iotlb_msg so let userspace at
+least know about it. For instance before these patch the code below runs
+without any error:
 
- ba4e - Add tunnel_key set action with missing mandatory id parameter
+int main()
+{
+  struct vhost_msg msg;
+  struct iovec iov;
+  int fd;
 
-because it's going to become a systematic fail as soon as userspace
-iproute2 will start supporting key-less tunnels.
+  fd = open("/dev/vhost-net", O_RDWR);
+  if (fd == -1) {
+    perror("open");
+    return 1;
+  }
 
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  iov.iov_base = &msg;
+  iov.iov_len = sizeof(msg)-4;
+
+  if (writev(fd, &iov,1) == -1) {
+    perror("writev");
+    return 1;
+  }
+
+  return 0;
+}
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../tc-tests/actions/tunnel_key.json          | 29 -------------------
- 1 file changed, 29 deletions(-)
+ drivers/vhost/vhost.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-index 10b2d894e436..af5e99d27229 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-@@ -81,35 +81,6 @@
- 	    ]
-         ]
-     },
--    {
--        "id": "ba4e",
--        "name": "Add tunnel_key set action with missing mandatory id parameter",
--        "category": [
--            "actions",
--            "tunnel_key"
--        ],
--        "setup": [
--            [
--                "$TC actions flush action tunnel_key",
--                0,
--                1,
--                255
--            ]
--        ],
--        "cmdUnderTest": "$TC actions add action tunnel_key set src_ip 10.10.10.1 dst_ip 20.20.20.2",
--        "expExitCode": "255",
--        "verifyCmd": "$TC actions list action tunnel_key",
--        "matchPattern": "action order [0-9]+: tunnel_key set.*src_ip 10.10.10.1.*dst_ip 20.20.20.2",
--        "matchCount": "0",
--        "teardown": [
--	    [
--		"$TC actions flush action tunnel_key",
--		0,
--		1,
--		255
--	    ]
--        ]
--    },
-     {
-         "id": "a5e0",
-         "name": "Add tunnel_key set action with invalid src_ip parameter",
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index cf82e7266397..7a07b0e86644 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1035,8 +1035,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
+ 	int type, ret;
+ 
+ 	ret = copy_from_iter(&type, sizeof(type), from);
+-	if (ret != sizeof(type))
++	if (ret != sizeof(type)) {
++		ret = -EINVAL;
+ 		goto done;
++	}
+ 
+ 	switch (type) {
+ 	case VHOST_IOTLB_MSG:
+@@ -1055,8 +1057,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
+ 
+ 	iov_iter_advance(from, offset);
+ 	ret = copy_from_iter(&msg, sizeof(msg), from);
+-	if (ret != sizeof(msg))
++	if (ret != sizeof(msg)) {
++		ret = -EINVAL;
+ 		goto done;
++	}
+ 	if (vhost_process_iotlb_msg(dev, &msg)) {
+ 		ret = -EFAULT;
+ 		goto done;
 -- 
 2.19.1
 
