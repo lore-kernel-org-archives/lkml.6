@@ -2,122 +2,183 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAB6C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BF3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B2E222A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2542B222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550094218;
+	bh=4MolkE+gEZntM8K2sR4FNq6I6eB478FcjQqeBoN2qdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tNC0qLwbytSL6+C90bbH4/DZ5X7cAqEN3mmC8J8mdi3X8dlEBIJe7xgKBl6m5OGd5
+	 plkyX7pr7VfvpD66Uxit1fn0y1CjRjkZQ/Ve1q3a3bMFAYrwuScsf0hUij+XN15HoN
+	 F05QiXcttD0zJhhkaKCFThDcOnYaDeP0Ox+v9QQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394982AbfBMVmN (ORCPT
+        id S2436884AbfBMVng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:42:13 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47796 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389739AbfBMVmM (ORCPT
+        Wed, 13 Feb 2019 16:43:36 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33985 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391795AbfBMVng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:42:12 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gu2Hz-0006JT-KB; Wed, 13 Feb 2019 22:41:55 +0100
-Date:   Wed, 13 Feb 2019 22:41:55 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Keith Busch <keith.busch@intel.com>
-cc:     Bjorn Helgaas <helgaas@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH V3 1/5] genirq/affinity: don't mark 'affd' as const
-In-Reply-To: <20190213213149.GB8027@localhost.localdomain>
-Message-ID: <alpine.DEB.2.21.1902132232560.1659@nanos.tec.linutronix.de>
-References: <20190213105041.13537-1-ming.lei@redhat.com> <20190213105041.13537-2-ming.lei@redhat.com> <20190213150407.GB96272@google.com> <alpine.DEB.2.21.1902132112590.1659@nanos.tec.linutronix.de> <20190213213149.GB8027@localhost.localdomain>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 13 Feb 2019 16:43:36 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 98so7034684oty.1;
+        Wed, 13 Feb 2019 13:43:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HuZsMpTtMDs5/dtC99dFz32xoIqYbKwcEhqrvVdX3yw=;
+        b=bHpeNj3iG62pPeP31awF33hlK2DlNahsv6p6paA6nMeLSqezXVwO8HKVkAP4H5Njdh
+         dHukxA6d1bmD8XOyoSl5AN4GB4ORRUJwcMk6n8JmBUGHx9Zhd0nlURs4C+3+Yvq7BLsL
+         zJE0qHCRK02T/tGKZGLibKxOhBte2bTuMph4pN0b/537oa6UxdpdR0YEz6lw7hawUH0G
+         f5POfR+MtMWEW4hFyHvJ3Ko5W90joFe1G2LEe6bDWQCGSwVeFpQ4cY48BJ3qrnRSqOIy
+         mH4FxLj1Q1uuuoPLXDyjea5sJU6/7GH1qklEDFUg/bXRSK8cR6TjHdHihMcLuYzwBhWy
+         tYyw==
+X-Gm-Message-State: AHQUAuaKqLNlM5FrKw8UbtBDVW96zVd2X0rQFv/EYGyPpMkuIi3SXBFw
+        5RDWMulCxypo8UNSJ6mM7A==
+X-Google-Smtp-Source: AHgI3IY1gnyiSbbR3AaPe11jtAKhirkxlwLrVEZ3EuRGOZo4XfiZyn97nEy28KRSY0D0iIkmKozeKg==
+X-Received: by 2002:aca:ba06:: with SMTP id k6mr192060oif.159.1550094214852;
+        Wed, 13 Feb 2019 13:43:34 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n185sm208758oih.18.2019.02.13.13.43.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 13:43:34 -0800 (PST)
+Date:   Wed, 13 Feb 2019 15:43:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        andy.gross@linaro.org, shawn.guo@linaro.org,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
+        jackp@codeaurora.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        khasim.mohammed@linaro.org
+Subject: Re: [PATCH v4 3/4] dt-bindings: Add Qualcomm USB SuperSpeed PHY
+ bindings
+Message-ID: <20190213214333.GA8220@bogus>
+References: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+ <20190207111734.24171-4-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207111734.24171-4-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019, Keith Busch wrote:
-> On Wed, Feb 13, 2019 at 09:56:36PM +0100, Thomas Gleixner wrote:
-> > On Wed, 13 Feb 2019, Bjorn Helgaas wrote:
-> > > On Wed, Feb 13, 2019 at 06:50:37PM +0800, Ming Lei wrote:
-> > > > We have to ask driver to re-caculate set vectors after the whole IRQ
-> > > > vectors are allocated later, and the result needs to be stored in 'affd'.
-> > > > Also both the two interfaces are core APIs, which should be trusted.
-> > > 
-> > > s/re-caculate/recalculate/
-> > > s/stored in 'affd'/stored in '*affd'/
-> > > s/both the two/both/
-> > > 
-> > > This is a little confusing because you're talking about both "IRQ
-> > > vectors" and these other "set vectors", which I think are different
-> > > things.  I assume the "set vectors" are cpumasks showing the affinity
-> > > of the IRQ vectors with some CPUs?
-> > 
-> > I think we should drop the whole vector wording completely.
-> > 
-> > The driver does not care about vectors, it only cares about a block of
-> > interrupt numbers. These numbers are kernel managed and the interrupts just
-> > happen to have a CPU vector assigned at some point. Depending on the CPU
-> > architecture the underlying mechanism might not even be named vector.
+On Thu, Feb 07, 2019 at 12:17:33PM +0100, Jorge Ramirez-Ortiz wrote:
+> Binding description for Qualcomm's Synopsys 1.0.0 SuperSpeed phy
+> controller embedded in QCS404.
 > 
-> Perhaps longer term we could move affinity mask creation from the irq
-> subsystem into a more generic library. Interrupts aren't the only
-> resource that want to spread across CPUs. For example, blk-mq has it's
-> own implementation to for polled queues, so I think a non-irq specific
-> implementation would be a nice addition to the kernel lib.
+> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
+> definitions.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  .../bindings/phy/qcom,snps-usb-ssphy.txt      | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt b/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> new file mode 100644
+> index 000000000000..354e6f9cef62
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> @@ -0,0 +1,79 @@
+> +Qualcomm Synopsys 1.0.0 SS phy controller
+> +===========================================
+> +
+> +Qualcomm 1.0.0 SS phy controller supports SuperSpeed USB connectivity on
+> +some Qualcomm platforms.
+> +
+> +Required properties:
+> +
+> +- compatible:
+> +    Value type: <string>
+> +    Definition: Should contain "qcom,snps-usb-ssphy".
 
-Agreed. There is nothing interrupt specific in that code aside of some
-name choices.
+Still not specific. Put the SoC name(s) in it.
 
-Btw, while I have your attention. There popped up an issue recently related
-to that affinity logic.
+> +
+> +- reg:
+> +    Value type: <prop-encoded-array>
+> +    Definition: USB PHY base address and length of the register map.
+> +
+> +- #phy-cells:
+> +    Value type: <u32>
+> +    Definition: Should be 0. See phy/phy-bindings.txt for details.
+> +
+> +- clocks:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See clock-bindings.txt section "consumers". List of
+> +		 three clock specifiers for reference, phy core and
+> +		 pipe clocks.
+> +
+> +- clock-names:
+> +    Value type: <string>
+> +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
+> +		 property. Must contain "ref", "phy" and "pipe".
+> +
+> +- vdd-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator VDD supply node.
+> +
+> +- vdda1p8-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator 1.8V supply node.
+> +
+> +Optional properties:
+> +
+> +- resets:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See reset.txt section "consumers". Specifiers for COM and
+> +		 PHY resets.
+> +
+> +- reset-names:
+> +    Value type: <string>
+> +    Definition: Names of the resets in 1-1 correspondence with the "resets"
+> +		 property. Must contain "com" and "phy" if the property is
+> +		 specified.
+> +
+> +Required child nodes:
+> +
+> +- usb connector node as defined in bindings/connector/usb-connector.txt
+> +  containing the property vbus-supply.
+> +
+> +Example:
+> +
+> +usb3_phy: usb3-phy@78000 {
+> +	compatible = "qcom,snps-usb-ssphy";
+> +	reg = <0x78000 0x400>;
+> +	#phy-cells = <0>;
+> +	clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+> +		 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+> +		 <&gcc GCC_USB3_PHY_PIPE_CLK>;
+> +	clock-names = "ref", "phy", "pipe";
+> +	resets = <&gcc GCC_USB3_PHY_BCR>,
+> +		 <&gcc GCC_USB3PHY_PHY_BCR>;
+> +	reset-names = "com", "phy";
+> +	vdd-supply = <&vreg_l3_1p05>;
+> +	vdda1p8-supply = <&vreg_l5_1p8>;
+> +	usb3_c_connector: usb3-c-connector {
+> +		compatible = "usb-c-connector";
+> +		label = "USB-C";
+> +		type = "micro";
 
-The current implementation fails when:
+'micro' is certainly not right for USB-C. Probably should be omitted?
 
-        /*
-         * If there aren't any vectors left after applying the pre/post
-         * vectors don't bother with assigning affinity.
-	 */
-	if (nvecs == affd->pre_vectors + affd->post_vectors)
-    		return NULL;
-
-Now the discussion arised, that in that case the affinity sets are not
-allocated and filled in for the pre/post vectors, but somehow the
-underlying device still works and later on triggers the warning in the
-blk-mq code because the MSI entries do not have affinity information
-attached.
-
-Sure, we could make that work, but there are several issues:
-
-    1) irq_create_affinity_masks() has another reason to return NULL:
-       memory allocation fails.
-
-    2) Does it make sense at all.
-
-Right now the PCI allocator ignores the NULL return and proceeds without
-setting any affinities. As a consequence nothing is managed and everything
-happens to work.
-
-But that happens to work is more by chance than by design and the warning
-is bogus if this is an expected mode of operation.
-
-We should address these points in some way.
-
-Thanks,
-
-	tglx
-
-
-
+> +		vbus-supply = <&usb3_vbus_reg>;
+> +	};
+> +};
+> -- 
+> 2.20.1
+> 
