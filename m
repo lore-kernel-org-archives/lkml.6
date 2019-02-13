@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C3DC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED2AC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7AD9222D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1467520811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083488;
-	bh=CeLCw0ccUC2W6wYH2ysmHkqIWkDWLRYdcc395Wa1XhU=;
+	s=default; t=1550083493;
+	bh=h9PfBPtwz2K9w5F89iLh7o9DWoaX81o+cmazjwxBlD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=up/ZKojTbif87GQbcYwvJ98IL3xwxRba3EViY6gBLuqw/ztLktqrvaWDuFhoLhhiO
-	 pkvR/PZD4yacItKh7kscdBp5Qle4BhpBligrnTK5HR5t/x3qr+pzkdUpftMS3FgldP
-	 0rDI0VfFCX0+syvb40NoWrfTglQ0mO0nqup5eiF0=
+	b=Jku8VJ1UQEUtuzc9Ic08p3iaxsnC4utCXz/IgoDgqpukDIyuoey+q7FpmRCw29ZdD
+	 tKDJcmmFBftZw8sTbJzNOXgG/ne8fFtyUbGRWJghhaOki2xPc2TYU0l9N9O2zOnIfN
+	 6z8nS1FjaBMDJEDmTCcqo5NhZq/VC3vw90vWfmt8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394004AbfBMSor (ORCPT
+        id S2406171AbfBMSov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:44:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43266 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:44:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393986AbfBMSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:42 -0500
+        id S2393995AbfBMSop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:44:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA9D020835;
-        Wed, 13 Feb 2019 18:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DE2B222D1;
+        Wed, 13 Feb 2019 18:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083481;
-        bh=CeLCw0ccUC2W6wYH2ysmHkqIWkDWLRYdcc395Wa1XhU=;
+        s=default; t=1550083485;
+        bh=h9PfBPtwz2K9w5F89iLh7o9DWoaX81o+cmazjwxBlD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uc8hyA5HpJbf9PQ5BJiY+I97S/pxCaxlvSYgY+vpKdzvibZnWYITCPAByuFw3sKw6
-         4Q+mGBf4pPMjr7PEdGtUe/qdzgKFpMSdDBmPgyCrTm7FvLc05FxvXvdS5kvxZE+Ljm
-         IRu72U46sJc4IkoColF+G5LkCRbPl77Jg8EQ75Ps=
+        b=kITFY7dnxQsPUmQop2lPLCBbNmFfY1BPuEN2pagZarMLqoN2ttrjXhF+stwy40Ind
+         oVKPzK8yQszZzWxTBSao4UHJh/74CW2d/NrsX8uEn298FKB7l4HVfxGcrCzhLOGuqT
+         e/FK/yc489PiA1Het6JcOrKhPYUTYXtJsseGm/qk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 44/44] svcrdma: Remove max_sge check at connect time
-Date:   Wed, 13 Feb 2019 19:38:45 +0100
-Message-Id: <20190213183655.483627018@linuxfoundation.org>
+        stable@vger.kernel.org, 3ntr0py1337@gmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.19 40/44] xfrm: refine validation of template and selector families
+Date:   Wed, 13 Feb 2019 19:38:41 +0100
+Message-Id: <20190213183655.153000945@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -65,199 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit e248aa7be86e8179f20ac0931774ecd746f3f5bf upstream.
+commit 35e6103861a3a970de6c84688c6e7a1f65b164ca upstream.
 
-Two and a half years ago, the client was changed to use gathered
-Send for larger inline messages, in commit 655fec6987b ("xprtrdma:
-Use gathered Send for large inline messages"). Several fixes were
-required because there are a few in-kernel device drivers whose
-max_sge is 3, and these were broken by the change.
+The check assumes that in transport mode, the first templates family
+must match the address family of the policy selector.
 
-Apparently my memory is going, because some time later, I submitted
-commit 25fd86eca11c ("svcrdma: Don't overrun the SGE array in
-svc_rdma_send_ctxt"), and after that, commit f3c1fd0ee294 ("svcrdma:
-Reduce max_send_sges"). These too incorrectly assumed in-kernel
-device drivers would have more than a few Send SGEs available.
+Syzkaller managed to build a template using MODE_ROUTEOPTIMIZATION,
+with ipv4-in-ipv6 chain, leading to following splat:
 
-The fix for the server side is not the same. This is because the
-fundamental problem on the server is that, whether or not the client
-has provisioned a chunk for the RPC reply, the server must squeeze
-even the most complex RPC replies into a single RDMA Send. Failing
-in the send path because of Send SGE exhaustion should never be an
-option.
+BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x1db/0x1854
+Read of size 4 at addr ffff888063e57aa0 by task a.out/2050
+ xfrm_state_find+0x1db/0x1854
+ xfrm_tmpl_resolve+0x100/0x1d0
+ xfrm_resolve_and_create_bundle+0x108/0x1000 [..]
 
-Therefore, instead of failing when the send path runs out of SGEs,
-switch to using a bounce buffer mechanism to handle RPC replies that
-are too complex for the device to send directly. That allows us to
-remove the max_sge check to enable drivers with small max_sge to
-work again.
+Problem is that addresses point into flowi4 struct, but xfrm_state_find
+treats them as being ipv6 because it uses templ->encap_family is used
+(AF_INET6 in case of reproducer) rather than family (AF_INET).
 
-Reported-by: Don Dutile <ddutile@redhat.com>
-Fixes: 25fd86eca11c ("svcrdma: Don't overrun the SGE array in ...")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+This patch inverts the logic: Enforce 'template family must match
+selector' EXCEPT for tunnel and BEET mode.
+
+In BEET and Tunnel mode, xfrm_tmpl_resolve_one will have remote/local
+address pointers changed to point at the addresses found in the template,
+rather than the flowi ones, so no oob read will occur.
+
+Reported-by: 3ntr0py1337@gmail.com
+Reported-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xprtrdma/svc_rdma_sendto.c    |  105 +++++++++++++++++++++++++++++--
- net/sunrpc/xprtrdma/svc_rdma_transport.c |    9 --
- 2 files changed, 102 insertions(+), 12 deletions(-)
+ net/xfrm/xfrm_user.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/net/sunrpc/xprtrdma/svc_rdma_sendto.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_sendto.c
-@@ -563,6 +563,99 @@ void svc_rdma_sync_reply_hdr(struct svcx
- 				      DMA_TO_DEVICE);
- }
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1488,10 +1488,15 @@ static int validate_tmpl(int nr, struct
+ 		if (!ut[i].family)
+ 			ut[i].family = family;
  
-+/* If the xdr_buf has more elements than the device can
-+ * transmit in a single RDMA Send, then the reply will
-+ * have to be copied into a bounce buffer.
-+ */
-+static bool svc_rdma_pull_up_needed(struct svcxprt_rdma *rdma,
-+				    struct xdr_buf *xdr,
-+				    __be32 *wr_lst)
-+{
-+	int elements;
-+
-+	/* xdr->head */
-+	elements = 1;
-+
-+	/* xdr->pages */
-+	if (!wr_lst) {
-+		unsigned int remaining;
-+		unsigned long pageoff;
-+
-+		pageoff = xdr->page_base & ~PAGE_MASK;
-+		remaining = xdr->page_len;
-+		while (remaining) {
-+			++elements;
-+			remaining -= min_t(u32, PAGE_SIZE - pageoff,
-+					   remaining);
-+			pageoff = 0;
+-		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
+-		    (ut[i].family != prev_family))
+-			return -EINVAL;
+-
++		switch (ut[i].mode) {
++		case XFRM_MODE_TUNNEL:
++		case XFRM_MODE_BEET:
++			break;
++		default:
++			if (ut[i].family != prev_family)
++				return -EINVAL;
++			break;
 +		}
-+	}
-+
-+	/* xdr->tail */
-+	if (xdr->tail[0].iov_len)
-+		++elements;
-+
-+	/* assume 1 SGE is needed for the transport header */
-+	return elements >= rdma->sc_max_send_sges;
-+}
-+
-+/* The device is not capable of sending the reply directly.
-+ * Assemble the elements of @xdr into the transport header
-+ * buffer.
-+ */
-+static int svc_rdma_pull_up_reply_msg(struct svcxprt_rdma *rdma,
-+				      struct svc_rdma_send_ctxt *ctxt,
-+				      struct xdr_buf *xdr, __be32 *wr_lst)
-+{
-+	unsigned char *dst, *tailbase;
-+	unsigned int taillen;
-+
-+	dst = ctxt->sc_xprt_buf;
-+	dst += ctxt->sc_sges[0].length;
-+
-+	memcpy(dst, xdr->head[0].iov_base, xdr->head[0].iov_len);
-+	dst += xdr->head[0].iov_len;
-+
-+	tailbase = xdr->tail[0].iov_base;
-+	taillen = xdr->tail[0].iov_len;
-+	if (wr_lst) {
-+		u32 xdrpad;
-+
-+		xdrpad = xdr_padsize(xdr->page_len);
-+		if (taillen && xdrpad) {
-+			tailbase += xdrpad;
-+			taillen -= xdrpad;
-+		}
-+	} else {
-+		unsigned int len, remaining;
-+		unsigned long pageoff;
-+		struct page **ppages;
-+
-+		ppages = xdr->pages + (xdr->page_base >> PAGE_SHIFT);
-+		pageoff = xdr->page_base & ~PAGE_MASK;
-+		remaining = xdr->page_len;
-+		while (remaining) {
-+			len = min_t(u32, PAGE_SIZE - pageoff, remaining);
-+
-+			memcpy(dst, page_address(*ppages), len);
-+			remaining -= len;
-+			dst += len;
-+			pageoff = 0;
-+		}
-+	}
-+
-+	if (taillen)
-+		memcpy(dst, tailbase, taillen);
-+
-+	ctxt->sc_sges[0].length += xdr->len;
-+	ib_dma_sync_single_for_device(rdma->sc_pd->device,
-+				      ctxt->sc_sges[0].addr,
-+				      ctxt->sc_sges[0].length,
-+				      DMA_TO_DEVICE);
-+
-+	return 0;
-+}
-+
- /* svc_rdma_map_reply_msg - Map the buffer holding RPC message
-  * @rdma: controlling transport
-  * @ctxt: send_ctxt for the Send WR
-@@ -585,8 +678,10 @@ int svc_rdma_map_reply_msg(struct svcxpr
- 	u32 xdr_pad;
- 	int ret;
+ 		if (ut[i].mode >= XFRM_MODE_MAX)
+ 			return -EINVAL;
  
--	if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
--		return -EIO;
-+	if (svc_rdma_pull_up_needed(rdma, xdr, wr_lst))
-+		return svc_rdma_pull_up_reply_msg(rdma, ctxt, xdr, wr_lst);
-+
-+	++ctxt->sc_cur_sge_no;
- 	ret = svc_rdma_dma_map_buf(rdma, ctxt,
- 				   xdr->head[0].iov_base,
- 				   xdr->head[0].iov_len);
-@@ -617,8 +712,7 @@ int svc_rdma_map_reply_msg(struct svcxpr
- 	while (remaining) {
- 		len = min_t(u32, PAGE_SIZE - page_off, remaining);
- 
--		if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
--			return -EIO;
-+		++ctxt->sc_cur_sge_no;
- 		ret = svc_rdma_dma_map_page(rdma, ctxt, *ppages++,
- 					    page_off, len);
- 		if (ret < 0)
-@@ -632,8 +726,7 @@ int svc_rdma_map_reply_msg(struct svcxpr
- 	len = xdr->tail[0].iov_len;
- tail:
- 	if (len) {
--		if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
--			return -EIO;
-+		++ctxt->sc_cur_sge_no;
- 		ret = svc_rdma_dma_map_buf(rdma, ctxt, base, len);
- 		if (ret < 0)
- 			return ret;
---- a/net/sunrpc/xprtrdma/svc_rdma_transport.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_transport.c
-@@ -478,12 +478,9 @@ static struct svc_xprt *svc_rdma_accept(
- 	/* Transport header, head iovec, tail iovec */
- 	newxprt->sc_max_send_sges = 3;
- 	/* Add one SGE per page list entry */
--	newxprt->sc_max_send_sges += svcrdma_max_req_size / PAGE_SIZE;
--	if (newxprt->sc_max_send_sges > dev->attrs.max_send_sge) {
--		pr_err("svcrdma: too few Send SGEs available (%d needed)\n",
--		       newxprt->sc_max_send_sges);
--		goto errout;
--	}
-+	newxprt->sc_max_send_sges += (svcrdma_max_req_size / PAGE_SIZE) + 1;
-+	if (newxprt->sc_max_send_sges > dev->attrs.max_send_sge)
-+		newxprt->sc_max_send_sges = dev->attrs.max_send_sge;
- 	newxprt->sc_max_req_size = svcrdma_max_req_size;
- 	newxprt->sc_max_requests = svcrdma_max_requests;
- 	newxprt->sc_max_bc_requests = svcrdma_max_bc_requests;
 
 
