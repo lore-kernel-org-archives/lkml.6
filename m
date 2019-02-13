@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AB0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E23C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBCA20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC9920835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550084088;
-	bh=WEHIL1r/DJ9eVXsov0T17YDlwMQ8sCGidjdyWbjyyMI=;
+	s=default; t=1550084105;
+	bh=r7r8NSK1M6gNleIw6IWKjoNiQeYmhnG9Gat57La97L0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wiIc38u+03GwXdai8qRc4VoJXMYdVuScL2VhjubZEiY6Rn7URlutFK1XoONEx1+kf
-	 FrWcLXYbPVeuNjI6rftbO3dd9eFfpN/o2COFvUcXrJS7dIx/yWEFlu2qkj0bQm+3UI
-	 11zFYT/BMHxnyQ+4EmzustLOQ5NEDt1wNBRup/Cg=
+	b=tY6QJuKQATuXCIJZpTTHDxoOnEOQAz1eqNo88L994R4YBgRD3dT0T9rzRqA9P7cTY
+	 8AS4+oItQLkunwMSzGmkuVgARiK0Czw84XWEhextjrBqGlSH4W3JkwaL/MwoD1kAdd
+	 dbs+zCHHenhgj4rv568a0p4zBwjKTLp+Tr5zwVpQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394312AbfBMSyr (ORCPT
+        id S2393827AbfBMSlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393869AbfBMSlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:35 -0500
+        id S2393811AbfBMSlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DBFF222D6;
-        Wed, 13 Feb 2019 18:41:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96A31222D9;
+        Wed, 13 Feb 2019 18:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083295;
-        bh=WEHIL1r/DJ9eVXsov0T17YDlwMQ8sCGidjdyWbjyyMI=;
+        s=default; t=1550083279;
+        bh=r7r8NSK1M6gNleIw6IWKjoNiQeYmhnG9Gat57La97L0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N388nfp2CQjx55XjoPuAibmsDbIJSFp8UV9WSWxsetuvB08BcOg15DaktFPxqzTMv
-         BD+mxOFGfdBmAM24g9da1JZMF+l2dnvZCd7EinDKNaVvGlICJ7emrY4CV7o4z7O9D/
-         V8ujBHuRNmFS6XvvDwYU75pvWInfPTNDP0ZV15i0=
+        b=kF6HMvNJTJNo39YrL7+fp14uE9EbouvK4VOwDBKYO2xeqXFcM+Ot6lOBYGbjT3kVA
+         Q/1iTwfKeyjG54JXxARNDxo4JeX0rqqgKivkECKUyy6cFMSjX+pvrH0fMZ08T+PP4e
+         mD0uT1Fb01ZkyVdqRo7lVlgFqcMAqvhrBzpvs2bM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Subject: [PATCH 4.14 25/35] perf tests attr: Fix task term values
-Date:   Wed, 13 Feb 2019 19:38:20 +0100
-Message-Id: <20190213183707.248020472@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 20/35] Revert "ext4: use ext4_write_inode() when fsyncing w/o a journal"
+Date:   Wed, 13 Feb 2019 19:38:15 +0100
+Message-Id: <20190213183707.062181014@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -70,70 +64,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 10836d9f9ac63d40ccfa756f871ce4ed51ae3b52 upstream.
+commit 8fdd60f2ae3682caf2a7258626abc21eb4711892 upstream.
 
-The perf_event_attr::task is 1 by default for first (tracking) event in
-the session. Setting task=1 as default and adding task=0 for cases that
-need it.
+This reverts commit ad211f3e94b314a910d4af03178a0b52a7d1ee0a.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20170703145030.12903-16-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+As Jan Kara pointed out, this change was unsafe since it means we lose
+the call to sync_mapping_buffers() in the nojournal case.  The
+original point of the commit was avoid taking the inode mutex (since
+it causes a lockdep warning in generic/113); but we need the mutex in
+order to call sync_mapping_buffers().
+
+The real fix to this problem was discussed here:
+
+https://lore.kernel.org/lkml/20181025150540.259281-4-bvanassche@acm.org
+
+The proposed patch was to fix a syzbot complaint, but the problem can
+also demonstrated via "kvm-xfstests -c nojournal generic/113".
+Multiple solutions were discused in the e-mail thread, but none have
+landed in the kernel as of this writing.  Anyway, commit
+ad211f3e94b314 is absolutely the wrong way to suppress the lockdep, so
+revert it.
+
+Fixes: ad211f3e94b314a910d4af03178a0b52a7d1ee0a ("ext4: use ext4_write_inode() when fsyncing w/o a journal")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/tests/attr/base-record                |    2 +-
- tools/perf/tests/attr/test-record-group          |    1 +
- tools/perf/tests/attr/test-record-group-sampling |    2 +-
- tools/perf/tests/attr/test-record-group1         |    1 +
- 4 files changed, 4 insertions(+), 2 deletions(-)
+ fs/ext4/fsync.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---- a/tools/perf/tests/attr/base-record
-+++ b/tools/perf/tests/attr/base-record
-@@ -23,7 +23,7 @@ comm=1
- freq=1
- inherit_stat=0
- enable_on_exec=1
--task=0
-+task=1
- watermark=0
- precise_ip=0|1|2|3
- mmap_data=0
---- a/tools/perf/tests/attr/test-record-group
-+++ b/tools/perf/tests/attr/test-record-group
-@@ -17,5 +17,6 @@ sample_type=327
- read_format=4
- mmap=0
- comm=0
-+task=0
- enable_on_exec=0
- disabled=0
---- a/tools/perf/tests/attr/test-record-group-sampling
-+++ b/tools/perf/tests/attr/test-record-group-sampling
-@@ -23,7 +23,7 @@ sample_type=343
+--- a/fs/ext4/fsync.c
++++ b/fs/ext4/fsync.c
+@@ -116,16 +116,8 @@ int ext4_sync_file(struct file *file, lo
+ 		goto out;
+ 	}
  
- # PERF_FORMAT_ID | PERF_FORMAT_GROUP
- read_format=12
+-	ret = file_write_and_wait_range(file, start, end);
+-	if (ret)
+-		return ret;
 -
-+task=0
- mmap=0
- comm=0
- enable_on_exec=0
---- a/tools/perf/tests/attr/test-record-group1
-+++ b/tools/perf/tests/attr/test-record-group1
-@@ -18,5 +18,6 @@ sample_type=327
- read_format=4
- mmap=0
- comm=0
-+task=0
- enable_on_exec=0
- disabled=0
+ 	if (!journal) {
+-		struct writeback_control wbc = {
+-			.sync_mode = WB_SYNC_ALL
+-		};
+-
+-		ret = ext4_write_inode(inode, &wbc);
++		ret = __generic_file_fsync(file, start, end, datasync);
+ 		if (!ret)
+ 			ret = ext4_sync_parent(inode);
+ 		if (test_opt(inode->i_sb, BARRIER))
+@@ -133,6 +125,9 @@ int ext4_sync_file(struct file *file, lo
+ 		goto out;
+ 	}
+ 
++	ret = file_write_and_wait_range(file, start, end);
++	if (ret)
++		return ret;
+ 	/*
+ 	 * data=writeback,ordered:
+ 	 *  The caller's filemap_fdatawrite()/wait will sync the data.
 
 
