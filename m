@@ -2,101 +2,88 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DCAC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDABC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7749C222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8816A21901
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:30:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="sbN07MRC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbfBMJ2Q (ORCPT
+        id S1726166AbfBMJad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:28:16 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:47748 "EHLO smtp3-g21.free.fr"
+        Wed, 13 Feb 2019 04:30:33 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:38136 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfBMJ2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:28:16 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 9F52B13F89C;
-        Wed, 13 Feb 2019 10:27:48 +0100 (CET)
-Subject: Re: [RESEND PATCH v2] of: fix kmemleak crash caused by imbalance in
- early memory reservation
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Prateek Patel <prpatel@nvidia.com>,
-        DT <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-References: <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
- <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
- <20190123055414.GA4747@rapoport-lnx>
- <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
- <20190123123143.GE4747@rapoport-lnx>
- <4b8f82c4-7f8f-b814-c1ec-9902e43963f6@free.fr>
- <617e0d57-342d-4162-bd21-ece18e481d87@free.fr>
- <CAL_JsqKbCg-rGmLoA3mPv54=LMuQBfevfzL8f2QPVyjN-sNk8w@mail.gmail.com>
- <20190213085028.6199594b@canb.auug.org.au>
- <CAL_JsqK-cC6oVZ9MkP+ExOGjCRhA0XxGSgqGKL3W9bFF3rKAgA@mail.gmail.com>
- <20190213065734.GA14425@rapoport-lnx>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <5c9184f3-71c1-7875-52f7-616d299a9549@free.fr>
-Date:   Wed, 13 Feb 2019 10:27:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1725818AbfBMJac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 04:30:32 -0500
+Received: from zn.tnic (p200300EC2BCDE800B80E9BCAB03A01F8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e800:b80e:9bca:b03a:1f8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D25771EC023E;
+        Wed, 13 Feb 2019 10:30:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550050231;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=nWhGRHRr+Zy/pEzCUxLY0b2h4C5bMxeBEoMYI11Ts54=;
+        b=sbN07MRC5yR8KuAl/7rk1VNOkW0PET2FJTcPP5cc4I6gOY9TH39BW8OMJAgRaErhahGwRQ
+        OCdtwN/zhp8IUwkcS0ynV87Rs+qOS8IomD2oi/8NGwvPEEkMRWbZ9/G9bEi4WmrTPJtvHy
+        bvUHTrReFkH51vHPuDRCQRGBS8MH0No=
+Date:   Wed, 13 Feb 2019 10:30:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 09/22] x86/fpu: Add (__)make_fpregs_active helpers
+Message-ID: <20190213093025.GA9683@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-10-bigeasy@linutronix.de>
+ <20190128182349.GG20487@zn.tnic>
+ <20190207104325.ai5fzaxa7xy7yydv@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190213065734.GA14425@rapoport-lnx>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190207104325.ai5fzaxa7xy7yydv@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2019 07:57, Mike Rapoport wrote:
+On Thu, Feb 07, 2019 at 11:43:25AM +0100, Sebastian Andrzej Siewior wrote:
+> They are accessible inside the region. But they should not be touched by
+> context switch code (and later BH).
+> Is that what you meant?
 
-> Below is the version vs. current mmotm.
-> 
-> From 9ea6dceb46067d4f1cbbdbec1189c8496aa0a4bc Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> Date: Mon, 4 Feb 2019 15:37:21 +0100
-> Subject: [PATCH] of: fix kmemleak crash caused by imbalance in early memory reservation
+I just don't like that "changes" name. So when called, those functions
+practically lock the FPU regs from being accessed by others. So with
 
-Out of curiosity, why don't you send as a proper v3?
+fpregs_lock
+fpregs_unlock
 
-> Marc Gonzalez reported the following kmemleak crash:
-> 
-> [...]
-> 
-> The crash happens when a no-map area is allocated in
-> early_init_dt_alloc_reserved_memory_arch(). The allocated region is
-> registered with kmemleak, but it is then removed from memblock using
-> memblock_remove() that is not kmemleak-aware.
-> 
-> Replacing __memblock_alloc_base() with memblock_find_in_range()
+for example, is kinda clear what's going on and you don't have to wonder
+what it does.
 
-Nit: in this new version, you're replacing memblock_phys_alloc_range()
-with memblock_find_in_range() so I don't know if the comment still
-applies.
+> No. I picked up the patches, that function was named like that. I kept
+> it. That __ probably denotes that it is an internal function but then it
+> has to be used outside (KVM) if they plan to "reload" registers (which
+> happens if they switch between host/guest registers).
 
-> makes sure that the allocated memory is not added to kmemleak and then
-> memblock_remove()'ing this memory is safe.
-> 
-> As a bonus, since memblock_find_in_range() ensures the allocation in the
-> specified range, the bounds check can be removed.
-> 
-> Cc: stable@vger.kernel.org # 3.15+
-> Fixes: 3f0c820664483 ("drivers: of: add initialization code for dynamic reserved memory")
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Prateek Patel <prpatel@nvidia.com>
-> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Ok, so you can drop the "__".
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
