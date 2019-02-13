@@ -2,122 +2,121 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001A9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A20C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBADC222CF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02AE222D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:33:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGGNe2M8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392280AbfBMPcV (ORCPT
+        id S2392322AbfBMPdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:32:21 -0500
-Received: from muru.com ([72.249.23.125]:38512 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbfBMPcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:32:20 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A361080AE;
-        Wed, 13 Feb 2019 15:32:28 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 07:32:15 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     marc.zyngier@arm.com, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
-        jason@lakedaemon.net,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-Message-ID: <20190213153215.GT5720@atomide.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
- <20190212074237.2875-6-lokeshvutla@ti.com>
- <20190212163018.GL5720@atomide.com>
- <5b5d86b9-2aa7-718c-c1da-70bbf9bf589e@ti.com>
+        Wed, 13 Feb 2019 10:33:13 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44895 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730097AbfBMPdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:33:12 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p4so1312747plq.11;
+        Wed, 13 Feb 2019 07:33:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lcmksHWGwSDXOrKAmTNKeWMLBrZoin/0R2U8zaZjtfM=;
+        b=QGGNe2M8ZpVaRZDHTuxtVY/7HkJzKR/ECoksK7XhNo/3cZbRTIelasU8jZAXhSv9rJ
+         6d+o+n8kIQ+bbegsurMol1BtY+LDVkXcBJncgWdmqmbDQMMkGLhZn3dMKkEF5kM7YJza
+         hjFL1UpD/muK6uBB8yyFZvz3AmpwYCRc46gRqSoKGMQ76mAe5c4S6JnH4HEko/O1V7fv
+         gyuu/9lNjapNQTRkiS02Ep8SBOmRWvLKRk2u8Ge30rsFlMnnyHrnsFMx9Lsq1Vbx2vLU
+         viy8xv+pnz0Vd1D6iPiy0cPq6EUTF715VMZver8TwIVD4meKGPHgWAxk0Nj0FxS7bR9Z
+         q/oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lcmksHWGwSDXOrKAmTNKeWMLBrZoin/0R2U8zaZjtfM=;
+        b=IWh8yOZR48GIAgSqFC2MsnThKjOZwIBNsR9caXHQPPCROo67FXPsUnx9UStf+6uWI8
+         orpqIMaHaS3aSgHkOcR/Q58uIlz1L71SYkOeIarimXSBqPchrm2vak4CWCo8qJCSGx5F
+         dii3Bg8l9yqukmKADwcKa7z81HGjOJGLVTp+qAxxRIXSrWzSEhOY9ofhndryD5couijG
+         Zj3Mja6NbLJKiM8plg4iTZHn1BtCHt6EoFGh2sdDX4RaPfgPxygiIsXYAFrNy81O99yb
+         C5KWKI09yJrUjwQemng9wKXaxC2oC8twgRzcZ0mqkAi35Cp1HwfuKbP8G9xXo2QhNLBU
+         FmEw==
+X-Gm-Message-State: AHQUAubJN792V70qB9/Cw3JT1zRimlS9oJpCFON7RMqvX+gKx5vqEas5
+        uriMWJOL4vVq9p77tjMvtSdS4ovR3hMDBxgIGCU=
+X-Google-Smtp-Source: AHgI3IZV1S4T7d5TzqSTun50KB7H4nd1C+uQyhoxoqisLCvJhTjtr/CQCrATuELnddE26UvJ9nRqKV3f9uXyd+DAjLU=
+X-Received: by 2002:a17:902:bc88:: with SMTP id bb8mr1150750plb.12.1550071991664;
+ Wed, 13 Feb 2019 07:33:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b5d86b9-2aa7-718c-c1da-70bbf9bf589e@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
+In-Reply-To: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 13 Feb 2019 17:33:00 +0200
+Message-ID: <CAHp75VeTwjbdjAXPZfB5B7oataarjG0epV1SzokdYnCj8xcPhA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] ICL support and other enhancements for PMC Core
+To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Lokesh Vutla <lokeshvutla@ti.com> [190213 04:23]:
-> Hi Tony,
-> 
-> On 12/02/19 10:00 PM, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > * Lokesh Vutla <lokeshvutla@ti.com> [190212 07:43]:
-> >> +The Interrupt Router (INTR) module provides a mechanism to route M
-> >> +interrupt inputs to N interrupt outputs, where all M inputs are selectable
-> >> +to be driven per N output. There is one register per output (MUXCNTL_N) that
-> >> +controls the selection.
-> >> +
-> >> +
-> >> +                                 Interrupt Router
-> >> +                             +----------------------+
-> >> +                             |  Inputs     Outputs  |
-> >> +        +-------+            | +------+             |
-> >> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
-> >> +        +-------+            | +------+             |      controller
-> >> +                             |    .        +-----+  |      +-------+
-> >> +        +-------+            |    .        |  0  |  |----->|  IRQ  |
-> >> +        | INTA  |----------->|    .        +-----+  |      +-------+
-> >> +        +-------+            |    .          .      |
-> >> +                             | +------+      .      |
-> >> +                             | | irqM |    +-----+  |
-> >> +                             | +------+    |  N  |  |
-> >> +                             |             +-----+  |
-> >> +                             +----------------------+
-> > 
-> > Is this always one-to-one mapping or can the same interrupt be routed to
-> > multiple targets like to the SoC and some coprocessor?
-> 
-> Yes, it is always one-to-one. Output of INTR can only be attached to one of the
-> processor.
+On Wed, Feb 13, 2019 at 5:08 PM Rajneesh Bhardwaj
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+>
+> This patch series provides Icelake support for PMC Core driver and while
+> doing so it introduces the Icelake Mobile to intel-family.h as per the
+> CPUID from below Coreboot link
+> https://github.com/coreboot/coreboot/blob/5ebcea3aaaa3cd358bc5bccaa156b13a6ef25df6/src/soc/intel/common/block/include/intelblocks/mp_init.h
+> and provides some fixes and enhancements to the driver.
 
-OK
+It's not applicable to my tree.
 
-> >> +Configuration of these MUXCNTL_N registers is done by a system controller
-> >> +(like the Device Memory and Security Controller on K3 AM654 SoC). System
-> >> +controller will keep track of the used and unused registers within the Router.
-> >> +Driver should request the system controller to get the range of GIC IRQs
-> >> +assigned to the requesting hosts. It is the drivers responsibility to keep
-> >> +track of Host IRQs.
-> >> +
-> >> +Communication between the host processor running an OS and the system
-> >> +controller happens through a protocol called TI System Control Interface
-> >> +(TISCI protocol). For more details refer:
-> >> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-> > 
-> > Care to describe a bit why the interrupts need to be routed by a system
-> > controller?
-> 
-> K3 architecture defines a heterogeneous system where multiple heterogeneous
-> cores are serving its own usecases. Given that there are multiple ways in which
-> a device IRQ can be routed using INTR, like either it can be routed to HLOS
-> core(A53 int this case) or it can be routed to any other coprocessor available
-> in the system(like R5). If every sw running in each co-processor is allowed to
-> program this INTR then there is a high probability that one sw executing on one
-> core can damage other heterogeneous core.  Mainly to avoid this damage the
-> configuration of all the INTRs and INTAs are done in a centralized place(sysfw).
-> Any user for programming its IRQ route should send a message to sysfw with the
-> parameters. These parameters are policed by sysfw and does the configuration.
+> Changes in v2:
+>  * Addressed review comments from Thomas
+>  * Added tags revieved
+>  * Folded in SHA1 suggestions from Stephen Rothwell, though Andy might want to
+>    fix it via rebasing
+>  * Rebased and tested with Linux v5.0.0-rc6
+>
+> This series:
+>  - Adds ICL U/Y CPUID to intel-family.h
+>  - Enables PMC driver for ICL
+>  - Introduces a new "package cstate show" feature
+>  - Fixes a customer issue related to S0ix on latest HP laptops
+>  - Fixes some minor bugs
+>
+> Rajneesh Bhardwaj (10):
+>   platform/x86: intel_pmc_core: Handle CFL regmap properly
+>   platform/x86: intel_pmc_core: Fix PCH IP sts reading
+>   platform/x86: intel_pmc_core: Fix PCH IP name
+>   platform/x86: intel_pmc_core: Fix file permissions for ltr_show
+>   platform/x86: intel_pmc_core: Include Reserved IP for LTR
+>   x86/cpu: Add Icelake to Intel family
+>   platform/x86: intel_pmc_core: Convert to INTEL_CPU_FAM6 macro
+>   platform/x86: intel_pmc_core: Add ICL platform support
+>   platform/x86: intel_pmc_core: Add Package cstates residency info
+>   platform/x86: intel_pmc_core: Quirk to ignore XTAL shutdown
+>
+>  arch/x86/include/asm/intel-family.h   |   2 +
+>  drivers/platform/x86/intel_pmc_core.c | 155 +++++++++++++++++++++-----
+>  drivers/platform/x86/intel_pmc_core.h |  14 ++-
+>  3 files changed, 145 insertions(+), 26 deletions(-)
+>
+> --
+> 2.17.1
+>
 
-OK so maybe update the description along those lines saying it's
-a shared piece of hardware between various independent SoC
-clusters which may or may not be running Linux.
 
-Regards,
-
-Tony
+-- 
+With Best Regards,
+Andy Shevchenko
