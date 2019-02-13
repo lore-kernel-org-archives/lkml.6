@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEA3C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB861C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07403222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCBB4222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083202;
-	bh=R7V2DY9s8Dvpewsc9iuCv90pVzXkeU3vbKJg1kDYe50=;
+	s=default; t=1550083203;
+	bh=EMHBaVpU1ntNc7ITT/Z4dlzJ3I3M4Lzv9eh5ccJjqjE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f4FErQMyDUxBM6uALkK+vZ8lntAQBiCIjnWt4qIq5ef+rY+Lxezrl8ebz+fTFxtU7
-	 e1w9vLWHxiudjEvgy5jIGawzESFJXGdFyA0q46BvDWqI3X/X+YHKc1dlzdLurmJMEZ
-	 PF8wbHajyvtzYZk2TWzH8t7/g1juAho7eOgiM3a0=
+	b=xkZaMUCAo5h4e/PJqogR67LB3npmI77ZI9z3SerUSV5wlOi6ZdFeymjUpDIAJBHq4
+	 udswl1G2nqsulEp7KMj9fruoWROTiSOsey5rLTZ9YjkiABybuYDkD10hr25jl5yiDI
+	 rSwpWzZKz9MfKulPDAsWqHrto7IAoanwHNLs2QQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405333AbfBMSkA (ORCPT
+        id S2405345AbfBMSkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:40:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38008 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:40:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405310AbfBMSj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:39:58 -0500
+        id S2405302AbfBMSkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:40:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55940222D5;
-        Wed, 13 Feb 2019 18:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D430222D8;
+        Wed, 13 Feb 2019 18:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083196;
-        bh=R7V2DY9s8Dvpewsc9iuCv90pVzXkeU3vbKJg1kDYe50=;
+        s=default; t=1550083199;
+        bh=EMHBaVpU1ntNc7ITT/Z4dlzJ3I3M4Lzv9eh5ccJjqjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeL+qxifv/FQtMDY7RPgxDXgT+r+8Hu5G/d5B2BdpnNCzMn8/AQNkrek7Ldaatm0S
-         w06ZC8DzF/xDHQh2fw7jL02rMy9L4PPcnvOvn/1a2BxtOA9rczIZA69YNnIH/joZ7e
-         9Xv89KXN3grTaQYMxybvG19iOUDFNsbMMM3YMmYc=
+        b=v9efRJocLKfvLXBf2VQnXwLkE27XvV1OxP2aWTXmPpgkWxWsMIAr1B+ectunhhg4C
+         9rX/HyykJHyE47dwuC0tQjeJ3WYSQzXQ8VKOEvUraEcKtYxm3zO39pfm+u3u5pFz4z
+         wzF3/x+T7GE00n0gt6YC89wCzekaGezdmrC/Wt/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.9 19/24] HID: debug: fix the ring buffer implementation
-Date:   Wed, 13 Feb 2019 19:38:16 +0100
-Message-Id: <20190213183649.051407712@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.9 02/24] iio: chemical: atlas-ph-sensor: correct IIO_TEMP values to millicelsius
+Date:   Wed, 13 Feb 2019 19:37:59 +0100
+Message-Id: <20190213183647.517234921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183647.333441569@linuxfoundation.org>
 References: <20190213183647.333441569@linuxfoundation.org>
@@ -66,273 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladis Dronov <vdronov@redhat.com>
+From: Matt Ranostay <matt.ranostay@konsulko.com>
 
-commit 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035 upstream.
+commit 0808831dc62e90023ad14ff8da4804c7846e904b upstream.
 
-Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-is strange allowing lost or corrupted data. After commit 717adfdaf147
-("HID: debug: check length before copy_to_user()") it is possible to enter
-an infinite loop in hid_debug_events_read() by providing 0 as count, this
-locks up a system. Fix this by rewriting the ring buffer implementation
-with kfifo and simplify the code.
+IIO_TEMP scale value for temperature was incorrect and not in millicelsius
+as required by the ABI documentation.
 
-This fixes CVE-2019-3819.
-
-v2: fix an execution logic and add a comment
-v3: use __set_current_state() instead of set_current_state()
-
-Backport to v4.9: some tree-wide patches are missing in v4.9 so
-cherry-pick relevant pieces from:
- * 6396bb22151 ("treewide: kzalloc() -> kcalloc()")
- * a9a08845e9ac ("vfs: do bulk POLL* -> EPOLL* replacement")
- * 174cd4b1e5fb ("sched/headers: Prepare to move signal wakeup & sigpending
-   methods from <linux/sched.h> into <linux/sched/signal.h>")
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-Cc: stable@vger.kernel.org # v4.18+
-Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Fixes: 27dec00ecf2d (iio: chemical: add Atlas pH-SM sensor support)
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c   |  122 ++++++++++++++++++----------------------------
- include/linux/hid-debug.h |    9 +--
- 2 files changed, 52 insertions(+), 79 deletions(-)
+ drivers/iio/chemical/atlas-ph-sensor.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -30,6 +30,7 @@
- 
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/kfifo.h>
- #include <linux/sched.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -455,7 +456,7 @@ static char *resolv_usage_page(unsigned
- 	char *buf = NULL;
- 
- 	if (!f) {
--		buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_ATOMIC);
-+		buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_ATOMIC);
- 		if (!buf)
- 			return ERR_PTR(-ENOMEM);
- 	}
-@@ -659,17 +660,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
- /* enqueue string to 'events' ring buffer */
- void hid_debug_event(struct hid_device *hdev, char *buf)
+--- a/drivers/iio/chemical/atlas-ph-sensor.c
++++ b/drivers/iio/chemical/atlas-ph-sensor.c
+@@ -453,9 +453,8 @@ static int atlas_read_raw(struct iio_dev
+ 	case IIO_CHAN_INFO_SCALE:
+ 		switch (chan->type) {
+ 		case IIO_TEMP:
+-			*val = 1; /* 0.01 */
+-			*val2 = 100;
+-			break;
++			*val = 10;
++			return IIO_VAL_INT;
+ 		case IIO_PH:
+ 			*val = 1; /* 0.001 */
+ 			*val2 = 1000;
+@@ -486,7 +485,7 @@ static int atlas_write_raw(struct iio_de
+ 			   int val, int val2, long mask)
  {
--	unsigned i;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
+ 	struct atlas_data *data = iio_priv(indio_dev);
+-	__be32 reg = cpu_to_be32(val);
++	__be32 reg = cpu_to_be32(val / 10);
  
- 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
--	list_for_each_entry(list, &hdev->debug_list, node) {
--		for (i = 0; buf[i]; i++)
--			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
--				buf[i];
--		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
--        }
-+	list_for_each_entry(list, &hdev->debug_list, node)
-+		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
- 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
- 
- 	wake_up_interruptible(&hdev->debug_wait);
-@@ -720,8 +716,7 @@ void hid_dump_input(struct hid_device *h
- 	hid_debug_event(hdev, buf);
- 
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
--
-+	wake_up_interruptible(&hdev->debug_wait);
- }
- EXPORT_SYMBOL_GPL(hid_dump_input);
- 
-@@ -1086,8 +1081,8 @@ static int hid_debug_events_open(struct
- 		goto out;
- 	}
- 
--	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
--		err = -ENOMEM;
-+	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-+	if (err) {
- 		kfree(list);
- 		goto out;
- 	}
-@@ -1107,77 +1102,57 @@ static ssize_t hid_debug_events_read(str
- 		size_t count, loff_t *ppos)
- {
- 	struct hid_debug_list *list = file->private_data;
--	int ret = 0, len;
-+	int ret = 0, copied;
- 	DECLARE_WAITQUEUE(wait, current);
- 
- 	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
--
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
--
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					set_current_state(TASK_RUNNING);
--					goto out;
--				}
--
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
-+	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
- 			}
- 
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
--		}
--
--		if (ret)
--			goto out;
--
--		/* pass the ringbuffer contents to userspace */
--copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
- 			}
--			ret += len;
--			list->head += len;
--		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
- 
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
-+			/* if list->hdev is NULL we cannot remove_wait_queue().
-+			 * if list->hdev->debug is 0 then hid_debug_unregister()
-+			 * was already called and list->hdev is being destroyed.
-+			 * if we add remove_wait_queue() here we can hit a race.
-+			 */
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
- 				goto out;
- 			}
--			list->head = 0;
--			ret += len;
--			count -= len;
--			if (count > 0)
--				goto copy_rest;
-+
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
- 		}
- 
-+		__set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
-+
-+		if (ret)
-+			goto out;
- 	}
-+
-+	/* pass the fifo content to userspace, locking is not needed with only
-+	 * one concurrent reader and one concurrent writer
-+	 */
-+	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-+	if (ret)
-+		goto out;
-+	ret = copied;
- out:
- 	mutex_unlock(&list->read_mutex);
- 	return ret;
-@@ -1188,7 +1163,7 @@ static unsigned int hid_debug_events_pol
- 	struct hid_debug_list *list = file->private_data;
- 
- 	poll_wait(file, &list->hdev->debug_wait, wait);
--	if (list->head != list->tail)
-+	if (!kfifo_is_empty(&list->hid_debug_fifo))
- 		return POLLIN | POLLRDNORM;
- 	if (!list->hdev->debug)
- 		return POLLERR | POLLHUP;
-@@ -1203,7 +1178,7 @@ static int hid_debug_events_release(stru
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_del(&list->node);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--	kfree(list->hid_debug_buf);
-+	kfifo_free(&list->hid_debug_fifo);
- 	kfree(list);
- 
- 	return 0;
-@@ -1254,4 +1229,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
- }
--
---- a/include/linux/hid-debug.h
-+++ b/include/linux/hid-debug.h
-@@ -24,7 +24,10 @@
- 
- #ifdef CONFIG_DEBUG_FS
- 
-+#include <linux/kfifo.h>
-+
- #define HID_DEBUG_BUFSIZE 512
-+#define HID_DEBUG_FIFOSIZE 512
- 
- void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
- void hid_dump_report(struct hid_device *, int , u8 *, int);
-@@ -37,11 +40,8 @@ void hid_debug_init(void);
- void hid_debug_exit(void);
- void hid_debug_event(struct hid_device *, char *);
- 
--
- struct hid_debug_list {
--	char *hid_debug_buf;
--	int head;
--	int tail;
-+	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
- 	struct fasync_struct *fasync;
- 	struct hid_device *hdev;
- 	struct list_head node;
-@@ -64,4 +64,3 @@ struct hid_debug_list {
- #endif
- 
- #endif
--
+ 	if (val2 != 0 || val < 0 || val > 20000)
+ 		return -EINVAL;
 
 
