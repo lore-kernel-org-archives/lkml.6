@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 883BCC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0B7C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F3320811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3617B20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n5Xg2bp6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R9BvU+rS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732442AbfBMHCq (ORCPT
+        id S2388971AbfBMHCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:02:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51212 "EHLO
+        Wed, 13 Feb 2019 02:02:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51322 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388415AbfBMHCi (ORCPT
+        with ESMTP id S2388769AbfBMHCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:02:38 -0500
+        Wed, 13 Feb 2019 02:02:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dFAB/R/6g9ehnd+kgvrT0wbLLIBOe4pEiIxLgRJaP24=; b=n5Xg2bp6pPEXnXo26OTE1M3WmA
-        KI9Rbn5t8LysQW2pV2Ioe+COZyqpe3JTu3MrjLxGt2+EkY3gaEK/04RDJKfp3nSbCoQ3ItqDAqwXz
-        paIzSSoP2sxlwx2m6Pi921M4xG22DBacUAX7QQpmEg7R645B0lEvKKQHwAJDYWV6Qu4qj6IMt7nV0
-        0/SOCQtwA0yOdVP8zITP1hRQXtvQ3RGZkGn1EGYyAuRpj1ix4JWGn4DFk4QM6EmN83c8gGD7SeT+n
-        PAfWEIo/f/CQujjoOU9r9jygMYeUpqBxkhfzfRIk51qmZoO3NktP4hb04Kl+l3uvby5i5ly66wmbe
-        2Gv91O0w==;
+        bh=trbd6cg4F+mafDtD6lzbWwOTuAfjWQjkxgAmq1QJDKk=; b=R9BvU+rS41m0zmbJ9PK6nO8sFy
+        h12/CVLObarS0V/Axg9efnL6TGc9Ytaycrt0tmaa0Bz/T1aIpccfnV1w/m1TX4Ruigbus/hYXEB+L
+        jRi4PBHtDtYrXg7TbA4LX44cvhceVQqynHftjIvv0nWU0YGpKXQ01RlFvLRq2JBbKoEK+UY7v/7Lk
+        tNiwiQXsZlr1NfrlcpkI6rEchL7JIRyqI6G3lo3KeACkRFTj8TRyj7/pGazGyUPQ1ZBw1IB0v3cUx
+        S10bLvOswMNibavWPV7ZA6DESJAL3kRC9M07R2j4O1ZSM4Rf46vbhxQIJvJjUGGEmBVBWF1fGcc3V
+        /SW18oTA==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtoYh-0000MJ-5A; Wed, 13 Feb 2019 07:02:15 +0000
+        id 1gtoYy-0000eL-16; Wed, 13 Feb 2019 07:02:32 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -45,9 +45,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org,
         Christian Zigotzky <chzigotzky@xenosoft.de>
-Subject: [PATCH 17/32] powerpc/dma: remove get_pci_dma_ops
-Date:   Wed, 13 Feb 2019 08:01:18 +0100
-Message-Id: <20190213070133.11259-18-hch@lst.de>
+Subject: [PATCH 24/32] powerpc/dma: remove dma_nommu_get_required_mask
+Date:   Wed, 13 Feb 2019 08:01:25 +0100
+Message-Id: <20190213070133.11259-25-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213070133.11259-1-hch@lst.de>
 References: <20190213070133.11259-1-hch@lst.de>
@@ -59,105 +59,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is only used by the Cell iommu code, which can keep track
-if it is using the iommu internally just as good.
+This function is identical to the generic dma_direct_get_required_mask,
+except that the generic version also takes the bus_dma_mask account,
+which could lead to incorrect results in the powerpc version.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
 ---
- arch/powerpc/include/asm/pci.h      |  2 --
- arch/powerpc/kernel/pci-common.c    |  6 ------
- arch/powerpc/platforms/cell/iommu.c | 17 ++++++++---------
- 3 files changed, 8 insertions(+), 17 deletions(-)
+ arch/powerpc/include/asm/dma-mapping.h |  1 -
+ arch/powerpc/kernel/dma-iommu.c        |  2 +-
+ arch/powerpc/kernel/dma.c              | 14 +-------------
+ 3 files changed, 2 insertions(+), 15 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/pci.h b/arch/powerpc/include/asm/pci.h
-index 0c72f1897063..6a1861a6301e 100644
---- a/arch/powerpc/include/asm/pci.h
-+++ b/arch/powerpc/include/asm/pci.h
-@@ -52,10 +52,8 @@ static inline int pci_get_legacy_ide_irq(struct pci_dev *dev, int channel)
+diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+index f19c486e7b3f..af9a32d4fcf8 100644
+--- a/arch/powerpc/include/asm/dma-mapping.h
++++ b/arch/powerpc/include/asm/dma-mapping.h
+@@ -32,7 +32,6 @@ dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
+ 		unsigned long offset, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs);
+ int dma_nommu_dma_supported(struct device *dev, u64 mask);
+-u64 dma_nommu_get_required_mask(struct device *dev);
  
- #ifdef CONFIG_PCI
- extern void set_pci_dma_ops(const struct dma_map_ops *dma_ops);
--extern const struct dma_map_ops *get_pci_dma_ops(void);
- #else	/* CONFIG_PCI */
- #define set_pci_dma_ops(d)
--#define get_pci_dma_ops()	NULL
- #endif
- 
- #ifdef CONFIG_PPC64
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index 88e4f69a09e5..a84707680525 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -69,12 +69,6 @@ void set_pci_dma_ops(const struct dma_map_ops *dma_ops)
- 	pci_dma_ops = dma_ops;
- }
- 
--const struct dma_map_ops *get_pci_dma_ops(void)
--{
--	return pci_dma_ops;
--}
--EXPORT_SYMBOL(get_pci_dma_ops);
--
+ #ifdef CONFIG_NOT_COHERENT_CACHE
  /*
-  * This function should run under locking protection, specifically
-  * hose_spinlock.
-diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
-index 6663cd3e6bb6..a3c4057a8f65 100644
---- a/arch/powerpc/platforms/cell/iommu.c
-+++ b/arch/powerpc/platforms/cell/iommu.c
-@@ -544,6 +544,7 @@ static struct cbe_iommu *cell_iommu_for_node(int nid)
- static unsigned long cell_dma_nommu_offset;
- 
- static unsigned long dma_iommu_fixed_base;
-+static bool cell_iommu_enabled;
- 
- /* iommu_fixed_is_weak is set if booted with iommu_fixed=weak */
- bool iommu_fixed_is_weak;
-@@ -572,16 +573,14 @@ static u64 cell_iommu_get_fixed_address(struct device *dev);
- 
- static void cell_dma_dev_setup(struct device *dev)
- {
--	if (get_pci_dma_ops() == &dma_iommu_ops) {
-+	if (cell_iommu_enabled) {
- 		u64 addr = cell_iommu_get_fixed_address(dev);
- 
- 		if (addr != OF_BAD_ADDR)
- 			set_dma_offset(dev, addr + dma_iommu_fixed_base);
- 		set_iommu_table_base(dev, cell_get_iommu_table(dev));
--	} else if (get_pci_dma_ops() == &dma_nommu_ops) {
--		set_dma_offset(dev, cell_dma_nommu_offset);
- 	} else {
--		BUG();
-+		set_dma_offset(dev, cell_dma_nommu_offset);
- 	}
- }
- 
-@@ -599,11 +598,11 @@ static int cell_of_bus_notify(struct notifier_block *nb, unsigned long action,
- 	if (action != BUS_NOTIFY_ADD_DEVICE)
+diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
+index ed8b60829a90..4377b69a9d42 100644
+--- a/arch/powerpc/kernel/dma-iommu.c
++++ b/arch/powerpc/kernel/dma-iommu.c
+@@ -152,7 +152,7 @@ u64 dma_iommu_get_required_mask(struct device *dev)
  		return 0;
  
--	/* We use the PCI DMA ops */
--	dev->dma_ops = get_pci_dma_ops();
--
-+	if (cell_iommu_enabled)
-+		dev->dma_ops = &dma_iommu_ops;
-+	else
-+		dev->dma_ops = &dma_nommu_ops;
- 	cell_dma_dev_setup(dev);
--
- 	return 0;
+ 	if (dev_is_pci(dev)) {
+-		u64 bypass_mask = dma_nommu_get_required_mask(dev);
++		u64 bypass_mask = dma_direct_get_required_mask(dev);
+ 
+ 		if (dma_iommu_bypass_supported(dev, bypass_mask))
+ 			return bypass_mask;
+diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+index 841c43355a7e..46afc66cc271 100644
+--- a/arch/powerpc/kernel/dma.c
++++ b/arch/powerpc/kernel/dma.c
+@@ -145,18 +145,6 @@ static void dma_nommu_unmap_sg(struct device *dev, struct scatterlist *sgl,
+ 		__dma_sync_page(sg_page(sg), sg->offset, sg->length, direction);
  }
  
-@@ -1093,7 +1092,7 @@ static int __init cell_iommu_init(void)
-  done:
- 	/* Setup default PCI iommu ops */
- 	set_pci_dma_ops(&dma_iommu_ops);
+-u64 dma_nommu_get_required_mask(struct device *dev)
+-{
+-	u64 end, mask;
 -
-+	cell_iommu_enabled = true;
-  bail:
- 	/* Register callbacks on OF platform device addition/removal
- 	 * to handle linking them to the right DMA operations
+-	end = memblock_end_of_DRAM() + get_dma_offset(dev);
+-
+-	mask = 1ULL << (fls64(end) - 1);
+-	mask += mask - 1;
+-
+-	return mask;
+-}
+-
+ dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
+ 		unsigned long offset, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs)
+@@ -205,7 +193,7 @@ const struct dma_map_ops dma_nommu_ops = {
+ 	.dma_supported			= dma_nommu_dma_supported,
+ 	.map_page			= dma_nommu_map_page,
+ 	.unmap_page			= dma_nommu_unmap_page,
+-	.get_required_mask		= dma_nommu_get_required_mask,
++	.get_required_mask		= dma_direct_get_required_mask,
+ #ifdef CONFIG_NOT_COHERENT_CACHE
+ 	.sync_single_for_cpu 		= dma_nommu_sync_single,
+ 	.sync_single_for_device 	= dma_nommu_sync_single,
 -- 
 2.20.1
 
