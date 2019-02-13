@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68FDC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C7BC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9530720835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E59320835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026576;
-	bh=6go/5oR2NCf81JfMdR+mvnKz0r8TB1gXrYV3tsOWs0U=;
+	s=default; t=1550026586;
+	bh=qfP/oAi2OZLsa1qvUPB8pF1cUEbG8ZBaAU7TfcW2HTE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kw8DLJd0OvBXPb+NJ3nT0yWuXSwFkv7S7udSbir78pV0kXh0qbRx82iTLX9wtqrJX
-	 5D4qp0vdx3byYfgb8KsssusRJQSOTBKQwDMMm2MJ0Bi74iBTh3RjKG6LRF4D+ayBm/
-	 +gPESAuRIzoRqhMrJZkxfHfD7WeuNgeN0uHYlixs=
+	b=yK9Yi34qixjS0/HKHT1gLdKnNXigKlYfDd1At7EN+vZcEBxWCwqD3FGMXubf0z7Fq
+	 Oi/jhMo6TyqVUxCcwgJoxtFFI+3QPOffXrmjNv8Z8vKCOHXTrE7vmh3HdJYFTbTOQy
+	 VRD3R46idshMOO1M91KPipuRt1G7AQ12SfEvQKso=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390086AbfBMC4J (ORCPT
+        id S2390104AbfBMC4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:56:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40944 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730731AbfBMChX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:23 -0500
+        id S2388275AbfBMChU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDDA2222C2;
-        Wed, 13 Feb 2019 02:37:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B16AE222C2;
+        Wed, 13 Feb 2019 02:37:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025442;
-        bh=6go/5oR2NCf81JfMdR+mvnKz0r8TB1gXrYV3tsOWs0U=;
+        s=default; t=1550025439;
+        bh=qfP/oAi2OZLsa1qvUPB8pF1cUEbG8ZBaAU7TfcW2HTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rq9sZG0yQCsLOsE9v1PHTrpO72qPvt9k4N5mYOEHaU9WkXPvSV1i/g5pXF1dsNzm8
-         M6uOPHaOpsanY5vKdxmGngFZ26XwEx9c1XbUl7Puvrt82wzxSIMzf1oZmgjngiRVMW
-         40NtLhEEs/vXUjOgPEB76/1hD3qS3jiN8XoG1Tv8=
+        b=nhPAypw5VTCj5vPD5KYoz9bIGp1BAW9vlL4kgk9X5j55OeAVjeymUMT3iPtMjlN/9
+         Efh3yK9wooVUiV4cgFwXce/88niXklzo2OkLkRykE3m1XOkhPxeUq1vgsLd7k8ul3j
+         mjQOHYz44joL7TgLKiROVYkxj3Y5rpd+pEpW94gQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Keerthy <j-keerthy@ti.com>, Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 18/83] mfd: tps65218: Use devm_regmap_add_irq_chip and clean up error path in probe()
-Date:   Tue, 12 Feb 2019 21:35:56 -0500
-Message-Id: <20190213023701.20286-18-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Oskari Lemmela <oskari@lemmela.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 15/83] mfd: axp20x: Re-align MFD cell entries
+Date:   Tue, 12 Feb 2019 21:35:53 -0500
+Message-Id: <20190213023701.20286-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -57,74 +58,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keerthy <j-keerthy@ti.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 75d4c5e03c2ae9902ab521024b10291f6fc9515b ]
+[ Upstream commit 753a8d083e085c6f552c7982749de4cc7c40e2ac ]
 
-Use devm_regmap_add_irq_chip and clean up error path in probe
-and also the remove function.
+In the axp20x driver, the various mfd_cell lists had varying amounts
+of indentation, sometimes even within the same list. For the axp288,
+there's no alignment at all.
 
-Reported-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Re-align the right hand side of the assignments with the least amount
+of tabs possible. Also collapse the closing bracket and the opening
+bracket of the next entry onto the same line for the axp288, to be
+consistent with all the other mfd_cell lists.
+
+This patch is whitespace change only. No functionality is modified.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/tps65218.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ drivers/mfd/axp20x.c | 107 +++++++++++++++++++++----------------------
+ 1 file changed, 51 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
-index 910f569ff77c..8bcdecf494d0 100644
---- a/drivers/mfd/tps65218.c
-+++ b/drivers/mfd/tps65218.c
-@@ -235,9 +235,9 @@ static int tps65218_probe(struct i2c_client *client,
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index dfc3cff1d08b..8037b4e01ed6 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -640,9 +640,9 @@ static const struct mfd_cell axp221_cells[] = {
  
- 	mutex_init(&tps->tps_lock);
+ static const struct mfd_cell axp223_cells[] = {
+ 	{
+-		.name			= "axp221-pek",
+-		.num_resources		= ARRAY_SIZE(axp22x_pek_resources),
+-		.resources		= axp22x_pek_resources,
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp22x_pek_resources),
++		.resources	= axp22x_pek_resources,
+ 	}, {
+ 		.name		= "axp22x-adc",
+ 		.of_compatible	= "x-powers,axp221-adc",
+@@ -650,7 +650,7 @@ static const struct mfd_cell axp223_cells[] = {
+ 		.name		= "axp20x-battery-power-supply",
+ 		.of_compatible	= "x-powers,axp221-battery-power-supply",
+ 	}, {
+-		.name			= "axp20x-regulator",
++		.name		= "axp20x-regulator",
+ 	}, {
+ 		.name		= "axp20x-ac-power-supply",
+ 		.of_compatible	= "x-powers,axp221-ac-power-supply",
+@@ -666,9 +666,9 @@ static const struct mfd_cell axp223_cells[] = {
  
--	ret = regmap_add_irq_chip(tps->regmap, tps->irq,
--			IRQF_ONESHOT, 0, &tps65218_irq_chip,
--			&tps->irq_data);
-+	ret = devm_regmap_add_irq_chip(&client->dev, tps->regmap, tps->irq,
-+				       IRQF_ONESHOT, 0, &tps65218_irq_chip,
-+				       &tps->irq_data);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -253,26 +253,9 @@ static int tps65218_probe(struct i2c_client *client,
- 			      ARRAY_SIZE(tps65218_cells), NULL, 0,
- 			      regmap_irq_get_domain(tps->irq_data));
- 
--	if (ret < 0)
--		goto err_irq;
--
--	return 0;
--
--err_irq:
--	regmap_del_irq_chip(tps->irq, tps->irq_data);
--
- 	return ret;
- }
- 
--static int tps65218_remove(struct i2c_client *client)
--{
--	struct tps65218 *tps = i2c_get_clientdata(client);
--
--	regmap_del_irq_chip(tps->irq, tps->irq_data);
--
--	return 0;
--}
--
- static const struct i2c_device_id tps65218_id_table[] = {
- 	{ "tps65218", TPS65218 },
- 	{ },
-@@ -285,7 +268,6 @@ static struct i2c_driver tps65218_driver = {
- 		.of_match_table = of_tps65218_match_table,
+ static const struct mfd_cell axp152_cells[] = {
+ 	{
+-		.name			= "axp20x-pek",
+-		.num_resources		= ARRAY_SIZE(axp152_pek_resources),
+-		.resources		= axp152_pek_resources,
++		.name		= "axp20x-pek",
++		.num_resources	= ARRAY_SIZE(axp152_pek_resources),
++		.resources	= axp152_pek_resources,
  	},
- 	.probe		= tps65218_probe,
--	.remove		= tps65218_remove,
- 	.id_table       = tps65218_id_table,
  };
  
+@@ -697,84 +697,79 @@ static const struct resource axp288_charger_resources[] = {
+ 
+ static const struct mfd_cell axp288_cells[] = {
+ 	{
+-		.name = "axp288_adc",
+-		.num_resources = ARRAY_SIZE(axp288_adc_resources),
+-		.resources = axp288_adc_resources,
+-	},
+-	{
+-		.name = "axp288_extcon",
+-		.num_resources = ARRAY_SIZE(axp288_extcon_resources),
+-		.resources = axp288_extcon_resources,
+-	},
+-	{
+-		.name = "axp288_charger",
+-		.num_resources = ARRAY_SIZE(axp288_charger_resources),
+-		.resources = axp288_charger_resources,
+-	},
+-	{
+-		.name = "axp288_fuel_gauge",
+-		.num_resources = ARRAY_SIZE(axp288_fuel_gauge_resources),
+-		.resources = axp288_fuel_gauge_resources,
+-	},
+-	{
+-		.name = "axp221-pek",
+-		.num_resources = ARRAY_SIZE(axp288_power_button_resources),
+-		.resources = axp288_power_button_resources,
+-	},
+-	{
+-		.name = "axp288_pmic_acpi",
++		.name		= "axp288_adc",
++		.num_resources	= ARRAY_SIZE(axp288_adc_resources),
++		.resources	= axp288_adc_resources,
++	}, {
++		.name		= "axp288_extcon",
++		.num_resources	= ARRAY_SIZE(axp288_extcon_resources),
++		.resources	= axp288_extcon_resources,
++	}, {
++		.name		= "axp288_charger",
++		.num_resources	= ARRAY_SIZE(axp288_charger_resources),
++		.resources	= axp288_charger_resources,
++	}, {
++		.name		= "axp288_fuel_gauge",
++		.num_resources	= ARRAY_SIZE(axp288_fuel_gauge_resources),
++		.resources	= axp288_fuel_gauge_resources,
++	}, {
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp288_power_button_resources),
++		.resources	= axp288_power_button_resources,
++	}, {
++		.name		= "axp288_pmic_acpi",
+ 	},
+ };
+ 
+ static const struct mfd_cell axp803_cells[] = {
+ 	{
+-		.name			= "axp221-pek",
+-		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+-		.resources		= axp803_pek_resources,
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
++		.resources	= axp803_pek_resources,
+ 	},
+-	{	.name			= "axp20x-regulator" },
++	{	.name		= "axp20x-regulator" },
+ };
+ 
+ static const struct mfd_cell axp806_self_working_cells[] = {
+ 	{
+-		.name			= "axp221-pek",
+-		.num_resources		= ARRAY_SIZE(axp806_pek_resources),
+-		.resources		= axp806_pek_resources,
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp806_pek_resources),
++		.resources	= axp806_pek_resources,
+ 	},
+-	{	.name			= "axp20x-regulator" },
++	{	.name		= "axp20x-regulator" },
+ };
+ 
+ static const struct mfd_cell axp806_cells[] = {
+ 	{
+-		.id			= 2,
+-		.name			= "axp20x-regulator",
++		.id		= 2,
++		.name		= "axp20x-regulator",
+ 	},
+ };
+ 
+ static const struct mfd_cell axp809_cells[] = {
+ 	{
+-		.name			= "axp221-pek",
+-		.num_resources		= ARRAY_SIZE(axp809_pek_resources),
+-		.resources		= axp809_pek_resources,
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp809_pek_resources),
++		.resources	= axp809_pek_resources,
+ 	}, {
+-		.id			= 1,
+-		.name			= "axp20x-regulator",
++		.id		= 1,
++		.name		= "axp20x-regulator",
+ 	},
+ };
+ 
+ static const struct mfd_cell axp813_cells[] = {
+ 	{
+-		.name			= "axp221-pek",
+-		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+-		.resources		= axp803_pek_resources,
++		.name		= "axp221-pek",
++		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
++		.resources	= axp803_pek_resources,
+ 	}, {
+-		.name			= "axp20x-regulator",
++		.name		= "axp20x-regulator",
+ 	}, {
+-		.name			= "axp20x-gpio",
+-		.of_compatible		= "x-powers,axp813-gpio",
++		.name		= "axp20x-gpio",
++		.of_compatible	= "x-powers,axp813-gpio",
+ 	}, {
+-		.name			= "axp813-adc",
+-		.of_compatible		= "x-powers,axp813-adc",
++		.name		= "axp813-adc",
++		.of_compatible	= "x-powers,axp813-adc",
+ 	}, {
+ 		.name		= "axp20x-battery-power-supply",
+ 		.of_compatible	= "x-powers,axp813-battery-power-supply",
 -- 
 2.19.1
 
