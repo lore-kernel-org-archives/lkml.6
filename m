@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A6CC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0437C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B249222D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF9D222D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083293;
-	bh=qsPlDopCh8ODNunck7c5aZ/nZc0gOG3DEq7RFSgAjjQ=;
+	s=default; t=1550083297;
+	bh=D/HzgyGx5YmEkW50KJstZOq613b+KHiJ4AUyLxZ8FvM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zrx8RYMXAfs90veefd2fqQlFb4bFI0OihaXoowf2y3mkGOjImqzrMJOC8SDkhyC/N
-	 EfJBKQN0fFx3wGR6ajA4qqJo/r2toLK4jyeujPr1KuFr2ZZwBTGDq06n72HyEv0DLI
-	 MkM5UsBVyxCl9aTfngd6frMsFVAr1GqrzTUN6rrQ=
+	b=1qtMcila74LgCbdIFJ0Lff2U4o1KrG+TwfyNefvLsw3Rv0HnkIp02Qpeig55xGYtb
+	 AEQW8DKHPUXkFqd4fX6LQcea8ZEhbDiVPTKsXNH7H8hj/1YlqSrlYNcfAnN93LBVJz
+	 Y+NZ1Mclu9a5whc/g0zroUWCu048G1DvNnVkdvIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393862AbfBMSlb (ORCPT
+        id S1728177AbfBMSlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:41:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39822 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393851AbfBMSl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:29 -0500
+        id S2393863AbfBMSlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 100A6222D6;
-        Wed, 13 Feb 2019 18:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4867222D7;
+        Wed, 13 Feb 2019 18:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083288;
-        bh=qsPlDopCh8ODNunck7c5aZ/nZc0gOG3DEq7RFSgAjjQ=;
+        s=default; t=1550083291;
+        bh=D/HzgyGx5YmEkW50KJstZOq613b+KHiJ4AUyLxZ8FvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o+eIfR7DxIpVKD7YFLnN7VoC2Y4xxePmoF+F175w2GEqS8ue66l8th6yf17Toa6WF
-         ZG0SeXCtRhsmHVKZkKLYMnD7wxjPAZiayT9NrImt0EF4IIpQXmGEXmDGY3Y09hn89j
-         9+zGqWCT6Xntx4uY5Ke/FrZRkuKwr6iR5SCXx3Kc=
+        b=p0qJWr5u2abJLpPlij1QNVN5/ie9Q0YPAE6LOwptiwgKjvU7RKW/Ydo5kWQm3HTFa
+         BOm8Xy1Jw8azMzJjYIHvO1nXmGs8Um66ehNz2+M2w99QRlGujHrtOlL/Md9QuJwWIx
+         rKhuI6SIBM/3L42/V/LlCjM/KYacp9IyqPXZVQVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com,
-        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+9d7405c7faa390e60b4e@syzkaller.appspotmail.com,
+        syzbot+7d20bc3f1ddddc0f9079@syzkaller.appspotmail.com,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 23/35] batman-adv: Avoid WARN on net_device without parent in netns
-Date:   Wed, 13 Feb 2019 19:38:18 +0100
-Message-Id: <20190213183707.176359632@linuxfoundation.org>
+Subject: [PATCH 4.14 24/35] batman-adv: Force mac header to start of data on xmit
+Date:   Wed, 13 Feb 2019 19:38:19 +0100
+Message-Id: <20190213183707.212564272@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -69,50 +70,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-commit 955d3411a17f590364238bd0d3329b61f20c1cd2 upstream.
+commit 9114daa825fc3f335f9bea3313ce667090187280 upstream.
 
-It is not allowed to use WARN* helpers on potential incorrect input from
-the user or transient problems because systems configured as panic_on_warn
-will reboot due to such a problem.
+The caller of ndo_start_xmit may not already have called
+skb_reset_mac_header. The returned value of skb_mac_header/eth_hdr
+therefore can be in the wrong position and even outside the current skbuff.
+This for example happens when the user binds to the device using a
+PF_PACKET-SOCK_RAW with enabled qdisc-bypass:
 
-A NULL return value of __dev_get_by_index can be caused by various problems
-which can either be related to the system configuration or problems
-(incorrectly returned network namespaces) in other (virtual) net_device
-drivers. batman-adv should not cause a (harmful) WARN in this situation and
-instead only report it via a simple message.
+  int opt = 4;
+  setsockopt(sock, SOL_PACKET, PACKET_QDISC_BYPASS, &opt, sizeof(opt));
 
-Fixes: b7eddd0b3950 ("batman-adv: prevent using any virtual device created on batman-adv as hard-interface")
-Reported-by: syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Since eth_hdr is used all over the codebase, the batadv_interface_tx
+function must always take care of resetting it.
+
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Reported-by: syzbot+9d7405c7faa390e60b4e@syzkaller.appspotmail.com
+Reported-by: syzbot+7d20bc3f1ddddc0f9079@syzkaller.appspotmail.com
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/batman-adv/hard-interface.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/batman-adv/soft-interface.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -19,7 +19,6 @@
- #include "main.h"
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -213,6 +213,8 @@ static int batadv_interface_tx(struct sk
  
- #include <linux/atomic.h>
--#include <linux/bug.h>
- #include <linux/byteorder/generic.h>
- #include <linux/errno.h>
- #include <linux/fs.h>
-@@ -172,8 +171,10 @@ static bool batadv_is_on_batman_iface(co
- 	parent_dev = __dev_get_by_index((struct net *)parent_net,
- 					dev_get_iflink(net_dev));
- 	/* if we got a NULL parent_dev there is something broken.. */
--	if (WARN(!parent_dev, "Cannot find parent device"))
-+	if (!parent_dev) {
-+		pr_err("Cannot find parent device\n");
- 		return false;
-+	}
+ 	netif_trans_update(soft_iface);
+ 	vid = batadv_get_vid(skb, 0);
++
++	skb_reset_mac_header(skb);
+ 	ethhdr = eth_hdr(skb);
  
- 	if (batadv_mutual_parents(net_dev, net, parent_dev, parent_net))
- 		return false;
+ 	switch (ntohs(ethhdr->h_proto)) {
 
 
