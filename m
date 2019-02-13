@@ -2,199 +2,118 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14D6C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8F2C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F63222D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42978222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083233;
-	bh=9K6rbO8qx8C6otpoJxTXkSMOHw2vEoq6opu11erBssc=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ObGRg2itcB/yBaRAfDTTb3TkmwGbDtbQP1OTsE3F5GkRe33xRrvbO0TYvn4gXIJaJ
-	 K5agPhTK3HQ1LtNtNLKrRCE5rTG/Zc6DMJTWUXzEXEspOyGwPQY0jMrgH54tA5RFC/
-	 KBXLD1VaPbAvE6Vx9iV+iL2TI2R00gx7rXJG4Urs=
+	s=default; t=1550083238;
+	bh=AP63xi/jvNvGTdE92dGMn97sunwzkiGT1rMXrlZbouQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=qjDt5wOaVh59QqUbFH2q9uh8q4OhXZEgo4yBKqsRFEek/U85lsfuRZrYFG/0+5Xpr
+	 pTUx7+Wu/snvvG/IYMd7hgX0V6iPPofgFshI4xaiLcdCrrEjqSKb6meP6AF204yuwZ
+	 dC1YrwgdGYYZCmaV5ulUHRnSMpE/NPRxtaV4GfMk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405422AbfBMSkc (ORCPT
+        id S2405436AbfBMSkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:40:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38650 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:40:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbfBMSka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:40:30 -0500
+        id S1728032AbfBMSke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:40:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7420C222D7;
-        Wed, 13 Feb 2019 18:40:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13C77222D8;
+        Wed, 13 Feb 2019 18:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083229;
-        bh=9K6rbO8qx8C6otpoJxTXkSMOHw2vEoq6opu11erBssc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DT2RIAiOqU4IT4dxfjMRq5Bcf/JveXPAjPRUrJzIZI7n6u10+PVaPgkmBiPrO1lwP
-         /biIVbcDzsNSUIhR9FgYGXUiWxgJdUV+djMQEz3l7Zq2Gn8V0w+miocyxBooUHpjoX
-         U0y3xHI/oFp8qIDPdR5s46LLkrV0E511KhnnHUR0=
+        s=default; t=1550083233;
+        bh=AP63xi/jvNvGTdE92dGMn97sunwzkiGT1rMXrlZbouQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mbTK4UDE49u/cdrK2fgQh7XVhU37MvMcthIonbAHs0WwxTgE2f5oIVMY7jfUbFmea
+         fuexg0yHIuGsDgMzzlUyfm88WlkmDLZkL5coereS11Qz2IRruoo06etE4Lz4cubf2j
+         zK0497kuHiWrpob+tAR58G+CQ9Ev9Azp47kfUfYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/24] 4.9.157-stable review
-Date:   Wed, 13 Feb 2019 19:37:57 +0100
-Message-Id: <20190213183647.333441569@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.9 23/24] batman-adv: Avoid WARN on net_device without parent in netns
+Date:   Wed, 13 Feb 2019 19:38:20 +0100
+Message-Id: <20190213183649.419876496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190213183647.333441569@linuxfoundation.org>
+References: <20190213183647.333441569@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.157-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.157-rc1
-X-KernelTest-Deadline: 2019-02-15T18:36+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.157 release.
-There are 24 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Fri Feb 15 18:36:26 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.157-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+From: Sven Eckelmann <sven@narfation.org>
 
-thanks,
+commit 955d3411a17f590364238bd0d3329b61f20c1cd2 upstream.
 
-greg k-h
+It is not allowed to use WARN* helpers on potential incorrect input from
+the user or transient problems because systems configured as panic_on_warn
+will reboot due to such a problem.
 
--------------
-Pseudo-Shortlog of commits:
+A NULL return value of __dev_get_by_index can be caused by various problems
+which can either be related to the system configuration or problems
+(incorrectly returned network namespaces) in other (virtual) net_device
+drivers. batman-adv should not cause a (harmful) WARN in this situation and
+instead only report it via a simple message.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.157-rc1
+Fixes: b7eddd0b3950 ("batman-adv: prevent using any virtual device created on batman-adv as hard-interface")
+Reported-by: syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Force mac header to start of data on xmit
+---
+ net/batman-adv/hard-interface.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid WARN on net_device without parent in netns
-
-Florian Westphal <fw@strlen.de>
-    xfrm: refine validation of template and selector families
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)"
-
-Vladis Dronov <vdronov@redhat.com>
-    HID: debug: fix the ring buffer implementation
-
-J. Bruce Fields <bfields@redhat.com>
-    nfsd4: catch some false session retries
-
-J. Bruce Fields <bfields@redhat.com>
-    nfsd4: fix cached replies to solo SEQUENCE compounds
-
-Thomas Hellstrom <thellstrom@vmware.com>
-    drm/vmwgfx: Return error code from vmw_execbuf_copy_fence_user
-
-Thomas Hellstrom <thellstrom@vmware.com>
-    drm/vmwgfx: Fix setting of dma masks
-
-Tina Zhang <tina.zhang@intel.com>
-    drm/modes: Prevent division by zero htotal
-
-Felix Fietkau <nbd@nbd.name>
-    mac80211: ensure that mgmt tx skbs have tailroom for encryption
-
-Marc Gonzalez <marc.w.gonzalez@free.fr>
-    ARM: tango: Improve ARCH_MULTIPLATFORM compatibility
-
-Russell King <rmk+kernel@armlinux.org.uk>
-    ARM: iop32x/n2100: fix PCI IRQ mapping
-
-Paul Burton <paul.burton@mips.com>
-    MIPS: VDSO: Include $(ccflags-vdso) in o32,n32 .lds builds
-
-Aaro Koskinen <aaro.koskinen@iki.fi>
-    MIPS: OCTEON: don't set octeon_dma_bar_type if PCI is disabled
-
-Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
-    mips: cm: reprime error cause
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    debugfs: fix debugfs_rename parameter checking
-
-Tomas Winkler <tomas.winkler@intel.com>
-    samples: mei: use /dev/mei0 instead of /dev/mei
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    misc: vexpress: Off by one in vexpress_syscfg_exec()
-
-Eric W. Biederman <ebiederm@xmission.com>
-    signal: Better detection of synchronous signals
-
-Eric W. Biederman <ebiederm@xmission.com>
-    signal: Always notice exiting tasks
-
-Matt Ranostay <matt.ranostay@konsulko.com>
-    iio: chemical: atlas-ph-sensor: correct IIO_TEMP values to millicelsius
-
-Martin Kepplinger <martin.kepplinger@ginzinger.com>
-    mtd: rawnand: gpmi: fix MX28 bus master lockup problem
-
-
--------------
-
-Diffstat:
-
- Makefile                                |   4 +-
- arch/arm/mach-iop32x/n2100.c            |   3 +-
- arch/arm/mach-tango/pm.c                |   6 +-
- arch/arm/mach-tango/pm.h                |   7 ++
- arch/arm/mach-tango/setup.c             |   2 +
- arch/mips/kernel/mips-cm.c              |   2 +-
- arch/mips/pci/pci-octeon.c              |  10 +--
- arch/mips/vdso/Makefile                 |   4 +-
- drivers/gpu/drm/drm_modes.c             |   2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c     |   9 ++-
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |   2 +-
- drivers/hid/hid-debug.c                 | 122 +++++++++++++-------------------
- drivers/iio/chemical/atlas-ph-sensor.c  |   7 +-
- drivers/misc/vexpress-syscfg.c          |   2 +-
- drivers/mtd/nand/gpmi-nand/gpmi-lib.c   |  15 ++--
- fs/cifs/Kconfig                         |   2 +-
- fs/debugfs/inode.c                      |   7 ++
- fs/nfsd/nfs4state.c                     |  57 +++++++++++++--
- fs/nfsd/state.h                         |   2 +
- fs/nfsd/xdr4.h                          |  13 +++-
- include/linux/hid-debug.h               |   9 ++-
- kernel/signal.c                         |  58 ++++++++++++++-
- net/batman-adv/hard-interface.c         |   5 +-
- net/batman-adv/soft-interface.c         |   2 +
- net/ceph/messenger.c                    |   5 +-
- net/mac80211/tx.c                       |  12 +++-
- net/xfrm/xfrm_user.c                    |  13 ++--
- samples/mei/mei-amt-version.c           |   2 +-
- 28 files changed, 249 insertions(+), 135 deletions(-)
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -19,7 +19,6 @@
+ #include "main.h"
+ 
+ #include <linux/atomic.h>
+-#include <linux/bug.h>
+ #include <linux/byteorder/generic.h>
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+@@ -172,8 +171,10 @@ static bool batadv_is_on_batman_iface(co
+ 	parent_dev = __dev_get_by_index((struct net *)parent_net,
+ 					dev_get_iflink(net_dev));
+ 	/* if we got a NULL parent_dev there is something broken.. */
+-	if (WARN(!parent_dev, "Cannot find parent device"))
++	if (!parent_dev) {
++		pr_err("Cannot find parent device\n");
+ 		return false;
++	}
+ 
+ 	if (batadv_mutual_parents(net_dev, net, parent_dev, parent_net))
+ 		return false;
 
 
