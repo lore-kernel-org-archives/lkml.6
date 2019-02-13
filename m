@@ -2,364 +2,229 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90062C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BBCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CDF222A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IN8Se1M8"
+	by mail.kernel.org (Postfix) with ESMTP id DEF70222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550096282;
+	bh=7f9ronJobgAie2lSugC/3Bp3d17aHG/AoC5wTmY1zPU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=K5ShaEE0vurSp02tTsLxdNHZjU956ASbiCYSL7Nn8rOK3wZL36G0q18BXtZMcAhTv
+	 VOg9vZkBvpniL45h++TB065EH5d7Ejjzo/OyjQXOKwLb46wSjl5/p76MRdHfhoAjLr
+	 iHBX8tOufMNwAuNCnvK4SEdkKVx7csPrSZnnofVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392456AbfBMWQn (ORCPT
+        id S2404100AbfBMWSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:16:43 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39198 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392271AbfBMWQm (ORCPT
+        Wed, 13 Feb 2019 17:18:00 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44299 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387673AbfBMWSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:16:42 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g80so3433784ljg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:16:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=IN8Se1M8VLb+jbfpdYZe0pzm4v36DIFczW7RtMc/WoWo4K8i5jctgHMRFDI8e02vlq
-         2eGp1Dx6FxN0ZovSz/kTvE7PszX9leeFDjpiqsfHhzImabs4eyBWwkjpWP5xtAn0ZI9W
-         XjHW+MwpGZPliUbAEV9cieNoMqfzlaOE6t2ZR6LXQp6Szj3qwNBo0zC8G+mZ8O9FvJ0r
-         +JHaRo1Xs2FhrptD810vL4yMRC7LJKpKRanhMHSG1lOIn8nT62+RXxXpWZTyL0oPF4lH
-         gGtrjncWZ9xsY2q1KXDMP9+ORsfk2zEdxNWll+1GdCL+RZt+LdGboWNYTtweMXjBWcCi
-         fHwg==
+        Wed, 13 Feb 2019 17:18:00 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g1so7061737otj.11;
+        Wed, 13 Feb 2019 14:17:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=QAMo+88bvwfANS8q2Tqj5tFIna2ENa6eAgDTCwbYK84u9komqLANmFpufkOfBbZJzS
-         32EKEGCbgBMmtQkQ+XJaPZg2ex9We2jLpLI2sFuHRxU1aeZ3gAakoWIfdHSfCF18JVx1
-         qn/FxWQc9spTYOHISUWECvljJQ2DmiBwxDiApGnAaiJGv7yFPoxBp3HOgN3NZvDlo/YO
-         oBxmH+hyff0AeF4KeaAiAtwf4n8Nu9IrKyhIg1cFAIW8A/F1+vehGtiPAvFa14hw+MPb
-         gKKOHHN23Jt90ECoGWrKoeqA0JKA6V5cuJDPuS/B7QirPCEOtdNmMn02rewwkrrhyci+
-         BL0Q==
-X-Gm-Message-State: AHQUAuavSNiOeM2ZMWqcDLEhPSsD1zzPGGktyws7XxxOtEd/fN2CriN/
-        NHg5oBOJr3F31NAjqKJsrEq74w==
-X-Google-Smtp-Source: AHgI3IYyhAThOhBPs3XUfRamYzG2Ohpzh57N5h0u/VRNe0kPef+GETh9d4RdSUYJfnqRpxaLS7zfHw==
-X-Received: by 2002:a2e:9649:: with SMTP id z9-v6mr234849ljh.11.1550096199223;
-        Wed, 13 Feb 2019 14:16:39 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm88080ljk.92.2019.02.13.14.16.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:16:38 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v3 2/2] efi: fix build error redeclaration of enumerator
-Date:   Wed, 13 Feb 2019 23:16:25 +0100
-Message-Id: <20190213221625.7551-2-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213221625.7551-1-anders.roxell@linaro.org>
-References: <20190213221625.7551-1-anders.roxell@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fW8vkSD+aewsXFKQ/xQCTzy+RyxZSLfgUfilPak5HRI=;
+        b=WCPTNC/bVDTLCGQsoiNU5jlKtAZ07W/i9xg7VDvGHxB44J61BUw00DmzO33NHsRPnn
+         uho3v+XjRp4rm9rvW8jQRcFR3Etf7cB+HH9GDho6Yl4c+MnxxdPGmQD72LhNt4w+dCK1
+         +kcVV2SYFVhjRATIKaldIuD79LIBTwNZLgNuhI6U/YRgI/s4jLgex+NrwQzI0s1q+tej
+         VRTG5hLIAZvPchB7iqkGPMRvize+yv0m6h3u/xmikoecyjDC6KfaCWQt0EW3oL8jgXge
+         uAKXstaCB5kcqygJfYk66OBZbWpcOaWfRknxcWO73MFYxHtN3+A/bk7ueMjNMTliOmSe
+         ItrQ==
+X-Gm-Message-State: AHQUAuaO1i8Vvrf/ULEgaHtNRAZRcx6CsUbZrFo5LwF0ZW93AcYndaoG
+        ux5hTKM0BMeL8PfgmnPAsNQ8zKxXRPYgeQWW25pgMMs0
+X-Google-Smtp-Source: AHgI3IaiySrpf6s0zwIt/lMQxp/Hd55RSAwxKHdA3eipGVixrrs239Tv4dq6OQqr6XcFupMpcP2chYXEAzLwFnqfYc4=
+X-Received: by 2002:aca:ed0f:: with SMTP id l15mr306796oih.76.1550096278672;
+ Wed, 13 Feb 2019 14:17:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190213120137.23354-1-sudeep.holla@arm.com>
+In-Reply-To: <20190213120137.23354-1-sudeep.holla@arm.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 13 Feb 2019 23:17:47 +0100
+Message-ID: <CAJZ5v0gg7H9G_HrvLhf9k26maYUR+_EpE8DDQ7NPh58HMRH3Ew@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers: base: add support to skip power management in
+ device/driver model
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit a893ea15d764 ("tpm: move tpm_chip definition to
-include/linux/tpm.h") introduced a build error when both ima and efi is
-enabled. What happens is that both headers (ima.h and efi.h) defines the
-same 'NONE' constant, and it broke when they started getting included
-from the same file.
+On Wed, Feb 13, 2019 at 1:01 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> All device objects in the driver model contain fields that control the
+> handling of various power management activities. However, it's not
+> always useful. There are few instances where pseudo devices are added
+> to the model just to take advantage of many other features like
+> kobjects, udev events, and so on. One such example is cpu devices and
+> their caches.
+>
+> The sysfs for the cpu caches are managed by adding devices with cpu
+> as the parent in cpu_device_create() when secondary cpu is brought
+> online. Generally when the secondary CPUs are hotplugged back in as part
+> of resume from suspend-to-ram, we call cpu_device_create() from the cpu
+> hotplug state machine while the cpu device associated with that CPU is
+> not yet ready to be resumed as the device_resume() call happens bit
+> later. It's not really needed to set the flag is_prepared for cpu
+> devices as they are mostly pseudo device and hotplug framework deals
+> with state machine and not managed through the cpu device.
+>
+> This often results in annoying warning when resuming:
+> Enabling non-boot CPUs ...
+> CPU1: Booted secondary processor
+>  cache: parent cpu1 should not be sleeping
+> CPU1 is up
+> CPU2: Booted secondary processor
+>  cache: parent cpu2 should not be sleeping
+> CPU2 is up
+> .... and so on.
+>
+> So in order to fix these kind of errors, we could just completely avoid
+> doing any power management related initialisations and operations if
+> they are not used by these devices.
+>
+> Lets add no_pm_required flags to indicate that the device doesn't
+> require any sort of pm activities and all of them can be completely
+> skipped. We can use the same flag to also avoid adding not used *power*
+> sysfs entries for these devices. For now, lets use this for cpu cache
+> devices.
+>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/base/cpu.c         |  1 +
+>  drivers/base/power/main.c  |  7 +++++++
+>  drivers/base/power/sysfs.c |  4 ++++
+>  include/linux/device.h     | 10 ++++++++++
+>  include/linux/pm.h         |  1 +
+>  5 files changed, 23 insertions(+)
+>
+> v1->v2:
+>         - dropped setting the flag for cpu devices, for now just cpu caches
+>          will make use of this new flag.
+>
+> RFC->v1:
+>         - dropped the idea of adding cpu hotplug callback to deal just
+>           with cpu devices, instead add a new flag in the device pm_info
+>           structure
+>
+> [RFC] : https://marc.info/?l=linux-pm&m=154842896407904&w=2
+> [v1] : https://marc.info/?l=linux-pm&m=154946578717730&w=2
+>
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index eb9443d5bae1..6ce93a52bf3f 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -427,6 +427,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
+>         dev->parent = parent;
+>         dev->groups = groups;
+>         dev->release = device_create_release;
+> +       device_set_pm_not_required(dev);
+>         dev_set_drvdata(dev, drvdata);
+>
+>         retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 0992e67e862b..2a29c3d4e240 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -124,6 +124,10 @@ void device_pm_unlock(void)
+>   */
+>  void device_pm_add(struct device *dev)
+>  {
+> +       /* No need to create pm sysfs if explicitly specified as not required */
 
-In file included from ../security/integrity/ima/ima_fs.c:30:
-../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
-  hook(NONE)   \
-       ^~~~
-../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
- #define __ima_hook_enumify(ENUM) ENUM,
-                                  ^~~~
-../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
-  __ima_hooks(__ima_hook_enumify)
-  ^~~~~~~~~~~
-In file included from ../arch/arm64/include/asm/acpi.h:15,
-                 from ../include/acpi/acpi_io.h:7,
-                 from ../include/linux/acpi.h:47,
-                 from ../include/linux/tpm.h:26,
-                 from ../security/integrity/ima/ima.h:25,
-                 from ../security/integrity/ima/ima_fs.c:30:
-../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
-  NONE,
-  ^~~~
-make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+Is this really about sysfs?
 
-Rework to prefix the efi enum with 'EFI_*'.
+> +       if (device_pm_not_required(dev))
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
+Should power.disable_depth be bumped up here or while setting the "no PM" flag?
 
-Changes against v2:
- - renamed a missed 'NONE' to 'EFI_NONE'.
+> +               return;
+> +
+>         pr_debug("PM: Adding info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         device_pm_check_callbacks(dev);
+> @@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
+>   */
+>  void device_pm_remove(struct device *dev)
+>  {
+> +       if (device_pm_not_required(dev))
+> +               return;
+> +
+>         pr_debug("PM: Removing info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         complete_all(&dev->power.completion);
+> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+> index d713738ce796..6cd159b51114 100644
+> --- a/drivers/base/power/sysfs.c
+> +++ b/drivers/base/power/sysfs.c
+> @@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
+>  {
+>         int rc;
+>
+> +       /* No need to create pm sysfs if explicitly disabled */
+> +       if (device_pm_not_required(dev))
+> +               return 0;
+> +
+>         rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
+>         if (rc)
+>                 return rc;
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 6cb4640b6160..739d0b62e4d4 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
+>         return !!dev->power.async_suspend;
+>  }
+>
+> +static inline bool device_pm_not_required(struct device *dev)
+> +{
+> +       return dev->power.no_pm_required;
+> +}
+> +
+> +static inline void device_set_pm_not_required(struct device *dev)
+> +{
+> +       dev->power.no_pm_required = true;
+> +}
+> +
+>  static inline void dev_pm_syscore_device(struct device *dev, bool val)
+>  {
+>  #ifdef CONFIG_PM_SLEEP
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 0bd9de116826..300ab9f0b858 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -592,6 +592,7 @@ struct dev_pm_info {
+>         bool                    is_suspended:1; /* Ditto */
+>         bool                    is_noirq_suspended:1;
+>         bool                    is_late_suspended:1;
+> +       bool                    no_pm_required:1;
 
- arch/x86/platform/efi/quirks.c          |  4 +--
- drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
- include/linux/efi.h                     | 26 +++++++-------
- 3 files changed, 39 insertions(+), 39 deletions(-)
+Maybe call it "no_pm"?
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 9ce85e605052..458a0e2bcc57 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -717,7 +717,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * "efi_mm" cannot be used to check if the page fault had occurred
- 	 * in the firmware context because efi=old_map doesn't use efi_pgd.
- 	 */
--	if (efi_rts_work.efi_rts_id == NONE)
-+	if (efi_rts_work.efi_rts_id == EFI_NONE)
- 		return;
- 
- 	/*
-@@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * because this case occurs *very* rarely and hence could be improved
- 	 * on a need by basis.
- 	 */
--	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+	if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
- 		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
- 		machine_real_restart(MRR_BIOS);
- 		return;
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index c70df5ae7c4a..28138534643e 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
- exit:									\
--	efi_rts_work.efi_rts_id = NONE;					\
-+	efi_rts_work.efi_rts_id = EFI_NONE;				\
- 	efi_rts_work.status;						\
- })
- 
-@@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
- 	arg5 = efi_rts_work.arg5;
- 
- 	switch (efi_rts_work.efi_rts_id) {
--	case GET_TIME:
-+	case EFI_GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
- 		break;
--	case SET_TIME:
-+	case EFI_SET_TIME:
- 		status = efi_call_virt(set_time, (efi_time_t *)arg1);
- 		break;
--	case GET_WAKEUP_TIME:
-+	case EFI_GET_WAKEUP_TIME:
- 		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
- 				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
- 		break;
--	case SET_WAKEUP_TIME:
-+	case EFI_SET_WAKEUP_TIME:
- 		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
- 				       (efi_time_t *)arg2);
- 		break;
--	case GET_VARIABLE:
-+	case EFI_GET_VARIABLE:
- 		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, (u32 *)arg3,
- 				       (unsigned long *)arg4, (void *)arg5);
- 		break;
--	case GET_NEXT_VARIABLE:
-+	case EFI_GET_NEXT_VARIABLE:
- 		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
- 				       (efi_char16_t *)arg2,
- 				       (efi_guid_t *)arg3);
- 		break;
--	case SET_VARIABLE:
-+	case EFI_SET_VARIABLE:
- 		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, *(u32 *)arg3,
- 				       *(unsigned long *)arg4, (void *)arg5);
- 		break;
--	case QUERY_VARIABLE_INFO:
-+	case EFI_QUERY_VARIABLE_INFO:
- 		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
- 				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
- 		break;
--	case GET_NEXT_HIGH_MONO_COUNT:
-+	case EFI_GET_NEXT_HIGH_MONO_COUNT:
- 		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
- 		break;
--	case UPDATE_CAPSULE:
-+	case EFI_UPDATE_CAPSULE:
- 		status = efi_call_virt(update_capsule,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2,
- 				       *(unsigned long *)arg3);
- 		break;
--	case QUERY_CAPSULE_CAPS:
-+	case EFI_QUERY_CAPSULE_CAPS:
- 		status = efi_call_virt(query_capsule_caps,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2, (u64 *)arg3,
-@@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-+	status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-+	status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-+	status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-+	status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-+	status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-+	status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
- 				remaining_space, max_variable_size, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-+	status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
--	efi_rts_work.efi_rts_id = RESET_SYSTEM;
-+	efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-@@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-+	status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-+	status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
- 				max_size, reset_type, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index a4de93c96907..b3471b6ff92f 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
-  * fault happened while executing an efi runtime service.
-  */
- enum efi_rts_ids {
--	NONE,
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	RESET_SYSTEM,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
-+	EFI_NONE,
-+	EFI_GET_TIME,
-+	EFI_SET_TIME,
-+	EFI_GET_WAKEUP_TIME,
-+	EFI_SET_WAKEUP_TIME,
-+	EFI_GET_VARIABLE,
-+	EFI_GET_NEXT_VARIABLE,
-+	EFI_SET_VARIABLE,
-+	EFI_QUERY_VARIABLE_INFO,
-+	EFI_GET_NEXT_HIGH_MONO_COUNT,
-+	EFI_RESET_SYSTEM,
-+	EFI_UPDATE_CAPSULE,
-+	EFI_QUERY_CAPSULE_CAPS,
- };
- 
- /*
--- 
-2.20.1
-
+>         bool                    early_init:1;   /* Owned by the PM core */
+>         bool                    direct_complete:1;      /* Owned by the PM core */
+>         u32                     driver_flags;
+> --
