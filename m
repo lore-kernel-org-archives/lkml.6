@@ -2,174 +2,123 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1429CC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11D3C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7984222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C4E9222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391149AbfBMJDO (ORCPT
+        id S2391174AbfBMJDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:03:14 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:38077 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbfBMJDO (ORCPT
+        Wed, 13 Feb 2019 04:03:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48371 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbfBMJDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:03:14 -0500
-X-Originating-IP: 90.88.30.68
-Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id B78DAC0043;
-        Wed, 13 Feb 2019 09:03:08 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 10:03:08 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
-Message-ID: <20190213090308.dlcwgcrhg264k2cu@flea>
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
- <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com>
+        Wed, 13 Feb 2019 04:03:20 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1D92d25196272
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 13 Feb 2019 01:02:39 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1D92dU0196268;
+        Wed, 13 Feb 2019 01:02:39 -0800
+Date:   Wed, 13 Feb 2019 01:02:39 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
+Message-ID: <tip-984640ce427fa67c7c1f8550ab53495733bd11fc@git.kernel.org>
+Cc:     mingo@kernel.org, righi.andrea@gmail.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mhiramat@kernel.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, mathieu.desnoyers@efficios.com,
+        acme@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+        hpa@zytor.com, jolsa@redhat.com
+Reply-To: jolsa@redhat.com, hpa@zytor.com, peterz@infradead.org,
+          rostedt@goodmis.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com,
+          mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, mhiramat@kernel.org, mingo@kernel.org,
+          righi.andrea@gmail.com, torvalds@linux-foundation.org
+In-Reply-To: <154998804911.31052.3541963527929117920.stgit@devbox>
+References: <154998804911.31052.3541963527929117920.stgit@devbox>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] kprobes: Prohibit probing on preemption checking
+ debug functions
+Git-Commit-ID: 984640ce427fa67c7c1f8550ab53495733bd11fc
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v3n2rtb3eqrrumch"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  984640ce427fa67c7c1f8550ab53495733bd11fc
+Gitweb:     https://git.kernel.org/tip/984640ce427fa67c7c1f8550ab53495733bd11fc
+Author:     Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate: Wed, 13 Feb 2019 01:14:09 +0900
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 13 Feb 2019 08:16:40 +0100
 
---v3n2rtb3eqrrumch
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+kprobes: Prohibit probing on preemption checking debug functions
 
-On Tue, Feb 12, 2019 at 03:16:02PM +0530, Jagan Teki wrote:
-> On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wr=
-ote:
-> >
-> > Here is next version changes for Allwinner A64 MIPI-DSI support
-> >
-> > This series grouped the changes like previous version[1] with different
-> > sets to support three different panels types that can fit into the DSI
-> > controller.
-> >
-> > set:1, for 4-lane, burst mode support
-> > - patch 0001: 0009, DSI controller changes that support burst mode.
-> >
-> > set:2, for A64 DSI support
-> > - patch 0010: tcon dclk divider computation based on A64 BSP.
-> > - patch 0011: 0017, Allwinner A64 DSI controller changes.
-> >
-> > set:3, enable 4-lane burst mode panel:
-> > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
-> >   burst mode panel on Pine64-LTS
-> >
-> > set:4, enable 4-lane video mode panel:
-> > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
-> > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
-> >   panel on Bananapi M64
-> >
-> > set:5, enable 2-lane video mode panel:
-> > - patch 0021, 0022: DSI hfp and hbp timings fixes
-> > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
-> >
-> > Changes for v7:
-> > - moved vcc-dsi binding to required filed.
-> > - drop quotes on fallback dphy bindings.
-> > - drop min_rate clock pll-mipi patches.
-> > - introduce dclk divider computation as like A64 BSP.
-> > - add A64 DSI quark patches.
-> > - fixed A64 DSI pipeline.
-> > - add proper commit messages.
-> > - collect Merlijn Wajer Tested-by credits.
-> > Changes for v6:
-> > - dropped unneeded changes, patches
-> > - fixed all burst mode patches as per previous version comments
-> > - rebase on master
-> > - update proper commit message
-> > - dropped unneeded comments
-> > - order the patches that make review easy
-> > Changes for v5:
-> > - collect Rob, Acked-by
-> > - droped "Fix VBP size calculation" patch
-> > - updated vblk timing calculation.
-> > - droped techstar, bananapi dsi panel drivers which may require
-> >   bridge or other setup. it's under discussion.
-> > Changes for v4:
-> > - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
-> >   nkm min, max rate patches
-> > - create two patches for "Add Allwinner A64 MIPI DSI support"
-> >   one for has_mod_clk quirk and other one for A64 support
-> > - use existing driver code construct for hblk computation
-> > - dropped "Increase hfp packet overhead" patch [2], though BSP added
-> >   this but we have no issues as of now.
-> >   (no issues on panel side w/o this change)
-> > - create separate function for vblk computation
-> > - enable vcc-dsi regulator in dsi_runtime_resume
-> > - collect Rob, Acked-by
-> > - update MAINTAINERS file for panel drivers
-> > - cleanup commit messages
-> > - fixed checkpatch warnings/errors
-> >
-> > [1] https://patchwork.kernel.org/cover/10779893/
-> >
-> > Any inputs?
-> > Jagan.
-> >
-> > Jagan Teki (23):
-> >   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
-> >     delay
-> >   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
-> >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
-> >   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
-> >   drm/sun4i: tcon: Export get tcon0 routine
-> >   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
-> >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
-> >   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
-> >   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
->=20
-> Can you pick these burst changes which are generic to all SoCs. and
-> reset will send once we decide the tcon clock.
+Since kprobes depends on preempt disable/enable, probing
+on the preempt debug routines can cause recursive breakpoint
+bugs.
 
-These patches don't implement what we discussed last week, and as I
-told you already, most of them really need some work on the commit log
-and their explanations.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrea Righi <righi.andrea@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/154998804911.31052.3541963527929117920.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ lib/smp_processor_id.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---v3n2rtb3eqrrumch
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGPdTAAKCRDj7w1vZxhR
-xc/AAP9miZRDj1pZWJVBU4zeqpb9KrssK+t+zsH+tsTM+wdnugEA6P4ORSF94yTT
-UipuIVIseMDH88WEB4c15hnBPzIDYAs=
-=Va9V
------END PGP SIGNATURE-----
-
---v3n2rtb3eqrrumch--
+diff --git a/lib/smp_processor_id.c b/lib/smp_processor_id.c
+index 85925aaa4fff..157d9e31f6c2 100644
+--- a/lib/smp_processor_id.c
++++ b/lib/smp_processor_id.c
+@@ -5,10 +5,11 @@
+  * DEBUG_PREEMPT variant of smp_processor_id().
+  */
+ #include <linux/export.h>
++#include <linux/kprobes.h>
+ #include <linux/sched.h>
+ 
+-notrace static unsigned int check_preemption_disabled(const char *what1,
+-							const char *what2)
++notrace static nokprobe_inline
++unsigned int check_preemption_disabled(const char *what1, const char *what2)
+ {
+ 	int this_cpu = raw_smp_processor_id();
+ 
+@@ -56,9 +57,11 @@ notrace unsigned int debug_smp_processor_id(void)
+ 	return check_preemption_disabled("smp_processor_id", "");
+ }
+ EXPORT_SYMBOL(debug_smp_processor_id);
++NOKPROBE_SYMBOL(debug_smp_processor_id);
+ 
+ notrace void __this_cpu_preempt_check(const char *op)
+ {
+ 	check_preemption_disabled("__this_cpu_", op);
+ }
+ EXPORT_SYMBOL(__this_cpu_preempt_check);
++NOKPROBE_SYMBOL(__this_cpu_preempt_check);
