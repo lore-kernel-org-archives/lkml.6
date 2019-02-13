@@ -2,105 +2,101 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69113C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5FFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C53222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42E5222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390380AbfBMNTR (ORCPT
+        id S2390456AbfBMNTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:19:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39010 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730377AbfBMNTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:19:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D0319B03B;
-        Wed, 13 Feb 2019 13:19:12 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 14:19:12 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     xiang xiao <xiaoxiang781216@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
-Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
-Message-ID: <20190213131912.4w3fonbgwjathpyp@pathway.suse.cz>
-References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
- <20190212144606.4b7cf0f8@gandalf.local.home>
- <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+        Wed, 13 Feb 2019 08:19:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:53452 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730377AbfBMNTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:19:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 787A980D;
+        Wed, 13 Feb 2019 05:19:21 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 931EC3F557;
+        Wed, 13 Feb 2019 05:19:19 -0800 (PST)
+Date:   Wed, 13 Feb 2019 13:19:16 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 0/4] Allow tasks to have their user stack pointer
+ sanity checked
+Message-ID: <20190213131915.GC5875@brain-police>
+References: <20190211175935.4602-1-will.deacon@arm.com>
+ <CAGXu5jJk7zpKzx0DrBRmJvAoPDEMUni5bgE-O1xR8_1-p6HAxQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CAGXu5jJk7zpKzx0DrBRmJvAoPDEMUni5bgE-O1xR8_1-p6HAxQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-02-13 14:19:01, xiang xiao wrote:
-> On Wed, Feb 13, 2019 at 3:46 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Wed, 13 Feb 2019 02:11:05 +0800
-> > Xiang Xiao <xiaoxiang781216@gmail.com> wrote:
-> >
-> > > Because log may already add the timestamp sometime
-> >
-> > Can you be a bit more detailed on this. When and where does this
-> > happen?
+Hi Kees,
+
+On Mon, Feb 11, 2019 at 11:12:19AM -0800, Kees Cook wrote:
+> On Mon, Feb 11, 2019 at 9:59 AM Will Deacon <will.deacon@arm.com> wrote:
+> > I attended an interesting talk at LCA last month that described some of the
+> > security features deployed in OpenBSD [1]. One hardening feature that piqued
+> > my interest was, on syscall entry and page faults from userspace, checking
+> > that the user stack pointer for a task points at pages that were either
+> > allocated by the kernel for the initial process stack of mapped with mmap()
+> > using the MAP_STACK flag. This acts as a basic defense against stack
+> > pivoting attacks.
 > 
-> Here is my case:
-> 1.A small MCU(Cortex M4) in SoC run RTOS
-> 2.RTOS append timestamp to log for the accurate timing
-> 3.RTOS send log to Linux kernel when buffer exceed the threshold
+> I think this is nice to have, yes! Thanks for working on it. It seems
+> like this blocks pivots to heap -- relocating to a groomed stack area
+> would still be allowed. Regardless, this does narrow the scope of such
+> attacks quite nicely.
+> 
+> > The problem with this checking is that it is a retrospective tightening
+> > of the ABI, but that hasn't stopped me hacking it together behind a couple
+> > of prctl() options.
+> 
+> MAP_STACK has been around for a long time, so I think anything using
+> threads via glibc should be "covered". I would assume this would mean
+> that glibc could set the prctl() for such users. I suspect there are a
+> lot of open-coded threading implementations, though. It'd be
+> interesting to see how many need modification.
+> 
+> Given that this is behind a prctl(), it seems the CONFIG isn't needed?
 
-What do you exactly mean by the threshold, please? Does it mean
-that you use the kernel buffer when there are too many messages
-and they do not fit into the MCU local buffer?
+I wanted to keep the CONFIG because we grow task_struct and maybe somebody
+cares about that (many of the other fields in there are guarded).
 
-How exactly the kernel gets the messages, please?
-Via a kernel driver or from userspace (via /dev/kmsg)?
+> > Anyway, it was fun to implement so I figured I'd post it as an RFC.
+> 
+> Thanks! I'd love to see an x86 counterpart to the sycall check too.
 
+I'll take a quick look. I think that, like arm64, x86 moved much of their
+entry code into C so it might be really straightforward.
 
-> 4.Kernel call printk to dump the received buffer
-> So I want that printk skip the timestamp here.
+> Did you trying bringing up a full userspace and windowing environment
+> with this enabled by default (i.e. forcing init to set the prctls)?
+> I'd be curious to see how much (if anything) goes boom. :)
 
-If the messages are printed by a kernel driver then
-a better solution would be to create a printk() API
-where you could pass the time stamp as a parameter.
+So far I haven't found anything other than my targetted testcase which
+explodes. However, I would fully expect some JITs to go wrong and probably
+also some uses of sigaltstack().
 
-The aim is to store the precise time stamp in ts_nsec, struct
-printk_log. Then it will get handled correctly by any
-output, e.g. consoles, syslog, /dev/kmsg.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
+Thanks!
 
-There are several problems with your approach:
-
-1. The time stamp is still duplicated in the output via /dev/kmsg,
-   see msg_print_ext_header(). We could not change this
-   because the time stamp is part of the format.
-   Any change could break userspace (systemd).
-
-
-2. The time stamp stays part of the message:
-
-     + It might have different format than the normal
-       time stamp. Therefore it might be hard to filter
-
-     + dmesg might be unable to parse it and show in
-       the other formats.
-
-     + Kernel-5.1 will allow to print information
-       about the caller. It is supposed to be between
-       the time stamp and the message text, see
-       http://lkml.kernel.org/r/93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp
-
-
-Best Regards,
-Petr
+Will
