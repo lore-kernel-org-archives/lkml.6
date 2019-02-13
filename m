@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F407EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1E1C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1A1C222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C502086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404697AbfBMRzP (ORCPT
+        id S2404735AbfBMRza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:55:15 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:54764 "EHLO ale.deltatee.com"
+        Wed, 13 Feb 2019 12:55:30 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:54670 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727511AbfBMRzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:55:12 -0500
+        id S2393508AbfBMRzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:55:09 -0500
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gtykN-0001z7-5Q; Wed, 13 Feb 2019 10:55:10 -0700
+        id 1gtykN-0001zI-5O; Wed, 13 Feb 2019 10:55:06 -0700
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gtykK-0001y0-VP; Wed, 13 Feb 2019 10:54:57 -0700
+        id 1gtykM-0001yX-3E; Wed, 13 Feb 2019 10:54:58 -0700
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
@@ -36,19 +36,18 @@ To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
 Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
         Serge Semin <fancer.lancer@gmail.com>,
         Eric Pilmore <epilmore@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Date:   Wed, 13 Feb 2019 10:54:43 -0700
-Message-Id: <20190213175454.7506-2-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed, 13 Feb 2019 10:54:54 -0700
+Message-Id: <20190213175454.7506-13-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20190213175454.7506-1-logang@deltatee.com>
 References: <20190213175454.7506-1-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, jdmason@kudzu.us, bhelgaas@google.com, joro@8bytes.org, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, epilmore@gigaio.com, logang@deltatee.com, dwmw2@infradead.org
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, jdmason@kudzu.us, bhelgaas@google.com, joro@8bytes.org, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, epilmore@gigaio.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2 01/12] iommu/vt-d: Implement dma_[un]map_resource()
+Subject: [PATCH v2 12/12] NTB: Add MSI interrupt support to ntb_transport
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,83 +55,281 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the Intel IOMMU uses the default dma_[un]map_resource()
-implementations does nothing and simply returns the physical address
-unmodified.
+Introduce the module parameter 'use_msi' which, when set uses
+MSI interrupts instead of doorbells for each queue pair (QP). T
+he parameter is only available if NTB MSI support is configured into
+the kernel. We also require there to be more than one memory window
+(MW) so that an extra one is available to forward the APIC region.
 
-However, this doesn't create the IOVA entries necessary for addresses
-mapped this way to work when the IOMMU is enabled. Thus, when the
-IOMMU is enabled, drivers relying on dma_map_resource() will trigger
-DMAR errors. We see this when running ntb_transport with the IOMMU
-enabled, DMA, and switchtec hardware.
+To use MSIs, we request one interrupt per QP and forward the MSI address
+and data to the peer using scratch pad registers (SPADS) above the MW
+spads. (If there are not enough SPADS the MSI interrupt will not be used.)
 
-The implementation for intel_map_resource() is nearly identical to
-intel_map_page(), we just have to re-create __intel_map_single().
-dma_unmap_resource() uses intel_unmap_page() directly as the
-functions are identical.
+Once registered, we simply use ntb_msi_peer_trigger and the recieving
+ISR simply queues up the rxc_db_work for the queue.
+
+This addition can significantly improve performance of ntb_transport.
+In a simple, untuned, apples-to-apples comparision using ntb_netdev
+and iperf with switchtec hardware, I see 3.88Gb/s without MSI
+interrupts and 14.1Gb/s which is a more than 3x improvement.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Allen Hubbe <allenbh@gmail.com>
 ---
- drivers/iommu/intel-iommu.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/ntb/ntb_transport.c | 169 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 168 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 78188bf7e90d..ad737e16575b 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3649,11 +3649,9 @@ static int iommu_no_mapping(struct device *dev)
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 526b65afc16a..90e3ea67d48a 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -93,6 +93,12 @@ static bool use_dma;
+ module_param(use_dma, bool, 0644);
+ MODULE_PARM_DESC(use_dma, "Use DMA engine to perform large data copy");
+ 
++static bool use_msi;
++#ifdef CONFIG_NTB_MSI
++module_param(use_msi, bool, 0644);
++MODULE_PARM_DESC(use_msi, "Use MSI interrupts instead of doorbells");
++#endif
++
+ static struct dentry *nt_debugfs_dir;
+ 
+ /* Only two-ports NTB devices are supported */
+@@ -188,6 +194,11 @@ struct ntb_transport_qp {
+ 	u64 tx_err_no_buf;
+ 	u64 tx_memcpy;
+ 	u64 tx_async;
++
++	bool use_msi;
++	int msi_irq;
++	struct ntb_msi_desc msi_desc;
++	struct ntb_msi_desc peer_msi_desc;
+ };
+ 
+ struct ntb_transport_mw {
+@@ -221,6 +232,10 @@ struct ntb_transport_ctx {
+ 	u64 qp_bitmap;
+ 	u64 qp_bitmap_free;
+ 
++	bool use_msi;
++	unsigned int msi_spad_offset;
++	u64 msi_db_mask;
++
+ 	bool link_is_up;
+ 	struct delayed_work link_work;
+ 	struct work_struct link_cleanup;
+@@ -667,6 +682,114 @@ static int ntb_transport_setup_qp_mw(struct ntb_transport_ctx *nt,
  	return 0;
  }
  
--static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
--				   unsigned long offset, size_t size, int dir,
--				   u64 dma_mask)
-+static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
-+				     size_t size, int dir, u64 dma_mask)
- {
--	phys_addr_t paddr = page_to_phys(page) + offset;
- 	struct dmar_domain *domain;
- 	phys_addr_t start_paddr;
- 	unsigned long iova_pfn;
-@@ -3715,7 +3713,15 @@ static dma_addr_t intel_map_page(struct device *dev, struct page *page,
- 				 enum dma_data_direction dir,
- 				 unsigned long attrs)
- {
--	return __intel_map_page(dev, page, offset, size, dir, *dev->dma_mask);
-+	return __intel_map_single(dev, page_to_phys(page) + offset, size,
-+				  dir, *dev->dma_mask);
++static irqreturn_t ntb_transport_isr(int irq, void *dev)
++{
++	struct ntb_transport_qp *qp = dev;
++
++	tasklet_schedule(&qp->rxc_db_work);
++
++	return IRQ_HANDLED;
 +}
 +
-+static dma_addr_t intel_map_resource(struct device *dev, phys_addr_t phys_addr,
-+				     size_t size, enum dma_data_direction dir,
-+				     unsigned long attrs)
++static void ntb_transport_setup_qp_peer_msi(struct ntb_transport_ctx *nt,
++					    unsigned int qp_num)
 +{
-+	return __intel_map_single(dev, phys_addr, size, dir, *dev->dma_mask);
- }
++	struct ntb_transport_qp *qp = &nt->qp_vec[qp_num];
++	int spad = qp_num * 2 + nt->msi_spad_offset;
++
++	if (!nt->use_msi)
++		return;
++
++	if (spad >= ntb_spad_count(nt->ndev))
++		return;
++
++	qp->peer_msi_desc.addr_offset =
++		ntb_peer_spad_read(qp->ndev, PIDX, spad);
++	qp->peer_msi_desc.data =
++		ntb_peer_spad_read(qp->ndev, PIDX, spad + 1);
++
++	dev_dbg(&qp->ndev->pdev->dev, "QP%d Peer MSI addr=%x data=%x\n",
++		qp_num, qp->peer_msi_desc.addr_offset, qp->peer_msi_desc.data);
++
++	if (qp->peer_msi_desc.addr_offset) {
++		qp->use_msi = true;
++		dev_info(&qp->ndev->pdev->dev,
++			 "Using MSI interrupts for QP%d\n", qp_num);
++	}
++}
++
++static void ntb_transport_setup_qp_msi(struct ntb_transport_ctx *nt,
++				       unsigned int qp_num)
++{
++	struct ntb_transport_qp *qp = &nt->qp_vec[qp_num];
++	int spad = qp_num * 2 + nt->msi_spad_offset;
++	int rc;
++
++	if (!nt->use_msi)
++		return;
++
++	if (spad >= ntb_spad_count(nt->ndev)) {
++		dev_warn_once(&qp->ndev->pdev->dev,
++			      "Not enough SPADS to use MSI interrupts\n");
++		return;
++	}
++
++	ntb_spad_write(qp->ndev, spad, 0);
++	ntb_spad_write(qp->ndev, spad + 1, 0);
++
++	if (!qp->msi_irq) {
++		qp->msi_irq = ntbm_msi_request_irq(qp->ndev, ntb_transport_isr,
++						   KBUILD_MODNAME, qp,
++						   &qp->msi_desc);
++		if (qp->msi_irq < 0) {
++			dev_warn(&qp->ndev->pdev->dev,
++				 "Unable to allocate MSI interrupt for qp%d\n",
++				 qp_num);
++			return;
++		}
++	}
++
++	rc = ntb_spad_write(qp->ndev, spad, qp->msi_desc.addr_offset);
++	if (rc)
++		goto err_free_interrupt;
++
++	rc = ntb_spad_write(qp->ndev, spad + 1, qp->msi_desc.data);
++	if (rc)
++		goto err_free_interrupt;
++
++	dev_dbg(&qp->ndev->pdev->dev, "QP%d MSI %d addr=%x data=%x\n",
++		qp_num, qp->msi_irq, qp->msi_desc.addr_offset,
++		qp->msi_desc.data);
++
++	return;
++
++err_free_interrupt:
++	devm_free_irq(&nt->ndev->dev, qp->msi_irq, qp);
++}
++
++static void ntb_transport_msi_peer_desc_changed(struct ntb_transport_ctx *nt)
++{
++	int i;
++
++	dev_dbg(&nt->ndev->pdev->dev, "Peer MSI descriptors changed");
++
++	for (i = 0; i < nt->qp_count; i++)
++		ntb_transport_setup_qp_peer_msi(nt, i);
++}
++
++static void ntb_transport_msi_desc_changed(void *data)
++{
++	struct ntb_transport_ctx *nt = data;
++	int i;
++
++	dev_dbg(&nt->ndev->pdev->dev, "MSI descriptors changed");
++
++	for (i = 0; i < nt->qp_count; i++)
++		ntb_transport_setup_qp_msi(nt, i);
++
++	ntb_peer_db_set(nt->ndev, nt->msi_db_mask);
++}
++
+ static void ntb_free_mw(struct ntb_transport_ctx *nt, int num_mw)
+ {
+ 	struct ntb_transport_mw *mw = &nt->mw_vec[num_mw];
+@@ -902,6 +1025,20 @@ static void ntb_transport_link_work(struct work_struct *work)
+ 	int rc = 0, i, spad;
  
- static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
-@@ -3806,8 +3812,9 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
- 		return NULL;
- 	memset(page_address(page), 0, size);
+ 	/* send the local info, in the opposite order of the way we read it */
++
++	if (nt->use_msi) {
++		rc = ntb_msi_setup_mws(ndev);
++		if (rc) {
++			dev_warn(&pdev->dev,
++				 "Failed to register MSI memory window: %d\n",
++				 rc);
++			nt->use_msi = false;
++		}
++	}
++
++	for (i = 0; i < nt->qp_count; i++)
++		ntb_transport_setup_qp_msi(nt, i);
++
+ 	for (i = 0; i < nt->mw_count; i++) {
+ 		size = nt->mw_vec[i].phys_size;
  
--	*dma_handle = __intel_map_page(dev, page, 0, size, DMA_BIDIRECTIONAL,
--				       dev->coherent_dma_mask);
-+	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
-+					 DMA_BIDIRECTIONAL,
-+					 dev->coherent_dma_mask);
- 	if (*dma_handle != DMA_MAPPING_ERROR)
- 		return page_address(page);
- 	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
-@@ -3924,6 +3931,8 @@ static const struct dma_map_ops intel_dma_ops = {
- 	.unmap_sg = intel_unmap_sg,
- 	.map_page = intel_map_page,
- 	.unmap_page = intel_unmap_page,
-+	.map_resource = intel_map_resource,
-+	.unmap_resource = intel_unmap_page,
- 	.dma_supported = dma_direct_supported,
- };
+@@ -959,6 +1096,7 @@ static void ntb_transport_link_work(struct work_struct *work)
+ 		struct ntb_transport_qp *qp = &nt->qp_vec[i];
+ 
+ 		ntb_transport_setup_qp_mw(nt, i);
++		ntb_transport_setup_qp_peer_msi(nt, i);
+ 
+ 		if (qp->client_ready)
+ 			schedule_delayed_work(&qp->link_work, 0);
+@@ -1132,6 +1270,19 @@ static int ntb_transport_probe(struct ntb_client *self, struct ntb_dev *ndev)
+ 		return -ENOMEM;
+ 
+ 	nt->ndev = ndev;
++
++	/*
++	 * If we are using MSI, and have at least one extra memory window,
++	 * we will reserve the last MW for the MSI window.
++	 */
++	if (use_msi && mw_count > 1) {
++		rc = ntb_msi_init(ndev, ntb_transport_msi_desc_changed);
++		if (!rc) {
++			mw_count -= 1;
++			nt->use_msi = true;
++		}
++	}
++
+ 	spad_count = ntb_spad_count(ndev);
+ 
+ 	/* Limit the MW's based on the availability of scratchpads */
+@@ -1145,6 +1296,8 @@ static int ntb_transport_probe(struct ntb_client *self, struct ntb_dev *ndev)
+ 	max_mw_count_for_spads = (spad_count - MW0_SZ_HIGH) / 2;
+ 	nt->mw_count = min(mw_count, max_mw_count_for_spads);
+ 
++	nt->msi_spad_offset = nt->mw_count * 2 + MW0_SZ_HIGH;
++
+ 	nt->mw_vec = kcalloc_node(mw_count, sizeof(*nt->mw_vec),
+ 				  GFP_KERNEL, node);
+ 	if (!nt->mw_vec) {
+@@ -1175,6 +1328,12 @@ static int ntb_transport_probe(struct ntb_client *self, struct ntb_dev *ndev)
+ 	qp_bitmap = ntb_db_valid_mask(ndev);
+ 
+ 	qp_count = ilog2(qp_bitmap);
++	if (nt->use_msi) {
++		qp_count -= 1;
++		nt->msi_db_mask = 1 << qp_count;
++		ntb_db_clear_mask(ndev, nt->msi_db_mask);
++	}
++
+ 	if (max_num_clients && max_num_clients < qp_count)
+ 		qp_count = max_num_clients;
+ 	else if (nt->mw_count < qp_count)
+@@ -1598,7 +1757,10 @@ static void ntb_tx_copy_callback(void *data,
+ 
+ 	iowrite32(entry->flags | DESC_DONE_FLAG, &hdr->flags);
+ 
+-	ntb_peer_db_set(qp->ndev, BIT_ULL(qp->qp_num));
++	if (qp->use_msi)
++		ntb_msi_peer_trigger(qp->ndev, PIDX, &qp->peer_msi_desc);
++	else
++		ntb_peer_db_set(qp->ndev, BIT_ULL(qp->qp_num));
+ 
+ 	/* The entry length can only be zero if the packet is intended to be a
+ 	 * "link down" or similar.  Since no payload is being sent in these
+@@ -2265,6 +2427,11 @@ static void ntb_transport_doorbell_callback(void *data, int vector)
+ 	u64 db_bits;
+ 	unsigned int qp_num;
+ 
++	if (ntb_db_read(nt->ndev) & nt->msi_db_mask) {
++		ntb_transport_msi_peer_desc_changed(nt);
++		ntb_db_clear(nt->ndev, nt->msi_db_mask);
++	}
++
+ 	db_bits = (nt->qp_bitmap & ~nt->qp_bitmap_free &
+ 		   ntb_db_vector_mask(nt->ndev, vector));
  
 -- 
 2.19.0
