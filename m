@@ -2,191 +2,173 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBEBC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4757C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A901222B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB39222B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:44:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550047493;
+	bh=yl2a51TtKApn4BcfDPfEWEnE8qT94fDdhkPcd+ofXLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bsHkJDO4iU3lBYJOiF8rZClVZH+3MfSjjnjKF1fsjTp4VkIiZzeXLsRm1Mf/ivpKU
+	 fwckpDCxkOmjxc5VnPk2WQ/YyG4I7dUTW1j+7fqyBumk4oBcg2SxnbwIp+0I+0p+Ry
+	 9cAqTk8uSRAHotdTpB00a2w163loyYJOo6dzl1DY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390769AbfBMInX (ORCPT
+        id S2390635AbfBMIow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:43:23 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:3221 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732602AbfBMInX (ORCPT
+        Wed, 13 Feb 2019 03:44:52 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33928 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731887AbfBMIow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:43:23 -0500
-X-IronPort-AV: E=Sophos;i="5.58,365,1544482800"; 
-   d="scan'208";a="369208476"
-Received: from unknown (HELO [193.50.110.185]) ([193.50.110.185])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA; 13 Feb 2019 09:43:20 +0100
-Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal
- RAM
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>
-References: <20190124231441.37A4A305@viggo.jf.intel.com>
- <20190124231448.E102D18E@viggo.jf.intel.com>
- <c4c6aca8-6ee8-be10-65ae-4cbe0aa03bfb@inria.fr>
- <26ac36f4-7391-5321-217b-50d67e2119d7@intel.com>
- <453f13cd-a7fe-33eb-9a27-8490825ca29c@inria.fr>
- <CAPcyv4jF7ZyKaFDw7nb04UvWkVWGJdLGkZDQ1g=X7i+kdu7JRg@mail.gmail.com>
- <a3bfe739-228e-26fe-90f7-4a4f8ceb3a9a@inria.fr>
- <CAPcyv4jJ=C7ZEsJqBxzBMsQWz4+C8BZmWuk7OkztOebprd2rMg@mail.gmail.com>
-From:   Brice Goglin <Brice.Goglin@inria.fr>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <057ad938-e745-02f7-edce-e19bd326da6a@inria.fr>
-Date:   Wed, 13 Feb 2019 09:43:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 13 Feb 2019 03:44:52 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v14-v6so1303187ljv.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:44:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Izvgryl2iiTiX+PEw/PVUMFMisAtBv+xAMEzVWOHECE=;
+        b=O7X7oXV0SybTExzB0JDE9W9Li0qAoiPZxU6p54bRMFMq8pJGCLiOjXWvZ7OgmE7+4Q
+         AnOX230SmXJ4gXKRdPuVnaDIijxgUaCVnZs25GB3PDuTVnt6Qx3EIWrAP53XnrYg+rkc
+         NwVkGAy5EF5mYdaxBHcFIdXxiaFi2MHbty08CZj5eKbvKTqN8gQBjoeYhaHdYP81TccV
+         vBks26EtJB+6z0LQOTT7oAcPb+dVXCq8PeRSepkmfIiKskBwFoLYsmGUDtjy3+mXDf33
+         94rtSy8BXx3WSvxXyigiyCp4hqNZm7PSX6r5ufPh/Hr6gdAXAhqXZZvE9v5PbdzcjSOr
+         v7yw==
+X-Gm-Message-State: AHQUAuazQwgso7MHuAMIQDswHLrEriz1CVG2YA1Jm9WCA6rr9E73/EXM
+        GLnn6t1Ii8HaDY4RRfF52toZjVCW
+X-Google-Smtp-Source: AHgI3IZwB4eU9yM/xPqwCI8H6mFu49zMH3KaR9qsu+No+msoLEIPRgPLErKmcDBcq0CkQ2wgHHRswA==
+X-Received: by 2002:a2e:4942:: with SMTP id b2-v6mr4487935ljd.168.1550047489794;
+        Wed, 13 Feb 2019 00:44:49 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id t14sm347210lft.96.2019.02.13.00.44.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 00:44:48 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gtq9q-0002gA-9M; Wed, 13 Feb 2019 09:44:42 +0100
+Date:   Wed, 13 Feb 2019 09:44:42 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Alan Kao <alankao@andestech.com>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Andreas Schwab <schwab@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [v4 PATCH 8/8] RISC-V: Assign hwcap as per comman capabilities.
+Message-ID: <20190213084442.GD28278@localhost>
+References: <1549969812-22502-1-git-send-email-atish.patra@wdc.com>
+ <1549969812-22502-9-git-send-email-atish.patra@wdc.com>
+ <20190212112534.GB28278@localhost>
+ <61766631-42f4-ec25-3b5c-ae892da44ccb@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jJ=C7ZEsJqBxzBMsQWz4+C8BZmWuk7OkztOebprd2rMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61766631-42f4-ec25-3b5c-ae892da44ccb@wdc.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Le 13/02/2019 à 09:24, Dan Williams a écrit :
-> On Wed, Feb 13, 2019 at 12:12 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
->> Le 13/02/2019 à 01:30, Dan Williams a écrit :
->>> On Tue, Feb 12, 2019 at 11:59 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
->>>> # ndctl disable-region all
->>>> # ndctl zero-labels all
->>>> # ndctl enable-region region0
->>>> # ndctl create-namespace -r region0 -t pmem -m devdax
->>>> {
->>>>   "dev":"namespace0.0",
->>>>   "mode":"devdax",
->>>>   "map":"dev",
->>>>   "size":"1488.37 GiB (1598.13 GB)",
->>>>   "uuid":"ad0096d7-3fe7-4402-b529-ad64ed0bf789",
->>>>   "daxregion":{
->>>>     "id":0,
->>>>     "size":"1488.37 GiB (1598.13 GB)",
->>>>     "align":2097152,
->>>>     "devices":[
->>>>       {
->>>>         "chardev":"dax0.0",
->>>>         "size":"1488.37 GiB (1598.13 GB)"
->>>>       }
->>>>     ]
->>>>   },
->>>>   "align":2097152
->>>> }
->>>> # ndctl enable-namespace namespace0.0
->>>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
->>>> <hang>
->>>>
->>>> I tried with and without dax_pmem_compat loaded, but it doesn't help.
->>> I think this is due to:
->>>
->>>   a9f1ffdb6a20 device-dax: Auto-bind device after successful new_id
->>>
->>> I missed that this path is also called in the remove_id path. Thanks
->>> for the bug report! I'll get this fixed up.
->>
->> Now that remove_id is fixed, things fails later in Dave's procedure:
->>
->> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
->> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
->> # echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
-> In the current version of the code the bind is not necessary, so the
-> lack of error messages here means the bind succeeded.
+On Tue, Feb 12, 2019 at 11:58:10AM -0800, Atish Patra wrote:
+> On 2/12/19 3:25 AM, Johan Hovold wrote:
+> > On Tue, Feb 12, 2019 at 03:10:12AM -0800, Atish Patra wrote:
+> >> Currently, we set hwcap based on first valid hart from DT. This may not
+> >> be correct always as that hart might not be current booting cpu or may
+> >> have a different capability.
+> >>
+> >> Set hwcap as the capabilities supported by all possible harts with "okay"
+> >> status.
+> >>
+> >> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> >> ---
+> >>   arch/riscv/kernel/cpufeature.c | 41 ++++++++++++++++++++++-------------------
+> >>   1 file changed, 22 insertions(+), 19 deletions(-)
+> >>
+> >> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> >> index e7a4701f..a1e4fb34 100644
+> >> --- a/arch/riscv/kernel/cpufeature.c
+> >> +++ b/arch/riscv/kernel/cpufeature.c
+> >> @@ -20,6 +20,7 @@
+> >>   #include <linux/of.h>
+> >>   #include <asm/processor.h>
+> >>   #include <asm/hwcap.h>
+> >> +#include <asm/smp.h>
+> >>   
+> >>   unsigned long elf_hwcap __read_mostly;
+> >>   #ifdef CONFIG_FPU
+> >> @@ -42,28 +43,30 @@ void riscv_fill_hwcap(void)
+> >>   
+> >>   	elf_hwcap = 0;
+> >>   
+> >> -	/*
+> >> -	 * We don't support running Linux on hertergenous ISA systems.  For
+> >> -	 * now, we just check the ISA of the first "okay" processor.
+> >> -	 */
+> >>   	for_each_of_cpu_node(node) {
+> >> -		if (riscv_of_processor_hartid(node) >= 0)
+> >> -			break;
+> >> -	}
+> >> -	if (!node) {
+> >> -		pr_warn("Unable to find \"cpu\" devicetree entry\n");
+> >> -		return;
+> >> -	}
+> >> +		unsigned long this_hwcap = 0;
+> >>   
+> >> -	if (of_property_read_string(node, "riscv,isa", &isa)) {
+> >> -		pr_warn("Unable to find \"riscv,isa\" devicetree entry\n");
+> >> -		of_node_put(node);
+> >> -		return;
+> >> -	}
+> >> -	of_node_put(node);
+> >> +		if (riscv_of_processor_hartid(node) < 0)
+> >> +			continue;
+> >>
+> 
+> >> -	for (i = 0; i < strlen(isa); ++i)
+> >> -		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+> >> +		if (of_property_read_string(node, "riscv,isa", &isa)) {
+> >> +			pr_warn("Unable to find \"riscv,isa\" devicetree entry\n");
+> >> +			return;
+> > 
+> > Did you want "continue" here to continue processing the other harts?
+> 
+> Hmm. If a cpu node doesn't have isa in DT, that means DT is wrong. A 
+> "continue" here will let user space use other harts just with a warning 
+> message?
+> 
+> Returning here will not set elf_hwcap which forces the user to fix the 
+> DT. I am not sure what should be the defined behavior in this case.
 >
->> # echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
->> -bash: echo: write error: No such device
-> This also happens when the device is already bound.
->
->> (And nothing seems to have changed in /sys/devices/system/memory/*/state)
-> What does "cat /proc/iomem" say?
+> Any thoughts ?
 
+The problem is that the proposed code might still set elf_hwcap -- it
+all depends on the order of the hart nodes in dt (i.e. it will only be
+left unset if the first node is malformed).
 
-3060000000-1aa5fffffff : Persistent Memory
-  3060000000-36481fffff : namespace0.0
-  3680000000-1a9ffffffff : dax0.0
-    3680000000-1a9ffffffff : System RAM
-(the last line wasn't here before attaching to kmem)
+For that reason, I'd say it's better to either bail out (hard or at
+least with elf_hwcap unset) or to continue processing the other nodes.
 
-I said nothing changed in memory/*/state, I actually meant that nothing
-was offline. But things are actually working!
+The former might break current systems with malformed dt, though.
 
-First, node4 appeared, all memory is already attached to it without
-having to write to memory/*/state
+And since the harts are expected to have the same ISA, continuing the
+processing while warning and ignoring the malformed node might be
+acceptable.
 
-Node 4 MemTotal:       1558183936 kB
-Node 4 MemFree:        1558068564 kB
-Node 4 MemUsed:          115372 kB
-
-I wasn't expecting node4 to appear because the machine has no
-/sys/firmware/acpi/tables/HMAT when running in 1LM (there's one in 2LM).
-I thought you said in the past that no HMAT would mean memory would be
-added to the existing DDR node?
-
-Thanks!
-
-Brice
-
-
+Johan
