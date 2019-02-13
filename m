@@ -2,165 +2,297 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1050C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A722AC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735952147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 659BB218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:46:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aVJnfS1d"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Q5AW5IiG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391518AbfBMKnH (ORCPT
+        id S2391528AbfBMKqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:43:07 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:12196 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbfBMKnG (ORCPT
+        Wed, 13 Feb 2019 05:46:43 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:56083 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbfBMKqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:43:06 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190213104303epoutp04957829285a3ae5d73967933ca8011a17~C5m5Yi8py2489724897epoutp04l
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 10:43:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190213104303epoutp04957829285a3ae5d73967933ca8011a17~C5m5Yi8py2489724897epoutp04l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550054583;
-        bh=yDpf9/nYmxXdKqzh3nl0n/2UoaaoboIaBEiS2MxYyYA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=aVJnfS1dYTO5TLZXXEQHuMMd7dtonAcdLyf+8aJsljp8PUitNerH5CiPyorq87J5y
-         pJFoYfusP7wzJvGVgoBJFB+qqOt0Xy7/VdAxziH+fDEuovXdN+0OcEHVxyh0A2O6kE
-         LtdoBlqaRFYaletF+VmMN1R+UDLeGnjYZpZBCcRo=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20190213104302epcas5p3896a282b2322b616d69c7846b869493e~C5m4r2H032282322823epcas5p3D;
-        Wed, 13 Feb 2019 10:43:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E5.78.04135.6B4F36C5; Wed, 13 Feb 2019 19:43:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213104301epcas5p230e5b9582c88753725b7ed4aa91fe144~C5m3vOsfc2754327543epcas5p2N;
-        Wed, 13 Feb 2019 10:43:01 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190213104301epsmtrp2be987dff232413b2b98e54f08fa29a00~C5m3sxY8Y2728727287epsmtrp2R;
-        Wed, 13 Feb 2019 10:43:01 +0000 (GMT)
-X-AuditID: b6c32a49-bafff70000001027-94-5c63f4b65890
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.DF.03971.5B4F36C5; Wed, 13 Feb 2019 19:43:01 +0900 (KST)
-Received: from [107.108.73.28] (unknown [107.108.73.28]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213104258epsmtip29a81c48d21461693142061fb7bb61d3a~C5m0c_vY51385513855epsmtip2s;
-        Wed, 13 Feb 2019 10:42:57 +0000 (GMT)
-Subject: Re: [PATCH v5 0/2] Clean up UFSHC driver
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Alex Lemberg <alex.lemberg@wdc.com>,
-        Ohad Sharabi <ohad.sharabi@wdc.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Yaniv Gardi <ygardi@codeaurora.org>,
-        Gilad Broner <gbroner@codeaurora.org>,
-        Raviv Shvili <rshvili@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-Message-ID: <7ce5a14a-56a7-22bb-b16e-fc898c0ea6e8@samsung.com>
-Date:   Wed, 13 Feb 2019 15:55:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Wed, 13 Feb 2019 05:46:42 -0500
+Received: by mail-it1-f194.google.com with SMTP id o131so4736063itc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 02:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=098FFW+ZJ4L6I/eXR7TVCD8JEV2OI+nP65I7uNmUxUU=;
+        b=Q5AW5IiG2qAZl9kx00Xx9g5JbZGron/CK2H+WVwvyWfkFCaE5+33S8IaO0RlQWwO5f
+         2tg79jfhdPsAxi9EJIjZwhHxIUQPsR+PGUcq3KG41fjpH6sR3yC+auKEiIlv14wsle/Y
+         HSG6O7Wsg7Iz9knRR+tdT04DTtxuI5wYlxtd1n7bMoA3G22aJ3HQIxvSXcMppVrCIbuV
+         dnofL3MG6qbPcnvl+jW9FayxtJUxVYQwUWGZGCG8FZaHHKKvHiLvSuOieE6NYf3eueFs
+         zj8tz1OMOQOU+RquJGHdb9wgjVI2M7GElcosxqp878/f5HdFOm1jfpnYLYBvt5F2f4fU
+         7u1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=098FFW+ZJ4L6I/eXR7TVCD8JEV2OI+nP65I7uNmUxUU=;
+        b=e11k7vgyD5qLSf/rOqRKO1qjOBG1ycgBExqHyhyV8g+WTXBWsCXI2LUex6P5FCNDkd
+         Zw0fTgWTI6vyqr+ol89OLyJCyjMWbg5CIj2F8QRHvDtZd0J353Z/FZgN84vmG8TDXo7R
+         FkCup75rcxrGFljE7ZksdbT9JtaS94jOqG7vzZNPrBmpgpKz8Dr0LjFAx3gzVhZfQgvW
+         gVyaXZoDb374FSdhSPF8jHP64Aoks+5R+ZlUBgIWU7lDzyzF6ORTnWy5+fQgK8sQOHvm
+         dSbxvk1yZMFbr/qZdasz4MaLirrrHUx9ckuOhmO6Lh/En4HBZFMHhfQIvql2cso7lTCM
+         EVjw==
+X-Gm-Message-State: AHQUAuZ9mQVYHzMW6lay08k4Irq3pmDDBpkT114GeruS9VenoPXxf2ly
+        zbD3k4zOz8t1TK+HBvvOUxH+e2KLECKF+uxJ6SAQlQ==
+X-Google-Smtp-Source: AHgI3IbdDkuSwvwe2nEmj6JEwC1saZJRwF9hNMQ41zn3Wczd/1bGHpFtm7MUmU6N6N/rDlFoLiG4Cf5SO6DKy7Wn+Rw=
+X-Received: by 2002:a02:c78d:: with SMTP id n13mr4184328jao.57.1550054801293;
+ Wed, 13 Feb 2019 02:46:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTQRTHnd3tdGmsrgvGBwY1jUdEBYmajMGoMX5YExOMJMYDoxVWJFxN
-        Cx7gBzxQpLYVDCJLvfAGxQSxQEujgIJHSsQiKIhERQhEiFIEjYpaFiPffm/m9583bzIszRfi
-        ADY2MVnUJ2rjNVjF2GrnBy2yDUZFLm6zzibNJRGk5/tLTF78HETk2f1+huS+68TEda0ak4yO
-        PIrcelRAkarCHIo0fYghr29ewaQuz86QoaZMirjtVkyMLRWY2DwumlyvH6FI+RUPJkfrvjIk
-        w/lQSTIbrDSp7C2myKvLlZhI9V8w+eUyKVf7CwXpjYzgNpsowVLiUQiVUrtSKC06gYU3zVVY
-        +PKxlRGG2gTh7rM0oey+Bwme0hnC8QdGasPEraoV0WJ87F5RH7Jyp2qPrXmjrpvdf8n5hE5H
-        v3AW8mGBWwoN7hFlFlKxPOdAYO7qouRiAEH1hUMKr8VzQwi62nz+JRzZZ8cSTgTPm+8q5KIP
-        QcflLOS1fLlQMH87rfSyH5cCTy3Do0xznzE4pfVextwCaM8ro7ys5laCe8BJe5nh5kDV7+ej
-        /lRuM9Sa+pHsTIEn+Z2Ml324MLDUnKDkM6dBa+eFMZ4J5X1WWr5pNgufjGkyr4WWrz2UzL7Q
-        W1+mlDkAPP3Ov2/B/uU4OGlfIi8fhKvn6xiZV8GDJivjVWhuPtyxh8idJoHpRyclJ9WQeYyX
-        7TlwpP/lWHI6ZBuNClkRoPvwKvmhzAiO53TQp9Asadxc0rhZpHGzSP8bX0RMEfIXdYaEGNGw
-        TBeaKO4LNmgTDCmJMcFRSQmlaPTnBq2rQFLD+hrEsUgzUX3j0a5IXqHdaziQUIOApTV+6lcD
-        UZG8Olp7IFXUJ+3Qp8SLhho0nWU009TnAs9t47kYbbIYJ4o6Uf9vl2J9AtLR1uSuXLu2vdC1
-        0Bh45ve64Xy1TQqc63bx6bsHzFUuvHpkkH8aNmuHoIpou5dxtvz68NTbtTpH69ukGWmWw8Xh
-        juWPkya0vLdsFmarILb99droBkdYYOiuxp7qyBC3ZfKSa9vCTQGbFLWNqSVxtFSwPSJnjbX6
-        VIhyi79GmofyNYxhjzY0iNYbtH8A3Y/gtrUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7bCSvO7WL8kxBhvvylpcWxds8fLnVTaL
-        S3++MFqc3v+OxWLqwydsFmeXHWSzaL0/nclizdHZTBZ7Fk1isrjyON3i5solbBbHpu9isfh2
-        pYPJ4vKuOWwW3dd3sFls+3yW2WL58X9MFtuXfGazaDn2lcWide8RdouOc3OYLXa+Ws1kcWPx
-        TjaLWcc/sln8PdvL7iDpMbvhIovH5b5eJo/+dZ9ZPXbOusvusWlVJ5vHnWt72Dw+Pr3F4vHt
-        tofH5tPVHlv2f2b0+LxJzqP9QDdTAE8Ul01Kak5mWWqRvl0CV8a2a0EFzzkqFu49ydzA+Jet
-        i5GTQ0LARGL3xBnsXYxcHEICuxklOud1skIkpCWub5zADmELS6z89xyq6DWjxIKnl1lAEsIC
-        hhJ9PyaDFYkIlEpM/vaKGaSIWeALm0T/vi5miI4+RollT1eBjWUT0Ja4O30LE4jNK2AncfnT
-        XmYQm0VAVWLP/wtgk0QFIiQ+Pt0HVSMocXLmE7BtnALWEv2HOsHizAJmEvM2P2SGsMUlbj2Z
-        DxWXl9j+dg7zBEahWUjaZyFpmYWkZRaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS
-        83M3MYJThZbmDsbLS+IPMQpwMCrx8K44mhQjxJpYVlyZe4hRgoNZSYT3xqfkGCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoY/SXaf3LnP9/jxLHsDnOB
-        4aWG78rfL2gH/0+KzG0t31RjnXvl7lGuzVNO8ztF5i+JOH0rOu7my/KgpVv4F6epRRe383qb
-        zeWvnRe0U6vOskPxwt8lggdaFlpoxi52tLnfXXZ4C8Ncj0luM/O/GMWeWaK+o5end25NdMG2
-        6JCHJvGS9ZvWe8QosRRnJBpqMRcVJwIA1S8FCBEDAAA=
-X-CMS-MailID: 20190213104301epcas5p230e5b9582c88753725b7ed4aa91fe144
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20190211133457epcas3p2dc95fa2c93c3cf884a376f0282be8b8a
-References: <CGME20190211133457epcas3p2dc95fa2c93c3cf884a376f0282be8b8a@epcas3p2.samsung.com>
-        <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
+References: <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell> <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+ <20190212111403.GC20638@dell> <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
+ <20190212132016.GA4781@dell> <20190213092553.GE1863@dell> <CAMRc=MeTMq_GWzQB6LBvts1csMftj=On5sB22jsJZzQzONxbNg@mail.gmail.com>
+ <20190213095330.GF1863@dell> <CAMpxmJXqEwNtyT1ahmRd05QOjhdi0rT_-5S9Lk8O-PmV8BuA6w@mail.gmail.com>
+ <20190213103946.GG1863@dell>
+In-Reply-To: <20190213103946.GG1863@dell>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 13 Feb 2019 11:46:30 +0100
+Message-ID: <CAMRc=Mctzwh7=gt43h3pra_SPoG8=RyKSVhe2zC3XgbjsaL56Q@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+=C5=9Br., 13 lut 2019 o 11:39 Lee Jones <lee.jones@linaro.org> napisa=C5=82=
+(a):
+>
+> On Wed, 13 Feb 2019, Bartosz Golaszewski wrote:
+>
+> > =C5=9Br., 13 lut 2019 o 10:53 Lee Jones <lee.jones@linaro.org> napisa=
+=C5=82(a):
+> > >
+> > > On Wed, 13 Feb 2019, Bartosz Golaszewski wrote:
+> > >
+> > > > =C5=9Br., 13 lut 2019 o 10:25 Lee Jones <lee.jones@linaro.org> napi=
+sa=C5=82(a):
+> > > > >
+> > > > > On Tue, 12 Feb 2019, Lee Jones wrote:
+> > > > >
+> > > > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > > > > >
+> > > > > > > wt., 12 lut 2019 o 12:14 Lee Jones <lee.jones@linaro.org> nap=
+isa=C5=82(a):
+> > > > > > > >
+> > > > > > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > > > > > > >
+> > > > > > > > > wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org>=
+ napisa=C5=82(a):
+> > > > > > > > > >
+> > > > > > > > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > > > > > > > > >
+> > > > > > > > > > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.=
+org> napisa=C5=82(a):
+> > > > > > > > > > > >
+> > > > > > > > > > > >  * The declaration of a superfluous struct
+> > > > > > > > > > > >  * 100 lines of additional/avoidable code
+> > > > > > > > > > > >  * Hacky hoop jumping trying to fudge VIRQs into re=
+sources
+> > > > > > > > > > > >  * Resources were designed for HWIRQs (unless a dom=
+ain is present)
+> > > > > > > > > > > >  * Loads of additional/avoidable CPU cycles setting=
+ all this up
+> > > > > > > > > > >
+> > > > > > > > > > > While the above may be right, this one is negligible =
+and you know it. :)
+> > > > > > > > > >
+> > > > > > > > > > You have nested for() loops.  You *are* wasting lots of=
+ cycles.
+> > > > > > > > > >
+> > > > > > > > > > > > Need I go on? :)
+> > > > > > > > > > > >
+> > > > > > > > > > > > Surely the fact that you are using both sides of an=
+ API
+> > > > > > > > > > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the =
+same driver, must
+> > > > > > > > > > > > set some alarm bells ringing?
+> > > > > > > > > > > >
+> > > > > > > > > > > > This whole HWIRQ setting, VIRQ getting, resource ha=
+cking is a mess.
+> > > > > > > > > > > >
+> > > > > > > > > > > > And for what?  To avoid passing IRQ data to a child=
+ driver?
+> > > > > > > > > > >
+> > > > > > > > > > > What do you propose? Should I go back to the approach=
+ in v1 and pass
+> > > > > > > > > > > the regmap_irq_chip_data to child drivers?
+> > > > > > > > > >
+> > > > > > > > > > I'm saying you should remove all of this hackery and pa=
+ss IRQs as they
+> > > > > > > > > > are supposed to be passed (like everyone else does).
+> > > > > > > > >
+> > > > > > > > > I'm not sure what you mean by "like everyone else does" -=
+ different
+> > > > > > > > > mfd drivers seem to be doing different things. Is a simpl=
+e struct
+> > > > > > > > > containing virtual irq numbers passed to sub-drivers fine=
+?
+> > > > > > > >
+> > > > > > > > How do you plan on deriving the VIRQs to place into the str=
+uct?
+> > > > > > >
+> > > > > > > Exampe:
+> > > > > > >
+> > > > > > > struct max77650_gpio_pdata {
+> > > > > > >     int gpi_irq;
+> > > > > > > };
+> > > > > > >
+> > > > > > > In MFD driver:
+> > > > > > >
+> > > > > > > struct max77650_gpio_pdata *gpio_data =3D devm_kmalloc(dev, s=
+izeof(*gpio_data));
+> > > > > > >
+> > > > > > > gpio_data->gpi_irq =3D regmap_irq_get_virq(irqchip_data, GPI_=
+NUM);
+> > > > > > >
+> > > > > > > gpio_cell.platform_data =3D gpio_data;
+> > > > > > >
+> > > > > > > In GPIO driver:
+> > > > > > >
+> > > > > > > struct max77650_gpio_pdata *gpio_data =3D pdev->dev.platform_=
+data;
+> > > > > > >
+> > > > > > > int irq =3D gpio_data->gpi_irq;
+> > > > > >
+> > > > > > Definitely not.  What you're trying to do is a hack.
+> > > > > >
+> > > > > > If you're using Regmap to handle your IRQs, then you should use=
+ Regmap
+> > > > > > in the client to pull them out.  Setting them via Regmap, then =
+pulling
+> > > > > > them out again in the *same driver*, only to store them in plat=
+form
+> > > > > > data to be passed to a child device is bonkers.
+> > > > > >
+> > > > > > *Either* use the MFD provided platform-data helpers *or* pass a=
+nd
+> > > > > > handle them via the Regmap APIs, *not* both.
+> > > > >
+> > > > > Right, a plan has been formed.
+> > > > >
+> > > > > Hopefully this works and you can avoid all this dancing around.
+> > > > >
+> > > > > Firstly, you need to make a small change to:
+> > > > >
+> > > > >   drivers/base/regmap/regmap-irq.c
+> > > > >
+> > > > > Add the following function:
+> > > > >
+> > > > >   struct irq_domain *regmap_irq_get_domain(struct regmap *map)
+> > > >
+> > > > We already do have such function and a lot of mfd drivers actually =
+use it.
+> > >
+> > > Even better.
+> > >
+> > > > > As you can see, it will return the IRQ Domain for the chip.
+> > > > >
+> > > > > You can then pass this IRQ domain to mfd_add_devices() and it wil=
+l do
+> > > > > the HWIRQ =3D> VIRQ mapping for you on the fly.  Meaning that you=
+ can
+> > > > > remove all the nastiness in max77650_setup_irqs() and have the In=
+put
+> > > > > device use the standard (e.g. platform_get_irq()) APIs.
+> > > > >
+> > > > > How does that Sound?
+> > > >
+> > > > This does sound better! Why didn't you lead with that in the first =
+place?
+> > >
+> > > I'm not even going to dignify that stupid question with a response.
+> >
+> > It's not a stupid question and you're being unnecessarily rude. As an
+> > expert in the subsystem you maintain you could have answered simply
+> > with a "this is wrong, retrieve the irq domain from the regmap
+> > irq_chip and pass it over to mfd_add_devices, the mfd core will create
+> > appropriate mappings".
+>
+> Could be culture clash, but I found the question offensive which is
+> why I chose not to answer it.  The reason is actually explained below:
+>
 
-On 11/02/19 7:01 PM, Marc Gonzalez wrote:
-> Casting a wide net to get as many eyeballs on the subject as possible.
-> 
-> I'm splitting this mini series off from the main "UFS on APQ8098/MSM8998"
-> as it's 1) ufs/scsi specific 2) controversial (to my surprise)
-> 
-> Please send all your Reviewed-by: tags if you agree with the patch,
-> and/or voice your concerns ASAP.
-> 
-> This series removes the "disable-VCCQ-power-rail-for-some-Flash-chips" quirk,
-> and cleans up after the dust settles.
-> 
-> Marc Gonzalez (2):
->    scsi: ufs: Do not disable vccq in UFSHC driver
->    scsi: ufs: Remove unused device quirks
-> 
->   drivers/scsi/ufs/ufs.h        |  1 -
->   drivers/scsi/ufs/ufs_quirks.h | 29 ----------------
->   drivers/scsi/ufs/ufshcd.c     | 63 +++--------------------------------
->   3 files changed, 4 insertions(+), 89 deletions(-)
-> 
-For this series
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-As no other platform has claimed issues with this we can land this.
-Others let us know if your opinion differs here.
+It wasn't meant to be offensive. I guess when dealing with non-native
+English speakers over e-mail it's best to assume good faith.
 
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+>  "It's only the craziness in this patch which forced me to look into how
+>   Regmap handles IRQs and come up with a subsequent solution which fits
+>   your use-case."
+>
+> Thus the fact that a) Regmap used IRQ domains and b) the IRQ domain
+> could be fetched and reused here didn't enter my thought process until
+> I delved into the inner workings of Regmap.
+>
+> Yes, I know MFD pretty well, but I only tend to deep-dive into other
+> subsystems, particularly ones as complicated as Regmap, when it's
+> necessary to do so.  Now I know a little more about it, I can provide
+> the feedback you suggest going forward.
+>
+> > > > It's a pity it's not documented, I had to look at the code to find =
+out
+> > > > irq resources would get translated in mfd_add_devices() if a domain=
+ is
+> > > > present.
+> > >
+> > > Where is it likely to be documented?  MFD is pretty simple and seldom
+> > > needs explanation.  A 3 second look at the API you're trying to use
+> > > (instead of blind copy & paste) would have told you that it's possibl=
+e
+> > > to take an IRQ domain as an argument.
+> > >
+> > > It's only the craziness in this patch which forced me to look into ho=
+w
+> > > Regmap handles IRQs and come up with a subsequent solution which fits
+> > > your use-case.
+> > >
+> > > > In that case - I really don't see a reason to create a superfluous
+> > > > structure to only hold the main regmap - we can very well get it fr=
+om
+> > > > the parent device in sub-drivers as I do now.
+> > >
+> > > The whole point of this solution is that you don't need to pass
+> > > anything non-standard (i.e. not provided by the current APIs) to the
+> > > child device.
+> >
+> > I don't understand what you're saying here.
+>
+> I'm saying that the structure you speak of is no longer required.
+>
 
-Thanks!
+Thanks for clarifying.
 
+Bartosz
