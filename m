@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889ADC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7B0C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC7B2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EACD421934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025973;
-	bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+	s=default; t=1550025978;
+	bh=8E+7059xRbmV189cNvMUwjiHKAtXN39+NDwbrKU2wLo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SUlEqKThiP4YqfYs1mvpSAovLSolS5TvnXZG+TCkjV3vCsxySZ/tobyhE0b1S4Ioa
-	 v/2YT1UBO+enlZpdQzKILAczkxXTn9WVOCWl7I8snf5BGNUHIoWNHl9yPofhrHrjaS
-	 cUUeezY6ZOHhQoQ5XZ4tlphroaL1D48fuZnnF3Sg=
+	b=qfwrDStNwTZE0Qkr2NcAYxRCkQWPpaoNNkNd6q4HRQbP2RRZuNWfUGgWxxU/kMJ3a
+	 6bP4iKL4lTW+VMp6LWhvU8raHEhT+z+Nj0tR+Gmnqs1wKAIOkWgbzXNYFdATKLBXQG
+	 Zw92A5OiHdvLX+C45Gmv+UG/pTt8PxiTKc9Na9iU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389682AbfBMCqM (ORCPT
+        id S2388550AbfBMCqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:46:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44564 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:46:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389092AbfBMCkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:49 -0500
+        id S2389096AbfBMCku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6114222CA;
-        Wed, 13 Feb 2019 02:40:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0372B222C2;
+        Wed, 13 Feb 2019 02:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025648;
-        bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+        s=default; t=1550025649;
+        bh=8E+7059xRbmV189cNvMUwjiHKAtXN39+NDwbrKU2wLo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TWv8qVdNuQwGg/IQ5fCzsG9bGJNJGMAivOjD4XgLDat+Jep5WiYjwVBVOIy2tX7vs
-         FQayCsvIk3IVvNdKSkCLM2fsoaNVpBC1U6Nst0hzuIRJgbQi7lH++le9eAv7ZQcOe+
-         /GCO/xTrvP9ZpHbxw9qVI6ptv4SKlovvqxUqwBb0=
+        b=rOI3YInWw320JMgkPxcnm4nT9ftlKkSL57ZehV/rgnqmRXwq6yK29Np/5dzatVX7g
+         glNSM2th7oQ1IhN7Q2kP+OXh4lQKNkCABRuBWYkpC2Go4xaHqjadtliBZ5bpBi2Z15
+         8ycvSak9pfApp63Kd0I+fscR9CYIT3D2usKiI82o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.9 07/21] mfd: wm5110: Add missing ASRC rate register
-Date:   Tue, 12 Feb 2019 21:40:26 -0500
-Message-Id: <20190213024040.21740-7-sashal@kernel.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>, Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 08/21] mfd: mc13xxx: Fix a missing check of a register-read failure
+Date:   Tue, 12 Feb 2019 21:40:27 -0500
+Message-Id: <20190213024040.21740-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
 References: <20190213024040.21740-1-sashal@kernel.org>
@@ -58,37 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
+[ Upstream commit 9e28989d41c0eab57ec0bb156617a8757406ff8a ]
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+When mc13xxx_reg_read() fails, "old_adc0" is uninitialized and will
+contain random value. Further execution uses "old_adc0" even when
+mc13xxx_reg_read() fails.
+The fix checks the return value of mc13xxx_reg_read(), and exits
+the execution when it fails.
+
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/wm5110-tables.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mfd/mc13xxx-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
-index 1ee68bd440fb..16c6e2accfaa 100644
---- a/drivers/mfd/wm5110-tables.c
-+++ b/drivers/mfd/wm5110-tables.c
-@@ -1618,6 +1618,7 @@ static const struct reg_default wm5110_reg_default[] = {
- 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
- 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
- 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
-+	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
- 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
- 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
- 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
-@@ -2869,6 +2870,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
- 	case ARIZONA_ASRC_ENABLE:
- 	case ARIZONA_ASRC_STATUS:
- 	case ARIZONA_ASRC_RATE1:
-+	case ARIZONA_ASRC_RATE2:
- 	case ARIZONA_ISRC_1_CTRL_1:
- 	case ARIZONA_ISRC_1_CTRL_2:
- 	case ARIZONA_ISRC_1_CTRL_3:
+diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
+index d7f54e492aa6..6c16f170529f 100644
+--- a/drivers/mfd/mc13xxx-core.c
++++ b/drivers/mfd/mc13xxx-core.c
+@@ -274,7 +274,9 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
+ 
+ 	mc13xxx->adcflags |= MC13XXX_ADC_WORKING;
+ 
+-	mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
++	ret = mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
++	if (ret)
++		goto out;
+ 
+ 	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2;
+ 	adc1 = MC13XXX_ADC1_ADEN | MC13XXX_ADC1_ADTRIGIGN | MC13XXX_ADC1_ASC;
 -- 
 2.19.1
 
