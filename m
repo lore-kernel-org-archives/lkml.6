@@ -2,90 +2,93 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C75C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC906C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E675B21B1A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gh1HSCLh"
+	by mail.kernel.org (Postfix) with ESMTP id 6A74C21934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550026179;
+	bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=y0D3cNs7Pqn3kXBLTmZmwSeBDSHAlLHEbZ+xneVBVFBEBsGdzIo0WU900z2PyNgzR
+	 o3zww+RClHy/2rTCnSj95PQ37vAPZkutFR0QiqA7+U7dfO3YYQUDyrLG5/bPXspJcm
+	 ByFCiqQTbCT7GvKf1KI7jxB4TiLy/baTMn1Ya6k0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389797AbfBMCtZ (ORCPT
+        id S2389538AbfBMCth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:49:25 -0500
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:33366 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388893AbfBMCtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:49:17 -0500
-Received: by mail-lf1-f50.google.com with SMTP id q12so624431lfm.0;
-        Tue, 12 Feb 2019 18:49:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9vwvprjmJurUjra8us7UNgk0CKT8vgL+IaRmi2GqZ0w=;
-        b=gh1HSCLhnPtLu6lnrg0T7RP+1b7Adathfo+yptaGjP0W5WBSi1g23mphy0af/Gx570
-         y9lQPJp7Hntdd/i7956hLo6EDmuaXkqS/gMleaCQUA6HGhdrRayEcYNCZlW3G9+4c+oZ
-         fHZs7lmbt+VtwZoyIazg4tPl8f2fhgYbnnqKzhpvzyfMB+Ek+GcIPuxKCUBsN9P95FGq
-         jFqu+xj2azDgoazTRJxKs2KRhSKdRgNL0Y8/WcISQaXjjsVF/YlVqciyKSZy9heW+nBx
-         pKwzAtSfmYX5GYcUAojCjUnqcglM7/ZRuVIyoqQIoUeaoWoM5a0MC38eC7MM3uuUYXwx
-         1Mqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9vwvprjmJurUjra8us7UNgk0CKT8vgL+IaRmi2GqZ0w=;
-        b=kde/j2DvpRT+pGB4qIPWufrNT80zG9kTA2tiIPDph6KebflKBoRPLY+HxATwcL1fhC
-         GKQaIoJhzFoHqdObWBnijpJ6+mel/It0X5HLgFBSTrN8uj1xn4CQBinJEQ/Eqhnaxxhr
-         3kb9FKwRH2BymWnKNSupbOTGtpWzvtjBhYJnjhlW/kP0qwvtN1gPdhLPA2aMMQBhopQX
-         k1ISD0N9hix/jM4Mu7gxpkWCE5lwyTiukbEFOMe8SPPoqaygWpuBz26+raUeMqkLMfpS
-         bPgJyHexnNMs3XAw7JfgnfHRj+7p3w+fULvelPYLA5gef1Ee6uH367OOv6EGDbHqAFzM
-         BvmQ==
-X-Gm-Message-State: AHQUAuaS+FxAAY170huDPsXHVrQllnILOGVveza7k4NKhx6/eXYInqHS
-        u9kcIkeuoW3n1d/siivlcnfQ1gGZUSf8Ihg3LXI=
-X-Google-Smtp-Source: AHgI3IbRllIKbDxDFBHpq4IcnyDsDeumAnPNkH+ghRpGnb+jpyxAJsgdYrUkW3OnnhOSiGnD20UfPxIL6ye1BmwUeSg=
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr3862616lfl.129.1550026154235;
- Tue, 12 Feb 2019 18:49:14 -0800 (PST)
+        Tue, 12 Feb 2019 21:49:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731507AbfBMCkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:03 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E4B2175B;
+        Wed, 13 Feb 2019 02:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550025603;
+        bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eNYzaNxRnyRP0wDpGdwCvrh8FJDvfZ6taxse9eIj7otJ1T2qwGGf2XTXLzJVKrM4q
+         dH+zKd8DH7OWh1+lbXXeyi82qzvBPh6HC+BDVgjdJUId8rd+dXdR6FVg3nUZyd3pcx
+         BTcLhOqfPcIC2Ctp9GK9G+gQfK59e4QVpxbSfy68=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.14 09/34] mfd: wm5110: Add missing ASRC rate register
+Date:   Tue, 12 Feb 2019 21:39:27 -0500
+Message-Id: <20190213023952.21311-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
+References: <20190213023952.21311-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <1549971097-12627-1-git-send-email-laoar.shao@gmail.com>
- <1549971097-12627-2-git-send-email-laoar.shao@gmail.com> <38d07cb3-b767-bfc4-9ae5-48367971d839@gmail.com>
- <CALOAHbAskuYhs3KQTJtT0Y7hjFcOyab-JpG4GCPENUxOk34-eA@mail.gmail.com> <CANn89i+2JB1UfdTmVMPMP-fEeYm9safcO49ygKn6fccEP1rpYA@mail.gmail.com>
-In-Reply-To: <CANn89i+2JB1UfdTmVMPMP-fEeYm9safcO49ygKn6fccEP1rpYA@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 12 Feb 2019 18:49:02 -0800
-Message-ID: <CAADnVQKhEshkWSDeYJ92pWnJjqawGSScBH+LU4iXsqwwxYjO9g@mail.gmail.com>
-Subject: Re: [bpf-next 1/2] tcp: replace SOCK_DEBUG() with tcp_stats()
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Yafang Shao <laoar.shao@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>, Lawrence Brakmo <brakmo@fb.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, shaoyafang@didiglobal.com
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 6:15 PM Eric Dumazet <edumazet@google.com> wrote:
->
-> Do not add more debugging stuff unless you can demonstrate
-> they actually allowed you to find a real bug and that you sent a
-> public fix for it.
->
-> Just adding "cool stuff" in TCP stack does not please me, it is only
-> more complexity for unproven gain.
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I agree.
-I don't see why this debugging of 'abnormal TCP' cannot be done
-with kprobes and tracepoints.
-Instrumenting every tcp counter increment is overkill.
+[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/mfd/wm5110-tables.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
+index 1ee68bd440fb..16c6e2accfaa 100644
+--- a/drivers/mfd/wm5110-tables.c
++++ b/drivers/mfd/wm5110-tables.c
+@@ -1618,6 +1618,7 @@ static const struct reg_default wm5110_reg_default[] = {
+ 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
+ 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
+ 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
++	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
+ 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
+ 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
+ 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
+@@ -2869,6 +2870,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
+ 	case ARIZONA_ASRC_ENABLE:
+ 	case ARIZONA_ASRC_STATUS:
+ 	case ARIZONA_ASRC_RATE1:
++	case ARIZONA_ASRC_RATE2:
+ 	case ARIZONA_ISRC_1_CTRL_1:
+ 	case ARIZONA_ISRC_1_CTRL_2:
+ 	case ARIZONA_ISRC_1_CTRL_3:
+-- 
+2.19.1
+
