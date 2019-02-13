@@ -2,267 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80500C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0442C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CFC222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="I+VCSK9b";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Gm8ymGkc"
+	by mail.kernel.org (Postfix) with ESMTP id 6EDE0222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:53:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550058830;
+	bh=/6Q7u9iZTNnjZqX+OeuxwSTh4pFcqmuZPn7ti/uDap4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=dgicth5+zFsETBESfa0UwDi1OKHIwrTWhg/ONcYCTBWj6603CkwM4/qMAJ164rwLr
+	 NTMZjH15/HjVH4oPOifk/AqncLqaAZd5X7pdTYklhn3EIh+g1+b5sC6QtEQMhRqc/H
+	 W3XSm8Fls47097K5b2V4ZCKM0nfuB498dpf8iI4A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391927AbfBMLxq (ORCPT
+        id S2391940AbfBMLxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:53:46 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:18775 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391908AbfBMLxo (ORCPT
+        Wed, 13 Feb 2019 06:53:48 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49776 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391919AbfBMLxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:53:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1550058825; x=1581594825;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KQcGW8lAHUewzSPpCVt2l3wyt8C2e+e5pUxeKnjvl8E=;
-  b=I+VCSK9bV8TxBJ99oj6AFso2B2AUuY2oYjwIw9MKz/1vRayNrRngf70S
-   xMiG6Ve43mLnnyDUt+2r/MTN+kldP3R9e9ZMym4VYAaK09nD+AdX+Mh+r
-   18xHNjgHH+V//j5+rYP7014j+7jjKu5ONBTuO3+VT29Gfu69bL5B/qCZP
-   HFZE0DVwtextqr6fp44PYj97LoX27qy+ZyfxIygfZ4nCbLJ6J9vcZroks
-   ozZG3NTNaWGNpQKONS8adOXp3pn2TMkYZTy3tDfQKcUyONoRHQVVvAp2o
-   Mt5I+ygxv+Di9QqeEHMqsO9u6/BqLbMtRXT7uxsBfaNzcHT4wI3Olfyax
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.58,365,1544457600"; 
-   d="scan'208";a="106122630"
-Received: from mail-by2nam01lp2052.outbound.protection.outlook.com (HELO NAM01-BY2-obe.outbound.protection.outlook.com) ([104.47.34.52])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Feb 2019 19:53:44 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vfy9a7eQpprxHOxnGVIApyfvb1IkN/Eoi7kyg0aj3DU=;
- b=Gm8ymGkcNxlkUJzKDRBv5rgxN5j5PdjDgt/nGEmPJpf1lNHSCglRdibdyJuVoTN7q4BK5W/7fvaBfqsCfJfSpEhOQw2xn08s2BdivynXX2LTOBNxIRm26d1UB4R1lzcw+hh1jc7fgNsxeNZtth473wFOlOv0oI8xVARHxdqveNE=
-Received: from DM6PR04MB6059.namprd04.prod.outlook.com (20.178.226.89) by
- DM6PR04MB6171.namprd04.prod.outlook.com (20.178.227.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Wed, 13 Feb 2019 11:53:42 +0000
-Received: from DM6PR04MB6059.namprd04.prod.outlook.com
- ([fe80::d006:5be7:c3f:ba6c]) by DM6PR04MB6059.namprd04.prod.outlook.com
- ([fe80::d006:5be7:c3f:ba6c%2]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
- 11:53:42 +0000
-From:   Anup Patel <Anup.Patel@wdc.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-CC:     Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v6 3/5] RISC-V: Move setup_vm() to mm/init.c
-Thread-Topic: [PATCH v6 3/5] RISC-V: Move setup_vm() to mm/init.c
-Thread-Index: AQHUw5LEqZUXVUXd9EWkO2EciZPqYA==
-Date:   Wed, 13 Feb 2019 11:53:42 +0000
-Message-ID: <20190213115301.103989-4-anup.patel@wdc.com>
-References: <20190213115301.103989-1-anup.patel@wdc.com>
-In-Reply-To: <20190213115301.103989-1-anup.patel@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MA1PR0101CA0007.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:21::17) To DM6PR04MB6059.namprd04.prod.outlook.com
- (2603:10b6:5:129::25)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anup.Patel@wdc.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [49.207.52.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b9cb2d7f-1d15-4967-e7cb-08d691a9e661
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR04MB6171;
-x-ms-traffictypediagnostic: DM6PR04MB6171:
-wdcipoutbound: EOP-TRUE
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DM6PR04MB6171;23:hMp3BXTmo6atw/NvBhCZhXdbfFeK9G28jPITtpm?=
- =?iso-8859-1?Q?GMYa1LGIGcvxSbuAqyDGwI5vfFKooJHfrjBedqnlb5RGero7bdJU/D+2Gq?=
- =?iso-8859-1?Q?l25QWKLdmw8OUqxchuIaBdeArjPNK4EwrNNLO6RKKF8+LzdusSZqyRyTW0?=
- =?iso-8859-1?Q?YCQNCGyX+EVh3V6DZOmoi6TAnIrIbbay5ZITIV+mOvPc5Wa4hJWTEoP1HL?=
- =?iso-8859-1?Q?OUMysYNT+mYzke0Tqw2vRmBx1IH5LSHwadFz9l+KN3qPtA2L6435McaC0Z?=
- =?iso-8859-1?Q?lq+DuBdlcNnr919aLhGXR6ra6d53lWVXs/3wy9F14O1/0qyCnFR1iyb8eK?=
- =?iso-8859-1?Q?wTLOLV3EsJycJQr+sqgw/f3+G9yP8CeHH2zC5E7N3GqpMAtzOE4DT4Qp7m?=
- =?iso-8859-1?Q?uXU+fBg61u3TgCQfrdagN2U2jNtqKlrnZY+qbaUEsWv59KKPWDMAnxVRmG?=
- =?iso-8859-1?Q?QGSLtMk+L9S6zFw2LodFLWCa3DtZVFLTQU6zm8h71lFBA9/WKHYrqfpv+I?=
- =?iso-8859-1?Q?uWSgPV35GAFT8YrHSS7YQUSwAB2msRW+ucCrT6uJVGKpFFdefh3ijqotoh?=
- =?iso-8859-1?Q?TbODyjzNxC4psUkuVa7RJWd4YTKFmLcSFGhWrSTGjVx6sgpOCCA7xneQUL?=
- =?iso-8859-1?Q?wTSptbPQWAwd8zNtKiuvZyfPRuaOOsLzv2Mcf9UpUOZE+9kr2N3A7Z3uwE?=
- =?iso-8859-1?Q?b3mih1RAMwgKqNgSapzR06Z+VhKPT5vZ9PJtjO62cy6GLIib0PvXoKgYY9?=
- =?iso-8859-1?Q?fqHJVg8cTkzxHT869j4An2v6uVCvXHkvPood0GRXpbUDKn6cNcuw9O2ulB?=
- =?iso-8859-1?Q?VkdNiYgC1qOBVFC3a+ow4MiBwG62lIvviaEaSpgnjaulZCK5TWCNixIzfP?=
- =?iso-8859-1?Q?3x4IWNQv7gO3+BbnQF0omG4xX1f5AiKwjHx/xoDBwoeRCOL1owYb8gGQxy?=
- =?iso-8859-1?Q?z0+NnsYo6HeCn0OyqkLrD3O5k+LCsaJ0lSo42E7L3h91KVBLjjfX5FDUaJ?=
- =?iso-8859-1?Q?sL7/eL4ud4HZ8bI8bILrlrBtRG1mYhId9GJ9NoFRUNmRU/LJQz23VHxbQi?=
- =?iso-8859-1?Q?wVHlWolKTo6ruujiTnT1Xph4y0tfkuff+YA8D7BKuFIk+uBap9UZV9Opkk?=
- =?iso-8859-1?Q?HBJKLHRT15Iwc2Bu9bAJM8CC4kT0iRnZQOX3EZ45m4QXs/Sz/lhVOOibYd?=
- =?iso-8859-1?Q?1JzCSARwgiAw+2x95++/vjQxnL+/b9mzBlD7mb9g9cuDnjQXYAJ5HjMZIv?=
- =?iso-8859-1?Q?+eoru55OaDz66i3iGjH2x9RYOVU6hqe5XJTvzBUhFL9jZMZxG+OkfHJ7tS?=
- =?iso-8859-1?Q?Kb03+bE40fiMvUfyPs4xD2f?=
-x-microsoft-antispam-prvs: <DM6PR04MB6171063FA996F7BB84CD97598D660@DM6PR04MB6171.namprd04.prod.outlook.com>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(39860400002)(136003)(396003)(199004)(189003)(52116002)(4326008)(66066001)(71190400001)(76176011)(316002)(8676002)(6436002)(106356001)(6486002)(6116002)(71200400001)(105586002)(3846002)(53936002)(386003)(44832011)(6506007)(6512007)(256004)(55236004)(97736004)(8936002)(54906003)(478600001)(72206003)(305945005)(26005)(102836004)(446003)(186003)(68736007)(1076003)(14454004)(81156014)(81166006)(7736002)(25786009)(99286004)(36756003)(2171002)(486006)(86362001)(11346002)(2616005)(50226002)(110136005)(476003)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB6171;H:DM6PR04MB6059.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: p3mkempJrc+2kJTsavInElWPc47QyJsLVPJ/T++PkLEuPYTbyn9wKUmkaHQAcataEq2LcJRtlmQVyVA31V6p1XXomwn5eAGqdkfufP2QSHRidlC2Z0Ubheu8UJI0GSo9pNf+5JwCtr3fWaxcnloqhBWB3uSZVj8zdd2AOBcvY1k2B3bONx0PJxFCwfk4K4ID5UiP1JKM5xLnxg3v1YM/h98DIrdWstExH49ycEBj6lXZOOZ2PQOVCUDHEIev83oJOwAlLiQq/PqiX/VvmhFg8ROB2pcEaNX/ekHDjGO+3XiWM/tq0OrX3GPLMLC7EtPryXh73RpAaS8PVWMRF4oPXiaemE0q2qiRjfdwwmx7j6LV2R81MEWq2iOb0FrYScsRMyfRw7E5e5lMAoL656GY8Sop3zMAWyJ0uyw5dtve2q4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9cb2d7f-1d15-4967-e7cb-08d691a9e661
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 11:53:39.1040
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6171
+        Wed, 13 Feb 2019 06:53:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=q+u/SWVyBPAxNz5MCCsxL5esEg5sHH7+4ZkIQ20U36A=; b=QYg5u0ms066E
+        YsaapePizJsWYd5T9qVVO4z/B33+4d81kd9dbKiAm1WObMtURIWkZiUGODOKm5IdPMNHoWywCD4PC
+        cew2MAsSeXqGDuHsCQH2UR4cr7C/IX0ZA0BwwtKkIABQUMO66fDHfkqCe84ZiQpzBcDCj1OtJDeDv
+        gL5tc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtt6Y-00045f-4X; Wed, 13 Feb 2019 11:53:30 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9F9DE1128158; Wed, 13 Feb 2019 11:53:29 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>, Liam@sirena.org.uk,
+        Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav@sirena.org.uk, Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Benson Leung <bleung@chromium.org>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static" to the asoc tree
+In-Reply-To:  <20190213062956.146536-1-weiyongjun1@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190213115329.9F9DE1128158@debutante.sirena.org.uk>
+Date:   Wed, 13 Feb 2019 11:53:29 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The setup_vm() is responsible for setting up initial page table hence
-should be placed in mm/init.c.
+The patch
 
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+   ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a4cbb465bcc98f1c5740c887d4be3a68f1a47279 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 13 Feb 2019 06:29:56 +0000
+Subject: [PATCH] ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
+
+Fixes the following sparse warning:
+
+sound/soc/codecs/cros_ec_codec.c:209:27: warning:
+ symbol 'cros_ec_dai' was not declared. Should it be static?
+
+Fixes: b291f42a3718 ("ASoC: cros_ec_codec: Add codec driver for Cros EC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/riscv/kernel/setup.c | 49 ---------------------------------------
- arch/riscv/mm/init.c      | 49 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 49 deletions(-)
+ sound/soc/codecs/cros_ec_codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 49bce6692f39..cffe0b3caba4 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -69,55 +69,6 @@ void __init smp_setup_processor_id(void)
- 	cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
- }
-=20
--pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
--pgd_t trampoline_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
--
--#ifndef __PAGETABLE_PMD_FOLDED
--#define NUM_SWAPPER_PMDS ((uintptr_t)-PAGE_OFFSET >> PGDIR_SHIFT)
--pmd_t swapper_pmd[PTRS_PER_PMD*((-PAGE_OFFSET)/PGDIR_SIZE)] __page_aligned=
-_bss;
--pmd_t trampoline_pmd[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
--#endif
--
--asmlinkage void __init setup_vm(void)
--{
--	extern char _start;
--	uintptr_t i;
--	uintptr_t pa =3D (uintptr_t) &_start;
--	pgprot_t prot =3D __pgprot(pgprot_val(PAGE_KERNEL) | _PAGE_EXEC);
--
--	va_pa_offset =3D PAGE_OFFSET - pa;
--	pfn_base =3D PFN_DOWN(pa);
--
--	/* Sanity check alignment and size */
--	BUG_ON((PAGE_OFFSET % PGDIR_SIZE) !=3D 0);
--	BUG_ON((pa % (PAGE_SIZE * PTRS_PER_PTE)) !=3D 0);
--
--#ifndef __PAGETABLE_PMD_FOLDED
--	trampoline_pg_dir[(PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
--		pfn_pgd(PFN_DOWN((uintptr_t)trampoline_pmd),
--			__pgprot(_PAGE_TABLE));
--	trampoline_pmd[0] =3D pfn_pmd(PFN_DOWN(pa), prot);
--
--	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
--		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
--		swapper_pg_dir[o] =3D
--			pfn_pgd(PFN_DOWN((uintptr_t)swapper_pmd) + i,
--				__pgprot(_PAGE_TABLE));
--	}
--	for (i =3D 0; i < ARRAY_SIZE(swapper_pmd); i++)
--		swapper_pmd[i] =3D pfn_pmd(PFN_DOWN(pa + i * PMD_SIZE), prot);
--#else
--	trampoline_pg_dir[(PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
--		pfn_pgd(PFN_DOWN(pa), prot);
--
--	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
--		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
--		swapper_pg_dir[o] =3D
--			pfn_pgd(PFN_DOWN(pa + i * PGDIR_SIZE), prot);
--	}
--#endif
--}
--
- void __init parse_dtb(unsigned int hartid, void *dtb)
- {
- 	if (!early_init_dt_scan(__va(dtb)))
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index bedaf04f9c2f..358e3d5daa29 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -140,3 +140,52 @@ void __init setup_bootmem(void)
- 				  &memblock.memory, 0);
- 	}
- }
-+
-+pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
-+pgd_t trampoline_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
-+
-+#ifndef __PAGETABLE_PMD_FOLDED
-+#define NUM_SWAPPER_PMDS ((uintptr_t)-PAGE_OFFSET >> PGDIR_SHIFT)
-+pmd_t swapper_pmd[PTRS_PER_PMD*((-PAGE_OFFSET)/PGDIR_SIZE)] __page_aligned=
-_bss;
-+pmd_t trampoline_pmd[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
-+#endif
-+
-+asmlinkage void __init setup_vm(void)
-+{
-+	extern char _start;
-+	uintptr_t i;
-+	uintptr_t pa =3D (uintptr_t) &_start;
-+	pgprot_t prot =3D __pgprot(pgprot_val(PAGE_KERNEL) | _PAGE_EXEC);
-+
-+	va_pa_offset =3D PAGE_OFFSET - pa;
-+	pfn_base =3D PFN_DOWN(pa);
-+
-+	/* Sanity check alignment and size */
-+	BUG_ON((PAGE_OFFSET % PGDIR_SIZE) !=3D 0);
-+	BUG_ON((pa % (PAGE_SIZE * PTRS_PER_PTE)) !=3D 0);
-+
-+#ifndef __PAGETABLE_PMD_FOLDED
-+	trampoline_pg_dir[(PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
-+		pfn_pgd(PFN_DOWN((uintptr_t)trampoline_pmd),
-+			__pgprot(_PAGE_TABLE));
-+	trampoline_pmd[0] =3D pfn_pmd(PFN_DOWN(pa), prot);
-+
-+	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
-+		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
-+		swapper_pg_dir[o] =3D
-+			pfn_pgd(PFN_DOWN((uintptr_t)swapper_pmd) + i,
-+				__pgprot(_PAGE_TABLE));
-+	}
-+	for (i =3D 0; i < ARRAY_SIZE(swapper_pmd); i++)
-+		swapper_pmd[i] =3D pfn_pmd(PFN_DOWN(pa + i * PMD_SIZE), prot);
-+#else
-+	trampoline_pg_dir[(PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
-+		pfn_pgd(PFN_DOWN(pa), prot);
-+
-+	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
-+		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
-+		swapper_pg_dir[o] =3D
-+			pfn_pgd(PFN_DOWN(pa + i * PGDIR_SIZE), prot);
-+	}
-+#endif
-+}
---=20
-2.17.1
+diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
+index b14100b6a939..99a3af8a15ff 100644
+--- a/sound/soc/codecs/cros_ec_codec.c
++++ b/sound/soc/codecs/cros_ec_codec.c
+@@ -206,7 +206,7 @@ static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
+ 	.set_fmt = cros_ec_i2s_set_dai_fmt,
+ };
+ 
+-struct snd_soc_dai_driver cros_ec_dai[] = {
++static struct snd_soc_dai_driver cros_ec_dai[] = {
+ 	{
+ 		.name = "cros_ec_codec I2S",
+ 		.id = 0,
+-- 
+2.20.1
 
