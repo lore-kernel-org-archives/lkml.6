@@ -2,134 +2,189 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11E2C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDC5C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC0B21902
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8737D21904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="beigrxpd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392629AbfBMQUo (ORCPT
+        id S2392631AbfBMQXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:20:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729502AbfBMQUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:20:43 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D61B113AA3;
-        Wed, 13 Feb 2019 16:20:42 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-125-158.rdu2.redhat.com [10.10.125.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 31B0A6013B;
-        Wed, 13 Feb 2019 16:20:34 +0000 (UTC)
-Subject: Re: [PATCH 03/10] locking/rwsem: Rename kernel/locking/rwsem.h
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1550017627-14504-1-git-send-email-longman@redhat.com>
- <1550017627-14504-4-git-send-email-longman@redhat.com>
- <20190213091918.GL32494@hirez.programming.kicks-ass.net>
- <31e47c29-fdb4-6fcb-64a9-36ce70226af5@redhat.com>
- <20190213155423.GZ32494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <29d3d686-978e-9b12-3f34-9f614baabfe6@redhat.com>
-Date:   Wed, 13 Feb 2019 11:20:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 13 Feb 2019 11:23:11 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37150 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729502AbfBMQXK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:23:10 -0500
+Received: by mail-qt1-f193.google.com with SMTP id a48so3225135qtb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NjxEKeyCObRr2sjcSUeukxOsu5en/ljpvN0RjIO7Ejs=;
+        b=beigrxpdNR+B/wztcbc4ZiGTIErUN1WbfjBqhk6yzHFHQDOKRkksCBhxAJ95d5+mG1
+         blO3YrNugSEg3AlXlYq6XfF9g093N6ogEa0ZkZJYJJB09CQkeHumCQN9L5iYv4IKXPfq
+         XSbdMokRxLfzdk2Wad/uONUp789H1Uz1R5qMY5Z5iGPqMTxJ4Up3cBIp4JXAt99AJxCq
+         nikT72negFaQxoDwdmzqR8ZzntjJLYlmM2+Eub0F38POqp4rHrwbtiMzb2FAgs88iFew
+         cyO6mHKtKruImTUgnch9/saEzKr/zQyhA/StRV2J/mcI5b7bVP8JTL5bkqPwbL4P2DDx
+         JXJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NjxEKeyCObRr2sjcSUeukxOsu5en/ljpvN0RjIO7Ejs=;
+        b=fyU9ni4ZNvjAu148Q9Fh/PphSKaok4b4yvlPyYOuKEqDgo6OWEHXe4558xb2mv3fDn
+         HLemDeC8r6IZX+fKo1rTGaZ4rzhvL6talCItlFuppp4xEpFYAkq5aWN4DNR7pFYvFyXi
+         PPmPsD3iiAMPI2p0pMaDKGlOb8HjZ1k1J+XTCPbiCimi4PLBgs5UV0j1qLRja/JJb4Ma
+         cZepK6oeIbBx3a9p8OSa+ceZM4F6sl3ge1zlHBcnVI2ZYVsQ8muP/RKXdVPqb5fSZbSH
+         LObrWzLdPXzFZIFVQmnCs7hbBvWFcQ7npANNzq0NZLGuymlJ++g9YnSoUgp1Hf/ZjA08
+         fCxQ==
+X-Gm-Message-State: AHQUAuaFDN3uW54ubsfCGnd4MaVkrPh9IkPihH3Rcj09E9s3nmwOf8wR
+        pBd5eN9/dcSuF4f+HS/qbTLARW6U2a0=
+X-Google-Smtp-Source: AHgI3IbWKIXV3Qg1k0ZC67tBztNKKXXaJlE9eBFl1qavFpJ/jZcthPyMAVAI/EaoxcqwQ8efqII3Ag==
+X-Received: by 2002:ac8:1ba9:: with SMTP id z38mr1082845qtj.3.1550074988815;
+        Wed, 13 Feb 2019 08:23:08 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id 46sm14115766qty.59.2019.02.13.08.23.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 08:23:07 -0800 (PST)
+Date:   Wed, 13 Feb 2019 11:23:07 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Rob Clark <robdclark@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] MAINTAINERS: update entry for drm/msm
+Message-ID: <20190213162307.GL114153@art_vandelay>
+References: <20190213151107.14833-1-robdclark@gmail.com>
+ <20190213152802.GK23159@phenom.ffwll.local>
+ <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
+ <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190213155423.GZ32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 13 Feb 2019 16:20:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2019 10:54 AM, Peter Zijlstra wrote:
-> On Wed, Feb 13, 2019 at 10:47:11AM -0500, Waiman Long wrote:
->> On 02/13/2019 04:19 AM, Peter Zijlstra wrote:
->>> On Tue, Feb 12, 2019 at 07:27:00PM -0500, Waiman Long wrote:
->>>> The content of kernel/locking/rwsem.h is now specific to rwsem-xadd only.
->>>> Rename it to rwsem-xadd.h to indicate that it is specific to rwsem-xadd
->>>> and include it only when CONFIG_RWSEM_XCHGADD_ALGORITHM is set. As a result,
->>>> the CONFIG_RWSEM_XCHGADD_ALGORITHM conditional compilation directives can
->>>> be removed. There is no functional change.
->>> Since all of rwsem-xadd is now generic code; how about we delete the
->>> spinlock thing and keep everything rwsem ?
->>>
->>> We don't carry a special spinlock mutex implementation either. And
->>> arguably any arch that uses spinlock based atomics (afaict the only case
->>> where rwsem-spinlock makes any sense anyway) suck anyway.
->> I don't mind removing the rwsem-spinlock code and have just one
->> implementation for all as long as there is no objection from others. I
->> don't know the history of why we have 2 implementations of rwsem and so
->> I didn't plan to do that.
-> It is from before my time too; but I think rwsem-spinlock is generic and
-> didn't require arch asm helpers, where rwsem-xadd did, but we just fixed
-> that :-)
+On Wed, Feb 13, 2019 at 05:04:59PM +0100, Daniel Vetter wrote:
+> On Wed, Feb 13, 2019 at 4:43 PM Rob Clark via dri-devel
+> <dri-devel@lists.freedesktop.org> wrote:
+> >
+> > On Wed, Feb 13, 2019 at 10:28 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > >
+> > > On Wed, Feb 13, 2019 at 10:10:44AM -0500, Rob Clark via dri-devel wrote:
+> > > > We've moved the tree to a shared gitlab tree, so that Sean can help out
+> > > > with maintainer duties.
+> > > >
+> > > > Cc: Sean Paul <seanpaul@chromium.org>
+> > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > > ---
+> > > > I can include this patch in msm-next for v5.1, but wanted to get it
+> > > > ack'd on list
+> > >
+> > > Is the plan to also add this to dim, for full group maintainership fun?
+> > > It's more or less adding a few lines to nightly.conf and done (plus
+> > > everyone being ok with using the dim tooling).
+> >
+> > I think drm/msm is big enough, that it wouldn't make sense to move to
+> > drm-misc..  but possibly using the dim tooling could make sense.
+> 
+> This was about using the dim tooling, not about moving msm to
+> drm-misc. That indeed doesn't make much sense. And Sean already knows
+> that tooling. Plus you pretty much need a big script if you want to
+> add more committers (which imo you guys totally should), since
+> otherwise you spend up endless amounts of time training people on
+> trivial hiccups.
 
-OK, I will attempt to send a patch to remove rwsem-spinlock. That will
-touch a lot of arch specific files too.
+Yeah, we've talked about switching to dim a few times already. IMO, the big win
+for msm would be inclusion in drm-tip to catch integration issues early, and
+dim's sanity checks around tags. Selfishly, this would also reduce dim's
+complaints when backmerging drm into drm-misc  :-).
 
-Cheers,
-Longman
+That said, would the committers we'd want to add to msm (Qualcomm employees) be
+receptive to (or even able to install/download) dim? I'm not sure on this one.
 
+At any rate, last time we discussed dim, we agreed the first step was to get
+msm on gitlab so we can easily add commit access and go from there. I think
+we're probably just at the end of that transition period, so everything is on
+track!
+
+Sean
+
+
+> -Daniel
+> 
+> > BR,
+> > -R
+> >
+> > > -Daniel
+> > >
+> > > >
+> > > >  MAINTAINERS | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index 9919840d54cd..2141a1b6653d 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -4838,10 +4838,11 @@ F:    Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt
+> > > >
+> > > >  DRM DRIVER FOR MSM ADRENO GPU
+> > > >  M:   Rob Clark <robdclark@gmail.com>
+> > > > +M:   Sean Paul <sean@poorly.run>
+> > > >  L:   linux-arm-msm@vger.kernel.org
+> > > >  L:   dri-devel@lists.freedesktop.org
+> > > >  L:   freedreno@lists.freedesktop.org
+> > > > -T:   git git://people.freedesktop.org/~robclark/linux
+> > > > +T:   git https://gitlab.freedesktop.org/drm/msm.git
+> > > >  S:   Maintained
+> > > >  F:   drivers/gpu/drm/msm/
+> > > >  F:   include/uapi/drm/msm_drm.h
+> > > > --
+> > > > A
+> > > > 2.20.1
+> > > >
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > >
+> > > --
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > http://blog.ffwll.ch
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
