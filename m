@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF158C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0389C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8CD222CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EF7D222CF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEvgGTcZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ukcGLI2h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437030AbfBMWHq (ORCPT
+        id S2392448AbfBMWHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:07:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38790 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbfBMWHn (ORCPT
+        Wed, 13 Feb 2019 17:07:51 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45064 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730382AbfBMWHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:07:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so1877908plb.5;
-        Wed, 13 Feb 2019 14:07:43 -0800 (PST)
+        Wed, 13 Feb 2019 17:07:47 -0500
+Received: by mail-pl1-f196.google.com with SMTP id r14so1855417pls.12;
+        Wed, 13 Feb 2019 14:07:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/FNSaCPkNb/ATQEB/CndFveaqB+F4uCmwJCbnMmSO6Y=;
-        b=GEvgGTcZLNMZ5vvQeqU/k8nRu5G+1FWJyGtVUNNs73ELZjVy1d4zrlIHNw6Nnnesup
-         rq00QhhI5fbhL3Y60R4eJjPe/fYHn0DlBi5jyYTXfWXw58NHOF2Y9g7xmlmStNJ5EX7E
-         TKVk2Of6QjynIJblOeoQTgGiDFEQwHJgiSYN7L5FDUMg4qVOQZrRnOzNcJbW8Affnv5d
-         893XIuI+5unQ/6y1+XodepjRdfhGNkT+qb/lb9kktI/PZ72zzEFrmtgZ2lvlVv4HtZMY
-         RAqGhO/tRCH1wr/GSFWpHxuJ7rRLdvoWFJIBW0TeRbAsvzmvzeQ5kEU85/z56/YZd/fF
-         GxoQ==
+        bh=g2+XpA5ni4P8phE+1KGFcK1ujquQd92gmwto6EnDuBU=;
+        b=ukcGLI2hsEhE6xbWBPkxxgsFDgBFuHWRCSi9hoOAVgn72tC0EekrHfFaCqyHHLo1xR
+         QFui0eDUHVJjFScQ2zisheQZ7xyv83Vkn8OwqOehwhM820Xk5bJshNAjwnNGYl5n8FKH
+         7cOuKYldlMnH1GRf1cEG1hXpVTM+EFNcCxcVvWPptXeqiRiniJKxuFqvQXv/g+E69VEr
+         5Dglu80QWA3AwO1zPKi0YvG4YEIpQmMa9B6JAp1EBSOeiScpc9bDqdODcUekd8SUPQmT
+         LktmUJJMbX1Rky5B3GFHBnSqLP5Mcl1+3+09GZDy/8miZ0agPCOffUlV+n6L8cxbDy7N
+         0PfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/FNSaCPkNb/ATQEB/CndFveaqB+F4uCmwJCbnMmSO6Y=;
-        b=NGzzYRGVYUhfu+RRolNq9xV3vDWpnHwOejWscy+j/Pi/KB2TiK0RD6ANsj/WNI0D4H
-         LplZsna6pM/kvjavpzOQzNWS7WRroU1B1jjBz6bHuJQyMirSQrr6AYFx9MGICOqU/0sv
-         lvDsMT5A4RttbqIn1wQCURTikyfut0Yk+XZjz74N0ScfkHT8URLcyTFN+ruC4ia9NbLI
-         u6Jm3sNhqNYCeoIjCVK2sh/4qAA+o4G+kl70PymArIgWgG5vUIKGVLCitnq7eDctidRb
-         3HSTijtkSGxcbRJQR+qPQb8cwza8w7XeXnsyyuBYrjcBSs11szufBJBz2uBcemRiDs36
-         GDXw==
-X-Gm-Message-State: AHQUAubdsMKgnGhtLWNX+1ACCS1U3uWkAAFPnoUvkifcsAOy7B63q25I
-        71biWvMVMLINchidjFW1YooIJJMr
-X-Google-Smtp-Source: AHgI3Ia8HnG0LE9hfYxaNbSSzCmSw9E9L3ZRjWlQPCsLoco0kl3amHHIXCYwU0vSJrS6fCxHHW2YyQ==
-X-Received: by 2002:a17:902:15a8:: with SMTP id m37mr420819pla.129.1550095662182;
-        Wed, 13 Feb 2019 14:07:42 -0800 (PST)
+        bh=g2+XpA5ni4P8phE+1KGFcK1ujquQd92gmwto6EnDuBU=;
+        b=AsWV/ELQAnJ6Nx5rhwATlpQWiLWN6Mox1+rnAMrsaHkW6lIVEr2wVnjH6FDfzNArwV
+         I0P+a7M1T8n14KIyMfa4LrqvD8HjUwggDuJ4Ahp6Xpg/cDzqxZOU0xDnOH81WM2uhh3A
+         ZBDLBJHwNUf8FAM8dVpuUgt0qvFse2JjkRi1p9sURR1n4QRr2R9ogwDo8gEDRHupwCCh
+         lgeq+UlFB7ovpkF1Izq9kVftJBH/mYW3ZlE7a3dZHd9k3WJWz5Z2FiK5l1GCR0NMtfnX
+         M9nrEVGaDr0VP91J+fFaBb26X5/351H2DR9yq5q5hnfapD+WWCYVEp3AqUZraIEAgqEj
+         V+Kg==
+X-Gm-Message-State: AHQUAuapoPVNG54nNbwF+6wHqP06f7npgca0ZLL0Yb4F8WsSw84vbVWL
+        hpVztgiy+H3DD865fRiAO2hekf/h
+X-Google-Smtp-Source: AHgI3IZXVg0G1d8VwY8AutKkd+3pP+trL+LKJ297RDgB+HUMXrVOoeFRIC9f9csPprcqq6ox7aYSMg==
+X-Received: by 2002:a17:902:bd82:: with SMTP id q2mr456485pls.156.1550095666611;
+        Wed, 13 Feb 2019 14:07:46 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id o1sm383735pgn.63.2019.02.13.14.07.38
+        by smtp.gmail.com with ESMTPSA id o1sm383735pgn.63.2019.02.13.14.07.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:07:41 -0800 (PST)
+        Wed, 13 Feb 2019 14:07:45 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next 7/9] net: bridge: Stop calling switchdev_port_attr_get()
-Date:   Wed, 13 Feb 2019 14:06:36 -0800
-Message-Id: <20190213220638.1552-8-f.fainelli@gmail.com>
+Subject: [PATCH net-next 8/9] net: Remove SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT
+Date:   Wed, 13 Feb 2019 14:06:37 -0800
+Message-Id: <20190213220638.1552-9-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190213220638.1552-1-f.fainelli@gmail.com>
 References: <20190213220638.1552-1-f.fainelli@gmail.com>
@@ -76,59 +75,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all switchdev drivers have been converted to checking the
-bridge port flags during the prepare phase of the
-switchdev_port_attr_set() when the process
-SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS, we can avoid calling
-switchdev_port_attr_get() with
-SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT.
+Now that we have converted the bridge code and the drivers to check for
+bridge port(s) flags at the time we try to set them, there is no need
+for a get() -> set() sequence anymore and
+SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT therefore becomes unused.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- net/bridge/br_switchdev.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ .../ethernet/mellanox/mlxsw/spectrum_switchdev.c   | 11 +----------
+ drivers/net/ethernet/rocker/rocker_main.c          | 14 +-------------
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c            | 10 +---------
+ include/net/switchdev.h                            |  2 --
+ net/dsa/slave.c                                    | 10 +---------
+ 5 files changed, 4 insertions(+), 43 deletions(-)
 
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index db9e8ab96d48..8f88f8a1a7fa 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -64,29 +64,27 @@ int br_switchdev_set_port_flag(struct net_bridge_port *p,
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 7616eab50035..c11cf7fa4863 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -434,16 +434,7 @@ static void mlxsw_sp_bridge_vlan_put(struct mlxsw_sp_bridge_vlan *bridge_vlan)
+ static int mlxsw_sp_port_attr_get(struct net_device *dev,
+ 				  struct switchdev_attr *attr)
  {
- 	struct switchdev_attr attr = {
- 		.orig_dev = p->dev,
--		.id = SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
-+		.id = SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS,
-+		.u.brport_flags = flags,
- 	};
- 	int err;
- 
- 	if (mask & ~BR_PORT_FLAGS_HW_OFFLOAD)
- 		return 0;
- 
--	err = switchdev_port_attr_get(p->dev, &attr);
--	if (err == -EOPNOTSUPP)
--		return 0;
--	if (err)
-+	err = switchdev_port_attr_set(p->dev, &attr);
-+	if (err && err != -EOPNOTSUPP)
- 		return err;
- 
--	/* Check if specific bridge flag attribute offload is supported */
--	if (!(attr.u.brport_flags_support & mask)) {
-+	if (err == -EOPNOTSUPP) {
- 		br_warn(p->br, "bridge flag offload is not supported %u(%s)\n",
- 			(unsigned int)p->port_no, p->dev->name);
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT:
+-		attr->u.brport_flags_support = BR_LEARNING | BR_FLOOD |
+-					       BR_MCAST_FLOOD;
+-		break;
+-	default:
 -		return -EOPNOTSUPP;
-+		return err;
- 	}
+-	}
+-
+-	return 0;
++	return -EOPNOTSUPP;
+ }
  
- 	attr.id = SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS;
- 	attr.flags = SWITCHDEV_F_DEFER;
--	attr.u.brport_flags = flags;
-+
- 	err = switchdev_port_attr_set(p->dev, &attr);
- 	if (err) {
- 		br_warn(p->br, "error setting offload flag on port %u(%s)\n",
+ static int
+diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
+index 863a8b32e6e9..8e80301eae7b 100644
+--- a/drivers/net/ethernet/rocker/rocker_main.c
++++ b/drivers/net/ethernet/rocker/rocker_main.c
+@@ -2057,19 +2057,7 @@ static const struct net_device_ops rocker_port_netdev_ops = {
+ static int rocker_port_attr_get(struct net_device *dev,
+ 				struct switchdev_attr *attr)
+ {
+-	const struct rocker_port *rocker_port = netdev_priv(dev);
+-	int err = 0;
+-
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT:
+-		err = rocker_world_port_attr_bridge_flags_support_get(rocker_port,
+-								      &attr->u.brport_flags_support);
+-		break;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-
+-	return err;
++	return -EOPNOTSUPP;
+ }
+ 
+ static int rocker_port_attr_set(struct net_device *dev,
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index f788a9458b89..5f58c7df67bb 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -643,15 +643,7 @@ static void ethsw_teardown_irqs(struct fsl_mc_device *sw_dev)
+ static int swdev_port_attr_get(struct net_device *netdev,
+ 			       struct switchdev_attr *attr)
+ {
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT:
+-		attr->u.brport_flags_support = BR_LEARNING | BR_FLOOD;
+-		break;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-
+-	return 0;
++	return -EOPNOTSUPP;
+ }
+ 
+ static int port_attr_stp_state_set(struct net_device *netdev,
+diff --git a/include/net/switchdev.h b/include/net/switchdev.h
+index de72b0a3867f..0f352019ef99 100644
+--- a/include/net/switchdev.h
++++ b/include/net/switchdev.h
+@@ -45,7 +45,6 @@ enum switchdev_attr_id {
+ 	SWITCHDEV_ATTR_ID_UNDEFINED,
+ 	SWITCHDEV_ATTR_ID_PORT_STP_STATE,
+ 	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS,
+-	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
+ 	SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS,
+ 	SWITCHDEV_ATTR_ID_PORT_MROUTER,
+ 	SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME,
+@@ -63,7 +62,6 @@ struct switchdev_attr {
+ 	union {
+ 		u8 stp_state;				/* PORT_STP_STATE */
+ 		unsigned long brport_flags;		/* PORT_{PRE}_BRIDGE_FLAGS */
+-		unsigned long brport_flags_support;	/* PORT_BRIDGE_FLAGS_SUPPORT */
+ 		bool mrouter;				/* PORT_MROUTER */
+ 		clock_t ageing_time;			/* BRIDGE_AGEING_TIME */
+ 		bool vlan_filtering;			/* BRIDGE_VLAN_FILTERING */
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 417388c9f1fa..a176d3ba3b7a 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -388,15 +388,7 @@ static int dsa_slave_get_port_parent_id(struct net_device *dev,
+ static int dsa_slave_port_attr_get(struct net_device *dev,
+ 				   struct switchdev_attr *attr)
+ {
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT:
+-		attr->u.brport_flags_support = 0;
+-		break;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-
+-	return 0;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline netdev_tx_t dsa_slave_netpoll_send_skb(struct net_device *dev,
 -- 
 2.17.1
 
