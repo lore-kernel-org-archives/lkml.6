@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAD9C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4149EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88754222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17F44222D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083375;
-	bh=ylQp+Oh3HynHeB+aFAcdGpMsJWAPQalDgdB0rdcmTiE=;
+	s=default; t=1550083382;
+	bh=U1E1iAagX6P6DBgCfGsX1+vXflqnUc8Wxv+cGYFAWn4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qHBTPsOjdl+qwVQtkwWSkZIjn+BW3AD7ry9kXHeKGhaKxwUC6ydS6nlC2GZfO2ot8
-	 b74MMaBRe5ydzdingAMqxvCDui5eY59VOnMFTANz7dFNUSSOb7w0oig6Yx2IbdlQn6
-	 scrNIRxto2qBscrZY6BcPcvegFz0Yu1adLsEOP8g=
+	b=lWrqfatrSXrER4mn70Qpre1EGOCo0iwbd/V0ybpHRJGB77n4M6eTKdqDZQVx3sCaG
+	 z/PPIrhFwwVKeuUXd8xxLufWmQYWK1ezi1sOsh/ZQbhI6TQCHhiANFNnSOIYdAUbCl
+	 i5rUVDwxYD+Y80vARkkLq9DF4b7UI4FaYFwNuD4s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405737AbfBMSmy (ORCPT
+        id S2405768AbfBMSnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:42:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41336 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:43:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405719AbfBMSmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:42:50 -0500
+        id S2405741AbfBMSm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:42:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49113222D6;
-        Wed, 13 Feb 2019 18:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9A6720811;
+        Wed, 13 Feb 2019 18:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083369;
-        bh=ylQp+Oh3HynHeB+aFAcdGpMsJWAPQalDgdB0rdcmTiE=;
+        s=default; t=1550083375;
+        bh=U1E1iAagX6P6DBgCfGsX1+vXflqnUc8Wxv+cGYFAWn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SNcdkl5eQImK5alXinfAsawudCt7nYWAdDVhF71AWJrbnGG4J6tAbzFKvIcsgSGRo
-         9UriBNprQdWAl1/zOR/kWMcqNj9XKlqCImRg9nlmg84K3HHCct8BzX2xR9olPomgaT
-         zFArZJNDBpjAT/IGfrXT+4fRzoeWFe4TN7bLtJ2E=
+        b=Ieska9TCrQcHbyx+HoNmZV/hpxEC1R3cjTWH/cR1efytAAI0ErAjaFUlVYGx3MiCK
+         Bac196PJIqd6cewuKYUV2CeNKyhu5WdETtX3r+Om5FKNBTFO6LlpeB21RSSAzjEuch
+         otXIcrnZc8uPPmpDWxIfKpvFKnAFsqHHKdNIisNM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.19 15/44] debugfs: fix debugfs_rename parameter checking
-Date:   Wed, 13 Feb 2019 19:38:16 +0100
-Message-Id: <20190213183652.935726211@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 17/44] pinctrl: cherryview: fix Strago DMI workaround
+Date:   Wed, 13 Feb 2019 19:38:18 +0100
+Message-Id: <20190213183653.130889496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -64,39 +68,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit d88c93f090f708c18195553b352b9f205e65418f upstream.
+commit e3f72b749da2bf63bed7409e416f160418d475b6 upstream.
 
-debugfs_rename() needs to check that the dentries passed into it really
-are valid, as sometimes they are not (i.e. if the return value of
-another debugfs call is passed into this one.)  So fix this up by
-properly checking if the two parent directories are errors (they are
-allowed to be NULL), and if the dentry to rename is not NULL or an
-error.
+Well, hopefully 3rd time is a charm. We tried making that check
+DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
+DMI_PRODUCT_VERSION.
 
-Cc: stable <stable@vger.kernel.org>
+Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/debugfs/inode.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pinctrl/intel/pinctrl-cherryview.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -787,6 +787,13 @@ struct dentry *debugfs_rename(struct den
- 	struct dentry *dentry = NULL, *trap;
- 	struct name_snapshot old_name;
- 
-+	if (IS_ERR(old_dir))
-+		return old_dir;
-+	if (IS_ERR(new_dir))
-+		return new_dir;
-+	if (IS_ERR_OR_NULL(old_dentry))
-+		return old_dentry;
-+
- 	trap = lock_rename(new_dir, old_dir);
- 	/* Source or destination directories don't exist? */
- 	if (d_really_is_negative(old_dir) || d_really_is_negative(new_dir))
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1524,7 +1524,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1532,7 +1532,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1540,7 +1540,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1548,7 +1548,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{}
 
 
