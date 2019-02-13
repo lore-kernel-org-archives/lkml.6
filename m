@@ -2,84 +2,77 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F520C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56E4C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD02F21902
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CA6221902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392500AbfBMPm5 (ORCPT
+        id S2392515AbfBMPnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:42:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:56344 "EHLO foss.arm.com"
+        Wed, 13 Feb 2019 10:43:07 -0500
+Received: from mga03.intel.com ([134.134.136.65]:44431 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbfBMPm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:42:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDC04A78;
-        Wed, 13 Feb 2019 07:42:56 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72E6E3F575;
-        Wed, 13 Feb 2019 07:42:55 -0800 (PST)
-Date:   Wed, 13 Feb 2019 15:42:53 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
- FPSIMD/SVE state
-Message-ID: <20190213154252.GL3567@e103592.cambridge.arm.com>
-References: <20190208165513.8435-1-julien.grall@arm.com>
- <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
- <20190213153630.GK3567@e103592.cambridge.arm.com>
- <CAKv+Gu__0uy6Y-EJGSygSYH4RqpLDWMMNFE3yauF_x7-UNcgFQ@mail.gmail.com>
+        id S2392502AbfBMPnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:43:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:43:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
+   d="scan'208";a="126167104"
+Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.68.82]) ([10.252.68.82])
+  by orsmga003.jf.intel.com with ESMTP; 13 Feb 2019 07:43:02 -0800
+Subject: Re: [PATCH v2 06/10] x86/cpu: Add Icelake to Intel family
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
+        andy@infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
+ <20190213150810.32750-7-rajneesh.bhardwaj@linux.intel.com>
+ <20190213152326.GA1883@zn.tnic>
+From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Message-ID: <308aa852-b2c3-3336-707f-d54de6ad77b7@linux.intel.com>
+Date:   Wed, 13 Feb 2019 21:13:01 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu__0uy6Y-EJGSygSYH4RqpLDWMMNFE3yauF_x7-UNcgFQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190213152326.GA1883@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 04:40:00PM +0100, Ard Biesheuvel wrote:
-> On Wed, 13 Feb 2019 at 16:36, Dave Martin <Dave.Martin@arm.com> wrote:
-> >
-> > On Wed, Feb 13, 2019 at 03:30:29PM +0100, Sebastian Andrzej Siewior wrote:
-> > > On 2019-02-08 16:55:13 [+0000], Julien Grall wrote:
-> > > > When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
-> > > > the kernel may be able to use FPSIMD/SVE. This is for instance the case
-> > > > for crypto code.
-> > > >
-> > > > Any use of FPSIMD/SVE in the kernel are clearly marked by using the
-> > > > function kernel_neon_{begin, end}. Furthermore, this can only be used
-> > > > when may_use_simd() returns true.
-> > >
-> > > This is equal what x86 is currently doing. The naming is slightly
-> > > different, there is irq_fpu_usable().
-> >
-> > Yes, I think it's basically the same idea.
-> >
-> > It's been evolving a bit on both sides, but is quite similar now.
-> >
-> 
-> may_use_simd() only exists because we have a generic crypto SIMD
-> helper, and so we needed something arch agnostic to wrap around
-> irq_fpu_usable()
 
-[...]
+On 13-Feb-19 8:53 PM, Borislav Petkov wrote:
+> On Wed, Feb 13, 2019 at 08:38:06PM +0530, Rajneesh Bhardwaj wrote:
+>> Add CPUID of Icelake (ICL) mobile processors to Intel family list. The
+>> information related to ICL CPUID is referenced from below Coreboot
+>> project link.
+>>
+>> https://github.com/coreboot/coreboot/blob/5ebcea3aaaa3cd358bc5bccaa156b13a6ef25df6/src/soc/intel/common/block/include/intelblocks/mp_init.h
+>>
+> I believe tglx was suggesting you should drop this link. If you can't
+> reference an official document, then you don't need any reference.
 
-Sounds plausible.
+Icelake related information is  available here 
+https://www.intel.in/content/www/in/en/design/products-and-solutions/processors-and-chipsets/ice-lake/overview.html 
+but it may require a login either with Intel or a Partner ID.
 
-Cheers
----Dave
+The CPUID mentioned in this document is 0x706E0 which is same as per 
+this coreboot link.
+
+
+>
