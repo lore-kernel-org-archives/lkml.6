@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C425C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C31CC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B2C2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F7121934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025884;
-	bh=oWph12QAmUVQyOnDNZPcInOo+iv/mDvodmfQ4VGm62E=;
+	s=default; t=1550025887;
+	bh=3qxNUs1XndwpvRhhPQmZVhpqri+EGv4YfaQl2FeNrfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cVvxggrL00xzY9oDnRnEzhXSeAwm7t+/Bk4KwyYZ35WmqJUEi6nHmdt6ShLviX1sY
-	 /bA7rMzvNdH/cWmgK6kkHY6jLUGATxcoKU5ZYJaLR6oq2oCFyoUBifUTGSISpA+E6y
-	 A+u7/u7vAwnr7o3wlRWn/KulBfCKA6kk5U2269iE=
+	b=N1wqzaObLXUzwOuFEwWKG3wuAW68cKrk9Uww/Arw2lRL9hRBd4L7+ZJmfQ5WCOerX
+	 g3VNXYrDF/peFfIdTiYJ1TRlPZvMXFav0uFxM9Gn1wYcT/MRxMzf5Z3VSfH97veFmx
+	 hc/TkgBIPGQCYzeHbsW4GDjXtgepudQv3Wl0YCmw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389216AbfBMClP (ORCPT
+        id S2389627AbfBMCop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:44:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732510AbfBMClF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:05 -0500
+        id S2389217AbfBMClQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58930222C9;
-        Wed, 13 Feb 2019 02:41:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28353222C7;
+        Wed, 13 Feb 2019 02:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025665;
-        bh=oWph12QAmUVQyOnDNZPcInOo+iv/mDvodmfQ4VGm62E=;
+        s=default; t=1550025675;
+        bh=3qxNUs1XndwpvRhhPQmZVhpqri+EGv4YfaQl2FeNrfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGuECCOYEIiM4D2CjyaaWHjU78qOMbdSEVSjBcdtNM1RbK6MJhuZp4rTWCxVbyUxo
-         ayBvOHf9Sx9tJYU5K+P5YxlhcMMOiruN+JNlnoS0SEqT/JW9UpAwusLqQSbLKXsSj1
-         REgMV9b27PnvrusWius436xIM19UYCTnU6pU5wXA=
+        b=YmBFgrVwOm+H5gB+5qehs/a2YuHr96DrTN2OgNPcUsbNABCdhIV5lMl/1AYh3mdmW
+         2WuSLYY9/pZYBMuaACqzhECgvS9zIFFW707FWaz21oSkntlTTSdJjcdbVb9+Y+ZFU9
+         xW/bid5DrHDXRo1gq4A9VQ3M4GuIt30wzaPlHEx4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 16/21] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
-Date:   Tue, 12 Feb 2019 21:40:35 -0500
-Message-Id: <20190213024040.21740-16-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 02/16] mfd: twl-core: Fix section annotations on {,un}protect_pm_master
+Date:   Tue, 12 Feb 2019 21:40:58 -0500
+Message-Id: <20190213024112.22038-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
-References: <20190213024040.21740-1-sashal@kernel.org>
+In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
+References: <20190213024112.22038-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,67 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 2ff33d6637393fe9348357285931811b76e1402f ]
+[ Upstream commit 8838555089f0345b87f4277fe5a8dd647dc65589 ]
 
-The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
-concurrently executed.
+When building the kernel with Clang, the following section mismatch
+warning appears:
 
-isdn_tty_tiocmset
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
+WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
+the function twl_probe() to the function
+.init.text:unprotect_pm_master()
+The function twl_probe() references
+the function __init unprotect_pm_master().
+This is often because twl_probe lacks a __init
+annotation or the annotation of unprotect_pm_master is wrong.
 
-isdn_tty_set_termios
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
+Remove the __init annotation on the *protect_pm_master functions so
+there is no more mismatch.
 
-Thus, some concurrency double-free bugs may occur.
-
-These possible bugs are found by a static tool written by myself and
-my manual code review.
-
-To fix these possible bugs, the mutex lock "modem_info_mutex" used in
-isdn_tty_tiocmset() is added in isdn_tty_set_termios().
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/i4l/isdn_tty.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mfd/twl-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
-index 63eaa0a9f8a1..d4e0d1602c80 100644
---- a/drivers/isdn/i4l/isdn_tty.c
-+++ b/drivers/isdn/i4l/isdn_tty.c
-@@ -1455,15 +1455,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index 831696ee2472..90732a655d57 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -982,7 +982,7 @@ add_children(struct twl4030_platform_data *pdata, unsigned irq_base,
+  * letting it generate the right frequencies for USB, MADC, and
+  * other purposes.
+  */
+-static inline int __init protect_pm_master(void)
++static inline int protect_pm_master(void)
  {
- 	modem_info *info = (modem_info *) tty->driver_data;
+ 	int e = 0;
  
-+	mutex_lock(&modem_info_mutex);
- 	if (!old_termios)
- 		isdn_tty_change_speed(info);
- 	else {
- 		if (tty->termios.c_cflag == old_termios->c_cflag &&
- 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
--		    tty->termios.c_ospeed == old_termios->c_ospeed)
-+		    tty->termios.c_ospeed == old_termios->c_ospeed) {
-+			mutex_unlock(&modem_info_mutex);
- 			return;
-+		}
- 		isdn_tty_change_speed(info);
- 	}
-+	mutex_unlock(&modem_info_mutex);
+@@ -991,7 +991,7 @@ static inline int __init protect_pm_master(void)
+ 	return e;
  }
  
- /*
+-static inline int __init unprotect_pm_master(void)
++static inline int unprotect_pm_master(void)
+ {
+ 	int e = 0;
+ 
 -- 
 2.19.1
 
