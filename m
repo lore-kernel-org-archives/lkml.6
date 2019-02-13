@@ -2,318 +2,184 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40E5C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D9E20643
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 863B620643
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:03:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DdkOrrrv"
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="dFqpITn5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388178AbfBMNAc (ORCPT
+        id S2388513AbfBMNDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:00:32 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32947 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730451AbfBMNAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:00:31 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190213130030euoutp02cf99455f8ccdf189dbee330a1a809757~C7e55DpEU0188801888euoutp02N
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:00:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190213130030euoutp02cf99455f8ccdf189dbee330a1a809757~C7e55DpEU0188801888euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550062830;
-        bh=bpPKzwesBV6HdybY3gutnR/+vzN1yzK8UODNlpERpxU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=DdkOrrrvrMdkCYnsvg+1+N/19ThVAFaSNy+mOCyJuHvOPibrH5fNjeFqZgK7LRRqw
-         6zgvY6q74vffkFvvoAZ3to84qqCR6Dy4R9V6/aZbE+zUPWhT2eI4i6+jr9Z6QJ1uuS
-         47YchJ5+9VtzCqrenUWErzMdL4nLVEmVtziq/yak=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190213130029eucas1p2895b800a765a2bf64fa764cd85a3d577~C7e5F42El2946929469eucas1p2b;
-        Wed, 13 Feb 2019 13:00:29 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6A.DE.04806.CE4146C5; Wed, 13
-        Feb 2019 13:00:29 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213130028eucas1p2c91c56e8b8672b479417b5b3e6312233~C7e4S1h490426404264eucas1p2R;
-        Wed, 13 Feb 2019 13:00:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190213130028eusmtrp24e1af0d8f05cdd2bca6c94e2bf183d48~C7e4D9VQC0937809378eusmtrp29;
-        Wed, 13 Feb 2019 13:00:28 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-e2-5c6414ec7b4f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D6.27.04284.CE4146C5; Wed, 13
-        Feb 2019 13:00:28 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190213130027eusmtip1e5e198082688fdc003e82eef2bae39a0~C7e3iQgKZ0208302083eusmtip1z;
-        Wed, 13 Feb 2019 13:00:27 +0000 (GMT)
-Subject: Re: [PATCH v2 0/2] drivers: devfreq: fix and optimize workqueue
- mechanism
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, b.zolnierkie@samsung.com,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        joel@joelfernandes.org, chris.diamand@arm.com,
-        Viresh Kumar <viresh.kumar@linaro.org>
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <90bbff25-1c9c-127c-13a7-91a5f4fe666e@partner.samsung.com>
-Date:   Wed, 13 Feb 2019 14:00:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190213003044.GV117604@google.com>
+        Wed, 13 Feb 2019 08:03:47 -0500
+Received: from mail-eopbgr10134.outbound.protection.outlook.com ([40.107.1.134]:48723
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733281AbfBMNDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:03:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xy3cSN5MdtPT1jJt3G84EVRJFt2GvNqUJo1DaR+IFsY=;
+ b=dFqpITn5SmbyQWM37mf4CyyaVNHof4DyOKUs76XJDpmdlslrU5cKCYg6kbz0IkWHkDiqjJuR2ztiwQ3vijTY8zADdvxawkxak6ZbPN8IcJnR49bik+Pp/OWdXo3QAJwv3We4Un6Guu6SZnwCOLmS84QtB5fGw7Sg62iO9IWa6WU=
+Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) by
+ HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.9; Wed, 13 Feb 2019 13:03:39 +0000
+Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
+ ([fe80::b49f:d20e:88d4:128]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
+ ([fe80::b49f:d20e:88d4:128%6]) with mapi id 15.20.1622.016; Wed, 13 Feb 2019
+ 13:03:39 +0000
+From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "acme@redhat.com" <acme@redhat.com>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>
+Subject: Re: [PATCH 4.14 198/205] perf/core: Dont WARN() for impossible
+ ring-buffer sizes
+Thread-Topic: [PATCH 4.14 198/205] perf/core: Dont WARN() for impossible
+ ring-buffer sizes
+Thread-Index: AQHUwh2ts6Ir49zUHk2QMyWGshaphqXdtNCA
+Date:   Wed, 13 Feb 2019 13:03:39 +0000
+Message-ID: <1eb319822aa9f75f423a7790e78315e7672036b9.camel@nokia.com>
+References: <20190211141827.214852402@linuxfoundation.org>
+         <20190211141841.367111122@linuxfoundation.org>
+In-Reply-To: <20190211141841.367111122@linuxfoundation.org>
+Accept-Language: fi-FI, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsWy7djPc7pvRVJiDN71s1psnLGe1WLap8ss
-        Fte/PGe1WNaganG26Q27xeVdc9gsPvceYbRYe+Quu8XnDY8ZLW43rmCzOPymHajrq4cDj8ea
-        eWsYPWY3XGTxWPjpK6vHnWt72Dz6tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoErY/PEmoI5LhVn
-        P/9gaWCcYdbFyMEhIWAisX5/TBcjF4eQwApGiabpvWwQzhdGifvtW1ghnM+MEiu7VjJ1MXKC
-        dTQe2wVVtZxRYs/8rVDOW0aJidNfs4JUCQuESKzpO8AMYosIaEg8+X2eEaSIWeAAk8SzpSvY
-        QJazCehJ7FhVCFLDK+AmsaD/FQuIzSKgKnGg5yUbiC0qECFxuPcdI0SNoMTJmU/AajgFDCXu
-        NN0Bm88sIC5x68l8JghbXqJ562xmkF0SAtfYJTa+XM0OcbaLxIv+dywQtrDEq+NboOIyEv93
-        zod6rVjibMcqNgi7RqL95A6oGmuJw8cvsoLczCygKbF+lz5E2FHifc93Jkg48knceCsIcQKf
-        xKRt05khwrwSHW1CENUaElt6LkAtEpNYvmYa+wRGpVlIHpuF5JlZSJ6ZhbB3ASPLKkbx1NLi
-        3PTUYuO81HK94sTc4tK8dL3k/NxNjMC0dfrf8a87GPf9STrEKMDBqMTDWyGUEiPEmlhWXJl7
-        iFGCg1lJhPcLH1CINyWxsiq1KD++qDQntfgQozQHi5I4bzXDg2ghgfTEktTs1NSC1CKYLBMH
-        p1QDo8PMsz6zDG0nrgiNUlbiKlnsuzVuze2lUzUVGy0N/tob+0q83+Wu45Ys63Co317HPezx
-        +QsrWWKrT2+L82N3uyZ5Qe+CN0OGmWJj5YPHbwQjnvUtFFy07eWrCI1tQekK6TW5V0rNPNjL
-        T1xscmyr3mWzju/J5OrrPKdvzuo4Z8JuXcl98YatEktxRqKhFnNRcSIA5AjwY1cDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xu7pvRFJiDG5N5bfYOGM9q8W0T5dZ
-        LK5/ec5qsaxB1eJs0xt2i8u75rBZfO49wmix9shddovPGx4zWtxuXMFmcfhNO6vFxq8eDjwe
-        a+atYfSY3XCRxWPhp6+sHneu7WHz6NuyitHj8ya5ALYoPZui/NKSVIWM/OISW6VoQwsjPUNL
-        Cz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYzNE2sK5rhUnP38g6WBcYZZFyMnh4SAiUTj
-        sV1sXYxcHEICSxklJh28zAaREJOYtG87O4QtLPHnWhdU0WtGiT3rG8ESwgIhEmv6DjCD2CIC
-        GhJPfp9nBCliFjjAJHGz7zMTRMddJomJP5YCORwcbAJ6EjtWFYI08Aq4SSzof8UCYrMIqEoc
-        6HkJtllUIELi49N9TBA1ghInZz4Bq+EUMJS403QHbBmzgJnEvM0PoWxxiVtP5jNB2PISzVtn
-        M09gFJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzBatx37uXkH
-        46WNwYcYBTgYlXh4K4RSYoRYE8uKK3MPMUpwMCuJ8H7hAwrxpiRWVqUW5ccXleakFh9iNAV6
-        biKzlGhyPjCR5JXEG5oamltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi4JRqYAxh
-        Ts2azhfwRiDW1tntnfzTuMeOq9Jmu3h7Cl/VEVA78yrCSrbD16r/RyVr2qO8p1djZr//uubr
-        2yxnVaGctF4/PuYNd1bGGUr91hM4FPrsgWVN+KrKlS87r4RmnN69cYbfvodFBROW1ZTs39RT
-        Ii+mpf5L99zF1KL/pluzFvXsSn/ZnMOrp8RSnJFoqMVcVJwIADo1fansAgAA
-X-CMS-MailID: 20190213130028eucas1p2c91c56e8b8672b479417b5b3e6312233
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tommi.t.rantala@nokia.com; 
+x-originating-ip: [131.228.2.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: be5d474c-1260-45e8-362b-08d691b3ac39
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:HE1PR0702MB3675;
+x-ms-traffictypediagnostic: HE1PR0702MB3675:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtIRTFQUjA3MDJNQjM2NzU7MjM6Q3hhemprbjhUUjBac1dIcXNLemdFOCtm?=
+ =?utf-8?B?ZUt6ZzVtcUJFeDJHeU44YjhRQTlXSXJQbVEyUFF3R2ZOKzNLb3hQaEhrRVFE?=
+ =?utf-8?B?T2dxTm03bkJReEwvYSthcGk2SW9mTWozSys3aDNjVEJuUGJtZ2h3ODVuSWo2?=
+ =?utf-8?B?UENQblZuLytIeHM5eDFCWEt3Yk5jT0pXUFNUUGtTOHduaUNBMmxzQnJjTFh5?=
+ =?utf-8?B?YlhPOFZ2Z2VPcWNBa01uNE1kMW5nZytzUmZRNE1HNVVObUZOUHBGNUlvVlhk?=
+ =?utf-8?B?TFV4d0Y5K0VGUkhLNmt4Nkc0dE1CT1JRM3JjZ2IzRzFldnlveStmZWNVdFZs?=
+ =?utf-8?B?NDJxY3ZIVlZ2Sy81SHgvZ0VvejZPUmdtc3pJWEkvMk0vaVpjQWhNbWYwNXJm?=
+ =?utf-8?B?aXFZdlJuWWlJeml3N0pRRWgvZS9JTTRabURaSG8wb1VsQXFMSG9IOFNMd0dF?=
+ =?utf-8?B?eFVUZ2hSVWMwRi9WVng2RWk5S2xDRXBDUzdkbTBmSnArOG9HaTV5Sy9YazdX?=
+ =?utf-8?B?OFI0YjJreFNSUGZIY1RWdVZuZmduWXphbkJxc2doSk9pV3MrNDZteENTSnNv?=
+ =?utf-8?B?Vy82MGJlbFY1Wmd5ek82WU5SOTVCWVJvNmF1ckNzc21YRGFWb09ROUJxMm1E?=
+ =?utf-8?B?bUp2TDZNMEtkTmw2U0I1R3FlOHhIMDFvQVVockw1R0ltSHJKWGlyWE1yTTR1?=
+ =?utf-8?B?S202RXFTSFZpa2x6UWJ1VTJnVUxjS3pkUGd3cGswNVFwNVpTcEpZaSt4QWVw?=
+ =?utf-8?B?MzkzL21nbHoxYXJ5NkdacmVwd25IZWF3Wk9JbVNSTkVtakJNTm1INWFGOURI?=
+ =?utf-8?B?eGtmZDlRTVdFd20yL2FXN2wxVFp1RWl4SlR4U04wdkVxbjFKREQyL1daN1Bt?=
+ =?utf-8?B?QWJBTjdqTmlXdXRBUlRPRzNKUmxIYXFZZ1RzMzdCcmNhc0d2a1FhOHNNZVBj?=
+ =?utf-8?B?UzdGQi9ZZXhDNmVLK211TzNlZmcyWnd5NitQTHkybWZWakYvck9ma3lTZStU?=
+ =?utf-8?B?R2lHMVIvYnhJZmRsN0hoT0t6U0FITktTeDlvUlo3MkNzaTg1Y2JoZ1MvUUlr?=
+ =?utf-8?B?N1lwNlVmeXB4WnBNMUk4U0tFZGo5bE0xRGJWWERkQzZuckJlQnVHaXUyVXlU?=
+ =?utf-8?B?T1FuUHNReE1wZm4rZjNFZDRpbFczbVpOSUd6T0VDem5wR0FLejlVR3dJaUdr?=
+ =?utf-8?B?Y04rUk5yNU9sVEdrbWw2aFE1WmVIV0JTK3UwYmsrZzE2V2VNdzd1MGRORzY1?=
+ =?utf-8?B?TUZJT0F4eXdOZVlZcFppaEpjNXZodTNTMXpuSDBWZytpZTVpT0ZvUWxYQmtB?=
+ =?utf-8?B?eHZxZ3gxQ214cUpIVWNjSUhFYVdIUzJHLzgreUhOS3hRaWZDL2dCa2xIOW1x?=
+ =?utf-8?B?OHg2Wm50SHg3czVnT0RVU0pzajZFM3BHSkZVVXZUL2phMDhGSEtHNjhCbUlP?=
+ =?utf-8?B?TzRhd1BHdlFnazZaUmpMVm9zU2lvKzVKWjlVWG04dmsyTzltWEdMeUJZTzJh?=
+ =?utf-8?B?QUNZUjZyZlo0Yk9LUVVmeFNsZTAyaTIxUFhiUmdiUHdKL1JoVXpuZ1pWK2Fr?=
+ =?utf-8?B?UVduNlIrbnh1UDBtYkJTTG9EN3NOMjZNdk1vWUpDMVNtWXJIYmx0QSs1WXAz?=
+ =?utf-8?B?R00vOFJraFlqN2JOL25ibzBoazY4bmFzTDBiNkh3UGxla3Nld2hTQWlHVVRZ?=
+ =?utf-8?Q?nYwtYzYtYCkcRVUIgaNOE6jofF6H4oudmU0B3Afm7?=
+x-microsoft-antispam-prvs: <HE1PR0702MB367561529D00AB3C077A376DB4660@HE1PR0702MB3675.eurprd07.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(346002)(396003)(376002)(199004)(189003)(110136005)(106356001)(8936002)(446003)(966005)(2616005)(7416002)(11346002)(105586002)(2906002)(97736004)(86362001)(476003)(6246003)(71190400001)(6116002)(486006)(54906003)(68736007)(14454004)(53936002)(316002)(478600001)(36756003)(3846002)(71200400001)(118296001)(256004)(102836004)(14444005)(6512007)(26005)(6436002)(2501003)(6486002)(66066001)(305945005)(81166006)(6506007)(25786009)(81156014)(99286004)(4326008)(186003)(6306002)(76176011)(8676002)(229853002)(7736002)(192303002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3675;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0hnYZK4sD9B+edxLn6SEW9UO7EZHn7Rg4+pz7Viqr3Z9jJBTLAIGeHEjnREYG7WnJ+WxX59425Ws20J2raulNpnBtkuITjWBMO7NZ1fLNnJL5Pb59FXw3UksKl2efkkJ0RBqDBflJjpByqUExD4wtdJR5dC0JBmt9J8s1YaOvHeK4x3Tvo2OY81wV/p2XQ0LxS8FQcPXdnAsQAg+TYxbfpF56q6OY/ecdPSVtf6Ec757pf77NTdgiwRBHuimA2604JUZ+UVIAZAnAqa6YfrP8UZgovLrV5x5nGbEBVN7sq67ZZlkHGYHkdaHy3G1Wz4MMq4HZzVxlYx08NAOug7PzlBSm9V1FGFya8X0smE6M0Wu4CMTVMLmewM/MsiyJVc9Lf5ihUk0Ry71Tkz40eZJlqY7L9gsZuxk/VsxTb9ytAY=
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190211153030eucas1p19bd9a7eca565ca066ab00dc2243cfb46
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190211153030eucas1p19bd9a7eca565ca066ab00dc2243cfb46
-References: <CGME20190211153030eucas1p19bd9a7eca565ca066ab00dc2243cfb46@eucas1p1.samsung.com>
-        <1549899005-7760-1-git-send-email-l.luba@partner.samsung.com>
-        <26e38213-630f-94bc-ff80-1cad708c7f83@samsung.com>
-        <20190212193229.GT117604@google.com>
-        <1356584e-1812-6768-72af-931c07d925a8@partner.samsung.com>
-        <20190213003044.GV117604@google.com>
+Content-ID: <8DBC24B983AF6F44881CED58B12DF3FC@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be5d474c-1260-45e8-362b-08d691b3ac39
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 13:03:39.2366
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
-
-On 2/13/19 1:30 AM, Matthias Kaehlcke wrote:
-> Hi Lukasz,
-> 
-> On Tue, Feb 12, 2019 at 10:20:07PM +0100, Lukasz Luba wrote:
->> Hi Matthias,
->>
->> On 2/12/19 8:32 PM, Matthias Kaehlcke wrote:
->>> Hi,
->>>
->>> On Tue, Feb 12, 2019 at 02:46:24PM +0900, Chanwoo Choi wrote:
->>>> Hi Lukasz,
->>>>
->>>> On 19. 2. 12. 오전 12:30, Lukasz Luba wrote:
->>>>> This patch set changes workqueue related features in devfreq framework.
->>>>> First patch switches to delayed work instead of deferred.
->>>>> The second switches to regular system work and deletes custom 'devfreq'.
->>>>>
->>>>> Using deferred work in this context might harm the system performance.
->>>>> When the CPU enters idle, deferred work is not fired. The devfreq device's
->>>>> utilization does not have to be connected with a particular CPU.
->>>>> The drivers for GPUs, Network on Chip, cache L3 rely on devfreq governor.
->>>>> They all are missing opportunity to check the HW state and react when
->>>>> the deferred work is not fired.
->>>>> A corner test case, when Dynamic Memory Controller is utilized by CPUs running
->>>>> on full speed, might show x5 worse performance if the crucial CPU is in idle.
->>>>
->>>> The devfreq framework keeps the balancing between performance
->>>> and power-consumption. It is wrong to focus on only either
->>>> performance or power.
->>>>
->>>> This cover-letter focus on the only performance without any power-consumption
->>>> disadvantages. It is easy to raise the performance with short sampling rate
->>>> with polling modes. To get the performance, it is good as short as possible
->>>> of period.
->>>>
->>>> Sometimes, when cpu is idle, the device might require the busy state.
->>>> It is very difficult to catch the always right timing between them.
->>>>
->>>> Also, this patch cannot prevent the unneeded wakeup from idle state.
->>>> Apparently, it only focuses on performance without considering
->>>> the power-consumption disadvantage. In the embedded device,
->>>> the power-consumption is very important point. We can not ignore
->>>> the side effect.
->>>>
->>>> Always, I hope to improve the devfreq framwork more that older.
->>>> But, frankly, it is difficult to agree because it only consider
->>>> the performance without considering the side-effect.
->>>>
->>>> The power management framework always have to consider
->>>> the power-consumption issue. This point is always true.
->>>
->>> I missed the impact of forcing a CPU out of an idle state and/or not
->>> allowing it to enter a more power efficient state. I agree that this
->>> should be avoided.
->> It would be good to have some real world scenarios for comparison:
->> w/ and w/o this change, i.e. it is 5% or 50% more power used.
-> 
-> If you have data please share :)
-I will try to measure it. I have some data which refer to CPU hotplug
-and generic data regarding ARM big.LITTLE.
-It is a mobile on my desk.
-When one CPU of ARM big is sent offline power drops ~12mW comparing
-to WFI idle which was previous state. The same for LITTLE ~12mW.
-When the last CPU in the cluster is sent offline, whole culster
-is switched off and power drops ~50mW.
-The LITTLE core can consume ~250mW at max speed.
-Energy Aware Scheduler is now merged IIRC, so if it has to choose
-which core wake up for idle, it will take LITTLE not big.
-For older platforms which has Cortex-A9 500mW is also better estimation.
-
-> 
-> Though I also imagine there will be quite some variation between
-> different systems/platforms.
-True.
-> 
->> I have patches that tries to mitigate wake-ups when there is small
->> utilization. Let's make it tunable and involve driver developers.
->> They will decide how much impact on the system power usage they
->> introduce.
-> 
-> Great!
-> 
->>> I wonder if using a power-efficient workqueue could help here:
->>>
->>>     Instead of running work on the local CPU, the workqueue core asks the
->>>     scheduler to provide the target CPU for the work queued on unbound
->>>     workqueues (which includes those marked as power-efficient). So they
->>>     will not get pinned on a single CPU as can happen with regular
->>>     workqueues.
->>>
->>>     https://lwn.net/Articles/731052/
->>>
->>>
->>> Since this series also changes from a custom to system workqueue it
->>> seems worth to mention that there are power-efficient system workqueues:
->>>
->>> system_power_efficient_wq
->>> system_freezable_power_efficient_wq
->>>
->>>
->>> In case a power-efficient workqueue is suitable in principle there
->>> would still be a problem though: the feature is currently disabled by
->>> default, hence devfreq couldn't really rely on it. It is enabled in
->>> the arm64 defconfig though, so at least devices on this architecture
->>> would benefit from it. Also power-efficient workqueues might be
->>> enabled by default in the future as the scheduler becomes more energy
->>> aware.
->> Regarding this CPU idle cost worries.
->> IIRC the new energy model does not even consider idle costs of the CPU.
->> It would be good to know the measurements, i.e. worst case scenario:
->> waking up 1 (of 4 or 8) CPU from idle 30 times per second for let's
->> say 100 us. It is 3 ms / 1000 ms * running energy cost i.e. 250mW.
->> Thus, 0.75mW.
-> 
-> I'm not an expert in this area, but your example seems too optimistic
-> You are just accounting for the pure runtime, not for the cost of
-> entering and exiting an idle state. Let's take a SDM845 idle state as
-> example:
-> 
-> C0_CPU_PD: c0-power-down {
->    ...
->    entry-latency-us = <350>;
->    exit-latency-us = <461>;
->    min-residency-us = <1890>;
->    ...
-> };
-> 
-> https://patchwork.kernel.org/patch/10661319/
-> 
-> That's 811us for entering and exiting the idle state. At an
-> intermediate OPP (1.8 GHz) the power consumption is 505mW, according
-> to the Energy Model. I'm ignoring the actual execution time, since I
-> tend to agree with you that the monitoring should be done, unless it
-> has a really unreasonable cost. That leaves us with 30 * 811us =
-> 24.3ms and 24.3ms / 1000 ms * 505mW = 12.3mW.
-You are probably taking ARM 'big' core wake-up from deeper that WFI 
-idle. I was referring to ARM LITTLE 250mW.
-It is also not 100% that the schedule work will wake up CPU which
-is currently in deepest idle.
-
-A short array would create a better picture of the use cases.
-The question is also probability of occurrence for each of these cases.
-For first two CPU state it would be a power cost lost during additional
-rescheduling to/from workqueue task, which takes i.e. 2*5 us * 30 times.
-
-CPU state ->|  running | idle    | idle clock | idle, pwr  |
-------------|   (C0)   | WFI (C1)|  gated (C2)| gated (C3) |
-architecture|          |         |            |            |
-------V-----------------------------------------------------
-ARM big     |    <1mW  | <1mW    |   ~12mW    |  ~12mW     |
-ARM LITTLE  |    <1mW  | <1mW    |   ~6mW     |  ~6mW      |
-MIPS
-PowerPC
-
-
-> 
->> In my opinion it is not a big cost. In most cases the system is still
->> doing some other work. It is worth to mention here that on mobiles
->> when the power button is hit the full suspend is called which freezes
->> all tasks, devices and power consumption is ~15mW. Thus, the system
->> suspend is out of scope here.
-> 
-> I agree that system suspend is out of scope.
-> 
->> As I replayed to Chanwoon for the same email: in my opinion current
->> devfreq is broken.
->> It was probably developed in times where there was 1 CPU (maybe 2)
->> and idle state of CPU would be a good hint to not to check devfreq
->> devices.
-> 
-> IIUC the use of a power-efficient workqueues would address the problem
-> of waking up a CPU in idle state, however as mentioned earlier by
-> default this feature is disabled (except for arm64). How about
-> switching to system_power_efficient_wq and use INIT_DELAYED_WORK if
-> CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y (or check if the workqueue in
-> question has WQ_UNBOUND set?) and INIT_DEFERRABLE_WORK otherwise? It's
-> not ideal, but a possible improvement.
-I think it would be to complicated to maintain because different
-platforms might use different mechanisms.
-I would suggests that we could just follow mechanism in thermal
-framework. I have never faced any issue with delayed work there,
-while working on IPA.
-They use 'system_freezable_power_efficient_wq' and INIT_DELAYED_WORK().
-https://elixir.bootlin.com/linux/v5.0-rc6/source/drivers/thermal/thermal_core.c#L293
-https://elixir.bootlin.com/linux/v5.0-rc6/source/drivers/thermal/thermal_core.c#L1281
-They have these two polling intervals, though.
-
-Regards,
-Lukasz
-
-> 
-> Cheers
-> 
-> Matthias
-> 
-> 
+T24gTW9uLCAyMDE5LTAyLTExIGF0IDE1OjE5ICswMTAwLCBHcmVnIEtyb2FoLUhhcnRtYW4gd3Jv
+dGU6DQo+IDQuMTQtc3RhYmxlIHJldmlldyBwYXRjaC4gIElmIGFueW9uZSBoYXMgYW55IG9iamVj
+dGlvbnMsIHBsZWFzZSBsZXQNCj4gbWUga25vdy4NCj4gDQo+IC0tLS0tLS0tLS0tLS0tLS0tLQ0K
+PiANCj4gRnJvbTogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT4NCj4gDQo+IGNv
+bW1pdCA5ZGZmMGFhOTVhMzI0ZTI2MmZmYjAzZjQyNWQwMGU0NzUxZjMyOTRlIHVwc3RyZWFtLg0K
+PiANCj4gVGhlIHBlcmYgdG9vbCB1c2VzIC9wcm9jL3N5cy9rZXJuZWwvcGVyZl9ldmVudF9tbG9j
+a19rYiB0byBkZXRlcm1pbmUNCj4gaG93DQo+IGxhcmdlIGl0cyByaW5nYnVmZmVyIG1tYXAgc2hv
+dWxkIGJlLiBUaGlzIGNhbiBiZSBjb25maWd1cmVkIHRvDQo+IGFyYml0cmFyeQ0KPiB2YWx1ZXMs
+IHdoaWNoIGNhbiBiZSBsYXJnZXIgdGhhbiB0aGUgbWF4aW11bSBwb3NzaWJsZSBhbGxvY2F0aW9u
+IGZyb20NCj4ga21hbGxvYy4NCj4gDQo+IFdoZW4gdGhpcyBpcyBjb25maWd1cmVkIHRvIGEgc3Vp
+dGFibHkgbGFyZ2UgdmFsdWUgKGUuZy4gdGhhbmtzIHRvIHRoZQ0KPiBwZXJmIGZ1enplciksIGF0
+dGVtcHRpbmcgdG8gdXNlIHBlcmYgcmVjb3JkIHRyaWdnZXJzIGEgV0FSTl9PTl9PTkNFKCkNCj4g
+aW4NCj4gX19hbGxvY19wYWdlc19ub2RlbWFzaygpOg0KPiANCj4gICAgV0FSTklORzogQ1BVOiAy
+IFBJRDogNTY2NiBhdCBtbS9wYWdlX2FsbG9jLmM6NDUxMQ0KPiBfX2FsbG9jX3BhZ2VzX25vZGVt
+YXNrKzB4M2Y4LzB4YmM4DQo+IA0KPiBMZXQncyBhdm9pZCB0aGlzIGJ5IGNoZWNraW5nIHRoYXQg
+dGhlIHJlcXVlc3RlZCBhbGxvY2F0aW9uIGlzDQo+IHBvc3NpYmxlDQo+IGJlZm9yZSBjYWxsaW5n
+IGt6YWxsb2MuDQoNCkhpLA0KDQpQZXJmIHRvb2wgaXMgYnJva2VuIGZvciBtZSBpbiA0LjE0Ljk5
+IChydW5uaW5nIGluIHg4Nl82NCBWTSksIGJpc2VjdGlvbg0KcG9pbnRzIHRvIHRoaXMgcGF0Y2gu
+DQoNCiMgcGVyZiB0b3ANCkVycm9yOg0KRmFpbGVkIHRvIG1tYXAgd2l0aCAxMiAoQ2Fubm90IGFs
+bG9jYXRlIG1lbW9yeSkNCg0KIyBwZXJmIHRyYWNlDQpDYW5ub3QgYWxsb2NhdGUgbWVtb3J5DQoN
+CiMgc3RyYWNlIC1UIC10dCAtZiAteSBwZXJmIHRvcA0KWy4uLl0NCjE0OjIyOjA5LjgyOTU0NCBv
+cGVuYXQoQVRfRkRDV0QsDQoiL3Byb2Mvc3lzL2tlcm5lbC9wZXJmX2V2ZW50X21sb2NrX2tiIiwg
+T19SRE9OTFkpID0NCjE4PC9wcm9jL3N5cy9rZXJuZWwvcGVyZl9ldmVudF9tbG9ja19rYj4gPDAu
+MDAwMDE1Pg0KMTQ6MjI6MDkuODI5NjEyIHJlYWQoMTg8L3Byb2Mvc3lzL2tlcm5lbC9wZXJmX2V2
+ZW50X21sb2NrX2tiPiwgIjUxNlxuIiwNCjY0KSA9IDQgPDAuMDAwMDExPg0KMTQ6MjI6MDkuODI5
+NjU1IGNsb3NlKDE4PC9wcm9jL3N5cy9rZXJuZWwvcGVyZl9ldmVudF9tbG9ja19rYj4pID0gMA0K
+PDAuMDAwMDA4Pg0KMTQ6MjI6MDkuODI5NzAyIG1tYXAoTlVMTCwgNTI4Mzg0LCBQUk9UX1JFQUR8
+UFJPVF9XUklURSwgTUFQX1NIQVJFRCwNCjM8YW5vbl9pbm9kZTpbcGVyZl9ldmVudF0+LCAwKSA9
+IC0xIEVOT01FTSAoQ2Fubm90IGFsbG9jYXRlIG1lbW9yeSkNCjwwLjAwMDAxNT4NCjE0OjIyOjA5
+LjgyOTc2MyB3cml0ZSgyPC9kZXYvcHRzLzA+LCAiRXJyb3I6XG4iLCA3KSA9IDcgPDAuMDAwMDA5
+Pg0KMTQ6MjI6MDkuODI5ODEwIHdyaXRlKDI8L2Rldi9wdHMvMD4sICJGYWlsZWQgdG8gbW1hcCB3
+aXRoIDEyIChDYW5ub3QNCmEiLi4uLCA0OCkgPSA0OCA8MC4wMDAwMDg+DQoNCg0KQ2hhbmdpbmcg
+dGhlIHBhdGNoIGxpa2UgdGhpcyBmaXhlcyBpdC4uLg0KDQotICAgICAgIGlmIChvcmRlcl9iYXNl
+XzIoc2l6ZSkgPj0gTUFYX09SREVSKQ0KKyAgICAgICBpZiAob3JkZXJfYmFzZV8yKHNpemUpID4g
+TUFYX09SREVSKQ0KDQotVG9tbWkNCg0KDQo+IFJlcG9ydGVkLWJ5OiBKdWxpZW4gVGhpZXJyeSA8
+anVsaWVuLnRoaWVycnlAYXJtLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogTWFyayBSdXRsYW5kIDxt
+YXJrLnJ1dGxhbmRAYXJtLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgWmlqbHN0cmEgKElu
+dGVsKSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+DQo+IFJldmlld2VkLWJ5OiBKdWxpZW4gVGhpZXJy
+eSA8anVsaWVuLnRoaWVycnlAYXJtLmNvbT4NCj4gQ2M6IEFsZXhhbmRlciBTaGlzaGtpbiA8YWxl
+eGFuZGVyLnNoaXNoa2luQGxpbnV4LmludGVsLmNvbT4NCj4gQ2M6IEFybmFsZG8gQ2FydmFsaG8g
+ZGUgTWVsbyA8YWNtZUByZWRoYXQuY29tPg0KPiBDYzogSmlyaSBPbHNhIDxqb2xzYUByZWRoYXQu
+Y29tPg0KPiBDYzogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3Jn
+Pg0KPiBDYzogTmFtaHl1bmcgS2ltIDxuYW1oeXVuZ0BrZXJuZWwub3JnPg0KPiBDYzogUGV0ZXIg
+WmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPg0KPiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0
+Z2x4QGxpbnV0cm9uaXguZGU+DQo+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4NCj4gTGlu
+azogDQo+IGh0dHBzOi8vbGttbC5rZXJuZWwub3JnL3IvMjAxOTAxMTAxNDI3NDUuMjU0OTUtMS1t
+YXJrLnJ1dGxhbmRAYXJtLmNvbQ0KPiBTaWduZWQtb2ZmLWJ5OiBJbmdvIE1vbG5hciA8bWluZ29A
+a2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hA
+bGludXhmb3VuZGF0aW9uLm9yZz4NCj4gDQo+IC0tLQ0KPiAga2VybmVsL2V2ZW50cy9yaW5nX2J1
+ZmZlci5jIHwgICAgMyArKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4g
+DQo+IC0tLSBhL2tlcm5lbC9ldmVudHMvcmluZ19idWZmZXIuYw0KPiArKysgYi9rZXJuZWwvZXZl
+bnRzL3JpbmdfYnVmZmVyLmMNCj4gQEAgLTcxOSw2ICs3MTksOSBAQCBzdHJ1Y3QgcmluZ19idWZm
+ZXIgKnJiX2FsbG9jKGludCBucl9wYWdlDQo+ICAJc2l6ZSA9IHNpemVvZihzdHJ1Y3QgcmluZ19i
+dWZmZXIpOw0KPiAgCXNpemUgKz0gbnJfcGFnZXMgKiBzaXplb2Yodm9pZCAqKTsNCj4gIA0KPiAr
+CWlmIChvcmRlcl9iYXNlXzIoc2l6ZSkgPj0gTUFYX09SREVSKQ0KPiArCQlnb3RvIGZhaWw7DQo+
+ICsNCj4gIAlyYiA9IGt6YWxsb2Moc2l6ZSwgR0ZQX0tFUk5FTCk7DQo+ICAJaWYgKCFyYikNCj4g
+IAkJZ290byBmYWlsOw0KPiANCj4gDQoNCg==
