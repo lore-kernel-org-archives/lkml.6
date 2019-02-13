@@ -2,210 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F137AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82E5C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93212190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849902190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pmf+EjiX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392530AbfBMPpp (ORCPT
+        id S2392543AbfBMPpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:45:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726317AbfBMPpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:45:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6B0F9AD1A;
-        Wed, 13 Feb 2019 15:45:42 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 16:45:41 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 02/25] printk-rb: add prb locking functions
-Message-ID: <20190213154541.wvft64nf352vghou@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-3-john.ogness@linutronix.de>
+        Wed, 13 Feb 2019 10:45:49 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44720 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbfBMPpr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:45:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HdDbBwL10xwWBHY4uWjVzdQtLeyqbXrybLGpZsQT0UM=; b=pmf+EjiXP0Q+miXdMnvJTukG+
+        SBVzKFzdcy1FkY2pE6D0dizvTy1+lE633fvRou2Meq7LfU72PE3pTBU5uFac4VjBhSO2L6R3jTE6e
+        J0GUvZkAx7o59SnsquPcxZY2QgOWEI87xwt7zxgnWDRW+KqYoOiUwFjztTQBJZyfjbLUQQw4N1v3W
+        stPt6jqH2O2hvEs3pkp0W+icxMvVAY8AFfCQ+VNksRf2uDfNHPP7O7DIAdgGLjm5Oufg76AQyfjqG
+        839j1yhEFn1AjpLaX/SHev5KJOTmwtA6/JGQoNYuQ2SFCSjEsFLtET3t/FC7SKVUL05UgkOGMFV9p
+        82zt5GZkQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtwj8-0002Gs-JV; Wed, 13 Feb 2019 15:45:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2AFA1202CEF72; Wed, 13 Feb 2019 16:45:32 +0100 (CET)
+Date:   Wed, 13 Feb 2019 16:45:32 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@redhat.com, catalin.marinas@arm.com, james.morse@arm.com,
+        hpa@zytor.com, valentin.schneider@arm.com, brgerst@gmail.com,
+        jpoimboe@redhat.com, luto@kernel.org, bp@alien8.de,
+        dvlasenk@redhat.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+Message-ID: <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
+References: <20190211134527.GA121589@gmail.com>
+ <20190211135159.GC32511@hirez.programming.kicks-ass.net>
+ <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
+ <20190213103553.GO32494@hirez.programming.kicks-ass.net>
+ <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
+ <20190213131720.GU32494@hirez.programming.kicks-ass.net>
+ <20190213140025.GB6346@brain-police>
+ <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com>
+ <20190213144145.GY32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212143003.48446-3-john.ogness@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-12 15:29:40, John Ogness wrote:
-> Add processor-reentrant spin locking functions. These allow
-> restricting the number of possible contexts to 2, which can simplify
-> implementing code that also supports NMI interruptions.
+On Wed, Feb 13, 2019 at 03:41:45PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 13, 2019 at 02:39:22PM +0000, Julien Thierry wrote:
+> > Hi Peter,
+> > 
+> > On 13/02/2019 14:25, Peter Zijlstra wrote:
+> > > On Wed, Feb 13, 2019 at 02:00:26PM +0000, Will Deacon wrote:
+> > >> The difference is because getting preempted in the sequence above is
+> > >> triggered off the back of an interrupt. On arm64, and I think also on x86,
+> > >> the user access state (SMAP or PAN) is saved and restored across exceptions
+> > >> but not across context switch.
+> > > 
+> > > A quick reading of the SDM seems to suggest the SMAP state is part of
+> > > EFLAGS, which is context switched just fine AFAIK.
+> > > 
+> > I fail to see where this is happening when looking at the switch_to()
+> > logic in x86_64.
 > 
->     prb_lock();
-> 
->     /*
->      * This code is synchronized with all contexts
->      * except an NMI on the same processor.
->      */
-> 
->     prb_unlock();
-> 
-> In order to support printk's emergency messages, a
-> processor-reentrant spin lock will be used to control raw access to
-> the emergency console. However, it must be the same
-> processor-reentrant spin lock as the one used by the ring buffer,
-> otherwise a deadlock can occur:
-> 
->     CPU1: printk lock -> emergency -> serial lock
->     CPU2: serial lock -> printk lock
-> 
-> By making the processor-reentrant implemtation available externally,
-> printk can use the same atomic_t for the ring buffer as for the
-> emergency console and thus avoid the above deadlock.
+> Yeah, me too.. we obviously preserve EFLAGS for user context, but for
+> kernel-kernel switches we do not seem to preserve it :-(
 
-Interesting idea. I just wonder if it might cause some problems
-when it is shared between printk() and many other consoles.
+So I dug around the context switch code a little, and I think we lost it
+here:
 
-It sounds like the big kernel lock or console_lock. They
-both caused many troubles.
+  0100301bfdf5 ("sched/x86: Rewrite the switch_to() code")
 
+Before that, x86_64 switch_to() read like (much simplified):
 
-> diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-> new file mode 100644
-> index 000000000000..28958b0cf774
-> --- /dev/null
-> +++ b/lib/printk_ringbuffer.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/smp.h>
-> +#include <linux/printk_ringbuffer.h>
-> +
-> +static bool __prb_trylock(struct prb_cpulock *cpu_lock,
-> +			  unsigned int *cpu_store)
-> +{
-> +	unsigned long *flags;
-> +	unsigned int cpu;
-> +
-> +	cpu = get_cpu();
-> +
-> +	*cpu_store = atomic_read(&cpu_lock->owner);
-> +	/* memory barrier to ensure the current lock owner is visible */
-> +	smp_rmb();
-> +	if (*cpu_store == -1) {
-> +		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
-> +		local_irq_save(*flags);
-> +		if (atomic_try_cmpxchg_acquire(&cpu_lock->owner,
-> +					       cpu_store, cpu)) {
-> +			return true;
-> +		}
-> +		local_irq_restore(*flags);
-> +	} else if (*cpu_store == cpu) {
-> +		return true;
-> +	}
-> +
-> +	put_cpu();
+	asm volatile ( /* do RSP twiddle */
+	  : /* output */
+	  : /* input */
+	  : "memory", "cc", .... "flags");
 
-Is there any reason why you get/put CPU and enable/disable
-in each iteration?
+(see __EXTRA_CLOBBER)
 
-It is a spin lock after all. We do busy waiting anyway. This looks like
-burning CPU power for no real gain. Simple cpu_relax() should be enough.
+Which I suppose means that GCC generates the PUSHF/POPF to preserve the
+EFLAGS, since we mark those explicitly clobbered.
 
-> +	return false;
-> +}
-> +
-> +/*
-> + * prb_lock: Perform a processor-reentrant spin lock.
-> + * @cpu_lock: A pointer to the lock object.
-> + * @cpu_store: A "flags" pointer to store lock status information.
-> + *
-> + * If no processor has the lock, the calling processor takes the lock and
-> + * becomes the owner. If the calling processor is already the owner of the
-> + * lock, this function succeeds immediately. If lock is locked by another
-> + * processor, this function spins until the calling processor becomes the
-> + * owner.
-> + *
-> + * It is safe to call this function from any context and state.
-> + */
-> +void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store)
-> +{
-> +	for (;;) {
-> +		if (__prb_trylock(cpu_lock, cpu_store))
-> +			break;
-> +		cpu_relax();
-> +	}
-> +}
-> +
-> +/*
-> + * prb_unlock: Perform a processor-reentrant spin unlock.
-> + * @cpu_lock: A pointer to the lock object.
-> + * @cpu_store: A "flags" object storing lock status information.
-> + *
-> + * Release the lock. The calling processor must be the owner of the lock.
-> + *
-> + * It is safe to call this function from any context and state.
-> + */
-> +void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
-> +{
-> +	unsigned long *flags;
-> +	unsigned int cpu;
-> +
-> +	cpu = atomic_read(&cpu_lock->owner);
-> +	atomic_set_release(&cpu_lock->owner, cpu_store);
-> +
-> +	if (cpu_store == -1) {
-> +		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
-> +		local_irq_restore(*flags);
-> +	}
+Before that:
 
-cpu_store looks like an implementation detail. The caller
-needs to remember it to handle the nesting properly.
+  f05e798ad4c0 ("Disintegrate asm/system.h for X86")
 
-We could achieve the same with a recursion counter hidden
-in struct prb_lock.
+We had explicit PUSHF / POPF in SAVE_CONTEXT / RESTORE_CONTEXT resp.
 
-Best Regards,
-Petr
+Now I cannot see how the current code preserves EFLAGS (if indeed it
+does), and the changelog doesn't mention this change _AT_ALL_.
 
 
-PS: This is the most complex patchset that I have ever reviewed.
-I am not sure what is the best approach. I am going to understand
-it and comment on what touches my eye. I will comment the overall
-design later after I have a better understanding.
+For a little bit of context; it turns out that user_access_begin() /
+user_access_end() sets EFLAGS.AC and scheduling in between there wrecks
+that because we're apparently not saving that anymore.
 
-The first feeling is that it would be nice to be able to
-store messages into a single log buffer from every context.
-It will depend if the new approach is safe and maintainable.
-
-The offloading of console handling into a kthread might be
-problematic. We were pushing it for years and never succeeded.
-People preferred to minimize the risk that messages would never
-appear on the console.
-
-Well, I still think that it might be needed because Steven's
-console waiter logic does not prevent softlockups completely.
-And realtime has much bigger problems with unpredictable
-random printk-console-lockups requirements. IMHO, we need
-a solution for the realtime mode and normal one could just benefit
-from it. We have some ideas in the drawer. And this patchset
-brings some new. Let's see.
-
-Best Regards,
-Petr
+Now, I'm tempted to add the PUSHF / POPF right back because of this, but
+first I suppose we need to figure out if that change was on purpose and
+why that went missing from the Changelog.
