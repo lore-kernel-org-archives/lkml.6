@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D04C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CC1C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4285B222CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56643206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025341;
-	bh=YoR5e4lPthnzep3LK3awfAmL8snpqLSWQ9DzAlV3ROg=;
+	s=default; t=1550025347;
+	bh=cKRT9wIdlA0mFtlv4E1zbRPiqP0Zl62XkpM09mgsqDU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vcG5Sf5CQ6pCzfUX/fjAgLQqtWubWZdQND1Vmf4o4pLCvSX7Ox56oiwwR2Jw/Lqa2
-	 W/cl+orqqP53cSocPCKLwdEtDyEVcqDZ5UIS3FcyzYvC5d70PmfMSEzSKjrNFq4oF6
-	 9dPMU68gVsx18HEj/OitSBb4MYFcI4D//8/A66jU=
+	b=QlidWkA9bZ2DJ71IykqxrcX2bj2skN566auv+g2oIhrLBI4SZD7/WwlpUTMdn/vqY
+	 63TM2vnPul27k/YHMrt9ItOjALx4etG7IiHOv9DGdI8mLK12lj+fqnKo4o8ZvnuT5R
+	 Wo9AMBIVmHqGAqfD+bwatbWdLf5f14+hIF6ONuE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388048AbfBMCfi (ORCPT
+        id S1731542AbfBMCfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39158 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388015AbfBMCf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:28 -0500
+        id S2388035AbfBMCfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80B95222C9;
-        Wed, 13 Feb 2019 02:35:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C28222CC;
+        Wed, 13 Feb 2019 02:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025327;
-        bh=YoR5e4lPthnzep3LK3awfAmL8snpqLSWQ9DzAlV3ROg=;
+        s=default; t=1550025332;
+        bh=cKRT9wIdlA0mFtlv4E1zbRPiqP0Zl62XkpM09mgsqDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tTFtc7WuxSMqMV2umwku2JLFEmp2g/TCJSdSLKVebd/lSPgBVbdREMY65Y09qnDkQ
-         6DVKOa6JYHncDSWn4Ev7A2KnDiraLazyt2ZHBgZX+65OOem/Q6/vtnaAlB0biaSJEQ
-         NX+EknBKTrl1KpQzw/8g0+ClkV3LtwoH2QHKO/gY=
+        b=E4ZxVly1DnmUdBtw5Bf93Utgcdm89NxUGz7k2zI4lKAIPHeI+rI/m3DInBRkVPagM
+         T1L2BVpbHPjZPhz1DorD2y4ZrJukrhiQ9I9O9JOzu8Wb3KMnEhStUcTUPUgKtdN5qq
+         iCwGmzuY/f9kXUw9xJ+KDOMuMqM1xQGDXPi+5H0o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 071/105] vhost/scsi: Use copy_to_iter() to send control queue response
-Date:   Tue, 12 Feb 2019 21:33:02 -0500
-Message-Id: <20190213023336.19019-71-sashal@kernel.org>
+Cc:     Yonghong Song <yhs@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        xdp-newbies@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 074/105] samples/bpf: workaround clang asm goto compilation errors
+Date:   Tue, 12 Feb 2019 21:33:05 -0500
+Message-Id: <20190213023336.19019-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,71 +58,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+From: Yonghong Song <yhs@fb.com>
 
-[ Upstream commit 8e5dadfe76cf2862ebf3e4f22adef29982df7766 ]
+[ Upstream commit 6bf3bbe1f4d4cf405e3c2bf07bbdff56d3223ec8 ]
 
-Uses copy_to_iter() instead of __copy_to_user() in order to ensure we
-support arbitrary layouts and an input buffer split across iov entries.
+x86 compilation has required asm goto support since 4.17.
+Since clang does not support asm goto, at 4.17,
+Commit b1ae32dbab50 ("x86/cpufeature: Guard asm_volatile_goto usage
+for BPF compilation") worked around the issue by permitting an
+alternative implementation without asm goto for clang.
 
-Fixes: 0d02dbd68c47b ("vhost/scsi: Respond to control queue operations")
-Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+At 5.0, more asm goto usages appeared.
+  [yhs@148 x86]$ egrep -r asm_volatile_goto
+  include/asm/cpufeature.h:     asm_volatile_goto("1: jmp 6f\n"
+  include/asm/jump_label.h:     asm_volatile_goto("1:"
+  include/asm/jump_label.h:     asm_volatile_goto("1:"
+  include/asm/rmwcc.h:  asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"     \
+  include/asm/uaccess.h:        asm_volatile_goto("\n"                          \
+  include/asm/uaccess.h:        asm_volatile_goto("\n"                          \
+  [yhs@148 x86]$
+
+Compiling samples/bpf directories, most bpf programs failed
+compilation with error messages like:
+  In file included from /home/yhs/work/bpf-next/samples/bpf/xdp_sample_pkts_kern.c:2:
+  In file included from /home/yhs/work/bpf-next/include/linux/ptrace.h:6:
+  In file included from /home/yhs/work/bpf-next/include/linux/sched.h:15:
+  In file included from /home/yhs/work/bpf-next/include/linux/sem.h:5:
+  In file included from /home/yhs/work/bpf-next/include/uapi/linux/sem.h:5:
+  In file included from /home/yhs/work/bpf-next/include/linux/ipc.h:9:
+  In file included from /home/yhs/work/bpf-next/include/linux/refcount.h:72:
+  /home/yhs/work/bpf-next/arch/x86/include/asm/refcount.h:70:9: error: 'asm goto' constructs are not supported yet
+        return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
+               ^
+  /home/yhs/work/bpf-next/arch/x86/include/asm/rmwcc.h:67:2: note: expanded from macro 'GEN_BINARY_SUFFIXED_RMWcc'
+        __GEN_RMWcc(op " %[val], %[var]\n\t" suffix, var, cc,           \
+        ^
+  /home/yhs/work/bpf-next/arch/x86/include/asm/rmwcc.h:21:2: note: expanded from macro '__GEN_RMWcc'
+        asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"             \
+        ^
+  /home/yhs/work/bpf-next/include/linux/compiler_types.h:188:37: note: expanded from macro 'asm_volatile_goto'
+  #define asm_volatile_goto(x...) asm goto(x)
+
+Most implementation does not even provide an alternative
+implementation. And it is also not practical to make changes
+for each call site.
+
+This patch workarounded the asm goto issue by redefining the macro like below:
+  #define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
+
+If asm_volatile_goto is not used by bpf programs, which is typically the case, nothing bad
+will happen. If asm_volatile_goto is used by bpf programs, which is incorrect, the compiler
+will issue an error since "invalid use of asm_volatile_goto" is not valid assembly codes.
+
+With this patch, all bpf programs under samples/bpf can pass compilation.
+
+Note that bpf programs under tools/testing/selftests/bpf/ compiled fine as
+they do not access kernel internal headers.
+
+Fixes: e769742d3584 ("Revert "x86/jump-labels: Macrofy inline assembly code to work around GCC inlining bugs"")
+Fixes: 18fe58229d80 ("x86, asm: change the GEN_*_RMWcc() macros to not quote the condition")
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/scsi.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ samples/bpf/Makefile              |  1 +
+ samples/bpf/asm_goto_workaround.h | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
+ create mode 100644 samples/bpf/asm_goto_workaround.h
 
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index 73a4adeab096..11bd8b6422eb 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -1132,16 +1132,18 @@ vhost_scsi_send_tmf_reject(struct vhost_scsi *vs,
- 			   struct vhost_virtqueue *vq,
- 			   struct vhost_scsi_ctx *vc)
- {
--	struct virtio_scsi_ctrl_tmf_resp __user *resp;
- 	struct virtio_scsi_ctrl_tmf_resp rsp;
-+	struct iov_iter iov_iter;
- 	int ret;
- 
- 	pr_debug("%s\n", __func__);
- 	memset(&rsp, 0, sizeof(rsp));
- 	rsp.response = VIRTIO_SCSI_S_FUNCTION_REJECTED;
--	resp = vq->iov[vc->out].iov_base;
--	ret = __copy_to_user(resp, &rsp, sizeof(rsp));
--	if (!ret)
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index be0a961450bc..f5ce993c78e4 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -273,6 +273,7 @@ $(obj)/%.o: $(src)/%.c
+ 		-Wno-gnu-variable-sized-type-not-at-end \
+ 		-Wno-address-of-packed-member -Wno-tautological-compare \
+ 		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
++		-I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
+ 		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
+ ifeq ($(DWARF2BTF),y)
+ 	$(BTF_PAHOLE) -J $@
+diff --git a/samples/bpf/asm_goto_workaround.h b/samples/bpf/asm_goto_workaround.h
+new file mode 100644
+index 000000000000..5cd7c1d1a5d5
+--- /dev/null
++++ b/samples/bpf/asm_goto_workaround.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2019 Facebook */
++#ifndef __ASM_GOTO_WORKAROUND_H
++#define __ASM_GOTO_WORKAROUND_H
 +
-+	iov_iter_init(&iov_iter, READ, &vq->iov[vc->out], vc->in, sizeof(rsp));
++/* this will bring in asm_volatile_goto macro definition
++ * if enabled by compiler and config options.
++ */
++#include <linux/types.h>
 +
-+	ret = copy_to_iter(&rsp, sizeof(rsp), &iov_iter);
-+	if (likely(ret == sizeof(rsp)))
- 		vhost_add_used_and_signal(&vs->dev, vq, vc->head, 0);
- 	else
- 		pr_err("Faulted on virtio_scsi_ctrl_tmf_resp\n");
-@@ -1152,16 +1154,18 @@ vhost_scsi_send_an_resp(struct vhost_scsi *vs,
- 			struct vhost_virtqueue *vq,
- 			struct vhost_scsi_ctx *vc)
- {
--	struct virtio_scsi_ctrl_an_resp __user *resp;
- 	struct virtio_scsi_ctrl_an_resp rsp;
-+	struct iov_iter iov_iter;
- 	int ret;
- 
- 	pr_debug("%s\n", __func__);
- 	memset(&rsp, 0, sizeof(rsp));	/* event_actual = 0 */
- 	rsp.response = VIRTIO_SCSI_S_OK;
--	resp = vq->iov[vc->out].iov_base;
--	ret = __copy_to_user(resp, &rsp, sizeof(rsp));
--	if (!ret)
++#ifdef asm_volatile_goto
++#undef asm_volatile_goto
++#define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
++#endif
 +
-+	iov_iter_init(&iov_iter, READ, &vq->iov[vc->out], vc->in, sizeof(rsp));
-+
-+	ret = copy_to_iter(&rsp, sizeof(rsp), &iov_iter);
-+	if (likely(ret == sizeof(rsp)))
- 		vhost_add_used_and_signal(&vs->dev, vq, vc->head, 0);
- 	else
- 		pr_err("Faulted on virtio_scsi_ctrl_an_resp\n");
++#endif
 -- 
 2.19.1
 
