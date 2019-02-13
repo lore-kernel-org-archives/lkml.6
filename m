@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3771AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C28C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0456020842
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D73C0222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:07:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQfMUSGF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHWeIXst"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436995AbfBMWHg (ORCPT
+        id S2437014AbfBMWHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:07:36 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46974 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727190AbfBMWHe (ORCPT
+        Wed, 13 Feb 2019 17:07:40 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33868 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436997AbfBMWHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:07:34 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so1802806pgp.13;
-        Wed, 13 Feb 2019 14:07:34 -0800 (PST)
+        Wed, 13 Feb 2019 17:07:39 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j18so1858357pfe.1;
+        Wed, 13 Feb 2019 14:07:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zhn5DT6JA7hfxUQ3fw/Pm1kt+m2tksN1j/7Jsb3V7Ro=;
-        b=aQfMUSGFuyMHVEAbv4VRomOraGhTDgHl8SAR6O43VbqwsxftqXYm0AigEgP2Mcaiko
-         b0wmnVPzAm/pIiKAYlwFYRQQGK29h/4zuAPVInWJ5Ll4SH78GyYKrXI6f/tzImFFRthr
-         YGt3O3GLcI1Hpuq0a60SYvX18fBpWaVzwQYm4CUlostRNdudA09jySaarVMUIuD001B6
-         /Kgc+zOlaL5IqP16Mx6VRVVf6U5ONsCfld/Hx15X1f1C6ba5xOHwgWIN82Ni3LYGtZ6P
-         tYrMcl26JFvvrqLUKBLngjKZBwhEo0X0yEMgpKKXW3TStTYu028Ydy52qZ7W2R12Ceeb
-         24/A==
+        bh=Iyaq3yEjkUqCdNXty1gzLutDNHaIKj6egyv5O/wPqPk=;
+        b=lHWeIXstmVjHTmd88m1ivg4nObLl4jTdKn3KpN8aMDAshZHsgkPsGNbUDERKeb7BhI
+         9TNquCTl+ssi4E4t0fu2NfGPToDkT8YCsdZIUQLXGryqcnBVLP2RGFi7SFetrCqPJdMA
+         S9kE2MEHwHB4Xd/Djxn6/OguEWiCYOhkcQRPZRTrC6vdmxwEsNx4l2JbKMokQaVR/vRb
+         mQRWbyZd4KdKTG2DhEHTIMMAMc1NejJIk2eYm5a/QqwaBGdrIeVtvnvDFS3ggnLx4pDM
+         VCcn8kC20sOXRbEZRoi4IMMRlKHNSMopsdROE8ez4oVx+JvehykHujJT0jpY4j/XrGIZ
+         cDKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zhn5DT6JA7hfxUQ3fw/Pm1kt+m2tksN1j/7Jsb3V7Ro=;
-        b=piVsZS0Mk13UCjLbu+Jq37kpQKKFXHCXmeYCuNxrW2Yn5iRhwXBxmyauicVmnLgl1l
-         hl+Z4kg/vt1Z5gAvahs/4FiLTVpVCDDrWv0mAOXxXSJ01HOwgVsIRJ6IfSWV1gXeJkZU
-         P9wfVYmiROrTmsNC8QvtUyud57CbDT4evJU4MAGz+32R7jF1VnRVOuSHw+sa87s2eKH7
-         iTPVHU6cdjWoqgcqjVk7JHyY8ESf1gD6jOtEpDyUDnOmCVdI1lQBRec7AzdSjF5fpl8Y
-         Og4lNzXntjeG/BzrK5qVzEClL5LU0eLtJnVVuvdFEy8Q+t3LPh+6PDZ2jafiuojETORK
-         43yw==
-X-Gm-Message-State: AHQUAuZ4aKEFfJ6Rem3jbo9auWv3k6CvJz3bnvqpIgPt15UgYwDgdxyk
-        U3S8/lTM14F8XHh2LgywGJ06Wl51
-X-Google-Smtp-Source: AHgI3Ibxm7z9fE7v/B42J+9Kfb0erWhRbniskgJaUaIQfYrHJ8MYjC3nhuF9WA1MHu+kyPQpCwYWHw==
-X-Received: by 2002:a63:e742:: with SMTP id j2mr422942pgk.172.1550095653274;
-        Wed, 13 Feb 2019 14:07:33 -0800 (PST)
+        bh=Iyaq3yEjkUqCdNXty1gzLutDNHaIKj6egyv5O/wPqPk=;
+        b=YSNnyD2OHlFNP4Yu+sfpzn0x3Ts9wnjXmoPIvoqgtgmPfqtXVOlxSFoSkMQlxCcjZ9
+         S/v4Muh/hyIZs1iIeQ9zNpiZ5mAoKFwYH74jYpF2w/KOanJoXp7k1u2U1EkEYht92aUR
+         xvOAP86wFPgi6ad02Stymfy1IJvH2PISoT/e0uc/NI2DzNfSidI+hcGeg8nEtEdgwdhA
+         19silF1DjmbsY9QMhWHIiGTgoi4IVlwXPxSqbquKNDLvuB6HlhqPOPEtt03RHfU3nonu
+         XZnI21Hc3sCwBiKm5Ckx5vSuKz5Mpuc2yGscKHfYzclEKyUamcs2C7c7jPxnEKc+XKJX
+         0Bvw==
+X-Gm-Message-State: AHQUAuYCCKp7Bwur0SD1fLy9PbBPf7y8kFRwl3ZD31EZv4AOtLQ/ArTM
+        6tzRNx3cU2+aX77PEbWVf3CrclA6
+X-Google-Smtp-Source: AHgI3IYHmCsEIr/eRgJhG6wyPFagIhzKMKVa4f6LxPnoo6bNFNDbtLjui+FHk4G/9EV5aBLGRhSAyQ==
+X-Received: by 2002:a62:931a:: with SMTP id b26mr417644pfe.65.1550095657834;
+        Wed, 13 Feb 2019 14:07:37 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id o1sm383735pgn.63.2019.02.13.14.07.29
+        by smtp.gmail.com with ESMTPSA id o1sm383735pgn.63.2019.02.13.14.07.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:07:32 -0800 (PST)
+        Wed, 13 Feb 2019 14:07:36 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next 5/9] net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
-Date:   Wed, 13 Feb 2019 14:06:34 -0800
-Message-Id: <20190213220638.1552-6-f.fainelli@gmail.com>
+Subject: [PATCH net-next 6/9] rocker: Check bridge flags during prepare phase
+Date:   Wed, 13 Feb 2019 14:06:35 -0800
+Message-Id: <20190213220638.1552-7-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190213220638.1552-1-f.fainelli@gmail.com>
 References: <20190213220638.1552-1-f.fainelli@gmail.com>
@@ -75,81 +75,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for removing SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
-add support for a function that processes the
-SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS and
-SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS attributes and returns not
-supported for any flag set, since DSA does not currently support
-toggling those bridge port attributes (yet).
+In preparation for getting rid of switchdev_port_attr_get(), have rocker
+check for the bridge flags being set through switchdev_port_attr_set()
+with the SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS attribute identifier.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- net/dsa/dsa_priv.h |  3 +++
- net/dsa/port.c     | 11 +++++++++++
- net/dsa/slave.c    |  7 +++++++
- 3 files changed, 21 insertions(+)
+ drivers/net/ethernet/rocker/rocker_main.c | 48 +++++++++++++++--------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
 
-diff --git a/net/dsa/dsa_priv.h b/net/dsa/dsa_priv.h
-index 1f4972dab9f2..50d73698dfb3 100644
---- a/net/dsa/dsa_priv.h
-+++ b/net/dsa/dsa_priv.h
-@@ -150,6 +150,9 @@ int dsa_port_vlan_filtering(struct dsa_port *dp, bool vlan_filtering,
- 			    struct switchdev_trans *trans);
- int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 			 struct switchdev_trans *trans);
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans, bool pre_set);
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid);
- int dsa_port_fdb_del(struct dsa_port *dp, const unsigned char *addr,
-diff --git a/net/dsa/port.c b/net/dsa/port.c
-index 2d7e01b23572..b0c4cfd18da9 100644
---- a/net/dsa/port.c
-+++ b/net/dsa/port.c
-@@ -177,6 +177,17 @@ int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 	return dsa_port_notify(dp, DSA_NOTIFIER_AGEING_TIME, &info);
+diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
+index 5ce8d5aba603..863a8b32e6e9 100644
+--- a/drivers/net/ethernet/rocker/rocker_main.c
++++ b/drivers/net/ethernet/rocker/rocker_main.c
+@@ -1565,37 +1565,48 @@ static int rocker_world_port_attr_stp_state_set(struct rocker_port *rocker_port,
+ 	return wops->port_attr_stp_state_set(rocker_port, state);
  }
  
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans,
-+				   bool pre_set)
++static int
++rocker_world_port_attr_bridge_flags_support_get(const struct rocker_port *
++						rocker_port,
++						unsigned long *
++						p_brport_flags_support)
 +{
-+	if (brport_flags)
-+		return -EOPNOTSUPP;
++	struct rocker_world_ops *wops = rocker_port->rocker->wops;
 +
-+	return 0;
++	if (!wops->port_attr_bridge_flags_support_get)
++		return -EOPNOTSUPP;
++	return wops->port_attr_bridge_flags_support_get(rocker_port,
++							p_brport_flags_support);
 +}
 +
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid)
+ static int
+ rocker_world_port_attr_bridge_flags_set(struct rocker_port *rocker_port,
+ 					unsigned long brport_flags,
+-					struct switchdev_trans *trans)
++					struct switchdev_trans *trans,
++					bool pre_set)
  {
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 2e5e7c04821b..417388c9f1fa 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -282,6 +282,7 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 				   struct switchdev_trans *trans)
+ 	struct rocker_world_ops *wops = rocker_port->rocker->wops;
++	unsigned long brport_flags_s;
++	int err;
+ 
+ 	if (!wops->port_attr_bridge_flags_set)
+ 		return -EOPNOTSUPP;
+ 
+-	if (switchdev_trans_ph_prepare(trans))
++	if (switchdev_trans_ph_prepare(trans) && pre_set) {
++		err = rocker_world_port_attr_bridge_flags_support_get(rocker_port,
++							      &brport_flags_s);
++		if (err)
++			return err;
++
++		if (brport_flags & ~brport_flags_s)
++			return -EOPNOTSUPP;
+ 		return 0;
++	}
+ 
+ 	return wops->port_attr_bridge_flags_set(rocker_port, brport_flags,
+ 						trans);
+ }
+ 
+-static int
+-rocker_world_port_attr_bridge_flags_support_get(const struct rocker_port *
+-						rocker_port,
+-						unsigned long *
+-						p_brport_flags_support)
+-{
+-	struct rocker_world_ops *wops = rocker_port->rocker->wops;
+-
+-	if (!wops->port_attr_bridge_flags_support_get)
+-		return -EOPNOTSUPP;
+-	return wops->port_attr_bridge_flags_support_get(rocker_port,
+-							p_brport_flags_support);
+-}
+-
+ static int
+ rocker_world_port_attr_bridge_ageing_time_set(struct rocker_port *rocker_port,
+ 					      u32 ageing_time,
+@@ -2066,6 +2077,7 @@ static int rocker_port_attr_set(struct net_device *dev,
+ 				struct switchdev_trans *trans)
  {
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
+ 	struct rocker_port *rocker_port = netdev_priv(dev);
 +	bool pre_set = false;
- 	int ret;
+ 	int err = 0;
  
  	switch (attr->id) {
-@@ -295,6 +296,12 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
- 		ret = dsa_port_ageing_time(dp, attr->u.ageing_time, trans);
+@@ -2074,10 +2086,12 @@ static int rocker_port_attr_set(struct net_device *dev,
+ 							   attr->u.stp_state,
+ 							   trans);
  		break;
 +	case SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS:
 +		pre_set = true; /* fall through */
-+	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
-+		ret = dsa_port_bridge_port_flags_set(dp, attr->u.brport_flags,
-+						     trans, pre_set);
-+		break;
- 	default:
- 		ret = -EOPNOTSUPP;
+ 	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
+ 		err = rocker_world_port_attr_bridge_flags_set(rocker_port,
+ 							      attr->u.brport_flags,
+-							      trans);
++							      trans, pre_set);
  		break;
+ 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
+ 		err = rocker_world_port_attr_bridge_ageing_time_set(rocker_port,
 -- 
 2.17.1
 
