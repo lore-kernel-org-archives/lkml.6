@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841F9C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8ADC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51A18222CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD9F222CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025564;
-	bh=maKmdX1RRYrfiRTEpEPGl+XrlyWmoxc5oidzyeFqGGA=;
+	s=default; t=1550025568;
+	bh=31Vu5vXHoW36MXU/r7LH8OcnPrEHU0wtOvOnidOif2k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DWWj7u81dE1zak2AxsM5nIWrKCs3raT0mC97rN8B43dHEUqsMW1IP7lKFCCCEMvUr
-	 eYmnI0laNmciYrxqdZZ5Ttp3mWoQw1EYGx4JGU8UJ0c7ZfLFb1+SsE1TaLJ7FUkFJw
-	 fTQUs02VPPaUjbSRxZjlGJQpN1ZglizrzKLKAO5U=
+	b=RUOGi5xoPjVz5/Rl0BSOxiUwPanR6EjZYSWCfWGKf/vx+tvLcPyBqMoDRQidTnzju
+	 FY0VVdq+jZOHYZU/az5Kcz3lVeuEiR9e6rAYh6Eql1gj9nrKyJ6r3/q6hkAWhljlGA
+	 qZA4XvfghfBZIBKyZYWBN2uyizIgwWaHsU7ESFf8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfBMCjX (ORCPT
+        id S2388711AbfBMCj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42886 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388661AbfBMCjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:21 -0500
+        id S2388672AbfBMCjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3BA6222C9;
-        Wed, 13 Feb 2019 02:39:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 250AE2175B;
+        Wed, 13 Feb 2019 02:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025560;
-        bh=maKmdX1RRYrfiRTEpEPGl+XrlyWmoxc5oidzyeFqGGA=;
+        s=default; t=1550025562;
+        bh=31Vu5vXHoW36MXU/r7LH8OcnPrEHU0wtOvOnidOif2k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O+SPzG52FMpzeoM42MSRuDp/tbi7gekiCRi6n6k83prLmwaAaMSuSSqOV4I3Rpt+0
-         0HkcTtKeJwmPE7twC3Oxq06t+cAvhkH1tukJ7WRk7dQW4bN83H3Ra5mRRnL9PZcWca
-         c9bQKUfGYkqYQqvX5LyzvSB/X4Biv50hF+VSL3rA=
+        b=MZs+9LazMdhOxozm7Tletme5im6R5VdpArX5MJ5GDuTVPnpgkeNkwbsEr3JU+OtZg
+         eOtpDHA3C2E5NyOxp9+Lb9pYmuqEt1R8zgjANKfmeDbP+g6PO44dZDyrmLGMc0LMTq
+         oIzktdR7ZjuVlysFg2GebREULrQGZhTOg7QljVgY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 67/83] PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
-Date:   Tue, 12 Feb 2019 21:36:45 -0500
-Message-Id: <20190213023701.20286-67-sashal@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 69/83] afs: Fix key refcounting in file locking code
+Date:   Tue, 12 Feb 2019 21:36:47 -0500
+Message-Id: <20190213023701.20286-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -57,73 +56,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit d2fd6e81912a665993b24dcdc1c1384a42a54f7e ]
+[ Upstream commit 59d49076ae3e6912e6d7df2fd68e2337f3d02036 ]
 
-The disable_acs_redir parameter stores a pointer to the string passed to
-pci_setup().  However, the string passed to PCI setup is actually a
-temporary copy allocated in static __initdata memory.  After init, once the
-memory is freed, it is no longer valid to reference this pointer.
+Fix the refcounting of the authentication keys in the file locking code.
+The vnode->lock_key member points to a key on which it expects to be
+holding a ref, but it isn't always given an extra ref, however.
 
-This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
-("PCI / PM: Allow runtime PM without callback functions") caused
-pci_disable_acs_redir() to be called during shutdown which manifested
-as an unable to handle kernel paging request at:
-
-  RIP: 0010:pci_enable_acs+0x3f/0x1e0
-  Call Trace:
-     pci_restore_state.part.44+0x159/0x3c0
-     pci_restore_standard_config+0x33/0x40
-     pci_pm_runtime_resume+0x2b/0xd0
-     ? pci_restore_standard_config+0x40/0x40
-     __rpm_callback+0xbc/0x1b0
-     rpm_callback+0x1f/0x70
-     ? pci_restore_standard_config+0x40/0x40
-      rpm_resume+0x4f9/0x710
-     ? pci_conf1_read+0xb6/0xf0
-     ? pci_conf1_write+0xb2/0xe0
-     __pm_runtime_resume+0x47/0x70
-     pci_device_shutdown+0x1e/0x60
-     device_shutdown+0x14a/0x1f0
-     kernel_restart+0xe/0x50
-     __do_sys_reboot+0x1ee/0x210
-     ? __fput+0x144/0x1d0
-     do_writev+0x5e/0xf0
-     ? do_writev+0x5e/0xf0
-     do_syscall_64+0x48/0xf0
-     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-It was also likely possible to trigger this bug when hotplugging PCI
-devices.
-
-To fix this, instead of storing a pointer, we use kstrdup() to copy the
-disable_acs_redir_param to its own buffer which will never be freed.
-
-Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
-Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Fixes: 0fafdc9f888b ("afs: Fix file locking")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/afs/flock.c | 4 ++--
+ fs/afs/inode.c | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index afc4680c584f..7eb1549cea81 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6113,7 +6113,8 @@ static int __init pci_setup(char *str)
- 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
- 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
- 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
--				disable_acs_redir_param = str + 18;
-+				disable_acs_redir_param =
-+					kstrdup(str + 18, GFP_KERNEL);
- 			} else {
- 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
- 						str);
+diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+index dc62d15a964b..1bb300ef362b 100644
+--- a/fs/afs/flock.c
++++ b/fs/afs/flock.c
+@@ -208,7 +208,7 @@ void afs_lock_work(struct work_struct *work)
+ 		/* The new front of the queue now owns the state variables. */
+ 		next = list_entry(vnode->pending_locks.next,
+ 				  struct file_lock, fl_u.afs.link);
+-		vnode->lock_key = afs_file_key(next->fl_file);
++		vnode->lock_key = key_get(afs_file_key(next->fl_file));
+ 		vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
+ 		vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
+ 		goto again;
+@@ -413,7 +413,7 @@ static void afs_dequeue_lock(struct afs_vnode *vnode, struct file_lock *fl)
+ 	/* The new front of the queue now owns the state variables. */
+ 	next = list_entry(vnode->pending_locks.next,
+ 			  struct file_lock, fl_u.afs.link);
+-	vnode->lock_key = afs_file_key(next->fl_file);
++	vnode->lock_key = key_get(afs_file_key(next->fl_file));
+ 	vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
+ 	vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
+ 	afs_lock_may_be_available(vnode);
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 26aa2d111a28..0726e40db0f8 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -542,6 +542,8 @@ void afs_evict_inode(struct inode *inode)
+ #endif
+ 
+ 	afs_put_permits(rcu_access_pointer(vnode->permit_cache));
++	key_put(vnode->lock_key);
++	vnode->lock_key = NULL;
+ 	_leave("");
+ }
+ 
 -- 
 2.19.1
 
