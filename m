@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670F4C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EBCC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D6F220811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FFFB20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083957;
-	bh=kMp7AG2KgegdWHMxSx54eETL5+aVwzX9n3mvaCacktA=;
+	s=default; t=1550083962;
+	bh=UUgbRxNhkruB8W0cVw0zBQ+pkPhZkiU03TYeuMFHVtY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S/qyznNNzjP1FjrEXNDvZI7LY0yvzRaGqZL3D8Qm8WbyNw9uYWhtcSMNqgkQuIfTz
-	 u0deaHDKakiwtCZDFNkspNN7CuOc4V/SQtK+qiCljVYdoD/DNvCn1u+wFnZzUdGsL0
-	 wVrjJinpEslieIy2zj7KPBxtZ4YEU4mX9v5R5RBc=
+	b=yvstJ05SzlUH6qDpH01/gIbEkHaOHsr2IsrSCspBF6ka1EZrWr9VnHRyFuSjqJNBk
+	 mO81O5ob6ApQDrbxZUhFy+1x4UrfiRbr6RPO30SMsALJScaal4ummuFbCWAEfAhq6G
+	 vqTab14q/tweW0NN1J4tErM52QvCSBmMx/uqo6iA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394175AbfBMSwf (ORCPT
+        id S2405827AbfBMSnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41858 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:43:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405839AbfBMSnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:43:16 -0500
+        id S2405808AbfBMSnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:43:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C3CD222D5;
-        Wed, 13 Feb 2019 18:43:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3005222D8;
+        Wed, 13 Feb 2019 18:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083395;
-        bh=kMp7AG2KgegdWHMxSx54eETL5+aVwzX9n3mvaCacktA=;
+        s=default; t=1550083389;
+        bh=UUgbRxNhkruB8W0cVw0zBQ+pkPhZkiU03TYeuMFHVtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EeplpFJBCUf7Zee0Z7JiEDSzS6hCaGpnqpJfN0k4fBGJ5/ijw8ciLY7XveTPDwotD
-         2G5MEQIVyEJ84Etlukwjyo9RKvtXg6b/B4nvzG6rKZDAYD9Kl5bjQTSHTGbn2b/npm
-         58fCxBy/gNehy15uqkxncYmxobO7gdukVGIGEoLI=
+        b=ZhtqMmEhk3aLCIm6mATcdtjt76UyUY7zJLAvbtoJy3vuxgoMfjImAlkWc0wH6iWRM
+         RiTs986VLpkhinvicG1JaxIDkFiZ4MM0n3YF4dJ82L5nusnfzs4empA5dUn9PS9TZA
+         62C6hZdP7orJvcaM10SyLG38jYIFUSIfMEbiUAf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        linux-mips@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Guenter Roeck <linux@roeck-us.net>,
-        "Maciej W . Rozycki" <macro@linux-mips.org>
-Subject: [PATCH 4.19 23/44] MIPS: VDSO: Include $(ccflags-vdso) in o32,n32 .lds builds
-Date:   Wed, 13 Feb 2019 19:38:24 +0100
-Message-Id: <20190213183653.695048322@linuxfoundation.org>
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 21/44] MIPS: VDSO: Use same -m%-float cflag as the kernel proper
+Date:   Wed, 13 Feb 2019 19:38:22 +0100
+Message-Id: <20190213183653.508709791@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -69,60 +70,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paul Burton <paul.burton@mips.com>
 
-commit 67fc5dc8a541e8f458d7f08bf88ff55933bf9f9d upstream.
+commit 0648e50e548d881d025b9419a1a168753c8e2bf7 upstream.
 
-When generating vdso-o32.lds & vdso-n32.lds for use with programs
-running as compat ABIs under 64b kernels, we previously haven't included
-the compiler flags that are supposedly common to all ABIs - ie. those in
-the ccflags-vdso variable.
+The MIPS VDSO build currently doesn't provide the -msoft-float flag to
+the compiler as the kernel proper does. This results in an attempt to
+use the compiler's default floating point configuration, which can be
+problematic in cases where this is incompatible with the target CPU's
+-march= flag. For example decstation_defconfig fails to build using
+toolchains in which gcc was configured --with-fp-32=xx with the
+following error:
 
-This is problematic in cases where we need to provide the -m%-float flag
-in order to ensure that we don't attempt to use a floating point ABI
-that's incompatible with the target CPU & ABI. For example a toolchain
-using current gcc trunk configured --with-fp-32=xx fails to build a
-64r6el_defconfig kernel with the following error:
+    LDS     arch/mips/vdso/vdso.lds
+  cc1: error: '-march=r3000' requires '-mfp32'
+  make[2]: *** [scripts/Makefile.build:379: arch/mips/vdso/vdso.lds] Error 1
 
-  cc1: error: '-march=mips1' requires '-mfp32'
-  make[2]: *** [arch/mips/vdso/Makefile:135: arch/mips/vdso/vdso-o32.lds] Error 1
+The kernel proper avoids this error because we build with the
+-msoft-float compiler flag, rather than using the compiler's default.
+Pass this flag through to the VDSO build so that it too becomes agnostic
+to the toolchain's floating point configuration.
 
-Include $(ccflags-vdso) for the compat VDSO .lds builds, just as it is
-included for the native VDSO .lds & when compiling objects for the
-compat VDSOs. This ensures we consistently provide the -msoft-float flag
-amongst others, avoiding the problem by ensuring we're agnostic to the
-toolchain defaults.
+Note that this is filtered out from KBUILD_CFLAGS rather than simply
+always using -msoft-float such that if we switch the kernel to use
+-mno-float in the future the VDSO will automatically inherit the change.
+
+The VDSO doesn't actually include any floating point code, and its
+.MIPS.abiflags section is already manually generated to specify that
+it's compatible with any floating point ABI. As such this change should
+have no effect on the resulting VDSO, apart from fixing the build
+failure for affected toolchains.
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Kevin Hilman <khilman@baylibre.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+References: https://lore.kernel.org/linux-mips/1477843551-21813-1-git-send-email-linux@roeck-us.net/
+References: https://kernelci.org/build/id/5c4e4ae059b5142a249ad004/logs/
 Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Cc: Maciej W. Rozycki <macro@linux-mips.org>
 Cc: linux-mips@vger.kernel.org
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Maciej W . Rozycki <macro@linux-mips.org>
 Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/vdso/Makefile |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/vdso/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/arch/mips/vdso/Makefile
 +++ b/arch/mips/vdso/Makefile
-@@ -129,7 +129,7 @@ $(obj)/%-o32.o: $(src)/%.c FORCE
- 	$(call cmd,force_checksrc)
- 	$(call if_changed_rule,cc_o_c)
+@@ -8,6 +8,7 @@ ccflags-vdso := \
+ 	$(filter -E%,$(KBUILD_CFLAGS)) \
+ 	$(filter -mmicromips,$(KBUILD_CFLAGS)) \
+ 	$(filter -march=%,$(KBUILD_CFLAGS)) \
++	$(filter -m%-float,$(KBUILD_CFLAGS)) \
+ 	-D__VDSO__
  
--$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := -mabi=32
-+$(obj)/vdso-o32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=32
- $(obj)/vdso-o32.lds: $(src)/vdso.lds.S FORCE
- 	$(call if_changed_dep,cpp_lds_S)
- 
-@@ -169,7 +169,7 @@ $(obj)/%-n32.o: $(src)/%.c FORCE
- 	$(call cmd,force_checksrc)
- 	$(call if_changed_rule,cc_o_c)
- 
--$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := -mabi=n32
-+$(obj)/vdso-n32.lds: KBUILD_CPPFLAGS := $(ccflags-vdso) -mabi=n32
- $(obj)/vdso-n32.lds: $(src)/vdso.lds.S FORCE
- 	$(call if_changed_dep,cpp_lds_S)
- 
+ ifeq ($(cc-name),clang)
 
 
