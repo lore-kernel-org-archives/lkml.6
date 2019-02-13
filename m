@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFABC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F2BC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8262190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A0B2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026879;
-	bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
+	s=default; t=1550026889;
+	bh=yvP+iZRZSakHDaDXQMknfSWwr5hUxPvQPJha0lDIZD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QLfQbyD+tMYTmp49ZZjjbauRzdDDdZ5NauVTkE8do/rX65g0Re6QWzIuWXAhrVvlp
-	 xqyBPTEwvOrbGKEJmdPTJhSTLJaMZx7cNSe1nci6vAjpiYAWFd6Kl94GIXXbj66apA
-	 2S/E9ye29Hbvluo/j+BxQnxIhwGh0Oh2VIDCyZN4=
+	b=KDszlp33qaVUAuyz2/JhtP64whOqiQyddM8TzKxkEfHT6YgfqX4+iNKqCWs0bOd5k
+	 iDpdQB7PfggXZpYu3KwpGJ5Ln1eef+YFzZRawrt8a6C+r5SkX5Y2v6Sf6uMURQ0gPv
+	 09ND+B+0Zt7qCvNqcEgC/kJIuH3y5A2EEkdTpdUw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390301AbfBMDBS (ORCPT
+        id S2390309AbfBMDB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39360 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 22:01:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388047AbfBMCfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:39 -0500
+        id S1728112AbfBMCfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74EB1222CD;
-        Wed, 13 Feb 2019 02:35:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A55BE222CC;
+        Wed, 13 Feb 2019 02:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025338;
-        bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
+        s=default; t=1550025310;
+        bh=yvP+iZRZSakHDaDXQMknfSWwr5hUxPvQPJha0lDIZD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nII3WzL4gQkE2ym8i4D3Li3Junntrcr5SxW+BjUUOINEKGJA+GxmHXQOL3VlNDJVL
-         /juWM+W0ADxJE/XwCEw5W+R5M0dninMYTIKXP2pzrvYVBAMsi7m+rK/gG+KxWukv9l
-         BX5NwHgiAbeLZnuf50Ac7KbcllCRqFb0PPxSStfU=
+        b=IqUkECOvJXt1M9VFsFRT4zHVKQu9DqUV+yJtqHoISMxcy3hU3+7SesnDSHTGD4Hbh
+         vFyTnqqK3yrzKQv9/bldBV9gwUaAKklFDDGpHH4Bb18pfgTpsGVfEfw17EEIO0UCBS
+         5kMBejhk5bwuUpFZ1Sxn0H86K+PCSMxdue+d/lwg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 078/105] pvcalls-front: fix potential null dereference
-Date:   Tue, 12 Feb 2019 21:33:09 -0500
-Message-Id: <20190213023336.19019-78-sashal@kernel.org>
+Cc:     Manish Rangankar <mrangankar@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 061/105] scsi: qedi: Add ep_state for login completion on un-reachable targets
+Date:   Tue, 12 Feb 2019 21:32:52 -0500
+Message-Id: <20190213023336.19019-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -61,77 +58,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Manish Rangankar <mrangankar@marvell.com>
 
-[ Upstream commit b4711098066f1cf808d4dc11a1a842860a3292fe ]
+[ Upstream commit 34a2ce887668db9dda4b56e6f155c49ac13f3e54 ]
 
- static checker warning:
-    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
-    error: we previously assumed 'map->active.ring' could be null
-           (see line 357)
+When the driver finds invalid destination MAC for the first un-reachable
+target, and before completes the PATH_REQ operation, set new ep_state to
+OFFLDCONN_NONE so that as part of driver ep_poll mechanism, the upper
+open-iscsi layer is notified to complete the login process on the first
+un-reachable target and thus proceed login to other reachable targets.
 
-drivers/xen/pvcalls-front.c
-    351 static int alloc_active_ring(struct sock_mapping *map)
-    352 {
-    353     void *bytes;
-    354
-    355     map->active.ring = (struct pvcalls_data_intf *)
-    356         get_zeroed_page(GFP_KERNEL);
-    357     if (!map->active.ring)
-                    ^^^^^^^^^^^^^^^^^
-Check
-
-    358         goto out;
-    359
-    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
-    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-    362                     PVCALLS_RING_ORDER);
-    363     if (!bytes)
-    364         goto out;
-    365
-    366     map->active.data.in = bytes;
-    367     map->active.data.out = bytes +
-    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-    369
-    370     return 0;
-    371
-    372 out:
---> 373     free_active_ring(map);
-                                 ^^^
-Add null check on map->active.ring before dereferencing it to avoid
-any NULL pointer dereferences.
-
-Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/pvcalls-front.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/qedi/qedi_iscsi.c | 3 +++
+ drivers/scsi/qedi/qedi_iscsi.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 6357160d466a..91da7e44d5d4 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -343,6 +343,9 @@ int pvcalls_front_socket(struct socket *sock)
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index 2f0a4f2c5ff8..d4821b9dea45 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -954,6 +954,7 @@ static int qedi_ep_poll(struct iscsi_endpoint *ep, int timeout_ms)
  
- static void free_active_ring(struct sock_mapping *map)
- {
-+	if (!map->active.ring)
-+		return;
-+
- 	free_pages((unsigned long)map->active.data.in,
- 			map->active.ring->ring_order);
- 	free_page((unsigned long)map->active.ring);
+ 	qedi_ep = ep->dd_data;
+ 	if (qedi_ep->state == EP_STATE_IDLE ||
++	    qedi_ep->state == EP_STATE_OFLDCONN_NONE ||
+ 	    qedi_ep->state == EP_STATE_OFLDCONN_FAILED)
+ 		return -1;
+ 
+@@ -1036,6 +1037,7 @@ static void qedi_ep_disconnect(struct iscsi_endpoint *ep)
+ 
+ 	switch (qedi_ep->state) {
+ 	case EP_STATE_OFLDCONN_START:
++	case EP_STATE_OFLDCONN_NONE:
+ 		goto ep_release_conn;
+ 	case EP_STATE_OFLDCONN_FAILED:
+ 			break;
+@@ -1226,6 +1228,7 @@ static int qedi_set_path(struct Scsi_Host *shost, struct iscsi_path *path_data)
+ 
+ 	if (!is_valid_ether_addr(&path_data->mac_addr[0])) {
+ 		QEDI_NOTICE(&qedi->dbg_ctx, "dst mac NOT VALID\n");
++		qedi_ep->state = EP_STATE_OFLDCONN_NONE;
+ 		ret = -EIO;
+ 		goto set_path_exit;
+ 	}
+diff --git a/drivers/scsi/qedi/qedi_iscsi.h b/drivers/scsi/qedi/qedi_iscsi.h
+index 11260776212f..892d70d54553 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.h
++++ b/drivers/scsi/qedi/qedi_iscsi.h
+@@ -59,6 +59,7 @@ enum {
+ 	EP_STATE_OFLDCONN_FAILED        = 0x2000,
+ 	EP_STATE_CONNECT_FAILED         = 0x4000,
+ 	EP_STATE_DISCONN_TIMEDOUT       = 0x8000,
++	EP_STATE_OFLDCONN_NONE          = 0x10000,
+ };
+ 
+ struct qedi_conn;
 -- 
 2.19.1
 
