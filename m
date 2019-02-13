@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B137C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A1C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0AB8222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C9D222CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025272;
-	bh=7qL2qAw+ftxunrtgcGs/Cs/pM5vHKgr9jDWsCZma3Dc=;
+	s=default; t=1550025274;
+	bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IETYU1xq7C+pnSflaR933gGgXwa2YXAg6R08orroEiks/2YFdlnGUp9Mz7D5KvzMF
-	 Wb5CGvjfxlnG8yWirgI4HJTiUDF4JBohM9qHqZm6XTqnLeqkbXemYPJcWpppHy4hlD
-	 JpBMQ5EWNkYaa3EMNx/gW1VRQ/PL793Qf96DA2X4=
+	b=dz6c5/sM9gv3aJ7bZTr9g5x3gfbtaQoGP/+m8OkfKOiUHJmCtSUn44KFbEss5j8jr
+	 i7gT1NaJUKiraisvBOaXIiVcjA847vx3L0DiQVvILL5aRiZe23JS0ZHlJ7M2ZzjKyv
+	 kStfQ3ekeYM4+mgbNRD+u9TrJ1zmltDWrrXdTmc4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387708AbfBMCeZ (ORCPT
+        id S2387740AbfBMCeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:34:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37862 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:34:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387667AbfBMCeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:34:19 -0500
+        id S2387675AbfBMCea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 400F7222C9;
-        Wed, 13 Feb 2019 02:34:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84CF3222C2;
+        Wed, 13 Feb 2019 02:34:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025258;
-        bh=7qL2qAw+ftxunrtgcGs/Cs/pM5vHKgr9jDWsCZma3Dc=;
+        s=default; t=1550025269;
+        bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tUwXWzL0NwhMxup/PmpGWfXbHLF+aDuqWvRuJX8YSboE/zZfZxsO/Qvkmva17o82J
-         zy8lTuUPamqWY7AYR1VTIRHBk+Y23gWHW1fZDFpRfP7Z/qH08v07/G4+bjWDnvKFN4
-         tvhBhxiR7e4xvGi3TcMnQhma3ksp4O+XQHQcXuCk=
+        b=E7+VlF8hkQp8B/SOYo2QmsdvxAetObmi96wf7Iz5fnyRUMLmkmBQlZYYx8SmIMJAz
+         PUvvy2VoRdu5dL/OmpcnI7sqiudRTsoDGA9h3funTkwPhVuIPvPaDvezwuC/zYjl/H
+         DmryMTe0n6AgIN/gzE4Oc71XbAWsspcXUlwh7CSo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nir Dotan <nird@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+Cc:     Ido Schimmel <idosch@mellanox.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 035/105] mlxsw: spectrum_acl: Add cleanup after C-TCAM update error condition
-Date:   Tue, 12 Feb 2019 21:32:26 -0500
-Message-Id: <20190213023336.19019-35-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 037/105] selftests: forwarding: Add a test for VLAN deletion
+Date:   Tue, 12 Feb 2019 21:32:28 -0500
+Message-Id: <20190213023336.19019-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,47 +59,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nir Dotan <nird@mellanox.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit ff0db43cd6c530ff944773ccf48ece55d32d0c22 ]
+[ Upstream commit 4fabf3bf93a194c7fa5288da3e0af37e4b943cf3 ]
 
-When writing to C-TCAM, mlxsw driver uses cregion->ops->entry_insert().
-In case of C-TCAM HW insertion error, the opposite action should take
-place.
-Add error handling case in which the C-TCAM region entry is removed, by
-calling cregion->ops->entry_remove().
+Add a VLAN on a bridge port, delete it and make sure the PVID VLAN is
+not affected.
 
-Fixes: a0a777b9409f ("mlxsw: spectrum_acl: Start using A-TCAM")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c   | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../selftests/net/forwarding/bridge_vlan_aware.sh | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-index e3c6fe8b1d40..1dcf152b2813 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-@@ -75,7 +75,15 @@ mlxsw_sp_acl_ctcam_region_entry_insert(struct mlxsw_sp *mlxsw_sp,
- 	act_set = mlxsw_afa_block_first_set(rulei->act_block);
- 	mlxsw_reg_ptce2_flex_action_set_memcpy_to(ptce2_pl, act_set);
+diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+index d8313d0438b7..04c6431b2bd8 100755
+--- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
++++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
  
--	return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	if (err)
-+		goto err_ptce2_write;
-+
-+	return 0;
-+
-+err_ptce2_write:
-+	cregion->ops->entry_remove(cregion, centry);
-+	return err;
+-ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding"
++ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
+ NUM_NETIFS=4
+ CHECK_TC="yes"
+ source lib.sh
+@@ -96,6 +96,19 @@ flooding()
+ 	flood_test $swp2 $h1 $h2
  }
  
- static void
++vlan_deletion()
++{
++	# Test that the deletion of a VLAN on a bridge port does not affect
++	# the PVID VLAN
++	log_info "Add and delete a VLAN on bridge port $swp1"
++
++	bridge vlan add vid 10 dev $swp1
++	bridge vlan del vid 10 dev $swp1
++
++	ping_ipv4
++	ping_ipv6
++}
++
+ trap cleanup EXIT
+ 
+ setup_prepare
 -- 
 2.19.1
 
