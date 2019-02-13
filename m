@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB2C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88977C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68822206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567D4206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025464;
-	bh=q/Cd8N9y3tE9MsUorh5FV8W8bdaIF34AhHBWCgjxgu4=;
+	s=default; t=1550025467;
+	bh=qQHn/cPbskFkR/KCb+yN8S0xGLXYeY96wswNr8pghiA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zo1EycpIpwhCokJgC1FLn1pArVOLdegT2eoinLtfYsOXVDFS5zSmq98C0gsw1kCKj
-	 IjzAU52v/HDubHUbT77Oso7XvNJyYQyyS9x6gtiE601EkaBiaXp97jXlbgxbxghcp6
-	 fzmN+3L7Vv6vk47cK0grDMF8sKO5P6SCc3HDs8Qo=
+	b=USAFs+Yyw+f9MdYF/B1kklMSG79PQMKn+IfQq0lpbjyarkEvOQbBU8pA4kNfd7Ets
+	 M6VplW64uRVyZFpufyVtXQ4uWOLMDG9zmdWemYHkwcIjaYTT1uAGWAOcMei5mpMj3T
+	 gvZWlyCA/pKJyEykgQUiPGgq3XftjCfj7WHZdbgc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732841AbfBMChn (ORCPT
+        id S2388388AbfBMChp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:37:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41042 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:37:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732753AbfBMChb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:31 -0500
+        id S2388317AbfBMChc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A27D206B6;
-        Wed, 13 Feb 2019 02:37:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61FD7222C2;
+        Wed, 13 Feb 2019 02:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025450;
-        bh=q/Cd8N9y3tE9MsUorh5FV8W8bdaIF34AhHBWCgjxgu4=;
+        s=default; t=1550025451;
+        bh=qQHn/cPbskFkR/KCb+yN8S0xGLXYeY96wswNr8pghiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mWXT+0KAQkOJpRLT5H4esLgz7Phae/Rnt8bwtQGNs+bA8kxbdI4Ow8L51WmYF5ynx
-         75t2bCtZpBLHwZpVDuzW6QYa8eFOXgfJAs7gPfCgtiEopELgwBXBEUGUWgSoj0q9UF
-         tO4OU06xYbrEvCocUf1+JxbUizshD824xsabjbLA=
+        b=ZTFS58aT1R3EdhiGzLd11JE2azOti4gRMwyOXKu7doWrmzJl0w07dHeRVSQMgg0+I
+         sfe31s0BZaPiY2WHZhsFC7LC5o29vfBFayd5Hp9D+5q/bZdfsHTM9cpwPh6h1V3ysz
+         5jReCEYh8veHE4dQ9wU8qlCB1LmhW+EwUPztU4+Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonglong Liu <liuyonglong@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 23/83] net: hns: Fix use after free identified by SLUB debug
-Date:   Tue, 12 Feb 2019 21:36:01 -0500
-Message-Id: <20190213023701.20286-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 24/83] bpf: Fix [::] -> [::1] rewrite in sys_sendmsg
+Date:   Tue, 12 Feb 2019 21:36:02 -0500
+Message-Id: <20190213023701.20286-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,93 +57,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit bb989501abcafa0de5f18b0ec0ec459b5b817908 ]
+[ Upstream commit e8e36984080b55ac5e57bdb09a5b570f2fc8e963 ]
 
-When enable SLUB debug, than remove hns_enet_drv module, SLUB debug will
-identify a use after free bug:
+sys_sendmsg has supported unspecified destination IPv6 (wildcard) for
+unconnected UDP sockets since 876c7f41. When [::] is passed by user as
+destination, sys_sendmsg rewrites it with [::1] to be consistent with
+BSD (see "BSD'ism" comment in the code).
 
-[134.189505] Unable to handle kernel paging request at virtual address
-		006b6b6b6b6b6b6b
-[134.197553] Mem abort info:
-[134.200381]   ESR = 0x96000004
-[134.203487]   Exception class = DABT (current EL), IL = 32 bits
-[134.209497]   SET = 0, FnV = 0
-[134.212596]   EA = 0, S1PTW = 0
-[134.215777] Data abort info:
-[134.218701]   ISV = 0, ISS = 0x00000004
-[134.222596]   CM = 0, WnR = 0
-[134.225606] [006b6b6b6b6b6b6b] address between user and kernel address ranges
-[134.232851] Internal error: Oops: 96000004 [#1] SMP
-[134.237798] CPU: 21 PID: 27834 Comm: rmmod Kdump: loaded Tainted: G
-		OE     4.19.5-1.2.34.aarch64 #1
-[134.247856] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 10/24/2018
-[134.255181] pstate: 20000005 (nzCv daif -PAN -UAO)
-[134.260044] pc : hns_ae_put_handle+0x38/0x60
-[134.264372] lr : hns_ae_put_handle+0x24/0x60
-[134.268700] sp : ffff00001be93c50
-[134.272054] x29: ffff00001be93c50 x28: ffff802faaec8040
-[134.277442] x27: 0000000000000000 x26: 0000000000000000
-[134.282830] x25: 0000000056000000 x24: 0000000000000015
-[134.288284] x23: ffff0000096fe098 x22: ffff000001050070
-[134.293671] x21: ffff801fb3c044a0 x20: ffff80afb75ec098
-[134.303287] x19: ffff80afb75ec098 x18: 0000000000000000
-[134.312945] x17: 0000000000000000 x16: 0000000000000000
-[134.322517] x15: 0000000000000002 x14: 0000000000000000
-[134.332030] x13: dead000000000100 x12: ffff7e02bea3c988
-[134.341487] x11: ffff80affbee9e68 x10: 0000000000000000
-[134.351033] x9 : 6fffff8000008101 x8 : 0000000000000000
-[134.360569] x7 : dead000000000100 x6 : ffff000009579748
-[134.370059] x5 : 0000000000210d00 x4 : 0000000000000000
-[134.379550] x3 : 0000000000000001 x2 : 0000000000000000
-[134.388813] x1 : 6b6b6b6b6b6b6b6b x0 : 0000000000000000
-[134.397993] Process rmmod (pid: 27834, stack limit = 0x00000000d474b7fd)
-[134.408498] Call trace:
-[134.414611]  hns_ae_put_handle+0x38/0x60
-[134.422208]  hnae_put_handle+0xd4/0x108
-[134.429563]  hns_nic_dev_remove+0x60/0xc0 [hns_enet_drv]
-[134.438342]  platform_drv_remove+0x2c/0x70
-[134.445958]  device_release_driver_internal+0x174/0x208
-[134.454810]  driver_detach+0x70/0xd8
-[134.461913]  bus_remove_driver+0x64/0xe8
-[134.469396]  driver_unregister+0x34/0x60
-[134.476822]  platform_driver_unregister+0x20/0x30
-[134.485130]  hns_nic_dev_driver_exit+0x14/0x6e4 [hns_enet_drv]
-[134.494634]  __arm64_sys_delete_module+0x238/0x290
+This didn't work when cgroup-bpf was enabled though since the rewrite
+[::] -> [::1] happened before passing control to cgroup-bpf block where
+fl6.daddr was updated with passed by user sockaddr_in6.sin6_addr (that
+might or might not be changed by BPF program). That way if user passed
+[::] as dst IPv6 it was first rewritten with [::1] by original code from
+876c7f41, but then rewritten back with [::] by cgroup-bpf block.
 
-struct hnae_handle is a member of struct hnae_vf_cb, so when vf_cb is
-freed, than use hnae_handle will cause use after free panic.
+It happened even when BPF_CGROUP_UDP6_SENDMSG program was not present
+(CONFIG_CGROUP_BPF=y was enough).
 
-This patch frees vf_cb after hnae_handle used.
+The fix is to apply BSD'ism after cgroup-bpf block so that [::] is
+replaced with [::1] no matter where it came from: passed by user to
+sys_sendmsg or set by BPF_CGROUP_UDP6_SENDMSG program.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1cedee13d25a ("bpf: Hooks for sys_sendmsg")
+Reported-by: Nitin Rawat <nitin.rawat@intel.com>
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/ipv6/udp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
-index ad1779fc410e..a78bfafd212c 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
-@@ -147,12 +147,10 @@ static void hns_ae_put_handle(struct hnae_handle *handle)
- 	struct hnae_vf_cb *vf_cb = hns_ae_get_vf_cb(handle);
- 	int i;
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 76ba2f34ef6b..cab8b2b647f9 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1322,10 +1322,7 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+ 	ipc6.opt = opt;
  
--	vf_cb->mac_cb	 = NULL;
--
--	kfree(vf_cb);
--
- 	for (i = 0; i < handle->q_num; i++)
- 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
+ 	fl6.flowi6_proto = sk->sk_protocol;
+-	if (!ipv6_addr_any(daddr))
+-		fl6.daddr = *daddr;
+-	else
+-		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
++	fl6.daddr = *daddr;
+ 	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
+ 		fl6.saddr = np->saddr;
+ 	fl6.fl6_sport = inet->inet_sport;
+@@ -1353,6 +1350,9 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+ 		}
+ 	}
+ 
++	if (ipv6_addr_any(&fl6.daddr))
++		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
 +
-+	kfree(vf_cb);
- }
- 
- static int hns_ae_wait_flow_down(struct hnae_handle *handle)
+ 	final_p = fl6_update_dst(&fl6, opt, &final);
+ 	if (final_p)
+ 		connected = false;
 -- 
 2.19.1
 
