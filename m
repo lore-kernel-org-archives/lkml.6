@@ -2,46 +2,118 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94480C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E541C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6862A222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06932222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:51:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oU3+t2He"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731609AbfBMMuH (ORCPT
+        id S1731964AbfBMMvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:50:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:53132 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731306AbfBMMuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:50:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB34780D;
-        Wed, 13 Feb 2019 04:50:06 -0800 (PST)
-Received: from [10.162.43.147] (p8cg001049571a15.blr.arm.com [10.162.43.147])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 132273F557;
-        Wed, 13 Feb 2019 04:50:03 -0800 (PST)
-Subject: Re: [LSF/MM TOPIC] Non standard size THP
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <dcb0b2cf-ba5c-e6ef-0b05-c6006227b6a9@arm.com>
- <20190212083331.dtch7xubjxlmz5tf@kshutemo-mobl1>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <282f6d89-bcc2-2622-1205-7c43ba85c37e@arm.com>
-Date:   Wed, 13 Feb 2019 18:20:03 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 13 Feb 2019 07:51:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38590 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731246AbfBMMvr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 07:51:47 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so2351235wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:51:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jz9eDBzxbto7/P5w2n8EpMDPhjXWxWZu8ztcjYR1zcY=;
+        b=oU3+t2He0Or7p5wLCNZIHKhntHbHRSY6q95q73i3CZjuZiO7IFxumPROTlZD2ETVsR
+         edy8Wh9wf6+2/aPOeEHgRL8IVCP8CKO8lCgBi9xkUEiEHHDslz/yKX26TfHYYB+4tw6Y
+         ruU4EhzMYeDAiBFAEnq6N0SVjkV0Om+rf53IlsUoP+ukYQDx5KsjVQV7WCADQqoSA/eD
+         HutMmDwkGk5oxqEf5dNWrO4UqamL6d2AgdgTWR1xji5D38cX/KIizfWW8CJCGPJ+2h+5
+         x4/rFpSpmdziCL/VrSb+zNBAkBFQFSQp7JDnT9SRXBPM09ovaRQSw5kZB8dLanE7z3gc
+         PDTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Jz9eDBzxbto7/P5w2n8EpMDPhjXWxWZu8ztcjYR1zcY=;
+        b=MGS6osoYmh6evyZ+wFo6XlgKzKooGgpIeilMJCulvYZYzhxQ0/KW/TyElDfPbcN7p+
+         7SDdx3gFYskV0iotlI/7TLzs65KDav0CpFNYy4TYfAdDTFLMnkNU1NopQ/q5N5XO6rhw
+         nWX9wnnkOWLae4g5NiZ97dDIKr0tO/f1A4H+ouZct95dAqlX5qG8CYXoGgq08Cd8+Iua
+         QgYKl4/StlZlaIJ56MPNYg5rCBgy//AKomlzw7S9LBN+tYCMLh0JHBfKtkwyjdW7je65
+         Ou0p3QHWqjQWqrYnp+drJeIF3c4goRFrjyXXQmL2gscnfOp81Xk9XY62jIdW9VnZM70M
+         v9YA==
+X-Gm-Message-State: AHQUAuZDnlgpkWxZRF0F4ZcOLDU8EJ8/rtH3AyiBDfcDoBXO8OHHrp4i
+        AjDKkuuLNqCD+oLNksWENNBmKLGWSK0=
+X-Google-Smtp-Source: AHgI3IY74JpyfxdUq3iIfXkRHL32G8ePxnDxmEDIqSFS97ykJRVQPN+Bfe8MEPUNtaeG/pbE4HMTqw==
+X-Received: by 2002:a05:6000:1091:: with SMTP id y17mr249185wrw.317.1550062304412;
+        Wed, 13 Feb 2019 04:51:44 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id k4sm11772549wrp.8.2019.02.13.04.51.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 04:51:43 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] drm/msm/a6xx: Add support for an interconnect path
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     jcrouse@codeaurora.org, robdclark@gmail.com, evgreen@chromium.org,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20190212095238.12306-1-georgi.djakov@linaro.org>
+ <20190212101624.GA20915@kroah.com>
+ <99ab72bf-9e06-bcaf-85ec-33d4037a54cd@linaro.org>
+ <20190212143525.GA15405@kroah.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <5dd06ff3-4fe7-af11-33ef-6dc9ed5fd8a5@linaro.org>
+Date:   Wed, 13 Feb 2019 14:51:40 +0200
 MIME-Version: 1.0
-In-Reply-To: <20190212083331.dtch7xubjxlmz5tf@kshutemo-mobl1>
+In-Reply-To: <20190212143525.GA15405@kroah.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,93 +122,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 02/12/2019 02:03 PM, Kirill A. Shutemov wrote:
-> On Fri, Feb 08, 2019 at 07:43:57AM +0530, Anshuman Khandual wrote:
->> Hello,
+On 2/12/19 16:35, Greg KH wrote:
+> On Tue, Feb 12, 2019 at 04:07:35PM +0200, Georgi Djakov wrote:
+>> Hi Greg,
 >>
->> THP is currently supported for
+>> On 2/12/19 12:16, Greg KH wrote:
+>>> On Tue, Feb 12, 2019 at 11:52:38AM +0200, Georgi Djakov wrote:
+>>>> From: Jordan Crouse <jcrouse@codeaurora.org>
+>>>>
+>>>> Try to get the interconnect path for the GPU and vote for the maximum
+>>>> bandwidth to support all frequencies. This is needed for performance.
+>>>> Later we will want to scale the bandwidth based on the frequency to
+>>>> also optimize for power but that will require some device tree
+>>>> infrastructure that does not yet exist.
+>>>>
+>>>> v6: use icc_set_bw() instead of icc_set()
+>>>> v5: Remove hardcoded interconnect name and just use the default
+>>>> v4: Don't use a port string at all to skip the need for names in the DT
+>>>> v3: Use macros and change port string per Georgi Djakov
+>>>>
+>>>> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+>>>> Acked-by: Rob Clark <robdclark@gmail.com>
+>>>> Reviewed-by: Evan Green <evgreen@chromium.org>
+>>>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>>>> ---
+>>>>
+>>>> Hi Greg,
+>>>>
+>>>> If not too late, could you please take this patch into char-misc-next.
+>>>> It is adding the first consumer of the interconnect API. We are just
+>>>> getting the code in place, without making it functional yet, as some
+>>>> DT bits are still needed to actually enable it. We have Rob's Ack to
+>>>> merge this together with the interconnect code. This patch has already
+>>>> spent some time in linux-next without any issues.
+>>>
+>>> I have a question about the interconnect code.  Last week I saw a
+>>> presentation about the resctrl/RDT code from ARM that is coming (MPAM),
+>>> and it really looks like the same functionality as this interconnect
+>>> code.  In fact, this code looks like the existing resctrl stuff, right?
 >>
->> - PMD level pages (anon and file)
->> - PUD level pages (file - DAX file system)
+>> Thanks for the question! It's nice that MPAM is moving forward. When i
+>> looked into the MPAM draft spec an year ago, it was an optional
+>> extension mentioning mostly use-cases with VMs on server systems.
 >>
->> THP is a single entry mapping at standard page table levels (either PMD or PUD)
->>
->> But architectures like ARM64 supports non-standard page table level huge pages
->> with contiguous bits.
->>
->> - These are created as multiple entries at either PTE or PMD level
->> - These multiple entries carry pages which are physically contiguous
->> - A special PTE bit (PTE_CONT) is set indicating single entry to be contiguous
->>
->> These multiple contiguous entries create a huge page size which is different
->> than standard PMD/PUD level but they provide benefits of huge memory like
->> less number of faults, bigger TLB coverage, less TLB miss etc.
->>
->> Currently they are used as HugeTLB pages because
->>
->> 	- HugeTLB page sizes is carried in the VMA
->> 	- Page table walker can operate on multiple PTE or PMD entries given its size in VMA
->> 	- Irrespective of HugeTLB page size its operated with set_huge_pte_at() at any level
->> 	- set_huge_pte_at() is arch specific which knows how to encode multiple consecutive entries
->> 	
->> But not as THP huge pages because
->>
->> 	- THP size is not encoded any where like VMA
->> 	- Page table walker expects it to be either at PUD (HPAGE_PUD_SIZE) or at PMD (HPAGE_PMD_SIZE)
->> 	- Page table operates directly with set_pmd_at() or set_pud_at()
->> 	- Direct faulted or promoted huge pages is verified with [pmd|pud]_trans_huge()
->>
->> How non-standard huge pages can be supported for THP
->>
->> 	- THP starts recognizing non standard huge page (exported by arch) like HPAGE_CONT_(PMD|PTE)_SIZE
->> 	- THP starts operating for either on HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE or HPAGE_CONT_PTE_SIZE
->> 	- set_pmd_at() only recognizes HPAGE_PMD_SIZE hence replace set_pmd_at() with set_huge_pmd_at()
->> 	- set_huge_pmd_at() could differentiate between HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE
->> 	- In case for HPAGE_CONT_PTE_SIZE extend page table walker till PTE level
->> 	- Use set_huge_pte_at() which can operate on multiple contiguous PTE bits
+>> But anyway, MPAM is only available for ARMv8.2+ cores as an optional
+>> extension and aarch32 is not supported. In contrast to that, the
+>> interconnect code is generic and does not put any limitations on the
+>> platform/architecture that can use it - just the platform specific
+>> implementation would be different. We have discussed in that past that
+>> it can be used even on x86 platforms to provide hints to firmware.
 > 
-> You only listed trivial things. All tricky stuff is what make THP
-> transparent.
+> Yes, but resctrl is arch independant.  It's not the "backend" that I'm
+> concerned about, it's the userspace and in-kernel api that I worry
+> about.
 
-Agreed. I was trying to draw an analogy from HugeTLB with respect to page
-table creation and it's walking. Huge page collapse and split on such non
-standard huge pages will involve taking care of much details.
+Agree that resctrl is now arch independent, but it looks to me that
+resctrl serves for a different purpose. It may sound that the have
+similarities related to bandwidth management, but they are completely
+different and resctrl does not seem suitable for managing interconnects
+on a system-on-chip systems. If i understand correctly, the resctrl is
+about monitoring and controlling system resources like cache, memory
+bandwidth, L2, L3, that are used by applications, VMs and containers in
+a CPU centric approach. It does this by making use of some CPU hardware
+features and expose this via a file-system to be controlled from userspace.
 
+>>> So why shouldn't we just drop the interconnect code and use resctrl
+>>> instead as it's already merged?
+>>
+>> I haven't seen any MPAM code so far, but i assume that we can have an
+>> interconnect provider that implements this MPAM extension for systems
+>> that support it (and want to use it). Currently there are people working
+>> on various interconnect platform drivers from 5 different SoC vendors
+>> and we have agreed to use a common DT bindings (and API). I doubt that
+>> even a single one of these platforms is based on v8.2+. Probably such
+>> SoCs would be coming in the future and then i expect people making use
+>> of MPAM in some interconnect provider driver.
 > 
-> To consider it seriously we need to understand what it means for
-> split_huge_p?d()/split_huge_page()? How khugepaged will deal with this?
+> Again, don't focus on MPAM as-is, it's the resctrl api that I would like
+> to see explained why interconnect can't use.
 
-Absolutely. Can these operate on non standard probably multi entry based
-huge pages ? How to handle atomicity etc.
+While resctrl can work for managing for example a CPU to memory
+bandwidth for processes, this is not enough for the bigger picture if
+you have a whole system-on-chip topology with distributed hardware
+components talking to each other. The "Linux" CPU might not be even the
+central arbiter in such topologies. The interconnect code does not
+support interaction with userspace.
 
-> 
-> In particular, I'm worry to expose (to user or CPU) page table state in
-> the middle of conversion (huge->small or small->huge). Handling this on
-> page table level provides a level atomicity that you will not have.
+Some reasons why the interconnect code can't use the resctrl api now:
+- The distributed hardware components need to express their needs for
+which interconnect path and how much bandwidth they want to use, in
+order to tune the whole system's (system-on-chip) performance in the
+most optimal state. The interconnect code does this with a
+consumer-provider API.
+- Custom aggregation of the consumer requests needs to be done based on
+the topology. SoCs may use different aggregation formula, depending for
+example on whether they are using a simple hierarchical bus, a crossbar
+or some network-on-chip. When the NoC concept is used, there is
+interleaved traffic that needs to be aggregated and an interconnect path
+can span across multiple clock domains (allowing each functional unit to
+have it's own clock domain).
+- Support for complex topologies is needed - multi-tiered buses with
+devices having multiple paths between each other. The device may choose
+which path to use depending on the needs or use even multiple for
+load-balancing.
+- A topology changes should be supported with an API - there are FPGA
+boards that can change their topology.
 
-I understand it might require a software based lock instead of standard HW
-atomicity constructs which will make it slow but is that even possible ?
+I looked at the existing resctrl code and at some in-flight patches, but
+it doesn't feel right to me to use resctrl. I don't think much of it can
+be reused or extended without very significant changes that would
+probably twist resctrl away from it's original purpose (and maybe
+conflict with it).
 
-> 
-> Honestly, I'm very skeptical about the idea. It took a lot of time to
-> stabilize THP for singe page size, equal to PMD page table, but this looks
-> like a new can of worms. :P
+TL;DR: The functionality of resctrl and interconnect code is different -
+resctrl seems to be about monitoring/managing/enforcing the usage of
+resources shared by one or more CPUs, the interconnect code is more
+about system-on-chip systems allowing various modules (GPU, DSP, modem,
+WiFi, bluetooth, {en,de}coders, camera, ethernet, etc.) to express their
+bandwidth needs in order to improve the power efficiency of the whole SoC.
 
-I understand your concern here but HW providing some more TLB sizes beyond
-standard page table level (PMD/PUD/PGD) based huge pages can help achieve
-performance improvement when the buddy is already fragmented enough not to
-provide higher order pages. PUD THP file mapping is already supported for
-DAX and PUD THP anon mapping might be supported in near future (it is not
-much challenging other than allocating HPAGE_PUD_SIZE huge page at runtime
-will be much difficult). Around PMD sizes like HPAGE_CONT_PMD_SIZE or
-HPAGE_CONT_PTE_SIZE really have better chances as future non-PMD level anon
-mapping than a PUD size anon mapping support in THP.
+Hope that this addressed your concerns.
 
-> 
-> It *might* be possible to support it for DAX, but beyond that...
->
-
-Did not get that. Why would you think that this is possible or appropriate
-only for DAX file mapping but not for anon mapping ?
+Thanks,
+Georgi
