@@ -2,98 +2,99 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C234C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E0EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA1C222B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6252222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:21:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nANY/kzs"
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="muAiGkfA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731832AbfBMORV (ORCPT
+        id S1732118AbfBMOVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:17:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43938 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBMORV (ORCPT
+        Wed, 13 Feb 2019 09:21:13 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35324 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731306AbfBMOVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:17:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g/rY88dwSNgbI6IugayxPvzdNhP0vcbds2CwH0My2R8=; b=nANY/kzsxnA2sMgFWRcxl84RF
-        n7xpk9vO/3NldWgY6XbNt8qNpFT8U9qnKo/hD3V2vL++wJsjG1mTc2ZFsOI73xnvi7tMJgw0acaXn
-        N+xjP/EJSRPnpP3eVbEAvRWvvotZ/hnKgZdo8M9HofQY9pZJcxZaK63Pm/WIrIi8Q0jMU3eIN4Rco
-        EhkwKvV3rdI0Ha7Jd7N7VbmS6oC3VwRqFzJDNH/mbbfTy9I4oZXrIXFuLK5//zxw5eEjQjm9RjT5F
-        WNYOAO4dm6SFvdjr72bsQJc0LLxQIki3QARfvTaTWx5fnq6XBAkiB7ft4khObn2FIlJfXWKpx6Xcr
-        obAwfKlkA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtvLf-00012z-Vt; Wed, 13 Feb 2019 14:17:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E50C520F51B0C; Wed, 13 Feb 2019 15:17:12 +0100 (CET)
-Date:   Wed, 13 Feb 2019 15:17:12 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com, hpa@zytor.com,
-        valentin.schneider@arm.com
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-Message-ID: <20190213141712.GV32494@hirez.programming.kicks-ass.net>
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
- <20190211134527.GA121589@gmail.com>
- <20190211135159.GC32511@hirez.programming.kicks-ass.net>
- <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
- <20190213103553.GO32494@hirez.programming.kicks-ass.net>
- <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
- <20190213131720.GU32494@hirez.programming.kicks-ass.net>
- <20190213140025.GB6346@brain-police>
+        Wed, 13 Feb 2019 09:21:13 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so1484735vsc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 06:21:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gBgeo3jT47/cB1TRoOn0GG0vfX0G94Ze9DPtiEyWnno=;
+        b=muAiGkfAgvj7ze14eyCq9V6CndfS5vRb8qAMvqly2a1RE0CXmaUL6uTUixOXE+G6cl
+         pIlysvQzSHcbuSgyL8iHTrKxdLIxB9eirQr+AB/i2Gna6N6ao3VDphM8fSYvxWyoM1vN
+         3MWeY4kIdH38Ffv4JbERXnYofuvdqcW3cmcZ93YCTOf+ld0w5KksBELg/tvoCX6wqAWH
+         ZMHBagnt07FR5K1ZwkI22h4fPM30pHEKf0yNkfFvToOyk2uUZRjb4Nk/p+UTFCgbZPXw
+         5Zb7nPgPCLgtYLgDCNGmYsINk9NhyAZa0b18EEH3nrA2WT6J/KnsCzJWdchyjxdyNe8Q
+         rdbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gBgeo3jT47/cB1TRoOn0GG0vfX0G94Ze9DPtiEyWnno=;
+        b=Up932m0OEnTHgcufOhWg7kutvFC+54EmvZNfZvJwjdYnOmnS0kQR78Dh4eyRBXl4N+
+         2RCpNrCgIs8wg3prgG8XS4fJu7vhI0J2vc+mYotAnsEHXiN+oMXlhvx3MGGMLBp1eRZy
+         0vL2wUY+sC4QV8SnOuP4kAA8b2ZPw5ChMSu9F21L4O82M3AI4hkOCgBCkFtvY6S2m/VY
+         Jca0qy0em6skor3xGCfY4Iu1LdQoshlQSa6qf1xUFIIPWpsbkxe6Kl3g1nFJX8QAaQA9
+         QAMj46JDcGGe7ey6avq3THiSMoRRPF9rqed1GNMrRCrm50duwzfqMpMvMRv69OAai5TP
+         BsMg==
+X-Gm-Message-State: AHQUAub5POfqAbDirkgw2zQ1PXEIHWXfG5N982WFkWrCKxkUZP9pkxtJ
+        A76Fq5AqeiP3/3NCRBJ/D8OFq/vkn8kfDHggK1C9JQ==
+X-Google-Smtp-Source: AHgI3IZGnFUv8HvcwcAzQwJdCtu68nji5drK6KddWOwiRyuTQ889STlbnh5dyrPCgDq8kRg5H5mx2E+6QsDrKfd8kqk=
+X-Received: by 2002:a67:f557:: with SMTP id z23mr300434vsn.4.1550067672526;
+ Wed, 13 Feb 2019 06:21:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213140025.GB6346@brain-police>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190211143052.3128-1-bsz@semihalf.com> <20190211143052.3128-5-bsz@semihalf.com>
+ <20190213112640.GI7087@linux.intel.com>
+In-Reply-To: <20190213112640.GI7087@linux.intel.com>
+From:   Bartosz Szczepanek <bsz@semihalf.com>
+Date:   Wed, 13 Feb 2019 15:21:01 +0100
+Message-ID: <CABLO=+ne=dfrMiqmmxV_xOPt7QKiwSgnmokgod6ZMn4PZeahvg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] efi/libstub/tpm: Retrieve TPM event log in 2.0 format
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
+        mingo@kernel.org, hdegoede@redhat.com,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:00:26PM +0000, Will Deacon wrote:
-> > This; how is getting preempted fundamentally different from scheduling
-> > ourselves?
-> 
-> The difference is because getting preempted in the sequence above is
-> triggered off the back of an interrupt. On arm64, and I think also on x86,
-> the user access state (SMAP or PAN) is saved and restored across exceptions
-> but not across context switch. Consequently, taking an irq in a
-> user_access_{begin,end} section and then scheduling is fine, but calling
-> schedule directly within such a section is not.
+On Wed, Feb 13, 2019 at 12:26 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> Collides with Matthew's changes. I want to land those change first
+> because they are almost production ready.
+>
+> Maybe you should consider reviewing those changes to make sure that
+> they make sense to you so that you can build these on top of after
+> these have landed.
 
-So how's this then:
+Yeah, I think so. Actually, I wasn't aware of Matthew's efforts, as it
+didn't appear on linux-efi mailing list. (On bad, I haven't checked
+linux-integrity.)
 
-	if (user_access_begin()) {
+At this point, I think it makes more sense to limit this patchset to
+5/5 patch, which makes TPM event log initialized on ARM platforms.
+Patches 1-4 introduce nothing more than Matthew already did, maybe
+except putting calc_tpm2_event_size to a library instead of making it
+inline. This function has already grown a bit so it may be a better
+approach, but that's nothing to affect functionality.
 
-		preempt_disable();
+I'll pull Matthew changes to my tree to confirm operation on ARM
+platforms, if that works fine the only thing to merge would be 5/5 +
+optionally the library change, if we reach agreement on that.
 
-		<IRQ>
-			set_need_resched();
-		</IRQ no preempt>
-
-		preempt_enable()
-		  __schedule();
-
-		user_access_end();
-	}
-
-That _should_ work just fine but explodes with the proposed nonsense.
+Bartosz
