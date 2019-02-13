@@ -2,97 +2,190 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994DBC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B80C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D05222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31AA0222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550070449;
+	bh=uOCdBJs/k/DikWGzoXILqmP1QrmQOgHrs7BMqLTb/es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SL5x0u9NKyCzQFFI/7s8M7mDAsQD1TRZ+5gGV6rZ+PAxEeCvwRFS1/PrClu51Bcne
+	 rx/UjI1bAvF60NaKFl8Dzv58Uba4jFyGpvDUbqGYo/fYicVPbuIcULXhuZZFl2c9v5
+	 XWIkqgWxjnG3fCExYBV5kth5xd89bSREv4XR+u7Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390717AbfBMPGf (ORCPT
+        id S2387567AbfBMPH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:06:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726317AbfBMPGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:06:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AA3C4AE7F;
-        Wed, 13 Feb 2019 15:06:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B2BDC1E09CD; Wed, 13 Feb 2019 16:06:32 +0100 (CET)
-Date:   Wed, 13 Feb 2019 16:06:32 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Doug Ledford <dledford@redhat.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190213150632.GB26828@quack2.suse.cz>
-References: <20190211180654.GB24692@ziepe.ca>
- <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
- <20190211182649.GD24692@ziepe.ca>
- <20190211184040.GF12668@bombadil.infradead.org>
- <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com>
- <20190211204945.GF24692@ziepe.ca>
- <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
- <20190211210956.GG24692@ziepe.ca>
- <20190212163433.GD19076@quack2.suse.cz>
- <01000168e2a26936-eb7cef59-9772-4a76-b7f3-a7fdc864fa72-000000@email.amazonses.com>
+        Wed, 13 Feb 2019 10:07:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbfBMPH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:07:26 -0500
+Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C649222C2;
+        Wed, 13 Feb 2019 15:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550070445;
+        bh=uOCdBJs/k/DikWGzoXILqmP1QrmQOgHrs7BMqLTb/es=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=biQ+NnN+tg1ZIjk2cwb0j/ehhjs7eTiaV+NLd+uAPocDFQyYKS4SoRAhmhPv61gsF
+         Tu8jOUu4O9wPIHPozU4ElCNkbQeZvKrqkPEI+Ad7mBmr5lWj9kQUmIqerZazLral61
+         g7iolxP6fmse3JvkBLaLU/tRtyLaW/5h/YSOfM1o=
+Date:   Wed, 13 Feb 2019 09:07:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH V3 2/5] genirq/affinity: store irq set vectors in 'struct
+ irq_affinity'
+Message-ID: <20190213150723.GC96272@google.com>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+ <20190213105041.13537-3-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01000168e2a26936-eb7cef59-9772-4a76-b7f3-a7fdc864fa72-000000@email.amazonses.com>
+In-Reply-To: <20190213105041.13537-3-ming.lei@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12-02-19 16:55:21, Christopher Lameter wrote:
-> On Tue, 12 Feb 2019, Jan Kara wrote:
+On Wed, Feb 13, 2019 at 06:50:38PM +0800, Ming Lei wrote:
+> Currently the array of irq set vectors is provided by driver.
 > 
-> > > Isn't that already racy? If the mmap user is fast enough can't it
-> > > prevent the page from becoming freed in the first place today?
-> >
-> > No, it cannot. We block page faulting for the file (via a lock), tear down
-> > page tables, free pages and blocks. Then we resume faults and return
-> > SIGBUS (if the page ends up being after the new end of file in case of
-> > truncate) or do new page fault and fresh block allocation (which can end
-> > with SIGBUS if the filesystem cannot allocate new block to back the page).
+> irq_create_affinity_masks() can be simplied a bit by treating the
+> non-irq-set case as single irq set.
+
+s/simplied a bit/simplified/
+
+> So move this array into 'struct irq_affinity', and pre-define the max
+> set number as 4, which should be enough for normal cases.
+
+s/irq/IRQ/
+You have a real mixture of capitalization across the changelogs.
+
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  drivers/nvme/host/pci.c   |  5 ++---
+>  include/linux/interrupt.h |  6 ++++--
+>  kernel/irq/affinity.c     | 18 +++++++++++-------
+>  3 files changed, 17 insertions(+), 12 deletions(-)
 > 
-> Well that is already pretty inconsistent behavior. Under what conditions
-> is the SIGBUS occurring without the new fault attempt?
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 022ea1ee63f8..0086bdf80ea1 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2081,12 +2081,11 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
+>  static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(dev->dev);
+> -	int irq_sets[2];
+>  	struct irq_affinity affd = {
+>  		.pre_vectors = 1,
+> -		.nr_sets = ARRAY_SIZE(irq_sets),
+> -		.sets = irq_sets,
+> +		.nr_sets = 2,
+>  	};
+> +	int *irq_sets = affd.set_vectors;
+>  	int result = 0;
+>  	unsigned int irq_queues, this_p_queues;
+>  
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 1ed1014c9684..a20150627a32 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -259,6 +259,8 @@ struct irq_affinity_notify {
+>  	void (*release)(struct kref *ref);
+>  };
+>  
+> +#define	IRQ_MAX_SETS  4
 
-I probably didn't express myself clearly enough. I didn't say that SIGBUS
-can occur without a page fault. The evaluation of whether a page would be
-beyond EOF, page allocation, and block allocation happen only in response
-to a page fault...
+This is a pretty generic name.  Maybe it should include a hint that it's
+related to affinity?
 
-> If a new fault is attempted then we have resource constraints that could
-> have caused a SIGBUS independently of the truncate. So that case is not
-> really something special to be considered for truncation.
-
-Agreed. I was just reacting to Jason's question whether an application
-cannot prevent page freeing by being aggressive enough.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  /**
+>   * struct irq_affinity - Description for automatic irq affinity assignements
+>   * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
+> @@ -266,13 +268,13 @@ struct irq_affinity_notify {
+>   * @post_vectors:	Don't apply affinity to @post_vectors at end of
+>   *			the MSI(-X) vector space
+>   * @nr_sets:		Length of passed in *sets array
+> - * @sets:		Number of affinitized sets
+> + * @set_vectors:	Number of affinitized sets
+>   */
+>  struct irq_affinity {
+>  	int	pre_vectors;
+>  	int	post_vectors;
+>  	int	nr_sets;
+> -	int	*sets;
+> +	int	set_vectors[IRQ_MAX_SETS];
+>  };
+>  
+>  /**
+> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> index 9200d3b26f7d..b868b9d3df7f 100644
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -244,7 +244,7 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+>  	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+>  	int curvec, usedvecs;
+>  	struct irq_affinity_desc *masks = NULL;
+> -	int i, nr_sets;
+> +	int i;
+>  
+>  	/*
+>  	 * If there aren't any vectors left after applying the pre/post
+> @@ -253,6 +253,9 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+>  	if (nvecs == affd->pre_vectors + affd->post_vectors)
+>  		return NULL;
+>  
+> +	if (affd->nr_sets > IRQ_MAX_SETS)
+> +		return NULL;
+> +
+>  	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+>  	if (!masks)
+>  		return NULL;
+> @@ -264,12 +267,13 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+>  	 * Spread on present CPUs starting from affd->pre_vectors. If we
+>  	 * have multiple sets, build each sets affinity mask separately.
+>  	 */
+> -	nr_sets = affd->nr_sets;
+> -	if (!nr_sets)
+> -		nr_sets = 1;
+> +	if (!affd->nr_sets) {
+> +		affd->nr_sets = 1;
+> +		affd->set_vectors[0] = affvecs;
+> +	}
+>  
+> -	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
+> -		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
+> +	for (i = 0, usedvecs = 0; i < affd->nr_sets; i++) {
+> +		int this_vecs = affd->set_vectors[i];
+>  		int ret;
+>  
+>  		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+> @@ -316,7 +320,7 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
+>  		int i;
+>  
+>  		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
+> -			set_vecs += affd->sets[i];
+> +			set_vecs += affd->set_vectors[i];
+>  	} else {
+>  		get_online_cpus();
+>  		set_vecs = cpumask_weight(cpu_possible_mask);
+> -- 
+> 2.9.5
+> 
