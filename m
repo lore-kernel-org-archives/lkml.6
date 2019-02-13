@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D4CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6B8C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966AE222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF14222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:42:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083323;
-	bh=sj2qkLFgJ4p0agvdsoV+AA3uZ4qE3Sk8oBucavObodI=;
+	s=default; t=1550083326;
+	bh=Y3k9zW6QjyRBWrBRWmAILogTdqbxRarzHfmmILCrG2M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NyHVtidlMd/a8x7Uv6S8W7/P6n8DjHve07qcshEbXfRag7TF6S0nT9SJOKMW956AQ
-	 mCeWAuFIsstnWui+soyzQGKIXz30ZJmL6DwuBJ5VgKlMj/70hqhj/5xn9t3dfePKId
-	 1qiYktmvKsNKpaWmZlFyy2pDfOXKigDplKsoiwsw=
+	b=WHNC95SS/dy7a+GNRQbG8uWTCe+0GA8TUDRDZB3HeCqMYB4tx4c1N6iJKK+rXamL1
+	 iAKyfMJYWFni4RPCiAfj5qLnBCsRenJ4KdD7oUcbeERKppwdCIUbQqDi7DGO4BXZqo
+	 VJwaqc31GuT6PLIoyI8e/S72mXq7gFB2j//dInaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393915AbfBMSmC (ORCPT
+        id S2405576AbfBMSmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:42:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40456 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:42:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405569AbfBMSmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:42:00 -0500
+        id S2393914AbfBMSmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:42:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8798222D5;
-        Wed, 13 Feb 2019 18:41:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93862222D6;
+        Wed, 13 Feb 2019 18:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083319;
-        bh=sj2qkLFgJ4p0agvdsoV+AA3uZ4qE3Sk8oBucavObodI=;
+        s=default; t=1550083322;
+        bh=Y3k9zW6QjyRBWrBRWmAILogTdqbxRarzHfmmILCrG2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aFfMwMemCjRLAFN8pPksEQOz65I11lHyW7h4z0XqzGg1i4X6IhOhYy8YAw75HoHYO
-         aZ/hCNeQy5CzxxH/qzKZUulPXtIH3jcGLVelj0SQGkkUydEVFY0pyKaFadBVIzum/x
-         tYiGGX9ENETbbZcVfmV+I2DkrnM1v/KHJp3vZA8s=
+        b=RwkpJOSVUD4hVaHuQ8luwb5dJSQucS31bzR+KKTERdEFKjVn37sPBSISwn54Jh715
+         9GhBXigb0FvJiG01/ku6P8ECnMiHTJXBkMnzArzSr7ovAXxC5NPivte1SGH+jk6ieJ
+         UcTbNVQGh7JtZncgI34dADFInkmU2CbwfddMGQgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
-        Mike Christie <mchristi@redhat.com>,
         Xiubo Li <xiubli@redhat.com>,
+        Hailong Liu <liu.hailong6@zte.com.cn>,
+        Jiang Biao <jiang.biao2@zte.com.cn>,
         Tommi Rantala <tommi.t.rantala@nokia.com>
-Subject: [PATCH 4.14 32/35] uio: fix crash after the device is unregistered
-Date:   Wed, 13 Feb 2019 19:38:27 +0100
-Message-Id: <20190213183707.496880685@linuxfoundation.org>
+Subject: [PATCH 4.14 33/35] uio: fix wrong return value from uio_mmap()
+Date:   Wed, 13 Feb 2019 19:38:28 +0100
+Message-Id: <20190213183707.531196774@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -68,261 +68,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Hailong Liu <liu.hailong6@zte.com.cn>
 
-commit 57c5f4df0a5a0ee83df799991251e2ee93a5e4e9 upstream.
+commit e7de2590f18a272e63732b9d519250d1b522b2c4 upstream.
 
-For the target_core_user use case, after the device is unregistered
-it maybe still opened in user space, then the kernel will crash, like:
+uio_mmap has multiple fail paths to set return value to nonzero then
+goto out. However, it always returns *0* from the *out* at end, and
+this will mislead callers who check the return value of this function.
 
-[  251.163692] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[  251.163820] IP: [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.163965] PGD 8000000062694067 PUD 62696067 PMD 0
-[  251.164097] Oops: 0000 [#1] SMP
-...
-[  251.165605]  e1000 mptscsih mptbase drm_panel_orientation_quirks dm_mirror dm_region_hash dm_log dm_mod
-[  251.166014] CPU: 0 PID: 13380 Comm: tcmu-runner Kdump: loaded Not tainted 3.10.0-916.el7.test.x86_64 #1
-[  251.166381] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  251.166747] task: ffff971eb91db0c0 ti: ffff971e9e384000 task.ti: ffff971e9e384000
-[  251.167137] RIP: 0010:[<ffffffffc0736213>]  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.167563] RSP: 0018:ffff971e9e387dc8  EFLAGS: 00010282
-[  251.167978] RAX: 0000000000000000 RBX: ffff971e9e3f8000 RCX: ffff971eb8368d98
-[  251.168408] RDX: ffff971e9e3f8000 RSI: ffffffffc0738084 RDI: ffff971e9e3f8000
-[  251.168856] RBP: ffff971e9e387dd0 R08: ffff971eb8bc0018 R09: 0000000000000000
-[  251.169296] R10: 0000000000001000 R11: ffffffffa09d444d R12: ffffffffa1076e80
-[  251.169750] R13: ffff971e9e387f18 R14: 0000000000000001 R15: ffff971e9cfb1c80
-[  251.170213] FS:  00007ff37d175880(0000) GS:ffff971ebb600000(0000) knlGS:0000000000000000
-[  251.170693] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  251.171248] CR2: 0000000000000008 CR3: 00000000001f6000 CR4: 00000000003607f0
-[  251.172071] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  251.172640] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  251.173236] Call Trace:
-[  251.173789]  [<ffffffffa0c9b2d3>] dev_attr_show+0x23/0x60
-[  251.174356]  [<ffffffffa0f561b2>] ? mutex_lock+0x12/0x2f
-[  251.174892]  [<ffffffffa0ac6d9f>] sysfs_kf_seq_show+0xcf/0x1f0
-[  251.175433]  [<ffffffffa0ac54e6>] kernfs_seq_show+0x26/0x30
-[  251.175981]  [<ffffffffa0a63be0>] seq_read+0x110/0x3f0
-[  251.176609]  [<ffffffffa0ac5d45>] kernfs_fop_read+0xf5/0x160
-[  251.177158]  [<ffffffffa0a3d3af>] vfs_read+0x9f/0x170
-[  251.177707]  [<ffffffffa0a3e27f>] SyS_read+0x7f/0xf0
-[  251.178268]  [<ffffffffa0f648af>] system_call_fastpath+0x1c/0x21
-[  251.178823] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 53 48 89 d3 e8 7e 96 56 e0 48 8b 80 d8 02 00 00 48 89 df 48 c7 c6 84 80 73 c0 <48> 8b 50 08 31 c0 e8 e2 67 44 e0 5b 48 98 5d c3 0f 1f 00 66 2e
-[  251.180115] RIP  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.180820]  RSP <ffff971e9e387dc8>
-[  251.181473] CR2: 0000000000000008
-
-CC: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-CC: Mike Christie <mchristi@redhat.com>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Fixes: 57c5f4df0a5a0ee ("uio: fix crash after the device is unregistered")
+CC: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/uio/uio.c |  104 +++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 88 insertions(+), 16 deletions(-)
+ drivers/uio/uio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/uio/uio.c
 +++ b/drivers/uio/uio.c
-@@ -215,7 +215,20 @@ static ssize_t name_show(struct device *
- 			 struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->name);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->name);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(name);
+@@ -816,7 +816,7 @@ static int uio_mmap(struct file *filep,
  
-@@ -223,7 +236,20 @@ static ssize_t version_show(struct devic
- 			    struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->version);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->version);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(version);
- 
-@@ -417,11 +443,15 @@ EXPORT_SYMBOL_GPL(uio_event_notify);
- static irqreturn_t uio_interrupt(int irq, void *dev_id)
- {
- 	struct uio_device *idev = (struct uio_device *)dev_id;
--	irqreturn_t ret = idev->info->handler(irq, idev->info);
-+	irqreturn_t ret;
-+
-+	mutex_lock(&idev->info_lock);
- 
-+	ret = idev->info->handler(irq, idev->info);
- 	if (ret == IRQ_HANDLED)
- 		uio_event_notify(idev->info);
- 
-+	mutex_unlock(&idev->info_lock);
- 	return ret;
- }
- 
-@@ -462,6 +492,12 @@ static int uio_open(struct inode *inode,
- 	filep->private_data = listener;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		mutex_unlock(&idev->info_lock);
-+		ret = -EINVAL;
-+		goto err_alloc_listener;
-+	}
-+
- 	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
+ out:
  	mutex_unlock(&idev->info_lock);
-@@ -592,6 +628,11 @@ static ssize_t uio_write(struct file *fi
- 	s32 irq_on;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		retval = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (!idev->info || !idev->info->irq) {
- 		retval = -EIO;
- 		goto out;
-@@ -637,10 +678,20 @@ static int uio_vma_fault(struct vm_fault
- 	struct page *page;
- 	unsigned long offset;
- 	void *addr;
-+	int ret = 0;
-+	int mi;
- 
--	int mi = uio_find_mem_index(vmf->vma);
--	if (mi < 0)
--		return VM_FAULT_SIGBUS;
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
-+
-+	mi = uio_find_mem_index(vmf->vma);
-+	if (mi < 0) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
- 
- 	/*
- 	 * We need to subtract mi because userspace uses offset = N*PAGE_SIZE
-@@ -655,7 +706,11 @@ static int uio_vma_fault(struct vm_fault
- 		page = vmalloc_to_page(addr);
- 	get_page(page);
- 	vmf->page = page;
 -	return 0;
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+
 +	return ret;
- }
- 
- static const struct vm_operations_struct uio_logical_vm_ops = {
-@@ -680,6 +735,7 @@ static int uio_mmap_physical(struct vm_a
- 	struct uio_device *idev = vma->vm_private_data;
- 	int mi = uio_find_mem_index(vma);
- 	struct uio_mem *mem;
-+
- 	if (mi < 0)
- 		return -EINVAL;
- 	mem = idev->info->mem + mi;
-@@ -721,30 +777,46 @@ static int uio_mmap(struct file *filep,
- 
- 	vma->vm_private_data = idev;
- 
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	mi = uio_find_mem_index(vma);
--	if (mi < 0)
--		return -EINVAL;
-+	if (mi < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	requested_pages = vma_pages(vma);
- 	actual_pages = ((idev->info->mem[mi].addr & ~PAGE_MASK)
- 			+ idev->info->mem[mi].size + PAGE_SIZE -1) >> PAGE_SHIFT;
--	if (requested_pages > actual_pages)
--		return -EINVAL;
-+	if (requested_pages > actual_pages) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	if (idev->info->mmap) {
- 		ret = idev->info->mmap(idev->info, vma);
--		return ret;
-+		goto out;
- 	}
- 
- 	switch (idev->info->mem[mi].memtype) {
- 		case UIO_MEM_PHYS:
--			return uio_mmap_physical(vma);
-+			ret = uio_mmap_physical(vma);
-+			break;
- 		case UIO_MEM_LOGICAL:
- 		case UIO_MEM_VIRTUAL:
--			return uio_mmap_logical(vma);
-+			ret = uio_mmap_logical(vma);
-+			break;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
- 	}
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return 0;
  }
  
  static const struct file_operations uio_fops = {
-@@ -943,12 +1015,12 @@ void uio_unregister_device(struct uio_in
- 
- 	uio_free_minor(idev);
- 
-+	mutex_lock(&idev->info_lock);
- 	uio_dev_del_attributes(idev);
- 
- 	if (info->irq && info->irq != UIO_IRQ_CUSTOM)
- 		free_irq(info->irq, idev);
- 
--	mutex_lock(&idev->info_lock);
- 	idev->info = NULL;
- 	mutex_unlock(&idev->info_lock);
- 
 
 
