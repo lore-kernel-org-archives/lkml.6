@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16030C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4054FC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA394222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108D8222CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025614;
-	bh=TnEGSoTVVCn7tMIT4f4oBmz+dWl2DI0Q7yJ0fJTxL3o=;
+	s=default; t=1550025618;
+	bh=vVS6lAQzDXAktnPEMGAfPEIjQ1VcVA7sI9x3R6YY47I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R0pN+f8vmwsad5gfNdkfiA8uLQGz9xb+TeW/VQMhXIbZYbh18Scoeg4hXKxAk0OEd
-	 Ad4sEfPfYmQhkdEwYq4nIw9rYazYMJPXygZo8vLYgBbvH48zmEptvol2hFQIAPPMWx
-	 pVDNg1BgZQW6Evq1ud+woUO9s9OrVD8kho5T4/54=
+	b=BngtyPx3uFx9/jSuBeOirfQuBMrSbWG++L6QjSUQbbUKS+EiBjHoUnHMryZHxX7Th
+	 KQbtt+qig0RQnHsFJ6z6keGa+KA2zf6GOGNeTiaR3vX4NylRWTd4U7kzl3eQXO2iYt
+	 W1eI28WMUCMeKAQM/mU1j9TwYuvXs4XvVca9N5s0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388931AbfBMCkM (ORCPT
+        id S2388947AbfBMCkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:40:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:40:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388907AbfBMCkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:08 -0500
+        id S2388926AbfBMCkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2389222C2;
-        Wed, 13 Feb 2019 02:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8021222C2;
+        Wed, 13 Feb 2019 02:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025607;
-        bh=TnEGSoTVVCn7tMIT4f4oBmz+dWl2DI0Q7yJ0fJTxL3o=;
+        s=default; t=1550025611;
+        bh=vVS6lAQzDXAktnPEMGAfPEIjQ1VcVA7sI9x3R6YY47I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eNxqP+rjkXi9bKjnlkyj7x/XDij8n7Ag33W8yLgIGdbBjYyb1L8qYjD7eT+0Csg9A
-         3pABX7gSM6ydnodbfHfPOea2Lia7c9JOhSDG2l+1+Ona1N7vyiXoPY3ErRboF8A03U
-         0VfZ7Ang25dQGZISgAgHVk75XoX1B+e2ls3SrvvI=
+        b=nqrIuqPVf3iclP0KiWvcOJ1gBjgNp+nTqALGHrbBObFy48v6wegxFkv/hcopLBjaN
+         PSSZLDm7ilsO4kPGrnj6T5tuXfyJ7+P/QDBASmHeSxX4IVH4R1amIabpma2voM3AUh
+         uRsFYzxrfUAZDVydLGrKG2sOmh4KA00EXSFo1b2E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Denis Bolotin <dbolotin@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 13/34] qed: Fix qed_chain_set_prod() for PBL chains with non power of 2 page count
-Date:   Tue, 12 Feb 2019 21:39:31 -0500
-Message-Id: <20190213023952.21311-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 15/34] net: hns: Fix use after free identified by SLUB debug
+Date:   Tue, 12 Feb 2019 21:39:33 -0500
+Message-Id: <20190213023952.21311-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
 References: <20190213023952.21311-1-sashal@kernel.org>
@@ -59,64 +59,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <dbolotin@marvell.com>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit 2d533a9287f2011632977e87ce2783f4c689c984 ]
+[ Upstream commit bb989501abcafa0de5f18b0ec0ec459b5b817908 ]
 
-In PBL chains with non power of 2 page count, the producer is not at the
-beginning of the chain when index is 0 after a wrap. Therefore, after the
-producer index wrap around, page index should be calculated more carefully.
+When enable SLUB debug, than remove hns_enet_drv module, SLUB debug will
+identify a use after free bug:
 
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
+[134.189505] Unable to handle kernel paging request at virtual address
+		006b6b6b6b6b6b6b
+[134.197553] Mem abort info:
+[134.200381]   ESR = 0x96000004
+[134.203487]   Exception class = DABT (current EL), IL = 32 bits
+[134.209497]   SET = 0, FnV = 0
+[134.212596]   EA = 0, S1PTW = 0
+[134.215777] Data abort info:
+[134.218701]   ISV = 0, ISS = 0x00000004
+[134.222596]   CM = 0, WnR = 0
+[134.225606] [006b6b6b6b6b6b6b] address between user and kernel address ranges
+[134.232851] Internal error: Oops: 96000004 [#1] SMP
+[134.237798] CPU: 21 PID: 27834 Comm: rmmod Kdump: loaded Tainted: G
+		OE     4.19.5-1.2.34.aarch64 #1
+[134.247856] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 10/24/2018
+[134.255181] pstate: 20000005 (nzCv daif -PAN -UAO)
+[134.260044] pc : hns_ae_put_handle+0x38/0x60
+[134.264372] lr : hns_ae_put_handle+0x24/0x60
+[134.268700] sp : ffff00001be93c50
+[134.272054] x29: ffff00001be93c50 x28: ffff802faaec8040
+[134.277442] x27: 0000000000000000 x26: 0000000000000000
+[134.282830] x25: 0000000056000000 x24: 0000000000000015
+[134.288284] x23: ffff0000096fe098 x22: ffff000001050070
+[134.293671] x21: ffff801fb3c044a0 x20: ffff80afb75ec098
+[134.303287] x19: ffff80afb75ec098 x18: 0000000000000000
+[134.312945] x17: 0000000000000000 x16: 0000000000000000
+[134.322517] x15: 0000000000000002 x14: 0000000000000000
+[134.332030] x13: dead000000000100 x12: ffff7e02bea3c988
+[134.341487] x11: ffff80affbee9e68 x10: 0000000000000000
+[134.351033] x9 : 6fffff8000008101 x8 : 0000000000000000
+[134.360569] x7 : dead000000000100 x6 : ffff000009579748
+[134.370059] x5 : 0000000000210d00 x4 : 0000000000000000
+[134.379550] x3 : 0000000000000001 x2 : 0000000000000000
+[134.388813] x1 : 6b6b6b6b6b6b6b6b x0 : 0000000000000000
+[134.397993] Process rmmod (pid: 27834, stack limit = 0x00000000d474b7fd)
+[134.408498] Call trace:
+[134.414611]  hns_ae_put_handle+0x38/0x60
+[134.422208]  hnae_put_handle+0xd4/0x108
+[134.429563]  hns_nic_dev_remove+0x60/0xc0 [hns_enet_drv]
+[134.438342]  platform_drv_remove+0x2c/0x70
+[134.445958]  device_release_driver_internal+0x174/0x208
+[134.454810]  driver_detach+0x70/0xd8
+[134.461913]  bus_remove_driver+0x64/0xe8
+[134.469396]  driver_unregister+0x34/0x60
+[134.476822]  platform_driver_unregister+0x20/0x30
+[134.485130]  hns_nic_dev_driver_exit+0x14/0x6e4 [hns_enet_drv]
+[134.494634]  __arm64_sys_delete_module+0x238/0x290
+
+struct hnae_handle is a member of struct hnae_vf_cb, so when vf_cb is
+freed, than use hnae_handle will cause use after free panic.
+
+This patch frees vf_cb after hnae_handle used.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/qed/qed_chain.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/qed/qed_chain.h b/include/linux/qed/qed_chain.h
-index 59ddf9af909e..2dd0a9ed5b36 100644
---- a/include/linux/qed/qed_chain.h
-+++ b/include/linux/qed/qed_chain.h
-@@ -663,6 +663,37 @@ static inline void *qed_chain_get_last_elem(struct qed_chain *p_chain)
- static inline void qed_chain_set_prod(struct qed_chain *p_chain,
- 				      u32 prod_idx, void *p_prod_elem)
- {
-+	if (p_chain->mode == QED_CHAIN_MODE_PBL) {
-+		u32 cur_prod, page_mask, page_cnt, page_diff;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+index a185a8be7999..53904f257b19 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -147,12 +147,10 @@ static void hns_ae_put_handle(struct hnae_handle *handle)
+ 	struct hnae_vf_cb *vf_cb = hns_ae_get_vf_cb(handle);
+ 	int i;
+ 
+-	vf_cb->mac_cb	 = NULL;
+-
+-	kfree(vf_cb);
+-
+ 	for (i = 0; i < handle->q_num; i++)
+ 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
 +
-+		cur_prod = is_chain_u16(p_chain) ? p_chain->u.chain16.prod_idx :
-+			   p_chain->u.chain32.prod_idx;
-+
-+		/* Assume that number of elements in a page is power of 2 */
-+		page_mask = ~p_chain->elem_per_page_mask;
-+
-+		/* Use "cur_prod - 1" and "prod_idx - 1" since producer index
-+		 * reaches the first element of next page before the page index
-+		 * is incremented. See qed_chain_produce().
-+		 * Index wrap around is not a problem because the difference
-+		 * between current and given producer indices is always
-+		 * positive and lower than the chain's capacity.
-+		 */
-+		page_diff = (((cur_prod - 1) & page_mask) -
-+			     ((prod_idx - 1) & page_mask)) /
-+			    p_chain->elem_per_page;
-+
-+		page_cnt = qed_chain_get_page_cnt(p_chain);
-+		if (is_chain_u16(p_chain))
-+			p_chain->pbl.c.u16.prod_page_idx =
-+				(p_chain->pbl.c.u16.prod_page_idx -
-+				 page_diff + page_cnt) % page_cnt;
-+		else
-+			p_chain->pbl.c.u32.prod_page_idx =
-+				(p_chain->pbl.c.u32.prod_page_idx -
-+				 page_diff + page_cnt) % page_cnt;
-+	}
-+
- 	if (is_chain_u16(p_chain))
- 		p_chain->u.chain16.prod_idx = (u16) prod_idx;
- 	else
++	kfree(vf_cb);
+ }
+ 
+ static int hns_ae_wait_flow_down(struct hnae_handle *handle)
 -- 
 2.19.1
 
