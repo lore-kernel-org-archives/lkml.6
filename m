@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDE4C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954B6C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A53222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 559C6222CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025322;
-	bh=1dQoRmg3qvblQMYmi0w1qcWDjYlPlWx0UO4a5gwAaBE=;
+	s=default; t=1550025326;
+	bh=IBuSxHGGz76Wu4/mNMoAVn5LKItJcaUsRmWRdX7ZJAE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LTMtqWccbMvyC5Aj9VJhUDvM/83+8QRXExg7uPC+B2Sy2zg8aonyt2gVUevV8yx51
-	 EBw7kX6Gu/2gArEhEpJIPyaQwtRARsGsxuxzpgkWme4/eNbwFbCo4ly8XgOKPrtHaP
-	 8P2Vm48YffwsU8zvoVMSciRYLqTa6k+xOXs/Pi2g=
+	b=TrMKFXiVXoWLcxHguadbVbExchc2/nim0Keanrdd/gsTTWq+zSzvq/9p8F/8AWG+w
+	 3+UrbXwqFq8Kb1ZyWhNRGP85duR6ZPY1FUju+n6kSS+2l+x16+rXGvDrjbxfPy9U6Q
+	 jFzDXVmIk8iIcGaDpfIGqqw1WaKwYozKh518mwTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387977AbfBMCfV (ORCPT
+        id S1730347AbfBMCfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38930 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387956AbfBMCfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:18 -0500
+        id S2387963AbfBMCfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C37E206B6;
-        Wed, 13 Feb 2019 02:35:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED1A2222C7;
+        Wed, 13 Feb 2019 02:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025317;
-        bh=1dQoRmg3qvblQMYmi0w1qcWDjYlPlWx0UO4a5gwAaBE=;
+        s=default; t=1550025319;
+        bh=IBuSxHGGz76Wu4/mNMoAVn5LKItJcaUsRmWRdX7ZJAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BE7ChiuQpIVSW/+xAGTKs6dHDd37RJIbtBHgrwsWdZE3qUbTHB5TD/Q9aIR2ivDag
-         Jr162vH7RKcln6QEvYrRxERdSu7ATyNLyPaPabXdQi0jmyePPL2QYnGzLFnHLPo9c2
-         3CcZQQyrjMq/5t49SLYq9wEXxEa3Qd6tOohTPdvc=
+        b=PlgVwIlszf6SsnMYur3HfpD6Sd4InwQ/3LZVT0qv3pcGZzJP2RM5YZMR35JT/d3Vz
+         ByRzNVxTTELqILG3DWONOH05rcZ1qTJTI7vcRApyrRC+7e4qphwTRSEHRQvx3bUnG4
+         tk/7ml8+1ypJ0ZEnSjnc/CERGLx1dEyPPLpQeJwk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Varun Prakash <varun@chelsio.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 064/105] scsi: cxgb4i: add wait_for_completion()
-Date:   Tue, 12 Feb 2019 21:32:55 -0500
-Message-Id: <20190213023336.19019-64-sashal@kernel.org>
+Cc:     Talons Lee <xin.li@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 066/105] always clear the X2APIC_ENABLE bit for PV guest
+Date:   Tue, 12 Feb 2019 21:32:57 -0500
+Message-Id: <20190213023336.19019-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,217 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Varun Prakash <varun@chelsio.com>
+From: Talons Lee <xin.li@citrix.com>
 
-[ Upstream commit 9e8f1c79831424d30c0e3df068be7f4a244157c9 ]
+[ Upstream commit 5268c8f39e0efef81af2aaed160272d9eb507beb ]
 
-In case of ->set_param() and ->bind_conn() cxgb4i driver does not wait for
-cmd completion, this can create race conditions, to avoid this add
-wait_for_completion().
+Commit e657fcc clears cpu capability bit instead of using fake cpuid
+value, the EXTD should always be off for PV guest without depending
+on cpuid value. So remove the cpuid check in xen_read_msr_safe() to
+always clear the X2APIC_ENABLE bit.
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Talons Lee <xin.li@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/cxgbi/cxgb3i/cxgb3i.c |  9 ++++-----
- drivers/scsi/cxgbi/cxgb4i/cxgb4i.c | 28 ++++++++++++++++++++--------
- drivers/scsi/cxgbi/libcxgbi.c      |  7 ++++---
- drivers/scsi/cxgbi/libcxgbi.h      |  5 +++--
- 4 files changed, 31 insertions(+), 18 deletions(-)
+ arch/x86/xen/enlighten_pv.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-index bf07735275a4..0fc382cb977b 100644
---- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-+++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-@@ -1144,7 +1144,7 @@ static void ddp_clear_map(struct cxgbi_device *cdev, struct cxgbi_ppm *ppm,
- }
- 
- static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
--				       unsigned int tid, int pg_idx, bool reply)
-+				unsigned int tid, int pg_idx)
- {
- 	struct sk_buff *skb = alloc_wr(sizeof(struct cpl_set_tcb_field), 0,
- 					GFP_KERNEL);
-@@ -1160,7 +1160,7 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
- 	req = (struct cpl_set_tcb_field *)skb->head;
- 	req->wr.wr_hi = htonl(V_WR_OP(FW_WROPCODE_FORWARD));
- 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
--	req->reply = V_NO_REPLY(reply ? 0 : 1);
-+	req->reply = V_NO_REPLY(1);
- 	req->cpu_idx = 0;
- 	req->word = htons(31);
- 	req->mask = cpu_to_be64(0xF0000000);
-@@ -1177,11 +1177,10 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk,
-  * @tid: connection id
-  * @hcrc: header digest enabled
-  * @dcrc: data digest enabled
-- * @reply: request reply from h/w
-  * set up the iscsi digest settings for a connection identified by tid
-  */
- static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
--			     int hcrc, int dcrc, int reply)
-+				 int hcrc, int dcrc)
- {
- 	struct sk_buff *skb = alloc_wr(sizeof(struct cpl_set_tcb_field), 0,
- 					GFP_KERNEL);
-@@ -1197,7 +1196,7 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
- 	req = (struct cpl_set_tcb_field *)skb->head;
- 	req->wr.wr_hi = htonl(V_WR_OP(FW_WROPCODE_FORWARD));
- 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
--	req->reply = V_NO_REPLY(reply ? 0 : 1);
-+	req->reply = V_NO_REPLY(1);
- 	req->cpu_idx = 0;
- 	req->word = htons(31);
- 	req->mask = cpu_to_be64(0x0F000000);
-diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-index 064ef5735182..bd6cc014cab0 100644
---- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-+++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-@@ -1548,16 +1548,22 @@ static void do_set_tcb_rpl(struct cxgbi_device *cdev, struct sk_buff *skb)
- 	struct cxgbi_sock *csk;
- 
- 	csk = lookup_tid(t, tid);
--	if (!csk)
-+	if (!csk) {
- 		pr_err("can't find conn. for tid %u.\n", tid);
-+		return;
-+	}
- 
- 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
- 		"csk 0x%p,%u,%lx,%u, status 0x%x.\n",
- 		csk, csk->state, csk->flags, csk->tid, rpl->status);
- 
--	if (rpl->status != CPL_ERR_NONE)
-+	if (rpl->status != CPL_ERR_NONE) {
- 		pr_err("csk 0x%p,%u, SET_TCB_RPL status %u.\n",
- 			csk, tid, rpl->status);
-+		csk->err = -EINVAL;
-+	}
-+
-+	complete(&csk->cmpl);
- 
- 	__kfree_skb(skb);
- }
-@@ -1984,7 +1990,7 @@ static int ddp_set_map(struct cxgbi_ppm *ppm, struct cxgbi_sock *csk,
- }
- 
- static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
--				int pg_idx, bool reply)
-+				int pg_idx)
- {
- 	struct sk_buff *skb;
- 	struct cpl_set_tcb_field *req;
-@@ -2000,7 +2006,7 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
- 	req = (struct cpl_set_tcb_field *)skb->head;
- 	INIT_TP_WR(req, csk->tid);
- 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, csk->tid));
--	req->reply_ctrl = htons(NO_REPLY_V(reply) | QUEUENO_V(csk->rss_qid));
-+	req->reply_ctrl = htons(NO_REPLY_V(0) | QUEUENO_V(csk->rss_qid));
- 	req->word_cookie = htons(0);
- 	req->mask = cpu_to_be64(0x3 << 8);
- 	req->val = cpu_to_be64(pg_idx << 8);
-@@ -2009,12 +2015,15 @@ static int ddp_setup_conn_pgidx(struct cxgbi_sock *csk, unsigned int tid,
- 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
- 		"csk 0x%p, tid 0x%x, pg_idx %u.\n", csk, csk->tid, pg_idx);
- 
-+	reinit_completion(&csk->cmpl);
- 	cxgb4_ofld_send(csk->cdev->ports[csk->port_id], skb);
--	return 0;
-+	wait_for_completion(&csk->cmpl);
-+
-+	return csk->err;
- }
- 
- static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
--				 int hcrc, int dcrc, int reply)
-+				 int hcrc, int dcrc)
- {
- 	struct sk_buff *skb;
- 	struct cpl_set_tcb_field *req;
-@@ -2032,7 +2041,7 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
- 	req = (struct cpl_set_tcb_field *)skb->head;
- 	INIT_TP_WR(req, tid);
- 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SET_TCB_FIELD, tid));
--	req->reply_ctrl = htons(NO_REPLY_V(reply) | QUEUENO_V(csk->rss_qid));
-+	req->reply_ctrl = htons(NO_REPLY_V(0) | QUEUENO_V(csk->rss_qid));
- 	req->word_cookie = htons(0);
- 	req->mask = cpu_to_be64(0x3 << 4);
- 	req->val = cpu_to_be64(((hcrc ? ULP_CRC_HEADER : 0) |
-@@ -2042,8 +2051,11 @@ static int ddp_setup_conn_digest(struct cxgbi_sock *csk, unsigned int tid,
- 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
- 		"csk 0x%p, tid 0x%x, crc %d,%d.\n", csk, csk->tid, hcrc, dcrc);
- 
-+	reinit_completion(&csk->cmpl);
- 	cxgb4_ofld_send(csk->cdev->ports[csk->port_id], skb);
--	return 0;
-+	wait_for_completion(&csk->cmpl);
-+
-+	return csk->err;
- }
- 
- static struct cxgbi_ppm *cdev2ppm(struct cxgbi_device *cdev)
-diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
-index 75f876409fb9..245742557c03 100644
---- a/drivers/scsi/cxgbi/libcxgbi.c
-+++ b/drivers/scsi/cxgbi/libcxgbi.c
-@@ -573,6 +573,7 @@ static struct cxgbi_sock *cxgbi_sock_create(struct cxgbi_device *cdev)
- 	skb_queue_head_init(&csk->receive_queue);
- 	skb_queue_head_init(&csk->write_queue);
- 	timer_setup(&csk->retry_timer, NULL, 0);
-+	init_completion(&csk->cmpl);
- 	rwlock_init(&csk->callback_lock);
- 	csk->cdev = cdev;
- 	csk->flags = 0;
-@@ -2251,14 +2252,14 @@ int cxgbi_set_conn_param(struct iscsi_cls_conn *cls_conn,
- 		if (!err && conn->hdrdgst_en)
- 			err = csk->cdev->csk_ddp_setup_digest(csk, csk->tid,
- 							conn->hdrdgst_en,
--							conn->datadgst_en, 0);
-+							conn->datadgst_en);
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 2f6787fc7106..c54a493e139a 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -898,10 +898,7 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
+ 	val = native_read_msr_safe(msr, err);
+ 	switch (msr) {
+ 	case MSR_IA32_APICBASE:
+-#ifdef CONFIG_X86_X2APIC
+-		if (!(cpuid_ecx(1) & (1 << (X86_FEATURE_X2APIC & 31))))
+-#endif
+-			val &= ~X2APIC_ENABLE;
++		val &= ~X2APIC_ENABLE;
  		break;
- 	case ISCSI_PARAM_DATADGST_EN:
- 		err = iscsi_set_param(cls_conn, param, buf, buflen);
- 		if (!err && conn->datadgst_en)
- 			err = csk->cdev->csk_ddp_setup_digest(csk, csk->tid,
- 							conn->hdrdgst_en,
--							conn->datadgst_en, 0);
-+							conn->datadgst_en);
- 		break;
- 	case ISCSI_PARAM_MAX_R2T:
- 		return iscsi_tcp_set_max_r2t(conn, buf);
-@@ -2384,7 +2385,7 @@ int cxgbi_bind_conn(struct iscsi_cls_session *cls_session,
- 
- 	ppm = csk->cdev->cdev2ppm(csk->cdev);
- 	err = csk->cdev->csk_ddp_setup_pgidx(csk, csk->tid,
--					     ppm->tformat.pgsz_idx_dflt, 0);
-+					     ppm->tformat.pgsz_idx_dflt);
- 	if (err < 0)
- 		return err;
- 
-diff --git a/drivers/scsi/cxgbi/libcxgbi.h b/drivers/scsi/cxgbi/libcxgbi.h
-index 5d5d8b50d842..1917ff57651d 100644
---- a/drivers/scsi/cxgbi/libcxgbi.h
-+++ b/drivers/scsi/cxgbi/libcxgbi.h
-@@ -149,6 +149,7 @@ struct cxgbi_sock {
- 	struct sk_buff_head receive_queue;
- 	struct sk_buff_head write_queue;
- 	struct timer_list retry_timer;
-+	struct completion cmpl;
- 	int err;
- 	rwlock_t callback_lock;
- 	void *user_data;
-@@ -490,9 +491,9 @@ struct cxgbi_device {
- 				  struct cxgbi_ppm *,
- 				  struct cxgbi_task_tag_info *);
- 	int (*csk_ddp_setup_digest)(struct cxgbi_sock *,
--				unsigned int, int, int, int);
-+				    unsigned int, int, int);
- 	int (*csk_ddp_setup_pgidx)(struct cxgbi_sock *,
--				unsigned int, int, bool);
-+				   unsigned int, int);
- 
- 	void (*csk_release_offload_resources)(struct cxgbi_sock *);
- 	int (*csk_rx_pdu_ready)(struct cxgbi_sock *, struct sk_buff *);
+ 	}
+ 	return val;
 -- 
 2.19.1
 
