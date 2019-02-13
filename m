@@ -2,151 +2,108 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E008EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D4AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBBD20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC8620835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550084074;
+	bh=R4TFWhIlHJgCP9/niB5+J2lGvpX9NeOhfhyBqrnInI0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=LFBUlw/mSIVxx1LIL7kDy2vr/HTiusD1iQw+gTv1pFsgB1ng5pchOsezZOsrQ+f0c
+	 M8kAtY31fMmwwJDEQ7BfyBd9wW3axb7HqiimDGaMQoZEhpkga7VzwD2aFVgisybs4B
+	 O8huN38lTHAXkUoaDuUVea8pcg1Is2v8eb3C3eg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394284AbfBMSy0 (ORCPT
+        id S2394296AbfBMSyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:54:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405539AbfBMSlx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:53 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DIdJiJ081632
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:41:52 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmpbbpv45-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:41:51 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 13 Feb 2019 18:41:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Feb 2019 18:41:45 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DIfiac43450398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 18:41:44 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B2588AE051;
-        Wed, 13 Feb 2019 18:41:44 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 571CBAE053;
-        Wed, 13 Feb 2019 18:41:43 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.163])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 13 Feb 2019 18:41:43 +0000 (GMT)
-Date:   Wed, 13 Feb 2019 20:41:40 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] initramfs: proide a generic free_initrd_mem
- implementation
-References: <20190213174621.29297-1-hch@lst.de>
- <20190213174621.29297-8-hch@lst.de>
+        Wed, 13 Feb 2019 13:54:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393881AbfBMSlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:50 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C826222D6;
+        Wed, 13 Feb 2019 18:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550083309;
+        bh=R4TFWhIlHJgCP9/niB5+J2lGvpX9NeOhfhyBqrnInI0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ajh+RkZmd7QciUtxdXpmlVLZKt97rq3RYbMZ6K0w1UHrx+0C7Wl4f9nxcuROWm6im
+         GWz/6KvaMBTdGMIIkGyE/WKMgWdKgXp4oILBVL5Eu+pBA50Lmv+cUjRmy1TnAvNpVi
+         qwwRtKX5mWEE43P3SxCyp8QS4rm892MEWEQ8/24U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 03/35] iio: chemical: atlas-ph-sensor: correct IIO_TEMP values to millicelsius
+Date:   Wed, 13 Feb 2019 19:37:58 +0100
+Message-Id: <20190213183706.337251129@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
+References: <20190213183706.176685027@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213174621.29297-8-hch@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19021318-0028-0000-0000-000003483455
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021318-0029-0000-0000-000024065911
-Message-Id: <20190213184139.GC15270@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902130129
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 06:46:20PM +0100, Christoph Hellwig wrote:
-> For most architectures free_initrd_mem just expands to the same
-> free_reserved_area call.  Provide that as a generic implementation
-> marked __weak.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/alpha/mm/init.c      | 8 --------
->  arch/arc/mm/init.c        | 7 -------
->  arch/c6x/mm/init.c        | 7 -------
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-csky seems to open-code free_reserved_page with the only
-difference that it's also increments totalram_pages for the freed pages,
-which doesn't seem correct anyway...
+------------------
 
-That said, I suppose arch/csky can be also added to the party.
+From: Matt Ranostay <matt.ranostay@konsulko.com>
 
->  arch/h8300/mm/init.c      | 8 --------
->  arch/m68k/mm/init.c       | 7 -------
->  arch/microblaze/mm/init.c | 7 -------
->  arch/nds32/mm/init.c      | 7 -------
->  arch/nios2/mm/init.c      | 7 -------
->  arch/openrisc/mm/init.c   | 7 -------
->  arch/parisc/mm/init.c     | 7 -------
->  arch/powerpc/mm/mem.c     | 7 -------
->  arch/sh/mm/init.c         | 7 -------
->  arch/um/kernel/mem.c      | 7 -------
->  arch/unicore32/mm/init.c  | 7 -------
->  init/initramfs.c          | 5 +++++
->  15 files changed, 5 insertions(+), 100 deletions(-)
+commit 0808831dc62e90023ad14ff8da4804c7846e904b upstream.
+
+IIO_TEMP scale value for temperature was incorrect and not in millicelsius
+as required by the ABI documentation.
+
+Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Fixes: 27dec00ecf2d (iio: chemical: add Atlas pH-SM sensor support)
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/iio/chemical/atlas-ph-sensor.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+--- a/drivers/iio/chemical/atlas-ph-sensor.c
++++ b/drivers/iio/chemical/atlas-ph-sensor.c
+@@ -453,9 +453,8 @@ static int atlas_read_raw(struct iio_dev
+ 	case IIO_CHAN_INFO_SCALE:
+ 		switch (chan->type) {
+ 		case IIO_TEMP:
+-			*val = 1; /* 0.01 */
+-			*val2 = 100;
+-			break;
++			*val = 10;
++			return IIO_VAL_INT;
+ 		case IIO_PH:
+ 			*val = 1; /* 0.001 */
+ 			*val2 = 1000;
+@@ -486,7 +485,7 @@ static int atlas_write_raw(struct iio_de
+ 			   int val, int val2, long mask)
+ {
+ 	struct atlas_data *data = iio_priv(indio_dev);
+-	__be32 reg = cpu_to_be32(val);
++	__be32 reg = cpu_to_be32(val / 10);
  
-...
+ 	if (val2 != 0 || val < 0 || val > 20000)
+ 		return -EINVAL;
 
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index cf8bf014873f..f3aaa58ac63d 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -527,6 +527,11 @@ extern unsigned long __initramfs_size;
->  #include <linux/initrd.h>
->  #include <linux/kexec.h>
-> 
-> +void __weak free_initrd_mem(unsigned long start, unsigned long end)
-> +{
-> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-
-Some architectures have pr_info("Freeing initrd memory..."), I'd add it for
-the generic version as well.
-
-Another thing that I was thinking of is that x86 has all those memory
-protection calls in its free_initrd_mem, maybe it'd make sense to have them
-in the generic version as well?
-
-> +}
-> +
->  #ifdef CONFIG_KEXEC_CORE
->  static bool kexec_free_initrd(void)
->  {
-> -- 
-> 2.20.1
-> 
-
--- 
-Sincerely yours,
-Mike.
 
