@@ -2,110 +2,114 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2C0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0067DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC79222C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C348D222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WSkJFxNz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fitHZwNj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732635AbfBME0B (ORCPT
+        id S1732864AbfBME0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 23:26:01 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58248 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfBME0A (ORCPT
+        Tue, 12 Feb 2019 23:26:12 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36212 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfBME0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 23:26:00 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1D4Ph6f126771;
-        Tue, 12 Feb 2019 22:25:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550031943;
-        bh=ldPf6PLPUt5wJrFZXASWy0gpWvDhqnPw/X7fS0wlK58=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WSkJFxNzzQuTZIQC0ZgKlXSmKQY9PwoPJtMerive8BSJNg7bpMvM4iokndinubN1D
-         aOrYAGR8rS+aZNtuWhbrMO6zEpFA3+mfzHoM1NZ2JN4rWdmT2Oxbn1Dt+t1HC4Cl79
-         1f/8wNZLIX8jXwqGugG/zkdzyUgsD+7qc+egbx/c=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1D4PhJ6053604
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 22:25:43 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 12
- Feb 2019 22:25:43 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 12 Feb 2019 22:25:43 -0600
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1D4Pd3S017352;
-        Tue, 12 Feb 2019 22:25:39 -0600
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <marc.zyngier@arm.com>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
- <20190212074237.2875-6-lokeshvutla@ti.com>
- <20190212162247.GK5720@atomide.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <6a274588-0fb6-2ddf-3bcc-f9e4d849ac07@ti.com>
-Date:   Wed, 13 Feb 2019 09:55:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 12 Feb 2019 23:26:12 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k98so1821547otk.3;
+        Tue, 12 Feb 2019 20:26:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sd5Ml0besxYMG4NkLF0fkNk0tH0yX+PUzLjCoBwLSJo=;
+        b=fitHZwNjBXnqfYHVIgOBoCsG5KP3gzis3h+VVLdEZWYK3zEwKG06TvZtlFmJo9mk/8
+         Rk7BjgyZsPFpn7DAAgilkl/4GghSc5UP9TjWxMf/riwSPZE8YHQZz2wPOcni0yl+ob9q
+         UckGC+ZrVbmF1VpzoafWNJc8LOrzEVZYP/UW0rIy5vPnu1wXkBJWaOpEsazoIZZs4frf
+         k0gL6kXv52Tw2YpGsqh2PQY5X3k5MEq23e1njEFwcuvhPZRqnuA9LWJnAnEqRS14uEDH
+         VOVN9K8bzt5jG4YbylxKPmUGQUJaDHgGELd5C/lMHlxg1U+gLNcBvnE4RSgH0RjUJHwq
+         ekCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sd5Ml0besxYMG4NkLF0fkNk0tH0yX+PUzLjCoBwLSJo=;
+        b=tp1BiB+Npggcxc6s9dRojlCMdWGQeceBzPAeSJev0K/7hWOKnIEs8MAGcrUuOQY3jo
+         zP8d101qosg4m6cOIR4qE2Vi0drrap07cJhx1IhgKF30Qlbahlz9obBi/+hgMyhBUzGK
+         zhDSv1wDuJ5Wk2h7gPokYYel+/EsmbQnnAgYuXZ4nslI1aIeCLlPToPz9UiSs5eu63+5
+         PEolGN+P4zj6K5zG6+jLEhD11OJm75fBh92cytAhf8notTT6w1H/7Xu/cePk+3v1UANX
+         0l1iYfEw95IEGvoz7yhHZP5CtCqfF1dJR86NkLGDfa4LAooPKz3ohGMPgRUXj8QJlrsS
+         m5ZA==
+X-Gm-Message-State: AHQUAub+49akMlnyNHL0HNzT6im1cDxxVnA0ikr5nstn7R/A1ShBxmab
+        ZnX/t6zGF0uDWfheDsY2dxw=
+X-Google-Smtp-Source: AHgI3IYUMerUKeJf7klbBxZ9mlo5bjz3DbQFIK30ipqXQFVV2SPbWAUnBXYy5RIqVC5bvi7hP+noxQ==
+X-Received: by 2002:a9d:7141:: with SMTP id y1mr6825013otj.177.1550031971225;
+        Tue, 12 Feb 2019 20:26:11 -0800 (PST)
+Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.gmail.com with ESMTPSA id a12sm6470650otl.39.2019.02.12.20.26.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 20:26:10 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM5301X ARM
+        ARCHITECTURE), Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ARM: dts: BCM5301X: Change Ethernet switch management port
+Date:   Tue, 12 Feb 2019 20:25:59 -0800
+Message-Id: <20190213042600.27729-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190212162247.GK5720@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+BCM5301X has 3 Ethernet controllers: GMAC0, 1, 2 which map to ports 5, 7
+and 8 respectively of the internal switch. Future changes will turn on
+management mode in the Ethernet switch driver (b53) which will require
+us to use port 8.
 
-On 12/02/19 9:52 PM, Tony Lindgren wrote:
-> Hi,
-> 
-> * Lokesh Vutla <lokeshvutla@ti.com> [190212 07:43]:
->> +Example:
->> +--------
->> +The following example demonstrates both interrupt router node and the consumer
->> +node(main gpio) on the AM654 SoC:
->> +
->> +main_intr: interrupt-controller0 {
->> +	compatible = "ti,sci-intr";
->> +	interrupt-controller;
->> +	interrupt-parent = <&gic500>;
->> +	#interrupt-cells = <4>;
->> +	ti,sci = <&dmsc>;
->> +	ti,sci-dst-id = <56>;
->> +	ti,sci-rm-range-girq = <0x1>;
->> +};
-> 
-> Can you describe a bit what the "ti,sci-dst-id" is above?
-> 
-> These IDs seem to be listed at at [0] below, but is it really a property
-> of the hardware? Or is it some enumeration of SoC devices in the firmware?
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-This is the way that sysfw describes the hardware. In this case it is GIC and it
-is identified by this ID.
+diff --git a/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts b/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
+index 3fced3b7f1a8..affa9cc7422d 100644
+--- a/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
++++ b/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
+@@ -150,10 +150,15 @@
+ 			label = "wan";
+ 		};
+ 
+-		port@5 {
+-			reg = <5>;
++		port@8 {
++			reg = <8>;
+ 			label = "cpu";
+-			ethernet = <&gmac0>;
++			ethernet = <&gmac2>;
++
++			fixed-link {
++				speed = <1000>;
++				full-duplex;
++			};
+ 		};
+ 	};
+ };
+-- 
+2.19.1
 
-Thanks and regards,
-Lokesh
