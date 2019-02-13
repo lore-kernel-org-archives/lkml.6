@@ -3,52 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90709C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4943EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64C602086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25C262086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404779AbfBMR4I (ORCPT
+        id S2404768AbfBMR4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:56:08 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:40660 "EHLO
+        Wed, 13 Feb 2019 12:56:07 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:43323 "EHLO
         mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388324AbfBMR4F (ORCPT
+        with ESMTP id S2391418AbfBMR4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:56:05 -0500
-Received: by mail-it1-f198.google.com with SMTP id 135so5186408itk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:56:04 -0800 (PST)
+        Wed, 13 Feb 2019 12:56:06 -0500
+Received: by mail-it1-f198.google.com with SMTP id i186so4316793ite.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:56:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=tGpGGv9zZPSYd1bawqbNQ+HgCFaseK+m9nbLFgTQS/k=;
-        b=rXmNHdpdON3Q3wxa5JsWjD1RcMkzxSN+BOrnAdfWbPyXNEJ/cjyP2F7TPPEosqWHWD
-         KS85/VGCyXqp9VbSRF+Yu5CJUTfVMaI+PmD+SwldVaYoxd7ofqNPt4gzROXROmu1I78K
-         vpWHYWTAxswOIPZhPkUFV5Uixh7l6UUw044iDRquvJ/LgQyexyMQVwzAOODi4bi5g12P
-         edXeFZE7KAXKlXJk396zl3lN9GxtAHyDxbRK2U62sJAVW80X/FD0sRKwKBYb4vtdIDEl
-         1kGZTc/johLtBLKhCYSpFnFmG4tnkFZBqSlpndz7yhs0SWJTXPrHWXj1oxL/RdAVLa6B
-         lJag==
-X-Gm-Message-State: AHQUAubN3J5EAbLlOgDUvT5oY7Ba8Q6ss7Ifq8bLP5o7DHi5eeKE03Xp
-        LHzzT8DIy6c7sxpraUc8E6iZFqlILPtZizXIWWQ36/gyqPLJ
-X-Google-Smtp-Source: AHgI3IYlS2NNcvSkEFyhiWkWuB1SpsLZPUaTYv4wgqwXTgMNfuhmJwGh2/8ElzFKHBUHzGJISgoHEvg8v3snZHXPN50689bvw1bo
+        bh=pTdYDjNhPS6KywDIRH7EPnd0wwC67zRuR3eps0gfOhU=;
+        b=Lqtg2+L5BhpfKLrCdQbUcouDTNiswObrz8xN8R1McUK9nervcdrSdvrvuvII7pz9Kf
+         ywdeosfJh5f9uSK8zJM/JoxX6ek/iZ+U4xixlWZLd+fhfFgkYu7D4VuVNQs/uPQ3eQGF
+         /zxXNFwYuiEhxy6xsTtr7PZVrua1GBqdnXFkk7YtiWNNqOdghuJlYhDf8JAeCSZTYo/8
+         PhnI5+esZwP7LyYbBBNoivUbiLsJy//cfT1U0xNaBgZ5GqpCHzl5dXZbL+Rm8pc91Fqe
+         sgmRyGenjVQaRrLqfZpMtWZ3RdAjy4aAQOO1splsKKRob5gYngbSv1JvSGVAjCTy1Ue7
+         CIWA==
+X-Gm-Message-State: AHQUAuYLpaw8plkyl+FmcW0NHaDy9+nwzYHEulT/2hRs2UJ8HWZeATTv
+        cVJun3tbs7R4eN+z2cxYHgOXSxs7pvQtql5evaoP+RKSAXFr
+X-Google-Smtp-Source: AHgI3IYqvU6n9KOcgLHSWDTmMDhGoqodjdF3UEErTpIsrchL9aCzztZJFZMSGILwQ5XtoeT5G8qHjzmr0NBZst1fDlQIqXHhovXa
 MIME-Version: 1.0
-X-Received: by 2002:a6b:510c:: with SMTP id f12mr1272016iob.16.1550080564397;
+X-Received: by 2002:a24:24e:: with SMTP id 75mr1055800itu.0.1550080564639;
  Wed, 13 Feb 2019 09:56:04 -0800 (PST)
 Date:   Wed, 13 Feb 2019 09:56:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a12bd0581ca4145@google.com>
-Subject: BUG: Bad page state (5)
-From:   syzbot <syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        nborisov@suse.com, rppt@linux.vnet.ibm.com, shakeelb@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        willy@infradead.org
+Message-ID: <0000000000006dc0290581ca413e@google.com>
+Subject: WARNING: locking bug in try_to_grab_pending
+From:   syzbot <syzbot+2b713236b28823cd4dff@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,124 +57,67 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    c4f3ef3eb53f Add linux-next specific files for 20190213
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1130a124c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ec67976eb2df882
-dashboard link: https://syzkaller.appspot.com/bug?extid=2cd2887ea471ed6e6995
+HEAD commit:    6663cf821c13 flow_offload: Fix flow action infrastructure
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15927de4c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8572a6e4661225f4
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b713236b28823cd4dff
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ecdaa8c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ebe178c00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e932a8c00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com
+Reported-by: syzbot+2b713236b28823cd4dff@syzkaller.appspotmail.com
 
-BUG: Bad page state in process udevd  pfn:472f0
-name:"memfd:"
-page:ffffea00011cbc00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xf
-shmem_aops
-flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-raw: 01fffc000008000c ffffea0000ac4f08 ffff8880a85af890 ffff88800df2ad40
-raw: 000000000000000f 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: non-NULL mapping
-Modules linked in:
-CPU: 1 PID: 7586 Comm: udevd Not tainted 5.0.0-rc6-next-20190213 #34
+Started in network mode
+Own node identity 7f000001, cluster identity 4711
+Enabled bearer <udp:syz0>, priority 10
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(class_idx > MAX_LOCKDEP_KEYS)
+WARNING: CPU: 1 PID: 3476 at kernel/locking/lockdep.c:3315  
+__lock_acquire+0x13bf/0x4700 kernel/locking/lockdep.c:3315
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 3476 Comm: kworker/1:2 Not tainted 5.0.0-rc5+ #59
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue:  addrconf_dad_work (ipv6_addrconf)
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  bad_page.cold+0xda/0xff mm/page_alloc.c:586
-  free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
-  free_pages_check mm/page_alloc.c:1023 [inline]
-  free_pages_prepare mm/page_alloc.c:1113 [inline]
-  free_pcp_prepare mm/page_alloc.c:1138 [inline]
-  free_unref_page_prepare mm/page_alloc.c:2991 [inline]
-  free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
-name:"memfd:"
-  release_pages+0x60d/0x1940 mm/swap.c:791
-  pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
-  __pagevec_lru_add mm/swap.c:917 [inline]
-  lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
-  lru_add_drain+0x20/0x60 mm/swap.c:652
-  exit_mmap+0x290/0x530 mm/mmap.c:3134
-  __mmput kernel/fork.c:1047 [inline]
-  mmput+0x15f/0x4c0 kernel/fork.c:1068
-  exec_mmap fs/exec.c:1046 [inline]
-  flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
-  load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
-  search_binary_handler fs/exec.c:1656 [inline]
-  search_binary_handler+0x17f/0x570 fs/exec.c:1634
-  exec_binprm fs/exec.c:1698 [inline]
-  __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
-  do_execveat_common fs/exec.c:1865 [inline]
-  do_execve fs/exec.c:1882 [inline]
-  __do_sys_execve fs/exec.c:1958 [inline]
-  __se_sys_execve fs/exec.c:1953 [inline]
-  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fc7001ba207
-Code: Bad RIP value.
-RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
-BUG: Bad page state in process udevd  pfn:2b13c
-page:ffffea0000ac4f00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xe
-shmem_aops
-flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-raw: 01fffc000008000c ffff8880a85af890 ffff8880a85af890 ffff88800df2ad40
-raw: 000000000000000e 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: non-NULL mapping
-Modules linked in:
-CPU: 1 PID: 7586 Comm: udevd Tainted: G    B              
-5.0.0-rc6-next-20190213 #34
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  bad_page.cold+0xda/0xff mm/page_alloc.c:586
-name:"memfd:"
-  free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
-  free_pages_check mm/page_alloc.c:1023 [inline]
-  free_pages_prepare mm/page_alloc.c:1113 [inline]
-  free_pcp_prepare mm/page_alloc.c:1138 [inline]
-  free_unref_page_prepare mm/page_alloc.c:2991 [inline]
-  free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
-  release_pages+0x60d/0x1940 mm/swap.c:791
-  pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
-  __pagevec_lru_add mm/swap.c:917 [inline]
-  lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
-  lru_add_drain+0x20/0x60 mm/swap.c:652
-  exit_mmap+0x290/0x530 mm/mmap.c:3134
-  __mmput kernel/fork.c:1047 [inline]
-  mmput+0x15f/0x4c0 kernel/fork.c:1068
-  exec_mmap fs/exec.c:1046 [inline]
-  flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
-  load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
-  search_binary_handler fs/exec.c:1656 [inline]
-  search_binary_handler+0x17f/0x570 fs/exec.c:1634
-  exec_binprm fs/exec.c:1698 [inline]
-  __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
-  do_execveat_common fs/exec.c:1865 [inline]
-  do_execve fs/exec.c:1882 [inline]
-  __do_sys_execve fs/exec.c:1958 [inline]
-  __se_sys_execve fs/exec.c:1953 [inline]
-  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fc7001ba207
-Code: Bad RIP value.
-RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x45 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:__lock_acquire+0x13bf/0x4700 kernel/locking/lockdep.c:3315
+Code: 8b 1d e9 c7 05 08 45 85 db 0f 85 d6 f4 ff ff 48 c7 c6 a0 a4 6b 87 48  
+c7 c7 00 79 6b 87 44 89 9c 24 98 00 00 00 e8 3f 2f ec ff <0f> 0b 44 8b 9c  
+24 98 00 00 00 e9 af f4 ff ff 8b 3d 5c 7a fe 08 85
+RSP: 0018:ffff88809b5478b0 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 00000000005e00a8 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815a8f66 RDI: ffffed10136a8f08
+RBP: ffff88809b547a78 R08: ffff88809b58e680 R09: fffffbfff1133341
+R10: fffffbfff1133340 R11: ffffffff88999a03 R12: ffff88809b58efb8
+R13: ffff88809b58efc2 R14: 00000000005e00a8 R15: ffff88809b58e680
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  try_to_grab_pending+0x129/0x710 kernel/workqueue.c:1259
+  __cancel_work kernel/workqueue.c:3115 [inline]
+  cancel_delayed_work+0x82/0x2d0 kernel/workqueue.c:3144
+  addrconf_del_dad_work+0x1c/0x50 net/ipv6/addrconf.c:312
+  addrconf_dad_stop+0x129/0x2e0 net/ipv6/addrconf.c:2040
+  addrconf_dad_begin net/ipv6/addrconf.c:3973 [inline]
+  addrconf_dad_work+0xdbf/0x1150 net/ipv6/addrconf.c:4062
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
