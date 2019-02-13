@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A5FC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98302C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175CC20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A18F20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:02:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qfrmHcw3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gd3tcy2j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387835AbfBMHCH (ORCPT
+        id S2387860AbfBMHCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 13 Feb 2019 02:02:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50898 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:50916 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbfBMHCG (ORCPT
+        with ESMTP id S1728298AbfBMHCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:02:06 -0500
+        Wed, 13 Feb 2019 02:02:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SyCrC/DKeY+8w7bFKU1IF1vwF6AQyj8P9WfRTm5AAvE=; b=qfrmHcw3MUYo8nkv/ZeWVnn7AP
-        +ZZobAHUlbf1wMgjLzD605oe4szYfA+yJ4F9PsO/YLK+597U1UG37st9M4uctxFcI8fZnngyBg1TO
-        pIRhd5icGke8bDc0sTn0KVTVtBqUrxK/G159hdx8aSL5IupGFI0WhG6wGxOdZOecReDL40buAE0dD
-        zDDZ3KH6meFTKzJPi257gcjyRzg6zy9qGzNHXyg5Mge9S1zcNWbipWldlS5j7dH5kiGpM+S76uPJF
-        akVCWfKsSvAWHykY6aKAvO7E7y/wMCtYSRjR3Rpfp0eQMuovdaYF5L3LQA9AAln1nDCYHEZUsDgDm
-        Ej8bU7QA==;
+        bh=BwvNPx1nbCxxl00TZ+tlGve53HbJ277SuN/3ICIDGTE=; b=gd3tcy2jYkn0mcg8NOwdCPfMad
+        f1dWfb+/ccNK50NTO+19wpLYH2ICvugvXG6mrFreyop5PjozNTEZowrJN7Tspr02+IDXauHao7AHk
+        PbPx7W/8UOSLmahlDFQna8bWo8c6fZHY34vtCxOHpxwZhhTB5G+M2dBL/RRjvYBClmpnCWg4C/pU9
+        uEqouSq/i/7HnWLqK7OG/2KH8r8kmpxiIeB5SLr1+7mgSPlF4f1Wk2SANkaA7eU7Nt8d/UXSvezCw
+        7G9guUBuF483VxRFM7o4bzImsepb33hRbnmbiWo1yNMNV4rBqOuZ9BRq9Myd+9Kyu0bNewI13lhto
+        uf4wwQmA==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtoY7-0000FR-8j; Wed, 13 Feb 2019 07:01:39 +0000
+        id 1gtoY4-0000F8-Qe; Wed, 13 Feb 2019 07:01:37 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -46,9 +46,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org,
         Christian Zigotzky <chzigotzky@xenosoft.de>
-Subject: [PATCH 02/32] dma-direct: we might need GFP_DMA for 32-bit dma masks
-Date:   Wed, 13 Feb 2019 08:01:03 +0100
-Message-Id: <20190213070133.11259-3-hch@lst.de>
+Subject: [PATCH 01/32] net: pasemi: set a 64-bit DMA mask on the DMA device
+Date:   Wed, 13 Feb 2019 08:01:02 +0100
+Message-Id: <20190213070133.11259-2-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213070133.11259-1-hch@lst.de>
 References: <20190213070133.11259-1-hch@lst.de>
@@ -60,30 +60,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is no ZONE_DMA32 we might need GFP_DMA to be able to
-allocate memory that satisfies a 32-bit DMA mask.
+The pasemi driver never set a DMA mask, and given that the powerpc
+DMA mapping routines never check it this worked ok so far.  But the
+generic dma-direct code which I plan to switch on for powerpc checks
+the DMA mask and fails unsupported mapping requests, so we need to
+make sure the proper 64-bit mask is set.
 
 Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
 ---
- kernel/dma/direct.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/pasemi/pasemi_mac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 355d16acee6d..d5bb51cf27c6 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -132,8 +132,7 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
- 			goto again;
- 		}
+diff --git a/drivers/net/ethernet/pasemi/pasemi_mac.c b/drivers/net/ethernet/pasemi/pasemi_mac.c
+index d21041554507..a5bf46310f60 100644
+--- a/drivers/net/ethernet/pasemi/pasemi_mac.c
++++ b/drivers/net/ethernet/pasemi/pasemi_mac.c
+@@ -1716,6 +1716,7 @@ pasemi_mac_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		err = -ENODEV;
+ 		goto out;
+ 	}
++	dma_set_mask(&mac->dma_pdev->dev, DMA_BIT_MASK(64));
  
--		if (IS_ENABLED(CONFIG_ZONE_DMA) &&
--		    phys_mask < DMA_BIT_MASK(32) && !(gfp & GFP_DMA)) {
-+		if (IS_ENABLED(CONFIG_ZONE_DMA) && !(gfp & GFP_DMA)) {
- 			gfp = (gfp & ~GFP_DMA32) | GFP_DMA;
- 			goto again;
- 		}
+ 	mac->iob_pdev = pci_get_device(PCI_VENDOR_ID_PASEMI, 0xa001, NULL);
+ 	if (!mac->iob_pdev) {
 -- 
 2.20.1
 
