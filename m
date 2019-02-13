@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C7C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3026C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF4E222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8FAB222D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083469;
-	bh=UcScgB/KufZY7N+HCt37p7qnEh/D5B3bZdFMX1QijNo=;
+	s=default; t=1550083474;
+	bh=4Zhox896YP+gNjjW2TETc7yLdNzrNRHSHzdtPGXPCkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kjfm6iZ3DtxuEaCPFqj5t4EhdH7rAIvarBqlDEad4380eSarOsj8rI9gsaWvY8i1l
-	 kMkMjyrVBGSytnn7kohZI6HHUKP1rzyynSNROsB6qsaa2sHDEOYL1EQDtv9RT44Rh+
-	 NFAxh6VK94A6C4QskzNDt36PPsugP0o/JRnf99fs=
+	b=sxonUv0/53QLhkGBUbHs+0YbDqtjuhNGsQLzDQpj03eAghbvN5bRQP0fXUTbUkyIE
+	 tgmcvMEnH1KWdXqnWYvtyCnPZMJgqZd+ykMOyNMnOM+EZ71oHNnBWbSBfk/s8LIU0G
+	 8L2j9xIKksYNUmEYkFqqC7myKiwQ5/hCbDMuI6ME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733053AbfBMSo1 (ORCPT
+        id S2406139AbfBMSoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:44:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42940 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406116AbfBMSoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:24 -0500
+        id S2406126AbfBMSo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:44:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7A9E20811;
-        Wed, 13 Feb 2019 18:44:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F18BB20835;
+        Wed, 13 Feb 2019 18:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083463;
-        bh=UcScgB/KufZY7N+HCt37p7qnEh/D5B3bZdFMX1QijNo=;
+        s=default; t=1550083466;
+        bh=4Zhox896YP+gNjjW2TETc7yLdNzrNRHSHzdtPGXPCkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dOtgTVEtGvg18wzR7iZUQNnxvudL9Eb2sYq2yy/aO1BdXiCLwc9waZJYCtKZaE/VI
-         tpnbwbezKFX3KCMCSRuUlJM52ydAlfHsH5KEG27U4642VKOQwIF99HRMC52APMr49G
-         0Z++CT38msi9Ym8qRuEPUQYzu6XIeTzvgWtERP8A=
+        b=wpThLmcGdjyshtXsJtFAieawmTTRlzviGvSR/0U8Q9Y4uT2UhPWXI8TKtLJHUWFI5
+         w4kCY5/UuScOvhY5dBwBEHzGVUVMdT9w5q+Wc3g6GydInNPVzPfkPHWnzF8Y7g+XdK
+         n7A468q4Rh3OTWEt1xdpxVBXu6GUdN+MxFAuESko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
+        stable@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 08/44] iio: chemical: atlas-ph-sensor: correct IIO_TEMP values to millicelsius
-Date:   Wed, 13 Feb 2019 19:38:09 +0100
-Message-Id: <20190213183652.350397690@linuxfoundation.org>
+Subject: [PATCH 4.19 09/44] iio: ti-ads8688: Update buffer allocation for timestamps
+Date:   Wed, 13 Feb 2019 19:38:10 +0100
+Message-Id: <20190213183652.441142552@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -65,45 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Ranostay <matt.ranostay@konsulko.com>
+From: Dan Murphy <dmurphy@ti.com>
 
-commit 0808831dc62e90023ad14ff8da4804c7846e904b upstream.
+commit f214ff521fb1f861c8d7f7d0af98b06bf61b3369 upstream.
 
-IIO_TEMP scale value for temperature was incorrect and not in millicelsius
-as required by the ABI documentation.
+Per Jonathan Cameron, the buffer needs to allocate room for a
+64 bit timestamp as well as the channels.  Change the buffer
+to allocate this additional space.
 
-Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Fixes: 27dec00ecf2d (iio: chemical: add Atlas pH-SM sensor support)
-Cc: <stable@vger.kernel.org>
+Fixes: 2a86487786b5c ("iio: adc: ti-ads8688: add trigger and buffer support")
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/chemical/atlas-ph-sensor.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/iio/adc/ti-ads8688.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/chemical/atlas-ph-sensor.c
-+++ b/drivers/iio/chemical/atlas-ph-sensor.c
-@@ -444,9 +444,8 @@ static int atlas_read_raw(struct iio_dev
- 	case IIO_CHAN_INFO_SCALE:
- 		switch (chan->type) {
- 		case IIO_TEMP:
--			*val = 1; /* 0.01 */
--			*val2 = 100;
--			break;
-+			*val = 10;
-+			return IIO_VAL_INT;
- 		case IIO_PH:
- 			*val = 1; /* 0.001 */
- 			*val2 = 1000;
-@@ -477,7 +476,7 @@ static int atlas_write_raw(struct iio_de
- 			   int val, int val2, long mask)
- {
- 	struct atlas_data *data = iio_priv(indio_dev);
--	__be32 reg = cpu_to_be32(val);
-+	__be32 reg = cpu_to_be32(val / 10);
+--- a/drivers/iio/adc/ti-ads8688.c
++++ b/drivers/iio/adc/ti-ads8688.c
+@@ -41,6 +41,7 @@
  
- 	if (val2 != 0 || val < 0 || val > 20000)
- 		return -EINVAL;
+ #define ADS8688_VREF_MV			4096
+ #define ADS8688_REALBITS		16
++#define ADS8688_MAX_CHANNELS		8
+ 
+ /*
+  * enum ads8688_range - ADS8688 reference voltage range
+@@ -385,7 +386,7 @@ static irqreturn_t ads8688_trigger_handl
+ {
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+-	u16 buffer[8];
++	u16 buffer[ADS8688_MAX_CHANNELS + sizeof(s64)/sizeof(u16)];
+ 	int i, j = 0;
+ 
+ 	for (i = 0; i < indio_dev->masklength; i++) {
 
 
