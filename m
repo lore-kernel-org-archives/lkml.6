@@ -2,102 +2,119 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9013EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E35C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8A22082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9364421872
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390506AbfBMWc1 (ORCPT
+        id S2392469AbfBMWdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:32:27 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34428 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728708AbfBMWc0 (ORCPT
+        Wed, 13 Feb 2019 17:33:23 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:33531 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728708AbfBMWdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:32:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i130so1864616pgd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:32:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1+CCXuNWz6DxN+r3F1hHqeSqXrw7Y/kUe+BLSxvQ5cQ=;
-        b=nW/WXfZwLFVXFFZ5YtN2fJAANnl5AknqNm5xr0phrDoQW3lDwEZ0xM5wTwQGy4L4JD
-         qxf59KvnbQTtP0qYZKlRj2CUM43dmNN4ly9QcqrRrSVJuxEjtbaAs0DBlnq9omLHarxh
-         JM8Z2DFpXIeCAZ2pzkGnhwHkQ5mo1KEeQrjx0HAcBjwAGituH4fQEhj/VLBvB/lvcJlt
-         lufG5c87feSx0H0poXqgDAjrwyerzIrzfivvfVfVZA9JZ8uP/6xFAytXDF8D+ODSiG4q
-         sgexP0I39aZlNm9Im4CPOniC76xSIytuvRwZciZQYEIKwnxQqQ5h630s3hHtjGTzB2fS
-         Uang==
-X-Gm-Message-State: AHQUAuYEgIzlOp14FH80pFTxQjdNWoRLSJMdfJ2tOmDBJ0BaONzJZcl9
-        W5sVJ50YHc0WNyVMgRS9lGQ=
-X-Google-Smtp-Source: AHgI3IYYmrXrGYeeWMUHDS7RK6PgnHRYZfmodEkrF6QgBUR6XRCTpzhZVES/FET5o7b/SMFEeQCtjA==
-X-Received: by 2002:a62:560f:: with SMTP id k15mr471326pfb.231.1550097145384;
-        Wed, 13 Feb 2019 14:32:25 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id v75sm419822pfa.164.2019.02.13.14.32.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:32:24 -0800 (PST)
-Message-ID: <1550097142.31902.55.camel@acm.org>
-Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        tj@kernel.org, longman@redhat.com, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Wed, 13 Feb 2019 14:32:22 -0800
-In-Reply-To: <20190208114315.GD6972@fuggles.cambridge.arm.com>
-References: <20190111124835.GP1900@hirez.programming.kicks-ass.net>
-         <1547222103.83374.72.camel@acm.org>
-         <20190111165529.GA14054@worktop.programming.kicks-ass.net>
-         <1547226101.83374.80.camel@acm.org>
-         <20190114125235.GB20726@hirez.programming.kicks-ass.net>
-         <1547484753.83374.109.camel@acm.org>
-         <20190118094808.GA27931@hirez.programming.kicks-ass.net>
-         <1250147c-27bc-92e1-3ff5-211f3ba56891@acm.org>
-         <20190201121510.GC31516@hirez.programming.kicks-ass.net>
-         <3c533b0e-b079-79ad-4935-cd61af000ce6@acm.org>
-         <20190208114315.GD6972@fuggles.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Wed, 13 Feb 2019 17:33:22 -0500
+Received: from oxbaltgw00.schlund.de ([172.19.246.6]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1N95mL-1h6vJ11dcl-0169yT; Wed, 13 Feb 2019 23:33:12 +0100
+Date:   Wed, 13 Feb 2019 23:33:11 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+Message-ID: <1278623750.602548.1550097191567@email.ionos.de>
+In-Reply-To: <87tvh7v8yd.fsf@anholt.net>
+References: <20190213003324.15224-1-eric@anholt.net>
+ <20190213003324.15224-2-eric@anholt.net>
+ <648bbc3e-6690-9b05-cae5-bf81edbec74a@i2se.com> <87tvh7v8yd.fsf@anholt.net>
+Subject: Re: [PATCH 2/2] soc: bcm: bcm2835-pm: Fix error paths of
+ initialization.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:DqYO30DjaNHimC3rWe2Bs3YBnZMLZYdE4l/CtepfnpKTvvQIVcz
+ Uz/VxVAUshlJDI90DG1qTZBQB2EHTpnrR/dyNY6jcdMPp2Nm0GsmyBGUlixi0YVYYkYSGfl
+ AUPU9v+HiBdg+82ec/s40HjcK2CYJCL4imcCHraDb7VfB+p4afplTrzfkckYCDnRotnMj31
+ +Zxq8YbGTN8r24gx5Wilg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lkLhe2+p65M=:zN8LflAYN4T935rhvTqBlb
+ B3IqtSknE9nmtNxVbNAdqSDL48yTeo6PATztadycIpFgjW6E1UxvinNLbz8YQCcd7QuyuZok4
+ AykWOPqaSFyLT4IuWUt2IwOs7AoNxS4XZ7zhz0vdzyBg/dSseciB9PYvzDua1rE2giJuJUX/I
+ oRAz22jtrheafDRwycE85E9pDQ6NZZHj22cjDqp3VKEl+xcQOSSMV5CwHkDMspQUCorug+mZK
+ +BDrMBlp6gcMWXISTGbZ6D0+XOfhdS4VJXIg2qytox1v0Y6G2da2VJGAdmq9zLM5oY1Px8ScW
+ NIQzni/cdWPDbnsFxTDJRMoTpMNEvt77t/snjAIXfrwOwEZ+RwsbSKcMD+m79dNSpR9CCrxDb
+ /cZR7xQ2ou+prjhaBPIHa5/KpPN8RdpdZkWdncHH+o79uIVO9/zmbnhpdmOTPLKgMixFBoh7I
+ LZtSGIma8NwpM8onebowleAGp4bkBESVDUtDw5RMkey66vxJoBGkDlNiDCNHmH8aXGnOg93wv
+ YHyJClQuzXCSPxTQjG7AAETGlqPJjXkLrD5A7FRj4eL5iNZSTJlYC26+e4GrHVX5AQIO2ZmbY
+ x4BZP8sB+DO8V0yehrSRaqVTQ6vH/lEd7gwmKvY2eAxAbPYZ7ntBf/SkNZ2a7fMWL3KwWppUt
+ J5imzIZp7SHrsniS4RbE8WZcX5P7OJnWCXl7ki9ic/H6pTl2Qxsc8RGzu7oDSXSgaYmv/MVIw
+ wYciWO9dG9r0xrS+E2jGIQ1D3pYRsE8YtJXX0DBMUOC0x+uf4D0LZTXTmTE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-02-08 at 11:43 +-0000, Will Deacon wrote:
-+AD4 I've also been trying to understand why it's necessary to check both of the
-+AD4 pending+AF8-free entries, and I'm still struggling somewhat. It's true that the
-+AD4 wakeup in get+AF8-pending+AF8-free+AF8-lock() could lead to both entries being used
-+AD4 without the RCU call back running in between, however in this scenario then
-+AD4 any list entries marked for freeing in the first pf will have been unhashed
-+AD4 and therefore made unreachable to look+AF8-up+AF8-lock+AF8-class().
-+AD4 
-+AD4 So I think the concern remains that entries are somehow remaining visible
-+AD4 after being zapped.
-+AD4 
-+AD4 You mentioned earlier in the thread that people actually complained about
-+AD4 list corruption if you only checked the current pf:
-+AD4 
-+AD4   +AHw The list+AF8-del+AF8-rcu() call must only happen once. I ran into complaints
-+AD4   +AHw reporting that the list+AF8-del+AF8-rcu() call triggered list corruption. This
-+AD4   +AHw change made these complaints disappear.
-+AD4 
-+AD4 Do you have any more details about these complaints (e.g. kernel logs etc)?
-+AD4 Failing that, any idea how to reproduce them?
 
-Hi Will,
+> Eric Anholt <eric@anholt.net> hat am 13. Februar 2019 um 19:28 geschrieben:
+> 
+> 
+> Stefan Wahren <stefan.wahren@i2se.com> writes:
+> 
+> > Hi Eric,
+> >
+> > Am 13.02.19 um 01:33 schrieb Eric Anholt:
+> >> The clock driver may probe after ours and so we need to pass the
+> >> -EPROBE_DEFER out.  Fix the other error path while we're here.
+> >>
+> >> Signed-off-by: Eric Anholt <eric@anholt.net>
+> >> Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power domains under a new binding.")
+> >> ---
+> >>  drivers/soc/bcm/bcm2835-power.c | 30 +++++++++++++++++++++++++-----
+> >>  1 file changed, 25 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm2835-power.c
+> >> index 4a1b99b773c0..11f9469423f7 100644
+> >> --- a/drivers/soc/bcm/bcm2835-power.c
+> >> +++ b/drivers/soc/bcm/bcm2835-power.c
+> >> @@ -485,7 +485,7 @@ static int bcm2835_power_pd_power_off(struct generic_pm_domain *domain)
+> >>  	}
+> >>  }
+> >>  
+> >> -static void
+> >> +static int
+> >>  bcm2835_init_power_domain(struct bcm2835_power *power,
+> >>  			  int pd_xlate_index, const char *name)
+> >>  {
+> >> @@ -493,6 +493,12 @@ bcm2835_init_power_domain(struct bcm2835_power *power,
+> >>  	struct bcm2835_power_domain *dom = &power->domains[pd_xlate_index];
+> >>  
+> >>  	dom->clk = devm_clk_get(dev->parent, name);
+> >> +	if (IS_ERR(dom->clk)) {
+> >> +		int ret = PTR_ERR(dom->clk);
+> >> +
+> >> +		if (ret == -EPROBE_DEFER)
+> >> +			return ret;
+> > is it safe to proceed in the other error cases?
+> > Even it would be more consistent with clk_prepare_enable() to print an
+> > error here.
+> 
+> Yes, not all domains have a clk, so we want to ignore the other error.
 
-Since elements of the list+AF8-entries+AFsAXQ array are always accessed with the graph
-lock held, how about removing the list+AF8-entries+AF8-being+AF8-freed bitmap and making
-zap+AF8-class() clear the appropriate bits in the list+AF8-entries+AF8-in+AF8-use bitmap?
+But shouldn't we set dom->clk to NULL instead of keeping the error pointer? AFAIK clk_prepare_enable is aware of NULL instead of error pointer.
 
-Thanks,
+> And we shouldn't print for defers, generally.
 
-Bart.
+Sure, i wanted to refer to all the other error cases.
+
+Stefan
