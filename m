@@ -2,163 +2,191 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE97CC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBEBC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84A5222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A901222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390756AbfBMIjb (ORCPT
+        id S2390769AbfBMInX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:39:31 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38617 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733177AbfBMIja (ORCPT
+        Wed, 13 Feb 2019 03:43:23 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:3221 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732602AbfBMInX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:39:30 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so1476985wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:39:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=OGr+fCOFipPuw4kPO6dQILVEWKC6WOl1B75bsywnpeU=;
-        b=DNpdmV0hBGL6L8oaec9eYThzFEWNKpb7K0UCPePotjl1bkoTEV5Y2Rfh0coti3f8Yw
-         lTg1VVdQfPysIak4p3N8BXs+JhaElGW5KSHIuDtb4OfKDq5LPWSvXdwJMte2ywSRmHkw
-         ItpYBnBXJ7hhwn0xBVOKR9r1cuOXqKa8gUOTnRYSf8JXDIUKcKbQlSU0mKiY06797DiI
-         48k1OUhvUUOtFZGV4JuV+MStjh+RueAmf11N0k8q0oftK9YhCxRHDuhSL7CL3IADYkrm
-         DY4oy55YuoRzArEIdU3QvHnn9GsiO+C/0a5CmX+04tIBgZsV9b1g4TV3girUy7QPeZzc
-         D78w==
-X-Gm-Message-State: AHQUAuZ/LYFO0GULV0/mt3O4o+yx/RbMX7XFcMapoiDbuaIMZQW9s9eL
-        ltZK0xP41FgBt+sfAbNP+vglS4Uq
-X-Google-Smtp-Source: AHgI3Ib+KuietEY/dETJuMzwmxGEQ58nHvLqF+J2Xqy5VxllPKUdckRNPZtCCoH7v93n9PXOK1HiLA==
-X-Received: by 2002:adf:dd4d:: with SMTP id u13mr6608467wrm.284.1550047167682;
-        Wed, 13 Feb 2019 00:39:27 -0800 (PST)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id h9sm1557650wrv.11.2019.02.13.00.39.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 00:39:26 -0800 (PST)
-Subject: Re: [PATCH] tty/n_hdlc: mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-References: <20190212191948.GA23588@embeddedor>
-From:   Jiri Slaby <jslaby@suse.cz>
+        Wed, 13 Feb 2019 03:43:23 -0500
+X-IronPort-AV: E=Sophos;i="5.58,365,1544482800"; 
+   d="scan'208";a="369208476"
+Received: from unknown (HELO [193.50.110.185]) ([193.50.110.185])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA; 13 Feb 2019 09:43:20 +0100
+Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal
+ RAM
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190124231448.E102D18E@viggo.jf.intel.com>
+ <c4c6aca8-6ee8-be10-65ae-4cbe0aa03bfb@inria.fr>
+ <26ac36f4-7391-5321-217b-50d67e2119d7@intel.com>
+ <453f13cd-a7fe-33eb-9a27-8490825ca29c@inria.fr>
+ <CAPcyv4jF7ZyKaFDw7nb04UvWkVWGJdLGkZDQ1g=X7i+kdu7JRg@mail.gmail.com>
+ <a3bfe739-228e-26fe-90f7-4a4f8ceb3a9a@inria.fr>
+ <CAPcyv4jJ=C7ZEsJqBxzBMsQWz4+C8BZmWuk7OkztOebprd2rMg@mail.gmail.com>
+From:   Brice Goglin <Brice.Goglin@inria.fr>
 Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e8f4e279-9e45-65f4-8c54-6d7b4fe99ddb@suse.cz>
-Date:   Wed, 13 Feb 2019 09:39:25 +0100
+Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <057ad938-e745-02f7-edce-e19bd326da6a@inria.fr>
+Date:   Wed, 13 Feb 2019 09:43:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190212191948.GA23588@embeddedor>
+In-Reply-To: <CAPcyv4jJ=C7ZEsJqBxzBMsQWz4+C8BZmWuk7OkztOebprd2rMg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12. 02. 19, 20:19,  Gustavo A. R. Silva  wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/tty/n_hdlc.c: In function ‘n_hdlc_tty_ioctl’:
-> drivers/tty/n_hdlc.c:775:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    switch (arg) {
->    ^~~~~~
-> drivers/tty/n_hdlc.c:782:2: note: here
->   default:
->   ^~~~~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
 
-Oh well, and that is:
-> [ \t.!]*([Ee]lse,? |[Ii]ntentional(ly)? )?fall(s | |-)?thr(ough|u)[
-\t.!]*(-[^\n\r]*)?
+Le 13/02/2019 à 09:24, Dan Williams a écrit :
+> On Wed, Feb 13, 2019 at 12:12 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
+>> Le 13/02/2019 à 01:30, Dan Williams a écrit :
+>>> On Tue, Feb 12, 2019 at 11:59 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
+>>>> # ndctl disable-region all
+>>>> # ndctl zero-labels all
+>>>> # ndctl enable-region region0
+>>>> # ndctl create-namespace -r region0 -t pmem -m devdax
+>>>> {
+>>>>   "dev":"namespace0.0",
+>>>>   "mode":"devdax",
+>>>>   "map":"dev",
+>>>>   "size":"1488.37 GiB (1598.13 GB)",
+>>>>   "uuid":"ad0096d7-3fe7-4402-b529-ad64ed0bf789",
+>>>>   "daxregion":{
+>>>>     "id":0,
+>>>>     "size":"1488.37 GiB (1598.13 GB)",
+>>>>     "align":2097152,
+>>>>     "devices":[
+>>>>       {
+>>>>         "chardev":"dax0.0",
+>>>>         "size":"1488.37 GiB (1598.13 GB)"
+>>>>       }
+>>>>     ]
+>>>>   },
+>>>>   "align":2097152
+>>>> }
+>>>> # ndctl enable-namespace namespace0.0
+>>>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+>>>> <hang>
+>>>>
+>>>> I tried with and without dax_pmem_compat loaded, but it doesn't help.
+>>> I think this is due to:
+>>>
+>>>   a9f1ffdb6a20 device-dax: Auto-bind device after successful new_id
+>>>
+>>> I missed that this path is also called in the remove_id path. Thanks
+>>> for the bug report! I'll get this fixed up.
+>>
+>> Now that remove_id is fixed, things fails later in Dave's procedure:
+>>
+>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+>> # echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+> In the current version of the code the bind is not necessary, so the
+> lack of error messages here means the bind succeeded.
+>
+>> # echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+>> -bash: echo: write error: No such device
+> This also happens when the device is already bound.
+>
+>> (And nothing seems to have changed in /sys/devices/system/memory/*/state)
+> What does "cat /proc/iomem" say?
 
-for implicit-fallthrough > 2.
 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
+3060000000-1aa5fffffff : Persistent Memory
+  3060000000-36481fffff : namespace0.0
+  3680000000-1a9ffffffff : dax0.0
+    3680000000-1a9ffffffff : System RAM
+(the last line wasn't here before attaching to kmem)
 
-But will we ever enable warning > 2? Does it even make sense?
+I said nothing changed in memory/*/state, I actually meant that nothing
+was offline. But things are actually working!
 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/tty/n_hdlc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-> index 8bdf42bc8fc8..e55c79eb6430 100644
-> --- a/drivers/tty/n_hdlc.c
-> +++ b/drivers/tty/n_hdlc.c
-> @@ -777,7 +777,7 @@ static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
->  		case TCOFLUSH:
->  			flush_tx_queue(tty);
->  		}
-> -		/* fall through to default */
-> +		/* fall through - to default */
+First, node4 appeared, all memory is already attached to it without
+having to write to memory/*/state
 
-As the former makes more sense than the latter here.
+Node 4 MemTotal:       1558183936 kB
+Node 4 MemFree:        1558068564 kB
+Node 4 MemUsed:          115372 kB
 
->  	default:
->  		error = n_tty_ioctl_helper(tty, file, cmd, arg);
-> 
+I wasn't expecting node4 to appear because the machine has no
+/sys/firmware/acpi/tables/HMAT when running in 1LM (there's one in 2LM).
+I thought you said in the past that no HMAT would mean memory would be
+added to the existing DDR node?
 
-thanks,
--- 
-js
-suse labs
+Thanks!
+
+Brice
+
+
