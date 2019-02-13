@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B364C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36DBC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F1B222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B59A222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ifDZRPto"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ncnXisXF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390093AbfBMJBt (ORCPT
+        id S2391116AbfBMJBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:01:49 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:62113 "EHLO
+        Wed, 13 Feb 2019 04:01:53 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:62116 "EHLO
         esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfBMJBt (ORCPT
+        with ESMTP id S2391089AbfBMJBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:01:49 -0500
+        Wed, 13 Feb 2019 04:01:50 -0500
 X-IronPort-AV: E=Sophos;i="5.58,365,1544511600"; 
-   d="scan'208";a="23778134"
+   d="scan'208";a="23778155"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Feb 2019 01:59:47 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Feb 2019 02:00:14 -0700
 Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
  email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 13 Feb 2019 01:59:47 -0700
+ 14.3.352.0; Wed, 13 Feb 2019 02:00:14 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OY3mtMmnD9cseNMymdV/VsZoqf3XBJ/9J7higqgrd7I=;
- b=ifDZRPto/btI/cv1RaHs5GbnteEH5fsHqHRRJ8zW73Ff4BXv8nFQg1M1lp6qP9k1VBhdQpWyojpppwflXJVptSJtNHmzJ8B29m1w/BbAgyXnwTJfKzt9WLBNHtxVUUS2w8ykrsUHStXSlEz03nwK9xZqYbvlAlTpK3BOCTMqnrA=
+ bh=Rwt9a91kqT7QK1mpL4hnCETBrUB80Mt9klad0VEyYSI=;
+ b=ncnXisXFattDmYSVCyPAjyJ5lb8Lj0IjoppkdGVq8mACC2HXKAYJJuYW5Ih5TisJD1MJFxELr8/2aafP37tJUqlQoKJytfjKCUWVxMaxMiELO3JExPH1rwXq9Yiua+32RYUwsi1Jc+sYKzvLGO/ETzJIPdC95XvMCvV18WYixgw=
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
  BN6PR11MB0019.namprd11.prod.outlook.com (10.161.155.139) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Wed, 13 Feb 2019 08:59:45 +0000
+ 15.20.1622.16; Wed, 13 Feb 2019 09:00:11 +0000
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
- 08:59:45 +0000
+ 09:00:11 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -55,11 +55,12 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
         <Tudor.Ambarus@microchip.com>
-Subject: [PATCH 01/11] ARM: at91: add sam9x60 SFR definitions
-Thread-Topic: [PATCH 01/11] ARM: at91: add sam9x60 SFR definitions
-Thread-Index: AQHUw3p2o3oeiLqtBEORedY4SOk1lg==
-Date:   Wed, 13 Feb 2019 08:59:44 +0000
-Message-ID: <20190213085930.31578-2-tudor.ambarus@microchip.com>
+Subject: [PATCH 09/11] mfd: syscon: atmel: switch to SPDX license identifiers
+Thread-Topic: [PATCH 09/11] mfd: syscon: atmel: switch to SPDX license
+ identifiers
+Thread-Index: AQHUw3qGDGH/245SdUqZtAPnTvyS6A==
+Date:   Wed, 13 Feb 2019 09:00:11 +0000
+Message-ID: <20190213085930.31578-10-tudor.ambarus@microchip.com>
 References: <20190213085930.31578-1-tudor.ambarus@microchip.com>
 In-Reply-To: <20190213085930.31578-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
@@ -75,45 +76,45 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [94.177.32.154]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6c45e8f4-873d-4782-4292-08d691919920
+x-ms-office365-filtering-correlation-id: ff6a6e74-edc8-42d7-7c61-08d69191a8ed
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB0019;
 x-ms-traffictypediagnostic: BN6PR11MB0019:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;BN6PR11MB0019;23:bsnb4tT4Z52Nz5HCeef55QLWwYqM6axbicSNtDx?=
- =?iso-8859-1?Q?BFCaq3ZngDdzhewFJbt9vgihiyVCYh+eTWjwwrLCc3byTzs11kWjEMfe4y?=
- =?iso-8859-1?Q?9j80qFjKuxN3B6/A44ecC1zBJZXz+JR2NqlvM00i1P03xtDRCEaY5pQR0P?=
- =?iso-8859-1?Q?Vuz2Z5ncVubobyI34F1KKBb3Ibk96WVBHrAyMYZKyjIiWyDiiGJQH/mwHm?=
- =?iso-8859-1?Q?6ondfgeFTj5Pxq6lckVCD/NRcYaI7oBt3MfIEcNMII9a6M7Acw6F0lcDxn?=
- =?iso-8859-1?Q?txHRl4fdByVJf+0TSJR2lTeFYUuLcn8BFukNE4/PPMJDTgUdpSj6M60gMu?=
- =?iso-8859-1?Q?D70l1UF7Jt+uxMdMgzhOg8q3FZ9IRweTHQZbXNFFlb8XR3UyX0GB3uz3o9?=
- =?iso-8859-1?Q?VZp7/Iw1fI5xSC3rfqGlKSS6S4JQQDvpe+SS4+bvE7ZlsJAn8YeW3w0bcn?=
- =?iso-8859-1?Q?VPvlP4ChX3RN5GzulIELF0TdKXQavx/LYAsgUA8Z2CxMpEQVfkiu6TIxOG?=
- =?iso-8859-1?Q?GF334l9YZMrdqI7j4T/vPU/EDFojK600IyFR+AzdIP05LAQ4ragErvtsvb?=
- =?iso-8859-1?Q?ODX29h47tT6roV3B2oIFdMefirhKOLgXhvyamWRPWNHfrolm0V4Rwr3V2J?=
- =?iso-8859-1?Q?qRgD1HNIMpm4xNmq+7yI7sbZKQqLcSsaothGuvzWAuzeuuHFJuRmTPVoQN?=
- =?iso-8859-1?Q?s+FizUv9eUkRXP1N2V3dYsPwyhWVkSnpAIy+KNv2tsx7RkPCPE8tIT56Md?=
- =?iso-8859-1?Q?M/GJ97xQcnWjbVYu36goa2tm/kKrYo37O/YL8rdBDWNiFr8v2RWwSLwYdj?=
- =?iso-8859-1?Q?f5oByt51SaRXA7tEePkdgcNfAug8vtvkLdV3BXzSVyU0+Kssv70xW+J/jP?=
- =?iso-8859-1?Q?0dyLUITxassx3vqTmo3pDm+nnTw63sJ24zAz76octRQKEM4rn6jWlKSQog?=
- =?iso-8859-1?Q?cfrbc3vpf45+sSd9l+6PyNOHt33bJ0colzPCpGCOXdrWd1ZLPkQhyvnq8d?=
- =?iso-8859-1?Q?9zx7YNhm1CHMaUHGnlGg7RNzkVStjBYUhyYl8N8bTo71SHwZFNAvTa2P/j?=
- =?iso-8859-1?Q?kM546+t803mCigOFWhicIDe/VE6rhKOReNox9wVxYfMv5jF3VZV+3+no+O?=
- =?iso-8859-1?Q?ALoOrmZ/lwuOdMaAJ3TodVJTHYO5LJPOMcbdiGnkGbnRQpW7hv0nwVWZit?=
- =?iso-8859-1?Q?hbF0A8opZrdpq71El8dXtT0SA2HmVwOjcv3Az+6yFhDBbKRwP8Ff+5G6Um?=
- =?iso-8859-1?Q?rj+aRyT/usTr9YUtLo5MC5Hain8aAQGKhAN3hfRog6Xmls8UbnfuCbIOWZ?=
- =?iso-8859-1?Q?7c3YWOFfa4fY89cP3vwNA+A7K6P9WZTDJley6z7cH9n9dLkI7AWHbs+alt?=
- =?iso-8859-1?Q?BZqKXACeqrXVvMNdH/VZrmwEO6oAc?=
-x-microsoft-antispam-prvs: <BN6PR11MB00193E96369D292E0882C537F0660@BN6PR11MB0019.namprd11.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;BN6PR11MB0019;23:IjjT6zluULY67LlVt2bZcQOfBz3NyM6e6ddE13M?=
+ =?iso-8859-1?Q?UeR596YFCBvfnU3drmcJEet9MyolrZc5Jm3XPfKd87XdbfEHcAQG2iSYLr?=
+ =?iso-8859-1?Q?1j2mGF3KxjoTAC5YfMIYNrPdukgM2e37NlPKndtsFxdpwFBHKJYRvC8GlM?=
+ =?iso-8859-1?Q?BeFkjgSnnWU8Mt5as/RUy6xdr+jimYXPCcwklL1vsfP/p+nAIcDS9YA/dy?=
+ =?iso-8859-1?Q?qqCOvEog6xnRyS/F/JjP245p/jnijnrSvEO9VizUoJeS9GIeXuQFJ+ZEtH?=
+ =?iso-8859-1?Q?H4+jbNqZV6pyUtrBQ3pkR4TqFAFSnO6l3OJJhhI1tX42DXdp5BFjTpF2pY?=
+ =?iso-8859-1?Q?bRCJrOPg0JvUh9o+UCANl4TZ5s1FJFcnAf4SdXzfftgBtIT7bWvx2MiBQs?=
+ =?iso-8859-1?Q?KknYjyFq5ca6HWkc4cEubk83C3w+AB+kdJl95ZLuYGNnYRHiezwcnaFHXt?=
+ =?iso-8859-1?Q?KImA8wdonRs6CkDhCC7+mY1GCUhnHmmy9/IQ/yakDLbo5GtvXWiom+d6cC?=
+ =?iso-8859-1?Q?rQeDXB0WX43vojX5Z0xd3w/e6Jg0eUj44Pv6TG69UP16uxzvxhieKbtY/R?=
+ =?iso-8859-1?Q?6MmWtLr1PbvwpWcDQMI6Ux5K02kEnmwz8qHlbRRhj0ZcfZOSKRvJ63m9mt?=
+ =?iso-8859-1?Q?Uh4VMCIXhx340alN4uvl2Pcxqi/x00uZaazbRMf3yR8p4glk8JgqAyUERq?=
+ =?iso-8859-1?Q?w3BaiJFz0p+DKrNrC8+zQCplgNYX/r4RRPneAblCcqmib0nsTljRq1SMIR?=
+ =?iso-8859-1?Q?2D+ugj/jwdKsOq+lLjN9JIfP0AWGShaubs+z1s42RHn/eaLUBbVdnHx4dx?=
+ =?iso-8859-1?Q?QYwPYU15bOcbFTiOgBf97LcTFry8w7kiXPRUlQzWatJ28DzfLXehZRFrlq?=
+ =?iso-8859-1?Q?WP9onEBCOb9epBvtEO+RiHd7yV9yyIpEwv4tVSR0eb0pE+owYVGuDlHJJw?=
+ =?iso-8859-1?Q?sfaJXX3RSkMKcMKKObXzvIq7Dt1gm/BmqWywhL80Bze9tQ5uV4Sz81n4JI?=
+ =?iso-8859-1?Q?fYn6XrZ9pJGV1w5L8e9xCGFNfara22+ouGNs/47VVX5AuxRpOjyPuS38Ny?=
+ =?iso-8859-1?Q?2wjBn5V6ZfLfR9j9bPSYyVfB0/inXs+chS4TICy35EhsxYjMv+OXd5rg4G?=
+ =?iso-8859-1?Q?ITreMgmCGIyZVBCeci1EwpcORyQ2mJWZhPHa3e8X4tkM0zKggm+EG0zl58?=
+ =?iso-8859-1?Q?whkbmBbmfYBaiJqkJQP/NZ3iVJsYN9dqc0d86UTEVxgjKh/Lrw9SVuPeSy?=
+ =?iso-8859-1?Q?IEGSr4n+1efaC1SpYDunUywfNu13Y2k1tU6xhVvBAbAE0KuoyyOBkrZ8Fi?=
+ =?iso-8859-1?Q?Sy6hravdjt1BhmD5Gj8oRVQXn4LQbS03PbxEsWzj9kmPM5iHhR+R5Mq2WR?=
+ =?iso-8859-1?Q?D67kivTfKMgiRn+/+aRIOGBtb99wz?=
+x-microsoft-antispam-prvs: <BN6PR11MB00192F2F8008A4D93B14006CF0660@BN6PR11MB0019.namprd11.prod.outlook.com>
 x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(136003)(376002)(39860400002)(189003)(199004)(81166006)(50226002)(106356001)(7416002)(6436002)(54906003)(2201001)(1076003)(81156014)(26005)(110136005)(476003)(102836004)(107886003)(8936002)(6512007)(6486002)(4326008)(446003)(2616005)(316002)(8676002)(105586002)(99286004)(66066001)(486006)(6116002)(3846002)(186003)(11346002)(86362001)(2906002)(72206003)(71190400001)(14454004)(76176011)(53936002)(71200400001)(478600001)(68736007)(6506007)(386003)(2501003)(52116002)(97736004)(14444005)(7736002)(305945005)(256004)(25786009)(36756003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0019;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(136003)(376002)(39860400002)(189003)(199004)(81166006)(50226002)(106356001)(7416002)(6436002)(54906003)(2201001)(1076003)(81156014)(26005)(110136005)(476003)(102836004)(107886003)(8936002)(6512007)(6486002)(4326008)(446003)(2616005)(316002)(8676002)(105586002)(99286004)(66066001)(486006)(6116002)(3846002)(186003)(11346002)(86362001)(2906002)(72206003)(71190400001)(14454004)(76176011)(53936002)(71200400001)(478600001)(68736007)(6506007)(386003)(2501003)(52116002)(97736004)(7736002)(305945005)(256004)(25786009)(36756003)(2004002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0019;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1tJHhf5WCnkFrdvsOF3MrqwM5CoO8oP4vA8eSmYucAosizNOd/d0Zucgc28Mnnl2OCmaBldGHWVOnV0I5lQbeS0Cc31w49JYAKGY8X6lGRzWwMB6DIdVtKmQ1SkpEh8XjeAMykqcA0cw3N1tmpwWNbPC1hAvuv4tvOxDUNRF5n/vkkLLT3TluQtqPeUrbZYcrS7OZWeO3682XigilIUfjuTCEOtL/ONx8Zn8osyCYwDUxMz00gPBhmka9tIza/A89Ms57Vq3WaGGalu6Kzbyq2tv4fRp0k60hGmLSL1xWVFZwLu2qHucs7zrFbYVeK1WK6On3ID0zU4FvUWsD+q7/aTcaSNw+UcBLv7HiRRqUxOR+FQb17eQjRN84z/BBAD1xe3lk+X08yR/sYNcr93TmnskQLvfcRtm2yap8ans5jA=
+x-microsoft-antispam-message-info: 848cl250TAC+o8bi811Meq3CkM6gjMKIjJPo5seBAK8eRlGlBlR9OsAwMc4psnpVJdNvPY8FZuZbjl/nE6BkcaSfQIeFR5FHxLrGvM/Z1qsJJN1q8HyxCQEJlqfdXRXO+oT6cpb1qgqbUrrD4KJO9DXaiVlTLGY5ao5qvNTLOs2jo5FfhBrPZm0H6sXEN6DewgEmuXMX1is2OLDaof5nmWW3c9lGLorOhq39yc2CgH9WiC6O+uARhJDXEXnNHKgxguc5mSVEXkUq96v6c5esf27Sxt4vnGVE2YqUWe1wiVV/KTE2n6PALu92u7lGBtkElryvRetEeDlN8ilhHw8khLNirXFL6PBA+MELGlhuZbRlTsJKkD/4CRo90Q2ahiVCCh18b00f69uw+nv5eRBpag9W6INdrzcHJ/laqDWw8xc=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c45e8f4-873d-4782-4292-08d691919920
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 08:59:41.6324
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff6a6e74-edc8-42d7-7c61-08d69191a8ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 09:00:08.5675
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -127,71 +128,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Keep generic names, as there are no conflicts with previous
-SFR definitions.
-
-While touching bits, update AT91_OHCIICR_USB_SUSPEND to use
-GENMASK, replace unused AT91_OHCIICR_SUSPEND_A/B/C with a more
-generic macro, align values on tab-width.
+Adopt the SPDX license identifiers to ease license compliance
+management.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
- include/soc/at91/atmel-sfr.h | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ include/linux/mfd/syscon/atmel-matrix.h | 6 +-----
+ include/linux/mfd/syscon/atmel-mc.h     | 6 +-----
+ include/linux/mfd/syscon/atmel-smc.h    | 5 +----
+ include/linux/mfd/syscon/atmel-st.h     | 6 +-----
+ 4 files changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
-index 482337af06b8..532fd784e86c 100644
---- a/include/soc/at91/atmel-sfr.h
-+++ b/include/soc/at91/atmel-sfr.h
-@@ -14,21 +14,41 @@
- #define _LINUX_MFD_SYSCON_ATMEL_SFR_H
+diff --git a/include/linux/mfd/syscon/atmel-matrix.h b/include/linux/mfd/sy=
+scon/atmel-matrix.h
+index 1e2cd118e4e3..20c25665216a 100644
+--- a/include/linux/mfd/syscon/atmel-matrix.h
++++ b/include/linux/mfd/syscon/atmel-matrix.h
+@@ -1,12 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  *  Copyright (C) 2014 Atmel Corporation.
+  *
+  * Memory Controllers (MATRIX, EBI) - System peripherals registers.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
 =20
- #define AT91_SFR_DDRCFG		0x04	/* DDR Configuration Register */
-+#define AT91_SFR_CCFG_EBICSA	0x04	/* EBI Chip Select Register */
- /* 0x08 ~ 0x0c: Reserved */
- #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
- #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
- #define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
-+#define AT91_SFR_UTMISWAP	0x3c	/* UTMI DP/DM Pin Swapping Register */
-+#define AT91_SFR_LS		0x7c	/* Light Sleep Register */
- #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
-+#define AT91_SFR_WPMR		0xe4	/* Write Protection Mode Register */
+ #ifndef _LINUX_MFD_SYSCON_ATMEL_MATRIX_H
+diff --git a/include/linux/mfd/syscon/atmel-mc.h b/include/linux/mfd/syscon=
+/atmel-mc.h
+index afd9b8f1e363..99c56205c410 100644
+--- a/include/linux/mfd/syscon/atmel-mc.h
++++ b/include/linux/mfd/syscon/atmel-mc.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Copyright (C) 2005 Ivan Kokshaysky
+  * Copyright (C) SAN People
+@@ -5,11 +6,6 @@
+  * Memory Controllers (MC, EBI, SMC, SDRAMC, BFC) - System peripherals
+  * registers.
+  * Based on AT91RM9200 datasheet revision E.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
 =20
- /* Field definitions */
--#define AT91_OHCIICR_SUSPEND_A	BIT(8)
--#define AT91_OHCIICR_SUSPEND_B	BIT(9)
--#define AT91_OHCIICR_SUSPEND_C	BIT(10)
-+#define AT91_SFR_CCFG_EBI_CSA(cs, val)		((val) << (cs))
-+#define AT91_SFR_CCFG_EBI_DBPUC			BIT(8)
-+#define AT91_SFR_CCFG_EBI_DBPDC			BIT(9)
-+#define AT91_SFR_CCFG_EBI_DRIVE			BIT(17)
-+#define AT91_SFR_CCFG_NFD0_ON_D16		BIT(24)
-+#define AT91_SFR_CCFG_DDR_MP_EN			BIT(25)
+ #ifndef _LINUX_MFD_SYSCON_ATMEL_MC_H_
+diff --git a/include/linux/mfd/syscon/atmel-smc.h b/include/linux/mfd/sysco=
+n/atmel-smc.h
+index 7a367f34b66a..e9e24f4c4578 100644
+--- a/include/linux/mfd/syscon/atmel-smc.h
++++ b/include/linux/mfd/syscon/atmel-smc.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Atmel SMC (Static Memory Controller) register offsets and bit definitio=
+ns.
+  *
+@@ -5,10 +6,6 @@
+  * Copyright (C) 2014 Free Electrons
+  *
+  * Author: Boris Brezillon <boris.brezillon@free-electrons.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
 =20
--#define AT91_OHCIICR_USB_SUSPEND	(AT91_OHCIICR_SUSPEND_A | \
--					 AT91_OHCIICR_SUSPEND_B | \
--					 AT91_OHCIICR_SUSPEND_C)
-+#define AT91_SFR_OHCIICR_RES(x)			BIT(x)
-+#define AT91_SFR_OHCIICR_ARIE			BIT(4)
-+#define AT91_SFR_OHCIICR_APPSTART		BIT(5)
-+#define AT91_SFR_OHCIICR_USB_SUSP(x)		BIT(8 + (x))
-+#define AT91_SFR_OHCIICR_UDPPUDIS		BIT(23)
-+#define AT91_OHCIICR_USB_SUSPEND		GENMASK(10, 8)
+ #ifndef _LINUX_MFD_SYSCON_ATMEL_SMC_H_
+diff --git a/include/linux/mfd/syscon/atmel-st.h b/include/linux/mfd/syscon=
+/atmel-st.h
+index 8acf1ec1fa32..5b6013d0c440 100644
+--- a/include/linux/mfd/syscon/atmel-st.h
++++ b/include/linux/mfd/syscon/atmel-st.h
+@@ -1,14 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Copyright (C) 2005 Ivan Kokshaysky
+  * Copyright (C) SAN People
+  *
+  * System Timer (ST) - System peripherals registers.
+  * Based on AT91RM9200 datasheet revision E.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
 =20
--#define AT91_UTMICKTRIM_FREQ	GENMASK(1, 0)
-+#define AT91_SFR_OHCIISR_RIS(x)			BIT(x)
-+
-+#define AT91_UTMICKTRIM_FREQ			GENMASK(1, 0)
-+
-+#define AT91_SFR_UTMISWAP_PORT(x)		BIT(x)
-+
-+#define AT91_SFR_LS_VALUE(x)			BIT(x)
-+#define AT91_SFR_LS_MEM_POWER_GATING_ULP1_EN	BIT(16)
-+
-+#define AT91_SFR_WPMR_WPEN			BIT(0)
-+#define AT91_SFR_WPMR_WPKEY_MASK		GENMASK(31, 8)
-=20
- #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+ #ifndef _LINUX_MFD_SYSCON_ATMEL_ST_H
 --=20
 2.9.5
 
