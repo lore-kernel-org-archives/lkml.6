@@ -2,184 +2,155 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2C0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ADDC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2221120835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550084000;
-	bh=tMd2wJADDfeOgzvHQuDm82xMsDrJ1I1oe+OpO9spSHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MlAs956UpMUGGsw1SV3mnEsinObh2ZWbD7JAtNH8mPTdv5Q+Pyv15MybfZBoc1+n7
-	 yM6ZmE7MF9DkneVk5Y8s5x/OZB7tSTClHB5zS0560zKcT+ECQM/wOCSrQgIr84zDtG
-	 purx1KYLcloTzGoM89cdWRvnfevZlR7tFvW2RaNw=
+	by mail.kernel.org (Postfix) with ESMTP id BD02320835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:53:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wh4IqUCx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405754AbfBMSm6 (ORCPT
+        id S2394229AbfBMSxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:42:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405729AbfBMSmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:42:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F3C222D6;
-        Wed, 13 Feb 2019 18:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083372;
-        bh=tMd2wJADDfeOgzvHQuDm82xMsDrJ1I1oe+OpO9spSHQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SQUiRBYZyFuwWqLoD4c2mgx9luegxTGKQxLYQhIcxP1Ad7+Svvd9bOLKE8RDrDIvL
-         aRylucCLwdbNl4tSNCv4XZnEeVTH9QX/Ijr7+vsvaW7CC/bHZCvJEDleHW+vOmIqBq
-         eOcuO2Y9wkulqONRWxiFV1aNadbOjYwyT5ibP4M4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 16/44] pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller
-Date:   Wed, 13 Feb 2019 19:38:17 +0100
-Message-Id: <20190213183653.042951004@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
-References: <20190213183651.648060257@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Feb 2019 13:53:21 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:30870 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405743AbfBMSm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:42:57 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190213184254epoutp02a6ef7436423fabe577eb578fca8a2ab6~DAJ3I3Nu00220402204epoutp02E;
+        Wed, 13 Feb 2019 18:42:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190213184254epoutp02a6ef7436423fabe577eb578fca8a2ab6~DAJ3I3Nu00220402204epoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550083374;
+        bh=NtuAGQahGCyd7DCok94cl4TUwN73t3SOacwj64SSrPI=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Wh4IqUCxzz+i8sSN9FlV+1g1JButFG1Zh4W8rBAPNCCrmdlO0cYw36zHYst4hGn1i
+         6AsykegOzL7foOzpz4YFCK7TaGrvQcNQaUeagTxg5xY1WeypOBCFjNIZVXq8Q5dmh4
+         2QMQXz72Q3EoXHQS/+HYxzJgHLM77yhYL6RSM1MA=
+Received: from epsmges1p4.samsung.com (unknown [182.195.42.56]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190213184253epcas1p1d031667d15dbd08d1551cbd0cdf177fa~DAJ19mu7j0131801318epcas1p1h;
+        Wed, 13 Feb 2019 18:42:53 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.C9.04288.D25646C5; Thu, 14 Feb 2019 03:42:53 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190213184252epcas1p131e1023b7f6ec280e880b160a4a96345~DAJ1fg6sk0131701317epcas1p1c;
+        Wed, 13 Feb 2019 18:42:52 +0000 (GMT)
+X-AuditID: b6c32a38-c0fff700000010c0-e3-5c64652d7d07
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 44.CE.04015.C25646C5; Thu, 14 Feb
+        2019 03:42:52 +0900 (KST)
+Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PMV00HOONZ3WX60@mmp2.samsung.com>; Thu, 14 Feb 2019
+        03:42:52 +0900 (KST)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 00/13] ASoC: dmaengine updates, secondary CPU DAI for
+ Odroid boards
+Date:   Wed, 13 Feb 2019 19:41:59 +0100
+Message-id: <20190213184212.5473-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCmnq5uakqMwcfnrBZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6Ms4tesRXcEa5Y9/4CcwPjZf4uRg4O
+        CQETifWLwrsYuTiEBHYwSpy5NYUZwvnOKNF5/QczTNG5Q1BFGxglXr1fwgTh/GKU2HzxGmMX
+        IycHm4ChRO/RPjBbREBM4vacTrBJzAItTBJz5i5lBkkIC0RIzJ25gR3EZhFQlfh29zwLiM0r
+        YCWxbHsbE4gtISAvsXrDAbBmCYEeNolZd0+yQSRcJObO+84IcZK0xKWjthDhaold27uh6jsY
+        JVoubGeGSFhLHD5+kRXEZhbgk3j3tYcVopdXoqNNCKLEQ+Jz8yqwvUICsRITH+1kncAovoCR
+        YRWjWGpBcW56arFhgYlecWJucWleul5yfu4mRnCkaVnsYNxzzucQowAHoxIPb4VQSowQa2JZ
+        cWXuIUYJDmYlEV69KKAQb0piZVVqUX58UWlOavEhRmkOFiVx3vUOzjFCAumJJanZqakFqUUw
+        WSYOTqkGxvnVS4NYu75VfrZd+/aWZEpY0Cbv1XuOHXVa/vC5rJRSj/EENlalF/pl36dbLC99
+        rvhZ85DDH9cDGnNtdzhKB+z58+3IfV6O3BSlU6Gz9mte5S859LFBcb+nlFE6z4Sf7Cqbptxq
+        23TLd0Vhw9SJF9IuxXonrjkve+2N39p3rPK6+S/CnihwRimxFGckGmoxFxUnAgA7TLIzsAIA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmluLIzCtJLcpLzFFi42I5/e+xoK5OakqMwcTvShZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6Ms4tesRXcEa5Y9/4CcwPjZf4uRg4O
+        CQETiXOHwrsYuTiEBNYxSly9/oYVwvnFKHHy1iH2LkZODjYBQ4neo32MILaIgJjE7TmdzCBF
+        zAJNTBK7bl8EKxIWiJBY9PIPmM0ioCrx7e55FhCbV8BKYtn2NiYQW0JAXmL1hgPMExi5FjAy
+        rGKUTC0ozk3PLTYqMMxLLdcrTswtLs1L10vOz93ECAyabYe1+nYw3l8Sf4hRgINRiYdXQSAl
+        Rog1say4MvcQowQHs5IIr14UUIg3JbGyKrUoP76oNCe1+BCjNAeLkjjv7bxjkUIC6Yklqdmp
+        qQWpRTBZJg5OqQZGiwfMH1ZIn94eUi/XnMUc882ITzF/ivX3SY9knxx7Wxn19xpb2A4eAXkn
+        7uxl9RsTlFfkbMwNC75f+fuuclBKacr69BVqzCn5FxZp1+2afWn37l//cw/PfvW5acPTfSuT
+        94oXXA6OuhYd5bL3b91ERrbSvl3Cxz9f2PluYmX2iejT/7/fYimzU2Ipzkg01GIuKk4EANJp
+        Md0WAgAA
+X-CMS-MailID: 20190213184252epcas1p131e1023b7f6ec280e880b160a4a96345
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190213184252epcas1p131e1023b7f6ec280e880b160a4a96345
+References: <CGME20190213184252epcas1p131e1023b7f6ec280e880b160a4a96345@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+This is a rebased version with the build break fixed and added Krzysztof's 
+Acks. My apologies, I double checked there is no build errors between patches 
+this time.
 
-------------------
+Below is cover letter text from v2.
 
-From: Chen-Yu Tsai <wens@csie.org>
+This series restores support for the secondary CPU DAI in samsung/i2s.c
+driver and adds support for secondary CPU DAI on Odroid boards.
 
-commit 10098709b4ee6f6f19f25ba81d9c6f83518c584c upstream.
+I have added 4 more clean up patches comparing to first version of the
+patch set (16/22...19/22).
 
-The H6 main pin controller has four banks of interrupt-triggering pins.
-The driver as originally submitted only specified three, but had pin
-descriptions referencing a fourth bank. This results in a out-of-bounds
-access into .irq_array of struct sunxi_pinctrl. This however did not
-result in a crash until v4.20, with commit a66d972465d1 ("devres: Align
-data[] to ARCH_KMALLOC_MINALIGN"), which changed the alignment of memory
-region returned by devm_kcalloc(). The increase likely moved the
-out-of-bounds access into the next, unmapped page.
+The first patch adds new platform device for the secondary PCM, I tried to
+avoid registering new platform device in probe() as it doesn't play well
+with deferred probing but couldn't find a way to avoid that new device,
+unique devices are needed to register "PCM" components for each CPU DAI.
 
-With KASAN on, the bug is quite clear:
+Patches 2/21...11/21 are mostly a clean up, following conversion to single
+component with multiple DAIs, allowing to reference both primary/secondary
+DAI in DT.
 
-    BUG: KASAN: slab-out-of-bounds in sunxi_pinctrl_init_with_variant+0x49c/0x12b8
-    Write of size 4 at addr ffff80002c680280 by task swapper/0/1
+The patch set has been tested on Odroid U3, XU3, XU4 and Mini2440
+(s3c2440 non-DT) boards.
 
-    CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc1-00016-gc480a5e6a077 #3
-    Hardware name: OrangePi Lite2 (DT)
-    Call trace:
-     dump_backtrace+0x0/0x220
-     show_stack+0x14/0x20
-     dump_stack+0xac/0xd4
-     print_address_description+0x60/0x25c
-     kasan_report+0x14c/0x1ac
-     __asan_store4+0x80/0xa0
-     sunxi_pinctrl_init_with_variant+0x49c/0x12b8
-     h6_pinctrl_probe+0x18/0x20
-     platform_drv_probe+0x6c/0xc8
-     really_probe+0x244/0x4b0
-     driver_probe_device.part.4+0x11c/0x164
-     __driver_attach+0x120/0x190
-     bus_for_each_dev+0xe8/0x158
-     driver_attach+0x30/0x40
-     bus_add_driver+0x308/0x318
-     driver_register+0xbc/0x1d0
-     __platform_driver_register+0x7c/0x88
-     h6_pinctrl_driver_init+0x18/0x20
-     do_one_initcall+0xd4/0x208
-     kernel_init_freeable+0x230/0x2c8
-     kernel_init+0x10/0x108
-     ret_from_fork+0x10/0x1c
+Changes since v1 ((addressing Krzysztof's review comments):
+ - added a comment, whitespace change in patch 1/21
+ - dropped unnecessary new line addition from patch 1/21
 
-    Allocated by task 1:
-     kasan_kmalloc.part.0+0x4c/0x100
-     kasan_kmalloc+0xc4/0xe8
-     kasan_slab_alloc+0x14/0x20
-     __kmalloc_track_caller+0x130/0x238
-     devm_kmalloc+0x34/0xd0
-     sunxi_pinctrl_init_with_variant+0x1d8/0x12b8
-     h6_pinctrl_probe+0x18/0x20
-     platform_drv_probe+0x6c/0xc8
-     really_probe+0x244/0x4b0
-     driver_probe_device.part.4+0x11c/0x164
-     __driver_attach+0x120/0x190
-     bus_for_each_dev+0xe8/0x158
-     driver_attach+0x30/0x40
-     bus_add_driver+0x308/0x318
-     driver_register+0xbc/0x1d0
-     __platform_driver_register+0x7c/0x88
-     h6_pinctrl_driver_init+0x18/0x20
-     do_one_initcall+0xd4/0x208
-     kernel_init_freeable+0x230/0x2c8
-     kernel_init+0x10/0x108
-     ret_from_fork+0x10/0x1c
+Sylwester Nawrocki (13):
+  ASoC: samsung: i2s: Move SFR pointer to common driver data structure
+  ASoC: samsung: i2s: Drop spinlock pointer from i2s_dai data structure
+  ASoC: samsung: i2s: Move IP variant data to common driver data
+    structure
+  ASoC: samsung: i2s: Move quirks data to common driver data structure
+  ASoC: samsung: i2s: Get rid of a static spinlock
+  ASoC: samsung: odroid: Add support for secondary CPU DAI
+  ASoC: samsung: Specify DMA channel names through custom DMA config
+  ASoC: samsung: Drop DAI DMA data chan_name assignments
+  ASoC: dmaengine: Remove unused
+    SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+  ASoC: samsung: i2s: Simplify pri_dai, sec_dai pointers usage
+  ASoC: samsung: i2s: Change indentation in SAMSUNG_I2S_FMTS definition
+  ASoC: samsung: i2s: Comments clean up
+  ASoC: samsung: i2s: Convert to SPDX License Indentifier
 
-    Freed by task 0:
-    (stack is not available)
+ include/sound/dmaengine_pcm.h         |   6 -
+ sound/soc/samsung/dmaengine.c         |  12 +-
+ sound/soc/samsung/i2s.c               | 297 +++++++++++++-------------
+ sound/soc/samsung/odroid.c            | 131 ++++++++----
+ sound/soc/samsung/s3c2412-i2s.c       |   4 +-
+ sound/soc/samsung/s3c24xx-i2s.c       |   4 +-
+ sound/soc/soc-generic-dmaengine-pcm.c |  21 +-
+ 7 files changed, 250 insertions(+), 225 deletions(-)
 
-    The buggy address belongs to the object at ffff80002c680080
-     which belongs to the cache kmalloc-512 of size 512
-    The buggy address is located 0 bytes to the right of
-     512-byte region [ffff80002c680080, ffff80002c680280)
-    The buggy address belongs to the page:
-    page:ffff7e0000b1a000 count:1 mapcount:0 mapping:ffff80002e00c780 index:0xffff80002c683c80 compound_mapcount: 0
-    flags: 0x10200(slab|head)
-    raw: 0000000000010200 ffff80002e003a10 ffff80002e003a10 ffff80002e00c780
-    raw: ffff80002c683c80 0000000000100001 00000001ffffffff 0000000000000000
-    page dumped because: kasan: bad access detected
-
-    Memory state around the buggy address:
-     ffff80002c680180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-     ffff80002c680200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    >ffff80002c680280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-		       ^
-     ffff80002c680300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-     ffff80002c680380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-Correct the number of IRQ banks so there are no more mismatches.
-
-Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6 main pin controller")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
-@@ -588,7 +588,7 @@ static const unsigned int h6_irq_bank_ma
- static const struct sunxi_pinctrl_desc h6_pinctrl_data = {
- 	.pins = h6_pins,
- 	.npins = ARRAY_SIZE(h6_pins),
--	.irq_banks = 3,
-+	.irq_banks = 4,
- 	.irq_bank_map = h6_irq_bank_map,
- 	.irq_read_needs_mux = true,
- };
-
+-- 
+2.17.1
 
