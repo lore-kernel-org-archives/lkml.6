@@ -2,74 +2,107 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A39C0044B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F00AC0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C942085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A54921872
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:30:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qGrkOHz8"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="p6mtw2Dr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bay8IKY5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392041AbfBMU0U (ORCPT
+        id S2392187AbfBMUas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 15:26:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45092 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730402AbfBMU0U (ORCPT
+        Wed, 13 Feb 2019 15:30:48 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39665 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730402AbfBMUas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 15:26:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fuyNjv+gA9Cpq0mS7d0DHpZNnRQ2StHPyhGiej79BQg=; b=qGrkOHz8qJCrWPVjL5jQPDQgS
-        USOcI7mUSjEYxD36Eb4n+vEdFCMwhKc4EJKz1DDMC41pa7aa1qsVPetZT1FFYL7dxi59Zx8XHVeC7
-        KBVChej3yiTi1dXFRaSPrWwsAH0ArhoXNVBYOuMpLzecL25EQ8+dXWQ16KQgwmAghhqaCImMA4giT
-        brascUu2N5+MOPcWY+D4CHjsyvEV39+djsXMMlU3wct/HNkpiV8Nm0xZNzy76PcTGdXKbLDF3oC5P
-        oiLhBL6ZAwgqRj0Fd+WyTLfvmLwgAOPtc+PezbKIGXD92zr0GnfTwRqGcndeHl5GoBs0kp7SzGBl6
-        VnjE3xRgQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gu16l-0007Kp-LX; Wed, 13 Feb 2019 20:26:16 +0000
-Date:   Wed, 13 Feb 2019 12:26:15 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guroan@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Kernel Team <Kernel-team@fb.com>,
+        Wed, 13 Feb 2019 15:30:48 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4A093244EE;
+        Wed, 13 Feb 2019 15:30:46 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 13 Feb 2019 15:30:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=T7QSnUai46rJkc55MyA/G3T7prr
+        ND/ta0QCFO8x15M0=; b=p6mtw2Dr4Ui82Mol6wL5Axy4sDXBdGzD+bKveYeJXAp
+        o/7y2ECPew26IlchXYHCTblzUvK/q0vJFziEQzm5leN3GDRwA9VZIDjnes8mbFZq
+        WTm/07xuiPRiOKvBYtHxUYIE/7m6idSMeCYLLBAGz/DIZNu0O8/d2IhKBUD+UlT5
+        AKbLAmFpGENBoGyzeaWosBMxwIgz+SfMuf1OCpqYA0Plp9LAa88pesHqkSSU8k6J
+        QzlHSSTVpXlOuAaItgeRt8unDl4ktAQNR2PcAFY+qELH4sQ6eJAEmka4g34/xQd+
+        HMLKtnFTbXCFCilwBjeSGBvVscKVONE9VRd4zMfNCEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=T7QSnU
+        ai46rJkc55MyA/G3T7prrND/ta0QCFO8x15M0=; b=Bay8IKY5xEp/PYnRJclueH
+        BU62LnOB8RFF8vRPD6BYQ9T6QmTpV6z9J23CGlr2ZuXm0UhtBW8fhDoSynZKpN+9
+        N6Lk19eJqwq+PUB3jL9WiKsEIy75tN1gliy56VpL0/f3Y37tFZqKoYggJICvYb6C
+        gmJ8N35nz6VXkK2opIvi01LujnMZBPhiB3rPqLE5YedlMQN1pJ0fMDOQv4yplpQ8
+        0WPr0zGbZgO1Knb5dKyb3dCg0s68HVIB/tLSUW243SdqrWDB1jJjwA/t2OVctB4D
+        /12Lt6SSTE0EuSNIxEKfD6F9nE2JTCueQmdw/9U3uNavYkYYkeYXo9m4LI06rnzA
+        ==
+X-ME-Sender: <xms:dH5kXDlxV8kEMOmOc19AOZseHpIVsMQJyfPpR2L5X-mHFbQQIZ5Ung>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtfedgudefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
+    fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfe
+    dtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhep
+    fdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukf
+    hppeduudekrddvuddurdduleelrddutdegnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    vgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:dH5kXCrqoifyditB8Oos33jJQPt7wxyTyflyUCKyK29w-BWSD5c2iQ>
+    <xmx:dH5kXA-eVMQHage5w_YgDGaDgUZaP7oGfwgkmaElBgRxGe1xm0-0Uw>
+    <xmx:dH5kXO2pZ1Oq6AE4stBVg7QDeI_vzYPwxOLkAjFIQyljlZ77WdJ7WA>
+    <xmx:dn5kXNcmbVQM8J9ZpoG-drB5VQ8WojIGqXBYoGPvFm99y8BewZ-jSA>
+Received: from localhost (ppp118-211-199-104.bras1.syd2.internode.on.net [118.211.199.104])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0E04910319;
+        Wed, 13 Feb 2019 15:30:43 -0500 (EST)
+Date:   Thu, 14 Feb 2019 07:30:33 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "'Tobin C. Harding'" <tobin@kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        Tycho Andersen <tycho@tycho.ws>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] vmalloc enhancements
-Message-ID: <20190213202614.GV12668@bombadil.infradead.org>
-References: <20190212175648.28738-1-guro@fb.com>
- <20190212184724.GA18339@cmpxchg.org>
- <20190212123409.7ed5c34d68466dbd8b7013a3@linux-foundation.org>
- <20190212223605.GA15979@tower.DHCP.thefacebook.com>
+Subject: Re: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
+Message-ID: <20190213203033.GB31743@eros.localdomain>
+References: <20190207225026.11723-1-tobin@kernel.org>
+ <20190207225026.11723-4-tobin@kernel.org>
+ <6aed136f16e8451dbcfa97f90c04438f@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212223605.GA15979@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <6aed136f16e8451dbcfa97f90c04438f@AcuMS.aculab.com>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:36:12PM +0000, Roman Gushchin wrote:
-> On Tue, Feb 12, 2019 at 12:34:09PM -0800, Andrew Morton wrote:
-> > On Tue, 12 Feb 2019 13:47:24 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > > I don't understand what prompted this change to percpu counters.
+On Wed, Feb 13, 2019 at 03:56:47PM +0000, David Laight wrote:
+> From: Tobin C. Harding
+> > Sent: 07 February 2019 22:50
+> > 
+> > Currently if user passes an output file to the script via
+> > --output-raw we do not handle expansion of tilde.
+> > 
+> > Use perl function glob() to expand tilde in output file name.
 > 
-> I *think*, I see some performance difference, but it's barely measurable
-> in my setup. Also as I remember, Matthew was asking why not percpu here.
-> So if everybody prefers a global atomic, I'm fine with either.
+> What happens if glob() returns multiple files?
+> I'm guessing that it can...
 
-I was asking why you were using an accessor instead of a direct reference
-to the atomic_long_t.
+Thanks for taking a look at this David.  Surely glob() cannot return
+multiple values when expanding tilde?  If someone passes a '*' into the
+command as an input/output file then they are clearly mad :)
 
+
+thanks,
+Tobin.
