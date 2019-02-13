@@ -2,138 +2,118 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461F2C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379CAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23F6A222CF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13CFC222CF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391700AbfBMTaQ (ORCPT
+        id S2394410AbfBMTbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 14:30:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40130 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728018AbfBMTaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 14:30:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 11:30:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="143193613"
-Received: from ssripath-mobl.amr.corp.intel.com (HELO [10.254.80.112]) ([10.254.80.112])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Feb 2019 11:30:09 -0800
-Subject: Re: [PATCH v2] hugetlb: allow to free gigantic pages regardless of
- the configuration
-To:     Alexandre Ghiti <alex@ghiti.fr>, Vlastimil Babka <vbabka@suse.cz>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Wed, 13 Feb 2019 14:31:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388082AbfBMTbe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 14:31:34 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DJVTE1101914
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:31:33 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmsfj8074-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:31:32 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 13 Feb 2019 19:31:31 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 19:31:27 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DJVQgc10944766
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 19:31:26 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C602B2064;
+        Wed, 13 Feb 2019 19:31:26 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F12F2B2066;
+        Wed, 13 Feb 2019 19:31:25 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Feb 2019 19:31:25 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 68CC016C5E3A; Wed, 13 Feb 2019 11:31:27 -0800 (PST)
+Date:   Wed, 13 Feb 2019 11:31:27 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Will Deacon <will.deacon@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20190213192610.17265-1-alex@ghiti.fr>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <d367b5c7-eb05-6d0b-f9bf-5b3fc3f392a9@intel.com>
-Date:   Wed, 13 Feb 2019 11:30:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Reply-To: paulmck@linux.ibm.com
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+ <20190213172047.GH6346@brain-police>
+ <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com>
+ <20190213183314.GB32494@hirez.programming.kicks-ass.net>
+ <3908561D78D1C84285E8C5FCA982C28F7D4FF0DE@ORSMSX110.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190213192610.17265-1-alex@ghiti.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D4FF0DE@ORSMSX110.amr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19021319-0052-0000-0000-00000389CC10
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010590; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01160586; UDB=6.00605748; IPR=6.00941140;
+ MB=3.00025567; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-13 19:31:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021319-0053-0000-0000-00005FD5DE43
+Message-Id: <20190213193127.GH4240@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
-> +#ifdef CONFIG_COMPACTION_CORE
->  static __init int gigantic_pages_init(void)
->  {
->  	/* With compaction or CMA we can allocate gigantic pages at runtime */
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index ac474a61be37..8fecd3ea5563 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -207,8 +207,9 @@ config HUGETLB_PAGE
->  config MEMFD_CREATE
->  	def_bool TMPFS || HUGETLBFS
->  
-> -config ARCH_HAS_GIGANTIC_PAGE
-> +config COMPACTION_CORE
->  	bool
-> +	default y if (MEMORY_ISOLATION && MIGRATION) || CMA
+On Wed, Feb 13, 2019 at 06:43:41PM +0000, Luck, Tony wrote:
+> > I think the last time this came up, it was said that those people still
+> > running Linux on Itanium were running old distro kernels, not upstream.
+> >
+> > So yeah, we could probably do whatever and nobody would ever notice,
+> > except maybe Al, who is rumoured to still have an ia64 :-)
+> 
+> I haven't heard of anyone taking upstream kernels and actually using them
+> for production work in a long time. It's mostly just a few folks keeping ia64
+> alive "just because" these days.  I doubt any of them have an SGI Altix
+> to test on (so realistically Altix was probably broken upstream many releases
+> ago).
 
-This takes a hard dependency (#if) and turns it into a Kconfig *default*
-that can be overridden.  That seems like trouble.
+That would require a well-healed computer collector, wouldn't it?  Just to
+run the thing.  ;-)
 
-Shouldn't it be:
+								Thanx, Paul
 
-config COMPACTION_CORE
-	def_bool y
-	depends on (MEMORY_ISOLATION && MIGRATION) || CMA
-
-?
