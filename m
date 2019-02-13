@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3652FC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C31BC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA7820835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A700222D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026732;
-	bh=AOblHNB1I4m5T4xHNu/ReneSaRK7xRaUSgz5L7AoJbs=;
+	s=default; t=1550026744;
+	bh=X49ohnDIm5wUUx8INhd0YOnPIGraaH2fNuB2nlyoh0o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WDXCNZcBqB9H4ze4Q2+KNy8aZJhBuJsuJCQoVODWXOK8/MrD+F3u35sgU6Nj2Y+1c
-	 KnWd7T3g8G1lVINdlDiG4iwEt9jQatp30tQIjD3Lgje1C9sbfvHyn9J3JLCQZhtm0c
-	 lMj3zyr4I9TZxlraPgnJL4N3DBYKcOJryS8Jt+VI=
+	b=rfjvVyw4Xp2HDb2W3FdtgoYO3dJPgCrBJLK2YiuWqSwGQc3KN7XbutjkMavwxbEa8
+	 FP2FEmRQAv5IrDBuYFREbpGl2GzDOTml+bMnOnhyT5fcpmBezAuKY+6mIt5teJwlqt
+	 um1wk9UilbK5DQgILC4mvpzTucCrW9Z3dYW1ruZI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390204AbfBMC6u (ORCPT
+        id S2390212AbfBMC7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:58:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:59:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732102AbfBMCg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:28 -0500
+        id S2388122AbfBMCgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:36:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3518222CC;
-        Wed, 13 Feb 2019 02:36:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BBEB222CA;
+        Wed, 13 Feb 2019 02:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025387;
-        bh=AOblHNB1I4m5T4xHNu/ReneSaRK7xRaUSgz5L7AoJbs=;
+        s=default; t=1550025384;
+        bh=X49ohnDIm5wUUx8INhd0YOnPIGraaH2fNuB2nlyoh0o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0sxQ81Hn51U5aNlbHiHRwueH2dsoO4W//7MkHJqZCVb9ipldW+145UUfrwQ08fCt0
-         Ux7EH1lQRktSj92/xUTJUV3cdhEOgGWKjW+sM3Kvuy/uRFYIz/iG3jG2YRED03VYti
-         6D8ldlTMvFZ08uOa23LWhg8i0ZhZIuOiqzuQJEi4=
+        b=CtA8vtNeF2P5SYLXGlE8YwYKkH31LFenI23uxBsSYkEg4lxS0fkejscqK+wzS25sz
+         6DvMffuUzL6AuCZYpCmvN/+1s2gx7C4ROsSRP8NB/vl7LJ2RHkFO63+jqfTlg+bOll
+         8KL8XKHIHMzf/crRcrZ5w2wFi2v8BfZr+P6U8RqQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 096/105] bpf: fix SO_MAX_PACING_RATE to support TCP internal pacing
-Date:   Tue, 12 Feb 2019 21:33:27 -0500
-Message-Id: <20190213023336.19019-96-sashal@kernel.org>
+Cc:     Cheng-Min Ao <tony_ao@wiwynn.com>,
+        Yu-Hsiang Chen <matt_chen@wiwynn.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 093/105] hwmon: (tmp421) Correct the misspelling of the tmp442 compatible attribute in OF device ID table
+Date:   Tue, 12 Feb 2019 21:33:24 -0500
+Message-Id: <20190213023336.19019-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -60,40 +59,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Cheng-Min Ao <tony_ao@wiwynn.com>
 
-[ Upstream commit e224c390a6259c529f7b2a6bd215a087b3344f5c ]
+[ Upstream commit f422449b58548a41e98fc97b259a283718e527db ]
 
-If sch_fq packet scheduler is not used, TCP can fallback to
-internal pacing, but this requires sk_pacing_status to
-be properly set.
+Correct a typo in OF device ID table
+The last one should be 'ti,tmp442'
 
-Fixes: 8c4b4c7e9ff0 ("bpf: Add setsockopt helper function to bpf")
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Lawrence Brakmo <brakmo@fb.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Cheng-Min Ao <tony_ao@wiwynn.com>
+Signed-off-by: Yu-Hsiang Chen <matt_chen@wiwynn.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/hwmon/tmp421.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index e176b335ddc0..16350f8c8815 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3935,6 +3935,10 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
- 			sk->sk_sndbuf = max_t(int, val * 2, SOCK_MIN_SNDBUF);
- 			break;
- 		case SO_MAX_PACING_RATE: /* 32bit version */
-+			if (val != ~0U)
-+				cmpxchg(&sk->sk_pacing_status,
-+					SK_PACING_NONE,
-+					SK_PACING_NEEDED);
- 			sk->sk_max_pacing_rate = (val == ~0U) ? ~0UL : val;
- 			sk->sk_pacing_rate = min(sk->sk_pacing_rate,
- 						 sk->sk_max_pacing_rate);
+diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
+index 8844c9565d2a..7053be59ad2e 100644
+--- a/drivers/hwmon/tmp421.c
++++ b/drivers/hwmon/tmp421.c
+@@ -88,7 +88,7 @@ static const struct of_device_id tmp421_of_match[] = {
+ 		.data = (void *)2
+ 	},
+ 	{
+-		.compatible = "ti,tmp422",
++		.compatible = "ti,tmp442",
+ 		.data = (void *)3
+ 	},
+ 	{ },
 -- 
 2.19.1
 
