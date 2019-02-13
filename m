@@ -2,51 +2,51 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EEEC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE58C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECBB52086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 830132086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393551AbfBMR4O (ORCPT
+        id S2393563AbfBMR4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:56:14 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:59825 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393537AbfBMR4H (ORCPT
+        Wed, 13 Feb 2019 12:56:23 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:44734 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393536AbfBMR4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:56:07 -0500
-Received: by mail-it1-f197.google.com with SMTP id m136so3898321ita.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:56:06 -0800 (PST)
+        Wed, 13 Feb 2019 12:56:06 -0500
+Received: by mail-it1-f198.google.com with SMTP id h6so3811931itk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:56:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=rw1u1E/Y0WN2t7/1UjBw4YH7Rz4n/OUD0yPyuovl1dQ=;
-        b=Zx1gJN9aGP4WbFYxEwFMOg8eaB5hlMB3z6iAW0OBZidQyOp7RXpKm9X0XhsVGC3aZz
-         SEDXrYE3TQHDe9oJpFhP/Ds/s25VVIbaIdsHxhmsIOGbRZirDcs051b/8JYJHA/5p2Cu
-         Eyqw6yfaQhWUvChPkN7Eddn+TYxd4o97VaUHJ8ySMeYxw7JPYBobq1wRco6EOdkb1p2D
-         SSsY+xpv2uW+Lrx932cvPH91ZgudODPj52RONvR+4lH66e6jKTcAeKb/yXZHTfe8zyp6
-         tBgXQmdZxqYmyW/+nevSfY7FNMwv4b8Kx3MVEacWsIQKlx3q4g6yNUEBQmUGMMqEWYG2
-         5EGg==
-X-Gm-Message-State: AHQUAuaCFYfdMOazVyNAy77syBe6kUcSRCBplALkRjIXWgEygnjWNYAp
-        cjnyC30ykK4m0IHhN2jFUe9D3xWTJfDZT8F1gHQQJcb/LVgQ
-X-Google-Smtp-Source: AHgI3IYA7DXug7n8UUiqKXJcDl2B9/CFmFAol9N7BkAa3X8FWXWvGZWilgVFVOsZsXoT3njymiwI1p72dEmDjOyYF9euptMcXnyD
+        bh=/8dKhXsiQ2QkfYGqoxIii4R2uRHURx43YRUX02sWWZk=;
+        b=WFEXE9IuYHPTiiHKn33Vz1WRwxAwIo/OBbkC2TOo+pmYmruPRNpON1X9CQW3YxaT1m
+         EarkGJnivZMbNpUGRryCsn0LH66eadDTVM5bmilTHqcV5toLDwyeW7vrOc+8NA2Fzrxc
+         FWlOCO8zYzmvgeHcAuR3p0WMG39mXdjO6n8Fc2NQ6TzdMT38ysWhjpzQ1Bp3obgg3gZp
+         m9S9AUnZEJ04wuFV056b/FKCVbsx1h/iZfBzcK3O32CuMvCRCj5IqGgd/9e6bO68Hqy+
+         eKh7s88ToKyWOfvkIvj9W0tXhw0L8xS+UCh4bPqy4G041P64ngcDfSmVsYIJ/Mh2Gox7
+         Jo6w==
+X-Gm-Message-State: AHQUAuZ6rLHfK6Om14d2EhQ+VGbPGX7/uESJ0sKbt06JA1aGW6RLAU06
+        U1RBkKIQYnDGcuLGd6wOesaVeb0Zw+STHcGrGQJDjJQZzKyA
+X-Google-Smtp-Source: AHgI3IZ58U73cYGoyRWtDlQp14fvqHk0IOmOOSUycwlw16eqtYk8jP+v5iEZj1KsxwiWKf+32AVJfCouWkbeNDUNAzUY1c8ybOx6
 MIME-Version: 1.0
-X-Received: by 2002:a02:a899:: with SMTP id l25mr1111299jam.5.1550080564900;
+X-Received: by 2002:a02:89cc:: with SMTP id e12mr1107363jak.15.1550080564169;
  Wed, 13 Feb 2019 09:56:04 -0800 (PST)
 Date:   Wed, 13 Feb 2019 09:56:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000071be120581ca41ed@google.com>
-Subject: BUG: soft lockup in kvm_vm_release
-From:   syzbot <syzbot+6349a512c2938b2ad058@syzkaller.appspotmail.com>
-To:     jpoimboe@redhat.com, linux-kernel@vger.kernel.org, luto@kernel.org,
-        peterz@infradead.org, riel@surriel.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Message-ID: <0000000000006694750581ca4139@google.com>
+Subject: general protection fault in tc_ctl_chain
+From:   syzbot <syzbot+eff9cae063e4b633c6c1@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,129 +57,86 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    57902dc0670c Merge tag 'riscv-for-linus-5.0-rc7' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=153b7958c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=6349a512c2938b2ad058
+HEAD commit:    bd3606c29fcc rocker: Remove port_attr_bridge_flags_get ass..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=121bbf87400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8572a6e4661225f4
+dashboard link: https://syzkaller.appspot.com/bug?extid=eff9cae063e4b633c6c1
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14287e78c00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11cbd404c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fc80d4c00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6349a512c2938b2ad058@syzkaller.appspotmail.com
+Reported-by: syzbot+eff9cae063e4b633c6c1@syzkaller.appspotmail.com
 
-kvm: vcpu 0: requested 34784 ns lapic timer period limited to 200000 ns
-kvm: vcpu 0: requested 34784 ns lapic timer period limited to 200000 ns
-kvm: vcpu 0: requested 34784 ns lapic timer period limited to 200000 ns
-kvm: vcpu 0: requested 34784 ns lapic timer period limited to 200000 ns
-kvm: vcpu 0: requested 34784 ns lapic timer period limited to 200000 ns
-watchdog: BUG: soft lockup - CPU#1 stuck for 123s! [syz-executor.5:21491]
-Modules linked in:
-irq event stamp: 31290
-hardirqs last  enabled at (31289): [<ffffffff81006673>]  
-trace_hardirqs_on_thunk+0x1a/0x1c
-hardirqs last disabled at (31290): [<ffffffff8100668f>]  
-trace_hardirqs_off_thunk+0x1a/0x1c
-softirqs last  enabled at (9202): [<ffffffff87400662>]  
-__do_softirq+0x662/0x95a kernel/softirq.c:319
-softirqs last disabled at (9159): [<ffffffff8144d800>] invoke_softirq  
-kernel/softirq.c:373 [inline]
-softirqs last disabled at (9159): [<ffffffff8144d800>] irq_exit+0x180/0x1d0  
-kernel/softirq.c:413
-CPU: 1 PID: 21491 Comm: syz-executor.5 Not tainted 5.0.0-rc6+ #69
+audit: type=1800 audit(1550028783.638:30): pid=7517 uid=0 auid=4294967295  
+ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
+comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 7669 Comm: syz-executor789 Not tainted 5.0.0-rc5+ #60
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:csd_lock_wait kernel/smp.c:108 [inline]
-RIP: 0010:smp_call_function_single+0x13e/0x420 kernel/smp.c:302
-Code: 00 48 8b 4c 24 08 48 8b 54 24 10 48 8d 74 24 40 8b 7c 24 1c e8 23 fa  
-ff ff 41 89 c5 eb 07 e8 99 7c 0a 00 f3 90 44 8b 64 24 58 <31> ff 41 83 e4  
-01 44 89 e6 e8 04 7e 0a 00 45 85 e4 75 e1 e8 7a 7c
-RSP: 0018:ffff888070747620 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: ffff8880770b82c0 RBX: 1ffff1100e0e8ec8 RCX: ffffffff8165649c
-RDX: 0000000000000000 RSI: ffffffff81656487 RDI: 0000000000000005
-RBP: ffff888070747700 R08: ffff8880770b82c0 R09: ffffed1015d05be9
-R10: ffffed1015d05be8 R11: ffff8880ae82df47 R12: 0000000000000003
-R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
-FS:  00007fdaeb8f5700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+RIP: 0010:__lock_acquire+0x8df/0x4700 kernel/locking/lockdep.c:3215
+Code: 28 00 00 00 0f 85 35 27 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dc 27 00 00 49 81 3c 24 20 45 9a 89 0f 84 03 f8
+RSP: 0018:ffff88808b44f180 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000000c RSI: 0000000000000000 RDI: 0000000000000060
+RBP: ffff88808b44f350 R08: 0000000000000001 R09: 0000000000000001
+R10: ffff88808b44f570 R11: 0000000000000001 R12: 0000000000000060
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880915d4680
+FS:  0000000001ef6880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffda65e1330 CR3: 000000009f959000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+CR2: 0000000020000080 CR3: 0000000093549000 CR4: 00000000001406f0
 Call Trace:
-  smp_call_function_many+0x750/0x8c0 kernel/smp.c:434
-  smp_call_function+0x42/0x90 kernel/smp.c:492
-  on_each_cpu+0x31/0x200 kernel/smp.c:602
-  text_poke_bp+0x12a/0x19b arch/x86/kernel/alternative.c:826
-  __jump_label_transform+0x263/0x330 arch/x86/kernel/jump_label.c:91
-  arch_jump_label_transform+0x2b/0x40 arch/x86/kernel/jump_label.c:99
-  __jump_label_update+0x16a/0x210 kernel/jump_label.c:389
-  jump_label_update kernel/jump_label.c:752 [inline]
-  jump_label_update+0x1ce/0x3d0 kernel/jump_label.c:731
-  __static_key_slow_dec_cpuslocked+0x61/0x150 kernel/jump_label.c:228
-  __static_key_slow_dec kernel/jump_label.c:238 [inline]
-  static_key_slow_dec+0x60/0xa0 kernel/jump_label.c:252
-  kvm_arch_vcpu_uninit+0x192/0x1d0 arch/x86/kvm/x86.c:9091
-  kvm_vcpu_uninit+0x44/0x90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:335
-  vmx_free_vcpu+0x1f6/0x340 arch/x86/kvm/vmx/vmx.c:6683
-  kvm_arch_vcpu_free arch/x86/kvm/x86.c:8707 [inline]
-  kvm_free_vcpus arch/x86/kvm/x86.c:9159 [inline]
-  kvm_arch_destroy_vm+0x25f/0x4f0 arch/x86/kvm/x86.c:9256
-  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:748 [inline]
-  kvm_put_kvm+0x55b/0xc70 arch/x86/kvm/../../../virt/kvm/kvm_main.c:769
-  kvm_vm_release+0x44/0x60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:780
-  __fput+0x2df/0x8d0 fs/file_table.c:278
-  ____fput+0x16/0x20 fs/file_table.c:309
-  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
-  get_signal+0x1969/0x1d60 kernel/signal.c:2388
-  do_signal+0x87/0x1940 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x244/0x2c0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+  __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  tc_ctl_chain+0x42f/0x11a0 net/sched/cls_api.c:2812
+  rtnetlink_rcv_msg+0x465/0xb00 net/core/rtnetlink.c:5192
+  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2485
+  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5210
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1925
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x806/0x930 net/socket.c:2136
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2174
+  __do_sys_sendmsg net/socket.c:2183 [inline]
+  __se_sys_sendmsg net/socket.c:2181 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2181
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ca7
-Code: 48 83 c4 08 48 89 d8 5b 5d c3 66 0f 1f 84 00 00 00 00 00 48 89 e8 48  
-f7 d8 48 39 c3 0f 92 c0 eb 92 66 90 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 0d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fdaeb8f3098 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: 0000000000000000 RBX: 0000000000000013 RCX: 0000000000457ca7
-RDX: 00007fdaeb8f3510 RSI: 000000004020ae46 RDI: 0000000000000007
-RBP: 0000000020ff3000 R08: 00007fdaeb8f30a0 R09: 000000000073bfa0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000fec00000
-R13: 0000000000000007 R14: 00000000004dbaf0 R15: 00000000ffffffff
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.0.0-rc6+ #69
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: rcu_gp process_srcu
-RIP: 0010:find_held_lock+0xc/0x130 kernel/locking/lockdep.c:3436
-Code: d0 e9 9e fc ff ff 4c 89 f7 48 89 75 d0 e8 3c 5a 50 00 48 8b 75 d0 e9  
-15 fd ff ff 0f 1f 00 55 48 89 e5 41 57 44 8d 7a ff 41 56 <49> 89 f6 49 63  
-c7 41 55 48 8d 04 80 41 54 4c 8d a4 c7 80 08 00 00
-RSP: 0018:ffff8880a98b7b28 EFLAGS: 00000006
-RAX: 0000000000000003 RBX: 1ffff11015316f6f RCX: ffff8880a98b7b98
-RDX: 0000000000000003 RSI: ffffffff88a41640 RDI: ffff8880a98a8300
-RBP: ffff8880a98b7b38 R08: ffff8880a98a8300 R09: 0000000000000003
-R10: ffffed1015316f72 R11: 0000000000000003 R12: ffffffff88a41640
-R13: ffffffff815d7751 R14: ffffffff8a556aa0 R15: 0000000000000002
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+RIP: 0033:0x4400d9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd09281608 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004400d9
+RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401960
+R13: 00000000004019f0 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 25ab48d993ef9249 ]---
+RIP: 0010:__lock_acquire+0x8df/0x4700 kernel/locking/lockdep.c:3215
+Code: 28 00 00 00 0f 85 35 27 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dc 27 00 00 49 81 3c 24 20 45 9a 89 0f 84 03 f8
+RSP: 0018:ffff88808b44f180 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000000c RSI: 0000000000000000 RDI: 0000000000000060
+RBP: ffff88808b44f350 R08: 0000000000000001 R09: 0000000000000001
+R10: ffff88808b44f570 R11: 0000000000000001 R12: 0000000000000060
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880915d4680
+FS:  0000000001ef6880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000018 CR3: 000000009b9db000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __lock_release kernel/locking/lockdep.c:3599 [inline]
-  lock_release+0x262/0xa00 kernel/locking/lockdep.c:3860
-  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:166 [inline]
-  _raw_spin_unlock_irq+0x1b/0x90 kernel/locking/spinlock.c:192
-  spin_unlock_irq include/linux/spinlock.h:379 [inline]
-  srcu_reschedule+0xa1/0x130 kernel/rcu/srcutree.c:1246
-  process_srcu+0x125/0xec0 kernel/rcu/srcutree.c:1262
-  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+CR2: 0000000020000080 CR3: 0000000093549000 CR4: 00000000001406f0
 
 
 ---
