@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D5DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC048C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F2A20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C0CE20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mhJhnq4c"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P2i8Izg6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389289AbfBMHDZ (ORCPT
+        id S2388888AbfBMHCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:03:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51392 "EHLO
+        Wed, 13 Feb 2019 02:02:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51272 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388940AbfBMHCt (ORCPT
+        with ESMTP id S2388614AbfBMHCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:02:49 -0500
+        Wed, 13 Feb 2019 02:02:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fNbJrcHN25NVSYV/f4JAQi3fs53KdSu9kh9zLwE6id4=; b=mhJhnq4c6rdzb0FRlLNltQucSq
-        mm1dYZLRjwvF4gfYJ0vxks4QzBQELvktYr/YX+0sLa1Gq3V5xXdLMuUpMzq3FIocfPmSjEqI8xapG
-        g5lItJ1VOzTl3pjbyKCzWBZca7eqWRderjPnRvNBcIUhQpE4BFvFXq/bXkwl+vmyOHRlSKjeARxnT
-        2/YPsjRGKvndhHvvHqfi9qLTBuJ1JO4VWChdW0mpdG4oA9Uuv9uL0UWpY2BQ1IgJFv5AlRQ1Pr/Y7
-        2L2VQtdoijFOOF5nAmmOzYnwHcNCa5GJCcrrh9HcNmloxaf5N1Q2oxN44jJudxX9Do5K3hf2iLMH9
-        LMJcQSWg==;
+        bh=ave9R4JqSgfJ1O28BXwhjR1N/4+/2O2q41XoX/ZRGwo=; b=P2i8Izg69f1cwMFd2PnjerWAb9
+        QAMSkieGduBOG41Er9PLrUQiCXlM9XV8UzjL4ZVAP1h87P1XY+nOps7DAHgXZ0qgfZqexebm0dABq
+        7qGSTHQSY+qUFiA25lQhp4vfNzA6o39HI+HfPxlW+aEJqgMG9GmyEIsB9khBQF0uALcs+3qmJy/LK
+        bYVbYMv/HgcfInCE2X3NQS3GBpgzKhdMTDxfXqNNjrX69vqsRpI0t4hnXgQlIrSgaEwZHcWhj5TXZ
+        vfr8VVRS8640oKXYyLly+zPiIDONGRVSwxVMpzEpMVRla5fRsuZ2ezn3IGZ+v715hUu+lTGwB+hGh
+        LtFCYwtw==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtoZ7-0000ji-IE; Wed, 13 Feb 2019 07:02:42 +0000
+        id 1gtoYo-0000SG-Cw; Wed, 13 Feb 2019 07:02:22 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -46,9 +46,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org,
         Christian Zigotzky <chzigotzky@xenosoft.de>
-Subject: [PATCH 28/32] powerpc/dma: use the dma_direct mapping routines
-Date:   Wed, 13 Feb 2019 08:01:29 +0100
-Message-Id: <20190213070133.11259-29-hch@lst.de>
+Subject: [PATCH 20/32] powerpc/dma: fix an off-by-one in dma_capable
+Date:   Wed, 13 Feb 2019 08:01:21 +0100
+Message-Id: <20190213070133.11259-21-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213070133.11259-1-hch@lst.de>
 References: <20190213070133.11259-1-hch@lst.de>
@@ -60,266 +60,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the streaming DMA mapping and ownership transfer methods to the
-functionally identical dma_direct_ versions.  Factor the cache
-maintainance helpers into the form expected by the common code for that.
+We need to compare the last byte in the dma range and not the one after it
+for the bus_dma_mask, just like we do for the regular dma_mask.  Fix this
+cleanly by merging the two comparisms into one.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
 ---
- arch/powerpc/include/asm/dma-mapping.h | 30 ---------
- arch/powerpc/kernel/dma-iommu.c        |  4 +-
- arch/powerpc/kernel/dma.c              | 87 +++-----------------------
- arch/powerpc/mm/dma-noncoherent.c      | 29 ++++++---
- arch/powerpc/platforms/Kconfig.cputype |  2 +
- 5 files changed, 32 insertions(+), 120 deletions(-)
+ arch/powerpc/include/asm/dma-direct.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-index cdf70aaeafeb..4de9d4ee23c1 100644
---- a/arch/powerpc/include/asm/dma-mapping.h
-+++ b/arch/powerpc/include/asm/dma-mapping.h
-@@ -25,36 +25,6 @@ extern void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
- extern void __dma_nommu_free_coherent(struct device *dev, size_t size,
- 				       void *vaddr, dma_addr_t dma_handle,
- 				       unsigned long attrs);
--int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
--		int nents, enum dma_data_direction direction,
--		unsigned long attrs);
--dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
--		unsigned long offset, size_t size,
--		enum dma_data_direction dir, unsigned long attrs);
--
--#ifdef CONFIG_NOT_COHERENT_CACHE
--/*
-- * DMA-consistent mapping functions for PowerPCs that don't support
-- * cache snooping.  These allocate/free a region of uncached mapped
-- * memory space for use with DMA devices.  Alternatively, you could
-- * allocate the space "normally" and use the cache management functions
-- * to ensure it is consistent.
-- */
--struct device;
--extern void __dma_sync(void *vaddr, size_t size, int direction);
--extern void __dma_sync_page(struct page *page, unsigned long offset,
--				 size_t size, int direction);
--extern unsigned long __dma_get_coherent_pfn(unsigned long cpu_addr);
--
--#else /* ! CONFIG_NOT_COHERENT_CACHE */
--/*
-- * Cache coherent cores.
-- */
--
--#define __dma_sync(addr, size, rw)		((void)0)
--#define __dma_sync_page(pg, off, sz, rw)	((void)0)
--
--#endif /* ! CONFIG_NOT_COHERENT_CACHE */
+diff --git a/arch/powerpc/include/asm/dma-direct.h b/arch/powerpc/include/asm/dma-direct.h
+index e00ab5d0612d..92d8aed86422 100644
+--- a/arch/powerpc/include/asm/dma-direct.h
++++ b/arch/powerpc/include/asm/dma-direct.h
+@@ -4,15 +4,11 @@
  
- static inline unsigned long device_to_mask(struct device *dev)
+ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
  {
-diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
-index c75ba4e3a50c..09231ef06d01 100644
---- a/arch/powerpc/kernel/dma-iommu.c
-+++ b/arch/powerpc/kernel/dma-iommu.c
-@@ -68,7 +68,7 @@ static dma_addr_t dma_iommu_map_page(struct device *dev, struct page *page,
- 				     unsigned long attrs)
- {
- 	if (dma_iommu_map_bypass(dev, attrs))
--		return dma_nommu_map_page(dev, page, offset, size, direction,
-+		return dma_direct_map_page(dev, page, offset, size, direction,
- 				attrs);
- 	return iommu_map_page(dev, get_iommu_table_base(dev), page, offset,
- 			      size, device_to_mask(dev), direction, attrs);
-@@ -90,7 +90,7 @@ static int dma_iommu_map_sg(struct device *dev, struct scatterlist *sglist,
- 			    unsigned long attrs)
- {
- 	if (dma_iommu_map_bypass(dev, attrs))
--		return dma_nommu_map_sg(dev, sglist, nelems, direction, attrs);
-+		return dma_direct_map_sg(dev, sglist, nelems, direction, attrs);
- 	return ppc_iommu_map_sg(dev, get_iommu_table_base(dev), sglist, nelems,
- 				device_to_mask(dev), direction, attrs);
- }
-diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index f983f8d435a6..b9f7283e7224 100644
---- a/arch/powerpc/kernel/dma.c
-+++ b/arch/powerpc/kernel/dma.c
-@@ -27,77 +27,6 @@
-  * default the offset is PCI_DRAM_OFFSET.
-  */
- 
--int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
--		int nents, enum dma_data_direction direction,
--		unsigned long attrs)
--{
--	struct scatterlist *sg;
--	int i;
--
--	for_each_sg(sgl, sg, nents, i) {
--		sg->dma_address = phys_to_dma(dev, sg_phys(sg));
--		sg->dma_length = sg->length;
--
--		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
--			continue;
--
--		__dma_sync_page(sg_page(sg), sg->offset, sg->length, direction);
--	}
--
--	return nents;
--}
--
--static void dma_nommu_unmap_sg(struct device *dev, struct scatterlist *sgl,
--				int nents, enum dma_data_direction direction,
--				unsigned long attrs)
--{
--	struct scatterlist *sg;
--	int i;
--
--	for_each_sg(sgl, sg, nents, i)
--		__dma_sync_page(sg_page(sg), sg->offset, sg->length, direction);
--}
--
--dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
--		unsigned long offset, size_t size,
--		enum dma_data_direction dir, unsigned long attrs)
--{
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		__dma_sync_page(page, offset, size, dir);
--
--	return phys_to_dma(dev, page_to_phys(page)) + offset;
--}
--
--static inline void dma_nommu_unmap_page(struct device *dev,
--					 dma_addr_t dma_address,
--					 size_t size,
--					 enum dma_data_direction direction,
--					 unsigned long attrs)
--{
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		__dma_sync(bus_to_virt(dma_address), size, direction);
--}
--
--#ifdef CONFIG_NOT_COHERENT_CACHE
--static inline void dma_nommu_sync_sg(struct device *dev,
--		struct scatterlist *sgl, int nents,
--		enum dma_data_direction direction)
--{
--	struct scatterlist *sg;
--	int i;
--
--	for_each_sg(sgl, sg, nents, i)
--		__dma_sync_page(sg_page(sg), sg->offset, sg->length, direction);
--}
--
--static inline void dma_nommu_sync_single(struct device *dev,
--					  dma_addr_t dma_handle, size_t size,
--					  enum dma_data_direction direction)
--{
--	__dma_sync(bus_to_virt(dma_handle), size, direction);
--}
+-#ifdef CONFIG_SWIOTLB
+-	if (dev->bus_dma_mask && addr + size > dev->bus_dma_mask)
+-		return false;
 -#endif
 -
- const struct dma_map_ops dma_nommu_ops = {
- #ifdef CONFIG_NOT_COHERENT_CACHE
- 	.alloc				= __dma_nommu_alloc_coherent,
-@@ -106,17 +35,17 @@ const struct dma_map_ops dma_nommu_ops = {
- 	.alloc				= dma_direct_alloc,
- 	.free				= dma_direct_free,
- #endif
--	.map_sg				= dma_nommu_map_sg,
--	.unmap_sg			= dma_nommu_unmap_sg,
-+	.map_sg				= dma_direct_map_sg,
- 	.dma_supported			= dma_direct_supported,
--	.map_page			= dma_nommu_map_page,
--	.unmap_page			= dma_nommu_unmap_page,
-+	.map_page			= dma_direct_map_page,
- 	.get_required_mask		= dma_direct_get_required_mask,
- #ifdef CONFIG_NOT_COHERENT_CACHE
--	.sync_single_for_cpu 		= dma_nommu_sync_single,
--	.sync_single_for_device 	= dma_nommu_sync_single,
--	.sync_sg_for_cpu 		= dma_nommu_sync_sg,
--	.sync_sg_for_device 		= dma_nommu_sync_sg,
-+	.unmap_sg			= dma_direct_unmap_sg,
-+	.unmap_page			= dma_direct_unmap_page,
-+	.sync_single_for_cpu 		= dma_direct_sync_single_for_cpu,
-+	.sync_single_for_device 	= dma_direct_sync_single_for_device,
-+	.sync_sg_for_cpu 		= dma_direct_sync_sg_for_cpu,
-+	.sync_sg_for_device 		= dma_direct_sync_sg_for_device,
- #endif
- };
- EXPORT_SYMBOL(dma_nommu_ops);
-diff --git a/arch/powerpc/mm/dma-noncoherent.c b/arch/powerpc/mm/dma-noncoherent.c
-index ee95da19c82d..c3d15d718a58 100644
---- a/arch/powerpc/mm/dma-noncoherent.c
-+++ b/arch/powerpc/mm/dma-noncoherent.c
-@@ -314,7 +314,7 @@ void __dma_nommu_free_coherent(struct device *dev, size_t size, void *vaddr,
- /*
-  * make an area consistent.
-  */
--void __dma_sync(void *vaddr, size_t size, int direction)
-+static void __dma_sync(void *vaddr, size_t size, int direction)
- {
- 	unsigned long start = (unsigned long)vaddr;
- 	unsigned long end   = start + size;
-@@ -340,7 +340,6 @@ void __dma_sync(void *vaddr, size_t size, int direction)
- 		break;
- 	}
+ 	if (!dev->dma_mask)
+ 		return false;
+ 
+-	return addr + size - 1 <= *dev->dma_mask;
++	return addr + size - 1 <=
++		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
  }
--EXPORT_SYMBOL(__dma_sync);
  
- #ifdef CONFIG_HIGHMEM
- /*
-@@ -387,21 +386,33 @@ static inline void __dma_sync_page_highmem(struct page *page,
-  * __dma_sync_page makes memory consistent. identical to __dma_sync, but
-  * takes a struct page instead of a virtual address
-  */
--void __dma_sync_page(struct page *page, unsigned long offset,
--	size_t size, int direction)
-+static void __dma_sync_page(phys_addr_t paddr, size_t size, int dir)
- {
-+	struct page *page = pfn_to_page(paddr >> PAGE_SHIFT);
-+	unsigned offset = paddr & ~PAGE_MASK;
-+
- #ifdef CONFIG_HIGHMEM
--	__dma_sync_page_highmem(page, offset, size, direction);
-+	__dma_sync_page_highmem(page, offset, size, dir);
- #else
- 	unsigned long start = (unsigned long)page_address(page) + offset;
--	__dma_sync((void *)start, size, direction);
-+	__dma_sync((void *)start, size, dir);
- #endif
- }
--EXPORT_SYMBOL(__dma_sync_page);
-+
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_sync_page(paddr, size, dir);
-+}
-+
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_sync_page(paddr, size, dir);
-+}
- 
- /*
-- * Return the PFN for a given cpu virtual address returned by
-- * __dma_nommu_alloc_coherent.
-+ * Return the PFN for a given cpu virtual address returned by arch_dma_alloc.
-  */
- long arch_dma_coherent_to_pfn(struct device *dev, void *vaddr,
- 		dma_addr_t dma_addr)
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index dea50355f6e8..842b2c7e156a 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -409,6 +409,8 @@ config NOT_COHERENT_CACHE
- 	depends on 4xx || PPC_8xx || E200 || PPC_MPC512x || \
- 		GAMECUBE_COMMON || AMIGAONE
- 	select ARCH_HAS_DMA_COHERENT_TO_PFN
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	default n if PPC_47x
- 	default y
- 
+ static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
 -- 
 2.20.1
 
