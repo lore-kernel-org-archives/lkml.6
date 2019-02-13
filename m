@@ -2,177 +2,171 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762B9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8C3C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27FD020700
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:41:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="RqZvgRfd"
+	by mail.kernel.org (Postfix) with ESMTP id B50EA2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392472AbfBMPl2 (ORCPT
+        id S2392485AbfBMPlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:41:28 -0500
-Received: from mout.web.de ([212.227.17.11]:44069 "EHLO mout.web.de"
+        Wed, 13 Feb 2019 10:41:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732059AbfBMPl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:41:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550072464;
-        bh=0pZlaYMCSK6QRJS3D6BlXVTlIGZyi3BqLCvNhXMXfGo=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=RqZvgRfdqd8knsuHT/DR6b3OybHn6BHwPFcXa6w4+Rh7zCul6ydNXoQagTy//PFv9
-         wzQS7XISi+OntIgM/8CWC/iO2wAwXZ9Egb5kR4K+CASaW9W83zi+OZ3TIpi2GiTWqd
-         z8QM5C1fZ555Ylo7AnU9vP7UsKS43Tu8YubF1Xm8=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.244.74.172]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lb1wz-1hMuhF1yeH-00kgdh; Wed, 13
- Feb 2019 16:41:04 +0100
-Subject: Re: [PATCH v3] coccinelle: semantic patch for missing put_device()
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Coccinelle <cocci@systeme.lip6.fr>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Xue Zhihong <xue.zhihong@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>
-References: <1550039015-5587-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <63ed130e-7764-3fc6-88b5-5965bf12c790@web.de>
-Date:   Wed, 13 Feb 2019 16:40:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1732059AbfBMPlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:41:47 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587AC20700;
+        Wed, 13 Feb 2019 15:41:45 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 10:41:43 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] kprobe: safely access memory specified by userspace
+Message-ID: <20190213104143.5c390b28@gandalf.local.home>
+In-Reply-To: <20190213143638.y54hghilbyastlpo@mail.google.com>
+References: <20190125151051.7381-1-changbin.du@gmail.com>
+        <20190213143638.y54hghilbyastlpo@mail.google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1550039015-5587-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ImzlekzBlGgS91LUY1bK79XPP5jDzL+sqq5tJu8PRi+8r9MafoL
- TfjYXP0AaJ9BogSfmz8EPkkFStR8fCOXQ1b+sVr2Q2y6KqnCQmtMUGF3TE9yhaypYv27OKa
- SQBTdae9bWRVv1cWrS1zDUTHKDOUEjCA+KnR486glO1qn2P3829UFqspf7q81R3fBNkxuRV
- u82UvyDt20dhWuX4vVn/w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NmFv6P6Bk3U=:0IfgTRz7gulPhQlObd0E50
- 5Lo+YF385gX8j7WRRsUb3fVNmlXsLPYv/NIwTjySB96vK4nbmOCZqeZp7UwdpsOo+lelKOCBP
- zfY8mCMigSZEbaXYWuW8Dc7RMLdrNE3Df6IhfyRgvfBcRU8Y/nk7P9BgxBoEPzhfmFunM/WLS
- o1wG7VILOHIVQaewpYxVJ44MCWe5VRzGjRiIakzLyUPO9DS12/56fsEBLBmrbI+VfCSDw5iDX
- HhMSrs4JofD9Snpb0ZlsqSuVi1R9OF3P2kc5uhbpDyGQ8hNLVFSWw4Szty5iKBTXWDaCSl76e
- IcFYDSf9VnUhddzaCad/EpQlpmbug72bRZ8rsyz8/K1LqX3pUtyAKX3rkisr348BjOn8/Lk20
- eN1SSa9STTK1oUn5ZgWWUsDbRQSnrrRtOOgsvgWwoZoo4zSXyySw8JnkIgI5f5D8Sc2Wrd2IO
- S56mCeedoDxeUG0A9X5MPbEaa0soTc1iWQPjwBXRJIZnj7p+rETGFeD8dkdH8YAECNTOjnshG
- P83ctq79RYds6VFT2+NaA/ilbxoqzD75drTV6bhr2gunPGUPN2bhfUZeo3zE+RS8D/w0SjC5l
- 9pMDXZeAMfduYN0NQOCBDezS6OtWDf+5T+jw/7S6vCyjDdTkW0qSk//yVShb7APFQ/PlF/OEn
- ZV52jZMFqzgNfv1H1lAvPNAiQdCQah5kbj1e0pRO70YlRQiSC7zfy0gBbWoLXwRxdb/v4U5HF
- YYlRwKfFBNI5Vp5khhrOsXK1ewiudHqVu1uqOqBUflcc87GCejS9ZWGDppq2CIC8cvXj7inHo
- GovyBW4ZSJlWn14P7jq5uhudKjNbkiZghHZX/7omB3XrHL2SQ5MCX45IBMPRwfcxtwBqKdlDR
- FllkTBhpoOS0ezm+/bAem708PNpB1N9LdrD24NCl2W6PXafzeAqv9KxCbaO604Tzooae/UY1G
- HoMHE/LXz3g==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Reviewed-by: Markus Elfring <Markus.Elfring@web.de>
+On Wed, 13 Feb 2019 22:36:40 +0800
+Changbin Du <changbin.du@gmail.com> wrote:
 
-I have got doubts that my code review comments qualify already
-for this tag.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?id=3D1f947a7a011fcceb14cb912f54=
-81a53b18f1879a#n565
+> Hi Steven,
+> I think this is a critical issue. Could you give priority to this fix?
+> 
+> On Fri, Jan 25, 2019 at 11:10:50PM +0800, Changbin Du wrote:
+> > The userspace can ask kprobe to intercept strings at any memory address,
+> > including invalid kernel address. In this case, fetch_store_strlen()
+> > would crash since it uses general usercopy function.
+> > 
+> > For example, we can crash the kernel by doing something as below:
+> > 
+> > $ sudo kprobe 'p:do_sys_open +0(+0(%si)):string'
 
+Note, I'm not able to reproduce this.
 
-> Cc: cocci@systeme.lip6.fr
+I just get:
 
-I assume that Masahiro Yamada will also need to get explicitly informed
-for a possible patch integration.
-
-
-> v3->v2:
-> - reduction of a bit of redundant C code within SmPL search specificatio=
-ns.
-> - consider the message construction without using the extra Python varia=
-ble =E2=80=9Cmsg=E2=80=9D
-
-I find it nice that you would like to take this information into account.
-
-
-> +    when !=3D e4 =3D (T1)platform_get_drvdata(id)
-> +(
-> +
-
-Should a blank line be omitted at such a source code place?
-
-
-> +  return
-> +(    id
-> +|    (T2)dev_get_drvdata(&id->dev)
-> +|    (T3)platform_get_drvdata(id)
-> +);
-
-It seems that you would like to express a different coding style.
-Would anybody like to reconsider the position once more for semicolons
-in nested disjunctions for such a SmPL search specification?
+        sendmail-1085  [001] ....   277.344573: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.879011: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.879056: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.879079: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.879132: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.879683: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.881521: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1550  [003] ....   279.881541: open: (do_sys_open+0x0/0x210) arg1=""
+           <...>-1597  [005] ....   280.907662: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1597  [005] ....   280.907694: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1597  [005] ....   280.907772: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1597  [005] ....   280.907825: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1597  [005] ....   280.907891: open: (do_sys_open+0x0/0x210) arg1=(fault)
+           <...>-1597  [005] ....   280.907947: open: (do_sys_open+0x0/0x210) arg1=(fault)
 
 
-> +coccilib.report.print_report(p2[0], "ERROR: missing put_device; of_find=
-_device_by_node on line " + p1[0].line + " and return without releasing.")
+> > 
+> > [  103.620391] BUG: GPF in non-whitelisted uaccess (non-canonical address?)
+> > [  103.622104] general protection fault: 0000 [#1] SMP PTI
+> > [  103.623424] CPU: 10 PID: 1046 Comm: cat Not tainted 5.0.0-rc3-00130-gd73aba1-dirty #96
+> > [  103.625321] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-2-g628b2e6-dirty-20190104_103505-linux 04/01/2014
+> > [  103.628284] RIP: 0010:process_fetch_insn+0x1ab/0x4b0
 
-Your willingness for such a rearrangement is interesting.
-How do you think about to move the long message parameter to a subsequent =
-line?
+What line number is the RIP on?
 
-Regards,
-Markus
+-- Steve
+
+
+> > [  103.629518] Code: 10 83 80 28 2e 00 00 01 31 d2 31 ff 48 8b 74 24 28 eb 0c 81 fa ff 0f 00 00 7f 1c 85 c0 75 18 66 66 90 0f ae e8 48 63
+> >  ca 89 f8 <8a> 0c 31 66 66 90 83 c2 01 84 c9 75 dc 89 54 24 34 89 44 24 28 48
+> > [  103.634032] RSP: 0018:ffff88845eb37ce0 EFLAGS: 00010246
+> > [  103.635312] RAX: 0000000000000000 RBX: ffff888456c4e5a8 RCX: 0000000000000000
+> > [  103.637057] RDX: 0000000000000000 RSI: 2e646c2f6374652f RDI: 0000000000000000
+> > [  103.638795] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > [  103.640556] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+> > [  103.642297] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> > [  103.644040] FS:  0000000000000000(0000) GS:ffff88846f000000(0000) knlGS:0000000000000000
+> > [  103.646019] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  103.647436] CR2: 00007ffc79758038 CR3: 0000000463360006 CR4: 0000000000020ee0
+> > [  103.649147] Call Trace:
+> > [  103.649781]  ? sched_clock_cpu+0xc/0xa0
+> > [  103.650747]  ? do_sys_open+0x5/0x220
+> > [  103.651635]  kprobe_trace_func+0x303/0x380
+> > [  103.652645]  ? do_sys_open+0x5/0x220
+> > [  103.653528]  kprobe_dispatcher+0x45/0x50
+> > [  103.654682]  ? do_sys_open+0x1/0x220
+> > [  103.655875]  kprobe_ftrace_handler+0x90/0xf0
+> > [  103.657282]  ftrace_ops_assist_func+0x54/0xf0
+> > [  103.658564]  ? __call_rcu+0x1dc/0x280
+> > [  103.659482]  0xffffffffc00000bf
+> > [  103.660384]  ? __ia32_sys_open+0x20/0x20
+> > [  103.661682]  ? do_sys_open+0x1/0x220
+> > [  103.662863]  do_sys_open+0x5/0x220
+> > [  103.663988]  do_syscall_64+0x60/0x210
+> > [  103.665201]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > [  103.666862] RIP: 0033:0x7fc22fadccdd
+> > [  103.668034] Code: 48 89 54 24 e0 41 83 e2 40 75 32 89 f0 25 00 00 41 00 3d 00 00 41 00 74 24 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff
+> >  ff 0f 05 <48> 3d 00 f0 ff ff 77 33 f3 c3 66 0f 1f 84 00 00 00 00 00 48 8d 44
+> > [  103.674029] RSP: 002b:00007ffc7972c3a8 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
+> > [  103.676512] RAX: ffffffffffffffda RBX: 0000562f86147a21 RCX: 00007fc22fadccdd
+> > [  103.678853] RDX: 0000000000080000 RSI: 00007fc22fae1428 RDI: 00000000ffffff9c
+> > [  103.681151] RBP: ffffffffffffffff R08: 0000000000000000 R09: 0000000000000000
+> > [  103.683489] R10: 0000000000000000 R11: 0000000000000287 R12: 00007fc22fce90a8
+> > [  103.685774] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+> > [  103.688056] Modules linked in:
+> > [  103.689131] ---[ end trace 43792035c28984a1 ]---
+> > 
+> > This can be fixed by using probe_mem_read() instead.
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  kernel/trace/trace_kprobe.c | 10 +---------
+> >  1 file changed, 1 insertion(+), 9 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> > index d5fb09ebba8b..9eaf07f99212 100644
+> > --- a/kernel/trace/trace_kprobe.c
+> > +++ b/kernel/trace/trace_kprobe.c
+> > @@ -861,22 +861,14 @@ static const struct file_operations kprobe_profile_ops = {
+> >  static nokprobe_inline int
+> >  fetch_store_strlen(unsigned long addr)
+> >  {
+> > -	mm_segment_t old_fs;
+> >  	int ret, len = 0;
+> >  	u8 c;
+> >  
+> > -	old_fs = get_fs();
+> > -	set_fs(KERNEL_DS);
+> > -	pagefault_disable();
+> > -
+> >  	do {
+> > -		ret = __copy_from_user_inatomic(&c, (u8 *)addr + len, 1);
+> > +		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
+> >  		len++;
+> >  	} while (c && ret == 0 && len < MAX_STRING_SIZE);
+> >  
+> > -	pagefault_enable();
+> > -	set_fs(old_fs);
+> > -
+> >  	return (ret < 0) ? ret : len;
+> >  }
+> >  
+> > -- 
+> > 2.19.1
+> >   
+> 
+
