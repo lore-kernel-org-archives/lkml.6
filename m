@@ -2,100 +2,267 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC80C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061DDC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B50207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:05:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiRWnLVV"
+	by mail.kernel.org (Postfix) with ESMTP id BE5A8207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550027108;
+	bh=BW/5BEtAbNJE/nzx9cKL0CzTeJomi87KD69i8VJMAOA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=S9E59SaJQ35GWxYd+/IYNILLxAHMZjmEpwqCgmITX/L++y7MVJ2wefrqIbB0XD+7c
+	 fBWjGcemiIwmPUg6Bs8TyAGP3kJNghqMZmN6AuAxROUiGYNWamQIK86LOJOx4JJX41
+	 tXZVbuZnL0jkQvOavmOtE+qq58aL8Kg+gW7r7M1A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390469AbfBMDFA (ORCPT
+        id S2390443AbfBMDEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:05:00 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37327 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387550AbfBMDE5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 22:04:57 -0500
-Received: by mail-it1-f194.google.com with SMTP id l131so2167799ita.2;
-        Tue, 12 Feb 2019 19:04:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eSntMJibvEZFlLbKlqVwmACNH56O++WuRx3xHgi+++M=;
-        b=PiRWnLVVGzmqW28JlA44Y8K7Z6HGUHIfWQqJwSCFp8E6KyHfuOZ9Q3g97jwPmzn12Q
-         aBQO+ylp0WbjVWBgH9MmgmCqijoRG5jMvbhm+cWnHujiy42+L9GHgfsvOI9XfUdwF2Km
-         P9BO6PNs0hOn9urfW2PJcbVGDOz/5vADf+7hUOjyEPto1+u/MFFDq9EQqf+hyi49DSj5
-         YBk9xz4Kw/sKCUKnl0b7z82hJ2h4bz4CM6S8o4GZuonjixb61EAuvsVWaDK+WPj2G1QT
-         eQHHdZdgMFy6ab5NWLvrh+8nUK3H4E2d8mtlJgo6Y2RuuGHrEnxudQbzIbgs/OVJRYmZ
-         Hd9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eSntMJibvEZFlLbKlqVwmACNH56O++WuRx3xHgi+++M=;
-        b=TAzDMifqQpi95kFEUdiVorX354zgaLy7tEntzyN8CVp8z8w+Qd5XjHsfFqzAb3NIeh
-         KHtEO+IZktNlqFEMnD1cEfQ0WsJMVaCe7xokkTSOr9RJDUOYYFu+SFzc3MvtQQAiO2Nc
-         ep1iNELGaaf8BNbd981LEUqwCHghFxwAi37dFhHwDxcyLQpG23opVZ180GvzxDU4aVPt
-         FFoESq0EqrrGwn0H0XmeJHBjp3aqzJJxcfq2YzJQZs2Xoitp9u3MCCe7TxpQSK/cn5Wf
-         CHaewZvWHEZxj2aUX5gx+nLYhtk/xRuH6mzMpNd15EhKIrpLmv05ZbONFFM6X3AA6/qV
-         DLag==
-X-Gm-Message-State: AHQUAuYElx1wqQJ8t7KXQfhb/H7BFx/H81LszLQFUQwzx1N/QOLRSnsg
-        Zh9fVSRlR9bFd7FLQl+WYbolIM4Gi7bBlsGwT7k=
-X-Google-Smtp-Source: AHgI3IZ2EbMKQPz9Fie8/4JCA6OIhVwq6BQCL4pzb+mri4csISNngZUP/Gw4UC0ur5jrHnhc7aflbXVUjw+DfWn2X/I=
-X-Received: by 2002:a24:e44:: with SMTP id 65mr983901ite.154.1550027097064;
- Tue, 12 Feb 2019 19:04:57 -0800 (PST)
+        Tue, 12 Feb 2019 22:04:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387538AbfBMCeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:01 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E06F6222C7;
+        Wed, 13 Feb 2019 02:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550025239;
+        bh=BW/5BEtAbNJE/nzx9cKL0CzTeJomi87KD69i8VJMAOA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MwGw78pBl65sQKfQ8wxWHJyicP8/DKNCGKu+mP8BPkUdMPElaqP1+kfslE00O2o9r
+         7XZqkvNaNOc1QtrxBBYAlC+orGdfmO/5LQGwx6Y9aWQZOgXRANjgjBUIQwBI/Ru0+x
+         9hN0scPZV1LmFBINuj/PwMp4ZG9FVu/u5DS9pEXU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Zhao Qiang <qiang.zhao@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 022/105] soc/fsl/qe: fix err handling of ucc_of_parse_tdm
+Date:   Tue, 12 Feb 2019 21:32:13 -0500
+Message-Id: <20190213023336.19019-22-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
+References: <20190213023336.19019-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <1549971097-12627-1-git-send-email-laoar.shao@gmail.com>
- <1549971097-12627-2-git-send-email-laoar.shao@gmail.com> <38d07cb3-b767-bfc4-9ae5-48367971d839@gmail.com>
- <CALOAHbAskuYhs3KQTJtT0Y7hjFcOyab-JpG4GCPENUxOk34-eA@mail.gmail.com>
- <CANn89i+2JB1UfdTmVMPMP-fEeYm9safcO49ygKn6fccEP1rpYA@mail.gmail.com> <CAADnVQKhEshkWSDeYJ92pWnJjqawGSScBH+LU4iXsqwwxYjO9g@mail.gmail.com>
-In-Reply-To: <CAADnVQKhEshkWSDeYJ92pWnJjqawGSScBH+LU4iXsqwwxYjO9g@mail.gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 13 Feb 2019 11:04:21 +0800
-Message-ID: <CALOAHbA4PrgV8tem3cMt+22Vm2GQw=oaRsXMcAr2XBgX8hhjKw@mail.gmail.com>
-Subject: Re: [bpf-next 1/2] tcp: replace SOCK_DEBUG() with tcp_stats()
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>, Lawrence Brakmo <brakmo@fb.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, shaoyafang@didiglobal.com
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:49 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Feb 12, 2019 at 6:15 PM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > Do not add more debugging stuff unless you can demonstrate
-> > they actually allowed you to find a real bug and that you sent a
-> > public fix for it.
-> >
-> > Just adding "cool stuff" in TCP stack does not please me, it is only
-> > more complexity for unproven gain.
->
-> I agree.
-> I don't see why this debugging of 'abnormal TCP' cannot be done
-> with kprobes and tracepoints.
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-kprobe is not suitable, because we have to use the line number, that's
-a trouble cross all kernel versions.
-Regarding  tracepoints, I don't think it is a good idea to introduce
-more and more tcp tracepoints and make them crowed as well.
+[ Upstream commit 8d68100ab4ad92560a16a68b72e068613ac4d573 ]
 
-> Instrumenting every tcp counter increment is overkill.
+Currently there are some issues with the ucc_of_parse_tdm function:
+1, a possible null pointer dereference in ucc_of_parse_tdm,
+detected by the semantic patch deref_null.cocci,
+with the following warning:
+drivers/soc/fsl/qe/qe_tdm.c:177:21-24: ERROR: pdev is NULL but dereferenced.
+2, dev gets modified, so in any case that devm_iounmap() will fail
+even when the new pdev is valid, because the iomap was done with a
+ different pdev.
+3, there is no driver bind with the "fsl,t1040-qe-si" or
+"fsl,t1040-qe-siram" device. So allocating resources using devm_*()
+with these devices won't provide a cleanup path for these resources
+when the caller fails.
+
+This patch fixes them.
+
+Suggested-by: Li Yang <leoyang.li@nxp.com>
+Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: Zhao Qiang <qiang.zhao@nxp.com>
+CC: David S. Miller <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wan/fsl_ucc_hdlc.c | 62 +++++++++++++++++++++++++++++++++-
+ drivers/soc/fsl/qe/qe_tdm.c    | 55 ------------------------------
+ 2 files changed, 61 insertions(+), 56 deletions(-)
+
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 4d6409605207..af13d8cf94ad 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -1049,6 +1049,54 @@ static const struct net_device_ops uhdlc_ops = {
+ 	.ndo_tx_timeout	= uhdlc_tx_timeout,
+ };
+ 
++static int hdlc_map_iomem(char *name, int init_flag, void __iomem **ptr)
++{
++	struct device_node *np;
++	struct platform_device *pdev;
++	struct resource *res;
++	static int siram_init_flag;
++	int ret = 0;
++
++	np = of_find_compatible_node(NULL, NULL, name);
++	if (!np)
++		return -EINVAL;
++
++	pdev = of_find_device_by_node(np);
++	if (!pdev) {
++		pr_err("%pOFn: failed to lookup pdev\n", np);
++		of_node_put(np);
++		return -EINVAL;
++	}
++
++	of_node_put(np);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		ret = -EINVAL;
++		goto error_put_device;
++	}
++	*ptr = ioremap(res->start, resource_size(res));
++	if (!*ptr) {
++		ret = -ENOMEM;
++		goto error_put_device;
++	}
++
++	/* We've remapped the addresses, and we don't need the device any
++	 * more, so we should release it.
++	 */
++	put_device(&pdev->dev);
++
++	if (init_flag && siram_init_flag == 0) {
++		memset_io(*ptr, 0, resource_size(res));
++		siram_init_flag = 1;
++	}
++	return  0;
++
++error_put_device:
++	put_device(&pdev->dev);
++
++	return ret;
++}
++
+ static int ucc_hdlc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -1143,6 +1191,15 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
+ 		ret = ucc_of_parse_tdm(np, utdm, ut_info);
+ 		if (ret)
+ 			goto free_utdm;
++
++		ret = hdlc_map_iomem("fsl,t1040-qe-si", 0,
++				     (void __iomem **)&utdm->si_regs);
++		if (ret)
++			goto free_utdm;
++		ret = hdlc_map_iomem("fsl,t1040-qe-siram", 1,
++				     (void __iomem **)&utdm->siram);
++		if (ret)
++			goto unmap_si_regs;
+ 	}
+ 
+ 	if (of_property_read_u16(np, "fsl,hmask", &uhdlc_priv->hmask))
+@@ -1151,7 +1208,7 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
+ 	ret = uhdlc_init(uhdlc_priv);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to init uhdlc\n");
+-		goto free_utdm;
++		goto undo_uhdlc_init;
+ 	}
+ 
+ 	dev = alloc_hdlcdev(uhdlc_priv);
+@@ -1181,6 +1238,9 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
+ free_dev:
+ 	free_netdev(dev);
+ undo_uhdlc_init:
++	iounmap(utdm->siram);
++unmap_si_regs:
++	iounmap(utdm->si_regs);
+ free_utdm:
+ 	if (uhdlc_priv->tsa)
+ 		kfree(utdm);
+diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
+index f78c34647ca2..76480df195a8 100644
+--- a/drivers/soc/fsl/qe/qe_tdm.c
++++ b/drivers/soc/fsl/qe/qe_tdm.c
+@@ -44,10 +44,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 	const char *sprop;
+ 	int ret = 0;
+ 	u32 val;
+-	struct resource *res;
+-	struct device_node *np2;
+-	static int siram_init_flag;
+-	struct platform_device *pdev;
+ 
+ 	sprop = of_get_property(np, "fsl,rx-sync-clock", NULL);
+ 	if (sprop) {
+@@ -124,57 +120,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 	utdm->siram_entry_id = val;
+ 
+ 	set_si_param(utdm, ut_info);
+-
+-	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-si");
+-	if (!np2)
+-		return -EINVAL;
+-
+-	pdev = of_find_device_by_node(np2);
+-	if (!pdev) {
+-		pr_err("%pOFn: failed to lookup pdev\n", np2);
+-		of_node_put(np2);
+-		return -EINVAL;
+-	}
+-
+-	of_node_put(np2);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	utdm->si_regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(utdm->si_regs)) {
+-		ret = PTR_ERR(utdm->si_regs);
+-		goto err_miss_siram_property;
+-	}
+-
+-	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-siram");
+-	if (!np2) {
+-		ret = -EINVAL;
+-		goto err_miss_siram_property;
+-	}
+-
+-	pdev = of_find_device_by_node(np2);
+-	if (!pdev) {
+-		ret = -EINVAL;
+-		pr_err("%pOFn: failed to lookup pdev\n", np2);
+-		of_node_put(np2);
+-		goto err_miss_siram_property;
+-	}
+-
+-	of_node_put(np2);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	utdm->siram = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(utdm->siram)) {
+-		ret = PTR_ERR(utdm->siram);
+-		goto err_miss_siram_property;
+-	}
+-
+-	if (siram_init_flag == 0) {
+-		memset_io(utdm->siram, 0,  resource_size(res));
+-		siram_init_flag = 1;
+-	}
+-
+-	return ret;
+-
+-err_miss_siram_property:
+-	devm_iounmap(&pdev->dev, utdm->si_regs);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ucc_of_parse_tdm);
+-- 
+2.19.1
+
