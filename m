@@ -2,103 +2,132 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517ADC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5ABC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B90222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBA7222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vsQQUyDp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390725AbfBMIf0 (ORCPT
+        id S1731546AbfBMIfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:35:26 -0500
-Received: from sauhun.de ([88.99.104.3]:42372 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733255AbfBMIf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:35:26 -0500
-Received: from localhost (p54B33842.dip0.t-ipconnect.de [84.179.56.66])
-        by pokefinder.org (Postfix) with ESMTPSA id 4D5522C2EF8;
-        Wed, 13 Feb 2019 09:35:23 +0100 (CET)
-Date:   Wed, 13 Feb 2019 09:35:20 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Peter Rosin <peda@axentia.se>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mkarthik@nvidia.com" <mkarthik@nvidia.com>,
-        "smohammed@nvidia.com" <smohammed@nvidia.com>,
-        "talho@nvidia.com" <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V19 1/7] i2c: tegra: sort all the include headers
- alphabetically
-Message-ID: <20190213083519.tynjs3ef6tnvvsms@ninjato>
-References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
- <de27b8f8-ba8e-fca7-6bdc-cdd580d959e6@axentia.se>
- <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
+        Wed, 13 Feb 2019 03:35:47 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38490 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfBMIfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:35:47 -0500
+Received: by mail-vs1-f67.google.com with SMTP id t7so906723vsq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:35:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1CJ7+HBssyW4VgrPSTkVO+QUsjpdif2wB2Ncp6ltYSU=;
+        b=vsQQUyDp1rZxWyX/tCBU6HR2ElSUPwTlpRRWFnf5z/toGyZYwMYY5twEqvy4z0Jq0y
+         Wp5L21DqIDyD6kde5StKA/IK6MviD2qwF433lHfWtwvKn7kefBEmEOsax5loPKkAuTn+
+         0tr3kFdTd7k4lTGdjWbOH1L2jYvapytjQGRHsQ5eb/B+ykciLw4B5Tohs5AmLBlP1X3x
+         cqFUUMKF6Y2YGdmHQ2LOFlnvrJ1mMcLWrbZ051ThJ3wOHdxcdQfDd9ObiDopVXwijf6J
+         bMl9v5Kw9x+O8dWMsAzpOicDRsysjnWuDCbem2MBcislxcgl3+QdUd46VE7nNPnYDECa
+         hq5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1CJ7+HBssyW4VgrPSTkVO+QUsjpdif2wB2Ncp6ltYSU=;
+        b=cwZh147ORrokZHeKfkXMuXhqbLYf5E4mqABCpAWn4VnQ6LJkL7KU/j9QYgtmSGCYsV
+         dEtqpIBAHoov0MGNYzy38EiIVM3NiWYpHc8FrHsuERuMdH3Xy0yVjwSWSgc0gOdstd2u
+         VaMzjq8HfB+dXugZYMWTWC/Hy0q9Hi0UGRV/w7oscBp3Mxy8q4hawPxYg8xo4iGFKCs1
+         EJ8MyTjQArkF951jwTBbJ63SHcFkUwKo8pJJutu3CTEJ3apSbowyHbalNC7HZwnnAoBh
+         OQQ8ZM8eVVppDIbWbvmAjlzH0W0JHFUIqg/Pp17Z9WrQCGfhxEalDxHqKVKai6RD6N0R
+         SbEQ==
+X-Gm-Message-State: AHQUAubVnjhytL3BQyFFrpn77KoF1FdCRmolq62tTKi3G5cy534tzUm1
+        eb9fu2UjVOVWPvsnxnJo/+4TeiJKww87s42LiR8UB6pG
+X-Google-Smtp-Source: AHgI3IYbZGP5UWt2TZFLIb1rQsRRqwfTSEHsbQ3ukj/qF+qwcoiro0ePSA7QHkIyNe7ugUGCXFpqWxlAfcdiOfU7h98=
+X-Received: by 2002:a67:7685:: with SMTP id r127mr3298985vsc.35.1550046945890;
+ Wed, 13 Feb 2019 00:35:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mq2ttdhzzwepa5vi"
-Content-Disposition: inline
-In-Reply-To: <cdb66da2-4886-e3ba-e78e-264bd4b5b73c@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190212152558.GA21933@embeddedor>
+In-Reply-To: <20190212152558.GA21933@embeddedor>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 13 Feb 2019 09:35:10 +0100
+Message-ID: <CAPDyKFrP3GX16EXQTjCa1ThfF-jzWM-JdtvY6TOqo8LBCJ2bbw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-xenon: Mark expected switch fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Hu Ziji <huziji@marvell.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 12 Feb 2019 at 16:26, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+>
+> This patch fixes the following warning:
+>
+> drivers/mmc/host/sdhci-xenon-phy.c: In function =E2=80=98xenon_emmc_phy_s=
+low_mode=E2=80=99:
+> drivers/mmc/host/sdhci-xenon-phy.c:527:47: warning: this statement may fa=
+ll through [-Wimplicit-fallthrough=3D]
+>    if ((priv->init_card_type =3D=3D MMC_TYPE_SDIO) ||
+>        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+>        params->slow_mode) {
+>        ~~~~~~~~~~~~~~~~~
+> drivers/mmc/host/sdhci-xenon-phy.c:534:2: note: here
+>   default:
+>   ^~~~~~~
+>
+> Warning level 3 was used: -Wimplicit-fallthrough=3D3
+>
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+>
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
---mq2ttdhzzwepa5vi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied for next - and by cleaning up the somewhat noisy change log, thanks=
+!
+
+Kind regards
+Uffe
 
 
-> > "^ Header removal should be mentioned in the commit message, I think."
-> > - Wolfram Sang [0]
-> >=20
-> > Cheers,
-> > Peter
-> >=20
-> > [0] https://lkml.org/lkml/2019/2/11/375
-> >=20
->=20
-> It could make sense to adjust the comment only if there will be
-> anything else worthwhile a new revision, otherwise it is
-> not-so-important.=20
-
-Not quite. Addressing review comments and proper commit messages are
-both important. So, it needs to be fixed. Yes, I can fix this small
-issue locally here (and I will do this, so no need to resend), but this
-is ultimately my decision (which you can surely ask for but not
-rely on).
-
-I'll apply this series later today.
-
-
---mq2ttdhzzwepa5vi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxj1sQACgkQFA3kzBSg
-KbaxNA//ahfn70SFTuWNC06WH3CmxOELccKUpXziV4mM1i38ljYSbzMGNPKWEtUA
-OhJ+2ZgIVcavuinuw6TlXswfcWe081BZywhSJYylKWID5pIPJf1DuGVSEWdmvlui
-f7TMZzpSLjUztq9y/inRHzPTF8vfiPJPfhGNZSbXNyoXLelQY7kp/ffF5GLqpd8b
-EtTi065Dhb76vsdOJXFgqH96w2os+6mVpeKLpnmvJqTZ7Xu+3qzT5ICehYGdQE3C
-jaux7tbWzy4JJntRN3bNorBvE0vYgO9EVOQ/7Jot0q+qbf+UI8iv48Lg3XUT9w/t
-g/2DwKmL9Hy2hdsfo3yhVc0dUqm218SqQC1JZgsgujjX4XtSBlUa4txjqu6se7qn
-lieRegzRSTGueuJad3dlP1ZyNtGNQxCV7ySjWEXBDHJtW/VF1cKrac8bI6WmPHCC
-q6nniai9Woz65+VMiycZzshVwYB6Rf3HoC9jADhyv2EvjnKZnGePNPw4Lo3GJ2E2
-S14axbfr2i19jXSGoBl/ZAy6pkvr5T8L9fRMELmja+cbKzqxQVLlppsXh9BJ3+HZ
-BHkORi8yry9Vrcbz0seGXtGM0DjymKPAKZZHvZs7o6ZJxOb1IrOEHkfG89nd8awo
-jgyb7fTcTsyJySDAjYyfd1h90Qaf+BtjAmUY3eOWQ+B+tinzcm4=
-=u57D
------END PGP SIGNATURE-----
-
---mq2ttdhzzwepa5vi--
+> ---
+>  drivers/mmc/host/sdhci-xenon-phy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-=
+xenon-phy.c
+> index 5b5eb53a63d2..8d07ee1b8f08 100644
+> --- a/drivers/mmc/host/sdhci-xenon-phy.c
+> +++ b/drivers/mmc/host/sdhci-xenon-phy.c
+> @@ -530,7 +530,7 @@ static bool xenon_emmc_phy_slow_mode(struct sdhci_hos=
+t *host,
+>                         ret =3D true;
+>                         break;
+>                 }
+> -               /* else: fall through */
+> +               /* fall through */
+>         default:
+>                 reg &=3D ~XENON_TIMING_ADJUST_SLOW_MODE;
+>                 ret =3D false;
+> --
+> 2.20.1
+>
