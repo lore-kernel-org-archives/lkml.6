@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B45C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C62EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8AC222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 235F320811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083772;
-	bh=ICKdlv495ptx260aR/8JVAvkdq8KMT3PF6NdpaxpXMQ=;
+	s=default; t=1550083778;
+	bh=gGG85TO/KRs/OuiwPthGb4aVTHNgRmStwAEvT/3rkV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q5dhu9tiPH1xVcGX5U87SXbVQCA3c2AcNdeXJT0w5xxaUl/6Bch8GIcQ3+5iO9W2o
-	 3IcUWSbNeYuiK+6kR5LzFwikd/1ivmVUiRoORc5+V38LwsJiNnbByBF93yOr6nGyv0
-	 X9tX8zL0fo3VMsMDcd+N4z6LKse1k+UB6NHn7dU4=
+	b=Sc/gZhLj/ZLlZ9VR+/EwfCe5D4jizkmYKBpNcZTmXNhPyyl8D0KzP/f0WvKSipGKs
+	 y7aB6judzXVGttcXxvU/309c6ni8fBANQJUOC0aKYj9Uu4rO5y8zhr5zKblAhTu3dT
+	 8TfHWYeKg+QkhJ5WrlVs1aTzc/RxgKJVkwkjGXvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394055AbfBMSpH (ORCPT
+        id S2390530AbfBMStg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:45:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43754 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394028AbfBMSpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:45:04 -0500
+        id S2394031AbfBMSpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:45:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5955222D4;
-        Wed, 13 Feb 2019 18:45:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 628B6222D2;
+        Wed, 13 Feb 2019 18:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083503;
-        bh=ICKdlv495ptx260aR/8JVAvkdq8KMT3PF6NdpaxpXMQ=;
+        s=default; t=1550083499;
+        bh=gGG85TO/KRs/OuiwPthGb4aVTHNgRmStwAEvT/3rkV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IlXNmlxSNslNc4QfgzAPuUE2c2A/Kd8skI6MFqQ2wClUS9ezUA4TyhL87tFD7Ho82
-         UEVU3xWpwxVJF4632SfS6st2O2mtI1vjJPl8n3eEVGONtDkmDDdvHQc7IaZlI5qrp6
-         kIJih7IpVBcYuj6LaQATvorfdfOIaHFmqaNunrRc=
+        b=bfs8DVeMrbHsPaVZwfED8VWWAlZe5KgHdEdBmcEdlfWpXXAU/aaBwsduoCEdLEw9v
+         /TxweIEciLh0z7M+yjQpWwLSg0zDAGzPDuf6+VjNdrG7DA1v4SPkJSl2pgh6j5yY/h
+         qVO7BdU6KUCKNNu7c2xjNtvVMNICOVVFn5muj5NY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Boris Brezillon <bbrezillon@kernel.org>,
+        stable@vger.kernel.org, Stefan Roese <sr@denx.de>,
+        Boris Brezillon <bbrezillon@kernel.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.20 03/50] mtd: spinand: Fix the error/cleanup path in spinand_init()
-Date:   Wed, 13 Feb 2019 19:38:08 +0100
-Message-Id: <20190213183656.040600586@linuxfoundation.org>
+Subject: [PATCH 4.20 02/50] mtd: spinand: Handle the case where PROGRAM LOAD does not reset the cache
+Date:   Wed, 13 Feb 2019 19:38:07 +0100
+Message-Id: <20190213183655.943424211@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -67,37 +68,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Boris Brezillon <bbrezillon@kernel.org>
 
-commit c3c7dbf4887ab3ed9d611cd1f6e16937f8700743 upstream.
+commit 13c15e07eedf26092054c8c71f2f47edb8388310 upstream.
 
-The manufacturer specific initialization has already been done when
-block unlocking takes place, and if anything goes wrong during this
-procedure we should call spinand_manufacturer_cleanup().
+Looks like PROGRAM LOAD (AKA write cache) does not necessarily reset
+the cache content to 0xFF (depends on vendor implementation), so we
+must fill the page cache entirely even if we only want to program the
+data portion of the page, otherwise we might corrupt the BBM or user
+data previously programmed in OOB area.
 
 Fixes: 7529df465248 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+Reported-by: Stefan Roese <sr@denx.de>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
+Tested-by: Stefan Roese <sr@denx.de>
+Reviewed-by: Stefan Roese <sr@denx.de>
 Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/spi/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/spi/core.c |   42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
 --- a/drivers/mtd/nand/spi/core.c
 +++ b/drivers/mtd/nand/spi/core.c
-@@ -1014,11 +1014,11 @@ static int spinand_init(struct spinand_d
- 	for (i = 0; i < nand->memorg.ntargets; i++) {
- 		ret = spinand_select_target(spinand, i);
- 		if (ret)
--			goto err_free_bufs;
-+			goto err_manuf_cleanup;
+@@ -304,24 +304,30 @@ static int spinand_write_to_cache_op(str
+ 	struct nand_device *nand = spinand_to_nand(spinand);
+ 	struct mtd_info *mtd = nanddev_to_mtd(nand);
+ 	struct nand_page_io_req adjreq = *req;
+-	unsigned int nbytes = 0;
+-	void *buf = NULL;
++	void *buf = spinand->databuf;
++	unsigned int nbytes;
+ 	u16 column = 0;
+ 	int ret;
  
- 		ret = spinand_lock_block(spinand, BL_ALL_UNLOCKED);
- 		if (ret)
--			goto err_free_bufs;
-+			goto err_manuf_cleanup;
+-	memset(spinand->databuf, 0xff,
+-	       nanddev_page_size(nand) +
+-	       nanddev_per_page_oobsize(nand));
++	/*
++	 * Looks like PROGRAM LOAD (AKA write cache) does not necessarily reset
++	 * the cache content to 0xFF (depends on vendor implementation), so we
++	 * must fill the page cache entirely even if we only want to program
++	 * the data portion of the page, otherwise we might corrupt the BBM or
++	 * user data previously programmed in OOB area.
++	 */
++	nbytes = nanddev_page_size(nand) + nanddev_per_page_oobsize(nand);
++	memset(spinand->databuf, 0xff, nbytes);
++	adjreq.dataoffs = 0;
++	adjreq.datalen = nanddev_page_size(nand);
++	adjreq.databuf.out = spinand->databuf;
++	adjreq.ooblen = nanddev_per_page_oobsize(nand);
++	adjreq.ooboffs = 0;
++	adjreq.oobbuf.out = spinand->oobbuf;
+ 
+-	if (req->datalen) {
++	if (req->datalen)
+ 		memcpy(spinand->databuf + req->dataoffs, req->databuf.out,
+ 		       req->datalen);
+-		adjreq.dataoffs = 0;
+-		adjreq.datalen = nanddev_page_size(nand);
+-		adjreq.databuf.out = spinand->databuf;
+-		nbytes = adjreq.datalen;
+-		buf = spinand->databuf;
+-	}
+ 
+ 	if (req->ooblen) {
+ 		if (req->mode == MTD_OPS_AUTO_OOB)
+@@ -332,14 +338,6 @@ static int spinand_write_to_cache_op(str
+ 		else
+ 			memcpy(spinand->oobbuf + req->ooboffs, req->oobbuf.out,
+ 			       req->ooblen);
+-
+-		adjreq.ooblen = nanddev_per_page_oobsize(nand);
+-		adjreq.ooboffs = 0;
+-		nbytes += nanddev_per_page_oobsize(nand);
+-		if (!buf) {
+-			buf = spinand->oobbuf;
+-			column = nanddev_page_size(nand);
+-		}
  	}
  
- 	ret = nanddev_init(nand, &spinand_ops, THIS_MODULE);
+ 	spinand_cache_op_adjust_colum(spinand, &adjreq, &column);
+@@ -370,8 +368,8 @@ static int spinand_write_to_cache_op(str
+ 
+ 		/*
+ 		 * We need to use the RANDOM LOAD CACHE operation if there's
+-		 * more than one iteration, because the LOAD operation resets
+-		 * the cache to 0xff.
++		 * more than one iteration, because the LOAD operation might
++		 * reset the cache to 0xff.
+ 		 */
+ 		if (nbytes) {
+ 			column = op.addr.val;
 
 
