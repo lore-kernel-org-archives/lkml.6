@@ -2,150 +2,100 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B89C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833AEC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A7C2080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 514CA206C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:36:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="bf3T75IX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388275AbfBMPgf (ORCPT
+        id S2391177AbfBMPgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:36:35 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56206 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726432AbfBMPge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:36:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 605C6A78;
-        Wed, 13 Feb 2019 07:36:34 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D979D3F575;
-        Wed, 13 Feb 2019 07:36:32 -0800 (PST)
-Date:   Wed, 13 Feb 2019 15:36:30 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        Wed, 13 Feb 2019 10:36:53 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40141 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfBMPgx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:36:53 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y16so1572753qki.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 07:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/wJ/1+0IfXImQLXSkFuPezPDsOxJHo73pRzAKlG1VuE=;
+        b=bf3T75IX3Vc0FTdcrcpk1Qi6F+xpQrpNcEiyMakuj/c6LJI4n8SEnOqM4Q3xR8Xhg2
+         44oIN1bay94X9D7kN4FOgcO3MLJorYxF2/Ysgp9bQ3C3YbNIyKXUuhfKrDxCDcM3VPqx
+         PifNWnUs2yA1TORyDGBF+N4lMCdWa9myRne9kbiNdHFyf505uKPXRVNxBqeACtlj50OX
+         oulNWva5sjLWc9A+HoFIGiG81zUOemIzhmpy5qRBXZ+sJOctg9GNpsTB79niN/ZdLpZ+
+         hGR2M1kRx1VjQeVVK5utjQFfo3dj1zktZdggh2p+Yyj6tEGka7vkYG4orLL7bC5Dvpku
+         DZzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/wJ/1+0IfXImQLXSkFuPezPDsOxJHo73pRzAKlG1VuE=;
+        b=uhHzFi29jo/fdeaCxbdjOaHoOqgvrdaNFjhpEPJ8qDA6srC+Iq6rc0h5ALWG5rz+Lz
+         iP/neamYHLyfPIQNOh7hEKvHB2lruVJuKSNLHyssuA6LyJ1KQ6Cl3U5nG1PIEs9rQEqu
+         xaz0syIPU8k4dD8m7VQH/z/RfTD5w2nXjkBd2f+Wly28CRzR7WHwTSyJVuIIQPPAyoyf
+         MJmiIdFUqEL0ErY39g4O/i+krv7ETJmxKNgjt3lB/Mty21y/SDioCx5n9u0OwrpoMF+4
+         osiEHLgkb2u/Kt1HfGezd1YRfonjR3dnPka19Y0ze082V86gtGRovgVdgBZP6VBCvPpt
+         36WQ==
+X-Gm-Message-State: AHQUAuY9wXVa1FCm6g5hzt0Z48JlkGyr/XY4XX5RJPbNRz1yIe8kjcWx
+        fFrUsGzqdowAQs6XhLTlm7fsdg==
+X-Google-Smtp-Source: AHgI3Ia0WyEybXefqqkxuAMhJAMaAQuwapaIVg65W5L7u9GdCaBkKYSU/7AhbbaG+oGvq9oa2ypvmg==
+X-Received: by 2002:ae9:dd84:: with SMTP id r126mr818066qkf.217.1550072212365;
+        Wed, 13 Feb 2019 07:36:52 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id v124sm18898827qkh.46.2019.02.13.07.36.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 07:36:51 -0800 (PST)
+Message-ID: <1550072210.6911.28.camel@lca.pw>
+Subject: Re: [PATCH v2 3/5] kmemleak: account for tagged pointers when
+ calculating pointer range
+From:   Qian Cai <cai@lca.pw>
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
- FPSIMD/SVE state
-Message-ID: <20190213153630.GK3567@e103592.cambridge.arm.com>
-References: <20190208165513.8435-1-julien.grall@arm.com>
- <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Date:   Wed, 13 Feb 2019 10:36:50 -0500
+In-Reply-To: <16e887d442986ab87fe87a755815ad92fa431a5f.1550066133.git.andreyknvl@google.com>
+References: <cover.1550066133.git.andreyknvl@google.com>
+         <16e887d442986ab87fe87a755815ad92fa431a5f.1550066133.git.andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 03:30:29PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-02-08 16:55:13 [+0000], Julien Grall wrote:
-> > When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
-> > the kernel may be able to use FPSIMD/SVE. This is for instance the case
-> > for crypto code.
-> > 
-> > Any use of FPSIMD/SVE in the kernel are clearly marked by using the
-> > function kernel_neon_{begin, end}. Furthermore, this can only be used
-> > when may_use_simd() returns true.
+On Wed, 2019-02-13 at 14:58 +0100, Andrey Konovalov wrote:
+> kmemleak keeps two global variables, min_addr and max_addr, which store
+> the range of valid (encountered by kmemleak) pointer values, which it
+> later uses to speed up pointer lookup when scanning blocks.
 > 
-> This is equal what x86 is currently doing. The naming is slightly
-> different, there is irq_fpu_usable().
-
-Yes, I think it's basically the same idea.
-
-It's been evolving a bit on both sides, but is quite similar now.
-
-> > The current implementation of may_use_simd() allows softirq to use
-> > FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
-> > When in used, softirqs usually fallback to a software method.
-> > 
-> > At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
-> > when touching the FPSIMD/SVE context. This has the drawback to disable
-> > all softirqs even if they are not using FPSIMD/SVE.
+> With tagged pointers this range will get bigger than it needs to be.
+> This patch makes kmemleak untag pointers before saving them to min_addr
+> and max_addr and when performing a lookup.
 > 
-> Is this bad? This means also that your crypto code will not be
-> interrupted by a softirq. Also if you would get rid of it, you could
-> avoid the software fallback in case may_use_simd() says false.
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 
-Masking softirqs during kernel_neon_begin()..._end() is unlikely to be a
-huge problem, but currently we block softirq during all context switch
-operations that act on the CPU vector registers.
-
-The reasons for this are somewhat historical, and IIRC predated the
-requirement for softirq users of kernel-mode NEON to include the
-may_use_simd() check and implement a fallback path on arm64.
-
-Now that softirq code is required to work around kernel-mode NEON being
-temporarily unusable, masking softirqs completely during context switch
-etc. should no longer be necessary.
-
-> > As a softirq should not rely on been able to use simd at a given time,
-> > there are limited reason to keep softirq disabled when touching the
-> > FPSIMD/SVE context. Instead, we can only disable preemption and tell
-> > the NEON unit is currently in use.
-> > 
-> > This patch introduces two new helpers kernel_neon_{disable, enable} to
-> > mark the area using FPSIMD/SVE context and use them in replacement of
-> > local_bh_{disable, enable}. The functions kernel_neon_{begin, end} are
-> > also re-implemented to use the new helpers.
-> > 
-> > Signed-off-by: Julien Grall <julien.grall@arm.com>
-> > 
-> > ---
-> > 
-> > I have been exploring this solution as an alternative approach to the RT
-> > patch "arm64: fpsimd: use preemp_disable in addition to local_bh_disable()".
-> > 
-> > So far, the patch has only been lightly tested.
-> > 
-> > For RT-linux, it might be possible to use migrate_{enable, disable}. I
-> > am quite new with RT and have some trouble to understand the semantics
-> > of migrate_{enable, disable}. So far, I am still unsure if it is possible
-> > to run another userspace task on the same CPU while getting preempted
-> > when the migration is disabled.
-> 
-> In RT:
-> - preemt_disable() is the same as !RT. A thread can not be suspend. An
->   interrupt may interrupt. However on RT we have threaded interrupts so
->   the interrupt is limited to the first-level handler (not the threaded
->   handler).
-> 
-> - migrate_disable() means that the thread can not be moved to another
->   CPU. It can be suspended.
-> 
-> - local_bh_disable() disables the BH: No softirq can run. In RT
->   local_bh_disable() does not inherit preempt_disable(). Two different
->   softirqs can be executed in parallel.
->   The BH is usually invoked at the end of the threaded interrupt
->   (because the threaded interrupt handler raises the softirq). It can
->   also run in the ksoftirqd.
-> 
-> Usually you should not get preempted in a migrate_disable() section. A
-> SCHED_OTHER task should not interrupt another SCHED_OTHER task in a
-> migrate_disable() section. A task with a higher priority (a RT/DL task)
-> will. Since threaded interrupts run with a RT priority of 50, they will
-> interrupt your task in a migrate_disable() section.
-
-"Usually" is probably not good enough if another task can run: if the
-preempting task enters userspace then the vector registers are needed
-for its use, which is tricky to arrange if the registers are currently
-in use by context switch logic running in the first task.
-
-My current feeling is that we probably have to stick with
-preempt_disable() here, but hopefully we can get rid of
-local_bh_disable() (as proposed) with no ill effects...
-
-Does that sound sensible?
-
-Cheers
----Dave
+Tested-by: Qian Cai <cai@lca.pw>
