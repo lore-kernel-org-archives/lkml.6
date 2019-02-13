@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36E0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61485C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB112222CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31704222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025579;
-	bh=8mvszyBeviXoWnkYXFKrjsYjy6ba0YEf2LICjkrC3+4=;
+	s=default; t=1550025584;
+	bh=rhUvPPBNANly9SLzat6WICnDg7ZlhnGAs2h+tLtIBiQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pinIzM5hlRZiNiheuWGVyH1GqD1sIi8a3PHOzBV9VoKrVvkblpr+BBF4vTU7q9Igi
-	 S89hfFHocaxV0zTkwA0zLPIfBjjDTkEcJdyMTyxGNdmWabvTHzDYNOgLn8BB8y55SD
-	 F/ypIQrqq0xwOJ1TRfS7gDAMI5YI2BpgRg2X98VY=
+	b=UdC7ka3iVQKIoAq68WGTtY1uxKua2TIyEz0OU9pCLzyoGRHXAD7BPJRBuYPZUVCAs
+	 Sd+ayIg2ydVAbXyE5d6WiJXUy14Sz9ArEnISOqZI4HbRxQRAeZ4NtMhNkVUmpOcL8e
+	 c+r83fI9puGdTHoGKI0Zy7nBP+aqGt2YEEaoJVBM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388813AbfBMCji (ORCPT
+        id S2388803AbfBMCjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43144 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388775AbfBMCjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:33 -0500
+        id S1729256AbfBMCjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41DF5222CE;
-        Wed, 13 Feb 2019 02:39:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 797FF222CF;
+        Wed, 13 Feb 2019 02:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025573;
-        bh=8mvszyBeviXoWnkYXFKrjsYjy6ba0YEf2LICjkrC3+4=;
+        s=default; t=1550025574;
+        bh=rhUvPPBNANly9SLzat6WICnDg7ZlhnGAs2h+tLtIBiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MOe1bszqvIH7tvPE2Nfv7M1rwu8c/uTDrUUEDCS9kBHVTMVFlQ8ZFGfIY6pF6f54k
-         CmGrep2YLO8E6N5PZ3j6ixqNvzLL/Tt26fe2tDhfwDzlw/UaIsji9MSzSfjb++cepK
-         AGjAaUUmrJR7waeDvlAx9+SlB05uQ54uF0uL3aEw=
+        b=ijD1KiaWVlhqFtaulhGoTZgjJNvTUTPfAeSj0clRP/x0ghLCDsTJJ3hY/grGAj4kI
+         1rYTUe9c97edLG/yWiJ8RAQo2zZ6Ao6NdL9Td9Gv8bDByDPpeP/OnvS+X2kLw4DUC/
+         cIpnbxhRDg3GS7w9l4LqcdiygQYT7nT5KdPpb2qo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nir Dotan <nird@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        bridge@lists.linux-foundation.org,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 78/83] mlxsw: pci: Return error on PCI reset timeout
-Date:   Tue, 12 Feb 2019 21:36:56 -0500
-Message-Id: <20190213023701.20286-78-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 79/83] net: bridge: Mark FDB entries that were added by user as such
+Date:   Tue, 12 Feb 2019 21:36:57 -0500
+Message-Id: <20190213023701.20286-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,40 +61,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nir Dotan <nird@mellanox.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 67c14cc9b35055264fc0efed00159a7de1819f1b ]
+[ Upstream commit 710ae72877378e7cde611efd30fe90502a6e5b30 ]
 
-Return an appropriate error in the case when the driver timeouts on waiting
-for firmware to go out of PCI reset.
+Externally learned entries can be added by a user or by a switch driver
+that is notifying the bridge driver about entries that were learned in
+hardware.
 
-Fixes: 233fa44bd67a ("mlxsw: pci: Implement reset done check")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+In the first case, the entries are not marked with the 'added_by_user'
+flag, which causes switch drivers to ignore them and not offload them.
+
+The 'added_by_user' flag can be set on externally learned FDB entries
+based on the 'swdev_notify' parameter in br_fdb_external_learn_add(),
+which effectively means if the created / updated FDB entry was added by
+a user or not.
+
+Fixes: 816a3bed9549 ("switchdev: Add fdb.added_by_user to switchdev notifications")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: bridge@lists.linux-foundation.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/br_fdb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/pci.c b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-index c7901a3f2a79..a903e97793f9 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-@@ -1367,10 +1367,10 @@ static int mlxsw_pci_sw_reset(struct mlxsw_pci *mlxsw_pci,
- 		u32 val = mlxsw_pci_read32(mlxsw_pci, FW_READY);
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index 502f66349530..4d4b9b5ea1c1 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -1088,6 +1088,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+ 			err = -ENOMEM;
+ 			goto err_unlock;
+ 		}
++		if (swdev_notify)
++			fdb->added_by_user = 1;
+ 		fdb->added_by_external_learn = 1;
+ 		fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+ 	} else {
+@@ -1107,6 +1109,9 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+ 			modified = true;
+ 		}
  
- 		if ((val & MLXSW_PCI_FW_READY_MASK) == MLXSW_PCI_FW_READY_MAGIC)
--			break;
-+			return 0;
- 		cond_resched();
- 	} while (time_before(jiffies, end));
--	return 0;
-+	return -EBUSY;
- }
- 
- static int mlxsw_pci_alloc_irq_vectors(struct mlxsw_pci *mlxsw_pci)
++		if (swdev_notify)
++			fdb->added_by_user = 1;
++
+ 		if (modified)
+ 			fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+ 	}
 -- 
 2.19.1
 
