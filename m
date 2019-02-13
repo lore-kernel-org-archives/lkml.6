@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA77C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC074C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF94222CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F45A222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025241;
-	bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
+	s=default; t=1550025253;
+	bh=3no22EYmO/OKYwLuELznf5xGue0RcVmh4wtJQU+P8Cc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TbEfG7HEh1tbeXSbzYaNs9jSPmA2OqjaQdQgUDuvrpMkVXdBBiAXSttQDYBGrve6+
-	 zutLeDF6JXIdiRpdfiek2XpjU+fLo8sQvM7TPv4fM7G+bVDJLwMi2B9hB5UxOwDkxb
-	 oi9pRQPpsga9axWQZum3T+/JCQ2HoggF1dJczdQA=
+	b=OFKX5X11FbGPdEMwkSyT8m6U9q+eYn+xjQzvLdn2tb11HUE7JI086yFHlREZKR20x
+	 K7UgKLUV9h7c8kweT9cDOGnagx7hbRsErwVtClRQz6tKPTmAopXiNOGty1mXjVb5AN
+	 JcpfVuBFEvuWDDF+cqNJBHXM4bVpEBb95FTSqZNM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387537AbfBMCeA (ORCPT
+        id S2387643AbfBMCeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:34:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:34:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387471AbfBMCdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:33:47 -0500
+        id S2387599AbfBMCeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:34:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CF0F222C7;
-        Wed, 13 Feb 2019 02:33:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EC74222CE;
+        Wed, 13 Feb 2019 02:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025227;
-        bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
+        s=default; t=1550025246;
+        bh=3no22EYmO/OKYwLuELznf5xGue0RcVmh4wtJQU+P8Cc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cK/yhLMsCuSlxkRkPmZEj53Q6ZSY2+tZCfEhCLD6SbdfvhnvSRYPNEwQUIR6r95ET
-         w04tQfL9U4NqgnoFXPoy/VeJonftXWIZs5yH2w5WZV87vol6N9YM4X0v3OaaoddUpK
-         ydPMWaTF/dQ9bxBYPcFmfayI460bs904VLErG2I8=
+        b=H4D/h32LtTGMnvVXA8Xcl+PHp3mvDMZeG3xNpd0BYUOrftZAazH3X6TSJQaUeWtXD
+         /GRZTe6Zchw0U4AjS+BVB0haZG95JU9hJuI8RVXvc8j2/xwVERTOL3yXPwYUN6nhZN
+         CHDIglrH+FBuZcYjC1UtL5q6x7MMya+epYopdvNY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Lee Jones <lee.jones@linaro.org>,
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Michael Cook <mcook@mackal.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 010/105] mfd: ab8500-core: Return zero in get_register_interruptible()
-Date:   Tue, 12 Feb 2019 21:32:01 -0500
-Message-Id: <20190213023336.19019-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 029/105] hwmon: (nct6775) Fix chip ID for NCT6798D
+Date:   Tue, 12 Feb 2019 21:32:20 -0500
+Message-Id: <20190213023336.19019-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -57,40 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
+[ Upstream commit 264142bc70ec039e26d8f3b46a717e8037f59ca0 ]
 
-This function is supposed to return zero on success or negative error
-codes on error.  Unfortunately, there is a bug so it sometimes returns
-non-zero, positive numbers on success.
+The chip ID is 0xd42[8-f], not 0xd45[8-f].
 
-I noticed this bug during review and I can't test it.  It does appear
-that the return is sometimes propogated back to _regmap_read() where all
-non-zero returns are treated as failure so this may affect run time.
-
-Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 0599682b826f ("hwmon: (nct6775) Add support for NCT6798D")
+Reported-by: Michael Cook <mcook@mackal.net>
+Cc: Michael Cook <mcook@mackal.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/ab8500-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/nct6775.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-index 30d09d177171..11ab17f64c64 100644
---- a/drivers/mfd/ab8500-core.c
-+++ b/drivers/mfd/ab8500-core.c
-@@ -261,7 +261,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
- 	mutex_unlock(&ab8500->lock);
- 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index c3040079b1cb..8f91e366866f 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -44,8 +44,8 @@
+  * nct6796d    14      7       7       2+6    0xd420 0xc1    0x5ca3
+  * nct6797d    14      7       7       2+6    0xd450 0xc1    0x5ca3
+  *                                           (0xd451)
+- * nct6798d    14      7       7       2+6    0xd458 0xc1    0x5ca3
+- *                                           (0xd459)
++ * nct6798d    14      7       7       2+6    0xd428 0xc1    0x5ca3
++ *                                           (0xd429)
+  *
+  * #temp lists the number of monitored temperature sources (first value) plus
+  * the number of directly connectable temperature sensors (second value).
+@@ -138,7 +138,7 @@ MODULE_PARM_DESC(fan_debounce, "Enable debouncing for fan RPM signal");
+ #define SIO_NCT6795_ID		0xd350
+ #define SIO_NCT6796_ID		0xd420
+ #define SIO_NCT6797_ID		0xd450
+-#define SIO_NCT6798_ID		0xd458
++#define SIO_NCT6798_ID		0xd428
+ #define SIO_ID_MASK		0xFFF8
  
--	return ret;
-+	return (ret < 0) ? ret : 0;
- }
- 
- static int ab8500_get_register(struct device *dev, u8 bank,
+ enum pwm_enable { off, manual, thermal_cruise, speed_cruise, sf3, sf4 };
 -- 
 2.19.1
 
