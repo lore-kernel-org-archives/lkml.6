@@ -2,85 +2,213 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F878C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AD9C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07C5218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nu39IdlO"
+	by mail.kernel.org (Postfix) with ESMTP id D49B3218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389699AbfBMDKD (ORCPT
+        id S2390288AbfBMDKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:10:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37170 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732597AbfBMDKB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 22:10:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YTJqe0BFIXEHjERP1CPFfEIYWeKwxFAUWIz6qSWu6fc=; b=Nu39IdlOGJtwfQhDDlccbR69K
-        IFMK9UFQ1J35KW8AOHqmmvyKLDyJUVqalDHRkDy2jTmfa2aaEPYUWjXqxVFenBke6ZpwzmJQTaUTL
-        djnHIXPZZVB96T6dGkXFSDcwe5rp4YuM0mt61Z9bdj9DaN+W/aEQWjROMTQOoynTPTBPlgD/EaNA9
-        clXOFswoV29cQ1J6FskskMNsnXBcrSCeBI7q73AXs61RmMeqbHcHdhCVCi3kZbREowlXqETRz/upl
-        xFjWw+1mSuKCqOL7ygu8XrTkj3+oVsYfT1fNT7teoyp2LJkgIaT03pPXDsNs3d7Yo3Ef1a2iya0BC
-        9Y+pjlY7g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtkvw-0005Vp-CN; Wed, 13 Feb 2019 03:10:00 +0000
-Subject: Re: mmotm 2019-02-12-15-37 uploaded (net/ipv4/devinit.c)
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <20190212233743.mGzbg%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <011529bd-bae3-f815-0d7e-6da733c1cf55@infradead.org>
-Date:   Tue, 12 Feb 2019 19:09:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 12 Feb 2019 22:10:08 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:33668 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729595AbfBMDKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 22:10:02 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 112ADA11C6;
+        Wed, 13 Feb 2019 04:10:00 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id dkP7OzqCrBiv; Wed, 13 Feb 2019 04:09:51 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH v5 4/5] namei: aggressively check for nd->root escape on ".." resolution
+Date:   Wed, 13 Feb 2019 14:08:50 +1100
+Message-Id: <20190213030851.1881-5-cyphar@cyphar.com>
+In-Reply-To: <20190213030851.1881-1-cyphar@cyphar.com>
+References: <20190213030851.1881-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20190212233743.mGzbg%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 3:37 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-02-12-15-37 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+This patch allows for O_BENEATH and O_THISROOT to safely permit ".."
+resolution (in the case of O_BENEATH the resolution will still fail if
+".." resolution would resolve a path outside of the root -- while
+O_THISROOT will chroot(2)-style scope it). "magic link" jumps are still
+disallowed entirely because now they could result in inconsistent
+behaviour if resolution encounters a subsequent "..".
 
-on x86_64:
+The need for this patch is explained by observing there is a fairly
+easy-to-exploit race condition with chroot(2) (and thus by extension
+O_THISROOT and O_BENEATH) where a rename(2) of a path can be used to
+"skip over" nd->root and thus escape to the filesystem above nd->root.
 
-when CONFIG_SYSCTL is not enabled:
+  thread1 [attacker]:
+    for (;;)
+      renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
+  thread2 [victim]:
+    for (;;)
+      openat(dirb, "b/c/../../etc/shadow", O_THISROOT);
 
-ld: net/ipv4/devinet.o: in function `devinet_init_net':
-devinet.c:(.text+0x3ad): undefined reference to `sysctl_devconf_inherit_init_net'
+With fairly significant regularity, thread2 will resolve to
+"/etc/shadow" rather than "/a/b/etc/shadow". There is also a similar
+(though somewhat more privileged) attack using MS_MOVE.
 
+With this patch, such cases will be detected *during* ".." resolution
+(which is the weak point of chroot(2) -- since walking *into* a
+subdirectory tautologically cannot result in you walking *outside*
+nd->root -- except through a bind-mount or "magic link"). By detecting
+this at ".." resolution (rather than checking only at the end of the
+entire resolution) we can both correct escapes by jumping back to the
+root (in the case of O_THISROOT), as well as avoid revealing to
+attackers the structure of the filesystem outside of the root (through
+timing attacks for instance).
 
+In order to avoid a quadratic lookup with each ".." entry, we only
+activate the slow path if a write through &rename_lock or &mount_lock
+have occurred during path resolution (&rename_lock and &mount_lock are
+re-taken to further optimise the lookup). Since the primary attack being
+protected against is MS_MOVE or rename(2), not doing additional checks
+unless a mount or rename have occurred avoids making the common case
+slow.
 
+The use of path_is_under() here might seem suspect, but on further
+inspection of the most important race (a path was *inside* the root but
+is now *outside*), there appears to be no attack potential. If
+path_is_under() occurs before the rename, then the path will be resolved
+but since the path was originally inside the root there is no escape.
+Subsequent ".." jumps are guaranteed to check path_is_under() (by
+construction, &rename_lock or &mount_lock must have been taken by the
+attacker after path_is_under() returned in the victim), and thus will
+not be able to escape from the previously-inside-root path. Walking down
+is still safe since the entire subtree was moved (either by rename(2) or
+MS_MOVE) and because (as discussed above) walking down is safe.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ fs/namei.c | 48 +++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 798eb1702a0c..af06b10b13a0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -493,7 +493,7 @@ struct nameidata {
+ 	struct path	root;
+ 	struct inode	*inode; /* path.dentry.d_inode */
+ 	unsigned int	flags;
+-	unsigned	seq, m_seq;
++	unsigned	seq, m_seq, r_seq;
+ 	int		last_type;
+ 	unsigned	depth;
+ 	int		total_link_count;
+@@ -1741,19 +1741,35 @@ static inline int may_lookup(struct nameidata *nd)
+ static inline int handle_dots(struct nameidata *nd, int type)
+ {
+ 	if (type == LAST_DOTDOT) {
+-		/*
+-		 * LOOKUP_BENEATH resolving ".." is not currently safe -- races can
+-		 * cause our parent to have moved outside of the root and us to skip
+-		 * over it.
+-		 */
+-		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT)))
+-			return -EXDEV;
++		int error = 0;
++
+ 		if (!nd->root.mnt)
+ 			set_root(nd);
+-		if (nd->flags & LOOKUP_RCU) {
+-			return follow_dotdot_rcu(nd);
+-		} else
+-			return follow_dotdot(nd);
++		if (nd->flags & LOOKUP_RCU)
++			error = follow_dotdot_rcu(nd);
++		else
++			error = follow_dotdot(nd);
++		if (error)
++			return error;
++
++		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT))) {
++			bool m_retry = read_seqretry(&mount_lock, nd->m_seq);
++			bool r_retry = read_seqretry(&rename_lock, nd->r_seq);
++
++			/*
++			 * Don't bother checking unless there's a racing
++			 * rename(2) or MS_MOVE.
++			 */
++			if (likely(!m_retry && !r_retry))
++				return 0;
++
++			if (m_retry && !(nd->flags & LOOKUP_RCU))
++				nd->m_seq = read_seqbegin(&mount_lock);
++			if (r_retry)
++				nd->r_seq = read_seqbegin(&rename_lock);
++			if (!path_is_under(&nd->path, &nd->root))
++				return -EXDEV;
++		}
+ 	}
+ 	return 0;
+ }
+@@ -2274,6 +2290,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	nd->last_type = LAST_ROOT; /* if there are only slashes... */
+ 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
+ 	nd->depth = 0;
++
++	nd->m_seq = read_seqbegin(&mount_lock);
++	if (unlikely(flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT)))
++		nd->r_seq = read_seqbegin(&rename_lock);
++
+ 	if (flags & LOOKUP_ROOT) {
+ 		struct dentry *root = nd->root.dentry;
+ 		struct inode *inode = root->d_inode;
+@@ -2284,7 +2305,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 		if (flags & LOOKUP_RCU) {
+ 			nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
+ 			nd->root_seq = nd->seq;
+-			nd->m_seq = read_seqbegin(&mount_lock);
+ 		} else {
+ 			path_get(&nd->path);
+ 		}
+@@ -2295,8 +2315,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	nd->path.mnt = NULL;
+ 	nd->path.dentry = NULL;
+ 
+-	nd->m_seq = read_seqbegin(&mount_lock);
+-
+ 	if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT))) {
+ 		error = dirfd_path_init(nd);
+ 		if (unlikely(error))
 -- 
-~Randy
+2.20.1
+
