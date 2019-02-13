@@ -3,28 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B10C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112EAC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E50D21904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB9921902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404386AbfBMQRD (ORCPT
+        id S2404374AbfBMQRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:17:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404233AbfBMQRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 11:17:02 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+Received: from mx1.redhat.com ([209.132.183.28]:46778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404228AbfBMQRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:17:01 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 31F2213A4D;
+        by mx1.redhat.com (Postfix) with ESMTPS id 266D3C04B94F;
         Wed, 13 Feb 2019 16:17:01 +0000 (UTC)
 Received: from llong.remote.csb (ovpn-125-158.rdu2.redhat.com [10.10.125.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C7E95D6B3;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BDB7600C0;
         Wed, 13 Feb 2019 16:16:59 +0000 (UTC)
 Subject: Re: [PATCH 03/10] locking/rwsem: Rename kernel/locking/rwsem.h
 To:     Peter Zijlstra <peterz@infradead.org>
@@ -88,7 +89,7 @@ Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
  wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
  weim8xU=
 Organization: Red Hat
-Message-ID: <9d93c817-6f4d-ebe3-e053-a8949a36f5b5@redhat.com>
+Message-ID: <95c79d19-3c69-6f50-337f-2bbe9f517ee7@redhat.com>
 Date:   Wed, 13 Feb 2019 11:16:53 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
@@ -97,8 +98,8 @@ In-Reply-To: <20190213155423.GZ32494@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 13 Feb 2019 16:17:01 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 13 Feb 2019 16:17:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
