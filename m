@@ -2,100 +2,90 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9DAC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6178AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE646222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:38:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GWnjly4m"
+	by mail.kernel.org (Postfix) with ESMTP id 3BF4C21901
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387862AbfBMJiJ (ORCPT
+        id S2388031AbfBMJi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:38:09 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42287 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbfBMJiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:38:09 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l7-v6so1391990ljg.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:38:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=diTfoAa5QUfTzyCKudm3waVERUH6mf8lPhS8olEIfwA=;
-        b=GWnjly4m3L0IPD8SDnUMVRj095jutzkbt+WpZ4AyR75rL3aN1aeilvTWTZknhajSTO
-         +exUHWeBQE4QHYcCwzlJQbUnHfYteFTcOLvIVyVUmqNv2mbJZ8CO5B+Aeoj9Tr/cycRm
-         JKqxvK+fRwkn5FWypypefqhiNarWhMvklhU03TI4sgoUxW0X3sTP9EQ3LVkLq7TJvNXy
-         2KawqSEBABa3QDDw7unRB/p2zuFivYfS7qTCwUraKb+06dzISxdpgUDOQ6RobeEgjT6h
-         6+BEs/vTUVi6l4ZUrWyxMhIV2wlFpEiN9BT6zGvQkY8kKKoSM3XBqPzK2t63eChCL1EE
-         vmxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=diTfoAa5QUfTzyCKudm3waVERUH6mf8lPhS8olEIfwA=;
-        b=Ur1uzMYlN/Fc4HAjy/LNLD0zm5HCfjmUsH2fk8PfFBNONWXIWcy9PPhZH9FY9MNByG
-         LXILXM4oVG0fmqszVw692+7/88D1N1kSfYMOFH24Zw6z3CJO/qF5Y3CPE21XReIFU8E7
-         2KR+tekrsmjtLIAaAzj58QC6/E4vE5PbOHefVhGNUFQBIgjyC7M2SDCZnib7oKkHHPhw
-         8PZid4OP4xCG64yG/pIHsaw7N3z3J99F5j2FHCn++a/hHL8SOufHEN3LsR6li6f7BjcE
-         0ZlS2OVkrD3whEjLcy3u765cVDDxU18SMKnbDlX62rlfSr7SnH52zV7DpejVDaW6Pxa1
-         L46A==
-X-Gm-Message-State: AHQUAuaJ6WAB4JHFwPzNebRo+X3p5lLaSfWCMd74hlZhkG7VKTMxsWOu
-        O8lWKc5oD0MKs5SlY9fF8H+EsWtHFfyYHIXsqMexTg==
-X-Google-Smtp-Source: AHgI3IZ+FvuvTd0D4WtEj7MZhxu41YRPzxL1ogMPwCR5y2mnUKndGUmf0teqhdLj+kLcleGt0/NDay4QAwlsHrjnXhs=
-X-Received: by 2002:a2e:6a18:: with SMTP id f24mr582828ljc.97.1550050687163;
- Wed, 13 Feb 2019 01:38:07 -0800 (PST)
+        Wed, 13 Feb 2019 04:38:27 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:27369 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728873AbfBMJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 04:38:27 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 07E3313F8CF;
+        Wed, 13 Feb 2019 10:38:06 +0100 (CET)
+Subject: Re: [PATCH] arm64: dts: qcom: msm8998: Extend reserved memory area
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <89492342-018b-3e5d-563c-026ad83458c4@free.fr>
+Message-ID: <7f67b755-436c-4172-f428-689149f8c2cf@free.fr>
+Date:   Wed, 13 Feb 2019 10:38:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
-In-Reply-To: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 13 Feb 2019 10:37:55 +0100
-Message-ID: <CACRpkdaSbcHAV=3NHYRujC7xEvVcbLJpV+k5sHdvFsRpYFsCbg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: zynq: properly support runtime PM for GPIO used as interrupts
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <89492342-018b-3e5d-563c-026ad83458c4@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 11:40 AM Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
+On 12/02/2019 16:16, Marc Gonzalez wrote:
 
-> The Zynq GPIO driver currently implements runtime PM by:
->
->  - Enabling runtime PM support in ->probe() and letting the runtime PM
->    reference counter drop to zero at the end of ->probe().
->
->  - Increasing the runtime PM reference counter in ->request() and
->    decreasing it in ->free().
->
-> However, the latter is not sufficient: when a GPIO is used as an
-> interrupt, ->request() and ->free() are not called. Due to this, the
-> runtime PM counter remains to zero when the only GPIOs in use are used
-> as interrupts, causing them to simply not work.
->
-> To address this problem, this commit implement the
-> ->irq_request_resources() and ->irq_release_resources() hooks,
-> ensuring that the runtime PM counter is properly
-> incremented/decremented. Since we override the default hooks, we keep
-> the existing behavior by making sure they call gpiochip_reqres_irq() /
-> gpiochip_relres_irq() respectively.
->
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+> My console locks up as soon as Linux writes to [88800000,88f00000[
+> AFAIU, that memory area is reserved for trustzone.
+> 
+> Extend the reserved memory range, to prevent Linux from stepping on
+> trustzone's feet.
 
-Patch applied with Shubhrajyoti's review tag.
+s/feet/toes/
 
-Yours,
-Linus Walleij
+Bjorn/Andy, could you fold this vital fixup into the final patch? ^_^
+
+> [    0.000000] early_memtest: # of tests: 17
+> [    0.000000]   0x0000000080000000 - 0x0000000080080000 pattern 4c494e5558726c7a
+> [    0.000000]   0x0000000080c7a000 - 0x0000000083200000 pattern 4c494e5558726c7a
+> [    0.000000]   0x0000000083205b94 - 0x0000000085800000 pattern 4c494e5558726c7a
+> [    0.000000]   0x0000000088f00000 - 0x00000000a1e00000 pattern 4c494e5558726c7a
+> [    0.000000]   0x00000000a2000000 - 0x000000017dbc06c8 pattern 4c494e5558726c7a
+> [    0.000000]   0x000000017dbc06f7 - 0x000000017dbc06f8 pattern 4c494e5558726c7a
+> 
+> Cc: stable@vger.kernel.org # 4.20+
+> Fixes: c7833949564ec ("arm64: dts: qcom: msm8998: Add smem related nodes")
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> index d69401152089..f5ec83a91fe4 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -38,7 +38,7 @@
+>  		};
+>  
+>  		memory@86200000 {
+> -			reg = <0x0 0x86200000 0x0 0x2600000>;
+> +			reg = <0x0 0x86200000 0x0 0x2d00000>;
+>  			no-map;
+>  		};
+>  
