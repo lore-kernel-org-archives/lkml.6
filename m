@@ -2,172 +2,143 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512C9C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8F7C10F00
 	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB7F2146E
+	by mail.kernel.org (Postfix) with ESMTP id 4B03B222A4
 	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:19:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dXnxlHiw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbfBMXTP (ORCPT
+        id S2387520AbfBMXTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:19:15 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.239]:29074 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbfBMXTP (ORCPT
+        Wed, 13 Feb 2019 18:19:32 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38065 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfBMXTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:19:15 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id CEBFD7567
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:19:13 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id u3o9gTmFm4FKpu3o9goGmI; Wed, 13 Feb 2019 17:19:13 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=44168 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gu3o9-001WD3-BL; Wed, 13 Feb 2019 17:19:13 -0600
-Subject: Re: [PATCH] HID: wacom: Mark expected switch fall-through
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Ping Cheng <ping.cheng@wacom.com>
-References: <20190211220422.GA22137@embeddedor>
- <nycvar.YFH.7.76.1902140006510.11598@cbobk.fhfr.pm>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <5a9703b9-2fb3-a01a-9f69-f2f53d701762@embeddedor.com>
-Date:   Wed, 13 Feb 2019 17:19:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 18:19:31 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j19so2759736ljg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WgVsJUTMnnCaCQDHvEM6XpYkBOEcgxFKcSfGDRa84GY=;
+        b=dXnxlHiw2i/q9AM8vmhwbkVle9HbCuDxTJD/8szwNtgM5LWwooWFjbaCwLz+oZXAqJ
+         Av4s6GLuP9JdrJKrMKI8Ez3MSvPbvQGZbiFqlPwvNMTDRBD6PJlmYLqYWC5HeeIvOK+b
+         gRTPxAWAdlF1buqHitCwXrupsytDHVGxyf+pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WgVsJUTMnnCaCQDHvEM6XpYkBOEcgxFKcSfGDRa84GY=;
+        b=ZJDaSsd5Ea/hpBSKbGGTbjB2r1iZWrs5NYMv7SL98ekpN/iRwofi/eVPXkGJziLMhK
+         hDRVQltMXRPovnpS9rkypXg6NSe3JV4cs30nCGPAGTrSJyHXlCDX941e9VtJ/A7FmnpE
+         54Y8k5nW/CWrdAI4yVDRcBoCXNsMMx7YM1mn8rn3s+wFDdJFzgVMK7IPRucgpjC7ZUAR
+         mjbbSMZDGP48D0ZyBqhADC0ytO/eBFDVzFotl+V97LTZXAMubqB4EiThNYp2eG3VLTlD
+         mkmGl07uQS3Wq07onIBBhZuiMyPyM3PaHXDYLfdwq41iRPeuHfQMYPDTkoxyoqaJIv4v
+         t6jg==
+X-Gm-Message-State: AHQUAuZk4O0s7ZIZKzML5kcrKZZ3O1CDI3Dp0FiOY4M7NAQK4dczutMS
+        k1wKpM2feOJbknaiR6j1hEpkyBE+XjE=
+X-Google-Smtp-Source: AHgI3IbyvWhIW+G6zGGz2hIg+P/a0svRsa6oaXgZqVLQSbvvN1XE3SdoSIOYEqzew2pAqASFvrB+mg==
+X-Received: by 2002:a2e:974d:: with SMTP id f13-v6mr380469ljj.104.1550099968612;
+        Wed, 13 Feb 2019 15:19:28 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id m18sm123596lfh.43.2019.02.13.15.19.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 15:19:27 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id j1so3103413lfb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:19:26 -0800 (PST)
+X-Received: by 2002:a19:ab09:: with SMTP id u9mr338489lfe.149.1550099966013;
+ Wed, 13 Feb 2019 15:19:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1902140006510.11598@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gu3o9-001WD3-BL
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:44168
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190211134527.GA121589@gmail.com> <20190211135159.GC32511@hirez.programming.kicks-ass.net>
+ <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com> <20190213103553.GO32494@hirez.programming.kicks-ass.net>
+ <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com> <20190213131720.GU32494@hirez.programming.kicks-ass.net>
+ <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+ <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 13 Feb 2019 15:19:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiSqQtuudpKSa9RwEGALw-Yw7v+YFonAEcNPEbY_-0m+g@mail.gmail.com>
+Message-ID: <CAHk-=wiSqQtuudpKSa9RwEGALw-Yw7v+YFonAEcNPEbY_-0m+g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, Peter Anvin <hpa@zytor.com>,
+        valentin.schneider@arm.com, brgerst@gmail.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, dvlasenk@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 13, 2019 at 7:45 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Before that, x86_64 switch_to() read like (much simplified):
+>
+>         asm volatile ( /* do RSP twiddle */
+>           : /* output */
+>           : /* input */
+>           : "memory", "cc", .... "flags");
+>
+> (see __EXTRA_CLOBBER)
+>
+> Which I suppose means that GCC generates the PUSHF/POPF to preserve the
+> EFLAGS, since we mark those explicitly clobbered.
 
+No, it only means that gcc won't keep conditionals in the flags over
+the asm. It doesn't make gcc save anything.
 
-On 2/13/19 5:07 PM, Jiri Kosina wrote:
-> On Mon, 11 Feb 2019, Gustavo A. R. Silva wrote:
-> 
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warning:
->>
->> drivers/hid/wacom_wac.c: In function ‘wacom_setup_pen_input_capabilities’:
->> drivers/hid/wacom_wac.c:3506:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>    __clear_bit(ABS_MISC, input_dev->absbit);
->>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/hid/wacom_wac.c:3508:2: note: here
->>   case WACOM_MO:
->>   ^~~~
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Let's CC Jason and Ping to make sure it's really intended :)
-> 
+The push/pop got removed elsewhere as Andy says.
 
-Sounds great.
+That said, I do agree that it's probably a good idea to save/restore
+flags anyway when scheduling. It's not just AC, actually, now that I
+look at it again I worry a bit about DF too.
 
-Thanks, Jiri.
---
-Gustavo
+We have the rule that we run with DF clear in the kernel, and all the
+kernel entry points do clear it properly (so that memcpy etc don't
+need to). But there are a few places that set DF temporarily because
+they do something odd (backwards memmove), and those atcually have the
+*exact* same issue as stac/clac has: it's ok to take a trap or
+interrupt, and schedule due to that (because the trap/irq will clear
+DF), but it would be a horrible bug to have a synchronous scheduling
+point there.
 
->> ---
->>  drivers/hid/wacom_wac.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
->> index 72477e872324..5ecda99bf431 100644
->> --- a/drivers/hid/wacom_wac.c
->> +++ b/drivers/hid/wacom_wac.c
->> @@ -3504,6 +3504,7 @@ int wacom_setup_pen_input_capabilities(struct input_dev *input_dev,
->>  	switch (features->type) {
->>  	case GRAPHIRE_BT:
->>  		__clear_bit(ABS_MISC, input_dev->absbit);
->> +		/* fall through */
->>  
->>  	case WACOM_MO:
->>  	case WACOM_G4:
->> -- 
->> 2.20.1
->>
-> 
+Arguably the DF issue really isn't even remotely likely to actually be
+a real issue (the code that sets DF really is very special and should
+never do any kind of preemption), but it's conceptually quite
+similar..
+
+Of course, if DF is ever set, and we end up calling any C code at all,
+I guess it would already be a huge problem. If the C code then does
+memcpy or something, it would corrupt things quite badly.
+
+So I guess save/restore isn't going to save us wrt DF. If we get
+anywhere close to the scheduler with the DF bit set, we've already
+lost.
+
+But I still do kind of prefer saving flags. We have other sticky state
+in there too, although none of it matters in the kernel currently (eg
+iopl etc - only matters in user space, and user space will always
+reload eflags on return).
+
+                 Linus
