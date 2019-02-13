@@ -2,617 +2,181 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6A3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B21C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D93222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:55:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bFQo2OSs"
+	by mail.kernel.org (Postfix) with ESMTP id 309AF222B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390884AbfBMIzl (ORCPT
+        id S2390896AbfBMI4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:55:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54640 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733127AbfBMIzl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:55:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so1511358wmh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wutqOrMX2nsjJ1ttK/DcRmKv8Q+v9k5mkKlJZQaGppU=;
-        b=bFQo2OSsl2j4w6gYt//eJPCdxXuBv7FsYq/MRpJAi8eVJCYqISMO8SUlVSBRVbjUz/
-         VT20h7nOX8FNBZ4Ge1dLvFhTyXISBAKIweYKFQ6tvvZRd58YPN0ONV9m0wuy1cGHBud+
-         o/vWL2XQZ0QDh99oI6cZRE+z/nz3IqHvB5kSc962kpFKqp0+yE7e7kpn/Kgt8PB9+LlA
-         sgljYF1spDJt61Zvdihba4uWVvfqcBs4EtWUMW3KeaWWREMqVrmqeVgkwa64hHqQe2sy
-         L65dOTvCcBDSXi7SAqg2Su9mHdamPIG9lIW7WiDOoXECn2DCeS3OdNY0ta5RDYk6ZjRm
-         5Srw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wutqOrMX2nsjJ1ttK/DcRmKv8Q+v9k5mkKlJZQaGppU=;
-        b=AzPFjlav1+k+n0UtnQNR/2+4cYxMOmN23umqBIcVwKvRxlgskShb60QhJXfyD5fS4a
-         FzmXPGmx3C5vs1VI62hU4jdiDH1X/JUWux/BwwBka0Qa+hKFTl+ExVrZQr+82ez8X2fd
-         P2ABpVESByzzPmwfrhQJ8ZG6gsdz5z92HInILIy6pJbEuu4u2ywFkpP9Uu6yZEpiS/RY
-         0j4/cv3u03OUiFYpj1HPFY2S6vQgBdQaIzFa5kMyI4iZ50fd+Ko5mj7us5csU1GpbCh7
-         l8XCaNrFWGBnLbPiV1MzMGjJ81kK7tiriJhbql1gYMZC5fU4vQZaqj7gO2QEEW3/6pGu
-         EbXA==
-X-Gm-Message-State: AHQUAua2F30h5sUB4NScThHR1MbbOa4iByZ8eQvYmhKu0Pl1LuY0DMaV
-        f/Nbutkv/LgkBuWr/nPzSe8SUw==
-X-Google-Smtp-Source: AHgI3IaMwHd6yQ6F2E1Ciu+Ye3XnJkwsK3XiEexo9awuTddpSXi99+u5TmEfv1Y2e483FXA9JnuOtg==
-X-Received: by 2002:a1c:9e41:: with SMTP id h62mr2248093wme.125.1550048136451;
-        Wed, 13 Feb 2019 00:55:36 -0800 (PST)
-Received: from [192.168.27.65] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id a184sm5765137wmh.37.2019.02.13.00.55.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 00:55:35 -0800 (PST)
-Subject: Re: [PATCH V6 2/7] clocksource: tegra: add Tegra210 timer support
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-References: <20190201161654.18315-1-josephl@nvidia.com>
- <20190201161654.18315-3-josephl@nvidia.com>
- <30d2a97c-c08f-f67c-706a-16288cf63dc8@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <94a6e53f-8997-4088-fa50-8b889eb81bc1@linaro.org>
-Date:   Wed, 13 Feb 2019 09:55:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <30d2a97c-c08f-f67c-706a-16288cf63dc8@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 13 Feb 2019 03:56:05 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61820 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbfBMI4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:56:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 00:56:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
+   d="scan'208";a="124116509"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Feb 2019 00:56:03 -0800
+Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 13 Feb 2019 00:55:58 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 13 Feb 2019 00:55:57 -0800
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.172]) with mapi id 14.03.0415.000;
+ Wed, 13 Feb 2019 16:55:45 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     'David Hildenbrand' <david@redhat.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXb13cw//+SQwCAAKVowA==
+Date:   Wed, 13 Feb 2019 08:55:45 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+ <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+In-Reply-To: <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTMyMmVmMjktODkwOC00ODJkLWEyODctYjUwMjVhM2UzNTBkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYjRxYmFGbFRGSnMwQStYa0xTRklKNWUzcFJYWkh5SVdCS1J6eXpwXC9OVWV5ZFF2UnF3QkFjYnF3UkswZkVqT3EifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 14:23, Joseph Lo wrote:
-> Hi Daniel & Thomas,
-> 
-> Do we have the chance to get this patch merged for K5.1?
-
-Hi Jospeh,
-
-sorry for the delay, I was overbooked these past two weeks.
-
-Overall it looks ok but give me a couple of days to review the driver
-more deeply.
-
-
-> On 2/2/19 12:16 AM, Joseph Lo wrote:
->> Add support for the Tegra210 timer that runs at oscillator clock
->> (TMR10-TMR13). We need these timers to work as clock event device and to
->> replace the ARMv8 architected timer due to it can't survive across the
->> power cycle of the CPU core or CPUPORESET signal. So it can't be a
->> wake-up
->> source when CPU suspends in power down state.
->>
->> Also convert the original driver to use timer-of API.
->>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->> v6:
->>   * refine the timer defines
->>   * add ack tag from Jon.
->> v5:
->>   * add ack tag from Thierry
->> v4:
->>   * merge timer-tegra210.c in previous version into timer-tegra20.c
->> v3:
->>   * use timer-of API
->> v2:
->>   * add error clean-up code
->> ---
->>   drivers/clocksource/Kconfig         |   2 +-
->>   drivers/clocksource/timer-tegra20.c | 371 ++++++++++++++++++++--------
->>   include/linux/cpuhotplug.h          |   1 +
->>   3 files changed, 270 insertions(+), 104 deletions(-)
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index a9e26f6a81a1..6af78534a285 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>   config TEGRA_TIMER
->>       bool "Tegra timer driver" if COMPILE_TEST
->>       select CLKSRC_MMIO
->> -    depends on ARM
->> +    select TIMER_OF
->>       help
->>         Enables support for the Tegra driver.
->>   diff --git a/drivers/clocksource/timer-tegra20.c
->> b/drivers/clocksource/timer-tegra20.c
->> index 4293943f4e2b..f66edd63d7f4 100644
->> --- a/drivers/clocksource/timer-tegra20.c
->> +++ b/drivers/clocksource/timer-tegra20.c
->> @@ -15,21 +15,24 @@
->>    *
->>    */
->>   -#include <linux/init.h>
->> +#include <linux/clk.h>
->> +#include <linux/clockchips.h>
->> +#include <linux/cpu.h>
->> +#include <linux/cpumask.h>
->> +#include <linux/delay.h>
->>   #include <linux/err.h>
->> -#include <linux/time.h>
->>   #include <linux/interrupt.h>
->> -#include <linux/irq.h>
->> -#include <linux/clockchips.h>
->> -#include <linux/clocksource.h>
->> -#include <linux/clk.h>
->> -#include <linux/io.h>
->>   #include <linux/of_address.h>
->>   #include <linux/of_irq.h>
->> -#include <linux/sched_clock.h>
->> -#include <linux/delay.h>
->> +#include <linux/percpu.h>
->> +#include <linux/syscore_ops.h>
->> +#include <linux/time.h>
->> +
->> +#include "timer-of.h"
->>   +#ifdef CONFIG_ARM
->>   #include <asm/mach/time.h>
->> +#endif
->>     #define RTC_SECONDS            0x08
->>   #define RTC_SHADOW_SECONDS     0x0c
->> @@ -39,74 +42,145 @@
->>   #define TIMERUS_USEC_CFG 0x14
->>   #define TIMERUS_CNTR_FREEZE 0x4c
->>   -#define TIMER1_BASE 0x0
->> -#define TIMER2_BASE 0x8
->> -#define TIMER3_BASE 0x50
->> -#define TIMER4_BASE 0x58
->> -
->> -#define TIMER_PTV 0x0
->> -#define TIMER_PCR 0x4
->> -
->> +#define TIMER_PTV        0x0
->> +#define TIMER_PTV_EN        BIT(31)
->> +#define TIMER_PTV_PER        BIT(30)
->> +#define TIMER_PCR        0x4
->> +#define TIMER_PCR_INTR_CLR    BIT(30)
->> +
->> +#ifdef CONFIG_ARM
->> +#define TIMER_CPU0        0x50 /* TIMER3 */
->> +#else
->> +#define TIMER_CPU0        0x90 /* TIMER10 */
->> +#define TIMER10_IRQ_IDX        10
->> +#define IRQ_IDX_FOR_CPU(cpu)    (TIMER10_IRQ_IDX + cpu)
->> +#endif
->> +#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
->> +
->> +static u32 usec_config;
->>   static void __iomem *timer_reg_base;
->> +#ifdef CONFIG_ARM
->>   static void __iomem *rtc_base;
->> -
->>   static struct timespec64 persistent_ts;
->>   static u64 persistent_ms, last_persistent_ms;
->> -
->>   static struct delay_timer tegra_delay_timer;
->> -
->> -#define timer_writel(value, reg) \
->> -    writel_relaxed(value, timer_reg_base + (reg))
->> -#define timer_readl(reg) \
->> -    readl_relaxed(timer_reg_base + (reg))
->> +#endif
->>     static int tegra_timer_set_next_event(unsigned long cycles,
->>                        struct clock_event_device *evt)
->>   {
->> -    u32 reg;
->> +    void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->>   -    reg = 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
->> -    timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->> +    writel(TIMER_PTV_EN |
->> +           ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
->> +           reg_base + TIMER_PTV);
->>         return 0;
->>   }
->>   -static inline void timer_shutdown(struct clock_event_device *evt)
->> +static int tegra_timer_shutdown(struct clock_event_device *evt)
->>   {
->> -    timer_writel(0, TIMER3_BASE + TIMER_PTV);
->> +    void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +    writel(0, reg_base + TIMER_PTV);
->> +
->> +    return 0;
->>   }
->>   -static int tegra_timer_shutdown(struct clock_event_device *evt)
->> +static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>   {
->> -    timer_shutdown(evt);
->> +    void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +    writel(TIMER_PTV_EN | TIMER_PTV_PER |
->> +           ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->> +           reg_base + TIMER_PTV);
->> +
->>       return 0;
->>   }
->>   -static int tegra_timer_set_periodic(struct clock_event_device *evt)
->> +static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
->>   {
->> -    u32 reg = 0xC0000000 | ((1000000 / HZ) - 1);
->> +    struct clock_event_device *evt = (struct clock_event_device
->> *)dev_id;
->> +    void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +
->> +    writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +    evt->event_handler(evt);
->> +
->> +    return IRQ_HANDLED;
->> +}
->> +
->> +#ifdef CONFIG_ARM64
->> +static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
->> +    .flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
->> +
->> +    .clkevt = {
->> +        .name = "tegra_timer",
->> +        .rating = 460,
->> +        .features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->> +        .set_next_event = tegra_timer_set_next_event,
->> +        .set_state_shutdown = tegra_timer_shutdown,
->> +        .set_state_periodic = tegra_timer_set_periodic,
->> +        .set_state_oneshot = tegra_timer_shutdown,
->> +        .tick_resume = tegra_timer_shutdown,
->> +    },
->> +};
->> +
->> +static int tegra_timer_setup(unsigned int cpu)
->> +{
->> +    struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +
->> +    irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
->> +    enable_irq(to->clkevt.irq);
->> +
->> +    clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
->> +                    1, /* min */
->> +                    0x1fffffff); /* 29 bits */
->>   -    timer_shutdown(evt);
->> -    timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>       return 0;
->>   }
->>   -static struct clock_event_device tegra_clockevent = {
->> -    .name            = "timer0",
->> -    .rating            = 300,
->> -    .features        = CLOCK_EVT_FEAT_ONESHOT |
->> -                  CLOCK_EVT_FEAT_PERIODIC |
->> -                  CLOCK_EVT_FEAT_DYNIRQ,
->> -    .set_next_event        = tegra_timer_set_next_event,
->> -    .set_state_shutdown    = tegra_timer_shutdown,
->> -    .set_state_periodic    = tegra_timer_set_periodic,
->> -    .set_state_oneshot    = tegra_timer_shutdown,
->> -    .tick_resume        = tegra_timer_shutdown,
->> +static int tegra_timer_stop(unsigned int cpu)
->> +{
->> +    struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +
->> +    to->clkevt.set_state_shutdown(&to->clkevt);
->> +    disable_irq_nosync(to->clkevt.irq);
->> +
->> +    return 0;
->> +}
->> +#else /* CONFIG_ARM */
->> +static struct timer_of tegra_to = {
->> +    .flags = TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
->> +
->> +    .clkevt = {
->> +        .name = "tegra_timer",
->> +        .rating    = 300,
->> +        .features = CLOCK_EVT_FEAT_ONESHOT |
->> +                CLOCK_EVT_FEAT_PERIODIC |
->> +                CLOCK_EVT_FEAT_DYNIRQ,
->> +        .set_next_event    = tegra_timer_set_next_event,
->> +        .set_state_shutdown = tegra_timer_shutdown,
->> +        .set_state_periodic = tegra_timer_set_periodic,
->> +        .set_state_oneshot = tegra_timer_shutdown,
->> +        .tick_resume = tegra_timer_shutdown,
->> +        .cpumask = cpu_possible_mask,
->> +    },
->> +
->> +    .of_irq = {
->> +        .index = 2,
->> +        .flags = IRQF_TIMER | IRQF_TRIGGER_HIGH,
->> +        .handler = tegra_timer_isr,
->> +    },
->>   };
->>     static u64 notrace tegra_read_sched_clock(void)
->>   {
->> -    return timer_readl(TIMERUS_CNTR_1US);
->> +    return readl(timer_reg_base + TIMERUS_CNTR_1US);
->> +}
->> +
->> +static unsigned long tegra_delay_timer_read_counter_long(void)
->> +{
->> +    return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>   }
->>     /*
->> @@ -143,98 +217,188 @@ static void
->> tegra_read_persistent_clock64(struct timespec64 *ts)
->>       timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
->>       *ts = persistent_ts;
->>   }
->> +#endif
->>   -static unsigned long tegra_delay_timer_read_counter_long(void)
->> +static int tegra_timer_suspend(void)
->>   {
->> -    return readl(timer_reg_base + TIMERUS_CNTR_1US);
->> +#ifdef CONFIG_ARM64
->> +    int cpu;
->> +
->> +    for_each_possible_cpu(cpu) {
->> +        struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +        void __iomem *reg_base = timer_of_base(to);
->> +
->> +        writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +    }
->> +#else
->> +    void __iomem *reg_base = timer_of_base(&tegra_to);
->> +
->> +    writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +#endif
->> +
->> +    return 0;
->>   }
->>   -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->> +static void tegra_timer_resume(void)
->>   {
->> -    struct clock_event_device *evt = (struct clock_event_device
->> *)dev_id;
->> -    timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
->> -    evt->event_handler(evt);
->> -    return IRQ_HANDLED;
->> +    writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
->>   }
->>   -static struct irqaction tegra_timer_irq = {
->> -    .name        = "timer0",
->> -    .flags        = IRQF_TIMER | IRQF_TRIGGER_HIGH,
->> -    .handler    = tegra_timer_interrupt,
->> -    .dev_id        = &tegra_clockevent,
->> +static struct syscore_ops tegra_timer_syscore_ops = {
->> +    .suspend = tegra_timer_suspend,
->> +    .resume = tegra_timer_resume,
->>   };
->>   -static int __init tegra20_init_timer(struct device_node *np)
->> +static int tegra_timer_init(struct device_node *np, struct timer_of *to)
->>   {
->> -    struct clk *clk;
->> -    unsigned long rate;
->> -    int ret;
->> +    int ret = 0;
->>   -    timer_reg_base = of_iomap(np, 0);
->> -    if (!timer_reg_base) {
->> -        pr_err("Can't map timer registers\n");
->> -        return -ENXIO;
->> -    }
->> +    ret = timer_of_init(np, to);
->> +    if (ret < 0)
->> +        goto out;
->>   -    tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
->> -    if (tegra_timer_irq.irq <= 0) {
->> -        pr_err("Failed to map timer IRQ\n");
->> -        return -EINVAL;
->> -    }
->> +    timer_reg_base = timer_of_base(to);
->>   -    clk = of_clk_get(np, 0);
->> -    if (IS_ERR(clk)) {
->> -        pr_warn("Unable to get timer clock. Assuming 12Mhz input
->> clock.\n");
->> -        rate = 12000000;
->> -    } else {
->> -        clk_prepare_enable(clk);
->> -        rate = clk_get_rate(clk);
->> -    }
->> -
->> -    switch (rate) {
->> +    /*
->> +     * Configure microsecond timers to have 1MHz clock
->> +     * Config register is 0xqqww, where qq is "dividend", ww is
->> "divisor"
->> +     * Uses n+1 scheme
->> +     */
->> +    switch (timer_of_rate(to)) {
->>       case 12000000:
->> -        timer_writel(0x000b, TIMERUS_USEC_CFG);
->> +        usec_config = 0x000b; /* (11+1)/(0+1) */
->> +        break;
->> +    case 12800000:
->> +        usec_config = 0x043f; /* (63+1)/(4+1) */
->>           break;
->>       case 13000000:
->> -        timer_writel(0x000c, TIMERUS_USEC_CFG);
->> +        usec_config = 0x000c; /* (12+1)/(0+1) */
->> +        break;
->> +    case 16800000:
->> +        usec_config = 0x0453; /* (83+1)/(4+1) */
->>           break;
->>       case 19200000:
->> -        timer_writel(0x045f, TIMERUS_USEC_CFG);
->> +        usec_config = 0x045f; /* (95+1)/(4+1) */
->>           break;
->>       case 26000000:
->> -        timer_writel(0x0019, TIMERUS_USEC_CFG);
->> +        usec_config = 0x0019; /* (25+1)/(0+1) */
->> +        break;
->> +    case 38400000:
->> +        usec_config = 0x04bf; /* (191+1)/(4+1) */
->> +        break;
->> +    case 48000000:
->> +        usec_config = 0x002f; /* (47+1)/(0+1) */
->>           break;
->>       default:
->> -        WARN(1, "Unknown clock rate");
->> +        ret = -EINVAL;
->> +        goto out;
->> +    }
->> +
->> +    writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
->> +
->> +    register_syscore_ops(&tegra_timer_syscore_ops);
->> +out:
->> +    return ret;
->> +}
->> +
->> +#ifdef CONFIG_ARM64
->> +static int __init tegra210_timer_init(struct device_node *np)
->> +{
->> +    int cpu, ret = 0;
->> +    struct timer_of *to;
->> +
->> +    to = this_cpu_ptr(&tegra_to);
->> +    ret = tegra_timer_init(np, to);
->> +    if (ret < 0)
->> +        goto out;
->> +
->> +    for_each_possible_cpu(cpu) {
->> +        struct timer_of *cpu_to;
->> +
->> +        cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +        cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
->> +        cpu_to->of_clk.rate = timer_of_rate(to);
->> +        cpu_to->clkevt.cpumask = cpumask_of(cpu);
->> +
->> +        cpu_to->clkevt.irq =
->> +            irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
->> +        if (!cpu_to->clkevt.irq) {
->> +            pr_err("%s: can't map IRQ for CPU%d\n",
->> +                   __func__, cpu);
->> +            ret = -EINVAL;
->> +            goto out;
->> +        }
->> +
->> +        irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
->> +        ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
->> +                  IRQF_TIMER | IRQF_NOBALANCING,
->> +                  cpu_to->clkevt.name, &cpu_to->clkevt);
->> +        if (ret) {
->> +            pr_err("%s: cannot setup irq %d for CPU%d\n",
->> +                __func__, cpu_to->clkevt.irq, cpu);
->> +            ret = -EINVAL;
->> +            goto out_irq;
->> +        }
->> +    }
->> +
->> +    cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
->> +              "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
->> +              tegra_timer_stop);
->> +
->> +    return ret;
->> +
->> +out_irq:
->> +    for_each_possible_cpu(cpu) {
->> +        struct timer_of *cpu_to;
->> +
->> +        cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +        if (cpu_to->clkevt.irq) {
->> +            free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
->> +            irq_dispose_mapping(cpu_to->clkevt.irq);
->> +        }
->>       }
->> +out:
->> +    timer_of_cleanup(to);
->> +    return ret;
->> +}
->> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer",
->> tegra210_timer_init);
->> +#else /* CONFIG_ARM */
->> +static int __init tegra20_init_timer(struct device_node *np)
->> +{
->> +    int ret = 0;
->> +
->> +    ret = tegra_timer_init(np, &tegra_to);
->> +    if (ret < 0)
->> +        goto out;
->>   -    sched_clock_register(tegra_read_sched_clock, 32, 1000000);
->> +    tegra_to.of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(0);
->> +    tegra_to.of_clk.rate = 1000000; /* microsecond timer */
->>   +    sched_clock_register(tegra_read_sched_clock, 32,
->> +                 timer_of_rate(&tegra_to));
->>       ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
->> -                    "timer_us", 1000000, 300, 32,
->> -                    clocksource_mmio_readl_up);
->> +                    "timer_us", timer_of_rate(&tegra_to),
->> +                    300, 32, clocksource_mmio_readl_up);
->>       if (ret) {
->>           pr_err("Failed to register clocksource\n");
->> -        return ret;
->> +        goto out;
->>       }
->>         tegra_delay_timer.read_current_timer =
->>               tegra_delay_timer_read_counter_long;
->> -    tegra_delay_timer.freq = 1000000;
->> +    tegra_delay_timer.freq = timer_of_rate(&tegra_to);
->>       register_current_timer_delay(&tegra_delay_timer);
->>   -    ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
->> -    if (ret) {
->> -        pr_err("Failed to register timer IRQ: %d\n", ret);
->> -        return ret;
->> -    }
->> +    clockevents_config_and_register(&tegra_to.clkevt,
->> +                    timer_of_rate(&tegra_to),
->> +                    0x1,
->> +                    0x1fffffff);
->>   -    tegra_clockevent.cpumask = cpu_possible_mask;
->> -    tegra_clockevent.irq = tegra_timer_irq.irq;
->> -    clockevents_config_and_register(&tegra_clockevent, 1000000,
->> -                    0x1, 0x1fffffff);
->> +    return ret;
->> +out:
->> +    timer_of_cleanup(&tegra_to);
->>   -    return 0;
->> +    return ret;
->>   }
->>   TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer",
->> tegra20_init_timer);
->>   @@ -261,3 +425,4 @@ static int __init tegra20_init_rtc(struct
->> device_node *np)
->>       return register_persistent_clock(tegra_read_persistent_clock64);
->>   }
->>   TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
->> +#endif
->> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
->> index fd586d0301e7..e78281d07b70 100644
->> --- a/include/linux/cpuhotplug.h
->> +++ b/include/linux/cpuhotplug.h
->> @@ -121,6 +121,7 @@ enum cpuhp_state {
->>       CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->>       CPUHP_AP_ARM_TWD_STARTING,
->>       CPUHP_AP_QCOM_TIMER_STARTING,
->> +    CPUHP_AP_TEGRA_TIMER_STARTING,
->>       CPUHP_AP_ARMADA_TIMER_STARTING,
->>       CPUHP_AP_MARCO_TIMER_STARTING,
->>       CPUHP_AP_MIPS_GIC_TIMER_STARTING,
->>
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+T24gVHVlc2RheSwgRmVicnVhcnkgMTIsIDIwMTkgNToyNCBQTSwgRGF2aWQgSGlsZGVuYnJhbmQg
+d3JvdGU6DQo+IEdsb2JhbCBtZWFucyBhbGwgVkNQVXMgd2lsbCBiZSBjb21wZXRpbmcgcG90ZW50
+aWFsbHkgZm9yIGEgc2luZ2xlIGxvY2sgd2hlbg0KPiBmcmVlaW5nL2FsbG9jYXRpbmcgYSBwYWdl
+LCBubz8gV2hhdCBpZiB5b3UgaGF2ZSA2NFZDUFVzIGFsbG9jYXRpbmcvZnJlZWluZw0KPiBtZW1v
+cnkgbGlrZSBjcmF6eT8NCg0KSSB0aGluayB0aGUga2V5IHBvaW50IGlzIHRoYXQgdGhlIDY0IHZj
+cHVzIHdvbid0IGFsbG9jYXRlL2ZyZWUgb24gdGhlIHNhbWUgcGFnZSBzaW11bHRhbmVvdXNseSwg
+c28gbm8gbmVlZCB0byBoYXZlIGEgZ2xvYmFsIGJpZyBsb2NrLCBpc27igJl0IGl0Pw0KSSB0aGlu
+ayBhdG9taWMgb3BlcmF0aW9ucyBvbiB0aGUgYml0bWFwIHdvdWxkIGJlIGVub3VnaC4NCg0KPiAo
+SSBhc3N1bWUgc29tZSBraW5kIG9mIGxvY2tpbmcgaXMgcmVxdWlyZWQgZXZlbiBpZiB0aGUgYml0
+bWFwIHdvdWxkIGJlDQo+IGF0b21pYy4gQWxzbywgZG9lc24ndCB4Yml0bWFwIG1lYW4gdGhhdCB3
+ZSBldmVudHVhbGx5IGhhdmUgdG8gYWxsb2NhdGUNCj4gbWVtb3J5IGF0IHBsYWNlcyB3aGVyZSB3
+ZSBkb24ndCB3YW50IHRvIC0gZS5nLiBmcm9tIGFyY2hfZnJlZV9wYWdlID8pDQoNCmFyY2hfZnJl
+ZV9wYWdlcyBpcyBpbiBmcmVlX3BhZ2VzX3ByZXBhcmUsIHdoeSBjYW4ndCB3ZSBoYXZlIG1lbW9y
+eSBhbGxvY2F0aW9uIHRoZXJlPw0KDQpJdCB3b3VsZCBhbHNvIGJlIGRvYWJsZSB0byBmaW5kIGEg
+cHJlZmVycmVkIHBsYWNlIHRvIHByZWFsbG9jYXRlIHNvbWUgYW1vdW50IG9mIG1lbW9yeSBmb3Ig
+dGhlIGJpdG1hcC4NCg0KPiANCj4gVGhhdCdzIHRoZSBiaWcgYmVuZWZpdCBvZiB0YWtpbmcgdGhl
+IHBhZ2VzIG9mIHRoZSBidWRkeSBmcmVlIGxpc3QuIE90aGVyIFZDUFVzDQo+IHdvbid0IHN0dW1i
+bGUgb3ZlciB0aGVtLCB3YWl0aW5nIGZvciB0aGVtIHRvIGdldCBmcmVlZCBpbiB0aGUgaHlwZXJ2
+aXNvci4NCg0KQXMgYWxzbyBtZW50aW9uZWQgYWJvdmUsIEkgdGhpbmsgb3RoZXIgdmNwdXMgd2ls
+bCBub3QgYWxsb2NhdGUvZnJlZSBvbiB0aGUgc2FtZSBwYWdlIHRoYXQgaXMgaW4gcHJvZ3Jlc3Mg
+b2YgYmVpbmcgYWxsb2NhdGVkL2ZyZWVkLg0KDQo+IFRoaXMgc291bmRzIG1vcmUgbGlrZSAidGhl
+IGhvc3QgcmVxdWVzdHMgdG8gZ2V0IGZyZWUgcGFnZXMgb25jZSBpbiBhIHdoaWxlIg0KPiBjb21w
+YXJlZCB0byAidGhlIGhvc3QgaXMgYWx3YXlzIGluZm9ybWVkIGFib3V0IGZyZWUgcGFnZXMiLiBB
+dCB0aGUgdGltZQ0KPiB3aGVyZSB0aGUgaG9zdCBhY3R1YWxseSBoYXMgdG8gYXNrIHRoZSBndWVz
+dCAoZS5nLiBiZWNhdXNlIHRoZSBob3N0IGlzIGxvdyBvbg0KPiBtZW1vcnkpLCBpdCBtaWdodCBi
+ZSB0byBsYXRlIHRvIHdhaXQgZm9yIGd1ZXN0IGFjdGlvbi4NCg0KT3B0aW9uIDE6IEhvc3QgYXNr
+cyBmb3IgZnJlZSBwYWdlczoNCk5vdCBuZWNlc3NhcnkgdG8gYXNrIG9ubHkgd2hlbiB0aGUgaG9z
+dCBoYXMgYmVlbiBpbiBtZW1vcnkgcHJlc3N1cmUuDQpUaGlzIGNvdWxkIGJlIHRoZSBvcmNoZXN0
+cmF0aW9uIGxheWVyJ3Mgam9iIHRvIG1vbml0b3IgdGhlIGhvc3QgbWVtb3J5IHVzYWdlLg0KRm9y
+IGV4YW1wbGUsIHBlb3BsZSBjb3VsZCBzZXQgdGhlIGNvbmRpdGlvbiAid2hlbiA1MCUgb2YgdGhl
+IGhvc3QgbWVtb3J5DQpoYXMgYmVlbiB1c2VkLCBzdGFydCB0byBhc2sgYSBndWVzdCBmb3Igc29t
+ZSBhbW91bnQgb2YgZnJlZSBwYWdlcyIgDQoNCk9wdGlvbiAyOiBHdWVzdCBhY3RpdmVseSBvZmZl
+cnMgZnJlZSBwYWdlczoNCkFkZCBhIGJhbGxvb24gY2FsbGJhY2sgdG8gYXJjaF9mcmVlX3BhZ2Ug
+c28gdGhhdCB3aGVuZXZlciBhIHBhZ2UgZ2V0cyBmcmVlZCBpdHMgZ2ZuDQp3aWxsIGJlIGZpbGxl
+ZCBpbnRvIHRoZSBiYWxsb29uJ3MgcmVwb3J0X3ZxIGFuZCB0aGUgaG9zdCB3aWxsIHRha2UgYXdh
+eSB0aGUgYmFja2luZw0KaG9zdCBwYWdlLg0KDQpCb3RoIG9wdGlvbnMgY2FuIGJlIGltcGxlbWVu
+dGVkLiBCdXQgSSB0aGluayBvcHRpb24gMSB3b3VsZCBiZSBtb3JlDQplZmZpY2llbnQgYXMgdGhl
+IGd1ZXN0IGZyZWUgcGFnZXMgYXJlIG9mZmVyZWQgb24gZGVtYW5kLiAgDQoNCj4gTml0ZXNoIHVz
+ZXMgTUFEVl9GUkVFIGhlcmUgKGFzIGZhciBhcyBJIHJlY2FsbCA6KSApLCB0byBvbmx5IG1hcmsg
+cGFnZXMgYXMNCj4gY2FuZGlkYXRlcyBmb3IgcmVtb3ZhbCBhbmQgaWYgdGhlIGhvc3QgaXMgbG93
+IG9uIG1lbW9yeSwgb25seSBzY2FubmluZyB0aGUNCj4gZ3Vlc3QgcGFnZSB0YWJsZXMgaXMgc3Vm
+ZmljaWVudCB0byBmcmVlIHVwIG1lbW9yeS4NCj4gDQo+IEJ1dCBib3RoIHBvaW50cyBtaWdodCBq
+dXN0IGJlIGFuIGltcGxlbWVudGF0aW9uIGRldGFpbCBpbiB0aGUgZXhhbXBsZSB5b3UNCj4gZGVz
+Y3JpYmUuDQoNClllcywgaXQgaXMgYW4gaW1wbGVtZW50YXRpb24gZGV0YWlsLiBJIHRoaW5rIERP
+TlRORUVEIHdvdWxkIGJlIGVhc2llcg0KZm9yIHRoZSBmaXJzdCBzdGVwLg0KDQo+IA0KPiA+DQo+
+ID4gSW4gYWJvdmUgMiksIGdldF9mcmVlX3BhZ2VfaGludHMgY2xlYXJzIHRoZSBiaXRzIHdoaWNo
+IGluZGljYXRlcyB0aGF0IHRob3NlDQo+IHBhZ2VzIGFyZSBub3QgcmVhZHkgdG8gYmUgdXNlZCBi
+eSB0aGUgZ3Vlc3QgeWV0LiBXaHk/DQo+ID4gVGhpcyBpcyBiZWNhdXNlIDMpIHdpbGwgdW5tYXAg
+dGhlIHVuZGVybHlpbmcgcGh5c2ljYWwgcGFnZXMgZnJvbSBFUFQuDQo+IE5vcm1hbGx5LCB3aGVu
+IGd1ZXN0IHJlLXZpc2l0cyB0aG9zZSBwYWdlcywgRVBUIHZpb2xhdGlvbnMgYW5kIFFFTVUgcGFn
+ZQ0KPiBmYXVsdHMgd2lsbCBnZXQgYSBuZXcgaG9zdCBwYWdlIHRvIHNldCB1cCB0aGUgcmVsYXRl
+ZCBFUFQgZW50cnkuIElmIGd1ZXN0IHVzZXMNCj4gdGhhdCBwYWdlIGJlZm9yZSB0aGUgcGFnZSBn
+ZXRzIHVubWFwcGVkIChpLmUuIHJpZ2h0IGJlZm9yZSBzdGVwIDMpLCBubyBFUFQNCj4gdmlvbGF0
+aW9uIGhhcHBlbnMgYW5kIHRoZSBndWVzdCB3aWxsIHVzZSB0aGUgc2FtZSBwaHlzaWNhbCBwYWdl
+IHRoYXQgd2lsbCBiZQ0KPiB1bm1hcHBlZCBhbmQgZ2l2ZW4gdG8gb3RoZXIgaG9zdCB0aHJlYWRz
+LiBTbyB3ZSBuZWVkIHRvIG1ha2Ugc3VyZSB0aGF0DQo+IHRoZSBndWVzdCBmcmVlIHBhZ2UgaXMg
+dXNhYmxlIG9ubHkgYWZ0ZXIgc3RlcCAzIGZpbmlzaGVzLg0KPiA+DQo+ID4gQmFjayB0byBhcmNo
+X2FsbG9jX3BhZ2UoKSwgaXQgbmVlZHMgdG8gY2hlY2sgaWYgdGhlIGFsbG9jYXRlZCBwYWdlcw0K
+PiA+IGhhdmUgIjEiIHNldCBpbiB0aGUgYml0bWFwLCBpZiB0aGF0J3MgdHJ1ZSwganVzdCBjbGVh
+ciB0aGUgYml0cy4gT3RoZXJ3aXNlLCBpdA0KPiBtZWFucyBzdGVwIDIpIGFib3ZlIGhhcyBoYXBw
+ZW5lZCBhbmQgc3RlcCA0KSBoYXNuJ3QgYmVlbiByZWFjaGVkLiBJbiB0aGlzDQo+IGNhc2UsIHdl
+IGNhbiBlaXRoZXIgaGF2ZSBhcmNoX2FsbG9jX3BhZ2UoKSBidXN5d2FpdGluZyBhIGJpdCB0aWxs
+IDQpIGlzIGRvbmUNCj4gZm9yIHRoYXQgcGFnZSBPciBiZXR0ZXIgdG8gaGF2ZSBhIGJhbGxvb24g
+Y2FsbGJhY2sgd2hpY2ggcHJpb3JpdGl6ZSAzKSBhbmQgNCkNCj4gdG8gbWFrZSB0aGlzIHBhZ2Ug
+dXNhYmxlIGJ5IHRoZSBndWVzdC4NCj4gDQo+IFJlZ2FyZGluZyB0aGUgbGF0dGVyLCB0aGUgVkNQ
+VSBhbGxvY2F0aW5nIGEgcGFnZSBjYW5ub3QgZG8gYW55dGhpbmcgaWYgdGhlDQo+IHBhZ2UgKGFs
+b25nIHdpdGggb3RoZXIgcGFnZXMpIGlzIGp1c3QgYmVpbmcgZnJlZWQgYnkgdGhlIGh5cGVydmlz
+b3IuDQo+IEl0IGhhcyB0byBidXN5LXdhaXQsIG5vIGNoYW5jZSB0byBwcmlvcml0aXplLg0KDQpJ
+IG1lYW50IHRoaXM6DQpXaXRoIHRoaXMgYXBwcm9hY2gsIGVzc2VudGlhbGx5IHRoZSBmcmVlIHBh
+Z2VzIGhhdmUgMiBzdGF0ZXM6DQpyZWFkeSBmcmVlIHBhZ2U6IHRoZSBwYWdlIGlzIG9uIHRoZSBm
+cmVlIGxpc3QgYW5kIGl0IGhhcyAiMSIgaW4gdGhlIGJpdG1hcA0Kbm9uLXJlYWR5IGZyZWUgcGFn
+ZTogdGhlIHBhZ2UgaXMgb24gdGhlIGZyZWUgbGlzdCBhbmQgaXQgaGFzICIwIiBpbiB0aGUgYml0
+bWFwDQpSZWFkeSBmcmVlIHBhZ2VzIGFyZSB0aG9zZSB3aG8gY2FuIGJlIGFsbG9jYXRlZCB0byB1
+c2UuDQpOb24tcmVhZHkgZnJlZSBwYWdlcyBhcmUgdGhvc2Ugd2hvIGFyZSBpbiBwcm9ncmVzcyBv
+ZiBiZWluZyByZXBvcnRlZCB0bw0KaG9zdCBhbmQgdGhlIHJlbGF0ZWQgRVBUIG1hcHBpbmcgaXMg
+YWJvdXQgdG8gYmUgemFwcGVkLiANCg0KVGhlIG5vbi1yZWFkeSBwYWdlcyBhcmUgaW5zZXJ0ZWQg
+aW50byB0aGUgcmVwb3J0X3ZxIGFuZCB3YWl0aW5nIGZvciB0aGUNCmhvc3QgdG8gemFwIHRoZSBt
+YXBwaW5ncyBvbmUgYnkgb25lLiBBZnRlciB0aGUgbWFwcGluZyBnZXRzIHphcHBlZA0KKHdoaWNo
+IG1lYW5zIHRoZSBiYWNraW5nIGhvc3QgcGFnZSBoYXMgYmVlbiB0YWtlbiBhd2F5KSwgaG9zdCBh
+Y2tzIHRvDQp0aGUgZ3Vlc3QgdG8gbWFyayB0aGUgZnJlZSBwYWdlIGFzIHJlYWR5IGZyZWUgcGFn
+ZSAoc2V0IHRoZSBiaXQgdG8gMSBpbiB0aGUgYml0bWFwKS4NCg0KU28gdGhlIG5vbi1yZWFkeSBm
+cmVlIHBhZ2UgbWF5IGhhcHBlbiB0byBiZSB1c2VkIHdoZW4gdGhleSBhcmUgd2FpdGluZyBpbg0K
+dGhlIHJlcG9ydF92cSB0byBiZSBoYW5kbGVkIGJ5IHRoZSBob3N0IHRvIHphcCB0aGUgbWFwcGlu
+ZywgYmFsbG9vbiBjb3VsZA0KaGF2ZSBhIGZhc3QgcGF0aCB0byBub3RpZnkgdGhlIGhvc3Q6DQoi
+cGFnZSAweDEwMDAgaXMgYWJvdXQgdG8gYmUgdXNlZCwgZG9u4oCZdCB6YXAgdGhlIG1hcHBpbmcg
+d2hlbiB5b3UgZ2V0DQoweDEwMDAgZnJvbSB0aGUgcmVwb3J0X3ZxIiAgLypvcHRpb24gWzFdICov
+DQoNCk9yDQoNCiJwYWdlIDB4MTAwMCBpcyBhYm91dCB0byBiZSB1c2VkLCBwbGVhc2UgemFwIHRo
+ZSBtYXBwaW5nIE5PVywgaS5lLiBkbyAzKSBhbmQgNCkgYWJvdmUsDQpzbyB0aGF0IHRoZSBmcmVl
+IHBhZ2Ugd2lsbCBiZSBtYXJrZWQgYXMgcmVhZHkgZnJlZSBwYWdlIGFuZCB0aGUgZ3Vlc3QgY2Fu
+IHVzZSBpdCIuDQpUaGlzIG9wdGlvbiB3aWxsIGdlbmVyYXRlIGFuIGV4dHJhIEVQVCB2aW9sYXRp
+b24gYW5kIFFFTVUgcGFnZSBmYXVsdCB0byBnZXQgYSBuZXcgaG9zdA0KcGFnZSB0byBiYWNrIHRo
+ZSBndWVzdCByZWFkeSBmcmVlIHBhZ2UuDQoNCj4gDQo+ID4NCj4gPiBVc2luZyBiaXRtYXBzIHRv
+IHJlY29yZCBmcmVlIHBhZ2UgaGludHMgZG9uJ3QgbmVlZCB0byB0YWtlIHRoZSBmcmVlIHBhZ2Vz
+DQo+IG9mZiB0aGUgYnVkZHkgbGlzdCBhbmQgcmV0dXJuIHRoZW0gbGF0ZXIsIHdoaWNoIG5lZWRz
+IHRvIGdvIHRocm91Z2ggdGhlIGxvbmcNCj4gYWxsb2NhdGlvbi9mcmVlIGNvZGUgcGF0aC4NCj4g
+Pg0KPiANCj4gWWVzLCBidXQgaXQgbWVhbnMgdGhhdCBhbnkgcHJvY2VzcyBpcyBhYmxlIHRvIGdl
+dCBzdHVjayBvbiBzdWNoIGEgcGFnZSBmb3IgYXMNCj4gbG9uZyBhcyBpdCB0YWtlcyB0byByZXBv
+cnQgdGhlIGZyZWUgcGFnZXMgdG8gdGhlIGh5cGVydmlzb3IgYW5kIGZvciBpdCB0byBjYWxsDQo+
+IG1hZHZpc2UocGZuX3N0YXJ0LCBET05UTkVFRCkgb24gYW55IHN1Y2ggcGFnZS4NCg0KVGhpcyBv
+bmx5IGhhcHBlbnMgd2hlbiB0aGUgZ3Vlc3QgdGhyZWFkIGhhcHBlbnMgdG8gZ2V0IGFsbG9jYXRl
+ZCBvbiBhIHBhZ2Ugd2hpY2ggaXMNCmJlaW5nIHJlcG9ydGVkIHRvIHRoZSBob3N0LiBVc2luZyBv
+cHRpb24gWzFdIGFib3ZlIHdpbGwgYXZvaWQgdGhpcy4NCg0KQmVzdCwNCldlaQ0K
