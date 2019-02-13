@@ -2,111 +2,105 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04321C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF103C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF95221920
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78C272190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:41:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="Tgc8sTSq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391515AbfBMKkA (ORCPT
+        id S2391487AbfBMKlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:40:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54710 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbfBMKkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:40:00 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E6E3289AD3;
-        Wed, 13 Feb 2019 10:39:59 +0000 (UTC)
-Received: from [10.36.116.102] (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DEBF760856;
-        Wed, 13 Feb 2019 10:39:51 +0000 (UTC)
-Subject: Re: [PATCH] vfio_pci: Enable memory accesses before calling
- pci_map_rom
-To:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, alex.williamson@redhat.com
-References: <20190213101406.3934-1-eric.auger@redhat.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <e827c0f3-74dc-6a45-1cbe-03cda74ffdf6@redhat.com>
-Date:   Wed, 13 Feb 2019 11:39:49 +0100
+        Wed, 13 Feb 2019 05:41:36 -0500
+Received: from smtp65.iad3a.emailsrvr.com ([173.203.187.65]:49256 "EHLO
+        smtp65.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727058AbfBMKlg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 05:41:36 -0500
+Received: from smtp1.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
+        by smtp1.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 26C824438;
+        Wed, 13 Feb 2019 05:41:35 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1550054495;
+        bh=Y90WeKpzsveqeeHu5XAOw5R+1ye7Uv3Va4KxZvPyku4=;
+        h=Subject:To:From:Date:From;
+        b=Tgc8sTSqX8960LzywBVafhG5u3FWnFYw/OzuX2ynA3YNgewvsU8DuOgoRukVJJktV
+         JDMGqxpA8sxD4/Tel+Zdve9uOWTG37eSkyd1Jc9bjcwHUwz8cyVl+HJqM5t/vQIvwf
+         BIRu85Q+g5YT/aONtP0lML/e0AxGwsArK6dzrrKI=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp1.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 627145B54;
+        Wed, 13 Feb 2019 05:41:34 -0500 (EST)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Wed, 13 Feb 2019 05:41:35 -0500
+Subject: Re: [PATCH v2] staging: comedi: ni_660x: fix missing break in switch
+ statement
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190212184450.GA6927@embeddedor>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <c689e4bb-4b7f-75fe-fb43-bc0c690de118@mev.co.uk>
+Date:   Wed, 13 Feb 2019 10:41:33 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190213101406.3934-1-eric.auger@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190212184450.GA6927@embeddedor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 13 Feb 2019 10:39:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 2/13/19 11:14 AM, Eric Auger wrote:
-> pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
-> In case the Memory Space accesses were disabled, readw() is likely to
-> crash the host with a synchronous external abort (aarch64).
+On 12/02/2019 18:44, Gustavo A. R. Silva wrote:
+> Add missing break statement in order to prevent the code from falling
+> through to the default case and return -EINVAL every time.
 > 
-> In case memory accesses were disabled, re-enable them before the call
-> and disable them back again just after.
+> This bug was found thanks to the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Fixes: aa94f2888825 ("staging: comedi: ni_660x: tidy up ni_660x_set_pfi_routing()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  drivers/vfio/pci/vfio_pci.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Changes in v2:
+>   - Fix Fixes tag.
 > 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index ff60bd1ea587..96b8bbd909d7 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -706,8 +706,10 @@ static long vfio_pci_ioctl(void *device_data,
->  			break;
->  		case VFIO_PCI_ROM_REGION_INDEX:
->  		{
-> +			bool mem_access_disabled;
->  			void __iomem *io;
->  			size_t size;
-> +			u16 cmd;
->  
->  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
->  			info.flags = 0;
-> @@ -723,6 +725,13 @@ static long vfio_pci_ioctl(void *device_data,
->  					break;
->  			}
->  
-> +			pci_read_config_word(pdev, PCI_COMMAND, &cmd);
-> +			mem_access_disabled = !(cmd & PCI_COMMAND_MEMORY);
-> +			if (mem_access_disabled) {
-> +				cmd |= PCI_COMMAND_MEMORY;
-> +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
-> +			}
-> +
->  			/* Is it really there? */
->  			io = pci_map_rom(pdev, &size);
->  			if (!io || !size) {
-> @@ -731,6 +740,11 @@ static long vfio_pci_ioctl(void *device_data,
->  			}
->  			pci_unmap_rom(pdev, io);
->  
-> +			if (mem_access_disabled) {
-> +				cmd &= ~PCI_COMMAND_MEMORY;
-> +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
-> +			}
-I failed to re-enable in case of error. I will respin.
-
-Thanks
-
-Eric
-> +
->  			info.flags = VFIO_REGION_INFO_FLAG_READ;
->  			break;
->  		}
+>   drivers/staging/comedi/drivers/ni_660x.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/staging/comedi/drivers/ni_660x.c b/drivers/staging/comedi/drivers/ni_660x.c
+> index e70a461e723f..405573e927cf 100644
+> --- a/drivers/staging/comedi/drivers/ni_660x.c
+> +++ b/drivers/staging/comedi/drivers/ni_660x.c
+> @@ -656,6 +656,7 @@ static int ni_660x_set_pfi_routing(struct comedi_device *dev,
+>   	case NI_660X_PFI_OUTPUT_DIO:
+>   		if (chan > 31)
+>   			return -EINVAL;
+> +		break;
+>   	default:
+>   		return -EINVAL;
+>   	}
+> 
+
+Thanks for the bug fix!
+
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
