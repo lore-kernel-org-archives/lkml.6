@@ -2,363 +2,106 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C449C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B83C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3460D222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:45:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0gR7eTL"
+	by mail.kernel.org (Postfix) with ESMTP id 1BD6E222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390778AbfBMIpZ (ORCPT
+        id S2389638AbfBMIqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:45:25 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:36551 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390675AbfBMIpZ (ORCPT
+        Wed, 13 Feb 2019 03:46:10 -0500
+Received: from mailout2.hostsharing.net ([83.223.90.233]:40147 "EHLO
+        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732843AbfBMIqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:45:25 -0500
-Received: by mail-yb1-f193.google.com with SMTP id h40so616673ybj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:45:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hr3/XJE9I3amI/YzMzL7wKhzr+YjIhDg8zrDyVv+5JY=;
-        b=q0gR7eTLrrAlpA2zDToxQJxphJPW5Z2sY0yJ6V50pDNAd7xxGXU3uwFYfgM8WD/WqT
-         mGU7iTkQ8WegfryVkn0bYNcVKhCoCmNBXCPIxKf6EP8+al2UQButMwSoQN89LdbAuQJ3
-         q1XBbu0J2hOAQFyXNi6db4C/W5C/rPXFwCy6MulnEOglJw6FvnbGfpUVlF8hm3YE36k3
-         Xqy+KmoIGRTVyHkBLsWSaeQ0jlDEvLEtZemvfuNXv5A12QkjgM+Y1QSfIzQlxZUxkU0w
-         8mNIqL6C1bCDqDgou7MyrZiEp7TdsEH2UJ7im4QJLBN3iREbtACp9A/6UI5CUhGV/0Im
-         T2WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hr3/XJE9I3amI/YzMzL7wKhzr+YjIhDg8zrDyVv+5JY=;
-        b=BCBRVyRugRmDVjQPz9z2JKgZultApvwN9kaCurWY1LLxQMfDJV2urPw1rXSU3kSMZ5
-         ADpn4HdZStdSjRpXlDZX5tL/UtcNQY+rPvhKLEg1yNi30G9QRxg7kDF5kzbOhvpujHms
-         tsLm7wRNbYTpaM2RlBBSvsyPR/Kc2nL9fjRo58BbHPKYilydMQx4Wm7qGwQZCk7l6mcD
-         m+e3LFS8PuK/UxNTiS7qSlwCrU452XXW89Sta+/DcYFlBhzoMMk/yuxWnSYLw2fGaCWI
-         3eEWh7M+cdkAZJcE8KA8LXxNwYgG0MT52TryGujcLQXdGAOp2DB2H40xyTuW+S7B2D94
-         0PpQ==
-X-Gm-Message-State: AHQUAuZwpm7h/Mc6dls68HJSa+UJKp4wVEd8pW2G/R4c5vK/fVjsBno0
-        9p+lDXhGSeYE5L8D2Jmlp72SfL7ZbgBFDKvUMqjCOQ==
-X-Google-Smtp-Source: AHgI3IYwRgDBJ4CvzmtVv+symVv/pEgR+t/9n87ySj0T3UsmJUfAJKl9PlQxWjWoyC3D5tT6w1OP0PtmI0WiqY9iYUU=
-X-Received: by 2002:a25:d94:: with SMTP id 142mr6533587ybn.256.1550047523753;
- Wed, 13 Feb 2019 00:45:23 -0800 (PST)
+        Wed, 13 Feb 2019 03:46:10 -0500
+X-Greylist: delayed 574 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Feb 2019 03:46:09 EST
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by mailout2.hostsharing.net (Postfix) with ESMTPS id 03D1B10189CEE;
+        Wed, 13 Feb 2019 09:36:34 +0100 (CET)
+Received: from localhost (p57BD742B.dip0.t-ipconnect.de [87.189.116.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 87C36603E21B;
+        Wed, 13 Feb 2019 09:36:33 +0100 (CET)
+Date:   Wed, 13 Feb 2019 09:36:32 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Alex_Gagniuc@Dellteam.com
+Cc:     mr.nuke.me@gmail.com, bhelgaas@google.com, Austin.Bolen@dell.com,
+        keith.busch@intel.com, Shyam.Iyer@dell.com, gustavo@embeddedor.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
+ after link
+Message-ID: <20190213083632.GA3387@wunner.de>
+References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
+ <20190209115849.244u67h7wmn3eb7o@wunner.de>
+ <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
+ <20190212083031.2no7mzn5xug7nba3@wunner.de>
+ <b2fffa5beb7941ebaceb8b8ce6e5b133@ausx13mps321.AMER.DELL.COM>
 MIME-Version: 1.0
-References: <20190212112121.32163-1-anders.roxell@linaro.org> <20190212112121.32163-2-anders.roxell@linaro.org>
-In-Reply-To: <20190212112121.32163-2-anders.roxell@linaro.org>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Wed, 13 Feb 2019 09:45:12 +0100
-Message-ID: <CADYN=9LMW_+vjw+V-hB929mjWC0uTsjPEtK_jftsXDuSPkqi6A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] efi: fix build error redeclaration of enumerator
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2fffa5beb7941ebaceb8b8ce6e5b133@ausx13mps321.AMER.DELL.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 12:21, Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> include/linux/tpm.h") introduced a build error when both ima and efi is
-> enabled. What happens is that both headers (ima.h and efi.h) defines the
-> same 'NONE' constant, and it broke when they started getting included
-> from the same file.
->
-> In file included from ../security/integrity/ima/ima_fs.c:30:
-> ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
->   hook(NONE)   \
->        ^~~~
-> ../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
->  #define __ima_hook_enumify(ENUM) ENUM,
->                                   ^~~~
-> ../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
->   __ima_hooks(__ima_hook_enumify)
->   ^~~~~~~~~~~
-> In file included from ../arch/arm64/include/asm/acpi.h:15,
->                  from ../include/acpi/acpi_io.h:7,
->                  from ../include/linux/acpi.h:47,
->                  from ../include/linux/tpm.h:26,
->                  from ../security/integrity/ima/ima.h:25,
->                  from ../security/integrity/ima/ima_fs.c:30:
-> ../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
->   NONE,
->   ^~~~
-> make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
->
-> Rework to prefix the efi enum with 'EFI_*'.
->
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->
-> No changes since v1.
->
->  arch/x86/platform/efi/quirks.c          |  2 +-
+On Tue, Feb 12, 2019 at 11:57:55PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> The recommendation is to set the "in-band PD disable" bit, and it's
+> possible that platform firmware may have set it at boot time
 
-I found that I missed rename one 'NONE' to 'EFI_NONE' in the file above.
-Will send a v3 shortly.
+Ok, then I'd suggest to check in pcie_init() whether the feature is
+supported and enable it if so.  And store that fact in a flag, either
+in struct pci_dev or struct controller.
 
-Cheers,
-Anders
 
->  drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
->  include/linux/efi.h                     | 26 +++++++-------
->  3 files changed, 38 insertions(+), 38 deletions(-)
->
-> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-> index 9ce85e605052..b7c0b04ee6ad 100644
-> --- a/arch/x86/platform/efi/quirks.c
-> +++ b/arch/x86/platform/efi/quirks.c
-> @@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
->          * because this case occurs *very* rarely and hence could be improved
->          * on a need by basis.
->          */
-> -       if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-> +       if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
->                 pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
->                 machine_real_restart(MRR_BIOS);
->                 return;
-> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-> index c70df5ae7c4a..28138534643e 100644
-> --- a/drivers/firmware/efi/runtime-wrappers.c
-> +++ b/drivers/firmware/efi/runtime-wrappers.c
-> @@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
->                 pr_err("Failed to queue work to efi_rts_wq.\n");        \
->                                                                         \
->  exit:                                                                  \
-> -       efi_rts_work.efi_rts_id = NONE;                                 \
-> +       efi_rts_work.efi_rts_id = EFI_NONE;                             \
->         efi_rts_work.status;                                            \
->  })
->
-> @@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
->         arg5 = efi_rts_work.arg5;
->
->         switch (efi_rts_work.efi_rts_id) {
-> -       case GET_TIME:
-> +       case EFI_GET_TIME:
->                 status = efi_call_virt(get_time, (efi_time_t *)arg1,
->                                        (efi_time_cap_t *)arg2);
->                 break;
-> -       case SET_TIME:
-> +       case EFI_SET_TIME:
->                 status = efi_call_virt(set_time, (efi_time_t *)arg1);
->                 break;
-> -       case GET_WAKEUP_TIME:
-> +       case EFI_GET_WAKEUP_TIME:
->                 status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
->                                        (efi_bool_t *)arg2, (efi_time_t *)arg3);
->                 break;
-> -       case SET_WAKEUP_TIME:
-> +       case EFI_SET_WAKEUP_TIME:
->                 status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
->                                        (efi_time_t *)arg2);
->                 break;
-> -       case GET_VARIABLE:
-> +       case EFI_GET_VARIABLE:
->                 status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
->                                        (efi_guid_t *)arg2, (u32 *)arg3,
->                                        (unsigned long *)arg4, (void *)arg5);
->                 break;
-> -       case GET_NEXT_VARIABLE:
-> +       case EFI_GET_NEXT_VARIABLE:
->                 status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
->                                        (efi_char16_t *)arg2,
->                                        (efi_guid_t *)arg3);
->                 break;
-> -       case SET_VARIABLE:
-> +       case EFI_SET_VARIABLE:
->                 status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
->                                        (efi_guid_t *)arg2, *(u32 *)arg3,
->                                        *(unsigned long *)arg4, (void *)arg5);
->                 break;
-> -       case QUERY_VARIABLE_INFO:
-> +       case EFI_QUERY_VARIABLE_INFO:
->                 status = efi_call_virt(query_variable_info, *(u32 *)arg1,
->                                        (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
->                 break;
-> -       case GET_NEXT_HIGH_MONO_COUNT:
-> +       case EFI_GET_NEXT_HIGH_MONO_COUNT:
->                 status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
->                 break;
-> -       case UPDATE_CAPSULE:
-> +       case EFI_UPDATE_CAPSULE:
->                 status = efi_call_virt(update_capsule,
->                                        (efi_capsule_header_t **)arg1,
->                                        *(unsigned long *)arg2,
->                                        *(unsigned long *)arg3);
->                 break;
-> -       case QUERY_CAPSULE_CAPS:
-> +       case EFI_QUERY_CAPSULE_CAPS:
->                 status = efi_call_virt(query_capsule_caps,
->                                        (efi_capsule_header_t **)arg1,
->                                        *(unsigned long *)arg2, (u64 *)arg3,
-> @@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-> +       status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
->  }
-> @@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-> +       status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
->  }
-> @@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-> +       status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
->                                 NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-> +       status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
->                                 NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-> +       status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
->                                 data);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-> +       status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-> +       status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
->                                 data);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-> +       status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
->                                 remaining_space, max_variable_size, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-> +       status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
->                         "could not get exclusive access to the firmware\n");
->                 return;
->         }
-> -       efi_rts_work.efi_rts_id = RESET_SYSTEM;
-> +       efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
->         __efi_call_virt(reset_system, reset_type, status, data_size, data);
->         up(&efi_runtime_lock);
->  }
-> @@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-> +       status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
->                                 NULL, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> @@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
->
->         if (down_interruptible(&efi_runtime_lock))
->                 return EFI_ABORTED;
-> -       status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-> +       status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
->                                 max_size, reset_type, NULL);
->         up(&efi_runtime_lock);
->         return status;
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index a4de93c96907..b3471b6ff92f 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
->   * fault happened while executing an efi runtime service.
->   */
->  enum efi_rts_ids {
-> -       NONE,
-> -       GET_TIME,
-> -       SET_TIME,
-> -       GET_WAKEUP_TIME,
-> -       SET_WAKEUP_TIME,
-> -       GET_VARIABLE,
-> -       GET_NEXT_VARIABLE,
-> -       SET_VARIABLE,
-> -       QUERY_VARIABLE_INFO,
-> -       GET_NEXT_HIGH_MONO_COUNT,
-> -       RESET_SYSTEM,
-> -       UPDATE_CAPSULE,
-> -       QUERY_CAPSULE_CAPS,
-> +       EFI_NONE,
-> +       EFI_GET_TIME,
-> +       EFI_SET_TIME,
-> +       EFI_GET_WAKEUP_TIME,
-> +       EFI_SET_WAKEUP_TIME,
-> +       EFI_GET_VARIABLE,
-> +       EFI_GET_NEXT_VARIABLE,
-> +       EFI_SET_VARIABLE,
-> +       EFI_QUERY_VARIABLE_INFO,
-> +       EFI_GET_NEXT_HIGH_MONO_COUNT,
-> +       EFI_RESET_SYSTEM,
-> +       EFI_UPDATE_CAPSULE,
-> +       EFI_QUERY_CAPSULE_CAPS,
->  };
->
->  /*
-> --
-> 2.20.1
->
+> (*) A bit hypothetical: There is no hardware yet implementing the ECN.
+
+Hm, this contradicts Austin Bolen's e-mail of Jan 25 that "Yes, this
+platform disables in-band presence" (when asked whether your host
+controller already adheres to the ECN).
+
+
+> I'm 
+> not sure that there is a spec-justifiable reason to not access a device 
+> whose DLL is up, but PD isn't.
+
+Austin asked in an e-mail of Jan 24 whether "the hot-inserted device's
+config space [is] accessed immediately after waiting this 20 + 100 ms
+delay", which sounded to me like you'd prefer the device not to be
+accessed until PDS is 1.  This can be achieved by polling PDS in
+pcie_wait_for_link() if in-band presence is disabled, which is why
+I suggested it.
+
+
+> > Be mindful however that pcie_wait_for_link() is also called from the
+> > DPC driver.  Keith should be able to judge whether a change to that
+> > function breaks DPC.
+> 
+> That's why I went for ammending pciehp_handle_presence_or_link_change(). 
+> Smaller bug surface ;). What I'm thinking at this point is, keep the 
+> patch as is, but, also check for in-band PD disable before aborting the 
+> shutdown. Old behavior stays the same.
+
+I'm worried that amending pciehp_handle_presence_or_link_change() makes
+the event handling logic more difficult to understand.  Polling PDS in
+pcie_wait_for_link() or disabling either PDC or DLLSC if in-band presence
+is disabled seems simpler to reason about.
+
+
+> in-band PD disable (what's a good acronym for that, BTW?)
+
+I don't know, maybe inband_presence_disabled?
+
+Thanks,
+
+Lukas
