@@ -2,91 +2,188 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2010CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC520C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E412720835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 970F4222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550070824;
+	bh=6jRo9xVu8JdFnU+zOlf9IBsSFSRq1sbM9Zq4v0wDlds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kKnWj80xv1aE5dpW+9bTDd+sVxCoGJAl8etDbmRfb8SWpFbbuOjSdUhtIKxvq5Jjv
+	 zua5O+CvZbNRxEMKhkxL6xQUdcJr2EPgbH4fR/3zaXEk7DkPFgHUu1gMdXfaVynljg
+	 vx893zxW5kgojiQmzZ3m23+5C9P1ifL3kdmnWU0Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbfBMPN3 (ORCPT
+        id S2389080AbfBMPNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:13:29 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9646 "EHLO mga07.intel.com"
+        Wed, 13 Feb 2019 10:13:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbfBMPN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:13:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:13:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="320060612"
-Received: from sorenthe-mobl1.ger.corp.intel.com ([10.249.254.151])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Feb 2019 07:13:22 -0800
-Message-ID: <9d3e78706b2fdbe0427f675592df5d7920d2c030.camel@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial
- reads
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Date:   Wed, 13 Feb 2019 17:13:23 +0200
-In-Reply-To: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-         <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729139AbfBMPNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:13:42 -0500
+Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B8C220835;
+        Wed, 13 Feb 2019 15:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550070820;
+        bh=6jRo9xVu8JdFnU+zOlf9IBsSFSRq1sbM9Zq4v0wDlds=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WIUfn27q9rHwln/4hnA4c0Hy1RJPbTQoSD7YmwUF2uY4pVmEHO1SLzNfgIBxOQMUo
+         5qP/PyrN90QvJg3U/mWrho2Bk22v49dKl6RrbnSv/FlXh7skkCrteX5JQ2SO/CSxhW
+         nUMM6RFNLD8qWwVqwoc1iLJqNx1VddmoVxcVkegk=
+Date:   Wed, 13 Feb 2019 09:13:39 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH V3 4/5] nvme-pci: avoid irq allocation retrying via
+ .calc_sets
+Message-ID: <20190213151339.GE96272@google.com>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+ <20190213105041.13537-5-ming.lei@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213105041.13537-5-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-12 at 15:42 -0800, Tadeusz Struk wrote:
-> Three new tests added:
-> 1. Send get random cmd, read header in 1st read, read the rest in second
->    read - expect success
-> 2. Send get random cmd, read only part of the response, send another
->    get random command, read the response - expect success
-> 3. Send get random cmd followed by another get random cmd, without
->    reading the first response - expect the second cmd to fail with -EBUSY
+On Wed, Feb 13, 2019 at 06:50:40PM +0800, Ming Lei wrote:
+> Currently pre-caculate each set vectors, and this way requires same
+> 'max_vecs' and 'min_vecs' passed to pci_alloc_irq_vectors_affinity(),
+> then nvme_setup_irqs() has to retry in case of allocation failure.
+
+s/pre-caculate/precalculate/
+My usual "set vectors" question as on other patches.
+
+> This usage & interface is a bit awkward because the retry should have
+> been avoided by providing one reasonable 'min_vecs'.
 > 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> Implement the callback of .calc_sets, so that pci_alloc_irq_vectors_affinity()
+> can calculate each set's vector after IRQ vectors is allocated and
+> before spread IRQ, then NVMe's retry in case of irq allocation failure
+> can be removed.
 
-Getting still some garbage in the output:
+s/irq/IRQ/
 
-$ sudo ./test_smoke.sh 
-[sudo] password for jsakkine: 
-test_read_partial_overwrite (tpm2_tests.SmokeTest)
-Reads only part of the response and issue a new cmd ... ok
-test_read_partial_resp (tpm2_tests.SmokeTest)
-Reads random in two subsequent reads ... ok
-test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-test_send_two_cmds (tpm2_tests.SmokeTest)
-Send two cmds without reading a response ... ok
-test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
+> Reviewed-by: Keith Busch <keith.busch@intel.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  drivers/nvme/host/pci.c | 62 +++++++++++++------------------------------------
+>  1 file changed, 16 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 0086bdf80ea1..8c51252a897e 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2078,14 +2078,25 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
+>  	}
+>  }
+>  
+> +static void nvme_calc_irq_sets(struct irq_affinity *affd, int nvecs)
+> +{
+> +	struct nvme_dev *dev = affd->priv;
+> +
+> +	nvme_calc_io_queues(dev, nvecs);
+> +
+> +	affd->set_vectors[HCTX_TYPE_DEFAULT] = dev->io_queues[HCTX_TYPE_DEFAULT];
+> +	affd->set_vectors[HCTX_TYPE_READ] = dev->io_queues[HCTX_TYPE_READ];
+> +	affd->nr_sets = 2;
+> +}
+> +
+>  static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>  	struct irq_affinity affd = {
+>  		.pre_vectors = 1,
+> -		.nr_sets = 2,
+> +		.calc_sets = nvme_calc_irq_sets,
+> +		.priv = dev,
+>  	};
+> -	int *irq_sets = affd.set_vectors;
+>  	int result = 0;
+>  	unsigned int irq_queues, this_p_queues;
+>  
+> @@ -2102,50 +2113,8 @@ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+>  	}
+>  	dev->io_queues[HCTX_TYPE_POLL] = this_p_queues;
+>  
+> -	/*
+> -	 * For irq sets, we have to ask for minvec == maxvec. This passes
+> -	 * any reduction back to us, so we can adjust our queue counts and
+> -	 * IRQ vector needs.
+> -	 */
+> -	do {
+> -		nvme_calc_io_queues(dev, irq_queues);
+> -		irq_sets[0] = dev->io_queues[HCTX_TYPE_DEFAULT];
+> -		irq_sets[1] = dev->io_queues[HCTX_TYPE_READ];
+> -		if (!irq_sets[1])
+> -			affd.nr_sets = 1;
+> -
+> -		/*
+> -		 * If we got a failure and we're down to asking for just
+> -		 * 1 + 1 queues, just ask for a single vector. We'll share
+> -		 * that between the single IO queue and the admin queue.
+> -		 * Otherwise, we assign one independent vector to admin queue.
+> -		 */
+> -		if (irq_queues > 1)
+> -			irq_queues = irq_sets[0] + irq_sets[1] + 1;
+> -
+> -		result = pci_alloc_irq_vectors_affinity(pdev, irq_queues,
+> -				irq_queues,
+> -				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+> -
+> -		/*
+> -		 * Need to reduce our vec counts. If we get ENOSPC, the
+> -		 * platform should support mulitple vecs, we just need
+> -		 * to decrease our ask. If we get EINVAL, the platform
+> -		 * likely does not. Back down to ask for just one vector.
+> -		 */
+> -		if (result == -ENOSPC) {
+> -			irq_queues--;
+> -			if (!irq_queues)
+> -				return result;
+> -			continue;
+> -		} else if (result == -EINVAL) {
+> -			irq_queues = 1;
+> -			continue;
+> -		} else if (result <= 0)
+> -			return -EIO;
+> -		break;
+> -	} while (1);
+> -
+> +	result = pci_alloc_irq_vectors_affinity(pdev, 1, irq_queues,
+> +			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+>  	return result;
+>  }
+>  
+> @@ -3021,6 +2990,7 @@ static struct pci_driver nvme_driver = {
+>  
+>  static int __init nvme_init(void)
+>  {
+> +	BUILD_BUG_ON(2 > IRQ_MAX_SETS);
 
-----------------------------------------------------------------------
-Ran 9 tests in 47.374s
+"IRQ_MAX_SETS < 2" would read more naturally; is there a reason to have it
+reversed?
 
-OK
-
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-Can give reviewed-by after those are cleaned up.
-
-/Jarkko
-
+>  	return pci_register_driver(&nvme_driver);
+>  }
+>  
+> -- 
+> 2.9.5
+> 
