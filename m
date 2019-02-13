@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F420C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60C1C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0811A20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA4220835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083628;
-	bh=yAGan5nb4rtdj4T0Sl6juqTsyY3N7femI0E3wmdGSkw=;
+	s=default; t=1550083629;
+	bh=b6o6rB+lLbYQP5kR1RPM/B4UgDtpAPu/6kfEFg1Jcb4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EZPzmQxej9OnV0+YDM2OkLn5Y1apuxkFrwL/B5VY+PnvExF9BoGE3kPeQNdtx5lSo
-	 f4ebKW/bRtIHbNG7NsFGnh/gHY2AkpJ0c4o+h9l6IQAgsu6GYnf8m3Db35tCdZ7BoN
-	 hpiR5tMklWonA7PhAaEw4CJ13y4wvjPr1ljypTGQ=
+	b=BMz8EgJ7bTr6NihJ8pzyppUIfuthrQwIl2ISZK0cgT7HJpwTY5g6ADwftMn18dbFn
+	 MRKiHGK0W05tKa8rJgL6KwgxVqbC91en+7O2TonUuKeLjwYW/N6hMxwo2xBmqC10++
+	 EUZycYfWSqHDZAulxre+HtUO1XC0huw9psdaYE6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406595AbfBMSrG (ORCPT
+        id S2406610AbfBMSrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45582 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406573AbfBMSrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:47:03 -0500
+        id S2404165AbfBMSrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:47:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22747222D1;
-        Wed, 13 Feb 2019 18:47:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66FE2222D1;
+        Wed, 13 Feb 2019 18:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083622;
-        bh=yAGan5nb4rtdj4T0Sl6juqTsyY3N7femI0E3wmdGSkw=;
+        s=default; t=1550083625;
+        bh=b6o6rB+lLbYQP5kR1RPM/B4UgDtpAPu/6kfEFg1Jcb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UX14+Zs4MPoW3BASyxOmRh6UsGS0d6ZKHCgmHPzSOhLJh6as2EwCI3Z9mVMN7J5wI
-         mDQ5SgxGoa1z9tZv1xqsUkO10Q9Qzx+noFZX03wDrr7aOkar3XCrUj1O+RkrQCyXU+
-         S/34Ehe/EXIOxKEXZ39V3DD4S8D1xmVdyvuxe9Vo=
+        b=Yk1/yHmWlZ1zWz8S6FN2XgeWUYc8EkiMYTWPy6xLsx250/O2rwkuS/fnAM24OPiXp
+         /PxTXXknR2XvsTrfDAt7jJXQlHEhHoAX8fH5vYX9b9aOdAp+Bc0lEk8oQtxpMlGPRM
+         qVjUMncUeI50bltxwbjkC5mZTY0iEH5TtJzYsUAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.20 19/50] pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller
-Date:   Wed, 13 Feb 2019 19:38:24 +0100
-Message-Id: <20190213183657.328902325@linuxfoundation.org>
+Subject: [PATCH 4.20 20/50] pinctrl: cherryview: fix Strago DMI workaround
+Date:   Wed, 13 Feb 2019 19:38:25 +0100
+Message-Id: <20190213183657.405950163@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -66,119 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 10098709b4ee6f6f19f25ba81d9c6f83518c584c upstream.
+commit e3f72b749da2bf63bed7409e416f160418d475b6 upstream.
 
-The H6 main pin controller has four banks of interrupt-triggering pins.
-The driver as originally submitted only specified three, but had pin
-descriptions referencing a fourth bank. This results in a out-of-bounds
-access into .irq_array of struct sunxi_pinctrl. This however did not
-result in a crash until v4.20, with commit a66d972465d1 ("devres: Align
-data[] to ARCH_KMALLOC_MINALIGN"), which changed the alignment of memory
-region returned by devm_kcalloc(). The increase likely moved the
-out-of-bounds access into the next, unmapped page.
+Well, hopefully 3rd time is a charm. We tried making that check
+DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
+DMI_PRODUCT_VERSION.
 
-With KASAN on, the bug is quite clear:
-
-    BUG: KASAN: slab-out-of-bounds in sunxi_pinctrl_init_with_variant+0x49c/0x12b8
-    Write of size 4 at addr ffff80002c680280 by task swapper/0/1
-
-    CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc1-00016-gc480a5e6a077 #3
-    Hardware name: OrangePi Lite2 (DT)
-    Call trace:
-     dump_backtrace+0x0/0x220
-     show_stack+0x14/0x20
-     dump_stack+0xac/0xd4
-     print_address_description+0x60/0x25c
-     kasan_report+0x14c/0x1ac
-     __asan_store4+0x80/0xa0
-     sunxi_pinctrl_init_with_variant+0x49c/0x12b8
-     h6_pinctrl_probe+0x18/0x20
-     platform_drv_probe+0x6c/0xc8
-     really_probe+0x244/0x4b0
-     driver_probe_device.part.4+0x11c/0x164
-     __driver_attach+0x120/0x190
-     bus_for_each_dev+0xe8/0x158
-     driver_attach+0x30/0x40
-     bus_add_driver+0x308/0x318
-     driver_register+0xbc/0x1d0
-     __platform_driver_register+0x7c/0x88
-     h6_pinctrl_driver_init+0x18/0x20
-     do_one_initcall+0xd4/0x208
-     kernel_init_freeable+0x230/0x2c8
-     kernel_init+0x10/0x108
-     ret_from_fork+0x10/0x1c
-
-    Allocated by task 1:
-     kasan_kmalloc.part.0+0x4c/0x100
-     kasan_kmalloc+0xc4/0xe8
-     kasan_slab_alloc+0x14/0x20
-     __kmalloc_track_caller+0x130/0x238
-     devm_kmalloc+0x34/0xd0
-     sunxi_pinctrl_init_with_variant+0x1d8/0x12b8
-     h6_pinctrl_probe+0x18/0x20
-     platform_drv_probe+0x6c/0xc8
-     really_probe+0x244/0x4b0
-     driver_probe_device.part.4+0x11c/0x164
-     __driver_attach+0x120/0x190
-     bus_for_each_dev+0xe8/0x158
-     driver_attach+0x30/0x40
-     bus_add_driver+0x308/0x318
-     driver_register+0xbc/0x1d0
-     __platform_driver_register+0x7c/0x88
-     h6_pinctrl_driver_init+0x18/0x20
-     do_one_initcall+0xd4/0x208
-     kernel_init_freeable+0x230/0x2c8
-     kernel_init+0x10/0x108
-     ret_from_fork+0x10/0x1c
-
-    Freed by task 0:
-    (stack is not available)
-
-    The buggy address belongs to the object at ffff80002c680080
-     which belongs to the cache kmalloc-512 of size 512
-    The buggy address is located 0 bytes to the right of
-     512-byte region [ffff80002c680080, ffff80002c680280)
-    The buggy address belongs to the page:
-    page:ffff7e0000b1a000 count:1 mapcount:0 mapping:ffff80002e00c780 index:0xffff80002c683c80 compound_mapcount: 0
-    flags: 0x10200(slab|head)
-    raw: 0000000000010200 ffff80002e003a10 ffff80002e003a10 ffff80002e00c780
-    raw: ffff80002c683c80 0000000000100001 00000001ffffffff 0000000000000000
-    page dumped because: kasan: bad access detected
-
-    Memory state around the buggy address:
-     ffff80002c680180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-     ffff80002c680200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    >ffff80002c680280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-		       ^
-     ffff80002c680300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-     ffff80002c680380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-Correct the number of IRQ banks so there are no more mismatches.
-
-Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6 main pin controller")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
-@@ -588,7 +588,7 @@ static const unsigned int h6_irq_bank_ma
- static const struct sunxi_pinctrl_desc h6_pinctrl_data = {
- 	.pins = h6_pins,
- 	.npins = ARRAY_SIZE(h6_pins),
--	.irq_banks = 3,
-+	.irq_banks = 4,
- 	.irq_bank_map = h6_irq_bank_map,
- 	.irq_read_needs_mux = true,
- };
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1507,7 +1507,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1515,7 +1515,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1523,7 +1523,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1531,7 +1531,7 @@ static const struct dmi_system_id chv_no
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{}
 
 
