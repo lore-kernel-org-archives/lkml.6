@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F47AC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE84C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B7A222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710F2222CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025705;
-	bh=DzEbZFWVZCB8E1iDuRIi0R/Hsa3LSHnFSHJkS0OhfjQ=;
+	s=default; t=1550025713;
+	bh=WQkpmhjVYY//XWX+PakOUL2LN4lusPrDw5Fkamk+SiY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sMG3KADLXiqljTBHHb8R1SMf6F2KPWbnazt2G7HLAb6+fgVaVr19bfKxM5K40oD/J
-	 JxclF5fmjHJBmbFGvr17yZn3wDuBy/FFx6pt9I+CNfhU16JKw+nCnOpMcqJbrm8WM0
-	 Z4Dl5xflDiQf91nGxIOdNhPswj0C/+Y4YhYTds+w=
+	b=idFcRp4ejmxY+b+jYitlqZ6gbdziXKArhDrkQz2azRY2sDpYjaWFMYRaSE1inhxy4
+	 tOZgnWtJXPmNlZuachXGgsybHf0btFBXco8xZ4BDSbdH8cJMfHMDVVni/zw2rxoE1D
+	 lnLyrPUvG/ivPKESNL9+hhbSw2JUYIBwU3h6Yelg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbfBMCln (ORCPT
+        id S2389382AbfBMClv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45224 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389314AbfBMCle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:34 -0500
+        id S2389352AbfBMClo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A99F2175B;
-        Wed, 13 Feb 2019 02:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C7CB222C2;
+        Wed, 13 Feb 2019 02:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025693;
-        bh=DzEbZFWVZCB8E1iDuRIi0R/Hsa3LSHnFSHJkS0OhfjQ=;
+        s=default; t=1550025704;
+        bh=WQkpmhjVYY//XWX+PakOUL2LN4lusPrDw5Fkamk+SiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DKVW1ec9mq36khQEHg7GLRlonU2Q6vaN5ilahrVcvLSeVjABxk/+D2QmwadI200Y
-         j04iQU5DFleGau6/iUUF+WT4Wu2HjRrTris4QRk6KQPEMpbf4EdWTy22uAWKIY8G4x
-         bbWgO2AFn6FH4pd0zj9F+719RwBzTo5xEPvgkQ3A=
+        b=172Spj/SywSG1jW2IrpATDbkt3TnE1D2tgPxOe9fJ+GfCvyDonjgDnQRRMcyZlRSd
+         DnAvt9UIbQSFXl0pK4DELa1zBBuB0VrXpDd12YgIiwDB+Ndb7mCivUbQddxnqGAu8+
+         lrsnDeS+hMUBayOIQGEuGijdz/QmmDHGAeeZMaUE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 13/16] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
-Date:   Tue, 12 Feb 2019 21:41:09 -0500
-Message-Id: <20190213024112.22038-13-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 04/14] mfd: ab8500-core: Return zero in get_register_interruptible()
+Date:   Tue, 12 Feb 2019 21:41:28 -0500
+Message-Id: <20190213024139.22268-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
-References: <20190213024112.22038-1-sashal@kernel.org>
+In-Reply-To: <20190213024139.22268-1-sashal@kernel.org>
+References: <20190213024139.22268-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,67 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 2ff33d6637393fe9348357285931811b76e1402f ]
+[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
 
-The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
-concurrently executed.
+This function is supposed to return zero on success or negative error
+codes on error.  Unfortunately, there is a bug so it sometimes returns
+non-zero, positive numbers on success.
 
-isdn_tty_tiocmset
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
+I noticed this bug during review and I can't test it.  It does appear
+that the return is sometimes propogated back to _regmap_read() where all
+non-zero returns are treated as failure so this may affect run time.
 
-isdn_tty_set_termios
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
-
-Thus, some concurrency double-free bugs may occur.
-
-These possible bugs are found by a static tool written by myself and
-my manual code review.
-
-To fix these possible bugs, the mutex lock "modem_info_mutex" used in
-isdn_tty_tiocmset() is added in isdn_tty_set_termios().
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/i4l/isdn_tty.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mfd/ab8500-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
-index 2175225af742..8291e9cc949a 100644
---- a/drivers/isdn/i4l/isdn_tty.c
-+++ b/drivers/isdn/i4l/isdn_tty.c
-@@ -1459,15 +1459,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
- {
- 	modem_info *info = (modem_info *) tty->driver_data;
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index bde2fc072410..44ebb84c2e74 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -259,7 +259,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
+ 	mutex_unlock(&ab8500->lock);
+ 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
  
-+	mutex_lock(&modem_info_mutex);
- 	if (!old_termios)
- 		isdn_tty_change_speed(info);
- 	else {
- 		if (tty->termios.c_cflag == old_termios->c_cflag &&
- 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
--		    tty->termios.c_ospeed == old_termios->c_ospeed)
-+		    tty->termios.c_ospeed == old_termios->c_ospeed) {
-+			mutex_unlock(&modem_info_mutex);
- 			return;
-+		}
- 		isdn_tty_change_speed(info);
- 	}
-+	mutex_unlock(&modem_info_mutex);
+-	return ret;
++	return (ret < 0) ? ret : 0;
  }
  
- /*
+ static int ab8500_get_register(struct device *dev, u8 bank,
 -- 
 2.19.1
 
