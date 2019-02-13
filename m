@@ -2,84 +2,110 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3469C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A4AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC233222D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B51B222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:48:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550044096;
+	bh=J5+YQZNHiUEsQpHZYR1XGrqUK1eplI2fDOdYxwyTkQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bD2O2rqvdqPDQEWqULRlIECznFTvMe9VKUoJVq12lKuZh9BxEKLUfa3ylkbQb92KF
+	 FjszeXKmPQpevhZ8lRVEx7YodD4l7nAzY3OhQQiwr4XrNpgzxCnXTGOVDOVa/9M34P
+	 4iPM98DubsWxJNZsG2hhUAXpnGNG/WCX1S/kbPUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389984AbfBMHqM (ORCPT
+        id S2388874AbfBMHsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:46:12 -0500
-Received: from mga09.intel.com ([134.134.136.24]:39706 "EHLO mga09.intel.com"
+        Wed, 13 Feb 2019 02:48:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388878AbfBMHqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:46:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:46:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="146426071"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2019 23:46:06 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/9] device connection: Add fwnode member to struct device_connection
-Date:   Wed, 13 Feb 2019 10:45:52 +0300
-Message-Id: <20190213074557.66028-5-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
-References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
+        id S1730851AbfBMHsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:48:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F65222BA;
+        Wed, 13 Feb 2019 07:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550044094;
+        bh=J5+YQZNHiUEsQpHZYR1XGrqUK1eplI2fDOdYxwyTkQ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GaPxl0eDIVu4dquSj+xW46FFESRNb7AOmZaUiO3/QIn56xNuR+hhlSwU4AspqnE8J
+         8RdcnhVyECH4OU200pc6LMmxNG1QluXPzKtlrLDpnBq47hAMDxHWQsP6s2EQcqamWq
+         2pg5boNAxgVuFEr59xtFv1SaDyDRmiKKjkrmFBEM=
+Date:   Wed, 13 Feb 2019 08:48:11 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mark D Rustad <mrustad@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: Re: Linux 4.4.174
+Message-ID: <20190213074811.GC3246@kroah.com>
+References: <20190208105422.GA32328@kroah.com>
+ <20190208105431.GB32328@kroah.com>
+ <870EE9C6-3748-498C-B6E8-33724168C605@gmail.com>
+ <20190209081301.GB30034@kroah.com>
+ <B6967E84-6DCE-4390-B2D1-E3B4A0146DD6@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <B6967E84-6DCE-4390-B2D1-E3B4A0146DD6@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will prepare the device connection API for connections
-described in firmware.
+On Tue, Feb 12, 2019 at 08:13:11PM -0800, Mark D Rustad wrote:
+> On Feb 9, 2019, at 12:13 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Fri, Feb 08, 2019 at 08:44:32PM -0800, Mark D Rustad wrote:
+> > > On Feb 8, 2019, at 2:54 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > 
+> > > > diff --git a/Documentation/networking/ip-sysctl.txt
+> > > > b/Documentation/networking/ip-sysctl.txt
+> > > > index 2ea4c45cf1c8..7c229f59016f 100644
+> > > > --- a/Documentation/networking/ip-sysctl.txt
+> > > > +++ b/Documentation/networking/ip-sysctl.txt
+> > > > @@ -112,14 +112,11 @@ min_adv_mss - INTEGER
+> > > > 
+> > > >  IP Fragmentation:
+> > > > 
+> > > > -ipfrag_high_thresh - INTEGER
+> > > > -	Maximum memory used to reassemble IP fragments. When
+> > > > -	ipfrag_high_thresh bytes of memory is allocated for this purpose,
+> > > > -	the fragment handler will toss packets until ipfrag_low_thresh
+> > > > -	is reached. This also serves as a maximum limit to namespaces
+> > > > -	different from the initial one.
+> > > > -
+> > > > -ipfrag_low_thresh - INTEGER
+> > > > +ipfrag_high_thresh - LONG INTEGER
+> > > > +	Maximum memory used to reassemble IP fragments.
+> > > > +
+> > > > +ipfrag_low_thresh - LONG INTEGER
+> > > > +	(Obsolete since linux-4.17)
+> > > 
+> > > It seems very strange to say that it is obsolete since 4.17 in a 4.4
+> > > kernel.
+> > 
+> > 4.17 is a point in time :)
+> 
+> Of course I understand, but some random non-kernel-developer tuning a kernel
+> may be pretty puzzled. I don't know right off the top something brief that
+> would be more generally meaningful, but maybe someone might. What does
+> obsolete mean in this context? It exists but does nothing? It exists and
+> does something but will eventually go away?
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Jun Li <jun.li@nxp.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- include/linux/device.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+Fair enough, want to provide a patch with the real kernel version this
+happened in?
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index d4e74fa42f9c..333db8c06152 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -758,11 +758,17 @@ struct device_dma_parameters {
- 
- /**
-  * struct device_connection - Device Connection Descriptor
-+ * @fwnode: The device node of the connected device
-  * @endpoint: The names of the two devices connected together
-  * @id: Unique identifier for the connection
-  * @list: List head, private, for internal use only
-+ *
-+ * NOTE: @fwnode is not used together with @endpoint. @fwnode is used when
-+ * platform firmware defines the connection. When the connection is registered
-+ * with device_connection_add() @endpoint is used instead.
-  */
- struct device_connection {
-+	struct fwnode_handle	*fwnode;
- 	const char		*endpoint[2];
- 	const char		*id;
- 	struct list_head	list;
--- 
-2.20.1
+thanks,
 
+greg k-h
