@@ -2,84 +2,152 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C7EC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7192BC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E47222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35959222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:26:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V4ZG+dan"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="CRtWfBig"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392138AbfBMOZ3 (ORCPT
+        id S2392184AbfBMO0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:25:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59304 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731144AbfBMOZ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:25:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BUSZJBEg95AZWRLllyUlX+QB7MyHQPRRcdezTH5hoC0=; b=V4ZG+danGvaZXWrUGwCSf80h0
-        BfIFH9QB1K2fXBwyb0rx6rBXssH3T4qBVLC0KWosOX3xWw6+DV2mf5g1+hLpznzR+SF+KUoIss0XT
-        tBu1F5wFqiyCBzvJS7di1WV5K/L8pr+sTF5/QgcPkIYxlx4g91tGoLSOSdUlkb806tnsPRYhDJxRU
-        TVaLPA1gbBKPedf/qa89TuJYG8Q3R+Kl0ioncTrIYAjZLAHNTOMuovabtU6heLKz0S6/yRbXXgPVk
-        gL9bO1Di7u2IRjXSyQd8Fmsffg8kJS8RCeoakXwImDD2SXQINGdv4pd26+Oy15WwISx5i0FrmN5pO
-        jJ3B9V7Cg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtvTZ-0002Qt-Ty; Wed, 13 Feb 2019 14:25:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 24EDB20F51B0C; Wed, 13 Feb 2019 15:25:24 +0100 (CET)
-Date:   Wed, 13 Feb 2019 15:25:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com, hpa@zytor.com,
-        valentin.schneider@arm.com
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-Message-ID: <20190213142524.GW32494@hirez.programming.kicks-ass.net>
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
- <20190211134527.GA121589@gmail.com>
- <20190211135159.GC32511@hirez.programming.kicks-ass.net>
- <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
- <20190213103553.GO32494@hirez.programming.kicks-ass.net>
- <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
- <20190213131720.GU32494@hirez.programming.kicks-ass.net>
- <20190213140025.GB6346@brain-police>
+        Wed, 13 Feb 2019 09:26:43 -0500
+Received: from mail-eopbgr690051.outbound.protection.outlook.com ([40.107.69.51]:16256
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731144AbfBMO0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:26:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3NZT4xX8DocpGW7VTFVffzaL1hJvBCxlUcjGaAtBSyQ=;
+ b=CRtWfBigAw4A80nPie5WxDs4Tpd7p8lFENokUlymlMz4IULJxzovzKY02P75Czyv0TvZZLQdgfhKIAOMx8AmadtnYP8MqepkQjC2WQuPW6JaNVpwT7WFhIiwq9afcGqDBxp3FrAujuf1fk+17Y/W3g3U/HJfFalijjQQmZqcULc=
+Received: from BN6PR02CA0043.namprd02.prod.outlook.com (2603:10b6:404:5f::29)
+ by BN6PR02MB2644.namprd02.prod.outlook.com (2603:10b6:404:54::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.24; Wed, 13 Feb
+ 2019 14:25:58 +0000
+Received: from CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::200) by BN6PR02CA0043.outlook.office365.com
+ (2603:10b6:404:5f::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Wed, 13 Feb 2019 14:25:58 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT055.mail.protection.outlook.com (10.152.74.80) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
+ via Frontend Transport; Wed, 13 Feb 2019 14:25:57 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1gtvU5-0006ad-ER; Wed, 13 Feb 2019 06:25:57 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1gtvU0-0005jV-AP; Wed, 13 Feb 2019 06:25:52 -0800
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x1DEPiUE029165;
+        Wed, 13 Feb 2019 06:25:44 -0800
+Received: from [172.23.37.224] (helo=xhdbharatku40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1gtvTs-0005hw-07; Wed, 13 Feb 2019 06:25:44 -0800
+From:   Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+To:     <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>
+CC:     <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+Subject: [PATCH] PCI: xilinx-nwl: Fix Multi MSI data programming
+Date:   Wed, 13 Feb 2019 19:55:39 +0530
+Message-ID: <1550067939-9859-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(199004)(189003)(6666004)(478600001)(356004)(36386004)(107886003)(63266004)(14444005)(106466001)(50226002)(36756003)(51416003)(7696005)(476003)(47776003)(81166006)(81156014)(426003)(26005)(2906002)(77096007)(186003)(8676002)(126002)(110136005)(486006)(2616005)(4326008)(316002)(50466002)(16586007)(48376002)(4744005)(305945005)(106002)(54906003)(9786002)(8936002)(336012)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR02MB2644;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT055;1:wgIse9XV477tgp2/+hjF+N18qgJ6GG7WF2GUc5qeOYJ5ad13pb0iYF0rlTiXyPcYO6ojR1OnWgx0EZ4vNHEhR8vQX+IgbGDbXM/ERnth98rJRmgEgqi0VmHQ6AccgN3HzLtCmRoXZxC8ECGGncjrDQ==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213140025.GB6346@brain-police>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b7f03ae3-dade-4d22-ff88-08d691bf2c0f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:BN6PR02MB2644;
+X-MS-TrafficTypeDiagnostic: BN6PR02MB2644:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR02MB2644;20:2WpWqhVG+3n3KTiGycZ2quod5iIlLt9M9qpO7kBsbnv+dMLHv/MA0sdPEbkbjXlswIOSsHGp2+rBKhBkE+zforaevju0wPKeZ7jOLcaPX6M7rY8n2Ch5tN73UAdMWcIb80w9rmkYr7bvOTkkjZZnIslIC1Oj+jpGDOnbl6rzuX8RgzJQ2aOyB6OA1YSk9etqJKsZt2jsF+YvwqTVBx9urjPqyn7gWxAwnzoxf+rdGeOvC8/w66/33xFKVXZh98/9CrDSTTMVsqYkmJfry0y/IwqSyGWBJGQDxlhJ95j4giTmOjFQ6Mjg3QEbG0aIn7P55fCZEqReoCoLmMHaZqklyu8FbO9eVwNOIvxr1wkBBbStJsW8pv8JBI6yeU4M4YXHVwwQr4RrD5zLKOuFnbPczLI7JS7zCcNZKpiG39RaAmafrSSkfsblrpE8DmjHWr8WT4lpK/M0KtyhVyh6w0my80DPY2aLTq3pTFGBrcx9KArbcdOdBbJhPNM7UjtgGKCW
+X-Microsoft-Antispam-PRVS: <BN6PR02MB2644FFD8E0AD7F346A887510A5660@BN6PR02MB2644.namprd02.prod.outlook.com>
+X-Forefront-PRVS: 094700CA91
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR02MB2644;23:MtMO9DkXQ3PXfBIL2qFBb5Tdh6c3qA+fvCWAMdY8M?=
+ =?us-ascii?Q?Vft9cL8Zlhfmc7sOV1cH+/vxINzq6T9zgbunMWXdnSLRVayWg3G9JeM1fVS5?=
+ =?us-ascii?Q?GGKC/SHKmK9B9g4o794ekSoSMp/WSwwUUZkIZlQf8eY78A/Mug67aZheNl94?=
+ =?us-ascii?Q?LKau6QOpEMbyB/ZoDZm3yiox7h03ZjgFPgUBKTi9VSYmBPuoZ+OAIRT0P4GF?=
+ =?us-ascii?Q?Ta+JWwIy4qmRfyUKo2c0/jPJR1YKTtBKiSFsswdQVd9AMMhSAs6XIMJXd7kT?=
+ =?us-ascii?Q?qJtRpzGGeK/Lmn8V0C3XfHnHurnsB/rCk98+q+8pPuqFe7t3jIBUImYxEwzL?=
+ =?us-ascii?Q?4r5vSwAoVttwoHprQ8YxtMg5dN382JF7z9qPAjlsjK1frIEiVSCoxowYb6kr?=
+ =?us-ascii?Q?UtbJLacdVhjnVIIy3xZl11nmPY+ro6ABlfs+b2DpqZo38r18asCGda1p3ShA?=
+ =?us-ascii?Q?DlDMzwXtT/ztQL82JUDlPELOqhtm+RN3hX1g6nSYkyGb2BpjArSRwhpdxHyz?=
+ =?us-ascii?Q?p5zM2zi3UvqAQFxrXbiKIWtjcf2rjwGNzkAfqDWwU989GWhHSmxoyOc0VPgi?=
+ =?us-ascii?Q?ki50cl8BxetF5iPM178RIGiYr3FSNOAwBlDI3URFatQUIhRzutymc7mVyubM?=
+ =?us-ascii?Q?d22MBIMLlnaUYb+t5sRmCnxReLwag/MUp5H+PVD4BVo11TeSuAO01DoCmdDI?=
+ =?us-ascii?Q?WZr29jtLml2avZ9C1jqb6fKvH26JH5kSsLKNlQveXz3EtgbqkoYY01KGDKR1?=
+ =?us-ascii?Q?Olm+Jy13c0Jp//Q/0iJOh7BSk5Iqmq99cE6ulQwOUxdf12mfjiKcJi6Czpy1?=
+ =?us-ascii?Q?atvlOOem28InV5CsxYleWyAx4j0PCAlFTS93Jqn8HtDHqDu/llESxJ1jCE6p?=
+ =?us-ascii?Q?ddojWxwSqrCBJBi+Np6vsmKUl9O6IFKPgsulWWta1nHoCF9Rn7PRh9YZ1Oaz?=
+ =?us-ascii?Q?AVbMBnKlcdpIZxQwjpfasT56KmLH8XWPKO5wQEV5PLVUnjjw81/9DCY8AfKc?=
+ =?us-ascii?Q?rdmg5L5EP50YImilSep/rRfnL2sQjpFIVlUislcj8LwLA=3D=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: ztwc/x8fzHX84tYlRCagHGq2IlGw0aZUCkjmfvo2R4w0WabxHb7rPTUeJb1z4RR2wIUP88z4BQ3elVADG/kV7l5g2s9n+Bo1n09xT3FoQSiTaQ+ttekaZJivqyqiIWKAyTrauBv7YrTkn6jBnIswT76cwsZIiRnpLgku+8Lesctq1FkBiKmVK0EJedmhL+q/ljP9uhiGq4EX4MatmWvwOVDtjYVycWNMyHsjAhEnXMgzlVZWVLAf8Kkarg2B7NuLf1y/8dmyiphlsR+R/H9VYNbMbV19uiSmejpGRwGnd5p/7BSaVOpyfxNrpq3Bq1LccK+5mZS0SkGCwHThoTynmiVGWYUKh30sGD9Pw5DiViyZWQbSfz7mA7rXrO+1X0fQ699zlljQ86KwmgcxGECxEnDmNjoFtM+NoUKbl4Sdt2M=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2019 14:25:57.9607
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7f03ae3-dade-4d22-ff88-08d691bf2c0f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR02MB2644
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:00:26PM +0000, Will Deacon wrote:
-> The difference is because getting preempted in the sequence above is
-> triggered off the back of an interrupt. On arm64, and I think also on x86,
-> the user access state (SMAP or PAN) is saved and restored across exceptions
-> but not across context switch.
+The current Multi MSI data programming fails if a
+end point is connected with switch.
 
-A quick reading of the SDM seems to suggest the SMAP state is part of
-EFLAGS, which is context switched just fine AFAIK.
+Fix Multi MSI data, by programming data with required alignment.
 
-SMAP {ab,re}uses the EFLAGS.AC bit.
+Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+---
+ drivers/pci/controller/pcie-xilinx-nwl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Consequently, taking an irq in a
-> user_access_{begin,end} section and then scheduling is fine, but calling
-> schedule directly within such a section is not.
+diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+index 81538d7..36669c5 100644
+--- a/drivers/pci/controller/pcie-xilinx-nwl.c
++++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+@@ -484,7 +484,7 @@ static int nwl_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+ 
+ 	mutex_lock(&msi->lock);
+ 	bit = bitmap_find_next_zero_area(msi->bitmap, INT_PCI_MSI_NR, 0,
+-					 nr_irqs, 0);
++					 nr_irqs, nr_irqs - 1);
+ 	if (bit >= INT_PCI_MSI_NR) {
+ 		mutex_unlock(&msi->lock);
+ 		return -ENOSPC;
+-- 
+2.7.4
+
