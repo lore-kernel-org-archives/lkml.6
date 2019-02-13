@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B074CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E0BC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E76222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B87FA222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025663;
-	bh=MFeAnHiJ4r6YGufQ8LsUH1G9t/JAmsxD/hPI1z5JOmQ=;
+	s=default; t=1550025668;
+	bh=vU9FBR8zMZmPYzMM+UQCbhw06l0bFoddS/mbVyVQNtM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QDhn/vn1vb9uNs3Rti2Mvdj2W8FRYnfKei7ZTQjX7aZPVnqU53/9MqVYjdbX3wCyU
-	 FyFWMDi+4TL+vSB7r41gBnkBi8mmM397dPqaGpIJG4oUx4+TUxjXMRXIFa+s2yBmBu
-	 DRpOoCAoSsCs+mQftC16mNUBoAlnmWjOeOCfuUUA=
+	b=WHATz06VtQidMkr5m+uNrwvcfS+oz8cUgMB+8IRcsuB0N3RY8yNnzfo3NwoJ5Kt6Y
+	 NU+Vr9HuAvpL3t5Ck/Dw2nydeD9yVaDdARbcPaH6sj7XQnn0uov5CklUU+Q7mCUnjH
+	 cE3vvruSCRUa6xfTJXbrfNcNaNxW9jnBQTY5MZas=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389137AbfBMClC (ORCPT
+        id S2389155AbfBMClH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44556 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389090AbfBMCkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:47 -0500
+        id S2389113AbfBMCk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3932222C9;
-        Wed, 13 Feb 2019 02:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5B3B222C2;
+        Wed, 13 Feb 2019 02:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025647;
-        bh=MFeAnHiJ4r6YGufQ8LsUH1G9t/JAmsxD/hPI1z5JOmQ=;
+        s=default; t=1550025655;
+        bh=vU9FBR8zMZmPYzMM+UQCbhw06l0bFoddS/mbVyVQNtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXCY9Oy5dseu6xODOwVUy2qmSpKoH6AZh3Rg3avSO6cncSXVpKN9DWpEWk/RtaX4J
-         cOcxDhIrrYZ6/Jfw5rlnDYyZM073JwSca0jZMmj+hGhnUXCw2AlMDZdZyGLv8X816e
-         trN7N3Uk38XeLocs+s9PnufKx8G3FjaQ6VDzE3oY=
+        b=D1B0sEluD5BmDgpvoCyNKl2sttJFXzwg1PpDPE9If90qw5Ae8QbFn/7ZXat6/LcjK
+         phPco5oEr3AU4tM3/ZDsyEKtGDy4oM3agDifb0z1+4u289bkGzEMd2FpV9JzL/97PL
+         4AiXJKLCq/AJbMHek8PcmFED41R15uD0VE/mUSEs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonathan Marek <jonathan@marek.ca>,
-        Lee Jones <lee.jones@linaro.org>,
+Cc:     Alban Bedel <albeu@free.fr>, Paul Burton <paul.burton@mips.com>,
+        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 06/21] mfd: qcom_rpm: write fw_version to CTRL_REG
-Date:   Tue, 12 Feb 2019 21:40:25 -0500
-Message-Id: <20190213024040.21740-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 11/21] MIPS: ath79: Enable OF serial ports in the default config
+Date:   Tue, 12 Feb 2019 21:40:30 -0500
+Message-Id: <20190213024040.21740-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
 References: <20190213024040.21740-1-sashal@kernel.org>
@@ -57,37 +59,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+From: Alban Bedel <albeu@free.fr>
 
-[ Upstream commit 504e4175829c44328773b96ad9c538e4783a8d22 ]
+[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
 
-This is required as part of the initialization sequence on certain SoCs.
+CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
+boards, enable it in the default config to get a working setup out of
+the box.
 
-If these registers are not initialized, the hardware can be unresponsive.
-This fixes the driver on apq8060 (HP TouchPad device).
-
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/qcom_rpm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/mips/configs/ath79_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mfd/qcom_rpm.c b/drivers/mfd/qcom_rpm.c
-index 52fafea06067..8d420c37b2a6 100644
---- a/drivers/mfd/qcom_rpm.c
-+++ b/drivers/mfd/qcom_rpm.c
-@@ -638,6 +638,10 @@ static int qcom_rpm_probe(struct platform_device *pdev)
- 		return -EFAULT;
- 	}
- 
-+	writel(fw_version[0], RPM_CTRL_REG(rpm, 0));
-+	writel(fw_version[1], RPM_CTRL_REG(rpm, 1));
-+	writel(fw_version[2], RPM_CTRL_REG(rpm, 2));
-+
- 	dev_info(&pdev->dev, "RPM firmware %u.%u.%u\n", fw_version[0],
- 							fw_version[1],
- 							fw_version[2]);
+diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
+index 134879c1310a..4ed369c0ec6a 100644
+--- a/arch/mips/configs/ath79_defconfig
++++ b/arch/mips/configs/ath79_defconfig
+@@ -74,6 +74,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ # CONFIG_SERIAL_8250_PCI is not set
+ CONFIG_SERIAL_8250_NR_UARTS=1
+ CONFIG_SERIAL_8250_RUNTIME_UARTS=1
++CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_AR933X=y
+ CONFIG_SERIAL_AR933X_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
 -- 
 2.19.1
 
