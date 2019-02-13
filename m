@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFF7C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA187C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1AB42086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E262086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393509AbfBMRzI (ORCPT
+        id S2404665AbfBMRzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:55:08 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:54602 "EHLO ale.deltatee.com"
+        Wed, 13 Feb 2019 12:55:09 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:54660 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393491AbfBMRzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:55:06 -0500
+        id S2393507AbfBMRzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:55:08 -0500
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gtykN-0001zA-9W; Wed, 13 Feb 2019 10:55:04 -0700
+        id 1gtykN-0001z9-9W; Wed, 13 Feb 2019 10:55:06 -0700
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gtykL-0001y9-BE; Wed, 13 Feb 2019 10:54:57 -0700
+        id 1gtykL-0001y6-7z; Wed, 13 Feb 2019 10:54:57 -0700
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
@@ -39,8 +39,8 @@ Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         David Woodhouse <dwmw2@infradead.org>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Date:   Wed, 13 Feb 2019 10:54:46 -0700
-Message-Id: <20190213175454.7506-5-logang@deltatee.com>
+Date:   Wed, 13 Feb 2019 10:54:45 -0700
+Message-Id: <20190213175454.7506-4-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20190213175454.7506-1-logang@deltatee.com>
 References: <20190213175454.7506-1-logang@deltatee.com>
@@ -49,7 +49,7 @@ Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, jdmason@kudzu.us, bhelgaas@google.com, joro@8bytes.org, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, epilmore@gigaio.com, logang@deltatee.com, dwmw2@infradead.org, jacob.jun.pan@linux.intel.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2 04/12] iommu/vt-d: Allow interrupts from the entire bus for aliased devices
+Subject: [PATCH v2 03/12] iommu/vt-d: Add helper to set an IRTE to verify only the bus number
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,72 +57,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a device has multiple aliases that all are from the same bus,
-we program the IRTE to accept requests from any matching device on the
-bus.
+The current code uses set_irte_sid() with SVT_VERIFY_BUS and PCI_DEVID
+to set the SID value. However, this is very confusing because, with
+SVT_VERIFY_BUS, the SID value is not a PCI devfn address, but the start
+and end bus numbers to match against.
 
-This is so NTB devices which can have requests from multiple bus-devfns
-can pass MSI interrupts through across the bridge.
+According to the Intel Virtualization Technology for Directed I/O
+Architecture Specification, Rev. 3.0, page 9-36:
+
+  The most significant 8-bits of the SID field contains the Startbus#,
+  and the least significant 8-bits of the SID field contains the Endbus#.
+  Interrupt requests that reference this IRTE must have a requester-id
+  whose bus# (most significant 8-bits of requester-id) has a value equal
+  to or within the Startbus# to Endbus# range.
+
+So to make this more clear, introduce a new set_irte_verify_bus() that
+explicitly takes a start bus and end bus so that we can stop abusing
+the PCI_DEVID macro.
+
+This helper function will be called a second time in an subsequent patch.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel_irq_remapping.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/iommu/intel_irq_remapping.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 5a55bef8e379..2d74641b7f7b 100644
+index 24d45b07f425..5a55bef8e379 100644
 --- a/drivers/iommu/intel_irq_remapping.c
 +++ b/drivers/iommu/intel_irq_remapping.c
-@@ -368,6 +368,8 @@ static int set_hpet_sid(struct irte *irte, u8 id)
- struct set_msi_sid_data {
- 	struct pci_dev *pdev;
- 	u16 alias;
-+	int count;
-+	int busmatch_count;
- };
- 
- static int set_msi_sid_cb(struct pci_dev *pdev, u16 alias, void *opaque)
-@@ -376,6 +378,10 @@ static int set_msi_sid_cb(struct pci_dev *pdev, u16 alias, void *opaque)
- 
- 	data->pdev = pdev;
- 	data->alias = alias;
-+	data->count++;
-+
-+	if (PCI_BUS_NUM(alias) == pdev->bus->number)
-+		data->busmatch_count++;
- 
- 	return 0;
+@@ -294,6 +294,18 @@ static void set_irte_sid(struct irte *irte, unsigned int svt,
+ 	irte->sid = sid;
  }
-@@ -387,6 +393,8 @@ static int set_msi_sid(struct irte *irte, struct pci_dev *dev)
- 	if (!irte || !dev)
- 		return -1;
  
-+	data.count = 0;
-+	data.busmatch_count = 0;
- 	pci_for_each_dma_alias(dev, set_msi_sid_cb, &data);
- 
- 	/*
-@@ -395,6 +403,11 @@ static int set_msi_sid(struct irte *irte, struct pci_dev *dev)
- 	 * device is the case of a PCIe-to-PCI bridge, where the alias is for
- 	 * the subordinate bus.  In this case we can only verify the bus.
- 	 *
-+	 * If there are multiple aliases, all with the same bus number,
-+	 * then all we can do is verify the bus. This is typical in NTB
-+	 * hardware which use proxy IDs where the device will generate traffic
-+	 * from multiple devfn numbers on the same bus.
-+	 *
- 	 * If the alias device is on a different bus than our source device
- 	 * then we have a topology based alias, use it.
- 	 *
-@@ -405,6 +418,8 @@ static int set_msi_sid(struct irte *irte, struct pci_dev *dev)
++/*
++ * Set an IRTE to match only the bus number. Interrupt requests that reference
++ * this IRTE must have a requester-id whose bus number is between or equal
++ * to the start_bus and end_bus arguments.
++ */
++static void set_irte_verify_bus(struct irte *irte, unsigned int start_bus,
++				unsigned int end_bus)
++{
++	set_irte_sid(irte, SVT_VERIFY_BUS, SQ_ALL_16,
++		     (start_bus << 8) | end_bus);
++}
++
+ static int set_ioapic_sid(struct irte *irte, int apic)
+ {
+ 	int i;
+@@ -391,9 +403,8 @@ static int set_msi_sid(struct irte *irte, struct pci_dev *dev)
+ 	 * original device.
+ 	 */
  	if (PCI_BUS_NUM(data.alias) != data.pdev->bus->number)
- 		set_irte_verify_bus(irte, PCI_BUS_NUM(data.alias),
- 				    dev->bus->number);
-+	else if (data.count >= 2 && data.busmatch_count == data.count)
-+		set_irte_verify_bus(irte, dev->bus->number, dev->bus->number);
+-		set_irte_sid(irte, SVT_VERIFY_BUS, SQ_ALL_16,
+-			     PCI_DEVID(PCI_BUS_NUM(data.alias),
+-				       dev->bus->number));
++		set_irte_verify_bus(irte, PCI_BUS_NUM(data.alias),
++				    dev->bus->number);
  	else if (data.pdev->bus->number != dev->bus->number)
  		set_irte_sid(irte, SVT_VERIFY_SID_SQ, SQ_ALL_16, data.alias);
  	else
