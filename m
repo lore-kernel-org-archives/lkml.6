@@ -2,77 +2,74 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F61C0044B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A9DC0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33361207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B159218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550091727;
+	bh=9X+gzRmSf+BHmR3RUa0gPVqj5qvtMZulGLtfrswIXdM=;
+	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
+	b=SHsTKTniDpsUx6tHgrQw4EZNoTOZxRhhPbZW+NDcYN5Uct+d80CfA3vll3bfnyCa0
+	 kDXjNNkBXAsH5tbdafRsxmSYaO8k33gVwTuOUk/h6JNdPnyVk2P6+hDZhN2N1K1CcE
+	 H/Bm+Y/OH+flUWA5Ji+u1W1meVXdEKGWlaxufsM8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394677AbfBMU7s (ORCPT
+        id S2394692AbfBMVCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 15:59:48 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36829 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbfBMU7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 15:59:47 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p25so4081081qtb.3;
-        Wed, 13 Feb 2019 12:59:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ng61dfKvZf21WQ4BUQ+6Qiu9cjO+4ESaMC3MYTHsLkE=;
-        b=I2dP9yLIiyYyRQcNlm1t5VDKDIiXd1OLiqQPw9jPl9FdHrbCq0E5aS7q2vHtWsQHso
-         /tLIb4PmxBDKggDmAVSWl/0YZAzozlnXsWKX49w3WvtHUmvy7F3r9pSyhF0xJy3VPU6c
-         6EMyqF9+CRpuZIFoaHZn8atQi2VKdEmd/2QTmd1men5pFKDT9P2nXUB4UbFkTATatjti
-         jwanPqNse4EfOhlRzR5yvuF2sx5UOHKVmizWad7J82WhCUtC+h+OF/PvI+RrXmPGIPvf
-         CI+o69IxJCPei28HdwFNAE8noHqpxCE5IqLAUIqZfrWHtftHV/faqG0321oJ1PXvox/i
-         uN+A==
-X-Gm-Message-State: AHQUAuab4TjIGL+Drm4EJTpo3fpCo1oWIKEbDVi0+CRPYD1EmIEprW/m
-        fDzGvw//EKYggOgD+NQh7E9JIdLA0L8MMsSck/U=
-X-Google-Smtp-Source: AHgI3IZTDIsbRkP6r1QUuY1BW6zHTWCPLmkpKUfQIt20OksmEJr861s8cpVm6GM9oo1eD7aBZLrWzIbdHTx+urBMzj8=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr123414qta.152.1550091586587;
- Wed, 13 Feb 2019 12:59:46 -0800 (PST)
+        Wed, 13 Feb 2019 16:02:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbfBMVCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 16:02:05 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD231207E0;
+        Wed, 13 Feb 2019 21:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550091724;
+        bh=9X+gzRmSf+BHmR3RUa0gPVqj5qvtMZulGLtfrswIXdM=;
+        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
+        b=ZNIeVIBzr8EiPpXNY5PGNvn/Ol+yuvol4uG3W30OpuRiVRq1T7vGEIlSjC2gzHiBw
+         actim0hMjCjgFR6nYobCG2zo5SA3TIPFus75V9GQyJbyaVmsZMWwrXrz6O1+nHCaKB
+         sxhwO/NcQTp3v91yEA8tQncsHvyoMHgJANIxtB3w=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190211174544.4302-1-will.deacon@arm.com> <20190211174544.4302-2-will.deacon@arm.com>
- <CAK8P3a1gmJTt+jdTbdSYZ0z43qodxf+co757K1-Hq1mj4fCqQA@mail.gmail.com> <20190213174608.GA29100@fuggles.cambridge.arm.com>
-In-Reply-To: <20190213174608.GA29100@fuggles.cambridge.arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 13 Feb 2019 21:59:28 +0100
-Message-ID: <CAK8P3a1-CA_d+tRRKh50+7-PU14AV=9S1JUSF4d-VUxZ+DcW4g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] asm-generic/io: Pass result on inX() accessor to __io_par()
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        andrew.murray@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20190213100714.15622-1-gabriel.fernandez@st.com>
+User-Agent: alot/0.8
+Subject: Re: [PATCH] dt-bindings: clock: remove unused definition for stm32mp1
+Message-ID: <155009172384.115909.11842128085275839689@swboyd.mtv.corp.google.com>
+References: <20190213100714.15622-1-gabriel.fernandez@st.com>
+Cc:     devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 13 Feb 2019 13:02:03 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 6:46 PM Will Deacon <will.deacon@arm.com> wrote:
+Quoting gabriel.fernandez@st.com (2019-02-13 02:07:14)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>=20
+> LTDC_K and ETHMAC_K are not used.
 
-> On Tue, Feb 12, 2019 at 12:55:17PM +0100, Arnd Bergmann wrote:
->
-> > For all I can see, this should not conflict with the usage of the
-> > same macros on RISC-V, though it does make add a significant
-> > difference, so I'd like to see an Ack from the RISC-V folks as
-> > well (added to Cc), or possibly a change to arch/riscv/include/asm/io.h
-> > to do a corresponding change.
->
-> There's already a comment in that header which says that the accesses are
-> ordered wrt timer reads, so I don't think anything needs to change there.
-> For consistency with the macro arguments, I could augment their __io_par to
-> take the read value as an unused argument, if that's what you mean?
+Ok, but do they exist? It's part of the binding so I don't see how it
+hurts anything to describe what is there.
 
-Yes, that's what I meant, I should have been clearer there.
+Also, please send patches to the linux-clk mailing list so patch
+tracking can work.
 
-     Arnd
