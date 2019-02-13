@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEACAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC0FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8273C218AC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42C15222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:26:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mPWThKxg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eWG5HMtU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391495AbfBMX0f (ORCPT
+        id S2393018AbfBMX0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:26:35 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46125 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390800AbfBMX0a (ORCPT
+        Wed, 13 Feb 2019 18:26:40 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46012 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391179AbfBMX0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:26:30 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o6so1968348pls.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:26:30 -0800 (PST)
+        Wed, 13 Feb 2019 18:26:33 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so1908592pgc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:26:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h9HThurJ83+fFieMaOoSrsodQvyRmZformqtiIRg6h8=;
-        b=mPWThKxgFRvWtE9dGW9KJ04d/XALQHxc6gmot78iBuNRpVlOr49U8OKBbn93BjB0Qc
-         OGpgP1ga7x+di9wqTPAJVnR0/KbWFzu8CEnCfmG4Jx1ebQBdmuxhG4jMHTjEA/nDlsfL
-         zIWxjxugdCaQuY/Fjat/fdIBITDKot3VnaeEw=
+        bh=qUWn5i6kFyi3ctVdq6jlMqS1XR9D0DIIis5PdwQb1TQ=;
+        b=eWG5HMtUgKklYz2LH40pJAKrX0ecavGBko/aig7HOZi3snnBS2TvJ9FosfqC1mpUqg
+         7VB/eIYt8mLI5igL0kdkmiaQD2i4ogL7TLSZuiUBi+E78+sb3VYSSI4KMNjIuj+fZHQ3
+         RbppSTqFd+EeIphinCNwrBXh9OhRcjQPagwII=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h9HThurJ83+fFieMaOoSrsodQvyRmZformqtiIRg6h8=;
-        b=a8dAq6EyVZj4KCyydtOSonryLmEoVT6xNmn8437iB77uPMAEFyEt3KCETtUoUEWgqm
-         fMjw0NsZqmEU5rOF/RFBnjcpMA2eEYe9BBIdkUa8TCmuDOgPlKr7nE+e+mS9CUlJzGwC
-         ouThxtsXlVWCgWsQ2P0uu/36XI4EOTzuS3/cGPgZJdCZqodjcKD2Sr+FQnxFMbN5JKj9
-         O79lSnUOkDbJCqaH5PNfVzMnq+F38zFKTQcSLIGHAbzxfM2nzNtUMAe5PI3B8OFNjNQj
-         I1KhGwC+2kpJMnP1DNX1WbvtlkHpTe/ySlDC97B2P55KifMCDXEcvLq2CFRzBb9kwLwk
-         hhng==
-X-Gm-Message-State: AHQUAuZBk9i/UvP7p2CLX0x431tFy2Wg/Txsm7rf2HdOL7ewvvQMOGk0
-        mbxC7zDJw0O6clFi36Rz2UZMZcDAEW4=
-X-Google-Smtp-Source: AHgI3IYN1uHkqYSPZjl+Bg8kEaQJtM4zYetKBDROADjTN4/G0pReWxyRUKa5qmphjL0kHoJvMzjTVw==
-X-Received: by 2002:a17:902:8304:: with SMTP id bd4mr704929plb.329.1550100389771;
-        Wed, 13 Feb 2019 15:26:29 -0800 (PST)
+        bh=qUWn5i6kFyi3ctVdq6jlMqS1XR9D0DIIis5PdwQb1TQ=;
+        b=ovtgCoEto/plpgaVK6l7DF+I/Ofkf1qtouTtVFPr0SGNQde3f8aHjMAnonO7MRQOFk
+         m/fJqk0KlW4cbQkLSRmUEN11/lXYao2zdV2UvD7mYGoyQAIav0HBdnyfu3u5aH1NvXOp
+         q+cSN+J54FwL4pX4SJO18Q3TbD1YBwh/M8qGQq3wQ+s5uZ6MLIT0B0bYRqvfN2ZmBJsW
+         l0F/lT1AiEH8TfK+zxgggi7hUo2VpO4xk2B0mfpYumIChR0nQdtcNXURRB2TrAiKjElZ
+         2B9TKs4jx0n9+z1CaUNlxSl9R/ef3yvJuU5u/+ardRF8Fr+MxT7ZVfkZxFgw880gjsl7
+         JWkQ==
+X-Gm-Message-State: AHQUAuYqcQBx7giAoL/tYgxN5+yMcer9/qPLQcu5yqmHywCkdiPjkg9I
+        Vl3v14qKIm+susMkQcew+0PEjQ==
+X-Google-Smtp-Source: AHgI3IY6dQIAVehCyhvxET9eZDdmAdJEjY5EoVkOvcSBySCvT2XO43a5RU2tmk4Rjhsa/Lx14ewcSQ==
+X-Received: by 2002:a62:e086:: with SMTP id d6mr699640pfm.247.1550100392096;
+        Wed, 13 Feb 2019 15:26:32 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id d129sm560660pfc.31.2019.02.13.15.26.28
+        by smtp.gmail.com with ESMTPSA id d129sm560660pfc.31.2019.02.13.15.26.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Feb 2019 15:26:29 -0800 (PST)
+        Wed, 13 Feb 2019 15:26:31 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
@@ -63,13 +63,17 @@ Cc:     Stephen Boyd <swboyd@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
         Asutosh Das <asutoshd@codeaurora.org>,
         Evan Green <evgreen@chromium.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-scsi@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/8] scsi: ufs: qcom: Expose the reset controller for PHY
-Date:   Wed, 13 Feb 2019 15:25:24 -0800
-Message-Id: <20190213232526.26995-7-evgreen@chromium.org>
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>
+Subject: [PATCH v4 7/8] phy: qcom: Utilize UFS reset controller
+Date:   Wed, 13 Feb 2019 15:25:25 -0800
+Message-Id: <20190213232526.26995-8-evgreen@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213232526.26995-1-evgreen@chromium.org>
 References: <20190213232526.26995-1-evgreen@chromium.org>
@@ -80,153 +84,271 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose a reset controller that the phy will later use to control its
-own PHY reset in the UFS controller. This will enable the combining
-of PHY init functionality into a single function.
+Move the PHY reset from ufs-qcom into the respective PHYs. This will
+allow us to merge the two phases of UFS PHY initialization.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
 ---
-Note: The remaining changes in this series need this change, since
-the PHYs now depend on getting the reset controller.
 
-Changes in v4: None
+Changes in v4:
+- Do reset_control_* unconditionally since null is handled (Stephen).
+
 Changes in v3:
-- Refactor to only expose the reset controller in one change (Stephen).
-- Add period to comment (Stephen).
-- Reset err to 0 in ignored error case (Stephen).
-- Add include of reset-controller.h (Stephen)
+- Refactored to move reset control in a single commit (Stephen)
+- Use no_pcs_sw_reset as an indicator of UFS reset in qmp-phy (Stephen).
+- Assign ret = PTR_ERR() earlier, for better reuse (Stephen).
 
 Changes in v2:
-- Remove include of reset.h (Stephen)
-- Fix error print of phy_power_on (Stephen)
-- Comment for reset controller warnings on id != 0 (Stephen)
-- Add static to ufs_qcom_reset_ops (Stephen).
+- Use devm_* to get the reset (Stephen)
+- Clear ufs_reset on error getting it
+- Remove needless error print (Stephen)
 
- drivers/scsi/ufs/Kconfig    |  1 +
- drivers/scsi/ufs/ufs-qcom.c | 52 +++++++++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-qcom.h |  4 +++
- 3 files changed, 57 insertions(+)
+ drivers/phy/qualcomm/phy-qcom-qmp.c          | 34 ++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-ufs-i.h        |  3 ++
+ drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c |  8 +++++
+ drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c |  8 +++++
+ drivers/phy/qualcomm/phy-qcom-ufs.c          | 23 +++++++++++++
+ drivers/scsi/ufs/ufs-qcom.c                  | 18 -----------
+ 6 files changed, 76 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index 2ddbb26d9c26..63c5c4115981 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,6 +100,7 @@ config SCSI_UFS_QCOM
- 	tristate "QCOM specific hooks to UFS controller platform driver"
- 	depends on SCSI_UFSHCD_PLATFORM && ARCH_QCOM
- 	select PHY_QCOM_UFS
-+	select RESET_CONTROLLER
- 	help
- 	  This selects the QCOM specific additions to UFSHCD platform driver.
- 	  UFS host on QCOM needs some vendor specific configuration before
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 3aeadb14aae1..ab05ef5cfdcd 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
-+#include <linux/reset-controller.h>
- 
- #include "ufshcd.h"
- #include "ufshcd-pltfrm.h"
-@@ -49,6 +50,11 @@ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
- static int ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div(struct ufs_hba *hba,
- 						       u32 clk_cycles);
- 
-+static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
-+{
-+	return container_of(rcd, struct ufs_qcom_host, rcdev);
-+}
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index 08d6f6f7f039..a808887ab4e2 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -897,6 +897,7 @@ struct qmp_phy {
+  * @init_count: phy common block initialization count
+  * @phy_initialized: indicate if PHY has been initialized
+  * @mode: current PHY mode
++ * @ufs_reset: optional UFS PHY reset handle
+  */
+ struct qcom_qmp {
+ 	struct device *dev;
+@@ -914,6 +915,8 @@ struct qcom_qmp {
+ 	int init_count;
+ 	bool phy_initialized;
+ 	enum phy_mode mode;
 +
- static void ufs_qcom_dump_regs_wrapper(struct ufs_hba *hba, int offset, int len,
- 				       const char *prefix, void *priv)
- {
-@@ -1147,6 +1153,41 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 	return err;
- }
- 
-+static int
-+ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-+
-+	/* Currently this code only knows about a single reset. */
-+	WARN_ON(id);
-+	ufs_qcom_assert_reset(host->hba);
-+	/* provide 1ms delay to let the reset pulse propagate. */
-+	usleep_range(1000, 1100);
-+	return 0;
-+}
-+
-+static int
-+ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-+
-+	/* Currently this code only knows about a single reset. */
-+	WARN_ON(id);
-+	ufs_qcom_deassert_reset(host->hba);
-+
-+	/*
-+	 * after reset deassertion, phy will need all ref clocks,
-+	 * voltage, current to settle down before starting serdes.
-+	 */
-+	usleep_range(1000, 1100);
-+	return 0;
-+}
-+
-+static const struct reset_control_ops ufs_qcom_reset_ops = {
-+	.assert = ufs_qcom_reset_assert,
-+	.deassert = ufs_qcom_reset_deassert,
-+};
-+
- #define	ANDROID_BOOT_DEV_MAX	30
- static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
- 
-@@ -1191,6 +1232,17 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- 	host->hba = hba;
- 	ufshcd_set_variant(hba, host);
- 
-+	/* Fire up the reset controller. Failure here is non-fatal. */
-+	host->rcdev.of_node = dev->of_node;
-+	host->rcdev.ops = &ufs_qcom_reset_ops;
-+	host->rcdev.owner = dev->driver->owner;
-+	host->rcdev.nr_resets = 1;
-+	err = devm_reset_controller_register(dev, &host->rcdev);
-+	if (err) {
-+		dev_warn(dev, "Failed to register reset controller\n");
-+		err = 0;
-+	}
-+
- 	/*
- 	 * voting/devoting device ref_clk source is time consuming hence
- 	 * skip devoting it during aggressive clock gating. This clock
-diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
-index c114826316eb..68a880185752 100644
---- a/drivers/scsi/ufs/ufs-qcom.h
-+++ b/drivers/scsi/ufs/ufs-qcom.h
-@@ -14,6 +14,8 @@
- #ifndef UFS_QCOM_H_
- #define UFS_QCOM_H_
- 
-+#include <linux/reset-controller.h>
-+
- #define MAX_UFS_QCOM_HOSTS	1
- #define MAX_U32                 (~(u32)0)
- #define MPHY_TX_FSM_STATE       0x41
-@@ -237,6 +239,8 @@ struct ufs_qcom_host {
- 	/* Bitmask for enabling debug prints */
- 	u32 dbg_print_en;
- 	struct ufs_qcom_testbus testbus;
-+
-+	struct reset_controller_dev rcdev;
++	struct reset_control *ufs_reset;
  };
  
- static inline u32
+ static inline void qphy_setbits(void __iomem *base, u32 offset, u32 val)
+@@ -1314,6 +1317,7 @@ static int qcom_qmp_phy_com_exit(struct qcom_qmp *qmp)
+ 		return 0;
+ 	}
+ 
++	reset_control_assert(qmp->ufs_reset);
+ 	if (cfg->has_phy_com_ctrl) {
+ 		qphy_setbits(serdes, cfg->regs[QPHY_COM_START_CONTROL],
+ 			     SERDES_START | PCS_START);
+@@ -1351,6 +1355,33 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 
+ 	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+ 
++	if (cfg->no_pcs_sw_reset) {
++		/*
++		 * Get UFS reset, which is delayed until now to avoid a
++		 * circular dependency where UFS needs its PHY, but the PHY
++		 * needs this UFS reset.
++		 */
++		if (!qmp->ufs_reset) {
++			qmp->ufs_reset =
++				devm_reset_control_get_exclusive(qmp->dev,
++								 "ufsphy");
++
++			if (IS_ERR(qmp->ufs_reset)) {
++				ret = PTR_ERR(qmp->ufs_reset);
++				dev_err(qmp->dev,
++					"failed to get UFS reset: %d\n",
++					ret);
++
++				qmp->ufs_reset = NULL;
++				return ret;
++			}
++		}
++
++		ret = reset_control_assert(qmp->ufs_reset);
++		if (ret)
++			goto err_lane_rst;
++	}
++
+ 	ret = qcom_qmp_phy_com_init(qphy);
+ 	if (ret)
+ 		return ret;
+@@ -1383,6 +1414,9 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 				       cfg->rx_tbl, cfg->rx_tbl_num);
+ 
+ 	qcom_qmp_phy_configure(pcs, cfg->regs, cfg->pcs_tbl, cfg->pcs_tbl_num);
++	ret = reset_control_deassert(qmp->ufs_reset);
++	if (ret)
++		goto err_lane_rst;
+ 
+ 	/*
+ 	 * UFS PHY requires the deassert of software reset before serdes start.
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+index f798fb64de94..ba77348d807c 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+@@ -19,6 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+@@ -101,6 +102,7 @@ struct ufs_qcom_phy {
+ 	struct ufs_qcom_phy_specific_ops *phy_spec_ops;
+ 
+ 	enum phy_mode mode;
++	struct reset_control *ufs_reset;
+ };
+ 
+ /**
+@@ -132,6 +134,7 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
+ 			struct ufs_qcom_phy *common_cfg,
+ 			const struct phy_ops *ufs_qcom_phy_gen_ops,
+ 			struct ufs_qcom_phy_specific_ops *phy_spec_ops);
++int ufs_qcom_phy_get_reset(struct ufs_qcom_phy *phy_common);
+ int ufs_qcom_phy_calibrate(struct ufs_qcom_phy *ufs_qcom_phy,
+ 			struct ufs_qcom_phy_calibration *tbl_A, int tbl_size_A,
+ 			struct ufs_qcom_phy_calibration *tbl_B, int tbl_size_B,
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
+index 1e0d4f2046a4..cc343517a2ca 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
+@@ -48,6 +48,14 @@ static int ufs_qcom_phy_qmp_14nm_init(struct phy *generic_phy)
+ 	bool is_rate_B = false;
+ 	int ret;
+ 
++	ret = ufs_qcom_phy_get_reset(phy_common);
++	if (ret)
++		return ret;
++
++	ret = reset_control_assert(phy_common->ufs_reset);
++	if (ret)
++		return ret;
++
+ 	if (phy_common->mode == PHY_MODE_UFS_HS_B)
+ 		is_rate_B = true;
+ 
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
+index aef40f7a41d4..54b2af9d8702 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
+@@ -67,6 +67,14 @@ static int ufs_qcom_phy_qmp_20nm_init(struct phy *generic_phy)
+ 	bool is_rate_B = false;
+ 	int ret;
+ 
++	ret = ufs_qcom_phy_get_reset(phy_common);
++	if (ret)
++		return ret;
++
++	ret = reset_control_assert(phy_common->ufs_reset);
++	if (ret)
++		return ret;
++
+ 	if (phy_common->mode == PHY_MODE_UFS_HS_B)
+ 		is_rate_B = true;
+ 
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs.c b/drivers/phy/qualcomm/phy-qcom-ufs.c
+index f2979ccad00a..fe59785a55f2 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs.c
+@@ -147,6 +147,22 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
+ }
+ EXPORT_SYMBOL_GPL(ufs_qcom_phy_generic_probe);
+ 
++int ufs_qcom_phy_get_reset(struct ufs_qcom_phy *phy_common)
++{
++	struct reset_control *reset;
++
++	if (phy_common->ufs_reset)
++		return 0;
++
++	reset = devm_reset_control_get_exclusive_by_index(phy_common->dev, 0);
++	if (IS_ERR(reset))
++		return PTR_ERR(reset);
++
++	phy_common->ufs_reset = reset;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ufs_qcom_phy_get_reset);
++
+ static int __ufs_qcom_phy_clk_get(struct device *dev,
+ 			 const char *name, struct clk **clk_out, bool err_print)
+ {
+@@ -533,6 +549,12 @@ int ufs_qcom_phy_power_on(struct phy *generic_phy)
+ 	if (phy_common->is_powered_on)
+ 		return 0;
+ 
++	err = reset_control_deassert(phy_common->ufs_reset);
++	if (err) {
++		dev_err(dev, "Failed to assert UFS PHY reset");
++		return err;
++	}
++
+ 	if (!phy_common->is_started) {
+ 		err = ufs_qcom_phy_start_serdes(phy_common);
+ 		if (err)
+@@ -620,6 +642,7 @@ int ufs_qcom_phy_power_off(struct phy *generic_phy)
+ 
+ 	ufs_qcom_phy_disable_vreg(phy_common->dev, &phy_common->vdda_pll);
+ 	ufs_qcom_phy_disable_vreg(phy_common->dev, &phy_common->vdda_phy);
++	reset_control_assert(phy_common->ufs_reset);
+ 	phy_common->is_powered_on = false;
+ 
+ 	return 0;
+diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+index ab05ef5cfdcd..1c25b1c82314 100644
+--- a/drivers/scsi/ufs/ufs-qcom.c
++++ b/drivers/scsi/ufs/ufs-qcom.c
+@@ -261,11 +261,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+ 	if (is_rate_B)
+ 		phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+ 
+-	/* Assert PHY reset and apply PHY calibration values */
+-	ufs_qcom_assert_reset(hba);
+-	/* provide 1ms delay to let the reset pulse propagate */
+-	usleep_range(1000, 1100);
+-
+ 	/* phy initialization - calibrate the phy */
+ 	ret = phy_init(phy);
+ 	if (ret) {
+@@ -274,15 +269,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+ 		goto out;
+ 	}
+ 
+-	/* De-assert PHY reset and start serdes */
+-	ufs_qcom_deassert_reset(hba);
+-
+-	/*
+-	 * after reset deassertion, phy will need all ref clocks,
+-	 * voltage, current to settle down before starting serdes.
+-	 */
+-	usleep_range(1000, 1100);
+-
+ 	/* power on phy - start serdes and phy's power and clocks */
+ 	ret = phy_power_on(phy);
+ 	if (ret) {
+@@ -296,7 +282,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+ 	return 0;
+ 
+ out_disable_phy:
+-	ufs_qcom_assert_reset(hba);
+ 	phy_exit(phy);
+ out:
+ 	return ret;
+@@ -559,9 +544,6 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+ 		 */
+ 		ufs_qcom_disable_lane_clks(host);
+ 		phy_power_off(phy);
+-
+-		/* Assert PHY soft reset */
+-		ufs_qcom_assert_reset(hba);
+ 		goto out;
+ 	}
+ 
 -- 
 2.20.1
 
