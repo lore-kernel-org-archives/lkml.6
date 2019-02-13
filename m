@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC2AC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314B1C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE96222CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA792222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025503;
-	bh=7Qn52lDhFtC4ht1RdIfsmQq91TQOejHD2t9S2LFhO1Q=;
+	s=default; t=1550025508;
+	bh=8KbKkTtGVpj7XQj+rMMhi+AEp0Y5WGBpMuL5NYrW6O4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gTFwAK7lcXVBbBfPPtui+K5x/9R2KjwrXq29GiAkrynfPOMUVW3PzxVUT26/JBlft
-	 xtc9Qam57svsRjkWDXFkzP5Cbb/3ERVUoye9YvQ/VVUYQVQLZzbaPKZSsvrjixi3cD
-	 2fgEOKu1Ne4Lv600qAsJmcTMcVLX9AxCRD91tfqo=
+	b=VrP2wwHG1iJMp5PHztWK3d7/yOBD8OdgV1Pf0jjkcDuFy6n6/KevSRvjvGVaam7sY
+	 WoQa2JyD4NyRt9/kShR2R0KAFdkApn53qo9P+dF2HQZbdwJximGpOrBx8tQ2OwV1bC
+	 j7WwHOpdedWrVOQfRqO0WsHeJjb40nRa9KrXRtXc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388505AbfBMCiW (ORCPT
+        id S1732704AbfBMCi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:38:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41816 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbfBMCiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:17 -0500
+        id S1730629AbfBMCiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3F7E222C7;
-        Wed, 13 Feb 2019 02:38:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6CD8206B6;
+        Wed, 13 Feb 2019 02:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025496;
-        bh=7Qn52lDhFtC4ht1RdIfsmQq91TQOejHD2t9S2LFhO1Q=;
+        s=default; t=1550025495;
+        bh=8KbKkTtGVpj7XQj+rMMhi+AEp0Y5WGBpMuL5NYrW6O4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GEP5NT1Aa6gb56ThTT302DqNTzSGToU4bZbCT2rJwwNkgScjRwgA4T89WBYDosOLv
-         +L/WPl8i8iseSQQP3snyooYvnmm7z+3ZLdscRcbEOEHessz89vNiioaVd+bsik/TPB
-         T6Obt14hEyAvZ31ojuFHQXZac2RXBZjQdoknMyTI=
+        b=m2UI/OOJXUKuXnC3Bg4U2JVKlQlALKWFpdIDjKFxP22nmlowW5il5ywLmhvhCsT0O
+         SKTWez6Ybn2FxVHWNDUKIY8jj4nREgfSVL1H2tePXe2s6hp2ki+iYd2Ipv/F+1sP/v
+         9AmptlnODtDgEvyBX0svN4XTBw48sEnjxUNM+pDo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nvdimm@lists.01.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 44/83] acpi/nfit: Fix race accessing memdev in nfit_get_smbios_id()
-Date:   Tue, 12 Feb 2019 21:36:22 -0500
-Message-Id: <20190213023701.20286-44-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 43/83] powerpc/8xx: fix setting of pagetable for Abatron BDI debug tool.
+Date:   Tue, 12 Feb 2019 21:36:21 -0500
+Message-Id: <20190213023701.20286-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,51 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Luck <tony.luck@intel.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 0919871ac37fdcf46c7657da0f1742efe096b399 ]
+[ Upstream commit fb0bdec51a4901b7dd088de0a1e365e1b9f5cd21 ]
 
-Possible race accessing memdev structures after dropping the
-mutex. Dan Williams says this could race against another thread
-that is doing:
+Commit 8c8c10b90d88 ("powerpc/8xx: fix handling of early NULL pointer
+dereference") moved the loading of r6 earlier in the code. As some
+functions are called inbetween, r6 needs to be loaded again with the
+address of swapper_pg_dir in order to set PTE pointers for
+the Abatron BDI.
 
- # echo "ACPI0012:00" > /sys/bus/acpi/drivers/nfit/unbind
-
-Reported-by: Jane Chu <jane.chu@oracle.com>
-Fixes: 23222f8f8dce ("acpi, nfit: Add function to look up nvdimm...")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 8c8c10b90d88 ("powerpc/8xx: fix handling of early NULL pointer dereference")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/nfit/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/head_8xx.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index ea59c01ce8db..f530d3541242 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -719,6 +719,7 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 	struct acpi_nfit_memory_map *memdev;
- 	struct acpi_nfit_desc *acpi_desc;
- 	struct nfit_mem *nfit_mem;
-+	u16 physical_id;
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 81d4574d1f37..9fd2ff28b8ff 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -919,11 +919,12 @@ start_here:
  
- 	mutex_lock(&acpi_desc_lock);
- 	list_for_each_entry(acpi_desc, &acpi_descs, list) {
-@@ -726,10 +727,11 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 		list_for_each_entry(nfit_mem, &acpi_desc->dimms, list) {
- 			memdev = __to_nfit_memdev(nfit_mem);
- 			if (memdev->device_handle == device_handle) {
-+				*flags = memdev->flags;
-+				physical_id = memdev->physical_id;
- 				mutex_unlock(&acpi_desc->init_mutex);
- 				mutex_unlock(&acpi_desc_lock);
--				*flags = memdev->flags;
--				return memdev->physical_id;
-+				return physical_id;
- 			}
- 		}
- 		mutex_unlock(&acpi_desc->init_mutex);
+ 	/* set up the PTE pointers for the Abatron bdiGDB.
+ 	*/
+-	tovirt(r6,r6)
+ 	lis	r5, abatron_pteptrs@h
+ 	ori	r5, r5, abatron_pteptrs@l
+ 	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
+ 	tophys(r5,r5)
++	lis	r6, swapper_pg_dir@h
++	ori	r6, r6, swapper_pg_dir@l
+ 	stw	r6, 0(r5)
+ 
+ /* Now turn on the MMU for real! */
 -- 
 2.19.1
 
