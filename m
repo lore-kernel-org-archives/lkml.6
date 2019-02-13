@@ -2,143 +2,105 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDCFC282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF79C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FCD2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3847C2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:57:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dionne-riel-com.20150623.gappssmtp.com header.i=@dionne-riel-com.20150623.gappssmtp.com header.b="Ns7tvNi0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389297AbfBMR5e (ORCPT
+        id S2391631AbfBMR5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:57:34 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:54858 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbfBMR5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:57:33 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gtymj-00025q-Hs; Wed, 13 Feb 2019 10:57:26 -0700
-To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20190213175454.7506-1-logang@deltatee.com>
- <20190213175454.7506-2-logang@deltatee.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <5de68173-5673-f834-c2aa-ec8cffc6702a@deltatee.com>
-Date:   Wed, 13 Feb 2019 10:57:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 12:57:39 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33356 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfBMR5j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:57:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id q12so2510114lfm.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 09:57:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dionne-riel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=VAjY+/bIOpJdGWQMH2R7x+05QKpXxteV+S4zLK9ofRU=;
+        b=Ns7tvNi0mZKdMDFfhbnN/LG2kICzb5lka48fhvM6pU70hzoEaF5BHmlDYiE8HR6vzT
+         of3DgJY8+lGSSjUZ89luR17Y3/Ja4w0JIcEFJ9AfCEFbTn2KcYci5N2f0W9L7Ho235Xz
+         WRmvgdfqsZ1nBGXWgKPjAI/W+eryl/6nG//z9ytCkspXIlbKYo051KE+CLAwVr3gBVBl
+         BiVG+rqR7yoEtmc76lECHc0eTHM0N4SdaG+3rUeqzC9omUdvLtzkKQQ/rKAfQA0LGNvH
+         iFwGpSU2o/zFY8tFlx9Cxkg9pmu1hGzC+i2CP5aXeGygJZ++xj8OH9hfU/dpJwXV7d7t
+         XzsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=VAjY+/bIOpJdGWQMH2R7x+05QKpXxteV+S4zLK9ofRU=;
+        b=C+hiBAGec3bhQMv6Ag9oQhcCnKP8887634dr7vrJ6D6akGNRY/I43DA7wls3YI4aVL
+         5+DqCYvfR4UQqg2isgwloECaFuOs9IBhWwAT+gvEDCc3j7dXbkCQhe9+Rn1kXQmPsX19
+         flLJ5UR5O7H8eLhG49sl9lT1020HMPD/o1R646QZrJa2nWr8UBdlzdsvVwYdlQBBH74l
+         JwimieUGxsSlDekE3YAP/FOQ7yh3ESczUBFa8WvrIKO79SQh1qCfftQn+vPYnh+Sxtyn
+         ROaLoe0/fjBnL6Vs8Mg7CV8ko53BxiPno2rPFKTrUbACmnS2bceP/k60yjFkKHIqkRsX
+         8flQ==
+X-Gm-Message-State: AHQUAuZkBBi4DiPKR9nIMjEOhdL79789yFIc/JGft8ZYFjqQZxNk3VdI
+        UbH3yqCHYveJqRZ7ckBLe7GBvMCN0O5vFZ9NGoMxk+1X
+X-Google-Smtp-Source: AHgI3IZGneiKDOMs/7Mwr1X+5YTuv6nRuVhxpqyuMKsB/BW0BRTIiDFgSu5aMfpwJCs5GTxooILLAuQddeyYutQFTxc=
+X-Received: by 2002:a19:5013:: with SMTP id e19mr1036562lfb.89.1550080656243;
+ Wed, 13 Feb 2019 09:57:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190213175454.7506-2-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: dwmw2@infradead.org, epilmore@gigaio.com, fancer.lancer@gmail.com, dave.jiang@intel.com, allenbh@gmail.com, joro@8bytes.org, bhelgaas@google.com, jdmason@kudzu.us, linux-kselftest@vger.kernel.org, iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 01/12] iommu/vt-d: Implement dma_[un]map_resource()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Received: by 2002:ab3:5612:0:0:0:0:0 with HTTP; Wed, 13 Feb 2019 09:57:35
+ -0800 (PST)
+From:   Samuel Dionne-Riel <samuel@dionne-riel.com>
+Date:   Wed, 13 Feb 2019 12:57:35 -0500
+Message-ID: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+Subject: Userspace regression in LTS and stable kernels
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, graham@grahamc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oops, sorry. Please ignore the first two patches in this series. They
-have already been merged independently.
+Hi,
 
-Logan
+I am posting as a representative of the NixOS Linux distribution,
+about a userspace regression on 5.0-rc* which recently was backported
+to the 4.14.99, 4.19.21 and 4.20.8 current LTS and stable versions.
+The issue has been reported to the bug tracker, bug 202497, but seems
+to have gone unnoticed by the maintainers.
 
+The issue seems to break userspace for long-standing patterns in the
+NixOS distribution, with regards to use of the shebangs.
 
+Here is an example shebang causing an issue:
 
-On 2019-02-13 10:54 a.m., Logan Gunthorpe wrote:
-> Currently the Intel IOMMU uses the default dma_[un]map_resource()
-> implementations does nothing and simply returns the physical address
-> unmodified.
-> 
-> However, this doesn't create the IOVA entries necessary for addresses
-> mapped this way to work when the IOMMU is enabled. Thus, when the
-> IOMMU is enabled, drivers relying on dma_map_resource() will trigger
-> DMAR errors. We see this when running ntb_transport with the IOMMU
-> enabled, DMA, and switchtec hardware.
-> 
-> The implementation for intel_map_resource() is nearly identical to
-> intel_map_page(), we just have to re-create __intel_map_single().
-> dma_unmap_resource() uses intel_unmap_page() directly as the
-> functions are identical.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> ---
->  drivers/iommu/intel-iommu.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 78188bf7e90d..ad737e16575b 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -3649,11 +3649,9 @@ static int iommu_no_mapping(struct device *dev)
->  	return 0;
->  }
->  
-> -static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
-> -				   unsigned long offset, size_t size, int dir,
-> -				   u64 dma_mask)
-> +static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
-> +				     size_t size, int dir, u64 dma_mask)
->  {
-> -	phys_addr_t paddr = page_to_phys(page) + offset;
->  	struct dmar_domain *domain;
->  	phys_addr_t start_paddr;
->  	unsigned long iova_pfn;
-> @@ -3715,7 +3713,15 @@ static dma_addr_t intel_map_page(struct device *dev, struct page *page,
->  				 enum dma_data_direction dir,
->  				 unsigned long attrs)
->  {
-> -	return __intel_map_page(dev, page, offset, size, dir, *dev->dma_mask);
-> +	return __intel_map_single(dev, page_to_phys(page) + offset, size,
-> +				  dir, *dev->dma_mask);
-> +}
-> +
-> +static dma_addr_t intel_map_resource(struct device *dev, phys_addr_t phys_addr,
-> +				     size_t size, enum dma_data_direction dir,
-> +				     unsigned long attrs)
-> +{
-> +	return __intel_map_single(dev, phys_addr, size, dir, *dev->dma_mask);
->  }
->  
->  static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
-> @@ -3806,8 +3812,9 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
->  		return NULL;
->  	memset(page_address(page), 0, size);
->  
-> -	*dma_handle = __intel_map_page(dev, page, 0, size, DMA_BIDIRECTIONAL,
-> -				       dev->coherent_dma_mask);
-> +	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
-> +					 DMA_BIDIRECTIONAL,
-> +					 dev->coherent_dma_mask);
->  	if (*dma_handle != DMA_MAPPING_ERROR)
->  		return page_address(page);
->  	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
-> @@ -3924,6 +3931,8 @@ static const struct dma_map_ops intel_dma_ops = {
->  	.unmap_sg = intel_unmap_sg,
->  	.map_page = intel_map_page,
->  	.unmap_page = intel_unmap_page,
-> +	.map_resource = intel_map_resource,
-> +	.unmap_resource = intel_unmap_page,
->  	.dma_supported = dma_direct_supported,
->  };
->  
-> 
+#! /nix/store/mbwav8kz8b3y471wjsybgzw84mrh4js9-perl-5.28.1/bin/perl
+-I/nix/store/x6yyav38jgr924nkna62q3pkp0dgmzlx-perl5.28.1-File-Slurp-9999.25=
+/lib/perl5/site_perl
+-I/nix/store/ha8v67sl8dac92r9z07vzr4gv1y9nwqz-perl5.28.1-Net-DBus-1.1.0/lib=
+/perl5/site_perl
+-I/nix/store/dcrkvnjmwh69ljsvpbdjjdnqgwx90a9d-perl5.28.1-XML-Parser-2.44/li=
+b/perl5/site_perl
+-I/nix/store/rmji88k2zz7h4zg97385bygcydrf2q8h-perl5.28.1-XML-Twig-3.52/lib/=
+perl5/site_perl
+
+(The shebang was artificially wrapped spaces replaced by newlines)
+
+Another contributor tracked the regression it to commit
+8099b047ecc431518b9bb6bdbba3549bbecdc343 in the 5.0-rc* tree.
+
+I bring no particular fix to the issue, but I believe it should at
+least be fast-tracked to a revert for the stable and LTS branches, and
+since 5.0 might drop soon, a solution worked on, or possibly a revert
+until one is figured out.
+
+Thanks,
+
+--=20
+=E2=80=94 Samuel Dionne-Riel
