@@ -3,142 +3,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8F7C10F00
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2FFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B03B222A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:19:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67F9A218AC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dXnxlHiw"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="MYJO7Cch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387520AbfBMXTc (ORCPT
+        id S2388587AbfBMXYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:19:32 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38065 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbfBMXTb (ORCPT
+        Wed, 13 Feb 2019 18:24:41 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:50664 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfBMXYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:19:31 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j19so2759736ljg.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WgVsJUTMnnCaCQDHvEM6XpYkBOEcgxFKcSfGDRa84GY=;
-        b=dXnxlHiw2i/q9AM8vmhwbkVle9HbCuDxTJD/8szwNtgM5LWwooWFjbaCwLz+oZXAqJ
-         Av4s6GLuP9JdrJKrMKI8Ez3MSvPbvQGZbiFqlPwvNMTDRBD6PJlmYLqYWC5HeeIvOK+b
-         gRTPxAWAdlF1buqHitCwXrupsytDHVGxyf+pg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WgVsJUTMnnCaCQDHvEM6XpYkBOEcgxFKcSfGDRa84GY=;
-        b=ZJDaSsd5Ea/hpBSKbGGTbjB2r1iZWrs5NYMv7SL98ekpN/iRwofi/eVPXkGJziLMhK
-         hDRVQltMXRPovnpS9rkypXg6NSe3JV4cs30nCGPAGTrSJyHXlCDX941e9VtJ/A7FmnpE
-         54Y8k5nW/CWrdAI4yVDRcBoCXNsMMx7YM1mn8rn3s+wFDdJFzgVMK7IPRucgpjC7ZUAR
-         mjbbSMZDGP48D0ZyBqhADC0ytO/eBFDVzFotl+V97LTZXAMubqB4EiThNYp2eG3VLTlD
-         mkmGl07uQS3Wq07onIBBhZuiMyPyM3PaHXDYLfdwq41iRPeuHfQMYPDTkoxyoqaJIv4v
-         t6jg==
-X-Gm-Message-State: AHQUAuZk4O0s7ZIZKzML5kcrKZZ3O1CDI3Dp0FiOY4M7NAQK4dczutMS
-        k1wKpM2feOJbknaiR6j1hEpkyBE+XjE=
-X-Google-Smtp-Source: AHgI3IbyvWhIW+G6zGGz2hIg+P/a0svRsa6oaXgZqVLQSbvvN1XE3SdoSIOYEqzew2pAqASFvrB+mg==
-X-Received: by 2002:a2e:974d:: with SMTP id f13-v6mr380469ljj.104.1550099968612;
-        Wed, 13 Feb 2019 15:19:28 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id m18sm123596lfh.43.2019.02.13.15.19.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 15:19:27 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id j1so3103413lfb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:19:26 -0800 (PST)
-X-Received: by 2002:a19:ab09:: with SMTP id u9mr338489lfe.149.1550099966013;
- Wed, 13 Feb 2019 15:19:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211134527.GA121589@gmail.com> <20190211135159.GC32511@hirez.programming.kicks-ass.net>
- <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com> <20190213103553.GO32494@hirez.programming.kicks-ass.net>
- <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com> <20190213131720.GU32494@hirez.programming.kicks-ass.net>
- <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
- <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Feb 2019 15:19:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiSqQtuudpKSa9RwEGALw-Yw7v+YFonAEcNPEbY_-0m+g@mail.gmail.com>
-Message-ID: <CAHk-=wiSqQtuudpKSa9RwEGALw-Yw7v+YFonAEcNPEbY_-0m+g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
+        Wed, 13 Feb 2019 18:24:40 -0500
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 38EDB10C1060;
+        Wed, 13 Feb 2019 15:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550100280; bh=wADILT3gOXXI1uysKlcymds29oYCzqucEqH5h6bdMy4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=MYJO7Cchxt/jHwcK64OcSfDtxV9AqPWtRt+eRFF1bX7fayfBFELWYtSfDjSOJ4mZh
+         CohniGvfYTyPwgWjMu/cweD5gTOCLPbTu89cdg/r/tHjA7RGg6tdyv8k7VEem6fcAE
+         FO4aTFPcZu+LZ2THmNJ+hphFKsyN4ydKK/UTzyUwf/xbgM7wMN+4UvVwIKQetjpCLV
+         j0kzlyvKqr+hfjbFRjee/kXv4/tubvN68U74byE+twA/r5LraqSGpNAeZ6fI2KTdiQ
+         FuRBXhNbg+SvdBIJQxlCXYBpKeLIE+DNu1y2BNWx7bt8U+eU0oFKzpe82XaUCOHgar
+         CB+lNsXbx3RYA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 8D0B1A0090;
+        Wed, 13 Feb 2019 23:24:38 +0000 (UTC)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 13 Feb 2019 15:23:45 -0800
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 14 Feb 2019 04:53:47 +0530
+Received: from [10.10.161.59] (10.10.161.59) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 14 Feb 2019 04:53:47 +0530
+Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, Peter Anvin <hpa@zytor.com>,
-        valentin.schneider@arm.com, brgerst@gmail.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, dvlasenk@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+CC:     David Laight <David.Laight@ACULAB.COM>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel.arc,gmane.linux.kernel
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ hhqBJlyU6MVUa6vZNv8E
+Message-ID: <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+Date:   Wed, 13 Feb 2019 15:23:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.59]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 7:45 AM Peter Zijlstra <peterz@infradead.org> wrote:
+On 2/13/19 4:56 AM, Peter Zijlstra wrote:
 >
-> Before that, x86_64 switch_to() read like (much simplified):
->
->         asm volatile ( /* do RSP twiddle */
->           : /* output */
->           : /* input */
->           : "memory", "cc", .... "flags");
->
-> (see __EXTRA_CLOBBER)
->
-> Which I suppose means that GCC generates the PUSHF/POPF to preserve the
-> EFLAGS, since we mark those explicitly clobbered.
+> Personally I think u64 and company should already force natural
+> alignment; but alas.
 
-No, it only means that gcc won't keep conditionals in the flags over
-the asm. It doesn't make gcc save anything.
+But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (load double) is
+allowed to take a 32-bit aligned address to load a register pair. Thus all u64
+need not be 64-bit aligned (unless attribute aligned 8 etc) hence the relaxation
+in ABI (alignment of long long is 4). You could certainly argue that we end up
+undoing some of it anyways by defining things like ARCH_KMALLOC_MINALIGN to 8, but
+still...
 
-The push/pop got removed elsewhere as Andy says.
+> I though that was part of the reason we have __u64
+> and co., so that ABI is invariant to kernel alignment changes.
 
-That said, I do agree that it's probably a good idea to save/restore
-flags anyway when scheduling. It's not just AC, actually, now that I
-look at it again I worry a bit about DF too.
+Apparently not.
 
-We have the rule that we run with DF clear in the kernel, and all the
-kernel entry points do clear it properly (so that memcpy etc don't
-need to). But there are a few places that set DF temporarily because
-they do something odd (backwards memmove), and those atcually have the
-*exact* same issue as stac/clac has: it's ok to take a trap or
-interrupt, and schedule due to that (because the trap/irq will clear
-DF), but it would be a horrible bug to have a synchronous scheduling
-point there.
+>>> I suspect the slab allocator should be returning 8 byte aligned addresses
+>>> on all systems.... 
+>>
+>> why ? As I understand it is still not fool proof against the expected alignment of
+>> inner members. There ought to be a better way to enforce all this.
+> 
+> I agree that for ARC ARCH_SLAB_MINALIGN should be at least 8.
 
-Arguably the DF issue really isn't even remotely likely to actually be
-a real issue (the code that sets DF really is very special and should
-never do any kind of preemption), but it's conceptually quite
-similar..
-
-Of course, if DF is ever set, and we end up calling any C code at all,
-I guess it would already be a huge problem. If the C code then does
-memcpy or something, it would corrupt things quite badly.
-
-So I guess save/restore isn't going to save us wrt DF. If we get
-anywhere close to the scheduler with the DF bit set, we've already
-lost.
-
-But I still do kind of prefer saving flags. We have other sticky state
-in there too, although none of it matters in the kernel currently (eg
-iopl etc - only matters in user space, and user space will always
-reload eflags on return).
-
-                 Linus
+This issue aside, are there other reasons ? Because making it 8 on ARC is just
+pending the eventuality for later.
