@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D994C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD85CC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D20602190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8114D2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026790;
-	bh=7H1SuANf+FOD1J1TmCN2mSpoS0LLIz9UPWYuuGlOidk=;
+	s=default; t=1550026799;
+	bh=zZQvyiDsVvku/cEWXAx8VLbxHBxBjUr7vtvCfi7jwZ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=a6yQjJsoM13BA5K1yyCD+6qYD3oQR5+WZSBbMo4cRcmMLv2omi7gwcekUdKDXamri
-	 c8M0WPvjwGFr6pvks5w1ZCq7v77etBgg/RIQ6/AzH02NN4HTPmp814dBqbN0U3sSjE
-	 sTHMudsdKa3dVm8mQ7oGvejMj0o7r9sjAP97ki+U=
+	b=naEWsEJCNIsf6MrRz4Ay+DuEwlfutfdgxM8/qf9VwJ4WQFe+GA0/sR8BIBYrLOtqw
+	 1UeWq7lDC8lNdAnI7iezLhMBhCqxlLP4L9m2/l2PZ6QZ1aMlGrEgLA599x/jKx4iIT
+	 tofkjaF8FmW5AYfq/CO5QSU4rovCEmvUzHjDe3U8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390232AbfBMC7s (ORCPT
+        id S2390242AbfBMC76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:59:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:59:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731764AbfBMCgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:15 -0500
+        id S2388058AbfBMCfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CD4C222CD;
-        Wed, 13 Feb 2019 02:36:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1D40222C9;
+        Wed, 13 Feb 2019 02:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025375;
-        bh=7H1SuANf+FOD1J1TmCN2mSpoS0LLIz9UPWYuuGlOidk=;
+        s=default; t=1550025340;
+        bh=zZQvyiDsVvku/cEWXAx8VLbxHBxBjUr7vtvCfi7jwZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XkeJG2ahV/bfDG5sUGMEN4hgR2SYltfkagH5WUIkmmNWfcw7cRzUFgriOaeAKJwM3
-         ftcNc53mn8ISKCiKxpjoTLsRUij/GXZjzLiUced/7lUhTsRc++dUfpAiZx4t5mWq9p
-         /a6pVvfJCjx3f49kQf5yd1fswbeVMVGm/wVPlm98=
+        b=KspK4VMsF7TISTUTfBIaDTFABxEcp/QqsCwChsPw3lBSt5TopQRo5OqzS3nQHm4Cy
+         CiardPnIDz9c08n6beJpMscNBI097oXonFqj6NsFvJHUN75XV/QYRspexS7fCFrCCF
+         NbwNiF0Szv1EtdEfMViqU0J4TO6sy2WQzLfzchdk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 085/105] afs: Don't set vnode->cb_s_break in afs_validate()
-Date:   Tue, 12 Feb 2019 21:33:16 -0500
-Message-Id: <20190213023336.19019-85-sashal@kernel.org>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 080/105] net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ9031
+Date:   Tue, 12 Feb 2019 21:33:11 -0500
+Message-Id: <20190213023336.19019-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,56 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Dionne <marc.dionne@auristor.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 4882a27cec24319d10f95e978ecc80050e3e3e15 ]
+[ Upstream commit 1d16073a326891c2a964e4cb95bc18fbcafb5f74 ]
 
-A cb_interest record is not necessarily attached to the vnode on entry to
-afs_validate(), which can cause an oops when we try to bring the vnode's
-cb_s_break up to date in the default case (ie. no current callback promise
-and the vnode has not been deleted).
+So far genphy_soft_reset was used automatically if the PHY driver
+didn't implement the soft_reset callback. This changed with the
+mentioned commit and broke KSZ9031. To fix this configure the
+KSZ9031 PHY driver to use genphy_soft_reset.
 
-Fix this by simply removing the line, as vnode->cb_s_break will be set when
-needed by afs_register_server_cb_interest() when we next get a callback
-promise from RPC call.
-
-The oops looks something like:
-
-    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-    ...
-    RIP: 0010:afs_validate+0x66/0x250 [kafs]
-    ...
-    Call Trace:
-     afs_d_revalidate+0x8d/0x340 [kafs]
-     ? __d_lookup+0x61/0x150
-     lookup_dcache+0x44/0x70
-     ? lookup_dcache+0x44/0x70
-     __lookup_hash+0x24/0xa0
-     do_unlinkat+0x11d/0x2c0
-     __x64_sys_unlink+0x23/0x30
-     do_syscall_64+0x4d/0xf0
-     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/phy/micrel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 6b17d3620414..211343831c30 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -414,7 +414,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
- 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
- 		valid = true;
- 	} else {
--		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
- 		vnode->cb_v_break = vnode->volume->cb_v_break;
- 		valid = false;
- 	}
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 51611c7a23d1..22dfbd4c6aaf 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -1076,6 +1076,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	.driver_data	= &ksz9021_type,
+ 	.probe		= kszphy_probe,
+ 	.config_init	= ksz9031_config_init,
++	.soft_reset	= genphy_soft_reset,
+ 	.read_status	= ksz9031_read_status,
+ 	.ack_interrupt	= kszphy_ack_interrupt,
+ 	.config_intr	= kszphy_config_intr,
 -- 
 2.19.1
 
