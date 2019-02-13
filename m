@@ -2,94 +2,130 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530F8C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DC9C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F9D2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026124;
-	bh=s6osJuse09wZAZqbpcAVYhtbgJWuNgoYnLeU+2u6w34=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zfjKIOt0/OfOW2O3/B/XUtaKwx37+HsiYVq9iDXGg7MHC6LZupA8LWAyOdt+GadCW
-	 tg3A90/XXWF0PCeCMaYtND8euuCo+S76SSlFtTjKCR0L10o/pDqgwSF3q8dD8pSffd
-	 ljbWjBfzg+Ef1oxi9QAzs0KhuhJe2qpD7TefKZ2U=
+	by mail.kernel.org (Postfix) with ESMTP id BAB702175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389676AbfBMCsm (ORCPT
+        id S2389768AbfBMCsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:48:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733035AbfBMCkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:14 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C680222C7;
-        Wed, 13 Feb 2019 02:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025614;
-        bh=s6osJuse09wZAZqbpcAVYhtbgJWuNgoYnLeU+2u6w34=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z1QUIDFAvS8WhmN5Vyt2JvRB9Ijou8NdJEmAZHz0KbdDOrZEq8EzHpEJSdxrN56No
-         kCnDnWw1Uh+SuBvdr+K8x9jEcAT8E1dlUXMfORM/OWzUjX1rHndjRBWW8zHrsCBmVo
-         KniCgM8UsiiThXPuWBC+GoRldUE/vE3gJpVhtAP4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 16/34] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Tue, 12 Feb 2019 21:39:34 -0500
-Message-Id: <20190213023952.21311-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
-References: <20190213023952.21311-1-sashal@kernel.org>
+        Tue, 12 Feb 2019 21:48:47 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.133]:22456 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733035AbfBMCsp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:48:45 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 322C2402C3B63
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 20:48:44 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tkbMgr8WI2PzOtkbMgLobP; Tue, 12 Feb 2019 20:48:44 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=38828 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gtkbL-001ogo-Bm; Tue, 12 Feb 2019 20:48:43 -0600
+Date:   Tue, 12 Feb 2019 20:48:42 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] iio: chemical: sps30: mark expected switch fall-throughs
+Message-ID: <20190213024842.GA25131@embeddedor>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gtkbL-001ogo-Bm
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:38828
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+This patch fixes the following warnings:
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+drivers/iio/chemical/sps30.c: In function ‘sps30_read_raw’:
+drivers/iio/chemical/sps30.c:289:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    switch (chan->channel2) {
+    ^~~~~~
+drivers/iio/chemical/sps30.c:299:3: note: here
+   default:
+   ^~~~~~~
+drivers/iio/chemical/sps30.c: In function ‘sps30_do_cmd’:
+drivers/iio/chemical/sps30.c:120:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
+          ^
+drivers/iio/chemical/sps30.c:121:2: note: here
+  case SPS30_READ_DATA_READY_FLAG:
+  ^~~~
+drivers/gpio/gpio-eic-sprd.c: In function ‘sprd_eic_irq_set_type’:
+drivers/gpio/gpio-eic-sprd.c:403:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   switch (flow_type) {
+   ^~~~~~
+drivers/gpio/gpio-eic-sprd.c:435:2: note: here
+  default:
+  ^~~~~~~
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/chemical/sps30.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 25ed914933e5..8a22978be1e6 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -72,6 +72,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+index e03a28a67146..f308d8ddceec 100644
+--- a/drivers/iio/chemical/sps30.c
++++ b/drivers/iio/chemical/sps30.c
+@@ -118,6 +118,7 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 	case SPS30_READ_AUTO_CLEANING_PERIOD:
+ 		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
+ 		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
++		/* fall through */
+ 	case SPS30_READ_DATA_READY_FLAG:
+ 	case SPS30_READ_DATA:
+ 	case SPS30_READ_SERIAL:
+@@ -296,6 +297,7 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+ 
+ 				return IIO_VAL_INT_PLUS_MICRO;
+ 			}
++			/* fall through */
+ 		default:
+ 			return -EINVAL;
+ 		}
 -- 
-2.19.1
+2.20.1
 
