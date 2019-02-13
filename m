@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDB1C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA4CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617F1222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 201DE2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550080110;
-	bh=SS0vbOTs/1srZxpl61yK6HRHGQuJgvxT9uBD1u1g7g8=;
+	s=default; t=1550080121;
+	bh=6AmCtmnGNJ3L2GipYDhIPyDm6V003oBndPdtARin9yk=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=DhrKuSEkOTnQ72ajxyd7bX+cwH239wgqAAE8jwYr60janjTyA78BDNbTbFKljyEW0
-	 kvzpDvNIiIsjTLGnThlRkeikVQyPod5s4cX/bqAFpf0tdk7/FWd+OW44T1+Mrm85A0
-	 R/MdGKvlcRhe/1Jcsie96Q2637yROjdL8HoCppyM=
+	b=t/OfP9Br7pnjTbRlLQ5Pygo89mItib79yqRxFmGDDKMnQtcsoZjj33Mj8uurvK3/G
+	 1o7yX2cuFDNwTCibsBIMDxLqJu3rQ38/lo1v56F7Maeufc0tyfv9ZYBU3/VLvvJCeu
+	 9WwqRgiM+/KdtpadG6Oy3C+5BUFFjDufb6t9Oi4c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404646AbfBMRs3 (ORCPT
+        id S2404658AbfBMRsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40038 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 12:48:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbfBMRs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:48:28 -0500
+        id S1727548AbfBMRsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:48:39 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3DF72190A;
-        Wed, 13 Feb 2019 17:48:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DB6C2086C;
+        Wed, 13 Feb 2019 17:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550080108;
-        bh=SS0vbOTs/1srZxpl61yK6HRHGQuJgvxT9uBD1u1g7g8=;
+        s=default; t=1550080118;
+        bh=6AmCtmnGNJ3L2GipYDhIPyDm6V003oBndPdtARin9yk=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=2JL+8D5YIFLBvLVlrvXP6ViyyH7kpowtchdZKoC7pTaEX5l8ECKxZUuFOpphbZaJr
-         sa5V8yUdvisv4KUrnfIE0ZrFxyZMqIyfF2vW/OUWPLlWwms4Q5454+NBtcWmXSwejt
-         b31B1YZE/2o3che2nLgcPVsdZhsUAJxJQ4W09pEI=
+        b=bVsc3OG0SnP0/SpS0+/TYYzuHsCrOhzE9pW8IvqE4KD1RylEPJUMKBsHq9jZc+mtX
+         nHhe8XfmS0W0E12WcyHo8hS4JNlQ+JT3XlFQrgTGLa1c4uRe//kQ+k/pXKppA79dyj
+         OgvOTTnotsm2YCSboeVEGInwcsHuvINc+qbPd+P4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,26 +45,26 @@ To:     Alexandre Torgue <alexandre.torgue@st.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         gabriel.fernandez@st.com
-In-Reply-To: <20190212135154.2733-5-gabriel.fernandez@st.com>
+In-Reply-To: <20190212135154.2733-6-gabriel.fernandez@st.com>
 User-Agent: alot/0.8
-Subject: Re: [PATCH 4/7] clk: stm32mp1: fix mcu divider table
-Message-ID: <155008010726.115909.10603966457383347348@swboyd.mtv.corp.google.com>
-References: <20190212135154.2733-1-gabriel.fernandez@st.com> <20190212135154.2733-5-gabriel.fernandez@st.com>
+Subject: Re: [PATCH 5/7] clk: stm32mp1: fix HSI divider flag
+Message-ID: <155008011784.115909.1034676212834412799@swboyd.mtv.corp.google.com>
+References: <20190212135154.2733-1-gabriel.fernandez@st.com> <20190212135154.2733-6-gabriel.fernandez@st.com>
 Cc:     linux-clk@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Gabriel Fernandez <gabriel.fernandez@st.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:48:27 -0800
+Date:   Wed, 13 Feb 2019 09:48:37 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting gabriel.fernandez@st.com (2019-02-12 05:51:51)
+Quoting gabriel.fernandez@st.com (2019-02-12 05:51:52)
 > From: Gabriel Fernandez <gabriel.fernandez@st.com>
 >=20
-> index 8: ck_mcuss divided by 256 (not 512)
+> The divider of HSI (clk-hsi-div) is power of two divider.
 >=20
 > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 
