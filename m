@@ -2,163 +2,151 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF714C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55D8C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733AA21904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7356821904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:04:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PkUPEjM3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rRNSYcyM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389366AbfBMHE3 (ORCPT
+        id S2387525AbfBMHCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:04:29 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:40481 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388560AbfBMHE2 (ORCPT
+        Wed, 13 Feb 2019 02:02:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50896 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729649AbfBMHCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:04:28 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190213070425epoutp023cf2fe13d2fba9977c9666b2ea7980a6~C2oAhGy0u2143421434epoutp02N
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 07:04:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190213070425epoutp023cf2fe13d2fba9977c9666b2ea7980a6~C2oAhGy0u2143421434epoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550041465;
-        bh=GcmfMIjCsjLAjFaF9yhH3fgJREV1qtbvxTQ2hHMHf1U=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=PkUPEjM3cTXVMqupqoh+P7NDSJJcjDUpewb3IatXHAQJhxueK+7sNHxffl2N9k8x/
-         9I+k6Rk867OFYkCXuPur1RDWi75xoZnItv68LWPetkmHgMB2eWRHYtGNC2kE5QaYyM
-         /t9oGyLDLe96wb4DZD6BWVnao2UM6W3ZHuriEIPM=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190213070422epcas1p3178d5a6fb094190f80053002b6437245~C2n9SwNf01396713967epcas1p3L;
-        Wed, 13 Feb 2019 07:04:22 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        45.45.04288.071C36C5; Wed, 13 Feb 2019 16:04:16 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213070415epcas1p26c32c7d372f5e492d3c25edeb2077cda~C2n3hj0bm1917519175epcas1p2a;
-        Wed, 13 Feb 2019 07:04:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190213070415epsmtrp1abcf92032192dbe45938c51e590e9955~C2n3gFBoW2580625806epsmtrp1J;
-        Wed, 13 Feb 2019 07:04:15 +0000 (GMT)
-X-AuditID: b6c32a38-bf7ff700000010c0-02-5c63c170d72d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0C.54.03971.F61C36C5; Wed, 13 Feb 2019 16:04:15 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190213070415epsmtip1f03acaf5a39650e981f69867fe9bedc3~C2n3QIR3M1869018690epsmtip1N;
-        Wed, 13 Feb 2019 07:04:15 +0000 (GMT)
-Subject: Re: [PATCH 1/4] dt-bindings: clock: exynos: Put CLK_UART3 in order
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <5f504ab8-33ca-4033-3d17-e2ba59bfd4ae@samsung.com>
-Date:   Wed, 13 Feb 2019 16:04:15 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Wed, 13 Feb 2019 02:02:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8ZZTvJaPw8PfKadwYBXqBlltfSltHnwtr+g4DE3dCCY=; b=rRNSYcyMxmzDkNMx3oHrGcp/n
+        pPD8CE++qGNHThZhR2Nr5HJEJEX4kXXKD8lsKOKFs3JiQ0Ga/ainxJiqQpPoC204MNm+MdxpaT25W
+        7+rDdIygaB9sa2Bzvi0JG0+DWS+0FWywolTlDWaO+XE582h2uzm5dSZwDnUMa4iHxUq80LIpMuTnw
+        Gg3BFCESqYr/p4+vvQbCiAVzaLZAgrZFJ480p8lEtUeWflW2BN2BFMWewLH4zeqTRoKuaWrPX0MtS
+        6mp5sSpTMhiJm377UoTKDchRIsxFZfQ7fHo69A5xnchljYxfHX2BsicFiXrnVZ5jgHmN9q66Dewr5
+        +XHpoL9eQ==;
+Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtoY2-0000Ej-3Z; Wed, 13 Feb 2019 07:01:34 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Olof Johansson <olof@lixom.net>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: use generic DMA mapping code in powerpc V7
+Date:   Wed, 13 Feb 2019 08:01:01 +0100
+Message-Id: <20190213070133.11259-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190212175052.6310-2-krzk@kernel.org>
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmgW7BweQYg479Yhbzj5xjteh//JrZ
-        4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyWHr9IpPFxVOuFq17j7BbHH7Tzmrx79pGFotV
-        u/4wOvB6rJm3htHj/Y1Wdo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwR2XbZKQmpqQWKaTm
-        JeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gAdq6RQlphTChQKSCwuVtK3
-        synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzIznj1dQZrwUyOilVH
-        9rM2MB5l62Lk5JAQMJH48KSbqYuRi0NIYAejxPJbS1ggnE+MEl9mTmGEcL4xSjyf+I8RpuXv
-        rhnsEIm9jBIXz+1nhXDeM0o8fnCZBaRKWMBb4nX/O7DBIgI3mSUOTO4H28gmoCWx/8UNMJtf
-        QFHi6o/HYGN5BewkDmz7DdbMIqAqsen9CbAaUYEIicO976BqBCVOznwCVsMJdMbtpZPB4swC
-        4hK3nsxngrDlJZq3zmYGWSwhMI9doqtrHjPE3S4Sq9Y8hfpBWOLV8S3sELaUxMv+Nii7WmLl
-        ySNsEM0djBJb9l9ghUgYS+xfOhloAwfQBk2J9bv0IZbxSbz72sMKEpYQ4JXoaBOCqFaWuPzg
-        LhOELSmxuL0TGtoeEleWtUHDdCOjxIEXO9gmMCrMQvLbLCT/zELyzyyEzQsYWVYxiqUWFOem
-        pxYbFpggR/gmRnBa1rLYwbjnnM8hRgEORiUe3hVHk2KEWBPLiitzDzFKcDArifDGb0yOEeJN
-        SaysSi3Kjy8qzUktPsRoCgz6icxSosn5wJyRVxJvaGpkbGxsYWJoZmpoqCTOu97BOUZIID2x
-        JDU7NbUgtQimj4mDU6qBcYX/3vSJDE6/04N91GxY54pvUNZomrryoe0q3W9J7d0HPTeGP1oR
-        XPpu3r2O9ifRkV8vfGHv7XY+tLOd93vIvw0nuo21Kgoq5H4/1J6VHmHHvfp5+oMphQV/w0UN
-        /l+VPuT2gGlK9+fXswRu/PqtpDHZvqff0fTA+9qftl8s54cwimUXNJStVWIpzkg01GIuKk4E
-        AITaX5nhAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsWy7bCSnG7+weQYg2ttphbzj5xjteh//JrZ
-        4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyWHr9IpPFxVOuFq17j7BbHH7Tzmrx79pGFotV
-        u/4wOvB6rJm3htHj/Y1Wdo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwR3HZpKTmZJalFunb
-        JXBlvPo6g7VgJkfFqiP7WRsYj7J1MXJySAiYSPzdNYMdxBYS2M0osWlXBURcUmLaxaPMXYwc
-        QLawxOHDxV2MXEAlbxkltk69BdYrLOAt8br/HRNIQkTgNrPE0ldt7BBVGxkldhw5DTaVTUBL
-        Yv+LG2Ad/AKKEld/PGYEsXkF7CQObPvNAmKzCKhKbHp/AqxGVCBC4uPTfUwQNYISJ2c+Aavh
-        BLr09tLJYL3MAuoSf+ZdYoawxSVuPZnPBGHLSzRvnc08gVFoFpL2WUhaZiFpmYWkZQEjyypG
-        ydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOAY1NLcwXh5SfwhRgEORiUe3hVHk2KEWBPL
-        iitzDzFKcDArifDGb0yOEeJNSaysSi3Kjy8qzUktPsQozcGiJM77NO9YpJBAemJJanZqakFq
-        EUyWiYNTqoExgOnbqmgl4RC7Oa4ln4L09e80bfNueB6d96nz2kGPm/c2S5atkA1s+jTf9Ih3
-        34a/u048aOhrzaxiPvnX5tNDx9q6+4xXVNfNPPyzpW12b8A+0eWVavzC+ao7p/0ufHMj9qJQ
-        fMMWnmtzD3RolwavnrnJ11g+aK9eGPu8bxZJPbFcU21ZL9xQYinOSDTUYi4qTgQA3lAJrb0C
-        AAA=
-X-CMS-MailID: 20190213070415epcas1p26c32c7d372f5e492d3c25edeb2077cda
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190212175224epcas5p2f8735fb888b2fae241eb1d6c153a1d88
-References: <20190212175052.6310-1-krzk@kernel.org>
-        <CGME20190212175224epcas5p2f8735fb888b2fae241eb1d6c153a1d88@epcas5p2.samsung.com>
-        <20190212175052.6310-2-krzk@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi all,
 
-On 19. 2. 13. 오전 2:50, Krzysztof Kozlowski wrote:
-> Order the CLK_UART3 by ID.  No change in functionality.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/dt-bindings/clock/exynos5410.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-> index f179eabbcdb7..5b911ede0534 100644
-> --- a/include/dt-bindings/clock/exynos5410.h
-> +++ b/include/dt-bindings/clock/exynos5410.h
-> @@ -36,6 +36,7 @@
->  #define CLK_UART0		257
->  #define CLK_UART1		258
->  #define CLK_UART2		259
-> +#define CLK_UART3		260
->  #define CLK_I2C0		261
->  #define CLK_I2C1		262
->  #define CLK_I2C2		263
-> @@ -44,7 +45,6 @@
->  #define CLK_USI1		266
->  #define CLK_USI2		267
->  #define CLK_USI3		268
-> -#define CLK_UART3		260
->  #define CLK_PWM			279
->  #define CLK_MCT			315
->  #define CLK_WDT			316
-> 
+this series switches the powerpc port to use the generic swiotlb and
+noncoherent dma ops, and to use more generic code for the coherent
+direct mapping, as well as removing a lot of dead code.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+As this series is very large and depends on the dma-mapping tree I've
+also published a git tree:
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+    git://git.infradead.org/users/hch/misc.git powerpc-dma.7
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.7
+
+Thanks a lot to Christian Zigotzky who spent a lot of time testing
+iterations on pasemi and FSL boards!
+
+
+Changes since v4:
+ - rebased on top of the latests powerpc/next tree
+ - fix the DART IOMMU bypass selection
+ - remove the return value from arch_dma_set_mask, which was done
+   incorrectly and isn't actually needed.
+ - add a new patch to remove swiotlb_dma_supported
+ - add a new patch to set a dma mask in the pasemi ethernet driver,
+   given that we now validate it
+ - add a new patch to fix a ZONE_DMA32 assumption in the dma-direct
+   patch
+ - split up a few patches to improve bisectability
+ (v5 and v6 were never posted)
+
+Changes since v3:
+ - rebase on the powerpc fixes tree
+ - add a new patch to actually make the baseline amigaone config
+   configure without warnings
+ - only use ZONE_DMA for 64-bit embedded CPUs, on pseries an IOMMU is
+   always present
+ - fix compile in mem.c for one configuration
+ - drop the full npu removal for now, will be resent separately
+ - a few git bisection fixes
+
+The changes since v1 are to big to list and v2 was not posted in public.
+
+ arch/powerpc/kernel/dma.c                       |  362 ------------------------
+ b/arch/powerpc/Kconfig                          |    5 
+ b/arch/powerpc/include/asm/device.h             |   10 
+ b/arch/powerpc/include/asm/dma-direct.h         |   18 -
+ b/arch/powerpc/include/asm/dma-mapping.h        |   92 ------
+ b/arch/powerpc/include/asm/iommu.h              |   17 +
+ b/arch/powerpc/include/asm/machdep.h            |    4 
+ b/arch/powerpc/include/asm/pci-bridge.h         |    5 
+ b/arch/powerpc/include/asm/pci.h                |    2 
+ b/arch/powerpc/include/asm/pgtable.h            |    1 
+ b/arch/powerpc/include/asm/swiotlb.h            |    5 
+ b/arch/powerpc/kernel/Makefile                  |    3 
+ b/arch/powerpc/kernel/dma-iommu.c               |   75 ++++
+ b/arch/powerpc/kernel/dma-mask.c                |   12 
+ b/arch/powerpc/kernel/dma-swiotlb.c             |   89 -----
+ b/arch/powerpc/kernel/pci-common.c              |   10 
+ b/arch/powerpc/kernel/setup-common.c            |    1 
+ b/arch/powerpc/mm/dma-noncoherent.c             |   40 +-
+ b/arch/powerpc/mm/mem.c                         |   22 -
+ b/arch/powerpc/platforms/44x/ppc476.c           |    1 
+ b/arch/powerpc/platforms/44x/warp.c             |    2 
+ b/arch/powerpc/platforms/85xx/corenet_generic.c |    5 
+ b/arch/powerpc/platforms/85xx/ge_imp3a.c        |    2 
+ b/arch/powerpc/platforms/85xx/mpc8536_ds.c      |    2 
+ b/arch/powerpc/platforms/85xx/mpc85xx_ds.c      |    4 
+ b/arch/powerpc/platforms/85xx/mpc85xx_mds.c     |    4 
+ b/arch/powerpc/platforms/85xx/p1010rdb.c        |    1 
+ b/arch/powerpc/platforms/85xx/p1022_ds.c        |    2 
+ b/arch/powerpc/platforms/85xx/p1022_rdk.c       |    2 
+ b/arch/powerpc/platforms/85xx/qemu_e500.c       |    1 
+ b/arch/powerpc/platforms/86xx/mpc86xx_hpcn.c    |    1 
+ b/arch/powerpc/platforms/Kconfig.cputype        |    3 
+ b/arch/powerpc/platforms/cell/iommu.c           |  172 +----------
+ b/arch/powerpc/platforms/pasemi/iommu.c         |    2 
+ b/arch/powerpc/platforms/pasemi/setup.c         |   51 ---
+ b/arch/powerpc/platforms/powernv/npu-dma.c      |    2 
+ b/arch/powerpc/platforms/powernv/pci-ioda.c     |  132 +-------
+ b/arch/powerpc/platforms/pseries/iommu.c        |   99 +-----
+ b/arch/powerpc/platforms/pseries/vio.c          |   95 ++----
+ b/arch/powerpc/sysdev/dart_iommu.c              |   58 +--
+ b/arch/powerpc/sysdev/fsl_pci.c                 |   25 -
+ b/drivers/misc/cxl/vphb.c                       |    3 
+ b/drivers/net/ethernet/pasemi/pasemi_mac.c      |    1 
+ b/include/linux/swiotlb.h                       |    3 
+ b/kernel/dma/Kconfig                            |    3 
+ b/kernel/dma/direct.c                           |    3 
+ b/kernel/dma/mapping.c                          |   11 
+ b/kernel/dma/swiotlb.c                          |   12 
+ 48 files changed, 317 insertions(+), 1158 deletions(-)
