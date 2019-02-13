@@ -2,132 +2,90 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C516C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA942C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57943222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6433222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:25:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fuXDnt7A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hl26d5gx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbfBMGZX (ORCPT
+        id S1732764AbfBMGZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 01:25:23 -0500
-Received: from ozlabs.org ([203.11.71.1]:44113 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbfBMGZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 01:25:23 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zqJc3Kjkz9s3l;
-        Wed, 13 Feb 2019 17:25:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550039120;
-        bh=KH5ptKAplq50O363m3RTOdOzo53uw8V99i7z5GP+wN4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fuXDnt7An8WockVzHEwAX7E6EP5S4Zh3xOvRmDpEXZHXgvazUoFNG4egVR+l/QwMR
-         34EUV1rsxHOmFSvrd5/TRwEEWDZXyN7G0nvqW48nS28rQhHJouGEKkIVJohOB3FyL/
-         Yt+ST5i9HvAoxXHu41DzFJekmoTyXelawOlapbWnpWZrQh5FybUfIQe4yXks9xeyzE
-         UvU1P2C91UJZFWNMNIkLqyWe1S3qy1RYXWUoyL5aIjjTqxdiwtBb61fe89/NjWDoSz
-         +pAz87ApK63Cj3E1/xPbvQnns3qsFb+A7ZeDEABSLaLraqtlB6zCQXwEhXG1DcM2sC
-         iWWnkLcAcynUw==
-Date:   Wed, 13 Feb 2019 17:25:18 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190213172518.50d4fec7@canb.auug.org.au>
+        Wed, 13 Feb 2019 01:25:41 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35931 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfBMGZk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 01:25:40 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o125so726758qkf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 22:25:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9td7SaZowoxwpxDBzINQYd3AMI0Umbla/WBrP6WTjrE=;
+        b=Hl26d5gxMg0jpbhaN2Ia64nmuwMGxMNgN1s81jWmq1pgpl0ydsixKVCGBdZ5OINGlG
+         s/Npj1NExXDo3iPWeiQ1Tijid73noBfsL2/F8p2XXABK2FpPcgriCV9NbGwmlow7UZ97
+         nKuvS/DolnYHnP7bMeayVLu5US9zQILiyOHlJ0I5wdfJLDJBBInAYNbxyrLFybQHn3YQ
+         MNuwooUcZ95wT3E6wFeIezQWEbO5EqIu0d5gtcY+uuLw0BRhsfJINrHTKlAgKOEslCff
+         uabBH4QMsTJGDtX8RzPIMK/bPjOMl3e3NUjnu1Jv9cnSHYDnRsWqy0tXC2r4CV6OjVlm
+         zNbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9td7SaZowoxwpxDBzINQYd3AMI0Umbla/WBrP6WTjrE=;
+        b=Ap8MdRh+fzS57/9dZ+Vk2oD5TrYZusiy5Xy2cSVJ6OAAmluGvsVXMHagxE9EFOxwNE
+         Q9OROcHey69UEGrvMqEC4rN0Mv4pnt3FftP18WENdFCWzfrh0Th+m7bgkQRaRTQEoPBb
+         D2OnUoA5YDu5w//9VrXxN2KfGaeeciiwVIbaRPjyNowGSB0E6JWevjbJb8VN8SUmZjZU
+         hlZRxo606KgZJ/ZT6fjAa9fKGCoUmGoK3K3QkmUKX3gm0U2ab3FxkHuvNAxeegJ5RRKW
+         4a+aB0dJLAAT3SgoJ2hJx+br6bIUYJDtdDqwxor6d8IGGPR+D0EoF9G2sP8YwyNBvm8A
+         LYrA==
+X-Gm-Message-State: AHQUAuaTwBrtWnFiEsxLELUIYJcwlQ/XqoH3utoqGv8wUct3cdNlEW0P
+        7bu1vLZbkPELj+aS7p5IPU1rjheu7NF3ejpsZLo=
+X-Google-Smtp-Source: AHgI3IZwmQ1rV1Nap5BzztBmJUilEi8167VG4sAdzS/VYCwYH2NJo5Jt0+K/+ysJzqL8jqoPrkqsDBrO3G9uVw6Orrs=
+X-Received: by 2002:a37:c554:: with SMTP id p81mr5349380qki.337.1550039139893;
+ Tue, 12 Feb 2019 22:25:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YHOchZ/0xpMrBCruzfM58WQ"; protocol="application/pgp-signature"
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com> <20190213004804.GA2992@jagdpanzerIV>
+In-Reply-To: <20190213004804.GA2992@jagdpanzerIV>
+From:   xiang xiao <xiaoxiang781216@gmail.com>
+Date:   Wed, 13 Feb 2019 14:25:20 +0800
+Message-ID: <CAH2Cfb909YCOtb+iob18QhY7Ze8AP0-5Ofdkr7i+xRVJi-yk1Q@mail.gmail.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YHOchZ/0xpMrBCruzfM58WQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 13, 2019 at 8:48 AM Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+>
+> On (02/13/19 02:11), Xiang Xiao wrote:
+> >
+> > Because log may already add the timestamp sometime
+> >
+>
+> We have module_param(printk_time) which enables/disables
+> timestamps. And a .config option. And a kernel boot param.
+> Why would you want KERN_NOTIME?
+>
 
-Hi Andrew,
+Because I need control whether append timestamp per message:
+1.message come from kernel add the timestamp
+2.message come from remote skip the timestamp
+Like my previous reply case.
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-fs/io_uring.c: In function 'io_async_list_note':
-fs/io_uring.c:931:16: error: 'VM_MAX_READAHEAD' undeclared (first use in th=
-is function); did you mean 'VM_MAYREAD'?
-    max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
-                ^~~~~~~~~~~~~~~~
-                VM_MAYREAD
-
-Caused by commit
-
-  4c416502dae2 ("mm: Refactor readahead defines in mm.h")
-
-interacting with commit
-
-  6eff5fa16a2e ("io_uring: allow workqueue item to handle multiple buffered=
- requests")
-
-from the block tree.
-
-I have applied this merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 13 Feb 2019 17:21:44 +1100
-Subject: [PATCH] io_uring: fix up for readahead defines refactor
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1ff4acc9654d..c8272bc96d84 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -928,7 +928,7 @@ static void io_async_list_note(int rw, struct io_kiocb =
-*req, size_t len)
- 		/* Use 8x RA size as a decent limiter for both reads/writes */
- 		max_pages =3D filp->f_ra.ra_pages;
- 		if (!max_pages)
--			max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
-+			max_pages =3D VM_READAHEAD_PAGES;
- 		max_pages *=3D 8;
-=20
- 		/* If max pages are exceeded, reset the state */
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YHOchZ/0xpMrBCruzfM58WQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjuE4ACgkQAVBC80lX
-0GxwaAf/bYpw9p+xNQbhPOLksKtY6LePxfnwcuBePysjuh9uWNt92N38var6cTXk
-rXCfhfZmEvU54aNTWrMtKtDUpGoR2sEOdRJEK+qC1jq2XCudxl0gRO6FA2Do+lrh
-oRqwR9umXK4mGeeLLDEP+i6MZDL9hZNFeztKcqx6fM6VhL6Gp1QnnOwSWgY8gIQL
-ZWZMl2xMbsemx6V5TFN8ODSeQhTXvmMJZPDsJ5asPu+8dV01L7onpar9e8AX1G7K
-6d7hf3/VzJMuQiENEpdpICPcwoUl85vajf/lWechpXf63ZP3hPWXh60fzaJIP6TB
-tIsreEmvniFT/WegiNguVeSCobEDfA==
-=tyJJ
------END PGP SIGNATURE-----
-
---Sig_/YHOchZ/0xpMrBCruzfM58WQ--
+>         -ss
