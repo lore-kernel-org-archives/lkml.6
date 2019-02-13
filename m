@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DB6C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3652FC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0875320835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDA7820835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026717;
-	bh=Gd0NWGrB8XbPit8PEcqzaJDHvFWP3xj182ausYKXIOc=;
+	s=default; t=1550026732;
+	bh=AOblHNB1I4m5T4xHNu/ReneSaRK7xRaUSgz5L7AoJbs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s2ZYKtquF3Et9Xcta/ZJ41WfWzIg/niF9pNq0Yb/uk+wxy0jrJGDKpk+lTNWBTFh9
-	 2/rvy3t0GzFM2NsRKIpK4x5Sq+Bq463oL2ekAlyahDTiNWUVyavWueTO9F6eQMKBtC
-	 heCRxcXJrQn5+VJNNNet/vGy8fiC/dkxWaOQRhYE=
+	b=WDXCNZcBqB9H4ze4Q2+KNy8aZJhBuJsuJCQoVODWXOK8/MrD+F3u35sgU6Nj2Y+1c
+	 KnWd7T3g8G1lVINdlDiG4iwEt9jQatp30tQIjD3Lgje1C9sbfvHyn9J3JLCQZhtm0c
+	 lMj3zyr4I9TZxlraPgnJL4N3DBYKcOJryS8Jt+VI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbfBMC6f (ORCPT
+        id S2390204AbfBMC6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:58:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:58:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388144AbfBMCg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:29 -0500
+        id S1732102AbfBMCg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:36:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63B73222C9;
-        Wed, 13 Feb 2019 02:36:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3518222CC;
+        Wed, 13 Feb 2019 02:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025389;
-        bh=Gd0NWGrB8XbPit8PEcqzaJDHvFWP3xj182ausYKXIOc=;
+        s=default; t=1550025387;
+        bh=AOblHNB1I4m5T4xHNu/ReneSaRK7xRaUSgz5L7AoJbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bzPJkCdsPmBBS6JPZe2/6xW4wumOVBT4uzMAMzx1Poj7i8be5yRhac6bGQDWzZXA3
-         jDgaPjYxlZQf5W2bJM8fnBRHhGGPfqfB9BnCYE+I+5Uhu/Z70wc+WZKqYUVAQYqk6d
-         Z8+Q6O7YX6yEXIUmAKb/CivIMTtYqfna9p+T12gk=
+        b=0sxQ81Hn51U5aNlbHiHRwueH2dsoO4W//7MkHJqZCVb9ipldW+145UUfrwQ08fCt0
+         Ux7EH1lQRktSj92/xUTJUV3cdhEOgGWKjW+sM3Kvuy/uRFYIz/iG3jG2YRED03VYti
+         6D8ldlTMvFZ08uOa23LWhg8i0ZhZIuOiqzuQJEi4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 097/105] dpaa_eth: NETIF_F_LLTX requires to do our own update of trans_start
-Date:   Tue, 12 Feb 2019 21:33:28 -0500
-Message-Id: <20190213023336.19019-97-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 096/105] bpf: fix SO_MAX_PACING_RATE to support TCP internal pacing
+Date:   Tue, 12 Feb 2019 21:33:27 -0500
+Message-Id: <20190213023336.19019-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,44 +60,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit c6ddfb9a963f0cac0f7365acfc87f3f3b33a3b69 ]
+[ Upstream commit e224c390a6259c529f7b2a6bd215a087b3344f5c ]
 
-As txq_trans_update() only updates trans_start when the lock is held,
-trans_start does not get updated if NETIF_F_LLTX is declared.
+If sch_fq packet scheduler is not used, TCP can fallback to
+internal pacing, but this requires sk_pacing_status to
+be properly set.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 8c4b4c7e9ff0 ("bpf: Add setsockopt helper function to bpf")
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Lawrence Brakmo <brakmo@fb.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ net/core/filter.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index 6e0f47f2c8a3..3e53be0fcd7e 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2051,6 +2051,7 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 	bool nonlinear = skb_is_nonlinear(skb);
- 	struct rtnl_link_stats64 *percpu_stats;
- 	struct dpaa_percpu_priv *percpu_priv;
-+	struct netdev_queue *txq;
- 	struct dpaa_priv *priv;
- 	struct qm_fd fd;
- 	int offset = 0;
-@@ -2100,6 +2101,11 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 	if (unlikely(err < 0))
- 		goto skb_to_fd_failed;
- 
-+	txq = netdev_get_tx_queue(net_dev, queue_mapping);
-+
-+	/* LLTX requires to do our own update of trans_start */
-+	txq->trans_start = jiffies;
-+
- 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
- 		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index e176b335ddc0..16350f8c8815 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -3935,6 +3935,10 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
+ 			sk->sk_sndbuf = max_t(int, val * 2, SOCK_MIN_SNDBUF);
+ 			break;
+ 		case SO_MAX_PACING_RATE: /* 32bit version */
++			if (val != ~0U)
++				cmpxchg(&sk->sk_pacing_status,
++					SK_PACING_NONE,
++					SK_PACING_NEEDED);
+ 			sk->sk_max_pacing_rate = (val == ~0U) ? ~0UL : val;
+ 			sk->sk_pacing_rate = min(sk->sk_pacing_rate,
+ 						 sk->sk_max_pacing_rate);
 -- 
 2.19.1
 
