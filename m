@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A601EC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A71C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ADB0222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 922DD222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025634;
-	bh=xgW7S3Frt+Rjjpxob43kYoM3ZR7NK8bSAeEG0hIZpcQ=;
+	s=default; t=1550025637;
+	bh=i0Gho9LR7kLGRs0OK5eAqk15IXsGCyyoqPzUUEUFq3c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xPVb55JSlclHxgyS4Lp/BFAZu+w07hicyLWBzQ9Q3HKIgyiq28W0Lp74DHyH7kt+V
-	 HQV4UxGr/uq2y2YNGl2OiNy3S1ZAt5sqmgo8lq53Ws6JpK55iGMHYXkbbmuxMbdV9p
-	 yD7QQMmXQ1PyqH8sIAYTlYubcZdhQ+7xFgln2Hs4=
+	b=U4t6Rbt/ZMmVJgqLC9tHgngGGkvfYm7QMllGckZH+5NzWkKN087isbK69jZc4UKfM
+	 hubwkTDDZ0GYWTbJQibqqAqrSP5VL5nHnUIfSWYEMoYaxQhqFAuQPRYyMb59UJo1D3
+	 jeiRAfeFie8QgjkbKEtFYEvvGu5CszRXEpdURdLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732136AbfBMCkd (ORCPT
+        id S2389037AbfBMCkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:40:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44200 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:40:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389001AbfBMCk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:29 -0500
+        id S2389010AbfBMCkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EFB4222C9;
-        Wed, 13 Feb 2019 02:40:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F902222C2;
+        Wed, 13 Feb 2019 02:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025629;
-        bh=xgW7S3Frt+Rjjpxob43kYoM3ZR7NK8bSAeEG0hIZpcQ=;
+        s=default; t=1550025630;
+        bh=i0Gho9LR7kLGRs0OK5eAqk15IXsGCyyoqPzUUEUFq3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dp4dbhzt1qUmDXwrmVc4nBLiYX6+OljiB3uO0Qk81tJthg5AF3sIgQE2ZSXF0/WTm
-         d0Vu9PYSWoXqbw8E8BRjnikPS2YlWBrkR1eKRNloKeJ62Zk/ryNY4004nbY4Cokptj
-         lsQgECYH2OmhqtTWgHfTaKvBkkdbi0FvnSmbtYys=
+        b=BQINJi8rO5vVqx9YAOwd9pKRCaKpS8yKNE37U9KmTUfRsdQE242bWGay3M46gcStq
+         TBUuoeKqVYOcW5I2cPbXETOZ9Dc9F1L5u8gUO9GCfphUq/hi6s0f/47j89FCuHz7ZZ
+         hzaRlslN5mc+3XRbhBw071yz6n7Fhpk/Bo4NGcAg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Talons Lee <xin.li@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 26/34] always clear the X2APIC_ENABLE bit for PV guest
-Date:   Tue, 12 Feb 2019 21:39:44 -0500
-Message-Id: <20190213023952.21311-26-sashal@kernel.org>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 27/34] drm/meson: add missing of_node_put
+Date:   Tue, 12 Feb 2019 21:39:45 -0500
+Message-Id: <20190213023952.21311-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023952.21311-1-sashal@kernel.org>
 References: <20190213023952.21311-1-sashal@kernel.org>
@@ -57,39 +58,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Talons Lee <xin.li@citrix.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 5268c8f39e0efef81af2aaed160272d9eb507beb ]
+[ Upstream commit f672b93e4a0a4947d2e1103ed8780e01e13eadb6 ]
 
-Commit e657fcc clears cpu capability bit instead of using fake cpuid
-value, the EXTD should always be off for PV guest without depending
-on cpuid value. So remove the cpuid check in xen_read_msr_safe() to
-always clear the X2APIC_ENABLE bit.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-Signed-off-by: Talons Lee <xin.li@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+An of_node_put is also needed when meson_probe_remote completes.  This was
+present at the recursive call, but not in the call from meson_drv_probe.
+
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/xen/enlighten_pv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/meson/meson_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index fd173e6425cc..481d7920ea24 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -900,10 +900,7 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
- 	val = native_read_msr_safe(msr, err);
- 	switch (msr) {
- 	case MSR_IA32_APICBASE:
--#ifdef CONFIG_X86_X2APIC
--		if (!(cpuid_ecx(1) & (1 << (X86_FEATURE_X2APIC & 31))))
--#endif
--			val &= ~X2APIC_ENABLE;
-+		val &= ~X2APIC_ENABLE;
- 		break;
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 4ad8223c60ea..5deb44ac6791 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -345,8 +345,10 @@ static int meson_probe_remote(struct platform_device *pdev,
+ 		remote_node = of_graph_get_remote_port_parent(ep);
+ 		if (!remote_node ||
+ 		    remote_node == parent || /* Ignore parent endpoint */
+-		    !of_device_is_available(remote_node))
++		    !of_device_is_available(remote_node)) {
++			of_node_put(remote_node);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, match, remote, remote_node);
+ 
+@@ -365,10 +367,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+ 
+ 	for_each_endpoint_of_node(np, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote || !of_device_is_available(remote))
++		if (!remote || !of_device_is_available(remote)) {
++			of_node_put(remote);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, &match, np, remote);
++		of_node_put(remote);
  	}
- 	return val;
+ 
+ 	if (count && !match)
 -- 
 2.19.1
 
