@@ -6,77 +6,154 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F66C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EFBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 661A2222A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0177222A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395200AbfBMXGd (ORCPT
+        id S2395298AbfBMXGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:06:33 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58234 "EHLO shell.v3.sk"
+        Wed, 13 Feb 2019 18:06:50 -0500
+Received: from mga05.intel.com ([192.55.52.43]:40570 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389971AbfBMXGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:06:31 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D3C36100E98;
-        Thu, 14 Feb 2019 00:06:28 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S3SJCkpOvypg; Thu, 14 Feb 2019 00:06:26 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 42FF8100E9A;
-        Thu, 14 Feb 2019 00:06:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id VRYAobHfSJnL; Thu, 14 Feb 2019 00:06:25 +0100 (CET)
-Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 70B95100E98;
-        Thu, 14 Feb 2019 00:06:25 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH] gpio: pxa: avoid attempting to set pin direction via pinctrl on MMP2
-Date:   Thu, 14 Feb 2019 00:06:18 +0100
-Message-Id: <20190213230618.1907-1-lkundrak@v3.sk>
+        id S2392790AbfBMXFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 18:05:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 15:05:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
+   d="scan'208";a="138415618"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga001.jf.intel.com with ESMTP; 13 Feb 2019 15:05:24 -0800
+From:   ira.weiny@intel.com
+To:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, kvm@vger.kernel.org,
+        linux-fpga@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, xen-devel@lists.xenproject.org,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        ceph-devel@vger.kernel.org, rds-devel@oss.oracle.com
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Joerg Roedel <joro@8bytes.org>, Wu Hao <hao.wu@intel.com>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Christian Benvenuti <benve@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH V2 4/7] mm/gup: Add FOLL_LONGTERM capability to GUP fast
+Date:   Wed, 13 Feb 2019 15:04:52 -0800
+Message-Id: <20190213230455.5605-5-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190213230455.5605-1-ira.weiny@intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190213230455.5605-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to PXA3xx, pinctrl-single can't set pin direction on MMP2 eithe=
-r.
-See also: commit 9dabfdd84bdfa ("gpio: pxa: disable pinctrl calls for
-PXA3xx")
+From: Ira Weiny <ira.weiny@intel.com>
 
-Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and reque=
-st")
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+DAX pages were previously unprotected from longterm pins when users
+called get_user_pages_fast().
+
+Use the new FOLL_LONGTERM flag to check for DEVMAP pages and fall
+back to regular GUP processing if a DEVMAP page is encountered.
+
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/gpio/gpio-pxa.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/gup.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index e9600b556f39..bcc6be4a5cb2 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -245,6 +245,7 @@ static bool pxa_gpio_has_pinctrl(void)
- {
- 	switch (gpio_type) {
- 	case PXA3XX_GPIO:
-+	case MMP2_GPIO:
- 		return false;
-=20
- 	default:
---=20
+diff --git a/mm/gup.c b/mm/gup.c
+index 6f32d36b3c5b..f7e759c523bb 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1439,6 +1439,9 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+ 			goto pte_unmap;
+ 
+ 		if (pte_devmap(pte)) {
++			if (unlikely(flags & FOLL_LONGTERM))
++				goto pte_unmap;
++
+ 			pgmap = get_dev_pagemap(pte_pfn(pte), pgmap);
+ 			if (unlikely(!pgmap)) {
+ 				undo_dev_pagemap(nr, nr_start, pages);
+@@ -1578,8 +1581,11 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
+ 		return 0;
+ 
+-	if (pmd_devmap(orig))
++	if (pmd_devmap(orig)) {
++		if (unlikely(flags & FOLL_LONGTERM))
++			return 0;
+ 		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
++	}
+ 
+ 	refs = 0;
+ 	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+@@ -1904,8 +1910,20 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+ 		start += nr << PAGE_SHIFT;
+ 		pages += nr;
+ 
+-		ret = get_user_pages_unlocked(start, nr_pages - nr, pages,
+-					      gup_flags);
++		if (gup_flags & FOLL_LONGTERM) {
++			down_read(&current->mm->mmap_sem);
++			ret = __gup_longterm_locked(current, current->mm,
++						    start, nr_pages - nr,
++						    pages, NULL, gup_flags);
++			up_read(&current->mm->mmap_sem);
++		} else {
++			/*
++			 * retain FAULT_FOLL_ALLOW_RETRY optimization if
++			 * possible
++			 */
++			ret = get_user_pages_unlocked(start, nr_pages - nr,
++						      pages, gup_flags);
++		}
+ 
+ 		/* Have to be a bit careful with return values */
+ 		if (nr > 0) {
+-- 
 2.20.1
 
