@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B859C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDE4C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220B7222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850C2222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390159AbfBMHqX (ORCPT
+        id S2390185AbfBMHqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:46:23 -0500
+        Wed, 13 Feb 2019 02:46:30 -0500
 Received: from mga09.intel.com ([134.134.136.24]:39706 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390130AbfBMHqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:46:20 -0500
+        id S2390048AbfBMHqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:46:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:46:19 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:46:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="146426150"
+   d="scan'208";a="146426129"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2019 23:46:17 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2019 23:46:15 -0800
 From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 9/9] device connection: Find device connections also from device graphs
-Date:   Wed, 13 Feb 2019 10:45:57 +0300
-Message-Id: <20190213074557.66028-10-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v3 8/9] device connection: Prepare support for firmware described connections
+Date:   Wed, 13 Feb 2019 10:45:56 +0300
+Message-Id: <20190213074557.66028-9-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
 References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
@@ -47,9 +47,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If connections between devices are described in OF graph or
-ACPI device graph, we can find them by using the
-fwnode_graph_*() functions.
+When the connections are defined in firmware, struct
+device_connection will have the fwnode member pointing to
+the device node (struct fwnode_handle) of the requested
+device. The endpoint member for the device names will not be
+used at all in that case.
 
 Acked-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
@@ -57,77 +59,50 @@ Reviewed-by: Jun Li <jun.li@nxp.com>
 Tested-by: Jun Li <jun.li@nxp.com>
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/base/devcon.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+ drivers/base/devcon.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 858b8d2f6ef8..04db9ae235e4 100644
+index d427e806cd73..858b8d2f6ef8 100644
 --- a/drivers/base/devcon.c
 +++ b/drivers/base/devcon.c
-@@ -7,10 +7,37 @@
-  */
+@@ -75,12 +75,36 @@ static struct bus_type *generic_match_buses[] = {
+ 	NULL,
+ };
  
- #include <linux/device.h>
-+#include <linux/property.h>
- 
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
-+typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
-+				   void *data);
-+
-+static void *
-+fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
-+			  void *data, devcon_match_fn_t match)
++static int device_fwnode_match(struct device *dev, void *fwnode)
 +{
-+	struct device_connection con = { .id = con_id };
-+	struct fwnode_handle *ep;
-+	void *ret;
++	return dev_fwnode(dev) == fwnode;
++}
 +
-+	fwnode_graph_for_each_endpoint(fwnode, ep) {
-+		con.fwnode = fwnode_graph_get_remote_port_parent(ep);
-+		if (!fwnode_device_is_available(con.fwnode))
-+			continue;
++static void *device_connection_fwnode_match(struct device_connection *con)
++{
++	struct bus_type *bus;
++	struct device *dev;
 +
-+		ret = match(&con, -1, data);
-+		fwnode_handle_put(con.fwnode);
-+		if (ret) {
-+			fwnode_handle_put(ep);
-+			return ret;
-+		}
++	for (bus = generic_match_buses[0]; bus; bus++) {
++		dev = bus_find_device(bus, NULL, (void *)con->fwnode,
++				      device_fwnode_match);
++		if (dev && !strncmp(dev_name(dev), con->id, strlen(con->id)))
++			return dev;
++
++		put_device(dev);
 +	}
 +	return NULL;
 +}
 +
- /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -23,10 +50,9 @@ static LIST_HEAD(devcon_list);
-  * caller is expecting to be returned.
-  */
- void *device_connection_find_match(struct device *dev, const char *con_id,
--			       void *data,
--			       void *(*match)(struct device_connection *con,
--					      int ep, void *data))
-+				   void *data, devcon_match_fn_t match)
+ /* This tries to find the device from the most common bus types by name. */
+ static void *generic_match(struct device_connection *con, int ep, void *data)
  {
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	const char *devname = dev_name(dev);
- 	struct device_connection *con;
- 	void *ret = NULL;
-@@ -35,6 +61,12 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
+ 	struct bus_type *bus;
+ 	struct device *dev;
  
-+	if (fwnode) {
-+		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+		if (ret)
-+			return ret;
-+	}
++	if (con->fwnode)
++		return device_connection_fwnode_match(con);
 +
- 	mutex_lock(&devcon_lock);
- 
- 	list_for_each_entry(con, &devcon_list, list) {
+ 	for (bus = generic_match_buses[0]; bus; bus++) {
+ 		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
+ 		if (dev)
 -- 
 2.20.1
 
