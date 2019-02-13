@@ -3,96 +3,158 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA42C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE52C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29538207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB8052075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732852AbfBMNu5 convert rfc822-to-8bit (ORCPT
+        id S2387705AbfBMNvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:50:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727894AbfBMNu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:50:57 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4B8A2075D;
-        Wed, 13 Feb 2019 13:50:55 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 08:50:54 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     John Sperbeck <jsperbeck@google.com>
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com
-Subject: Re: [PATCH v3] i2c: core-smbus: don't trace smbus_reply data on
- errors
-Message-ID: <20190213085054.1a63c95a@gandalf.local.home>
-In-Reply-To: <20190213034057.244716-1-jsperbeck@google.com>
-References: <20190213034057.244716-1-jsperbeck@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 13 Feb 2019 08:51:39 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:39721 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727452AbfBMNvi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 08:51:38 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07513279|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07426;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.Dy6Id.T_1550065891;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.Dy6Id.T_1550065891)
+          by smtp.aliyun-inc.com(10.147.43.230);
+          Wed, 13 Feb 2019 21:51:32 +0800
+From:   liaoweixiong <liaoweixiong@allwinnertech.com>
+Subject: Re: [RFC v7 2/5] dt-bindings: pstore-block: new support for blkoops
+To:     Rob Herring <robh@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1548245116-6360-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1548245116-6360-3-git-send-email-liaoweixiong@allwinnertech.com>
+ <20190130160707.GA31844@bogus>
+Message-ID: <ab72f73d-b7ea-4688-f768-509d55964be0@allwinnertech.com>
+Date:   Wed, 13 Feb 2019 21:52:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190130160707.GA31844@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 19:40:57 -0800
-John Sperbeck <jsperbeck@google.com> wrote:
 
-> If an smbus transfer fails, there's no guarantee that the output
-> buffer was written.  So, avoid trying to show the output buffer when
-> tracing after an error.  This was 'mostly harmless', but would trip
-> up kasan checking if left-over cruft in byte 0 is a large length,
-> causing us to read from unwritten memory.
-
-From a tracing viewpoint:
-
- Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
+On 2019-01-31 00:07, Rob Herring wrote:> On Wed, Jan 23, 2019 at
+08:05:13PM +0800, liaoweixiong wrote:
+>> Create DT binding document for blkoops.
+>>
+>> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+>> ---
+>>  .../devicetree/bindings/pstore-block/blkoops.txt   | 32 ++++++++++++++++++++++
 > 
-> Signed-off-by: John Sperbeck <jsperbeck@google.com>
-> ---
->  drivers/i2c/i2c-core-smbus.c | 2 +-
->  include/trace/events/smbus.h | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
+> /bindings/pstore/...
 > 
-> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-> index 9cd66cabb84f..132119112596 100644
-> --- a/drivers/i2c/i2c-core-smbus.c
-> +++ b/drivers/i2c/i2c-core-smbus.c
-> @@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
->  trace:
->  	/* If enabled, the reply tracepoint is conditional on read_write. */
->  	trace_smbus_reply(adapter, addr, flags, read_write,
-> -			  command, protocol, data);
-> +			  command, protocol, data, res);
->  	trace_smbus_result(adapter, addr, flags, read_write,
->  			   command, protocol, res);
->  
-> diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
-> index d2fb6e1d3e10..a4892a187842 100644
-> --- a/include/trace/events/smbus.h
-> +++ b/include/trace/events/smbus.h
-> @@ -138,9 +138,9 @@ TRACE_EVENT_CONDITION(smbus_reply,
->  	TP_PROTO(const struct i2c_adapter *adap,
->  		 u16 addr, unsigned short flags,
->  		 char read_write, u8 command, int protocol,
-> -		 const union i2c_smbus_data *data),
-> -	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
-> -	TP_CONDITION(read_write == I2C_SMBUS_READ),
-> +		 const union i2c_smbus_data *data, int res),
-> +	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
-> +	TP_CONDITION(res >= 0 && read_write == I2C_SMBUS_READ),
->  	TP_STRUCT__entry(
->  		__field(int,	adapter_nr		)
->  		__field(__u16,	addr			)
+> I wouldn't call it blkoops either. I believe ramoops is called that to 
+> maintain compatibility keeping the same kernel module name that 
+> preceeded pstore.
+> 
 
+Fixed.
+
+In addition, I don't known whether should we move
+ramreserved-memory/ooos.txt to /bindings/pstore. This is for maintainer
+to decide, and do it on other patch.
+
+>>  MAINTAINERS                                        |  1 +
+>>  2 files changed, 33 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pstore-block/blkoops.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/pstore-block/blkoops.txt b/Documentation/devicetree/bindings/pstore-block/blkoops.txt
+>> new file mode 100644
+>> index 0000000..a25835b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pstore-block/blkoops.txt
+>> @@ -0,0 +1,32 @@
+>> +Blkoops oops logger
+>> +===================
+>> +
+>> +Blkoops provides a block partition for oops, excluding panics now, so they can
+>> +be recovered after a reboot.
+>> +
+>> +Any space of block partition will be used for a circular buffer of oops records.
+>> +These records have a configurable size, with a size of 0 indicating that they
+>> +should be disabled.
+>> +
+>> +"partition-size" and at least one of "dmesg-size" or "pmsg-size" must be set
+>> +non-zero, but are otherwise optional as listed below.
+>> +
+>> +Blkoops will take value from Kconfig if device tree do not set, but settings
+>> +from module parameters can also overwrite them.
+> 
+> That's all kernel details not relevant to the binidng.
+> 
+
+Deleted.
+
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: must be "blkoops".
+>> +
+>> +- partition-size: size in kbytes, must be a multiple of 4.
+> 
+> This seems unnecessary given a partition has a known size.
+> 
+
+partition-size is necessary for psotre/blk. User should tell pstore/blk
+how large space can it use.
+
+>> +
+>> +Optional properties:
+>> +
+>> +- partition-path: strings must begin with "/dev", tell blkoops which partition
+>> +  it can used. If it is not set, blkoops will drop all data when reboot.
+> 
+> No. '/dev/...' is a Linux thing and doesn't belong in DT.
+> 
+> You should define a partition UUID and/or label and the kernel can find 
+> the right partition to use.
+> 
+
+pstore/blk do general read/write by filp_open/kernel_read/kernel_write,
+which need device path.
+In addition, i have no idea how to use UUID and/or label to do general
+read/write on kernel layer, can you give me a tip?
+
+>> +
+>> +- dmesg-size: maximum size in kbytes of each dump done on oops, which must be a
+>> +  multiple of 4.
+>> +
+>> +- pmsg-size: maximum size in kbytes for userspace messages, which must be a
+>> +  multiple of 4.
+> 
+> Common properties shared with ramoops should be in a common doc.
+> 
+
+The size limit are different. Size for ramoops must be power of 2, but
+be a multiple of 4k for pstore/blk.
+
+> Rob
+> 
+
+-- 
+liaoweixiong
