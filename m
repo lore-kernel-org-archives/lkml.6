@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C2C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D115C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E16C222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD8A3222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+u2BXE8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tmteZ4Ya"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392158AbfBMMeT (ORCPT
+        id S2392174AbfBMMeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:34:19 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45669 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388400AbfBMMeQ (ORCPT
+        Wed, 13 Feb 2019 07:34:24 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38166 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392160AbfBMMeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:34:16 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so1056822pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:34:16 -0800 (PST)
+        Wed, 13 Feb 2019 07:34:20 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so1081262pfi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:34:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=TsYSQ/G0YznTAgTKSekGveHgCX9PxIa5Y7B9m7W0j9A=;
-        b=K+u2BXE8igH9mZ5PXj92nX6kf00B7E4SIonYnZdN76QA5DDQe+PbEmkmz8iP2a49Mc
-         uE5vBYjcHExxmpQT2+jeCXEbGfxlZLpDUD0NFNA+H3nDVZvPV/Wa6fEup4fZUomy0hbC
-         69/VDJuxrS+cNBBlVnAZuptQnAIzO+bZMe7BN6E1ZIYliug9BFIXqB1qerjLskzPOmlW
-         wNGZEYi128Ls+AATJPire+8gcSzsxxBAOi+Jfh2MRTWJ1A9lbIhYOGJROro6VeBKb8xc
-         Lv+zNRmnYMKofHCyLEZxM8+TlUvChbvJc40bSJpvJoc18NkN3OzpRyRnXyK3Sn2GZ2Q9
-         nkcg==
+        bh=FGaARlyO45jSVlRCo3Ba46kwztIqiQvxEWOsLPfUyBY=;
+        b=tmteZ4Yadx1Xj9sG8FjJzb/XQPKilq9yCsNYjoVZLRWUeNlKFBj20Hj8lf4izmYo+Y
+         bbeGCWqccyS9rQx2mLdyJdaEyxg9LQoJHkArA1j4+WFLIBkZ/KsWvN4ODiaQxNttHHkR
+         EwMAQ79vWNIuNG+PBfqs86YTYnu68D6h2ZruC0dK3pdyx7t9OTXKx+SzPO0DDz3kPl7X
+         Pl9ZnKlNAzcHzZatc7X9UWT1XsN3zg5o6jD0fqONbJ4Rhm8+a5ZizaCaK1lwGBmReHOj
+         IY4QGtiQ/igG6Lco8H4XRwozAfMo9moQS56Kiu8zFudHq+QrCqC3OnbFRLQlPQSC4Sml
+         +nEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=TsYSQ/G0YznTAgTKSekGveHgCX9PxIa5Y7B9m7W0j9A=;
-        b=Oi3y4CdeqgeYApNdtl/Lft6jUuWNG7tJ0rLgiuRjx3AMjJhjmAJeo6B67uPCzsRhaC
-         OeuEXMAqUMNiE2919jKjfe7qMQjcOLagf4pIDMucshVOQSWKVNywWBMui8e9zYQ4PzFq
-         nFcjOIPg1IfwShWdw4B/rNZdh1Wze9MMSPhKmWftB0aKPIp9ekkb8goP3kHYdFj7D4az
-         T8SCMRLQWUUj6GDmdKUZM6NPuSvqWDmFkPtNBBXsfWIaxoiHChDkx5BkuHiHwpLDxodT
-         KTkzwJVZSuPlygyH91piOwULjL0Iiba52lpAPuweWEnnhK4kc5v9NMmlWsdGesGt7Wo3
-         bu7g==
-X-Gm-Message-State: AHQUAuYIaq3fHbmbCm+Pk2XgoqMPbr6GRJGEGPz3LIb9jU8OvOOSFyH5
-        7RHQFHmA0Ke0rD1iVSBJlvjUhg==
-X-Google-Smtp-Source: AHgI3IasfNSW9A1fNEEBfWE7qbZtE4VaXKaB3tivIDyCvYJl0ojIazlXhuIdAmvJqFEljsjrumLvuQ==
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr275245pgc.25.1550061255741;
-        Wed, 13 Feb 2019 04:34:15 -0800 (PST)
+        bh=FGaARlyO45jSVlRCo3Ba46kwztIqiQvxEWOsLPfUyBY=;
+        b=RzFeTAW81ErbW03+zgiBPs5xuTxAR2BLuIGGByjRAgu3xw/hrOu7/dJ6wbZMMIQw2b
+         fhlo2943v1pmo5f/kYRKzR5KsHB+yu4wAjIRQmVL741po0F5kkQcTEGHJGHKdIoqh1OP
+         6ptaGzIK5BarbyWsJg9cmPdp3WJMSYDPWtNZv3msmlSvreYWZANUlfvb0bcU0l6boKoX
+         cZkJu0l1PG14i89I4h0RUx8qzS3F1fYjubfvIGXfYsbBOsgxAGzH5L4AmctFyV59QTPe
+         /F0PEU6j0upKan6tHQzgllKE6yNAbfy1u7m6Y5nLKrprc8qfL2hmyIjytqmEdylXmqpU
+         cGkQ==
+X-Gm-Message-State: AHQUAubGuPHZhtbXppNXWX6RSuty+H+3qp5JTAsZxs8jfRdXYgPGn5Ct
+        nwCsiywpvyPjxfG9yN1NdmFGig==
+X-Google-Smtp-Source: AHgI3IZrWYzG9huHS10ehbGpwHIHSv79LI09Vcrf45ydQgH291PARN3sX4S/vYIcLE4vYgUdlpfxRw==
+X-Received: by 2002:a63:d347:: with SMTP id u7mr232319pgi.383.1550061259786;
+        Wed, 13 Feb 2019 04:34:19 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id l5sm21223640pgl.51.2019.02.13.04.34.11
+        by smtp.gmail.com with ESMTPSA id l5sm21223640pgl.51.2019.02.13.04.34.15
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Feb 2019 04:34:15 -0800 (PST)
+        Wed, 13 Feb 2019 04:34:19 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de
 Cc:     olof@lixom.net, orsonzhai@gmail.com, zhang.lyra@gmail.com,
         devicetree@vger.kernel.org, arm@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         broonie@kernel.org, baolin.wang@linaro.org
-Subject: [PATCH v2 2/5] arm64: dts: sprd: Add ADC calibration support
-Date:   Wed, 13 Feb 2019 20:32:46 +0800
-Message-Id: <0213394a8e432e0ee0809f9032427d971ea9cde2.1550060544.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 3/5] arm64: dts: sprd: Add SC2731 charger device
+Date:   Wed, 13 Feb 2019 20:32:47 +0800
+Message-Id: <ecfa4740cd1255f358b307af946cb059f7776090.1550060544.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1550060543.git.baolin.wang@linaro.org>
 References: <cover.1550060543.git.baolin.wang@linaro.org>
@@ -75,42 +75,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds phandles to the calibration cells provided by the Efuse
-device, which is used to calibrate the ADC channel scales.
+Add charger device node and related battery node for SC2731 PMIC.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/arm64/boot/dts/sprd/sc2731.dtsi |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/sprd/sc2731.dtsi      |    6 ++++++
+ arch/arm64/boot/dts/sprd/sp9860g-1h10.dts |   16 ++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-index f2f2aa5..a2edc25 100644
+index a2edc25..dbf6242 100644
 --- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
 +++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-@@ -63,6 +63,14 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			hwlocks = <&hwlock 12>;
-+
-+			adc_big_scale: calib@24 {
-+				reg = <0x24 0x2>;
-+			};
-+
-+			adc_small_scale: calib@26 {
-+				reg = <0x26 0x2>;
-+			};
- 		};
+@@ -17,6 +17,12 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- 		pmic_adc: adc@480 {
-@@ -72,6 +80,8 @@
- 			interrupts = <0>;
- 			#io-channel-cells = <1>;
- 			hwlocks = <&hwlock 4>;
-+			nvmem-cell-names = "big_scale_calib", "small_scale_calib";
-+			nvmem-cells = <&adc_big_scale>, <&adc_small_scale>;
- 		};
++		charger@0 {
++			compatible = "sprd,sc2731-charger";
++			reg = <0x0>;
++			monitored-battery = <&bat>;
++		};
++
+ 		led-controller@200 {
+ 			compatible = "sprd,sc27xx-bltc", "sprd,sc2731-bltc";
+ 			reg = <0x200>;
+diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+index 3bd18e3..2a963bd 100644
+--- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
++++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+@@ -41,6 +41,22 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 	};
++
++	bat: battery {
++		compatible = "simple-battery";
++		charge-full-design-microamp-hours = <1900000>;
++		charge-term-current-microamp = <120000>;
++		constant_charge_voltage_max_microvolt = <4350000>;
++		internal-resistance-micro-ohms = <250000>;
++		ocv-capacity-celsius = <20>;
++		ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>,
++			<4022000 85>, <3983000 80>, <3949000 75>,
++			<3917000 70>, <3889000 65>, <3864000 60>,
++			<3835000 55>, <3805000 50>, <3787000 45>,
++			<3777000 40>, <3773000 35>, <3770000 30>,
++			<3765000 25>, <3752000 20>, <3724000 15>,
++			<3680000 10>, <3605000 5>, <3400000 0>;
++	};
+ };
  
- 		vibrator@ec8 {
+ &uart0 {
 -- 
 1.7.9.5
 
