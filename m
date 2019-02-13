@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D99C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9971AC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E729E2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64BC62190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026840;
-	bh=CJ46lVxIpsGgmKGMKLd8qu5tHuajzU09cQlDnxEV5k4=;
+	s=default; t=1550026848;
+	bh=QWysNWTr6IRbzkiUuI+dLByNhfTvNgLMdVvF4P/w5dU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vr+lGEu1uA5EcOvoStm/cxYeD3qJ+ERflaaQ4vnCAkErTrN0eMidpzde9Uj6q9gDX
-	 DDogO/7tMSCkHP7HwVuD48UKUBlU5UKrTe8M1qRIA/7GgmV39oC0Zwf15eI5s+Uip9
-	 nWfDKeStGD5qz5SE6ZOXlJEyX3DG6wGfF+Z7uIyI=
+	b=NbuXdSmVPq8/N2XxAawkMVozRXPdph3PI3Qv14M8XbYBVRSK4DiiE3wejO/T9bpEo
+	 PLNFCGu50SVB43ib90U/liUTZNFQyEvnn8YyfU2NPNYjx2n7gmcWI3fbwuitCUGNYA
+	 YuF75K+RpORcAEHNh8/eFL8XUU2HyqSCVSrXf0Rk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390264AbfBMDAi (ORCPT
+        id S2390282AbfBMDAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:00:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39206 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 22:00:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387983AbfBMCfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:30 -0500
+        id S2387976AbfBMCfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 126B1222C7;
-        Wed, 13 Feb 2019 02:35:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3AD9206B6;
+        Wed, 13 Feb 2019 02:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025329;
-        bh=CJ46lVxIpsGgmKGMKLd8qu5tHuajzU09cQlDnxEV5k4=;
+        s=default; t=1550025320;
+        bh=QWysNWTr6IRbzkiUuI+dLByNhfTvNgLMdVvF4P/w5dU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f2Yjwzz6KvN1qDT/3IjfBGlbauQDaQN6R6mvxRTloyn8zuMQn7qz7oJVgBK9keft/
-         Bffb2cojDqOwpm67JwE83z/tmnU7/qTZu6ilGZ9OjgPtQ33rMNxWF5hqLDbsG6EHCS
-         FP6fYSMUmV2C5ohWCmVi0266GDuGsG6tf0WG0A8w=
+        b=CagRRmmibFg135pOzGNhfE4+DC22oaii+kfcLjFjjIOlc5oUFIcPOhdRhlnuD0jzg
+         gvxkxpKdIYGQvzBNRtMvdbhA+uw7Crttx9T+ywCFm5yxEk85Ke3wgHEgWbHw1ecXuV
+         Lh+yeIHb1ce492pkGsPHJ4oh6RPUUy01HDVTxjmI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 073/105] selftests/bpf: install with_tunnels.sh for test_flow_dissector.sh
-Date:   Tue, 12 Feb 2019 21:33:04 -0500
-Message-Id: <20190213023336.19019-73-sashal@kernel.org>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 067/105] drm/meson: add missing of_node_put
+Date:   Tue, 12 Feb 2019 21:32:58 -0500
+Message-Id: <20190213023336.19019-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -59,38 +59,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 1be72f29bfb98be27a95309f18b4ab5249967b59 ]
+[ Upstream commit f672b93e4a0a4947d2e1103ed8780e01e13eadb6 ]
 
-test_flow_dissector.sh depends on both with_addr.sh and with_tunnels.sh
-However, we install only with_addr.sh.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-Add with_tunnels.sh to TEST_PROGS_EXTENDED to make sure it gets
-installed as well.
+An of_node_put is also needed when meson_probe_remote completes.  This was
+present at the recursive call, but not in the call from meson_drv_probe.
 
-Tested with: make TARGETS=bpf install INSTALL_PATH=$PWD/x
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Fixes: ef4ab8447aa26 ("selftests: bpf: install script with_addr.sh")
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/meson/meson_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 74ece4f9fcce..d5e992f7c7dd 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -54,6 +54,7 @@ TEST_PROGS := test_kmod.sh \
- 	test_xdp_vlan.sh
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index bf5f294f172f..611ac340fb28 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -368,8 +368,10 @@ static int meson_probe_remote(struct platform_device *pdev,
+ 		remote_node = of_graph_get_remote_port_parent(ep);
+ 		if (!remote_node ||
+ 		    remote_node == parent || /* Ignore parent endpoint */
+-		    !of_device_is_available(remote_node))
++		    !of_device_is_available(remote_node)) {
++			of_node_put(remote_node);
+ 			continue;
++		}
  
- TEST_PROGS_EXTENDED := with_addr.sh \
-+	with_tunnels.sh \
- 	tcp_client.py \
- 	tcp_server.py
+ 		count += meson_probe_remote(pdev, match, remote, remote_node);
  
+@@ -388,10 +390,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+ 
+ 	for_each_endpoint_of_node(np, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote || !of_device_is_available(remote))
++		if (!remote || !of_device_is_available(remote)) {
++			of_node_put(remote);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, &match, np, remote);
++		of_node_put(remote);
+ 	}
+ 
+ 	if (count && !match)
 -- 
 2.19.1
 
