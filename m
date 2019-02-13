@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEF8C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D8CC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575A82175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A6E42175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025984;
-	bh=/iVqUW9Xp+ST9ehK6hZACe4p1b3FWX7kApoMbQsSvTI=;
+	s=default; t=1550025991;
+	bh=IRkt86I+jtWBYEj1GlCmZscR5wfkoyK8OEbPz/qor4Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Oln9fcv0q0fGZUqtXd7NdK4uVby6GRRv0uZuAGsEkL8enpJVMyvcThecSCWcHJokC
-	 cPMXQhEZ8oZ1+h9IaOL2kJJOoDTG0Go3gEja3XQUAYsE6N8B47C2J3rhQhXyyi/qbi
-	 ADus3EnlA5daWWV+nnMbKkITdW3oHi21jZmwWqKU=
+	b=c+TlmW+HoyZw5bvDEKzqQkiUe/m8HHQhfwv0ZpCKPtY67TjAI9DBzm9Kgpb49aTRE
+	 aF1+EccHrCtBTbwMRgIKnP+W/GxfDj7ilI/FE4Zzdm0zu+IDJYDptQjzCvGBKEIg4L
+	 wd/Q8UC6MxDAdRYIBMMDOaeOuQI6HJvAQqBijR/0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389687AbfBMCqW (ORCPT
+        id S2389441AbfBMCq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:46:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44544 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:46:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389084AbfBMCkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:47 -0500
+        id S2389081AbfBMCkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:40:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBD3E222C2;
-        Wed, 13 Feb 2019 02:40:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C493C222C9;
+        Wed, 13 Feb 2019 02:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025646;
-        bh=/iVqUW9Xp+ST9ehK6hZACe4p1b3FWX7kApoMbQsSvTI=;
+        s=default; t=1550025645;
+        bh=IRkt86I+jtWBYEj1GlCmZscR5wfkoyK8OEbPz/qor4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BvbQCNF316x3q+aQXaVwlZp4kqi4D7fMUt4JatUb+rQ4/9bJFB/palbH9loGKBGq1
-         55oR2hBV48xFeTjfEIZz7vMwxX+pzOOCj2Nmw9ekobCm0+nUozOTPL1sg//Qn8JHHt
-         xO0tAbsmbuBe+X8CtcH8Hq+UfQmKCx0GznVGkcIQ=
+        b=gyvtBe2PZfKgJe0IaL2DirtncgSsSiINRB8pr9fcCua1Wj+BlS0NgGuTNcVb8GWSk
+         4oFun3D7iRfzXGZGxOiPpKgajs7RRaqwDqI3ETn5bPqvwux0Kvxi4z66uvTKqQ3Y6L
+         9yttFxCVu0CzWdIh5faLWRMvFlZzVcxQyL9nMOY0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 05/21] mfd: ab8500-core: Return zero in get_register_interruptible()
-Date:   Tue, 12 Feb 2019 21:40:24 -0500
-Message-Id: <20190213024040.21740-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/21] mfd: mt6397: Do not call irq_domain_remove if PMIC unsupported
+Date:   Tue, 12 Feb 2019 21:40:23 -0500
+Message-Id: <20190213024040.21740-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
 References: <20190213024040.21740-1-sashal@kernel.org>
@@ -58,40 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Nicolas Boichat <drinkcat@chromium.org>
 
-[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
+[ Upstream commit a177276aa098aa47a100d51a13eaaef029604b6d ]
 
-This function is supposed to return zero on success or negative error
-codes on error.  Unfortunately, there is a bug so it sometimes returns
-non-zero, positive numbers on success.
+If the PMIC ID is unknown, the current code would call
+irq_domain_remove and panic, as pmic->irq_domain is only
+initialized by mt6397_irq_init.
 
-I noticed this bug during review and I can't test it.  It does appear
-that the return is sometimes propogated back to _regmap_read() where all
-non-zero returns are treated as failure so this may affect run time.
+Return immediately with an error, if the chip ID is unsupported.
 
-Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/ab8500-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/mt6397-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-index 589eebfc13df..2f212bdc187a 100644
---- a/drivers/mfd/ab8500-core.c
-+++ b/drivers/mfd/ab8500-core.c
-@@ -257,7 +257,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
- 	mutex_unlock(&ab8500->lock);
- 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+index e14d8b058f0c..5d4c10f05450 100644
+--- a/drivers/mfd/mt6397-core.c
++++ b/drivers/mfd/mt6397-core.c
+@@ -306,8 +306,7 @@ static int mt6397_probe(struct platform_device *pdev)
  
--	return ret;
-+	return (ret < 0) ? ret : 0;
- }
+ 	default:
+ 		dev_err(&pdev->dev, "unsupported chip: %d\n", id);
+-		ret = -ENODEV;
+-		break;
++		return -ENODEV;
+ 	}
  
- static int ab8500_get_register(struct device *dev, u8 bank,
+ 	if (ret) {
 -- 
 2.19.1
 
