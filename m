@@ -2,217 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE15C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3CDC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83AE2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 897242175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393113AbfBMRfv (ORCPT
+        id S2393129AbfBMRg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:35:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:57976 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732687AbfBMRfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:35:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 809B6A78;
-        Wed, 13 Feb 2019 09:35:50 -0800 (PST)
-Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B5773F675;
-        Wed, 13 Feb 2019 09:35:48 -0800 (PST)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-Subject: Re: [PATCH v5 5/5] arm64/kvm: control accessibility of ptrauth key
- registers
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-6-git-send-email-amit.kachhap@arm.com>
-Message-ID: <6ddfa9ae-5c98-540e-b4aa-8149c8515c9e@arm.com>
-Date:   Wed, 13 Feb 2019 17:35:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 12:36:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390226AbfBMRg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:36:57 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DHSo3Q141128
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:36:55 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmqet12jm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:36:55 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 13 Feb 2019 17:36:54 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 17:36:50 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DHanp321823728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 17:36:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD06FB206E;
+        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A824CB206A;
+        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0706916C5E3A; Wed, 13 Feb 2019 09:36:51 -0800 (PST)
+Date:   Wed, 13 Feb 2019 09:36:50 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: [PATCH memory-model 0/7] LKMM updates for v5.1
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <1548658727-14271-6-git-send-email-amit.kachhap@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19021317-0072-0000-0000-000003F96EF4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010589; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01160548; UDB=6.00605725; IPR=6.00941102;
+ MB=3.00025565; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-13 17:36:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021317-0073-0000-0000-00004B2B8E7E
+Message-Id: <20190213173650.GA26078@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=659 adultscore=98 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
-> According to userspace settings, ptrauth key registers are conditionally
-> present in guest system register list based on user specified flag
-> KVM_ARM_VCPU_PTRAUTH.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: kvmarm@lists.cs.columbia.edu
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  Documentation/arm64/pointer-authentication.txt |  3 ++
->  arch/arm64/kvm/sys_regs.c                      | 42 +++++++++++++++++++-------
->  2 files changed, 34 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/arm64/pointer-authentication.txt b/Documentation/arm64/pointer-authentication.txt
-> index 0529a7d..3be4ee1 100644
-> --- a/Documentation/arm64/pointer-authentication.txt
-> +++ b/Documentation/arm64/pointer-authentication.txt
-> @@ -87,3 +87,6 @@ created by passing a flag (KVM_ARM_VCPU_PTRAUTH) requesting this feature
->  to be enabled. Without this flag, pointer authentication is not enabled
->  in KVM guests and attempted use of the feature will result in an UNDEFINED
->  exception being injected into the guest.
-> +
-> +Additionally, when KVM_ARM_VCPU_PTRAUTH is not set then KVM will filter
-> +out the authentication key registers from userspace.
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 2546a65..b46a78e 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1334,12 +1334,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
->  	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
->  
-> -	PTRAUTH_KEY(APIA),
-> -	PTRAUTH_KEY(APIB),
-> -	PTRAUTH_KEY(APDA),
-> -	PTRAUTH_KEY(APDB),
-> -	PTRAUTH_KEY(APGA),
-> -
->  	{ SYS_DESC(SYS_AFSR0_EL1), access_vm_reg, reset_unknown, AFSR0_EL1 },
->  	{ SYS_DESC(SYS_AFSR1_EL1), access_vm_reg, reset_unknown, AFSR1_EL1 },
->  	{ SYS_DESC(SYS_ESR_EL1), access_vm_reg, reset_unknown, ESR_EL1 },
-> @@ -1491,6 +1485,14 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_FPEXC32_EL2), NULL, reset_val, FPEXC32_EL2, 0x70 },
->  };
->  
-> +static const struct sys_reg_desc ptrauth_reg_descs[] = {
-> +	PTRAUTH_KEY(APIA),
-> +	PTRAUTH_KEY(APIB),
-> +	PTRAUTH_KEY(APDA),
-> +	PTRAUTH_KEY(APDB),
-> +	PTRAUTH_KEY(APGA),
-> +};
-> +
->  static bool trap_dbgidr(struct kvm_vcpu *vcpu,
->  			struct sys_reg_params *p,
->  			const struct sys_reg_desc *r)
-> @@ -2093,6 +2095,8 @@ static int emulate_sys_reg(struct kvm_vcpu *vcpu,
->  	r = find_reg(params, table, num);
->  	if (!r)
->  		r = find_reg(params, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
-> +	if (!r && kvm_arm_vcpu_ptrauth_allowed(vcpu))
-> +		r = find_reg(params, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
->  
->  	if (likely(r)) {
->  		perform_access(vcpu, params, r);
-> @@ -2206,6 +2210,8 @@ static const struct sys_reg_desc *index_to_sys_reg_desc(struct kvm_vcpu *vcpu,
->  	r = find_reg_by_id(id, &params, table, num);
->  	if (!r)
->  		r = find_reg(&params, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
-> +	if (!r && kvm_arm_vcpu_ptrauth_allowed(vcpu))
-> +		r = find_reg(&params, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
->  
->  	/* Not saved in the sys_reg array and not otherwise accessible? */
->  	if (r && !(r->reg || r->get_user))
-> @@ -2487,18 +2493,22 @@ static int walk_one_sys_reg(const struct sys_reg_desc *rd,
->  }
->  
->  /* Assumed ordered tables, see kvm_sys_reg_table_init. */
-> -static int walk_sys_regs(struct kvm_vcpu *vcpu, u64 __user *uind)
-> +static int walk_sys_regs(struct kvm_vcpu *vcpu, u64 __user *uind,
-> +			const struct sys_reg_desc *desc, unsigned int len)
->  {
->  	const struct sys_reg_desc *i1, *i2, *end1, *end2;
->  	unsigned int total = 0;
->  	size_t num;
->  	int err;
->  
-> +	if (desc == ptrauth_reg_descs && !kvm_arm_vcpu_ptrauth_allowed(vcpu))
-> +		return total;
-> +
->  	/* We check for duplicates here, to allow arch-specific overrides. */
->  	i1 = get_target_table(vcpu->arch.target, true, &num);
->  	end1 = i1 + num;
-> -	i2 = sys_reg_descs;
-> -	end2 = sys_reg_descs + ARRAY_SIZE(sys_reg_descs);
-> +	i2 = desc;
-> +	end2 = desc + len;
->  
->  	BUG_ON(i1 == end1 || i2 == end2);
->  
-> @@ -2526,7 +2536,10 @@ unsigned long kvm_arm_num_sys_reg_descs(struct kvm_vcpu *vcpu)
->  {
->  	return ARRAY_SIZE(invariant_sys_regs)
->  		+ num_demux_regs()
-> -		+ walk_sys_regs(vcpu, (u64 __user *)NULL);
-> +		+ walk_sys_regs(vcpu, (u64 __user *)NULL, sys_reg_descs,
-> +				ARRAY_SIZE(sys_reg_descs))
-> +		+ walk_sys_regs(vcpu, (u64 __user *)NULL, ptrauth_reg_descs,
-> +				ARRAY_SIZE(ptrauth_reg_descs));
->  }
->  
->  int kvm_arm_copy_sys_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
-> @@ -2541,7 +2554,12 @@ int kvm_arm_copy_sys_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
->  		uindices++;
->  	}
->  
-> -	err = walk_sys_regs(vcpu, uindices);
-> +	err = walk_sys_regs(vcpu, uindices, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
-> +	if (err < 0)
-> +		return err;
-> +	uindices += err;
-> +
-> +	err = walk_sys_regs(vcpu, uindices, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
->  	if (err < 0)
->  		return err;
->  	uindices += err;
-> @@ -2575,6 +2593,7 @@ void kvm_sys_reg_table_init(void)
->  	BUG_ON(check_sysreg_table(cp15_regs, ARRAY_SIZE(cp15_regs)));
->  	BUG_ON(check_sysreg_table(cp15_64_regs, ARRAY_SIZE(cp15_64_regs)));
->  	BUG_ON(check_sysreg_table(invariant_sys_regs, ARRAY_SIZE(invariant_sys_regs)));
-> +	BUG_ON(check_sysreg_table(ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs)));
->  
->  	/* We abuse the reset function to overwrite the table itself. */
->  	for (i = 0; i < ARRAY_SIZE(invariant_sys_regs); i++)
-> @@ -2616,6 +2635,7 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
->  
->  	/* Generic chip reset first (so target could override). */
->  	reset_sys_reg_descs(vcpu, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
-> +	reset_sys_reg_descs(vcpu, ptrauth_reg_descs, ARRAY_SIZE(ptrauth_reg_descs));
->  
->  	table = get_target_table(vcpu->arch.target, true, &num);
->  	reset_sys_reg_descs(vcpu, table, num);
+Hello, Ingo,
 
-This isn't very scalable, since we'd need to duplicate all the above
-code every time we add new system registers that are conditionally
-accessible.
+This series contains updates for the Linux-kernel memory model, which
+are ready for inclusion into -tip:
 
-It seems that the SVE patches [1] solved this problem by adding a
-check_present() callback into struct sys_reg_desc. It probably makes
-sense to rebase onto that patch and just implement the callback for the
-ptrauth key registers as well.
+1-5.	Add support for SRCU, courtesy of Alan Stern.
 
-[1] https://lore.kernel.org/linux-arm-kernel/1547757219-19439-13-git-send-email-Dave.Martin@arm.com/
+6.	Dynamically check SRCU lock-to-unlock matching, courtesy of
+	Luc Maranget.
 
-Thanks,
-Kristina
+7.	Avoid duplicating herdtools versions in documentation, courtesy
+	of Andrea Parri.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/explanation.txt |  289 ++++++++++++++++++++++--------------------
+ README                        |   33 ++++
+ linux-kernel.bell             |   37 ++++-
+ linux-kernel.cat              |   57 +++++---
+ linux-kernel.def              |    7 -
+ lock.cat                      |    3 
+ 6 files changed, 254 insertions(+), 172 deletions(-)
+
