@@ -2,87 +2,92 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E38C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C288C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0130222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:13:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A29820700
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:13:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YZVh/XcB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSZGh9rr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404345AbfBMQNA (ORCPT
+        id S2392517AbfBMQNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:13:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43648 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404331AbfBMQM7 (ORCPT
+        Wed, 13 Feb 2019 11:13:25 -0500
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:40152 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392481AbfBMQNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:12:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uTRgEeEdhm0wcpIo1IAgXhU8CUSaovZo07Rkj8+fcgg=; b=YZVh/XcBQgbmagSejHOgjmBTx
-        B9yKu1TY7uHcFQ2sMFMbZtzUhXg8uzeF4F0QI2HiAHwMsci1IA4Qax07Cy/fpRYJ3o48A1/EzjMeI
-        PUE4tofsMHmjdad95EQqv1dZQgU4dYczxBvfOylsVlG0tc6ECQlSemXR1zJyG1akUuPDtaWdum4ru
-        x1YiNra9qQs1eYESGG3rHNVavYbgwOSZMjLuTdpAXDg/zJSpoEed2GhxB2LI7Nhnrafq1/ib1UfuN
-        hfDO6J8PKFtV0kChsiQw+YCREoZcY/kHoYpjQkmqNL0RIIJ3xsyvx83gpvZDLnPubBb8ewa4Ou3XN
-        DHDUUXwpw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtx9e-00020l-MD; Wed, 13 Feb 2019 16:12:58 +0000
-Date:   Wed, 13 Feb 2019 08:12:58 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xarray: Document erasing entries during iteration
-Message-ID: <20190213161258.GS12668@bombadil.infradead.org>
-References: <20190212072958.17373-1-tobin@kernel.org>
- <20190212135129.GL12668@bombadil.infradead.org>
- <20190213144744.ifejzbxrbaltivwc@master>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213144744.ifejzbxrbaltivwc@master>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 13 Feb 2019 11:13:24 -0500
+Received: by mail-wm1-f47.google.com with SMTP id q21so3020186wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:13:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lIWWoez3wtwu40qsq7ScX6E/uuw/MJvh6CXR6TUM7dY=;
+        b=RSZGh9rrW0OkwPQs6ZHNdbUhYdNeBBLoZqmy1JQYbhwkxBdAJ0nwC4rek6VAPMCW9t
+         +iXLKzC56RnJxO+8ckzo/yQ3tMh4h6IvFagxluG3EoUI1u53DG4WD1MhazQZpx5il67y
+         ziBnwBfFajURIpng23M3lsIQuYxGhr01czGwXWYcqMqSKpQVb7LpkolqDsMh4TuJeRIx
+         B1by3xj95xaNA4z5DZ2F+xL+15W6apxQoszhQ9rszeH8tKWHERBsX4J3LPoYJWNeNN0m
+         dDMTIAh/p5Ejtb8MT8qlPfxGUIthZNNy/7PHnfGgJVAfSJWecbTs0uUmyvcBWH5e7api
+         auKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lIWWoez3wtwu40qsq7ScX6E/uuw/MJvh6CXR6TUM7dY=;
+        b=gTGaJrpklPvcuN952lO+YTZpkXtmQ0duLlqux3MM+G16mfOBVGWTpD8xY8sePUe/nj
+         6moUAlOlOLN3fltBkEsBO2IEGhgsTlcJfX9F5mNjbovuEpY13Z/EirjWAT/cGSE4Pckx
+         j8F0EAvPZwRStIw5zqyZ8xRx4GwVshpnxQ7tj2ab7cHWOqj31/oCzUcxm1/ru/+u7QXC
+         +k/VwZz0v2rP0Iiq292I8QTbejz4aWfTMArHmjODxoPjcyxKy0MBASLwlNepXRRupn1w
+         Di55JvTFrxJ0q88KLtOrsoFsyJhHrCrZxg/s2nnPhLvwDX7bgVOmXSYcvHP0DWF8PH9c
+         VaJg==
+X-Gm-Message-State: AHQUAuaoeq13sCyrsyXeSgH9/jjLf5MySk3B7FVp0koxGu7DP1EJSbbL
+        +Gj/35+nylUH1RSDPerhGemJxvsoyl0=
+X-Google-Smtp-Source: AHgI3IZUavB1RBBF4LFqd7BygDb50ZZapHn6EAVpt7xVRjYKFiMgkahiDpSMdrFCGdhVUw/DkoHf4w==
+X-Received: by 2002:a1c:ac42:: with SMTP id v63mr872708wme.119.1550074402511;
+        Wed, 13 Feb 2019 08:13:22 -0800 (PST)
+Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
+        by smtp.gmail.com with ESMTPSA id f134sm6007950wme.31.2019.02.13.08.13.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 08:13:21 -0800 (PST)
+From:   Mathieu Othacehe <m.othacehe@gmail.com>
+To:     bbrezillon@kernel.org, jgg@ziepe.ca, broonie@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Othacehe <m.othacehe@gmail.com>
+Subject: [PATCH] .mailmap: Add Mathieu Othacehe
+Date:   Wed, 13 Feb 2019 17:12:49 +0100
+Message-Id: <20190213161249.17155-1-m.othacehe@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:47:44PM +0000, Wei Yang wrote:
-> On Tue, Feb 12, 2019 at 05:51:29AM -0800, Matthew Wilcox wrote:
-> >That is _fine_.  As you know I hope to get rid of the radix tree soon ;-)
-> 
-> You mean replace radix tree in whole kernel? That would be a big effort.
+Some contributions appears as Mathieu Othacehe and other as Mathieu
+OTHACEHE.
 
-Already mostly done.
+Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
+---
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray-conv
-
-The only remaining user of the radix tree in that tree is the IDR.  So
-now I'm converting the IDR users over to the XArray as well.
-
-
-But that isn't what I was talking about.  At the moment, the radix
-tree and the XArray use the same data structure.  It has good best-case
-performance, but shockingly bad worst-case performance.  So we're looking
-at replacing the data structure, which won't require changing any of the
-users (maybe the page cache ... that has some pretty intimate knowledge
-of exactly how the radix tree works).
-
-> BTW, have we compared the performance difference?
-
-It's in the noise.  Sometimes the XArray does a little better because
-the APIs encourage the user to do things in a more efficient way.
-Some of the users are improved just because the original author didn't
-know about a more efficient way of doing what they wanted to do.
-
+diff --git a/.mailmap b/.mailmap
+index ea98fcc197e4..37e1847c7988 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -123,6 +123,7 @@ Mark Brown <broonie@sirena.org.uk>
+ Mark Yao <markyao0591@gmail.com> <mark.yao@rock-chips.com>
+ Martin Kepplinger <martink@posteo.de> <martin.kepplinger@theobroma-systems.com>
+ Martin Kepplinger <martink@posteo.de> <martin.kepplinger@ginzinger.com>
++Mathieu Othacehe <m.othacehe@gmail.com>
+ Matthew Wilcox <willy@infradead.org> <matthew.r.wilcox@intel.com>
+ Matthew Wilcox <willy@infradead.org> <matthew@wil.cx>
+ Matthew Wilcox <willy@infradead.org> <mawilcox@linuxonhyperv.com>
+-- 
+2.17.1
 
