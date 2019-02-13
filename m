@@ -2,215 +2,165 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECCBC282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAD5C0044B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 348AE222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:12:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hnZIPCB5"
+	by mail.kernel.org (Postfix) with ESMTP id 12290218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436693AbfBMVM2 (ORCPT
+        id S2394747AbfBMVNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:12:28 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42181 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394738AbfBMVM0 (ORCPT
+        Wed, 13 Feb 2019 16:13:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38194 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727469AbfBMVNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:12:26 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i5so6791320oto.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:12:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BVV7ZolsVWZ77ivAzCKG4hVvrPhIZVl55jqYeCDjgHc=;
-        b=hnZIPCB5b4B9VYL4aopvRhUNQQm9ct0xoHEtDhhMxsoLbTI8Lk/nu/a1WYfvyNQclC
-         qucJwzlGbm1wabD0r3GAnOBfYQM8T94VodwVZVlsIpehDAgCpJ1GlqdT6z6VOfQWUS6u
-         xUW67mAepzazag0HSazVRcfzvvprfBbhumUkazifytWD/EjCxkVWqwdRTDmSXnqFMsMn
-         FU+ahg/ywdoGIv3rEPAo1dIehpEwIJk76VTDUGGW0Ubs3ebs4yIskSkL4ZAY4ATnJD7/
-         cbHOfw5H8iZJYTjPaz1LPvlAA4faYrmtcdo/kQa0WaRhkyLZAdv60yr7vyeazk/XYnm2
-         BldQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BVV7ZolsVWZ77ivAzCKG4hVvrPhIZVl55jqYeCDjgHc=;
-        b=ShTmn6Y4kQEtcoyKEDMHZGc/sdaPLN+NnyctVZHli1grzKJg/HTPv2taI62KfF+iS7
-         //Luj2THwIJEHa0ymJ/5hNdYu1qgMrLORUINAU0nHApmvAfl3cm+6gP4rIgaj7BNA9xb
-         bt7KPs1OoliYPYdRPi0/M7ds5UStya2yMUrAqFAJdzdIMwcjMgvzh/gQCLT3/vEGzfnH
-         YZI/mdblgOPFvZjtoiNB87R5OGJx5yMpoJSP8ICoLEfvixFF90AprLn58aukEYdvqmgm
-         KrVAK2ZLBsPVhQnFuQc2CFJp4TlIEh9h5v1/OumOTalj0QrkwUfUt+QqC83amK4KHap3
-         hAVg==
-X-Gm-Message-State: AHQUAuZqp+JYMxc6y9Y0n0uj1jrfwCvhMTvMmOYXiMIn+fapFof+I2xF
-        7hkHQVO1/EbBC1cG/8Ek9uBqMU8anTKHiFAvFQj/p4KG8ST7cw==
-X-Google-Smtp-Source: AHgI3Ibc01vjE4u34XsCSZEw2Gj9UJofoO4qtYbnjppF4oB2ESnr/mpDGacxGFDhtayggk6aR3C+NLKlTtf4zgvz7jA=
-X-Received: by 2002:a9d:5910:: with SMTP id t16mr111037oth.292.1550092345071;
- Wed, 13 Feb 2019 13:12:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20190213204157.12570-1-jannh@google.com> <20190213125906.eae96c18fe585e060aaf0ef7@linux-foundation.org>
-In-Reply-To: <20190213125906.eae96c18fe585e060aaf0ef7@linux-foundation.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 13 Feb 2019 22:11:58 +0100
-Message-ID: <CAG48ez2Qo7N-+=y=eFhzw9HfYS3HODAY-zLaubFMGyXEV_nwpg@mail.gmail.com>
-Subject: Re: [PATCH] mm: page_alloc: fix ref bias in page_frag_alloc() for
- 1-byte allocs
+        Wed, 13 Feb 2019 16:13:42 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DL9lMw047911
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 16:13:40 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmtg7s8e2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 16:13:40 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 13 Feb 2019 21:13:38 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 21:13:34 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DLDXou55836754
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 21:13:33 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 711675204E;
+        Wed, 13 Feb 2019 21:13:33 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.163])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 016D85204F;
+        Wed, 13 Feb 2019 21:13:31 +0000 (GMT)
+Date:   Wed, 13 Feb 2019 23:13:29 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Aaron Lu <aaron.lu@intel.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Alexander Duyck <alexander.h.duyck@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] of: fix kmemleak crash caused by imbalance in early
+ memory reservation
+References: <20190213181921.GB15270@rapoport-lnx>
+ <20190213121237.b6df41e4fb6317e58c0716a3@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213121237.b6df41e4fb6317e58c0716a3@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19021321-0008-0000-0000-000002C0241A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021321-0009-0000-0000-0000222C4413
+Message-Id: <20190213211329.GD15270@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=985 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 9:59 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 13 Feb 2019 21:41:57 +0100 Jann Horn <jannh@google.com> wrote:
->
-> > The basic idea behind ->pagecnt_bias is: If we pre-allocate the maximum
-> > number of references that we might need to create in the fastpath later,
-> > the bump-allocation fastpath only has to modify the non-atomic bias value
-> > that tracks the number of extra references we hold instead of the atomic
-> > refcount. The maximum number of allocations we can serve (under the
-> > assumption that no allocation is made with size 0) is nc->size, so that's
-> > the bias used.
-> >
-> > However, even when all memory in the allocation has been given away, a
-> > reference to the page is still held; and in the `offset < 0` slowpath, the
-> > page may be reused if everyone else has dropped their references.
-> > This means that the necessary number of references is actually
-> > `nc->size+1`.
-> >
-> > Luckily, from a quick grep, it looks like the only path that can call
-> > page_frag_alloc(fragsz=1) is TAP with the IFF_NAPI_FRAGS flag, which
-> > requires CAP_NET_ADMIN in the init namespace and is only intended to be
-> > used for kernel testing and fuzzing.
->
-> For the net-naive, what is TAP?  It doesn't appear to mean
-> drivers/net/tap.c.
+On Wed, Feb 13, 2019 at 12:12:37PM -0800, Andrew Morton wrote:
+> On Wed, 13 Feb 2019 20:19:22 +0200 Mike Rapoport <rppt@linux.ibm.com> wrote:
+> 
+> > 
+> > Marc Gonzalez reported the following kmemleak crash:
+> > 
+> > Unable to handle kernel paging request at virtual address ffffffc021e00000
+> > Mem abort info:
+> >   ESR = 0x96000006
+> >   Exception class = DABT (current EL), IL = 32 bits
+> >   SET = 0, FnV = 0
+> >   EA = 0, S1PTW = 0
+> > Data abort info:
+> >   ISV = 0, ISS = 0x00000006
+> >   CM = 0, WnR = 0
+> > swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+> > [ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803,
+> > pmd=0000000000000000
+> > Internal error: Oops: 96000006 [#1] PREEMPT SMP
+> > Modules linked in:
+> > CPU: 6 PID: 523 Comm: kmemleak Tainted: G S      W         5.0.0-rc1 #13
+> > Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+> > pstate: 80000085 (Nzcv daIf -PAN -UAO)
+> > pc : scan_block+0x70/0x190
+> > lr : scan_block+0x6c/0x190
+> > sp : ffffff8012e8bd20
+> > x29: ffffff8012e8bd20 x28: ffffffc0fdbaf018
+> > x27: ffffffc022000000 x26: 0000000000000080
+> > x25: ffffff8011aadf70 x24: ffffffc0f8cc8000
+> > x23: ffffff8010dc8000 x22: ffffff8010dc8830
+> > x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050
+> > x19: ffffffc021e00000 x18: 0000000000002409
+> > x17: 0000000000000200 x16: 0000000000000000
+> > x15: ffffff8010e14dd8 x14: 0000000000002406
+> > x13: 000000004c4dd0c6 x12: ffffffc0f77dad58
+> > x11: 0000000000000001 x10: ffffff8010d9e688
+> > x9 : ffffff8010d9f000 x8 : ffffff8010d9e688
+> > x7 : 0000000000000002 x6 : 0000000000000000
+> > x5 : ffffff8011511c20 x4 : 00000000000026d1
+> > x3 : ffffff8010e14d88 x2 : 5b36396f4e7d4000
+> > x1 : 0000000000208040 x0 : 0000000000000000
+> > Process kmemleak (pid: 523, stack limit = 0x(____ptrval____))
+> > Call trace:
+> >  scan_block+0x70/0x190
+> >  scan_gray_list+0x108/0x1c0
+> >  kmemleak_scan+0x33c/0x7c0
+> >  kmemleak_scan_thread+0x98/0xf0
+> >  kthread+0x11c/0x120
+> >  ret_from_fork+0x10/0x1c
+> > Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260)
+> > ---[ end trace 176d6ed9d86a0c33 ]---
+> > note: kmemleak[523] exited with preempt_count 2
+> > 
+> > The crash happens when a no-map area is allocated in
+> > early_init_dt_alloc_reserved_memory_arch(). The allocated region is
+> > registered with kmemleak, but it is then removed from memblock using
+> > memblock_remove() that is not kmemleak-aware.
+> > 
+> > Replacing memblock_phys_alloc_range() with memblock_find_in_range() makes
+> > sure that the allocated memory is not added to kmemleak and then
+> > memblock_remove()'ing this memory is safe.
+> > 
+> > As a bonus, since memblock_find_in_range() ensures the allocation in the
+> > specified range, the bounds check can be removed.
+> 
+> hm, why is this against -mm rather than against mainline?
+> 
+> Do the OF maintainers intend to merge the fix?
 
-It's implemented in drivers/net/tun.c; the combined functionality
-implemented in there is called TUN/TAP. TUN refers to providing raw IP
-packets to the kernel, TAP refers to providing raw ethernet packets.
-It's documented in Documentation/networking/tuntap.txt. The code
-that's interesting here is tun_get_user(), which calls into
-tun_napi_alloc_frags() if tun_napi_frags_enabled(tfile) is true, which
-in turn calls into netdev_alloc_frag(), which ends up in
-page_frag_alloc(). This is how you can use it (except that if you were
-using it legitimately, you'd be writing an ethernet header, a layer 3
-header, and application data instead of writing "aaaaaaaaaaaaaaa" like
-me):
+There's a conflict this fix and resent memblock related changes in -mm.
+Rob said he anyway wasn't planning to to send this for 5.0 [1] and
+suggested to merge it via your tree.
 
-================
-#define _GNU_SOURCE
-#include <stdlib.h>
-#include <stdarg.h>
-#include <net/if.h>
-#include <linux/if.h>
-#include <linux/if_tun.h>
-#include <err.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
+[1] https://lore.kernel.org/lkml/CAL_JsqK-cC6oVZ9MkP+ExOGjCRhA0XxGSgqGKL3W9bFF3rKAgA@mail.gmail.com/
 
-void systemf(const char *command, ...) {
-  char *full_command;
-  va_list ap;
-  va_start(ap, command);
-  if (vasprintf(&full_command, command, ap) == -1)
-    err(1, "vasprintf");
-  va_end(ap);
-  printf("systemf: <<<%s>>>\n", full_command);
-  system(full_command);
-}
+> 
+> Thanks.
+> 
 
-char *devname;
+-- 
+Sincerely yours,
+Mike.
 
-int tun_alloc(char *name) {
-  int fd = open("/dev/net/tun", O_RDWR);
-  if (fd == -1)
-    err(1, "open tun dev");
-  static struct ifreq req = { .ifr_flags =
-IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI };
-  strcpy(req.ifr_name, name);
-  if (ioctl(fd, TUNSETIFF, &req))
-    err(1, "TUNSETIFF");
-  devname = req.ifr_name;
-  printf("device name: %s\n", devname);
-  return fd;
-}
-
-int main(void) {
-  int tun_fd = tun_alloc("inject_dev%d");
-  systemf("ip link set %s up", devname);
-
-  while (1) {
-    struct iovec iov[15];
-    for (int i=0; i<sizeof(iov)/sizeof(iov[0]); i++) {
-      iov[i].iov_base = "a";
-      iov[i].iov_len = 1;
-    }
-    writev(tun_fd, iov, sizeof(iov)/sizeof(iov[0]));
-  }
-}
-================
-
-> > To test for this issue, put a `WARN_ON(page_ref_count(page) == 0)` in the
-> > `offset < 0` path, below the virt_to_page() call, and then repeatedly call
-> > writev() on a TAP device with IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI,
-> > with a vector consisting of 15 elements containing 1 byte each.
-> >
-> > ...
-> >
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -4675,11 +4675,11 @@ void *page_frag_alloc(struct page_frag_cache *nc,
-> >               /* Even if we own the page, we do not use atomic_set().
-> >                * This would break get_page_unless_zero() users.
-> >                */
-> > -             page_ref_add(page, size - 1);
-> > +             page_ref_add(page, size);
-> >
-> >               /* reset page count bias and offset to start of new frag */
-> >               nc->pfmemalloc = page_is_pfmemalloc(page);
-> > -             nc->pagecnt_bias = size;
-> > +             nc->pagecnt_bias = size + 1;
-> >               nc->offset = size;
-> >       }
-> >
-> > @@ -4695,10 +4695,10 @@ void *page_frag_alloc(struct page_frag_cache *nc,
-> >               size = nc->size;
-> >  #endif
-> >               /* OK, page count is 0, we can safely set it */
-> > -             set_page_count(page, size);
-> > +             set_page_count(page, size + 1);
-> >
-> >               /* reset page count bias and offset to start of new frag */
-> > -             nc->pagecnt_bias = size;
-> > +             nc->pagecnt_bias = size + 1;
-> >               offset = size - fragsz;
-> >       }
->
-> This is probably more a davem patch than a -mm one.
-
-Ah, sorry. I assumed that I just should go by which directory the
-patched code is in.
-
-You did just add it to the -mm tree though, right? So I shouldn't
-resend it to davem?
