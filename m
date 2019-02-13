@@ -2,77 +2,109 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C900C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A75C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA658222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D7E4222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:36:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="noxi15mC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392299AbfBMOcG (ORCPT
+        id S2389698AbfBMOgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:32:06 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42550 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392265AbfBMOcF (ORCPT
+        Wed, 13 Feb 2019 09:36:11 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36242 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733163AbfBMOgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:32:05 -0500
-Received: by mail-qt1-f195.google.com with SMTP id b8so2716520qtr.9;
-        Wed, 13 Feb 2019 06:32:05 -0800 (PST)
+        Wed, 13 Feb 2019 09:36:11 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r124so1223046pgr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 06:36:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1E5DPm3qgeniIx5Gi272hRsM9mfOnn/4ZxCuFF39vOg=;
+        b=noxi15mCVj5J1M0qcQepb/SBoqa0JfYACQW52WNKPyrf+a3v3mUnq1zNP5nkR+IbVL
+         0OAGEwVoR1uJwPtJUG8GcARF2PBYunnzNUIHBPtCDlZ4rxJl4PC/LwyffJLk2DjOkAAr
+         6jG2Yxpx1VdQDUkKg1abt0m/HM5K5xlGo48gVBsXBHg/Z9buu558QNXw1U2CviOZhgM0
+         IfjaOP8eA+ul6x0XoEk6c00TCKv53O0POpuVBmjU2+Wgd+KdvlQC2fd8Q2DXcWEGgEz4
+         xjb+yBd8Xcl6s4euiWjEhAtg/aSNWiE0PUZlhtdQ0rc9QCfOQo2bCvnmxnez7WXYMDmR
+         EtiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yQjmZowm/ZKBxge9W+Z0hhgJKB8GgrmSu4tCCYAjf2o=;
-        b=G+ll3lPNdsc7lOi4NDn0Q/7Th9et1Sawna5wv3mxz0RdewlsFCnh1m15Hy8g9+jLVn
-         P3acBmmo+I9mnMW8fxOQ19giEVEuLpBGsL8IdB+0tF5z/tMzE3sDYkShLgRSkhjrxVgY
-         F5qTQyHPieTK7zYgtrJqFTfhV+15BJ4/sINM82022b/825ia3/PINKEwqGO4zb2s0IoK
-         STjSgZmKM0cVu9juovXmHqxJum0R3of4zQ8QROYgPGcBFoin3JrPyrlI8en4nzZi/NFa
-         Gg5uw/5p9GkXT6kIUjKeADbJIeo6rqLf6q71arTe9DjviEzSBzkziLeWL7TGPv7FzycH
-         lqhg==
-X-Gm-Message-State: AHQUAuZjLhbbtOpO1zS7MBCK9VX263i+JPlZBZkWouvUnx7bxwhnZ7OJ
-        sD/9tCQ5N+dE8pRtR1/LyAmTh9wqkJvsyH6x8iY=
-X-Google-Smtp-Source: AHgI3IbBDEPON02dOFX651H6FLMPKtV3GSRs3pPWsKyjo0nsyKsTGsVP1M9c7PuPbLx6Ic4qJnXnSiMwE1XB+F7pj2w=
-X-Received: by 2002:a0c:81ee:: with SMTP id 43mr594004qve.180.1550068324570;
- Wed, 13 Feb 2019 06:32:04 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1E5DPm3qgeniIx5Gi272hRsM9mfOnn/4ZxCuFF39vOg=;
+        b=CEKqNoQ9r8DxNA5O8dkBaGmEtunWfzjuVYnlW8a+PbrWO/E4mSNdL23wf4eoD8Uere
+         b19oXrZCLHQObmterf6QOxjQxS/w6xFz29+3erwjw7LWLUCDdMjEtMQkHDXhlqqBsox7
+         gvCOLwN9iK5xqWzvyGDXq9mR+ktXIowmaRsvFsHOztHwVbK5NORd8usdDDhfg3oKhbWG
+         u0VRU51BNdXNaTPDC+sU+/Rjc7M9+aDELagP79XwTDE4vWCaWQJ+Qkmd9e0dH5ovsrIn
+         jj6YpYth7FZhrJ8HewMs7tTBanwqrkzrsaQ2Yz0iLVDuObJhAQacd9wROUm33PQYcnTR
+         mqaQ==
+X-Gm-Message-State: AHQUAua2Yh4km1818K5X2aOuYFayfNCRPm3waTPrI0vjfFojPs8sVcYK
+        pViLPpoJDPwC9CLrlFuhUpjkSg==
+X-Google-Smtp-Source: AHgI3IbSWS/hKCdO37Y5ezGagJqTKDYszunhWrg0C1ii8PYrXULU3X2OLEO99KGTo8vggM58V82NHg==
+X-Received: by 2002:a63:89c7:: with SMTP id v190mr715030pgd.370.1550068570200;
+        Wed, 13 Feb 2019 06:36:10 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id e9sm74152165pfh.42.2019.02.13.06.36.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 06:36:09 -0800 (PST)
+Subject: Re: [PATCH V3 0/5] genirq/affinity: add .calc_sets for improving IRQ
+ allocation & spread
+To:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-block@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a026c441-d433-2391-796d-3d67d233ab04@kernel.dk>
+Date:   Wed, 13 Feb 2019 07:36:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <cover.1550060543.git.baolin.wang@linaro.org> <f34970a034946bacda19202e2ce9973ca732c925.1550060544.git.baolin.wang@linaro.org>
-In-Reply-To: <f34970a034946bacda19202e2ce9973ca732c925.1550060544.git.baolin.wang@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 13 Feb 2019 15:31:47 +0100
-Message-ID: <CAK8P3a38=4JZvqPi8f8Mpup2P70c+_xsM48-b35BVRYWGeHp9w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: sprd: Remove wildcard compatible string
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190213105041.13537-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 1:34 PM Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> Remove wildcard compatible string.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+On 2/13/19 3:50 AM, Ming Lei wrote:
+> Hi,
+> 
+> Currently pre-caculated set vectors are provided by driver for
+> allocating & spread vectors. This way only works when drivers passes
+> same 'max_vecs' and 'min_vecs' to pci_alloc_irq_vectors_affinity(),
+> also requires driver to retry the allocating & spread.
+> 
+> As Bjorn and Keith mentioned, the current usage & interface for irq sets
+> is a bit awkward because the retrying should have been avoided by providing
+> one resonable 'min_vecs'. However, if 'min_vecs' isn't same with
+> 'max_vecs', number of the allocated vectors is unknown before calling
+> pci_alloc_irq_vectors_affinity(), then each set's vectors can't be
+> pre-caculated.
+> 
+> Add a new callback of .calc_sets into 'struct irq_affinity' so that
+> driver can caculate set vectors after IRQ vector is allocated and
+> before spread IRQ vectors.
 
+Much improved, thanks for doing this work. You can add
 
-Looks good to me. It does break using the new dtb file on older kernels,
-but I suppose this is not a case we care much about yet on your
-platform, given that both the dts file sand the drivers in the
-kernel are still  work in progress.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-I had started the other reply I just sent before I saw this new mail.
+if you want.
 
-    Arnd
+-- 
+Jens Axboe
+
