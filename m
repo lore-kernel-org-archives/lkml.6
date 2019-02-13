@@ -7,45 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C44C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2DBC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D729222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E9BA20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083451;
-	bh=Hy5cpnRTRshAQgvD7rqAFmKX4Va7kNk62tlwHG3jhao=;
+	s=default; t=1550083455;
+	bh=dE0c2+Zg4U6444ywA6BbsJiq05kwtXlyugoT+97kSOY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D3g0ixngzaGwibkXs65hTI/xAN9tRP+bo04jV0WqaTVxH2P32ANgSazQc4m4psa0l
-	 kvqK1TeSuej58E3PcCVyYQFqVhX6+amAHxLCm5mZhJ78GvS8cIxKYkoZ9ZlhApl/Qg
-	 D4RbCmX7QI/kKZTCQS+ogzKCxc7zb7mJQQS4hZMA=
+	b=IJTATElZnNNgFKJoAPo4nCTpbGwYQrliAB9uJ24bsUqn6jBM34OYrBj7jL2vXAIIW
+	 apXrSnfTPHXYz6mWWr6/mEuOaoeG+Bu+alBpG+pNMqqzwu+O4NzOOBFgOGg4d7BZ1a
+	 91R/STau66EuwfbBuy6BuzKTulsM6H8Pk/KjIgnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406056AbfBMSoI (ORCPT
+        id S2406083AbfBMSoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:44:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406036AbfBMSoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:05 -0500
+        id S2406066AbfBMSoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:44:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13C5720835;
-        Wed, 13 Feb 2019 18:44:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57E8420811;
+        Wed, 13 Feb 2019 18:44:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083444;
-        bh=Hy5cpnRTRshAQgvD7rqAFmKX4Va7kNk62tlwHG3jhao=;
+        s=default; t=1550083450;
+        bh=dE0c2+Zg4U6444ywA6BbsJiq05kwtXlyugoT+97kSOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2O7IwrT695XEDZctIqHsYRsn1JLelTL4SlgCEku6Dk6Oh9bhDN/nT9z2vKay3O6Av
-         rhJkspHZf2XuMEeVqvIrDyb4hO4aU6gxywwUanGgNuN2wtZ2g/UwReKX+kM3cZQ+yP
-         +a224cs/Hw2g1u4MoUE6ciQvIqCxTMzKre/yLf+Y=
+        b=K9HrJAyd/zUfQwZs94DmdYZy8/71cQfJt+sm0XPHlX7agT7fmvNEsNA8FFlah+iPH
+         knX9+Yilx8KutwTt0Ffeuwlo0DPFpAKQZ1chJ0QQze1ytDtk2zoHAJk2vYpmyZhk4J
+         1e7P6XWzSsD7MPZJTdY5kLAo9X2Kpj+MI2bfFWHs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.19 38/44] Revert "ext4: use ext4_write_inode() when fsyncing w/o a journal"
-Date:   Wed, 13 Feb 2019 19:38:39 +0100
-Message-Id: <20190213183654.986591536@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH 4.19 04/44] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+Date:   Wed, 13 Feb 2019 19:38:05 +0100
+Message-Id: <20190213183652.022054654@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -64,67 +69,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-commit 8fdd60f2ae3682caf2a7258626abc21eb4711892 upstream.
+commit d5d27fd9826b59979b184ec288e4812abac0e988 upstream.
 
-This reverts commit ad211f3e94b314a910d4af03178a0b52a7d1ee0a.
+Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+reset may cause bus master lock up") for MX28 too. It has the same
+problem.
 
-As Jan Kara pointed out, this change was unsafe since it means we lose
-the call to sync_mapping_buffers() in the nojournal case.  The
-original point of the commit was avoid taking the inode mutex (since
-it causes a lockdep warning in generic/113); but we need the mutex in
-order to call sync_mapping_buffers().
+Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+DMA timeout errors:
+[    1.770823] UBI: attaching mtd3 to ubi0
+[    2.768088] gpmi_nand: DMA timeout, last DMA :1
+[    3.958087] gpmi_nand: BCH timeout, last DMA :1
+[    4.156033] gpmi_nand: Error in ECC-based read: -110
+[    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+bytes from PEB 0:0, read only 0 bytes, retry
+[    4.171283] step 1 error
+[    4.173846] gpmi_nand: Chip: 0, Error -1
 
-The real fix to this problem was discussed here:
+Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
 
-https://lore.kernel.org/lkml/20181025150540.259281-4-bvanassche@acm.org
+I have a quote from NXP regarding this problem, from July 18th 2016:
 
-The proposed patch was to fix a syzbot complaint, but the problem can
-also demonstrated via "kvm-xfstests -c nojournal generic/113".
-Multiple solutions were discused in the e-mail thread, but none have
-landed in the kernel as of this writing.  Anyway, commit
-ad211f3e94b314 is absolutely the wrong way to suppress the lockdep, so
-revert it.
+"As the i.MX23 and i.MX28 are of the same generation, they share many
+characteristics. Unfortunately, also the erratas may be shared.
+In case of the documented erratas and the workarounds, you can also
+apply the workaround solution of one device on the other one. This have
+been reported, but I’m afraid that there are not an estimated date for
+updating the Errata documents.
+Please accept our apologies for any inconveniences this may cause."
 
-Fixes: ad211f3e94b314a910d4af03178a0b52a7d1ee0a ("ext4: use ext4_write_inode() when fsyncing w/o a journal")
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported: Jan Kara <jack@suse.cz>
+Fixes: 6f2a6a52560a ("mtd: nand: gpmi: reset BCH earlier, too, to avoid NAND startup problems")
+Cc: stable@vger.kernel.org
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/fsync.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/fs/ext4/fsync.c
-+++ b/fs/ext4/fsync.c
-@@ -116,16 +116,8 @@ int ext4_sync_file(struct file *file, lo
- 		goto out;
- 	}
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+@@ -155,9 +155,10 @@ int gpmi_init(struct gpmi_nand_data *thi
  
--	ret = file_write_and_wait_range(file, start, end);
--	if (ret)
--		return ret;
--
- 	if (!journal) {
--		struct writeback_control wbc = {
--			.sync_mode = WB_SYNC_ALL
--		};
--
--		ret = ext4_write_inode(inode, &wbc);
-+		ret = __generic_file_fsync(file, start, end, datasync);
- 		if (!ret)
- 			ret = ext4_sync_parent(inode);
- 		if (test_opt(inode->i_sb, BARRIER))
-@@ -133,6 +125,9 @@ int ext4_sync_file(struct file *file, lo
- 		goto out;
- 	}
- 
-+	ret = file_write_and_wait_range(file, start, end);
-+	if (ret)
-+		return ret;
  	/*
- 	 * data=writeback,ordered:
- 	 *  The caller's filemap_fdatawrite()/wait will sync the data.
+ 	 * Reset BCH here, too. We got failures otherwise :(
+-	 * See later BCH reset for explanation of MX23 handling
++	 * See later BCH reset for explanation of MX23 and MX28 handling
+ 	 */
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+@@ -263,12 +264,10 @@ int bch_set_geometry(struct gpmi_nand_da
+ 	/*
+ 	* Due to erratum #2847 of the MX23, the BCH cannot be soft reset on this
+ 	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23.
+-	* On the other hand, the MX28 needs the reset, because one case has been
+-	* seen where the BCH produced ECC errors constantly after 10000
+-	* consecutive reboots. The latter case has not been seen on the MX23
+-	* yet, still we don't know if it could happen there as well.
++	* and MX28.
+ 	*/
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
 
 
