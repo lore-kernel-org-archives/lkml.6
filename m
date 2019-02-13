@@ -2,160 +2,117 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF01C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758D3C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECBD2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:41:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dYoLjN9T"
+	by mail.kernel.org (Postfix) with ESMTP id 461FA222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550058459;
+	bh=3AAiA4tNwn19yywJuyiFajqd/KZliB5LZawOr87FRaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A/KLxydvrCx6H9BtcIrSVVRzgbw3UIj8ZoTCqgpcfnYs9dkB8R5fjQe87K+GIUw//
+	 CQw2Miiw7WT/OJMjtQXkXW4KXzL0DCNBa6ffSWLiZARnrOqujpZf8AXZHVyL+uY1L1
+	 NaOTHRDScMFcN115RIULWwuoIupLxfOGBVkvSAe4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732991AbfBMLlD (ORCPT
+        id S1733071AbfBMLrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:41:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55965 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732035AbfBMLlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:41:02 -0500
-Received: by mail-wm1-f68.google.com with SMTP id r17so2070068wmh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 03:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=37gNnip2pUO7WpshWw5fCnmuyn0lJdQR0BJGyefQAvc=;
-        b=dYoLjN9TrUKPATAOQ2Er/MGKi76DiyZzIxu6I1xrWyopW/fXA6dW6F36PyuTCDGWDC
-         q7V0kkGzY13yLOSEHpleaAeH0LVR96z10queTPnCzTnMcGeceiiX0ujvp8WgHewdBAfq
-         H5wKGQk8IwmswEueq7gEwfrFW9iIzB0P/cN3QS02sZJ/nMILrGE6qrpXrKdaM4GNl+xA
-         Vbu3lO2O3YIJnS/E/JZ/+YbDC27KmrF4SmCcg3eCh300Z4yEwzYt5NEytM9hfZ1jG9vS
-         6dc3MQvPuy/QFZ6CfvotvARpETcVBH/3eOra/UF8Q3gnptSeK7WC19rCz5rbGNH7iv3I
-         KYOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=37gNnip2pUO7WpshWw5fCnmuyn0lJdQR0BJGyefQAvc=;
-        b=ou9BSQnj9HI3bPl5isBp94zZSbTqFeyn+3qU62di8S3pv/Ao6NhTLy1TrHJh7VJTOS
-         tA+FuirgEui4X8DLgYHMHDpLPKxngJOPXMp2dQK9s2PFvFUyBE5cUCs9CLwA3DcFluKr
-         +a9hrsO6jk2BtS6/NNrQsyaynVFoftNaufzbS/CqJztSZjGxiIzO0eVVu5drJrCAR+It
-         rREZxlSPjkbuUlnU4Z9P1DsQ6EPKYppQ4XJH8dUiTa6fEtKzr9CU6hel0yFaWOeTqjVa
-         MUQQDc5lDcOvK+cMqAr5dM7FWkYRr++ec0j+Fm1OHB6s0/SnUTHr9yHLN5ud1UMiD/wg
-         E3vQ==
-X-Gm-Message-State: AHQUAuYdYmuO7glB1zWPh8CRefvV4dKLO67MwPAvMr867L9n6g9vNHKS
-        fqgfxxSVgkn7ln8NyHMcKmDeJdn8y/cYCSm6XrVqjA==
-X-Google-Smtp-Source: AHgI3Ia3tlOX9B0Wc9itABeYo3VSlGbnUbRzEf1NckYvIhP1mEo5Xcjffa+PtDTuCksXTOIn8kFhY4+DSSlplDk5w2A=
-X-Received: by 2002:a1c:a5c8:: with SMTP id o191mr11419wme.137.1550058060914;
- Wed, 13 Feb 2019 03:41:00 -0800 (PST)
+        Wed, 13 Feb 2019 06:47:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49028 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726174AbfBMLrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 06:47:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2384AADAA;
+        Wed, 13 Feb 2019 11:47:35 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 12:47:33 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yong-Taek Lee <ytk.lee@samsung.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc, oom: do not report alien mms when setting
+ oom_score_adj
+Message-ID: <20190213114733.GB4525@dhcp22.suse.cz>
+References: <20190212102129.26288-1-mhocko@kernel.org>
+ <20190212125635.27742b5741e92a0d47690c53@linux-foundation.org>
+ <201902130124.x1D1OGg3070046@www262.sakura.ne.jp>
 MIME-Version: 1.0
-References: <20190213095835.17448-1-jbrunet@baylibre.com>
-In-Reply-To: <20190213095835.17448-1-jbrunet@baylibre.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Wed, 13 Feb 2019 12:40:50 +0100
-Message-ID: <CAMO6nay=xXnxks==Zj_uPAE6o9_V=DsLkJOkkLRR1duPxg324Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: axg-audio: unexpose controller inputs
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201902130124.x1D1OGg3070046@www262.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:59 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> Remove the bindings ID of the clock input of the controller. These
-> clocks are purely internal to the controller, exposing them was a
-> mistake. Actually, these should not even be in the provider and have
-> IDs to begin with.
->
-> Unexpose these IDs before:
->  * someone starts using them (even if there no valid reason to do so)
->  * the actual clocks are removed. The fact that they exist is just the
->    result of an ugly hack. This will be resolved in CCF when we can
->    reference DT directly in parent table.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/axg-audio.h              | 20 ++++++++++++++++++++
->  include/dt-bindings/clock/axg-audio-clkc.h | 20 --------------------
->  2 files changed, 20 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-> index 7191b39c9d65..644f0b0fddf2 100644
-> --- a/drivers/clk/meson/axg-audio.h
-> +++ b/drivers/clk/meson/axg-audio.h
-> @@ -60,6 +60,26 @@
->  #define AUD_CLKID_MST5                 6
->  #define AUD_CLKID_MST6                 7
->  #define AUD_CLKID_MST7                 8
-> +#define AUD_CLKID_SLV_SCLK0            9
-> +#define AUD_CLKID_SLV_SCLK1            10
-> +#define AUD_CLKID_SLV_SCLK2            11
-> +#define AUD_CLKID_SLV_SCLK3            12
-> +#define AUD_CLKID_SLV_SCLK4            13
-> +#define AUD_CLKID_SLV_SCLK5            14
-> +#define AUD_CLKID_SLV_SCLK6            15
-> +#define AUD_CLKID_SLV_SCLK7            16
-> +#define AUD_CLKID_SLV_SCLK8            17
-> +#define AUD_CLKID_SLV_SCLK9            18
-> +#define AUD_CLKID_SLV_LRCLK0           19
-> +#define AUD_CLKID_SLV_LRCLK1           20
-> +#define AUD_CLKID_SLV_LRCLK2           21
-> +#define AUD_CLKID_SLV_LRCLK3           22
-> +#define AUD_CLKID_SLV_LRCLK4           23
-> +#define AUD_CLKID_SLV_LRCLK5           24
-> +#define AUD_CLKID_SLV_LRCLK6           25
-> +#define AUD_CLKID_SLV_LRCLK7           26
-> +#define AUD_CLKID_SLV_LRCLK8           27
-> +#define AUD_CLKID_SLV_LRCLK9           28
->  #define AUD_CLKID_MST_A_MCLK_SEL       59
->  #define AUD_CLKID_MST_B_MCLK_SEL       60
->  #define AUD_CLKID_MST_C_MCLK_SEL       61
-> diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-> index fd9c362099d9..eafb0de8466b 100644
-> --- a/include/dt-bindings/clock/axg-audio-clkc.h
-> +++ b/include/dt-bindings/clock/axg-audio-clkc.h
-> @@ -7,26 +7,6 @@
->  #ifndef __AXG_AUDIO_CLKC_BINDINGS_H
->  #define __AXG_AUDIO_CLKC_BINDINGS_H
->
-> -#define AUD_CLKID_SLV_SCLK0            9
-> -#define AUD_CLKID_SLV_SCLK1            10
-> -#define AUD_CLKID_SLV_SCLK2            11
-> -#define AUD_CLKID_SLV_SCLK3            12
-> -#define AUD_CLKID_SLV_SCLK4            13
-> -#define AUD_CLKID_SLV_SCLK5            14
-> -#define AUD_CLKID_SLV_SCLK6            15
-> -#define AUD_CLKID_SLV_SCLK7            16
-> -#define AUD_CLKID_SLV_SCLK8            17
-> -#define AUD_CLKID_SLV_SCLK9            18
-> -#define AUD_CLKID_SLV_LRCLK0           19
-> -#define AUD_CLKID_SLV_LRCLK1           20
-> -#define AUD_CLKID_SLV_LRCLK2           21
-> -#define AUD_CLKID_SLV_LRCLK3           22
-> -#define AUD_CLKID_SLV_LRCLK4           23
-> -#define AUD_CLKID_SLV_LRCLK5           24
-> -#define AUD_CLKID_SLV_LRCLK6           25
-> -#define AUD_CLKID_SLV_LRCLK7           26
-> -#define AUD_CLKID_SLV_LRCLK8           27
-> -#define AUD_CLKID_SLV_LRCLK9           28
->  #define AUD_CLKID_DDR_ARB              29
->  #define AUD_CLKID_PDM                  30
->  #define AUD_CLKID_TDMIN_A              31
-> --
-> 2.20.1
->
+On Wed 13-02-19 10:24:16, Tetsuo Handa wrote:
+> Andrew Morton wrote:
+> > On Tue, 12 Feb 2019 11:21:29 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > > Tetsuo has reported that creating a thousands of processes sharing MM
+> > > without SIGHAND (aka alien threads) and setting
+> > > /proc/<pid>/oom_score_adj will swamp the kernel log and takes ages [1]
+> > > to finish. This is especially worrisome that all that printing is done
+> > > under RCU lock and this can potentially trigger RCU stall or softlockup
+> > > detector.
+> > > 
+> > > The primary reason for the printk was to catch potential users who might
+> > > depend on the behavior prior to 44a70adec910 ("mm, oom_adj: make sure
+> > > processes sharing mm have same view of oom_score_adj") but after more
+> > > than 2 years without a single report I guess it is safe to simply remove
+> > > the printk altogether.
+> > > 
+> > > The next step should be moving oom_score_adj over to the mm struct and
+> > > remove all the tasks crawling as suggested by [2]
+> > > 
+> > > [1] http://lkml.kernel.org/r/97fce864-6f75-bca5-14bc-12c9f890e740@i-love.sakura.ne.jp
+> > > [2] http://lkml.kernel.org/r/20190117155159.GA4087@dhcp22.suse.cz
+> > 
+> > I think I'll put a cc:stable on this.  Deleting a might-trigger debug
+> > printk is safe and welcome.
+> > 
+> 
+> I don't like this patch, for I can confirm that removing only printk() is not
+> sufficient for avoiding hungtask warning. If the reason of removing printk() is
+> that we have never heard that someone hit this printk() for more than 2 years,
+> the whole iteration is nothing but a garbage. I insist that this iteration
+> should be removed.
 
-Acked-by: Maxime Jourdan <mjourdan@baylibre.com>
+As the changelog states explicitly, removing the loop should be the next
+step and the implementation is outlined in [2]. It is not as simple
+as to do the revert as you have proposed. We simply cannot allow to have
+different processes disagree on oom_score_adj. This could easily lead
+to breaking the OOM_SCORE_ADJ_MIN protection. And that is a correctness
+issue.
+
+As a side note.
+I am pretty sure I would have more time to do that if only I didn't
+really have to spend it on pointless and repeated discussions. You
+are clearly not interested on spending _your_ time to address this
+issue properly yourself. This is fair but nacking a low hanging
+fruit patch that doesn't make situation any worse while it removes a
+potential expensive operation from withing RCU context is nothing but
+an obstruction.  It is even more sad that this is not the first example
+of this attitude which makes it pretty hard, if not impossible, to work
+with you.
+
+And another side note. I have already pointed out that this is by far
+not the only problem with CLONE_VM without CLONE_SIGHAND threading
+model. Try to put your "only the oom paths matter" glasses down
+for a moment and try to look what are the actual and much more
+serious consequences of this threading model. Hint have a look at
+mm_update_next_owner and how we have to for_each_process from under
+tasklist_lock or zap_threads with RCU as well.
+-- 
+Michal Hocko
+SUSE Labs
