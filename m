@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A630AC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133BBC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7128820835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C939620835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026644;
-	bh=qXxg9THhxmvvWyZYCN+YubzoGd0xAxwKw4kK0abyqNo=;
+	s=default; t=1550026650;
+	bh=6JkXZgU+8gSIgO+8waHN99SUQskISg9iLCzYDiLVzlo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1syYVJ3c2snRWKPq3tQNCdR7DzTRui9NPBq6qyeIUY5lq9dLKhchedLqAvOYSrq4u
-	 RrYbA6sDS0vcaPCrxNs4mKZcCU4bdC+kpdjKDfxD6ArqFM7UkQCvEFZPMZJAKg3ClU
-	 ufXnomVJCg5ZoMV/tpKntuJgu9AajkBZ6OxEEdWo=
+	b=S2gxshMRK3MxQrT0yiFTW9hO0JxivYhnVEgPqVxc/pmKEf1B6iDJFfhXfA8bJ68K4
+	 fxYSuDbmqIa8Yl/puSWiynHbmZ3YdDHhmF6rRRZ4gx7d6/RjeYCG5QOmUccKeyyOAw
+	 oULhd5wmM3iuhHqvAo8ncHSztyROEhx11bJKzzQY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390142AbfBMC5W (ORCPT
+        id S2390155AbfBMC53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40676 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388234AbfBMChH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:07 -0500
+        id S2388230AbfBMChG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F9B5222C2;
-        Wed, 13 Feb 2019 02:37:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6137B222C7;
+        Wed, 13 Feb 2019 02:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025427;
-        bh=qXxg9THhxmvvWyZYCN+YubzoGd0xAxwKw4kK0abyqNo=;
+        s=default; t=1550025426;
+        bh=6JkXZgU+8gSIgO+8waHN99SUQskISg9iLCzYDiLVzlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EycEefSpWYCKgmzwP990kL7+OchthjhyWrjhSz5PLTuIPyFBWoJdWVodBg9WX/oKj
-         9kFUU3zhJiU9gsmYcwtHRUdbIlFpl/Q2bRXHim4ovg+iOWhdiPvVG8GBWqN0wBBqtZ
-         +1xUf2YEbXQ2hEjGPbxfQ7JeDp65wz31GnPkruL4=
+        b=no61RIYA1NxMRzoFZKgfm+d0P7hDL56Xwx7bzJZQ6LbYqOgtp8kQ6rXuNMpmE2hFX
+         uCuZUYT+ypie6JeUHPglj2Cuhce9zhdKQKOavpsEGHiCBKPflV2nL6xs1fhUG1VyYK
+         lmZ6nNC59X+DHRdaTJKhCmtsZrN3B7Z+f2SqYTHA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Stefano Stabellini <sstabellini@kernel.org>,
         Stefano Stabellini <stefanos@xilinx.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 04/83] pvcalls-front: don't try to free unallocated rings
-Date:   Tue, 12 Feb 2019 21:35:42 -0500
-Message-Id: <20190213023701.20286-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 03/83] pvcalls-front: read all data before closing the connection
+Date:   Tue, 12 Feb 2019 21:35:41 -0500
+Message-Id: <20190213023701.20286-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -61,34 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefano Stabellini <sstabellini@kernel.org>
 
-[ Upstream commit 96283f9a084e23d7cda2d3c5d1ffa6df6cf1ecec ]
+[ Upstream commit b79470b64fa9266948d1ce8d825ced94c4f63293 ]
 
-inflight_req_id is 0 when initialized. If inflight_req_id is 0, there is
-no accept_map to free. Fix the check in pvcalls_front_release.
+When a connection is closing in_error is set to ENOTCONN. There could
+still be outstanding data on the ring left by the backend. Before
+closing the connection on the frontend side, drain the ring.
 
 Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
 Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/pvcalls-front.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/pvcalls-front.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index e5d95aab2cb8..4f3d664b3f39 100644
+index 77224d8f3e6f..e5d95aab2cb8 100644
 --- a/drivers/xen/pvcalls-front.c
 +++ b/drivers/xen/pvcalls-front.c
-@@ -1030,8 +1030,8 @@ int pvcalls_front_release(struct socket *sock)
- 		spin_lock(&bedata->socket_lock);
- 		list_del(&map->list);
- 		spin_unlock(&bedata->socket_lock);
--		if (READ_ONCE(map->passive.inflight_req_id) !=
--		    PVCALLS_INVALID_ID) {
-+		if (READ_ONCE(map->passive.inflight_req_id) != PVCALLS_INVALID_ID &&
-+			READ_ONCE(map->passive.inflight_req_id) != 0) {
- 			pvcalls_front_free_map(bedata,
- 					       map->passive.accept_map);
- 		}
+@@ -560,15 +560,13 @@ static int __read_ring(struct pvcalls_data_intf *intf,
+ 	error = intf->in_error;
+ 	/* get pointers before reading from the ring */
+ 	virt_rmb();
+-	if (error < 0)
+-		return error;
+ 
+ 	size = pvcalls_queued(prod, cons, array_size);
+ 	masked_prod = pvcalls_mask(prod, array_size);
+ 	masked_cons = pvcalls_mask(cons, array_size);
+ 
+ 	if (size == 0)
+-		return 0;
++		return error ?: size;
+ 
+ 	if (len > size)
+ 		len = size;
 -- 
 2.19.1
 
