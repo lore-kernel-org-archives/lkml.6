@@ -1,127 +1,101 @@
 Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18B2C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA01BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4A6222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550043952;
-	bh=Bf6wVHM2zl0aE9B2LDl29C2f3IcoiM4ObH6yW8fhAyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Qpye7HNe6RS1tj74Z7xx7YcTIfjfl7bNMHmRZIsQl0rt0sNNkt2OD0lVMX4ZK9lhm
-	 SOD7WdwIVnYE/XPk5N9htjrVns6HwRpr9mukOIgNeiEmHKc3uAjoXECRxHWJ+eFS/5
-	 byePhM0r/QtYmJNBwVVpdGxXye9T7A5DcbTysDNA=
+	by mail.kernel.org (Postfix) with ESMTP id 8EB02222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389741AbfBMHpv (ORCPT
+        id S2389775AbfBMHqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:45:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54798 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbfBMHpu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:45:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so1289906wmh.4;
-        Tue, 12 Feb 2019 23:45:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WSLNpQeKH85LdvlZ78tn7b/TaWGoRsly3MpPfDxVU28=;
-        b=n0Uu+1spwh6BP8F080TtY1cvdPiS5MomeYgaSXLX0ODIFfwbvTDCFCySsQcLxVKGmM
-         dw/96VmrPhtvCuR7/3aha/Y+YTXZYmokABimDEcEnAeR0hD3UDlcQCUCKdmikIZpJm7D
-         V81pl3f8hRpJxAFdazAHEXOg7tIHMAM9CYE2zVy7dMTLwKTYDzwRNPhxrhdAIO52PsDj
-         w/7l9Pu0cYzoafONIE5xszt/iaFRaoZh+SEBV/1dLccfZHIgA35DSaB0okBf0jyDgwDz
-         kUXx6/grQqC0RNDfrI1CRbMCF2x8FbFq5HpRq/FEdLVE5s+21PZZUKFE+EKOUMwCUXXD
-         hTkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WSLNpQeKH85LdvlZ78tn7b/TaWGoRsly3MpPfDxVU28=;
-        b=GhFk60DU5FF7cpM6Krj1QuIhhpJzLSH7fftEj428k+sACuPUIwqOdgPMCvI+L/lrZv
-         pJg4iVSWckf8YKbuaY+pAz7+rzrftFyDrc8MzrTUXE0f7OfOT/KFVZdF8mGOStu8JIUy
-         xW7qTU4PhZ/Ijol5/kMWdtbCJg6YYwcgsGwS/CW2b0jzOeK6uk+hEn6xXXrxR9J3HHUk
-         jqKvbx+uCuX6K+pCfPNmHgOL8zfvS3IyMc+iNav17OlgTv+JbxKvfYh0J8NPxLun5ROZ
-         c7C8G5a+telnfNjN1DAVff6lfs0S4rCPnA78tcWi6PMuAh9+QfNJ/hmou7Exavyz/gKG
-         DMGQ==
-X-Gm-Message-State: AHQUAubGs7oFIoqttZq4YWeaXEkeasNxI/JkjFwjfjGDScncsYjC2M25
-        HgufSAgDcu5vRznz4pAbHDA=
-X-Google-Smtp-Source: AHgI3IZUCQNNdjmNfZR03XpdWC0K36paSAMR5JYQTu6XL1rM9r4b6zd01sh6EsJm+bWZZlyeBZ+N7A==
-X-Received: by 2002:a1c:f605:: with SMTP id w5mr2238898wmc.116.1550043947629;
-        Tue, 12 Feb 2019 23:45:47 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id m4sm5399647wmi.3.2019.02.12.23.45.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 23:45:46 -0800 (PST)
-Date:   Wed, 13 Feb 2019 08:45:44 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] locking/rwsem: Optimize down_read_trylock()
-Message-ID: <20190213074544.GB62549@gmail.com>
-References: <1549913486-16799-1-git-send-email-longman@redhat.com>
- <1549913486-16799-3-git-send-email-longman@redhat.com>
- <CAHk-=wjTmSg6zX=xKFSPZor7FWi3s4D0dy-hz_M=yeF_6478QA@mail.gmail.com>
- <ef66f262-d68e-58ea-34f6-15b88803cf71@redhat.com>
+        Wed, 13 Feb 2019 02:46:01 -0500
+Received: from mga09.intel.com ([134.134.136.24]:39706 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728291AbfBMHqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:46:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:45:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
+   d="scan'208";a="146426015"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2019 23:45:57 -0800
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9] device connection: Add support for device graphs
+Date:   Wed, 13 Feb 2019 10:45:48 +0300
+Message-Id: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef66f262-d68e-58ea-34f6-15b88803cf71@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-* Waiman Long <longman@redhat.com> wrote:
+This is the third version of my proposal to add device graph parsing
+to the device connection API. There was only one problem reported in
+v2 by Jun - kernel-doc entry was missing for the new fwnode member in
+struct usb_role_switch_desc - and it's now fixed.
 
-> I looked at the assembly code in arch/x86/include/asm/rwsem.h. For both
-> trylocks (read & write), the count is read first before attempting to
-> lock it. We did the same for all trylock functions in other locks.
-> Depending on how the trylock is used and how contended the lock is, it
-> may help or hurt performance. Changing down_read_trylock to do an
-> unconditional cmpxchg will change the performance profile of existing
-> code. So I would prefer keeping the current code.
-> 
-> I do notice now that the generic down_write_trylock() code is doing an
-> unconditional compxchg. So I wonder if we should change it to read the
-> lock first like other trylocks or just leave it as it is.
+The second version of the series:
+https://lkml.org/lkml/2019/1/30/622
 
-No, I think we should instead move the other trylocks to the 
-try-for-ownership model as well, like Linus suggested.
+The commit message from v1:
 
-That's the general assumption we make in locking primitives, that we 
-optimize for the common, expected case - which would be that the trylock 
-succeeds, and I don't see why trylock primitives should be different.
+This series adds support for OF and ACPI device graph parsing to the
+device connection API.
 
-In fact I can see more ways for read-for-sharing to perform suboptimally 
-on larger systems.
+Handling the graph is straightforward, but because I'm adding that
+fwnode member to struct device_connection, I had to make sure all the
+existing users consider it.
 
-Thanks,
+The plan is to only support matching with fwnode in the future, so no
+more device name matching. The software fwnodes that we now have in
+kernel should make that possible, once we add support for references
+to them.
 
-	Ingo
+The original RFC:
+https://lkml.org/lkml/2018/10/24/619
+
+thanks,
+
+Heikki Krogerus (9):
+  platform/x86: intel_cht_int33fe: Prepare for better mux naming scheme
+  usb: typec: Rationalize the API for the muxes
+  platform/x86: intel_cht_int33fe: Remove old style mux connections
+  device connection: Add fwnode member to struct device_connection
+  usb: typec: mux: Find the muxes by also matching against the device
+    node
+  usb: roles: Find the muxes by also matching against the device node
+  usb: typec: Find the ports by also matching against the device node
+  device connection: Prepare support for firmware described connections
+  device connection: Find device connections also from device graphs
+
+ drivers/base/devcon.c                    | 62 ++++++++++++++-
+ drivers/platform/x86/intel_cht_int33fe.c | 15 ++--
+ drivers/usb/roles/class.c                | 21 +++++-
+ drivers/usb/typec/class.c                | 31 ++++++--
+ drivers/usb/typec/mux.c                  | 96 ++++++++++++++++++++----
+ include/linux/device.h                   |  6 ++
+ include/linux/usb/role.h                 |  2 +
+ include/linux/usb/typec_mux.h            |  3 +-
+ 8 files changed, 196 insertions(+), 40 deletions(-)
+
+-- 
+2.20.1
+
