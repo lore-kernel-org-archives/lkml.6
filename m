@@ -2,125 +2,86 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3C8C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024B7C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C9A20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:08:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GJgFZO1Q"
+	by mail.kernel.org (Postfix) with ESMTP id CBD20222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:10:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404811AbfBMSI5 (ORCPT
+        id S2390654AbfBMSKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:08:57 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39861 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbfBMSI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:08:56 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g80so2841837ljg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 10:08:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e+LQWnqULW+l6EMSnspy1Pa7LnelXaU8iBmL+OFW3Oc=;
-        b=GJgFZO1QUUbKQ41XirqInswpyPhw8V0Q7enJjpCSXV042beuF5aL8nKpSquwC8PANn
-         cmA/rsEK/2YiiDDCXV1wihj2JUXRaxIguoLa8a0UYmK46816Y3utsUVpzrMQAd0bwaPh
-         pQ0q7Paz+Cnt+TvDESIeUsKcmn3af1g1janxI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e+LQWnqULW+l6EMSnspy1Pa7LnelXaU8iBmL+OFW3Oc=;
-        b=L1reg8VZ51rw1h1VljWVuySqDwZfo5FxBuMTQuts33aBQQCr1HDwd0coGInw382oJ9
-         OEDYKlGPWUfVfjm3cuRlL9PQAgr7tW6dVITGXKMMxW3etHQNLWolIMNQNYvbKwIO8aKu
-         djvg6lp1Omqeg99/yor0qdRo99eN/gcfdoto5eBeCmuuuvG0Mv7Dusga3gQFPujIxQ/i
-         IF/akpN3VsgpY5ZlFCyk4ppCzrWM5ArWhfbe+oFEU246JrZkgRS37bD3pRMCMZI6wRNT
-         AL0awnetcIqPWgrJHtIVHxTmdpydoTewa0w6m/P9wKBH2A5c5T2VEj65mZdyZMdr3giy
-         RdCA==
-X-Gm-Message-State: AHQUAub/xA+JbkqAZGp5whSmZLxMPwlVKaXW4OsQRMCif1nWbQjqWpYQ
-        x0JGndlUnqzIx3I2H+RcFU3u0trbsAs=
-X-Google-Smtp-Source: AHgI3IZEW2r8zyXbY1rcr6QitFN2WiUBorjbsPEWqkkxkbO1f+GOFpRCGTm8W/Ujdi51+g/2EpzgKw==
-X-Received: by 2002:a2e:3e04:: with SMTP id l4-v6mr981926lja.148.1550081333611;
-        Wed, 13 Feb 2019 10:08:53 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id 76sm2065589lfb.10.2019.02.13.10.08.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 10:08:52 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id m11so2506252lfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 10:08:51 -0800 (PST)
-X-Received: by 2002:a19:911c:: with SMTP id t28mr1137087lfd.78.1550081331399;
- Wed, 13 Feb 2019 10:08:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211141827.214852402@linuxfoundation.org> <20190211141841.367111122@linuxfoundation.org>
- <1eb319822aa9f75f423a7790e78315e7672036b9.camel@nokia.com> <20190213131333.GT32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190213131333.GT32494@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Feb 2019 10:08:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgpU+5zAgakcDksXfEdJCtBFRdHm7Hqb_iDc+VWYKiqnA@mail.gmail.com>
-Message-ID: <CAHk-=wgpU+5zAgakcDksXfEdJCtBFRdHm7Hqb_iDc+VWYKiqnA@mail.gmail.com>
-Subject: Re: [PATCH 4.14 198/205] perf/core: Dont WARN() for impossible
- ring-buffer sizes
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>,
+        Wed, 13 Feb 2019 13:10:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:42827 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727937AbfBMSKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:10:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 10:10:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
+   d="scan'208";a="126202694"
+Received: from araj-mobl1.jf.intel.com ([10.7.201.26])
+  by orsmga003.jf.intel.com with ESMTP; 13 Feb 2019 10:10:46 -0800
+Date:   Wed, 13 Feb 2019 10:10:46 -0800
+From:   "Raj, Ashok" <ashok.raj@intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "sathyanarayanan.kuppuswamy@linux.intel.com" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "acme@redhat.com" <acme@redhat.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Busch, Keith" <keith.busch@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
+Subject: Re: [PATCH v2 2/2] iommu/vt-d: Enable PASID only if device expects
+ PASID  in PRG Response.
+Message-ID: <20190213181046.GA16999@araj-mobl1.jf.intel.com>
+References: <cover.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <787d13ae22ae07c708b06180241f4f2b71031f84.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19C93AD90@SHSMSX104.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19C93AD90@SHSMSX104.ccr.corp.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 5:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> There is this queued:
->
->   http://lkml.kernel.org/r/tip-528871b456026e6127d95b1b2bd8e3a003dc1614@git.kernel.org
+On Wed, Feb 13, 2019 at 12:26:33AM -0800, Tian, Kevin wrote:
+> > 
+> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> > index 1457f931218e..af2e4a011787 100644
+> > --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -1399,7 +1399,8 @@ static void iommu_enable_dev_iotlb(struct
+> > device_domain_info *info)
+> >  	   undefined. So always enable PASID support on devices which
+> >  	   have it, even if we can't yet know if we're ever going to
+> >  	   use it. */
+> > -	if (info->pasid_supported && !pci_enable_pasid(pdev, info-
+> > >pasid_supported & ~1))
+> > +	if (info->pasid_supported && pci_prg_resp_pasid_required(pdev)
+> > &&
+> > +	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
+> >  		info->pasid_enabled = 1;
+> 
+> Above logic looks problematic. As Dave commented in another thread,
+> PRI and PASID are orthogonal capabilities. Especially with introduction
+> of VT-d scalable mode, PASID will be used alone even w/o PRI...
+> 
+> Why not doing the check when PRI is actually enabled? At that point
+> you can fail the request if above condition is false. 
+> 
 
-I think it would likely have been better to just remove the test
-entirely, and instead just use __GFP_NOWARN.
-
-This is an allocation essentially done for the user (as part of
-mmap(), and we handle the failure case fine. So it doesn't matter
-whether the warning is due to being out of memory or being a bad size,
-we shouldn't cause a kernel warning.
-
-That said, I think we should *indepdendently* have some sane limit for
-"nr_pages", simply because we do that
-
-        ...
-        for (i = 0; i < nr_pages; i++) {
-                rb->data_pages[i] = perf_mmap_alloc_page(cpu);
-
-thing, which is really really expensive when "nr_pages" is in the
-thousands (or millions). The fact that we end up almost _accidentally_
-limiting nr_pages simply because the kzmalloc() size is limited is I
-think a mistake.
-
-So I'd rather see __GFP_NORWARN _and_ some kind of "don't allow crazy
-perf ring buffers" check that is separate and independent from any
-kmalloc issue..
-
-For example, right now the maximum size you can allocate is (insanely)
-tied to the page size. With a bigger page size, not only do you get a
-bigger ring buffer anyway, but you also get more 'nr_pages', so it's
-basically quadratic behavior. Does that make sense? It doesn't sound
-that way to me.
-
-                  Linus
+That makes sense. 
