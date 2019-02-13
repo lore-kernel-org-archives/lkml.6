@@ -2,91 +2,98 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB52CC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0312CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0982222E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C59FF222E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404308AbfBMPyo (ORCPT
+        id S2392589AbfBMP4I convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:54:44 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:46840 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391483AbfBMPyn (ORCPT
+        Wed, 13 Feb 2019 10:56:08 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:57799 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389192AbfBMP4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:54:43 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gtwrr-0005yB-BC; Wed, 13 Feb 2019 16:54:35 +0100
-Date:   Wed, 13 Feb 2019 16:54:35 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v6] x86: load FPU registers on return to userland
-Message-ID: <20190213155435.vnvgzu76ienzvfhv@linutronix.de>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190130113555.GC18383@zn.tnic>
- <20190130120647.abbf2cbbpguaz356@linutronix.de>
- <20190130122713.GG18383@zn.tnic>
- <20190208131233.5g5guefglq6ik2ow@linutronix.de>
+        Wed, 13 Feb 2019 10:56:08 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-78-cgJCcBveOA6ngiNPG7z4FA-1; Wed, 13 Feb 2019 15:56:04 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 13 Feb 2019 15:56:47 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 13 Feb 2019 15:56:47 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'Tobin C. Harding'" <tobin@kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>
+CC:     Tycho Andersen <tycho@tycho.ws>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
+Thread-Topic: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
+Thread-Index: AQHUvze0635TNBS/ZEmpDgH2942+BqXd6ssg
+Date:   Wed, 13 Feb 2019 15:56:47 +0000
+Message-ID: <6aed136f16e8451dbcfa97f90c04438f@AcuMS.aculab.com>
+References: <20190207225026.11723-1-tobin@kernel.org>
+ <20190207225026.11723-4-tobin@kernel.org>
+In-Reply-To: <20190207225026.11723-4-tobin@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190208131233.5g5guefglq6ik2ow@linutronix.de>
-User-Agent: NeoMutt/20180716
+X-MC-Unique: cgJCcBveOA6ngiNPG7z4FA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-08 14:12:33 [+0100], To Borislav Petkov wrote:
-> Then we have lat_sig [0]. Without the series 64bit:
-> |Signal handler overhead: 2.6839 microseconds
-> |Signal handler overhead: 2.6996 microseconds
-> |Signal handler overhead: 2.6821 microseconds
+From: Tobin C. Harding
+> Sent: 07 February 2019 22:50
 > 
-> with the series:
-> |Signal handler overhead: 3.2976 microseconds
-> |Signal handler overhead: 3.3033 microseconds
-> |Signal handler overhead: 3.2980 microseconds
+> Currently if user passes an output file to the script via
+> --output-raw we do not handle expansion of tilde.
+> 
+> Use perl function glob() to expand tilde in output file name.
 
-Did a patch-by-patch run (64bit only, server preemption model, output in
-us ("commit")):
+What happens if glob() returns multiple files?
+I'm guessing that it can...
 
-2.368 ("Linux 5.0-rc5")
+	David
 
-2.603 ("x86/fpu: Always store the registers in copy_fpstate_to_sigframe()")
-  copy_fpstate_to_sigframe() stores to thread's FPU area and then copies
-  user stack area.
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> ---
+>  scripts/leaking_addresses.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
+> index ef9e5b2a1614..ce545ca3fb70 100755
+> --- a/scripts/leaking_addresses.pl
+> +++ b/scripts/leaking_addresses.pl
+> @@ -150,7 +150,7 @@ if (!(is_supported_architecture() or $opt_32bit or $page_offset_32bit)) {
+>  }
+> 
+>  if ($output_raw) {
+> -	open my $fh, '>', $output_raw or die "$0: $output_raw: $!\n";
+> +	open my $fh, '>', glob($output_raw) or die "$0: $output_raw: $!\n";
+>  	select $fh;
+>  }
+> 
+> --
+> 2.20.1
 
-2.668 ("x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD")
-  this should be noise since preempt_disable/enable is a nop -
-  test_thread_flag() isn't.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-2.701 ("x86/fpu: Inline copy_user_to_fpregs_zeroing()")
-  This pops up somehow but is simply code movement.
-
-3.474 ("x86/fpu: Let __fpu__restore_sig() restore the !32bit+fxsr frame from kernel memory")
-  This stands out. There a kmalloc() + saving to kernel memory + copy
-  instead a direct save to kernel stack.
-
-2.928 ("x86/fpu: Defer FPU state load until return to userspace")
-  The kmalloc() has been removed. Just "copy-to-kernel-memory" and
-  copy_to_user() remained.
-
-So this looks like 0.3us for the save-copy + 0.3us for copy-restore. The
-numbers for the preempt/low-lat-desktop have the same two spikes and
-drop at the end.
-
-Sebastian
