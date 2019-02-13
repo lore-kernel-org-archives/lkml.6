@@ -2,78 +2,153 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC45C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B9FC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E36921904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 835EB21904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="aonD9Zx+"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dUebzb4w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391975AbfBMQEM (ORCPT
+        id S2392188AbfBMQFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:04:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45478 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729649AbfBMQEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:04:12 -0500
-Received: from zn.tnic (p200300EC2BCDE80030B889FF4AEDD03A.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e800:30b8:89ff:4aed:d03a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 91B951EC01AF;
-        Wed, 13 Feb 2019 17:04:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550073850;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=V34Ijg4Fc1k4UhDCp94BW1/OJzu2iSUgLYzKWutbDps=;
-        b=aonD9Zx+oRc2Boo+DL1GIEaRddUZHZrFyRD96Up76/ZNdFonFNv5tFQWmr4LPjwfwivDrH
-        R8pCTQdAU5MfNk8UH42SxoYz/7G0Dbwiv13rm3AExGw8A4Ecqgw9gbi0mJLJhJYkaXEZ+n
-        bb+oUHD0WNahnNA+HbnvHw7rGqoM+Z0=
-Date:   Wed, 13 Feb 2019 17:04:05 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
-        andy@infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v2 06/10] x86/cpu: Add Icelake to Intel family
-Message-ID: <20190213160405.GC1883@zn.tnic>
-References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
- <20190213150810.32750-7-rajneesh.bhardwaj@linux.intel.com>
- <20190213152326.GA1883@zn.tnic>
- <308aa852-b2c3-3336-707f-d54de6ad77b7@linux.intel.com>
+        Wed, 13 Feb 2019 11:05:12 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37765 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729649AbfBMQFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:05:12 -0500
+Received: by mail-ot1-f67.google.com with SMTP id b3so4933555otp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:05:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E4rm+dPHumJI+cccvdii/izqIGaiBjQQRkm0cHKUQDY=;
+        b=dUebzb4wU+pFts3jNYFWY4A1QQhxcVMpFOiCN+IbYPntirYrg1YCJ30gppOxPH4Ifq
+         YxMkVE1Gjp0UNQoSEawUNLmbM10aRaxCI0zbRLIVGTzlj35T3nMpnk/4UOL+/qy0xV+z
+         7NROVLdY7E/28MecAMHbfOQFf0Wv6vQlNV6Eg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E4rm+dPHumJI+cccvdii/izqIGaiBjQQRkm0cHKUQDY=;
+        b=DUxi675L4xDKSi+F5aEs6jtTzwNYwF+qt9Tdmmp/r6TN/XLznY5/358N2CWuIbzooq
+         nSXz/oDKCTvhzTKIuZPcya4MLp7S8HTeqF/zu0zeiYwfBt5j7evW2rAEYVoRaqtpfpiz
+         faq9Uhex74xQl+dyS77/cu3+pdtgi7zdac0XtuQOBF/z8qkrg8Z0nDeJhRCDf0s+4m2E
+         xLWfU4Q3Za7Z49SW1hbbsRuqy6JBpEtfprHAOPNViu58jgatsYn1Fasiqk7tOhx78MmX
+         LPDOMhiozQsZuH1iINtICV4WEf9n1LDfefYTvc8YxHTrQPD/7DYY1ug4eBl9UQpirs34
+         zPBA==
+X-Gm-Message-State: AHQUAubWs30aB9ZfCGPypioJfs+jIDyBODBWsjj6XlwvmnIv/7ZnPbiK
+        p6qSp9MW1eKF41iEFOnBXgrRoSeXmpwnpy0+rUlTMg==
+X-Google-Smtp-Source: AHgI3IZG4jAaFOsu9mddpdRnT37Vlmb6q/rvctvHVCC5bO86814rTufc+BTgln/QujMmSVwMDLbY3BgbRTWgUxSey8c=
+X-Received: by 2002:a24:94cb:: with SMTP id j194mr624095ite.117.1550073910624;
+ Wed, 13 Feb 2019 08:05:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <308aa852-b2c3-3336-707f-d54de6ad77b7@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190213151107.14833-1-robdclark@gmail.com> <20190213152802.GK23159@phenom.ffwll.local>
+ <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
+In-Reply-To: <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 13 Feb 2019 17:04:59 +0100
+Message-ID: <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update entry for drm/msm
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 09:13:01PM +0530, Bhardwaj, Rajneesh wrote:
-> Icelake related information is  available here https://www.intel.in/content/www/in/en/design/products-and-solutions/processors-and-chipsets/ice-lake/overview.html
-> but it may require a login either with Intel or a Partner ID.
-> 
-> The CPUID mentioned in this document is 0x706E0 which is same as per this
-> coreboot link.
+On Wed, Feb 13, 2019 at 4:43 PM Rob Clark via dri-devel
+<dri-devel@lists.freedesktop.org> wrote:
+>
+> On Wed, Feb 13, 2019 at 10:28 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Wed, Feb 13, 2019 at 10:10:44AM -0500, Rob Clark via dri-devel wrote:
+> > > We've moved the tree to a shared gitlab tree, so that Sean can help out
+> > > with maintainer duties.
+> > >
+> > > Cc: Sean Paul <seanpaul@chromium.org>
+> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > ---
+> > > I can include this patch in msm-next for v5.1, but wanted to get it
+> > > ack'd on list
+> >
+> > Is the plan to also add this to dim, for full group maintainership fun?
+> > It's more or less adding a few lines to nightly.conf and done (plus
+> > everyone being ok with using the dim tooling).
+>
+> I think drm/msm is big enough, that it wouldn't make sense to move to
+> drm-misc..  but possibly using the dim tooling could make sense.
 
-You did not read what I wrote.
+This was about using the dim tooling, not about moving msm to
+drm-misc. That indeed doesn't make much sense. And Sean already knows
+that tooling. Plus you pretty much need a big script if you want to
+add more committers (which imo you guys totally should), since
+otherwise you spend up endless amounts of time training people on
+trivial hiccups.
+-Daniel
+
+> BR,
+> -R
+>
+> > -Daniel
+> >
+> > >
+> > >  MAINTAINERS | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 9919840d54cd..2141a1b6653d 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -4838,10 +4838,11 @@ F:    Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt
+> > >
+> > >  DRM DRIVER FOR MSM ADRENO GPU
+> > >  M:   Rob Clark <robdclark@gmail.com>
+> > > +M:   Sean Paul <sean@poorly.run>
+> > >  L:   linux-arm-msm@vger.kernel.org
+> > >  L:   dri-devel@lists.freedesktop.org
+> > >  L:   freedreno@lists.freedesktop.org
+> > > -T:   git git://people.freedesktop.org/~robclark/linux
+> > > +T:   git https://gitlab.freedesktop.org/drm/msm.git
+> > >  S:   Maintained
+> > >  F:   drivers/gpu/drm/msm/
+> > >  F:   include/uapi/drm/msm_drm.h
+> > > --
+> > > A
+> > > 2.20.1
+> > >
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
