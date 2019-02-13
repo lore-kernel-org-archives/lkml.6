@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3026C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57580C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FAB222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27A2A20835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083474;
-	bh=4Zhox896YP+gNjjW2TETc7yLdNzrNRHSHzdtPGXPCkk=;
+	s=default; t=1550083478;
+	bh=9I1C+FATty6ADm8iJXz/BSTVyBDWoU8k7DjkRTQMcF8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sxonUv0/53QLhkGBUbHs+0YbDqtjuhNGsQLzDQpj03eAghbvN5bRQP0fXUTbUkyIE
-	 tgmcvMEnH1KWdXqnWYvtyCnPZMJgqZd+ykMOyNMnOM+EZ71oHNnBWbSBfk/s8LIU0G
-	 8L2j9xIKksYNUmEYkFqqC7myKiwQ5/hCbDMuI6ME=
+	b=TS3ugCM++4llfl+tVUk1PVPL/2RMtZvMn9tjkMw5JEeJS36QbSCbiqzbKxx0hQPjS
+	 PwiWD9efzgsbu8mSdBPrhJoAXoI0O8+KF5Lz6IDbv/ghJrfP2513wk27w9PAp+Sh0A
+	 J22OPpLbh7DdD16ib+gTv3ZHZnmTCMVPc8YBBUu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406139AbfBMSoc (ORCPT
+        id S2406155AbfBMSog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:44:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42986 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:44:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406126AbfBMSo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:27 -0500
+        id S2406126AbfBMSod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:44:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F18BB20835;
-        Wed, 13 Feb 2019 18:44:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62ABE20835;
+        Wed, 13 Feb 2019 18:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083466;
-        bh=4Zhox896YP+gNjjW2TETc7yLdNzrNRHSHzdtPGXPCkk=;
+        s=default; t=1550083472;
+        bh=9I1C+FATty6ADm8iJXz/BSTVyBDWoU8k7DjkRTQMcF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wpThLmcGdjyshtXsJtFAieawmTTRlzviGvSR/0U8Q9Y4uT2UhPWXI8TKtLJHUWFI5
-         w4kCY5/UuScOvhY5dBwBEHzGVUVMdT9w5q+Wc3g6GydInNPVzPfkPHWnzF8Y7g+XdK
-         n7A468q4Rh3OTWEt1xdpxVBXu6GUdN+MxFAuESko=
+        b=kZvKr/ZfL5n0r2WDbp3SEpMJ8B9+nX9dL1LIEcrYrgI4MCshx0Nw1YvWtoRLMINbx
+         mD0mx2BX2MXt1eAWKqIN1f3Ata7Kcx5SHpFux/0A8NrE0QJZ02w7fTX2w/JyeaOznA
+         I9Qk/Bcv1aKj6Gw6LXEzDX53xKnc6pY3YxMkKrX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 09/44] iio: ti-ads8688: Update buffer allocation for timestamps
-Date:   Wed, 13 Feb 2019 19:38:10 +0100
-Message-Id: <20190213183652.441142552@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.19 41/44] batman-adv: Avoid WARN on net_device without parent in netns
+Date:   Wed, 13 Feb 2019 19:38:42 +0100
+Message-Id: <20190213183655.230155745@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -66,42 +68,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Murphy <dmurphy@ti.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit f214ff521fb1f861c8d7f7d0af98b06bf61b3369 upstream.
+commit 955d3411a17f590364238bd0d3329b61f20c1cd2 upstream.
 
-Per Jonathan Cameron, the buffer needs to allocate room for a
-64 bit timestamp as well as the channels.  Change the buffer
-to allocate this additional space.
+It is not allowed to use WARN* helpers on potential incorrect input from
+the user or transient problems because systems configured as panic_on_warn
+will reboot due to such a problem.
 
-Fixes: 2a86487786b5c ("iio: adc: ti-ads8688: add trigger and buffer support")
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+A NULL return value of __dev_get_by_index can be caused by various problems
+which can either be related to the system configuration or problems
+(incorrectly returned network namespaces) in other (virtual) net_device
+drivers. batman-adv should not cause a (harmful) WARN in this situation and
+instead only report it via a simple message.
+
+Fixes: b7eddd0b3950 ("batman-adv: prevent using any virtual device created on batman-adv as hard-interface")
+Reported-by: syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ti-ads8688.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/batman-adv/hard-interface.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/ti-ads8688.c
-+++ b/drivers/iio/adc/ti-ads8688.c
-@@ -41,6 +41,7 @@
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -20,7 +20,6 @@
+ #include "main.h"
  
- #define ADS8688_VREF_MV			4096
- #define ADS8688_REALBITS		16
-+#define ADS8688_MAX_CHANNELS		8
+ #include <linux/atomic.h>
+-#include <linux/bug.h>
+ #include <linux/byteorder/generic.h>
+ #include <linux/errno.h>
+ #include <linux/gfp.h>
+@@ -179,8 +178,10 @@ static bool batadv_is_on_batman_iface(co
+ 	parent_dev = __dev_get_by_index((struct net *)parent_net,
+ 					dev_get_iflink(net_dev));
+ 	/* if we got a NULL parent_dev there is something broken.. */
+-	if (WARN(!parent_dev, "Cannot find parent device"))
++	if (!parent_dev) {
++		pr_err("Cannot find parent device\n");
+ 		return false;
++	}
  
- /*
-  * enum ads8688_range - ADS8688 reference voltage range
-@@ -385,7 +386,7 @@ static irqreturn_t ads8688_trigger_handl
- {
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *indio_dev = pf->indio_dev;
--	u16 buffer[8];
-+	u16 buffer[ADS8688_MAX_CHANNELS + sizeof(s64)/sizeof(u16)];
- 	int i, j = 0;
- 
- 	for (i = 0; i < indio_dev->masklength; i++) {
+ 	if (batadv_mutual_parents(net_dev, net, parent_dev, parent_net))
+ 		return false;
 
 
