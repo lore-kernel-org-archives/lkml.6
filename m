@@ -2,147 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15891C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C1C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31E9222DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DE6222CF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:50:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="vq6KrWoR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404492AbfBMQrP (ORCPT
+        id S2392723AbfBMQuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:47:15 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59267 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404369AbfBMQrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:47:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 08:47:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="133319959"
-Received: from chenyu-office.sh.intel.com ([10.239.158.163])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Feb 2019 08:47:12 -0800
-Date:   Thu, 14 Feb 2019 00:55:38 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][RFC] ACPI: add "processor.broadcast_ppc" hook to
- broadcast  _PPC to all online CPUs
-Message-ID: <20190213165538.GB30385@chenyu-office.sh.intel.com>
-References: <20190209120232.21582-1-yu.c.chen@intel.com>
- <20190211103307.rccddkso3f5s3yko@vireshk-i7>
+        Wed, 13 Feb 2019 11:50:01 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46109 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388561AbfBMQuA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:50:00 -0500
+Received: by mail-ot1-f66.google.com with SMTP id w25so5315263otm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:50:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XtYAbd61b340Vd3goSh2N2gZ0biExBnNhPdti+q3fWM=;
+        b=vq6KrWoRpJa7Efj9KN5Rx9KajsCeZCXqEFYqOZEKwKqpVb0f2e9tb95B49AOibTbEq
+         LZXHlLJHGxc7fdixDC3Y9zWBuiC+AMyP+AxiFG5U+D8vAlz3kFUYQr9aYHHLDniugXj8
+         WWuICq9NJwnwc3gzVZF5/8t5GxRY7+LcbuNCQoBzjQVc222d7pyrlJn291tFup8Wcf7Z
+         MhFGMcua74XKheGnIy642YVsyNQ1cJ9vd63NC1wVFogKV95KCSWLVxU6edqmofmWeyTj
+         b3pHtHFLLxG+XPw9+ULrktNH8eBG1G8muF7N5H+/SQco+9N9cZ34MiU5vxD0joUquTK0
+         UzfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XtYAbd61b340Vd3goSh2N2gZ0biExBnNhPdti+q3fWM=;
+        b=skpSSO/Df/P0BC0osjXcaArtFlnokgqCFIvvZ9Xq+p2nFVYAC8TTZ/CxMLN9nP1vwf
+         +uk4M1Gs3OuUnK1oqgS0NF/S/ECLFhGMIXw8J9mmi0GjgOIva2w5mXVY2+GK3fzukKjm
+         xEZKkYGNXVLqSpbSQI+QvWl/wEPwz317xfAH2FXBY1CSQeScZ74pnxX/vvc/HnaGYiBB
+         7E1HjLf2nTUZMlZ+DiQNqDf6lDJisrjpT5+xNqM2UldB+xyH0jFgDVvdakp1blM1K/hy
+         FS0x0Z7JXgqBUFxRdM/hMIJvPZ8MgLJc8Qk+m46OXJX8gx5TxQELSdjK79MdpgXOYlVL
+         8IVA==
+X-Gm-Message-State: AHQUAuZ6ZJvNgSCeIV/FZbxe2hH71l2jXSqcokJ6OUASplTmJFheB85A
+        4ZST6WrnsEhdmElONVUaS9aqDnwgO6UyGduFFF0uE64q
+X-Google-Smtp-Source: AHgI3Ia0ed/GAdXV+nQu5iOaR0+5225WY3WzLkQZzkMBgFVte6GfZt/3WWPbEklP7enNysMV+oh68M6me5d4LBgnUCY=
+X-Received: by 2002:a05:6808:344:: with SMTP id j4mr770099oie.149.1550076599649;
+ Wed, 13 Feb 2019 08:49:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211103307.rccddkso3f5s3yko@vireshk-i7>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155000669646.348031.16690970886357498896.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190213102202.GA13313@quack2.suse.cz>
+In-Reply-To: <20190213102202.GA13313@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 13 Feb 2019 08:49:47 -0800
+Message-ID: <CAPcyv4jwMx2ohs9QobTohL8jxc5G74XhmY5QFpmiVF9siWLuwA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] dax: Check the end of the block-device capacity with dax_direct_access()
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
-On Mon, Feb 11, 2019 at 04:03:07PM +0530, Viresh Kumar wrote:
-> On 09-02-19, 20:02, Chen Yu wrote:
-> > On Dell Inc. XPS13 9333, the BIOS changes the value of
-> > MSR_IA32_MISC_ENABLE_TURBO_DISABLE at runtime (e.g., when
-> > the power source changes), the maximum frequency of the
-> > CPU is not updated accordingly. This is due to the policy's
-> > cpuinfo.max is not updated when _PPC notifier fires.
-> > 
-> > Fix this problem by updating the policy's cpuinfo.max
-> > and broadcast the _PPC notifier to all online CPUs.
-> > 
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=200759
-> > Reported-and-tested-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
-> > Originally-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > ---
-> >  drivers/acpi/processor_perflib.c | 16 ++++++++++++++--
-> >  drivers/cpufreq/cpufreq.c        |  2 ++
-> >  drivers/cpufreq/intel_pstate.c   | 15 ++++++++++++++-
-> >  3 files changed, 30 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-> > index a303fd0e108c..737dbf5aa7f7 100644
-> > --- a/drivers/acpi/processor_perflib.c
-> > +++ b/drivers/acpi/processor_perflib.c
-> > @@ -63,6 +63,10 @@ module_param(ignore_ppc, int, 0644);
-> >  MODULE_PARM_DESC(ignore_ppc, "If the frequency of your machine gets wrongly" \
-> >  		 "limited by BIOS, this should help");
-> >  
-> > +static int broadcast_ppc;
-> > +module_param(broadcast_ppc, int, 0644);
-> > +MODULE_PARM_DESC(broadcast_ppc, "Broadcast the ppc to all online CPUs");
-> > +
-> >  #define PPC_REGISTERED   1
-> >  #define PPC_IN_USE       2
-> >  
-> > @@ -180,8 +184,16 @@ void acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag)
-> >  		else
-> >  			acpi_processor_ppc_ost(pr->handle, 0);
-> >  	}
-> > -	if (ret >= 0)
-> > -		cpufreq_update_policy(pr->id);
-> > +	if (ret >= 0) {
-> > +		if (broadcast_ppc) {
-> > +			int cpu;
-> > +
-> > +			for_each_possible_cpu(cpu)
-> > +				cpufreq_update_policy(cpu);
-> > +		} else {
-> > +			cpufreq_update_policy(pr->id);
-> > +		}
-> > +	}
-> >  }
-> >  
-> >  int acpi_processor_get_bios_limit(int cpu, unsigned int *limit)
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index e35a886e00bc..95e08816b512 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -2237,6 +2237,8 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
-> >  
-> >  	policy->min = new_policy->min;
-> >  	policy->max = new_policy->max;
-> > +	policy->cpuinfo.max_freq = new_policy->cpuinfo.max_freq;
-> > +	policy->cpuinfo.min_freq = new_policy->cpuinfo.min_freq;
-> >  	trace_cpu_frequency_limits(policy);
-> >  
-> >  	policy->cached_target_freq = UINT_MAX;
-> > diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> > index dd66decf2087..e1881313c396 100644
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -2081,11 +2081,24 @@ static void intel_pstate_adjust_policy_max(struct cpufreq_policy *policy,
-> >  
-> >  static int intel_pstate_verify_policy(struct cpufreq_policy *policy)
-> >  {
-> > +	int max_freq;
-> >  	struct cpudata *cpu = all_cpu_data[policy->cpu];
-> >  
-> >  	update_turbo_state();
-> > +	max_freq = intel_pstate_get_max_freq(cpu);
-> > +
-> > +	if (acpi_ppc && policy->max == policy->cpuinfo.max_freq &&
-> 
-> Why do have this check for policy->max here ?
+On Wed, Feb 13, 2019 at 2:22 AM Jan Kara <jack@suse.cz> wrote:
 >
-Thanks for looking at this change, I've replied to another email in detail of
-the scenario that, this is due to corner case that if the system boots
-with battery and plug the AC after boot up, the cpufreq max limit will not
-increase even the turbo has been enabled after the AC plugged.
+> On Tue 12-02-19 13:24:56, Dan Williams wrote:
+> > The checks in __bdev_dax_supported() helped mitigate a potential data
+> > corruption bug in the pmem driver's handling of section alignment
+> > padding. Strengthen the checks, including checking the end of the range,
+> > to validate the dev_pagemap, Xarray entries, and sector-to-pfn
+> > translation established for pmem namespaces.
+> >
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > ---
+> >  drivers/dax/super.c |   39 +++++++++++++++++++++++++++++----------
+> >  1 file changed, 29 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> > index 6e928f37d084..a27395cfcec6 100644
+> > --- a/drivers/dax/super.c
+> > +++ b/drivers/dax/super.c
+> > @@ -86,12 +86,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+> >  {
+> >       struct dax_device *dax_dev;
+> >       bool dax_enabled = false;
+> > +     pgoff_t pgoff, pgoff_end;
+> >       struct request_queue *q;
+> > -     pgoff_t pgoff;
+> > -     int err, id;
+> > -     pfn_t pfn;
+> > -     long len;
+> >       char buf[BDEVNAME_SIZE];
+> > +     void *kaddr, *end_kaddr;
+> > +     pfn_t pfn, end_pfn;
+> > +     sector_t last_page;
+> > +     long len, len2;
+> > +     int err, id;
+> >
+> >       if (blocksize != PAGE_SIZE) {
+> >               pr_debug("%s: error: unsupported blocksize for dax\n",
+> > @@ -113,6 +115,15 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+> >               return false;
+> >       }
+> >
+> > +     last_page = ALIGN_DOWN(part_nr_sects_read(bdev->bd_part)
+> > +                     - PAGE_SIZE / 512, PAGE_SIZE / 512);
+>
+> Why not just (i_size_read(bdev->bd_inode) - 1) >> PAGE_SHIFT?
 
-Best,
-Yu
+Because that would be too elegant and straightforward?
+
+> Otherwise the patch looks good to me.
+
+Thanks, I'll fix up the last page calculation.
