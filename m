@@ -2,114 +2,188 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0067DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE76EC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C348D222C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fitHZwNj"
+	by mail.kernel.org (Postfix) with ESMTP id 9B6C7222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732864AbfBME0M (ORCPT
+        id S1732892AbfBME0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 23:26:12 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36212 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfBME0M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 23:26:12 -0500
-Received: by mail-ot1-f68.google.com with SMTP id k98so1821547otk.3;
-        Tue, 12 Feb 2019 20:26:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sd5Ml0besxYMG4NkLF0fkNk0tH0yX+PUzLjCoBwLSJo=;
-        b=fitHZwNjBXnqfYHVIgOBoCsG5KP3gzis3h+VVLdEZWYK3zEwKG06TvZtlFmJo9mk/8
-         Rk7BjgyZsPFpn7DAAgilkl/4GghSc5UP9TjWxMf/riwSPZE8YHQZz2wPOcni0yl+ob9q
-         UckGC+ZrVbmF1VpzoafWNJc8LOrzEVZYP/UW0rIy5vPnu1wXkBJWaOpEsazoIZZs4frf
-         k0gL6kXv52Tw2YpGsqh2PQY5X3k5MEq23e1njEFwcuvhPZRqnuA9LWJnAnEqRS14uEDH
-         VOVN9K8bzt5jG4YbylxKPmUGQUJaDHgGELd5C/lMHlxg1U+gLNcBvnE4RSgH0RjUJHwq
-         ekCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sd5Ml0besxYMG4NkLF0fkNk0tH0yX+PUzLjCoBwLSJo=;
-        b=tp1BiB+Npggcxc6s9dRojlCMdWGQeceBzPAeSJev0K/7hWOKnIEs8MAGcrUuOQY3jo
-         zP8d101qosg4m6cOIR4qE2Vi0drrap07cJhx1IhgKF30Qlbahlz9obBi/+hgMyhBUzGK
-         zhDSv1wDuJ5Wk2h7gPokYYel+/EsmbQnnAgYuXZ4nslI1aIeCLlPToPz9UiSs5eu63+5
-         PEolGN+P4zj6K5zG6+jLEhD11OJm75fBh92cytAhf8notTT6w1H/7Xu/cePk+3v1UANX
-         0l1iYfEw95IEGvoz7yhHZP5CtCqfF1dJR86NkLGDfa4LAooPKz3ohGMPgRUXj8QJlrsS
-         m5ZA==
-X-Gm-Message-State: AHQUAub+49akMlnyNHL0HNzT6im1cDxxVnA0ikr5nstn7R/A1ShBxmab
-        ZnX/t6zGF0uDWfheDsY2dxw=
-X-Google-Smtp-Source: AHgI3IYUMerUKeJf7klbBxZ9mlo5bjz3DbQFIK30ipqXQFVV2SPbWAUnBXYy5RIqVC5bvi7hP+noxQ==
-X-Received: by 2002:a9d:7141:: with SMTP id y1mr6825013otj.177.1550031971225;
-        Tue, 12 Feb 2019 20:26:11 -0800 (PST)
-Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id a12sm6470650otl.39.2019.02.12.20.26.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 20:26:10 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM5301X ARM
-        ARCHITECTURE), Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: dts: BCM5301X: Change Ethernet switch management port
-Date:   Tue, 12 Feb 2019 20:25:59 -0800
-Message-Id: <20190213042600.27729-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 12 Feb 2019 23:26:49 -0500
+Received: from mga09.intel.com ([134.134.136.24]:42632 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbfBME0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 23:26:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 20:26:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,364,1544515200"; 
+   d="scan'208";a="299314832"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga005.jf.intel.com with ESMTP; 12 Feb 2019 20:26:47 -0800
+Subject: [PATCH v2] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM family
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Dexuan Cui <decui@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 12 Feb 2019 20:14:10 -0800
+Message-ID: <155003117983.733096.1672828968568209328.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BCM5301X has 3 Ethernet controllers: GMAC0, 1, 2 which map to ports 5, 7
-and 8 respectively of the internal switch. Future changes will turn on
-management mode in the Ethernet switch driver (b53) which will require
-us to use port 8.
+As Dexuan reports the NVDIMM_FAMILY_HYPERV platform is incompatible with
+the existing Linux namespace implementation because it uses
+NSLABEL_FLAG_LOCAL for x1-width PMEM interleave sets. Quirk it as an
+platform / DIMM that does not provide BLK-aperture access. Allow the
+libnvdimm core to assume no potential for aliasing. In case other
+implementations make the same mistake, provide a "noblk" module
+parameter to force-enable the quirk.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Link: https://lkml.kernel.org/r/PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+Reported-by: Dexuan Cui <decui@microsoft.com>
+Tested-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Changes since v1:
+* Fix the default setting for NDD_NOBLK in __nvdimm_create().
 
-diff --git a/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts b/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
-index 3fced3b7f1a8..affa9cc7422d 100644
---- a/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
-+++ b/arch/arm/boot/dts/bcm4708-smartrg-sr400ac.dts
-@@ -150,10 +150,15 @@
- 			label = "wan";
- 		};
+ drivers/acpi/nfit/core.c        |    4 ++++
+ drivers/nvdimm/dimm_devs.c      |    7 +++++++
+ drivers/nvdimm/label.c          |    3 +++
+ drivers/nvdimm/namespace_devs.c |    6 ++++++
+ drivers/nvdimm/region_devs.c    |    7 +++++++
+ include/linux/libnvdimm.h       |    2 ++
+ 6 files changed, 29 insertions(+)
+
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 4a7e8b1fa43b..811c399a3a76 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -2016,6 +2016,10 @@ static int acpi_nfit_register_dimms(struct acpi_nfit_desc *acpi_desc)
+ 			cmd_mask |= nfit_mem->dsm_mask & NVDIMM_STANDARD_CMDMASK;
+ 		}
  
--		port@5 {
--			reg = <5>;
-+		port@8 {
-+			reg = <8>;
- 			label = "cpu";
--			ethernet = <&gmac0>;
-+			ethernet = <&gmac2>;
++		/* Quirk to ignore LOCAL for labels on HYPERV DIMMs */
++		if (nfit_mem->family == NVDIMM_FAMILY_HYPERV)
++			set_bit(NDD_NOBLK, &flags);
 +
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
- 		};
- 	};
- };
--- 
-2.19.1
+ 		if (test_bit(NFIT_MEM_LSR, &nfit_mem->flags)) {
+ 			set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
+ 			set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
+diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+index 4890310df874..553aa78abeee 100644
+--- a/drivers/nvdimm/dimm_devs.c
++++ b/drivers/nvdimm/dimm_devs.c
+@@ -11,6 +11,7 @@
+  * General Public License for more details.
+  */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#include <linux/moduleparam.h>
+ #include <linux/vmalloc.h>
+ #include <linux/device.h>
+ #include <linux/ndctl.h>
+@@ -25,6 +26,10 @@
+ 
+ static DEFINE_IDA(dimm_ida);
+ 
++static bool noblk;
++module_param(noblk, bool, 0444);
++MODULE_PARM_DESC(noblk, "force disable BLK / local alias support");
++
+ /*
+  * Retrieve bus and dimm handle and return if this bus supports
+  * get_config_data commands
+@@ -551,6 +556,8 @@ struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus,
+ 
+ 	nvdimm->dimm_id = dimm_id;
+ 	nvdimm->provider_data = provider_data;
++	if (noblk)
++		flags |= 1 << NDD_NOBLK;
+ 	nvdimm->flags = flags;
+ 	nvdimm->cmd_mask = cmd_mask;
+ 	nvdimm->num_flush = num_flush;
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 6d6e9a12150b..f3d753d3169c 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -392,6 +392,7 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+ 		return 0; /* no label, nothing to reserve */
+ 
+ 	for_each_clear_bit_le(slot, free, nslot) {
++		struct nvdimm *nvdimm = to_nvdimm(ndd->dev);
+ 		struct nd_namespace_label *nd_label;
+ 		struct nd_region *nd_region = NULL;
+ 		u8 label_uuid[NSLABEL_UUID_LEN];
+@@ -406,6 +407,8 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+ 
+ 		memcpy(label_uuid, nd_label->uuid, NSLABEL_UUID_LEN);
+ 		flags = __le32_to_cpu(nd_label->flags);
++		if (test_bit(NDD_NOBLK, &nvdimm->flags))
++			flags &= ~NSLABEL_FLAG_LOCAL;
+ 		nd_label_gen_id(&label_id, label_uuid, flags);
+ 		res = nvdimm_allocate_dpa(ndd, &label_id,
+ 				__le64_to_cpu(nd_label->dpa),
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 4b077555ac70..3677b0c4a33d 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2492,6 +2492,12 @@ static int init_active_labels(struct nd_region *nd_region)
+ 			if (!label_ent)
+ 				break;
+ 			label = nd_label_active(ndd, j);
++			if (test_bit(NDD_NOBLK, &nvdimm->flags)) {
++				u32 flags = __le32_to_cpu(label->flags);
++
++				flags &= ~NSLABEL_FLAG_LOCAL;
++				label->flags = __cpu_to_le32(flags);
++			}
+ 			label_ent->label = label;
+ 
+ 			mutex_lock(&nd_mapping->lock);
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index e2818f94f292..3b58baa44b5c 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -1003,6 +1003,13 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
+ 
+ 		if (test_bit(NDD_UNARMED, &nvdimm->flags))
+ 			ro = 1;
++
++		if (test_bit(NDD_NOBLK, &nvdimm->flags)
++				&& dev_type == &nd_blk_device_type) {
++			dev_err(&nvdimm_bus->dev, "%s: %s mapping%d is not BLK capable\n",
++					caller, dev_name(&nvdimm->dev), i);
++			return NULL;
++		}
+ 	}
+ 
+ 	if (dev_type == &nd_blk_device_type) {
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index 5440f11b0907..7da406ae3a2b 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -42,6 +42,8 @@ enum {
+ 	NDD_SECURITY_OVERWRITE = 3,
+ 	/*  tracking whether or not there is a pending device reference */
+ 	NDD_WORK_PENDING = 4,
++	/* ignore / filter NSLABEL_FLAG_LOCAL for this DIMM, i.e. no aliasing */
++	NDD_NOBLK = 5,
+ 
+ 	/* need to set a limit somewhere, but yes, this is likely overkill */
+ 	ND_IOCTL_MAX_BUFLEN = SZ_4M,
 
