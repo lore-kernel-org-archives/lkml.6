@@ -2,213 +2,118 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469BBC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B6AC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020AB21920
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:06:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Q9hEMKYZ"
+	by mail.kernel.org (Postfix) with ESMTP id 863B72175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550074113;
+	bh=UIQE35139V11IOLHEZmrZZdv+9BZJtImez6vXdgnVV8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=i2MWSDnNCoyfgaWo3NjSN+pD5YMOZI55uTmlQ1tfwZMVqf26Psykxh9HaXQMcn90R
+	 un5D7joQ2zrjdfGd3nhMR4MrDVuJAH5Ao3ulY0XLcoWWtxkLxIQ7tYU9PGGAIem9fh
+	 aCBPcX40gR+RZJTVIRI2u7rwZIa77STc+MFr3qy4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392608AbfBMQG0 (ORCPT
+        id S2404312AbfBMQIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:06:26 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:65024 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392580AbfBMQGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:06:24 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4404C05JsFz9vKHt;
-        Wed, 13 Feb 2019 17:06:20 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Q9hEMKYZ; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id yCGx1A9PKAZ7; Wed, 13 Feb 2019 17:06:20 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4404C04HFpz9vKHr;
-        Wed, 13 Feb 2019 17:06:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550073980; bh=YENrTdZmjRUQzznsCocFVOEf27q2NU6laX+CVp49Qwk=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=Q9hEMKYZFJIIe5jotB1jmSVsne04ZjiZcngjYsaJc/vpgUnqwSwS705Mn8qcAJyBn
-         WxRVjYKA9ULNkwORGKyBQH822F7gV9YMge/4nadzf3gKd2QPcpicTjYjML/ifux6pH
-         1vYOxJvKL6J6NKJjIy4e5uvLS553mtgDvgIbC8mc=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 289568B876;
-        Wed, 13 Feb 2019 17:06:22 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id HM3eYe_1KKhk; Wed, 13 Feb 2019 17:06:22 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0340F8B756;
-        Wed, 13 Feb 2019 17:06:22 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id EAAA769D7C; Wed, 13 Feb 2019 16:06:21 +0000 (UTC)
-Message-Id: <c1fee958acabcfadcab6cb2c07f04fd395583e88.1550073540.git.christophe.leroy@c-s.fr>
-In-Reply-To: <21f171c0cbd460905a134ce9b9afc2ecb5277269.1550073540.git.christophe.leroy@c-s.fr>
-References: <21f171c0cbd460905a134ce9b9afc2ecb5277269.1550073540.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 2/2] powerpc/8xx: Map 32Mb of RAM at init.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 13 Feb 2019 16:06:21 +0000 (UTC)
+        Wed, 13 Feb 2019 11:08:32 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41966 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733262AbfBMQIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:08:31 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so4943264otk.8;
+        Wed, 13 Feb 2019 08:08:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XnbXfZW5UqKnm7T4Tfw4mA9FpQDbLcwwfMQTvEh1Vao=;
+        b=B+x6k6doXlwh1L0mAbuKx+QBrTDegv1gkhlgXKui6ocZPeTxXq5vsYDH0I2Ig67RWZ
+         LBBJnB9bizuYRH9akzs5tPTJa9lP+AMEjB7nJmEll5Fw8g7v8nxzP1gS4I7f2WKPvVKA
+         EPHWhezBfkj6gtG1nZsRcFV7rkVkEnTfAjZ5GTuJ8XHe+C8LKgmngZG1SBPANbBn8H37
+         ZlXlgeannb7uN0+dLJVraGQUugBpRD7T3DwJAQ7WL6uMMgFUP40hcoSvPIS61pfC72w4
+         Gb3TMuXOy4proZ0eHsNNhvkRXs3H0jQITw/983WhWcHef/JeaBPZQ93XPTwocKhFuqXq
+         xKjA==
+X-Gm-Message-State: AHQUAuYGd214GGY2DfJanucKiYszhvr/YiYdTCquSd0tBUhQNVTAWz3O
+        lsRADkefLAUmLuMzZ+NQgw==
+X-Google-Smtp-Source: AHgI3Ib1WA8L/jE+BT8TeduzdbA43Qx4dLZcflAvuEJ0GSgeBi1zHCClTKbGZxgFQn0WlamkkOApTA==
+X-Received: by 2002:aca:c5d5:: with SMTP id v204mr671477oif.104.1550074111020;
+        Wed, 13 Feb 2019 08:08:31 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id m5sm4022129oih.16.2019.02.13.08.08.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 08:08:30 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: qlogicpti: Use of_node_name_eq for node name comparisons
+Date:   Wed, 13 Feb 2019 10:08:29 -0600
+Message-Id: <20190213160829.3923-1-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the time being, initial MMU setup allows 24 Mbytes
-of DATA and 8 Mbytes of code.
+Convert string compares of DT node names to use of_node_name_eq helper
+instead. This removes direct access to the node name pointer.
 
-Some debug setup like CONFIG_KASAN generate huge
-kernels with text size over the 8M limit and data over the
-24 Mbytes limit.
+As prom_name is not used for anything else, remove it.
 
-Here is an 8xx kernel compiled with CONFIG_KASAN_INLINE for
-one of my boards:
-
-[root@po16846vm linux-powerpc]# size -x vmlinux
-   text	   data	    bss	    dec	    hex	filename
-0x111019c	0x41b0d4	0x490de0	26984528	19bc050	vmlinux
-
-This patch maps up to 32 Mbytes code based on _einittext symbol
-and allows 32 Mbytes of memory instead of 24.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- v3: Maps 32M of both data and text.
+ drivers/scsi/qlogicpti.c | 3 +--
+ drivers/scsi/qlogicpti.h | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
- v2: Using IS_ENABLED() instead of #ifdef in 8xx_mmu.c
-
- arch/powerpc/kernel/head_8xx.S | 51 +++++++++++++++++++++++++-----------------
- arch/powerpc/mm/8xx_mmu.c      |  7 ++++--
- 2 files changed, 36 insertions(+), 22 deletions(-)
-
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 20cc816b3508..fe2857ef0309 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -337,8 +337,8 @@ InstructionTLBMiss:
- 	rlwinm	r10, r10, 16, 0xfff8
- 	cmpli	cr0, r10, PAGE_OFFSET@h
- #ifndef CONFIG_PIN_TLB_TEXT
--	/* It is assumed that kernel code fits into the first 8M page */
--0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x0800000)@h
-+	/* It is assumed that kernel code fits into the first 32M */
-+0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x2000000)@h
- 	patch_site	0b, patch__itlbmiss_linmem_top
- #endif
- #endif
-@@ -434,7 +434,7 @@ DataStoreTLBMiss:
- #ifndef CONFIG_PIN_TLB_IMMR
- 	cmpli	cr6, r10, VIRT_IMMR_BASE@h
- #endif
--0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x1800000)@h
-+0:	cmpli	cr7, r10, (PAGE_OFFSET + 0x2000000)@h
- 	patch_site	0b, patch__dtlbmiss_linmem_top
+diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+index e35ce762d454..0e22512bd3e4 100644
+--- a/drivers/scsi/qlogicpti.c
++++ b/drivers/scsi/qlogicpti.c
+@@ -1314,8 +1314,7 @@ static int qpti_sbus_probe(struct platform_device *op)
+ 	qpti->qhost = host;
+ 	qpti->op = op;
+ 	qpti->qpti_id = nqptis;
+-	strcpy(qpti->prom_name, op->dev.of_node->name);
+-	qpti->is_pti = strcmp(qpti->prom_name, "QLGC,isp");
++	qpti->is_pti = !of_node_name_eq(op->dev.of_node, "QLGC,isp");
  
- 	mfspr	r10, SPRN_M_TWB	/* Get level 1 table */
-@@ -886,28 +886,11 @@ initial_mmu:
- 	mtspr	SPRN_MD_CTR, r10	/* remove PINNED DTLB entries */
- 
- 	tlbia			/* Invalidate all TLB entries */
--#ifdef CONFIG_PIN_TLB_TEXT
--	lis	r8, MI_RSV4I@h
--	ori	r8, r8, 0x1c00
--
--	mtspr	SPRN_MI_CTR, r8	/* Set instruction MMU control */
--#endif
--
- #ifdef CONFIG_PIN_TLB_DATA
- 	oris	r10, r10, MD_RSV4I@h
- 	mtspr	SPRN_MD_CTR, r10	/* Set data TLB control */
- #endif
- 
--	/* Now map the lower 8 Meg into the ITLB. */
--	lis	r8, KERNELBASE@h	/* Create vaddr for TLB */
--	ori	r8, r8, MI_EVALID	/* Mark it valid */
--	mtspr	SPRN_MI_EPN, r8
--	li	r8, MI_PS8MEG /* Set 8M byte page */
--	ori	r8, r8, MI_SVALID	/* Make it valid */
--	mtspr	SPRN_MI_TWC, r8
--	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
--	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
--
- 	lis	r8, MI_APG_INIT@h	/* Set protection modes */
- 	ori	r8, r8, MI_APG_INIT@l
- 	mtspr	SPRN_MI_AP, r8
-@@ -937,6 +920,34 @@ initial_mmu:
- 	mtspr	SPRN_MD_RPN, r8
- #endif
- 
-+	/* Now map the lower RAM (up to 32 Mbytes) into the ITLB. */
-+#ifdef CONFIG_PIN_TLB_TEXT
-+	lis	r8, MI_RSV4I@h
-+	ori	r8, r8, 0x1c00
-+#endif
-+	li	r9, 4				/* up to 4 pages of 8M */
-+	mtctr	r9
-+	lis	r9, KERNELBASE@h		/* Create vaddr for TLB */
-+	li	r10, MI_PS8MEG | MI_SVALID	/* Set 8M byte page */
-+	li	r11, MI_BOOTINIT		/* Create RPN for address 0 */
-+	lis	r12, _einittext@h
-+	ori	r12, r12, _einittext@l
-+1:
-+#ifdef CONFIG_PIN_TLB_TEXT
-+	mtspr	SPRN_MI_CTR, r8	/* Set instruction MMU control */
-+	addi	r8, r8, 0x100
-+#endif
-+
-+	ori	r0, r9, MI_EVALID		/* Mark it valid */
-+	mtspr	SPRN_MI_EPN, r0
-+	mtspr	SPRN_MI_TWC, r10
-+	mtspr	SPRN_MI_RPN, r11		/* Store TLB entry */
-+	addis	r9, r9, 0x80
-+	addis	r11, r11, 0x80
-+
-+	cmpl	cr0, r9, r12
-+	bdnzf	gt, 1b
-+
- 	/* Since the cache is enabled according to the information we
- 	 * just loaded into the TLB, invalidate and enable the caches here.
- 	 * We should probably check/set other modes....later.
-diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
-index 92b677faea8c..50c8cd8d3cb9 100644
---- a/arch/powerpc/mm/8xx_mmu.c
-+++ b/arch/powerpc/mm/8xx_mmu.c
-@@ -112,6 +112,9 @@ unsigned long __init mmu_mapin_ram(unsigned long top)
- 			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
- 	} else {
- 		mapped = top & ~(LARGE_PAGE_SIZE_8M - 1);
-+		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
-+			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
-+					    _ALIGN(__pa(_einittext), 8 << 20));
- 	}
- 
- 	mmu_patch_cmp_limit(&patch__dtlbmiss_linmem_top, mapped);
-@@ -140,8 +143,8 @@ void __init setup_initial_memory_limit(phys_addr_t first_memblock_base,
- 	 */
- 	BUG_ON(first_memblock_base != 0);
- 
--	/* 8xx can only access 24MB at the moment */
--	memblock_set_current_limit(min_t(u64, first_memblock_size, 0x01800000));
-+	/* 8xx can only access 32MB at the moment */
-+	memblock_set_current_limit(min_t(u64, first_memblock_size, 0x02000000));
- }
- 
- /*
+ 	if (qpti_map_regs(qpti) < 0)
+ 		goto fail_unlink;
+diff --git a/drivers/scsi/qlogicpti.h b/drivers/scsi/qlogicpti.h
+index 884ad72ade57..2b6374e08a7d 100644
+--- a/drivers/scsi/qlogicpti.h
++++ b/drivers/scsi/qlogicpti.h
+@@ -364,7 +364,6 @@ struct qlogicpti {
+ 	int                       qpti_id;
+ 	int                       scsi_id;
+ 	int                       prom_node;
+-	char                      prom_name[64];
+ 	int                       irq;
+ 	char                      differential, ultra, clock;
+ 	unsigned char             bursts;
+@@ -379,7 +378,7 @@ struct qlogicpti {
+ #define SREG_IMASK                0x0c   /* Interrupt level            */
+ #define SREG_SPMASK               0x03   /* Mask for switch pack       */
+ 	unsigned char             swsreg;
+-	unsigned int	
++	unsigned int
+ 		gotirq	:	1,	/* this instance got an irq */
+ 		is_pti	: 	1;	/* Non-zero if this is a PTI board. */
+ };
 -- 
-2.13.3
+2.19.1
 
