@@ -2,121 +2,99 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E340C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F47AC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47118222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10B8222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390914AbfBMI5K convert rfc822-to-8bit (ORCPT
+        id S2390928AbfBMI5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:57:10 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:49653 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfBMI5I (ORCPT
+        Wed, 13 Feb 2019 03:57:53 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:1706 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727264AbfBMI5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:57:08 -0500
-X-Originating-IP: 87.231.134.186
-Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 8C44EE0012;
-        Wed, 13 Feb 2019 08:57:04 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v3 0/6] Add CPU clock support for Armada 7K/8K
-In-Reply-To: <875zuwo4fi.fsf@FE-laptop>
-References: <20181216094147.6468-1-gregory.clement@bootlin.com> <87a7k8o5d5.fsf@FE-laptop> <154713766177.15366.14948014236046606980@swboyd.mtv.corp.google.com> <875zuwo4fi.fsf@FE-laptop>
-Date:   Wed, 13 Feb 2019 09:57:04 +0100
-Message-ID: <871s4c5an3.fsf@FE-laptop>
+        Wed, 13 Feb 2019 03:57:53 -0500
+X-IronPort-AV: E=Sophos;i="5.58,365,1544457600"; 
+   d="scan'208";a="54237418"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 13 Feb 2019 16:57:50 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 950CB4C4A88F;
+        Wed, 13 Feb 2019 16:57:49 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 13 Feb 2019 16:57:57 +0800
+Date:   Wed, 13 Feb 2019 16:57:38 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <caoj.fnst@cn.fujitsu.com>, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <linux-tip-commits@vger.kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190213085738.GC1624@localhost.localdomain>
+References: <20190211102426.GA19618@zn.tnic>
+ <20190211104254.GB19618@zn.tnic>
+ <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
+ <20190211112009.GE19618@zn.tnic>
+ <20190213015429.GA12592@localhost.localdomain>
+ <CFAC8B79-54C1-4E74-8660-31B0B88BF749@alien8.de>
+ <20190213075825.GA1624@localhost.localdomain>
+ <CAKv+Gu9WWKZtgtdwv0y8giieiwzuKHdZ0Qaa2UA7WXZRkcEJNg@mail.gmail.com>
+ <20190213081221.GB1624@localhost.localdomain>
+ <20190213085010.GA30103@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190213085010.GA30103@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 950CB4C4A88F.ABC7A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
- 
- On jeu., janv. 10 2019, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
-
-> Hi Stephen,
->  
->  On jeu., janv. 10 2019, Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Feb 13, 2019 at 09:50:10AM +0100, Borislav Petkov wrote:
+>On Wed, Feb 13, 2019 at 04:12:21PM +0800, Chao Fan wrote:
+>> Yes, I tried the 32-bit OVMF and rootfs from Guenter.
 >
->> Quoting Gregory CLEMENT (2019-01-10 08:16:22)
->>> Hi Stephen,
->>>  
->>>  On dim., déc. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
->>> 
->>> > Hello,
->>> >
->>> > This is the third version of a series allowing to manage the cpu
->>> > clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
->>> > by cluster, so actually the clock management is done at cluster level.
->>> >
->>> > As for the other Armada 7K/8K clocks it is possible to have multiple
->>> > AP so here again we need to have unique name: the purpose of the second
->>> > patch is to share a common code which will be used in 3 drivers.
->>> >
->>> > The last 2 patch enable the driver at dt and platform level and will
->>> > be applied through the mvebu subsystem.
->>> 
->>> What is the status of this series?
->>> 
->>> The only comments I had was from Rob about the binding and I answered
->>> them 3 weeks ago. Do you have any other comments? Do you expect a rebase
->>> of this series on v5.0-rc1?
->>> 
->>
->> I'm waiting for Rob. I think the binding is not proper so presumably you
->> will figure out what Rob wants and then change the code accordingly and
->> resend?
+>Ok, thanks.
 >
-> Actually the binding describes properly the hardware we have and that
-> what I answered to Rob.
+>Final version of the fix coming up...
 
-I pinged you about this series more than one month ago, and answered Rob
-concerned 2 months ago! He didn't said anything about my comments so I
-really think that the binding is OK and described the hardware we have.
-
-So could you consider to apply this series?
+Thanks so much for your help.
 
 Thanks,
-
-Gregory
-
+Chao Fan
 
 >
-> Gregory
+>-- 
+>Regards/Gruss,
+>    Boris.
 >
-> -- 
-> Gregory Clement, Bootlin
-> Embedded Linux and Kernel engineering
-> http://bootlin.com
+>Good mailing practices for 400: avoid top-posting and trim the reply.
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
 
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+
