@@ -2,152 +2,304 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BB7C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C881C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4510A222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="lBj67NuV"
+	by mail.kernel.org (Postfix) with ESMTP id 1B04221902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404380AbfBMQ3w (ORCPT
+        id S2392596AbfBMQdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:29:52 -0500
-Received: from mail-eopbgr10091.outbound.protection.outlook.com ([40.107.1.91]:36831
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404319AbfBMQ3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:29:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kna2VtpzOEl0QRLSR/t16AVeJ3yhyryVtJ2cbOnc6Ps=;
- b=lBj67NuV5XcWT35RxvNupsjBYPPc56ktKJj8+haDn+jkji/ttYLN5JHPf8B4ckZG2SHz8UZP5w7D5mg/hVvqkdulgHthDh7hzujzjBzqd9yC/R3VQfZmyIGeMcFMnItlv+rc29V+nUbv81PNb0xw3gxkTdPfV5A/XP9+/ctLBZE=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) by
- HE1PR0702MB3721.eurprd07.prod.outlook.com (52.133.6.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.13; Wed, 13 Feb 2019 16:29:36 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::b49f:d20e:88d4:128]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::b49f:d20e:88d4:128%6]) with mapi id 15.20.1622.016; Wed, 13 Feb 2019
- 16:29:36 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hailong Liu <liu.hailong6@zte.com.cn>,
-        Xiubo Li <xiubli@redhat.com>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Subject: [PATCH 4.14 6/8] uio: fix wrong return value from uio_mmap()
-Thread-Topic: [PATCH 4.14 6/8] uio: fix wrong return value from uio_mmap()
-Thread-Index: AQHUw7lOsesSnm8vj0OOLrNDcZjOGA==
-Date:   Wed, 13 Feb 2019 16:29:36 +0000
-Message-ID: <20190213162845.11688-7-tommi.t.rantala@nokia.com>
-References: <20190213162845.11688-1-tommi.t.rantala@nokia.com>
-In-Reply-To: <20190213162845.11688-1-tommi.t.rantala@nokia.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.20.1
-x-clientproxiedby: HE1P191CA0019.EURP191.PROD.OUTLOOK.COM (2603:10a6:3:cf::29)
- To HE1PR0702MB3675.eurprd07.prod.outlook.com (2603:10a6:7:8d::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.228.2.5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 135000e5-3232-4d68-f4ad-08d691d0712a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:HE1PR0702MB3721;
-x-ms-traffictypediagnostic: HE1PR0702MB3721:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;HE1PR0702MB3721;23:hes2eNv7q9kCTRWNhW74sSLdm7LunTKqMTnyB?=
- =?iso-8859-1?Q?kfLnRM+CkqCFCKKTTEXdipYZbiIT3I3pfTVprWdtG2RER9LdzUlXL5jYMf?=
- =?iso-8859-1?Q?JIM56RvuE58mEXtGE+EoilcDMooM8LQc+QeUCvWrgOLGaIVi/99w2PkhPd?=
- =?iso-8859-1?Q?I/FrX56MCjRtI7hOCfigwdf7hbxwuEoO5YiVEf2Olu1Geihth7b6vpY6ph?=
- =?iso-8859-1?Q?Hz1J4bXRMuVkPIKztBDSiBUOQN2PFBIrfnd6fvtO7fO8FtlmAN7yiOznIQ?=
- =?iso-8859-1?Q?sb9mLYeKYjYu2wi4mL8zj0dzbPiL89Bs7dQEJfbchZG5WxXFPdk4CS47s+?=
- =?iso-8859-1?Q?LkxXiNGiPiSOf5P0+O0alqeDffli4D8r/vvE4PbbSIe+BtLl8yGGFZPyHl?=
- =?iso-8859-1?Q?nn9reNRrEoWiWsdvA5qYvI0MJQw7WOzX68fI0MCbB3wmN165gT+/q0VmSG?=
- =?iso-8859-1?Q?8FvRQ9dc65BrbN5l0US8gcBaG7jFcG9VXMERFr+wdSKUhMQ+ERKCUoPSZX?=
- =?iso-8859-1?Q?H9uxekBHl1PDGTGDI9ZlngA5NwPqCmGtiLJcFstF9asL3l+hPQgHBq6CHl?=
- =?iso-8859-1?Q?gg1dg8den7nGWt2oQxqPkUiA7QkFR4xfOXBmTTa8WXo/3tGBDKeO85NoUt?=
- =?iso-8859-1?Q?548B4JhkQsUiu4n7KEavKetB3T0BWkTg2LicP0O5oLiSGIxP3PAePfGEhh?=
- =?iso-8859-1?Q?TBxJKlJAxtUwJ1XNtqRqagPA5QzcIOZcB1KbENMrC869qMSzhVjgja+O6o?=
- =?iso-8859-1?Q?cdIl3SZeoNgiZ0AsYKAZWt2MfXHtZKw1PVH6Rsmp5GmTLW43WtDf9K9eye?=
- =?iso-8859-1?Q?xfdJ+lL0iPlgUK+D2lWT1oSVoZF31K2Dee3iH5Mmd4Eowc1aVFNRXI4fqG?=
- =?iso-8859-1?Q?KS61lTipjR7/pV68iDK+6Nbb1ayDf6brsgKpDLy+smWJROcl1CjaRO34s9?=
- =?iso-8859-1?Q?ERijpP8+HWB1oDlvsBj+WU3JJeL9dDbLxscrT0PU7d48TVU/8IUSv2G+mS?=
- =?iso-8859-1?Q?jfrEc+Sm0ECD0iqFbGRON1SudUHkNJ+E/heZNIxGSvXTLGqneRdFkaH17k?=
- =?iso-8859-1?Q?3A6pgqKSjvQNf/L7V3XFRkeYDS/5rvyUK6e4iFecItE1/vmD74eokdb0PV?=
- =?iso-8859-1?Q?7yr5Sqmq53qXzN4DWs06bD0VKE05+4cwGywgx4iiFS8wBnmHc0hppzkpZ1?=
- =?iso-8859-1?Q?jqt9HHNmN0oDwKQCIhW5rPtTeqew2KqWOsGP6e0HrD+Iex6CeRFFuPrEga?=
- =?iso-8859-1?Q?H1yb3qWJXy3Nustq8otriHdKtbcJJof6DwWRJB0j/kM5ugzy2bB0UvKzOl?=
- =?iso-8859-1?Q?8git24OJTJs0c7T6+1TcHE5o/eGcbWGFxvLV3xLHYXfIuSIHtr1er0c2/0?=
- =?iso-8859-1?Q?p2/2tzuvWkO2D7St4EWWF77zLqnS+tK06h8HdAh7+bdh8KFPBrqjw=3D?=
- =?iso-8859-1?Q?=3D?=
-x-microsoft-antispam-prvs: <HE1PR0702MB3721A031CF04426EB1FDDFAFB4660@HE1PR0702MB3721.eurprd07.prod.outlook.com>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(346002)(376002)(396003)(366004)(199004)(189003)(2906002)(1076003)(68736007)(71190400001)(71200400001)(446003)(486006)(4326008)(4744005)(8676002)(478600001)(5640700003)(81156014)(1730700003)(97736004)(6512007)(81166006)(11346002)(105586002)(6486002)(2616005)(476003)(6916009)(106356001)(6436002)(2501003)(14444005)(256004)(36756003)(99286004)(186003)(386003)(2351001)(66066001)(50226002)(14454004)(8936002)(54906003)(3846002)(305945005)(25786009)(53936002)(102836004)(316002)(6116002)(26005)(76176011)(107886003)(52116002)(7736002)(86362001)(6506007)(103116003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3721;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: s+jcQ6KrnMvKSV43JWSWNpvotVRF1CcFI3iGZn521vxx7wU74uRauik9J+6xV5cVwyLF8vKSekI1lv3jovdEZaFq4CfE2KGpumrvbpVj7Tu10giGqzHPmIwYxkZmBs8GABcvCJcBpKzBmg8L9a0u0RuhxA586oRrm7WuWnHheaJVebE0bVSFKd82nwZv8BhTbGV8tRfl6Tzh15M9JZc0JPm64J0M/74IdKqkPqtIAzKJcAg2gmvCtxNnx3JYMMRVJ8YUlSkrpu3nKVBAzNyvUmIlTk2sTlABwaMI8+7qvjpiyOEv4hW79rlQT0BQ+0PTj6bsQT6bsMG3zuVhv86yZzoRNpeWCkLwI8J9RuW3XxyfCyEa1x1tniozsObdf3elel12YgIg6haTqA/iUGRvd7zX2oQ3j6b5y86Pq4KofkY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 13 Feb 2019 11:33:18 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36958 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392258AbfBMQdR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 11:33:17 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DGV2ir145152
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 11:33:16 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmny3k3a7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 11:33:14 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 13 Feb 2019 16:33:10 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 16:33:07 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DGX6Dh42598476
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 16:33:07 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF04D5204F;
+        Wed, 13 Feb 2019 16:33:06 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 3CFFD52059;
+        Wed, 13 Feb 2019 16:33:06 +0000 (GMT)
+Date:   Wed, 13 Feb 2019 18:33:04 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Anup Patel <Anup.Patel@wdc.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 2/5] RISC-V: Move setup_bootmem() to mm/init.c
+References: <20190213115301.103989-1-anup.patel@wdc.com>
+ <20190213115301.103989-3-anup.patel@wdc.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 135000e5-3232-4d68-f4ad-08d691d0712a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 16:29:35.5678
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3721
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213115301.103989-3-anup.patel@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19021316-4275-0000-0000-0000030F141A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021316-4276-0000-0000-0000381D2D66
+Message-Id: <20190213163304.GB6110@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hailong Liu <liu.hailong6@zte.com.cn>
+On Wed, Feb 13, 2019 at 11:53:37AM +0000, Anup Patel wrote:
+> The setup_bootmem() mainly populates memblocks and does early memory
+> reservations. The right location for this function is mm/init.c. It
+> calls setup_initrd() so we move that as well.
+> 
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 
-commit e7de2590f18a272e63732b9d519250d1b522b2c4 upstream.
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-uio_mmap has multiple fail paths to set return value to nonzero then
-goto out. However, it always returns *0* from the *out* at end, and
-this will mislead callers who check the return value of this function.
+> ---
+>  arch/riscv/include/asm/pgtable.h |  1 +
+>  arch/riscv/kernel/setup.c        | 72 --------------------------------
+>  arch/riscv/mm/init.c             | 70 +++++++++++++++++++++++++++++++
+>  3 files changed, 71 insertions(+), 72 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index 16301966d65b..35893810cba3 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -404,6 +404,7 @@ static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
+>  #define kern_addr_valid(addr)   (1) /* FIXME */
+>  #endif
+>  
+> +extern void setup_bootmem(void);
+>  extern void paging_init(void);
+>  
+>  static inline void pgtable_cache_init(void)
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index c6e858122815..49bce6692f39 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -23,7 +23,6 @@
+>  #include <linux/mm.h>
+>  #include <linux/memblock.h>
+>  #include <linux/sched.h>
+> -#include <linux/initrd.h>
+>  #include <linux/console.h>
+>  #include <linux/screen_info.h>
+>  #include <linux/of_fdt.h>
+> @@ -70,34 +69,6 @@ void __init smp_setup_processor_id(void)
+>  	cpuid_to_hartid_map(0) = boot_cpu_hartid;
+>  }
+>  
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -static void __init setup_initrd(void)
+> -{
+> -	unsigned long size;
+> -
+> -	if (initrd_start >= initrd_end) {
+> -		printk(KERN_INFO "initrd not found or empty");
+> -		goto disable;
+> -	}
+> -	if (__pa(initrd_end) > PFN_PHYS(max_low_pfn)) {
+> -		printk(KERN_ERR "initrd extends beyond end of memory");
+> -		goto disable;
+> -	}
+> -
+> -	size =  initrd_end - initrd_start;
+> -	memblock_reserve(__pa(initrd_start), size);
+> -	initrd_below_start_ok = 1;
+> -
+> -	printk(KERN_INFO "Initial ramdisk at: 0x%p (%lu bytes)\n",
+> -		(void *)(initrd_start), size);
+> -	return;
+> -disable:
+> -	pr_cont(" - disabling initrd\n");
+> -	initrd_start = 0;
+> -	initrd_end = 0;
+> -}
+> -#endif /* CONFIG_BLK_DEV_INITRD */
+> -
+>  pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
+>  pgd_t trampoline_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>  
+> @@ -159,49 +130,6 @@ void __init parse_dtb(unsigned int hartid, void *dtb)
+>  #endif
+>  }
+>  
+> -static void __init setup_bootmem(void)
+> -{
+> -	struct memblock_region *reg;
+> -	phys_addr_t mem_size = 0;
+> -
+> -	/* Find the memory region containing the kernel */
+> -	for_each_memblock(memory, reg) {
+> -		phys_addr_t vmlinux_end = __pa(_end);
+> -		phys_addr_t end = reg->base + reg->size;
+> -
+> -		if (reg->base <= vmlinux_end && vmlinux_end <= end) {
+> -			/*
+> -			 * Reserve from the start of the region to the end of
+> -			 * the kernel
+> -			 */
+> -			memblock_reserve(reg->base, vmlinux_end - reg->base);
+> -			mem_size = min(reg->size, (phys_addr_t)-PAGE_OFFSET);
+> -		}
+> -	}
+> -	BUG_ON(mem_size == 0);
+> -
+> -	set_max_mapnr(PFN_DOWN(mem_size));
+> -	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
+> -
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -	setup_initrd();
+> -#endif /* CONFIG_BLK_DEV_INITRD */
+> -
+> -	early_init_fdt_reserve_self();
+> -	early_init_fdt_scan_reserved_mem();
+> -	memblock_allow_resize();
+> -	memblock_dump_all();
+> -
+> -	for_each_memblock(memory, reg) {
+> -		unsigned long start_pfn = memblock_region_memory_base_pfn(reg);
+> -		unsigned long end_pfn = memblock_region_memory_end_pfn(reg);
+> -
+> -		memblock_set_node(PFN_PHYS(start_pfn),
+> -		                  PFN_PHYS(end_pfn - start_pfn),
+> -		                  &memblock.memory, 0);
+> -	}
+> -}
+> -
+>  void __init setup_arch(char **cmdline_p)
+>  {
+>  	init_mm.start_code = (unsigned long) _stext;
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 658ebf645f42..bedaf04f9c2f 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/initrd.h>
+>  #include <linux/swap.h>
+>  #include <linux/sizes.h>
+> +#include <linux/of_fdt.h>
+>  
+>  #include <asm/tlbflush.h>
+>  #include <asm/sections.h>
+> @@ -66,7 +67,76 @@ void free_initmem(void)
+>  }
+>  
+>  #ifdef CONFIG_BLK_DEV_INITRD
+> +static void __init setup_initrd(void)
+> +{
+> +	unsigned long size;
+> +
+> +	if (initrd_start >= initrd_end) {
+> +		printk(KERN_INFO "initrd not found or empty");
+> +		goto disable;
+> +	}
+> +	if (__pa(initrd_end) > PFN_PHYS(max_low_pfn)) {
+> +		printk(KERN_ERR "initrd extends beyond end of memory");
+> +		goto disable;
+> +	}
+> +
+> +	size =  initrd_end - initrd_start;
+> +	memblock_reserve(__pa(initrd_start), size);
+> +	initrd_below_start_ok = 1;
+> +
+> +	printk(KERN_INFO "Initial ramdisk at: 0x%p (%lu bytes)\n",
+> +		(void *)(initrd_start), size);
+> +	return;
+> +disable:
+> +	pr_cont(" - disabling initrd\n");
+> +	initrd_start = 0;
+> +	initrd_end = 0;
+> +}
+> +
+>  void free_initrd_mem(unsigned long start, unsigned long end)
+>  {
+>  }
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+> +
+> +void __init setup_bootmem(void)
+> +{
+> +	struct memblock_region *reg;
+> +	phys_addr_t mem_size = 0;
+> +
+> +	/* Find the memory region containing the kernel */
+> +	for_each_memblock(memory, reg) {
+> +		phys_addr_t vmlinux_end = __pa(_end);
+> +		phys_addr_t end = reg->base + reg->size;
+> +
+> +		if (reg->base <= vmlinux_end && vmlinux_end <= end) {
+> +			/*
+> +			 * Reserve from the start of the region to the end of
+> +			 * the kernel
+> +			 */
+> +			memblock_reserve(reg->base, vmlinux_end - reg->base);
+> +			mem_size = min(reg->size, (phys_addr_t)-PAGE_OFFSET);
+> +		}
+> +	}
+> +	BUG_ON(mem_size == 0);
+> +
+> +	set_max_mapnr(PFN_DOWN(mem_size));
+> +	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
+> +
+> +#ifdef CONFIG_BLK_DEV_INITRD
+> +	setup_initrd();
+> +#endif /* CONFIG_BLK_DEV_INITRD */
+> +
+> +	early_init_fdt_reserve_self();
+> +	early_init_fdt_scan_reserved_mem();
+> +	memblock_allow_resize();
+> +	memblock_dump_all();
+> +
+> +	for_each_memblock(memory, reg) {
+> +		unsigned long start_pfn = memblock_region_memory_base_pfn(reg);
+> +		unsigned long end_pfn = memblock_region_memory_end_pfn(reg);
+> +
+> +		memblock_set_node(PFN_PHYS(start_pfn),
+> +				  PFN_PHYS(end_pfn - start_pfn),
+> +				  &memblock.memory, 0);
+> +	}
+> +}
+> -- 
+> 2.17.1
+> 
 
-Fixes: 57c5f4df0a5a0ee ("uio: fix crash after the device is unregistered")
-CC: Xiubo Li <xiubli@redhat.com>
-Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
----
- drivers/uio/uio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 262610192755..fed2d8fa4d4d 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -816,7 +816,7 @@ static int uio_mmap(struct file *filep, struct vm_area_=
-struct *vma)
-=20
- out:
- 	mutex_unlock(&idev->info_lock);
--	return 0;
-+	return ret;
- }
-=20
- static const struct file_operations uio_fops =3D {
---=20
-2.20.1
+-- 
+Sincerely yours,
+Mike.
 
