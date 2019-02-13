@@ -2,402 +2,104 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115E4C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C19C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1583218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:26:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2927121904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 19:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550086081;
+	bh=d4USaxOaZ5zIs0Yd6AYwU7IxGiiMG63YyGPnEEw7QQk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=FHEq/f1xiMj0MicBVxcYdDtkLr4hudZ+MpvZaVHx/3JqV+NqBhRhan08nTRC2vNlC
+	 8s3TL2f6fKQEaJPfH03kapfKAjZ8Szkd2rmJ3fM05JxcDayh3H8PDpmu1sNun7kDbl
+	 UCyTAZfBbdap26ghemXpSsEkrTjKNCgGuLGpHl8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394387AbfBMT0b (ORCPT
+        id S2394397AbfBMT2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 14:26:31 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:50917 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729533AbfBMT0a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 14:26:30 -0500
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B67852000B;
-        Wed, 13 Feb 2019 19:26:17 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v2] hugetlb: allow to free gigantic pages regardless of the configuration
-Date:   Wed, 13 Feb 2019 14:26:10 -0500
-Message-Id: <20190213192610.17265-1-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
+        Wed, 13 Feb 2019 14:28:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730161AbfBMT17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 14:27:59 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74928222D0;
+        Wed, 13 Feb 2019 19:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550086078;
+        bh=d4USaxOaZ5zIs0Yd6AYwU7IxGiiMG63YyGPnEEw7QQk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MRdSBbmokqMe8z+9FVsMJsm648JqGS4TxplBfDvE4kg//D3ih8EgoUzNEvOm+uwxn
+         OfG3inpBJ3aRJziIpru75JaWAPGejKP+rW0jT753boDgWR4cniOiayP/gg5vgcXp5C
+         PoMWr+zmo30lm/AU8BhVR7120eozOfZ2/B37L/HE=
+Received: by mail-qt1-f171.google.com with SMTP id p48so4044960qtk.2;
+        Wed, 13 Feb 2019 11:27:58 -0800 (PST)
+X-Gm-Message-State: AHQUAuYWvvSaPwJwO5+zbtiZopJxWOw+vFw9/w2RILkJ5UxaFlomM3JV
+        DevgBpG74GMtgaUGuX3EkTs6Lrjc+6qu8doW7Q==
+X-Google-Smtp-Source: AHgI3Ia7ZzDKkBkWUQYA6sU/9ZdcsVSBsmd/pRgt7FkqYjFxVtDglXsm4TWC21OgiOFhLerCX65ssWFBeBIZC5R9+H0=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr1699437qve.246.1550086077695;
+ Wed, 13 Feb 2019 11:27:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190211133554.30055-1-hch@lst.de> <20190211133554.30055-7-hch@lst.de>
+ <CAL_JsqL+LiJTF5kZz2hXGbQcH+D4U0jAQE376VSUVMQmdg=XFA@mail.gmail.com> <20190213182435.GA19906@lst.de>
+In-Reply-To: <20190213182435.GA19906@lst.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 13 Feb 2019 13:27:45 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLCr4Jk_-cWUFGs5zfk+NKksc+bs0bpiBeQHsZFthaM1Q@mail.gmail.com>
+Message-ID: <CAL_JsqLCr4Jk_-cWUFGs5zfk+NKksc+bs0bpiBeQHsZFthaM1Q@mail.gmail.com>
+Subject: Re: [PATCH 06/12] dma-mapping: improve selection of
+ dma_declare_coherent availability
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>, x86@kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, linux-mips@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org,
+        SH-Linux <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems without CMA or (MEMORY_ISOLATION && COMPACTION) activated but
-that support gigantic pages, boottime reserved gigantic pages can not be
-freed at all. This patch simply enables the possibility to hand back
-those pages to memory allocator.
+On Wed, Feb 13, 2019 at 12:24 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Tue, Feb 12, 2019 at 02:40:23PM -0600, Rob Herring wrote:
+> > > diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> > > index 3607fd2810e4..f8c66a9472a4 100644
+> > > --- a/drivers/of/Kconfig
+> > > +++ b/drivers/of/Kconfig
+> > > @@ -43,6 +43,7 @@ config OF_FLATTREE
+> > >
+> > >  config OF_EARLY_FLATTREE
+> > >         bool
+> > > +       select DMA_DECLARE_COHERENT
+> >
+> > Is selecting DMA_DECLARE_COHERENT okay on UML? We run the unittests with UML.
+>
+> No, that will fail with undefined references to memunmap.
+>
+> I gues this needs to be
+>
+>         select DMA_DECLARE_COHERENT if HAS_DMA
+>
+> > Maybe we should just get rid of OF_RESERVED_MEM. If we support booting
+> > from DT, then it should always be enabled anyways.
+>
+> Fine with me.  Do you want me to respin the series to just remove
+> it?
 
-This patch also renames:
+Either now or it can wait. I don't want to hold this up any.
 
-- the triplet CMA or (MEMORY_ISOLATION && COMPACTION) into COMPACTION_CORE,
-and gets rid of all use of it in architecture specific code (and then
-removes ARCH_HAS_GIGANTIC_PAGE config).
-- gigantic_page_supported to make it more accurate: this value being false
-does not mean that the system cannot use gigantic pages, it just means that
-runtime allocation of gigantic pages is not supported, one can still
-allocate boottime gigantic pages if the architecture supports it.
-
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
----
-
-Changes in v2 as suggested by Vlastimil Babka:
-- Get rid of ARCH_HAS_GIGANTIC_PAGE
-- Get rid of architecture specific gigantic_page_supported
-- Factorize CMA or (MEMORY_ISOLATION && COMPACTION) into COMPACTION_CORE
-
-Compiles on all arches and validated on riscv.
-
- arch/arm64/Kconfig                           |  1 -
- arch/arm64/include/asm/hugetlb.h             |  4 --
- arch/powerpc/include/asm/book3s/64/hugetlb.h |  7 ----
- arch/powerpc/platforms/Kconfig.cputype       |  1 -
- arch/s390/Kconfig                            |  1 -
- arch/s390/include/asm/hugetlb.h              |  3 --
- arch/x86/Kconfig                             |  1 -
- arch/x86/include/asm/hugetlb.h               |  4 --
- arch/x86/mm/hugetlbpage.c                    |  2 +-
- fs/Kconfig                                   |  3 +-
- include/linux/gfp.h                          |  4 +-
- mm/hugetlb.c                                 | 44 +++++++++++---------
- mm/page_alloc.c                              |  7 ++--
- 13 files changed, 32 insertions(+), 50 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a4168d366127..6c778046b9f7 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -18,7 +18,6 @@ config ARM64
- 	select ARCH_HAS_FAST_MULTIPLIER
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
--	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
- 	select ARCH_HAS_KCOV
- 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
- 	select ARCH_HAS_PTE_SPECIAL
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index fb6609875455..59893e766824 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -65,8 +65,4 @@ extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
- 
- #include <asm-generic/hugetlb.h>
- 
--#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
--static inline bool gigantic_page_supported(void) { return true; }
--#endif
--
- #endif /* __ASM_HUGETLB_H */
-diff --git a/arch/powerpc/include/asm/book3s/64/hugetlb.h b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-index 5b0177733994..d04a0bcc2f1c 100644
---- a/arch/powerpc/include/asm/book3s/64/hugetlb.h
-+++ b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-@@ -32,13 +32,6 @@ static inline int hstate_get_psize(struct hstate *hstate)
- 	}
- }
- 
--#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
--static inline bool gigantic_page_supported(void)
--{
--	return true;
--}
--#endif
--
- /* hugepd entry valid bit */
- #define HUGEPD_VAL_BITS		(0x8000000000000000UL)
- 
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 8c7464c3f27f..3e629dfb5efa 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -319,7 +319,6 @@ config ARCH_ENABLE_SPLIT_PMD_PTLOCK
- config PPC_RADIX_MMU
- 	bool "Radix MMU Support"
- 	depends on PPC_BOOK3S_64
--	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
- 	default y
- 	help
- 	  Enable support for the Power ISA 3.0 Radix style MMU. Currently this
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index ed554b09eb3f..556860f290e9 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -69,7 +69,6 @@ config S390
- 	select ARCH_HAS_ELF_RANDOMIZE
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
--	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
- 	select ARCH_HAS_KCOV
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_SET_MEMORY
-diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
-index 2d1afa58a4b6..bd191560efcf 100644
---- a/arch/s390/include/asm/hugetlb.h
-+++ b/arch/s390/include/asm/hugetlb.h
-@@ -116,7 +116,4 @@ static inline pte_t huge_pte_modify(pte_t pte, pgprot_t newprot)
- 	return pte_modify(pte, newprot);
- }
- 
--#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
--static inline bool gigantic_page_supported(void) { return true; }
--#endif
- #endif /* _ASM_S390_HUGETLB_H */
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 68261430fe6e..2fd983e2b2f6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -23,7 +23,6 @@ config X86_64
- 	def_bool y
- 	depends on 64BIT
- 	# Options that are inherently 64-bit kernel only:
--	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
- 	select ARCH_SUPPORTS_INT128
- 	select ARCH_USE_CMPXCHG_LOCKREF
- 	select HAVE_ARCH_SOFT_DIRTY
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 7469d321f072..f65cfb48cfdd 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -17,8 +17,4 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
--#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
--static inline bool gigantic_page_supported(void) { return true; }
--#endif
--
- #endif /* _ASM_X86_HUGETLB_H */
-diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
-index 92e4c4b85bba..4c3d8f8fc414 100644
---- a/arch/x86/mm/hugetlbpage.c
-+++ b/arch/x86/mm/hugetlbpage.c
-@@ -203,7 +203,7 @@ static __init int setup_hugepagesz(char *opt)
- }
- __setup("hugepagesz=", setup_hugepagesz);
- 
--#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
-+#ifdef CONFIG_COMPACTION_CORE
- static __init int gigantic_pages_init(void)
- {
- 	/* With compaction or CMA we can allocate gigantic pages at runtime */
-diff --git a/fs/Kconfig b/fs/Kconfig
-index ac474a61be37..8fecd3ea5563 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -207,8 +207,9 @@ config HUGETLB_PAGE
- config MEMFD_CREATE
- 	def_bool TMPFS || HUGETLBFS
- 
--config ARCH_HAS_GIGANTIC_PAGE
-+config COMPACTION_CORE
- 	bool
-+	default y if (MEMORY_ISOLATION && MIGRATION) || CMA
- 
- source "fs/configfs/Kconfig"
- source "fs/efivarfs/Kconfig"
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 5f5e25fd6149..aa0e899a9753 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -585,12 +585,12 @@ static inline bool pm_suspended_storage(void)
- }
- #endif /* CONFIG_PM_SLEEP */
- 
--#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
-+#ifdef CONFIG_COMPACTION_CORE
- /* The below functions must be run on a range from a single zone. */
- extern int alloc_contig_range(unsigned long start, unsigned long end,
- 			      unsigned migratetype, gfp_t gfp_mask);
--extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
- #endif
-+extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
- 
- #ifdef CONFIG_CMA
- /* CMA stuff */
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index afef61656c1e..61bbcf8dcd9b 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
- 		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
- 		nr_nodes--)
- 
--#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
- static void destroy_compound_gigantic_page(struct page *page,
- 					unsigned int order)
- {
-@@ -1058,6 +1057,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
- 	free_contig_range(page_to_pfn(page), 1 << order);
- }
- 
-+static inline bool gigantic_page_runtime_allocation_supported(void)
-+{
-+	return IS_ENABLED(CONFIG_COMPACTION_CORE);
-+}
-+
-+#ifdef CONFIG_COMPACTION_CORE
- static int __alloc_gigantic_page(unsigned long start_pfn,
- 				unsigned long nr_pages, gfp_t gfp_mask)
- {
-@@ -1143,22 +1148,15 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
- static void prep_compound_gigantic_page(struct page *page, unsigned int order);
- 
--#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
--static inline bool gigantic_page_supported(void) { return false; }
-+#else /* !CONFIG_COMPACTION_CORE */
- static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- 		int nid, nodemask_t *nodemask) { return NULL; }
--static inline void free_gigantic_page(struct page *page, unsigned int order) { }
--static inline void destroy_compound_gigantic_page(struct page *page,
--						unsigned int order) { }
- #endif
- 
- static void update_and_free_page(struct hstate *h, struct page *page)
- {
- 	int i;
- 
--	if (hstate_is_gigantic(h) && !gigantic_page_supported())
--		return;
--
- 	h->nr_huge_pages--;
- 	h->nr_huge_pages_node[page_to_nid(page)]--;
- 	for (i = 0; i < pages_per_huge_page(h); i++) {
-@@ -2276,13 +2274,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
- }
- 
- #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
--static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
-+static int set_max_huge_pages(struct hstate *h, unsigned long count,
- 						nodemask_t *nodes_allowed)
- {
- 	unsigned long min_count, ret;
- 
--	if (hstate_is_gigantic(h) && !gigantic_page_supported())
--		return h->max_huge_pages;
-+	if (hstate_is_gigantic(h) &&
-+		!gigantic_page_runtime_allocation_supported()) {
-+		spin_lock(&hugetlb_lock);
-+		if (count > persistent_huge_pages(h)) {
-+			spin_unlock(&hugetlb_lock);
-+			return -EINVAL;
-+		}
-+		goto decrease_pool;
-+	}
- 
- 	/*
- 	 * Increase the pool size
-@@ -2322,6 +2327,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
- 			goto out;
- 	}
- 
-+decrease_pool:
- 	/*
- 	 * Decrease the pool size
- 	 * First return free pages to the buddy allocator (being careful
-@@ -2350,9 +2356,10 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
- 			break;
- 	}
- out:
--	ret = persistent_huge_pages(h);
-+	h->max_huge_pages = persistent_huge_pages(h);
- 	spin_unlock(&hugetlb_lock);
--	return ret;
-+
-+	return 0;
- }
- 
- #define HSTATE_ATTR_RO(_name) \
-@@ -2404,11 +2411,6 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
- 	int err;
- 	NODEMASK_ALLOC(nodemask_t, nodes_allowed, GFP_KERNEL | __GFP_NORETRY);
- 
--	if (hstate_is_gigantic(h) && !gigantic_page_supported()) {
--		err = -EINVAL;
--		goto out;
--	}
--
- 	if (nid == NUMA_NO_NODE) {
- 		/*
- 		 * global hstate attribute
-@@ -2428,7 +2430,9 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
- 	} else
- 		nodes_allowed = &node_states[N_MEMORY];
- 
--	h->max_huge_pages = set_max_huge_pages(h, count, nodes_allowed);
-+	err = set_max_huge_pages(h, count, nodes_allowed);
-+	if (err)
-+		goto out;
- 
- 	if (nodes_allowed != &node_states[N_MEMORY])
- 		NODEMASK_FREE(nodes_allowed);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 35fdde041f5c..e319548d2da2 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -8024,8 +8024,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 	return true;
- }
- 
--#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
--
-+#ifdef CONFIG_COMPACTION_CORE
- static unsigned long pfn_max_align_down(unsigned long pfn)
- {
- 	return pfn & ~(max_t(unsigned long, MAX_ORDER_NR_PAGES,
-@@ -8235,8 +8234,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
- 				pfn_max_align_up(end), migratetype);
- 	return ret;
- }
-+#endif
- 
--void free_contig_range(unsigned long pfn, unsigned nr_pages)
-+void free_contig_range(unsigned long pfn, unsigned int nr_pages)
- {
- 	unsigned int count = 0;
- 
-@@ -8248,7 +8248,6 @@ void free_contig_range(unsigned long pfn, unsigned nr_pages)
- 	}
- 	WARN(count != 0, "%d pages are still in use!\n", count);
- }
--#endif
- 
- #ifdef CONFIG_MEMORY_HOTPLUG
- /*
--- 
-2.20.1
-
+Rob
