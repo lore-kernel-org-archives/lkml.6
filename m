@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2609AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14804C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D56222D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6151222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083391;
-	bh=r0/je9PMCaBkAyZ1j0Y25BvQix6Z/PvImODgraSkXkU=;
+	s=default; t=1550083400;
+	bh=ZQ/VpiYT18CARV7PDY75fdOuIpq+xcU1ZPOnebo+MhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nojvvr9FuxVkkoEZaXrTi0HAjGRDYlJ4K2ZrIbnH8xF72fqAn6tltl+PtBLcGlfSu
-	 Xn5UWiE2Nrp228tx56AsX2Cq6Y3hlWI+2Sd6IT92nTRPHZVuANeZAWf97riIt8SoFf
-	 w6z0L2WHqnVIktm628YDRhPUvHxXFhkIZ/vArie0=
+	b=DNzpKWjT26YwHbV3IeYhCBxIhCCQrK8cfM2HMDD5GS+iszmNBX0Seq58Nnt0GzYUG
+	 4wQzIXVvLQnInjgWEE2dnvKm1Ypj5heX6MN1l4qLPpitdHgvhn9BozBX2r4IB1EVUd
+	 vVV5EbKS8pxZdB3mo3hrXNGdhsPnfre4udeVASt0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405811AbfBMSnJ (ORCPT
+        id S2393971AbfBMSnT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:43:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41624 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:43:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405778AbfBMSnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:43:04 -0500
+        id S2405822AbfBMSnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:43:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C45E0222D9;
-        Wed, 13 Feb 2019 18:43:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CC62222D9;
+        Wed, 13 Feb 2019 18:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083383;
-        bh=r0/je9PMCaBkAyZ1j0Y25BvQix6Z/PvImODgraSkXkU=;
+        s=default; t=1550083392;
+        bh=ZQ/VpiYT18CARV7PDY75fdOuIpq+xcU1ZPOnebo+MhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0dBz1yKGNnyy9Pl7juzSi4G4T26PKPA4U9aYgpeg6+MVZ0m7nMooInolaMuR+3epH
-         o0QM2B3q/mOSOtj24ayUhwvqjK3tKUDRVuAWfOeCeBHOY7RyrQCVKeVTKiJo461jgD
-         UQFsUixcD9rrtn/pfIMC7HKpprZk1sp5ud+n38XM=
+        b=wDzemyld3VAFdI1he50PsNoANSLqU1I+kOwsVrD2PgziiqQSpt31gKC1SgixqAndr
+         kZsf4s5+pphxrZrxf5q4Vdc7sD8rBAggII3oFR+fGsNo6gPxFCl/8Hd7+AO7HssyUD
+         MLvS+ni2Eqp/lMlvnS4IdXjUgppr94PFF/SxIcGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Roese <sr@denx.de>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.19 02/44] mtd: spinand: Handle the case where PROGRAM LOAD does not reset the cache
-Date:   Wed, 13 Feb 2019 19:38:03 +0100
-Message-Id: <20190213183651.845108950@linuxfoundation.org>
+        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Huacai Chen <chenhc@lemote.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: [PATCH 4.19 22/44] mips: loongson64: remove unreachable(), fix loongson_poweroff().
+Date:   Wed, 13 Feb 2019 19:38:23 +0100
+Message-Id: <20190213183653.613005602@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -66,99 +68,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <bbrezillon@kernel.org>
+From: Yifeng Li <tomli@tomli.me>
 
-commit 13c15e07eedf26092054c8c71f2f47edb8388310 upstream.
+commit 8a96669d77897ff3613157bf43f875739205d66d upstream.
 
-Looks like PROGRAM LOAD (AKA write cache) does not necessarily reset
-the cache content to 0xFF (depends on vendor implementation), so we
-must fill the page cache entirely even if we only want to program the
-data portion of the page, otherwise we might corrupt the BBM or user
-data previously programmed in OOB area.
+On my Yeeloong 8089, I noticed the machine fails to shutdown
+properly, and often, the function mach_prepare_reboot() is
+unexpectedly executed, thus the machine reboots instead. A
+wait loop is needed to ensure the system is in a well-defined
+state before going down.
 
-Fixes: 7529df465248 ("mtd: nand: Add core infrastructure to support SPI NANDs")
-Reported-by: Stefan Roese <sr@denx.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
-Tested-by: Stefan Roese <sr@denx.de>
-Reviewed-by: Stefan Roese <sr@denx.de>
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+In commit 997e93d4df16 ("MIPS: Hang more efficiently on
+halt/powerdown/restart"), a general superset of the wait loop for all
+platforms is already provided, so we don't need to implement our own.
+
+This commit simply removes the unreachable() compiler marco after
+mach_prepare_reboot(), thus allowing the execution of machine_hang().
+My test shows that the machine is now able to shutdown successfully.
+
+Please note that there are two different bugs preventing the machine
+from shutting down, another work-in-progress commit is needed to
+fix a lockup in cpufreq / i8259 driver, please read Reference, this
+commit does not fix that bug.
+
+Reference: https://lkml.org/lkml/2019/2/5/908
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: stable@vger.kernel.org # v4.17+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/spi/core.c |   42 ++++++++++++++++++++----------------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ arch/mips/loongson64/common/reset.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -304,24 +304,30 @@ static int spinand_write_to_cache_op(str
- 	struct nand_device *nand = spinand_to_nand(spinand);
- 	struct mtd_info *mtd = nanddev_to_mtd(nand);
- 	struct nand_page_io_req adjreq = *req;
--	unsigned int nbytes = 0;
--	void *buf = NULL;
-+	void *buf = spinand->databuf;
-+	unsigned int nbytes;
- 	u16 column = 0;
- 	int ret;
- 
--	memset(spinand->databuf, 0xff,
--	       nanddev_page_size(nand) +
--	       nanddev_per_page_oobsize(nand));
+--- a/arch/mips/loongson64/common/reset.c
++++ b/arch/mips/loongson64/common/reset.c
+@@ -59,7 +59,12 @@ static void loongson_poweroff(void)
+ {
+ #ifndef CONFIG_LEFI_FIRMWARE_INTERFACE
+ 	mach_prepare_shutdown();
+-	unreachable();
++
 +	/*
-+	 * Looks like PROGRAM LOAD (AKA write cache) does not necessarily reset
-+	 * the cache content to 0xFF (depends on vendor implementation), so we
-+	 * must fill the page cache entirely even if we only want to program
-+	 * the data portion of the page, otherwise we might corrupt the BBM or
-+	 * user data previously programmed in OOB area.
++	 * It needs a wait loop here, but mips/kernel/reset.c already calls
++	 * a generic delay loop, machine_hang(), so simply return.
 +	 */
-+	nbytes = nanddev_page_size(nand) + nanddev_per_page_oobsize(nand);
-+	memset(spinand->databuf, 0xff, nbytes);
-+	adjreq.dataoffs = 0;
-+	adjreq.datalen = nanddev_page_size(nand);
-+	adjreq.databuf.out = spinand->databuf;
-+	adjreq.ooblen = nanddev_per_page_oobsize(nand);
-+	adjreq.ooboffs = 0;
-+	adjreq.oobbuf.out = spinand->oobbuf;
++	return;
+ #else
+ 	void (*fw_poweroff)(void) = (void *)loongson_sysconf.poweroff_addr;
  
--	if (req->datalen) {
-+	if (req->datalen)
- 		memcpy(spinand->databuf + req->dataoffs, req->databuf.out,
- 		       req->datalen);
--		adjreq.dataoffs = 0;
--		adjreq.datalen = nanddev_page_size(nand);
--		adjreq.databuf.out = spinand->databuf;
--		nbytes = adjreq.datalen;
--		buf = spinand->databuf;
--	}
- 
- 	if (req->ooblen) {
- 		if (req->mode == MTD_OPS_AUTO_OOB)
-@@ -332,14 +338,6 @@ static int spinand_write_to_cache_op(str
- 		else
- 			memcpy(spinand->oobbuf + req->ooboffs, req->oobbuf.out,
- 			       req->ooblen);
--
--		adjreq.ooblen = nanddev_per_page_oobsize(nand);
--		adjreq.ooboffs = 0;
--		nbytes += nanddev_per_page_oobsize(nand);
--		if (!buf) {
--			buf = spinand->oobbuf;
--			column = nanddev_page_size(nand);
--		}
- 	}
- 
- 	spinand_cache_op_adjust_colum(spinand, &adjreq, &column);
-@@ -370,8 +368,8 @@ static int spinand_write_to_cache_op(str
- 
- 		/*
- 		 * We need to use the RANDOM LOAD CACHE operation if there's
--		 * more than one iteration, because the LOAD operation resets
--		 * the cache to 0xff.
-+		 * more than one iteration, because the LOAD operation might
-+		 * reset the cache to 0xff.
- 		 */
- 		if (nbytes) {
- 			column = op.addr.val;
 
 
