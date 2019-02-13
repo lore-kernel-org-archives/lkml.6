@@ -2,131 +2,233 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E36EC282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BACC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF9F20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C5F121902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 20:04:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nHOjDJaH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392028AbfBMUDh (ORCPT
+        id S2394527AbfBMUEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 15:03:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbfBMUDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 15:03:36 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 76DA6C0669DD;
-        Wed, 13 Feb 2019 20:03:34 +0000 (UTC)
-Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 570CB5D6B3;
-        Wed, 13 Feb 2019 20:03:31 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 13:03:30 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org,
-        dave@stgolabs.net, jack@suse.cz, cl@linux.com, linux-mm@kvack.org,
-        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
-        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru,
-        peterz@infradead.org
-Subject: Re: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to
- account pinned pages
-Message-ID: <20190213130330.76ef1987@w520.home>
-In-Reply-To: <20190213002650.kav7xc4r2xs5f3ef@ca-dmjordan1.us.oracle.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
-        <20190211224437.25267-2-daniel.m.jordan@oracle.com>
-        <20190211225620.GO24692@ziepe.ca>
-        <20190211231152.qflff6g2asmkb6hr@ca-dmjordan1.us.oracle.com>
-        <20190212114110.17bc8a14@w520.home>
-        <20190213002650.kav7xc4r2xs5f3ef@ca-dmjordan1.us.oracle.com>
+        Wed, 13 Feb 2019 15:04:09 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:40269 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbfBMUEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 15:04:09 -0500
+Received: by mail-ua1-f67.google.com with SMTP id n32so1212702uae.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:04:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xUswEnmeyEbd1rvzjR0pRksg1fx8EudFWzooVekrU04=;
+        b=nHOjDJaHiml1izY/S09BSPbWGh5yJ3rRUT+JOchzwUAIqOI9JEeorF3fRuKUKIaB+C
+         ID5a8YiUkZczX9zJYpVwC2dl8kvI64pFvvHJeLTmO1LJXGxADM3sJevNTGDOyAX9igOv
+         L3r5LzdkCge4DawjFTjJ8y1C9wCYE7BSQQDkG4W8g/DGxw34n6siT7MGWdC6OmbvofJ0
+         JKiTpVlmQvsc8Fwarg1ixTssyX74K54blGXd7FDL47726LBcvSxZailTcH5ewhmuMckS
+         4tNaj4DuB2VywHBGxrpaWnItjbtwOjo0phM3gn9a2M+38GiPZ8jCMlpXp/hR+8cylH0O
+         p+xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xUswEnmeyEbd1rvzjR0pRksg1fx8EudFWzooVekrU04=;
+        b=SDqBApLpuUrNN6gQn9votDhK/fSVKwukpLHsCLEbAdnFPJhbWbz6Q5AriYgzQREdjI
+         spnhmh2i2Jfy1OqimsO1xFhpmV0avCIMm+V+zT/mQsxuEOOvbRYxNR0EYBeJYc+1XB7a
+         qpzyYIimoLLv+acZBt1SevBcfCxSimYTyX8dxnfZLZVuureMHG5NZQ0qpE21Xp9sblLV
+         mAHgvyHroDDYYX8+GLTcrZNJxFIHGakvtqOxRF8dmdADKuIoiHk4jcIPC1f7B3p41F8y
+         mDqWU5s+nhNnY7OgG6gYXPPqltN+3s+kqpcf3wWugAaveuAYnDPg0rQPiYYpMZcou42T
+         RZ0w==
+X-Gm-Message-State: AHQUAuYgzz1adpNXfuyypXJD4U+imLo3uTiJ5r8JH8HJgOrnqZG8c2fM
+        dJw5N3pCJ1ClBLX3RCaO0ylb+CqgjXOAUBxIlCxO/w==
+X-Google-Smtp-Source: AHgI3IY1jpQRu/sTf5XatFEO0edXXT0r/LJ2MYch8IwZ2c97S3+KECtlx2R/yzJAn7264EcKtD/gao5E4vQr9kTcojY=
+X-Received: by 2002:ab0:48c9:: with SMTP id y9mr1016912uac.77.1550088247673;
+ Wed, 13 Feb 2019 12:04:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 13 Feb 2019 20:03:35 +0000 (UTC)
+References: <20190213120137.23354-1-sudeep.holla@arm.com>
+In-Reply-To: <20190213120137.23354-1-sudeep.holla@arm.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 13 Feb 2019 21:03:31 +0100
+Message-ID: <CAPDyKFr2JJynsKHvoro3kV2yN5bMPPfdCFgkgyCXVhzgHuZwCA@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers: base: add support to skip power management in
+ device/driver model
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 19:26:50 -0500
-Daniel Jordan <daniel.m.jordan@oracle.com> wrote:
+On Wed, 13 Feb 2019 at 13:01, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> All device objects in the driver model contain fields that control the
+> handling of various power management activities. However, it's not
+> always useful. There are few instances where pseudo devices are added
+> to the model just to take advantage of many other features like
+> kobjects, udev events, and so on. One such example is cpu devices and
+> their caches.
+>
+> The sysfs for the cpu caches are managed by adding devices with cpu
+> as the parent in cpu_device_create() when secondary cpu is brought
+> online. Generally when the secondary CPUs are hotplugged back in as part
+> of resume from suspend-to-ram, we call cpu_device_create() from the cpu
+> hotplug state machine while the cpu device associated with that CPU is
+> not yet ready to be resumed as the device_resume() call happens bit
+> later. It's not really needed to set the flag is_prepared for cpu
+> devices as they are mostly pseudo device and hotplug framework deals
+> with state machine and not managed through the cpu device.
+>
+> This often results in annoying warning when resuming:
+> Enabling non-boot CPUs ...
+> CPU1: Booted secondary processor
+>  cache: parent cpu1 should not be sleeping
+> CPU1 is up
+> CPU2: Booted secondary processor
+>  cache: parent cpu2 should not be sleeping
+> CPU2 is up
+> .... and so on.
+>
+> So in order to fix these kind of errors, we could just completely avoid
+> doing any power management related initialisations and operations if
+> they are not used by these devices.
+>
+> Lets add no_pm_required flags to indicate that the device doesn't
+> require any sort of pm activities and all of them can be completely
+> skipped. We can use the same flag to also avoid adding not used *power*
+> sysfs entries for these devices. For now, lets use this for cpu cache
+> devices.
+>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
-> On Tue, Feb 12, 2019 at 11:41:10AM -0700, Alex Williamson wrote:
-> > Daniel Jordan <daniel.m.jordan@oracle.com> wrote:  
-> > > On Mon, Feb 11, 2019 at 03:56:20PM -0700, Jason Gunthorpe wrote:  
-> > > > I haven't looked at this super closely, but how does this stuff work?
-> > > > 
-> > > > do_mlock doesn't touch pinned_vm, and this doesn't touch locked_vm...
-> > > > 
-> > > > Shouldn't all this be 'if (locked_vm + pinned_vm < RLIMIT_MEMLOCK)' ?
-> > > >
-> > > > Otherwise MEMLOCK is really doubled..    
-> > > 
-> > > So this has been a problem for some time, but it's not as easy as adding them
-> > > together, see [1][2] for a start.
-> > > 
-> > > The locked_vm/pinned_vm issue definitely needs fixing, but all this series is
-> > > trying to do is account to the right counter.  
-> 
-> Thanks for taking a look, Alex.
-> 
-> > This still makes me nervous because we have userspace dependencies on
-> > setting process locked memory.  
-> 
-> Could you please expand on this?  Trying to get more context.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-VFIO is a userspace driver interface and the pinned/locked page
-accounting we're doing here is trying to prevent a user from exceeding
-their locked memory limits.  Thus a VM management tool or unprivileged
-userspace driver needs to have appropriate locked memory limits
-configured for their use case.  Currently we do not have a unified
-accounting scheme, so if a page is mlock'd by the user and also mapped
-through VFIO for DMA, it's accounted twice, these both increment
-locked_vm and userspace needs to manage that.  If pinned memory
-and locked memory are now two separate buckets and we're only comparing
-one of them against the locked memory limit, then it seems we have
-effectively doubled the user's locked memory for this use case, as
-Jason questioned.  The user could mlock one page and DMA map another,
-they're both "locked", but now they only take one slot in each bucket.
+Kind regards
+Uffe
 
-If we continue forward with using a separate bucket here, userspace
-could infer that accounting is unified and lower the user's locked
-memory limit, or exploit the gap that their effective limit might
-actually exceed system memory.  In the former case, if we do eventually
-correct to compare the total of the combined buckets against the user's
-locked memory limits, we'll break users that have adapted their locked
-memory limits to meet the apparent needs.  In the latter case, the
-inconsistent accounting is potentially an attack vector.
-
-> > There's a user visible difference if we
-> > account for them in the same bucket vs separate.  Perhaps we're
-> > counting in the wrong bucket now, but if we "fix" that and userspace
-> > adapts, how do we ever go back to accounting both mlocked and pinned
-> > memory combined against rlimit?  Thanks,  
-> 
-> PeterZ posted an RFC that addresses this point[1].  It kept pinned_vm and
-> locked_vm accounting separate, but allowed the two to be added safely to be
-> compared against RLIMIT_MEMLOCK.
-
-Unless I'm incorrect in the concerns above, I don't see how we can
-convert vfio before this occurs.
- 
-> Anyway, until some solution is agreed on, are there objections to converting
-> locked_vm to an atomic, to avoid user-visible changes, instead of switching
-> locked_vm users to pinned_vm?
-
-Seems that as long as we have separate buckets that are compared
-individually to rlimit that we've got problems, it's just a matter of
-where they're exposed based on which bucket is used for which
-interface.  Thanks,
-
-Alex
+> ---
+>  drivers/base/cpu.c         |  1 +
+>  drivers/base/power/main.c  |  7 +++++++
+>  drivers/base/power/sysfs.c |  4 ++++
+>  include/linux/device.h     | 10 ++++++++++
+>  include/linux/pm.h         |  1 +
+>  5 files changed, 23 insertions(+)
+>
+> v1->v2:
+>         - dropped setting the flag for cpu devices, for now just cpu caches
+>          will make use of this new flag.
+>
+> RFC->v1:
+>         - dropped the idea of adding cpu hotplug callback to deal just
+>           with cpu devices, instead add a new flag in the device pm_info
+>           structure
+>
+> [RFC] : https://marc.info/?l=linux-pm&m=154842896407904&w=2
+> [v1] : https://marc.info/?l=linux-pm&m=154946578717730&w=2
+>
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index eb9443d5bae1..6ce93a52bf3f 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -427,6 +427,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
+>         dev->parent = parent;
+>         dev->groups = groups;
+>         dev->release = device_create_release;
+> +       device_set_pm_not_required(dev);
+>         dev_set_drvdata(dev, drvdata);
+>
+>         retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 0992e67e862b..2a29c3d4e240 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -124,6 +124,10 @@ void device_pm_unlock(void)
+>   */
+>  void device_pm_add(struct device *dev)
+>  {
+> +       /* No need to create pm sysfs if explicitly specified as not required */
+> +       if (device_pm_not_required(dev))
+> +               return;
+> +
+>         pr_debug("PM: Adding info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         device_pm_check_callbacks(dev);
+> @@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
+>   */
+>  void device_pm_remove(struct device *dev)
+>  {
+> +       if (device_pm_not_required(dev))
+> +               return;
+> +
+>         pr_debug("PM: Removing info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         complete_all(&dev->power.completion);
+> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+> index d713738ce796..6cd159b51114 100644
+> --- a/drivers/base/power/sysfs.c
+> +++ b/drivers/base/power/sysfs.c
+> @@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
+>  {
+>         int rc;
+>
+> +       /* No need to create pm sysfs if explicitly disabled */
+> +       if (device_pm_not_required(dev))
+> +               return 0;
+> +
+>         rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
+>         if (rc)
+>                 return rc;
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 6cb4640b6160..739d0b62e4d4 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
+>         return !!dev->power.async_suspend;
+>  }
+>
+> +static inline bool device_pm_not_required(struct device *dev)
+> +{
+> +       return dev->power.no_pm_required;
+> +}
+> +
+> +static inline void device_set_pm_not_required(struct device *dev)
+> +{
+> +       dev->power.no_pm_required = true;
+> +}
+> +
+>  static inline void dev_pm_syscore_device(struct device *dev, bool val)
+>  {
+>  #ifdef CONFIG_PM_SLEEP
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 0bd9de116826..300ab9f0b858 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -592,6 +592,7 @@ struct dev_pm_info {
+>         bool                    is_suspended:1; /* Ditto */
+>         bool                    is_noirq_suspended:1;
+>         bool                    is_late_suspended:1;
+> +       bool                    no_pm_required:1;
+>         bool                    early_init:1;   /* Owned by the PM core */
+>         bool                    direct_complete:1;      /* Owned by the PM core */
+>         u32                     driver_flags;
+> --
+> 2.17.1
+>
