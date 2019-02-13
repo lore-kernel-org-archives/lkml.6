@@ -2,118 +2,113 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF9C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D22C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA364222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:46:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UPkdxirG"
+	by mail.kernel.org (Postfix) with ESMTP id 4B58E222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 05:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbfBMFqH (ORCPT
+        id S1730031AbfBMFvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 00:46:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42289 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfBMFqH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 00:46:07 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l10so807223lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 21:46:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PeCBPDtNKEuaDKuiaHAzR3WaJUZOBwZPqqRsoj6cyhI=;
-        b=UPkdxirGr+HslQwZfW7aZGsFIjX/hlnjhkEgIOZjSq/gGk0dL7x/rGp/35KCQTsyfi
-         E0UcpVCn0e4A0Knks+0AXHnTnFHmXE2DUr8IBYqPIidXClhRwzHTU4SbMg/ccvpevDCn
-         fn6oLBF8kAgU+lV2Ig2XWO1F2HOeFkgps4lxF/J5UzMZRDxETvMwBLRh69Z0NdDuPaA/
-         a2VnxY9l6w31IMeZC83IQyv8LQZOR7nisU+gLkg8Om2nuSpjIIjxx2Y7fwyEglqo4yxA
-         dkPwsCnSOqabvbmxTAdhTazgU7qwobUmqv3awExjwmof94h7yFDxkOuB5ve84T3Yq3fl
-         M6cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PeCBPDtNKEuaDKuiaHAzR3WaJUZOBwZPqqRsoj6cyhI=;
-        b=fNL4Rc081wmCzi8xDMEn+yG8W8N5KTpSP7L478NE1EFug3DMhqdIanoTN65cOj9uFN
-         ZiTFK5o6nIViKjV1HwF8s+KqmtLbuc3kjDm7JI6wlZhLchygyFqI/o7l5Yq5bzMsBEon
-         yBdSkyiEWvBmiAFRdnD4VO36Kr78NJmkGFra6eDHBir04AC+XJplNe5ZHKHXUOqT4lUa
-         aIgy3fkdHHOk4I+VvkszfU9fyq+4TrplSZiuR88lmt+fjjjOEn49ywWIZ5u8TcoKLKYd
-         PlfZBA2s57ogGkJYrzRL9N0pZXCJzHCVVmvrMaiI8/5WImmDVYOgmdlThD3DlNTlnV0E
-         3Jrw==
-X-Gm-Message-State: AHQUAubzV7vjsA24OgboHFlWUgJ8fFxjsIlpMqg2l4aUNRVCbq9ncNuo
-        RFp7PQhyAl2JnOv5jAClYHIKh9cqWH82ULVhg/gh+w==
-X-Google-Smtp-Source: AHgI3Iamku4Gk6WwnAlQTQH0P3xvFkH9o1Kpoob1PmQ254v3FRny5b5BJ2MVBR1/ydD7UCVLB1jrXDy9s0tm0TxPsxo=
-X-Received: by 2002:a19:5205:: with SMTP id m5mr4613271lfb.61.1550036764803;
- Tue, 12 Feb 2019 21:46:04 -0800 (PST)
+        Wed, 13 Feb 2019 00:51:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729401AbfBMFvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 00:51:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D4ECCADE6;
+        Wed, 13 Feb 2019 05:50:59 +0000 (UTC)
+Subject: Re: [PATCH] xen: mark expected switch fall-through
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190212203720.GA24175@embeddedor>
+ <20190212235041.GA4463@localhost.localdomain>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1c86461d-71b4-7759-2255-19983b888fb5@suse.com>
+Date:   Wed, 13 Feb 2019 06:50:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <cover.1548052878.git.baolin.wang@linaro.org> <CAK8P3a3UROFLTtEcNXKtMUN283UQ6auQUOXCR=6e3BdLu5K8Nw@mail.gmail.com>
- <CAMz4kuLotnNom9kx2EmdfVEb+gvWfEbxoh6+hiqk87EjmtYJwA@mail.gmail.com>
- <20190201130519.GH20797@sirena.org.uk> <CAMz4kuJdPts31Ak-H=VAivvoqqPtxO5M1RdqrNPwTLT5d1h_7w@mail.gmail.com>
- <20190212122035.GA20635@sirena.org.uk>
-In-Reply-To: <20190212122035.GA20635@sirena.org.uk>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 13 Feb 2019 13:45:53 +0800
-Message-ID: <CAMz4kuLCA2d0aRf4r7-F6w7q58F4Do-z5weTXNHYVvvJ4Acegg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Add new device nodes for Spreadtrum SC9860 platform
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190212235041.GA4463@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 20:20, Mark Brown <broonie@kernel.org> wrote:
->
-> On Tue, Feb 12, 2019 at 04:40:10PM +0800, Baolin Wang wrote:
-> > On Fri, 1 Feb 2019 at 21:05, Mark Brown <broonie@kernel.org> wrote:
->
-> > > You can just list all the individual device names in the of_match_table
-> > > for the MFD and then it can bind to any of them.  You can always map
-> > > them onto the same behaviour in the MFD driver if they are identical
-> > > from a software point of view.
->
-> > If I understood correctly, as you suggested, we should add new
-> > mfd_cell groups to list all different PMICs' device names. Something
-> > like:
->
-> I do think this is a good idea (registering the components of the MFD
-> using mfd_cell), though it wasn't quite the point I was making.  Having
-> individual device names matters less for Linux-internal names like this.
->
-> > But from my point, they are just some meaningless duplication, and
-> > will waste lots of code there.
->
-> I was more thinking of the of_match table that has the IDs that appear
-> in DT - they're the one that's the ABI.  Look at something like wm8994
-> where the driver has several IDs listed in the main table then selects
-> function drivers based on that.
+On 13/02/2019 00:50, Boris Ostrovsky wrote:
+> On Tue, Feb 12, 2019 at 02:37:20PM -0600, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> drivers/xen/xen-pciback/xenbus.c: In function ‘xen_pcibk_frontend_changed’:
+>> drivers/xen/xen-pciback/xenbus.c:545:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>    if (xenbus_dev_is_online(xdev))
+>>       ^
+>> drivers/xen/xen-pciback/xenbus.c:548:2: note: here
+>>   case XenbusStateUnknown:
+>>   ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> Notice that, in this particular case, the code comment is modified
+>> in accordance with what GCC is expecting to find.
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied to for-linus-5.0
+> 
+> (xen-scsiback patch too)
 
-Yes, we can use id_table to populate the PMIC child devices, but some
-child devices need use the device node to get some resources which are
-described in DT, so we must specify the of_compabible member of
-mfd_cell. That means we should use compatible string of the
-of_match_table to populate the child devices.
-
-So the problem is still there, we should expand the mfd_cell groups to
-list all device names, but just some meaningless duplication.
+I'm tending to delay those patches until 5.1, as we are pretty late in
+the 5.0 cycle. We should add only really critical fixes to 5.0 now.
 
 
-
-
---
-Baolin Wang
-Best Regards
+Juergen
