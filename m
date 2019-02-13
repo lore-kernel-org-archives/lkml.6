@@ -2,256 +2,187 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA19C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49086C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D023222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:52:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q7dohMPP"
+	by mail.kernel.org (Postfix) with ESMTP id 175AB222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550069679;
+	bh=qBmJE21QuJZxJsnoZtzFuiwameDyGhYK9XwsjEHdHfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SkZE0CB9SLtKS25cJ0Pa+AHY6zGjciDI4UcYnA7icmM4izk6YItGPKNc43sSv3XNP
+	 Y4BFxDQ6JHuPhtwx6fOD7sCuWipt8sqXDB6spbbkTILqgNNeQukSPS+hzGMMOd5NdJ
+	 tfP9sXzdPGmwBVLact/r+3qqEfDeWdWRj2p8Xh60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403854AbfBMOwy (ORCPT
+        id S2403875AbfBMOyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:52:54 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46213 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfBMOwx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:52:53 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190213145251euoutp027f4d6ce62aecf33590ef24a092c8a260~C9A-_v1PC0078700787euoutp02P
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:52:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190213145251euoutp027f4d6ce62aecf33590ef24a092c8a260~C9A-_v1PC0078700787euoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550069571;
-        bh=pVrUwqnUPjrxJQiTr6JOTk6QnHXkFvCrW4hd6oReHvA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=q7dohMPPisqQCwLeqa8iLRDrpAPphAS1msizo8AfSL+iMyqh8tkhJ5ds0WuYly977
-         D+ddZFOFG6nkmv44HJoI0z3H6Y/VXtgo0Y4sxJEc+R8uWwTpQzTEeXfcttcphTFtiG
-         ojErCsGXc0URfkkSaqosLqmjL66hWuVtuNeHwlyY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190213145250eucas1p21fc4767693427b830a49db86e21c433f~C9A-SOkM22279922799eucas1p2n;
-        Wed, 13 Feb 2019 14:52:50 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E5.F2.04441.24F246C5; Wed, 13
-        Feb 2019 14:52:50 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213145249eucas1p25320b36cd88b950ee5d89ac40f5a4072~C9A_kPdwO3244332443eucas1p2Q;
-        Wed, 13 Feb 2019 14:52:49 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190213145249eusmtrp2f008ca137f3a731c4fe0d6e5ec42fa7a~C9A_VUCHU0821308213eusmtrp2c;
-        Wed, 13 Feb 2019 14:52:49 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-23-5c642f4299c7
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id ED.C6.04284.14F246C5; Wed, 13
-        Feb 2019 14:52:49 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190213145248eusmtip1d6c99f37afcad212d46ad9330b7e7c0f~C9A9iWdT83107631076eusmtip1d;
-        Wed, 13 Feb 2019 14:52:48 +0000 (GMT)
-Subject: Re: [PATCH v3 0/7] drivers: devfreq: fix and optimize workqueue
- mechanism
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, joel@joelfernandes.org,
-        chris.diamand@arm.com, mka@chromium.org, rostedt@goodmis.org,
-        mingo@redhat.com
-Message-ID: <3ad228a9-71af-2604-a8b4-8c49f1ca1038@partner.samsung.com>
-Date:   Wed, 13 Feb 2019 15:52:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Wed, 13 Feb 2019 09:54:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60168 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726056AbfBMOyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 09:54:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 83146AC24;
+        Wed, 13 Feb 2019 14:54:35 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 15:54:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix __dump_page() for poisoned pages
+Message-ID: <20190213145434.GR4525@dhcp22.suse.cz>
+References: <dbbcd36ca1f045ec81f49c7657928a1cdf24872b.1550065120.git.robin.murphy@arm.com>
+ <20190213142308.GQ4525@dhcp22.suse.cz>
+ <05a91777-3b95-14a9-c959-a12b25a9b26f@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <80cd346e-a0a3-ff66-40a6-c15fd23ba904@partner.samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87pO+ikxBhdOCFhsnLGe1WLap8ss
-        Fte/PGe1WNaganG26Q27xeVdc9gsPvceYbRYe+Quu8WlAwuYLD5veMxocbtxBZvFvo4HTBaH
-        37SzOvB6rJm3htFjdsNFFo+WfbfYPRZ++srq8X7fVTaPvi2rGD0+b5ILYI/isklJzcksSy3S
-        t0vgyjg63bTgmG5Fw8brbA2MC1W7GDk4JARMJHZsLeti5OIQEljBKPFm3n5mCOcLo8S2hu+M
-        EM5nRonzB7ezdTFygnX82/uGHSKxnFFi9o53TBDOW0aJfU+3M4FUCQuESMz8tYkFZAebgJ7E
-        jlWFIKaIQJLEjP82IOXMAh8ZJTYeaGcBKecVcJP4+ukKmM0ioCrx+/NrsDGiAhESh3vfMULU
-        CEqcnPkErIZTwF3iXvctVhCbWUBc4taT+UwQtrxE89bZYC9ICLxll2jc9grqaheJ6XO/M0PY
-        whKvjm9hh7BlJP7vhGiWECiWONuxCqq+RqL95A6oGmuJw8cvsoI8wCygKbF+lz5E2FHi7fLb
-        LJBg5JO48VYQ4gQ+iUnbpjNDhHklOtqEIKo1JLb0XIBaJCaxfM009gmMSrOQPDYLyTOzkDwz
-        C2HvAkaWVYziqaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIGp7PS/4592MH69lHSIUYCDUYmH
-        t0IoJUaINbGsuDL3EKMEB7OSCG+hDlCINyWxsiq1KD++qDQntfgQozQHi5I4bzXDg2ghgfTE
-        ktTs1NSC1CKYLBMHp1QD49xkfxNWtROF+wqzubhvnjuVKKGZsDhBnfMa096ZF6qPKS+JaZRI
-        bZTpXm/VsuQ5f91MLU4ZIa1kr/X6RvPjvlkHG9k9ZToYdEWK/c2EX6c2JIV8/e5Y6FSR6Nd+
-        +W703/1NG7kTDQoqD5Rc2P7H6aBArrtylmCf3bRT9xdxn+GPiDfSf6upxFKckWioxVxUnAgA
-        AZiRUWEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xu7qO+ikxBssPCVpsnLGe1WLap8ss
-        Fte/PGe1WNaganG26Q27xeVdc9gsPvceYbRYe+Quu8WlAwuYLD5veMxocbtxBZvFvo4HTBaH
-        37SzOvB6rJm3htFjdsNFFo+WfbfYPRZ++srq8X7fVTaPvi2rGD0+b5ILYI/SsynKLy1JVcjI
-        Ly6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQyzg63bTgmG5Fw8brbA2M
-        C1W7GDk5JARMJP7tfcPexcjFISSwlFHiyMdjrBAJMYlJ+7azQ9jCEn+udbFBFL1mlJj9ZyoT
-        SEJYIERi5q9NLF2MHBxsAnoSO1YVgoRFBJIkphx/AFbPLPCRUeLQswNQGyYwSVz8/4MNpIpX
-        wE3i66crLCA2i4CqxO/Pr8GGigpESHx8uo8JokZQ4uTMJ2A1nALuEve6b4FdxyxgJjFv80Nm
-        CFtc4taT+UwQtrxE89bZzBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtQrTswtLs1L
-        10vOz93ECIzhbcd+bt7BeGlj8CFGAQ5GJR7eCqGUGCHWxLLiytxDjBIczEoivIU6QCHelMTK
-        qtSi/Pii0pzU4kOMpkDPTWSWEk3OB6aXvJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFCAumJJanZ
-        qakFqUUwfUwcnFINjPYLWhtL7KbW/XuQahvF7PT2a5wgQ+HhFw+0lrPw1LF4rraIdtl/6uob
-        HdYjE/k+iN/P/B1bdpPfti30isjU6GebfY2mHfFYkn06uiuN++LLwpbjog2TJL+161jaRKfP
-        b1roa/F2x83At/Z8+pN2XMpy2/Plrmd9VVOib0b4PWcjLV++bmYBJZbijERDLeai4kQAz6iV
-        evcCAAA=
-X-CMS-MailID: 20190213145249eucas1p25320b36cd88b950ee5d89ac40f5a4072
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190212222422eucas1p1624203db4db3e495035820dea542e23a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190212222422eucas1p1624203db4db3e495035820dea542e23a
-References: <CGME20190212222422eucas1p1624203db4db3e495035820dea542e23a@eucas1p1.samsung.com>
-        <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-        <d9245497-ec63-4a5d-6c00-0ec2954af735@samsung.com>
-        <80cd346e-a0a3-ff66-40a6-c15fd23ba904@partner.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05a91777-3b95-14a9-c959-a12b25a9b26f@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias, Chanwoo,
-
-Regarding some measurements data for our approximations.
-
-I have found a comprehensive power consumption measurements
-for i.MX6 dual/quad (Cortex-A9) boards.
-https://cache.freescale.com/files/32bit/doc/app_note/AN4509.pdf
-
-The boards have DDR3 memories not LPDDR3 PoP but it is also measured
-and mentioned explicitly.
-There are many use case scenarios covered, which use different devices
-in the SoC.
-
-Regards,
-Lukasz
-
-
-On 2/13/19 12:14 PM, Lukasz Luba wrote:
-> Hi Chanwoo,
+On Wed 13-02-19 14:38:37, Robin Murphy wrote:
+> On 13/02/2019 14:23, Michal Hocko wrote:
+> > On Wed 13-02-19 13:40:49, Robin Murphy wrote:
+> > > Evaluating page_mapping() on a poisoned page ends up dereferencing junk
+> > > and making PF_POISONED_CHECK() considerably crashier than intended. Fix
+> > > that by not inspecting the mapping until we've determined that it's
+> > > likely to be valid.
+> > 
+> > Has this ever triggered? I am mainly asking because there is no usage of
+> > mapping so I would expect that the compiler wouldn't really call
+> > page_mapping until it is really used.
 > 
-> On 2/13/19 1:18 AM, Chanwoo Choi wrote:
->> On 19. 2. 13. 오전 7:23, Lukasz Luba wrote:
->>> This patch set changes workqueue related features in devfreq framework.
->>> First patch switches to delayed work instead of deferred.
->>> The second switches to regular system work and deletes custom 'devfreq'.
->>>
->>> Using deferred work in this context might harm the system performance.
->>> When the CPU enters idle, deferred work is not fired. The devfreq 
->>> device's
->>> utilization does not have to be connected with a particular CPU.
->>> The drivers for GPUs, Network on Chip, cache L3 rely on devfreq 
->>> governor.
->>> They all are missing opportunity to check the HW state and react when
->>> the deferred work is not fired.
->>> A corner test case, when Dynamic Memory Controller is utilized by 
->>> CPUs running
->>> on full speed, might show x5 worse performance if the crucial CPU is 
->>> in idle.
->>>
->>> There was a discussion regarding v2 that the power usage because of 
->>> waking up
->>
->> We have not yet finished the any discussion. We only just had a few reply
->> and you didn't wait for any reply from other. As I already commented
->> on exynos5422-dmc series, please don't send the next patch
->> without any final agreement.
->>
->> In this series, patch1/patch2 are same at version 2 patchset.
->> Even if we need to discuss more them, you just send same patches
->> without any agreement among reviewers. At least, you have to wait the 
->> reply
->> instead of just sending the new patchset. It is basic review rule on 
->> mailing list.
-> I think you are blocking the fixes.
-> Matthias is currently fixing devfreq governors which lack 'case SUSPEND'
-> and he is interested in these v3. I have fixed a month ago issue with
-> system suspend and OPP state of devfreq devices, which Tobias was rising
-> and sending patches a few years ago, but you have blocked them.
+> A function call is a sequence point, so any compiler that did that would be
+> totally broken.
+
+Ohh, right I thought this is a static inline.
+
+> The crash looks like this (now from an explicit dump_page() call before it
+> happens naturally deep within pfn_to_nid()):
+
+please add this to the changelog.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> -----
+> [  107.147056] Unable to handle kernel NULL pointer dereference at virtual
+> address 0000000000000006
+> [  107.155774] Mem abort info:
+> [  107.158546]   ESR = 0x96000005
+> [  107.161572]   Exception class = DABT (current EL), IL = 32 bits
+> [  107.167437]   SET = 0, FnV = 0
+> [  107.170460]   EA = 0, S1PTW = 0
+> [  107.173568] Data abort info:
+> [  107.176419]   ISV = 0, ISS = 0x00000005
+> [  107.180218]   CM = 0, WnR = 0
+> [  107.183151] user pgtable: 4k pages, 39-bit VAs, pgdp = 00000000c2f6ac38
+> [  107.189702] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
+> [  107.196430] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> [  107.201942] Modules linked in:
+> [  107.204962] CPU: 2 PID: 491 Comm: bash Not tainted 5.0.0-rc1+ #1
+> [  107.210903] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno
+> Development Platform, BIOS EDK II Dec 17 2018
+> [  107.221576] pstate: 00000005 (nzcv daif -PAN -UAO)
+> [  107.226321] pc : page_mapping+0x18/0x118
+> [  107.230200] lr : __dump_page+0x1c/0x398
+> [  107.233990] sp : ffffff8011a53c30
+> [  107.237265] x29: ffffff8011a53c30 x28: ffffffc039b6ec00
+> [  107.242520] x27: 0000000000000000 x26: 0000000000000000
+> [  107.247775] x25: 0000000056000000 x24: 0000000000000015
+> [  107.253029] x23: ffffff80114d8b18 x22: 0000000000000022
+> [  107.258283] x21: ffffffc03538ec38 x20: ffffff8011082e78
+> [  107.263537] x19: ffffffbf20000000 x18: 0000000000000000
+> [  107.268790] x17: 0000000000000000 x16: 0000000000000000
+> [  107.274044] x15: 0000000000000000 x14: 0000000000000000
+> [  107.279297] x13: 0000000000000000 x12: 0000000000000030
+> [  107.284550] x11: 0000000000000030 x10: 0101010101010101
+> [  107.289804] x9 : ff7274615e68726c x8 : 7f7f7f7f7f7f7f7f
+> [  107.295057] x7 : feff64756e6c6471 x6 : 0000000000008080
+> [  107.300310] x5 : 0000000000000000 x4 : 0000000000000000
+> [  107.305564] x3 : ffffffc039b6ec00 x2 : fffffffffffffffe
+> [  107.310817] x1 : ffffffffffffffff x0 : fffffffffffffffe
+> [  107.316072] Process bash (pid: 491, stack limit = 0x000000004ebd4ecd)
+> [  107.322442] Call trace:
+> [  107.324858]  page_mapping+0x18/0x118
+> [  107.328392]  __dump_page+0x1c/0x398
+> [  107.331840]  dump_page+0xc/0x18
+> [  107.334945]  remove_store+0xbc/0x120
+> [  107.338479]  dev_attr_store+0x18/0x28
+> [  107.342103]  sysfs_kf_write+0x40/0x50
+> [  107.345722]  kernfs_fop_write+0x130/0x1d8
+> [  107.349687]  __vfs_write+0x30/0x180
+> [  107.353134]  vfs_write+0xb4/0x1a0
+> [  107.356410]  ksys_write+0x60/0xd0
+> [  107.359686]  __arm64_sys_write+0x18/0x20
+> [  107.363565]  el0_svc_common+0x94/0xf8
+> [  107.367184]  el0_svc_handler+0x68/0x70
+> [  107.370890]  el0_svc+0x8/0xc
+> [  107.373737] Code: f9400401 d1000422 f240003f 9a801040 (f9400402)
+> [  107.379766] ---[ end trace cdb5eb5bf435cecb ]---
+> -----
 > 
-> These version is ready for comments regarding 'battery powered devices'.
-> The v3 has introduced approach for 2 polling intervals similar to
-> thermal framework.
-> It also has trace events. The trace events are *really* important in
-> this discussion because we need some measurements.
+> While after this patch, DEBUG_VM works as intended:
+> -----
+> [   46.835963] page:ffffffbf20000000 is uninitialized and poisoned
+> [   46.835970] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> ffffffffffffffff
+> [   46.849520] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> ffffffffffffffff
+> [   46.857194] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> [   46.863170] ------------[ cut here ]------------
+> [   46.867736] kernel BUG at ./include/linux/mm.h:1006!
+> [   46.872646] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+> [   46.878071] Modules linked in:
+> [   46.881092] CPU: 1 PID: 483 Comm: bash Not tainted 5.0.0-rc1+ #3
+> [   46.887032] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno
+> Development Platform, BIOS EDK II Dec 17 2018
+> [   46.897704] pstate: 40000005 (nZcv daif -PAN -UAO)
+> [   46.902449] pc : remove_store+0xbc/0x120
+> ...
+> -----
 > 
-> You said:
-> 'When release the real mobile product like galaxy phone,
-> it is very important issue to remove the unneeded wakeup on idle state.'
-> Was it a real reason for profiling the devfreq framework and core
-> workqueue mechanism? There are embedded devices which are not using
-> battery and probably developers were not aware because there was no
-> traces which could give any information about devfreq behavior.
-> Power is important, performance is important but relaying on randomness
-> is not the best solution. As I said earlier, your driver can stuck on
-> highest OPP waiting for next callback which will not come...
+> Robin.
 > 
-> Regards,
-> Lukasz
->>
->>
->>> an idle CPU would be too high. In my opinion it won't and fixing bug 
->>> is more
->>> important than < 1% more power used [1].
->>> I have addressed also this issue. In this patch set there is a mechanism
->>> which prevents from to frequent checks when there is no need.
->>> When the device enters its lowest state (OPP) the framework sets polling
->>> interval to 'polling_idle_ms'. In default Kconfig it is 500ms, so 2 
->>> times per
->>> second.
->>> It is tunable from the sysfs interface per device, thus driver 
->>> developer can
->>> experiment and choose best intervals for the system.
->>>
->>> Changes:
->>> v3:
->>> - reordered first two patches
->>> - added functionality to lower power consumption when the device is 
->>> less busy;
->>>    there is a new polling interval enabled when device enters lowest 
->>> frequency;
->>> - added trace events to capture the behaviour of the system
->>> v2:
->>> - single patch split into two
->>> - added cover letter
->>>
->>> link for the previous version and discussion:
->>> https://marc.info/?l=linux-pm&m=154989907416072&w=2
->>> https://marc.info/?l=linux-pm&m=154904631226997&w=2
->>>
->>> Regards,
->>> Lukasz Luba
->>>
->>> [1] https://marc.info/?l=linux-kernel&m=155000641622443&w=2
->>>
->>> Lukasz Luba (7):
->>>    drivers: devfreq: change deferred work into delayed
->>>    drivers: devfreq: change devfreq workqueue mechanism
->>>    Kconfig: drivers: devfreq: add default idle polling
->>>    include: devfreq: add polling_idle_ms to 'profile'
->>>    drivers: devfreq: add longer polling interval in idle
->>>    trace: events: add devfreq trace event file
->>>    drivers: devfreq: add tracing for scheduling work
->>>
->>>   MAINTAINERS                               |   1 +
->>>   drivers/devfreq/Kconfig                   |  13 +++
->>>   drivers/devfreq/devfreq.c                 | 184 
->>> ++++++++++++++++++++++++------
->>>   drivers/devfreq/governor.h                |   3 +-
->>>   drivers/devfreq/governor_simpleondemand.c |   6 +-
->>>   include/linux/devfreq.h                   |   6 +
->>>   include/trace/events/devfreq.h            |  39 +++++++
->>>   7 files changed, 218 insertions(+), 34 deletions(-)
->>>   create mode 100644 include/trace/events/devfreq.h
->>>
->>
->>
+> > > Fixes: 1c6fb1d89e73 ("mm: print more information about mapping in __dump_page")
+> > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> > > ---
+> > >   mm/debug.c | 4 +++-
+> > >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/mm/debug.c b/mm/debug.c
+> > > index 0abb987dad9b..1611cf00a137 100644
+> > > --- a/mm/debug.c
+> > > +++ b/mm/debug.c
+> > > @@ -44,7 +44,7 @@ const struct trace_print_flags vmaflag_names[] = {
+> > >   void __dump_page(struct page *page, const char *reason)
+> > >   {
+> > > -	struct address_space *mapping = page_mapping(page);
+> > > +	struct address_space *mapping;
+> > >   	bool page_poisoned = PagePoisoned(page);
+> > >   	int mapcount;
+> > > @@ -58,6 +58,8 @@ void __dump_page(struct page *page, const char *reason)
+> > >   		goto hex_only;
+> > >   	}
+> > > +	mapping = page_mapping(page);
+> > > +
+> > >   	/*
+> > >   	 * Avoid VM_BUG_ON() in page_mapcount().
+> > >   	 * page->_mapcount space in struct page is used by sl[aou]b pages to
+> > > -- 
+> > > 2.20.1.dirty
+> > > 
+> > 
+
+-- 
+Michal Hocko
+SUSE Labs
