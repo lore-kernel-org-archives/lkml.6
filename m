@@ -2,106 +2,196 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE7C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B364C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B937F222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F1B222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:01:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIMY0KrK"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ifDZRPto"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391087AbfBMJBj (ORCPT
+        id S2390093AbfBMJBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:01:39 -0500
-Received: from mail-yb1-f180.google.com ([209.85.219.180]:35220 "EHLO
-        mail-yb1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfBMJBi (ORCPT
+        Wed, 13 Feb 2019 04:01:49 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:62113 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbfBMJBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:01:38 -0500
-Received: by mail-yb1-f180.google.com with SMTP id v2so634958ybm.2;
-        Wed, 13 Feb 2019 01:01:38 -0800 (PST)
+        Wed, 13 Feb 2019 04:01:49 -0500
+X-IronPort-AV: E=Sophos;i="5.58,365,1544511600"; 
+   d="scan'208";a="23778134"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Feb 2019 01:59:47 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 13 Feb 2019 01:59:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOxAq2jgYrMbNTBlWFr73Rc+ViApmre//M8IaWoP5S0=;
-        b=VIMY0KrK4iSNyI1HGmm4jPV9TrQ8QlHaQh+ToWWJjoo8CPj15twvFmLLdUrKhTAEuC
-         biSzvOM4rUQMNMRSLiF8FC5/cdnQm8YeFA83kwKe9KrxnJpJ/H1JqWy0QIeMiUnEFmOH
-         AoGIq6s8Hf8lnYLG+tbwxlDl3CX3zGKbHSkAvuelpni4+TJUfm3tTR/sEgAK5F7qCN7J
-         X+B+k2wB5QutnnTROe8xnwDeO0DIPSvEa3LTswwjR/YISSO4/IgEqSio+8bUdv5vFCCy
-         KuM/DtIYgwC5ImjMq7rtXguacejHqDPZc+bsS2Te3hQ0t9AREltbQK1D8ba7bAqaH85v
-         k4YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOxAq2jgYrMbNTBlWFr73Rc+ViApmre//M8IaWoP5S0=;
-        b=CUkdbqv50GTUcxGmRjdNST62SVIA45LNwRQYASxfLyuYZJXX+Fm2d/mqoh6AybvDgB
-         62Bfl+v86TR5kVDfJVGPLbtW4pfgfCD69tLIhnYA4gJrsGWUdnxpk1DzVXfQGwU8B+ZQ
-         m0o/ZZx1D6VTMF6MYxads+7+DTUaCRJFh0mSAPTZvtR1PTW5SxDY0m5y983D4PbffsR6
-         241YSpEnvrdGjE87nwy07MRn0yT/Rb2a+UV2ZK9RrzxDz3xg5NQFuhQ1fXZ4m6tC3vD1
-         j9QLHV4+HIW2UjLtkVRj7DFB51iDFspH8PkL74IStAow4SzEoYsGh8gMli8HnwsArENj
-         4mlA==
-X-Gm-Message-State: AHQUAuZcEJTbtktCqkmBMdawBaZ0fWCI2VZboQdyFN+/dLqns0pxuEjm
-        hjikQzlo1VkyS/RZfRJW/vHQ5LwFN6rGFh89dVQ=
-X-Google-Smtp-Source: AHgI3IZIW2qaSfMP7UCdKZdSY60xgXrV4aT4hPX+oDKBJgV5JMHXw6PQsG1u07u6EgbYCN/CakP8YSOXqaenfqEulHM=
-X-Received: by 2002:a25:9c09:: with SMTP id c9mr6796704ybo.462.1550048497909;
- Wed, 13 Feb 2019 01:01:37 -0800 (PST)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OY3mtMmnD9cseNMymdV/VsZoqf3XBJ/9J7higqgrd7I=;
+ b=ifDZRPto/btI/cv1RaHs5GbnteEH5fsHqHRRJ8zW73Ff4BXv8nFQg1M1lp6qP9k1VBhdQpWyojpppwflXJVptSJtNHmzJ8B29m1w/BbAgyXnwTJfKzt9WLBNHtxVUUS2w8ykrsUHStXSlEz03nwK9xZqYbvlAlTpK3BOCTMqnrA=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
+ BN6PR11MB0019.namprd11.prod.outlook.com (10.161.155.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Wed, 13 Feb 2019 08:59:45 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
+ 08:59:45 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <bbrezillon@kernel.org>,
+        <marek.vasut@gmail.com>, <richard@nod.at>,
+        <miquel.raynal@bootlin.com>, <lee.jones@linaro.org>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <Tudor.Ambarus@microchip.com>
+Subject: [PATCH 01/11] ARM: at91: add sam9x60 SFR definitions
+Thread-Topic: [PATCH 01/11] ARM: at91: add sam9x60 SFR definitions
+Thread-Index: AQHUw3p2o3oeiLqtBEORedY4SOk1lg==
+Date:   Wed, 13 Feb 2019 08:59:44 +0000
+Message-ID: <20190213085930.31578-2-tudor.ambarus@microchip.com>
+References: <20190213085930.31578-1-tudor.ambarus@microchip.com>
+In-Reply-To: <20190213085930.31578-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR08CA0085.eurprd08.prod.outlook.com
+ (2603:10a6:800:d3::11) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:101::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.9.5
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6c45e8f4-873d-4782-4292-08d691919920
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB0019;
+x-ms-traffictypediagnostic: BN6PR11MB0019:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;BN6PR11MB0019;23:bsnb4tT4Z52Nz5HCeef55QLWwYqM6axbicSNtDx?=
+ =?iso-8859-1?Q?BFCaq3ZngDdzhewFJbt9vgihiyVCYh+eTWjwwrLCc3byTzs11kWjEMfe4y?=
+ =?iso-8859-1?Q?9j80qFjKuxN3B6/A44ecC1zBJZXz+JR2NqlvM00i1P03xtDRCEaY5pQR0P?=
+ =?iso-8859-1?Q?Vuz2Z5ncVubobyI34F1KKBb3Ibk96WVBHrAyMYZKyjIiWyDiiGJQH/mwHm?=
+ =?iso-8859-1?Q?6ondfgeFTj5Pxq6lckVCD/NRcYaI7oBt3MfIEcNMII9a6M7Acw6F0lcDxn?=
+ =?iso-8859-1?Q?txHRl4fdByVJf+0TSJR2lTeFYUuLcn8BFukNE4/PPMJDTgUdpSj6M60gMu?=
+ =?iso-8859-1?Q?D70l1UF7Jt+uxMdMgzhOg8q3FZ9IRweTHQZbXNFFlb8XR3UyX0GB3uz3o9?=
+ =?iso-8859-1?Q?VZp7/Iw1fI5xSC3rfqGlKSS6S4JQQDvpe+SS4+bvE7ZlsJAn8YeW3w0bcn?=
+ =?iso-8859-1?Q?VPvlP4ChX3RN5GzulIELF0TdKXQavx/LYAsgUA8Z2CxMpEQVfkiu6TIxOG?=
+ =?iso-8859-1?Q?GF334l9YZMrdqI7j4T/vPU/EDFojK600IyFR+AzdIP05LAQ4ragErvtsvb?=
+ =?iso-8859-1?Q?ODX29h47tT6roV3B2oIFdMefirhKOLgXhvyamWRPWNHfrolm0V4Rwr3V2J?=
+ =?iso-8859-1?Q?qRgD1HNIMpm4xNmq+7yI7sbZKQqLcSsaothGuvzWAuzeuuHFJuRmTPVoQN?=
+ =?iso-8859-1?Q?s+FizUv9eUkRXP1N2V3dYsPwyhWVkSnpAIy+KNv2tsx7RkPCPE8tIT56Md?=
+ =?iso-8859-1?Q?M/GJ97xQcnWjbVYu36goa2tm/kKrYo37O/YL8rdBDWNiFr8v2RWwSLwYdj?=
+ =?iso-8859-1?Q?f5oByt51SaRXA7tEePkdgcNfAug8vtvkLdV3BXzSVyU0+Kssv70xW+J/jP?=
+ =?iso-8859-1?Q?0dyLUITxassx3vqTmo3pDm+nnTw63sJ24zAz76octRQKEM4rn6jWlKSQog?=
+ =?iso-8859-1?Q?cfrbc3vpf45+sSd9l+6PyNOHt33bJ0colzPCpGCOXdrWd1ZLPkQhyvnq8d?=
+ =?iso-8859-1?Q?9zx7YNhm1CHMaUHGnlGg7RNzkVStjBYUhyYl8N8bTo71SHwZFNAvTa2P/j?=
+ =?iso-8859-1?Q?kM546+t803mCigOFWhicIDe/VE6rhKOReNox9wVxYfMv5jF3VZV+3+no+O?=
+ =?iso-8859-1?Q?ALoOrmZ/lwuOdMaAJ3TodVJTHYO5LJPOMcbdiGnkGbnRQpW7hv0nwVWZit?=
+ =?iso-8859-1?Q?hbF0A8opZrdpq71El8dXtT0SA2HmVwOjcv3Az+6yFhDBbKRwP8Ff+5G6Um?=
+ =?iso-8859-1?Q?rj+aRyT/usTr9YUtLo5MC5Hain8aAQGKhAN3hfRog6Xmls8UbnfuCbIOWZ?=
+ =?iso-8859-1?Q?7c3YWOFfa4fY89cP3vwNA+A7K6P9WZTDJley6z7cH9n9dLkI7AWHbs+alt?=
+ =?iso-8859-1?Q?BZqKXACeqrXVvMNdH/VZrmwEO6oAc?=
+x-microsoft-antispam-prvs: <BN6PR11MB00193E96369D292E0882C537F0660@BN6PR11MB0019.namprd11.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(136003)(376002)(39860400002)(189003)(199004)(81166006)(50226002)(106356001)(7416002)(6436002)(54906003)(2201001)(1076003)(81156014)(26005)(110136005)(476003)(102836004)(107886003)(8936002)(6512007)(6486002)(4326008)(446003)(2616005)(316002)(8676002)(105586002)(99286004)(66066001)(486006)(6116002)(3846002)(186003)(11346002)(86362001)(2906002)(72206003)(71190400001)(14454004)(76176011)(53936002)(71200400001)(478600001)(68736007)(6506007)(386003)(2501003)(52116002)(97736004)(14444005)(7736002)(305945005)(256004)(25786009)(36756003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0019;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1tJHhf5WCnkFrdvsOF3MrqwM5CoO8oP4vA8eSmYucAosizNOd/d0Zucgc28Mnnl2OCmaBldGHWVOnV0I5lQbeS0Cc31w49JYAKGY8X6lGRzWwMB6DIdVtKmQ1SkpEh8XjeAMykqcA0cw3N1tmpwWNbPC1hAvuv4tvOxDUNRF5n/vkkLLT3TluQtqPeUrbZYcrS7OZWeO3682XigilIUfjuTCEOtL/ONx8Zn8osyCYwDUxMz00gPBhmka9tIza/A89Ms57Vq3WaGGalu6Kzbyq2tv4fRp0k60hGmLSL1xWVFZwLu2qHucs7zrFbYVeK1WK6On3ID0zU4FvUWsD+q7/aTcaSNw+UcBLv7HiRRqUxOR+FQb17eQjRN84z/BBAD1xe3lk+X08yR/sYNcr93TmnskQLvfcRtm2yap8ans5jA=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190212170012.GF69686@sasha-vm> <CAH2r5mviqHxaXg5mtVe30s2OTiPW2ZYa9+wPajjzz3VOarAUfw@mail.gmail.com>
- <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com> <20190213073707.GA2875@kroah.com>
-In-Reply-To: <20190213073707.GA2875@kroah.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 13 Feb 2019 11:01:25 +0200
-Message-ID: <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Steve French <smfrench@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c45e8f4-873d-4782-4292-08d691919920
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 08:59:41.6324
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB0019
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 9:37 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Feb 13, 2019 at 09:20:00AM +0200, Amir Goldstein wrote:
-> > I never saw an email from you or Greg saying, the branch "stable-xxx" is
-> > in review. Please run your tests.
->
-> That is what my "Subject: [PATCH 4.9 000/137] 4.9.156-stable review"
-> type emails are supposed to kick off.  They are sent both to the stable
-> mailing list and lkml.
->
-> This message already starts the testing systems going for a number of
-> different groups out there, do you want to be added to the cc: list so
-> you get them directly?
->
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-No thanks, I'll fix my email filters ;-)
+Keep generic names, as there are no conflicts with previous
+SFR definitions.
 
-I think the main difference between these review announcements
-and true CI is what kind of guaranty you get for a release candidate
-from NOT getting a test failure response, which is one of the main
-reasons that where holding back xfs stable fixes for so long.
+While touching bits, update AT91_OHCIICR_USB_SUSPEND to use
+GENMASK, replace unused AT91_OHCIICR_SUSPEND_A/B/C with a more
+generic macro, align values on tab-width.
 
-Best effort testing in timely manner is good, but a good way to
-improve confidence in stable kernel releases is a publicly
-available list of tests that the release went through.
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+ include/soc/at91/atmel-sfr.h | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
-Do you have any such list of tests that you *know* are being run,
-that you (or Sasha) run yourself or that you actively wait on an
-ACK from a group before a release?
+diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
+index 482337af06b8..532fd784e86c 100644
+--- a/include/soc/at91/atmel-sfr.h
++++ b/include/soc/at91/atmel-sfr.h
+@@ -14,21 +14,41 @@
+ #define _LINUX_MFD_SYSCON_ATMEL_SFR_H
+=20
+ #define AT91_SFR_DDRCFG		0x04	/* DDR Configuration Register */
++#define AT91_SFR_CCFG_EBICSA	0x04	/* EBI Chip Select Register */
+ /* 0x08 ~ 0x0c: Reserved */
+ #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
+ #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
+ #define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
++#define AT91_SFR_UTMISWAP	0x3c	/* UTMI DP/DM Pin Swapping Register */
++#define AT91_SFR_LS		0x7c	/* Light Sleep Register */
+ #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
++#define AT91_SFR_WPMR		0xe4	/* Write Protection Mode Register */
+=20
+ /* Field definitions */
+-#define AT91_OHCIICR_SUSPEND_A	BIT(8)
+-#define AT91_OHCIICR_SUSPEND_B	BIT(9)
+-#define AT91_OHCIICR_SUSPEND_C	BIT(10)
++#define AT91_SFR_CCFG_EBI_CSA(cs, val)		((val) << (cs))
++#define AT91_SFR_CCFG_EBI_DBPUC			BIT(8)
++#define AT91_SFR_CCFG_EBI_DBPDC			BIT(9)
++#define AT91_SFR_CCFG_EBI_DRIVE			BIT(17)
++#define AT91_SFR_CCFG_NFD0_ON_D16		BIT(24)
++#define AT91_SFR_CCFG_DDR_MP_EN			BIT(25)
+=20
+-#define AT91_OHCIICR_USB_SUSPEND	(AT91_OHCIICR_SUSPEND_A | \
+-					 AT91_OHCIICR_SUSPEND_B | \
+-					 AT91_OHCIICR_SUSPEND_C)
++#define AT91_SFR_OHCIICR_RES(x)			BIT(x)
++#define AT91_SFR_OHCIICR_ARIE			BIT(4)
++#define AT91_SFR_OHCIICR_APPSTART		BIT(5)
++#define AT91_SFR_OHCIICR_USB_SUSP(x)		BIT(8 + (x))
++#define AT91_SFR_OHCIICR_UDPPUDIS		BIT(23)
++#define AT91_OHCIICR_USB_SUSPEND		GENMASK(10, 8)
+=20
+-#define AT91_UTMICKTRIM_FREQ	GENMASK(1, 0)
++#define AT91_SFR_OHCIISR_RIS(x)			BIT(x)
++
++#define AT91_UTMICKTRIM_FREQ			GENMASK(1, 0)
++
++#define AT91_SFR_UTMISWAP_PORT(x)		BIT(x)
++
++#define AT91_SFR_LS_VALUE(x)			BIT(x)
++#define AT91_SFR_LS_MEM_POWER_GATING_ULP1_EN	BIT(16)
++
++#define AT91_SFR_WPMR_WPEN			BIT(0)
++#define AT91_SFR_WPMR_WPKEY_MASK		GENMASK(31, 8)
+=20
+ #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+--=20
+2.9.5
 
-Thanks,
-Amir.
