@@ -2,147 +2,101 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DEFC282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735E6C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D35E222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F23C222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:28:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHjbVsFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390647AbfBMI0j convert rfc822-to-8bit (ORCPT
+        id S2390657AbfBMI2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:26:39 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51151 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732708AbfBMI0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:26:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 00:26:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="143846923"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Feb 2019 00:26:37 -0800
-Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 00:26:37 -0800
-Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
- fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 00:26:37 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.102]) by
- SHSMSX107.ccr.corp.intel.com ([169.254.9.162]) with mapi id 14.03.0415.000;
- Wed, 13 Feb 2019 16:26:34 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     "sathyanarayanan.kuppuswamy@linux.intel.com" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
-Subject: RE: [PATCH v2 2/2] iommu/vt-d: Enable PASID only if device expects
- PASID  in PRG Response.
-Thread-Topic: [PATCH v2 2/2] iommu/vt-d: Enable PASID only if device expects
- PASID  in PRG Response.
-Thread-Index: AQHUwlRVYQqQT7kyVUeZoMty0D5kcKXdY7SQ
-Date:   Wed, 13 Feb 2019 08:26:33 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19C93AD90@SHSMSX104.ccr.corp.intel.com>
-References: <cover.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <787d13ae22ae07c708b06180241f4f2b71031f84.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <787d13ae22ae07c708b06180241f4f2b71031f84.1549915780.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzVhZTEyOGYtZjllZC00MjMyLTgwYjAtYzY5OTcxMmNkY2RkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSFU2ZWdObGtNdmlZd1NweHFUdk5QMVwvaFwvbG94UW9EUDlwYW5xbGg4RXFDTktPR3UrbFRLYlFvTzNrZkJTOGFsIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 13 Feb 2019 03:28:10 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33952 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389393AbfBMI2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:28:09 -0500
+Received: by mail-it1-f195.google.com with SMTP id j17so1015406ita.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:28:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oUOESfCs2JKUr06HFwqaqcZEgGAvtw6Ga9RJAY0/XVE=;
+        b=KHjbVsFAGe5kL0whgNUj4yJGoi7INyUg6kBDyLeHO84YWt6mjXcl2Ua6UdwpF0ImDa
+         TmO6TCrS2cet7UmS/bIjmjKe++9vRqniwRMvZiEM1fbWweydJRgITpQxZCzsLeEIFEAi
+         QLi77/9h38BHmZgME7i6nWwUIOOvPKCX/znOnra5zZ8vh5S02jamn9mxRVGyG73R4n1E
+         zAArHuHuywkIzJJGNRaxEutnIE40TYP8PaojudQfD5HxsJQu4RmVRBIXYHe695TwNfRS
+         hPeYeIUAzREvvdkm/7KBPC+T+Z810e3sqFR7Y2plB8wZ/knvolewANmm2cEC7J1MSF5Y
+         f9Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oUOESfCs2JKUr06HFwqaqcZEgGAvtw6Ga9RJAY0/XVE=;
+        b=T6T6IikWctMwh/pGK72mJn1KsIDPABD5wVD4Uh0e9lvJ4X6LKFXKUqg7TfJXblzSww
+         dIvCixYDPmdKliHpl4oOS7iUuXo9Q6PM1fPgqZO1ryDNRDF2vC557DEVRoCAgBtmHRLn
+         Fwrpu5NboVFen1VDm5lUSPhGEKv21mx4nqhmV+xgKwOxtNmUCO9DxuAukdwum5SOLaEQ
+         /Sw73T+7xFhXuCEQuCPfxoT0tbBaICF8SzLds/Uv5JepKGSMUG7k6dIFd2wrIhe4JVvi
+         fl5iPrla3NyvhmIAXk0BgVLkK080NjSQyqPhr3cALS5y1LJ/hs5XMcIAasmWXPkSva1j
+         PCMA==
+X-Gm-Message-State: AHQUAuYn9QxuMlQ/W24M7Qn9WCRWsJHz6JsMR84msOe9IQqjzomx0TzC
+        Ytcnf5Hu6dQq17Bp4ZyvymsV/fLKozhGcWu1/kLyHA==
+X-Google-Smtp-Source: AHgI3IaxpYbHG2FxCIUkjtqeJfxg92cycDUtEq1CI8jWo2tSKkz7wFzY+UdA7+FyS/cgzNKsjBZKFPV6kbMC1EUtBBA=
+X-Received: by 2002:a24:5052:: with SMTP id m79mr1408387itb.166.1550046488924;
+ Wed, 13 Feb 2019 00:28:08 -0800 (PST)
 MIME-Version: 1.0
+References: <0000000000002015db0581b71858@google.com> <20190212191920.GI10665@localhost.localdomain>
+In-Reply-To: <20190212191920.GI10665@localhost.localdomain>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 13 Feb 2019 09:27:56 +0100
+Message-ID: <CACT4Y+ZLEPummCf==B30ucY8cdoOx8FWohnUn_UMoWmwwTL87g@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in sctp_outq_tail
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     syzbot <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
-> bounces@lists.linux-foundation.org] On Behalf Of
-> sathyanarayanan.kuppuswamy@linux.intel.com
-> Sent: Tuesday, February 12, 2019 5:51 AM
-> To: bhelgaas@google.com; joro@8bytes.org; dwmw2@infradead.org
-> Cc: Raj, Ashok <ashok.raj@intel.com>; linux-pci@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Busch, Keith <keith.busch@intel.com>;
-> iommu@lists.linux-foundation.org; Pan, Jacob jun
-> <jacob.jun.pan@intel.com>
-> Subject: [PATCH v2 2/2] iommu/vt-d: Enable PASID only if device expects
-> PASID in PRG Response.
-> 
-> From: Kuppuswamy Sathyanarayanan
-> <sathyanarayanan.kuppuswamy@linux.intel.com>
-> 
-> In Intel IOMMU, if the Page Request Queue (PRQ) is full, it will
-> automatically respond to the device with a success message as a keep
-> alive. And when sending the success message, IOMMU will include PASID in
-> the Response Message when the Page Request has a PASID in Request
-> Message and It does not check against the PRG Response PASID
-> requirement
-> of the device before sending the response. Also, If the device receives the
-> PRG response with PASID when its not expecting it then the device behavior
-> is undefined. So enable PASID support only if device expects PASID in PRG
-> response message.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Suggested-by: Ashok Raj <ashok.raj@intel.com>
-> Signed-off-by: Kuppuswamy Sathyanarayanan
-> <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 1457f931218e..af2e4a011787 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -1399,7 +1399,8 @@ static void iommu_enable_dev_iotlb(struct
-> device_domain_info *info)
->  	   undefined. So always enable PASID support on devices which
->  	   have it, even if we can't yet know if we're ever going to
->  	   use it. */
-> -	if (info->pasid_supported && !pci_enable_pasid(pdev, info-
-> >pasid_supported & ~1))
-> +	if (info->pasid_supported && pci_prg_resp_pasid_required(pdev)
-> &&
-> +	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
->  		info->pasid_enabled = 1;
+On Tue, Feb 12, 2019 at 8:19 PM Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+>
+> On Tue, Feb 12, 2019 at 11:04:27AM -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
+> > git tree:       linux-next
+>
+> I can't find this commit. How can I know for sure which commits are in?
+> Recent patches are involved with this code, but not sure what was
+> included on the test.
 
-Above logic looks problematic. As Dave commented in another thread,
-PRI and PASID are orthogonal capabilities. Especially with introduction
-of VT-d scalable mode, PASID will be used alone even w/o PRI...
+Hi Marcelo,
 
-Why not doing the check when PRI is actually enabled? At that point
-you can fail the request if above condition is false. 
+linux-next is weird. Not sure why a so recent commit is not in
+linux-next, maybe one needs to fetch tags or something. Fetching
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next-history.git
+helped me to get this commit:
 
-> 
->  	if (info->pri_supported && !pci_reset_pri(pdev)
-> && !pci_enable_pri(pdev, 32))
-> --
-> 2.20.1
-> 
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+$ git show d4104460aec1
+commit d4104460aec152e23cf80ab1f950f414bf94f4ea (HEAD, tag: next-20190211)
+Author: Stephen Rothwell
+Date:   Mon Feb 11 18:37:26 2019 +1100
+    Add linux-next specific files for 20190211
