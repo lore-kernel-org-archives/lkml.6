@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65BF6C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB6AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288B720835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DD5A2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026499;
-	bh=9fff7Y53ByZc4GPGUy1uC7VXdvhIdzzONFMNSuxFStU=;
+	s=default; t=1550026504;
+	bh=hmsH/XMWy/rZomudERQamvEfiZwqRdu6uZwMn5eP3rQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R48BZKbefdciumoCsY/eeHHR2RsMXzui6W84WqvXV3X3U1O4/uw1wyfM13ocn97hJ
-	 4/064Nk+erkTU4bKFa7/acJ2HvzvdfiJdqlmyTX11pnE2r8ClqCFeZWiXkNJo/3Omh
-	 ZXNAbNKxY/BnetzRN7j2CBux91Y5c2anXfG5QIpI=
+	b=zMIP+KIDrggD3p1qBUnwHX//FMUYtjzwY4X9xXzyNjYLAg6Ny+CyelTvXlj6zg0Hd
+	 jCZ81YcQAp6MXnbg4KWeHbrnRbgncvwJ9N86CdyZos4+Fl14TQ/VpBWAIChxFwBVmt
+	 vmqXFfzyW16blpqVLmOJ7MVGa3y7i+gtfQAWEvCM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390001AbfBMCy6 (ORCPT
+        id S2388338AbfBMChf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:54:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:37:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388332AbfBMChh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:37 -0500
+        id S2388253AbfBMChP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E20F222C2;
-        Wed, 13 Feb 2019 02:37:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41364222C2;
+        Wed, 13 Feb 2019 02:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025457;
-        bh=9fff7Y53ByZc4GPGUy1uC7VXdvhIdzzONFMNSuxFStU=;
+        s=default; t=1550025435;
+        bh=hmsH/XMWy/rZomudERQamvEfiZwqRdu6uZwMn5eP3rQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=etH2TgwQfiqxErxF0xCaqsMhFaGq+vXjAS8NauI7TW3HdGw9Vm7J9tZJGDQJp908Q
-         RSvXcsodrPnTUzUq9q4sI1JeJy4z6AGIUZxp+bfrrMtU6Ea/Wvw7Wf0bPpVKEcuxgp
-         gO4BklaV2y/m/V0MMpgwte9rcP9J8GcJfaDE0zUo=
+        b=sIN2CcUxqG5eFEiYfAM1qqXnZjpw3uB1MfTmyE/uDZWG6m2we2VikuLuATRBpx8ru
+         CQ0v+l9VX7yUWBMkei1bThqGcLYYXCNxwETkd8PkIUWHGt01G8y303aHBNQlIoOmaK
+         B56au3MqK9YgPR8cKgKRyIfwHLccFzs4dO55e5dw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 28/83] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Tue, 12 Feb 2019 21:36:06 -0500
-Message-Id: <20190213023701.20286-28-sashal@kernel.org>
+Cc:     Dien Pham <dien.pham.ry@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 11/83] mfd: bd9571mwv: Add volatile register to make DVFS work
+Date:   Tue, 12 Feb 2019 21:35:49 -0500
+Message-Id: <20190213023701.20286-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,37 +59,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Dien Pham <dien.pham.ry@renesas.com>
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+[ Upstream commit b0aff01e7aa6ad2d6998ef1323843212d1db8b04 ]
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+Because BD9571MWV_DVFS_MONIVDAC is not defined in the volatile table,
+the physical register value is not updated by regmap and DVFS doesn't
+work as expected. Fix it!
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+Fixes: d3ea21272094 ("mfd: Add ROHM BD9571MWV-M MFD PMIC driver")
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+[wsa: rebase, add 'Fixes', reword commit message]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
+ drivers/mfd/bd9571mwv.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 951c4231bdb8..4c47b3fd958b 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -71,6 +71,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 503979c81dae..fab3cdc27ed6 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -59,6 +59,7 @@ static const struct regmap_access_table bd9571mwv_writable_table = {
+ };
+ 
+ static const struct regmap_range bd9571mwv_volatile_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
+ 	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
+ 	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
+ 	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
 -- 
 2.19.1
 
