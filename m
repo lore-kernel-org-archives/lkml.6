@@ -2,117 +2,78 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 758D3C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4FEC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461FA222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550058459;
-	bh=3AAiA4tNwn19yywJuyiFajqd/KZliB5LZawOr87FRaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=A/KLxydvrCx6H9BtcIrSVVRzgbw3UIj8ZoTCqgpcfnYs9dkB8R5fjQe87K+GIUw//
-	 CQw2Miiw7WT/OJMjtQXkXW4KXzL0DCNBa6ffSWLiZARnrOqujpZf8AXZHVyL+uY1L1
-	 NaOTHRDScMFcN115RIULWwuoIupLxfOGBVkvSAe4=
+	by mail.kernel.org (Postfix) with ESMTP id 15F1D222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733071AbfBMLrh (ORCPT
+        id S2403983AbfBMLry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:47:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49028 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726174AbfBMLrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:47:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2384AADAA;
-        Wed, 13 Feb 2019 11:47:35 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 12:47:33 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yong-Taek Lee <ytk.lee@samsung.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] proc, oom: do not report alien mms when setting
- oom_score_adj
-Message-ID: <20190213114733.GB4525@dhcp22.suse.cz>
-References: <20190212102129.26288-1-mhocko@kernel.org>
- <20190212125635.27742b5741e92a0d47690c53@linux-foundation.org>
- <201902130124.x1D1OGg3070046@www262.sakura.ne.jp>
+        Wed, 13 Feb 2019 06:47:54 -0500
+Received: from mga07.intel.com ([134.134.136.100]:61125 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfBMLrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 06:47:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 03:47:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
+   d="scan'208";a="146480025"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Feb 2019 03:47:50 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v0 0/2] perf: Allow forcing high-order allocation for AUX buffers
+Date:   Wed, 13 Feb 2019 13:47:14 +0200
+Message-Id: <20190213114716.63972-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201902130124.x1D1OGg3070046@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 13-02-19 10:24:16, Tetsuo Handa wrote:
-> Andrew Morton wrote:
-> > On Tue, 12 Feb 2019 11:21:29 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-> > 
-> > > Tetsuo has reported that creating a thousands of processes sharing MM
-> > > without SIGHAND (aka alien threads) and setting
-> > > /proc/<pid>/oom_score_adj will swamp the kernel log and takes ages [1]
-> > > to finish. This is especially worrisome that all that printing is done
-> > > under RCU lock and this can potentially trigger RCU stall or softlockup
-> > > detector.
-> > > 
-> > > The primary reason for the printk was to catch potential users who might
-> > > depend on the behavior prior to 44a70adec910 ("mm, oom_adj: make sure
-> > > processes sharing mm have same view of oom_score_adj") but after more
-> > > than 2 years without a single report I guess it is safe to simply remove
-> > > the printk altogether.
-> > > 
-> > > The next step should be moving oom_score_adj over to the mm struct and
-> > > remove all the tasks crawling as suggested by [2]
-> > > 
-> > > [1] http://lkml.kernel.org/r/97fce864-6f75-bca5-14bc-12c9f890e740@i-love.sakura.ne.jp
-> > > [2] http://lkml.kernel.org/r/20190117155159.GA4087@dhcp22.suse.cz
-> > 
-> > I think I'll put a cc:stable on this.  Deleting a might-trigger debug
-> > printk is safe and welcome.
-> > 
-> 
-> I don't like this patch, for I can confirm that removing only printk() is not
-> sufficient for avoiding hungtask warning. If the reason of removing printk() is
-> that we have never heard that someone hit this printk() for more than 2 years,
-> the whole iteration is nothing but a garbage. I insist that this iteration
-> should be removed.
+Hi Peter and Arnaldo,
 
-As the changelog states explicitly, removing the loop should be the next
-step and the implementation is outlined in [2]. It is not as simple
-as to do the revert as you have proposed. We simply cannot allow to have
-different processes disagree on oom_score_adj. This could easily lead
-to breaking the OOM_SCORE_ADJ_MIN protection. And that is a correctness
-issue.
+It turns out that using high-order allocations for AUX buffers reduces the
+run-time performance penalty, for example, with Intel PT. The assumption is
+that this comes from not having to fetch the next page's address at every
+page boundary. Given a workload that does a lot of indirect branches (thus
+generating more PT data with addresses of branch targets), it takes around
+6% longer to complete under PT in snapshot mode than without PT, but only
+around 4% if we use high-order output regions instead of single page output
+regions. This is measured on an Atom CPU.
 
-As a side note.
-I am pretty sure I would have more time to do that if only I didn't
-really have to spend it on pointless and repeated discussions. You
-are clearly not interested on spending _your_ time to address this
-issue properly yourself. This is fair but nacking a low hanging
-fruit patch that doesn't make situation any worse while it removes a
-potential expensive operation from withing RCU context is nothing but
-an obstruction.  It is even more sad that this is not the first example
-of this attitude which makes it pretty hard, if not impossible, to work
-with you.
+We already use high-order allocations for PMUs that don't do HW SG (like
+Intel PT on BDW). This patchset adds an attribute bit that enables the
+same for the PMUs that do have HW SG, and a command line option for perf
+record to set this bit.
 
-And another side note. I have already pointed out that this is by far
-not the only problem with CLONE_VM without CLONE_SIGHAND threading
-model. Try to put your "only the oom paths matter" glasses down
-for a moment and try to look what are the actual and much more
-serious consequences of this threading model. Hint have a look at
-mm_update_next_owner and how we have to for_each_process from under
-tasklist_lock or zap_threads with RCU as well.
+Alexander Shishkin (2):
+  perf: Add an option to ask for high order allocations for AUX buffers
+  perf record: Add --aux-highorder
+
+ include/uapi/linux/perf_event.h       | 3 ++-
+ kernel/events/core.c                  | 3 +++
+ kernel/events/ring_buffer.c           | 3 ++-
+ tools/include/uapi/linux/perf_event.h | 3 ++-
+ tools/perf/builtin-record.c           | 2 ++
+ tools/perf/perf.h                     | 1 +
+ tools/perf/util/evsel.c               | 9 +++++++++
+ 7 files changed, 21 insertions(+), 3 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
