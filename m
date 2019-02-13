@@ -2,110 +2,117 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6351AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68181C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B509222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35FBC222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550051008;
+	bh=Kx/lPmqfaKbuUi8+R+pluUKxUMk7XrEfuD5x/lNXBEg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=XoOIMc3UZAP2lZLzX30DRMxsvtkLjcj2kMGZxZepQ6LXEMsSUWCqMalXyQQ/QJjUf
+	 Ij6K0B+tO/fdUPkVkwTdOs0jj0xgzk4J6HdKA9NC+wgEl41fwJw3Xs+saEAsnD0UGR
+	 aW4U1iIG1Ve+qyhKiCStT/2QIA4vACsTrNu46uME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388235AbfBMJlz (ORCPT
+        id S2388321AbfBMJn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:41:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50042 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726091AbfBMJlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:41:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4116FAFB2;
-        Wed, 13 Feb 2019 09:41:53 +0000 (UTC)
-Subject: Re: [PATCH v2] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM
- family
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     linux-kernel@vger.kernel.org
-References: <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155003117983.733096.1672828968568209328.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a99ce729-9dd3-a18c-bf1f-ae7ed8c75c72@suse.de>
-Date:   Wed, 13 Feb 2019 10:41:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 13 Feb 2019 04:43:26 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41509 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfBMJn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 04:43:26 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so1675516wrs.8;
+        Wed, 13 Feb 2019 01:43:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Kk/GG3OgbzX8YIM46cZBNoZxrXJT1E5EGBKwMDd7vXI=;
+        b=Bz3r7hwg/pS4VBpQCDU42VsFGdVTUqAjmUX+w61pcuFzNKqLImgTNZjuO6BUKak0WY
+         Revm3qcWMjbRcupEOfcrLeM/ev8WVZJOXW0j/NU7soxx3P8cqNfpZ/VGI+7ACFzrIboV
+         9hc+Ew6DAyorCBPAmR8Vp6XJjEc4dI0N+wa+gSTOaHK4b7QpBRAzXUySTxb3gsUmm7w8
+         MNNx/jdrNXFSOfQ32OcekZXg+YoYy7NqXGDexNJ5pDGPxGSeNkqv61TrdyLl7pHTq3G8
+         sESUyJToUNKMje680ICa4/rTL8GDfMVy+VfNqErO7O1w5w/LfzuAXOtiNqlFs9A6tOE7
+         E8yg==
+X-Gm-Message-State: AHQUAuZ3+sbSNBT/nDjWSLrhKGxOTVVarK5sFwutVRM6MxkejuQ25i9N
+        fvtkbz41jin9tSL1yoHoaSQ=
+X-Google-Smtp-Source: AHgI3IZGZGyJI5vbywvzsWNw+C5pG4oYQrFxR54toXy/PK1qWoOPyoC6Bgzg4NOhsQ5CAtgQdn/loQ==
+X-Received: by 2002:a5d:4b07:: with SMTP id v7mr6179697wrq.281.1550051004381;
+        Wed, 13 Feb 2019 01:43:24 -0800 (PST)
+Received: from tiehlicka.suse.cz (ip-37-188-151-205.eurotel.cz. [37.188.151.205])
+        by smtp.gmail.com with ESMTPSA id x21sm6111396wmi.28.2019.02.13.01.43.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 01:43:23 -0800 (PST)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     <linux-mm@kvack.org>
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v3 2/2] mm: be more verbose about zonelist initialization
+Date:   Wed, 13 Feb 2019 10:43:15 +0100
+Message-Id: <20190213094315.3504-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190212095343.23315-3-mhocko@kernel.org>
+References: <20190212095343.23315-3-mhocko@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <155003117983.733096.1672828968568209328.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+From: Michal Hocko <mhocko@suse.com>
+
+We have seen several bugs where zonelists have not been initialized
+properly and it is not really straightforward to track those bugs down.
+One way to help a bit at least is to dump zonelists of each node when
+they are (re)initialized.
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+
+Sorry for spamming. I have screwed up ammending the previous version.
+
+ mm/page_alloc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2e097f336126..52e54d16662a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5234,6 +5234,8 @@ static void build_zonelists(pg_data_t *pgdat)
+ 	int node, load, nr_nodes = 0;
+ 	nodemask_t used_mask;
+ 	int local_node, prev_node;
++	struct zone *zone;
++	struct zoneref *z;
+ 
+ 	/* NUMA-aware ordering of nodes */
+ 	local_node = pgdat->node_id;
+@@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
+ 
+ 	build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
+ 	build_thisnode_zonelists(pgdat);
++
++	pr_info("node[%d] zonelist: ", pgdat->node_id);
++	for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
++		pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
++	pr_cont("\n");
+ }
+ 
+ #ifdef CONFIG_HAVE_MEMORYLESS_NODES
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+2.20.1
+
