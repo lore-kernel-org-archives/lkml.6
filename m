@@ -2,248 +2,251 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E541C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1180C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06932222BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B90206A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:54:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oU3+t2He"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nz6tsB78"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbfBMMvr (ORCPT
+        id S1732105AbfBMMx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:51:47 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38590 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731246AbfBMMvr (ORCPT
+        Wed, 13 Feb 2019 07:53:58 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:32865 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731790AbfBMMx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:51:47 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so2351235wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:51:45 -0800 (PST)
+        Wed, 13 Feb 2019 07:53:57 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i12so2405386wrw.0;
+        Wed, 13 Feb 2019 04:53:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jz9eDBzxbto7/P5w2n8EpMDPhjXWxWZu8ztcjYR1zcY=;
-        b=oU3+t2He0Or7p5wLCNZIHKhntHbHRSY6q95q73i3CZjuZiO7IFxumPROTlZD2ETVsR
-         edy8Wh9wf6+2/aPOeEHgRL8IVCP8CKO8lCgBi9xkUEiEHHDslz/yKX26TfHYYB+4tw6Y
-         ruU4EhzMYeDAiBFAEnq6N0SVjkV0Om+rf53IlsUoP+ukYQDx5KsjVQV7WCADQqoSA/eD
-         HutMmDwkGk5oxqEf5dNWrO4UqamL6d2AgdgTWR1xji5D38cX/KIizfWW8CJCGPJ+2h+5
-         x4/rFpSpmdziCL/VrSb+zNBAkBFQFSQp7JDnT9SRXBPM09ovaRQSw5kZB8dLanE7z3gc
-         PDTA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Nzo7XXlf1TvFAdO72ji9ouH3fWFVK+LwFHWJE2tCDeg=;
+        b=nz6tsB78U3dVyw2qKDSKWtsbUhTK4tDQc7MUh9BErHDmgsey5e3xkr1zmxkqprReqy
+         s91ZfkAyqHvWz95GVYxjkU8WR7D290eR0O6OMDJbn33uve5Bhjlw001vvplYAeyC0Iim
+         SzBp9lko1N1DNZ/YAFhY+oWejSZYr0Kk3O4/vMGwVoSA1aqLNGh3xdpp3hPuH4hsvmTL
+         Truxs23NrdIlaKgIWSiH+OISpxhpfLt1CcJHXqqvJLEPvo6NJOwTT5i+EfgiuCvGH94v
+         vmdIyUm2EAQxMs9b/UZ6HKfCyNXcOPq6nDEHXQQKHhk32VaE1KNv0RKinilslyV4IMSt
+         JayA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jz9eDBzxbto7/P5w2n8EpMDPhjXWxWZu8ztcjYR1zcY=;
-        b=MGS6osoYmh6evyZ+wFo6XlgKzKooGgpIeilMJCulvYZYzhxQ0/KW/TyElDfPbcN7p+
-         7SDdx3gFYskV0iotlI/7TLzs65KDav0CpFNYy4TYfAdDTFLMnkNU1NopQ/q5N5XO6rhw
-         nWX9wnnkOWLae4g5NiZ97dDIKr0tO/f1A4H+ouZct95dAqlX5qG8CYXoGgq08Cd8+Iua
-         QgYKl4/StlZlaIJ56MPNYg5rCBgy//AKomlzw7S9LBN+tYCMLh0JHBfKtkwyjdW7je65
-         Ou0p3QHWqjQWqrYnp+drJeIF3c4goRFrjyXXQmL2gscnfOp81Xk9XY62jIdW9VnZM70M
-         v9YA==
-X-Gm-Message-State: AHQUAuZDnlgpkWxZRF0F4ZcOLDU8EJ8/rtH3AyiBDfcDoBXO8OHHrp4i
-        AjDKkuuLNqCD+oLNksWENNBmKLGWSK0=
-X-Google-Smtp-Source: AHgI3IY74JpyfxdUq3iIfXkRHL32G8ePxnDxmEDIqSFS97ykJRVQPN+Bfe8MEPUNtaeG/pbE4HMTqw==
-X-Received: by 2002:a05:6000:1091:: with SMTP id y17mr249185wrw.317.1550062304412;
-        Wed, 13 Feb 2019 04:51:44 -0800 (PST)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id k4sm11772549wrp.8.2019.02.13.04.51.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 04:51:43 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Add support for an interconnect path
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     jcrouse@codeaurora.org, robdclark@gmail.com, evgreen@chromium.org,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20190212095238.12306-1-georgi.djakov@linaro.org>
- <20190212101624.GA20915@kroah.com>
- <99ab72bf-9e06-bcaf-85ec-33d4037a54cd@linaro.org>
- <20190212143525.GA15405@kroah.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <5dd06ff3-4fe7-af11-33ef-6dc9ed5fd8a5@linaro.org>
-Date:   Wed, 13 Feb 2019 14:51:40 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Nzo7XXlf1TvFAdO72ji9ouH3fWFVK+LwFHWJE2tCDeg=;
+        b=eMPYASSUYc78qHTQHG0rUOisx16u4U2BrniI5AJ4cC1Km7IvwaK+hljLrQc24D85LM
+         glFIMDKvNml2leZUVki4hgcGyaopg6LZm79l2PtLo/4XVW0nNxjljD0HYuRKvBg5Dw7l
+         KYjguPX+AREJ4ccIIQ3NOMSYRUNVeTvoxyk/pQhPgmhUZeVRjUnJBejhn4h8nMf4/ULh
+         9QfUx4HSAQLUqO4RPeAUaXurCIZSVtDNkm6N8sqAvDhvjQHv/gMcHjC63cIhemWCT7Y/
+         3scfDQc5lxuQYDaCVd4r+PS2p2spGMFB9rT+skhMbKHJAFGRQ3+OsBp5NXyROCqsIIkM
+         VD5g==
+X-Gm-Message-State: AHQUAuYhuSmLqmT4lSgbv/nOtaCnD+8CjD3tAefXMtpJA+hzMBiinK/2
+        Fgz9JwCps1iCKMvrQsboQKo=
+X-Google-Smtp-Source: AHgI3IaHPdwxcsKYZxwkD6P1VoHg8MvwKwZ0vht2CbI9xj87Tcz0eyNVGsU7V3AS2ssiD4eECYYfPA==
+X-Received: by 2002:adf:f181:: with SMTP id h1mr282736wro.95.1550062434970;
+        Wed, 13 Feb 2019 04:53:54 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id f196sm2276838wme.36.2019.02.13.04.53.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 04:53:54 -0800 (PST)
+Date:   Wed, 13 Feb 2019 13:53:53 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     robh+dt@kernel.org, u.kleine-koenig@pengutronix.de,
+        tduszyns@gmail.com, mark.rutland@arm.com, alexandre.torgue@st.com,
+        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 3/3] pwm: core: add consumer device link
+Message-ID: <20190213125353.GI647@ulmo>
+References: <1550055012-23348-1-git-send-email-fabrice.gasnier@st.com>
+ <1550055012-23348-4-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20190212143525.GA15405@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jaTU8Y2VLE5tlY1O"
+Content-Disposition: inline
+In-Reply-To: <1550055012-23348-4-git-send-email-fabrice.gasnier@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 2/12/19 16:35, Greg KH wrote:
-> On Tue, Feb 12, 2019 at 04:07:35PM +0200, Georgi Djakov wrote:
->> Hi Greg,
->>
->> On 2/12/19 12:16, Greg KH wrote:
->>> On Tue, Feb 12, 2019 at 11:52:38AM +0200, Georgi Djakov wrote:
->>>> From: Jordan Crouse <jcrouse@codeaurora.org>
->>>>
->>>> Try to get the interconnect path for the GPU and vote for the maximum
->>>> bandwidth to support all frequencies. This is needed for performance.
->>>> Later we will want to scale the bandwidth based on the frequency to
->>>> also optimize for power but that will require some device tree
->>>> infrastructure that does not yet exist.
->>>>
->>>> v6: use icc_set_bw() instead of icc_set()
->>>> v5: Remove hardcoded interconnect name and just use the default
->>>> v4: Don't use a port string at all to skip the need for names in the DT
->>>> v3: Use macros and change port string per Georgi Djakov
->>>>
->>>> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
->>>> Acked-by: Rob Clark <robdclark@gmail.com>
->>>> Reviewed-by: Evan Green <evgreen@chromium.org>
->>>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->>>> ---
->>>>
->>>> Hi Greg,
->>>>
->>>> If not too late, could you please take this patch into char-misc-next.
->>>> It is adding the first consumer of the interconnect API. We are just
->>>> getting the code in place, without making it functional yet, as some
->>>> DT bits are still needed to actually enable it. We have Rob's Ack to
->>>> merge this together with the interconnect code. This patch has already
->>>> spent some time in linux-next without any issues.
->>>
->>> I have a question about the interconnect code.  Last week I saw a
->>> presentation about the resctrl/RDT code from ARM that is coming (MPAM),
->>> and it really looks like the same functionality as this interconnect
->>> code.  In fact, this code looks like the existing resctrl stuff, right?
->>
->> Thanks for the question! It's nice that MPAM is moving forward. When i
->> looked into the MPAM draft spec an year ago, it was an optional
->> extension mentioning mostly use-cases with VMs on server systems.
->>
->> But anyway, MPAM is only available for ARMv8.2+ cores as an optional
->> extension and aarch32 is not supported. In contrast to that, the
->> interconnect code is generic and does not put any limitations on the
->> platform/architecture that can use it - just the platform specific
->> implementation would be different. We have discussed in that past that
->> it can be used even on x86 platforms to provide hints to firmware.
-> 
-> Yes, but resctrl is arch independant.  It's not the "backend" that I'm
-> concerned about, it's the userspace and in-kernel api that I worry
-> about.
+--jaTU8Y2VLE5tlY1O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agree that resctrl is now arch independent, but it looks to me that
-resctrl serves for a different purpose. It may sound that the have
-similarities related to bandwidth management, but they are completely
-different and resctrl does not seem suitable for managing interconnects
-on a system-on-chip systems. If i understand correctly, the resctrl is
-about monitoring and controlling system resources like cache, memory
-bandwidth, L2, L3, that are used by applications, VMs and containers in
-a CPU centric approach. It does this by making use of some CPU hardware
-features and expose this via a file-system to be controlled from userspace.
+On Wed, Feb 13, 2019 at 11:50:12AM +0100, Fabrice Gasnier wrote:
+> Add a device link between the PWM consumer and the PWM provider. This
+> enforces the PWM user to get suspended before the PWM provider. It
+> allows proper synchronization of suspend/resume sequences: the PWM user
+> is responsible for properly stopping PWM, before the provider gets
+> suspended: see [1]. Add the device link in:
+> - of_pwm_get()
+> - pwm_get()
+> - devm_ variants
+> as it requires a reference to the device for the PWM consumer.
+>=20
+> [1] https://lkml.org/lkml/2019/2/5/770
+>=20
+> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+> Changes in v3:
+> - add struct device to of_get_pwm() arguments to handle device link from
+>   there.
+> ---
+>  drivers/pwm/core.c  | 14 +++++++++++---
+>  include/linux/pwm.h |  6 ++++--
+>  2 files changed, 15 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index 1581f6a..8cb5d4bc 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -638,6 +638,7 @@ static struct pwm_chip *of_node_to_pwmchip(struct dev=
+ice_node *np)
+> =20
+>  /**
+>   * of_pwm_get() - request a PWM via the PWM framework
+> + * @dev: device for PWM consumer
+>   * @np: device node to get the PWM from
+>   * @con_id: consumer name
+>   *
+> @@ -655,7 +656,8 @@ static struct pwm_chip *of_node_to_pwmchip(struct dev=
+ice_node *np)
+>   * Returns: A pointer to the requested PWM device or an ERR_PTR()-encoded
+>   * error code on failure.
+>   */
+> -struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id)
+> +struct pwm_device *of_pwm_get(struct device *dev, struct device_node *np,
+> +			      const char *con_id)
+>  {
+>  	struct pwm_device *pwm =3D NULL;
+>  	struct of_phandle_args args;
+> @@ -689,6 +691,9 @@ struct pwm_device *of_pwm_get(struct device_node *np,=
+ const char *con_id)
+>  	if (IS_ERR(pwm))
+>  		goto put;
+> =20
+> +	if (!device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
+> +		pr_debug("%s(): device link not added\n", __func__);
 
->>> So why shouldn't we just drop the interconnect code and use resctrl
->>> instead as it's already merged?
->>
->> I haven't seen any MPAM code so far, but i assume that we can have an
->> interconnect provider that implements this MPAM extension for systems
->> that support it (and want to use it). Currently there are people working
->> on various interconnect platform drivers from 5 different SoC vendors
->> and we have agreed to use a common DT bindings (and API). I doubt that
->> even a single one of these platforms is based on v8.2+. Probably such
->> SoCs would be coming in the future and then i expect people making use
->> of MPAM in some interconnect provider driver.
-> 
-> Again, don't focus on MPAM as-is, it's the resctrl api that I would like
-> to see explained why interconnect can't use.
+I think it's better to turn this into dev_dbg(dev, ...) and maybe
+mention which supplier it failed to link to, something like:
 
-While resctrl can work for managing for example a CPU to memory
-bandwidth for processes, this is not enough for the bigger picture if
-you have a whole system-on-chip topology with distributed hardware
-components talking to each other. The "Linux" CPU might not be even the
-central arbiter in such topologies. The interconnect code does not
-support interaction with userspace.
+	if (!device_link_add(...))
+		dev_dbg(dev, "failed to create device link to %s\n",
+			pwm->chip->dev);
 
-Some reasons why the interconnect code can't use the resctrl api now:
-- The distributed hardware components need to express their needs for
-which interconnect path and how much bandwidth they want to use, in
-order to tune the whole system's (system-on-chip) performance in the
-most optimal state. The interconnect code does this with a
-consumer-provider API.
-- Custom aggregation of the consumer requests needs to be done based on
-the topology. SoCs may use different aggregation formula, depending for
-example on whether they are using a simple hierarchical bus, a crossbar
-or some network-on-chip. When the NoC concept is used, there is
-interleaved traffic that needs to be aggregated and an interconnect path
-can span across multiple clock domains (allowing each functional unit to
-have it's own clock domain).
-- Support for complex topologies is needed - multi-tiered buses with
-devices having multiple paths between each other. The device may choose
-which path to use depending on the needs or use even multiple for
-load-balancing.
-- A topology changes should be supported with an API - there are FPGA
-boards that can change their topology.
+Also, I wonder if this should perhaps be dev_err(). Under what
+circumstances does this fail?
 
-I looked at the existing resctrl code and at some in-flight patches, but
-it doesn't feel right to me to use resctrl. I don't think much of it can
-be reused or extended without very significant changes that would
-probably twist resctrl away from it's original purpose (and maybe
-conflict with it).
+> +
+>  	/*
+>  	 * If a consumer name was not given, try to look it up from the
+>  	 * "pwm-names" property if it exists. Otherwise use the name of
+> @@ -771,7 +776,7 @@ struct pwm_device *pwm_get(struct device *dev, const =
+char *con_id)
+> =20
+>  	/* look up via DT first */
+>  	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
+> -		return of_pwm_get(dev->of_node, con_id);
+> +		return of_pwm_get(dev, dev->of_node, con_id);
+> =20
+>  	/*
+>  	 * We look up the provider in the static table typically provided by
+> @@ -851,6 +856,9 @@ struct pwm_device *pwm_get(struct device *dev, const =
+char *con_id)
+>  	pwm->args.period =3D chosen->period;
+>  	pwm->args.polarity =3D chosen->polarity;
+> =20
+> +	if (!device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
+> +		pr_debug("%s(): device link not added\n", __func__);
 
-TL;DR: The functionality of resctrl and interconnect code is different -
-resctrl seems to be about monitoring/managing/enforcing the usage of
-resources shared by one or more CPUs, the interconnect code is more
-about system-on-chip systems allowing various modules (GPU, DSP, modem,
-WiFi, bluetooth, {en,de}coders, camera, ethernet, etc.) to express their
-bandwidth needs in order to improve the power efficiency of the whole SoC.
+Same here. Also: not sure if we really need to include __func__ in the
+message.
 
-Hope that this addressed your concerns.
+> +
+>  	return pwm;
+>  }
+>  EXPORT_SYMBOL_GPL(pwm_get);
+> @@ -939,7 +947,7 @@ struct pwm_device *devm_of_pwm_get(struct device *dev=
+, struct device_node *np,
+>  	if (!ptr)
+>  		return ERR_PTR(-ENOMEM);
+> =20
+> -	pwm =3D of_pwm_get(np, con_id);
+> +	pwm =3D of_pwm_get(dev, np, con_id);
+>  	if (!IS_ERR(pwm)) {
+>  		*ptr =3D pwm;
+>  		devres_add(dev, ptr);
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index d5199b5..895e074 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -406,7 +406,8 @@ struct pwm_device *of_pwm_xlate_with_flags(struct pwm=
+_chip *pc,
+>  		const struct of_phandle_args *args);
+> =20
+>  struct pwm_device *pwm_get(struct device *dev, const char *con_id);
+> -struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id=
+);
+> +struct pwm_device *of_pwm_get(struct device *dev, struct device_node *np,
+> +			      const char *con_id);
 
-Thanks,
-Georgi
+I'm slightly concerned about this. I think one of the reasons why this
+was introduced was to allow code to get at the PWM if they didn't have
+a struct device * available. However, it doesn't seem like there are any
+users of that function, so this seems fine.
+
+Thierry
+
+>  void pwm_put(struct pwm_device *pwm);
+> =20
+>  struct pwm_device *devm_pwm_get(struct device *dev, const char *con_id);
+> @@ -494,7 +495,8 @@ static inline struct pwm_device *pwm_get(struct devic=
+e *dev,
+>  	return ERR_PTR(-ENODEV);
+>  }
+> =20
+> -static inline struct pwm_device *of_pwm_get(struct device_node *np,
+> +static inline struct pwm_device *of_pwm_get(struct device *dev,
+> +					    struct device_node *np,
+>  					    const char *con_id)
+>  {
+>  	return ERR_PTR(-ENODEV);
+> --=20
+> 1.9.1
+>=20
+
+--jaTU8Y2VLE5tlY1O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxkE2EACgkQ3SOs138+
+s6GFRw//WfjZ4WWaTh2RR5S6JcMl98NKiUpTDAtZrDp3x9nyj+mesyPf/U3BI5Sw
+cwccTz3axsu6UNGzSICWnFIFNFgkcprhzHSohDpTWfliLY9qDF2jGpE+GxnZlOmq
+/jC6fWdZLU364U3AoZSlRGb4EP4soclPdkRN4GOUhLrc/RkvsWgXF8FyO9Ey/5/R
+hZoLMgmsgoP200DcVFVcDp2ef43Q0NHKIvwxv2l7Khp1Yt+3jJ4QQkbijGbCLqNP
+bFROfS1ycHYk19bQcAhzpUWfxkU2ITZ9MnV9AX8CQIveO4ircvxqUiC8kplED7jf
+YOSz3+KNM72er/deev5gLOnmGF1RUM85PPCUbYDW9POHxdjRCyITyEix0zeTeDMc
+nW8s7qmaaAaVnKlDx4r2SPrj1/KrMUs82iODOp1ceRsGX6lSLckmIlaZyz1yYTqQ
+jRMUiu6bgb4YFODQ4LKLbZYicCmlTO1hXH9c7HbSmwiwk8Rl8t1i0qJctH2+hKct
+a5JGR7XmV0QsLgq6kBHB0eFAtfxY21iolcSI1A+I1bxRPyEe+p2vsDd78cO9X+4f
+9ApI2rAGWxK7fdLIHBMPwixuDfTtjVps4ku2ZcP8Bkhijfx/Yt5efc0JN2dhdmZQ
+JmXhtskNozXeJvO3E9B86lr2Rgx8Ns79iNA15Ha17j3SpbDn8H0=
+=+1n7
+-----END PGP SIGNATURE-----
+
+--jaTU8Y2VLE5tlY1O--
