@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF412C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB96EC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9B320835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8068620835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026598;
-	bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+	s=default; t=1550026604;
+	bh=u34JNRiEC/Zy2iU//3ErYndHZ4kCrIErVSUEXpcNIIA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ycwNbnzTCO3UwTZVUr4mwyzpVE2vJZMOe2RkmaByMtpZXuEYfafh3t0zYJtdRgqYq
-	 Bcq4MYA1mtawX3fstaHr5KW+ikwGyHJ/6jdUR/j9foEzKbSSPKVNz8yYj1L33+VGAp
-	 fZkfTYjHlZmqZH2VoNnnw5vcdz+Ax5RladwVLguk=
+	b=Zli64cDryUrj/KaBdzWi6NOeGhHey6L8HNUk2kev6G1gTjzPkats51EVI4Rwaeu/a
+	 4uTjlb/jkt0OpCUlpT5xhlFFaVL02Hb3hE3ouCkH0bfYGKj1BTYPouS+rG6ynWFJlN
+	 afxUePCIGK5eQhl+OD1mObCFOqc1TkUYzvmhNid8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390121AbfBMC4g (ORCPT
+        id S1731841AbfBMChR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:56:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388269AbfBMChR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Feb 2019 21:37:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732688AbfBMChK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84C02222CA;
-        Wed, 13 Feb 2019 02:37:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC970222C7;
+        Wed, 13 Feb 2019 02:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025437;
-        bh=6sT0o+68zBOm4nfSnH07N+YIIZ139m1xleIttFOKPfg=;
+        s=default; t=1550025429;
+        bh=u34JNRiEC/Zy2iU//3ErYndHZ4kCrIErVSUEXpcNIIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GH/CSFTy/O7bihwGYmERXuqacr3UjIdnN2ZZHjqFSw0+dgCMJa0ciw5hW2psBE8Oz
-         RiqwP5TzBqVZVf5UB7OinczQOqYAKzmm/iTNXQN6uYSSO3mCQurNAAJlU656ONezXi
-         b1AeD8iZUddC9JWJALolLu0o4xjsr60kI8wQCSHs=
+        b=wb01gtGwAiYpo2v20DFfk7qzyvpc5UztHvVKehTWc8y7zg7L6355EojeqTSeeGAR+
+         xPF2O1R6am58RiusE6xHJBougg4JPLUHZ1lf38xcMiA2Onaf5WhFs44EEnbdR5kfGd
+         m7NoqBoDQ3uruxFN6nnl+QZrv4P15DRed7vZ4Zi0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.19 13/83] mfd: wm5110: Add missing ASRC rate register
-Date:   Tue, 12 Feb 2019 21:35:51 -0500
-Message-Id: <20190213023701.20286-13-sashal@kernel.org>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/83] pvcalls-back: set -ENOTCONN in pvcalls_conn_back_read
+Date:   Tue, 12 Feb 2019 21:35:44 -0500
+Message-Id: <20190213023701.20286-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,37 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Stefano Stabellini <sstabellini@kernel.org>
 
-[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
+[ Upstream commit e6587cdbd732eacb4c7ce592ed46f7bbcefb655f ]
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+When a connection is closing we receive on pvcalls_sk_state_change
+notification. Instead of setting the connection as closed immediately
+(-ENOTCONN), let's read one more time from it: pvcalls_conn_back_read
+will set the connection as closed when necessary.
+
+That way, we avoid races between pvcalls_sk_state_change and
+pvcalls_back_ioworker.
+
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/wm5110-tables.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/xen/pvcalls-back.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
-index 1ee68bd440fb..16c6e2accfaa 100644
---- a/drivers/mfd/wm5110-tables.c
-+++ b/drivers/mfd/wm5110-tables.c
-@@ -1618,6 +1618,7 @@ static const struct reg_default wm5110_reg_default[] = {
- 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
- 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
- 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
-+	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
- 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
- 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
- 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
-@@ -2869,6 +2870,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
- 	case ARIZONA_ASRC_ENABLE:
- 	case ARIZONA_ASRC_STATUS:
- 	case ARIZONA_ASRC_RATE1:
-+	case ARIZONA_ASRC_RATE2:
- 	case ARIZONA_ISRC_1_CTRL_1:
- 	case ARIZONA_ISRC_1_CTRL_2:
- 	case ARIZONA_ISRC_1_CTRL_3:
+diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
+index b1092fbefa63..e8b3ff8e7868 100644
+--- a/drivers/xen/pvcalls-back.c
++++ b/drivers/xen/pvcalls-back.c
+@@ -160,9 +160,10 @@ static void pvcalls_conn_back_read(void *opaque)
+ 
+ 	/* write the data, then modify the indexes */
+ 	virt_wmb();
+-	if (ret < 0)
++	if (ret < 0) {
++		atomic_set(&map->read, 0);
+ 		intf->in_error = ret;
+-	else
++	} else
+ 		intf->in_prod = prod + ret;
+ 	/* update the indexes, then notify the other end */
+ 	virt_wmb();
+@@ -288,7 +289,7 @@ static void pvcalls_sk_state_change(struct sock *sock)
+ 		return;
+ 
+ 	intf = map->ring;
+-	intf->in_error = -ENOTCONN;
++	atomic_inc(&map->read);
+ 	notify_remote_via_irq(map->irq);
+ }
+ 
 -- 
 2.19.1
 
