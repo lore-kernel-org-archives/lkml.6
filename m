@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E18DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4056C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05090222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EAC6222D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083582;
-	bh=bUH9GX+26SvKWTptuJ+OL6vDK9Ossh72M8Cb5eq8OGI=;
+	s=default; t=1550083586;
+	bh=w5dyh7n/2LdziC4L5Svno/nejRTHTCAoPYqkvLX/80g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QGtpHcBDDLhX/pG3GUahGmJ0tL4FlxnJuJW+O0/VgsRoL7VU1YLOeZWchRrdO27KI
-	 M8FCUoWb+KLu0gpwyZJhu4kliftJD1mVnHklLQ5XWug2wT/YK00G8LUFRjgplTP9v0
-	 j+spgShFSTcmTHHEHUgfwfs3wTqwlxRaqQzfQ2Ys=
+	b=fLCh9Hpysqc5pphA1t7xDsJEh18rgi9INhLWc3mMA31Xp5TJueAF4IO+Ps6elBVVn
+	 pocLwyUXjkscbCCPIXrrXNO6fh50lZ4ypj2stzSURF7RPC4b2wbq9q/WFfSDnQJih6
+	 OCwhioeLlKI0Y18c6mfn6uhO0vMccqcUNYQamgUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406431AbfBMSqU (ORCPT
+        id S2403942AbfBMSqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:46:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44870 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:46:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730329AbfBMSqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:46:18 -0500
+        id S2406427AbfBMSqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:46:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 982A520811;
-        Wed, 13 Feb 2019 18:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FEAA20835;
+        Wed, 13 Feb 2019 18:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083577;
-        bh=bUH9GX+26SvKWTptuJ+OL6vDK9Ossh72M8Cb5eq8OGI=;
+        s=default; t=1550083579;
+        bh=w5dyh7n/2LdziC4L5Svno/nejRTHTCAoPYqkvLX/80g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HhSJ+1BiLhWxPFeaNkVRO/B+r+aqR/MRw/O/VoC7sas4/Ky8SPsLuz3MGw+IGWAdD
-         C7A+cgUGRTeaeeVIfP7TDt3KUV4swSILmc06qWutgoEhpvRHEUZ3oW47tQ5CyrgJwN
-         E8QL27qm8duxrd7Kw6LdaPgnoTHWjxn/n4WsXfxo=
+        b=eT4c6tV/Jk5Z1HwZ9+1g3bEvd1JGH548tZN2lkY5Wn/ojkZh/mtIaD37R+jwoPAK3
+         wLvp8JVdnlTA7jMtaNaD39oj41vu9PdJ8b23KiSVmBlHfXY6Y8ii/FE0dib0dkySXU
+         0I8V3EUa4jt3SfuDJ2Tg9hid0YuxIicoEi04CmAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.20 38/50] drm/rockchip: rgb: update SPDX license identifier
-Date:   Wed, 13 Feb 2019 19:38:43 +0100
-Message-Id: <20190213183658.703685353@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.20 39/50] drm/amd/powerplay: Fix missing break in switch
+Date:   Wed, 13 Feb 2019 19:38:44 +0100
+Message-Id: <20190213183658.776366374@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -66,69 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandy Huang <hjc@rock-chips.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 053ff09f1a8f2151339f9fda457c5250929d1c49 upstream.
+commit 2f10d823739680d2477ce34437e8a08a53117f40 upstream.
 
-Update SPDX License Identifier from GPL-2.0+ to GPL-2.0
-and drop some GPL text.
-This fixes a mismatch between the existing SPDX headers and GPL
-boilerplate text.
+Add missing break statement in order to prevent the code from falling
+through to the default case.
 
-Fixes: 1f0f01515172 ("Add support for Rockchip Soc RGB output interface")
+The resoning for this is that pclk_vol_table is an automatic variable.
+So, it makes no sense to update it just before falling through to the
+default case and return -EINVAL.
+
+This bug was found thanks to the ongoing efforts to enabling
+-Wimplicit-fallthrough.
+
+Fixes: cd70f3d6e3fa ("drm/amd/powerplay: PP/DAL interface changes for dynamic clock switch")
 Cc: stable@vger.kernel.org
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/1548238479-171491-1-git-send-email-hjc@rock-chips.com
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_rgb.c |   11 +----------
- drivers/gpu/drm/rockchip/rockchip_rgb.h |   11 +----------
- 2 files changed, 2 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-@@ -1,17 +1,8 @@
--//SPDX-License-Identifier: GPL-2.0+
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-  * Author:
-  *      Sandy Huang <hjc@rock-chips.com>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #include <drm/drmP.h>
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.h
-@@ -1,17 +1,8 @@
--//SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-  * Author:
-  *      Sandy Huang <hjc@rock-chips.com>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifdef CONFIG_ROCKCHIP_RGB
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+@@ -1005,6 +1005,7 @@ static int smu10_get_clock_by_type_with_
+ 		break;
+ 	case amd_pp_dpp_clock:
+ 		pclk_vol_table = pinfo->vdd_dep_on_dppclk;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
 
 
