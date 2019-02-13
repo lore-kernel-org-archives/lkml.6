@@ -2,136 +2,162 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD858C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785EEC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D10222BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47AD920675
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 01:13:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="qEaR6Ok6"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="GBREfe+I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UT3HKVRB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfBMBKJ (ORCPT
+        id S1730630AbfBMBN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 20:10:09 -0500
-Received: from mail-eopbgr770134.outbound.protection.outlook.com ([40.107.77.134]:46400
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726530AbfBMBKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 20:10:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i32Yy8wwpjGbFb49EpXLjNaiJN1jwLdA1/CHRtDedrU=;
- b=qEaR6Ok66f8tIleRL5AZ5C40Q1f/unqhPto3hCuN6+kd7LVdQ47goS7kRM/cUM9GSrh22lZE+0OiUwyTvD3VQH9UZIggcvjzEdPJH9sKCE+qvnkgcEcHRnEmFyim+sKaoqfR3eNlQPAKWBeEU4A0sBEoLKjrg9suAp0BvgZEF/w=
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
- MWHPR0601MB3642.namprd06.prod.outlook.com (10.167.236.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Wed, 13 Feb 2019 01:10:03 +0000
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::ac0c:a03e:77c7:fa85]) by MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::ac0c:a03e:77c7:fa85%5]) with mapi id 15.20.1622.016; Wed, 13 Feb 2019
- 01:10:03 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "festevam@gmail.com" <festevam@gmail.com>
-CC:     "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add DMA properties for ECSPI
-Thread-Topic: [PATCH 2/2] ARM: dts: imx7: add DMA properties for ECSPI
-Thread-Index: AQHUvyD/DkP33gVxsUSHwHJ5QzA1bqXU0h6AgAUATgCAATwLAIAAFl6AgAANW4CAAWRIAIAAS20AgAAOAYCAAAOJAA==
-Date:   Wed, 13 Feb 2019 01:10:03 +0000
-Message-ID: <1550020202.3075.135.camel@impinj.com>
-References: <20190107132226.16216-1-stefan@agner.ch>
-         <20190107132226.16216-2-stefan@agner.ch>
-         <1549573243.3075.72.camel@impinj.com> <20190211012305.GA21496@dragon>
-         <1549916056.3075.102.camel@impinj.com>
-         <CAOMZO5BrTLyg7Q51tPcHbN8S2VmA4HAENOVzNhw+Yx7Nniz3Gg@mail.gmail.com>
-         <1549923727.3075.103.camel@impinj.com>
-         <CAOMZO5Ccovx2hMU0SmPm9ToZDNXOdLWkoQ8QT7EOhLocL7GAEQ@mail.gmail.com>
-         <1550016436.3075.127.camel@impinj.com>
-         <CAOMZO5Ctp_p=j1G1DCaPxsyjWTK8dtKR9Ov59XGxYdiqE+1c2g@mail.gmail.com>
-In-Reply-To: <CAOMZO5Ctp_p=j1G1DCaPxsyjWTK8dtKR9Ov59XGxYdiqE+1c2g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tpiepho@impinj.com; 
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c9c90075-90fd-42b0-fcfd-08d6914ffbce
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3642;
-x-ms-traffictypediagnostic: MWHPR0601MB3642:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3642;20:EIAsZwRgNrR2imKiSdc48optt7LjQXiuCFpjUHbBaS6npMQ4EPciWuKYp54fYhPvHmpPxgU1LCjkM/t6BVmzj0Yajr0nx3Q0XXVJf+Ut0Yg6DbdYhfhBcUB91bnzhRI556Y1zhPG1WwhcPC3Cpf6cQ2Ukn1VvVRbNZFZyR1VlzA=
-x-microsoft-antispam-prvs: <MWHPR0601MB3642B1DA53B751B7323671FAD3660@MWHPR0601MB3642.namprd06.prod.outlook.com>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(366004)(136003)(376002)(346002)(199004)(189003)(54094003)(105586002)(1411001)(81166006)(478600001)(6436002)(966005)(5640700003)(106356001)(1730700003)(2351001)(476003)(14454004)(8676002)(53936002)(81156014)(7416002)(229853002)(6486002)(1361003)(2616005)(68736007)(256004)(14444005)(93886005)(2501003)(8936002)(71200400001)(71190400001)(6512007)(6306002)(103116003)(99286004)(2906002)(26005)(36756003)(102836004)(486006)(97736004)(25786009)(446003)(4326008)(316002)(66066001)(186003)(305945005)(7736002)(11346002)(86362001)(3846002)(53546011)(6506007)(6916009)(6116002)(76176011)(6246003)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3642;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: impinj.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vpR2qVWUUQiZ6QPDczMXtxLV6kJnc9jNvhK9QHgkmMNoT0pU2TOdoCMiyFEAf8Z80JA/ozR9F9TtAANyXsCvWtqyTPyUDRTgzevPmaPmg/K7JItSQxGgXIgWwQ3QnSx0yRjKdKlqgDWwrGGup04TMqPkl+lg1Yc49ru1K0YqsA8rS0qTUVdNqhcsRi7SG2/ai/Dk9/kLTOk3I/2/aRKsrBsT0rEVWzYlaXiYc6VUBkRPl1hP4tKM/gzbu3+3LworcdmQQ6/9n2rL+YR5+93ajs4ngBIDP4AonTZuh6cFrpEYOX1Nw/b2Pq1EsQ2p/KdY92lvmIj2SA0cHbohWwnETJ/4uB8U/leGd/jXlnmCqFJf/dKK98btJGVeQk7F9GjinGM7m5GR9ZAY/IWk3NtYeNDVNNELS4conKf3RXAh2y4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <621C6364E9CB144487460B453BFA5A37@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 12 Feb 2019 20:13:57 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:35425 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729726AbfBMBN4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 20:13:56 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 5D38021D07;
+        Tue, 12 Feb 2019 20:13:53 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 12 Feb 2019 20:13:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=/vsni0qI4nIlP2MtRM9/uEjnMvw
+        ObGlkgdfO3PfJISo=; b=GBREfe+IaNu9MN4ysUkKzXc3q741zVmIMyvcTElSMab
+        qaOnWrhH5L9k/zSktZt0FD4MuXuZ4f7CXUDokMK3myFif9Co5FytGYVnTt6pafv1
+        cbM/bLrhOGpkyspnYUj1jugnmDQD8OySP/olkAOiX0nKRR4wY8WxLWS3llHsul17
+        dpVDirkVEllNcBhQqviXah2SkimT6Q9KICjczpbTSgBh9AVos7MKtZVOULptdnQG
+        QaLbteNgo1RNUuXwqS54vBXANYBse7Io5pLmvKefI/y44ChDU5NS0n5laA893IEv
+        CF/QbagS3F0xUc7NEmpslh4rJ9w0vVXaz9Y5vqTgwGQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/vsni0
+        qI4nIlP2MtRM9/uEjnMvwObGlkgdfO3PfJISo=; b=UT3HKVRBITRkJypVgGFLED
+        qv18xzFsnV5L6iem9iX3/ckmxTmJU5ClGacny9G/5hnU5YiZw9Jjddx1E3WTBQqC
+        gMVHdp+0IQ2mdIjI0q+xYEo/Ul3EDc/Ke6HdmspWzADm/BEPe1dFD04LrVyOAaXz
+        qMvABH6fg+VdzFTsXabpmauexRDf2hM4kr29GDH+RQe439f/bK2WaGx2M1eWk8GX
+        pkY/hoIC+dNbuOTzGWtAnrixRkbokCANGhyK04INmyvuqGNx32Q4aG0UCsbXr/tS
+        IYayXARX0qPcGKuHIwnMdc8AMRfGyE0M22aHjzoMD/IDl3KXe7KRZ9Eq4rQvUMeg
+        ==
+X-ME-Sender: <xms:UG9jXLmnFeAqt6cNu6cMmyXeEKut8cF5NeMZ6QF8_DTOq8y5OjgBig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtvddgfeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecufghrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfse
+    httdertdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehm
+    vgesthhosghinhdrtggtqeenucfkphepuddukedrvdduuddrudelledruddtgeenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhi
+    iigvpedt
+X-ME-Proxy: <xmx:UG9jXD0KircKN0WWwwHH9TeuIcQ0DYE-iuTiLS4bGuEtmEZJosdoOg>
+    <xmx:UG9jXJh3C75OBfdlmyqsEpeQVw-WwrDUj69r4Trg4-TRFTXFBJ7rjw>
+    <xmx:UG9jXBbQd9WObKl93wsTU6MdPGQmP-qWhbf04KxgubPYDFaYTT33oA>
+    <xmx:UW9jXGF4GohBPaUia8NzuDe6dJ5CvmAxMEIB_of7GZpRGjyHajE9Jg>
+Received: from localhost (ppp118-211-199-104.bras1.syd2.internode.on.net [118.211.199.104])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0B255E4693;
+        Tue, 12 Feb 2019 20:13:51 -0500 (EST)
+Date:   Wed, 13 Feb 2019 12:13:40 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xarray: Document erasing entries during iteration
+Message-ID: <20190213011340.GA29295@eros.localdomain>
+References: <20190212072958.17373-1-tobin@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9c90075-90fd-42b0-fcfd-08d6914ffbce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 01:10:03.1803
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3642
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212072958.17373-1-tobin@kernel.org>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTAyLTEyIGF0IDIyOjU3IC0wMjAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
-PiBPbiBUdWUsIEZlYiAxMiwgMjAxOSBhdCAxMDowNyBQTSBUcmVudCBQaWVwaG8gPHRwaWVwaG9A
-aW1waW5qLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+IFRyaWVkIFNETUEgZmlybXdhcmUgNC4yLiAg
-U3RpbGwgYnJva2VuLiAgTm8gYXBwYXJlbnQgY2hhbmdlLg0KPiA+IA0KPiA+IEdldCA0IGN5Y2xl
-IHBhdXNlIGFmdGVyIGVhY2ggYnl0ZS4NCj4gPiANCj4gPiBBbmQgY3Jhc2ggd2hpbGUvYWZ0ZXIg
-dXNpbmcgRE1BLiAgQ2xlYXJseSBzb21lIHNvcnQgb2YgbWVtb3J5DQo+ID4gY29ycnVwdGlvbiBn
-b2luZyBvbi4gIEZvcnR1bmF0ZWx5LCBpdCdzIHZlcnkgcmVsaWFibGUgdGhhdCB1c2luZw0KPiA+
-IERNQQ0KPiA+IGFsbW9zdCBpbW1lZGlhdGVseSBjYXVzZXMgYSBwcm9ibGVtIGFuZCB0aGlzIGlz
-IGVhc3kgdG8NCj4gPiByZXByb2R1Y2UuICBJDQo+ID4gdGhpbmsgdGhhdCBpbmRpY2F0ZXMgaXQn
-cyBlaXRoZXIgY2xvYmJlcnMgYSBsb3Qgb2YgUkFNLCBvcg0KPiA+IGNvbnNpc3RlbnRseQ0KPiA+
-IG1hbmFnZXMgdG8gaGl0IGEgdmVyeSBpbXBvcnRhbnQgbG9jYXRpb24gZm9yIGtlcm5lbCBtZW1v
-cnkNCj4gPiBhbGxvY2F0b3JzLg0KPiA+IA0KPiA+IEkndmUgZ290IGFuIGlkZWEgb2Ygd2hlcmUg
-dGhhdCBtaWdodCBiZSBoYXBwZW5pbmcgdGhhdCBJJ20gbG9va2luZw0KPiA+IGludG8uDQo+IA0K
-PiBPaywgdGhhbmtzIGZvciBpbnZlc3RpZ2F0aW5nIHRoaXMgaXNzdWUuDQo+IA0KPiA+IA0KPiA+
-IEkgdGhpbmsgaXQncyByZWFzb25hYmxlIHRvIGFkZCB0aGUgZG1hIGF0dHJpYnV0ZXMsIGJ1dCBw
-dXQgYSBjaGVjaw0KPiA+IGluDQo+ID4gdGhlIHNwaS1pbXggZHJpdmVyIHRvIGRpc2FibGUgRE1B
-IG9uIGlteDdkIGF0IGxlYXN0Lg0KPiANCj4gU29tZXRoaW5nIGxpa2UgdGhpcz8NCmh0dHA6Ly9k
-YXJrLWNvZGUuYnVsaXgub3JnL3VyZm9oOC01ODAxNzQNCg0KU29tZXRoaW5nIGxpa2UgdGhhdC4g
-IEkgdGhvdWdodCBhIHByaW50ayBvbiBwcm9iZSwgdGhhdCBETUEgd2FzDQpkaXNhYmxlZCwgd291
-bGQgYmUgbmljZSBzbyBubyBvbmUgYmVhdHMgdGhlaXIgaGVhZCBhZ2FpbnN0IHRoZSB3YWxsDQp0
-cnlpbmcgdG8gZmlndXJlIG91dCB3aHkgRE1BIGlzbid0IGJlaW5nIHVzZWQuDQoNCkJ1dCBJIHRo
-aW5rIEkndmUgZm91bmQgdGhlIGlzc3VlIGFuZCB0cmFja2VkIGl0IHRvIGJ1ZyBpbiB0aGUgc3Bp
-IGNvcmUuDQogIEknbGwgc2VuZCBhIHBhdGNoIHNob3J0bHkuICBJdCBzaG91bGQgYWZmZWN0IGFu
-eXRoaW5nIHRoYXQgdXNlcyBETUEsDQp3aXRoIGEgc3BpIG1hc3RlciB0aGF0IHJlcXVpcmVzIFJY
-IGFuZC9vciBUWCBidWZmZXJzLCBhbmQgYSBzcGkNCnRyYW5zZmVyIHRoYXQgZG9lcyBub3QgcHJv
-dmlkZSB0aGUgcmVxdWlyZSBidWZmZXIocykuICBJbiBteSBjYXNlLCBzcGktDQppbXggcmVxdWly
-ZXMgYW4gUlggYnVmZmVyIGJ1dCBJIGFtIGRvaW5nIFRYIG9ubHkgRE1BLiAgVGhlIHNwaSBjb3Jl
-DQp0YWtlcyBjYXJlIG9mIHRoaXMsIGJ1dCBJIHRoaW5rIHRoZXJlIGlzIGEgcmFjZSBpbiB0aGUg
-Y2xlYW51cCBvZiB0aGUNCmR1bW15IFJYIERNQSBidWZmZXIuDQoNClRoaXMgYXBwZWFycyB0byBj
-bG9iYmVyIHNvbWV0aGluZyByZWxhdGluZyB0byBETUEgYnVmZmVyIGFsbG9jYXRpb24gYW5kDQp0
-aGUga2VybmVsIHN0YXJ0cyB0byBhbGxvY2F0ZSBib2d1cyBETUEgYnVmZmVyIGFkZHJlc3Nlcywg
-YW5kIHRoZSBTUEkNCmNvbnRyb2xsZXIgaGFwcGlseSBETUFzIGFsbCBvdmVyIG1lbW9yeS4gIEkg
-d29uZGVyIGlmIHRoYXQgY291bGQgYmUNCnNvbWVob3cgZXhwbG9pdGVkIHRvIHJlYWQvd3JpdGUg
-YXJiaXRyYXJ5IG1lbW9yeSB2aWEgU1BJIERNQT8=
+On Tue, Feb 12, 2019 at 06:29:58PM +1100, Tobin C. Harding wrote:
+> The XArray is, in a way, a replacement data structure for linked lists,
+> as such, on first use developers may wonder if it is safe to remove
+> items while iterating over the array.
+> 
+> For example, this is fine:
+> 
+> 	DEFINE_XARRAY(things);
+> 
+> 	void cleanup()
+> 	{
+> 		struct thing *thing;
+> 		unsigned long index;
+> 
+> 		xa_for_each(&things, index, thing)
+> 			xa_erase(&things, index);
+> 	}
+> 
+> Document this feature explicitly in the docs and also for the macro
+> definition.
+> 
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> ---
+> 
+> Hi Willy,
+> 
+> I had my first go using the XArray today and during that I wondered if
+> it was safe to remove items during iteration.  Conceptually it seems
+> fine and it seemed to work just fine in code - is this something people
+> should not be doing for any reason?  Is this the best way to traverse
+> the tree and get every thing just to erase it?  Are we even supposed to
+> be thinking this is a tree or should we just be thinking it is an array?
+> 
+> (As you might have guessed I _still_ don't know exactly how a radix tree
+> works :)
+> 
+> Oh, and FTR the XArray is hot - good effort man.
+> 
+> thanks,
+> Tobin.
+> 
+> 
+>  Documentation/core-api/xarray.rst | 3 ++-
+>  include/linux/xarray.h            | 2 ++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+> index 5d54b27c6eba..2578e0bdaa17 100644
+> --- a/Documentation/core-api/xarray.rst
+> +++ b/Documentation/core-api/xarray.rst
+> @@ -97,7 +97,8 @@ You can copy entries out of the XArray into a plain array by calling
+>  :c:func:`xa_extract`.  Or you can iterate over the present entries in
+>  the XArray by calling :c:func:`xa_for_each`.  You may prefer to use
+>  :c:func:`xa_find` or :c:func:`xa_find_after` to move to the next present
+> -entry in the XArray.
+> +entry in the XArray.  It is safe to call :c:func:`xa_release` on entries
+> +as you iterate over the array using :c:func:`xa_for_each`.
+
+Re-reading documentation this line may be in the wrong place .
+
+Perhaps it would be better added at the end of the 'Normal API' section?
+
+	Finally, you can remove all entries from an XArray by calling
+	:c:func:`xa_destroy`.  If the XArray entries are pointers, you may wish
+	to free the entries first.  You can do this by iterating over all present
+	entries in the XArray using the :c:func:`xa_for_each` iterator.  It is safe
+	to call :c:func:`xa_erase` while iterating the array.
+
+I'm a bit lazy when I read docs and soon as I find an answer I stop
+reading (bad Tobin) so it might be nice to tie the first mention of
+xa_for_each with the comment on xa_erase _and_ the section on
+xa_destroy.  Man, writing docs is never as easy as it first appears.
+
+Oh and I sent v2 already but it hasn't shown up in my inbox so replying
+here on v1.
+
+thanks,
+Tobin.
